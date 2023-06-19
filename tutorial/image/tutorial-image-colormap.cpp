@@ -63,7 +63,7 @@ int main()
       vpDisplayX d(Icolor2, 10, 10, "Memorial");
   #elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Memorial");
-  #elif defined(VISP_HAVE_OPENCV)
+  #elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Memorial");
   #else
       std::cout << "No image viewer is available..." << std::endl;
@@ -96,7 +96,7 @@ int main()
       vpDisplayX d(Icolor2, 10, 10, "Monkey");
   #elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
-  #elif defined(VISP_HAVE_OPENCV)
+  #elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
   #else
       std::cout << "No image viewer is available..." << std::endl;
@@ -129,7 +129,7 @@ int main()
       vpDisplayX d(Icolor2, 10, 10, "Monkey");
   #elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
-  #elif defined(VISP_HAVE_OPENCV)
+  #elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
   #else
       std::cout << "No image viewer is available..." << std::endl;

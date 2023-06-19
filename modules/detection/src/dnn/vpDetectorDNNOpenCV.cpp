@@ -34,7 +34,7 @@
 *****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/core/vpIoTools.h>

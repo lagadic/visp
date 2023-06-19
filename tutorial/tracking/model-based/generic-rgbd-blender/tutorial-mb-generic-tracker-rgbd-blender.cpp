@@ -9,7 +9,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
 namespace
 {
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
@@ -145,7 +145,11 @@ int main(int argc, char *argv[])
   std::cout << "click: " << click << std::endl;
 
   std::vector<int> tracker_types;
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+#else
+  tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER);
+#endif
   if (!disable_depth)
     tracker_types.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 
@@ -179,7 +183,7 @@ int main(int argc, char *argv[])
   vpDisplayX d1, d2;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d1, d2;
-#else
+#elif defined (HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d1, d2;
 #endif
 

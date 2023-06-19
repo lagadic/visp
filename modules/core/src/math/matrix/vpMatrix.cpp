@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,10 @@
  * Description:
  * Matrix manipulation.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
-\file vpMatrix.cpp
-\brief Definition of the vpMatrix class
+  \file vpMatrix.cpp
+  \brief Definition of the vpMatrix class
 */
 
 #include <algorithm>
@@ -2024,7 +2024,7 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
   svdLapack(w, V);
 #elif defined(VISP_HAVE_EIGEN3)
   svdEigen3(w, V);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   svdOpenCV(w, V);
 #else
   (void)w;
@@ -2093,7 +2093,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
   return pseudoInverseLapack(Ap, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, svThreshold);
 #else
   (void)Ap;
@@ -2169,7 +2169,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, int rank_in) const
   return pseudoInverseLapack(Ap, rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, rank_in);
 #else
   (void)Ap;
@@ -2235,7 +2235,7 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
   return pseudoInverseLapack(svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(svThreshold);
 #else
   (void)svThreshold;
@@ -2300,7 +2300,7 @@ vpMatrix vpMatrix::pseudoInverse(int rank_in) const
   return pseudoInverseLapack(rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(rank_in);
 #else
   (void)svThreshold;
@@ -3726,7 +3726,7 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
 }
 
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
   matrix \f$\bf A\f$ using OpenCV 3rd party.
@@ -4503,7 +4503,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseLapack(Ap, sv, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold);
 #else
   (void)Ap;
@@ -4586,7 +4586,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
   return pseudoInverseLapack(Ap, sv, rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, rank_in);
 #else
   (void)Ap;
@@ -4902,7 +4902,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold, imA, imAt, kerAt);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold, imA, imAt, kerAt);
 #else
   (void)Ap;
@@ -5062,7 +5062,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix
   return pseudoInverseLapack(Ap, sv, rank_in, imA, imAt, kerAt);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, rank_in, imA, imAt, kerAt);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, rank_in, imA, imAt, kerAt);
 #else
   (void)Ap;

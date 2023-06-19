@@ -129,7 +129,7 @@ TEST_CASE("Benchmark binary image morphology", "[benchmark]")
   }
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
 TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 {
   std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");

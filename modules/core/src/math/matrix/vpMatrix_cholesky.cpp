@@ -49,7 +49,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
 #endif
 
@@ -113,7 +113,7 @@ vpMatrix vpMatrix::inverseByCholesky() const
 {
 #if defined(VISP_HAVE_LAPACK)
   return inverseByCholeskyLapack();
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif defined(VISP_HAVE_OPENCV)
   return inverseByCholeskyOpenCV();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
@@ -215,10 +215,10 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
-OpenCV 3rd party. The matrix must be real symmetric positive defined.
+  OpenCV 3rd party. The matrix must be real symmetric positive defined.
 
   \return The inverse matrix.
 

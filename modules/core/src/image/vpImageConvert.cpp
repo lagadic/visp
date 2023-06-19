@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Convert image types.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpImageConvert.cpp
@@ -264,366 +264,12 @@ void vpImageConvert::createDepthHistogram(const vpImage<float> &src_depth, vpIma
   vp_createDepthHistogram(src_depth, dest_depth);
 }
 
-#ifdef VISP_HAVE_OPENCV
-// Deprecated: will be removed with OpenCV transcient from C to C++ api
-/*!
-  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
-  IplImage structure will be removed with OpenCV transcient from C to C++ api.
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
-  Convert an IplImage to a vpImage\<vpRGBa\>.
-
-  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-  image structure. See http://opencvlibrary.sourceforge.net/ for general
-  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-  for the specific IplImage structure documentation.
-
-  If the input image has only 1 or 3 channels, the alpha channel is set to
-  vpRGBa::alpha_default.
-
-  \warning This function is only available if OpenCV was detected during
-  the configuration step.
-
-  \param[in] src : Source image in OpenCV format.
-  \param[out] dest : Destination image in ViSP format.
-  \param[in] flip : Set to true to vertically flip the converted image.
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  vpImage<vpRGBa> Ic; // A color image
-  IplImage* Ip;
-
-  // Read an image on a disk with openCV library
-  Ip = cvLoadImage("image.ppm", CV_LOAD_IMAGE_COLOR);
-  // Convert the grayscale IplImage into vpImage<vpRGBa>
-  vpImageConvert::convert(Ip, Ic);
-
-  // ...
-
-  // Release Ip header and data
-  cvReleaseImage(&Ip);
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest, bool flip)
-{
-  int nChannel = src->nChannels;
-  int depth = src->depth;
-  int height = src->height;
-  int width = src->width;
-  int widthStep = src->widthStep;
-  int lineStep = (flip) ? 1 : 0;
-
-  if (nChannel == 3 && depth == 8) {
-    dest.resize((unsigned int)height, (unsigned int)width);
-
-    // starting source address
-    unsigned char *input = (unsigned char *)src->imageData;
-    unsigned char *beginOutput = (unsigned char *)dest.bitmap;
-
-    for (int i = 0; i < height; i++) {
-      unsigned char *line = input;
-      unsigned char *output = beginOutput + lineStep * (4 * width * (height - 1 - i)) + (1 - lineStep) * 4 * width * i;
-      for (int j = 0; j < width; j++) {
-        *(output++) = *(line + 2);
-        *(output++) = *(line + 1);
-        *(output++) = *(line);
-        *(output++) = vpRGBa::alpha_default;
-
-        line += 3;
-      }
-      // go to the next line
-      input += widthStep;
-    }
-  } else if (nChannel == 1 && depth == 8) {
-    dest.resize((unsigned int)height, (unsigned int)width);
-    // starting source address
-    unsigned char *input = (unsigned char *)src->imageData;
-    unsigned char *beginOutput = (unsigned char *)dest.bitmap;
-
-    for (int i = 0; i < height; i++) {
-      unsigned char *line = input;
-      unsigned char *output = beginOutput + lineStep * (4 * width * (height - 1 - i)) + (1 - lineStep) * 4 * width * i;
-      for (int j = 0; j < width; j++) {
-        *output++ = *(line);
-        *output++ = *(line);
-        *output++ = *(line);
-        *output++ = vpRGBa::alpha_default; // alpha
-
-        line++;
-      }
-      // go to the next line
-      input += widthStep;
-    }
-  }
-}
-
-/*!
-  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
-  IplImage structure will be removed with OpenCV transcient from C to C++ api.
-
-  Convert an IplImage to a vpImage\<unsigned char\>.
-
-  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-  image structure. See http://opencvlibrary.sourceforge.net/ for general
-  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-  for the specific IplImage structure documentation.
-
-  \warning This function is only available if OpenCV was detected during
-  the configuration step.
-
-  \param[in] src : Source image in OpenCV format.
-  \param[out] dest : Destination image in ViSP format.
-  \param[in] flip : Set to true to vertically flip the converted image.
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  vpImage<unsigned char> Ig; // A grayscale image
-  IplImage* Ip;
-
-  // Read an image on a disk with openCV library
-  Ip = cvLoadImage("image.pgm", CV_LOAD_IMAGE_GRAYSCALE);
-  // Convert the grayscale IplImage into vpImage<unsigned char>
-  vpImageConvert::convert(Ip, Ig);
-
-  // ...
-
-  // Release Ip header and data
-  cvReleaseImage(&Ip);
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const IplImage *src, vpImage<unsigned char> &dest, bool flip)
-{
-  int nChannel = src->nChannels;
-  int depth = src->depth;
-  int height = src->height;
-  int width = src->width;
-  int widthStep = src->widthStep;
-  int lineStep = (flip) ? 1 : 0;
-
-  if (flip == false) {
-    if (widthStep == width) {
-      if (nChannel == 1 && depth == 8) {
-        dest.resize((unsigned int)height, (unsigned int)width);
-        memcpy(dest.bitmap, src->imageData, (size_t)(height * width));
-      }
-      if (nChannel == 3 && depth == 8) {
-        dest.resize((unsigned int)height, (unsigned int)width);
-        BGRToGrey((unsigned char *)src->imageData, dest.bitmap, (unsigned int)width, (unsigned int)height, false);
-      }
-    } else {
-      if (nChannel == 1 && depth == 8) {
-        dest.resize((unsigned int)height, (unsigned int)width);
-        for (int i = 0; i < height; i++) {
-          memcpy(dest.bitmap + i * width, src->imageData + i * widthStep, (size_t)width);
-        }
-      }
-      if (nChannel == 3 && depth == 8) {
-        dest.resize((unsigned int)height, (unsigned int)width);
-        for (int i = 0; i < height; i++) {
-          BGRToGrey((unsigned char *)src->imageData + i * widthStep, dest.bitmap + i * width, (unsigned int)width, 1,
-                    false);
-        }
-      }
-    }
-  } else {
-    if (nChannel == 1 && depth == 8) {
-      dest.resize((unsigned int)height, (unsigned int)width);
-      unsigned char *beginOutput = (unsigned char *)dest.bitmap;
-      for (int i = 0; i < height; i++) {
-        memcpy(beginOutput + lineStep * (4 * width * (height - 1 - i)), src->imageData + i * widthStep, (size_t)width);
-      }
-    }
-    if (nChannel == 3 && depth == 8) {
-      dest.resize((unsigned int)height, (unsigned int)width);
-      // for (int i = 0  ; i < height ; i++){
-      BGRToGrey((unsigned char *)src->imageData /*+ i*widthStep*/, dest.bitmap /*+ i*width*/, (unsigned int)width,
-                (unsigned int)height /*1*/, true);
-      //}
-    }
-  }
-}
-
-/*!
-  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
-  IplImage structure will be removed with OpenCV transcient from C to C++ api.
-
-  Convert a vpImage\<vpRGBa\> to a IplImage.
-
-  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-  image structure. See http://opencvlibrary.sourceforge.net/ for general
-  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-  for the specific IplImage structure documentation.
-
-  \warning This function is only available if OpenCV was detected during
-  the configuration step.
-
-  \param[in] src : Source image.
-  \param[out] dest : Destination image.
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  vpImage<vpRGBa> Ic; // A color image
-  IplImage* Ip = NULL;
-
-  // Read an image on a disk
-  vpImageIo::read(Ic, "image.ppm");
-  // Convert the vpImage<vpRGBa> in to color IplImage
-  vpImageConvert::convert(Ic, Ip);
-  // Treatments on IplImage
-  //...
-  // Save the IplImage on the disk
-  cvSaveImage("Ipl.ppm", Ip);
-
-  //Release Ip header and data
-  cvReleaseImage(&Ip);
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const vpImage<vpRGBa> &src, IplImage *&dest)
-{
-  int height = (int)src.getHeight();
-  int width = (int)src.getWidth();
-  CvSize size = cvSize(width, height);
-  int depth = 8;
-  int channels = 3;
-  if (dest != NULL) {
-    if (dest->nChannels != channels || dest->depth != depth || dest->height != height || dest->width != width) {
-      if (dest->nChannels != 0)
-        cvReleaseImage(&dest);
-      dest = cvCreateImage(size, depth, channels);
-    }
-  } else
-    dest = cvCreateImage(size, depth, channels);
-
-  // starting source address
-  unsigned char *input = (unsigned char *)src.bitmap;       // rgba image
-  unsigned char *output = (unsigned char *)dest->imageData; // bgr image
-
-  int j = 0;
-  int i = 0;
-  int widthStep = dest->widthStep;
-
-  for (i = 0; i < height; i++) {
-    output = (unsigned char *)dest->imageData + i * widthStep;
-    unsigned char *line = input;
-    for (j = 0; j < width; j++) {
-      *output++ = *(line + 2); // B
-      *output++ = *(line + 1); // G
-      *output++ = *(line);     // R
-
-      line += 4;
-    }
-    // go to the next line
-    input += 4 * width;
-  }
-}
-
-/*!
-  \deprecated Rather then using OpenCV IplImage you should use cv::Mat images.
-  IplImage structure will be removed with OpenCV transcient from C to C++ api.
-
-  Convert a vpImage\<unsigned char\> to a IplImage.
-
-  An IplImage is an OpenCV (Intel's Open source Computer Vision Library)
-  image structure. See http://opencvlibrary.sourceforge.net/ for general
-  OpenCV documentation, or http://opencvlibrary.sourceforge.net/CxCore
-  for the specific IplImage structure documentation.
-
-  \warning This function is only available if OpenCV was detected during
-  the configuration step.
-
-  \param[in] src : Source image.
-  \param[out] dest : Destination image.
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  vpImage<unsigned char> Ig; // A greyscale image
-  IplImage* Ip = NULL;
-
-  // Read an image on a disk
-  vpImageIo::read(Ig, "image.pgm");
-  // Convert the vpImage<unsigned char> in to greyscale IplImage
-  vpImageConvert::convert(Ig, Ip);
-  // Treatments on IplImage Ip
-  //...
-  // Save the IplImage on the disk
-  cvSaveImage("Ipl.pgm", Ip);
-
-  //Release Ip header and data
-  cvReleaseImage(&Ip);
-#endif
-}
-  \endcode
-*/
-void vpImageConvert::convert(const vpImage<unsigned char> &src, IplImage *&dest)
-{
-  unsigned int height = src.getHeight();
-  unsigned int width = src.getWidth();
-  CvSize size = cvSize((int)width, (int)height);
-  int depth = 8;
-  int channels = 1;
-  if (dest != NULL) {
-    if (dest->nChannels != channels || dest->depth != depth || dest->height != (int)height ||
-        dest->width != (int)width) {
-      if (dest->nChannels != 0)
-        cvReleaseImage(&dest);
-      dest = cvCreateImage(size, depth, channels);
-    }
-  } else
-    dest = cvCreateImage(size, depth, channels);
-
-  unsigned int widthStep = (unsigned int)dest->widthStep;
-
-  if (width == widthStep) {
-    memcpy(dest->imageData, src.bitmap, width * height);
-  } else {
-    // copying each line taking account of the widthStep
-    for (unsigned int i = 0; i < height; i++) {
-      memcpy(dest->imageData + i * widthStep, src.bitmap + i * width, width);
-    }
-  }
-}
-
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
 /*!
   Convert a cv::Mat to a vpImage\<vpRGBa\>.
 
-  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
-  the general OpenCV documentation, or
-  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
-  for the specific Mat structure documentation.
-
-  Similarily to the convert(const IplImage* src, vpImage<vpRGBa> & dest, bool
-  flip) method, only cv::Mat with a depth equal to 8 and a channel between 1 and
-  3 are converted.
+  A cv::Mat is an OpenCV image class.
 
   If the input image is of type CV_8UC1 or CV_8UC3, the alpha channel is set
   to vpRGBa::alpha_default, or 0 in certain case (see the warning below).
@@ -646,7 +292,7 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, IplImage *&dest)
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   vpImage<vpRGBa> Ic; // A color image
   cv::Mat Ip;
 
@@ -722,14 +368,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
 /*!
   Convert a cv::Mat to a vpImage\<unsigned char\>.
 
-  A cv::Mat is an OpenCV image class. See http://opencv.willowgarage.com for
-  the general OpenCV documentation, or
-  http://opencv.willowgarage.com/documentation/cpp/core_basic_structures.html
-  for the specific Mat structure documentation.
-
-  Similarily to the convert(const IplImage* src, vpImage<vpRGBa> & dest, bool
-  flip) method, only Mat with a depth equal to 8 and a channel between 1 and 3
-  are converted.
+  A cv::Mat is an OpenCV image class.
 
   \warning This function is only available if OpenCV was detected during
   the configuration step.
@@ -747,7 +386,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   vpImage<unsigned char> Ig; // A grayscale image
   cv::Mat Ip;
 
@@ -923,7 +562,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool fli
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   vpImage<vpRGBa> I; // A color image
   cv::Mat Icv;
 
@@ -967,7 +606,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) &&
   vpImage<unsigned char> Ig; // A grayscale image
   cv::Mat Ip;
 
@@ -1009,7 +648,6 @@ void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
   cv::cvtColor(vpToMat, dest, cv::COLOR_RGB2BGR);
 }
 
-#endif
 #endif
 
 #ifdef VISP_HAVE_YARP
@@ -4300,7 +3938,7 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
   \param[in] G : Green channel.
   \param[in] B : Blue channel.
   \param[in] a : Alpha channel.
-  \param[out] RGBa : Destination RGBa image. Image is resized internaly if needed.
+  \param[out] RGBa : Destination RGBa image. Image is resized internally if needed.
 
   \note If R, G, B, a are provided, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
 */

@@ -130,7 +130,7 @@ int main()
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 800, 100, "Current image");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display(I, 800, 100, "Current image");
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display(I, 800, 100, "Current image");

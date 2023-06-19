@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,15 @@
  * Description:
  * Convert image types.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpImageConvert.h
   \brief Convert image types
 */
 
-#ifndef vpIMAGECONVERT_H
-#define vpIMAGECONVERT_H
+#ifndef _vpImageConvert_h_
+#define _vpImageConvert_h_
 
 #include <stdint.h>
 
@@ -50,27 +50,9 @@
 // color
 #include <visp3/core/vpRGBa.h>
 
-#ifdef VISP_HAVE_OPENCV
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
-#include <opencv2/highgui.hpp>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/highgui/highgui_c.h>
-#include <opencv2/legacy/legacy.hpp>
-#else
-#include <highgui.h>
-#endif
 #endif
 
 #ifdef VISP_HAVE_YARP
@@ -127,13 +109,7 @@ public:
   */
   template <typename Type> static void convert(const vpImage<Type> &src, vpImage<Type> &dest) { dest = src; }
 
-#ifdef VISP_HAVE_OPENCV
-  // Deprecated: will be removed with OpenCV transcient from C to C++ api
-  static void convert(const IplImage *src, vpImage<vpRGBa> &dest, bool flip = false);
-  static void convert(const IplImage *src, vpImage<unsigned char> &dest, bool flip = false);
-  static void convert(const vpImage<vpRGBa> &src, IplImage *&dest);
-  static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false, unsigned int nThreads = 0);
   static void convert(const cv::Mat &src, vpImage<float> &dest, bool flip = false);
@@ -143,7 +119,6 @@ public:
   static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<float> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<vpRGBf> &src, cv::Mat &dest);
-#endif
 #endif
 
 #ifdef VISP_HAVE_YARP
@@ -175,10 +150,9 @@ public:
     using:
     \f[ r = 0.9999695*y - 0.0009508*(u-128) + 1.1359061*(v-128) \f]
     \param g Green component from the YUV coding format. This value is
-    computed using: \f[g = 0.9999695*y - 0.3959609*(u-128) - 0.5782955*(v-128)
-    \f] \param b Blue component from the YUV coding format. This value is
-    computed using: \f[b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128)
-    \f]
+    computed using: \f[g = 0.9999695*y - 0.3959609*(u-128) - 0.5782955*(v-128) \f]
+    \param b Blue component from the YUV coding format. This value is
+    computed using: \f[b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128) \f]
   */
   static inline void YUVToRGB(unsigned char y, unsigned char u, unsigned char v, unsigned char &r, unsigned char &g,
                               unsigned char &b)

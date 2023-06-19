@@ -254,7 +254,7 @@ int main()
     // External view initialization : view from an external camera
     simu.initExternalViewer(300, 300);
 
-    // Inernal camera paramters initialization
+    // Inernal camera parameters initialization
     vpCameraParameters cam(800, 800, 240, 180);
     simu.setInternalCameraParameters(cam);
 

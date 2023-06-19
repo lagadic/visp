@@ -15,7 +15,7 @@
  */
 int main(int argc, char **argv)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   try {
     std::string videoname = "video.mp4";
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #else
     std::cout << "No image viewer is available..." << std::endl;

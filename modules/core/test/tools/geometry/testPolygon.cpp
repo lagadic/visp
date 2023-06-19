@@ -100,7 +100,7 @@ OPTIONS: \n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param opt_display : optionnal flag to turn off the display.
+  \param opt_display : Optional flag to turn off the display.
   \param opt_click : activates the mouse click.
   \return false if the program has to be stopped, true otherwise.
 */
@@ -181,11 +181,11 @@ int main(int argc, const char **argv)
     std::vector<vpImagePoint> vec3;
     vpPolygon p3(vec3);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
 #else
     opt_display = false;
@@ -292,11 +292,11 @@ int main(int argc, const char **argv)
         t_benchmark = vpTime::measureTimeMs() - t_benchmark;
         std::cout << "PnPolyRayCasting: " << t_benchmark << " ms" << std::endl;
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
         vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
         vpDisplayGTK display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
         vpDisplayGDI display1, display2;
 #endif
 

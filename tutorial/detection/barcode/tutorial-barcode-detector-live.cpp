@@ -12,7 +12,7 @@
 
 int main(int argc, const char **argv)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
+#if (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) && (defined(VISP_HAVE_ZBAR) || defined(VISP_HAVE_DMTX))
   int opt_device = 0;
   int opt_barcode = 0; // 0=QRCode, 1=DataMatrix
 
@@ -42,7 +42,7 @@ int main(int argc, const char **argv)
     g.setDevice(device.str());
     g.setScale(1);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -58,7 +58,7 @@ int main(int argc, const char **argv)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
@@ -81,7 +81,7 @@ int main(int argc, const char **argv)
 //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#else
+#elif defined(HAVE_OPENCV_VIDEOIO)
       cap >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #endif

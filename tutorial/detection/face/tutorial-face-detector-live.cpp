@@ -10,7 +10,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
     unsigned int opt_device = 0;
@@ -44,7 +44,7 @@ int main(int argc, const char *argv[])
     g.setScale(opt_scale); // Default value is 2 in the constructor. Turn it
                            // to 1 to avoid subsampling
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     cv::VideoCapture cap(opt_device); // open the default camera
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     int width = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -71,7 +71,7 @@ int main(int argc, const char *argv[])
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");

@@ -1,20 +1,16 @@
 //! \example tutorial-bridge-opencv-camera-param.cpp
+#include <iostream>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x040000
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020300
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
   //! [Set ViSP camera parameters]
   double u0 = 326.6;
   double v0 = 215.0;
@@ -52,6 +48,13 @@ int main()
 
   //! [Save image]
   vpImageIo::write(IUndistorted, "chessboard-undistorted.pgm");
-//! [Save image]
-#endif
+  //! [Save image]
 }
+
+#else
+int main()
+{
+  std::cout << "This tutorial required OpenCV imgproc module" << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif

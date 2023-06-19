@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,10 @@
  * Description:
  * Pixel to meter conversion.
  *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpPixelMeterConversion_H
-#define vpPixelMeterConversion_H
+#ifndef _vpPixelMeterConversion_h_
+#define _vpPixelMeterConversion_h_
 
 /*!
   \file vpPixelMeterConversion.h
@@ -51,7 +47,7 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
@@ -64,7 +60,7 @@
   Various conversion functions to transform primitives (2D line, moments, 2D point) from pixel to normalized
   coordinates in meter in the image plane.
 
-  Tranformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
+  Transformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
   that are set from a projection matrix and a distortion coefficients vector.
 
 */
@@ -266,7 +262,7 @@ public:
     \f$ r_d = \sqrt{x^2_d + y^2_d} \f$
     Solve for \f$ \theta \f$ knowing that:
     \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^5 \f$
-    Calcluate the distortion scale \f$ scale \f$:
+    Calculate the distortion scale \f$ scale \f$:
     \f$ scale = \tan(\theta) / r_d \f$
     \f$ x   = x_d * scale \f$
     \f$ y   = y_d * scale \f$
@@ -321,7 +317,7 @@ public:
     \f$ r_d = \sqrt{x^2_d + y^2_d} \f$
     Solve for \f$ \theta \f$ knowing that:
     \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^5 \f$
-    Calcluate the distortion scale \f$ scale \f$:
+    Calculate the distortion scale \f$ scale \f$:
     \f$ scale = \tan(\theta) / r_d \f$
     \f$ x   = x_d * scale \f$
     \f$ y   = y_d * scale \f$
@@ -364,7 +360,7 @@ public:
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
   /** @name Using OpenCV camera parameters  */
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const vpImagePoint &center_p,

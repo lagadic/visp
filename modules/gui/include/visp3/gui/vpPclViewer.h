@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 // System
 #include <thread>
 #include <mutex>
@@ -87,7 +87,7 @@ public:
 
   /**
    * @brief Construct a new vpPclViewer object.
-   * 
+   *
    * @param title The title of the window of the viewer.
    * @param width The width of the window of the viewer.
    * @param height The height of the window of the viewer.
@@ -96,12 +96,12 @@ public:
    * @param outFolder If different from the empty string, the point clouds will be saved in this folder.
    * @param ignoreThreshold A point for which the weight is below this threshold will be displayed in black.
    */
-  vpPclViewer(const std::string &title , const int &width = 640, const int &height = 480, const int &posU = 720, const int &posV = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
+  vpPclViewer(const std::string &title, const int &width = 640, const int &height = 480, const int &posU = 720, const int &posV = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
   ~vpPclViewer();
 
   /**
    * @brief Set the name of the PCL viewer window.
-   * 
+   *
    * @param nameWindow The name of the PCL viewer window.
    */
   void setNameWindow(const std::string &nameWindow);
@@ -122,7 +122,7 @@ public:
 
   /**
    * @brief Add a surface to the list of point clouds known by the viewer.
-   * 
+   *
    * @param surface The surface that must be knwon to be displayed by the PCL viewer.
    * @param name The name of the surface that will be displayed in the legend. If empty, it will be automatically generated.
    * @param v_color A vector containing the 3 RGB values.
@@ -133,7 +133,7 @@ public:
   /**
    * @brief Add a surface to the list of point clouds known by the viewer.
    * The points whose weights are below the \b vpPclViewer::s_ignoreThresh wil be displayed in black.
-   * 
+   *
    * @param surface The surface that must be knwon to be displayed by the PCL viewer.
    * @param weights The confidence weights of each points. Must be between 0 and 1.
    * @param name The name of the surface that will be displayed in the legend. If empty, it will be automatically generated.
@@ -144,7 +144,7 @@ public:
 
   /**
    * @brief Update the surface known by \b id by the viewer.
-   * 
+   *
    * @param surface The updated surface.
    * @param id The ID of the surface that must be updated.
    * @param hasToKeepColor If true, will be displayed in its original color. Otherwise, will be displayed in its default color.
@@ -153,7 +153,7 @@ public:
 
   /**
    * @brief Update the surface known by \b id by the viewer.
-   * 
+   *
    * @param surface The updated surface.
    * @param id The ID of the surface that must be updated.
    * @param weights The confidence weights of each points.
@@ -225,12 +225,12 @@ protected:
 
 
   /**
-   * @brief Internal method that is called by \b vpPclViewer::launchThread to launch the 
+   * @brief Internal method that is called by \b vpPclViewer::launchThread to launch the
    * drawing thread.
-   * 
-   * @param p_viewer The pointer of the \b vpPclViewer object that will run the thread (is equal to \b this ). 
+   *
+   * @param p_viewer The pointer of the \b vpPclViewer object that will run the thread (is equal to \b this ).
    */
-  static void runThread(vpPclViewer* p_viewer);
+  static void runThread(vpPclViewer *p_viewer);
 
   /**
    * @brief The internal loop of the non-blocking drawing thread.

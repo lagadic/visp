@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,27 +31,23 @@
  * Description:
  * Write videos and sequences of images.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpVideoWriter.h
   \brief Write videos and sequences of images.
 */
 
-#ifndef vpVideoWriter_H
-#define vpVideoWriter_H
+#ifndef _vpVideoWriter_h_
+#define _vpVideoWriter_h_
 
 #include <string>
 
 #include <visp3/io/vpImageIo.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020200
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/videoio/videoio.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
-#include <opencv/highgui.h>
 #endif
 
 /*!
@@ -133,7 +129,7 @@ int main()
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   writer.setCodec( cv::VideoWriter::fourcc('P','I','M','1') );
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
   writer.setCodec( CV_FOURCC('P','I','M','1') );
 #endif
 
@@ -159,7 +155,7 @@ int main()
 class VISP_EXPORT vpVideoWriter
 {
 private:
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoWriter m_writer;
   int m_fourcc;
   double m_framerate;
@@ -177,7 +173,7 @@ private:
     FORMAT_UNKNOWN
   } vpVideoFormatType;
 
-  //! Video's format which has to be writen
+  //! Video's format which has to be written
   vpVideoFormatType m_formatType;
 
   //! Path to the video or image sequence
@@ -231,7 +227,7 @@ public:
   void saveFrame(vpImage<vpRGBa> &I);
   void saveFrame(vpImage<unsigned char> &I);
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   inline void setCodec(const int fourcc_codec) { m_fourcc = fourcc_codec; }
 #endif
 
@@ -247,7 +243,7 @@ public:
    *
    * \note Framerate can only be set when OpenCV > 2.1.0.
    */
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   inline void setFramerate(const double framerate) { m_framerate = framerate; }
 #else
   inline void setFramerate(const double dummy) { (void)dummy; }

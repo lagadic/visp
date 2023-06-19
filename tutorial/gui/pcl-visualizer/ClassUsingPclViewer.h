@@ -4,7 +4,7 @@
 //! \example ClassUsingPclViewer.h
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include<visp3/core/vpColVector.h>
 #include<visp3/gui/vpPclViewer.h>
@@ -32,7 +32,7 @@ private:
    *
    * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
-   * @return std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> 
+   * @return std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr>
    */
   std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
@@ -43,13 +43,13 @@ public:
    * @param ylimits A pair defining the <min, max> values of Y-coordinates of the generated surface.
    * @param nbPoints The number of points along the <X-axis, Y-axis> that will be generated.
    */
-  ClassUsingPclViewer(std::pair<double, double> xlimits = {-2.5,2.5}, std::pair<double, double> ylimits = {-2.5,2.5}, std::pair<unsigned int, unsigned int> nbPoints = {50,50});
+  ClassUsingPclViewer(std::pair<double, double> xlimits = { -2.5,2.5 }, std::pair<double, double> ylimits = { -2.5,2.5 }, std::pair<unsigned int, unsigned int> nbPoints = { 50,50 });
 
   ~ClassUsingPclViewer();
 
   /**
    * @brief Demonstration on how to use a \b vpPclViewer in blocking mode, i.e.
-   * we expect an input from the user after call to \b vpPclViewer::display 
+   * we expect an input from the user after call to \b vpPclViewer::display
    * to go forward in the code.
    * @param addedNoise Standard deviation of the noise added to the moved surface.
    * @param order  The order of the polynomial surface that is generated.
@@ -58,8 +58,8 @@ public:
 
   /**
    * @brief Demonstration on how to use a \b vpPclViewer in threaded mode.
-   * 
-   * @param addedNoise Standard deviation of the noise added to the moved surface. 
+   *
+   * @param addedNoise Standard deviation of the noise added to the moved surface.
    * @param order  The order of the polynomial surface that is generated.
    */
   void threadedMode(const double &addedNoise, const unsigned int &order);

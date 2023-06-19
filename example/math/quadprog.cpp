@@ -87,7 +87,7 @@ int main(int argc, char **argv)
                    "\n"
                    "  -c \n"
                    "     Disable the mouse click. Useful to automate the \n"
-                   "     execution of this program without humain intervention.\n"
+                   "     execution of this program without human intervention.\n"
                    "\n"
 #endif
                    "  -h, --help\n"

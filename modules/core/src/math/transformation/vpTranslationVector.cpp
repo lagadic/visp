@@ -757,7 +757,7 @@ double vpTranslationVector::sumSquare() const
   Compute the Euclidean mean of the translation vector extracted from a vector of homogeneous matrices.
 
   \param[in] vec_M : Set of homogeneous matrices.
-  \return The Euclidian mean of the translation vectors.
+  \return The Euclidean mean of the translation vectors.
 
   \sa vpRotationMatrix::mean()
  */
@@ -777,7 +777,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
   Compute the Euclidean mean of a vector of translation vector.
 
   \param[in] vec_t : Set of translation vectors.
-  \return The Euclidian mean of the translation vectors.
+  \return The Euclidean mean of the translation vectors.
 
   \sa vpRotationMatrix::mean()
  */

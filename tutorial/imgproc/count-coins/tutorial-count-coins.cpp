@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
   vpDisplayX d, d2, d3, d4, d5;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d, d2, d3, d4, d5;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d, d2, d3, d4, d5;
 #endif
   d.init(I, 0, 0, "Coins");
