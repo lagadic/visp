@@ -196,7 +196,7 @@ double vpAdaptiveGain::setConstant(void)
   \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.
@@ -231,7 +231,7 @@ double vpAdaptiveGain::limitValue_const(void) const
   This value is stored as a parameter of the class.
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.
@@ -270,7 +270,7 @@ double vpAdaptiveGain::limitValue(void) const
   \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.

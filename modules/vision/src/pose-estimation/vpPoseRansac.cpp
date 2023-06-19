@@ -31,11 +31,6 @@
  * Description:
  * Pose computation.
  *
- * Authors:
- * Eric Marchand
- * Aurelien Yol
- * Souriya Trinh
- *
  *****************************************************************************/
 
 /*!
@@ -603,14 +598,12 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
 {
   vpPose pose;
 
-  int nbPts = 0;
   for (unsigned int i = 0; i < p2D.size(); i++) {
     for (unsigned int j = 0; j < p3D.size(); j++) {
       vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());
       pose.addPoint(pt);
-      nbPts++;
     }
   }
 

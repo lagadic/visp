@@ -865,6 +865,10 @@ void vpMbKltTracker::computeVVS()
   double normRes_1 = -1;
   unsigned int iter = 0;
 
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
+
   vpMbKltTracker::computeVVSInit();
 
   while (((int)((normRes - normRes_1) * 1e8) != 0) && (iter < m_maxIter)) {
@@ -904,8 +908,7 @@ void vpMbKltTracker::computeVVS()
         }
       }
 
-      computeVVSPoseEstimation(isoJoIdentity, iter, m_L_klt, LTL, m_weightedError_klt, m_error_klt, error_prev, LTR, mu,
-                               v);
+      computeVVSPoseEstimation(m_isoJoIdentity, iter, m_L_klt, LTL, m_weightedError_klt, m_error_klt, error_prev, LTR, mu, v);
 
       cMoPrev = m_cMo;
       ctTc0_Prev = ctTc0;
@@ -916,7 +919,7 @@ void vpMbKltTracker::computeVVS()
     iter++;
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity, m_w_klt, cMoPrev, L_true, LVJ_true, m_error_klt);
+  computeCovarianceMatrixVVS(m_isoJoIdentity, m_w_klt, cMoPrev, L_true, LVJ_true, m_error_klt);
 }
 
 void vpMbKltTracker::computeVVSInit()

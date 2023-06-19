@@ -32,10 +32,7 @@
  * Example of visual servoing with moments using an image as object
  * container
  *
- * Authors:
- * Filip Novotny
- * Manikandan.B
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoMomentImage.cpp
@@ -71,8 +68,8 @@
 int main()
 {
   std::cout << "Can't run this example since vpSimulatorAfma6 capability is "
-               "not available."
-            << std::endl;
+    "not available."
+    << std::endl;
   std::cout << "You should install pthread third-party library." << std::endl;
   return EXIT_SUCCESS;
 }
@@ -83,8 +80,8 @@ int main()
 {
   std::cout << "Can't run this example since no display capability is available." << std::endl;
   std::cout << "You should install one of the following third-party library: "
-               "X11, OpenCV, GDI, GTK."
-            << std::endl;
+    "X11, OpenCV, GDI, GTK."
+    << std::endl;
   return EXIT_SUCCESS;
 }
 #else
@@ -95,11 +92,10 @@ class servoMoment
 public:
   servoMoment()
     : m_width(640), m_height(480), m_cMo(), m_cdMo(), m_robot(), m_Iint(m_height, m_width, 0), m_task(), m_cam(),
-      m_error(0), m_imsim(), m_cur_img(m_height, m_width, 0), m_src_img(m_height, m_width, 0),
-      m_dst_img(m_height, m_width, 0), m_start_img(m_height, m_width, 0), m_interaction_type(), m_src(6), m_dst(6),
-      m_moments(NULL), m_momentsDes(NULL), m_featureMoments(NULL), m_featureMomentsDes(NULL), m_displayInt(NULL)
-  {
-  }
+    m_error(0), m_imsim(), m_cur_img(m_height, m_width, 0), m_src_img(m_height, m_width, 0),
+    m_dst_img(m_height, m_width, 0), m_start_img(m_height, m_width, 0), m_interaction_type(), m_src(6), m_dst(6),
+    m_moments(NULL), m_momentsDes(NULL), m_featureMoments(NULL), m_featureMomentsDes(NULL), m_displayInt(NULL)
+  { }
   ~servoMoment()
   {
 #ifdef VISP_HAVE_DISPLAY
@@ -202,9 +198,9 @@ public:
     // don't need to be specific, vpMomentCommon automatically loads
     // Xg,Yg,An,Ci,Cj,Alpha moments
     m_moments = new vpMomentCommon(vpMomentCommon::getSurface(m_dst), vpMomentCommon::getMu3(m_dst),
-                                   vpMomentCommon::getAlpha(m_dst), vec[2], true);
+      vpMomentCommon::getAlpha(m_dst), vec[2], true);
     m_momentsDes = new vpMomentCommon(vpMomentCommon::getSurface(m_dst), vpMomentCommon::getMu3(m_dst),
-                                      vpMomentCommon::getAlpha(m_dst), vec[2], true);
+      vpMomentCommon::getAlpha(m_dst), vec[2], true);
     // same thing with common features
     m_featureMoments = new vpFeatureMomentCommon(*m_moments);
     m_featureMomentsDes = new vpFeatureMomentCommon(*m_momentsDes);
@@ -220,11 +216,11 @@ public:
     //////////////////////////////////add useful features to
     /// task//////////////////////////////
     m_task.addFeature(m_featureMoments->getFeatureGravityNormalized(),
-                      m_featureMomentsDes->getFeatureGravityNormalized());
+      m_featureMomentsDes->getFeatureGravityNormalized());
     m_task.addFeature(m_featureMoments->getFeatureAn(), m_featureMomentsDes->getFeatureAn());
     // the moments are different in case of a symmetric object
     m_task.addFeature(m_featureMoments->getFeatureCInvariant(), m_featureMomentsDes->getFeatureCInvariant(),
-                      (1 << 10) | (1 << 11));
+      (1 << 10) | (1 << 11));
     m_task.addFeature(m_featureMoments->getFeatureAlpha(), m_featureMomentsDes->getFeatureAlpha());
 
     m_task.setLambda(1.);
@@ -382,12 +378,12 @@ public:
      * -------------------------------------
      */
     const unsigned int NbGraphs = 3;                            // No. of graphs
-    const unsigned int NbCurves_in_graph[NbGraphs] = {6, 6, 6}; // Curves in each graph
+    const unsigned int NbCurves_in_graph[NbGraphs] = { 6, 6, 6 }; // Curves in each graph
 
     ViSP_plot.init(NbGraphs, 800, 800, 100 + static_cast<int>(m_width), 50, "Visual Servoing results...");
 
     vpColor Colors[6] = {// Colour for s1, s2, s3,  in 1st plot
-                         vpColor::red, vpColor::green, vpColor::blue, vpColor::orange, vpColor::cyan, vpColor::purple};
+                         vpColor::red, vpColor::green, vpColor::blue, vpColor::orange, vpColor::cyan, vpColor::purple };
 
     for (unsigned int p = 0; p < NbGraphs; p++) {
       ViSP_plot.initGraph(p, NbCurves_in_graph[p]);
@@ -470,7 +466,8 @@ int main()
 
     servo.execute(1500);
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

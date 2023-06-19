@@ -397,7 +397,7 @@ int main(int argc, const char *argv[])
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "Without distorsion results");
+      vpDisplay::setTitle(I, "Without distortion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual() / calibrator[i].get_npt());
@@ -467,7 +467,7 @@ int main(int argc, const char *argv[])
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "With distorsion results");
+      vpDisplay::setTitle(I, "With distortion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual_dist() / calibrator[i].get_npt());

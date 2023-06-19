@@ -893,7 +893,7 @@ double vpImageFilter::getSobelKernelY(double *filter, unsigned int size)
   static const double SobelY7x7[49] = {-1,   -6,  -15, -20, -15, -6, -1, -4, -24, -60, -80, -60, -24, -4, -5,  -30, -75,
                                        -100, -75, -30, -5,  0,   0,  0,  0,  0,   0,   0,   5,   30,  75, 100, 75,  30,
                                        5,    4,   24,  60,  80,  60, 24, 4,  1,   6,   15,  20,  15,  6,  1};
-  static const vpMatrix smoothingKernel(3, 3);
+  const vpMatrix smoothingKernel(3, 3);
   smoothingKernel[0][0] = 1.0;
   smoothingKernel[0][1] = 2.0;
   smoothingKernel[0][2] = 1.0;

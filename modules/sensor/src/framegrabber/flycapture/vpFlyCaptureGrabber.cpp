@@ -874,7 +874,7 @@ allowed size.
   If the format7 video mode and pixel format are not supported, return an
 exception.
 
-  The following example shows how to use this fonction to capture a 640x480
+  The following example shows how to use this function to capture a 640x480
 roi:
 
   \code

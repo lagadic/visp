@@ -31,9 +31,6 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# AKOURIM Youness (ENS Rennes)
-#
 #############################################################################
 
 project(example-servo-flir-ptu)

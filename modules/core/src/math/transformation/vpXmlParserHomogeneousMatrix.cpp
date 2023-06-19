@@ -109,7 +109,7 @@ public:
   /*!
     Read Homogeneous matrix values from a XML file.
 
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param name : name of the Homogeneous Matrix
     \return error code.
    */
@@ -152,7 +152,7 @@ public:
   /*!
     Read Homogeneous Matrix fields from a XML file.
 
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param name : name of the Homogeneous matrix
 
     \return error code.
@@ -218,7 +218,7 @@ public:
   /*!
     Read homogeneous matrix fields from a XML file.
 
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param M : Homogeneous matrix to fill with read data (output).
 
     \return error code.
@@ -351,7 +351,7 @@ public:
     Read homogeneous matrix names from a XML file and read if there is already a
     homogeneous matrix with the same name.
 
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param name : name of the homogeneous matrix.
 
     \return 1 if there is an homogeneous matrix corresponding with the input
@@ -381,7 +381,7 @@ public:
   /*!
     Write Homogeneous Matrix in an XML Tree.
 
-    \param node : XML tree, pointing on a marker equipement.
+    \param node : XML tree, pointing on a marker equipment.
     \param name : name of the Homogeneous Matrix.
 
     \return error code.

@@ -345,7 +345,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -364,7 +364,7 @@ int main(int argc, const char **argv)
       // by using setGraphics, we request to see the all the pixel of the dot
       // in green on the screen.
       // It uses the overlay image plane.
-      // The default of this setting is that it is time consumming
+      // The default of this setting is that it is time consuming
 
       d.setGraphics(true);
     } else {
@@ -379,7 +379,7 @@ int main(int argc, const char **argv)
 
     // tracking is initalized if no other parameters are given to the
     // iniTracking(..) method a right mouse click on the dot is expected
-    // dot location can also be specified explicitely in the
+    // dot location can also be specified explicitly in the
     // initTracking method : d.initTracking(I,ip) where ip is the image
     // point from which the dot is searched
 

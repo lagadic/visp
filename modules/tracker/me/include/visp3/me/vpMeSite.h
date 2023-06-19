@@ -31,16 +31,11 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- * Andrew Comport
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
-        \file vpMeSite.h
-        \brief Moving edges
+  \file vpMeSite.h
+  \brief Moving edges
 */
 
 #ifndef vpMeSite_H
@@ -57,7 +52,7 @@
 
   \brief Performs search in a given direction(normal) for a given
    distance(pixels) for a given 'site'. Gives the most likely site
-   given the probablility from an ME mask
+   given the probability from an ME mask
 
   - Bug fix: rewrote application of masks to use the temporal
     information instead of applying both temporal masks to the same
@@ -74,9 +69,13 @@ public:
   typedef enum { NONE, RANGE, RESULT, RANGE_RESULT } vpMeSiteDisplayType;
 
   /// Moving-edge site state
-  typedef enum {
+  typedef enum
+  {
     NO_SUPPRESSION = 0, ///< Point used by the tracker.
-    CONSTRAST = 1,      ///< Point removed due to a contrast problem.
+    CONTRAST = 1,       ///< Point removed due to a contrast problem.
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    CONSTRAST = CONTRAST, ///< Point removed due to a contrast problem (kept for compatibility with previous releases).
+#endif
     THRESHOLD = 2,      ///< Point removed due to a threshold problem.
     M_ESTIMATOR = 3,    ///< Point removed during virtual visual-servoing because considered as an outlier.
     TOO_NEAR = 4,       ///< Point removed because too near image borders.
@@ -111,7 +110,7 @@ public:
   vpMeSite();
   vpMeSite(double ip, double jp);
   vpMeSite(const vpMeSite &mesite);
-  virtual ~vpMeSite(){};
+  virtual ~vpMeSite() { };
 
   void display(const vpImage<unsigned char> &I);
   void display(const vpImage<vpRGBa> &I);
@@ -120,7 +119,7 @@ public:
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
 
-  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_contraste = true);
+  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_contrast = true);
 
   /*!
     Set the angle of tangent at site
@@ -237,11 +236,11 @@ public:
   }
 
   static void display(const vpImage<unsigned char> &I, const double &i, const double &j,
-                      const vpMeSiteState &state = NO_SUPPRESSION);
+    const vpMeSiteState &state = NO_SUPPRESSION);
   static void display(const vpImage<vpRGBa> &I, const double &i, const double &j,
-                      const vpMeSiteState &state = NO_SUPPRESSION);
+    const vpMeSiteState &state = NO_SUPPRESSION);
 
-// Deprecated
+  // Deprecated
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
   //! Flag to indicate whether point is rejected or not

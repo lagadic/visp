@@ -230,7 +230,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
       // display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       // Flush the display
@@ -275,7 +275,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
       // by using setGraphics, we request to see the edges of the dot
       // in red on the screen.
       // It uses the overlay image plane.
-      // The default of this setting is that it is time consumming
+      // The default of this setting is that it is time consuming
 
       md[i].setGraphics(true);
       md[i].setGrayLevelPrecision(0.7);
@@ -560,7 +560,7 @@ int main(int argc, const char **argv)
       // the pose structure has been updated
 
       // the pose is now updated using the virtual visual servoing approach
-      // Dementhon or lagrange is no longuer necessary, pose at the
+      // Dementhon or lagrange is no longer necessary, pose at the
       // previous iteration is sufficient
       mPose.computePose(vpPose::VIRTUAL_VS, cMo);
 

@@ -94,7 +94,7 @@ extern "C" {
   \end{tabular}
   \f]
 
-  In this modelisation, different frames have to be considered.
+  In this modelization, different frames have to be considered.
 
   - \f$ {\cal F}_f \f$: the reference frame, also called world frame
 

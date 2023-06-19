@@ -269,7 +269,7 @@ void vpRobotBiclops::init()
 /*
   Control loop to manage the biclops joint limits in speed control.
 
-  This control loop is running in a seperate thread in order to detect each 5
+  This control loop is running in a separate thread in order to detect each 5
   ms joint limits during the speed control. If a joint limit is detected the
   axis should be halted.
 

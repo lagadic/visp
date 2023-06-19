@@ -31,9 +31,6 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 project(example-servo-franka)
@@ -66,6 +63,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 
   visp_set_source_file_compile_flag(servoFrankaPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(servoFrankaIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})

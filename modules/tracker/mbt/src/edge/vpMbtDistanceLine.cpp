@@ -222,7 +222,7 @@ void vpMbtDistanceLine::addPolygon(const int &idx)
 
 /*!
   Set if the line has to considered during tracking phase.
-  Line won't be considered if all of its polygons are desactivated.
+  The line will not be taken into account if all its polygons are disabled.
 
   \param polyname : name of the polygons that have to be modified.
   \param track : True if the polygon has to be tracked, False otherwise.
@@ -254,8 +254,7 @@ void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &trac
 
 /*!
   Update the boolean specifying if the line has to be tracked.
-  It takes into account the desactivated polygons and the visibility of the
-  others.
+  It takes into account deactivated polygons and the visibility of other polygons.
 */
 void vpMbtDistanceLine::updateTracked()
 {
@@ -656,7 +655,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
+   (contrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase
    (threshold problem).
     - If blue : The point is removed because of the robust method in the

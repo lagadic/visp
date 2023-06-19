@@ -34,7 +34,12 @@ jobs:
       run: lsb_release -a
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libblas-dev libeigen3-dev nlohmann-json3-dev
+
+    - name: Linear algebra liblapack/libblas alternatives
+      run: |
+        update-alternatives --list liblapack.so.3-x86_64-linux-gnu
+        update-alternatives --list libblas.so.3-x86_64-linux-gnu
 
     - name: Clone visp-images
       env:
@@ -49,7 +54,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_C_FLAGS=${{ matrix.flags }} -DCMAKE_CXX_FLAGS=${{ matrix.flags }} -DCMAKE_LDFLAGS=${{ matrix.flags }} -DCMAKE_BUILD_TYPE=Debug
+        cmake .. -DCMAKE_C_FLAGS=${{ matrix.flags }} -DCMAKE_CXX_FLAGS=${{ matrix.flags }} -DCMAKE_LDFLAGS=${{ matrix.flags }} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_OPENMP=OFF
         cat ViSP-third-party.txt
 
     - name: Compile

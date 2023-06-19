@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -78,10 +75,10 @@
   An ellipse is also represented thanks to five parameters that are
   the center \f$ (uc,vc) \f$ of the ellipse and either:
   - three normalized moments \f$ n_{ij} \f$ of order 2,
-  - or the semimajor axis \f$ A \f$, the semiminor
-  axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
-  defined by the angle between the major axis and the u axis of the image
-  frame.
+  - or the semi major axis \f$ A \f$, the semi minor
+    axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
+    defined by the angle between the major axis and the u axis of the image frame.
+
   For more details, see \cite Chaumette04a.
   The following figure illustrates these parameters.
 
@@ -101,12 +98,12 @@ public:
   vpMeEllipse(const vpMeEllipse &me_ellipse);
   virtual ~vpMeEllipse();
 
-  void display(const vpImage<unsigned char> &I, vpColor col);
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
   /*!
     Gets the second order normalized centered moment \f$ n_{ij} \f$
     as a 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$
-    such as \f$ n_{ij}  = \mu_{ij}/m_{00} \f$
+    such as \f$ n_{ij} = \mu_{ij}/m_{00} \f$
 
     \return The 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$.
 
@@ -126,7 +123,7 @@ public:
     Gets the ellipse parameters as a 3-dim vector containing \f$ A, B, E \f$.
 
     \return The 3-dim vector containing \f$ A, B, E \f$ corresponding respectively to
-    the semimajor axis, the semiminor axis and the angle in rad made by the major axis
+    the semi major axis, the semi minor axis and the angle in rad made by the major axis
     and the u axis of the image frame \f$ (u,v) \f$,  \f$ e \in [-\pi/2;pi/2] \f$.
 
     \sa getCenter(), get_nij(), getArea()
@@ -239,7 +236,7 @@ public:
   //@{
   /*!
     \deprecated You should rather use get_ABE().
-    Gets the semimajor axis of the ellipse.
+    Gets the semi major axis of the ellipse.
 
     \sa get_ABE()
   */
@@ -247,7 +244,7 @@ public:
 
   /*!
     \deprecated You should rather use get_ABE().
-    Gets the semiminor axis of the ellipse.
+    Gets the semi minor axis of the ellipse.
 
     \sa get_ABE()
   */
@@ -362,9 +359,9 @@ protected:
   vpColVector K;
   //! The coordinates of the ellipse center.
   vpImagePoint iPc;
-  //! \f$ a \f$ is the semimajor axis of the ellipse.
+  //! \f$ a \f$ is the semi major axis of the ellipse.
   double a;
-  //! \f$ b \f$ is the semiminor axis of the ellipse.
+  //! \f$ b \f$ is the semi minor axis of the ellipse.
   double b;
   /*! \f$ e \in [-\pi/2;\pi/2] \f$ is the angle made by the major axis
     and the u axis of the image frame \f$ (u,v) \f$.
@@ -446,7 +443,7 @@ protected:
   double computeTheta(const vpImagePoint &iP) const;
   double computeTheta(double u, double v) const;
   void getParameters();
-  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP); // FC : new
+  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
   void leastSquareRobust(const vpImage<unsigned char> &I);
   unsigned int plugHoles(const vpImage<unsigned char> &I);
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);

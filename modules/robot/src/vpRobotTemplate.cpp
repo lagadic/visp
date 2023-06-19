@@ -255,7 +255,7 @@ void vpRobotTemplate::setVelocity(const vpRobot::vpControlFrameType frame, const
 
 /*
 
-  THESE FUNCTIONS ARE NOT MENDATORY BUT ARE USUALLY USEFUL
+  THESE FUNCTIONS ARE NOT MANDATORY BUT ARE USUALLY USEFUL
 
 */
 

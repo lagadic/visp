@@ -74,7 +74,7 @@
 
   This class provide a position and a speed control interface for the biclops
   head. To manage the biclops joint limits in speed control, a control loop is
-  running in a seperate thread implemented in vpRobotBiclopsSpeedControlLoop().
+  running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
 
   The control of the head is done by vpRobotBiclopsController class.
 

@@ -65,7 +65,7 @@
   coordinates in meter in the image plane.
 
   Tranformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
-  that are set from a projection matrix and a distorsion coefficients vector.
+  that are set from a projection matrix and a distortion coefficients vector.
 
 */
 class VISP_EXPORT vpPixelMeterConversion

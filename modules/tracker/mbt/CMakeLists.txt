@@ -131,6 +131,11 @@ if(USE_PCL)
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
+if(USE_NLOHMANN_JSON)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+endif()
+
 if(WITH_CLIPPER)
   # clipper is private
   include_directories(${CLIPPER_INCLUDE_DIRS})
@@ -198,6 +203,7 @@ if(BUILD_TESTS)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDeterminist.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
+    vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtJsonSettings.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
   endif()
 endif()
 

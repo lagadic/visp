@@ -184,7 +184,7 @@ TEST_CASE("Check MBT determinism parallel", "[MBT_determinism]")
 
   vpHomogeneousMatrix cMo1 = res_cMo1.get();
   vpHomogeneousMatrix cMo2 = res_cMo2.get();
-  std::cout << "Run both trackers in seperate threads" << std::endl;
+  std::cout << "Run both trackers in separate threads" << std::endl;
   std::cout << "First tracker, final cMo:\n" << cMo1 << std::endl;
   std::cout << "Second tracker, final cMo:\n" << cMo2 << std::endl;
 
@@ -226,7 +226,7 @@ TEST_CASE("Check Stereo MBT determinism parallel", "[MBT_determinism]")
 
   vpHomogeneousMatrix cMo1 = res_cMo1.get();
   vpHomogeneousMatrix cMo2 = res_cMo2.get();
-  std::cout << "Run both stereo trackers in seperate threads" << std::endl;
+  std::cout << "Run both stereo trackers in separate threads" << std::endl;
   std::cout << "First tracker, final cMo:\n" << cMo1 << std::endl;
   std::cout << "Second tracker, final cMo:\n" << cMo2 << std::endl;
 

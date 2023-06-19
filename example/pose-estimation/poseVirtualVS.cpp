@@ -329,7 +329,7 @@ int main(int argc, const char **argv)
       // by using setGraphics, we request to see the all the pixel of the dot
       // in green on the screen.
       // It uses the overlay image plane.
-      // The default of this setting is that it is time consumming
+      // The default of this setting is that it is time consuming
 
       if (opt_display) {
         d[i].setGraphics(true);
@@ -373,7 +373,7 @@ int main(int argc, const char **argv)
       // display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       // Flush the display
@@ -388,7 +388,7 @@ int main(int argc, const char **argv)
         // tracking is initalized if no other parameters are given
         // to the iniTracking(..) method a right mouse click on the
         // dot is expected dot location can also be specified
-        // explicitely in the initTracking method :
+        // explicitly in the initTracking method :
         // d.initTracking(I,ip) where ip is the image point from
         // where the dot need to be searched.
 
@@ -571,7 +571,7 @@ int main(int argc, const char **argv)
       // the pose structure has been updated
 
       // the pose is now updated using the virtual visual servoing approach
-      // Dementhon or lagrange is no longuer necessary, pose at the
+      // Dementhon or lagrange is no longer necessary, pose at the
       // previous iteration is sufficient
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
       if (opt_display) {

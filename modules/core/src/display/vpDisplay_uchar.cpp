@@ -747,7 +747,7 @@ int main() {
   unsigned int radius = 100;
   vpDisplay::displayCircle(I, center, radius, vpColor::red);
 
-  vpDisplay::flush(I); // Mendatory to display the requested features.
+  vpDisplay::flush(I); // Mandatory to display the requested features.
 }
   \endcode
 

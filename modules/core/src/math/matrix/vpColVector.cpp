@@ -756,6 +756,12 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
 }
 #endif
 
+/*!
+ * Compare two column vectors.
+ * \param v : Vector to compare with.
+ * \return true when their respective size and their respective values are the same,
+ * false when their size or values differ.
+ */
 bool vpColVector::operator==(const vpColVector &v) const
 {
   if (rowNum != v.rowNum || colNum != v.colNum /* should not happen */)
@@ -769,7 +775,36 @@ bool vpColVector::operator==(const vpColVector &v) const
   return true;
 }
 
+/*!
+ * Compare a column vector to a floating point value.
+ * \param v : Floating point value to compare with.
+ * \return true when all the values of the vector are equal to the floating point value `v`,
+ * false otherwise.
+ */
+bool vpColVector::operator==(double v) const
+{
+  for (unsigned int i = 0; i < rowNum; i++) {
+    if (!vpMath::equal(data[i], v, std::numeric_limits<double>::epsilon()))
+      return false;
+  }
+
+  return true;
+}
+
+/*!
+ * Compare two column vectors.
+ * \param v : Vector to compare with.
+ * \return true when their respective size or their values differ, false when their size and values are the same.
+ */
 bool vpColVector::operator!=(const vpColVector &v) const { return !(*this == v); }
+
+/*!
+ * Compare a column vector to a floating point value.
+ * \param v : Floating point value to compare with.
+ * \return true when at least one value of the vector differ from the floating point value `v`.
+ * false when all the vector values are equal to `v`.
+ */
+bool vpColVector::operator!=(double v) const { return !(*this == v); }
 
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.

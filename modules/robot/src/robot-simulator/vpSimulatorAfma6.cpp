@@ -69,20 +69,6 @@ vpSimulatorAfma6::vpSimulatorAfma6()
   tcur = vpTime::measureTimeMs();
 
 #if defined(_WIN32)
-#ifdef WINRT_8_1
-  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
-#else
-  mutex_fMi = CreateMutex(NULL, FALSE, NULL);
-  mutex_artVel = CreateMutex(NULL, FALSE, NULL);
-  mutex_artCoord = CreateMutex(NULL, FALSE, NULL);
-  mutex_velocity = CreateMutex(NULL, FALSE, NULL);
-  mutex_display = CreateMutex(NULL, FALSE, NULL);
-#endif
-
   DWORD dwThreadIdArray;
   hThread = CreateThread(NULL,              // default security attributes
                          0,                 // use default stack size
@@ -91,12 +77,6 @@ vpSimulatorAfma6::vpSimulatorAfma6()
                          0,                 // use default creation flags
                          &dwThreadIdArray); // returns the thread identifier
 #elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_init(&mutex_fMi, NULL);
-  pthread_mutex_init(&mutex_artVel, NULL);
-  pthread_mutex_init(&mutex_artCoord, NULL);
-  pthread_mutex_init(&mutex_velocity, NULL);
-  pthread_mutex_init(&mutex_display, NULL);
-
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
@@ -122,20 +102,6 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
   tcur = vpTime::measureTimeMs();
 
 #if defined(_WIN32)
-#ifdef WINRT_8_1
-  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
-#else
-  mutex_fMi = CreateMutex(NULL, FALSE, NULL);
-  mutex_artVel = CreateMutex(NULL, FALSE, NULL);
-  mutex_artCoord = CreateMutex(NULL, FALSE, NULL);
-  mutex_velocity = CreateMutex(NULL, FALSE, NULL);
-  mutex_display = CreateMutex(NULL, FALSE, NULL);
-#endif
-
   DWORD dwThreadIdArray;
   hThread = CreateThread(NULL,              // default security attributes
                          0,                 // use default stack size
@@ -144,12 +110,6 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
                          0,                 // use default creation flags
                          &dwThreadIdArray); // returns the thread identifier
 #elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_init(&mutex_fMi, NULL);
-  pthread_mutex_init(&mutex_artVel, NULL);
-  pthread_mutex_init(&mutex_artCoord, NULL);
-  pthread_mutex_init(&mutex_velocity, NULL);
-  pthread_mutex_init(&mutex_display, NULL);
-
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
@@ -164,7 +124,9 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
 */
 vpSimulatorAfma6::~vpSimulatorAfma6()
 {
+  m_mutex_robotStop.lock();
   robotStop = true;
+  m_mutex_robotStop.unlock();
 
 #if defined(_WIN32)
 #if defined(WINRT_8_1)
@@ -173,19 +135,9 @@ vpSimulatorAfma6::~vpSimulatorAfma6()
   WaitForSingleObject(hThread, INFINITE);
 #endif
   CloseHandle(hThread);
-  CloseHandle(mutex_fMi);
-  CloseHandle(mutex_artVel);
-  CloseHandle(mutex_artCoord);
-  CloseHandle(mutex_velocity);
-  CloseHandle(mutex_display);
 #elif defined(VISP_HAVE_PTHREAD)
   pthread_attr_destroy(&attr);
   pthread_join(thread, NULL);
-  pthread_mutex_destroy(&mutex_fMi);
-  pthread_mutex_destroy(&mutex_artVel);
-  pthread_mutex_destroy(&mutex_artCoord);
-  pthread_mutex_destroy(&mutex_velocity);
-  pthread_mutex_destroy(&mutex_display);
 #endif
 
   if (robotArms != NULL) {
@@ -198,7 +150,7 @@ vpSimulatorAfma6::~vpSimulatorAfma6()
 }
 
 /*!
-  Method which initialises the parameters linked to the robot caracteristics.
+  Method which initialises the parameters linked to the robot characteristics.
 
   Set the path to the arm files (*.bnd and *.sln) used by the
   simulator.  If the path set in vpConfig.h in VISP_ROBOT_ARMS_DIR macro is
@@ -403,7 +355,10 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
   }
 
   vpRotationMatrix eRc(_erc);
+
+  m_mutex_eMc.lock();
   this->_eMc.buildFrom(_etc, eRc);
+  m_mutex_eMc.unlock();
 
   setToolType(tool);
   return;
@@ -520,14 +475,21 @@ void vpSimulatorAfma6::updateArticularPosition()
 {
   double tcur_1 = tcur; // temporary variable used to store the last time
                         // since the last command
-
-  while (!robotStop) {
+  bool stop = false;
+  bool setVelocityCalled_ = false;
+  while (!stop) {
     // Get current time
     tprev = tcur_1;
     tcur = vpTime::measureTimeMs();
 
-    if (setVelocityCalled || !constantSamplingTimeMode) {
+    m_mutex_setVelocityCalled.lock();
+    setVelocityCalled_ = setVelocityCalled;
+    m_mutex_setVelocityCalled.unlock();
+
+    if (setVelocityCalled_ || !constantSamplingTimeMode) {
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = false;
+      m_mutex_setVelocityCalled.unlock();
 
       computeArticularVelocity();
 
@@ -591,13 +553,14 @@ void vpSimulatorAfma6::updateArticularPosition()
       }
 
       if (displayType == MODEL_3D && displayAllowed) {
-        while (get_displayBusy())
+        while (get_displayBusy()) {
           vpTime::wait(2);
+        }
         vpSimulatorAfma6::getExternalImage(I);
         set_displayBusy(false);
       }
 
-      if (0 /*displayType == MODEL_DH && displayAllowed*/) {
+      if (displayType == MODEL_DH && displayAllowed) {
         vpHomogeneousMatrix fMit[8];
         get_fMi(fMit);
 
@@ -632,6 +595,10 @@ void vpSimulatorAfma6::updateArticularPosition()
     } else {
       vpTime::wait(tcur, vpTime::getMinTimeForUsleepCall());
     }
+
+    m_mutex_robotStop.lock();
+    stop = robotStop;
+    m_mutex_robotStop.unlock();
   }
 }
 
@@ -761,33 +728,25 @@ void vpSimulatorAfma6::compute_fMi()
   fMit[6][1][3] = fMit[5][1][3];
   fMit[6][2][3] = fMit[5][2][3];
 
-  //   vpHomogeneousMatrix cMe;
-  //   get_cMe(cMe);
-  //   cMe = cMe.inverse();
-  //   fMit[7] = fMit[6] * cMe;
+  // vpHomogeneousMatrix cMe;
+  // get_cMe(cMe);
+  // cMe = cMe.inverse();
+  // fMit[7] = fMit[6] * cMe;
+  m_mutex_eMc.lock();
   vpAfma6::get_fMc(q, fMit[7]);
+  m_mutex_eMc.unlock();
 
-#if defined(_WIN32)
-#if defined(WINRT_8_1)
-  WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
-#else // pure win32
-  WaitForSingleObject(mutex_fMi, INFINITE);
-#endif
-  for (int i = 0; i < 8; i++)
+  m_mutex_fMi.lock();
+  for (int i = 0; i < 8; i++) {
     fMi[i] = fMit[i];
-  ReleaseMutex(mutex_fMi);
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_lock(&mutex_fMi);
-  for (int i = 0; i < 8; i++)
-    fMi[i] = fMit[i];
-  pthread_mutex_unlock(&mutex_fMi);
-#endif
+  }
+  m_mutex_fMi.unlock();
 }
 
 /*!
-Change the robot state.
+  Change the robot state.
 
-\param newState : New requested robot state.
+  \param newState : New requested robot state.
 */
 vpRobot::vpRobotStateType vpSimulatorAfma6::setRobotState(vpRobot::vpRobotStateType newState)
 {
@@ -986,14 +945,20 @@ void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, cons
                                                               "functionality not implemented");
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in END_EFFECTOT_FRAME frame:"
+    throw vpRobotException(vpRobotException::wrongStateError, "Cannot set a velocity in END_EFFECTOR_FRAME frame:"
                                                               "functionality not implemented");
   }
   }
 
   set_velocity(vel * scale_sat);
+
+  m_mutex_frame.lock();
   setRobotFrame(frame);
+  m_mutex_frame.unlock();
+
+  m_mutex_setVelocityCalled.lock();
   setVelocityCalled = true;
+  m_mutex_setVelocityCalled.unlock();
 }
 
 /*!
@@ -1001,7 +966,11 @@ void vpSimulatorAfma6::setVelocity(const vpRobot::vpControlFrameType frame, cons
 */
 void vpSimulatorAfma6::computeArticularVelocity()
 {
-  vpRobot::vpControlFrameType frame = getRobotFrame();
+  vpRobot::vpControlFrameType frame;
+
+  m_mutex_frame.lock();
+  frame = getRobotFrame();
+  m_mutex_frame.unlock();
 
   double vel_rot_max = getMaxRotationVelocity();
 
@@ -1369,7 +1338,11 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
       articularCoordinates = get_artCoord();
       qdes = articularCoordinates;
       nbSol = getInverseKinematics(fMc2, qdes, true, verbose_);
+
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = true;
+      m_mutex_setVelocityCalled.unlock();
+
       if (nbSol > 0) {
         error = qdes - articularCoordinates;
         errsqr = error.sumSquare();
@@ -1398,7 +1371,9 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
       errsqr = error.sumSquare();
       // findHighestPositioningSpeed(error);
       set_artVel(error);
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = true;
+      m_mutex_setVelocityCalled.unlock();
       if (errsqr < 1e-4) {
         set_artCoord(q);
         error = 0;
@@ -1428,7 +1403,9 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
       articularCoordinates = get_artCoord();
       qdes = articularCoordinates;
       nbSol = getInverseKinematics(fMc_, qdes, true, verbose_);
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = true;
+      m_mutex_setVelocityCalled.unlock();
       if (nbSol > 0) {
         error = qdes - articularCoordinates;
         errsqr = error.sumSquare();
@@ -2293,6 +2270,7 @@ void vpSimulatorAfma6::initArms()
 
 void vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
 {
+  m_mutex_scene.lock();
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I_, changed);
 
@@ -2364,6 +2342,7 @@ void vpSimulatorAfma6::getExternalImage(vpImage<vpRGBa> &I_)
     vp2jlc_matrix(fMo, w44o);
     display_scene(w44o, scene, I_, curColor);
   }
+  m_mutex_scene.unlock();
 }
 
 /*!
@@ -2388,6 +2367,7 @@ bool vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatri
   vpColVector stop(6);
   bool status = true;
   stop = 0;
+  m_mutex_scene.lock();
   set_artVel(stop);
   set_velocity(stop);
   vpHomogeneousMatrix fMc_;
@@ -2407,6 +2387,7 @@ bool vpSimulatorAfma6::initialiseCameraRelativeToObject(const vpHomogeneousMatri
   set_artCoord(articularCoordinates);
 
   compute_fMi();
+  m_mutex_scene.unlock();
 
   return status;
 }
@@ -2428,11 +2409,13 @@ void vpSimulatorAfma6::initialiseObjectRelativeToCamera(const vpHomogeneousMatri
 {
   vpColVector stop(6);
   stop = 0;
+  m_mutex_scene.lock();
   set_artVel(stop);
   set_velocity(stop);
   vpHomogeneousMatrix fMit[8];
   get_fMi(fMit);
   fMo = fMit[7] * cMo_;
+  m_mutex_scene.unlock();
 }
 
 /*!
@@ -2466,7 +2449,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   vpVelocityTwistMatrix cVe;
 
   unsigned int i, iter = 0;
-  while ((iter++ < 300) & (err.frobeniusNorm() > errMax)) {
+  while ((iter++ < 300) && (err.frobeniusNorm() > errMax)) {
     double t = vpTime::measureTimeMs();
 
     // update image

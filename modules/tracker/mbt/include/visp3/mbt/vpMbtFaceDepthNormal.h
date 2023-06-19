@@ -301,4 +301,21 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include<nlohmann/json.hpp>
+#ifdef VISP_HAVE_PCL
+NLOHMANN_JSON_SERIALIZE_ENUM( vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
+    {vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
+});
+#else
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
+});
+#endif
+#endif
+
 #endif

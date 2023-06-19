@@ -701,6 +701,10 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   vpColVector m_error_prev;
   vpColVector m_w_prev;
 
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
+
   // Init size
   m_error_hybrid.resize(totalNbRows, false);
   m_w_hybrid.resize(totalNbRows, false);
@@ -1027,7 +1031,6 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
         }
       }
 
-      unsigned int indexFeature = 0;
       for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::const_iterator itListLine;
         if (l->meline[a] != NULL) {
@@ -1039,7 +1042,6 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
             if (site.getState() != vpMeSite::NO_SUPPRESSION)
               factor[n + i] = 0.2;
             ++itListLine;
-            indexFeature++;
           }
           n += l->nbFeature[a];
         }

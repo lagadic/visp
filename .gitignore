@@ -6,7 +6,7 @@ CMakeLists.txt.user*
 platforms/ios/build_framework.pyc
 *.bak
 *.pyc
+*.pdf
 modules/java/\.idea/
 .scannerwork
 build
-.vscode

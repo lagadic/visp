@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Andrew Comport
- *
  *****************************************************************************/
 
 /*!
@@ -178,13 +175,10 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 
   nGoodElement = 0;
 
-  int d = 0;
-
   // Loop through list of sites to track
   for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite refp = *it; // current reference pixel
 
-    d++;
     // If element hasn't been suppressed
     if (refp.getState() == vpMeSite::NO_SUPPRESSION) {
       try {
@@ -216,24 +210,6 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
     *it = refp;
   }
 
-  /*
-  if (res != OK)
-  {
-  std::cout<< "In vpMeTracker::initTracking(): " ;
-  switch (res)
-  {
-  case  ERR_TRACKING:
-  std::cout << "vpMeTracker::initTracking:Track return ERR_TRACKING " <<
-  std::endl ; break ; case fatalError: std::cout <<
-  "vpMeTracker::initTracking:Track return fatalError" << std::endl ; break ;
-  default:
-  std::cout << "vpMeTracker::initTracking:Track return error " << res <<
-  std::endl ;
-  }
-  return res ;
-  }
-  */
-
   me->setRange(range_tmp);
 }
 
@@ -242,8 +218,7 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 
   \param I : Image.
 
-  \exception vpTrackingException::initializationError : Moving edges not
-  initialized.
+  \exception vpTrackingException::initializationError : Moving edges not initialized.
 
 */
 void vpMeTracker::track(const vpImage<unsigned char> &I)
@@ -310,7 +285,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
   - If green : The vpMeSite is a good point.
   - If blue : The point is removed because of the vpMeSite tracking phase
-  (constrast problem).
+  (contrast problem).
   - If purple : The point is removed because of the vpMeSite tracking phase
   (threshold problem).
   - If red : The point is removed because of the robust method in the virtual
