@@ -211,19 +211,17 @@ public:
     };
     parsers[name] = [&parameter, required, getter, name](nlohmann::json &j) {
       const nlohmann::json *field = getter(j, false);
-      if (field != nullptr) {
-        if (field->empty()) {
-          std::stringstream ss;
-          ss << "Argument " << name << "is required, but no value was provided" << std::endl;
-          throw vpException(vpException::badValue, ss.str());
-        }
-        field->get_to(parameter);
-      }
-      else {
+      const bool fieldHasNoValue = field == nullptr || (field != nullptr && field->is_null());
+      if (required && fieldHasNoValue) {
         std::stringstream ss;
-        ss << "Argument " << name << "is required, but no value was provided" << std::endl;
+        ss << "Argument " << name << " is required, but no value was provided" << std::endl;
         throw vpException(vpException::badValue, ss.str());
       }
+      else if (!fieldHasNoValue) {
+        field->get_to(parameter);
+      }
+
+
     };
     updaters[name] = [getter, &parameter, this](nlohmann::json &j, const std::string &s) {
       nlohmann::json *field = getter(j, true);

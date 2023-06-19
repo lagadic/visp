@@ -20,7 +20,7 @@ vpJsonArgumentParser::vpJsonArgumentParser(const std::string &description, const
   }
 
   if (nestSeparator.empty()) {
-    throw vpException(vpException::badValue, "You must provided a JSON nesting delimiter to be able to parse JSON");
+    throw vpException(vpException::badValue, "You must provide a JSON nesting delimiter to be able to parse JSON");
   }
 
   helpers[jsonFileArgumentName] = []() -> std::string {

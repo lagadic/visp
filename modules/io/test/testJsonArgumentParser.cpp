@@ -95,6 +95,20 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     saveJson(j, jsonPath);
   };
 
+  GIVEN("Some specific arguments")
+  {
+    const std::string s = "hello";
+    WHEN("Converting a string to a json rep")
+    {
+      const json js = convertCommandLineArgument<std::string>(s);
+      const json truejs = s;
+      THEN("Conversion is correct")
+      {
+        REQUIRE(js == truejs);
+      }
+    }
+  }
+
   GIVEN("Some JSON parameters saved in a file, and some C++ variables")
   {
     json j = json {
@@ -102,6 +116,9 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       {"b", 2.0},
       {"c", "a string"},
       {"d", true},
+      {"e", {
+        {"a", 5}
+      }}
     };
     saveJson(j, jsonPath);
 
@@ -109,13 +126,15 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     double b = 1.0;
     std::string c = "";
     bool d = false;
+    int ea = 4;
     WHEN("Declaring a parser with all parameters required")
     {
       vpJsonArgumentParser parser("A program", "--config", "/");
       parser.addArgument("a", a, true)
         .addArgument("b", b, true)
         .addArgument("c", c, true)
-        .addArgument("d", d, true);
+        .addArgument("d", d, true)
+        .addArgument("e/a", ea, true);
 
       THEN("Calling the parser without any argument fails")
       {
@@ -140,6 +159,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(b == j["b"]);
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
+        REQUIRE(ea == j["e"]["a"]);
+
       }
       THEN("Calling the parser by specifying the json argument but leaving the file path empty throws an error")
       {
@@ -149,6 +170,32 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
           "--config",
         };
         REQUIRE_THROWS(parser.parse(argc, argv));
+      }
+      THEN("Calling the parser with only the json file but deleting a random field throws an error")
+      {
+        const int argc = 3;
+        for (const auto &jsonElem : j.items()) {
+          modifyJson([&jsonElem](json &j) { j.erase(jsonElem.key()); });
+          const char *argv [] = {
+            "program",
+            "--config",
+            jsonPath.c_str()
+          };
+          REQUIRE_THROWS(parser.parse(argc, argv));
+        }
+      }
+      THEN("Calling the parser with only the json file but setting a random field to null throws an error")
+      {
+        const int argc = 3;
+        for (const auto &jsonElem : j.items()) {
+          modifyJson([&jsonElem](json &j) { j[jsonElem.key()] = nullptr; });
+          const char *argv [] = {
+            "program",
+            "--config",
+            jsonPath.c_str()
+          };
+          REQUIRE_THROWS(parser.parse(argc, argv));
+        }
       }
       THEN("Calling the parser with an invalid json file path throws an error")
       {
@@ -162,7 +209,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       }
       THEN("Calling the parser with only the command line arguments works")
       {
-        const int newa = a + 1;
+        const int newa = a + 1, newea = ea + 6;
         const double newb = b + 2.0;
         const std::string newc = c + "hello";
         const bool newd = !d;
@@ -174,6 +221,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
           "b", std::to_string(newb),
           "c", newc,
           "d", newdstr,
+          "e/a", std::to_string(newea)
         };
         int argc;
         std::vector<char *> argv;
@@ -183,6 +231,8 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(b == newb);
         REQUIRE(c == newc);
         REQUIRE(d == newd);
+        REQUIRE(ea == newea);
+
       }
       THEN("Calling the parser with JSON and command line argument works")
       {
@@ -202,8 +252,103 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(b == newb);
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
+        REQUIRE(ea == j["e"]["a"]);
+
+      }
+      THEN("Calling the parser with a missing argument value throws an error")
+      {
+
+        std::vector<std::string> args = {
+          "program",
+          "--config", jsonPath,
+          "a"
+        };
+        int argc;
+        std::vector<char *> argv;
+        std::tie(argc, argv) = convertToArgcAndArgv(args);
+        REQUIRE_THROWS(parser.parse(argc, (const char **)(&argv[0])));
       }
     }
+  }
+  THEN("Declaring a parser with an undefined nesting delimiter fails")
+  {
+    REQUIRE_THROWS(vpJsonArgumentParser("A program", "--config", ""));
+  }
+  THEN("Declaring a parser with an invalid JSON file argument fails")
+  {
+    REQUIRE_THROWS(vpJsonArgumentParser("A program", "", "/"));
+  }
+
+  WHEN("Instanciating a parser with some optional fields")
+  {
+    vpJsonArgumentParser parser("A program", "--config", "/");
+    float b = 0.0;
+    parser.addArgument("b", b, false);
+
+    THEN("Calling the parser without any argument works and does not modify the default value")
+    {
+      float bcopy = b;
+      const int argc = 1;
+      const char *argv [] = {
+        "program"
+      };
+
+      REQUIRE_NOTHROW(parser.parse(argc, argv));
+      REQUIRE(b == bcopy);
+
+    }
+  }
+  WHEN("Instanciating a parser with nested parameters")
+  {
+    vpJsonArgumentParser parser("A program", "--config", "/");
+    float b = 0.0;
+    parser.addArgument("b", b, false);
+
+    THEN("Calling the parser without any argument works and does not modify the default value")
+    {
+      float bcopy = b;
+      const int argc = 1;
+      const char *argv [] = {
+        "program"
+      };
+
+      REQUIRE_NOTHROW(parser.parse(argc, argv));
+      REQUIRE(b == bcopy);
+
+    }
+  }
+
+
+  WHEN("Instanciating a parser with some documentation")
+  {
+    const std::string programString = "ProgramString";
+    const std::string firstArg = "FirstArgName", firstArgDescription = "FirstArgDescription";
+    const std::string secondArg = "secondArgName", secondArgDescription = "secondArgDescription";
+    vpJsonArgumentParser parser(programString, "--config", "/");
+    std::string a = "DefaultFirstArg", b = "DefaultSecondArg";
+    parser.addArgument(firstArg, a, true, firstArgDescription);
+    parser.addArgument(secondArg, b, false, secondArgDescription);
+    WHEN("Getting the help string")
+    {
+      const std::string help = parser.help();
+      THEN("Output should contain the basic program description")
+      {
+        REQUIRE(help.find(programString) < help.size());
+      }
+      THEN("Output should contain the json argument")
+      {
+        REQUIRE(help.find("--config") < help.size());
+      }
+      THEN("Output should contain the arguments, their description and their default value")
+      {
+        const std::vector<std::string> requireds = { firstArg, secondArg, firstArgDescription, secondArgDescription, a, b };
+        for (const auto &required : requireds) {
+          REQUIRE(help.find(required) < help.size());
+        }
+      }
+    }
+
+
   }
 }
 int main(int argc, char *argv [])
