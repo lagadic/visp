@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,10 @@
  * Description:
  * Matrix manipulation.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
-\file vpMatrix.cpp
-\brief Definition of the vpMatrix class
+  \file vpMatrix.cpp
+  \brief Definition of the vpMatrix class
 */
 
 #include <algorithm>
@@ -4586,7 +4586,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
   return pseudoInverseLapack(Ap, sv, rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, rank_in);
-#elif defined(VISP_HAVE_OPENCV)1) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, rank_in);
 #else
   (void)Ap;
