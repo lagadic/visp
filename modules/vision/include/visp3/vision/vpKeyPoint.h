@@ -174,7 +174,7 @@ int main()
   //First grab the reference image Irefrence
   //Add your code to load the reference image in Ireference
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
@@ -189,7 +189,7 @@ int main()
 
   //Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }

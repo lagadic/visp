@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,12 @@
  * Description:
  * Planar surface detection tool.
  *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/vision/vpPlanarObjectDetector.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.4.8 and < 3.0.0
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpDisplay.h>
@@ -58,9 +55,8 @@
 */
 vpPlanarObjectDetector::vpPlanarObjectDetector()
   : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
-    refImagePoints(), minNbMatching(10)
-{
-}
+  refImagePoints(), minNbMatching(10)
+{ }
 
 /*!
 
@@ -72,7 +68,7 @@ vpPlanarObjectDetector::vpPlanarObjectDetector()
 */
 vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string &_dataFile, const std::string &_objectName)
   : fern(), homography(), H(), dst_corners(), isCorrect(false), ref_corners(), modelROI(), currentImagePoints(),
-    refImagePoints(), minNbMatching(10)
+  refImagePoints(), minNbMatching(10)
 {
   load(_dataFile, _objectName);
 }
@@ -80,14 +76,14 @@ vpPlanarObjectDetector::vpPlanarObjectDetector(const std::string &_dataFile, con
 /*!
   Initialise stuff. For the moment does nothing.
 */
-void vpPlanarObjectDetector::init() {}
+void vpPlanarObjectDetector::init() { }
 
 /*!
 
   Basic destructor
 
 */
-vpPlanarObjectDetector::~vpPlanarObjectDetector() {}
+vpPlanarObjectDetector::~vpPlanarObjectDetector() { }
 
 /*!
   Compute the rectangular ROI from at least 4 points and set the region of
@@ -164,7 +160,7 @@ unsigned int vpPlanarObjectDetector::buildReference(const vpImage<unsigned char>
   \return the number of reference points
 */
 unsigned int vpPlanarObjectDetector::buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-                                                    unsigned int _height, unsigned int _width)
+  unsigned int _height, unsigned int _width)
 {
   unsigned int res = fern.buildReference(_I, _iP, _height, _width);
   modelROI.x = (int)_iP.get_u();
@@ -235,7 +231,8 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
       for (unsigned int j = 0; j < 3; j += 1) {
         if (i == j) {
           homography[i][j] = 1;
-        } else {
+        }
+        else {
           homography[i][j] = 0;
         }
       }
@@ -255,7 +252,7 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 
       double w = 1. / (H_tmp(2, 0) * pt.x + H_tmp(2, 1) * pt.y + H_tmp(2, 2));
       dst_corners[i] = cv::Point2f((float)((H_tmp(0, 0) * pt.x + H_tmp(0, 1) * pt.y + H_tmp(0, 2)) * w),
-                                   (float)((H_tmp(1, 0) * pt.x + H_tmp(1, 1) * pt.y + H_tmp(1, 2)) * w));
+        (float)((H_tmp(1, 0) * pt.x + H_tmp(1, 1) * pt.y + H_tmp(1, 2)) * w));
     }
 
     double *ptr = (double *)H_tmp.data;
@@ -263,7 +260,8 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
       this->homography[(unsigned int)(i / 3)][i % 3] = *(ptr++);
     }
     isCorrect = true;
-  } else {
+  }
+  else {
     isCorrect = false;
   }
 
@@ -302,7 +300,7 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
   \return true if the surface has been found.
 */
 bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                                        unsigned int width)
+  unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");
@@ -350,7 +348,7 @@ void vpPlanarObjectDetector::display(vpImage<unsigned char> &I, bool displayKpts
   for (unsigned int i = 0; i < dst_corners.size(); i++) {
     vpImagePoint ip1(dst_corners[i].y - modelROI.y, dst_corners[i].x - modelROI.x);
     vpImagePoint ip2(dst_corners[(i + 1) % dst_corners.size()].y - modelROI.y,
-                     dst_corners[(i + 1) % dst_corners.size()].x - modelROI.x);
+      dst_corners[(i + 1) % dst_corners.size()].x - modelROI.x);
     vpDisplay::displayLine(I, ip1, ip2, vpColor::red);
   }
 
@@ -472,7 +470,7 @@ void vpPlanarObjectDetector::getReferencePoint(unsigned int _i, vpImagePoint &_i
 }
 
 void vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImagePoint &_referencePoint,
-                                              vpImagePoint &_currentPoint)
+  vpImagePoint &_currentPoint)
 {
   //  fern.getMatchedPoints(_index, _referencePoint, _currentPoint);
   if (_index >= currentImagePoints.size()) {
@@ -486,5 +484,5 @@ void vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImage
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_vision.a(vpPlanarObjectDetector.cpp.o) has no symbols
-void dummy_vpPlanarObjectDetector(){};
+void dummy_vpPlanarObjectDetector() { };
 #endif

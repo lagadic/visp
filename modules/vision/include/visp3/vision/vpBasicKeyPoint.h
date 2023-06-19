@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,17 +31,14 @@
  * Description:
  * Key point used in matching algorithm.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpBasicKeyPoint_H
 #define vpBasicKeyPoint_H
 
 /*!
   \file vpBasicKeyPoint.h
-  \brief class that defines what is a Keypoint
+  \brief class that defines what is a keypoint
 */
 
 #include <visp3/core/vpColor.h>
@@ -55,7 +52,7 @@
   \class vpBasicKeyPoint
   \ingroup group_vision_keypoints
 
-  \brief class that defines what is a Keypoint. This class provides
+  \brief class that defines what is a keypoint. This class provides
   all the basic elements to implement classes which aims to match
   points from an image to another.
 */
@@ -74,22 +71,22 @@ public:
   virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                                      unsigned int width) = 0;
+    unsigned int width) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                                  unsigned int width) = 0;
+    unsigned int width) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
   virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent,
-                       unsigned int size = 3) = 0;
+    unsigned int size = 3) = 0;
 
   virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3,
-                       const vpColor &color = vpColor::green) = 0;
+    const vpColor &color = vpColor::green) = 0;
 
   /*!
     Indicate wether the reference has been built or not.
@@ -143,7 +140,7 @@ public:
       throw(vpException(vpException::fatalError, "Index of the matched points out of range"));
     }
     referencePoint.set_ij(referenceImagePointsList[matchedReferencePoints[index]].get_i(),
-                          referenceImagePointsList[matchedReferencePoints[index]].get_j());
+      referenceImagePointsList[matchedReferencePoints[index]].get_j());
     currentPoint.set_ij(currentImagePointsList[index].get_i(), currentImagePointsList[index].get_j());
   }
 
