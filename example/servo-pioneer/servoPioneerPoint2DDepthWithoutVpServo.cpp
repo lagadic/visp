@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * IBVS on Pioneer P3DX mobile platform
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/blob/vpDot2.h>
@@ -244,7 +241,7 @@ int main(int argc, char **argv)
 
     while (1) {
 // Acquire a new image
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #else

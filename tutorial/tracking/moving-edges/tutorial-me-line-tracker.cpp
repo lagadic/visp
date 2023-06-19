@@ -30,10 +30,14 @@ int main()
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera
+#endif
+
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
+    g.acquire(I);
+#elif defined(VISP_HAVE_VIDEOIO)
+    g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
-    g.open(I);
-    g.acquire(I);
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, 0, 0, "Camera view");
