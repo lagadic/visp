@@ -13,7 +13,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020300)
+#if defined(VISP_HAVE_OPENCV)
   try {
     std::string opt_videoname_left = "teabox_left.mp4";
     std::string opt_videoname_right = "teabox_right.mp4";
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display_left;
     vpDisplayGDI display_right;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display_left;
     vpDisplayOpenCV display_right;
 #endif

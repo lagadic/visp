@@ -119,7 +119,7 @@ int main(int argc, const char **argv)
       display_undistort = new vpDisplayX(I_undist, I_left.getWidth(), 30, "Undistorted image");
 #elif defined(VISP_HAVE_GDI)
       display_left = new vpDisplayGDI(I_left, 100, 30, "Left image");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       display_left = new vpDisplayOpenCV(I_left, 100, 30, "Left image");
 #endif
     }

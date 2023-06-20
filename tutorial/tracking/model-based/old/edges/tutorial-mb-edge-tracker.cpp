@@ -11,7 +11,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   try {
     std::string videoname = "teabox.mp4";
 
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     vpDisplayX display;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #else
     std::cout << "No image viewer is available..." << std::endl;

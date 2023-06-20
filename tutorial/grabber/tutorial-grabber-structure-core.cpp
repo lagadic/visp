@@ -40,7 +40,7 @@ void usage(const char *argv[], int error)
             << std::endl
             << "  --no-display" << std::endl
             << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)."
+            << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
             << std::endl
             << std::endl
             << "  --help, -h" << std::endl
@@ -165,7 +165,7 @@ int main(int argc, const char *argv[])
 #elif defined(VISP_HAVE_GDI)
         display_visible = new vpDisplayGDI(I_color, 10, 10, "Visible image");
         display_depth = new vpDisplayGDI(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
         display_visible = new vpDisplayOpenCV(I_color, 10, 10, "Visible image");
         display_depth = new vpDisplayOpenCV(I_depth, 10 + I_color.getWidth(), 10, "Depth image");
 #endif
@@ -223,7 +223,7 @@ int main(int argc, const char *argv[])
   std::cout << "Install libStructure, configure and build ViSP again to use this example" << std::endl;
 #endif
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This turorial should be built with c++11 support" << std::endl;
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

@@ -8,7 +8,7 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpKeyPoint &keypoint_learning, int id)
 {
   //! [Keypoints reference detection]
@@ -46,7 +46,7 @@ void learnCube(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, vpK
 
 int main(int argc, char **argv)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
   //! [MBT code]
   try {
     std::string videoname = "cube.mp4";
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
     vpDisplayX display;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #else
     std::cout << "No image viewer is available..." << std::endl;
@@ -213,13 +213,13 @@ int main(int argc, char **argv)
     g.setFileName(videoname);
     g.open(I);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display2;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display2;
 #endif
     display2.init(IMatching, 50, 50, "Display matching between learned and current images");

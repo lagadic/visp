@@ -78,7 +78,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -c\n\
      Disable the mouse click. Useful to automate the \n\
-     execution of this program without humain intervention.\n\
+     execution of this program without human intervention.\n\
 \n\
   -d                                             \n\
      Disable the image display. This can be useful \n\
@@ -166,7 +166,7 @@ int main(int argc, const char **argv)
     vpDisplayGDI d, d2;
 #elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D d, d2;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d, d2;
 #endif
     d.init(I, 0, 0, "Grayscale image");

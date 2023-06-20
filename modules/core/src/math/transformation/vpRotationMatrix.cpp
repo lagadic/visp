@@ -879,7 +879,7 @@ vpColVector vpRotationMatrix::getCol(unsigned int j) const
   Moakher's method (SIAM 2002).
 
   \param[in] vec_M : Set of homogeneous matrices.
-  \return The Euclidian mean of the rotation matrices.
+  \return The Euclidean mean of the rotation matrices.
 
   \sa vpTranslationVector::mean()
  */
@@ -916,7 +916,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   Compute the Euclidean mean of the rotation matrices following Moakher's method (SIAM 2002).
 
   \param[in] vec_R : Set of rotation matrices.
-  \return The Euclidian mean of the rotation matrices.
+  \return The Euclidean mean of the rotation matrices.
 
   \sa vpTranslationVector::mean()
  */

@@ -315,13 +315,13 @@ int main(int argc, const char **argv)
 #endif
 
 // Default display is one available
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
   opt_dtype = vpGTK;
-#elif defined VISP_HAVE_X11
+#elif defined(VISP_HAVE_X11)
   opt_dtype = vpX11;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   opt_dtype = vpGDI;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   opt_dtype = vpD3D;
 #endif
 
@@ -342,19 +342,20 @@ int main(int argc, const char **argv)
   if (opt_list) {
     unsigned nbDevices = 0;
     std::cout << "List of video-devices available: \n";
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
     std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
     nbDevices++;
 #endif
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     std::cout << "  X11 (use \"-t X11\" option to use it)\n";
     nbDevices++;
 #endif
-#if defined VISP_HAVE_GDI
+#if defined(VISP_HAVE_GDI)
+
     std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
     nbDevices++;
 #endif
-#if defined VISP_HAVE_D3D9
+#if defined(VISP_HAVE_D3D9)
     std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
     nbDevices++;
 #endif
@@ -434,8 +435,8 @@ int main(int argc, const char **argv)
 
   switch (opt_dtype) {
   case vpX11:
-    std::cout << "Requested X11 display functionnalities..." << std::endl;
-#if defined VISP_HAVE_X11
+    std::cout << "Requested X11 display functionalities..." << std::endl;
+#if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
 #else
     std::cout << "  Sorry, X11 video device is not available.\n";
@@ -444,8 +445,8 @@ int main(int argc, const char **argv)
 #endif
     break;
   case vpGTK:
-    std::cout << "Requested GTK display functionnalities..." << std::endl;
-#if defined VISP_HAVE_GTK
+    std::cout << "Requested GTK display functionalities..." << std::endl;
+#if defined(VISP_HAVE_GTK)
     display = new vpDisplayGTK;
 #else
     std::cout << "  Sorry, GTK video device is not available.\n";
@@ -454,8 +455,9 @@ int main(int argc, const char **argv)
 #endif
     break;
   case vpGDI:
-    std::cout << "Requested GDI display functionnalities..." << std::endl;
-#if defined VISP_HAVE_GDI
+    std::cout << "Requested GDI display functionalities..." << std::endl;
+#if defined(VISP_HAVE_GDI)
+
     display = new vpDisplayGDI;
 #else
     std::cout << "  Sorry, GDI video device is not available.\n";
@@ -464,8 +466,8 @@ int main(int argc, const char **argv)
 #endif
     break;
   case vpD3D:
-    std::cout << "Requested D3D display functionnalities..." << std::endl;
-#if defined VISP_HAVE_D3D9
+    std::cout << "Requested D3D display functionalities..." << std::endl;
+#if defined(VISP_HAVE_D3D9)
     display = new vpDisplayD3D;
 #else
     std::cout << "  Sorry, D3D video device is not available.\n";

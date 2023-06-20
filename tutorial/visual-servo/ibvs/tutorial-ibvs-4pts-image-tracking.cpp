@@ -115,7 +115,7 @@ int main()
     vpDisplayX d(I, 0, 0, "Current camera view");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, 0, 0, "Current camera view");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I, 0, 0, "Current camera view");
 #else
     std::cout << "No image viewer is available..." << std::endl;

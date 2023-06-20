@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Directory management.
  *
- * Authors:
- * Fabien Spindler
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpConvert.cpp
@@ -47,13 +43,13 @@
 
 #include <visp3/core/vpConvert.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-/**!
-   Unary function used to transform a cv::KeyPoint to a vpImagePoint.
-   \param keypoint : KeyPoint to convert.
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
+/*!
+  Unary function used to transform a cv::KeyPoint to a vpImagePoint.
+  \param keypoint : KeyPoint to convert.
 
-   \return A vpImagePoint with the 2D coordinates corresponding to the
-   location of the KeyPoint.
+  \return A vpImagePoint with the 2D coordinates corresponding to the
+  location of the KeyPoint.
  */
 vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
 {
@@ -61,26 +57,26 @@ vpImagePoint vpConvert::keyPointToVpImagePoint(const cv::KeyPoint &keypoint)
 }
 
 /*!
-   Unary function to convert a cv::Point2f to a vpImagePoint.
-   \param point : Point to convert.
+  Unary function to convert a cv::Point2f to a vpImagePoint.
+  \param point : Point to convert.
 
-   \return A vpImagePoint with the 2D coordinates stored in cv::Point2f.
+  \return A vpImagePoint with the 2D coordinates stored in cv::Point2f.
  */
 vpImagePoint vpConvert::point2fToVpImagePoint(const cv::Point2f &point) { return vpImagePoint(point.y, point.x); }
 
 /*!
-   Unary function to convert a cv::Point2d to a vpImagePoint.
-   \param point : Point to convert.
+  Unary function to convert a cv::Point2d to a vpImagePoint.
+  \param point : Point to convert.
 
-   \return A vpImagePoint with the 2D coordinates stored in cv::Point2d.
+  \return A vpImagePoint with the 2D coordinates stored in cv::Point2d.
  */
 vpImagePoint vpConvert::point2dToVpImagePoint(const cv::Point2d &point) { return vpImagePoint(point.y, point.x); }
 
 /*!
-   Unary function to convert a cv::Point3f to a vpPoint (object frame).
-   \param point3f : Point to convert.
-   \return A vpPoint with 3D coordinates in the object frame from from a
-   cv::Point3f.
+  Unary function to convert a cv::Point3f to a vpPoint (object frame).
+  \param point3f : Point to convert.
+  \return A vpPoint with 3D coordinates in the object frame from from a
+  cv::Point3f.
  */
 vpPoint vpConvert::point3fToVpObjectPoint(const cv::Point3f &point3f)
 {
@@ -93,10 +89,10 @@ vpPoint vpConvert::point3fToVpObjectPoint(const cv::Point3f &point3f)
 }
 
 /*!
-   Unary function to convert a cv::Point3f to a vpPoint (camera frame).
-   \param point3f : Point to convert.
-   \return A vpPoint with 3D coordinates in the camera frame from from a
-   cv::Point3f.
+  Unary function to convert a cv::Point3f to a vpPoint (camera frame).
+  \param point3f : Point to convert.
+  \return A vpPoint with 3D coordinates in the camera frame from from a
+  cv::Point3f.
  */
 vpPoint vpConvert::point3fToVpCamPoint(const cv::Point3f &point3f)
 {
@@ -109,10 +105,10 @@ vpPoint vpConvert::point3fToVpCamPoint(const cv::Point3f &point3f)
 }
 
 /*!
-   Unary function to convert a cv::Point3d to a vpPoint (object frame).
-   \param point3d : Point to convert.
-   \return A vpPoint with 3D coordinates in the object frame from from a
-   cv::Point3d.
+  Unary function to convert a cv::Point3d to a vpPoint (object frame).
+  \param point3d : Point to convert.
+  \return A vpPoint with 3D coordinates in the object frame from from a
+  cv::Point3d.
  */
 vpPoint vpConvert::point3dToVpObjectPoint(const cv::Point3d &point3d)
 {
@@ -125,10 +121,10 @@ vpPoint vpConvert::point3dToVpObjectPoint(const cv::Point3d &point3d)
 }
 
 /*!
-   Unary function to convert a cv::Point3d to a vpPoint (camera frame).
-   \param point3d : Point to convert.
-   \return A vpPoint with 3D coordinates in the camera frame from from a
-   cv::Point3d.
+  Unary function to convert a cv::Point3d to a vpPoint (camera frame).
+  \param point3d : Point to convert.
+  \return A vpPoint with 3D coordinates in the camera frame from from a
+  cv::Point3d.
  */
 vpPoint vpConvert::point3dToVpCamPoint(const cv::Point3d &point3d)
 {
@@ -141,10 +137,10 @@ vpPoint vpConvert::point3dToVpCamPoint(const cv::Point3d &point3d)
 }
 
 /*!
-   Unary function to convert a vpImagePoint to a cv::Point2f.
-   \param point : Image point to convert.
+  Unary function to convert a vpImagePoint to a cv::Point2f.
+  \param point : Image point to convert.
 
-   \return A cv::Point2f with the 2D coordinates stored in vpImagePoint.
+  \return A cv::Point2f with the 2D coordinates stored in vpImagePoint.
  */
 cv::Point2f vpConvert::vpImagePointToPoint2f(const vpImagePoint &point)
 {
@@ -152,10 +148,10 @@ cv::Point2f vpConvert::vpImagePointToPoint2f(const vpImagePoint &point)
 }
 
 /*!
-   Unary function to convert a vpImagePoint to a cv::Point2d.
-   \param point : Image point to convert.
+  Unary function to convert a vpImagePoint to a cv::Point2d.
+  \param point : Image point to convert.
 
-   \return A cv::Point2d with the 2D coordinates stored in vpImagePoint.
+  \return A cv::Point2d with the 2D coordinates stored in vpImagePoint.
  */
 cv::Point2d vpConvert::vpImagePointToPoint2d(const vpImagePoint &point)
 {
@@ -163,11 +159,12 @@ cv::Point2d vpConvert::vpImagePointToPoint2d(const vpImagePoint &point)
 }
 
 /*!
-   Unary function to convert the 3D coordinates in the camera frame to a
-   cv::Point3f. \param point : Point to convert.
+  Unary function to convert the 3D coordinates in the camera frame to a cv::Point3f.
 
-   \return A cv::Point3f with the 3D coordinates stored in vpPoint in the
-   camera frame.
+  \param point : Point to convert.
+
+  \return A cv::Point3f with the 3D coordinates stored in vpPoint in the
+  camera frame.
  */
 cv::Point3f vpConvert::vpCamPointToPoint3f(const vpPoint &point)
 {
@@ -175,11 +172,12 @@ cv::Point3f vpConvert::vpCamPointToPoint3f(const vpPoint &point)
 }
 
 /*!
-   Unary function to convert the 3D coordinates in the camera frame to a
-   cv::Point3d. \param point : Point to convert.
+  Unary function to convert the 3D coordinates in the camera frame to a cv::Point3d.
 
-   \return A cv::Point3d with the 3D coordinates stored in vpPoint in the
-   camera frame.
+  \param point : Point to convert.
+
+  \return A cv::Point3d with the 3D coordinates stored in vpPoint in the
+  camera frame.
  */
 cv::Point3d vpConvert::vpCamPointToPoint3d(const vpPoint &point)
 {
@@ -187,11 +185,11 @@ cv::Point3d vpConvert::vpCamPointToPoint3d(const vpPoint &point)
 }
 
 /*!
-   Unary function to convert the 3D coordinates in the object frame to a
-   cv::Point3f. \param point : Point to convert.
+  Unary function to convert the 3D coordinates in the object frame to a cv::Point3f. 
+  \param point : Point to convert.
 
-   \return A cv::Point3f with the 3D coordinates stored in vpPoint in the
-   object frame.
+  \return A cv::Point3f with the 3D coordinates stored in vpPoint in the
+  object frame.
  */
 cv::Point3f vpConvert::vpObjectPointToPoint3f(const vpPoint &point)
 {
@@ -199,11 +197,11 @@ cv::Point3f vpConvert::vpObjectPointToPoint3f(const vpPoint &point)
 }
 
 /*!
-   Unary function to convert the 3D coordinates in the object frame to a
-   cv::Point3d. \param point : Point to convert.
+  Unary function to convert the 3D coordinates in the object frame to a cv::Point3d.
+  \param point : Point to convert.
 
-   \return A cv::Point3d with the 3D coordinates stored in vpPoint in the
-   object frame.
+  \return A cv::Point3d with the 3D coordinates stored in vpPoint in the
+  object frame.
  */
 cv::Point3d vpConvert::vpObjectPointToPoint3d(const vpPoint &point)
 {
@@ -211,40 +209,40 @@ cv::Point3d vpConvert::vpObjectPointToPoint3d(const vpPoint &point)
 }
 
 /*!
-   Unary function to return the train index stored in a cv::DMatch.
-   \param match : The cv::DMatch we want to get the train index.
+  Unary function to return the train index stored in a cv::DMatch.
+  \param match : The cv::DMatch we want to get the train index.
 
-   \return The train index stored in a cv::DMatch.
+  \return The train index stored in a cv::DMatch.
  */
 int vpConvert::dMatchToTrainIndex(const cv::DMatch &match) { return match.trainIdx; }
 
 /*!
-   Convert a cv::KeyPoint to a vpImagePoint.
-   \param from : cv::KeyPoint to convert.
-   \param to : vpImagePoint converted.
+  Convert a cv::KeyPoint to a vpImagePoint.
+  \param from : cv::KeyPoint to convert.
+  \param to : vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const cv::KeyPoint &from, vpImagePoint &to) { to = keyPointToVpImagePoint(from); }
 
 /*!
-   Convert a cv::Point2f to a vpImagePoint.
-   \param from : cv::Point2f to convert.
-   \param to : vpImagePoint converted.
+  Convert a cv::Point2f to a vpImagePoint.
+  \param from : cv::Point2f to convert.
+  \param to : vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const cv::Point2f &from, vpImagePoint &to) { to = point2fToVpImagePoint(from); }
 
 /*!
-   Convert a cv::Point2d to a vpImagePoint.
-   \param from : cv::Point2d to convert.
-   \param to : vpImagePoint converted.
+  Convert a cv::Point2d to a vpImagePoint.
+  \param from : cv::Point2d to convert.
+  \param to : vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const cv::Point2d &from, vpImagePoint &to) { to = point2dToVpImagePoint(from); }
 
 /*!
-   Convert a cv::Point3f to a vpPoint.
-   \param from : cv::Point3f to convert.
-   \param to : vpPoint converted.
-   \param cameraFrame : If true, convert into the camera frame, otherwise in
-   the object frame.
+  Convert a cv::Point3f to a vpPoint.
+  \param from : cv::Point3f to convert.
+  \param to : vpPoint converted.
+  \param cameraFrame : If true, convert into the camera frame, otherwise in
+  the object frame.
  */
 void vpConvert::convertFromOpenCV(const cv::Point3f &from, vpPoint &to, bool cameraFrame)
 {
@@ -256,11 +254,11 @@ void vpConvert::convertFromOpenCV(const cv::Point3f &from, vpPoint &to, bool cam
 }
 
 /*!
-   Convert a cv::Point3d to a vpPoint.
-   \param from : cv::Point3d to convert.
-   \param to : vpPoint converted.
-   \param cameraFrame : If true, convert into the camera frame, otherwise in
-   the object frame.
+  Convert a cv::Point3d to a vpPoint.
+  \param from : cv::Point3d to convert.
+  \param to : vpPoint converted.
+  \param cameraFrame : If true, convert into the camera frame, otherwise in
+  the object frame.
  */
 void vpConvert::convertFromOpenCV(const cv::Point3d &from, vpPoint &to, bool cameraFrame)
 {
@@ -272,9 +270,9 @@ void vpConvert::convertFromOpenCV(const cv::Point3d &from, vpPoint &to, bool cam
 }
 
 /*!
-   Convert a vector of cv::KeyPoint to a vector of vpImagePoint.
-   \param from : Vector of cv::KeyPoint to convert.
-   \param to : Vector of vpImagePoint converted.
+  Convert a vector of cv::KeyPoint to a vector of vpImagePoint.
+  \param from : Vector of cv::KeyPoint to convert.
+  \param to : Vector of vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::KeyPoint> &from, std::vector<vpImagePoint> &to)
 {
@@ -283,9 +281,9 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::KeyPoint> &from, std::ve
 }
 
 /*!
-   Convert a vector of cv::Point2f to a vector of vpImagePoint.
-   \param from : Vector of cv::Point2f to convert.
-   \param to : Vector of vpImagePoint converted.
+  Convert a vector of cv::Point2f to a vector of vpImagePoint.
+  \param from : Vector of cv::Point2f to convert.
+  \param to : Vector of vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::Point2f> &from, std::vector<vpImagePoint> &to)
 {
@@ -294,9 +292,9 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point2f> &from, std::vec
 }
 
 /*!
-   Convert a vector of cv::Point2d to a vector of vpImagePoint.
-   \param from : Vector of cv::Point2d to convert.
-   \param to : Vector of vpImagePoint converted.
+  Convert a vector of cv::Point2d to a vector of vpImagePoint.
+  \param from : Vector of cv::Point2d to convert.
+  \param to : Vector of vpImagePoint converted.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::Point2d> &from, std::vector<vpImagePoint> &to)
 {
@@ -305,11 +303,11 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point2d> &from, std::vec
 }
 
 /*!
-   Convert a vector of cv::Point3f to a vector of vpPoint.
-   \param from : Vector of cv::Point3f to convert.
-   \param to : Vector of vpPoint converted.
-   \param cameraFrame : If true, convert into the camera frame, otherwise in
-   the object frame.
+  Convert a vector of cv::Point3f to a vector of vpPoint.
+  \param from : Vector of cv::Point3f to convert.
+  \param to : Vector of vpPoint converted.
+  \param cameraFrame : If true, convert into the camera frame, otherwise in
+  the object frame.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to, bool cameraFrame)
 {
@@ -322,11 +320,11 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vec
 }
 
 /*!
-   Convert a vector of cv::Point3d to a vector of vpPoint.
-   \param from : Vector of cv::Point3d to convert.
-   \param to : Vector of vpPoint converted.
-   \param cameraFrame : If true, convert into the camera frame, otherwise in
-   the object frame.
+  Convert a vector of cv::Point3d to a vector of vpPoint.
+  \param from : Vector of cv::Point3d to convert.
+  \param to : Vector of vpPoint converted.
+  \param cameraFrame : If true, convert into the camera frame, otherwise in
+  the object frame.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vector<vpPoint> &to, bool cameraFrame)
 {
@@ -339,14 +337,14 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vec
 }
 
 /*!
-   Convert a vector of cv::DMatch to a vector of unsigned int (for a query
-   index 0, to[0] ==> train index).
+  Convert a vector of cv::DMatch to a vector of unsigned int (for a query
+  index 0, to[0] ==> train index).
 
-   \warning The list of query indexes in DMatch must be ordered in a way that
-   from[i].queryIdx == i.
+  \warning The list of query indexes in DMatch must be ordered in a way that
+  from[i].queryIdx == i.
 
-   \param from : Vector of cv::DMatch to convert.
-   \param to : Vector of unsigned int converted.
+  \param from : Vector of cv::DMatch to convert.
+  \param to : Vector of unsigned int converted.
  */
 void vpConvert::convertFromOpenCV(const std::vector<cv::DMatch> &from, std::vector<unsigned int> &to)
 {
@@ -355,25 +353,25 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::DMatch> &from, std::vect
 }
 
 /*!
-   Convert a vpImagePoint to a cv::Point2f.
-   \param from : vpImagePoint to convert.
-   \param to : cv::Point2f converted.
- */
+  Convert a vpImagePoint to a cv::Point2f.
+  \param from : vpImagePoint to convert.
+  \param to : cv::Point2f converted.
+*/
 void vpConvert::convertToOpenCV(const vpImagePoint &from, cv::Point2f &to) { to = vpImagePointToPoint2f(from); }
 
 /*!
-   Convert a vpImagePoint to a cv::Point2d.
-   \param from : vpImagePoint to convert.
-   \param to : cv::Point2d converted.
+  Convert a vpImagePoint to a cv::Point2d.
+  \param from : vpImagePoint to convert.
+  \param to : cv::Point2d converted.
  */
 void vpConvert::convertToOpenCV(const vpImagePoint &from, cv::Point2d &to) { to = vpImagePointToPoint2d(from); }
 
 /*!
-   Convert a vpPoint to a cv::Point3f.
-   \param from : vpPoint to convert.
-   \param to : cv::Point3f converted.
-   \param cameraFrame : If true, convert from coordinates in the camera frame,
-   otherwise in the object frame.
+  Convert a vpPoint to a cv::Point3f.
+  \param from : vpPoint to convert.
+  \param to : cv::Point3f converted.
+  \param cameraFrame : If true, convert from coordinates in the camera frame,
+  otherwise in the object frame.
  */
 void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3f &to, bool cameraFrame)
 {
@@ -385,11 +383,11 @@ void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3f &to, bool camer
 }
 
 /*!
-   Convert a vpPoint to a cv::Point3d.
-   \param from : vpPoint to convert.
-   \param to : cv::Point3d converted.
-   \param cameraFrame : If true, convert from coordinates in the camera frame,
-   otherwise in the object frame.
+  Convert a vpPoint to a cv::Point3d.
+  \param from : vpPoint to convert.
+  \param to : cv::Point3d converted.
+  \param cameraFrame : If true, convert from coordinates in the camera frame,
+  otherwise in the object frame.
  */
 void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3d &to, bool cameraFrame)
 {
@@ -401,9 +399,9 @@ void vpConvert::convertToOpenCV(const vpPoint &from, cv::Point3d &to, bool camer
 }
 
 /*!
-   Convert a vector of vpImagePoint to a vector of cv::Point2f.
-   \param from : Vector of vpImagePoint to convert.
-   \param to : Vector of cv::Point2f converted.
+  Convert a vector of vpImagePoint to a vector of cv::Point2f.
+  \param from : Vector of vpImagePoint to convert.
+  \param to : Vector of cv::Point2f converted.
  */
 void vpConvert::convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to)
 {
@@ -412,9 +410,9 @@ void vpConvert::convertToOpenCV(const std::vector<vpImagePoint> &from, std::vect
 }
 
 /*!
-   Convert a vector of vpImagePoint to a vector of cv::Point2d.
-   \param from : Vector of vpImagePoint to convert.
-   \param to : Vector of cv::Point2d converted.
+  Convert a vector of vpImagePoint to a vector of cv::Point2d.
+  \param from : Vector of vpImagePoint to convert.
+  \param to : Vector of cv::Point2d converted.
  */
 void vpConvert::convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2d> &to)
 {
@@ -423,11 +421,11 @@ void vpConvert::convertToOpenCV(const std::vector<vpImagePoint> &from, std::vect
 }
 
 /*!
-   Convert a vector of vpPoint to a vector of cv::Point3f.
-   \param from : Vector of vpPoint to convert.
-   \param to : Vector of cv::Point3f converted.
-   \param cameraFrame : If true, the camera frame is considered, otherwise the
-   object frame.
+  Convert a vector of vpPoint to a vector of cv::Point3f.
+  \param from : Vector of vpPoint to convert.
+  \param to : Vector of cv::Point3f converted.
+  \param cameraFrame : If true, the camera frame is considered, otherwise the
+  object frame.
  */
 void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, bool cameraFrame)
 {
@@ -440,11 +438,11 @@ void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv
 }
 
 /*!
-   Convert a vector of vpPoint to a vector of cv::Point3d.
-   \param from : Vector of vpPoint to convert.
-   \param to : Vector of cv::Point3d converted.
-   \param cameraFrame : If true, the camera frame is considered, otherwise the
-   object frame.
+  Convert a vector of vpPoint to a vector of cv::Point3d.
+  \param from : Vector of vpPoint to convert.
+  \param to : Vector of cv::Point3d converted.
+  \param cameraFrame : If true, the camera frame is considered, otherwise the
+  object frame.
  */
 void vpConvert::convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3d> &to, bool cameraFrame)
 {

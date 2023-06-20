@@ -185,7 +185,7 @@ int main()
   vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d;
 #endif
   d.init(I, 0, 0, "Paint");

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Example of model based tracking.
  *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example mbtEdgeTracking.cpp
@@ -119,7 +114,7 @@ OPTIONS:                                               \n\
 \n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
-     This base name is also used for the optionnal picture specifying where to \n\
+     This base name is also used for the Optional picture specifying where to \n\
      click (a .ppm picture).\n\
 \n\
   -t \n\
@@ -129,8 +124,8 @@ OPTIONS:                                               \n\
      Turn off the display.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -o\n\
      Use Ogre3D for visibility tests.\n\
@@ -366,15 +361,15 @@ int main(int argc, const char **argv)
     reader.acquire(I);
 
 // initialise a  display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
 #else
     opt_display = false;
@@ -458,7 +453,7 @@ int main(int argc, const char **argv)
     //   - a ./cube/cube.init file that defines the 3d coordinates (in meter,
     //   in the object basis) of the points used for the initialisation
     //   - a ./cube/cube.ppm file to display where the user have to click
-    //   (optionnal, set by the third parameter)
+    //   (Optional, set by the third parameter)
     if (opt_display && opt_click_allowed) {
       tracker.initClick(I, initFile, true);
       tracker.getPose(cMo);

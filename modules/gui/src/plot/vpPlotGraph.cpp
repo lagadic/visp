@@ -295,7 +295,7 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
       std::stringstream valeur;
       valeur.precision(3);
       valeur << ttemp;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       vpDisplay::displayText(I, vpImagePoint(yorg + 3 * epsi, x), valeur.str(), vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
       vpDisplay::displayText(I, vpImagePoint(yorg + epsi, x), valeur.str(), vpColor::black);
@@ -306,7 +306,7 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
     std::stringstream ss;
     ss << "x10e";
     ss << -power;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 6 * epsj), ss.str(),
                            vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
@@ -333,7 +333,7 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
     std::stringstream valeur;
     valeur.precision(3);
     valeur << ttemp;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplay::displayText(I, vpImagePoint(y + epsi, topLeft.get_j() + epsj), valeur.str(), vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
     vpDisplay::displayText(I, vpImagePoint(y - epsi, topLeft.get_j() + epsj), valeur.str(), vpColor::black);
@@ -343,7 +343,7 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
     std::stringstream ss;
     ss << "x10e";
     ss << -power;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), ss.str(),
                            vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
@@ -378,7 +378,7 @@ void vpPlotGraph::displayUnit(vpImage<unsigned char> &
 {
   unsigned int offsetx = vpMath::minimum<unsigned int>((unsigned int)unitx.size(), dWidth);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplay::displayText(I, vpImagePoint(yorg - 2 * epsi, dTopLeft.get_j() + dWidth - offsetx * epsj), unitx.c_str(),
                          vpColor::black);
   vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i(), dTopLeft.get_j() + epsj), unity.c_str(), vpColor::black);

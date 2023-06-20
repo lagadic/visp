@@ -218,13 +218,13 @@ int main(int argc, char **argv)
       vpImage<unsigned char> I;
       drone.getGrayscaleImage(I);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
       vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
       vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV display;
 #endif
       int orig_displayX = 100;

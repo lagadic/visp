@@ -26,8 +26,8 @@
  */
 int main(int argc, const char *argv[])
 {
-#if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) &&                                            \
-     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
+#if ((defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&                                            \
+     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_GTK)))
   std::string opt_videoname = "video-recorded.mpg";
   int opt_device = 0;
 
@@ -58,7 +58,7 @@ int main(int argc, const char *argv[])
     g.setScale(1); // Acquire full resolution images
     g.open(I);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -75,7 +75,7 @@ int main(int argc, const char *argv[])
     vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d;
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d;
@@ -83,10 +83,12 @@ int main(int argc, const char *argv[])
     d.init(I, 0, 0, "Camera view");
     vpVideoWriter writer;
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(HAVE_OPENCV_VIDEOIO)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     writer.setCodec(cv::VideoWriter::fourcc('P', 'I', 'M', '1')); // MPEG-1 codec
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
     writer.setCodec(CV_FOURCC('P', 'I', 'M', '1'));
+#endif
 #endif
     writer.setFileName(opt_videoname);
     writer.open(I);
@@ -95,7 +97,7 @@ int main(int argc, const char *argv[])
     for (;;) {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif

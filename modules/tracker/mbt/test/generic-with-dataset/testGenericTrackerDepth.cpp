@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Regression test for depth MBT.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testGenericTrackerDepth.cpp
@@ -238,15 +238,15 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
                 "Template function supports only unsigned char and vpRGBa images!");
 #endif
   // Initialise a  display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display1, display2;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display1, display2;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   vpDisplayD3D display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK display1, display2;
 #else
   opt_display = false;
@@ -272,7 +272,7 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
 
     tracker.setDepthDenseSamplingStep(4, 4);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     tracker.setKltMaskBorder(5);
 #endif
 

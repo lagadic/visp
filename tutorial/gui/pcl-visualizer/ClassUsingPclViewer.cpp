@@ -1,7 +1,7 @@
 //! \example ClassUsingPclViewer.cpp
 #include "ClassUsingPclViewer.h"
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 // PCL
 #include <pcl/io/pcd_io.h>
 
@@ -35,9 +35,9 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 
 //! [Constructor]
 ClassUsingPclViewer::ClassUsingPclViewer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
-  : m_t(0.1,0.1,0.1)
-  , m_R(M_PI_4,M_PI_4,M_PI_4)
-  , m_cMo(m_t,m_R)
+  : m_t(0.1, 0.1, 0.1)
+  , m_R(M_PI_4, M_PI_4, M_PI_4)
+  , m_cMo(m_t, m_R)
   , m_minX(xlimits.first)
   , m_maxX(xlimits.second)
   , m_n(nbPoints.first)
@@ -62,8 +62,8 @@ std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPo
   std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> result;
 
   // Create control points
-  vpPclViewer::pclPointCloudPointXYZRGBPtr unrotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n,m_m));
-  vpPclViewer::pclPointCloudPointXYZRGBPtr   rotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n,m_m));
+  vpPclViewer::pclPointCloudPointXYZRGBPtr unrotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n, m_m));
+  vpPclViewer::pclPointCloudPointXYZRGBPtr   rotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n, m_m));
 
   // Initializing confindence weights
   confidenceWeights.resize(m_m * m_n);
@@ -124,7 +124,7 @@ std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPo
 }
 //! [Surface generator]
 
-void ClassUsingPclViewer::blockingMode(const double &addedNoise, const unsigned int& order)
+void ClassUsingPclViewer::blockingMode(const double &addedNoise, const unsigned int &order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
@@ -149,11 +149,11 @@ void ClassUsingPclViewer::blockingMode(const double &addedNoise, const unsigned 
   m_visualizer.display();
   //! [Displaying point clouds blocking mode]
 
-  (void) id_ctrlPts;
-  (void) id_robust;
+  (void)id_ctrlPts;
+  (void)id_robust;
 }
 
-void ClassUsingPclViewer::threadedMode(const double &addedNoise, const unsigned int& order)
+void ClassUsingPclViewer::threadedMode(const double &addedNoise, const unsigned int &order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
@@ -178,9 +178,9 @@ void ClassUsingPclViewer::threadedMode(const double &addedNoise, const unsigned 
   vpKeyboard keyboard;
   bool wantToStop = false;
   double t;
-  
+
   std::cout << "Press any key in the console to stop the program." << std::endl;
-  while(!wantToStop){
+  while (!wantToStop) {
     t = vpTime::measureTimeMs();
     grids = generateControlPoints(addedNoise, order, confWeights);
 

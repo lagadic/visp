@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * Detect faces.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
+#if defined(HAVE_OPENCV_OBJDETECT)
 
 #include <algorithm>
 
@@ -65,21 +62,21 @@ void vpDetectorFace::setCascadeClassifierFile(const std::string &filename)
 }
 
 /*!
-   Allows to detect a face in the image. When more than one face is detected,
-   faces are sorted from largest to smallest.
+  Allows to detect a face in the image. When more than one face is detected,
+  faces are sorted from largest to smallest.
 
-   \param I : Input image to process. This ViSP image is converted internally
-   in an OpenCV cv::Mat image. If you original image is an gray level OpenCV
-   image, we suggest rather the use of detect(const cv::Mat &). \return true
-   if one or more faces are found, false otherwise.
+  \param I : Input image to process. This ViSP image is converted internally
+  in an OpenCV cv::Mat image. If you original image is an gray level OpenCV
+  image, we suggest rather the use of detect(const cv::Mat &). \return true
+  if one or more faces are found, false otherwise.
 
-   The number of detected faces is returned using getNbObjects().
-   If a face is found the functions getBBox(), getCog() return some
-   information about the location of the face.
+  The number of detected faces is returned using getNbObjects().
+  If a face is found the functions getBBox(), getCog() return some
+  information about the location of the face.
 
-   The largest face is always available using getBBox(0) or getCog(0).
+  The largest face is always available using getBBox(0) or getCog(0).
 
-   \sa detect(const cv::Mat &)
+  \sa detect(const cv::Mat &)
  */
 bool vpDetectorFace::detect(const vpImage<unsigned char> &I)
 {
@@ -88,17 +85,17 @@ bool vpDetectorFace::detect(const vpImage<unsigned char> &I)
   return detect(m_frame_gray);
 }
 /*!
-   Allows to detect a face in the image. When more than one face is detected,
-   faces are sorted from largest to smallest.
+  Allows to detect a face in the image. When more than one face is detected,
+  faces are sorted from largest to smallest.
 
-   \param frame_gray : Input gray level image to process.
-   \return true if one or more faces are found, false otherwise.
+  \param frame_gray : Input gray level image to process.
+  \return true if one or more faces are found, false otherwise.
 
-   The number of detected faces is returned using getNbObjects().
-   If a face is found the functions getBBox(), getCog() return some
-   information about the location of the face.
+  The number of detected faces is returned using getNbObjects().
+  If a face is found the functions getBBox(), getCog() return some
+  information about the location of the face.
 
-   The largest face is always available using getBBox(0) or getCog(0).
+  The largest face is always available using getBBox(0) or getCog(0).
  */
 bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 {

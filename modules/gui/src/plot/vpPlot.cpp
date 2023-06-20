@@ -101,15 +101,15 @@ void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int widt
 {
   I.init(height, width, 255);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   display = new vpDisplayGDI;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   display = new vpDisplayOpenCV;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   display = new vpDisplayGTK;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   display = new vpDisplayD3D;
 #endif
 

@@ -206,7 +206,7 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
   return density_gradient;
 }
 
-// Epanechnikov_kernel for an d dimensional Euclidian space R^d
+// Epanechnikov_kernel for an d dimensional Euclidean space R^d
 double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
 {
 
@@ -234,7 +234,7 @@ double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
     return 0;
 }
 
-// Epanechnikov_kernel for an d dimensional Euclidian space R^d
+// Epanechnikov_kernel for an d dimensional Euclidean space R^d
 double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
 {
 

@@ -287,7 +287,7 @@ void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py
   Initialization with specific parameters using Kannala-Brandt distortion model
   \param cam_px,cam_py : The ratio between the focal length and the size of a pixel.
   \param cam_u0,cam_v0 : Principal points coordinates in pixels.
-  \param coefficients  : Distorsion coefficients.
+  \param coefficients  : Distortion coefficients.
 */
 void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, double cam_py, double cam_u0, double cam_v0,
                                                              const std::vector<double> &coefficients)

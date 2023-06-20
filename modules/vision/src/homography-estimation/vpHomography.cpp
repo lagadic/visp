@@ -506,7 +506,7 @@ void vpHomography::setIdentity() { eye(); }
 
 /*!
   Given `iPa` a pixel with coordinates \f$(u_a,v_a)\f$ in
-  image a, and the homography `bHa` in the Euclidian space or calibrated domain that links image a and b, computes the
+  image a, and the homography `bHa` in the Euclidean space or calibrated domain that links image a and b, computes the
   coordinates of the pixel \f$(u_b,v_b)\f$ in the image b using the camera
   parameters matrix \f$\bf K\f$.
 
@@ -532,7 +532,7 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
 
 /*!
   Given `Pa` a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the
-  image plane a, and the homography `bHa` in the Euclidian space that links image a and b, computes
+  image plane a, and the homography `bHa` in the Euclidean space that links image a and b, computes
   the normalized coordinates of the point \f$(x_b,y_b,1)\f$ in the image plane
   b.
 
@@ -769,7 +769,7 @@ vpMatrix vpHomography::convert() const
  * Transform an homography from pixel space to calibrated domain.
  *
  * Given homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space,
- * compute the homography matrix \f$\bf H\f$ in the Euclidian space or calibrated domain using:
+ * compute the homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain using:
  * \f[ {\bf H} = {\bf K}^{-1} {\bf G} {\bf K} \f]
  * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
  * \f[{\bf K} =
@@ -779,7 +779,7 @@ vpMatrix vpHomography::convert() const
  * 0   & 0   & 1
  * \end{array}\right]
  * \f]
- * \return The corresponding homography matrix \f$\bf H\f$ in the Euclidian space or calibrated domain.
+ * \return The corresponding homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain.
  *
  * \sa homography2collineation()
  */
@@ -824,7 +824,7 @@ vpHomography vpHomography::collineation2homography(const vpCameraParameters &cam
 /*!
  * Transform an homography from calibrated domain to pixel space.
  *
- * Given homography \f$\bf H\f$ in the Euclidian space or in the calibrated domain,
+ * Given homography \f$\bf H\f$ in the Euclidean space or in the calibrated domain,
  * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
  * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
  * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as

@@ -118,9 +118,9 @@ void *laser_display_and_save_loop(void *)
 
   vpDisplay *display = NULL;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   display = new vpDisplayX;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   display = new vpDisplayGTK;
 #endif
   display->init(map, 10, 10, "Laser scan");
@@ -252,9 +252,9 @@ void *camera_acq_and_display_loop(void *)
 
     vpDisplay *display = NULL;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     display = new vpDisplayGTK;
 #endif
     display->init(Q, 320, 10, "Camera");

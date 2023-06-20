@@ -6,7 +6,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_OPENCV
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO) && defined(HAVE_OPENCV_VIDEOIO)
   try {
     vpVideoReader reader;
     reader.setFileName("video-postcard.mp4");
@@ -14,11 +14,8 @@ int main()
     vpImage<unsigned char> I;
     reader.acquire(I);
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    IplImage *cvI = NULL;
-#else
     cv::Mat cvI;
-#endif
+
     vpImageConvert::convert(I, cvI);
 
     // Display initialisation
@@ -51,7 +48,7 @@ int main()
       // Restart the initialization to detect new keypoints
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+
         // Save of previous features
         std::vector<cv::Point2f> prev_features = tracker.getFeatures();
 
@@ -80,51 +77,6 @@ int main()
           // std::endl;
           tracker.addFeature(prev_features[i]);
         }
-#else
-        // Save of previous features
-        int prev_nfeatures = tracker.getNbFeatures();
-        float x, y;
-        long id;
-        int j = 0;
-
-        CvPoint2D32f *prev_features = (CvPoint2D32f *)cvAlloc(prev_nfeatures * sizeof(CvPoint2D32f));
-
-        for (int i = 0; i < prev_nfeatures; i++) {
-          tracker.getFeature(i, id, x, y);
-          prev_features[i].x = x;
-          prev_features[i].y = y;
-          // printf("prev feature %d: id %d coord: %g %g\n", i, id, x, y);
-        }
-
-        // Start a new feature detection
-        tracker.initTracking(cvI);
-        std::cout << "Detection of " << tracker.getNbFeatures() << " new features" << std::endl;
-
-        // Add previous features if they are not to close to detected one
-        double distance, minDistance_ = tracker.getMinDistance();
-        for (int i = tracker.getNbFeatures(); j < prev_nfeatures && i < tracker.getMaxFeatures(); j++) {
-          // Test if a previous feature is not redundant with new the one that
-          // are newly detected
-          bool is_redundant = false;
-          for (int k = 0; k < tracker.getNbFeatures(); k++) {
-            tracker.getFeature(k, id, x, y);
-            // printf("curr feature %d: id %d coord: %g %g\n", k, id, x, y);
-            distance = sqrt(vpMath::sqr(x - prev_features[j].x) + vpMath::sqr(y - prev_features[j].y));
-            if (distance < minDistance_) {
-              is_redundant = true;
-              break;
-            }
-          }
-          if (is_redundant) {
-            continue;
-          }
-          // std::cout << "Add previous feature with index " << i <<
-          // std::endl;
-          tracker.addFeature(i, prev_features[j].x, prev_features[j].y);
-          i++;
-        }
-        cvFree(&prev_features);
-#endif
       }
       // Track the features
       tracker.track(cvI);
@@ -137,10 +89,6 @@ int main()
     }
 
     vpDisplay::getClick(I);
-
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    cvReleaseImage(&cvI);
-#endif
 
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

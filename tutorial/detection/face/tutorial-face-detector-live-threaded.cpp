@@ -10,10 +10,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT) &&                                   \
-    (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
-
-#include <opencv2/highgui/highgui.hpp>
+#if defined(HAVE_OPENCV_OBJDETECT) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
@@ -32,14 +29,14 @@ vpThread::Return captureFunction(vpThread::Args args)
 {
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber cap = *(static_cast<vpV4l2Grabber *>(args));
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture cap = *((cv::VideoCapture *)args);
 #endif
 
 // If the image is larger than 640 by 480, we subsample
 #if defined(VISP_HAVE_V4L2)
   vpImage<unsigned char> frame_;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::Mat frame_;
 #endif
   bool stop_capture_ = false;
@@ -218,14 +215,14 @@ int main(int argc, const char *argv[])
     }
   }
 
-// Instanciate the capture
+// Instantiate the capture
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber cap;
   std::ostringstream device;
   device << "/dev/video" << opt_device;
   cap.setDevice(device.str());
   cap.setScale(opt_scale);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture cap;
   cap.open(opt_device);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)

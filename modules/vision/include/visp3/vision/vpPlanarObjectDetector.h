@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,27 +31,19 @@
  * Description:
  * Planar surface detection tool.
  *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef VPPLANAROBJECTDETECTOR_H_
-#define VPPLANAROBJECTDETECTOR_H_
+#ifndef _vpPlanarObjectDetector_h_
+#define _vpPlanarObjectDetector_h_
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408) && \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.4.8 and < 3.0.0
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
-#include <cv.h>
-#include <cvaux.hpp>
-#endif
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -75,7 +67,7 @@
 
   It uses the class vpFernClassifier to extract points of interest in a
   reference image. These points are recorded and a classifier is trained to
-  recognises them.
+  recognise them.
 
   In this class the points detected are assumed to belong to a planar surface.
   Therefore an homography can be computed between the reference image and the
@@ -90,8 +82,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpPlanarObjectDetector.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Surf Fern classifier only
-available since 2.1.0 int main()
+#if VISP_HAVE_OPENCV_VERSION >= 0x020408 // Surf Fern classifier only available since 2.4.8
+int main()
 {
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
@@ -99,7 +91,7 @@ available since 2.1.0 int main()
 
   //First grab the reference image Ireference
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
@@ -183,7 +175,7 @@ public:
   // creation of reference
   unsigned int buildReference(const vpImage<unsigned char> &I);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                              unsigned int width);
+    unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   // matching

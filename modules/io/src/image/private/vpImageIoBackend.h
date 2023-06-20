@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,15 @@
  * Description:
  * Backend functions implementation for image I/O operations.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpImageIoBackend.h
   \brief Backend functions implementation for image I/O operations.
 */
 
-#ifndef vpIMAGEIOBACKEND_H
-#define vpIMAGEIOBACKEND_H
+#ifndef _vpImageIoBackend_h_
+#define _vpImageIoBackend_h_
 
 #include <visp3/core/vpImage.h>
 

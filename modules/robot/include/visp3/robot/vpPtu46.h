@@ -63,7 +63,7 @@
 
   \ingroup group_robot_real_ptu
 
-  \brief Jacobian, geometric model functionnalities... for ptu46, pan, tilt
+  \brief Jacobian, geometric model functionalities... for ptu46, pan, tilt
   head from Directed Perception.
 
   See http://www.DPerception.com for more details.

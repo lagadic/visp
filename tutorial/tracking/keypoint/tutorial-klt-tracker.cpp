@@ -9,7 +9,7 @@
 int main(int argc, const char *argv[])
 {
 //! [Check 3rd party]
-#ifdef VISP_HAVE_OPENCV
+#if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   //! [Check 3rd party]
   try {
     std::string opt_videoname = "video-postcard.mp4";
@@ -42,11 +42,7 @@ int main(int argc, const char *argv[])
     //! [Acquire]
 
     //! [Convert to OpenCV image]
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    IplImage *cvI = NULL;
-#else
     cv::Mat cvI;
-#endif
     vpImageConvert::convert(I, cvI);
     //! [Convert to OpenCV image]
 
@@ -157,14 +153,7 @@ int main(int argc, const char *argv[])
 
     //! [Wait click]
     vpDisplay::getClick(I);
-//! [Wait click]
-
-//! [Release IplImage]
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    cvReleaseImage(&cvI);
-#endif
-    //! [Release IplImage]
-
+    //! [Wait click]
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

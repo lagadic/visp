@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,28 +31,23 @@
  * Description:
  * Read videos and sequences of images .
  *
- * Authors:
- * Nicolas Melchior
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpVideoReader.h
   \brief Read videos and image sequences
 */
 
-#ifndef vpVideoReader_H
-#define vpVideoReader_H
+#ifndef _vpVideoReader_h_
+#define _vpVideoReader_h_
 
 #include <string>
 
 #include <visp3/io/vpDiskGrabber.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020200
-#include "opencv2/highgui/highgui.hpp"
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020000
-#include "opencv/highgui.h"
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+#include <opencv2/videoio/videoio.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #endif
 
 /*!
@@ -173,7 +168,7 @@ class VISP_EXPORT vpVideoReader : public vpFrameGrabber
 private:
   //! To read sequences of images
   vpDiskGrabber *m_imSequence;
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   //! To read video files with OpenCV
   cv::VideoCapture m_capture;
   cv::Mat m_frame;
@@ -226,26 +221,6 @@ private:
   //! The frame step
   long m_frameStep;
   double m_frameRate;
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //    vpVideoReader(const vpVideoReader &)
-  //      : vpFrameGrabber(), m_imSequence(NULL),
-  //    #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  //        m_capture(), m_frame(),
-  //    #endif
-  //        m_formatType(FORMAT_UNKNOWN), m_initFileName(false), m_isOpen(false),
-  //        m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
-  //        m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false)
-  //    {
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!");
-  //    }
-  //    vpVideoReader &operator=(const vpVideoReader &){
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!"); return *this;
-  //    }
-  //#endif
 
 public:
   vpVideoReader();
@@ -344,7 +319,7 @@ public:
     By default the first frame index is set to 0.
 
     This method is useful if you use the class like a frame grabber (ie with
-    theacquire method).
+    the acquire method).
   */
   inline void resetFrameCounter() { m_frameCount = m_firstFrame; }
   void setFileName(const std::string &filename);

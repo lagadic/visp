@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * Various image tools, convolution, ...
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpImageFilter_H
-#define vpImageFilter_H
+#ifndef _vpImageFilter_h_
+#define _vpImageFilter_h_
 
 /*!
   \file vpImageFilter.h
@@ -45,16 +42,21 @@
 
 */
 
+#include <fstream>
+#include <iostream>
+#include <math.h>
+#include <string.h>
+
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRGBa.h>
 
-#include <fstream>
-#include <iostream>
-#include <math.h>
-#include <string.h>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
+#endif
 
 /*!
   \class vpImageFilter
@@ -67,7 +69,7 @@
 class VISP_EXPORT vpImageFilter
 {
 public:
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
                     double thresholdCanny, unsigned int apertureSobel);
 #endif

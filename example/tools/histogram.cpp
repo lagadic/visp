@@ -79,7 +79,7 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
-features (line, circle, caracters) in overlay and finaly write \n\
+features (line, circle, characters) in overlay and finally write \n\
 the image and the overlayed features in an image on the disk.\n\
 \n\
 SYNOPSIS\n\

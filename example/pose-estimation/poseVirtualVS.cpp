@@ -140,8 +140,8 @@ OPTIONS:                                               Default\n\
      Step between two images.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -358,13 +358,13 @@ int main(int argc, const char **argv)
 // We open a window using either the X11 or GTK or GDI window manager
 // it will be located in 100,100 and titled "tracking using vpDot"
 // its size is automatically defined by the image (I) size
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #endif
     if (opt_display) {
@@ -396,7 +396,7 @@ int main(int argc, const char **argv)
         // track the dot and returns its coordinates in the image
         // results are given in float since many many are usually considered
         //
-        // an expcetion is thrown by the track method if
+        // an exception is thrown by the track method if
         //  - dot is lost
         //  - the number of pixel is too small
         //  - too many pixels are detected (this is usual when a "big"

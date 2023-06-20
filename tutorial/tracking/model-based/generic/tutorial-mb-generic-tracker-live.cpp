@@ -29,9 +29,9 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) &&                                                                                       \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                             \
-     (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+     defined(HAVE_OPENCV_HIGHGUI) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
 
   try {
     std::string opt_modelname = "model/teabox/teabox.cao";
@@ -177,8 +177,7 @@ int main(int argc, char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
@@ -196,7 +195,7 @@ int main(int argc, char **argv)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
     display = new vpDisplayGDI;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     display = new vpDisplayOpenCV;
 #endif
     display->init(I, 100, 100, "Model-based tracker");
@@ -205,7 +204,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -223,7 +222,7 @@ int main(int argc, char **argv)
     vpMbGenericTracker tracker;
     if (opt_tracker == 0)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
-#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     else if (opt_tracker == 1)
       tracker.setTrackerType(vpMbGenericTracker::KLT_TRACKER);
     else
@@ -358,7 +357,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(VISP_HAVE_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif

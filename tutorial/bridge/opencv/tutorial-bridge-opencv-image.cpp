@@ -4,14 +4,13 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_IMGCODECS)
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-#endif
+#include <opencv2/imgcodecs/imgcodecs.hpp>
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
   // From ViSP to OpenCV conversion
   {
     //! [Load ViSP color image]
@@ -83,5 +82,11 @@ int main()
     vpImageIo::write(Igrey, "monkey-vp-grey.jpeg");
     //! [Save ViSP grey image]
   }
-#endif
 }
+#else
+int main()
+{
+  std::cout << "This tutorial required OpenCV imgproc and imgcodecs modules." << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif

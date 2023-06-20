@@ -116,7 +116,7 @@ int main()
     vpDisplayX displayInt(Iint, 700, 0, "Internal view");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI displayInt(Iint, 700, 0, "Internal view");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV displayInt(Iint, 700, 0, "Internal view");
 #else
     std::cout << "No image viewer is available..." << std::endl;

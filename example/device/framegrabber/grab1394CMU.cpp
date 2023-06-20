@@ -208,16 +208,16 @@ int main(int argc, const char **argv)
 
   std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
 
 // Creates a display
-#if defined VISP_HAVE_OPENCV
+#if defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display;
 #endif
   if (opt_display) {
-    display.init(I, 100, 100, "DirectShow Framegrabber");
+    display.init(I, 100, 100, "Current image");
   }
 #endif
 
@@ -231,7 +231,7 @@ int main(int argc, const char **argv)
       // Acquires an RGBa image
       g.acquire(I);
 
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
       if (opt_display) {
         // Displays the grabbed rgba image
         vpDisplay::display(I);

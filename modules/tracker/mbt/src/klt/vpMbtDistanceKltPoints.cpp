@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,17 +31,13 @@
  * Description:
  * Klt polygon, containing points of interest.
  *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 #include <visp3/me/vpMeTracker.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #if defined(VISP_HAVE_CLIPPER)
 #include <clipper.hpp> // clipper private library
@@ -320,7 +316,7 @@ void vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix &_cTc0,
 }
 
 /*!
-  Test whether the feature with identifier id in paramters is in the list of
+  Test whether the feature with identifier id in parameters is in the list of
   tracked features.
 
   \param _id : the id of the current feature to test
@@ -348,25 +344,16 @@ bool vpMbtDistanceKltPoints::isTrackedFeature(int _id)
   default is 255).
 
   \param mask : the mask to update (0, not in the object, _nb otherwise).
-  \param nb : Optionnal value to set to the pixels included in the face.
-  \param shiftBorder : Optionnal shift for the border in pixel (sort of
+  \param nb : Optional value to set to the pixels included in the face.
+  \param shiftBorder : Optional shift for the border in pixel (sort of
   built-in erosion) to avoid to consider pixels near the limits of the face.
 */
 void vpMbtDistanceKltPoints::updateMask(
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     cv::Mat &mask,
-#else
-    IplImage *mask,
-#endif
     unsigned char nb, unsigned int shiftBorder)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   int width = mask.cols;
   int height = mask.rows;
-#else
-  int width = mask->width;
-  int height = mask->height;
-#endif
 
   int i_min, i_max, j_min, j_max;
   std::vector<vpImagePoint> roi;
@@ -441,7 +428,6 @@ void vpMbtDistanceKltPoints::updateMask(
     j_max = width;
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   for (int i = i_min; i < i_max; i++) {
     double i_d = (double)i;
 
@@ -469,32 +455,6 @@ void vpMbtDistanceKltPoints::updateMask(
 #endif
     }
   }
-#else
-  unsigned char *ptrData = (unsigned char *)mask->imageData + i_min * mask->widthStep + j_min;
-  for (int i = i_min; i < i_max; i++) {
-    double i_d = (double)i;
-    for (int j = j_min; j < j_max; j++) {
-      double j_d = (double)j;
-      if (shiftBorder != 0) {
-        if (vpPolygon::isInside(roi, i_d, j_d) && vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d + shiftBorder_d) &&
-            vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d + shiftBorder_d) &&
-            vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d - shiftBorder_d) &&
-            vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d - shiftBorder_d)) {
-          *(ptrData++) = nb;
-        } else {
-          ptrData++;
-        }
-      } else {
-        if (vpPolygon::isInside(roi, i, j)) {
-          *(ptrData++) = nb;
-        } else {
-          ptrData++;
-        }
-      }
-    }
-    ptrData += mask->widthStep - j_max + j_min;
-  }
-#endif
 }
 
 /*!
