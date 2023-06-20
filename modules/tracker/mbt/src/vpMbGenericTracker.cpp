@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Generic model-based tracker.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/mbt/vpMbGenericTracker.h>
 
@@ -59,7 +59,7 @@ vpMbGenericTracker::vpMbGenericTracker()
   // Add default ponderation between each feature type
   m_mapOfFeatureFactors[EDGE_TRACKER] = 1.0;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
 
@@ -98,7 +98,7 @@ vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, int trackerType)
   // Add default ponderation between each feature type
   m_mapOfFeatureFactors[EDGE_TRACKER] = 1.0;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
 
@@ -138,7 +138,7 @@ vpMbGenericTracker::vpMbGenericTracker(const std::vector<int> &trackerTypes)
   // Add default ponderation between each feature type
   m_mapOfFeatureFactors[EDGE_TRACKER] = 1.0;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
 
@@ -170,7 +170,7 @@ vpMbGenericTracker::vpMbGenericTracker(const std::vector<std::string> &cameraNam
   // Add default ponderation between each feature type
   m_mapOfFeatureFactors[EDGE_TRACKER] = 1.0;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
 
@@ -325,7 +325,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
   }
 
   double factorEdge = m_mapOfFeatureFactors[EDGE_TRACKER];
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   double factorKlt = m_mapOfFeatureFactors[KLT_TRACKER];
 #endif
   double factorDepth = m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER];
@@ -348,7 +348,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
         tracker->m_cMo = m_mapOfCameraTransformationMatrix[it->first] * cMo_prev;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
         vpHomogeneousMatrix c_curr_tTc_curr0 =
           m_mapOfCameraTransformationMatrix[it->first] * cMo_prev * tracker->c0Mo.inverse();
         tracker->ctTc0 = c_curr_tTc_curr0;
@@ -418,7 +418,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
           start_index += tracker->m_error_edge.getRows();
         }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
         if (tracker->m_trackerType & KLT_TRACKER) {
           for (unsigned int i = 0; i < tracker->m_error_klt.getRows(); i++) {
             double wi = tracker->m_w_klt[i] * factorKlt;
@@ -481,7 +481,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
       m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
         it != m_mapOfTrackers.end(); ++it) {
         TrackerWrapper *tracker = it->second;
@@ -510,7 +510,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
     if (tracker->m_trackerType & EDGE_TRACKER) {
       m_nb_feat_edge += tracker->m_error_edge.size();
     }
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (tracker->m_trackerType & KLT_TRACKER) {
       m_nb_feat_klt += tracker->m_error_klt.size();
     }
@@ -578,7 +578,7 @@ void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu(
     TrackerWrapper *tracker = it->second;
 
     tracker->m_cMo = m_mapOfCameraTransformationMatrix[it->first] * m_cMo;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpHomogeneousMatrix c_curr_tTc_curr0 =
       m_mapOfCameraTransformationMatrix[it->first] * m_cMo * tracker->c0Mo.inverse();
     tracker->ctTc0 = c_curr_tTc_curr0;
@@ -951,7 +951,7 @@ vpMbHiddenFaces<vpMbtPolygon> &vpMbGenericTracker::getFaces(const std::string &c
   return faces;
 }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 /*!
   Return the address of the circle feature list for the reference camera.
 */
@@ -1088,7 +1088,7 @@ void vpMbGenericTracker::getFeaturesForDisplay(std::map<std::string, std::vector
 */
 double vpMbGenericTracker::getGoodMovingEdgesRatioThreshold() const { return m_percentageGdPt; }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 /*!
   Get the current list of KLT points for the reference camera.
 
@@ -1231,7 +1231,6 @@ void vpMbGenericTracker::getKltOpencv(std::map<std::string, vpKltOpencv> &mapOfK
   }
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 /*!
   Get the current list of KLT points for the reference camera.
 
@@ -1250,7 +1249,6 @@ std::vector<cv::Point2f> vpMbGenericTracker::getKltPoints() const
 
   return std::vector<cv::Point2f>();
 }
-#endif
 
 /*!
   Get the threshold for the acceptation of a point.
@@ -1867,7 +1865,7 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
   containing the coordinates of at least 4 3D points the user has to click in
   the image acquired by the second camera. This file should have .init
   extension.
-  \param displayHelp : Optionnal display of an image that should
+  \param displayHelp : Optional display of an image that should
   have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
   visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
@@ -1937,7 +1935,7 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
   containing the coordinates of at least 4 3D points the user has to click in
   the image acquired by the second camera. This file should have .init
   extension.
-  \param displayHelp : Optionnal display of an image that should
+  \param displayHelp : Optional display of an image that should
   have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
   visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
@@ -2004,7 +2002,7 @@ void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImag
   \param mapOfImages : Map of grayscale images.
   \param mapOfInitFiles : Map of files containing the points where to click
   for each camera.
-  \param displayHelp : Optionnal display of an image that should
+  \param displayHelp : Optional display of an image that should
   have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
   visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
@@ -2109,7 +2107,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
   \param mapOfColorImages : Map of color images.
   \param mapOfInitFiles : Map of files containing the points where to click
   for each camera.
-  \param displayHelp : Optionnal display of an image that should
+  \param displayHelp : Optional display of an image that should
   have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
   visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
@@ -3627,7 +3625,7 @@ void vpMbGenericTracker::resetTracker()
   // Reset default ponderation between each feature type
   m_mapOfFeatureFactors[EDGE_TRACKER] = 1.0;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   m_mapOfFeatureFactors[KLT_TRACKER] = 1.0;
 #endif
 
@@ -4364,7 +4362,7 @@ void vpMbGenericTracker::setNbRayCastingAttemptsForVisibility(const unsigned int
 }
 #endif
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 /*!
   Set the new value of the klt tracker.
 
@@ -4461,7 +4459,7 @@ void vpMbGenericTracker::setLod(bool useLod, const std::string &name)
   }
 }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 /*!
   Set the erosion of the mask used on the Model faces.
 
@@ -5244,7 +5242,7 @@ void vpMbGenericTracker::setUseEdgeTracking(const std::string &name, const bool 
   }
 }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 /*!
   Set if the polygon that has the given name has to be considered during
   the tracking phase.
@@ -5439,7 +5437,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     TrackerWrapper *tracker = it->second;
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       KLT_TRACKER |
 #endif
       DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -5447,7 +5445,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5484,7 +5482,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     tracker->postTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
 
     if (displayFeatures) {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (tracker->m_trackerType & KLT_TRACKER) {
         tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
       }
@@ -5516,7 +5514,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     TrackerWrapper *tracker = it->second;
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       KLT_TRACKER |
 #endif
       DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -5524,7 +5522,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5532,7 +5530,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5570,7 +5568,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     tracker->postTracking(mapOfImages[it->first], mapOfPointClouds[it->first]);
 
     if (displayFeatures) {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (tracker->m_trackerType & KLT_TRACKER) {
         tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
       }
@@ -5606,7 +5604,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     TrackerWrapper *tracker = it->second;
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       KLT_TRACKER |
 #endif
       DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -5614,7 +5612,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5651,7 +5649,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
 
     if (displayFeatures) {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (tracker->m_trackerType & KLT_TRACKER) {
         tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
       }
@@ -5687,7 +5685,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     TrackerWrapper *tracker = it->second;
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       KLT_TRACKER |
 #endif
       DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -5695,7 +5693,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5703,7 +5701,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       | KLT_TRACKER
 #endif
       ) &&
@@ -5741,7 +5739,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
     tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
 
     if (displayFeatures) {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (tracker->m_trackerType & KLT_TRACKER) {
         tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
       }
@@ -5774,7 +5772,7 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(int trackerType)
   : m_error(), m_L(), m_trackerType(trackerType), m_w(), m_weightedError()
 {
   if ((m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     KLT_TRACKER |
 #endif
     DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -5807,7 +5805,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
   unsigned int iter = 0;
 
   double factorEdge = 1.0;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   double factorKlt = 1.0;
 #endif
   double factorDepth = 1.0;
@@ -5819,7 +5817,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 
   double mu = m_initialMu;
   vpHomogeneousMatrix cMo_prev;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   vpHomogeneousMatrix ctTc0_Prev; // Only for KLT
 #endif
   bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
@@ -5831,7 +5829,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
   vpMatrix L_true, LVJ_true;
 
   unsigned int nb_edge_features = m_error_edge.getRows();
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   unsigned int nb_klt_features = m_error_klt.getRows();
 #endif
   unsigned int nb_depth_features = m_error_depthNormal.getRows();
@@ -5843,7 +5841,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
     bool reStartFromLastIncrement = false;
     computeVVSCheckLevenbergMarquardt(iter, m_error, error_prev, cMo_prev, mu, reStartFromLastIncrement);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (reStartFromLastIncrement) {
       if (m_trackerType & KLT_TRACKER) {
         ctTc0 = ctTc0_Prev;
@@ -5910,7 +5908,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
         start_index += nb_edge_features;
       }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (m_trackerType & KLT_TRACKER) {
         for (unsigned int i = 0; i < nb_klt_features; i++) {
           double wi = m_w_klt[i] * factorKlt;
@@ -5966,7 +5964,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
       computeVVSPoseEstimation(isoJoIdentity, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
 
       cMo_prev = m_cMo;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (m_trackerType & KLT_TRACKER) {
         ctTc0_Prev = ctTc0;
       }
@@ -5974,7 +5972,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 
       m_cMo = vpExponentialMap::direct(v).inverse() * m_cMo;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (m_trackerType & KLT_TRACKER) {
         ctTc0 = vpExponentialMap::direct(v).inverse() * ctTc0;
       }
@@ -6017,7 +6015,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInit(const vpImage<unsigned c
     m_w_edge.clear();
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     vpMbKltTracker::computeVVSInit();
     nbFeatures += m_error_klt.getRows();
@@ -6074,7 +6072,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(co
     vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu(*ptr_I);
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     vpMbKltTracker::computeVVSInteractionMatrixAndResidu();
   }
@@ -6096,7 +6094,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSInteractionMatrixAndResidu(co
     start_index += m_error_edge.getRows();
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     m_L.insert(m_L_klt, start_index, 0);
     m_error.insert(start_index, m_error_klt);
@@ -6131,7 +6129,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSWeights()
     start_index += m_w_edge.getRows();
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     vpMbTracker::computeVVSWeights(m_robust_klt, m_error_klt, m_w_klt);
     m_w.insert(start_index, m_w_klt);
@@ -6231,7 +6229,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
 
 #ifdef VISP_HAVE_OGRE
   if ((m_trackerType & EDGE_TRACKER)
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     || (m_trackerType & KLT_TRACKER)
 #endif
     ) {
@@ -6315,7 +6313,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const
 
 #ifdef VISP_HAVE_OGRE
   if ((m_trackerType & EDGE_TRACKER)
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     || (m_trackerType & KLT_TRACKER)
 #endif
     ) {
@@ -6334,7 +6332,7 @@ std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getFeature
     features.insert(features.end(), m_featuresToBeDisplayedEdge.begin(), m_featuresToBeDisplayedEdge.end());
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     // m_featuresToBeDisplayedKlt updated after postTracking()
     features.insert(features.end(), m_featuresToBeDisplayedKlt.begin(), m_featuresToBeDisplayedKlt.end());
@@ -6362,7 +6360,7 @@ std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelFo
   if (m_trackerType == EDGE_TRACKER) {
     models = vpMbEdgeTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
   }
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   else if (m_trackerType == KLT_TRACKER) {
     models = vpMbKltTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
   }
@@ -6429,7 +6427,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
     faces.computeScanLineRender(m_cam, I.getWidth(), I.getHeight());
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::reinit(I);
 #endif
@@ -6456,7 +6454,7 @@ void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpP
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initCircle(p1, p2, p3, radius, idFace, name);
 #endif
@@ -6468,7 +6466,7 @@ void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const v
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initCylinder(p1, p2, radius, idFace, name);
 #endif
@@ -6479,7 +6477,7 @@ void vpMbGenericTracker::TrackerWrapper::initFaceFromCorners(vpMbtPolygon &polyg
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initFaceFromCorners(polygon);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initFaceFromCorners(polygon);
 #endif
@@ -6496,7 +6494,7 @@ void vpMbGenericTracker::TrackerWrapper::initFaceFromLines(vpMbtPolygon &polygon
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initFaceFromLines(polygon);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER)
     vpMbKltTracker::initFaceFromLines(polygon);
 #endif
@@ -6538,7 +6536,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
   xmlp.setKltHarrisParam(0.01);
   xmlp.setKltBlockSize(3);
   xmlp.setKltPyramidLevels(3);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   xmlp.setKltMaskBorder(maskBorder);
 #endif
 
@@ -6562,7 +6560,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     std::vector<std::string> tracker_names;
     if (m_trackerType & EDGE_TRACKER)
       tracker_names.push_back("Edge");
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (m_trackerType & KLT_TRACKER)
       tracker_names.push_back("Klt");
 #endif
@@ -6623,7 +6621,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
   vpMbEdgeTracker::setMovingEdge(meParser);
 
   // KLT
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   tracker.setMaxFeatures((int)xmlp.getKltMaxFeatures());
   tracker.setWindowSize((int)xmlp.getKltWindowSize());
   tracker.setQuality(xmlp.getKltQuality());
@@ -6652,7 +6650,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned char> *const ptr_I,
   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   // KLT
   if (m_trackerType & KLT_TRACKER) {
     if (vpMbKltTracker::postTracking(*ptr_I, m_w_klt)) {
@@ -6707,7 +6705,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
     }
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     try {
       vpMbKltTracker::preTracking(*ptr_I);
@@ -6745,7 +6743,7 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   const unsigned int pointcloud_width,
   const unsigned int pointcloud_height)
 {
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   // KLT
   if (m_trackerType & KLT_TRACKER) {
     if (vpMbKltTracker::postTracking(*ptr_I, m_w_klt)) {
@@ -6802,7 +6800,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
     }
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     try {
       vpMbKltTracker::preTracking(*ptr_I);
@@ -6883,14 +6881,7 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   nbvisiblepolygone = 0;
 
   // KLT
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (cur != NULL) {
-    cvReleaseImage(&cur);
-    cur = NULL;
-  }
-#endif
-
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
@@ -6967,7 +6958,7 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<vpRGBa> &I_co
 void vpMbGenericTracker::TrackerWrapper::resetTracker()
 {
   vpMbEdgeTracker::resetTracker();
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   vpMbKltTracker::resetTracker();
 #endif
   vpMbDepthNormalTracker::resetTracker();
@@ -6979,7 +6970,7 @@ void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParam
   m_cam = cam;
 
   vpMbEdgeTracker::setCameraParameters(m_cam);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   vpMbKltTracker::setCameraParameters(m_cam);
 #endif
   vpMbDepthNormalTracker::setCameraParameters(m_cam);
@@ -7014,7 +7005,7 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
     vpImageConvert::convert(*I_color, m_I);
   }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (m_trackerType & KLT_TRACKER) {
     performKltSetPose = true;
 
@@ -7088,7 +7079,7 @@ void vpMbGenericTracker::TrackerWrapper::setProjectionErrorComputation(const boo
 void vpMbGenericTracker::TrackerWrapper::setScanLineVisibilityTest(const bool &v)
 {
   vpMbEdgeTracker::setScanLineVisibilityTest(v);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   vpMbKltTracker::setScanLineVisibilityTest(v);
 #endif
   vpMbDepthNormalTracker::setScanLineVisibilityTest(v);
@@ -7098,7 +7089,7 @@ void vpMbGenericTracker::TrackerWrapper::setScanLineVisibilityTest(const bool &v
 void vpMbGenericTracker::TrackerWrapper::setTrackerType(int type)
 {
   if ((type & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     KLT_TRACKER |
 #endif
     DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -7122,7 +7113,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
 )
 {
   if ((m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     | KLT_TRACKER
 #endif
     )) == 0) {
@@ -7145,7 +7136,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   if ((m_trackerType & (EDGE_TRACKER |
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     KLT_TRACKER |
 #endif
     DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
@@ -7154,7 +7145,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
   }
 
   if (m_trackerType & (EDGE_TRACKER
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     | KLT_TRACKER
 #endif
     ) &&

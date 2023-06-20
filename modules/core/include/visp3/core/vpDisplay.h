@@ -64,7 +64,7 @@
 
   \ingroup group_core_gui
 
-  \brief Class that defines generic functionnalities for display.
+  \brief Class that defines generic functionalities for display.
 
   The \ref tutorial-getting-started is a good starting point to know
   how to use this class to display an image in a window.
@@ -108,7 +108,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -644,7 +644,7 @@ public:
       d = new vpDisplayGDI;
     #elif defined(VISP_HAVE_D3D9)
       d = new vpDisplayD3D;
-    #elif defined(VISP_HAVE_OPENCV)
+    #elif defined(HAVE_OPENCV_HIGHGUI)
       d = new vpDisplayOpenCV;
     #else
       std::cout << "Sorry, no video device is available" << std::endl;

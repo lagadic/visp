@@ -33,7 +33,7 @@ void usage(const char *argv[], int error)
             << std::endl
             << "  --no-display" << std::endl
             << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)."
+            << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
             << std::endl
             << std::endl
             << "  --help, -h" << std::endl
@@ -109,7 +109,7 @@ int main(int argc, const char *argv[])
     std::cout << "Record name: " << opt_seqname << std::endl;
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
@@ -173,11 +173,11 @@ int main(int argc, const char *argv[])
 #else
   (void)argc;
   (void)argv;
-#if (VISP_HAVE_OPENCV_VERSION < 0x020100)
-  std::cout << "Install OpenCV, configure and build ViSP again to use this example" << std::endl;
+#if !defined(HAVE_OPENCV_VIDEOIO)
+  std::cout << "Install OpenCV videoio module, configure and build ViSP again to use this example" << std::endl;
 #endif
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This turorial should be built with c++11 support" << std::endl;
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

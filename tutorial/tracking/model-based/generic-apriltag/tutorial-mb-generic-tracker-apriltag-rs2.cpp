@@ -278,7 +278,7 @@ int main(int argc, const char **argv)
       d_gray = new vpDisplayGDI(I_gray);
       if (opt_use_depth)
         d_depth = new vpDisplayGDI(I_depth);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       d_gray = new vpDisplayOpenCV(I_gray);
       if (opt_use_depth)
         d_depth = new vpDisplayOpenCV(I_depth);
@@ -292,7 +292,7 @@ int main(int argc, const char **argv)
 
     // Prepare MBT
     std::vector<int> trackerTypes;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture)
       trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
@@ -316,7 +316,7 @@ int main(int argc, const char **argv)
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
 
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);

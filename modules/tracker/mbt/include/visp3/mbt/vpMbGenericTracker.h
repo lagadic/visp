@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -202,7 +202,7 @@ public:
   enum vpTrackerType
   {
     EDGE_TRACKER = 1 << 0, /*!< Model-based tracking using moving edges features. */
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) &&  defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO))
     KLT_TRACKER = 1 << 1, /*!< Model-based tracking using KLT features. */
 #endif
     DEPTH_NORMAL_TRACKER = 1 << 2, /*!< Model-based tracking using depth normal features. */
@@ -261,7 +261,7 @@ public:
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces();
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces(const std::string &cameraName);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   virtual std::list<vpMbtDistanceCircle *> &getFeaturesCircle();
   virtual std::list<vpMbtDistanceKltCylinder *> &getFeaturesKltCylinder();
   virtual std::list<vpMbtDistanceKltPoints *> &getFeaturesKlt();
@@ -272,7 +272,7 @@ public:
 
   virtual double getGoodMovingEdgesRatioThreshold() const;
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   virtual std::vector<vpImagePoint> getKltImagePoints() const;
   virtual std::map<int, vpImagePoint> getKltImagePointsWithId() const;
 
@@ -283,7 +283,7 @@ public:
   virtual void getKltOpencv(vpKltOpencv &klt1, vpKltOpencv &klt2) const;
   virtual void getKltOpencv(std::map<std::string, vpKltOpencv> &mapOfKlts) const;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   virtual std::vector<cv::Point2f> getKltPoints() const;
 #endif
 
@@ -512,7 +512,7 @@ public:
   virtual void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts);
 #endif
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   virtual void setKltMaskBorder(const unsigned int &e);
   virtual void setKltMaskBorder(const unsigned int &e1, const unsigned int &e2);
   virtual void setKltMaskBorder(const std::map<std::string, unsigned int> &mapOfErosions);
@@ -573,7 +573,7 @@ public:
   virtual void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
   virtual void setUseDepthNormalTracking(const std::string &name, const bool &useDepthNormalTracking);
   virtual void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 #endif
 
@@ -643,7 +643,7 @@ protected:
 
 private:
   class TrackerWrapper : public vpMbEdgeTracker,
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     public vpMbKltTracker,
 #endif
     public vpMbDepthNormalTracker,
@@ -833,7 +833,7 @@ protected:
 #define MBT_JSON_SETTINGS_VERSION "1.0"
 
 // Serialize tracker type enumeration
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
     {vpMbGenericTracker::KLT_TRACKER, "klt"},
@@ -859,7 +859,7 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
   // Common tracker attributes
   const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
     vpMbGenericTracker::EDGE_TRACKER,
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpMbGenericTracker::KLT_TRACKER,
     #endif
     vpMbGenericTracker::DEPTH_DENSE_TRACKER,
@@ -895,7 +895,7 @@ inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper 
     j["edge"] = t.me;
   }
   //KLT tracker settings
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     nlohmann::json klt = nlohmann::json {
       {"maxFeatures", t.tracker.getMaxFeatures()},
@@ -961,10 +961,10 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
   t.setTrackerType(flagsFromJSON<vpMbGenericTracker::vpTrackerType>(j.at("type")));
   //Load base settings
   if (j.contains("angleAppear")) {
-    t.setAngleAppear(vpMath::rad(j.at("angleAppear")));
+    t.setAngleAppear(vpMath::rad(static_cast<double>(j.at("angleAppear"))));
   }
   if (j.contains("angleDisappear")) {
-    t.setAngleDisappear(vpMath::rad(j.at("angleDisappear")));
+    t.setAngleDisappear(vpMath::rad(static_cast<double>(j.at("angleDisappear"))));
   }
   if (j.contains("clipping")) {
     const nlohmann::json clipping = j["clipping"];
@@ -1004,7 +1004,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
     from_json(j.at("edge"), t.me);
   }
   //KLT tracker settings
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   if (t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     const nlohmann::json klt = j.at("klt");
     auto &ktrack = t.tracker;

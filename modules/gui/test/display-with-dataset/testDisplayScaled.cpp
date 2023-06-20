@@ -78,7 +78,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
     d = new vpDisplayX;
 #endif
   } else if (display == "OpenCV") {
-#ifdef VISP_HAVE_OPENCV
+#ifdef HAVE_OPENCV_HIGHGUI
     d = new vpDisplayOpenCV;
 #endif
   } else if (display == "D3D9") {

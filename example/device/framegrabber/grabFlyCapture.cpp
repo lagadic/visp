@@ -29,14 +29,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Acquire images using OpenCV cv::VideoCapture.
+ * Acquire images using FlyCapture SDK.
  *
  *****************************************************************************/
 
 /*!
   \example grabFlyCapture.cpp
 
-  \brief Example of framegrabbing using OpenCV cv::VideoCapture class.
+  \brief Example of framegrabbing using vpFlyCaptureGrabber class.
 
 */
 
@@ -195,7 +195,7 @@ int main(int argc, const char **argv)
       display = new vpDisplayX(I);
 #elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV(I);
 #else
       std::cout << "No image viewer is available..." << std::endl;

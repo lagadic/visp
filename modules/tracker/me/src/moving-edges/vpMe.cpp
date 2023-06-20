@@ -160,7 +160,7 @@ static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, do
     /* NE TRIE PLUS LE RESULTAT ! S_relative() en tient compte
 { if(P[0].x < P[1].x) // Rend le couple de points
     { Ac=P[0];  Bc=P[1]; }  //  clippes (ordonnes selon
-else  { Ac=P[1];  Bc=P[0]; }  //  leur abscisse x)
+else  { Ac=P[1];  Bc=P[0]; }  //  leur abscise x)
     */
     {
       Ac = P[0];
@@ -206,7 +206,7 @@ static double S_relative(point P, point Q, double Xmin, double Ymin, double Xmax
 {
 
   if (Q.x < P.x)   // tri le couple de points
-    permute(P, Q); //  selon leur abscisse x
+    permute(P, Q); //  selon leur abscise x
 
   recale(P, Xmin, Ymin, Xmax, Ymax); // permet des calculs de S_relative
   recale(Q, Xmin, Ymin, Xmax, Ymax); //  moins approximatifs.

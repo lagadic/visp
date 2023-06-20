@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Read/write images.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpImageIo.cpp
@@ -118,7 +115,7 @@ std::string vpImageIo::getExtension(const std::string &filename)
 
 /*!
   Read the contents of the image filename, allocate memory for the
-  corresponding greyscale image, update its content, and return a reference to
+  corresponding grayscale image, update its content, and return a reference to
   the image.
 
   If the image has been already initialized, memory allocation is done
@@ -183,7 +180,7 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int
   }
 
   if (try_opencv_reader) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #else
     std::string message = "Cannot read file \"" + filename + "\": No backend able to support this image format";
@@ -194,7 +191,7 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int
 
 /*!
   Read the contents of the image filename, allocate memory for the
-  corresponding greyscale image, update its content, and return a reference to
+  corresponding grayscale image, update its content, and return a reference to
   the image.
 
   If the image has been already initialized, memory allocation is done
@@ -258,7 +255,7 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backen
   }
 
   if (try_opencv_reader) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #else
     std::string message = "Cannot read file \"" + filename + "\": No backend able to support this image format";
@@ -318,7 +315,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   }
 
   if (try_opencv_writer) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
 #else
     std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
@@ -378,7 +375,7 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
   }
 
   if (try_opencv_writer) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
 #else
     std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
@@ -406,13 +403,13 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
@@ -426,7 +423,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
     readJPEGLibjpeg(I, filename);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_STB_IMAGE_BACKEND) {
@@ -455,13 +452,13 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
@@ -475,7 +472,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
     readJPEGLibjpeg(I, filename);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_STB_IMAGE_BACKEND) {
@@ -504,7 +501,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
@@ -512,7 +509,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
   } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     backend = IO_SYSTEM_LIB_BACKEND;
-#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#elif defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_STB_IMAGE_BACKEND;
@@ -524,7 +521,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
     readPNGLibpng(I, filename);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_STB_IMAGE_BACKEND) {
@@ -553,13 +550,13 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_STB_IMAGE_BACKEND;
@@ -571,7 +568,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
     readPNGLibpng(I, filename);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_STB_IMAGE_BACKEND) {
@@ -596,7 +593,7 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
         "This backend cannot read file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
@@ -604,7 +601,7 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
@@ -634,7 +631,7 @@ void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int bac
         "This backend cannot read file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message =
         "OpenCV backend is not available to read file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
@@ -642,7 +639,7 @@ void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int bac
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
@@ -676,14 +673,14 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
-#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#elif defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_SIMDLIB_BACKEND;
@@ -695,7 +692,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     writeJPEGLibjpeg(I, filename, quality);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, quality);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
@@ -724,14 +721,14 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
-#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#elif defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_SIMDLIB_BACKEND;
@@ -743,7 +740,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     writeJPEGLibjpeg(I, filename, quality);
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, quality);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
@@ -771,12 +768,12 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_SIMDLIB_BACKEND;
@@ -784,7 +781,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
@@ -816,12 +813,12 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     backend = IO_OPENCV_BACKEND;
 #else
     backend = IO_SIMDLIB_BACKEND;
@@ -829,7 +826,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
@@ -858,7 +855,7 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
         "This backend cannot save file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     (void)I;
     std::string message =
         "OpenCV backend is not available to save file \"" + filename + "\": switch to the default TinyEXR backend";
@@ -867,7 +864,7 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
@@ -896,7 +893,7 @@ void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, 
         "This backend cannot save file \"" + filename + "\": switch to the default TinyEXR backend";
     backend = IO_DEFAULT_BACKEND;
   } else if (backend == IO_OPENCV_BACKEND) {
-#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
     (void)I;
     std::string message =
         "OpenCV backend is not available to save file \"" + filename + "\": switch to the default TinyEXR backend";
@@ -905,7 +902,7 @@ void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, 
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {

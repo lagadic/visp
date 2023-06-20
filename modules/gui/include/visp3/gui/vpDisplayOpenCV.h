@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,17 +31,14 @@
  * Description:
  * Image display.
  *
- * Authors:
- * Christophe Collewet
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpDisplayOpenCV_h
-#define vpDisplayOpenCV_h
+#ifndef _vpDisplayOpenCV_h_
+#define _vpDisplayOpenCV_h_
 
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_OPENCV)
+
+#if defined(HAVE_OPENCV_HIGHGUI)
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <functional>
@@ -51,14 +48,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#else
-#include <cv.h>
-#include <cxcore.h>
-#include <highgui.h>
-#endif
 
 /*!
   \file vpDisplayOpenCV.h
@@ -150,19 +141,11 @@ int main()
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
 private:
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  //! true if OpenCV display is ready to use
-  IplImage *m_background;
-  CvScalar *col;
-  CvScalar cvcolor;
-  CvFont *font;
-#else
   cv::Mat m_background;
   cv::Scalar *col;
   cv::Scalar cvcolor;
   int font;
   float fontScale;
-#endif
   static std::vector<std::string> m_listTitles;
   static unsigned int m_nbWindows;
   int fontHeight;

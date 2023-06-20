@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Regression test for MBT.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testGenericTracker.cpp
@@ -263,15 +263,15 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
                 "Template function supports only unsigned char and vpRGBa images!");
 #endif
   // Initialise a  display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display1, display2;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display1, display2;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   vpDisplayD3D display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK display1, display2;
 #else
   opt_display = false;
@@ -307,7 +307,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
     tracker.setMovingEdge(me);
 
     // Klt
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpKltOpencv klt;
     tracker.setKltMaskBorder(5);
     klt.setMaxFeatures(10000);
@@ -362,7 +362,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #ifdef VISP_HAVE_COIN3D
   map_thresh[vpMbGenericTracker::EDGE_TRACKER] =
       useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.7);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
       useScanline ? std::pair<double, double>(0.007, 1.9) : std::pair<double, double>(0.007, 1.8);
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER] =
@@ -370,7 +370,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #endif
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER] =
       useScanline ? std::pair<double, double>(0.003, 1.7) : std::pair<double, double>(0.002, 0.8);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER] =
       std::pair<double, double>(0.002, 0.3);
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER |
@@ -380,7 +380,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #else
   map_thresh[vpMbGenericTracker::EDGE_TRACKER] =
       useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.1);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
       useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER] =
@@ -388,7 +388,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #endif
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER] =
       useScanline ? std::pair<double, double>(0.002, 0.7) : std::pair<double, double>(0.001, 0.4);
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER] =
       std::pair<double, double>(0.002, 0.3);
   map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER |
@@ -674,6 +674,13 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+#if ! (defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO))
+    if (trackerType_image == 2 || trackerType_image == 3) {
+      std::cout << "Using klt tracker is not possible without OpenCV imgproc and video modules." << std::endl;
+      std::cout << "Use rather command line option -t 1 to use edges." << std::endl;
+      return EXIT_SUCCESS;
+    }
+#endif
     std::cout << "trackerType_image: " << trackerType_image << std::endl;
     std::cout << "useScanline: " << useScanline << std::endl;
     std::cout << "use_depth: " << use_depth << std::endl;

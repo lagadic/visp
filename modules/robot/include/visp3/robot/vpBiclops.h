@@ -61,7 +61,7 @@
 
   \ingroup group_robot_real_ptu
 
-  \brief Jacobian, geometric model functionnalities... for biclops, pan, tilt
+  \brief Jacobian, geometric model functionalities... for biclops, pan, tilt
   head.
 
   Two different Denavit Hartenberg representations of the robot are

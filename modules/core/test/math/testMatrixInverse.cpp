@@ -229,7 +229,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for (M = make_random_matrix(nb_rows, nb_cols); std::fabs(det = M.AtA().det()) < .01;
@@ -255,7 +255,7 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for (M = make_random_symmetric_positive_matrix(n); std::fabs(det = M.det()) < .01;
@@ -282,7 +282,7 @@ void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned in
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for (M = make_random_triangular_matrix(n); std::fabs(det = M.det()) < .01; M = make_random_triangular_matrix(n)) {
@@ -412,7 +412,7 @@ int test_inverse_qr_lapack(bool verbose, const std::vector<vpMatrix> &bench, dou
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 int test_inverse_lu_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
@@ -452,7 +452,7 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
 }
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
 // SVD is only available for these 3rd parties
 int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
@@ -532,7 +532,7 @@ int main(int argc, const char *argv[])
       of << "\"LU Eigen3\""
          << "\t";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       of << "\"LU OpenCV\""
          << "\t";
 #endif
@@ -542,7 +542,7 @@ int main(int argc, const char *argv[])
          << "\t";
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       of << "\"Cholesky OpenCV\""
          << "\t";
 #endif
@@ -552,7 +552,7 @@ int main(int argc, const char *argv[])
          << "\t";
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
       of << "\"Pseudo inverse (Lapack, Eigen3 or OpenCV)\""
          << "\t";
 #endif
@@ -567,7 +567,7 @@ int main(int argc, const char *argv[])
       create_bench_random_matrix(nb_matrices, 2, 2, verbose, bench_random_matrices_22);
       std::vector<vpMatrix> bench_random_matrices_33;
       create_bench_random_matrix(nb_matrices, 3, 3, verbose, bench_random_matrices_33);
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
       std::vector<vpMatrix> bench_random_matrices;
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
       std::vector<vpMatrix> bench_symmetric_positive_matrices;
@@ -602,7 +602,7 @@ int main(int argc, const char *argv[])
       save_time("Inverse by LU (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       ret += test_inverse_lu_opencv(verbose, bench_random_matrices, time);
       save_time("Inverse by LU (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
@@ -613,7 +613,7 @@ int main(int argc, const char *argv[])
       save_time("Inverse by Cholesly (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       ret += test_inverse_cholesky_opencv(verbose, bench_symmetric_positive_matrices, time);
       save_time("Inverse by Cholesky (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
@@ -625,7 +625,7 @@ int main(int argc, const char *argv[])
 #endif
 
       // Pseudo-inverse with SVD
-#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
       save_time("Pseudo inverse (Lapack, Eigen3, OpenCV): ", verbose, use_plot_file, of, time);
 #endif

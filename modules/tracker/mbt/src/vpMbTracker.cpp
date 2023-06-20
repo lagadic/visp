@@ -374,11 +374,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
         if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
           d_help = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
           d_help = new vpDisplayGDI;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
           d_help = new vpDisplayOpenCV;
 #endif
 
@@ -571,7 +571,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  \param displayHelp : Optional display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
@@ -608,7 +608,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  \param displayHelp : Optional display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
@@ -648,9 +648,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   if (vpIoTools::checkFilename(displayFile)) {
     try {
       std::cout << "Load image to help initialization: " << displayFile << std::endl;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       d_help = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
       d_help = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
       d_help = new vpDisplayOpenCV;

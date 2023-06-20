@@ -29,6 +29,12 @@ ViSP 3.5.1 (under development)
     . Support of JSON for modern C++ third-party to enable serialization capabilities
       in vpMbGenericTracker, vpCameraParameters, vpPoseVector, vpHomogeneousMatrix,
       vpPolygon3D to load/save internal data or settings from/to JSON files
+    . New vpPclViewer class that enables real time plotting of 3D point clouds based on
+      PCL library
+    . Remove deprecated OpenCV IplImage interfaces
+    . Remove deprecated vpOpenCVGrabber, vpKeyPointSurf classes and corresponding
+      tutorials
+    . Minimum OpenCV version is 2.4.8
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -53,6 +59,8 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-json.html
     . New tutorial: Loading a model-based generic tracker from JSON
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
+    . New tutorial: Threaded PCL viewer
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
@@ -65,6 +73,7 @@ ViSP 3.5.1 (under development)
     . [#1106] SIFT Illegal Instruction error on macOS Intel with OpenCV 4.6.0 installed with brew
     . [#1155] Wrong representation of the ellipse in model-based tracker
     . [#1160] MBT does not estimate dof set by the user using vpMbTracker::setEstimatedDoF()
+    . [#1176] ViSP cannot be built with a subset of OpenCV modules
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
@@ -1177,7 +1186,7 @@ ViSP 2.4.4-rc1 (released December 21th, 2009)
     - [7994] vpMeLine : initialization problem for horizontal lines
     - [8001] Coin and SoQt are not detected during CMake configuration
 	     under Fedora 10
-    - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
+    - [8032] Link error with GSL while compiling HelloWorld.cpp on OSX
     - [8225] Bug in the multiplication of a twist matrix (6x6) by a matrix (6xn)
     - [8248] Compilation error under Windows MSCV8 if deprecated functions
 	     are not build
@@ -1332,7 +1341,7 @@ ViSP 2.4.2 (released March 27th, 2008)
         in your programs. Otherwise an exception
         vpServoException::notKilledProperly is launched by
         vpServo::~vpServo() destructor.
-    - vpMatrix : Change Infinity Norm and Euclidian Norm formula to match with
+    - vpMatrix : Change Infinity Norm and Euclidean Norm formula to match with
 	the standard matrix norms definitions.
         Change determinant formula for 3x3 matrices to match with
         the standard determinant definition.

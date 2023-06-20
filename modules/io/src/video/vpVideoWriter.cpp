@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Write image sequences.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpVideoWriter.cpp
@@ -42,7 +42,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpVideoWriter.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020200
+#if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
 #endif
 
@@ -51,16 +51,18 @@
 */
 vpVideoWriter::vpVideoWriter()
   :
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_writer(), m_framerate(25.0),
 #endif
     m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
     m_firstFrame(0), m_width(0), m_height(0), m_frameStep(1)
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   m_fourcc = cv::VideoWriter::fourcc('P', 'I', 'M', '1');
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
   m_fourcc = CV_FOURCC('P', 'I', 'M', '1'); // default is a MPEG-1 codec
+#endif
 #endif
 }
 
@@ -123,7 +125,7 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
     m_height = I.getHeight();
   } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
              m_formatType == FORMAT_MOV) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
@@ -162,7 +164,7 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
     m_height = I.getHeight();
   } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
              m_formatType == FORMAT_MOV) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
@@ -201,7 +203,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
     vpImageIo::write(I, name);
     m_frameName = std::string(name);
   } else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     cv::Mat matFrame;
     vpImageConvert::convert(I, matFrame);
     m_writer << matFrame;
@@ -233,16 +235,18 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
     vpImageIo::write(I, name);
     m_frameName = std::string(name);
   } else {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);
     cv::cvtColor(matFrame, rgbMatFrame, cv::COLOR_GRAY2BGR);
     m_writer << rgbMatFrame;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);
     cv::cvtColor(matFrame, rgbMatFrame, CV_GRAY2BGR);
     m_writer << rgbMatFrame;
+#endif
 #endif
   }
 

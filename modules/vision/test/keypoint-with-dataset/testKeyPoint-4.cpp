@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,21 +30,16 @@
  *
  * Description:
  * Test keypoint matching and pose estimation with mostly OpenCV functions
- *calls to detect potential memory leaks in testKeyPoint-2.cpp.
+ * calls to detect potential memory leaks in testKeyPoint-2.cpp.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020301)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/features2d/features2d.hpp>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -163,13 +158,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   Iref = I;
   std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d." + ext);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK display, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display, display2;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display, display2;
 #endif
 
@@ -424,6 +419,7 @@ int main(int argc, const char **argv)
   std::cout << "testKeyPoint-4 is ok !" << std::endl;
   return EXIT_SUCCESS;
 }
+
 #else
 int main()
 {

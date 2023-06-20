@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,10 +45,6 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:h"
@@ -144,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   return true;
 }
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int half_size_y, unsigned int half_size_x)
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
@@ -278,7 +274,7 @@ int main(int argc, const char *argv[])
       std::cout << "I_correlation_2:\n" << I_correlation_2 << std::endl;
       std::cout << "I_correlation_3:\n" << I_correlation_3 << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg;
       vpImageConvert::convert(I, matImg);
 
@@ -330,7 +326,7 @@ int main(int argc, const char *argv[])
       std::cout << "I_convolution_2:\n" << I_convolution_2 << std::endl;
       std::cout << "I_convolution_3:\n" << I_convolution_3 << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat mat_kernel_1_flip, mat_kernel_2_flip, mat_kernel_3_flip;
       cv::flip(mat_kernel_1, mat_kernel_1_flip, -1);
       cv::flip(mat_kernel_2, mat_kernel_2_flip, -1);
@@ -378,7 +374,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do 3 correlation filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       vpImageConvert::convert(I, matImg);
 
       t = vpTime::measureTimeMs();
@@ -419,7 +415,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do 3 convolution filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
       t = vpTime::measureTimeMs();
       cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip, anchor1);
@@ -467,7 +463,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do Sobel: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_sobel_x;
       t = vpTime::measureTimeMs();
       cv::Sobel(matImg, matImg_sobel_x, CV_64F, 1, 0, 5);
@@ -487,7 +483,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do Sobel Iu and Iv: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_sobel_y;
       cv::Sobel(matImg, matImg_sobel_y, CV_64F, 0, 1, 5);
 
@@ -519,7 +515,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do sepFilter: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2, kernel_sobel_x.getCols() / 2);
       std::cout << "(I_sep_filtered == matImg_sobel_x)? " << test << std::endl;
 
@@ -553,7 +549,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do ViSP Gaussian Blur on grayscale images: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg, matImg_blur;
       vpImageConvert::convert(I, matImg);
       t = vpTime::measureTimeMs();
@@ -596,7 +592,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do ViSP Gaussian Blur on color images: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_rgb, matImg_rgb_blur;
       vpImageConvert::convert(I_rgb, matImg_rgb);
       t = vpTime::measureTimeMs();

@@ -46,7 +46,7 @@
 
 // Define the different process we want to apply to the input image
 NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to gray", @"compute gradient",
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
                     @"canny detector",
 #endif
                     nil];
@@ -119,7 +119,7 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
     
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:gray]];
   }
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   else if([myButton.currentTitle isEqualToString:[process objectAtIndex: 3]]){
     // canny detector
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 3]);

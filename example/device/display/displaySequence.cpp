@@ -322,11 +322,11 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_X11
+#elif defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
 #endif
     if (opt_display) {

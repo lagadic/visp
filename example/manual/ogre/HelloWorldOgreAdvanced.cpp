@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Ogre example.
  *
- * Authors:
- * Bertrand Delabarre
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example HelloWorldOgreAdvanced.cpp
 
@@ -49,7 +46,6 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/sensor/vpOpenCVGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
 #if defined(VISP_HAVE_OGRE)
@@ -109,7 +105,7 @@ int main()
 {
   try {
 #if defined(VISP_HAVE_OGRE)
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(HAVE_OPENCV_VIDEOIO)
 
     // Image to store gathered data
     // Here we acquire a grey level image. The consequence will be that
@@ -134,7 +130,7 @@ int main()
     // the image size
     grabber.open(I);
     grabber.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     // OpenCV to gather images
     cv::VideoCapture grabber(0); // open the default camera
     if (!grabber.isOpened()) {   // check if we succeeded
@@ -166,7 +162,7 @@ int main()
 // Acquire a new image
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       grabber >> frame;
       vpImageConvert::convert(frame, I);
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Read videos and image sequences.
  *
- * Authors:
- * Nicolas Melchior
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 \file vpVideoReader.cpp
@@ -56,7 +52,7 @@
 */
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(NULL),
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
     m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
@@ -138,7 +134,7 @@ void vpVideoReader::getProperties()
     }
     m_frameRate = -1.;
   } else if (isVideoExtensionSupported()) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_capture.open(m_videoName.c_str());
 
     if (!m_capture.isOpened()) {
@@ -192,7 +188,7 @@ void vpVideoReader::open(vpImage<vpRGBa> &I)
   m_frameCount = m_firstFrame;
 
   if (isVideoExtensionSupported()) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     m_capture.set(cv::CAP_PROP_POS_FRAMES, m_firstFrame - 1);
@@ -225,7 +221,7 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
   m_frameCount = m_firstFrame;
 
   if (isVideoExtensionSupported()) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     m_capture.set(cv::CAP_PROP_POS_FRAMES, m_firstFrame - 1);
@@ -271,7 +267,7 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
       m_imSequence->setImageNumber(m_frameCount);
     }
   }
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   else {
     m_capture >> m_frame;
     if (m_frameStep == 1) {
@@ -356,7 +352,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
       m_imSequence->setImageNumber(m_frameCount);
     }
   }
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   else {
     m_capture >> m_frame;
     if (m_frameStep == 1) {
@@ -436,7 +432,8 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       return false;
     }
   } else {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
       return false;
@@ -456,7 +453,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       }
     } else
       vpImageConvert::convert(m_frame, I);
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#else
     if (!m_capture.set(CV_CAP_PROP_POS_FRAMES, frame_index)) {
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
       return false;
@@ -469,6 +466,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       setLastFrameIndex(m_frameCount - m_frameStep);
     else
       vpImageConvert::convert(m_frame, I);
+#endif
 #endif
   }
   return true;
@@ -506,6 +504,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       return false;
     }
   } else {
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
       vpERROR_TRACE("Couldn't find the %ld th frame", frame_index);
@@ -524,7 +523,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     } else {
       vpImageConvert::convert(m_frame, I);
     }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
     if (!m_capture.set(CV_CAP_PROP_POS_FRAMES, frame_index)) {
       vpERROR_TRACE("Couldn't find the %ld th frame",
                     frame_index); // next index
@@ -543,6 +542,7 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       setLastFrameIndex(m_frameCount - m_frameStep);
     else
       vpImageConvert::convert(m_frame, I);
+#endif
 #endif
   }
   return true;
@@ -692,6 +692,7 @@ void vpVideoReader::findLastFrameIndex()
     }
   }
 
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   else if (!m_lastFrameIndexIsSet) {
     m_lastFrame = (long)m_capture.get(cv::CAP_PROP_FRAME_COUNT);
@@ -703,7 +704,7 @@ void vpVideoReader::findLastFrameIndex()
       m_lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
   }
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+#else
   else if (!m_lastFrameIndexIsSet) {
     m_lastFrame = (long)m_capture.get(CV_CAP_PROP_FRAME_COUNT);
     if (m_lastFrame <= 2) {
@@ -714,6 +715,7 @@ void vpVideoReader::findLastFrameIndex()
       m_lastFrame = 100000; // Set lastFrame to an arbitrary value
     }
   }
+#endif
 #endif
 }
 
@@ -743,7 +745,8 @@ void vpVideoReader::findFirstFrameIndex()
       m_imSequence->setImageNumber(m_firstFrame);
     }
   }
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
+
   else if (!m_firstFrameIndexIsSet) {
     m_firstFrame = 1L;
   }

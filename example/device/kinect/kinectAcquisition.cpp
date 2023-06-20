@@ -94,17 +94,17 @@ int main()
 #endif
     vpImage<vpRGBa> Irgb(480, 640), Iwarped(480, 640);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display, displayRgb, displayRgbWarped;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
     vpDisplayGTK displayRgb;
     vpDisplayGTK displayRgbWarped;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
     vpDisplayOpenCV displayRgb;
     vpDisplayOpenCV displayRgbWarped;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
     vpDisplayGDI displayRgb;
     vpDisplayGDI displayRgbWarped;

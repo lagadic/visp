@@ -61,7 +61,7 @@ int main(int argc, const char **argv)
   vpDisplayX d, d2, d3, d4, d5, d6;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d, d2, d3, d4, d5, d6;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d, d2, d3, d4, d5, d6;
 #endif
   d.init(I_color, 0, 0, "Input color image");
