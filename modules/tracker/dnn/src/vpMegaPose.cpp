@@ -35,7 +35,7 @@
 
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/core/vpConfig.h>
-//#ifdef VISP_HAVE_NLOHMANN_JSON
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <arpa/inet.h>
 #include <netdb.h>
@@ -590,4 +590,3 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   std::vector<std::string> result = jsonValue;
   return result;
 }
-//#endif
