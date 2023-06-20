@@ -87,8 +87,8 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -167,13 +167,13 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I3(540, 480);
 
 // We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display[3];
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display[3];
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display[3];
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display[3];
 #endif
 

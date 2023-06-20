@@ -15,7 +15,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
 {
 #if defined(VISP_HAVE_X11)
   vpDisplayX d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d(I);
 #elif defined(VISP_HAVE_GTK)
   vpDisplayGTK d(I);
@@ -82,12 +82,12 @@ int main(int argc, char **argv)
     //! [Gradients y]
     display(dIy, "Gradient dIy");
 
-//! [Canny]
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    //! [Canny]
+  #if defined(HAVE_OPENCV_IMGPROC)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, 15, 3);
     display(C, "Canny");
-#endif
+  #endif
     //! [Canny]
 
     //! [Convolution kernel]

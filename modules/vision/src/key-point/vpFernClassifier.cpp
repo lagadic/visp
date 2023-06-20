@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,15 +32,12 @@
  * Class that implements the Fern classifier and the YAPE detector thanks
  * to the OpenCV library.
  *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.4.8 and < 3.0.0
 
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpDisplay.h>
@@ -54,17 +51,11 @@
 */
 vpFernClassifier::vpFernClassifier()
   : vpBasicKeyPoint(), ldetector(), fernClassifier(),
-    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
-    nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
-    blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-    curImg(),
-#else
-    curImg(NULL),
-#endif
-    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
-{
-}
+  gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
+  nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
+  blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
+  curImg(), objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
+{ }
 
 /*!
   Constructor using the provided data file to load the object given by its
@@ -79,15 +70,10 @@ vpFernClassifier::vpFernClassifier()
 */
 vpFernClassifier::vpFernClassifier(const std::string &_dataFile, const std::string &_objectName)
   : vpBasicKeyPoint(), ldetector(), fernClassifier(),
-    gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
-    nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
-    blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-    curImg(),
-#else
-    curImg(NULL),
-#endif
-    objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
+  gen(0, 256, 5, true, 0.6, 1.5, -CV_PI / 2, CV_PI / 2, -CV_PI / 2, CV_PI / 2), hasLearn(false), threshold(20),
+  nbView(2000), dist(2), nbClassfier(100), ClassifierSize(11), nbOctave(2), patchSize(32), radius(7), nbPoints(200),
+  blurImage(true), radiusBlur(7), sigmaBlur(1), nbMinPoint(10),
+  curImg(), objKeypoints(), modelROI_Ref(), modelROI(), modelPoints(), imgKeypoints(), refPt(), curPt()
 {
   this->load(_dataFile, _objectName);
 }
@@ -97,19 +83,7 @@ vpFernClassifier::vpFernClassifier(const std::string &_dataFile, const std::stri
 
 */
 vpFernClassifier::~vpFernClassifier()
-{
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (curImg != NULL) {
-    if (curImg->width % 8 == 0) {
-      curImg->imageData = NULL;
-      cvReleaseImageHeader(&curImg);
-    } else {
-      cvReleaseImage(&curImg);
-    }
-    curImg = NULL;
-  }
-#endif
-}
+{ }
 
 /*!
   initialise any OpenCV parameters
@@ -123,9 +97,6 @@ void vpFernClassifier::init()
   nbClassfier = 100;
   ClassifierSize = 11;
   nbPoints = 200;
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  curImg = NULL;
-#endif
   blurImage = true;
   radiusBlur = 7;
   sigmaBlur = 1;
@@ -167,7 +138,7 @@ void vpFernClassifier::train()
   ldetector.getMostStable2D(objpyr[0], modelPoints, 100, gen);
 
   fernClassifier.trainFromSingleView(objpyr[0], modelPoints, patchSize, (int)modelPoints.size(), 100, 11, 10000,
-                                     cv::FernClassifier::COMPRESSION_NONE, gen);
+    cv::FernClassifier::COMPRESSION_NONE, gen);
 
   /* from OpenCV format to ViSP format */
   referenceImagePointsList.resize(0);
@@ -222,7 +193,7 @@ unsigned int vpFernClassifier::buildReference(const vpImage<unsigned char> &_I)
   \return the number of reference points.
 */
 unsigned int vpFernClassifier::buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-                                              const unsigned int _height, const unsigned int _width)
+  const unsigned int _height, const unsigned int _width)
 {
   if ((_iP.get_i() + _height) >= _I.getHeight() || (_iP.get_j() + _width) >= _I.getWidth()) {
     vpTRACE("Bad size for the subimage");
@@ -296,7 +267,7 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
 
   if (this->getBlurSetting()) {
     cv::GaussianBlur(img, img, cv::Size(this->getBlurSize(), this->getBlurSize()), this->getBlurSigma(),
-                     this->getBlurSigma());
+      this->getBlurSigma());
   }
 
   std::vector<cv::Mat> imgPyr;
@@ -358,7 +329,7 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I)
   \return the number of point which have been matched.
 */
 unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-                                          const unsigned int _height, const unsigned int _width)
+  const unsigned int _height, const unsigned int _width)
 {
   if ((_iP.get_i() + _height) >= _I.getHeight() || (_iP.get_j() + _width) >= _I.getWidth()) {
     vpTRACE("Bad size for the subimage");
@@ -409,7 +380,7 @@ unsigned int vpFernClassifier::matchPoint(const vpImage<unsigned char> &_I, cons
   points.
 */
 void vpFernClassifier::display(const vpImage<unsigned char> &_Iref, const vpImage<unsigned char> &_Icurrent,
-                               unsigned int size)
+  unsigned int size)
 {
   for (unsigned int i = 0; i < matchedReferencePoints.size(); i++) {
     vpDisplay::displayCross(_Iref, referenceImagePointsList[matchedReferencePoints[i]], size, vpColor::red);
@@ -503,38 +474,11 @@ void vpFernClassifier::record(const std::string &_objectName, const std::string 
 */
 void vpFernClassifier::setImage(const vpImage<unsigned char> &I)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   vpImageConvert::convert(I, curImg);
-#else
-  if (curImg != NULL) {
-    cvResetImageROI(curImg);
-    if ((curImg->width % 8) == 0) {
-      curImg->imageData = NULL;
-      cvReleaseImageHeader(&curImg);
-    } else {
-      cvReleaseImage(&curImg);
-    }
-    curImg = NULL;
-  }
-  if ((I.getWidth() % 8) == 0) {
-    curImg = cvCreateImageHeader(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
-    if (curImg != NULL) {
-      curImg->imageData = (char *)I.bitmap;
-    } else {
-      throw vpException(vpException::memoryAllocationError, "Could not create the image in the OpenCV format.");
-    }
-  } else {
-    vpImageConvert::convert(I, curImg);
-  }
-  if (curImg == NULL) {
-    std::cout << "!> conversion failed" << std::endl;
-    throw vpException(vpException::notInitialized, "conversion failed");
-  }
-#endif
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_vision.a(vpFernClassifier.cpp.o) has
 // no symbols
-void dummy_vpFernClassifier(){};
+void dummy_vpFernClassifier() { };
 #endif

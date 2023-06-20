@@ -102,7 +102,7 @@ int main()
     vpDisplayGTK disp;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI disp;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV disp;
 #endif
 

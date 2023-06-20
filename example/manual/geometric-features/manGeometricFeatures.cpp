@@ -87,7 +87,7 @@ int main()
     vpDisplayX display;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;

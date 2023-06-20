@@ -80,7 +80,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
     keepOn(true), // When created no reason to stop displaying
     mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL), mBackgroundHeight(0), mBackgroundWidth(0),
     mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
-    mshowConfigDialog(true), mOptionnalResourceLocation()
+    mshowConfigDialog(true), mOptionalResourceLocation()
 {
 }
 
@@ -301,9 +301,9 @@ void vpAROgre::init(bool
     }
   }
   std::cout << "##################### add resources" << std::endl;
-  // Add optionnal resources (given by the user).
-  for (std::list<std::string>::const_iterator iter = mOptionnalResourceLocation.begin();
-       iter != mOptionnalResourceLocation.end(); ++iter) {
+  // Add Optional resources (given by the user).
+  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
+       iter != mOptionalResourceLocation.end(); ++iter) {
     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
         *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   }

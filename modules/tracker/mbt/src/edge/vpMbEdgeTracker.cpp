@@ -2735,23 +2735,11 @@ void vpMbEdgeTracker::initPyramid(const vpImage<unsigned char> &_I,
     if (scales[i]) {
       unsigned int cScale = static_cast<unsigned int>(pow(2., (int)i));
       vpImage<unsigned char> *I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408))
-      IplImage *vpI0 = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
-      vpI0->imageData = (char *)(_I.bitmap);
-      IplImage *vpI =
-          cvCreateImage(cvSize((int)(_I.getWidth() / cScale), (int)(_I.getHeight() / cScale)), IPL_DEPTH_8U, 1);
-      cvResize(vpI0, vpI, CV_INTER_NN);
-      vpImageConvert::convert(vpI, *I);
-      cvReleaseImage(&vpI);
-      vpI0->imageData = NULL;
-      cvReleaseImageHeader(&vpI0);
-#else
       for (unsigned int k = 0, ii = 0; k < I->getHeight(); k += 1, ii += cScale) {
         for (unsigned int l = 0, jj = 0; l < I->getWidth(); l += 1, jj += cScale) {
           (*I)[k][l] = _I[ii][jj];
         }
       }
-#endif
       _pyramid[i] = I;
     } else {
       _pyramid[i] = NULL;

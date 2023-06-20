@@ -66,7 +66,7 @@ extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, doub
 #endif
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
 #endif
 
@@ -115,7 +115,7 @@ int main()
   std::cout << "(using Lapack)";
 #elif defined(VISP_HAVE_EIGEN3)
   std::cout << "(using Eigen3)";
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif defined(VISP_HAVE_OPENCV)
   std::cout << "(using OpenCV)";
 #endif
   std::cout << ": \n" << A_1 << std::endl;
@@ -179,7 +179,7 @@ vpMatrix vpMatrix::inverseByLU() const
     return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
     return inverseByLUEigen3();
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif defined(VISP_HAVE_OPENCV)
     return inverseByLUOpenCV();
 #else
     throw(vpException(vpException::fatalError, "Cannot inverse by LU. "
@@ -236,7 +236,7 @@ double vpMatrix::detByLU() const
     return detByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
     return detByLUEigen3();
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif defined(VISP_HAVE_OPENCV)
     return detByLUOpenCV();
 #else
     throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. "
@@ -447,7 +447,7 @@ double vpMatrix::detByLULapack() const
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
 OpenCV 3rd party.

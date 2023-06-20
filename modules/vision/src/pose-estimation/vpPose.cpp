@@ -421,7 +421,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, vpColVector &residuals) const
 {
   double squared_error = 0;
-  residuals.resize(listP.size());
+  residuals.resize(static_cast<unsigned int>(listP.size()));
   vpPoint P;
   unsigned int i = 0;
   for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {

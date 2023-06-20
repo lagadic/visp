@@ -154,8 +154,8 @@ OPTIONS:                                                            Default\n\
      Turn off the display.\n\
           \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
           \n",
           ext.c_str(), last_frame);
 
@@ -412,15 +412,15 @@ int main(int argc, const char **argv)
     vpDisplay *display = NULL;
     if (opt_display) {
 // initialise a  display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
       display = new vpDisplayD3D;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK;
 #else
       opt_display = false;

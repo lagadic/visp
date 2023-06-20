@@ -68,7 +68,7 @@
   servoing with respect to a segment. The segment consists in two horizontal
   dots. The current visual features that are used are \f${\bf s} = (x_n, l_n,
   \alpha)\f$. The desired one are \f${\bf s^*} = (0, l_n*, 0)\f$, with:
-  - \f$x_n\f$ the normalized abscisse of the point corresponding to segment
+  - \f$x_n\f$ the normalized abscise of the point corresponding to segment
   - \f$l_n\f$ the normalized segment length
   - \f$\alpha\f$ the segment orientation.
 

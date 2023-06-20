@@ -52,7 +52,7 @@
 #include <Eigen/SVD>
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
 #endif
 
@@ -82,7 +82,7 @@ SVD related functions
 
 ---------------------------------------------------------------------*/
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 
 /*!
 

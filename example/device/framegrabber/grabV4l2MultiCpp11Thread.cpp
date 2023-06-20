@@ -347,9 +347,9 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
 {
   vpImage<vpRGBa> local_img(height, width);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK display;
 #endif
 

@@ -789,7 +789,7 @@ TEST_CASE("Split <==> Merge conversion", "[image_conversion]")
   CHECK((rgba == rgba_ref));
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
 {
   SECTION("CV_8UC3 to vpRGBa")

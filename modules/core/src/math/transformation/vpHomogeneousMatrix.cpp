@@ -1146,7 +1146,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
   The Euclidean mean of the rotation matrices is computed following Moakher's method (SIAM 2002).
 
   \param[in] vec_M : Set of homogeneous matrices.
-  \return The Euclidian mean of the homogeneous matrices.
+  \return The Euclidean mean of the homogeneous matrices.
 
   \sa vpTranslationVector::mean(), vpRotationMatrix::mean()
  */

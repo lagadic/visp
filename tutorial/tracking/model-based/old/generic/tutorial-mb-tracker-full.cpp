@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
 
   try {
     std::string opt_videoname = "teabox.mp4";
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
     display = new vpDisplayGDI;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     display = new vpDisplayOpenCV;
 #endif
     display->init(I, 100, 100, "Model-based tracker");
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     vpMbTracker *tracker;
     if (opt_tracker == 0)
       tracker = new vpMbEdgeTracker;
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     else if (opt_tracker == 1)
       tracker = new vpMbKltTracker;
     else
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
         //! [Set moving-edges parameters]
       }
 
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (opt_tracker == 1 || opt_tracker == 2) {
         //! [Set klt parameters]
         vpKltOpencv klt_settings;

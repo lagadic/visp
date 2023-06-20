@@ -110,7 +110,7 @@ int main(int argc, const char **argv)
     if (!opt_no_display) {
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI;
 #endif
     }
@@ -122,7 +122,7 @@ int main(int argc, const char **argv)
       display->init(I);
 #endif
 
-    vpHomogeneousMatrix wMo; // Set to indentity. Robot world frame is equal to object frame
+    vpHomogeneousMatrix wMo; // Set to identity. Robot world frame is equal to object frame
     vpHomogeneousMatrix cMo(-0.5, 0.5, 2., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
     vpHomogeneousMatrix cdMo(0., 0., 1., vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     vpHomogeneousMatrix wMc; // Camera location in the robot world frame

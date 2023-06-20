@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Key point functionalities.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iomanip>
 #include <limits>
@@ -42,11 +39,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-#include <opencv2/calib3d/calib3d.hpp>
-#endif
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 
 #include <pugixml.hpp>
 
@@ -4899,7 +4892,6 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
 void dummy_vpKeyPoint(){};
 #endif

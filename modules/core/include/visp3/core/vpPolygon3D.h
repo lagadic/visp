@@ -38,7 +38,7 @@
 
 /*!
  \file vpPolygon3D.h
- \brief Implements a 3D polygon with render functionnalities like clipping.
+ \brief Implements a 3D polygon with render functionalities like clipping.
 */
 
 #ifndef vpPolygon3D_HH
@@ -53,7 +53,7 @@
 /*!
   \class vpPolygon3D
   \ingroup group_core_geometry
-  \brief Implements a 3D polygon with render functionnalities like clipping.
+  \brief Implements a 3D polygon with render functionalities like clipping.
 
 */
 class VISP_EXPORT vpPolygon3D

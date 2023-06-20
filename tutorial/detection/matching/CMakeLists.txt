@@ -36,12 +36,7 @@ set(tutorial_cpp
   tutorial-matching-keypoint.cpp
   tutorial-matching-keypoint-SIFT.cpp
   tutorial-matching-keypoint-homography.cpp
-  tutorial-matching-surf-deprecated.cpp
 )
-
-if(NOT DEFINED WINRT_8_1)
-  list(APPEND tutorial_cpp tutorial-matching-surf-homography-deprecated.cpp)
-endif()
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video-postcard.mp4" )
 

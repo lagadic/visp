@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Example of Hybrid Tracking of MBT and MBT KTL.
  *
- * Authors:
- * Aurelien Yol
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example mbtGenericTracking.cpp
@@ -377,15 +373,15 @@ int main(int argc, const char **argv)
     I2 = I1;
 
 // initialise a  display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display1, display2;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display1, display2;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display1, display2;
 #else
     opt_display = false;
@@ -426,7 +422,7 @@ int main(int argc, const char **argv)
     me.setMu2(0.5);
     me.setSampleStep(4);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     vpKltOpencv klt;
     klt.setMaxFeatures(10000);
     klt.setWindowSize(5);
@@ -492,7 +488,7 @@ int main(int argc, const char **argv)
     //   - a ./cube/cube.init file that defines the 3d coordinates (in meter,
     //   in the object basis) of the points used for the initialisation
     //   - a ./cube/cube.ppm file to display where the user have to click
-    //   (optionnal, set by the third parameter)
+    //   (Optional, set by the third parameter)
     if (opt_display && opt_click_allowed) {
       dynamic_cast<vpMbGenericTracker *>(tracker)->initClick(I1, I2, initFile, initFile, true);
       dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(c1Mo, c2Mo);
@@ -552,7 +548,7 @@ int main(int argc, const char **argv)
         me.setMu2(0.5);
         me.setSampleStep(4);
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
         klt.setMaxFeatures(10000);
         klt.setWindowSize(5);
         klt.setQuality(0.01);

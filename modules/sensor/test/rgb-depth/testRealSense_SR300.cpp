@@ -456,7 +456,6 @@ int main(int argc, char *argv[])
                "SR300_DEPTH_ALIGNED_TO_COLOR_Z16_640x480_30FPS",
                true, rs::stream::color, rs::stream::depth_aligned_to_color);
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020409
     rs.setEnableStream(rs::stream::color, true);
     rs.setEnableStream(rs::stream::depth, false);
     rs.setEnableStream(rs::stream::infrared, true);
@@ -482,8 +481,6 @@ int main(int argc, char *argv[])
         break;
       }
     }
-#endif
-
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
   } catch (const rs::error &e) {

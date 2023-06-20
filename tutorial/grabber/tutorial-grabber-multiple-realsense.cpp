@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   std::vector<vpDisplayX> d(type_serial_nb.size());
 #elif defined(VISP_HAVE_GDI)
   std::vector<vpDisplayGDI> d(type_serial_nb.size());
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   std::vector<vpDisplayOpenCV> d(type_serial_nb.size());
 #else
   std::cout << "No image viewer is available..." << std::endl;
@@ -125,7 +125,7 @@ int main(int argc, char **argv)
             << std::endl;
 #endif
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This turorial should be built with c++11 support" << std::endl;
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
   return EXIT_SUCCESS;

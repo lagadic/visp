@@ -111,8 +111,7 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
 int main(int argc, const char **argv)
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV)) &&                           \
-    defined(VISP_HAVE_MODULE_MBT)
+#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&  defined(VISP_HAVE_MODULE_MBT)
   //! [Macro defined]
 
   int opt_device = 0;
@@ -196,7 +195,7 @@ int main(int argc, const char **argv)
     g.setDevice(device.str());
     g.setScale(1);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     std::cout << "Use device " << opt_device << " (OpenCV grabber)" << std::endl;
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
@@ -235,7 +234,7 @@ int main(int argc, const char **argv)
       d = new vpDisplayX(I);
 #elif defined(VISP_HAVE_GDI)
       d = new vpDisplayGDI(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       d = new vpDisplayOpenCV(I);
 #endif
     }
@@ -247,7 +246,7 @@ int main(int argc, const char **argv)
 
     // Prepare MBT
     vpMbGenericTracker tracker;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
@@ -264,7 +263,7 @@ int main(int argc, const char **argv)
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
 
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -295,7 +294,7 @@ int main(int argc, const char **argv)
 
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       cap >> frame;
       vpImageConvert::convert(frame, I);
 #endif

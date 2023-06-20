@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Model based tracker using only KLT
  *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpTrackingException.h>
@@ -43,7 +39,7 @@
 #include <visp3/mbt/vpMbKltTracker.h>
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
@@ -54,7 +50,7 @@ namespace
 /*!
  * Transform an homography from calibrated domain to pixel space.
  *
- * Given homography \f$\bf H\f$ in the Euclidian space or in the calibrated domain,
+ * Given homography \f$\bf H\f$ in the Euclidean space or in the calibrated domain,
  * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
  * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
  * \param[in] H : Homography in the calibrated domain.
@@ -111,12 +107,7 @@ vpMatrix homography2collineation(const vpMatrix &H, const vpCameraParameters &ca
 
 vpMbKltTracker::vpMbKltTracker()
   :
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-    cur(),
-#else
-    cur(NULL),
-#endif
-    c0Mo(), firstInitialisation(true), maskBorder(5), threshold_outlier(0.5), percentGood(0.6), ctTc0(), tracker(),
+    cur(), c0Mo(), firstInitialisation(true), maskBorder(5), threshold_outlier(0.5), percentGood(0.6), ctTc0(), tracker(),
     kltPolygons(), kltCylinders(), circles_disp(), m_nbInfos(0), m_nbFaceUsed(0), m_L_klt(), m_error_klt(), m_w_klt(),
     m_weightedError_klt(), m_robust_klt(), m_featuresToBeDisplayedKlt()
 {
@@ -144,13 +135,6 @@ vpMbKltTracker::vpMbKltTracker()
 */
 vpMbKltTracker::~vpMbKltTracker()
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (cur != NULL) {
-    cvReleaseImage(&cur);
-    cur = NULL;
-  }
-#endif
-
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
@@ -227,13 +211,8 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
     faces.computeScanLineRender(m_cam, I.getWidth(), I.getHeight());
   }
 
-// mask
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  // mask
   cv::Mat mask((int)I.getRows(), (int)I.getCols(), CV_8UC1, cv::Scalar(0));
-#else
-  IplImage *mask = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
-  cvZero(mask);
-#endif
 
   vpMbtDistanceKltPoints *kltpoly;
   vpMbtDistanceKltCylinder *kltPolyCylinder;
@@ -289,10 +268,6 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
     if (kltPolyCylinder->isTracked())
       kltPolyCylinder->init(tracker, m_cMo);
   }
-
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  cvReleaseImage(&mask);
-#endif
 }
 
 /*!
@@ -302,13 +277,6 @@ void vpMbKltTracker::reinit(const vpImage<unsigned char> &I)
 void vpMbKltTracker::resetTracker()
 {
   m_cMo.eye();
-
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (cur != NULL) {
-    cvReleaseImage(&cur);
-    cur = NULL;
-  }
-#endif
 
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
@@ -487,26 +455,9 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
   } else {
     vpMbtDistanceKltPoints *kltpoly;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     std::vector<cv::Point2f> init_pts;
     std::vector<long> init_ids;
     std::vector<cv::Point2f> guess_pts;
-#else
-    unsigned int nbp = 0;
-    for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-      kltpoly = *it;
-      if (kltpoly->polygon->isVisible() && kltpoly->polygon->getNbPoint() > 2)
-        nbp += (*it)->getCurrentNumberPoints();
-    }
-
-    CvPoint2D32f *init_pts = NULL;
-    init_pts = (CvPoint2D32f *)cvAlloc(tracker.getMaxFeatures() * sizeof(init_pts[0]));
-    long *init_ids = (long *)cvAlloc((unsigned int)tracker.getMaxFeatures() * sizeof(long));
-    unsigned int iter_pts = 0;
-
-    CvPoint2D32f *guess_pts = NULL;
-    guess_pts = (CvPoint2D32f *)cvAlloc(tracker.getMaxFeatures() * sizeof(guess_pts[0]));
-#endif
 
     vpHomogeneousMatrix cdMc = cdMo * m_cMo.inverse();
     vpHomogeneousMatrix cMcd = cdMc.inverse();
@@ -546,7 +497,6 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
         std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
         // nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
         for (; iter != kltpoly->getCurrentPoints().end(); ++iter) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 #if TARGET_OS_IPHONE
           if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[(int)iter->first]) !=
               init_ids.end())
@@ -559,25 +509,18 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
             // vpMbtDistanceKltPoints due to possible overlapping faces)
             continue;
           }
-#endif
 
           vpColVector cdp(3);
           cdp[0] = iter->second.get_j();
           cdp[1] = iter->second.get_i();
           cdp[2] = 1.0;
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
           cv::Point2f p((float)cdp[0], (float)cdp[1]);
           init_pts.push_back(p);
 #if TARGET_OS_IPHONE
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(int)iter->first]);
 #else
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);
-#endif
-#else
-          init_pts[iter_pts].x = (float)cdp[0];
-          init_pts[iter_pts].y = (float)cdp[1];
-          init_ids[iter_pts] = (kltpoly->getCurrentPointsInd())[(size_t)iter->first];
 #endif
 
           double p_mu_t_2 = cdp[0] * cdGc[2][0] + cdp[1] * cdGc[2][1] + cdGc[2][2];
@@ -591,14 +534,9 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
           cdp[0] = (cdp[0] * cdGc[0][0] + cdp[1] * cdGc[0][1] + cdGc[0][2]) / p_mu_t_2;
           cdp[1] = (cdp[0] * cdGc[1][0] + cdp[1] * cdGc[1][1] + cdGc[1][2]) / p_mu_t_2;
 
-// Set value to the KLT tracker
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+          // Set value to the KLT tracker
           cv::Point2f p_guess((float)cdp[0], (float)cdp[1]);
           guess_pts.push_back(p_guess);
-#else
-          guess_pts[iter_pts].x = (float)cdp[0];
-          guess_pts[iter_pts++].y = (float)cdp[1];
-#endif
         }
       }
     }
@@ -609,23 +547,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
       vpImageConvert::convert(m_I, cur);
     }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     tracker.setInitialGuess(init_pts, guess_pts, init_ids);
-#else
-    tracker.setInitialGuess(&init_pts, &guess_pts, init_ids, iter_pts);
-
-    if (init_pts)
-      cvFree(&init_pts);
-    init_pts = NULL;
-
-    if (guess_pts)
-      cvFree(&guess_pts);
-    guess_pts = NULL;
-
-    if (init_ids)
-      cvFree(&init_ids);
-    init_ids = NULL;
-#endif
 
     bool reInitialisation = false;
     if (!useOgre) {
@@ -1463,13 +1385,6 @@ void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::str
                                  const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
-
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (cur != NULL) {
-    cvReleaseImage(&cur);
-    cur = NULL;
-  }
-#endif
 
   firstInitialisation = true;
 

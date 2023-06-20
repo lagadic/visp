@@ -110,8 +110,8 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -216,16 +216,16 @@ int main(int argc, const char **argv)
 
 // We open two displays, one for the internal camera view, the other one for
 // the external view, using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX displayInt;
     vpDisplayX displayExt;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK displayInt;
     vpDisplayGTK displayExt;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI displayInt;
     vpDisplayGDI displayExt;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV displayInt;
     vpDisplayOpenCV displayExt;
 #endif

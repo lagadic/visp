@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Performs various tests on the vpPixelMeterConversion and
  * vpPixelMeterConversion class.
  *
- * Authors:
- * Anthony saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file testCameraParametersConversion.cpp
@@ -121,7 +118,7 @@ int main()
       return EXIT_FAILURE;
     }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
@@ -297,7 +294,7 @@ int main()
     }
 #endif
 
-    std::cout << "Test succesful" << std::endl;
+    std::cout << "Test successful" << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

@@ -394,13 +394,13 @@ int main(int argc, const char **argv)
 
     if (opt_display) {
       // We open a window using either X11, GTK or GDI.
-  #if defined VISP_HAVE_X11
+  #if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
-  #elif defined VISP_HAVE_GTK
+  #elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK;
-  #elif defined VISP_HAVE_GDI
+  #elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI;
-  #elif defined VISP_HAVE_OPENCV
+  #elif defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV;
   #endif
       if (opt_display_scale_auto) {

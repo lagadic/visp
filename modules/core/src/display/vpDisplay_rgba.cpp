@@ -962,7 +962,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
@@ -1051,7 +1051,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
@@ -1142,7 +1142,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;

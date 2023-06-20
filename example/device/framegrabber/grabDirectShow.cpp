@@ -210,9 +210,9 @@ int main(int argc, const char **argv)
     std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
 // Creates a display
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
 #endif
 

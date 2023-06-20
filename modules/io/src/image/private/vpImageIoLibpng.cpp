@@ -253,7 +253,7 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
 /*!
   Read the contents of the PNG file, allocate memory
   for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
+  gray level, and set the bitmap with the gray level data. That means that
   the image \e I is a "black and white" rendering of the original image in \e
   filename, as in a black and white photograph. If necessary, the quantization
   formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
@@ -429,7 +429,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   Read the contents of the PNG file, allocate
   memory for the corresponding image, and set
-  the bitmap whith the content of
+  the bitmap with the content of
   the file.
 
   If the image has been already initialized, memory allocation is done

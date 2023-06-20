@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Class that implements the Fern classifier and the YAPE detector thanks
  * to the OpenCV library.
  *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFernClassifier_H
 #define vpFernClassifier_H
@@ -44,16 +41,11 @@
 
 #include <string>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000)  // Require opencv >= 2.0.0 and < 3.0.0
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408) &&                                                                          \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000)  // Require opencv >= 2.4.8 and < 3.0.0
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/legacy/legacy.hpp>
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020000) // Require opencv >= 2.0.0
-#include <cv.h>
-#include <cvaux.hpp>
-#endif
 
 #include <visp3/vision/vpBasicKeyPoint.h>
 
@@ -90,8 +82,8 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpFernClassifier.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Fern classifier only available
-since OpenCV-2.0.0 int main()
+#if VISP_HAVE_OPENCV_VERSION >= 0x020408 // Fern classifier only available since OpenCV-2.4.8
+int main()
 {
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
@@ -126,8 +118,8 @@ int main() {}
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpFernClassifier.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020000 // Fern classifier only available
-since OpenCV-2.0.0 int main()
+#if VISP_HAVE_OPENCV_VERSION >= 0x020408 // Fern classifier only available since OpenCV-2.4.8
+int main()
 {
   vpImage<unsigned char> Ireference;
   vpImage<unsigned char> Icurrent;
@@ -150,7 +142,7 @@ since OpenCV-2.0.0 int main()
 
   // Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
@@ -219,12 +211,8 @@ protected:
   //! (must be at least four)
   unsigned int nbMinPoint;
 
-//! The current image in the OpenCV format.
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  //! The current image in the OpenCV format.
   cv::Mat curImg;
-#else
-  IplImage *curImg;
-#endif
 
   //! keypoints detected in the reference image.
   std::vector<cv::KeyPoint> objKeypoints;
@@ -247,20 +235,20 @@ public:
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
   virtual unsigned int buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP, unsigned int _height,
-                                      unsigned int _width);
+    unsigned int _width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &_I, const vpImagePoint &_iP, unsigned int _height,
-                                  unsigned int _width);
+    unsigned int _width);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* display */
   virtual void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent,
-                       unsigned int size = 3);
+    unsigned int size = 3);
   virtual void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3,
-                       const vpColor &color = vpColor::green);
+    const vpColor &color = vpColor::green);
 
   /* io methods */
   void load(const std::string &_dataFile, const std::string & /*_objectName*/);

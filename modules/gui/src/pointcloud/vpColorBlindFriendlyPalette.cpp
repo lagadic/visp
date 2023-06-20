@@ -35,6 +35,8 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 std::vector<std::string> vpColorBlindFriendlyPalette::s_paletteNames =
 {
   "black"     ,
@@ -204,3 +206,5 @@ std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color)
   color.set_fromString(nameColor);
   return is;
 }
+
+#endif

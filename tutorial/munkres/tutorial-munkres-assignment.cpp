@@ -42,7 +42,7 @@ int main()
     vpDisplayX d(I, disp_scale_type);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, disp_scale_type);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I, disp_scale_type);
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d(I, disp_scale_type);

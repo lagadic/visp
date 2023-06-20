@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,10 @@
  * Description:
  * Meter to pixel conversion.
  *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpMeterPixelConversion_H
-#define vpMeterPixelConversion_H
+#ifndef _vpMeterPixelConversion_h_
+#define _vpMeterPixelConversion_h_
 
 /*!
   \file vpMeterPixelConversion.h
@@ -53,7 +49,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpSphere.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
@@ -65,7 +61,7 @@
   Various conversion functions to transform primitives (2D ellipse, 2D line, 2D point) from normalized
   coordinates in meter in the image plane into pixel coordinates.
 
-  Tranformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
+  Transformation relies either on ViSP camera parameters implemented in vpCameraParameters or on OpenCV camera parameters
   that are set from a projection matrix and a distortion coefficients vector.
 
 */
@@ -260,7 +256,7 @@ public:
 
     \f$ r = sqrt{x^2 + y^2} \f$
     \f$ \theta = \arctan{r} \f$
-    Calculate \f$ r_d \f$ knowing ditorsion coefficients as follows:
+    Calculate \f$ r_d \f$ knowing distortion coefficients as follows:
     \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^9 \f$
     \f$ scale = r_d / r \f$
     \f$ x_d = x * scale \f$
@@ -303,7 +299,7 @@ public:
 
     \f$ r = sqrt{x^2 + y^2} \f$
     \f$ \theta = \arctan{r} \f$
-    Calculate \f$ r_d \f$ knowing ditorsion coefficients as follows:
+    Calculate \f$ r_d \f$ knowing distortion coefficients as follows:
     \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^9 \f$
     \f$ scale = r_d / r \f$
     \f$ x_d = x * scale \f$
@@ -337,7 +333,7 @@ public:
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
   /** @name Using OpenCV camera parameters  */
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center, double &n20_p,

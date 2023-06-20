@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,17 +31,14 @@
  * Description:
  * Klt cylinder, containing points of interest.
  *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpMbtDistanceKltCylinder_h
 #define vpMbtDistanceKltCylinder_h
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <map>
 
@@ -213,11 +210,7 @@ public:
   */
   inline void setTracked(const bool &track) { this->isTrackedKltCylinder = track; }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   void updateMask(cv::Mat &mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
-#else
-  void updateMask(IplImage *mask, unsigned char _nb = 255, unsigned int _shiftBorder = 0);
-#endif
 };
 
 #endif

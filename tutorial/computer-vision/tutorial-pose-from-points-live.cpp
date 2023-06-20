@@ -21,14 +21,14 @@
 // #undef VISP_HAVE_CMU1394
 // #undef VISP_HAVE_FLYCAPTURE
 // #undef VISP_HAVE_REALSENSE2
-// #undef VISP_HAVE_OPENCV
+// #undef HAVE_OPENCV_VIDEOIO
 //! [Undef grabber]
 
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                             \
-     (VISP_HAVE_OPENCV_VERSION >= 0x020100) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&     \
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
+     defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
   try {
     std::string opt_intrinsic_file; // xml file obtained from camera calibration
     std::string opt_camera_name;    // corresponding camera name in the xml calibration file
@@ -109,7 +109,7 @@ int main(int argc, char **argv)
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     std::cout << "Use OpenCV grabber on device " << opt_device << std::endl;
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
 
@@ -152,10 +152,10 @@ int main(int argc, char **argv)
     while (!quit) {
       double t_begin = vpTime::measureTimeMs();
       // Image Acquisition
-#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
+#if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif

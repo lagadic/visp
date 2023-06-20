@@ -144,7 +144,7 @@ class vpThetaUVector;
 
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
-  vpRzyxVector and finaly how to extract the vpRzyxVector Euler angles
+  vpRzyxVector and finally how to extract the vpRzyxVector Euler angles
   from the build rotation matrix.
 
   \code

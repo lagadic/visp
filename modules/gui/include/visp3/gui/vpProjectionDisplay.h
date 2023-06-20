@@ -71,16 +71,16 @@ private:
   vpImage<unsigned char> Icam;
   vpImage<unsigned char> Iext;
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX dIcam;
   vpDisplayX dIext;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK dIcam;
   vpDisplayGTK dIext;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI dIcam;
   vpDisplayGDI dIext;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV dIcam;
   vpDisplayOpenCV dIext;
 #elif defined(VISP_HAVE_D3D9)
