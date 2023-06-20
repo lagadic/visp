@@ -3,6 +3,7 @@
 
 if test "$#" -ne 1; then
   echo "Script should take the path to the build directory as input, and should be started from the root of the visp source directory"
+  exit 1
 fi
 
 source_dir=`pwd`
