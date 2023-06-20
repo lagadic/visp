@@ -33,9 +33,9 @@ vpColor interpolate(const vpColor &low, const vpColor &high, const double f)
   return vpColor((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
 /*
- * Display the megapose confidence score as a rectangle in the image.
- * This rectangle becomes green when megapose is "confident" about its prediction
- * The confidence score measures whether megapose can, from its pose estimation, recover the true pose in future pose refinement iterations
+ * Display the Megapose confidence score as a rectangle in the image.
+ * This rectangle becomes green when Megapose is "confident" about its prediction
+ * The confidence score measures whether Megapose can, from its pose estimation, recover the true pose in future pose refinement iterations
  *
  * I The image in which to display the confidence
  * score The confidence score of megapose, between 0 and 1
@@ -57,7 +57,7 @@ void displayScore(const vpImage<vpRGBa> &I, double score)
 }
 
 /*
- * Add the megapose rendering on top of the actual image I.
+ * Add the Megapose rendering on top of the actual image I.
  * Require I and overlay to be of the same size.
  * Note that a fully black object will not render
 */
@@ -72,13 +72,13 @@ void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
   }
 }
 
-#if defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 //! [Detect]
 /*
  * Run the detection network on an image in order to find a specific object.
  * The best matching detection is returned:
- *  If a previous megapose estimation is available, find the closest match in the image (Euclidean distance between centers)
- *  Otherwise, take the detection with highest confidence
+ * - If a previous Megapose estimation is available, find the closest match in the image (Euclidean distance between centers)
+ * - Otherwise, take the detection with highest confidence
  * If no detection corresponding to detectionLabel is found, then std::nullopt is returned
  */
 std::optional<vpRect> detectObjectForInitMegaposeDnn(vpDetectorDNNOpenCV &detector, const cv::Mat &I,
@@ -136,9 +136,10 @@ std::optional<vpRect> detectObjectForInitMegaposeDnn(vpDetectorDNNOpenCV &detect
   return std::nullopt;
 }
 #endif
+
 /*
-* Ask user to provide the detection themselves. They must click to start labelling, then click on the top left and bottom right corner to create the detection.
-*/
+ * Ask user to provide the detection themselves. They must click to start labelling, then click on the top left and bottom right corner to create the detection.
+ */
 std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
 {
   const bool startLabelling = vpDisplay::getClick(I, false);
@@ -210,13 +211,13 @@ int main(int argc, const char *argv [])
     .addArgument("object", objectName, true, "Name of the object to track with megapose.")
     .addArgument("detectionMethod", detectionMethod, true, "How to perform detection of the object to get the bounding box:"
       " \"click\" for user labelling, \"dnn\" for dnn detection.")
-    .addArgument("reinitThreshold", reinitThreshold, false, "If the megapose score falls below this threshold, then a reinitialization is be required."
+    .addArgument("reinitThreshold", reinitThreshold, false, "If the Megapose score falls below this threshold, then a reinitialization is be required."
       " Should be between 0 and 1")
-    .addArgument("megapose/address", megaposeAddress, true, "IP address of the megapose server.")
-    .addArgument("megapose/port", megaposePort, true, "Port on which the megapose server listens for connections.")
-    .addArgument("megapose/refinerIterations", refinerIterations, false, "Number of megapose refiner model iterations."
+    .addArgument("megapose/address", megaposeAddress, true, "IP address of the Megapose server.")
+    .addArgument("megapose/port", megaposePort, true, "Port on which the Megapose server listens for connections.")
+    .addArgument("megapose/refinerIterations", refinerIterations, false, "Number of Megapose refiner model iterations."
       "A higher count may lead to better accuracy, at the cost of more processing time")
-    .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of megapose renderings used for the initial pose estimation.")
+    .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of Megapose renderings used for the initial pose estimation.")
 
     .addArgument("detector/model-path", detectorModelPath, true, "Path to the model")
     .addArgument("detector/config", detectorConfig, true, "Path to the model configuration. Set to none if config is not required.")
@@ -268,11 +269,11 @@ int main(int argc, const char *argv [])
   vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HUIGUI)
   vpDisplayOpenCV d;
 #endif
   //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-#if defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
     vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
@@ -291,22 +292,22 @@ int main(int argc, const char *argv [])
     megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
   }
   catch (vpException &e) {
-    throw vpException(vpException::ioError, "Could not connect to megapose server at " + megaposeAddress + " on port " + std::to_string(megaposePort));
+    throw vpException(vpException::ioError, "Could not connect to mMgapose server at " + megaposeAddress + " on port " + std::to_string(megaposePort));
   }
 
   vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);
   megapose->setCoarseNumSamples(coarseNumSamples);
   const std::vector<std::string> allObjects = megapose->getObjectNames();
   if (std::find(allObjects.begin(), allObjects.end(), objectName) == allObjects.end()) {
-    throw vpException(vpException::badValue, "Object " + objectName + " is not known by the megapose server!");
+    throw vpException(vpException::badValue, "Object " + objectName + " is not known by the Megapose server!");
   }
   std::future<vpMegaPoseEstimate> trackerFuture;
   //! [Instantiate megapose]
 
   cv::Mat frame;
-  vpMegaPoseEstimate megaposeEstimate; // last megapose estimation
+  vpMegaPoseEstimate megaposeEstimate; // last Megapose estimation
   vpRect lastDetection; // Last detection (initialization)
-  bool callMegapose = true; // Whether we should call megapose this iteration
+  bool callMegapose = true; // Whether we should call Megapose this iteration
   bool initialized = false; // Whether tracking should be initialized or reinitialized
   bool tracking = false;
 
@@ -337,7 +338,7 @@ int main(int argc, const char *argv [])
     }
     vpDisplay::display(I);
     //! [Acquisition]
-    //Check whether megapose is still running
+    // Check whether Megapose is still running
     //! [Check megapose]
     if (!callMegapose && trackerFuture.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
       megaposeEstimate = trackerFuture.get();
@@ -356,12 +357,12 @@ int main(int argc, const char *argv [])
       }
     }
     //! [Check megapose]
-    //! [Call megapose]
+    //! [Call MegaPose]
     if (callMegapose) {
       if (!initialized) {
         tracking = false;
         std::optional<vpRect> detection = std::nullopt;
-#if defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
         if (detectionMethod == DetectionMethod::DNN) {
           detection = detectObjectForInitMegaposeDnn(
             dnn, frame, objectName, initialized ? std::optional(megaposeEstimate) : std::nullopt);
@@ -385,7 +386,7 @@ int main(int argc, const char *argv [])
         megaposeStartTime = vpTime::measureTimeMs();
       }
     }
-    //! [Call megapose]
+    //! [Call MegaPose]
 
     //! [Display]
     std::string keyboardEvent;
@@ -429,7 +430,7 @@ int main(int argc, const char *argv [])
     frameTimes.push_back(vpTime::measureTimeMs() - frameStart);
   }
   std::cout << "Average frame time: " << vpMath::getMean(frameTimes) << std::endl;
-  std::cout << "Average time between megapose calls: " << vpMath::getMean(megaposeTimes) << std::endl;
+  std::cout << "Average time between Megapose calls: " << vpMath::getMean(megaposeTimes) << std::endl;
 }
 
 #else

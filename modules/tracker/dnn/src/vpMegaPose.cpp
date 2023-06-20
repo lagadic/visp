@@ -1,3 +1,38 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * MegaPose wrapper.
+ *
+*****************************************************************************/
+
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/core/vpConfig.h>
 //#ifdef VISP_HAVE_NLOHMANN_JSON
@@ -134,11 +169,11 @@ void decode(const std::vector<uint8_t> &, unsigned int &)
 }
 
 /*
-Modify an object, given a byte array and an index reading into the byte array.
-The byte array is not modified. But the index should be modified once the object is read.
-After calling this function, the index should indicate the position of the next object to be read.
+  Modify an object, given a byte array and an index reading into the byte array.
+  The byte array is not modified. But the index should be modified once the object is read.
+  After calling this function, the index should indicate the position of the next object to be read.
 
-There is no default decoding behaviour. As such, specializations must be written.
+  There is no default decoding behaviour. As such, specializations must be written.
 */
 template<typename T>
 void decode(const std::vector<uint8_t>& buffer, unsigned int& index, T& t) = delete;
@@ -229,7 +264,7 @@ void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpImage<vpR
 void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<uint8_t>& buffer)
 {
   if (code != vpMegaPose::ServerMessage::ERR) {
-    throw vpException(vpException::fatalError, "Megapose: got an unexpected message from the server: " + std::to_string(code));
+    throw vpException(vpException::fatalError, "MegaPose: got an unexpected message from the server: " + std::to_string(code));
   }
   std::string message;
   unsigned index = 0;
@@ -251,8 +286,6 @@ const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::cod
     {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
     {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
     {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
-
-
 };
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
@@ -289,14 +322,14 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 
   size_t readCount = read(serverSocket, &size, sizeof(uint32_t));
   if (readCount != sizeof(uint32_t)) {
-    throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
+    throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
   size = ntohl(size);
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
   readCount = read(serverSocket, code, MEGAPOSE_CODE_SIZE);
   if (readCount != MEGAPOSE_CODE_SIZE) {
-    throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
+    throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
 
   std::vector<uint8_t> data;
@@ -306,7 +339,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   while (read_total < size) {
     int actually_read = read(serverSocket, &data[read_total], read_size);
     if (actually_read <= 0) {
-      throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
+      throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
     }
     read_total += actually_read;
   }
@@ -314,8 +347,6 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   vpMegaPose::ServerMessage c = stringToMessage(codeStr);
   return std::make_pair(c, data);
 }
-
-
 
 vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParameters& cam, unsigned height, unsigned width)
 {
@@ -364,7 +395,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
   parametersJson["labels"] = labels;
 
   if (detections == nullptr && initial_cTos == nullptr) {
-    throw vpException(vpException::badValue, "You must either provide detections (bounding boxes) or initial pose estimates for Megapose to work.");
+    throw vpException(vpException::badValue, "You must either provide detections (bounding boxes) or initial pose estimates for MegaPose to work.");
   }
 
   if (detections != nullptr) {

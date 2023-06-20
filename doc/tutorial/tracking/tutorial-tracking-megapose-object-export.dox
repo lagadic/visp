@@ -1,18 +1,18 @@
 /**
 
-\page tutorial-megapose-model Tutorial: Exporting a 3D model to megapose
+\page tutorial-megapose-model Tutorial: Exporting a 3D model to MegaPose
 \tableofcontents
 
-This tutorial details how to export your 3D model for usage with MegaPose.
-We will use Blender to inspect our model, correct it and export it to a format readable by Megapose.
-Blender is free and open source software. It is available for Linux, Windows and Mac and is available <a href="https://www.blender.org/">here</a>
+This tutorial follows \ref tutorial-tracking-megapose and details how to export your 3D model for usage with MegaPose.
+We will use Blender to inspect our model, correct it and export it to a format readable by MegaPose.
+Blender is free and open source software. It is available for Linux, Windows and Mac and is available <a href="https://www.blender.org/">here</a>.
 The steps followed and the displayed images are those for Blender 3.4.1.
 
 
-This tutorial does not focus on creating the 3D model by hand, but rather on the export specifics for the model to best work with megapose.
+This tutorial does not focus on creating the 3D model by hand, but rather on the export specifics for the model to best work with MegaPose.
 We also provide a step by step guide on how to create a 3D model from images of the object with Neural Radiance Fields (NeRFs).
 
-Megapose supports multiple file formats: .ply, .obj (with .mtl and textures), .gltf, .glb, .egg, .bam
+MegaPose supports multiple file formats: .ply, .obj (with .mtl and textures), .gltf, .glb, .egg, .bam.
 
 \section megapose_model_prep 3D Model preparation
 
@@ -29,7 +29,7 @@ While NeRFs are able to generate high quality renderings, we will focus on their
 
 In this tutorial, we will use <a href="https://docs.nerf.studio/en/latest/index.html">nerfstudio</a> to train a NeRF and recover the geometry.
 
-Note that while NeRF may not be entirely accurate (both in geometry and texture), we found in our tests that the generated 3D mesh often works well to get an estimate of an object's pose with Megapose.
+Note that while NeRF may not be entirely accurate (both in geometry and texture), we found in our tests that the generated 3D mesh often works well to get an estimate of an object's pose with MegaPose.
 
 \subsubsection megapose_reconstruction_requirements Requirements and installation
 Since NeRFs are based on deep learning, they require a GPU to be trainable.
@@ -39,7 +39,7 @@ To install nerfstudio you have two options:
 
 If you choose to install with conda, you should create a new environment in order to avoid potential dependency clashes with your other work.
 
-To set up nerfstudio, please follow the installation procedure described here: <a href="https://docs.nerf.studio/en/latest/quickstart/installation.html">https://docs.nerf.studio/en/latest/quickstart/installation.html</a>
+To set up nerfstudio, please follow the installation procedure described here: <https://docs.nerf.studio/en/latest/quickstart/installation.html>
 
 
 \subsubsection megapose_reconstruction_acquisition Data acquisition
@@ -47,25 +47,26 @@ To set up nerfstudio, please follow the installation procedure described here: <
 To train a NeRF and obtain a 3D mesh, we require images of the object.
 
 Nerfstudio supports multiple data acquisition pipelines. You can for instance acquire images on your phone with an application such as KIRI Engine, and feed its results to nerfstudio.
-For more information, see the <a href="https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html> available custom data formats</a>
+For more information, see the [available custom data formats](https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html).
 
 In this tutorial, we will focus on using a basic image sequence, a folder containing a set of `.png` images.
-To capture those images, you can use a program such as the ViSP grabber tutorial for your camera: \ref tutorial-grabber
+To capture those images, you can use a program such as the ViSP grabber tutorial for your camera: \ref tutorial-grabber.
 
 For example, to capture images with a Realsense:
 \code
-IMAGES_DIR=castle_data
-tutorial/grabber/tutorial-grabber-realsense --record 1 --seqname ${IMAGES_DIR}/I%05d.png --width 1920 --height 1080
+$ IMAGES_DIR=castle_data
+$ cd $VISP_WS/visp-build/tutorial/grabber
+$ ./tutorial-grabber-realsense --record 1 --seqname ${IMAGES_DIR}/I%05d.png --width 1920 --height 1080
 \endcode
 
-The --record 1, will record only the images when you click: you should avoid providing blurry or irrelevant images.
+The `--record 1`, will record only the images when you click: you should avoid providing blurry or irrelevant images.
 It is recommended to have at least 50 images of your object, acquired at various viewpoints for a NeRF to be trainable.
 
-\warning When capturing images, do not move the object. Rather, move around the object to acquire the different viewpoints. Moreover, Try to have uniform lighting and avoid shadows to get the best results.
+\warning When capturing images, do not move the object. Rather, move around the object to acquire the different viewpoints. Moreover, try to have uniform lighting and avoid shadows to get the best results.
 
 Once you have acquired your images, you need to estimate the camera pose associated to each image. NerfStudio provides some utils to do this.
-This data processing script is backed by either <a href="https://colmap.github.io/">colmap</a> or <a href="https://github.com/cvg/Hierarchical-Localization">hloc</a>
-As such, either one of those needs to be installed. For colmap installation instruction, see <a href="https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html#installing-colmap">The nerfstudio documentation</a>
+This data processing script is backed by either <a href="https://colmap.github.io/">colmap</a> or <a href="https://github.com/cvg/Hierarchical-Localization">hloc</a>.
+As such, either one of those needs to be installed. For colmap installation instructions, see <a href="https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html#installing-colmap">The nerfstudio documentation</a>.
 Note that colmap can also provide dense reconstructions, but also requires a GPU.
 
 To process the data, to give it as an input to the NeRF model, run:
@@ -76,7 +77,6 @@ To process the data, to give it as an input to the NeRF model, run:
 
 Here, we use superpoint as the keypoint extraction method. This method requires hloc to be installed.
 
-
 \subsubsection megapose_reconstruction_training Training a NeRF
 
 \code
@@ -86,19 +86,18 @@ Here, we use superpoint as the keypoint extraction method. This method requires 
 \subsubsection megapose_reconstruction_conversion Converting NeRF representation to .obj
 
 \code
-NERF_MODEL_DIR=castle_nerf
-ns-export poisson --load-config ${NERF_DIR}/${NERF_DATA_DIR}/nerfacto/2023-06-13_171130/config.yml --output-dir $NERF_MODEL_DIR
+(nerfstudio) $ NERF_MODEL_DIR=castle_nerf
+(nerfstudio) $ ns-export poisson --load-config ${NERF_DIR}/${NERF_DATA_DIR}/nerfacto/2023-06-13_171130/config.yml --output-dir $NERF_MODEL_DIR
 \endcode
 
-Where the full path to the config.yml will change, depending on the date at which you train your model.
-Other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>
+Where the full path to the `config.yml` will change, depending on the date at which you train your model.
+Other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>.
 
 You can specify many parameters that will directly impact the quality of the model:
 - Number of generated points
 - Target number of faces for your mesh
 - 3D bounding box for which to generate the mesh
-- Texture resolution
-
+- Texture resolution.
 
 Excluding image acquisition and installation, this process takes around 40 minutes with a Quadro RTX 6000.
 
@@ -126,21 +125,21 @@ To do so, switch the viewport rendering to shaded mode.
 If you generated your model with a NeRF, it may contain extraneous geometry, corresponding to the environment in which you performed your scan.
 You should remove this geometry, leaving only the object of interest in the mesh.
 
-Your imported mesh may look something like this:
+Your imported mesh may look like this:
 \image html tutorial/tracking/megapose/model_after_import.png
 
 To start, you should realign your mesh with the world frame. This makes it easier to move around and manipulate the mesh.
 To manipulate your mesh cleanly, you should be in **object mode**, you can check that it is the case in the top left of the viewport.
-To rotate your mesh, press **R**. To restrict the rotation to a single axis, you can press**X**, **Y** or **Z** after pressing **R**.
+To rotate your mesh, press **R**. To restrict the rotation to a single axis, you can press **X**, **Y** or **Z** after pressing **R**.
 To move your mesh, press **G**. The axis restriction principle is the same as for rotation.
 For a more accurate placement and orientation, use the front, top and side orthographic views.
-You can do so by using the the numbers of the NumPad, or by using the gimbal in the top right of the viewport.
+You can do so by using the numbers of the NumPad, or by using the gimbal in the top right of the viewport.
 
 To clean your mesh, select it (left click) and go into edit mode by pressing **Tab**. You should see the vertices that compose the mesh.
 Next, press **W** to have the "paint selection" tool enabled. You can now select the different vertices by dragging your mouse across the mesh.
 Select all the unwanted geometry, then press **X** and select the appropriate option (by default, use delete vertices).
 
-To make the process easier and less error prone, delete the geometry in multiple steps. If, by mistake, you clear your selection, you can recover by using **CTRL+Z**
+To make the process easier and less error prone, delete the geometry in multiple steps. If, by mistake, you clear your selection, you can recover by using **CTRL+Z**.
 
 If you go into wireframe view, the selection tool will pick up all vertices, whether they are occluded by other faces or not. This makes it faster to delete large portions of geometry.
 
@@ -151,8 +150,8 @@ Once you have cleaned up your model, you should have something similar to this:
 
 \subsection megapose_model_scale  Step 2: Ensuring correct scale
 
-If your model was built from a nerf or was created with another software, you should ensure that the dimensions of the object are correct.
-The Megapose server expects a mesh with units in meters. Some formats and software use millimeters by default.
+If your model was built from a NeRF or was created with another software, you should ensure that the dimensions of the object are correct.
+The MegaPose server expects a mesh with units in meters. Some formats and software use millimeters by default.
 
 If you used a NeRF to generate your model and you only used RGB images as inputs, then the scale information will probably be wrong.
 
@@ -160,7 +159,7 @@ To check the scale of your object, you can view the item scale in the "Item pane
 \image html tutorial/tracking/megapose/wrong_dimensions.png
 
 At the bottom of this panel, you can see the dimensions of your model. In the example above, our model is not 77cm wide, so we need to correct it.
-The easiest way to find the scale of your object is to take measurements. In Blender, you ca do so by selecting the ruler tool
+The easiest way to find the scale of your object is to take measurements. In Blender, you can do so by selecting the ruler tool:
 \image html tutorial/tracking/megapose/ruler_tool.png
 It is also advisable to use vertex snapping to make measuring easier. Snapping can be enabled at the top of the viewport:
 \image html tutorial/tracking/megapose/snapping.png
@@ -178,18 +177,18 @@ Next, compare the measurements with the real ones to compute a rescaling factor 
 
 To scale, the model, first ensure that it is selected by left clicking on it.
 Then, you can either:
-- Press **S**, then type "*your_scale" (for example, "*0.45") and left click to confirm.
+- Press **S**, then type "your_scale" (for example, "*0.45") and left click to confirm.
 - Adjust the dimensions or scale in the "Item panel". The input fields support mathematical expressions, so you can multiple each dimension by the scale factor.
 
 
 \subsection megapose_model_origin Step 3: Selecting the origin of your model
 
 When exporting to a format such as `.obj` or `.ply`, the object origin defined in Blender (the orange dot visible when you select your model) is lost.
-What matters then is to place your object relative to Blender's world frame (where the axes cross, at (0,0,0)).
+What matters then is to place your object relative to Blender's world frame, at the axes intersections, at (0,0,0).
 
 To set the origin of the object, move it around with **G**, or use the "Location" field in the "Item" panel.
 
-\warning Using the same model but with different origins will impact the results of Megapose. We observed better results when placing the geometric center at the world's origin.
+\warning Using the same model but with different origins will impact the results of MegaPose. We observed better results when placing the geometric center at the world's origin.
 
 Here is an example of a model that is not well placed: it is too far from the world origin. The results may be impacted and the returned poses will not be useful.
 \image html tutorial/tracking/megapose/megapose-bad-origin-model.png
@@ -218,10 +217,9 @@ Finally, to bake the material in the object data: follow these steps:
 
 \warning When exporting a baked model, remember to check the "Color" export option. This is not yet required, but will be in the last step of the tutorial.
 
+\subsection megapose_final_model_export Final step: exporting to a MegaPose-readable format
 
-\subsection megapose_final_model_export Final step: exporting to a Megapose-readable format
-
-We are now ready to export the model. Here, we will focus on exporting to the .obj format which is widely supported and works well with Megapose.
+We are now ready to export the model. Here, we will focus on exporting to the .obj format which is widely supported and works well with MegaPose.
 
 Before exporting, save your blender file, and select your model.
 
@@ -240,17 +238,17 @@ If you move your object, you should also move the .mtl file and the texture
 
 \section megapose_model_common_errors Common issues
 
-When using with megapose, you may encounter multiple issues:
+When using with MegaPose, you may encounter multiple issues:
 
 - The server crashes with an assertion error about `meshes.sample_points` not having enough points:
- - To fix this error, the total number of vertices of all your objects that are watched by the Megapose server should be more than 2000.
+ - To fix this error, the total number of vertices of all your objects that are watched by the MegaPose server should be more than 2000.
  - To artificially add vertices without modifying, you can perform subdivision on your mesh: go into edit mode (**Tab**), select all your geometry (**A**), then right click and select subdivide.
 
 - The exported model has no texture
  - If you have no image texture, follow the steps in \ref megapose_model_texture and ensure that you select "Color" when exporting to .obj.
  - Note that exporting colors to .ply seems not to be working
  - If you have an image texture
-  - Watch the output of the Megapose server, a warning may be raised if the texture cannot be loaded.
+  - Watch the output of the MegaPose server, a warning may be raised if the texture cannot be loaded.
   - If this is the case, open the `.mtl` file linked to your model. Make sure that the path to the image texture is correct.
   - If the issue is still present after fixing the .mtl file, open the .obj and look for a line containing something like
   \code
@@ -258,7 +256,7 @@ When using with megapose, you may encounter multiple issues:
   \endcode
 
 - The model looks different/darker when exporting to `.gltf` or `.glb`
- - Megapose relies on Panda3D to perform 3D rendering. using gltf (or their binary version, glb) files requires a different rendering pipeline which is not the default choice for megapose
+ - MegaPose relies on Panda3D to perform 3D rendering. Using gltf (or their binary version, glb) files requires a different rendering pipeline which is not the default choice for megapose
  - Prefer an export to .obj
 
 \section megapose_model_testing Testing your model
