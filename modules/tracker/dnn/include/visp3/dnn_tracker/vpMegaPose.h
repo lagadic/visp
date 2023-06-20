@@ -85,7 +85,7 @@ inline void to_megapose_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
   std::vector<double> values;
   values.reserve(16);
   for (unsigned i = 0; i < 16; ++i) {
-      values.push_back(T.data[i]);
+    values.push_back(T.data[i]);
   }
   j = values;
 }
@@ -93,7 +93,7 @@ inline void to_megapose_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 inline void to_megapose_json(nlohmann::json &j, const vpRect &d)
 {
   std::vector<double> values = {
-      d.getLeft(), d.getTop(), d.getRight(), d.getBottom()
+    d.getLeft(), d.getTop(), d.getRight(), d.getBottom()
   };
   j = values;
 }
@@ -167,7 +167,6 @@ public:
   */
   vpMegaPose(const std::string &host, int port, const vpCameraParameters &cam, unsigned height, unsigned width);
 
-
   /**
   * Estimate the poses of objects (in the frame of the camera c) with MegaPose.
   * The object origins used to estimate the poses are those used by the MegaPose server.
@@ -232,15 +231,15 @@ public:
 
 private:
   // Server connection data
-  int serverSocket;
-  int fd;
+  int m_serverSocket;
+  int m_fd;
 
-  std::mutex mutex; // Since client-server communications are synchronous, avoid multiple parallel communications
+  std::mutex m_mutex; // Since client-server communications are synchronous, avoid multiple parallel communications
 
   void makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t> &data) const;
   std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> readMessage() const;
 
-  const static std::unordered_map<vpMegaPose::ServerMessage, std::string> codeMap;
+  const static std::unordered_map<vpMegaPose::ServerMessage, std::string> m_codeMap;
   static std::string messageToString(const vpMegaPose::ServerMessage messageType);
   static vpMegaPose::ServerMessage stringToMessage(const std::string &s);
 };

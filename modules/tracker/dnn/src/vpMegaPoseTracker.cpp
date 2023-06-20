@@ -40,29 +40,29 @@ std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I
 {
   return std::async(std::launch::async, [&I, &bb, this]() -> vpMegaPoseEstimate {
     std::vector<vpRect> bbs = {bb};
-    this->poseEstimate = megapose->estimatePoses(I, {this->objectLabel}, nullptr, 0.0, &bbs, nullptr)[0];
-    this->initialized = true;
-    return this->poseEstimate;
+    m_poseEstimate = m_megapose->estimatePoses(I, {m_objectLabel}, nullptr, 0.0, &bbs, nullptr)[0];
+    m_initialized = true;
+    return m_poseEstimate;
   });
 }
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cTo)
 {
   return std::async(std::launch::async, [&I, &cTo, this]() -> vpMegaPoseEstimate {
     std::vector<vpHomogeneousMatrix> poses = { cTo };
-    this->poseEstimate = megapose->estimatePoses(I, { this->objectLabel }, nullptr, 0.0, nullptr, &poses)[0];
-    this->initialized = true;
-    return this->poseEstimate;
+    m_poseEstimate = m_megapose->estimatePoses(I, { m_objectLabel }, nullptr, 0.0, nullptr, &poses)[0];
+    m_initialized = true;
+    return m_poseEstimate;
   });
 }
 
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::track(const vpImage<vpRGBa> &I)
 {
-  if (!initialized) {
+  if (!m_initialized) {
     throw vpException(vpException::notInitialized, "MegaPose tracker was not initialized. Call init before calling track.");
   }
   return std::async(std::launch::async, [&I, this]() -> vpMegaPoseEstimate {
-    std::vector<vpHomogeneousMatrix> poses = {this->poseEstimate.cTo};
-    this->poseEstimate = megapose->estimatePoses(I, {this->objectLabel}, nullptr, 0.0, nullptr, &poses, refinerIterations)[0];
-    return this->poseEstimate;
+    std::vector<vpHomogeneousMatrix> poses = {m_poseEstimate.cTo};
+    m_poseEstimate = m_megapose->estimatePoses(I, {m_objectLabel}, nullptr, 0.0, nullptr, &poses, m_refinerIterations)[0];
+    return m_poseEstimate;
   });
 }

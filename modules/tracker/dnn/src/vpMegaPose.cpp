@@ -272,7 +272,7 @@ void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<
   throw vpException(vpException::badValue, "Server error : " + message);
 }
 
-const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::codeMap =
+const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::m_codeMap =
 {
     {ServerMessage::ERR, "RERR"},
     {ServerMessage::OK, "OKOK"},
@@ -290,12 +290,12 @@ const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::cod
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
 {
-  return codeMap.at(messageType);
+  return m_codeMap.at(messageType);
 }
 
 vpMegaPose::ServerMessage vpMegaPose::stringToMessage(const std::string& s)
 {
-  for (auto it : codeMap) {
+  for (auto it : m_codeMap) {
     if (it.second == s) {
       return it.first;
     }
@@ -320,14 +320,14 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 {
   uint32_t size;
 
-  size_t readCount = read(serverSocket, &size, sizeof(uint32_t));
+  size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
   if (readCount != sizeof(uint32_t)) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
   size = ntohl(size);
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
-  readCount = read(serverSocket, code, MEGAPOSE_CODE_SIZE);
+  readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
   if (readCount != MEGAPOSE_CODE_SIZE) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
@@ -337,7 +337,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   unsigned read_size = 4096;
   unsigned read_total = 0;
   while (read_total < size) {
-    int actually_read = read(serverSocket, &data[read_total], read_size);
+    int actually_read = read(m_serverSocket, &data[read_total], read_size);
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
     }
@@ -357,7 +357,7 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
   }
 #endif
   struct sockaddr_in serv_addr;
-  if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+  if ((m_serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     throw vpException(vpException::ioError, "Could not create socket to connect to MegaPose server");
   }
   serv_addr.sin_family = AF_INET;
@@ -367,7 +367,7 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
     throw vpException(vpException::badValue, "Invalid ip address: " + host);
   }
   //Initiate connection
-  if ((fd = connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
+  if ((m_fd = connect(m_serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
@@ -378,7 +378,7 @@ vpMegaPose::~vpMegaPose()
 #if defined(_WIN32)
   WSACleanup();
 #else
-  close(fd);
+  close(m_fd);
 #endif
 }
 
@@ -388,7 +388,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
                           const std::vector<vpRect>* const detections, const std::vector<vpHomogeneousMatrix>* const initial_cTos,
                           int refinerIterations)
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   encode(data, image);
   json parametersJson;
@@ -441,7 +441,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
     encode(data, *depth);
   }
   makeMessage(ServerMessage::GET_POSE, data);
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
   //std::cout<< "Encoding time = " << (vpTime::measureTimeMs() - beforeEncoding) << std::endl;
 
   ServerMessage code;
@@ -462,7 +462,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
 std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
   const std::vector<std::string>& labels, const std::vector<vpHomogeneousMatrix>& cTos)
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   if (cTos.size() != labels.size()) {
     throw vpException(vpException::generalExceptionEnum::badValue, "The number of poses should be the same as the number of object labels");
@@ -480,7 +480,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
 
   encode(data, parametersJson.dump());
   makeMessage(ServerMessage::GET_SCORE, data);
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
 
   ServerMessage code;
   std::vector<uint8_t> data_result;
@@ -500,7 +500,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
 
 void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, unsigned width)
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
 
   json message;
@@ -514,7 +514,7 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   encode(data, message.dump());
   makeMessage(ServerMessage::SET_INTR, data);
 
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -526,7 +526,7 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
 vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNames,
                                         const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType)
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   json j;
   j["labels"] = objectNames;
@@ -540,7 +540,7 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNa
   j["type"] = viewType;
   encode(data, j.dump());
   makeMessage(ServerMessage::GET_VIZ, data);
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -556,13 +556,13 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNa
 
 void vpMegaPose::setCoarseNumSamples(const unsigned num)
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   json j;
   j["so3_grid_size"] = num;
   encode(data, j.dump());
   makeMessage(ServerMessage::SET_SO3_GRID_SIZE, data);
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -573,10 +573,10 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
 
 std::vector<std::string> vpMegaPose::getObjectNames()
 {
-  const std::lock_guard<std::mutex> lock(mutex);
+  const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   makeMessage(ServerMessage::GET_LIST_OBJECTS, data);
-  send(serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, &data[0], data.size(), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();

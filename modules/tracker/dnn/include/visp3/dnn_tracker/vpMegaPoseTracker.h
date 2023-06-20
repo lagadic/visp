@@ -42,6 +42,7 @@
 #include <future>
 #include<memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
+
 /**
  * \class vpMegaPoseTracker
  * \ingroup module_dnn_tracker
@@ -105,7 +106,7 @@ public:
    * @param[in] refinerIterations : Number of refiner iterations to perform every time init or track is called. Impacts performance.
    */
   vpMegaPoseTracker(std::shared_ptr<vpMegaPose> megapose, const std::string &objectLabel, const int refinerIterations) :
-    megapose(megapose), objectLabel(objectLabel), refinerIterations(refinerIterations), initialized(false)
+    m_megapose(megapose), m_objectLabel(objectLabel), m_refinerIterations(refinerIterations), m_initialized(false)
   { }
   /**
    * @brief Initialize tracking. Performs a full object pose estimation with megapose.
@@ -140,11 +141,11 @@ public:
   std::future<vpMegaPoseEstimate> track(const vpImage<vpRGBa> &I);
 
 private:
-  std::shared_ptr<vpMegaPose> megapose;
-  vpMegaPoseEstimate poseEstimate;
-  std::string objectLabel;
-  int refinerIterations;
-  bool initialized;
+  std::shared_ptr<vpMegaPose> m_megapose;
+  vpMegaPoseEstimate m_poseEstimate;
+  std::string m_objectLabel;
+  int m_refinerIterations;
+  bool m_initialized;
 };
 
 #endif // VISP_HAVE_NLOHMANN_JSON
