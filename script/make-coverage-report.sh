@@ -1,4 +1,6 @@
 # usage: $ script/make-coverage-report.sh path/to/build
+# CMake should already have been run once in the build folder, with BUILD_COVERAGE turned on
+
 if test "$#" -ne 1; then
   echo "Script should take the path to the build directory as input, and should be started from the root of the visp source directory"
 fi
