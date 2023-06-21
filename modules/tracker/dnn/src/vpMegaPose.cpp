@@ -45,6 +45,7 @@
 #else
 #include <io.h>
 #include <winsock2.h>
+#include <ws2tcpip.h> // for inet_pton()
 #endif
 #include <stdexcept>
 #include <mutex>
@@ -77,6 +78,7 @@ void encode(std::vector<uint8_t>& buffer, const int& object)
   const uint8_t* varr = (uint8_t*)&v;
   buffer.insert(buffer.end(), varr, varr + 4);
 }
+
 template<>
 void encode(std::vector<uint8_t>& buffer, const float& object)
 {
@@ -90,15 +92,16 @@ void encode(std::vector<uint8_t>& buffer, const float& object)
 template<>
 void encode(std::vector<uint8_t>& buffer, const std::string& object)
 {
-  const int size = object.size();
+  const int size = static_cast<int>(object.size());
   encode(buffer, size);
   const uint8_t* chars = (uint8_t*)&object[0];
   buffer.insert(buffer.end(), chars, chars + size);
 }
+
 template<typename T>
 void encode(std::vector<uint8_t>& buffer, const std::vector<T>& object)
 {
-  const int size = object.size();
+  const int size = static_cast<int>(object.size());
   encode(buffer, size);
   for (const T& value : object) {
     encode(buffer, value);
@@ -305,7 +308,7 @@ vpMegaPose::ServerMessage vpMegaPose::stringToMessage(const std::string& s)
 
 void vpMegaPose::makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t>& data) const
 {
-  const uint32_t size = htonl(data.size());
+  const uint32_t size = htonl(static_cast<uint32_t>(data.size()));
   const std::string code = messageToString(messageType);
   uint8_t arr[sizeof(size) + MEGAPOSE_CODE_SIZE];
   memcpy(arr, (uint8_t*)&size, sizeof(size));
@@ -319,15 +322,22 @@ void vpMegaPose::makeMessage(const vpMegaPose::ServerMessage messageType, std::v
 std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessage() const
 {
   uint32_t size;
-
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
+#else
+  size_t readCount = _read(m_serverSocket, &size, sizeof(uint32_t));
+#endif
   if (readCount != sizeof(uint32_t)) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
   size = ntohl(size);
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
+#else
+  readCount = _read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
+#endif
   if (readCount != MEGAPOSE_CODE_SIZE) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
   }
@@ -337,7 +347,11 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   unsigned read_size = 4096;
   unsigned read_total = 0;
   while (read_total < size) {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int actually_read = read(m_serverSocket, &data[read_total], read_size);
+#else
+    int actually_read = _read(m_serverSocket, &data[read_total], read_size);
+#endif
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
     }
@@ -357,7 +371,11 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
   }
 #endif
   struct sockaddr_in serv_addr;
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   if ((m_serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+#else
+  if ((m_serverSocket = static_cast<int>(socket(AF_INET, SOCK_STREAM, 0))) < 0) {
+#endif
     throw vpException(vpException::ioError, "Could not create socket to connect to MegaPose server");
   }
   serv_addr.sin_family = AF_INET;
@@ -441,7 +459,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
     encode(data, *depth);
   }
   makeMessage(ServerMessage::GET_POSE, data);
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
   //std::cout<< "Encoding time = " << (vpTime::measureTimeMs() - beforeEncoding) << std::endl;
 
   ServerMessage code;
@@ -480,7 +498,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
 
   encode(data, parametersJson.dump());
   makeMessage(ServerMessage::GET_SCORE, data);
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
 
   ServerMessage code;
   std::vector<uint8_t> data_result;
@@ -514,7 +532,7 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   encode(data, message.dump());
   makeMessage(ServerMessage::SET_INTR, data);
 
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -540,7 +558,7 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNa
   j["type"] = viewType;
   encode(data, j.dump());
   makeMessage(ServerMessage::GET_VIZ, data);
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -562,7 +580,7 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
   j["so3_grid_size"] = num;
   encode(data, j.dump());
   makeMessage(ServerMessage::SET_SO3_GRID_SIZE, data);
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -576,7 +594,7 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   makeMessage(ServerMessage::GET_LIST_OBJECTS, data);
-  send(m_serverSocket, &data[0], data.size(), 0);
+  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();

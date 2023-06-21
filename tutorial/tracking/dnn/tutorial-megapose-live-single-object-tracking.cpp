@@ -25,7 +25,7 @@ using json = nlohmann::json;
  * f interpolation factor, between 0 and 1
  * Returns the interpolated color
  */
-vpColor interpolate(const vpColor &low, const vpColor &high, const double f)
+vpColor interpolate(const vpColor &low, const vpColor &high, const float f)
 {
   const float r = ((float)high.R - (float)low.R) * f;
   const float g = ((float)high.G - (float)low.G) * f;
@@ -40,12 +40,12 @@ vpColor interpolate(const vpColor &low, const vpColor &high, const double f)
  * I The image in which to display the confidence
  * score The confidence score of megapose, between 0 and 1
  */
-void displayScore(const vpImage<vpRGBa> &I, double score)
+void displayScore(const vpImage<vpRGBa> &I, float score)
 {
-  const unsigned top = I.getHeight() * 0.85;
-  const unsigned height = I.getHeight() * 0.1;
-  const unsigned left = I.getWidth() * 0.05;
-  const unsigned width = I.getWidth() * 0.5;
+  const unsigned top = static_cast<unsigned>(I.getHeight() * 0.85f);
+  const unsigned height = static_cast<unsigned>(I.getHeight() * 0.1f);
+  const unsigned left = static_cast<unsigned>(I.getWidth() * 0.05f);
+  const unsigned width = static_cast<unsigned>(I.getWidth() * 0.5f);
   vpRect full(left, top, width, height);
   vpRect scoreRect(left, top, width * score, height);
   const vpColor low = vpColor::red;
@@ -198,9 +198,9 @@ int main(int argc, const char *argv [])
   std::string detectorFramework = "onnx", detectorTypeString = "yolov7";
   std::string objectName = "cube";
   std::vector<std::string> labels = {"cube"};
-  double detectorMeanR = 0.f, detectorMeanG = 0.f, detectorMeanB = 0.f;
-  double detectorConfidenceThreshold = 0.65, detectorNmsThreshold = 0.5, detectorFilterThreshold = -0.25;
-  double detectorScaleFactor = 0.0039;
+  float detectorMeanR = 0.f, detectorMeanG = 0.f, detectorMeanB = 0.f;
+  float detectorConfidenceThreshold = 0.65f, detectorNmsThreshold = 0.5f, detectorFilterThreshold = -0.25f;
+  float detectorScaleFactor = 0.0039f;
   bool  detectorSwapRB = false;
   //! [Arguments]
   vpJsonArgumentParser parser("Single object tracking with Megapose", "--config", "/");
@@ -256,8 +256,8 @@ int main(int argc, const char *argv [])
   else {
     hasCaptureOpeningSucceeded = capture.open(videoDevice);
     isLiveCapture = false;
-    int fps = capture.get(cv::CAP_PROP_FPS);
-    videoFrametime = (1.0 / double(fps)) * 1000.0;
+    double fps = capture.get(cv::CAP_PROP_FPS);
+    videoFrametime = (1.0 / fps) * 1000.0;
   }
   if (!hasCaptureOpeningSucceeded) {
     std::cout << "Capture from camera: " << videoDevice << " didn't work" << std::endl;
@@ -291,8 +291,8 @@ int main(int argc, const char *argv [])
   try {
     megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
   }
-  catch (vpException &e) {
-    throw vpException(vpException::ioError, "Could not connect to mMgapose server at " + megaposeAddress + " on port " + std::to_string(megaposePort));
+  catch (...) {
+    throw vpException(vpException::ioError, "Could not connect to Megapose server at " + megaposeAddress + " on port " + std::to_string(megaposePort));
   }
 
   vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);

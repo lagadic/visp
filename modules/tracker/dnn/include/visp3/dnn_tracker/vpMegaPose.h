@@ -65,9 +65,9 @@
 class vpMegaPoseEstimate
 {
 public:
-  vpMegaPoseEstimate() { }
+  vpMegaPoseEstimate() : score(0.f) { }
   vpHomogeneousMatrix cTo;
-  double score;
+  float score;
   vpRect boundingBox;
 };
 

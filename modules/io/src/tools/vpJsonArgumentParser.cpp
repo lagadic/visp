@@ -37,7 +37,7 @@ std::string vpJsonArgumentParser::help() const
   unsigned spacesBetweenArgAndDescription = 0;
   for (const auto &helper : helpers) {
     if (helper.first.size() > spacesBetweenArgAndDescription) {
-      spacesBetweenArgAndDescription = helper.first.size();
+      spacesBetweenArgAndDescription = static_cast<unsigned int>(helper.first.size());
     }
   }
   spacesBetweenArgAndDescription += 4;
@@ -47,7 +47,7 @@ std::string vpJsonArgumentParser::help() const
     std::string line;
     bool first = true;
     while (getline(argss, line, '\n')) {
-      const unsigned lineSpace = first ? spacesBetweenArgAndDescription - helper.first.size() : spacesBetweenArgAndDescription;
+      const unsigned lineSpace = first ? spacesBetweenArgAndDescription - static_cast<unsigned>(helper.first.size()) : spacesBetweenArgAndDescription;
       const std::string spaceBetweenArgAndDescription(lineSpace, ' ');
       if (first) {
         ss << "\t" << helper.first << spaceBetweenArgAndDescription << line << std::endl;

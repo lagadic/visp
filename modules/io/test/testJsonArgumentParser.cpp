@@ -53,7 +53,7 @@ std::pair<int, std::vector<char *>> convertToArgcAndArgv(const std::vector<std::
 {
   std::vector<char *> argvs;
   argvs.reserve(args.size());
-  int argc = args.size();
+  int argc = static_cast<int>(args.size());
   for (unsigned i = 0; i < args.size(); ++i) {
     argvs.push_back(const_cast<char *>(args[i].c_str()));
   }
