@@ -61,11 +61,12 @@ void displayScore(const vpImage<vpRGBa> &I, float score)
  * Require I and overlay to be of the same size.
  * Note that a fully black object will not render
 */
-void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
-  const vpRGBa black = vpRGBa(0,0,0);
-  for(unsigned int i = 0; i < I.getHeight(); ++i) {
-    for(unsigned int j = 0; j < I.getWidth(); ++j) {
-      if(overlay[i][j] != black) {
+void overlayRender(vpImage<vpRGBa> &I, const vpImage<vpRGBa> &overlay)
+{
+  const vpRGBa black = vpRGBa(0, 0, 0);
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+      if (overlay[i][j] != black) {
         I[i][j] = overlay[i][j];
       }
     }
@@ -82,8 +83,8 @@ void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
  * If no detection corresponding to detectionLabel is found, then std::nullopt is returned
  */
 std::optional<vpRect> detectObjectForInitMegaposeDnn(vpDetectorDNNOpenCV &detector, const cv::Mat &I,
-                                                  const std::string &detectionLabel,
-                                                  std::optional<vpMegaPoseEstimate> previousEstimate)
+  const std::string &detectionLabel,
+  std::optional<vpMegaPoseEstimate> previousEstimate)
 {
   std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> detections_vec;
   detector.detect(I, detections_vec);
@@ -197,7 +198,7 @@ int main(int argc, const char *argv [])
   std::string detectorModelPath = "path/to/model.onnx", detectorConfig = "none";
   std::string detectorFramework = "onnx", detectorTypeString = "yolov7";
   std::string objectName = "cube";
-  std::vector<std::string> labels = {"cube"};
+  std::vector<std::string> labels = { "cube" };
   float detectorMeanR = 0.f, detectorMeanG = 0.f, detectorMeanB = 0.f;
   float detectorConfidenceThreshold = 0.65f, detectorNmsThreshold = 0.5f, detectorFilterThreshold = -0.25f;
   float detectorScaleFactor = 0.0039f;
@@ -277,7 +278,7 @@ int main(int argc, const char *argv [])
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
     vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
-                                           cv::Size(width, height), detectorFilterThreshold);
+    cv::Size(width, height), detectorFilterThreshold);
   vpDetectorDNNOpenCV dnn(netConfig, detectorType);
   if (detectionMethod == DetectionMethod::DNN) {
     dnn.readNet(detectorModelPath, detectorConfig, detectorFramework);
@@ -320,7 +321,6 @@ int main(int argc, const char *argv [])
 
   double megaposeStartTime = 0.0;
 
-  unsigned iter = 0;
   //! [Acquisition]
   while (true) {
     const double frameStart = vpTime::measureTimeMs();
@@ -349,7 +349,7 @@ int main(int argc, const char *argv [])
       tracking = true;
 
       if (overlayModel) {
-        overlayImage = megapose->viewObjects({objectName}, {megaposeEstimate.cTo}, overlayMode);
+        overlayImage = megapose->viewObjects({ objectName }, { megaposeEstimate.cTo }, overlayMode);
       }
 
       if (megaposeEstimate.score < reinitThreshold) { // If confidence is low, require a reinitialisation with 2D detection
@@ -415,7 +415,6 @@ int main(int argc, const char *argv [])
     //! [Display]
 
     vpDisplay::flush(I);
-    ++iter;
 
     vpMouseButton::vpMouseButtonType button;
     if (vpDisplay::getClick(I, button, false)) {

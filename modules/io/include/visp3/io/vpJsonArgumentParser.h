@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * An argument parser that can both use JSON files and command line arguments as inputs.
  *
- * Authors:
- * Samuel Felton
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpJsonArgumentParser_h
-#define vpJsonArgumentParser_h
+#ifndef _vpJsonArgumentParser_h_
+#define _vpJsonArgumentParser_h_
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON)
@@ -46,12 +43,12 @@
 #include <sstream>
 
 
- /**
- * @brief Convert a command line argument to a json representation. By default, will call the parsing function of the JSON library
- *
- * @param arg the argument, represented as a string
- * @return json the json representation of the argument
- */
+/**
+* @brief Convert a command line argument to a json representation. By default, will call the parsing function of the JSON library
+*
+* @param arg the argument, represented as a string
+* @return json the json representation of the argument
+*/
 
 template<typename T>
 nlohmann::json convertCommandLineArgument(const std::string &arg)
@@ -209,6 +206,7 @@ public:
       f = &(f->at(name_copy));
       return f;
     };
+
     parsers[name] = [&parameter, required, getter, name](nlohmann::json &j) {
       const nlohmann::json *field = getter(j, false);
       const bool fieldHasNoValue = field == nullptr || (field != nullptr && field->is_null());
@@ -220,13 +218,13 @@ public:
       else if (!fieldHasNoValue) {
         field->get_to(parameter);
       }
-
-
     };
-    updaters[name] = [getter, &parameter, this](nlohmann::json &j, const std::string &s) {
+
+    updaters[name] = [getter](nlohmann::json &j, const std::string &s) {
       nlohmann::json *field = getter(j, true);
       *field = convertCommandLineArgument<T>(s);
     };
+
     helpers[name] = [help, parameter, required]() -> std::string {
       std::stringstream ss;
       nlohmann::json repr = parameter;

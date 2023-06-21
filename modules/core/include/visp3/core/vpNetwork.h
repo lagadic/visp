@@ -50,7 +50,7 @@
 #include <sys/select.h>
 #endif
 
-// inet_ntop() not supported on win XP
+ // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -81,7 +81,7 @@
   on one computer to another program on another computer.
 
   \warning This class shouldn't be used directly. You better use vpClient and
-  vpServer to simulate your network. Some exemples are provided in these
+  vpServer to simulate your network. Some examples are provided in these
   classes.
 
   \sa vpServer
@@ -91,7 +91,8 @@ class VISP_EXPORT vpNetwork
 {
 protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct vpReceptor {
+  struct vpReceptor
+  {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int socketFileDescriptorReceptor;
     socklen_t receptorAddressSize;
@@ -102,10 +103,11 @@ protected:
     struct sockaddr_in receptorAddress;
     std::string receptorIP;
 
-    vpReceptor() : socketFileDescriptorReceptor(0), receptorAddressSize(), receptorAddress(), receptorIP() {}
+    vpReceptor() : socketFileDescriptorReceptor(0), receptorAddressSize(), receptorAddress(), receptorIP() { }
   };
 
-  struct vpEmitter {
+  struct vpEmitter
+  {
     struct sockaddr_in emitterAddress;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int socketFileDescriptorEmitter;
@@ -314,17 +316,19 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     // Timeout
     return 0;
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < receptor_list.size(); i++) {
       if (FD_ISSET((unsigned int)receptor_list[i].socketFileDescriptorReceptor, &readFileDescriptor)) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         numbytes = recv(receptor_list[i].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
         numbytes = recv((unsigned int)receptor_list[i].socketFileDescriptorReceptor, (char *)(void *)object,
-                        (int)sizeOfObject, 0);
+          (int)sizeOfObject, 0);
 #endif
         if (numbytes <= 0) {
           std::cout << "Disconnected : " << inet_ntoa(receptor_list[i].receptorAddress.sin_addr) << std::endl;
@@ -389,21 +393,23 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
     if (verboseMode)
       vpERROR_TRACE("Select error");
     return -1;
-  } else if (value == 0) {
+  }
+  else if (value == 0) {
     // timeout
     return 0;
-  } else {
+  }
+  else {
     if (FD_ISSET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor)) {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       numbytes =
-          recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
+        recv(receptor_list[receptorEmitting].socketFileDescriptorReceptor, (char *)(void *)object, sizeOfObject, 0);
 #else
       numbytes = recv((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor,
-                      (char *)(void *)object, (int)sizeOfObject, 0);
+        (char *)(void *)object, (int)sizeOfObject, 0);
 #endif
       if (numbytes <= 0) {
         std::cout << "Disconnected : " << inet_ntoa(receptor_list[receptorEmitting].receptorAddress.sin_addr)
-                  << std::endl;
+          << std::endl;
         receptor_list.erase(receptor_list.begin() + (int)receptorEmitting);
         return numbytes;
       }
@@ -443,17 +449,17 @@ template <typename T> int vpNetwork::send(T *object, const unsigned int &sizeOfO
   }
 
   int flags = 0;
-//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+  //#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
 #if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
-                (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
+    (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #else
   return sendto(receptor_list[0].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject, flags,
-                (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
+    (sockaddr *)&receptor_list[0].receptorAddress, receptor_list[0].receptorAddressSize);
 #endif
 }
 
@@ -487,17 +493,17 @@ template <typename T> int vpNetwork::sendTo(T *object, const unsigned int &dest,
   }
 
   int flags = 0;
-//#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
+  //#if ! defined(APPLE) && ! defined(SOLARIS) && ! defined(_WIN32)
 #if defined(__linux__)
   flags = MSG_NOSIGNAL; // Only for Linux
 #endif
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, sizeOfObject, flags,
-                (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
+    (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #else
   return sendto(receptor_list[dest].socketFileDescriptorReceptor, (const char *)(void *)object, (int)sizeOfObject,
-                flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
+    flags, (sockaddr *)&receptor_list[dest].receptorAddress, receptor_list[dest].receptorAddressSize);
 #endif
 }
 
