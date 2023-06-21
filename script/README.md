@@ -123,3 +123,27 @@ python3 PlotCameraTrajectory.py -p poses.txt -m cube_and_cylinder.cao --azim -11
 Following video shows the camera poses outputed by the ViSP model-based tracker when tracking the cube+cylinder object model:
 
 [![Cube+cylinder tracking using ViSP MBT](https://user-images.githubusercontent.com/8035162/180662930-605b2c42-bbb5-4bd6-9fe6-b2a1af3a04e7.png)](https://user-images.githubusercontent.com/8035162/180662750-02fccaff-74bd-411c-8258-06910edc6fde.mp4 "Cube+cylinder tracking using ViSP MBT")
+
+## make-coverage-report.sh
+
+Script that runs the same coverage pipeline as the GitHub CI and generates an HTML report in the build folder. This makes it easier to have an up to date coverage when writing tests locally.
+
+The script is working for Ubuntu and needs `lcov` tool.
+
+- To install `lcov` on Ubuntu like OS:
+
+  ```console
+  $ sudo apt-get install lcov gcovr
+  ```
+
+- To run the script
+
+  ```console
+  $ cd $VISP_WS
+  $ git clone https://github.com/lagadic/visp
+  $ mkdir visp-build
+  $ cd visp-build
+  $ cmake ../visp -DBUILD_COVERAGE=ON
+  $ cd ../visp
+  $ script/make-coverage-report.sh ../visp-build
+  ```
