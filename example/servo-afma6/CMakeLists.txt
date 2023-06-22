@@ -64,7 +64,7 @@ if(WINRT)
   endif()
 endif()
 
-find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
+find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui visp_dnn_tracker)
 
 set(example_cpp
   servoAfma6Ellipse2DCamVelocity.cpp
@@ -80,6 +80,7 @@ set(example_cpp
   servoAfma62DhalfCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocity.cpp
   servoAfma6Segment2DCamVelocity.cpp
+  servoAfma6MegaposePBVS.cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
