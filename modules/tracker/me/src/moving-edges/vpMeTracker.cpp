@@ -31,7 +31,7 @@
  * Description:
  * Moving edges.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 \file vpMeTracker.cpp
@@ -59,8 +59,8 @@ void vpMeTracker::init()
 vpMeTracker::vpMeTracker()
   : list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    ,
-    query_range(0), display_point(false)
+  ,
+  query_range(0), display_point(false)
 #endif
 {
   init();
@@ -69,8 +69,8 @@ vpMeTracker::vpMeTracker()
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
   : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    ,
-    query_range(0), display_point(false)
+  ,
+  query_range(0), display_point(false)
 #endif
 {
   init();
@@ -138,7 +138,8 @@ bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int
 {
   try {
     return (mask == NULL || mask->getValue(i, j));
-  } catch (vpException &) {
+  }
+  catch (vpException &) {
     return false;
   }
 }
@@ -183,7 +184,8 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
     if (refp.getState() == vpMeSite::NO_SUPPRESSION) {
       try {
         refp.track(I, me, false);
-      } catch (...) {
+      }
+      catch (...) {
         // EM verifier quel signal est de sortie !!!
         vpERROR_TRACE("Error caught");
         throw;
@@ -192,21 +194,6 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
         nGoodElement++;
     }
 
-#if (DEBUG_LEVEL2)
-    {
-      vpImagePoint ip1, ip2;
-      double a, b;
-      a = refp.i_1 - refp.i;
-      b = refp.j_1 - refp.j;
-      if (refp.getState() == vpMeSite::NO_SUPPRESSION) {
-        ip1.set_i(refp.i);
-        ip1.set_j(refp.j);
-        ip2.set_i(refp.i + a);
-        ip2.set_j(refp.j + b);
-        vpDisplay::displayArrow(I, ip1, ip2, vpColor::green);
-      }
-    }
-#endif
     *it = refp;
   }
 
@@ -245,36 +232,24 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
       try {
         s.track(I, me, true);
-      } catch (...) {
+      }
+      catch (...) {
         s.setState(vpMeSite::THRESHOLD);
       }
 
       if (vpMeTracker::inMask(m_mask, s.i, s.j)) {
         if (s.getState() != vpMeSite::THRESHOLD) {
           nGoodElement++;
-
-#if (DEBUG_LEVEL2)
-          {
-            double a, b;
-            a = s.i_1 - s.i;
-            b = s.j_1 - s.j;
-            if (s.getState() == vpMeSite::NO_SUPPRESSION) {
-              ip1.set_i(s.i);
-              ip1.set_j(s.j);
-              ip2.set_i(s.i + a * 5);
-              ip2.set_j(s.j + b * 5);
-              vpDisplay::displayArrow(I, ip1, ip2, vpColor::black);
-            }
-          }
-#endif
         }
         *it = s;
         ++it;
-      } else {
+      }
+      else {
         // Site outside mask: it is no more tracked.
         it = list.erase(it);
       }
-    } else {
+    }
+    else {
       ++it;
     }
   }
@@ -284,12 +259,9 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
   Display the moving edge sites with a color corresponding to their state.
 
   - If green : The vpMeSite is a good point.
-  - If blue : The point is removed because of the vpMeSite tracking phase
-  (contrast problem).
-  - If purple : The point is removed because of the vpMeSite tracking phase
-  (threshold problem).
-  - If red : The point is removed because of the robust method in the virtual
-  visual servoing (M-Estimator problem).
+  - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
+  - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+  - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
   - If cyan : The point is removed because it's too close to another.
   - Yellow otherwise
 
@@ -297,12 +269,6 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 */
 void vpMeTracker::display(const vpImage<unsigned char> &I)
 {
-#if (DEBUG_LEVEL1)
-  {
-    std::cout << "begin vpMeTracker::displayList() " << std::endl;
-    std::cout << " There are " << list.size() << " sites in the list " << std::endl;
-  }
-#endif
   for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
     vpMeSite p_me = *it;
     p_me.display(I);

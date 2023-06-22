@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
   int opt_tracker = 0;
@@ -73,74 +73,74 @@ int main(int argc, char **argv)
       }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nSYNOPSIS " << std::endl
-                  << argv[0]
-                  << " [--video <video name>]"
-                  << " [--video-first-frame <image index>"
-                  << " [--model <model name>"
-                  << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
-                  << " [--downscale-img <scale factor>]"
-                  << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
-                  << " [--save <video>]"
-                  << " [--display-scale-auto]"
-                  << " [--plot]"
-                  << " [--verbose,-v]"
-                  << " [--help,-h]"
-                  << std::endl;
+          << argv[0]
+          << " [--video <video name>]"
+          << " [--video-first-frame <image index>"
+          << " [--model <model name>"
+          << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
+          << " [--downscale-img <scale factor>]"
+          << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
+          << " [--save <video>]"
+          << " [--display-scale-auto]"
+          << " [--plot]"
+          << " [--verbose,-v]"
+          << " [--help,-h]"
+          << std::endl;
         std::cout << "\nOPTIONS " << std::endl
-                  << "  --video <video name>" << std::endl
-                  << "      Input video name." << std::endl
-                  << "      Default: model/teabox/teabox.mp4" << std::endl
-                  << std::endl
-                  << "  --video-first-frame <image index>" << std::endl
-                  << "      Index of the first image to process." << std::endl
-                  << "      Set to -1 to process the first image of the video." << std::endl
-                  << "      Default: -1" << std::endl
-                  << std::endl
-                  << "  --model <model name>" << std::endl
-                  << "      CAD model filename. Supported formats are .cao and .wrl." << std::endl
-                  << "      To use wrl format, ViSP need to be built with Coin3D third-party." << std::endl
-                  << "      Default: model/teabox/teabox.cao" << std::endl
-                  << std::endl
-                  << "  --tracker <0=egde|1=keypoint|2=hybrid>" << std::endl
-                  << "      Tracker type:" << std::endl
-                  << "      - when 0: use only moving-edges" << std::endl
-                  << "      - when 1: use only KLT keypoints" << std::endl
-                  << "      - when 2: use hybrid scheme, moving-edges and KLT keypoints." << std::endl
-                  << "      Default: 0" << std::endl
-                  << std::endl
-                  << "  --downscale-img <scale factor>" << std::endl
-                  << "      Downscale input image width and height by this factor." << std::endl
-                  << "      When set to 1, image not down scaled. When set to 2, image width" << std::endl
-                  << "      and height is divided by 2." << std::endl
-                  << "      Default: 1" << std::endl
-                  << std::endl
-                  << "  --dof <0/1 0/1 0/1 0/1 0/1 0/1>" << std::endl
-                  << "      6-dim vector of 0 and 1 to indicate which dof [tx ty tz rx ry rz]" << std::endl
-                  << "      has to be estimated." << std::endl
-                  << "      When set to 1 the dof is estimated. When rather set to 0 the dof" << std::endl
-                  << "      is not estimated. It's value is the one from the initialisation." << std::endl
-                  << "      Default: 1 1 1 1 1 1 (to estimate all 6 dof)" << std::endl
-                  << std::endl
-                  << "  --save <video>" << std::endl
-                  << "      Name of the saved image sequence that contains tracking results in overlay." << std::endl
-                  << "      When the name contains a folder like in the next example, the folder" << std::endl
-                  << "      is created if it doesn't exist."
-                  << "      Example: \"result/image-%04d.png\"." << std::endl
-                  << std::endl
-                  << "  --display-scale-auto" << std::endl
-                  << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
-                  << "      visible on the screen. Useful for large images." << std::endl
-                  << "      Note that this option doesn't affect the size of the processed images." << std::endl
-                  << std::endl
-                  << "  --plot" << std::endl
-                  << "      Open a window that plots the estimated pose evolution." << std::endl
-                  << std::endl
-                  << "  --verbose, -v" << std::endl
-                  << "      Enable verbose mode." << std::endl
-                  << std::endl
-                  << "  --help, -h" << std::endl
-                  << "      Display this helper message." << std::endl
-                  << std::endl;
+          << "  --video <video name>" << std::endl
+          << "      Input video name." << std::endl
+          << "      Default: model/teabox/teabox.mp4" << std::endl
+          << std::endl
+          << "  --video-first-frame <image index>" << std::endl
+          << "      Index of the first image to process." << std::endl
+          << "      Set to -1 to process the first image of the video." << std::endl
+          << "      Default: -1" << std::endl
+          << std::endl
+          << "  --model <model name>" << std::endl
+          << "      CAD model filename. Supported formats are .cao and .wrl." << std::endl
+          << "      To use wrl format, ViSP need to be built with Coin3D third-party." << std::endl
+          << "      Default: model/teabox/teabox.cao" << std::endl
+          << std::endl
+          << "  --tracker <0=egde|1=keypoint|2=hybrid>" << std::endl
+          << "      Tracker type:" << std::endl
+          << "      - when 0: use only moving-edges" << std::endl
+          << "      - when 1: use only KLT keypoints" << std::endl
+          << "      - when 2: use hybrid scheme, moving-edges and KLT keypoints." << std::endl
+          << "      Default: 0" << std::endl
+          << std::endl
+          << "  --downscale-img <scale factor>" << std::endl
+          << "      Downscale input image width and height by this factor." << std::endl
+          << "      When set to 1, image not down scaled. When set to 2, image width" << std::endl
+          << "      and height is divided by 2." << std::endl
+          << "      Default: 1" << std::endl
+          << std::endl
+          << "  --dof <0/1 0/1 0/1 0/1 0/1 0/1>" << std::endl
+          << "      6-dim vector of 0 and 1 to indicate which dof [tx ty tz rx ry rz]" << std::endl
+          << "      has to be estimated." << std::endl
+          << "      When set to 1 the dof is estimated. When rather set to 0 the dof" << std::endl
+          << "      is not estimated. It's value is the one from the initialisation." << std::endl
+          << "      Default: 1 1 1 1 1 1 (to estimate all 6 dof)" << std::endl
+          << std::endl
+          << "  --save <video>" << std::endl
+          << "      Name of the saved image sequence that contains tracking results in overlay." << std::endl
+          << "      When the name contains a folder like in the next example, the folder" << std::endl
+          << "      is created if it doesn't exist."
+          << "      Example: \"result/image-%04d.png\"." << std::endl
+          << std::endl
+          << "  --display-scale-auto" << std::endl
+          << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
+          << "      visible on the screen. Useful for large images." << std::endl
+          << "      Note that this option doesn't affect the size of the processed images." << std::endl
+          << std::endl
+          << "  --plot" << std::endl
+          << "      Open a window that plots the estimated pose evolution." << std::endl
+          << std::endl
+          << "  --verbose, -v" << std::endl
+          << "      Enable verbose mode." << std::endl
+          << std::endl
+          << "  --help, -h" << std::endl
+          << "      Display this helper message." << std::endl
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -161,9 +161,9 @@ int main(int argc, char **argv)
     std::cout << "Dof to estimate            : " << opt_dof_to_estimate.t() << std::endl;
 
     // Create output folder if needed
-    if (! opt_save.empty()) {
+    if (!opt_save.empty()) {
       std::string parent = vpIoTools::getParent(opt_save);
-      if (! parent.empty()) {
+      if (!parent.empty()) {
         std::cout << "Create output directory: " << parent << std::endl;
         vpIoTools::makeDirectory(parent);
       }
@@ -190,7 +190,7 @@ int main(int argc, char **argv)
     }
 
     vpImage<vpRGBa> O;
-    if (! opt_save.empty()) {
+    if (!opt_save.empty()) {
       writer = new vpVideoWriter();
       writer->setFileName(opt_save);
       writer->open(O);
@@ -222,7 +222,6 @@ int main(int argc, char **argv)
       plot->setColor(1, 2, vpColor::blue);
     }
 
-
     //! [Constructor]
     vpMbGenericTracker tracker;
     if (opt_tracker == 0)
@@ -235,8 +234,8 @@ int main(int argc, char **argv)
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is not available. "
-                   "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
-                << std::endl;
+        "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
+        << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -259,7 +258,8 @@ int main(int argc, char **argv)
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(8);
-        me.setThreshold(10000);
+        me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me.setThreshold(20);
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
@@ -354,7 +354,7 @@ int main(int argc, char **argv)
       }
       std::stringstream ss;
       ss << "Process image " << g.getFrameIndex();
-      if(opt_verbose) {
+      if (opt_verbose) {
         std::cout << "-- " << ss.str() << std::endl;
       }
       vpDisplay::display(I);
@@ -368,8 +368,8 @@ int main(int argc, char **argv)
       tracker.display(I, cMo, cam, vpColor::red, thickness);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, thickness);
-      vpDisplay::displayText(I, 20*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), "A click to exit...", vpColor::red);
-      vpDisplay::displayText(I, 40*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 20 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), "A click to exit...", vpColor::red);
+      vpDisplay::displayText(I, 40 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
       {
         std::stringstream ss;
         ss << "Features";
@@ -381,18 +381,18 @@ int main(int argc, char **argv)
           ss << " klt: " << tracker.getNbFeaturesKlt();
         }
 #endif
-        vpDisplay::displayText(I, 60*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
-        if(opt_verbose) {
+        vpDisplay::displayText(I, 60 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        if (opt_verbose) {
           std::cout << ss.str() << std::endl;
-          std::cout <<"cMo:\n" << cMo << std::endl;
+          std::cout << "cMo:\n" << cMo << std::endl;
         }
       }
       {
         double proj_error = tracker.computeCurrentProjectionError(I, cMo, cam);
         std::stringstream ss;
         ss << "Projection error: " << std::setprecision(2) << proj_error << " deg";
-        vpDisplay::displayText(I, 80*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
-        if(opt_verbose) {
+        vpDisplay::displayText(I, 80 * display->getDownScalingFactor(), 10 * display->getDownScalingFactor(), ss.str(), vpColor::red);
+        if (opt_verbose) {
           std::cout << ss.str() << std::endl;
         }
       }
@@ -406,7 +406,7 @@ int main(int argc, char **argv)
         plot->plot(1, g.getFrameIndex(), c_tu_o_deg);
       }
 
-      if (! opt_save.empty()) {
+      if (!opt_save.empty()) {
         vpDisplay::getImage(I, O);
         writer->saveFrame(O);
       }
@@ -415,7 +415,8 @@ int main(int argc, char **argv)
         break;
     }
     vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     vpDisplay::getClick(I);
   }

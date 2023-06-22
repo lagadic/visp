@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,15 @@
  * Description:
  * Moving edges.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeEllipse.h
   \brief Moving edges on an ellipse
 */
 
-#ifndef vpMeEllipse_HH
-#define vpMeEllipse_HH
+#ifndef _vpMeEllipse_h_
+#define _vpMeEllipse_h_
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -98,7 +98,7 @@ public:
   vpMeEllipse(const vpMeEllipse &me_ellipse);
   virtual ~vpMeEllipse();
 
-  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
 
   /*!
     Gets the second order normalized centered moment \f$ n_{ij} \f$
@@ -192,10 +192,11 @@ public:
   */
   inline double getSmallestAngle() const { return m_alphamin; }
 
-  void initTracking(const vpImage<unsigned char> &I, bool trackArc = false);
-  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackArc = false);
+  void initTracking(const vpImage<unsigned char> &I, bool trackCircle = false, bool trackArc = false);
+  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackCircle = false,
+    bool trackArc = false);
   void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL,
-                    const vpImagePoint *pt2 = NULL);
+    const vpImagePoint *pt2 = NULL, bool trackCircle = false);
   void printParameters() const;
 
   /*!
@@ -220,9 +221,11 @@ public:
   {
     if (threshold < 0) {
       thresholdWeight = 0;
-    } else if (threshold > 1) {
+    }
+    else if (threshold > 1) {
       thresholdWeight = 1;
-    } else {
+    }
+    else {
       thresholdWeight = threshold;
     }
   }
@@ -342,7 +345,7 @@ public:
     E = e;
   }
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p,
-                                  double e_p, double low_alpha, double high_alpha);
+    double e_p, double low_alpha, double high_alpha);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j);
   //@}
@@ -429,7 +432,9 @@ protected:
   unsigned int m_expectedDensity;
   //! Number of correct points tracked along the ellipse.
   unsigned int m_numberOfGoodPoints;
-  //! Track an arc of ellipse (true) or a complete one (false).
+  //! Track a circle (true) or an ellipse (false).
+  bool m_trackCircle;
+  //! Track an arc of ellipse/circle (true) or a complete one (false).
   bool m_trackArc;
   //! Epsilon value used to check if arc angles are the same
   double m_arcEpsilon;
@@ -457,11 +462,11 @@ private:
   // Static Function
 public:
   static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
-                      const double &E, const double &smallalpha, const double &highalpha,
-                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
   static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-                      const double &E, const double &smallalpha, const double &highalpha,
-                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

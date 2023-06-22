@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Moving edges.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeLine.h
@@ -114,7 +114,8 @@ int main()
   // Set the moving-edges tracker parameters
   vpMe me;
   me.setRange(25);
-  me.setThreshold(15000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
   me.setSampleStep(10);
 
   // Initialize the moving-edges line tracker parameters
@@ -238,18 +239,18 @@ public:
   // Static Functions
 public:
   static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-                      const double &B, const double &C, const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
+    const double &B, const double &C, const vpColor &color = vpColor::green,
+    unsigned int thickness = 1);
   static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-                      const double &B, const double &C, const vpColor &color = vpColor::green,
-                      unsigned int thickness = 1);
+    const double &B, const double &C, const vpColor &color = vpColor::green,
+    unsigned int thickness = 1);
 
   static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
   static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-                      const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
+    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

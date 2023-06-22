@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,22 +28,18 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description:
- * Moving edges.
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#include <visp3/me/vpMeEllipse.h>
+#include <cmath>  // std::fabs
+#include <limits> // numeric_limits
+#include <vector>
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/me/vpMe.h>
-
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
-#include <vector>
+#include <visp3/me/vpMeEllipse.h>
 
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
@@ -51,14 +47,14 @@
 vpMeEllipse::vpMeEllipse()
   : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2 * M_PI), ce(0.), se(0.), angle(), m00(0.),
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    mu11(0.), mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
+  mu11(0.), mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
 #endif
-    thresholdWeight(0.2),
+  thresholdWeight(0.2),
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    expecteddensity(0.),
+  expecteddensity(0.),
 #endif
-    m_alphamin(0.), m_alphamax(0.), m_uc(0.), m_vc(0.), m_n20(0.), m_n11(0.), m_n02(0.), m_expectedDensity(0),
-    m_numberOfGoodPoints(0), m_trackArc(false), m_arcEpsilon(1e-6)
+  m_alphamin(0.), m_alphamax(0.), m_uc(0.), m_vc(0.), m_n20(0.), m_n11(0.), m_n02(0.), m_expectedDensity(0),
+  m_numberOfGoodPoints(0), m_trackCircle(false), m_trackArc(false), m_arcEpsilon(1e-6)
 {
   // Resize internal parameters vector
   // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 =  0
@@ -72,22 +68,21 @@ vpMeEllipse::vpMeEllipse()
 */
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
   : vpMeTracker(me_ellipse), K(me_ellipse.K), iPc(me_ellipse.iPc), a(me_ellipse.a), b(me_ellipse.b), e(me_ellipse.e),
-    iP1(me_ellipse.iP1), iP2(me_ellipse.iP2), alpha1(me_ellipse.alpha1), alpha2(me_ellipse.alpha2), ce(me_ellipse.ce),
-    se(me_ellipse.se), angle(me_ellipse.angle), m00(me_ellipse.m00),
+  iP1(me_ellipse.iP1), iP2(me_ellipse.iP2), alpha1(me_ellipse.alpha1), alpha2(me_ellipse.alpha2), ce(me_ellipse.ce),
+  se(me_ellipse.se), angle(me_ellipse.angle), m00(me_ellipse.m00),
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    mu11(me_ellipse.mu11), mu20(me_ellipse.mu20), mu02(me_ellipse.mu02), m10(me_ellipse.m10), m01(me_ellipse.m01),
-    m11(me_ellipse.m11), m02(me_ellipse.m02), m20(me_ellipse.m20),
+  mu11(me_ellipse.mu11), mu20(me_ellipse.mu20), mu02(me_ellipse.mu02), m10(me_ellipse.m10), m01(me_ellipse.m01),
+  m11(me_ellipse.m11), m02(me_ellipse.m02), m20(me_ellipse.m20),
 #endif
-    thresholdWeight(me_ellipse.thresholdWeight),
+  thresholdWeight(me_ellipse.thresholdWeight),
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    expecteddensity(me_ellipse.expecteddensity),
+  expecteddensity(me_ellipse.expecteddensity),
 #endif
-    m_alphamin(me_ellipse.m_alphamin), m_alphamax(me_ellipse.m_alphamax), m_uc(me_ellipse.m_uc), m_vc(me_ellipse.m_vc),
-    m_n20(me_ellipse.m_n20), m_n11(me_ellipse.m_n11), m_n02(me_ellipse.m_n02),
-    m_expectedDensity(me_ellipse.m_expectedDensity), m_numberOfGoodPoints(me_ellipse.m_numberOfGoodPoints),
-    m_trackArc(me_ellipse.m_trackArc)
-{
-}
+  m_alphamin(me_ellipse.m_alphamin), m_alphamax(me_ellipse.m_alphamax), m_uc(me_ellipse.m_uc), m_vc(me_ellipse.m_vc),
+  m_n20(me_ellipse.m_n20), m_n11(me_ellipse.m_n11), m_n02(me_ellipse.m_n02),
+  m_expectedDensity(me_ellipse.m_expectedDensity), m_numberOfGoodPoints(me_ellipse.m_numberOfGoodPoints),
+  m_trackCircle(me_ellipse.m_trackCircle), m_trackArc(me_ellipse.m_trackArc)
+{ }
 
 /*!
   Basic destructor.
@@ -250,7 +245,8 @@ void vpMeEllipse::computeAbeFromNij()
     ce = 1.0;
     se = 0.0;
     a = b = 2.0 * sqrt(m_n20);         // = sqrt(2.0*(n20+n02))
-  } else {                             // real ellipse
+  }
+  else {                             // real ellipse
     e = atan2(2.0 * m_n11, num) / 2.0; // e in [-Pi/2 ; Pi/2]
     ce = cos(e);
     se = sin(e);
@@ -304,7 +300,7 @@ void vpMeEllipse::getParameters()
   // Equations below from Chaumette PhD and TRO 2004 paper
   double num = K[0] * K[1] - K[2] * K[2]; // > 0 for an ellipse
   if (num <= 0) {
-    throw(vpException(vpException::fatalError, "The points do not belong to an ellipse!"));
+    throw(vpException(vpException::fatalError, "The points do not belong to an ellipse! num: %f", num));
   }
 
   m_uc = (K[2] * K[4] - K[1] * K[3]) / num;
@@ -399,6 +395,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     }
     ang += incr;
   }
+
   if (!doNotTrack) {
     vpMeTracker::initTracking(I);
   }
@@ -426,16 +423,11 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 
   unsigned int memory_range = me->getRange();
   me->setRange(2);
-  double memory_mu1 = me->getMu1();
-  me->setMu1(0.5);
-  double memory_mu2 = me->getMu2();
-  me->setMu2(0.5);
 
   double incr = vpMath::rad(me->getSampleStep());
   // Detect holes and try to complete them
-  // FC : Currently only one point is looked at the middle of each hole
-  // (to avoid multiple insertions that are time consuming).
-  // A different choice could be done.
+  // In this option, the sample step is used to complete the holes
+  // as much as possible
   std::list<double>::iterator angleList = angle.begin();
   double ang = *angleList;
   for (std::list<vpMeSite>::iterator meList = list.begin(); meList != list.end();) {
@@ -444,39 +436,46 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
     double nextang = *angleList;
     // The minimal size of a hole (1 point lost for sure).
     // could be increased to reduce time processing
-    if ((nextang - ang) > 1.6 * incr) {
-      ang = (nextang + ang) / 2.0; // mid angle
-      vpImagePoint iP;
-      computePointOnEllipse(ang, iP);
-      if (!outOfImage(vpMath::round(iP.get_i()), vpMath::round(iP.get_j()), 0, nbrows, nbcols)) {
-        double theta = computeTheta(iP);
-        vpMeSite pix;
-        pix.init(iP.get_i(), iP.get_j(), theta);
-        pix.setDisplay(selectDisplay);
-        pix.setState(vpMeSite::NO_SUPPRESSION);
-        pix.track(I, me, false);
-        if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
-          nb_pts_added++;
-          iP.set_ij(pix.ifloat, pix.jfloat);
-          double new_ang = computeAngleOnEllipse(iP);
-          if ((new_ang - ang) > M_PI) {
-            new_ang -= 2.0 * M_PI;
-          } else if ((ang - new_ang) > M_PI) {
-            new_ang += 2.0 * M_PI;
-          }
-          list.insert(meList, pix);
-          angle.insert(angleList, new_ang);
-          if (vpDEBUG_ENABLE(3)) {
-            vpDisplay::displayCross(I, iP, 5, vpColor::blue);
+    if ((nextang - ang) > 1.6 * incr) { // A hole exists
+      ang += incr;                      // next point to be checked
+      while (ang < nextang) {
+        vpImagePoint iP;
+        computePointOnEllipse(ang, iP);
+        if (!outOfImage(vpMath::round(iP.get_i()), vpMath::round(iP.get_j()), 0, nbrows, nbcols)) {
+          double theta = computeTheta(iP);
+          vpMeSite pix;
+          pix.init(iP.get_i(), iP.get_j(), theta);
+          pix.setDisplay(selectDisplay);
+          pix.setState(vpMeSite::NO_SUPPRESSION);
+          pix.track(I, me, false);
+          if (pix.getState() == vpMeSite::NO_SUPPRESSION) { // good point
+            nb_pts_added++;
+            iP.set_ij(pix.ifloat, pix.jfloat);
+            double new_ang = computeAngleOnEllipse(iP);
+            if ((new_ang - ang) > M_PI) {
+              new_ang -= 2.0 * M_PI;
+            }
+            else if ((ang - new_ang) > M_PI) {
+              new_ang += 2.0 * M_PI;
+            }
+            list.insert(meList, pix);
+            angle.insert(angleList, new_ang);
+            if (vpDEBUG_ENABLE(3)) {
+              vpDisplay::displayCross(I, iP, 5, vpColor::blue);
+            }
           }
         }
+        ang += incr;
       }
     }
     ang = nextang;
   }
 
   // Try to fill the first extremity: from alpha_min - incr to alpha1
-  unsigned int nbpts = static_cast<unsigned int>(floor((m_alphamin - alpha1) / incr));
+  unsigned int nbpts = 0;
+  if ((m_alphamin - alpha1) > 0.0) {
+    nbpts = static_cast<unsigned int>(floor((m_alphamin - alpha1) / incr));
+  }
   ang = m_alphamin - incr;
   for (unsigned int i = 0; i < nbpts; i++) {
     vpImagePoint iP;
@@ -494,7 +493,8 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
         double new_ang = computeAngleOnEllipse(iP);
         if ((new_ang - ang) > M_PI) {
           new_ang -= 2.0 * M_PI;
-        } else if ((ang - new_ang) > M_PI) {
+        }
+        else if ((ang - new_ang) > M_PI) {
           new_ang += 2.0 * M_PI;
         }
         list.push_front(pix);
@@ -508,7 +508,10 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   }
 
   // Try to fill the second extremity: from alphamax + incr to alpha2
-  nbpts = static_cast<unsigned int>(floor((alpha2 - m_alphamax) / incr));
+  nbpts = 0;
+  if ((alpha2 - m_alphamax) > 0.0) {
+    nbpts = static_cast<unsigned int>(floor((alpha2 - m_alphamax) / incr));
+  }
   ang = m_alphamax + incr;
   for (unsigned int i = 0; i < nbpts; i++) {
     vpImagePoint iP;
@@ -526,7 +529,8 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
         double new_ang = computeAngleOnEllipse(iP);
         if ((new_ang - ang) > M_PI) {
           new_ang -= 2.0 * M_PI;
-        } else if ((ang - new_ang) > M_PI) {
+        }
+        else if ((ang - new_ang) > M_PI) {
           new_ang += 2.0 * M_PI;
         }
         list.push_back(pix);
@@ -539,71 +543,99 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
     ang += incr;
   }
   me->setRange(memory_range);
-  me->setMu1(memory_mu1);
-  me->setMu2(memory_mu2);
 
-  if (vpDEBUG_ENABLE(3)) {
-    printf("In plugHoles(): nb of added points : %d\n", nb_pts_added);
-  }
   return nb_pts_added;
 }
 
 /*!
-  Least squares method to compute the ellipse to which the points belong.
+  Least squares method to compute the circle/ ellipse to which the points belong.
 
-  \param I : Image in which the ellipse appears (useful just to get its number
-             of rows and columns...
-  \param iP : A vector of points belonging to the ellipse.
+  \param I : Image in which the circle/ellipse appears (useful just to get
+             its number of rows and columns...
+  \param iP : A vector of points belonging to the circle/ellipse.
 */
 void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP)
 {
-  // Homogeneous system A x = 0  ; x is the nullspace of A
-  // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
-  // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
-
-  // It would be a bad idea to solve the same system using A x = b where
-  // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
-  // cannot consider the case where the origin belongs to the ellipse.
-  // Another possibility would be to consider K0+K1=1 which is always valid,
-  // leading to the system A x = b where
-  // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
-
   double um = I.getWidth() / 2.;
   double vm = I.getHeight() / 2.;
   unsigned int n = static_cast<unsigned int>(iP.size());
 
-  vpMatrix A(n, 6);
+  if (m_trackCircle) { // we track a circle
+    if (n < 3) {
+      throw(vpException(vpException::dimensionError, "Not enough points to compute the circle"));
+    }
+    // System A x = b to be solved by least squares
+    // with A = (u v 1), b = (u^2 + v^2) and x = (2xc, 2yc, r^2-xc^2-yc^2)
 
-  for (unsigned int k = 0; k < n; k++) {
-    // normalization so that (u,v) in [-1;1]
-    double u = (iP[k].get_u() - um) / um;
-    double v = (iP[k].get_v() - vm) / vm;
-    A[k][0] = u * u;
-    A[k][1] = v * v;
-    A[k][2] = 2.0 * u * v;
-    A[k][3] = 2.0 * u;
-    A[k][4] = 2.0 * v;
-    A[k][5] = 1.0;
+    vpMatrix A(n, 3);
+    vpColVector b(n);
+
+    for (unsigned int k = 0; k < n; k++) {
+      // normalization so that (u,v) in [-1;1]
+      double u = (iP[k].get_u() - um) / um;
+      double v = (iP[k].get_v() - vm) / um; // um here to not deform the circle
+      A[k][0] = u;
+      A[k][1] = v;
+      A[k][2] = 1.0;
+      b[k] = u * u + v * v;
+    }
+    vpColVector x(3);
+    x = A.solveByQR(b); // or by SVD?
+    // A circle is a particular ellipse. Going from x for circle to K for ellipse
+    // using inverse normalization to go back to pixel values
+    double ratio = vm / um;
+    K[0] = K[1] = 1.0 / (um * um);
+    K[2] = 0.0;
+    K[3] = -(1.0 + x[0] / 2.0) / um;
+    K[4] = -(ratio + x[1] / 2.0) / um;
+    K[5] = -x[2] + 1.0 + ratio * ratio + x[0] + ratio * x[1];
   }
-  vpMatrix KerA;
-  unsigned int dim = A.nullSpace(KerA, 1);
-  if (dim > 1) { // case with less than 5 independent points
-    // FC : should create a rankError exception
-    throw(vpException(vpException::fatalError, "Linear system for computing the ellipse equation ill conditionned"));
+  else { // we track an ellipse
+    if (n < 5) {
+      throw(vpException(vpException::dimensionError, "Not enough points to compute the ellipse"));
+    }
+    // Homogeneous system A x = 0  ; x is the nullspace of A
+    // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
+    // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
+
+    // It would be a bad idea to solve the same system using A x = b where
+    // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
+    // cannot consider the case where the origin belongs to the ellipse.
+    // Another possibility would be to consider K0+K1=1 which is always valid,
+    // leading to the system A x = b where
+    // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
+
+    vpMatrix A(n, 6);
+
+    for (unsigned int k = 0; k < n; k++) {
+      // normalization so that (u,v) in [-1;1]
+      double u = (iP[k].get_u() - um) / um;
+      double v = (iP[k].get_v() - vm) / vm;
+      A[k][0] = u * u;
+      A[k][1] = v * v;
+      A[k][2] = 2.0 * u * v;
+      A[k][3] = 2.0 * u;
+      A[k][4] = 2.0 * v;
+      A[k][5] = 1.0;
+    }
+    vpMatrix KerA;
+    unsigned int dim = A.nullSpace(KerA, 1);
+    if (dim > 1) { // case with less than 5 independent points
+      throw(vpException(vpException::fatalError, "Linear system for computing the ellipse equation ill conditioned"));
+    }
+    // the term um*vm is for counterbalancing the bad conditioning of the
+    // inverse normalization below
+    for (unsigned int i = 0; i < 6; i++)
+      K[i] = um * vm * KerA[i][0];
+
+    // Inverse normalization to go back to pixel values
+    K[0] /= um * um;
+    K[1] /= vm * vm;
+    K[2] /= um * vm;
+    K[3] = K[3] / um - K[0] * um - K[2] * vm;
+    K[4] = K[4] / vm - K[1] * vm - K[2] * um;
+    K[5] = K[5] - K[0] * um * um - K[1] * vm * vm - 2.0 * K[2] * um * vm - 2.0 * K[3] * um - 2.0 * K[4] * vm;
   }
-  // the term um*vm is for counterbalancing the bad conditioning of the
-  // inverse normalization below
-  for (unsigned int i = 0; i < 6; i++)
-    K[i] = um * vm * KerA[i][0];
-
-  // Inverse normalization to go back to pixel values
-  K[0] /= um * um;
-  K[1] /= vm * vm;
-  K[2] /= um * vm;
-  K[3] = K[3] / um - K[0] * um - K[2] * vm;
-  K[4] = K[4] / vm - K[1] * vm - K[2] * um;
-  K[5] = K[5] - K[0] * um * um - K[1] * vm * vm - 2.0 * K[2] * um * vm - 2.0 * K[3] * um - 2.0 * K[4] * vm;
-
   getParameters();
 }
 
@@ -616,187 +648,353 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
 */
 void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 {
-  // Homogeneous system A x = 0  ; x is the nullspace of A
-  // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
-  // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
-
-  // It would be a bad idea to solve the same system using A x = b where
-  // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
-  // cannot consider the case where the origin belongs to the ellipse.
-  // Another possibility would be to consider K0+K1=1 which is always valid,
-  // leading to the system A x = b where
-  // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
-
-  const unsigned int nos = numberOfSignal();
-
-  // Note that the (nos-k) last rows of A, xp and yp are not used.
-  // Hopefully, this is not an issue.
-
-  vpMatrix A(nos, 6);
-  // Useful to compute the weights in the robust estimation
-  vpColVector xp(nos), yp(nos);
-
-  unsigned int k = 0;
   double um = I.getWidth() / 2.;
   double vm = I.getHeight() / 2.;
-  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
-    vpMeSite p_me = *it;
-    if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
-      // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
-      double u = (p_me.jfloat - um) / um;
-      double v = (p_me.ifloat - vm) / vm;
-      A[k][0] = u * u;
-      A[k][1] = v * v;
-      A[k][2] = 2.0 * u * v;
-      A[k][3] = 2.0 * u;
-      A[k][4] = 2.0 * v;
-      A[k][5] = 1.0;
-      // Useful to compute the weights in the robust estimation
-      xp[k] = p_me.jfloat;
-      yp[k] = p_me.ifloat;
 
-      k++;
-    }
-  }
-  if (k < 5) {
-    throw(vpException(vpException::dimensionError, "Not enough moving edges to track the ellipse"));
-  }
+  const unsigned int nos = numberOfSignal();
+  unsigned int k = 0; // count the number of tracked MEs
 
-  vpRobust r;
-  // r.setThreshold(0.02);  // Old version where this threshold was highly
-  // sensitive since the residues do not represent the Euclidean distance
-  // from the point to the ellipse
-  r.setMinMedianAbsoluteDeviation(1.0); // image noise in pixels for the geometrical distance
-  vpColVector w(k);
+  vpColVector w(nos);
   w = 1.0;
-  unsigned int iter = 0;
-  double var = 1.0;
-  vpColVector Kprev(6);
-  vpMatrix DA(k, 6);
-  vpMatrix KerDA;
+  // Note that the (nos-k) last rows of w are not used. Hopefully, this is not an issue.
 
-  // stop after 4 it or if variation of K between 2 iterations is more than 0.1 %
-  while ((iter < 4) && (var > 0.001)) {
-    for (unsigned int i = 0; i < k; i++) {
-      for (unsigned int j = 0; j < 6; j++) {
-        DA[i][j] = w[i] * A[i][j];
+  if (m_trackCircle) { // we track a circle
+    // System A x = b to be solved by least squares
+    // with A = (u v 1), b = (u^2 + v^2) and x = (2xc, 2yc, r^2-xc^2-yc^2)
+
+    // Note that the (nos-k) last rows of A, b, xp and yp are not used.
+    // Hopefully, this is not an issue.
+    vpMatrix A(nos, 3);
+    vpColVector b(nos);
+
+    // Useful to compute the weights in the robust estimation
+    vpColVector xp(nos), yp(nos);
+
+    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+      vpMeSite p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
+        // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
+        double u = (p_me.jfloat - um) / um;
+        double v = (p_me.ifloat - vm) / um; // um here to not deform the circle
+        A[k][0] = u;
+        A[k][1] = v;
+        A[k][2] = 1.0;
+        b[k] = u * u + v * v;
+        // Useful to compute the weights in the robust estimation
+        xp[k] = p_me.jfloat;
+        yp[k] = p_me.ifloat;
+
+        k++;
       }
     }
-    unsigned int dim = DA.nullSpace(KerDA, 1);
-    if (dim > 1) { // case with less than 5 independent points
-      // FC : should create a rankError exception
-      throw(vpException(vpException::fatalError, "Linear system for computing the ellipse equation ill conditionned"));
+    if (k < 3) {
+      throw(vpException(vpException::dimensionError, "Not enough moving edges %d / %d to track the circle ", k, list.size()));
     }
 
-    for (unsigned int i = 0; i < 6; i++)
-      K[i] = KerDA[i][0]; // norm(K) = 1
-    var = (K - Kprev).frobeniusNorm();
-    Kprev = K;
-    // the term um*vm is for counterbalancing the bad conditioning of the
-    // inverse normalization just below
-    K *= (um * vm);
-    // vpColVector residu(k);  // old version for considering the algebraic distance
-    // residu = A * K;
-    // Better version considering the geometric distance
+    vpRobust r;
+    // r.setThreshold(0.02);  // Old version where this threshold was highly
+    // sensitive since the residues do not represent the Euclidean distance
+    // from the point to the ellipse
+    r.setMinMedianAbsoluteDeviation(1.0); // image noise in pixels for the geometrical distance
+
+    unsigned int iter = 0;
+    double var = 1.0;
+    vpColVector x(3);
+    vpColVector xprev(3);
+    vpMatrix DA(k, 3);
+    vpColVector Db(k);
+
+    // stop after 4 it or if variation of K between 2 iterations is more than 0.1 %
+    while ((iter < 4) && (var > 0.001)) {
+      for (unsigned int i = 0; i < k; i++) {
+        for (unsigned int j = 0; j < 3; j++) {
+          DA[i][j] = w[i] * A[i][j];
+        }
+        Db[i] = w[i] * b[i];
+      }
+      x = DA.solveByQR(Db); // or by SVD?
+      var = (x - xprev).frobeniusNorm();
+      xprev = x;
+      // A circle is a particular ellipse. Going from x for circle to K for ellipse
+      // using inverse normalization to go back to pixel values
+      double ratio = vm / um;
+      K[0] = K[1] = 1.0 / (um * um);
+      K[2] = 0.0;
+      K[3] = -(1.0 + x[0] / 2.0) / um;
+      K[4] = -(ratio + x[1] / 2.0) / um;
+      K[5] = -x[2] + 1.0 + ratio * ratio + x[0] + ratio * x[1];
+
+      getParameters(); // since a, b, and e are used just after
+
+      vpColVector residu(k);
+      for (unsigned int i = 0; i < k; i++) {
+        vpImagePoint ip1, ip2;
+        ip1.set_uv(xp[i], yp[i]);
+        double ang = computeAngleOnEllipse(ip1);
+        computePointOnEllipse(ang, ip2);
+        // residu = 0 if point is exactly on the ellipse, not otherwise
+        residu[i] = vpImagePoint::distance(ip1, ip2);
+      }
+      // end of new version
+      r.MEstimator(vpRobust::TUKEY, residu, w);
+      iter++;
+    }
+  }
+  else { // we track an ellipse
+
+    // Homogeneous system A x = 0  ; x is the nullspace of A
+    // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0
+    // A = (u^2 v^2 2uv 2u 2v 1), x = (K0 K1 K2 K3 K4 K5)^T
+
+    // It would be a bad idea to solve the same system using A x = b where
+    // A = (u^2 v^2 2uv 2u 2v), b = (-1), x = (K0 K1 K2 K3 K4)^T since it
+    // cannot consider the case where the origin belongs to the ellipse.
+    // Another possibility would be to consider K0+K1=1 which is always valid,
+    // leading to the system A x = b where
+    // A = (u^2-v^2 2uv 2u 2v 1), b = (-v^2), x = (K0 K2 K3 K4 K5)^T
+
+    vpMatrix A(nos, 6);
+    // Useful to compute the weights in the robust estimation
+    vpColVector xp(nos), yp(nos);
+
+    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+      vpMeSite p_me = *it;
+      if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
+        // from (i,j) to (u,v) frame + normalization so that (u,v) in [-1;1]
+        double u = (p_me.jfloat - um) / um;
+        double v = (p_me.ifloat - vm) / vm;
+        A[k][0] = u * u;
+        A[k][1] = v * v;
+        A[k][2] = 2.0 * u * v;
+        A[k][3] = 2.0 * u;
+        A[k][4] = 2.0 * v;
+        A[k][5] = 1.0;
+        // Useful to compute the weights in the robust estimation
+        xp[k] = p_me.jfloat;
+        yp[k] = p_me.ifloat;
+
+        k++;
+      }
+    }
+    if (k < 5) {
+      throw(vpException(vpException::dimensionError, "Not enough moving edges to track the ellipse"));
+    }
+
+    vpRobust r;
+    // r.setThreshold(0.02);  // Old version where this threshold was highly
+    // sensitive since the residues do not represent the Euclidean distance
+    // from the point to the ellipse
+    r.setMinMedianAbsoluteDeviation(1.0); // image noise in pixels for the geometrical distance
+    unsigned int iter = 0;
+    double var = 1.0;
+    vpColVector Kprev(6);
+    vpMatrix DA(k, 6);
+    vpMatrix KerDA;
+
+    // stop after 4 it or if variation of K between 2 iterations is more than 0.1 %
+    while ((iter < 4) && (var > 0.001)) {
+      for (unsigned int i = 0; i < k; i++) {
+        for (unsigned int j = 0; j < 6; j++) {
+          DA[i][j] = w[i] * A[i][j];
+        }
+      }
+      unsigned int dim = DA.nullSpace(KerDA, 1);
+      if (dim > 1) { // case with less than 5 independent points
+        throw(vpException(vpException::fatalError, "Rank error: Linear system for computing the ellipse equation ill conditioned"));
+      }
+
+      for (unsigned int i = 0; i < 6; i++)
+        K[i] = KerDA[i][0]; // norm(K) = 1
+      var = (K - Kprev).frobeniusNorm();
+      Kprev = K;
+      // the term um*vm is for counterbalancing the bad conditioning of the
+      // inverse normalization just below
+      K *= (um * vm);
+      // vpColVector residu(k);  // old version for considering the algebraic distance
+      // residu = A * K;
+      // Better version considering the geometric distance
+      // Inverse normalization to go back to pixels
+      K[0] /= um * um;
+      K[1] /= vm * vm;
+      K[2] /= um * vm;
+      K[3] = K[3] / um - K[0] * um - K[2] * vm;
+      K[4] = K[4] / vm - K[1] * vm - K[2] * um;
+      K[5] = K[5] - K[0] * um * um - K[1] * vm * vm - 2.0 * K[2] * um * vm - 2.0 * K[3] * um - 2.0 * K[4] * vm;
+      getParameters(); // since a, b, and e are used just after
+
+      vpColVector residu(k);
+      for (unsigned int i = 0; i < k; i++) {
+        vpImagePoint ip1, ip2;
+        ip1.set_uv(xp[i], yp[i]);
+        double ang = computeAngleOnEllipse(ip1);
+        computePointOnEllipse(ang, ip2);
+        // residu = 0 if point is exactly on the ellipse, not otherwise
+        residu[i] = vpImagePoint::distance(ip1, ip2);
+      }
+      // end of new version
+      r.MEstimator(vpRobust::TUKEY, residu, w);
+      iter++;
+    }
+    /*  FC : for old version with algebraic distance
     // Inverse normalization to go back to pixels
     K[0] /= um * um;
     K[1] /= vm * vm;
     K[2] /= um * vm;
-    K[3] = K[3] / um - K[0] * um - K[2] * vm;
-    K[4] = K[4] / vm - K[1] * vm - K[2] * um;
+    K[3] = K[3]/um - K[0] * um - K[2] * vm;
+    K[4] = K[4]/vm - K[1] * vm - K[2] * um;
     K[5] = K[5] - K[0] * um * um - K[1] * vm * vm - 2.0 * K[2] * um * vm - 2.0 * K[3] * um - 2.0 * K[4] * vm;
-    getParameters(); // since a, b, and e are used just after
+    getParameters();
+    */
+  } // end of case ellipse
 
-    vpColVector residu(k);
-    for (unsigned int i = 0; i < k; i++) {
-      vpImagePoint ip1, ip2;
-      ip1.set_uv(xp[i], yp[i]);
-      double ang = computeAngleOnEllipse(ip1);
-      computePointOnEllipse(ang, ip2);
-      // residu = 0 if point is exactly on the ellipse, not otherwise
-      residu[i] = vpImagePoint::distance(ip1, ip2);
-    }
-    // end of new version
-    r.MEstimator(vpRobust::TUKEY, residu, w);
-    iter++;
-  }
-  /*  FC : for old version with algebraic distance
-  // Inverse normalization to go back to pixels
-  K[0] /= um * um;
-  K[1] /= vm * vm;
-  K[2] /= um * vm;
-  K[3] = K[3]/um - K[0] * um - K[2] * vm;
-  K[4] = K[4]/vm - K[1] * vm - K[2] * um;
-  K[5] = K[5] - K[0] * um * um - K[1] * vm * vm - 2.0 * K[2] * um * vm - 2.0 * K[3] * um - 2.0 * K[4] * vm;
-  getParameters();
-  */
+  // Remove bad points and outliers from the lists
+  // Modify the angle to order the list
   double previous_ang = -4.0 * M_PI;
-  double incr = vpMath::rad(me->getSampleStep());
-  // Remove bad points, too near points, and outliers from the lists
-  k = m_numberOfGoodPoints = 0;
+  k = 0;
   std::list<double>::iterator angleList = angle.begin();
   for (std::list<vpMeSite>::iterator meList = list.begin(); meList != list.end();) {
     vpMeSite p_me = *meList;
-    if (p_me.getState() == vpMeSite::NO_SUPPRESSION) {
-      if (w[k] > thresholdWeight) { // inlier
-        // Management of the angle to keep only the points in the interval
-        // [alpha1 ; alpha2]
+    if (p_me.getState() != vpMeSite::NO_SUPPRESSION) {
+      // points not selected as me
+      meList = list.erase(meList);
+      angleList = angle.erase(angleList);
+      if (vpDEBUG_ENABLE(3)) {
+        vpImagePoint iP;
+        iP.set_ij(p_me.ifloat, p_me.jfloat);
+        vpDisplay::displayCross(I, iP, 10, vpColor::blue, 1);
+      }
+    }
+    else {
+      if (w[k] < thresholdWeight) { // outlier
+        meList = list.erase(meList);
+        angleList = angle.erase(angleList);
+        if (vpDEBUG_ENABLE(3)) {
+          vpImagePoint iP;
+          iP.set_ij(p_me.ifloat, p_me.jfloat);
+          vpDisplay::displayCross(I, iP, 10, vpColor::cyan, 1);
+        }
+      }
+      else { //  good point
         double ang = *angleList;
         vpImagePoint iP;
         iP.set_ij(p_me.ifloat, p_me.jfloat);
         double new_ang = computeAngleOnEllipse(iP);
         if ((new_ang - ang) > M_PI) {
           new_ang -= 2.0 * M_PI;
-        } else if ((ang - new_ang) > M_PI) {
+        }
+        else if ((ang - new_ang) > M_PI) {
           new_ang += 2.0 * M_PI;
         }
-        if ((new_ang >= alpha1) && (new_ang <= alpha2)) {
-          // good point if not too near from the previous one in the list
-          // if so,  udate of its angle
-          if ((new_ang - previous_ang) >= (0.6 * incr)) {
-            *angleList = previous_ang = new_ang;
-            m_numberOfGoodPoints++;
-            ++meList;
-            ++angleList;
-            if (vpDEBUG_ENABLE(3)) {
-              vpDisplay::displayCross(I, iP, 10, vpColor::red, 1);
-              printf("In LQR: angle : %lf, i = %.0lf, j = %.0lf\n", vpMath::deg(new_ang), iP.get_i(), iP.get_j());
-            }
-          } else {
-            if (vpDEBUG_ENABLE(3)) {
-              vpDisplay::displayCross(I, iP, 10, vpColor::orange, 1);
-              printf("too near : angle  %lf, i %.0f , j : %0.f\n", vpMath::deg(new_ang), p_me.ifloat, p_me.jfloat);
-            }
-            meList = list.erase(meList);
-            angleList = angle.erase(angleList);
-          }
-        } else { // point not in the interval [alpha1 ; alpha2]
-          if (vpDEBUG_ENABLE(3)) {
-            vpDisplay::displayCross(I, iP, 10, vpColor::green, 1);
-            printf("not in interval: angle : %lf, i %.0f , j : %0.f\n", vpMath::deg(new_ang), p_me.ifloat, p_me.jfloat);
-          }
-          meList = list.erase(meList);
-          angleList = angle.erase(angleList);
+        *angleList = previous_ang = new_ang;
+        ++meList;
+        ++angleList;
+        if (vpDEBUG_ENABLE(3)) {
+          vpDisplay::displayCross(I, iP, 10, vpColor::cyan, 1);
         }
-      } else { // outlier
+      }
+      k++;
+    }
+  }
+
+  // printf("Au debut %d points retenus dont  outliers \n", k);
+  //  Manage the list so that all new angles belong to [0;2Pi]
+  bool nbdeb = false;
+  std::list<double> finAngle;
+  finAngle.clear();
+  std::list<vpMeSite> finMe;
+  finMe.clear();
+  std::list<double>::iterator debutAngleList;
+  std::list<vpMeSite>::iterator debutMeList;
+  angleList = angle.begin();
+  std::list<vpMeSite>::iterator meList;
+  for (meList = list.begin(); meList != list.end();) {
+    vpMeSite p_me = *meList;
+    double ang = *angleList;
+
+    // Move these ones to another list to be added at the end
+    if (ang < alpha1) {
+      ang += 2.0 * M_PI;
+      angleList = angle.erase(angleList);
+      finAngle.push_back(ang);
+      meList = list.erase(meList);
+      finMe.push_back(p_me);
+    }
+    // Moved at the beginning of  the list
+    else if (ang > alpha2) {
+      ang -= 2.0 * M_PI;
+      angleList = angle.erase(angleList);
+      meList = list.erase(meList);
+      if (!nbdeb) {
+        angle.push_front(ang);
+        debutAngleList = angle.begin();
+        ++debutAngleList;
+
+        list.push_front(p_me);
+        debutMeList = list.begin();
+        ++debutMeList;
+
+        nbdeb = true;
+      }
+      else {
+        debutAngleList = angle.insert(debutAngleList, ang);
+        ++debutAngleList;
+        debutMeList = list.insert(debutMeList, p_me);
+        ++debutMeList;
+      }
+    }
+    else {
+      ++angleList;
+      ++meList;
+    }
+  }
+  // Fuse the lists
+  angleList = angle.end();
+  angle.splice(angleList, finAngle);
+  meList = list.end();
+  list.splice(meList, finMe);
+
+  m_numberOfGoodPoints = 0;
+  previous_ang = -4.0 * M_PI;
+  double incr = vpMath::rad(me->getSampleStep());
+
+  // Keep only the points  in the interval [alpha1 ; alpha2]
+  // and those  that are not too close
+  angleList = angle.begin();
+  for (std::list<vpMeSite>::iterator meList = list.begin(); meList != list.end();) {
+    vpMeSite p_me = *meList;
+    double new_ang = *angleList;
+    if ((new_ang >= alpha1) && (new_ang <= alpha2)) {
+      if ((new_ang - previous_ang) >= (0.6 * incr)) {
+        previous_ang = new_ang;
+        m_numberOfGoodPoints++;
+        ++meList;
+        ++angleList;
         if (vpDEBUG_ENABLE(3)) {
           vpImagePoint iP;
           iP.set_ij(p_me.ifloat, p_me.jfloat);
-          printf("point %d outlier i : %.0f , j : %0.f, poids : %lf\n", k, p_me.ifloat, p_me.jfloat, w[k]);
-          vpDisplay::displayCross(I, iP, 10, vpColor::cyan, 1);
+          vpDisplay::displayCross(I, iP, 10, vpColor::red, 1);
+          printf("In LQR: angle : %lf, i = %.0lf, j = %.0lf\n", vpMath::deg(new_ang), iP.get_i(), iP.get_j());
         }
+      }
+      else {
         meList = list.erase(meList);
         angleList = angle.erase(angleList);
+        if (vpDEBUG_ENABLE(3)) {
+          vpImagePoint iP;
+          iP.set_ij(p_me.ifloat, p_me.jfloat);
+          vpDisplay::displayCross(I, iP, 10, vpColor::orange, 1);
+          printf("too near : angle  %lf, i %.0f , j : %0.f\n", vpMath::deg(new_ang), p_me.ifloat, p_me.jfloat);
+        }
       }
-      k++;
-    } else { // points not selected as me
+    }
+    else { // point not in the interval [alpha1 ; alpha2]
       meList = list.erase(meList);
       angleList = angle.erase(angleList);
       if (vpDEBUG_ENABLE(3)) {
         vpImagePoint iP;
         iP.set_ij(p_me.ifloat, p_me.jfloat);
-        printf("point not me i : %.0f , j : %0.f\n", p_me.ifloat, p_me.jfloat);
-        vpDisplay::displayCross(I, iP, 10, vpColor::blue, 1);
+        vpDisplay::displayCross(I, iP, 10, vpColor::green, 1);
+        printf("not in interval: angle : %lf, i %.0f , j : %0.f\n", vpMath::deg(new_ang), p_me.ifloat, p_me.jfloat);
       }
     }
   }
@@ -817,12 +1015,12 @@ void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
   vpDisplay::flush() is needed.
 
   \param I : Image in which the ellipse appears.
-  \param color : Color of the displayed ellipse.
+  \param col : Color of the displayed ellipse.
   \param thickness : Thickness of the drawing.
  */
-void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
+void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
-  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, color, thickness);
+  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
 }
 
 /*!
@@ -833,48 +1031,69 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &color,
   When an arc of an ellipse is tracked, it is recommended to select the 5 points clockwise.
 
   \param I : Image in which the ellipse appears.
-  \param trackArc : When true, track an arc of the ellipse.
-  First and fifth points specify the extremities of the arc (clockwise).
-  When false track the complete ellipse.
+  \param trackCircle : When true, track a circle, when false track an ellipse.
+  \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
+  last points specify the extremities of the arc (clockwise).
+  When false track the complete ellipse/circle.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackArc)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle, bool trackArc)
 {
-  const unsigned int n = 5;
+  unsigned int n = 5; // by default, 5 points for an ellipse
+  m_trackCircle = trackCircle;
+  if (trackCircle)
+    n = 3;
   std::vector<vpImagePoint> iP(n);
   m_trackArc = trackArc;
 
-  if (m_trackArc) {
-    std::cout << "First and fifth points specify the extremities of the arc of ellipse (clockwise)" << std::endl;
+  if (m_trackCircle) {
+    if (m_trackArc) {
+      std::cout << "First and third points specify the extremities of the arc of circle (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; k++) {
+      std::cout << "Click point " << k + 1 << "/" << n << " on the circle " << std::endl;
+      vpDisplay::getClick(I, iP[k], true);
+      vpDisplay::displayCross(I, iP[k], 10, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << iP[k] << std::endl;
+    }
   }
-  for (unsigned int k = 0; k < n; k++) {
-    std::cout << "Click point " << k + 1 << "/" << n << " on the ellipse " << std::endl;
-    vpDisplay::getClick(I, iP[k], true);
-    vpDisplay::displayCross(I, iP[k], 10, vpColor::red);
-    vpDisplay::flush(I);
-    std::cout << iP[k] << std::endl;
+  else {
+    if (m_trackArc) {
+      std::cout << "First and fifth points specify the extremities of the arc of ellipse (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; k++) {
+      std::cout << "Click point " << k + 1 << "/" << n << " on the ellipse " << std::endl;
+      vpDisplay::getClick(I, iP[k], true);
+      vpDisplay::displayCross(I, iP[k], 10, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << iP[k] << std::endl;
+    }
   }
-  initTracking(I, iP, trackArc);
+  initTracking(I, iP, trackCircle, trackArc);
 }
 
 /*!
-  Initialize the tracking of an ellipse or an arc of an ellipse when \e trackArc is set to true.
-  The ellipse is defined thanks to a vector of image points.
+  Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when \e trackArc is set to true.
+  The ellipse/circle is defined thanks to a vector of image points.
 
   \warning It is mandatory to use at least five image points to estimate the
-  ellipse parameters.
+  ellipse parameters while three points are needed to estimate the circle parameters.
   \warning The image points should be selected as far as possible from each other.
-  When an arc of an ellipse is tracked, it is recommended to select the 5 points clockwise.
+  When an arc of an ellipse/circle is tracked, it is recommended to select the 5/3 points clockwise.
 
-  \param I : Image in which the ellipse appears.
-  \param iP : A vector of image points belonging to the ellipse edge used to
+  \param I : Image in which the ellipse/circle appears.
+  \param iP : A vector of image points belonging to the ellipse/circle edge used to
   initialize the tracking.
-  \param trackArc : When true, track an arc of the ellipse.
-  First and last points specify the extremities of the arc (clockwise).
-  When false track the complete ellipse.
+  \param trackCircle : When true, track a circle, when false track an ellipse.
+  \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
+  last points specify the extremities of the arc (clockwise).
+  When false track the complete ellipse/circle.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackArc)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP,
+  bool trackCircle, bool trackArc)
 {
   m_trackArc = trackArc;
+  m_trackCircle = trackCircle;
   // useful for sample(I):
   leastSquare(I, iP);
   if (trackArc) {
@@ -887,7 +1106,8 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vecto
     if ((alpha2 <= alpha1) || (std::fabs(alpha2 - alpha1) < m_arcEpsilon)) {
       alpha2 += 2.0 * M_PI;
     }
-  } else {
+  }
+  else {
     alpha1 = 0.0;
     alpha2 = 2 * M_PI;
     // useful for track(I):
@@ -903,22 +1123,24 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vecto
 }
 
 /*!
-  Initialize the tracking of an ellipse or an arc of an ellipse when arc extremities are given.
-  The ellipse is defined by the vector containing the coordinates of its center and the three second order
+  Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when arc extremities are given.
+  The ellipse/circle is defined by the vector containing the coordinates of its center and the three second order
   centered normalized moments \f$ n_ij \f$. Without setting the arc extremities with
-  parameters \e pt1 and \e pt2, the complete ellipse is considered. When extremities
-  are set, we consider an ellipse arc defined clockwise from first extremity to second extremity.
+  parameters \e pt1 and \e pt2, the complete ellipse/circle is considered. When extremities
+  are set, we consider an ellipse/circle arc defined clockwise from first extremity to second extremity.
 
   \param I : Image in which the ellipse appears.
   \param param : Vector with the five parameters \f$(u_c, v_c, n_{20}, n_{11}, n_{02})\f$ defining the ellipse
   (expressed in pixels).
   \param pt1 : Image point defining the first extremity of the arc or NULL to track a complete ellipse.
   \param pt2 : Image point defining the second extremity of the arc or NULL to track a complete ellipse.
+  \param trackCircle : When true enable tracking of a circle, when false the tracking of an ellipse.
 
 */
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1,
-                               const vpImagePoint *pt2)
+  const vpImagePoint *pt2, bool trackCircle)
 {
+  m_trackCircle = trackCircle;
   if (pt1 != NULL && pt2 != NULL) {
     m_trackArc = true;
   }
@@ -940,7 +1162,8 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVecto
     // useful for track(I)
     iP1 = *pt1;
     iP2 = *pt2;
-  } else {
+  }
+  else {
     alpha1 = 0.0;
     alpha2 = 2.0 * M_PI;
     // useful for track(I)
@@ -976,28 +1199,23 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
   }
   // Compute the ellipse parameters from the tracked points and manage the lists
   leastSquareRobust(I);
-  if (vpDEBUG_ENABLE(3)) {
-    printf("nb of Good points %u, density %d, alphamin %lf, alphamax %lf\n", m_numberOfGoodPoints, m_expectedDensity,
-           vpMath::deg(m_alphamin), vpMath::deg(m_alphamax));
-  }
 
   // Try adding points at the extremities and in the holes if needed
   if (m_numberOfGoodPoints < m_expectedDensity) { // at least one point has been lost
+
     if (plugHoles(I) > 0) {
       leastSquareRobust(
-          I); // if new points have been added, recompute the ellipse parameters and manage again the lists
+        I); // if new points have been added, recompute the ellipse parameters and manage again the lists
     }
   }
   if (vpDEBUG_ENABLE(3)) {
     printf("nb of Good points %u, density %d, alphamin %lf, alphamax %lf\n", m_numberOfGoodPoints, m_expectedDensity,
-           vpMath::deg(m_alphamin), vpMath::deg(m_alphamax));
+      vpMath::deg(m_alphamin), vpMath::deg(m_alphamax));
   }
 
-  // resample if needed in case of unsufficient number of points or
-  // bad repartition
+  // resample if needed in case of insufficient number of points or bad repartition
   // FC : (thresholds ad hoc and sensitive...)
-  if (((3 * m_numberOfGoodPoints) < m_expectedDensity) || (m_numberOfGoodPoints <= 5) ||
-      ((m_alphamax - m_alphamin) < vpMath::rad(120.0))) {
+  if (m_numberOfGoodPoints <= 5) {
     if (vpDEBUG_ENABLE(3)) {
       printf("Before RESAMPLE !!! nb points %d \n", m_numberOfGoodPoints);
       printf("A click to continue \n");
@@ -1005,26 +1223,20 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
       vpDisplay::getClick(I);
       vpDisplay::display(I);
     }
-
     sample(I);
     vpMeTracker::track(I);
     leastSquareRobust(I);
-    if (vpDEBUG_ENABLE(3)) {
-      printf("nb of Good points %u, density %d, alphamax %lf, alphamin %lf\n", m_numberOfGoodPoints, m_expectedDensity,
-             vpMath::deg(m_alphamax), vpMath::deg(m_alphamin));
-    }
 
     // Stop in case of failure after resample
-    if (((3 * m_numberOfGoodPoints) < m_expectedDensity) || (m_numberOfGoodPoints <= 5) ||
-        ((m_alphamax - m_alphamin) < vpMath::rad(120.0))) {
-      // FC : dimensionError pas vraiment le bon terme...
-      throw(vpException(vpException::dimensionError, "Impossible to track the ellipse"));
+    if (m_numberOfGoodPoints <= 5) {
+      throw(vpException(vpException::fatalError, "Impossible to track the ellipse"));
     }
   }
 
   if (vpDEBUG_ENABLE(3)) {
     printParameters();
   }
+
   // remet a jour l'angle delta pour chaque vpMeSite de la liste
   updateTheta();
   // not in getParameters since computed only once for each image
@@ -1078,8 +1290,8 @@ void vpMeEllipse::computeMoments()
   \param alpha1_p : Angle in rad defining the first extremity of the arc.
   \param alpha2_p : Angle in rad defining the second extremity of the arc.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p,
-                               double e_p, double alpha1_p, double alpha2_p)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p,
+  double b_p, double e_p, double alpha1_p, double alpha2_p)
 {
   m_trackArc = true;
   // useful for sample(I): uc, vc, a, b, e, Ki, alpha1, alpha2
@@ -1172,9 +1384,9 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, 
 
   \param thickness : Thickness of the drawings.
 */
-void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
-                          const double &E, const double &smallalpha, const double &highalpha, const vpColor &color,
-                          unsigned int thickness)
+void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A,
+  const double &B, const double &E, const double &smallalpha, const double &highalpha,
+  const vpColor &color, unsigned int thickness)
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }
@@ -1203,8 +1415,8 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &c
   \param thickness : Thickness of the drawings.
 */
 void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-                          const double &E, const double &smallalpha, const double &highalpha, const vpColor &color,
-                          unsigned int thickness)
+  const double &E, const double &smallalpha, const double &highalpha,
+  const vpColor &color, unsigned int thickness)
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }

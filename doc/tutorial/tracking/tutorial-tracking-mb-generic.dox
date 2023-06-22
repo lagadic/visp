@@ -406,7 +406,8 @@ The content of the XML file teabox.xml that is considered by default is the foll
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -441,8 +442,8 @@ The content of the XML file teabox.xml that is considered by default is the foll
 \endcode
 
 Depending on the visual features that are used all the XML tags are not useful:
-- \c \<ecm\> tag corresponds to the moving-edges settings.
-- \c \<klt\> tag corresponds to the keypoint visual features and especially the KLT tracker settings used to detect and track the keypoints.
+- \c \<ecm\> tag corresponds to the moving-edges settings
+- \c \<klt\> tag corresponds to the keypoint visual features and especially the KLT tracker settings used to detect and track the keypoints
 - \c \<camera\> tag is used to define the camera intrinsic parameters
 - \c \<face\> tag is used by the visibility algorithm used to determine if a face of the object is visible or not.
 
@@ -462,7 +463,8 @@ These settings could be tuned either from XML using \<ecm\> tag as:
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -478,16 +480,33 @@ of from source code using vpMbGenericTracker::setMovingEdge() method:
 \snippet tutorial-mb-generic-tracker-full.cpp Set moving-edges parameters
 
 Either from xml or from the previous source code you can set:
-- mask_size: defines the size of the convolution mask used to detect an edge.
-- nb_mask: number of mask applied to determine the object contour. The number of mask determines the precision of the normal of the
-  edge for every sample. If precision is 2deg, then there are 360/2 = 180 masks.
-- range_tracking: range on both sides of the reference pixel along the normal of the contour used to track a moving-edge. If the
-  displacement of the tracked object in two successive images is large, you have to increase this parameter.
-- edge_threshold: likelihood threshold used to determined if the moving edge is valid or not.
-- mu1: minimum image contrast allowed to detect a contour.
-- mu2: maximum image contrast allowed to detect a contour.
-- sample_step: minimum distance in pixel between two discretized moving-edges. To increase the number of moving-edges you have to
-  reduce this parameter.
+- mask size: using vpMe::setMaskSize() or `<mask>/<size>` xml tag, you will define the size of the convolution mask used to detect an edge.
+  Possible values are 3, 5 or 7. We recommend to use 5.
+- mask number: using vpMe::setMaskNumber() or `<mask>/<nb_mask>` xml tag, you will set the number of mask applied to determine the object contour.
+  The number of mask determines the precision of the normal of the edge for every sample. If precision is 2 deg, then there are 360/2 = 180 masks.
+  Recommended value is 180.
+- range tracking: using vpMe::setRange() or `<range>/<tracking>` xml tag, you will define the range on both sides of the reference pixel along the
+  normal of the contour used to track a moving-edge. If the displacement of the tracked object in two successive images is large, you have to increase this parameter.
+- moving-edges likelihood threshold type: this setting is new since ViSP 3.6.0. Using vpMe::setLikelihoodThresholdType() or `<contrast>/<edge_threshold_type>` xml tag,
+  you will define the type of likelihood threshold used to determined if the moving edge is valid or not. Two values are possible: vpMe::OLD_THRESHOLD corresponding to `0`,
+  or vpMe::NORMALIZED_THRESHOLD corresponding to a value of `1` in the xml file. To keep compatibility with previous ViSP releases, the default type is set to vpMe::OLD_THRESHOLD
+  in vpMe constructor, but we recommend to use the normalized threshold.
+- moving-edges threshold: using vpMe::setThreshold() or `<contrast>/<edge_threshold>` xml tag, you will define the likelihood threshold used to determined if the moving edge is valid or not.
+  - When the moving-edges likelihood threshold type is set to vpMe::NORMALIZED_THRESHOLD, admissible values are in range [0 ; 255] and correspond to the
+    luminance contrast between both sides of the moving-edge. When the contrast is small in the image, you should use a small value, like 5 or 10.
+    When the contrast is large, corresponding for example to a transition from black to white or vice-versa, you can increase this value to 60 or 100.
+  - When the moving-edges likelihood threshold type is set to vpMe::OLD_THRESHOLD, the value depends on the mask size and the contrast. To ease setting this parameter,
+    we recommend to use rather a normalized version.
+  - To convert an old threshold to a normalized one, you can use the following trick:
+    - When your convolution mask size is 3: divide the value by 300
+    - When your convolution mask size is 5: divide the value by 2000
+    - When your convolution mask size is 7: divide the value by 21000.
+    .
+    Remmember that the value should be always in [0 ; 255].
+- mu1: using vpMe::setMu1() or `<contrast>/<mu1>` xml tag, you will define the minimum image contrast allowed to detect a contour. We recommend to keep this value to 0.5.
+- mu2: using vpMe::setMu2() or `<contrast>/<mu2>` xml tag, you will define the maximum image contrast allowed to detect a contour. We recommend to keep this value to 0.5.
+- sample step: using vpMe::setSampleStep() or `<sample>/<step>` xml tag, you will define the minimum distance in pixel between two discretized moving-edges.
+  To increase the number of moving-edges you have to reduce this parameter.
 
 \note Most important parameters are \e range_tracking and \e sample_step.
 
@@ -517,15 +536,21 @@ of from source code using vpMbKltTracker::setKltOpencv() and vpMbKltTracker::set
 \snippet tutorial-mb-generic-tracker-full.cpp Set klt parameters
 
 With the previous parameters you can set:
-- mask_border: erosion number of the mask used on each face.
-- max_features: maximum number of keypoint features to track in the image.
-- window_size: window size used to refine the corner locations.
-- quality: parameter characterizing the minimal accepted quality of image corners. Corners with quality measure less than this
-  parameter are rejected. This means that if you want to have more keypoints on a face, you have to reduce this parameter.
-- min_distance: minimal Euclidean distance between detected corners during keypoint detection stage used to initialize keypoint location.
-- harris: free parameter of the Harris detector.
-- size_block: size of the averaging block used to track the keypoint features.
-- pyramid_lvl: maximal pyramid level. If the level is zero, then no pyramid is computed for the optical flow.
+- mask border: using vpMbKltTracker::setMaskBorder() or `<klt>/<mask_border>` xml tag, you can specify the size of the mask corresponding
+  to a zone inside the face along the contour in which the keypoints will not be detected. A mask size of zero means that keypoints
+  can be detected on the contour.
+- max features: using vpKltOpencv::setMaxFeatures() or `<klt>/<max_features>` xml tag, you can set the maximum number of keypoint features to track in the image.
+- window size: using vpKltOpencv::setWindowSize() or `<klt>/<window_size>` xml tag, you can set the window size used to refine the corner locations.
+- quality: using vpKltOpencv::setQuality() or `<klt>/<quality>` xml tag, you can set the parameter characterizing the minimal accepted quality
+  of image corners. Corners with quality measure less than this parameter are rejected. This means that if you want to have more keypoints
+  on a face, you have to reduce this parameter.
+- min_distance: using vpKltOpencv::setMinDistance() or `<klt>/<min_distance>` xml tag, you can set the minimal Euclidean distance between
+  detected corners during keypoint detection stage used to initialize keypoint location.
+- harris: using vpKltOpencv::setHarrisFreeParameter() or `<klt>/<harris>` xml tag, you can set the free parameter of the Harris detector.
+- block size: using vpKltOpencv::setBlockSize() or `<klt>/<size_block>` xml tag, you can set the size of the averaging block used to track
+  the keypoint features.
+- pyramid level: using vpKltOpencv::setPyramidLevels() or `<klt>/<pyramid_lvl>` xml tag, you can set the maximal pyramid level.
+  If the level is zero, then no pyramid is computed for the optical flow.
 
 \note Most important parameters are \e min_distance and \e quality.
 
