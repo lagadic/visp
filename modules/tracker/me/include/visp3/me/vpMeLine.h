@@ -178,11 +178,18 @@ public:
   vpMeLine(const vpMeLine &meline);
   virtual ~vpMeLine();
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1) override;
+#else
   void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
-
+#endif
   void track(const vpImage<unsigned char> &Im);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) override;
+#else
   virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
+#endif
   void reSample(const vpImage<unsigned char> &I);
   void leastSquare();
   void updateDelta();
