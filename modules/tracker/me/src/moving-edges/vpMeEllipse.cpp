@@ -1020,7 +1020,7 @@ void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
  */
 void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
-  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
+  vpMeEllipse::displayEllipse(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
 }
 
 /*!
@@ -1360,9 +1360,10 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, 
   }
   initTracking(I, v_iP);
 }
-#endif // Deprecated
 
 /*!
+  \deprecated This static function is deprecated. Use rather vpMeEllipse::displayEllipse().
+
   Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
 
   \param I : The image used as background.
@@ -1393,6 +1394,8 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &c
 
 /*!
 
+  \deprecated This static function is deprecated. Use rather vpMeEllipse::displayEllipse().
+
   Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
 
   \param I : The image used as background.
@@ -1413,8 +1416,74 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &c
   \param color : Color used to display th lines.
 
   \param thickness : Thickness of the drawings.
+
+  \sa vpDisplay::displayEllipse()
 */
 void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+  const double &E, const double &smallalpha, const double &highalpha,
+  const vpColor &color, unsigned int thickness)
+{
+  vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
+}
+#endif // Deprecated
+
+/*!
+  Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
+
+  \param I : The image used as background.
+
+  \param center : Center of the ellipse.
+
+  \param A : Semimajor axis of the ellipse.
+
+  \param B : Semiminor axis of the ellipse.
+
+  \param E : Angle made by the major axis and the u axis of the image frame
+  \f$ (u,v) \f$ (in rad).
+
+  \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
+
+  \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
+
+  \param color : Color used to display the ellipse.
+
+  \param thickness : Thickness of the drawings.
+
+  \sa vpDisplay::displayEllipse()
+*/
+void vpMeEllipse::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A,
+  const double &B, const double &E, const double &smallalpha, const double &highalpha,
+  const vpColor &color, unsigned int thickness)
+{
+  vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
+}
+
+/*!
+
+  Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
+
+  \param I : The image used as background.
+
+  \param center : Center of the ellipse
+
+  \param A : Semimajor axis of the ellipse.
+
+  \param B : Semiminor axis of the ellipse.
+
+  \param E : Angle made by the major axis and the u axis of the image frame
+  \f$ (u,v) \f$ (in rad)
+
+  \param smallalpha : Smallest \f$ alpha \f$ angle in rad  (0 for a complete ellipse)
+
+  \param highalpha : Highest \f$ alpha \f$ angle in rad  (\f$ 2 \Pi \f$ for a complete ellipse)
+
+  \param color : Color used to display th lines.
+
+  \param thickness : Thickness of the drawings.
+
+  \sa vpDisplay::displayEllipse()
+*/
+void vpMeEllipse::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
   const double &E, const double &smallalpha, const double &highalpha,
   const vpColor &color, unsigned int thickness)
 {

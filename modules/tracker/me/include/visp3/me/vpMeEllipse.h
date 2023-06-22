@@ -459,7 +459,7 @@ protected:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
 #else
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
 #endif
   void updateTheta();
 
@@ -470,12 +470,22 @@ private:
 
   // Static Function
 public:
-  static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+  static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
     const double &E, const double &smallalpha, const double &highalpha,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+  static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
     const double &E, const double &smallalpha, const double &highalpha,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  // Marked deprecated since they override vpMeTracker::display(). Warning detected by mingw64
+  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+#endif
 };
 
 #endif
