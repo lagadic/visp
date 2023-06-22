@@ -48,7 +48,7 @@ jobs:
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
-        git clone --branch feat_me_new_threshold --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        git clone --branch feat_me_new_threshold --depth 1 https://github.com/fspindle/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
