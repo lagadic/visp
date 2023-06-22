@@ -259,7 +259,7 @@ public:
     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-#ifdef FABIEN
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
     const double &B, const double &C, const vpColor &color = vpColor::green,
     unsigned int thickness = 1);
