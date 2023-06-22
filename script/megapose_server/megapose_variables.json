@@ -1,0 +1,5 @@
+{
+  "megapose_dir": "./megapose6d",
+  "megapose_data_dir": "./megapose6d/data",
+  "environment": "megapose"
+}

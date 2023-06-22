@@ -357,6 +357,17 @@ $ brew install nlohmann-json
 
   To install JSON on windows, follow \ref install_win11_msvc17_3rdparty_json installation instructions.
 
+- <b>Installation from source</b>
+
+  If the package is not available for your distribution, you can install JSON from source:
+\verbatim
+$ cd $VISP_WS/3rdparty
+$ git clone https://github.com/nlohmann/json.git
+$ cd json && mkdir build && cd build
+$ cmake ..
+$ make -j$(nproc) && sudo make install
+\endverbatim
+
 \subsection soft_tool_pcl Point Cloud Library (PCL)
 
 [Point Cloud Library](https://pointclouds.org/) can optionnally be installed to extend vpRealSense2 capabilities

@@ -46,7 +46,7 @@
 #include <visp3/core/vpRequest.h>
 #include <visp3/core/vpTime.h>
 
-// inet_ntop() not supported on win XP
+ // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 /*!
@@ -60,8 +60,8 @@
   on one computer to another program on another computer.
 
   Exemple of client's code, receiving and sending basic message
-  It corresponds to the client used in the first exemple of vpServer class'
-documentation:
+  It corresponds to the client used in the first example of vpServer class'
+  documentation:
 
   \code
 #include <iostream>
@@ -98,8 +98,8 @@ int main()
   \endcode
 
   Exemple of client's code, sending a vpImage on request form.
-  It correspond to the server used in the second exemple of vpServer class'
-documentation.
+  It correspond to the server used in the second example of vpServer class'
+  documentation.
 
   \code
 #include <iostream>

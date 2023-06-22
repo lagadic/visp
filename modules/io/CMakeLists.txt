@@ -65,6 +65,12 @@ if(WITH_CATCH2)
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
+if(USE_NLOHMANN_JSON)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+endif()
+
+
 # simdlib is always enabled since it contains fallback code to plain C++ code
 # Simd lib is private
 include_directories(${SIMDLIB_INCLUDE_DIRS})
