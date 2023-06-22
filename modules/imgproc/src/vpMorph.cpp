@@ -162,7 +162,7 @@ void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigne
 
   do {
     // Dilatation
-    vpImageMorphology::dilatation(h_kp1, connexity);
+    vpImageMorphology::dilatation<unsigned char>(h_kp1, connexity);
 
     // Keep min
     for (unsigned int i = 0; i < h_kp1.getHeight(); i++) {
