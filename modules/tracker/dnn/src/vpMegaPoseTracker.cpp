@@ -55,6 +55,10 @@ std::future<vpMegaPoseEstimate> vpMegaPoseTracker::init(const vpImage<vpRGBa> &I
   });
 }
 
+void vpMegaposeTracker::updatePose(const vpHomogeneousMatrix& cTo) {
+  m_poseEstimate.cTo = cTo;
+}
+
 std::future<vpMegaPoseEstimate> vpMegaPoseTracker::track(const vpImage<vpRGBa> &I)
 {
   if (!m_initialized) {

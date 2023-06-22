@@ -140,6 +140,8 @@ public:
    */
   std::future<vpMegaPoseEstimate> track(const vpImage<vpRGBa> &I);
 
+  void updatePose(const vpHomogeneousMatrix& cTo);
+
 private:
   std::shared_ptr<vpMegaPose> m_megapose;
   vpMegaPoseEstimate m_poseEstimate;
