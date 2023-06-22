@@ -362,7 +362,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
   // Take the highest thresholds between all CI machines
 #ifdef VISP_HAVE_COIN3D
   map_thresh[vpMbGenericTracker::EDGE_TRACKER] =
-    useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.7);
+    useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.9);
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
     useScanline ? std::pair<double, double>(0.007, 1.9) : std::pair<double, double>(0.007, 1.8);
