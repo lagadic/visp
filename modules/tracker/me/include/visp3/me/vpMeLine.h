@@ -245,19 +245,35 @@ public:
 
   // Static Functions
 public:
-  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+  static void displayLine(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
     const double &B, const double &C, const vpColor &color = vpColor::green,
     unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+  static void displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
     const double &B, const double &C, const vpColor &color = vpColor::green,
     unsigned int thickness = 1);
 
-  static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+  static void displayLine(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+  static void displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+#ifdef FABIEN
+  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+    const double &B, const double &C, const vpColor &color = vpColor::green,
+    unsigned int thickness = 1);
+  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+    const double &B, const double &C, const vpColor &color = vpColor::green,
+    unsigned int thickness = 1);
+
+  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
+    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+#endif
 };
 
 #endif

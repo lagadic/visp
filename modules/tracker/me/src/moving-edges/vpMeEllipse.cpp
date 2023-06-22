@@ -1389,7 +1389,7 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &c
   const double &B, const double &E, const double &smallalpha, const double &highalpha,
   const vpColor &color, unsigned int thickness)
 {
-  vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
+  vpMeEllipse::displayEllipse(I, center, A, B, E, smallalpha, highalpha, color, thickness);
 }
 
 /*!
@@ -1423,7 +1423,7 @@ void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, 
   const double &E, const double &smallalpha, const double &highalpha,
   const vpColor &color, unsigned int thickness)
 {
-  vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
+  vpMeEllipse::displayEllipse(I, center, A, B, E, smallalpha, highalpha, color, thickness);
 }
 #endif // Deprecated
 

@@ -469,7 +469,7 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const d
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
     break;
 
-  case CONSTRAST:
+  case CONTRAST:
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
     break;
 
