@@ -710,13 +710,12 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
     if (findCenterPoint(&ip_edges_list)) {
       //      list.end();
       vpMeSite s;
-      while (true) //{//!list.outside())
-      {
-        s = list.back(); // list.value() ;
+
+      for (std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it) {
+        s = *it;
         vpImagePoint iP(s.ifloat, s.jfloat);
         if (inRectangle(iP, rect)) {
-          list.erase(list.end());
-          //          list.end();
+          list.erase(it);
         }
         else
           break;

@@ -35,6 +35,8 @@ ViSP 3.5.1 (under development)
     . Remove deprecated vpOpenCVGrabber, vpKeyPointSurf classes and corresponding
       tutorials
     . Minimum OpenCV version is 2.4.8
+    . New vpMegaPose and vpMegaPoseTracker classes that are wrapper over MegaPose
+      https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -61,6 +63,10 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
     . New tutorial: Threaded PCL viewer
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
+    . New tutorial: Tracking with MegaPose
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
+    . New tutorial: Exporting a 3D model to MegaPose
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-megapose-model.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config

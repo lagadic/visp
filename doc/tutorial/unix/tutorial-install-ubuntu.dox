@@ -110,7 +110,7 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
   libpthread-stubs0-dev libdc1394-22-dev
 \endverbatim
 
-Note that on older distributions, the apt package for the JSON library is outdated: to install, see \ref install_ubuntu_3rdparty_other.
+Note that on older distributions, the apt package for the JSON library is outdated. If needed, you may install \ref soft_tool_json from source.
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
@@ -444,15 +444,10 @@ $ sudo apt-get install libdmtx-dev
 \verbatim
 $ sudo apt-get install libgsl-dev
 \endverbatim
-- JSON for modern C++: if the apt package `nlohmann-json3-dev` is not available for your distribution, you can either install from source or from a package manager
-  - To install from source
+- JSON for modern C++
 \verbatim
-$ git clone https://github.com/nlohmann/json.git
-$ cd json && mkdir build && cd build
-$ cmake ..
-$ make -j$(nproc) && sudo make install
+$ sudo apt-get install nlohmann-json3-dev
 \endverbatim
-  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code
 
