@@ -62,10 +62,18 @@ jobs:
         cmake --build . --target test -j$(nproc)
         lcov --directory . --capture --output-file visp-coverage.info
         lcov --remove visp-coverage.info \
-          '/usr/*' "/home/runner/work/visp/visp/3rdparty/*" "/home/runner/work/visp/visp/demo/*" \
-          "/home/runner/work/visp/visp/samples/*" "/home/runner/work/visp/visp/example/*" '*/test/*' \
-          '*/private/*' "/home/runner/work/visp/visp/modules/robot*" \
-          "/home/runner/work/visp/visp"/modules/sensor*" --output-file visp-coverage.cleaned
+          '/usr/*' \
+          '*/private/*' \
+          '*/test/*' \
+          "/home/runner/work/visp/visp/3rdparty/*" \
+          "/home/runner/work/visp/visp/demo/*" \
+          "/home/runner/work/visp/visp/example/*" \
+          "/home/runner/work/visp/visp/samples/*" \
+          "/home/runner/work/visp/visp/modules/gui*" \
+          "/home/runner/work/visp/visp/modules/io/src/parallel-port*" \
+          "/home/runner/work/visp/visp/modules/robot*" \
+          "/home/runner/work/visp/visp/modules/sensor*" \
+          --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
       uses: codecov/codecov-action@v2

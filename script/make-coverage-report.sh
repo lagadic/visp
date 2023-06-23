@@ -22,7 +22,7 @@ cmake $source_dir -DBUILD_COVERAGE=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
 cmake --build . --target all -j$(nproc)
 cmake --build . --target test -j$(nproc)
 lcov --directory . --capture --output-file visp-coverage.info
-lcov --remove visp-coverage.info '/usr/*' "$source_dir/3rdparty/*" "$source_dir/demo/*" "$source_dir/samples/*" "$source_dir/example/*" '*/test/*' '*/private/*' "$source_dir/modules/robot*" "$source_dir/modules/sensor*" --output-file visp-coverage.cleaned
+lcov --remove visp-coverage.info '/usr/*' '*/private/*' '*/test/*' "$source_dir/3rdparty/*" "$source_dir/demo/*" "$source_dir/example/*" "$source_dir/samples/*" "$source_dir/modules/gui*" "$source_dir/modules/io/src/parallel-port*" "$source_dir/modules/robot*" "$source_dir/modules/sensor*" --output-file visp-coverage.cleaned
 genhtml visp-coverage.cleaned -o coverage
 
 echo "Detected source directory: $source_dir"
