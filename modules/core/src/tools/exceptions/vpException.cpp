@@ -37,7 +37,7 @@
  *****************************************************************************/
 
 /* \file vpException.cpp
-   \brief error that can be emited by the vp class and its derivates
+   \brief error that can be emitted by the vp class and its derivatives
  */
 
 #include "visp3/core/vpException.h"

@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpParallelPort class and its
+ * Exceptions that can be emitted by the vpParallelPort class and its
  *derivates.
  *
  * Authors:
@@ -51,7 +51,7 @@
 
   \file vpParallelPortException.h
 
-  \brief Error that can be emited by the vpParallelPort class and its
+  \brief Error that can be emitted by the vpParallelPort class and its
   derivates.
 
 */
@@ -73,14 +73,14 @@
 /*!
   \class vpParallelPortException
 
-  \brief Error that can be emited by the vpParallelPort class and its
+  \brief Error that can be emitted by the vpParallelPort class and its
   derivates.
  */
 class VISP_EXPORT vpParallelPortException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible errors than can be emmited while calling
+  \brief Lists the possible errors than can be emitted while calling
   vpParallelPort member
  */
   enum error {

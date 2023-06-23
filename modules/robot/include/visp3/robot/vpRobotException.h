@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpRobot class and its derivates.
+ * Exception that can be emitted by the vpRobot class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -48,7 +48,7 @@
  */
 
 /* \file vpRobotException.h
-   \brief error that can be emited by the vpRobot class and its derivates
+   \brief error that can be emitted by the vpRobot class and its derivatives
  */
 /* Classes standards. */
 
@@ -66,13 +66,13 @@
 
 /*!
   \class vpRobotException
-  \brief Error that can be emited by the vpRobot class and its derivates.
+  \brief Error that can be emitted by the vpRobot class and its derivatives.
  */
 class VISP_EXPORT vpRobotException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpRobot member
   */
   enum errorRobotCodeEnum {

@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the simulator classes.
+ * Exceptions that can be emitted by the simulator classes.
  *
 *****************************************************************************/
 
@@ -37,7 +37,7 @@
 #define _vpSimulatorException_h_
 
 /* \file vpSimulatorException.h
-   \brief Error that can be emited by the vpSimulator class and its derivates
+   \brief Error that can be emitted by the vpSimulator class and its derivatives
  */
 /* Classes standards. */
 
@@ -50,13 +50,13 @@
 /*!
 
   \class vpSimulatorException
-  \brief Error that can be emited by the vpSimulator class and its derivates.
+  \brief Error that can be emitted by the vpSimulator class and its derivatives.
  */
 class VISP_EXPORT vpSimulatorException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpSimulator member
  */
   enum errorSimulatorCodeEnum {

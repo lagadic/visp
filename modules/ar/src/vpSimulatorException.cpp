@@ -29,12 +29,12 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the simulator classes.
+ * Exceptions that can be emitted by the simulator classes.
  *
 *****************************************************************************/
 
 /* \file vpSimulatorException.h
-   \brief error that can be emited by the vpSimulator class and its derivates
+   \brief error that can be emitted by the vpSimulator class and its derivatives
  */
 /* Classes standards. */
 

@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpDisplay class and its derivates.
+ * Exception that can be emitted by the vpDisplay class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -47,7 +47,7 @@
  */
 
 /* \file vpDisplayException.h
-   \brief error that can be emited by the vpDisplay class and its derivates
+   \brief error that can be emitted by the vpDisplay class and its derivatives
  */
 /* Classes standards. */
 #include <iostream> /* Classe std::ostream.    */
@@ -65,13 +65,13 @@
 /*!
   \class vpDisplayException
   \ingroup group_core_debug
-  \brief Error that can be emited by the vpDisplay class and its derivates.
+  \brief Error that can be emitted by the vpDisplay class and its derivatives.
  */
 class VISP_EXPORT vpDisplayException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpDisplay member
  */
   enum errorDisplayCodeEnum {

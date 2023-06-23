@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpFeature class and its derivates.
+ * Exception that can be emitted by the vpFeature class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -47,7 +47,7 @@
  */
 
 /* \file vpFeatureException.h
-   \brief error that can be emited by the vpFeature class and its derivates
+   \brief error that can be emitted by the vpFeature class and its derivatives
  */
 /* Classes standards. */
 
@@ -66,14 +66,14 @@
 /*!
   \class vpFeatureException
   \ingroup group_visual_features
-  \brief Error that can be emited by the vpBasicFeature class and its
+  \brief Error that can be emitted by the vpBasicFeature class and its
   derivates.
  */
 class VISP_EXPORT vpFeatureException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpFeature member
  */
   enum errorFeatureCodeEnum {

@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpMatrix class and its derivates.
+ * Exceptions that can be emitted by the vpMatrix class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -65,13 +65,13 @@
 /*!
   \class vpMatrixException
   \ingroup group_core_debug
-  \brief error that can be emited by the vpMatrix class and its derivates
+  \brief error that can be emitted by the vpMatrix class and its derivatives
  */
 class VISP_EXPORT vpMatrixException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpMatrix member
  */
   enum errorCodeEnum {

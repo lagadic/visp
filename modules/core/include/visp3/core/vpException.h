@@ -37,7 +37,7 @@
  *****************************************************************************/
 
 /* \file vpException.h
-   \brief error that can be emited by the vp class and its derivates
+   \brief error that can be emitted by the vp class and its derivatives
  */
 
 #ifndef _vpException_h_
@@ -61,7 +61,7 @@
 /*!
    \class vpException
    \ingroup group_core_debug
-   \brief error that can be emited by ViSP classes.
+   \brief error that can be emitted by ViSP classes.
 
    This class inherites from the standard std::exception contained in the C++
    STL.
