@@ -105,6 +105,33 @@ public:
 
   template <typename T>
   static void dilatation(vpImage<T> &I, const vpConnexityType &connexity = CONNEXITY_4);
+
+  #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+     \deprecated Provided only for compat with previous releases. Use rather the template function erosion(vpImage<T> &, const vpConnexityType &)
+     
+     Add here the description of the function...
+   */
+  vp_deprecated static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4) 
+  {
+    vpImageMorphology::erosion<unsigned char>(I, connexity);
+  }
+
+  /*!
+     \deprecated Provided only for compat with previous releases. Use rather the template function dilatation(vpImage<T> &, const vpConnexityType &)
+     
+     Add here the description of the function...
+   */
+  vp_deprecated static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
+  {
+    vpImageMorphology::dilatation<unsigned char>(I, connexity);
+  }
+  //@}
+#endif
 };
 
 /*!
