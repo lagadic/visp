@@ -140,6 +140,12 @@ public:
    */
   std::future<vpMegaPoseEstimate> track(const vpImage<vpRGBa> &I);
 
+  /**
+   * @brief Update the current pose estimate with a new one, provided by an external source
+   * No operation (such as init or track) should be running.
+   *
+   * @param cTo the new pose estimate
+   */
   void updatePose(const vpHomogeneousMatrix& cTo);
 
 private:
