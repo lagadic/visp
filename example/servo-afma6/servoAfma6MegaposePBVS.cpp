@@ -61,12 +61,18 @@
 #include <visp3/visual_features/vpFeatureTranslation.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/io/vpJsonArgumentParser.h>
+#include <visp3/core/vpImageFilter.h>
 #include <optional>
+#include <visp3/io/vpVideoWriter.h>
+
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_MODULE_DNN_TRACKER)
 
+#include <visp3/io/vpJsonArgumentParser.h>
+#include <visp3/dnn_tracker/vpMegaPoseTracker.h>
+
+using json = nlohmann::json;
 
 void overlayRender(vpImage<vpRGBa> &I, const vpImage<vpRGBa> &overlay, bool contour)
 {
@@ -123,18 +129,19 @@ std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
 
 int main(int argc, char **argv)
 {
-  bool opt_verbose = false;
+  bool opt_verbose = true;
+  bool opt_plot = true;
   double convergence_threshold_t = 0.0005; // Value in [m]
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
   unsigned width = 640, height = 480;
-  std::string megaposeAddress = "127.0.0.1";
+  std::string megaposeAddress = "131.254.20.153";
   unsigned megaposePort = 5555;
-  int refinerIterations = 1, coarseNumSamples = 576;
-  std::string objectName = "cube";
+  int refinerIterations = 1, coarseNumSamples = 1024;
+  std::string objectName = "castle_v2";
 
-  std::string desiredPosFile = "cdTw.pos";
-  std::string initialPosFile = "cTw.pos";
+  std::string desiredPosFile = "desired2.pos";
+  std::string initialPosFile = "init.pos";
 
 
   vpRobotAfma6 robot;
@@ -145,11 +152,14 @@ int main(int argc, char **argv)
       << "Please make sure to have the user stop button at hand!" << std::endl
       << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
-
+    std::vector<vpColVector> velocities;
+    std::vector<vpPoseVector> error;
     /*
      * Move to a safe position
      */
     vpColVector q(6, 0);
+
+    vpVideoWriter writer;
 
     // Go to desired pose, save true camera pose wrt world frame
     robot.setPositioningVelocity(10.0); // In %
@@ -162,8 +172,7 @@ int main(int argc, char **argv)
 
     vpRealSense2 rs;
     rs2::config config;
-    unsigned int width = 640, height = 480;
-    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, 60);
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, 30);
     rs.open(config);
 
     // Get camera intrinsics
@@ -203,8 +212,7 @@ int main(int argc, char **argv)
       vpDisplay::flush(I);
     }
 
-    vpHomogeneousMatrix cdTo = megaposeTracker.init(I, detection).get().cTo; //get camera pose relative to object, not world
-
+    vpHomogeneousMatrix cdTo = megaposeTracker.init(I, *detection).get().cTo; //get camera pose relative to object, not world
 
     // Go to desired pose, save true desired pose
     robot.readPosFile(initialPosFile, q);
@@ -224,9 +232,17 @@ int main(int argc, char **argv)
       detection = detectObjectForInitMegaposeClick(I);
       vpDisplay::flush(I);
     }
-    vpHomogeneousMatrix cTo = megaposeTracker.init(I, detection).get().cTo;
+    auto est = megaposeTracker.init(I, *detection).get();
+    vpHomogeneousMatrix cTo = est.cTo;
+    std::cout << "Estimate score = " << est.score << std::endl;
+    writer.setFileName("video/I%05d.png");
+    //writer.setFramerate(60.0);
+    writer.open(I);
 
-    cdTc = cdTo * cTo.inverse();
+    //vpHomogeneousMatrix oTw = cTo.inverse() * cTw;
+
+
+    vpHomogeneousMatrix cdTc = cdTo * cTo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
     t.buildFrom(cdTc);
@@ -240,7 +256,7 @@ int main(int argc, char **argv)
     task.addFeature(tu, tud);
     task.setServo(vpServo::EYEINHAND_CAMERA);
     task.setInteractionMatrixType(vpServo::CURRENT);
-    task.setLambda(0.05);
+    task.setLambda(0.2);
 
     vpPlot *plotter = nullptr;
     int iter_plot = 0;
@@ -281,7 +297,8 @@ int main(int argc, char **argv)
 
     bool callMegapose = true;
     bool updatedThisIter = true;
-    double timeLastUpdate = vpTime::measureMs();
+    double timeLastUpdate = vpTime::measureTimeMs();
+    vpMegaPoseEstimate  megaposeEstimate;
 
     while (!has_converged && !final_quit) {
       double t_start = vpTime::measureTimeMs();
@@ -289,20 +306,22 @@ int main(int argc, char **argv)
       rs.acquire(I);
       vpDisplay::display(I);
       if (!callMegapose && trackerFuture.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
-        vpMegaPoseEstimate megaposeEstimate = trackerFuture.get();
+        megaposeEstimate = trackerFuture.get();
 
         cTo = megaposeEstimate.cTo;        
         callMegapose = true;
-        updateThisIter = true;
-        timeLastUpdate = vpTime::measureMs();
+        updatedThisIter = true;
+        timeLastUpdate = vpTime::measureTimeMs();
 
-        if (megaposeEstimate.score < reinitThreshold) { // If confidence is low, exit
+        if (megaposeEstimate.score < 0.2) { // If confidence is low, exit
           final_quit = true;
+          std::cout << "Low confidence, exiting" << std::endl;
         }
       }
 
       if(callMegapose) {
-        megaposeEstimate = megaposeTracker.track(I);
+        std::cout << "Calling megapose" << std::endl;
+        trackerFuture = megaposeTracker.track(I);
         callMegapose = false;
       }
 
@@ -318,19 +337,25 @@ int main(int argc, char **argv)
       cdTc = cdTo * cTo.inverse();
       t.buildFrom(cdTc);
       tu.buildFrom(cdTc);
-      v_c = task.computeControlLaw();
+      v = task.computeControlLaw();
+
 
 
       // Update true pose
+      vpPoseVector p;
+      robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
       cTw = robot.get_fMc(q).inverse();
+      
       cdTc_true = cdTw * cTw.inverse();
 
+      velocities.push_back(v);
+      vpPoseVector cdrc(cdTc_true);
+      error.push_back(cdrc);
       updatedThisIter = false;
 
       // Display desired and current pose features
-      vpDisplay::displayFrame(I, cdTo, cam, 5, vpColor::yellow, 2);
-      vpDisplay::displayFrame(I, cTo, cam, 5, vpColor::none, 3);
-      // Get tag corners
+      vpDisplay::displayFrame(I, cdTo, cam, 0.05, vpColor::yellow, 2);
+      vpDisplay::displayFrame(I, cTo, cam, 0.05, vpColor::none, 3);
       
       if (opt_plot) {
         plotter->plot(0, iter_plot, task.getError());
@@ -339,7 +364,7 @@ int main(int argc, char **argv)
       }
 
       if (opt_verbose) {
-        std::cout << "v_c: " << v_c.t() << std::endl;
+        std::cout << "v: " << v.t() << std::endl;
       }
 
       vpTranslationVector cd_t_c = cdTc.getTranslationVector();
@@ -353,10 +378,10 @@ int main(int argc, char **argv)
 
       ss.str("");
       ss << "Predicted error_t: " << error_tr << ", True error_t:" << error_tr_true;
-      vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 300, ss.str(), vpColor::red);
       ss.str("");
       ss << "Predicted error_tu: " << error_tu << ", True error_tu:" << error_tu_true;
-      vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
+      vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 300, ss.str(), vpColor::red);
 
       if (opt_verbose)
         std::cout << "error translation: " << error_tr << " ; error rotation: " << error_tu << std::endl;
@@ -367,10 +392,6 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
       }
 
-      if (first_time) {
-        first_time = false;
-      }
-
 
       // Send to the robot
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
@@ -379,6 +400,9 @@ int main(int argc, char **argv)
       ss << "Loop time: " << vpTime::measureTimeMs() - t_start << " ms";
       vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
       vpDisplay::flush(I);
+      vpImage<vpRGBa> displayImage;
+      vpDisplay::getImage(I, displayImage);
+      writer.saveFrame(displayImage);
 
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(I, button, false)) {
@@ -400,6 +424,16 @@ int main(int argc, char **argv)
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
 
+    json j = json{
+      {"velocities", velocities},
+      {"error", error}
+    };
+    std::ofstream jsonFile;
+    jsonFile.open("results.json");
+    jsonFile << j.dump(4);
+    jsonFile.close();
+
+
     if (opt_plot && plotter != nullptr) {
       delete plotter;
       plotter = nullptr;
@@ -420,6 +454,7 @@ int main(int argc, char **argv)
         vpDisplay::flush(I);
       }
     }
+
 
     
   }
