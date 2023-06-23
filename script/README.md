@@ -141,9 +141,7 @@ The script is working for Ubuntu and needs `lcov` tool.
   ```console
   $ cd $VISP_WS
   $ git clone https://github.com/lagadic/visp
-  $ mkdir visp-build
-  $ cd visp-build
-  $ cmake ../visp -DBUILD_COVERAGE=ON
-  $ cd ../visp
-  $ script/make-coverage-report.sh ../visp-build
+  $ ./visp/script/make-coverage-report.sh visp-build
   ```
+
+- Results are available in `visp-build/coverage/index.html`.
