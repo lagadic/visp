@@ -112,9 +112,15 @@ public:
   */
   //@{
   /*!
-     \deprecated Provided only for compat with previous releases. Use rather the template function erosion(vpImage<T> &, const vpConnexityType &)
-     
-     Add here the description of the function...
+    \brief  An erosion is performed with a flat structuring element
+  \f$ \left( B \left( x,y \right) = 0 \right) \f$. The erosion using
+  such a structuring element is equivalent to a local-minimum operator: \f[
+    \left ( A \ominus B \right ) \left( x,y \right) = \textbf{min} \left \{ A
+  \left ( x+x', y+y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
+  \f]
+    \deprecated Provided only for compat with previous releases. Use rather the template function erosion(vpImage<T> &, const vpConnexityType &)
+    \param I : Gray-scale image to process.
+    \param connexity : Type of connexity: 4 or 8.
    */
   vp_deprecated static void erosion(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4) 
   {
@@ -122,9 +128,16 @@ public:
   }
 
   /*!
-     \deprecated Provided only for compat with previous releases. Use rather the template function dilatation(vpImage<T> &, const vpConnexityType &)
-     
-     Add here the description of the function...
+    \brief A dilatation is performed with a flat structuring element
+  \f$ \left( B \left( x,y \right) = 0 \right) \f$. The erosion using
+  such a structuring element is equivalent to a local-maximum operator: \f[
+    \left ( A \ominus B \right ) \left( x,y \right) = \textbf{max} \left \{ A
+  \left ( x+x', y+y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
+  \f]
+
+    \deprecated Provided only for compat with previous releases. Use rather the template function dilatation(vpImage<T> &, const vpConnexityType &)
+    \param I : Gray-scale image to process.
+    \param connexity : Type of connexity: 4 or 8.
    */
   vp_deprecated static void dilatation(vpImage<unsigned char> &I, const vpConnexityType &connexity = CONNEXITY_4)
   {
