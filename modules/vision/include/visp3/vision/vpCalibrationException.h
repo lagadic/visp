@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpCalibration class and its derivates.
+ * Exceptions that can be emitted by the vpCalibration class and its derivatives.
  *
  * Authors:
  * Anthony Saunier
@@ -64,13 +64,13 @@
 /*!
 
   \class vpCalibrationException
-  \brief Error that can be emited by the vpCalibration class.
+  \brief Error that can be emitted by the vpCalibration class.
  */
 class VISP_EXPORT vpCalibrationException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpCalibration member
  */
   enum errorCodeEnum {

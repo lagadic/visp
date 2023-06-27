@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Error that can be emited by the vpPose class and its derivates
+ * Error that can be emitted by the vpPose class and its derivatives
  *
  * Authors:
  * Eric Marchand
@@ -63,13 +63,13 @@
 /*!
   \class vpPoseException
   \ingroup group_vision_pose
-  \brief Error that can be emited by the vpPose class and its derivates.
+  \brief Error that can be emitted by the vpPose class and its derivatives.
  */
 class VISP_EXPORT vpPoseException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpPose member
  */
   enum errorCodeEnum {

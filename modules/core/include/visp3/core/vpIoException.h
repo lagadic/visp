@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpIo class and its derivates.
+ * Exceptions that can be emitted by the vpIo class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -48,7 +48,7 @@
 
 /*!
   \file vpIoException.h
-  \brief Error that can be emited by the vpIoTools class and its derivates.
+  \brief Error that can be emitted by the vpIoTools class and its derivatives.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -67,13 +67,13 @@
 /*!
   \class vpIoException
   \ingroup group_core_debug
-  \brief Error that can be emited by the vpIoTools class and its derivates.
+  \brief Error that can be emitted by the vpIoTools class and its derivatives.
  */
 class VISP_EXPORT vpIoException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpIo member.
  */
   enum error {

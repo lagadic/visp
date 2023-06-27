@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpFrameGrabber class and its
+ * Exceptions that can be emitted by the vpFrameGrabber class and its
  *derivates.
  *
  * Authors:
@@ -48,7 +48,7 @@
  */
 
 /* \file vpFrameGrabberException.h
-   \brief error that can be emited by the vpFrameGrabber class and its
+   \brief error that can be emitted by the vpFrameGrabber class and its
    derivates
  */
 /* Classes standards. */
@@ -66,14 +66,14 @@
  */
 
 /*!
-  \brief Error that can be emited by the vpFrameGrabber class and its
+  \brief Error that can be emitted by the vpFrameGrabber class and its
   derivates
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpFrameGrabber member
  */
   enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };

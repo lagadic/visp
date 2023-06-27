@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpServo class and its derivates.
+ * Exception that can be emitted by the vpServo class and its derivatives.
  *
  * Authors:
  * Eric Marchand
@@ -41,7 +41,7 @@
 
 /*!
   \file vpServoException.h
-  \brief error that can be emited by the vpServo class and its derivates
+  \brief error that can be emitted by the vpServo class and its derivatives
 */
 
 #include <visp3/core/vpException.h>
@@ -58,7 +58,7 @@
 
 /*!
   \class vpServoException
-  \brief Error that can be emited by the vpServo class and its derivates.
+  \brief Error that can be emitted by the vpServo class and its derivatives.
   \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
  */
 class VISP_EXPORT vpServoException : public vpException
@@ -66,7 +66,7 @@ class VISP_EXPORT vpServoException : public vpException
 public:
   /*!
 
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpServo member
  */
   enum errorServoCodeEnum {
