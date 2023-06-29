@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
 
   //! [Opening]
   vpImage<unsigned char> I_open = I_fill;
-  vpImageMorphology::erosion(I_open, vpImageMorphology::CONNEXITY_4);
-  vpImageMorphology::dilatation(I_open, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::erosion<unsigned char>(I_open, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::dilatation<unsigned char>(I_open, vpImageMorphology::CONNEXITY_4);
   //! [Opening]
 
   //! [Closing]
   vpImage<unsigned char> I_close = I_open;
-  vpImageMorphology::dilatation(I_close, vpImageMorphology::CONNEXITY_4);
-  vpImageMorphology::erosion(I_close, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::dilatation<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::erosion<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
   //! [Closing]
   d4.init(I_close, I.getWidth(), I.getHeight() + 80, "Closing");
 

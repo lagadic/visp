@@ -155,7 +155,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark dilatation (ViSP)")
       {
-        vpImageMorphology::dilatation(I, connexity);
+        vpImageMorphology::dilatation<unsigned char>(I, connexity);
         return I;
       };
 
@@ -177,7 +177,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark dilatation (ViSP)")
       {
-        vpImageMorphology::dilatation(I, connexity);
+        vpImageMorphology::dilatation<unsigned char>(I, connexity);
         return I;
       };
 
@@ -202,7 +202,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark erosion (ViSP)")
       {
-        vpImageMorphology::erosion(I, connexity);
+        vpImageMorphology::erosion<unsigned char>(I, connexity);
         return I;
       };
 
@@ -224,7 +224,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark erosion (ViSP)")
       {
-        vpImageMorphology::erosion(I, connexity);
+        vpImageMorphology::erosion<unsigned char>(I, connexity);
         return I;
       };
 
