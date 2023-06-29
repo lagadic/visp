@@ -11,7 +11,8 @@
 
 #if defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
@@ -93,7 +94,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Check if we need to initialize the display with the first frame
       if (!display_initialized_) {
-// Initialize the display
+        // Initialize the display
 #if defined(VISP_HAVE_X11)
         d_ = new vpDisplayX(I_);
         display_initialized_ = true;
@@ -115,7 +116,8 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Update the display
       vpDisplay::flush(I_);
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);
@@ -130,7 +132,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded displayFunction]
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc, const char *argv[])
+int main(int argc, const char *argv [])
 {
   int opt_device = 0;
 

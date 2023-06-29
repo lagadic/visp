@@ -18,6 +18,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 //! [Undef grabber]
 // #undef VISP_HAVE_V4L2
 // #undef VISP_HAVE_DC1394

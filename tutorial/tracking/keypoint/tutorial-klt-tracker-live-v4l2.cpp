@@ -8,7 +8,11 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/klt/vpKltOpencv.h>
 
-int main(int argc, const char *argv[])
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
+int main(int argc, const char *argv [])
 {
 #if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   try {
@@ -83,7 +87,8 @@ int main(int argc, const char *argv[])
         vpTime::wait(20);
       } while (button != vpMouseButton::button3);
       tracker.initTracking(cvI, guess);
-    } else {
+    }
+    else {
       tracker.initTracking(cvI);
     }
 
@@ -105,7 +110,8 @@ int main(int argc, const char *argv[])
       if (vpDisplay::getClick(I, false))
         break;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
