@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-video)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-video)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui)
 

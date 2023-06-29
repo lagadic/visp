@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-device-framegrabber)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-device-framegrabber)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 

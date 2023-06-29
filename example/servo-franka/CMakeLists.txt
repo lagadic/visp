@@ -33,9 +33,9 @@
 #
 #############################################################################
 
-project(example-servo-franka)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-servo-franka)
 
 find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 

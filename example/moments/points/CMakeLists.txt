@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-moments-points)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-moments-points)
 
 find_package(VISP REQUIRED visp_core visp_vs visp_robot visp_gui)
 

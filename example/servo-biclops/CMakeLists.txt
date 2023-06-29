@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-servo-biclops)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-servo-biclops)
 
 find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 

@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-manual)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-manual)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision visp_io visp_gui)
 

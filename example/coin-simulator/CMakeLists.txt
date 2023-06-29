@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-coin-simulator)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-coin-simulator)
 
 find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_ar visp_io)
 

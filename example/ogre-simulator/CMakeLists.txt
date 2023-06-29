@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-ogre-simulator)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-ogre-simulator)
 
 find_package(VISP REQUIRED visp_core visp_vision visp_ar visp_blob visp_io visp_gui)
 

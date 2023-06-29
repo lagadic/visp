@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-device-laserscanner)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-device-laserscanner)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_io)
 

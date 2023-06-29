@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-direct-vvs)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-direct-vvs)
 
 find_package(VISP REQUIRED visp_core visp_robot visp_visual_features visp_io visp_gui)
 

@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-robot-simulator-viper850)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-robot-simulator-viper850)
 
 find_package(VISP REQUIRED visp_core visp_vs visp_robot visp_io visp_gui)
 

@@ -36,9 +36,9 @@
 #
 #############################################################################
 
-project(example-pose-estimation)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-pose-estimation)
 
 find_package(VISP REQUIRED visp_core visp_blob visp_vision visp_io visp_gui)
 

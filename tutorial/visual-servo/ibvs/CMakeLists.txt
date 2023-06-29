@@ -1,6 +1,6 @@
-project(tutorial-visual-servo-ibvs)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-visual-servo-ibvs)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
@@ -8,7 +8,7 @@ endif(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES Window
 
 if(WINRT)
   add_definitions(-DWINRT)
-  
+
   if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone)
     set(WINRT_PHONE TRUE)
     add_definitions(-DWINRT_PHONE)
@@ -44,7 +44,7 @@ set(tutorial_cpp
   tutorial-ibvs-4pts-wireframe-robot-afma6.cpp
   tutorial-ibvs-4pts-wireframe-robot-viper.cpp
   tutorial-ibvs-4pts-json.cpp
-  
+
 )
 
 if(NOT DEFINED WINRT_8_1)
