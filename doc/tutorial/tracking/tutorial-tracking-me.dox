@@ -5,13 +5,13 @@
 
 \section tracking_me_intro Introduction
 
-ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours. Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.  
+ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours. Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.
 
 All the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/moving-edges
-\endcode
+\endverbatim
 
 \section tracking_me_line Line tracking
 
@@ -29,100 +29,55 @@ Here after we explain line by line the program.
 
 Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix. That is allowed by including the grabber headers.
 
-\code
-#include <visp3/sensor/vp1394CMUGrabber.h>
-#include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
-\endcode
+\snippet tutorial-me-line-tracker.cpp camera headers
 
 To display these images we then include the headers of the viewers.
 
-\code
-#include <visp3/core/vpDisplayGDI.h>
-#include <visp3/core/vpDisplayX.h>
-\endcode
+\snippet tutorial-me-line-tracker.cpp display headers
 
-The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under unix-like systems. 
+The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under unix-like systems.
 
 Finally, to track a line with the moving edges, we include the header of the vpMeLine class.
 
-\code
-#include <visp3/core/vpMeLine.h>
-\endcode
- 
-In the main() function, The source code is build only if one of the grabbers and one of the viewers is available.
+\snippet tutorial-me-line-tracker.cpp me line headers
 
-\code
-#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(VISP_HAVE_V4L2)) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
-\endcode
+In the main() function, The source code is build only if one of the grabbers is available.
+
+\snippet tutorial-me-line-tracker.cpp defines
 
 Here we create a gray level image container \c I that will contain the images acquired by our camera.
 
-\code
-vpImage<unsigned char> I;
-\endcode
+\snippet tutorial-me-line-tracker.cpp image container
 
-Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed, secondly for a firewire camera under Windows if CMU1394 3rd party is installed, and lastly for an usb camera under Unix if none of the previous 3rd party are installed, and if libv4l is installed. The \ref tutorial-grabber gives more details concerning the framegrabbing.
+Then, we create a grabber instance, first for a firewire camera under Unix if libdc1394 3rd party is installed,
+secondly for a firewire camera under Windows if CMU1394 3rd party is installed, next for an usb camera
+under Unix if none of the previous 3rd party are installed and if libv4l is installed, and finally with OpenCV.
+The \ref tutorial-grabber gives more details concerning the framegrabbing.
 
-\code
-#if defined(VISP_HAVE_DC1394)
-  vp1394TwoGrabber g(false);
-#elif defined(VISP_HAVE_CMU1394)
-  vp1394CMUGrabber g;
-#elif defined(VISP_HAVE_V4L2)
-  vpV4l2Grabber g;     
-#endif
-\endcode
+\snippet tutorial-me-line-tracker.cpp grabber container
 
 We then open the connection with the grabber and acquire an image in \c I.
-\code
-  g.open(I);
-  g.acquire(I);
-\endcode
+\snippet tutorial-me-line-tracker.cpp first image acquisition
 
 To be able to display image \c I and the tracking results in overlay in a window, we create a display instance.
-\code
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d(I, 0, 0, "Camera view");
-#else
-  vpDisplayGDI d(I, 0, 0, "Camera view");
-#endif
-\endcode
+\snippet tutorial-me-line-tracker.cpp display container
 
 Then we display the image in the window created previously.
-\code
-  vpDisplay::display(I);
-  vpDisplay::flush(I);
-\endcode
+\snippet tutorial-me-line-tracker.cpp display image
 
-We then initialize the moving edges parameters used later by the tracker. From the previous position of a moving edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the contour we keep a space of 10 pixels.
-\code
-  vpMe me;
-  me.setRange(25);
-  me.setThreshold(15000);
-  me.setSampleStep(10);
-\endcode
+We then initialize the moving edges parameters used later by the tracker. From the previous position of a moving
+edge, we are tracking its new position along the normal of the contour with a range of 25 pixels. For each pixel
+along the normal we will compute the oriented convolution. The pixel that will be selected by the moving edges
+algorithm will be the one that has a convolution higher than 15000. Between two consecutive moving edges on the
+contour we keep a space of 10 pixels.
+\snippet tutorial-me-line-tracker.cpp me container
 
 We then, create an instance of the vpMeTracker class that will track our line.
-We initialize the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track. 
-\code
-  vpMeLine line;
-  line.set Me(&me);
-  line.set Display(vpMeSite::RANGE_RESULT);
-  line.initTracking(I);
-\endcode
+We initialize the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track.
+\snippet tutorial-me-line-tracker.cpp me line container
 
 Once the tracker is initialized, we enter in a while loop where we successively acquire a new image, display it, track the line, display the tracking results and finally flush the overlay drawings in the viewer.
-\code
-  while(1) {
-    g.acquire(I); 
-    vpDisplay::display(I);
-    line.track(I);
-    line.display(I, vpColor::red);
-    vpDisplay::flush(I);
-  }
-\endcode
-
+\snippet tutorial-me-line-tracker.cpp loop
 
 \section tracking_me_ellipse Ellipse tracking
 
@@ -138,14 +93,9 @@ The video shows the result of the tracking:
 
 This example is very similar to the one presented in \ref tracking_me_line. It differs only in the name of the class and its header that is used to allow ellipse tracking:
 
-\code
-  vpMeEllipse ellipse;
-  ellipse.setMe(&me);
-  ellipse.setDisplay(vpMeSite::RANGE_RESULT);
-  ellipse.initTracking(I);
-\endcode
+\snippet tutorial-me-ellipse-tracker.cpp me ellipse container
 
-Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse to track. 
+Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse to track.
 
 \section tracking_me_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb-generic.

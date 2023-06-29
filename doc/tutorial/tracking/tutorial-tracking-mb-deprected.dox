@@ -259,7 +259,8 @@ The content of the XML file teabox.xml that is considered by default is the foll
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -314,7 +315,8 @@ These settings could be tuned either from XML using \<ecm\> tag as:
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>

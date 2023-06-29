@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Moving edges.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeNurbs.h
@@ -87,7 +87,8 @@ int main()
   vpMe me;
   me.setRange(25);
   me.setPointsToTrack(20);
-  me.setThreshold(15000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
   me.setSampleStep(10);
 
   // Initialize the moving-edges tracker parameters
@@ -191,7 +192,11 @@ public:
 
   void track(const vpImage<unsigned char> &I);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) override;
+#else
   virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
+#endif
   void reSample(const vpImage<unsigned char> &I);
   void updateDelta();
   void setExtremities();
@@ -207,7 +212,11 @@ public:
   */
   inline vpNurbs getNurbs() const { return nurbs; }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1) override;
+#else
   void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
+#endif
 
 private:
   bool computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element);

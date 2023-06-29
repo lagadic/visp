@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Make the complete tracking of an object by using its CAD model
  *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMbEdgeTracker.cpp
@@ -2596,7 +2591,7 @@ void vpMbEdgeTracker::setScales(const std::vector<bool> &scale)
   if (scale.empty() || (nbActivatedLevels == 0)) {
     vpERROR_TRACE(" !! WARNING : must use at least one level for the "
                   "tracking. Use the global one");
-    this->scales.resize(0);
+    this->scales.clear();
     this->scales.push_back(true);
 
     lines.resize(1);

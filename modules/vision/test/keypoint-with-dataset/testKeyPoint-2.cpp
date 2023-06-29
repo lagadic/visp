@@ -72,7 +72,7 @@ Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-p] [-h]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -146,7 +146,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
 
 template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, bool use_parallel_ransac,
-              vpImage<Type> &I, vpImage<Type> &IMatching)
+  vpImage<Type> &I, vpImage<Type> &IMatching)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
@@ -189,7 +189,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   me.setMaskSize(5);
   me.setMaskNumber(180);
   me.setRange(8);
-  me.setThreshold(10000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
   me.setMu1(0.5);
   me.setMu2(0.5);
   me.setSampleStep(4);
@@ -213,7 +214,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   std::string init_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.init");
   if (opt_display && opt_click_allowed) {
     tracker.initClick(I, init_file);
-  } else {
+  }
+  else {
     vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
     tracker.initFromPose(I, cMoi);
   }
@@ -248,7 +250,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   std::vector<vpPolygon> polygons;
   std::vector<std::vector<vpPoint> > roisPt;
   std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > pair =
-      tracker.getPolygonFaces(true); // To detect an issue with CI
+    tracker.getPolygonFaces(true); // To detect an issue with CI
   polygons = pair.first;
   roisPt = pair.second;
 
@@ -272,7 +274,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   // Keep only keypoints on the cube
   pair = tracker.getPolygonFaces(true, true,
-                                 true); // To detect an issue with CI
+    true); // To detect an issue with CI
   polygons = pair.first;
   roisPt = pair.second;
 
@@ -378,7 +380,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         // Display model in the correct sub-image in IMatching
         vpCameraParameters cam2;
         cam2.initPersProjWithoutDistortion(cam.get_px(), cam.get_py(), cam.get_u0() + I.getWidth(),
-                                           cam.get_v0() + I.getHeight());
+          cam.get_v0() + I.getHeight());
         tracker.setCameraParameters(cam2);
         tracker.setPose(IMatching, cMo);
         tracker.display(IMatching, cMo, cam2, vpColor::red, 2);
@@ -398,12 +400,14 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
         if (button == vpMouseButton::button3) {
           opt_click = false;
         }
-      } else {
+      }
+      else {
         // Use right click to enable/disable step by step tracking
         if (vpDisplay::getClick(I, button, false)) {
           if (button == vpMouseButton::button3) {
             opt_click = true;
-          } else if (button == vpMouseButton::button1) {
+          }
+          else if (button == vpMouseButton::button1) {
             break;
           }
         }
@@ -413,8 +417,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   if (!times_vec.empty()) {
     std::cout << "Computation time, Mean: " << vpMath::getMean(times_vec)
-              << " ms ; Median: " << vpMath::getMedian(times_vec) << " ms ; Std: " << vpMath::getStdev(times_vec)
-              << std::endl;
+      << " ms ; Median: " << vpMath::getMedian(times_vec) << " ms ; Std: " << vpMath::getStdev(times_vec)
+      << std::endl;
   }
 }
 
@@ -442,8 +446,8 @@ int main(int argc, const char **argv)
 
     if (env_ipath.empty()) {
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
-                   "variable value."
-                << std::endl;
+        "variable value."
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -462,7 +466,8 @@ int main(int argc, const char **argv)
       run_test(env_ipath, opt_click_allowed, opt_display, use_parallel_ransac, I, IMatching);
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

@@ -4997,9 +4997,9 @@ void vpMbGenericTracker::setPose(const std::map<std::string, const vpImage<unsig
   \note Image and camera pose must be supplied for the reference camera. The
   images for all the cameras must be supplied to correctly initialize the
   trackers but some camera poses can be omitted. In this case, they will be
-  initialized using the pose computed from the reference camera pose and using
-  the known geometric transformation between each camera (see
-  setCameraTransformationMatrix()).
+initialized using the pose computed from the reference camera pose and using
+the known geometric transformation between each camera(see
+setCameraTransformationMatrix()).
 */
 void vpMbGenericTracker::setPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
   const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses)
