@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -35,9 +35,6 @@
 # VIRTUOSE_INCLUDE_DIRS
 # VIRTUOSE_LIBRARIES
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 set(VIRTUOSE_API $ENV{VIRTUOSE_HOME})
@@ -47,9 +44,9 @@ if(UNIX)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_97/VirtuoseAPI_v3_97)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_90/VirtuoseAPI_v3_93)
   list(APPEND VIRTUOSE_API /local/virtuose-6D/Livraison_3_90/VirtuoseAPI_v3_93)
-  
+
   set(VIRTUOSE_OS "linux")
-  
+
   if(CMAKE_SIZEOF_VOID_P EQUAL 8)
     list(APPEND VIRTUOSE_ARCH "x64")
   else()
@@ -62,7 +59,7 @@ elseif(MSVC)
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_93")
 
   set(VIRTUOSE_OS win)
-  
+
   if(CMAKE_CL_64)
     list(APPEND VIRTUOSE_ARCH "x64")
   else()
@@ -92,13 +89,13 @@ elseif(MSVC)
 else()
   return()
 endif()
-  
+
 set(VIRTUOSE_API_INC "")
 set(VIRTUOSE_API_LIB "")
 if(UNIX)
   foreach(api_ ${VIRTUOSE_API})
-    list(APPEND VIRTUOSE_API_INC "${api_}")  
-    list(APPEND VIRTUOSE_API_LIB "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_ARCH}")  
+    list(APPEND VIRTUOSE_API_INC "${api_}")
+    list(APPEND VIRTUOSE_API_LIB "${api_}/${VIRTUOSE_OS}/lib/${VIRTUOSE_ARCH}")
   endforeach()
 elseif(MSVC)
   foreach(api_ ${VIRTUOSE_API})
@@ -116,7 +113,7 @@ find_path(VIRTUOSE_INCLUDE_DIRS VirtuoseAPI.h
 if(UNIX)
   find_library(VIRTUOSE_LIBRARIES
     NAMES virtuose
-    PATHS 
+    PATHS
       ${VIRTUOSE_API_LIB}
   )
 elseif(MSVC)
@@ -128,33 +125,33 @@ elseif(MSVC)
   endforeach()
   find_library(VIRTUOSE_LIBRARIES_DEBUG
     NAMES virtuoseDLL
-    PATHS 
+    PATHS
       ${VIRTUOSE_API_LIB_DEBUG}
   )
   find_library(VIRTUOSE_LIBRARIES_RELEASE
     NAMES virtuoseDLL
-    PATHS 
+    PATHS
       ${VIRTUOSE_API_LIB_RELEASE}
   )
-  
+
   if(VIRTUOSE_LIBRARIES_DEBUG AND VIRTUOSE_LIBRARIES_RELEASE)
     set(VIRTUOSE_LIBRARIES
       debug ${VIRTUOSE_LIBRARIES_DEBUG}
       optimized ${VIRTUOSE_LIBRARIES_RELEASE})
-	                       
+
   elseif(VIRTUOSE_LIBRARIES_DEBUG)
     set(VIRTUOSE_LIBRARIES ${VIRTUOSE_LIBRARIES_DEBUG})
   elseif(VIRTUOSE_LIBRARIES_RELEASE)
     set(VIRTUOSE_LIBRARIES ${VIRTUOSE_LIBRARIES_RELEASE})
   endif()
-endif()  
+endif()
 
 if(VIRTUOSE_LIBRARIES AND VIRTUOSE_INCLUDE_DIRS)
   set(VIRTUOSE_FOUND TRUE)
 else()
   set(VIRTUOSE_FOUND FALSE)
 endif()
-  
+
 mark_as_advanced(
   VIRTUOSE_INCLUDE_DIRS
   VIRTUOSE_LIBRARIES

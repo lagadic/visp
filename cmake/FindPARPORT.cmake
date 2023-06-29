@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,28 +30,25 @@
 #
 # Description:
 # Try to find linux/parport.h.h for parallel port usage.
-# Once run this will define: 
+# Once run this will define:
 #
 # PARPORT_FOUND
 # PARPORT_INCLUDE_DIRS
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 find_path(PARPORT_INCLUDE_DIRS linux/parport.h
-  /usr/include 
+  /usr/include
   /usr/src/linux/include
 )
 
 mark_as_advanced(
   PARPORT_INCLUDE_DIRS
 )
-      
+
 if(PARPORT_INCLUDE_DIRS)
   set(PARPORT_FOUND TRUE)
 else()
   set(PARPORT_FOUND FALSE)
 endif()
-  
+

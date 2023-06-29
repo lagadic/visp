@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example of sequential calls to QP solver
  *
- * Authors:
- * Olivier Kermorgant
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file qp_plot.h
 
@@ -98,9 +95,9 @@ private:
 class VISP_EXPORT QPPlot
 {
 public:
-  QPPlot(int, int, std::vector<std::string>) {}
-  void plot(int, int, int, double) {}
-  void wait() {}
+  QPPlot(int, int, std::vector<std::string>) { }
+  void plot(int, int, int, double) { }
+  void wait() { }
 };
 #endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

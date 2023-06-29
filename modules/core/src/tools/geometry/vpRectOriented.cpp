@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Defines a (possibly oriented) rectangle in the plane.
  *
- * Author:
- * Pierre Chatelain
- * Marc Pouliquen
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpRectOriented.h>
 
 #include <cmath>
@@ -43,8 +39,7 @@
 /// Default constructor.
 vpRectOriented::vpRectOriented()
   : m_center(), m_width(), m_height(), m_theta(), m_topLeft(), m_topRight(), m_bottomLeft(), m_bottomRight()
-{
-}
+{ }
 
 /** Constructor.
  * @param center The rectangle center.

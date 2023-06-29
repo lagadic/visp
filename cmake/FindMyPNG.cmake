@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,21 +31,18 @@
 # Description:
 # Try to find libpng library.
 # To use the libpng library, the zlib library is required.
-# Once run this will define: 
+# Once run this will define:
 #
 # PNG_FOUND
 # PNG_INCLUDE_DIR
 # PNG_LIBRARIES
 # PNG_VERSION_STRING
 #
-# Authors:
-# Nicolas Melchior
-#
 #############################################################################
 
 # detection of the Libpng headers location
 if(MINGW)
-  find_path(PNG_INCLUDE_DIR 
+  find_path(PNG_INCLUDE_DIR
     NAMES
       png.h
     PATHS
@@ -53,7 +50,7 @@ if(MINGW)
       "$ENV{MINGW_DIR}/include/libpng14"
   )
 else()
-  find_path(PNG_INCLUDE_DIR 
+  find_path(PNG_INCLUDE_DIR
     NAMES
       png.h
     PATHS
@@ -128,7 +125,7 @@ set(PNG_FOUND FALSE)
 
 find_package(ZLIB)
 if(NOT ZLIB_FOUND)
-  find_package(MyZLIB)    
+  find_package(MyZLIB)
 endif()
 
 if(UNIX)
@@ -140,7 +137,7 @@ if(UNIX)
     vp_get_version_from_pkg("libpng" "${PNG_LIB_DIR}/pkgconfig" PNG_VERSION_STRING)
 
     set(PNG_FOUND TRUE)
-	
+
   endif()
 else(UNIX)
   set(PNG_LIBRARIES "")
@@ -154,7 +151,7 @@ else(UNIX)
     list(APPEND PNG_LIBRARIES debug ${PNG_LIBRARY_DEBUG})
     set(PNG_FOUND TRUE)
   endif()
-endif(UNIX)	  
+endif(UNIX)
 
 if(PNG_FOUND)
   vp_parse_header2(PNG "${PNG_INCLUDE_DIR}/png.h" PNG_LIBPNG_VER_STRING)
@@ -164,12 +161,12 @@ if(ZLIB_FOUND)
   if(PNG_FOUND)
     # The material is found. Check if it works on the requested architecture
     include(CheckCXXSourceCompiles)
-	
+
     #message(PNG_LIBRARIES: ${PNG_LIBRARIES})
     #message(ZLIB_LIBRARIES: ${ZLIB_LIBRARIES})
 
     set(CMAKE_REQUIRED_LIBRARIES ${PNG_LIBRARIES} ${ZLIB_LIBRARIES})
-    set(CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS}) 
+    set(CMAKE_REQUIRED_INCLUDES ${PNG_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIRS})
     CHECK_CXX_SOURCE_COMPILES("
       #include <png.h> // Contrib for png image io
       int main()
@@ -177,7 +174,7 @@ if(ZLIB_FOUND)
         /* create a png read struct */
         png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
       }
-      " PNG_BUILD_TEST) 
+      " PNG_BUILD_TEST)
     #message("PNG_BUILD_TEST: ${PNG_BUILD_TEST}")
     if(PNG_BUILD_TEST)
       set(PNG_FOUND TRUE)

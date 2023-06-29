@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,17 +29,14 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find gnu scientific library GSL 
+# Try to find gnu scientific library GSL
 # (see http://www.gnu.org/software/gsl/)
-# Once run this will define: 
-# 
+# Once run this will define:
+#
 # GSL_FOUND        : system has GSL lib
 # GSL_LIBRARIES    : full path to the libraries
 # GSL_INCLUDE_DIRS : where to find headers
 # GSL_VERSION      : which version
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 

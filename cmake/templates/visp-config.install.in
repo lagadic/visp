@@ -3,9 +3,9 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright(C) 2005 - 2023 by Inria.All rights reserved.
 #
-# This software is free software; you can redistribute it and/or modify
+# This software is free software; you can redistribute it and /or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
@@ -16,9 +16,9 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https ://visp.inria.fr for more information.
 #
-# This software was developed at:
+# This software was developed at :
 # Inria Rennes - Bretagne Atlantique
 # Campus Universitaire de Beaulieu
 # 35042 Rennes Cedex
@@ -31,71 +31,68 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# visp-config shell script.
-# Auto-generated from visp-config.install.in by cmake. For backward
+# visp - config shell script.
+# Auto - generated from visp - config.install.in by cmake.For backward
 # compatibility used visp.pc.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
 
-relpath=`dirname $0`
-relpath=`(cd $relpath/..; pwd)`
+relpath = `dirname $0`
+relpath = `(cd $relpath / ..; pwd)`
 
-PREFIX=$relpath
+PREFIX = $relpath
 
-CFLAGS_CMD=`pkg-config --cflags visp`
-CFLAGS=$CFLAGS_CMD
+CFLAGS_CMD = `pkg-config --cflags visp`
+CFLAGS = $CFLAGS_CMD
 
-LIBS_CMD=`pkg-config --libs visp`
-LIBS=$LIBS_CMD
+LIBS_CMD = `pkg-config --libs visp`
+LIBS = $LIBS_CMD
 
-VERSION_CMD=`pkg-config --modversion visp`
-VERSION=$VERSION_CMD
+VERSION_CMD = `pkg-config --modversion visp`
+VERSION = $VERSION_CMD
 
-NO_NEWLINE_CHARACTER="@VISP_VISP_SCRIPT_ECHO_NO_NEWLINE_CHARACTER@"
-NO_NEWLINE_OPTION="@VISP_VISP_SCRIPT_ECHO_NO_NEWLINE_OPTION@"
+NO_NEWLINE_CHARACTER = "@VISP_VISP_SCRIPT_ECHO_NO_NEWLINE_CHARACTER@"
+NO_NEWLINE_OPTION = "@VISP_VISP_SCRIPT_ECHO_NO_NEWLINE_OPTION@"
 
 usage()
 {
-    cat <<EOF
+    cat << EOF
 
-ViSP $VERSION (Visual Servoing Platform)
-Copyright (C) 2005 - 2019 Inria. All rights reserved.
+        ViSP $VERSION(Visual Servoing Platform)
+        Copyright(C) 2005 - 2019 Inria.All rights reserved.
 
-Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--dumpversion]  [--help]
+        Usage: $0[--prefix][--cflags][--libs][--version][--dumpversion][--help]
 
-  --prefix      Show ViSP installation prefix.
-  --cflags      Print pre-processor and compiler flags including
-                third party includes we depend on.
-  --libs        Print library linking information with ViSP
-                including third party libraries we depend on.
-  --version     Output ViSP information.
-  --dumpversion Output ViSP version information.
-  --help        Display this help and exit.
+        --prefix      Show ViSP installation prefix.
+        --cflags      Print pre - processor and compiler flags including
+        third party includes we depend on.
+        --libs        Print library linking information with ViSP
+        including third party libraries we depend on.
+        --version     Output ViSP information.
+        --dumpversion Output ViSP version information.
+        --help        Display this help and exit.
 
-EOF
-    exit $1
+        EOF
+        exit $1
 }
 
-if ! test "$1"; then
-    usage;
-    exit 0;
+if !test "$1"; then
+usage;
+exit 0;
 fi;
 
 for arg in $@; do
-    case $arg in
-  --prefix) echo $NO_NEWLINE_OPTION "$PREFIX$NO_NEWLINE_CHARACTER";;
-  --cflags) echo $NO_NEWLINE_OPTION "$CFLAGS$NO_NEWLINE_CHARACTER";;
-  --libs) echo $NO_NEWLINE_OPTION "$LIBS$NO_NEWLINE_CHARACTER";;
-  --version)
-      echo "ViSP $VERSION (Visual Servoing Platform)"
-      echo ""
-      echo "Copyright (C) 2005 - 2019 Inria. All rights reserved.";;
-  --dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
-        *) usage; exit 0 ;;
-    esac;
+case $arg in
+--prefix) echo $NO_NEWLINE_OPTION "$PREFIX$NO_NEWLINE_CHARACTER";;
+--cflags) echo $NO_NEWLINE_OPTION "$CFLAGS$NO_NEWLINE_CHARACTER";;
+--libs) echo $NO_NEWLINE_OPTION "$LIBS$NO_NEWLINE_CHARACTER";;
+--version)
+echo "ViSP $VERSION (Visual Servoing Platform)"
+echo ""
+echo "Copyright (C) 2005 - 2019 Inria. All rights reserved.";;
+--dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
+*) usage; exit 0;;
+esac;
 done;
 echo ""

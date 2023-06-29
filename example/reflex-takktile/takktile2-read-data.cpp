@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Reflex Takktile 2 hand from Right Hand Robotics.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example takktile2-read-data.cpp
@@ -48,7 +45,7 @@
 
 #include <visp3/robot/vpReflexTakktile2.h>
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   std::string opt_network_interface = "eth0";
   std::string opt_finger_file_name = "yaml/finger_calibrate.yaml";
@@ -66,12 +63,12 @@ int main(int argc, char *argv[])
       opt_motor_file_name = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0]
-                << " [--network <interface name>] "
-                   " [--finger <calib file name>]"
-                   " [--tactile <calib file name>]"
-                   " [--motor <constants file name>]"
-                   " [--help] [-h]\n"
-                << std::endl;
+        << " [--network <interface name>] "
+        " [--finger <calib file name>]"
+        " [--tactile <calib file name>]"
+        " [--motor <constants file name>]"
+        " [--help] [-h]\n"
+        << std::endl;
       std::cout << "Options:" << std::endl;
       std::cout << "  --network <interface name>" << std::endl;
       std::cout << "\tNetwork interface name. Default: " << opt_network_interface << std::endl << std::endl;

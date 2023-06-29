@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,14 +30,11 @@
 #
 # Description:
 # Try to find FFMPEG. FFMpeg depend son Zlib.
-# Once run this will define: 
+# Once run this will define:
 #
 # FFMPEG_FOUND - system has FFMPEG
 # FFMPEG_INCLUDE_DIRS - the FFMPEG include directory
 # FFMPEG_LIBRARIES - Link these to use FFMPEG
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -235,13 +232,13 @@ endif(MINGW)
   # FFMpeg depend son Zlib
   find_package(ZLIB)
   if(NOT ZLIB_FOUND)
-    find_package(MyZLIB)    
+    find_package(MyZLIB)
   endif()
 
   # FFMpeg depend son BZip2
   # with CMake 2.6, the CMake bzip2 package material is named FindBZip2.cmake
   # while with CMake 2.8, the name is FindBZIP2.cmake
-  # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2) 
+  # that is why we need to call FIND_PACKAGE(BZip2) and FIND_PACKAGE(BZIP2)
   find_package(BZIP2 QUIET)
   # MESSAGE("BZIP2_FOUND: ${BZIP2_FOUND}")
   if(NOT BZIP2_FOUND)

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * This class implements an 2D array as a template class.
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef _vpArray2D_h_
 #define _vpArray2D_h_
 
@@ -482,7 +482,7 @@ public:
   }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  vpArray2D<Type> &operator=(const nlohmann::json& j) = delete;  
+  vpArray2D<Type> &operator=(const nlohmann::json& j) = delete;
 #endif
 #endif
 
@@ -1050,7 +1050,7 @@ inline void from_json(const nlohmann::json& j, vpArray2D<Type>& array) {
       array.data[i] = jValue;
       ++i;
     }
-  } else {    
+  } else {
     throw vpException(vpException::badValue, "Trying to read a vpArray2D from something that is not an array or object");
   }
 }

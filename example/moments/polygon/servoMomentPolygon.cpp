@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,15 +31,12 @@
  * Description:
  * Example of visual servoing with moments using a polygon as object container
  *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+*****************************************************************************/
 
- /*!
-   \example servoMomentPolygon.cpp
-   Example of moment-based visual servoing with Images
- */
+/*!
+  \example servoMomentPolygon.cpp
+  Example of moment-based visual servoing with Images
+*/
 
 #include <iostream>
 #include <visp3/core/vpCameraParameters.h>
@@ -65,7 +62,7 @@
 #include <visp3/vs/vpServo.h>
 
 #if !defined(_WIN32) && !defined(VISP_HAVE_PTHREAD)
- // Robot simulator used in this example is not available
+// Robot simulator used in this example is not available
 int main()
 {
   std::cout << "Can't run this example since vpSimulatorAfma6 capability is "

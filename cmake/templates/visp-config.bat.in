@@ -1,9 +1,9 @@
 @rem #############################################################################
 @rem #
 @rem # ViSP, open source Visual Servoing Platform software.
-@rem # Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+@rem # Copyright(C) 2005 - 2023 by Inria.All rights reserved.
 @rem #
-@rem # This software is free software; you can redistribute it and/or modify
+@rem # This software is free software; you can redistribute it and /or modify
 @rem # it under the terms of the GNU General Public License as published by
 @rem # the Free Software Foundation; either version 2 of the License, or
 @rem # (at your option) any later version.
@@ -14,9 +14,9 @@
 @rem # GPL, please contact Inria about acquiring a ViSP Professional
 @rem # Edition License.
 @rem #
-@rem # See http://visp.inria.fr for more information.
+@rem # See https ://visp.inria.fr for more information.
 @rem #
-@rem # This software was developed at:
+@rem # This software was developed at :
 @rem # Inria Rennes - Bretagne Atlantique
 @rem # Campus Universitaire de Beaulieu
 @rem # 35042 Rennes Cedex
@@ -29,11 +29,8 @@
 @rem # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 @rem #
 @rem # Description:
-@rem # visp-config.bat script for Windows.
-@rem # Auto-generated from visp-config.bat.in by cmake.
-@rem #
-@rem # Authors:
-@rem # Fabien Spindler
+@rem # visp - config.bat script for Windows.
+@rem # Auto - generated from visp - config.bat.in by cmake.
 @rem #
 @rem #############################################################################
 
@@ -41,95 +38,95 @@
 @echo off
 
 @rem Get the dirname
-@rem for /F %%x in ('CHDIR') do set PREFIX=%%x\..\..\..
-set CURPATH=%CD /d %%~dp0%
+@rem for / F % %x in('CHDIR') do set PREFIX = % %x\..\..\..
+set CURPATH = % CD / d % %~dp0 %
 
-@rem echo CURPATH: %CURPATH%
+@rem echo CURPATH : % CURPATH %
 
-set PREFIX=%CURPATH%\..\..\..
+set PREFIX = % CURPATH % \..\..\..
 
-set VERSION=@VISP_VERSION@
+set VERSION = @VISP_VERSION@
 
-set DEFS=@VISP_SCRIPT_CONFIG_DEFS@
+set DEFS = @VISP_SCRIPT_CONFIG_DEFS@
 
-set INCLUDE="@VISP_SCRIPT_CONFIG_INC@"
+set INCLUDE = "@VISP_SCRIPT_CONFIG_INC@"
 
-set OPENMP_SUPPORT=@VISP_SCRIPT_CONFIG_OPENMP_SUPPORT@
+set OPENMP_SUPPORT = @VISP_SCRIPT_CONFIG_OPENMP_SUPPORT@
 
-set LIBDIR="@VISP_SCRIPT_CONFIG_LIBDIR@"
+set LIBDIR = "@VISP_SCRIPT_CONFIG_LIBDIR@"
 
-set LIBS_DEBUG=@VISP_SCRIPT_CONFIG_LIBS_DEBUG@
+set LIBS_DEBUG = @VISP_SCRIPT_CONFIG_LIBS_DEBUG@
 
-set LIBS_OPTIMIZED=@VISP_SCRIPT_CONFIG_LIBS_OPTIMIZED@
+set LIBS_OPTIMIZED = @VISP_SCRIPT_CONFIG_LIBS_OPTIMIZED@
 
 @rem Test if an argument is provided
 
 if "%1" == "" goto USAGE
 
 @rem Parse the argument list
-for %%a in (%*) do (
-@rem  echo Read arg %%a
-  if "%%a" == "--help" (
-	goto USAGE
-  )
-  if "%%a" == "--prefix" (
-	echo %PREFIX%
-	goto END
-  )
-  if "%%a" == "--def" (
-	echo %DEFS%
-	goto END
-  )
-  if "%%a" == "--include" (
-	echo %INCLUDE%
-	goto END
-  )
-  if "%%a" == "--openmp" (
-	echo %OPENMP_SUPPORT%
-	goto END
-  )
-  if "%%a" == "--libpath" (
-	echo %LIBDIR%
-	goto END
-  )
-  if "%%a" == "--libs-debug" (
-	echo %LIBS_DEBUG%
-	goto END
-  )
-  if "%%a" == "--libs-optimized" (
-	echo %LIBS_OPTIMIZED%
-	goto END
-  )
-  if "%%a" == "--version" (
-	echo ViSP %VERSION% Visual Servoing Platform
-	echo.
-	echo Copyright 2005 - 2019 Inria. All rights reserved.
-	goto END
-  )
-  if "%%a" == "--dumpversion" (
-	echo %VERSION%
-	goto END
-  )
+for %%a in(%*) do (
+@rem  echo Read arg % %a
+if "%%a" == "--help" (
+goto USAGE
+)
+if "%%a" == "--prefix" (
+echo % PREFIX %
+goto END
+)
+if "%%a" == "--def" (
+echo % DEFS %
+goto END
+)
+if "%%a" == "--include" (
+echo % INCLUDE %
+goto END
+)
+if "%%a" == "--openmp" (
+echo % OPENMP_SUPPORT %
+goto END
+)
+if "%%a" == "--libpath" (
+echo % LIBDIR %
+goto END
+)
+if "%%a" == "--libs-debug" (
+echo % LIBS_DEBUG %
+goto END
+)
+if "%%a" == "--libs-optimized" (
+echo % LIBS_OPTIMIZED %
+goto END
+)
+if "%%a" == "--version" (
+echo ViSP % VERSION % Visual Servoing Platform
+echo.
+echo Copyright 2005 - 2019 Inria.All rights reserved.
+goto END
+)
+if "%%a" == "--dumpversion" (
+echo % VERSION %
+goto END
+)
 
 )
 
-:USAGE
-echo ViSP %VERSION% (Visual Servoing Platform)
-echo Copyright (C) 2005 - 2019 Inria. All rights reserved.
-echo.
-echo Usage: %0 [--prefix] [--def] [--include] [--openmp] [--libpath] 
-echo [--libs-debug] [--libs-optimized] [--version] [--dumpversion] [--help]
-echo.
-echo  --prefix          Show ViSP installation prefix.
-echo  --def             Print pre-processor definitions.
-echo  --include         Print include directories.
-echo  --openmp          Indicates if OpenMP support has to be turned on/off.
-echo  --libpath         Print library directories.
-echo  --libs-debug      Print library dependencies for debug configuration.
-echo  --libs-optimized  Print library dependencies for optimized configuration.
-echo  --dumpversion     Output ViSP version information.
-echo  --help            Display this help and exit.
-echo.
-goto END
+	:USAGE
+	echo ViSP %VERSION % (Visual Servoing Platform)
+	echo Copyright(C) 2005 - 2019 Inria.All rights reserved.
+	echo.
+	echo Usage : % 0[--prefix][--def][--include][--openmp][--libpath]
+	echo[--libs - debug][--libs - optimized][--version][--dumpversion][--help]
+	echo.
+	echo  --prefix          Show ViSP installation prefix.
+	echo  --def             Print pre - processor definitions.
+	echo  --include         Print include directories.
+	echo  --openmp          Indicates if OpenMP support has to be turned on / off.
+	echo  --libpath         Print library directories.
+	echo  --libs - debug      Print library dependencies for debug configuration.
+	echo  --libs - optimized  Print library dependencies for optimized configuration.
+	echo  --dumpversion     Output ViSP version information.
+	echo  --help            Display this help and exit.
+	echo.
+	goto END
 
-:End
+	:End

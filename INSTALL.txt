@@ -1,14 +1,14 @@
                                ViSP
                      Visual Servoing Platform
 
-      Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+      Copyright (C) 2005 - 2023 by Inria. All rights reserved.
                        https://visp.inria.fr
 
 
 
 INSTALL howto for the ViSP library
 
-QUICKINSTALL: 
+QUICKINSTALL:
 > get ViSP source
 > install CMake (see http://www.cmake.org)
 > cmake .
@@ -22,13 +22,13 @@ projects. To do the installation, you don't need to be root.
 Building ViSP with CMake
 ------------------------
 
-Prerequsits: 
+Prerequsits:
 (1) Install newest cmake release from http://www.cmake.org
 
 (2) checkout/install ViSP source code.
 
-(3) configure 
-run cmake to change options and to generate makefiles. 
+(3) configure
+run cmake to change options and to generate makefiles.
 
 example for a build on Linux:
 cd to source directory of ViSP
@@ -42,11 +42,11 @@ See the bottom line for usage instructions, in particular:
 - finally press 'g' to generate Makefiles
 
 On Win32:
-> CMakeSetup.exe 
+> CMakeSetup.exe
 The GUI is self-explaining.
 
 Note:
-You can also use 
+You can also use
  > cmake .
 directly if you prefer command line instead of graphical interface.
 
@@ -64,7 +64,7 @@ Copy visp-config shell script in ${CMAKE_INSTALL_PREFIX}/bin
 > make uninstall
 Dual from install.
 Remove headers in ${CMAKE_INSTALL_PREFIX}/include
-Remove library and cmake files in ${CMAKE_INSTALL_PREFIX}/lib 
+Remove library and cmake files in ${CMAKE_INSTALL_PREFIX}/lib
 Remove visp-config shell script in ${CMAKE_INSTALL_PREFIX}/bin
 
 (7) clean:

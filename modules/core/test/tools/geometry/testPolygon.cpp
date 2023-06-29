@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example which test the polygon.
  *
- * Author:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPolygon.h>
@@ -73,7 +70,7 @@ test the generic 2D polygons.\n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n						      \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS: \n\
@@ -145,9 +142,9 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
 
 /* --------------------------------------------------------------------------
  */
-/*                               MAIN FUNCTION */
-/* --------------------------------------------------------------------------
- */
+ /*                               MAIN FUNCTION */
+ /* --------------------------------------------------------------------------
+  */
 
 int main(int argc, const char **argv)
 {
@@ -316,7 +313,8 @@ int main(int argc, const char **argv)
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

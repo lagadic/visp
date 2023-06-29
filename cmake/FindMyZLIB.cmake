@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,18 +29,15 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find zlib library. 
+# Try to find zlib library.
 # This file should be used only if FindZLIB.cmake provided with CMake
 # is not able to detect zlib.
-# The detection can be eased by setting ZLIB_HOME environment variable 
+# The detection can be eased by setting ZLIB_HOME environment variable
 # especially under windows.
 #
 # ZLIB_FOUND
 # ZLIB_INCLUDE_DIRS
 # ZLIB_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
