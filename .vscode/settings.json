@@ -89,5 +89,10 @@
         "variant": "cpp"
     },
     "C_Cpp.vcFormat.indent.namespaceContents": false,
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "C_Cpp.vcFormat.indent.accessSpecifiers": false,
+    "C_Cpp.vcFormat.indent.preserveWithinParentheses": true,
+    "C_Cpp.vcFormat.indent.preprocessor": "leftmostColumn",
+    "C_Cpp.vcFormat.indent.multiLineRelativeTo": "innermostParenthesis",
+    "C_Cpp.vcFormat.indent.withinParentheses": "alignToParenthesis"
 }
