@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test image morphology.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testImageMorphology.cpp
@@ -49,14 +49,14 @@
 
 TEST_CASE("Binary image morphology", "[image_morphology]")
 {
-  unsigned char image_data[8 * 16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
+  unsigned char image_data[8 * 16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                                       0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
-                                      0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 
-                                      0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 
+                                      0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0,
+                                      0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
                                       0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 
-                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 
-                                      1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0};
+                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                                      1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
 
   vpImage<unsigned char> I(image_data, 8, 16, true);
 
@@ -75,12 +75,6 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_morpho_ref == I_deprecated_dilatation));
-      #endif
     }
     SECTION("8-connexity")
     {
@@ -95,12 +89,6 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_morpho_ref == I_deprecated_dilatation));
-      #endif
     }
   }
 
@@ -119,12 +107,6 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_morpho_ref == I_deprecated_erosion));
-      #endif
     }
 
     SECTION("8-connexity")
@@ -140,12 +122,6 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_morpho_ref == I_deprecated_erosion));
-      #endif
     }
   }
 
@@ -161,14 +137,9 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
           0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0,
           0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1,
           1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1};
+          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 8, 16, true);
       CHECK((I_dilatation_ref == I_dilatation));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_dilatation_ref == I_deprecated_dilatation));
-      #endif
 
       vpImage<unsigned char> I_erosion = I_dilatation;
       vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
@@ -177,14 +148,9 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
           0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
           0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-          1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0};
+          1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 8, 16, true);
       CHECK((I_erosion_ref == I_erosion));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_erosion_ref == I_deprecated_erosion));
-      #endif
     }
 
     SECTION("8-connexity")
@@ -197,14 +163,9 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
           0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1,
           0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1,
-          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1};
+          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 8, 16, true);
       CHECK((I_dilatation_ref == I_dilatation));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_dilatation_ref == I_deprecated_dilatation));
-      #endif
 
       vpImage<unsigned char> I_erosion = I_dilatation;
       vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
@@ -213,14 +174,9 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
           0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0,
           0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
           0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1};
+          1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 8, 16, true);
       CHECK((I_erosion_ref == I_erosion));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_erosion_ref == I_deprecated_erosion));
-      #endif
     }
   }
 }
@@ -242,12 +198,6 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_morpho_ref == I_deprecated_dilatation));
-      #endif
     }
     SECTION("8-connexity")
     {
@@ -259,12 +209,6 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
-
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_morpho_ref == I_deprecated_dilatation));
-      #endif
     }
   }
 
@@ -280,11 +224,6 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_morpho_ref == I_deprecated_erosion));
-      #endif
     }
 
     SECTION("8-connexity")
@@ -297,11 +236,6 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_morpho_ref == I_deprecated_erosion));
-      #endif
     }
   }
 
@@ -327,14 +261,9 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           198, 217, 236, 255, 255, 255, 255, 255, 44,  63,  81,  119, 121, 140, 159, 178, 197, 216, 235, 254, 255,
           255, 255, 255, 43,  62,  81,  99,  136, 139, 158, 177, 196, 215, 234, 253, 255, 255, 255, 255, 42,  61,
           80,  99,  117, 138, 157, 176, 195, 214, 233, 252, 255, 255, 255, 255, 41,  60,  79,  98,  117, 135, 156,
-          175, 194, 213, 232, 251, 255, 255, 255, 255, 40,  59,  78,  97,  116, 135, 135};
+          175, 194, 213, 232, 251, 255, 255, 255, 255, 40,  59,  78,  97,  116, 135, 135 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 17, 17, true);
       CHECK((I_dilatation_ref == I_dilatation));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_dilatation_ref == I_deprecated_dilatation));
-      #endif
 
       vpImage<unsigned char> I_erosion = I_dilatation;
       vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
@@ -353,14 +282,9 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           179, 198, 217, 236, 255, 255, 255, 43,  44,  44,  63,  101, 119, 121, 140, 159, 178, 197, 216, 235, 254,
           255, 255, 42,  43,  43,  62,  81,  119, 121, 139, 158, 177, 196, 215, 234, 253, 255, 255, 41,  42,  42,
           61,  80,  99,  136, 138, 157, 176, 195, 214, 233, 252, 255, 255, 40,  41,  41,  60,  79,  98,  117, 138,
-          156, 175, 194, 213, 232, 251, 255, 255, 40,  40,  40,  59,  78,  97,  116, 135};
+          156, 175, 194, 213, 232, 251, 255, 255, 40,  40,  40,  59,  78,  97,  116, 135 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 17, 17, true);
       CHECK((I_erosion_ref == I_erosion));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_erosion_ref == I_deprecated_erosion));
-      #endif
     }
 
     SECTION("8-connexity")
@@ -383,14 +307,9 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           216, 235, 254, 255, 255, 255, 255, 255, 255, 81,  81,  120, 139, 158, 177, 196, 215, 234, 253, 255, 255,
           255, 255, 255, 255, 80,  99,  99,  138, 157, 176, 195, 214, 233, 252, 255, 255, 255, 255, 255, 255, 79,
           98,  117, 117, 156, 175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 255, 78,  97,  116, 135, 135, 156,
-          175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 59,  78,  97,  116, 135, 135};
+          175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 59,  78,  97,  116, 135, 135 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 17, 17, true);
       CHECK((I_dilatation_ref == I_dilatation));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_dilatation = I;
-      vpImageMorphology::dilatation(I_deprecated_dilatation, connexity);
-      CHECK((I_dilatation_ref == I_deprecated_dilatation));
-      #endif
 
       vpImage<unsigned char> I_erosion = I_dilatation;
       vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
@@ -409,19 +328,14 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           179, 198, 217, 236, 255, 255, 255, 80,  80,  63,  63,  119, 119, 121, 140, 159, 178, 197, 216, 235, 254,
           255, 255, 79,  79,  79,  80,  81,  120, 120, 139, 158, 177, 196, 215, 234, 253, 255, 255, 78,  78,  78,
           79,  80,  99,  138, 138, 157, 176, 195, 214, 233, 252, 255, 255, 59,  59,  59,  78,  79,  98,  117, 156,
-          156, 175, 194, 213, 232, 251, 255, 255, 255, 59,  59,  59,  78,  97,  116, 135};
+          156, 175, 194, 213, 232, 251, 255, 255, 255, 59,  59,  59,  78,  97,  116, 135 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 17, 17, true);
       CHECK((I_erosion_ref == I_erosion));
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      vpImage<unsigned char> I_deprecated_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_deprecated_erosion, connexity);
-      CHECK((I_erosion_ref == I_deprecated_erosion));
-      #endif
     }
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
 
