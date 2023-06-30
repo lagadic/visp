@@ -1,17 +1,22 @@
 {
     "camera": {
-        "px": 500,
-        "py": 500,
+        "px": 600,
+        "py": 600,
         "u0": 320,
         "v0": 240,
         "h": 480,
         "w": 640,
-        "randomize_params_percent": 10.0 
+        "randomize_params_percent": 5.0
     },
 
     "dataset": {
       "object_poses": true,
-      "camera_poses": true,
-      
-    }
+      "depth": false,
+      "normals": false,
+      "segmentation": false,
+      "detection": true
+    },
+    "models_path": "/home/sfelton/megapose-models",
+    "cc_textures_path": "/home/sfelton/cc0",
+    "output_path": "output"
 }
