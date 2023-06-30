@@ -1,0 +1,17 @@
+{
+    "camera": {
+        "px": 500,
+        "py": 500,
+        "u0": 320,
+        "v0": 240,
+        "h": 480,
+        "w": 640,
+        "randomize_params_percent": 10.0 
+    },
+
+    "dataset": {
+      "object_poses": true,
+      "camera_poses": true,
+      
+    }
+}
