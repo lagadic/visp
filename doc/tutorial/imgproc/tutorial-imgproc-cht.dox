@@ -1,0 +1,36 @@
+/**
+
+\page tutorial-imgproc-cht Gradient-based Circle Hough Transform
+\tableofcontents
+
+\section imgproc_cht_intro Introduction
+
+The Circle Hough Transform (*CHT*) is an image processing algorithm that permits to
+detect circles in an image. We refer the interested reader to the 
+[Wikipedia page](https://en.wikipedia.org/wiki/Circle_Hough_Transform) to have a better 
+understanding on the principles of the algorithm.
+
+The ViSP implementation relies on the Gradient-based implementation of the
+algorithm.
+
+During the step where the algorithm votes for center candidates, we use the gradient information
+in order to reduce the dimensionality of the search space. Instead of voting in circular pattern,
+we vote along a straight line that follows the gradient.
+
+\image html img-tutorial-cht-center-votes.png 
+
+Then, during the step where the algorithm votes for radius candidates for each center candidate,
+we check the colinearity between the gradient at a considered point and the line which links the 
+point towards the center candidate. If they are "enough" colinear, we increment the corresponding
+radius bin vote by 1. The "enough" characteristic is controlled by the circle perfectness
+parameter.
+
+\image html img-tutorial-cht-radius-votes.png 
+
+\section imgproc_cht_requirements Requirements
+
+\section imgproc_cht_howto How to use the tutorial
+
+\section imgproc_cht_explanations Detailed explanations about the tutorial
+
+*/

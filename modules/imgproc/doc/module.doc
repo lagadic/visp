@@ -67,3 +67,8 @@
   \image html img-auto-threshold-grid36-03.png Input image.
   \image html img-auto-threshold-grid36-03-otsu.png Image automatically thresholded with the Otsu method.
 */
+/*!
+  \ingroup module_imgproc
+  \defgroup group_hough_transform Hough-transform-based image detection
+  Detection of image features based on the Hough transform.
+*/

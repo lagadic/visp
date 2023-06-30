@@ -1,0 +1,788 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *****************************************************************************/
+
+#ifndef _vpCircleHoughTransform_h_
+#define _vpCircleHoughTransform_h_
+
+// System includes
+#include <utility>
+#include <vector>
+
+// ViSP includes
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageDraw.h>
+#include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpRect.h>
+#include <visp3/imgproc/vpImageMedian.h>
+
+// 3rd parties inclue
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+#endif
+
+/**
+ * \brief Class that permits to detect 2D circles in a image using
+ * the gradient-based Circle Hough transform.
+ * Please find more information on the algorithm 
+ * [here](https://theailearner.com/tag/hough-gradient-method-opencv/)
+ * 
+ */
+class VISP_EXPORT vpCircleHoughTransform
+{
+public:
+  /**
+   * \brief Class that gather the algorithm parameters.
+   */
+  class CHTransformParameters
+  {
+    private:
+      // // Gaussian smoothing attributes
+      int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
+      double m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+      
+      // // Gradient computation attributes
+      int m_sobelKernelSize; /*!< Size of the Sobel kernels used to compute the gradients. Must be an odd number.*/
+
+      // // Edge detection attributes
+      double m_cannyThresh; /*!< The threshold for the Canny operator. Only value greater than this value are marked as an edge.
+                                 A negative value makes the algorithm compute this threshold automatically.*/
+
+      // // Center candidates computation attributes
+      unsigned int m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
+      unsigned int m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
+      int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
+      double m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+      
+      // // Circle candidates computation attributes
+      double m_radiusRatioThresh;  /*!< Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.*/
+      double m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
+      
+      // // Circle candidates merging atttributes
+      double m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
+      double m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
+
+      friend vpCircleHoughTransform;
+    public:
+      CHTransformParameters()
+        : m_gaussianKernelSize(5)
+        , m_gaussianStdev(1.)
+        , m_sobelKernelSize(3)
+        , m_cannyThresh(-1)
+        , m_minRadius(0)
+        , m_maxRadius(1000)
+        , m_dilatationNbIter(1)
+        , m_centerThresh(50.)
+        , m_radiusRatioThresh(2.)
+        , m_circlePerfectness(0.9)
+        , m_centerMinDist(15.)
+        , m_mergingRadiusDiffThresh(1.5 * (double)m_centerMinDist)
+      {
+
+      }
+
+      /**
+       * \brief Construct a new CHTransformParameters object.
+       * 
+       * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
+       * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
+       * \param[in] sobelKernelSize Size of the Sobel kernels used to compute the gradients. Must be an odd number. 
+       * \param[in] cannyThresh The threshold for the Canny operator. Only value greater than this value are marked as an edge.
+                            A negative value makes the algorithm compute this threshold automatically.
+       * \param[in] minRadius Minimum radius of the circles we want to detect.
+       * \param[in] maxRadius Maximum radius of the circles we want to detect.
+       * \param[in] dilatationNbIter Number of times dilatation is performed to detect the maximum number of votes for the center candidates
+       * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
+       * \param[in] radiusThreshRatio Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.
+       * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+       * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
+       * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
+       */
+      CHTransformParameters(
+          const int &gaussianKernelSize
+        , const double &gaussianStdev
+        , const int &sobelKernelSize
+        , const double &cannyThresh
+        , const unsigned int &minRadius
+        , const unsigned int &maxRadius
+        , const int &dilatationNbIter
+        , const double &centerThresh
+        , const double &radiusThreshRatio
+        , const double &circlePerfectness
+        , const double &centerMinDistThresh
+        , const double &mergingRadiusDiffThresh
+        )
+        : m_gaussianKernelSize(gaussianKernelSize)
+        , m_gaussianStdev(gaussianStdev)
+        , m_sobelKernelSize(sobelKernelSize)
+        , m_cannyThresh(cannyThresh)
+        , m_minRadius(std::min(minRadius, maxRadius))
+        , m_maxRadius(std::max(minRadius, maxRadius))
+        , m_dilatationNbIter(dilatationNbIter)
+        , m_centerThresh(centerThresh)
+        , m_radiusRatioThresh(radiusThreshRatio)
+        , m_circlePerfectness(circlePerfectness)
+        , m_centerMinDist(centerMinDistThresh)
+        , m_mergingRadiusDiffThresh(mergingRadiusDiffThresh)
+      {
+
+      }
+
+      std::string toString() const
+      {
+        std::string txt("Hough Circle Transform Configuration:\n");
+        txt += "\tGaussian filter kernel size = " + std::to_string(m_gaussianKernelSize) + "\n";
+        txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
+        txt += "\tSobel filter kernel size = " + std::to_string(m_sobelKernelSize) + "\n"; 
+        txt += "\tCanny edge filter threshold = " + std::to_string(m_cannyThresh) + "\n";
+        txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
+        txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
+        txt += "\tCenters votes threshold = " + std::to_string(m_centerThresh) + "\n";
+        txt += "\tRadius votes per radian threshold = " + std::to_string(m_radiusRatioThresh) + "\n";
+        txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
+        txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
+        txt += "\tRadius difference merging threshold = " + std::to_string(m_mergingRadiusDiffThresh) + "\n";
+        return txt;
+      }
+
+    // // Configuration from files
+    #ifdef VISP_HAVE_NLOHMANN_JSON
+      /**
+       * \brief Create a new CHTransformParameters from a JSON file.
+       * 
+       * \param[in] jsonFile The path towards the JSON file.
+       * \return CHTransformParameters The corresponding CHTransformParameters object.
+       */
+      inline static CHTransformParameters createFromJSON(const std::string & jsonFile)
+      {
+        std::ifstream file(jsonFile);
+        if (!file.good()) {
+          std::stringstream ss;
+          ss << "Problem opening file " << jsonFile << ". Make sure it exists and is readable" << std::endl;
+          throw vpException(vpException::ioError, ss.str());
+        }
+        json j;
+        try {
+          j = json::parse(file);
+        }
+        catch (json::parse_error &e) {
+          std::stringstream msg;
+          msg << "Could not parse JSON file : \n";
+
+          msg << e.what() << std::endl;
+          msg << "Byte position of error: " << e.byte;
+          throw vpException(vpException::ioError, msg.str());
+        }
+        CHTransformParameters params = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+        file.close();
+        return params;
+      }
+
+      /**
+       * \brief Save the configuration of the detector in a JSON file
+       * described by the path \b jsonPath. Throw a \b vpException
+       * is the file cannot be created.
+       *
+       * \param[in] jsonPath The path towards the JSON output file.
+       */
+      inline void saveConfigurationInJSON(const std::string &jsonPath) const
+      {
+          std::ofstream file(jsonPath);
+          const json j = *this;
+          file << j.dump(4);
+          file.close();
+      }
+
+      /**
+       * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
+       * the default value defined in the constructor is kept
+       *
+       * \param j The JSON object, resulting from the parsing of a JSON file.
+       * \param detector The detector, that will be initialized from the JSON data.
+       */
+      inline friend void from_json(const json &j, CHTransformParameters &params)
+      {
+        params.m_gaussianKernelSize = j.value("gaussianKernelSize", params.m_gaussianKernelSize);
+        if ((params.m_gaussianKernelSize % 2) != 1)
+        {
+          throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
+        }
+
+        params.m_gaussianStdev = j.value("gaussianStdev", params.m_gaussianStdev);
+        if (params.m_gaussianStdev <= 0)
+        {
+          throw vpException(vpException::badValue, "Standard deviation should be > 0");
+        }
+
+        params.m_sobelKernelSize = j.value("sobelKernelSize", params.m_sobelKernelSize);
+        if ((params.m_sobelKernelSize % 2) != 1)
+        {
+          throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+        }
+
+        params.m_cannyThresh = j.value("cannyThresh", params.m_cannyThresh);
+
+        std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
+        params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
+        params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
+
+        params.m_dilatationNbIter = j.value("dilatationNbIter", params.m_dilatationNbIter);
+
+        params.m_centerThresh = j.value("centerThresh", params.m_centerThresh);
+        if (params.m_centerThresh <= 0)
+        {
+          throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
+        }
+
+        params.m_radiusRatioThresh = j.value("radiusThreshRatio", params.m_radiusRatioThresh);
+
+        params.m_circlePerfectness = j.value("circlePerfectnessThreshold", params.m_circlePerfectness);
+
+        if (params.m_circlePerfectness <= 0 || params.m_circlePerfectness > 1)
+        {
+          throw vpException(vpException::badValue, "Circle perfectness must be in the interval ] 0; 1].");
+        }
+
+        params.m_centerMinDist = j.value("centerMinDistance", params.m_centerMinDist);
+        if (params.m_centerMinDist <= 0)
+        {
+          throw vpException(vpException::badValue, "Centers minimum distance threshold must be positive.");
+        }
+
+        params.m_mergingRadiusDiffThresh = j.value("mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh);
+        if (params.m_mergingRadiusDiffThresh <= 0)
+        {
+          throw vpException(vpException::badValue, "Radius difference merging threshold must be positive.");
+        }
+      }
+
+      /**
+       * \brief Parse a vpCircleHoughTransform into JSON format.
+       *
+       * \param j A JSON parser object.
+       * \param config The vpCircleHoughTransform that must be parsed into JSON format.
+       */
+      inline friend void to_json(json &j, const CHTransformParameters &params)
+      {
+        std::pair<unsigned int, unsigned int> radiusLimits = {params.m_minRadius, params.m_maxRadius};
+
+        j = json{
+            {"gaussianKernelSize", params.m_gaussianKernelSize},
+            {"gaussianStdev", params.m_gaussianStdev},
+            {"sobelKernelSize", params.m_sobelKernelSize},
+            {"cannyThresh", params.m_cannyThresh},
+            {"radiusLimits", radiusLimits},
+            {"dilatationNbIter", params.m_dilatationNbIter},
+            {"centerThresh", params.m_centerThresh},
+            {"radiusThreshRatio", params.m_radiusRatioThresh},
+            {"circlePerfectnessThreshold", params.m_circlePerfectness},
+            {"centerMinDistance", params.m_centerMinDist},
+            {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh}};
+      }
+    #endif
+  } ;
+
+  /**
+   * \brief Class that defines a 2D circle in an image.
+   */
+  class vpCircle2D
+  {
+    public:
+      /*!
+      * Default constructor.
+      */
+      vpCircle2D() : m_center(), m_radius(0.) { }
+
+      /*!
+      * Constructor from a center and radius.
+      */
+      vpCircle2D(const vpImagePoint &center, double radius) : m_center(center), m_radius(radius) { }
+
+      /*!
+      * Constructor from an OpenCV vector that contains [center_x, center_y, radius].
+      */
+      vpCircle2D(const cv::Vec3f &vec) : m_center(vec[1], vec[0]), m_radius(vec[2]) { }
+
+      /*!
+      * Default destructor.
+      */
+      virtual ~vpCircle2D() { };
+
+      /*!
+      * Return the center of the 2D circle.
+      */
+      vpImagePoint getCenter() const { return m_center; };
+
+      /*!
+      * Return the radius of the 2D circle.
+      */
+      double getRadius() const { return m_radius; };
+
+      /*!
+      * Return the 2D circle bounding box.
+      */
+      vpRect getBBox() const
+      {
+        vpRect bbox(m_center - vpImagePoint(m_radius, m_radius), 2 * m_radius, 2 * m_radius);
+        return bbox;
+      };
+
+      /*!
+      * Return normalized moment \f$n_{20}\f$.
+      */
+      double get_n20() const { return m_radius * m_radius / 4; };
+
+      /*!
+      * Return normalized moment \f$n_{02}\f$.
+      */
+      double get_n02() const { return m_radius * m_radius / 4; };
+
+      /*!
+      * Return normalized moment \f$n_{02}\f$.
+      */
+      double get_n11() const { return 0.; };
+
+      template < typename Type >
+      void display( vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1, unsigned int size = 5 ) const;
+
+    private:
+      vpImagePoint m_center;
+      double m_radius;
+  };
+
+  /**
+   * \brief Construct a new vpCircleHoughTransform object with default parameters.
+   */
+  vpCircleHoughTransform();
+
+  /**
+   * \brief Construct a new vpCircleHoughTransform object
+   * from a \b CHTransformParameters object.
+   * \param algoParams The parameters of the Circle Hough Transform.
+   */
+  vpCircleHoughTransform(const CHTransformParameters &algoParams);
+
+  /**
+   * \brief Destroy the vp Circle Hough Transform object
+   */
+  virtual ~vpCircleHoughTransform();
+
+  // // Detection methods
+
+  /**
+   * \brief Perform Circle Hough Transform to detect the circles in an OpenCV image.
+   *
+   * \param[in] I The input gray scale image.
+   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   */
+  std::vector<vpCircle2D> detect(const cv::Mat &cv_I);
+
+  /**
+   * \brief Convert the input image in a gray-scale image and then
+   * perform Circle Hough Transform to detect the circles in it
+   *
+   * \param[in] I The input color image.
+   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   */
+  std::vector<vpCircle2D> detect(const vpImage<vpRGBa> &I);
+
+  /**
+   * \brief Perform Circle Hough Transform to detect the circles in a gray-scale image
+   *
+   * \param[in] I The input gray scale image.
+   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   */
+  std::vector<vpCircle2D> detect(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
+   * Get only the \b nbCircles circles having the greatest number of votes.
+   *
+   * \param[in] I The input gray scale image.
+   * \param[in] nbCircles The number of circles we want to get. If negative, all the circles will be
+   * returned, sorted such as result[0] has the highest number of votes and result[end -1] the lowest.
+   * \return std::vector<vpCircle2D> The list of 2D circles with the most number
+   * of votes detected in the image.
+   */
+  std::vector<vpCircle2D> detect(const vpImage<unsigned char> &I, const int &nbCircles);
+
+// // Configuration from files
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  /**
+   * \brief Construct a new vpCircleHoughTransform object configured according to
+   * the JSON file whose path is \b jsonPath. Throw a \b vpException error if the file
+   * does not exist.
+   * \param[in] jsonPath The path towards the JSON configuration file.
+   */
+  vpCircleHoughTransform(const std::string &jsonPath);
+
+  /**
+   * \brief Initialize all the algorithm parameters using the JSON file
+   * whose path is \b jsonPath. Throw a \b vpException error if the file
+   * does not exist.
+   *
+   * \param[in] jsonPath The path towards the JSON configuration file.
+   */
+  void initFromJSON(const std::string &jsonPath);
+
+  /**
+   * \brief Save the configuration of the detector in a JSON file
+   * described by the path \b jsonPath. Throw a \b vpException
+   * is the file cannot be created.
+   *
+   * \param[in] jsonPath The path towards the JSON output file.
+   */
+  void saveConfigurationInJSON(const std::string &jsonPath) const;
+
+  /**
+   * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
+   * the default value defined in the constructor is kept
+   *
+   * \param j The JSON object, resulting from the parsing of a JSON file.
+   * \param detector The detector, that will be initialized from the JSON data.
+   */
+  inline friend void from_json(const json &j, vpCircleHoughTransform &detector)
+  {
+    detector.m_algoParams = j;
+  }
+
+  /**
+   * \brief Parse a vpCircleHoughTransform into JSON format.
+   *
+   * \param j A JSON parser object.
+   * \param config The vpCircleHoughTransform that must be parsed into JSON format.
+   */
+  inline friend void to_json(json &j, const vpCircleHoughTransform &detector)
+  {
+    j = detector.m_algoParams;
+  }
+#endif
+
+  // // Setters
+  /**
+   * \brief Initialize all the algorithm parameters.
+   * 
+   * \param[in] algoParams The algorithm parameters.
+   */
+  void init(const CHTransformParameters &algoParams);
+
+  /**
+   * \brief Set the parameters of the Gaussian filter, that computes the
+   * gradients of the image.
+   *
+   * \param[in] kernelSize The size of the Gaussian kernel. Must be an odd value.
+   * \param[in] stdev The standard deviation of the Gaussian function.
+   */
+  inline void setGaussianParameters(const int &kernelSize, const double &stdev)
+  {
+    m_algoParams.m_gaussianKernelSize = kernelSize;
+    m_algoParams.m_gaussianStdev = stdev;
+
+    if ((m_algoParams.m_gaussianKernelSize % 2) != 1)
+    {
+      throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
+    }
+
+    if (m_algoParams.m_gaussianStdev <= 0)
+    {
+      throw vpException(vpException::badValue, "Standard deviation should be > 0");
+    }
+
+    initGaussianFilters();
+  }
+
+  /*!
+   * Set the threshold for the Canny operator.
+   * Only value greater than this value are marked as an edge.
+   * If negative, the threshold is automatically computed.
+   * \param[in] canny_threshold : Canny filter upper threshold. When set to -1 (default), compute
+   * automatically this threshold.
+   */
+  inline void setCannyThreshold(double canny_threshold)
+  {
+    m_algoParams.m_cannyThresh = canny_threshold;
+  }
+
+  /*!
+   * Set circles center min distance.
+   * Change this value to detect circles with different distances to each other.
+   *
+   * \param[in] center_min_dist : Center min distance in pixels.
+   */
+  inline void setCircleCenterMinDist(double center_min_dist)
+  {
+    m_algoParams.m_centerMinDist = center_min_dist;
+
+    if (m_algoParams.m_centerMinDist <= 0)
+    {
+      throw vpException(vpException::badValue, "Circles center min distance  must be positive.");
+    }
+  }
+
+  /*!
+   * Set circles min radius.
+   * \param[in] circle_min_radius : Min radius in pixels.
+   */
+  inline void setCircleMinRadius(double circle_min_radius)
+  {
+    m_algoParams.m_minRadius = circle_min_radius;
+  }
+
+  /*!
+   * Set circles max radius.
+   * \param[in] circle_max_radius : Max radius in pixels.
+   */
+  inline void setCircleMaxRadius(double circle_max_radius)
+  {
+    m_algoParams.m_maxRadius = circle_max_radius;
+  }
+
+  /*!
+   * Set circles perfectness. The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+   * \param[in] circle_perfectness : Circle perfectness. Value between 0 and 1. A perfect circle has value 1.
+   */
+  void setCirclePerfectness(double circle_perfectness)
+  {
+    m_algoParams.m_circlePerfectness = circle_perfectness;
+    if (m_algoParams.m_circlePerfectness <= 0 || m_algoParams.m_circlePerfectness > 1)
+    {
+      throw vpException(vpException::badValue, "Circle perfectness must be in the interval ] 0; 1].");
+    }
+  }
+
+  /**
+   * \brief Set the parameters of the computation of the circle center candidates.
+   *
+   * \param[in] dilatationRepet Number of repetition of the dilatation operation to detect the maxima in the center accumulator.
+   * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
+   */
+  inline void setCenterComputationParameters(const int &dilatationRepet, const double &centerThresh)
+  {
+    m_algoParams.m_dilatationNbIter = dilatationRepet;
+    m_algoParams.m_centerThresh = centerThresh;
+
+    if (m_algoParams.m_centerThresh <= 0)
+    {
+      throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
+    }
+  }
+
+  /**
+   * \brief Set the parameters of the computation of the circle radius candidates.
+   *
+   * \param[in] radiusRatioThresh Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.
+   */
+  inline void setRadiusRatioThreshold( const double &radiusRatioThresh )
+  {
+    m_algoParams.m_radiusRatioThresh = radiusRatioThresh;
+
+    if (m_algoParams.m_radiusRatioThresh <= 0)
+    {
+      throw vpException(vpException::badValue, "Radius ratio threshold must be > 0.");
+    }
+  }
+
+  /**
+   * \brief Set the radius merging threshold used during the merging step in order
+   * to merge the circles that are similar.
+   *
+   * \param[in] radiusDifferenceThresh Maximum radius difference between two circle candidates to consider merging them.
+   */
+  inline void setRadiusMergingThresholds(const double &radiusDifferenceThresh)
+  {
+    m_algoParams.m_mergingRadiusDiffThresh = radiusDifferenceThresh;
+
+    if (m_algoParams.m_mergingRadiusDiffThresh <= 0)
+    {
+      throw vpException(vpException::badValue, "Radius difference merging threshold must be positive.");
+    }
+  }
+
+  // // Getters
+
+  /**
+   * \brief Get the list of Center Candidates, stored as pair <idRow, idCol>
+   *
+   * \return std::vector<std::pair<unsigned int, unsigned int>> The list of Center Candidates, stored as pair <idRow, idCol>
+   */
+  inline std::vector<std::pair<unsigned int, unsigned int>> getCenterCandidatesList()
+  {
+    return m_centerCandidatesList;
+  }
+
+  /**
+   * \brief Get the gradient along the horizontal axis of the image.
+   *
+   * \return vpImage<double> The gradient along the horizontal axis of  the image.
+   */
+  inline vpImage<double> getGradientX()
+  {
+    return m_dIx;
+  }
+
+  /**
+   * \brief Get the gradient along the vertical axis of the image.
+   *
+   * \return vpImage<double> The gradient along the vertical axis of  the image.
+   */
+  inline vpImage<double> getGradientY()
+  {
+    return m_dIy;
+  }
+
+  /*!
+   * Get internal Canny filter upper threshold. When value is equal to -1 (default), it means that the threshold is computed
+   * automatically.
+   */
+  inline double getCannyThreshold() const
+  {
+    return m_algoParams.m_cannyThresh;
+  }
+
+  /*!
+   * Get circles center min distance in pixels.
+   */
+  inline double getCircleCenterMinDist() const
+  {
+    return m_algoParams.m_centerMinDist;
+  }
+
+  /*!
+   * Get circles min radius in pixels.
+   */
+  inline double getCircleMinRadius() const
+  {
+    return m_algoParams.m_minRadius;
+  }
+
+  /*!
+   * Get circles max radius in pixels.
+   */
+  inline double getCircleMaxRadius() const
+  {
+    return m_algoParams.m_maxRadius;
+  }
+
+  // // Debug methods
+  std::string toString() const;
+
+  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detector);
+
+private:
+  void initGaussianFilters();
+
+  /**
+   * \brief Perform Gaussian smoothing on the input image to reduce the noise
+   * that would perturbate the edge detection.
+   * Then, compute the x-gradient and y-gradient of the input images.
+   *
+   * \param[in] I The input gray scale image.
+   */
+  void computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Perform edge detection based on the computed gradients.
+   * Stores the edge points and the edge points connectivity.
+   *
+   * \param[in] I The input gray scale image.
+   */
+  void edgeDetection(const vpImage<unsigned char> &I);
+
+  /**
+   * \brief Determine the image points that are circle center candidates.
+   * Increment the center accumulator based on the edge points and gradient information.
+   * Perform thresholding to keep only the center candidates that exceed the threshold.
+   */
+  void computeCenterCandidates();
+
+  /**
+   * \brief For each center candidate CeC_i, do:
+   * - For each edge point EP_j, compute the distance d_ij = distance(CeC_i; EP_j)
+   * - Determine to which radius candidate bin RCB_k the distance d_ij belongs to
+   * - Increment the radius candidate accumulator accum_rc[CeC_i][RCB_k]
+   * - If accum_rc[CeC_i][RCB_k] > radius_count_thresh, add the circle candidate (CeC_i, RCB_k)
+   *   to the list of circle candidates
+   */
+  void computeCircleCandidates();
+
+  /**
+   * \brief For each circle candidate CiC_i do:
+   * - For each other circle candidate CiC_j do:
+   * +- Compute the similarity between CiC_i and CiC_j
+   * +- If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
+   * - Add the circle candidate CiC_i to the final list of detected circles
+   */
+  void mergeCircleCandidates();
+
+
+  CHTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
+  // // Gaussian smoothing attributes
+  vpMatrix m_fg;
+  vpMatrix m_fgDg;
+  vpImage<double> m_Ifilt; /*!< Filtered version of the input image, after having used a Gaussian filter.*/
+
+  // // Gradient computation attributes
+  vpImage<double> m_dIx; /*!< Gradient along the x-axis of the input image.*/
+  vpImage<double> m_dIy; /*!< Gradient along the y-axis of the input image.*/
+
+  // // Edge detection attributes
+  vpImage<unsigned char> m_edgeMap; /*!< Edge map resulting from the edge detection algorithm.*/
+
+  // // Center candidates computation attributes
+  std::vector<std::pair<unsigned int, unsigned int>> m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<unsigned int, unsigned int>> m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
+
+  // // Circle candidates computation attributes
+  std::vector<vpCircle2D> m_circleCandidates;        /*!< List of the candidate circles.*/
+  std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of votes for the candidate circles.*/
+
+  // // Circle candidates merging atttributes
+  std::vector<vpCircle2D> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
+};
+
+/*!
+ * Display the \b vpCircle2D  in an image.
+ *
+ * \param[in] img : Image used as background.
+ * \param[in] color : Color used to draw the CAD model.
+ * \param[in] thickness : Thickness used to draw the CAD model.
+ */
+template < typename Type >
+inline void
+vpCircleHoughTransform::vpCircle2D::display( vpImage< Type > &img, const vpColor &color, unsigned int thickness, unsigned int size ) const
+{
+  vpImageDraw::drawCross(img, m_center, size, color, thickness);
+  vpImageDraw::drawCircle(img, m_center, m_radius, color, thickness);
+}
+#endif

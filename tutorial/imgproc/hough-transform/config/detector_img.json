@@ -1,0 +1,16 @@
+{
+    "cannyThresh": -1.0,
+    "centerMinDistance": 5.0,
+    "centerThresh": 200.0,
+    "circlePerfectnessThreshold": 0.9,
+    "dilatationNbIter": 1,
+    "gaussianKernelSize": 5,
+    "gaussianStdev": 1.0,
+    "mergingRadiusDiffThresh": 5.0,
+    "radiusLimits": [
+        80,
+        90
+    ],
+    "radiusThreshRatio": 2,
+    "sobelKernelSize": 3
+}

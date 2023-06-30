@@ -73,7 +73,7 @@ This page introduces some image processing methods.
 - \subpage tutorial-imgproc-connected-components <br>This tutorial will show you how to do a connected-components labeling.
 - \subpage tutorial-imgproc-flood-fill <br>This tutorial will show you how to use the flood fill algorithm.
 - \subpage tutorial-imgproc-count-coins <br>This tutorial will show you how to count the number of coins in an image.
-
+- \subpage tutorial-imgproc-cht <br>This tutorial will show you how to use the gradient-based Circle Hough Transform to detect circles in an image.
 */
 
 /*! \page tutorial_calib Camera calibration
