@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * IBVS on Pioneer P3DX mobile platform
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -56,6 +53,10 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
@@ -67,28 +68,28 @@
 #undef VISP_HAVE_OPENCV // To use a firewire camera
 #undef VISP_HAVE_V4L2   // To use a firewire camera
 
-/*!
-  \example servoPioneerPoint2DDepth.cpp
+ /*!
+   \example servoPioneerPoint2DDepth.cpp
 
-  Example that shows how to control the Pioneer mobile robot by IBVS visual
-  servoing with respect to a blob. The current visual features that are used
-  are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
-  - x the abscise of the point corresponding to the blob center of gravity
-  measured at each iteration,
-  - x* the desired abscise position of the point (x* = 0)
-  - Z the depth of the point measured at each iteration
-  - Z* the desired depth of the point equal to the initial one.
+   Example that shows how to control the Pioneer mobile robot by IBVS visual
+   servoing with respect to a blob. The current visual features that are used
+   are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
+   - x the abscise of the point corresponding to the blob center of gravity
+   measured at each iteration,
+   - x* the desired abscise position of the point (x* = 0)
+   - Z the depth of the point measured at each iteration
+   - Z* the desired depth of the point equal to the initial one.
 
-  The degrees of freedom that are controlled are (vx, wz), where wz is the
-  rotational velocity and vx the translational velocity of the mobile platform
-  at point M located at the middle between the two wheels.
+   The degrees of freedom that are controlled are (vx, wz), where wz is the
+   rotational velocity and vx the translational velocity of the mobile platform
+   at point M located at the middle between the two wheels.
 
-  The feature x allows to control wy, while log(Z/Z*) allows to control vz.
-  The value of x is measured thanks to a blob tracker.
-  The value of Z is estimated from the surface of the blob that is
-  proportional to the depth Z.
+   The feature x allows to control wy, while log(Z/Z*) allows to control vz.
+   The value of x is measured thanks to a blob tracker.
+   The value of Z is estimated from the surface of the blob that is
+   proportional to the depth Z.
 
- */
+  */
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
@@ -97,7 +98,7 @@ int main(int argc, char **argv)
     double depth = 1.;
     double lambda = 0.6;
     double coef = 1. / 6.77; // Scale parameter used to estimate the depth Z
-                             // of the blob from its surface
+    // of the blob from its surface
 
     vpRobotPioneer robot;
     ArArgumentParser parser(&argc, argv);
@@ -131,7 +132,7 @@ int main(int argc, char **argv)
     // calibration of the camera
     vpCameraParameters cam;
 
-// Create the camera framegrabber
+    // Create the camera framegrabber
 #if defined(HAVE_OPENCV_VIDEOIO)
     int device = 1;
     std::cout << "Use device: " << device << std::endl;
@@ -175,7 +176,7 @@ int main(int argc, char **argv)
     cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
 
-// Acquire an image from the grabber
+    // Acquire an image from the grabber
 #if defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
     g.acquire(I);
 #endif
 
-// Create an image viewer
+    // Create an image viewer
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, 10, 10, "Current frame");
 #elif defined(VISP_HAVE_GDI)
@@ -199,8 +200,8 @@ int main(int argc, char **argv)
     dot.setEllipsoidShapePrecision(0.);       // to track a blob without any constraint on the shape
     dot.setGrayLevelPrecision(0.9);           // to set the blob gray level bounds for binarisation
     dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner
-                                              // and outside points with bad
-                                              // gray level
+    // and outside points with bad
+    // gray level
     dot.initTracking(I);
     vpDisplay::flush(I);
 
@@ -256,7 +257,7 @@ int main(int argc, char **argv)
     vpColVector v; // vz, wx
 
     while (1) {
-// Acquire a new image
+      // Acquire a new image
 #if defined(HAVE_OPENCV_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
@@ -311,7 +312,8 @@ int main(int argc, char **argv)
     // Kill the servo task
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

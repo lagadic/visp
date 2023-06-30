@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -35,10 +35,6 @@
 # NETLIB_FOUND
 # NETLIB_LIBRARIES
 # NETLIB_VERSION
-#
-# Authors:
-# Filip Novotny
-# Fabien Spindler
 #
 #############################################################################
 
@@ -66,12 +62,12 @@ if(WIN32)
     NAMES blas
     PATHS ${NETLIB_LIB_SEARCH_PATH}
   )
-    
+
   find_library(NETLIB_LIBRARY_F2C_RELEASE
     NAMES libf2c
     PATHS ${NETLIB_LIB_SEARCH_PATH}
   )
-			
+
   find_library(NETLIB_LIBRARY_NETLIB_DEBUG
     NAMES lapackd
     PATHS ${NETLIB_LIB_SEARCH_PATH}
@@ -81,12 +77,12 @@ if(WIN32)
     NAMES blasd
     PATHS ${NETLIB_LIB_SEARCH_PATH}
   )
-		
+
   find_library(NETLIB_LIBRARY_F2C_DEBUG
     NAMES libf2cd
     PATHS ${NETLIB_LIB_SEARCH_PATH}
   )
-				 
+
   if((NETLIB_LIBRARY_NETLIB_RELEASE AND NETLIB_LIBRARY_BLAS_RELEASE AND NETLIB_LIBRARY_F2C_RELEASE))
     list(APPEND NETLIB_LIBRARIES optimized ${NETLIB_LIBRARY_NETLIB_RELEASE})
     list(APPEND NETLIB_LIBRARIES optimized ${NETLIB_LIBRARY_BLAS_RELEASE})

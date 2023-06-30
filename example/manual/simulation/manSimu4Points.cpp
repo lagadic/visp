@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Simulation of a visual servoing with visualization.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file manSimu4Points.cpp
@@ -229,7 +225,8 @@ int main()
     // Run the simulator
     simu.mainLoop();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -241,8 +238,8 @@ int main()
   std::cout << "You do not have Coin3D and SoQT or SoWin or SoXt functionalities enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout
-      << "- Install Coin3D and SoQT or SoWin or SoXt, configure ViSP again using cmake and build again this example"
-      << std::endl;
+    << "- Install Coin3D and SoQT or SoWin or SoXt, configure ViSP again using cmake and build again this example"
+    << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

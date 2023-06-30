@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example of visual servoing with moments using a polygon as object container
  *
- * Authors:
- * Filip Novotny
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example manServoMomentsSimple.cpp
@@ -79,13 +76,13 @@ void cMoToABC(vpHomogeneousMatrix &cMo, double &A, double &B, double &C)
 int main()
 {
   try {
-    double x[8] = {1, 3, 4, -1, -3, -2, -1, 1};
-    double y[8] = {0, 1, 4, 4, -2, -2, 1, 0};
+    double x[8] = { 1, 3, 4, -1, -3, -2, -1, 1 };
+    double y[8] = { 0, 1, 4, 4, -2, -2, 1, 0 };
     double A, B, C, Ad, Bd, Cd;
 
     int nbpoints = 8;
     std::vector<vpPoint> vec_p,
-        vec_p_d; // vectors that contain the vertices of the contour polygon
+      vec_p_d; // vectors that contain the vertices of the contour polygon
 
     vpHomogeneousMatrix cMo(0.1, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), vpMath::rad(0));
     vpHomogeneousMatrix cdMo(vpHomogeneousMatrix(0.0, 0.0, 1.0, vpMath::rad(0), vpMath::rad(0), -vpMath::rad(0)));
@@ -105,12 +102,12 @@ int main()
 
     vpMomentObject cur(6);                      // Create a source moment object with 6 as maximum order
     cur.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a
-                                                // countour polygon
+    // countour polygon
     cur.fromVector(vec_p);                      // Init the dense object with the source polygon
 
     vpMomentObject dst(6);                      // Create a destination moment object with 6 as maximum order
     dst.setType(vpMomentObject::DENSE_POLYGON); // The object is defined by a
-                                                // countour polygon
+    // countour polygon
     dst.fromVector(vec_p_d);                    // Init the dense object with the destination polygon
 
     // init classic moment primitives (for source)
@@ -178,7 +175,8 @@ int main()
     } while ((task.getError()).sumSquare() > 0.005);
     std::cout << "final error=" << (task.getError()).sumSquare() << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

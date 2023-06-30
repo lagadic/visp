@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,13 +29,10 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find RT library material 
+# Try to find RT library material
 #
 # RT_FOUND
 # RT_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -43,19 +40,19 @@ IF(NOT UNIX)
   # MESSAGE("FindRT.cmake: only available for Unix.")
   SET(RT_FOUND FALSE)
 ELSE(NOT UNIX)
-    
+
   FIND_LIBRARY(RT_LIBRARY
     NAMES rt
-    PATHS 
+    PATHS
     $ENV{RT_HOME}/lib
     /usr/lib
     /usr/local/lib
     )
 
   #MESSAGE("DBG RT_LIBRARY=${RT_LIBRARY}")
-  
+
   ## --------------------------------
-  
+
   IF(RT_LIBRARY)
     SET(RT_LIBRARIES ${RT_LIBRARY})
     SET(RT_FOUND TRUE)
@@ -63,7 +60,7 @@ ELSE(NOT UNIX)
     SET(RT_FOUND FALSE)
     #MESSAGE(SEND_ERROR "rt library not found.")
   ENDIF(RT_LIBRARY)
-  
+
   MARK_AS_ADVANCED(
     RT_LIBRARIES
     RT_LIBRARY

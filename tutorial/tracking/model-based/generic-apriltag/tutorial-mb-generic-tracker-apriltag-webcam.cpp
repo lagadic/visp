@@ -11,6 +11,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 typedef enum { state_detection, state_tracking, state_quit } state_t;
 
 // Creates a cube.cao file in your current directory

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file vpFeatureMomentGravityCenterNormalized.h
   \brief Implementation of the interaction matrix computation for
@@ -161,7 +161,7 @@ class vpMomentDatabase;
   \right]
   }^t
   \f]
-  
+
   \f[
   L_{y_n} =
   {
@@ -172,7 +172,7 @@ class vpMomentDatabase;
   \right)
   A+ \left( -1+\theta \right) y_{{n}}B-a_{{n}}C \\
   \noalign{\medskip}-Aw_{{y}}+ \left( -a_{{n}}+w_{{x}} \right) B \\
-  \noalign{\medskip}\theta\,a_{{n}}{\it NA}+ 
+  \noalign{\medskip}\theta\,a_{{n}}{\it NA}+
   \left( -e_{{2,1}}+\eta_{{1,0}}e_{{1,1}}+\eta_{{0,1}}-x_{{g}}e_{{1,1}}+ \left( \eta_{{0,1}}-y_{{g}} \right) \theta
   \right) y_{{n}}+a_{{n}}-{\frac {y_{{n}}\eta_{{0,3}}}{{\it NA}}} \\
   \noalign{\medskip}-a_{{n}}e_{{1,1}}{\it NA}-x_{{n}}\eta_{{0,1}}+\left( e_{{1,2}}+y_{{g}}e_{{1,1}}-\eta_{{0,1}}e_{{1,1}}+x_{{g}}+e_{{3,0}}-2\,\eta_{{1,0}}+ \left( -x_{{g}}+\eta_{{1,0}} \right) \theta

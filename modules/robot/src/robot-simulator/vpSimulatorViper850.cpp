@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Class which provides a simulator for the robot Viper850.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -672,7 +669,7 @@ void vpSimulatorViper850::compute_fMi()
   m_mutex_eMc.lock();
   vpViper::get_fMc(q, fMit[7]);
   m_mutex_eMc.unlock();
-  
+
   m_mutex_fMi.lock();
   for (int i = 0; i < 8; i++) {
     fMi[i] = fMit[i];

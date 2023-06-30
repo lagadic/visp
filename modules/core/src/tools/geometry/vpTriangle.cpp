@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Defines a 2D triangle.
  *
- * Author:
- * Amaury Dame
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTriangle.h>
@@ -48,7 +44,7 @@
 */
 vpTriangle::vpTriangle()
   : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
-    apex2(), apex3()
+  apex2(), apex3()
 {
   init(vpImagePoint(0, 0), vpImagePoint(1, 0), vpImagePoint(0, 1));
 }
@@ -63,7 +59,7 @@ vpTriangle::vpTriangle()
 */
 vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const vpImagePoint &iP3)
   : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
-    apex2(), apex3()
+  apex2(), apex3()
 {
   init(iP1, iP2, iP3);
 }
@@ -75,7 +71,7 @@ vpTriangle::vpTriangle(const vpImagePoint &iP1, const vpImagePoint &iP2, const v
 */
 vpTriangle::vpTriangle(const vpTriangle &tri)
   : goodTriange(true), S1(), uvinv00(0), uvinv01(0), uvinv10(0), uvinv11(0), ptempo0(0), ptempo1(0), area(0), apex1(),
-    apex2(), apex3()
+  apex2(), apex3()
 {
   *this = tri;
 }
@@ -83,7 +79,7 @@ vpTriangle::vpTriangle(const vpTriangle &tri)
 /*!
   Basic destructor
 */
-vpTriangle::~vpTriangle() {}
+vpTriangle::~vpTriangle() { }
 
 /*!
   Assign \e tri to this triangle and return a reference to this triangle.
@@ -135,7 +131,8 @@ void vpTriangle::init(const vpImagePoint &iP1, const vpImagePoint &iP2, const vp
   try {
     uvinv = uv.inverseByLU();
     goodTriange = true;
-  } catch (...) {
+  }
+  catch (...) {
     goodTriange = false;
     std::cout << "Empty triangle" << std::endl;
   }

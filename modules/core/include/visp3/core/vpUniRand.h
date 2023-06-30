@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Pseudo random number generator.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*
  * PCG Random Number Generation for C.
  *
@@ -149,7 +149,7 @@ public:
 
   /**
  * @brief Create a new vector that is a shuffled version of the \b inputVector.
- * 
+ *
  * @tparam T : A class that possesses a copy constructor.
  * @param inputVector : The input vector that must be shuffled. It will not be modified.
  * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.

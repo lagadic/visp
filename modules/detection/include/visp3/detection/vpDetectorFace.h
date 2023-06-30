@@ -65,17 +65,19 @@
 
 int main()
 {
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_OBJDETECT)
   vpImage<unsigned char> I;
   vpDetectorFace face_detector;
   face_detector.setCascadeClassifierFile("haarcascade_frontalface_alt.xml");
 
   while(1) {
-    // acquire a new image in I
-    bool face_found = face_detector.track(I);
+    // Acquire a new image in I
+    bool face_found = face_detector.detect(I);
     if (face_found) {
-      vpRect face_bbox = face_detector.getBoundingBox(0); // largest face has index 0
+      vpRect face_bbox = face_detector.getBBox(0); // largest face has index 0
     }
   }
+#endif
 }
   \endcode
 
@@ -94,7 +96,7 @@ public:
   /*!
     Default destructor.
    */
-  virtual ~vpDetectorFace() {}
+  virtual ~vpDetectorFace() { }
 
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const cv::Mat &frame_gray);

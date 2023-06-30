@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -36,9 +36,6 @@
 # DIRECTSHOW_FOUND        - system has DirectShow
 # DIRECTSHOW_INCLUDE_DIRS - include directory for DirectShow
 # DIRECTSHOW_LIBRARIES    - libraries you need to link to
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -80,7 +77,7 @@ IF(WIN32 AND NOT MINGW)
   FIND_PATH(DIRECTSHOW_dshow_INCLUDE_PATH dshow.h
     DOC "What is the path where the file dshow.h can be found"
     )
-    
+
   FIND_PATH(DIRECTSHOW_qedit_INCLUDE_PATH qedit.h
     "$ENV{WINSDK_HOME}/Include"
     "$ENV{DXSDK_DIR}/Include"
@@ -97,7 +94,7 @@ IF(WIN32 AND NOT MINGW)
   FIND_PATH(DIRECTSHOW_qedit_INCLUDE_PATH qedit.h
     DOC "What is the path where the file qedit.h can be found"
     )
-    
+
   FIND_PATH(DIRECTSHOW_atlbase_INCLUDE_PATH atlbase.h
     DOC "What is the path where the file atlbase.h can be found"
     )
@@ -168,7 +165,7 @@ IF(WIN32 AND NOT MINGW)
         DOC "Where can the DirectShow strmiids library be found"
 	   )
     ELSE(CMAKE_CL_64)
-      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY 
+      FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY
         NAMES strmiids
         PATHS
         "$ENV{WINSDK_HOME}/Lib"
@@ -188,13 +185,13 @@ IF(WIN32 AND NOT MINGW)
         "C:/Program Files/Microsoft Platform SDK/Lib"
 	       NO_DEFAULT_PATH
         DOC "Where can the DirectShow strmiids library be found"
-	   )    
-    ENDIF(CMAKE_CL_64)  
+	   )
+    ENDIF(CMAKE_CL_64)
     FIND_LIBRARY(DIRECTSHOW_strmiids_LIBRARY
       NAMES strmiids
       DOC "Where can the DirectShow strmiids library be found"
       )
-    
+
 
     IF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECTSHOW_quartz_LIBRARY

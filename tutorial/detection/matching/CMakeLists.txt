@@ -1,6 +1,6 @@
-project(tutorial-matching-keypoint)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-matching-keypoint)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)

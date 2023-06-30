@@ -31,7 +31,7 @@
  * Description:
  * Test connected components.
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <map>
 #include <set>
 #include <visp3/core/vpImageTools.h>

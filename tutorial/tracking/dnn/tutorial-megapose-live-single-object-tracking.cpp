@@ -2,7 +2,10 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && (VISP_HAVE_OPENCV_VERSION >= 0x030403)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_DNN)
+
+#include <optional>
+
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -10,10 +13,12 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
-#include <optional>
 #include <visp3/io/vpJsonArgumentParser.h>
 
 #include <nlohmann/json.hpp>
+
+#include <opencv2/videoio.hpp>
+
 
 using json = nlohmann::json;
 
@@ -32,13 +37,14 @@ vpColor interpolate(const vpColor &low, const vpColor &high, const float f)
   const float b = ((float)high.B - (float)low.B) * f;
   return vpColor((unsigned char)r, (unsigned char)g, (unsigned char)b);
 }
+
 /*
  * Display the Megapose confidence score as a rectangle in the image.
  * This rectangle becomes green when Megapose is "confident" about its prediction
  * The confidence score measures whether Megapose can, from its pose estimation, recover the true pose in future pose refinement iterations
  *
- * I The image in which to display the confidence
- * score The confidence score of megapose, between 0 and 1
+ * \param[in] I : The image in which to display the confidence.
+ * \param[in] score : The confidence score of Megapose, between 0 and 1.
  */
 void displayScore(const vpImage<vpRGBa> &I, float score)
 {
@@ -73,7 +79,6 @@ void overlayRender(vpImage<vpRGBa> &I, const vpImage<vpRGBa> &overlay)
   }
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 //! [Detect]
 /*
  * Run the detection network on an image in order to find a specific object.
@@ -104,7 +109,7 @@ std::optional<vpRect> detectObjectForInitMegaposeDnn(vpDetectorDNNOpenCV &detect
     return matchingDetections[0].getBoundingBox();
   }
   else {
-    // Get detection that is closest to previous object bounding box estimated by megapose
+    // Get detection that is closest to previous object bounding box estimated by Megapose
     if (previousEstimate) {
       vpRect best;
       double bestDist = 10000.f;
@@ -136,7 +141,6 @@ std::optional<vpRect> detectObjectForInitMegaposeDnn(vpDetectorDNNOpenCV &detect
   }
   return std::nullopt;
 }
-#endif
 
 /*
  * Ask user to provide the detection themselves. They must click to start labelling, then click on the top left and bottom right corner to create the detection.

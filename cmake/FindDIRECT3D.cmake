@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -36,9 +36,6 @@
 # DIRECT3D_FOUND        - system has DirectShow
 # DIRECT3D_INCLUDE_DIRS - include directory for DirectShow
 # DIRECT3D_LIBRARIES    - libraries you need to link to
-#
-# Authors:
-# Bruno Renier
 #
 #############################################################################
 
@@ -63,7 +60,7 @@ IF(WIN32 AND NOT MINGW)
     IF(DIRECT3D_INCLUDE_DIR)
       IF(CMAKE_CL_64)
 	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-	  "$ENV{DXSDK_DIR}/Lib"	
+	  "$ENV{DXSDK_DIR}/Lib"
 	  "$ENV{DXSDK_DIR}/Lib/x64"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x64"
           "C:/DXSDK/Include/Lib/x64"
@@ -72,7 +69,7 @@ IF(WIN32 AND NOT MINGW)
         )
       ELSE(CMAKE_CL_64)
 	FIND_LIBRARY(DIRECT3D_d3d9_LIBRARY d3d9
-	  "$ENV{DXSDK_DIR}/Lib"	
+	  "$ENV{DXSDK_DIR}/Lib"
 	  "$ENV{DXSDK_DIR}/Lib/x86"
 	  "C:/Program Files/Microsoft DirectX SDK/Lib/x86"
           "C:/DXSDK/Include/Lib/x86"
@@ -102,7 +99,7 @@ IF(WIN32 AND NOT MINGW)
 	  NO_DEFAULT_PATH
           DOC "Where can the Direct3D d3dx9 library be found"
         )
-      ENDIF(CMAKE_CL_64)	 
+      ENDIF(CMAKE_CL_64)
       FIND_LIBRARY(DIRECT3D_d3dx9_LIBRARY d3dx9
         DOC "Where can the Direct3D d3dx9 library be found"
       )

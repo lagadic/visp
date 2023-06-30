@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP packaging configuration file.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -60,7 +57,7 @@ SET(CPACK_COMPONENT_LIBRARIES_DESCRIPTION "ViSP ${VISP_VERSION} libraries")
 SET(CPACK_COMPONENT_HEADERS_DESCRIPTION "C/C++ header files for use with ViSP ${VISP_VERSION} libraries")
 SET(CPACK_COMPONENT_HEADERS_DEPENDS libraries)
 SET(CPACK_COMPONENT_LIBRARIES_GROUP "Development")
-SET(CPACK_COMPONENT_HEADERS_GROUP "Development")	
+SET(CPACK_COMPONENT_HEADERS_GROUP "Development")
 SET(CPACK_COMPONENT_GROUP_DEVELOPMENT_DESCRIPTION "All of the tools you'll ever need to develop software with ViSP")
 SET(CPACK_ALL_INSTALL_TYPES Full Developer)
 SET(CPACK_COMPONENT_LIBRARIES_INSTALL_TYPES Developer Full)

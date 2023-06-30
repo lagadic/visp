@@ -1,6 +1,6 @@
-project(ViSP-tutorial)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(ViSP-tutorial)
 
 find_package(VISP REQUIRED)
 

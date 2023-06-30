@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,7 +28,7 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -42,11 +42,11 @@
 + (vpImage<vpRGBa>)vpImageColorFromUIImage:(UIImage *)image
 {
   CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
-  
+
   if (CGColorSpaceGetModel(colorSpace) == kCGColorSpaceModelMonochrome) {
     NSLog(@"Input UIImage is grayscale");
     vpImage<unsigned char> gray(image.size.height, image.size.width); // 8 bits per component, 1 channel
-    
+
     CGContextRef contextRef = CGBitmapContextCreate(gray.bitmap,                // pointer to  data
                                                     image.size.width,           // width of bitmap
                                                     image.size.height,          // height of bitmap
@@ -55,21 +55,21 @@
                                                     colorSpace,                 // colorspace
                                                     kCGImageAlphaNone |
                                                     kCGBitmapByteOrderDefault); // bitmap info flags
-    
+
     CGContextDrawImage(contextRef, CGRectMake(0, 0, image.size.width, image.size.height), image.CGImage);
     CGContextRelease(contextRef);
-    
+
     vpImage<vpRGBa> color;
     vpImageConvert::convert(gray, color);
-    
+
     return color;
   }
   else {
     NSLog(@"Input UIImage is color");
     vpImage<vpRGBa> color(image.size.height, image.size.width); // 8 bits per component, 4 channels
-    
+
     colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     CGContextRef contextRef = CGBitmapContextCreate(color.bitmap,               // pointer to  data
                                                     image.size.width,           // width of bitmap
                                                     image.size.height,          // height of bitmap
@@ -78,10 +78,10 @@
                                                     colorSpace,                 // colorspace
                                                     kCGImageAlphaNoneSkipLast |
                                                     kCGBitmapByteOrderDefault); // bitmap info flags
-    
+
     CGContextDrawImage(contextRef, CGRectMake(0, 0, image.size.width, image.size.height), image.CGImage);
     CGContextRelease(contextRef);
-    
+
     return color;
   }
 }
@@ -92,11 +92,11 @@
 + (vpImage<unsigned char>)vpImageGrayFromUIImage:(UIImage *)image
 {
   CGColorSpaceRef colorSpace = CGImageGetColorSpace(image.CGImage);
-  
+
   if (CGColorSpaceGetModel(colorSpace) == kCGColorSpaceModelMonochrome) {
     NSLog(@"Input UIImage is grayscale");
     vpImage<unsigned char> gray(image.size.height, image.size.width); // 8 bits per component, 1 channel
-    
+
     CGContextRef contextRef = CGBitmapContextCreate(gray.bitmap,                // pointer to  data
                                                     image.size.width,           // width of bitmap
                                                     image.size.height,          // height of bitmap
@@ -105,17 +105,17 @@
                                                     colorSpace,                 // colorspace
                                                     kCGImageAlphaNone |
                                                     kCGBitmapByteOrderDefault); // bitmap info flags
-    
+
     CGContextDrawImage(contextRef, CGRectMake(0, 0, image.size.width, image.size.height), image.CGImage);
     CGContextRelease(contextRef);
-    
+
     return gray;
   } else {
     NSLog(@"Input UIImage is color");
     vpImage<vpRGBa> color(image.size.height, image.size.width); // 8 bits per component, 4 channels (color channels + alpha)
-    
+
     colorSpace = CGColorSpaceCreateDeviceRGB();
-    
+
     CGContextRef contextRef = CGBitmapContextCreate(color.bitmap,               // pointer to  data
                                                     image.size.width,           // width of bitmap
                                                     image.size.height,          // height of bitmap
@@ -124,13 +124,13 @@
                                                     colorSpace,                 // colorspace
                                                     kCGImageAlphaNoneSkipLast |
                                                     kCGBitmapByteOrderDefault); // bitmap info flags
-    
+
     CGContextDrawImage(contextRef, CGRectMake(0, 0, image.size.width, image.size.height), image.CGImage);
     CGContextRelease(contextRef);
-    
+
     vpImage<unsigned char> gray;
     vpImageConvert::convert(color, gray);
-    
+
     return gray;
   }
 }
@@ -142,11 +142,11 @@
 {
   NSData *data = [NSData dataWithBytes:I.bitmap length:I.getSize()*4];
   CGColorSpaceRef colorSpace;
-  
+
   colorSpace = CGColorSpaceCreateDeviceRGB();
-  
+
   CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-  
+
   // Creating CGImage from vpImage
   CGImageRef imageRef = CGImageCreate(I.getWidth(),                               // width
                                       I.getHeight(),                              // height
@@ -160,14 +160,14 @@
                                       false,                                      // should interpolate
                                       kCGRenderingIntentDefault                   // intent
                                       );
-  
-  
+
+
   // Getting UIImage from CGImage
   UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
   CGImageRelease(imageRef);
   CGDataProviderRelease(provider);
   CGColorSpaceRelease(colorSpace);
-  
+
   return finalImage;
 }
 //! [UIImageFromVpImageColor]
@@ -178,11 +178,11 @@
 {
   NSData *data = [NSData dataWithBytes:I.bitmap length:I.getSize()];
   CGColorSpaceRef colorSpace;
-  
+
   colorSpace = CGColorSpaceCreateDeviceGray();
-  
+
   CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-  
+
   // Creating CGImage from vpImage
   CGImageRef imageRef = CGImageCreate(I.getWidth(),                               // width
                                       I.getHeight(),                              // height
@@ -196,14 +196,14 @@
                                       false,                                      // should interpolate
                                       kCGRenderingIntentDefault                   // intent
                                       );
-  
-  
+
+
   // Getting UIImage from CGImage
   UIImage *finalImage = [UIImage imageWithCGImage:imageRef];
   CGImageRelease(imageRef);
   CGDataProviderRelease(provider);
   CGColorSpaceRelease(colorSpace);
-  
+
   return finalImage;
 }
 //! [UIImageFromVpImageGray]

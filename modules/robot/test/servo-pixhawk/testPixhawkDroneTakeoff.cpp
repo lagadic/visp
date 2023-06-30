@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,7 +32,7 @@
  * Simple example to demonstrate how takeoff and land using mavsdk on
  * a drone equipped with a Pixhawk connected to a Jetson TX2.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  * \example testPixhawkDroneTakeoff.cpp
@@ -89,8 +89,8 @@ int main(int argc, char **argv)
   vpHomogeneousMatrix ned_M_frd;
   drone.getPosition(ned_M_frd);
   vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
-  std::cout << "Vehicle position in NED frame: " 
-            << ned_M_frd.getTranslationVector().t() << " [m] and " 
+  std::cout << "Vehicle position in NED frame: "
+            << ned_M_frd.getTranslationVector().t() << " [m] and "
             << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
 
   std::cout << "Hold position for 4 sec" << std::endl;

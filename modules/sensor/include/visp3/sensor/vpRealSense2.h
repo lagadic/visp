@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * librealSense2 interface.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRealSense2_h_
 #define _vpRealSense2_h_
@@ -50,239 +50,240 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImage.h>
 
-/*!
-  \class vpRealSense2
+ /*!
+   \class vpRealSense2
 
-  \ingroup group_sensor_rgbd
+   \ingroup group_sensor_rgbd
 
-  This class provides a lightweight wrapper over the Intel librealsense2
-  library https://github.com/IntelRealSense/librealsense. It allows to capture
-  data from the Intel RealSense cameras.
+   This class provides a lightweight wrapper over the Intel librealsense2
+   library https://github.com/IntelRealSense/librealsense. It allows to capture
+   data from the Intel RealSense cameras.
 
-  \note Supported devices for Intel® RealSense™ SDK 2.0:
-    - Intel® RealSense™ Camera D400-Series
-    - Intel® RealSense™ Developer Kit SR300
-    - Intel® RealSense™ Tracking Camera T265 (librealsense2 version > 2.31.0)
+   \note Supported devices for Intel® RealSense™ SDK 2.0:
+     - Intel® RealSense™ Camera D400-Series
+     - Intel® RealSense™ Developer Kit SR300
+     - Intel® RealSense™ Tracking Camera T265 (librealsense2 version > 2.31.0)
 
-  The usage of vpRealSense2 class is enabled when librealsense2 3rd party is
-  successfully installed.
+   The usage of vpRealSense2 class is enabled when librealsense2 3rd party is
+   successfully installed.
 
-  Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
-  propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
-  or pcl::PointCloud<pcl::PointXYZRGB> data structures.
+   Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
+   propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
+   or pcl::PointCloud<pcl::PointXYZRGB> data structures.
 
-  \warning Notice that the usage of this class requires compiler and library
-  support for the ISO C++ 2011 standard. This support is enabled by default
-  in ViSP when supported by the compiler. Hereafter we give an example of a
-  CMakeLists.txt file that allows to build sample-realsense.cpp that
-  uses vpRealSense2 class.
+   \warning Notice that the usage of this class requires compiler and library
+   support for the ISO C++ 2011 standard. This support is enabled by default
+   in ViSP when supported by the compiler. Hereafter we give an example of a
+   CMakeLists.txt file that allows to build sample-realsense.cpp that
+   uses vpRealSense2 class.
 
-  \code
-project(sample)
-cmake_minimum_required(VERSION 3.0)
+   \code
+ cmake_minimum_required(VERSION 3.0)
 
-find_package(VISP REQUIRED)
-include_directories(${VISP_INCLUDE_DIRS})
+ project(sample)
 
-add_executable(sample-realsense sample-realsense.cpp)
-target_link_libraries(sample-realsense ${VISP_LIBRARIES})
-  \endcode
+ find_package(VISP REQUIRED)
+ include_directories(${VISP_INCLUDE_DIRS})
 
-  To acquire images from the RealSense color camera and convert them into grey
-  level images, a good starting is to use the following code that corresponds to
-  the content of sample-realsense.cpp:
+ add_executable(sample-realsense sample-realsense.cpp)
+ target_link_libraries(sample-realsense ${VISP_LIBRARIES})
+   \endcode
 
-  \code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+   To acquire images from the RealSense color camera and convert them into grey
+   level images, a good starting is to use the following code that corresponds to
+   the content of sample-realsense.cpp:
 
-int main()
-{
-  vpRealSense2 rs;
-  rs.open();
+   \code
+ #include <visp3/gui/vpDisplayGDI.h>
+ #include <visp3/gui/vpDisplayX.h>
+ #include <visp3/sensor/vpRealSense2.h>
 
-  vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-#ifdef VISP_HAVE_X11
-  vpDisplayX d(I);
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d(I);
-#endif
+ int main()
+ {
+   vpRealSense2 rs;
+   rs.open();
 
-  while (true) {
-    rs.acquire(I);
-    vpDisplay::display(I);
-    vpDisplay::flush(I);
-    if (vpDisplay::getClick(I, false))
-      break;
-  }
-  return 0;
-}
-  \endcode
+   vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+ #ifdef VISP_HAVE_X11
+   vpDisplayX d(I);
+ #elif defined(VISP_HAVE_GDI)
+   vpDisplayGDI d(I);
+ #endif
 
-  If you want to acquire color images, in the previous sample replace:
-  \code
-  vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  \endcode
-  by
-  \code
-  vpImage<vpRGBa> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  \endcode
+   while (true) {
+     rs.acquire(I);
+     vpDisplay::display(I);
+     vpDisplay::flush(I);
+     if (vpDisplay::getClick(I, false))
+       break;
+   }
+   return 0;
+ }
+   \endcode
 
-  If you are interested in the point cloud and if ViSP is build with PCL
-  support, you can start from the following example where we use PCL library to
-  visualize the point cloud
+   If you want to acquire color images, in the previous sample replace:
+   \code
+   vpImage<unsigned char> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+   \endcode
+   by
+   \code
+   vpImage<vpRGBa> I(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+   \endcode
 
-  \code
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <visp3/sensor/vpRealSense2.h>
+   If you are interested in the point cloud and if ViSP is build with PCL
+   support, you can start from the following example where we use PCL library to
+   visualize the point cloud
 
-int main()
-{
-  vpRealSense2 rs;
-  rs.open();
+   \code
+ #include <pcl/visualization/cloud_viewer.h>
+ #include <pcl/visualization/pcl_visualizer.h>
+ #include <visp3/sensor/vpRealSense2.h>
 
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+ int main()
+ {
+   vpRealSense2 rs;
+   rs.open();
 
-  rs.acquire(NULL, NULL, NULL, pointcloud);
+   pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-  pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
-  viewer->setBackgroundColor(0, 0, 0);
-  viewer->initCameraParameters();
-  viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
+   rs.acquire(NULL, NULL, NULL, pointcloud);
 
-  while (true) {
-    rs.acquire(NULL, NULL, NULL, pointcloud);
+   pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+   viewer->setBackgroundColor(0, 0, 0);
+   viewer->initCameraParameters();
+   viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
-    static bool update = false;
-    if (!update) {
-      viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-      viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-      update = true;
-    } else {
-      viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-    }
+   while (true) {
+     rs.acquire(NULL, NULL, NULL, pointcloud);
 
-    viewer->spinOnce(30);
-  }
-  return 0;
-}
-  \endcode
+     static bool update = false;
+     if (!update) {
+       viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+       viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+       update = true;
+     } else {
+       viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+     }
 
-  If you want to change the default stream parameters, refer to the
-  librealsense2 `rs2::config` documentation. The following code allows to
-  capture the color stream in 1920x1080 at 30 Hz:
+     viewer->spinOnce(30);
+   }
+   return 0;
+ }
+   \endcode
 
-\code
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+   If you want to change the default stream parameters, refer to the
+   librealsense2 `rs2::config` documentation. The following code allows to
+   capture the color stream in 1920x1080 at 30 Hz:
 
-int main() {
-  vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, 1920, 1080, RS2_FORMAT_RGBA8, 30);
-  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
-  rs.open(config);
+ \code
+ #include <visp3/gui/vpDisplayGDI.h>
+ #include <visp3/gui/vpDisplayX.h>
+ #include <visp3/sensor/vpRealSense2.h>
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  vpImage<unsigned char> Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
-                            rs.getIntrinsics(RS2_STREAM_INFRARED).width);
+ int main() {
+   vpRealSense2 rs;
+   rs2::config config;
+   config.enable_stream(RS2_STREAM_COLOR, 1920, 1080, RS2_FORMAT_RGBA8, 30);
+   config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+   rs.open(config);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX di(Ii, 100, 100, "Infrared");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI di(Ii, 100, 100, "Infrared");
-#endif
+   vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+   vpImage<unsigned char> Ii(rs.getIntrinsics(RS2_STREAM_INFRARED).height,
+                             rs.getIntrinsics(RS2_STREAM_INFRARED).width);
 
-  while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ii);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ii);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
-      break;
-  }
-  return 0;
-}
-  \endcode
+ #ifdef VISP_HAVE_X11
+   vpDisplayX dc(Ic, 0, 0, "Color");
+   vpDisplayX di(Ii, 100, 100, "Infrared");
+ #elif defined(VISP_HAVE_GDI)
+   vpDisplayGDI dc(Ic, 0, 0, "Color");
+   vpDisplayGDI di(Ii, 100, 100, "Infrared");
+ #endif
 
-  This other example shows how to get depth stream aligned on color stream:
-  \code
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense2.h>
+   while (true) {
+     rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
+     vpDisplay::display(Ic);
+     vpDisplay::display(Ii);
+     vpDisplay::flush(Ic);
+     vpDisplay::flush(Ii);
+     if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Ii, false))
+       break;
+   }
+   return 0;
+ }
+   \endcode
 
-int main() {
-  vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-  config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
-  config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
-  rs.open(config);
+   This other example shows how to get depth stream aligned on color stream:
+   \code
+ #include <visp3/core/vpImageConvert.h>
+ #include <visp3/gui/vpDisplayGDI.h>
+ #include <visp3/gui/vpDisplayX.h>
+ #include <visp3/sensor/vpRealSense2.h>
 
-  vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
-  vpImage<uint16_t> Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
-  vpImage<vpRGBa> Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+ int main() {
+   vpRealSense2 rs;
+   rs2::config config;
+   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+   config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
+   config.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+   rs.open(config);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX dc(Ic, 0, 0, "Color");
-  vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(Ic, 0, 0, "Color");
-  vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
-#endif
+   vpImage<vpRGBa> Ic(rs.getIntrinsics(RS2_STREAM_COLOR).height, rs.getIntrinsics(RS2_STREAM_COLOR).width);
+   vpImage<uint16_t> Id_raw(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
+   vpImage<vpRGBa> Id(rs.getIntrinsics(RS2_STREAM_DEPTH).height, rs.getIntrinsics(RS2_STREAM_DEPTH).width);
 
-  rs2::align align_to(RS2_STREAM_COLOR);
-  while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, &align_to);
-    vpImageConvert::createDepthHistogram(Id_raw, Id);
-    vpDisplay::display(Ic);
-    vpDisplay::display(Id);
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Id);
-    if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
-      break;
-  }
-  return 0;
-}
-  \endcode
+ #ifdef VISP_HAVE_X11
+   vpDisplayX dc(Ic, 0, 0, "Color");
+   vpDisplayX dd(Id, 100, 100, "Depth aligned to color");
+ #elif defined(VISP_HAVE_GDI)
+   vpDisplayGDI dc(Ic, 0, 0, "Color");
+   vpDisplayGDI dd(Id, 100, 100, "Depth aligned to color");
+ #endif
 
-  References to `rs2::pipeline_profile` and `rs2::pipeline` can be retrieved
-  with (`rs.open() must be called before`):
-  \code
-  rs2::pipeline_profile& profile = rs.getPipelineProfile();
-  rs2::pipeline& pipeline = rs.getPipeline();
-  \endcode
+   rs2::align align_to(RS2_STREAM_COLOR);
+   while (true) {
+     rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, &align_to);
+     vpImageConvert::createDepthHistogram(Id_raw, Id);
+     vpDisplay::display(Ic);
+     vpDisplay::display(Id);
+     vpDisplay::flush(Ic);
+     vpDisplay::flush(Id);
+     if (vpDisplay::getClick(Ic, false) || vpDisplay::getClick(Id, false))
+       break;
+   }
+   return 0;
+ }
+   \endcode
 
-  Information about the sensor can be printed with:
-  \code
-#include <visp3/sensor/vpRealSense2.h>
+   References to `rs2::pipeline_profile` and `rs2::pipeline` can be retrieved
+   with (`rs.open() must be called before`):
+   \code
+   rs2::pipeline_profile& profile = rs.getPipelineProfile();
+   rs2::pipeline& pipeline = rs.getPipeline();
+   \endcode
 
-int main() {
-  vpRealSense2 rs;
-  rs.open();
-  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+   Information about the sensor can be printed with:
+   \code
+ #include <visp3/sensor/vpRealSense2.h>
 
-  return 0;
-}
-  \endcode
+ int main() {
+   vpRealSense2 rs;
+   rs.open();
+   std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
-  It is also possible to use several RealSense sensors at the same time. In that case, you need to create a
-  vpRealSense2 object for each device and use vpRealSense2::enable_device(const std::string &serial_number)
-  to select the device explicitly by its serial number. An example is provided
-  in tutorial-grabber-multiple-realsense.cpp.
+   return 0;
+ }
+   \endcode
 
-  \note Additional information can be found in the
-  [librealsense wiki](https://github.com/IntelRealSense/librealsense/wiki/).
-*/
+   It is also possible to use several RealSense sensors at the same time. In that case, you need to create a
+   vpRealSense2 object for each device and use vpRealSense2::enable_device(const std::string &serial_number)
+   to select the device explicitly by its serial number. An example is provided
+   in tutorial-grabber-multiple-realsense.cpp.
+
+   \note Additional information can be found in the
+   [librealsense wiki](https://github.com/IntelRealSense/librealsense/wiki/).
+ */
 class VISP_EXPORT vpRealSense2
 {
 public:
