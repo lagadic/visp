@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Simulation of a 2D visual servoing on a cylinder.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoSimuCylinder2DCamVelocityDisplay.cpp
@@ -173,7 +169,7 @@ int main(int argc, const char **argv)
 
     vpImage<unsigned char> I(512, 512, 255);
 
-// We open a window using either X11, GTK or GDI.
+    // We open a window using either X11, GTK or GDI.
 #if defined(VISP_HAVE_X11)
     vpDisplayX display;
 #elif defined(VISP_HAVE_GTK)
@@ -195,7 +191,8 @@ int main(int argc, const char **argv)
         // display variable.
         vpDisplay::display(I);
         vpDisplay::flush(I);
-      } catch (...) {
+      }
+      catch (...) {
         vpERROR_TRACE("Error while displaying the image");
         return EXIT_FAILURE;
       }
@@ -325,7 +322,8 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -341,8 +339,8 @@ int main()
 int main()
 {
   std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) or OpenCV functionalities to display "
-               "images..."
-            << std::endl;
+    "images..."
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

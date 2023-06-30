@@ -31,9 +31,6 @@
  * Description:
  * ViSP configuration.
  *
- * Authors:
- * Fabien Spindler
- *
 *****************************************************************************/
 
 #ifndef _vpConfig_h_

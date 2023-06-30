@@ -1,6 +1,6 @@
-project(tutorial-apriltag)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-apriltag)
 
 find_package(VISP REQUIRED visp_core visp_detection visp_io visp_gui visp_sensor)
 

@@ -12,6 +12,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 #include "pose_helper.h"
 
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
@@ -38,20 +42,23 @@ int main(int argc, char **argv)
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
         opt_intrinsic_file = std::string(argv[i + 1]);
-      } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[i + 1]);
-      } else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--camera_device" && i + 1 < argc) {
         opt_device = atoi(argv[i + 1]);
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0] << " [--camera_device <camera device> (default: 0)]"
-                  << " [--intrinsic <xml calibration file> (default: empty)]"
-                     " [--camera_name <camera name in xml calibration file> (default: empty)]"
-                     " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"
-                  << "\nExample using default camera parameters and square size:\n"
-                  << "  " << argv[0] << "\n"
-                  << "\nExample fully tuned for a 0.1m x 0.1m square:\n"
-                  << "  " << argv[0] << " --intrinsic camera.xml --camera_name Camera --square_width 0.1\n"
-                  << std::endl;
+          << " [--intrinsic <xml calibration file> (default: empty)]"
+          " [--camera_name <camera name in xml calibration file> (default: empty)]"
+          " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"
+          << "\nExample using default camera parameters and square size:\n"
+          << "  " << argv[0] << "\n"
+          << "\nExample fully tuned for a 0.1m x 0.1m square:\n"
+          << "  " << argv[0] << " --intrinsic camera.xml --camera_name Camera --square_width 0.1\n"
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -67,7 +74,8 @@ int main(int argc, char **argv)
       if (parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) ==
           vpXmlParserCamera::SEQUENCE_OK) {
         std::cout << "Succeed to read camera parameters from xml file" << std::endl;
-      } else {
+      }
+      else {
         std::cout << "Unable to read camera parameters from xml file" << std::endl;
       }
     }
@@ -175,10 +183,11 @@ int main(int argc, char **argv)
             vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
             ss.str(""); // erase ss
             ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " "
-               << vpMath::deg(pose[5]) << " [deg]";
+              << vpMath::deg(pose[5]) << " [deg]";
             vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::red);
           }
-        } catch (...) {
+        }
+        catch (...) {
           std::cout << "Computer vision failure." << std::endl;
           apply_cv = false;
           init_cv = true;
@@ -187,14 +196,16 @@ int main(int argc, char **argv)
       vpDisplay::displayText(I, 20, 20, "Right click: quit", vpColor::red);
       if (apply_cv) {
         vpDisplay::displayText(I, 40, 20, "Computer vision in progress...", vpColor::red);
-      } else {
+      }
+      else {
         vpDisplay::displayText(I, 40, 20, "Left click : start", vpColor::red);
       }
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(I, button, false)) {
         if (button == vpMouseButton::button3) {
           quit = true;
-        } else if (button == vpMouseButton::button1) {
+        }
+        else if (button == vpMouseButton::button1) {
           apply_cv = true;
         }
       }
@@ -205,20 +216,21 @@ int main(int argc, char **argv)
       }
       vpDisplay::flush(I);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   (void)argc;
   (void)argv;
   std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, "
-               "Realsense2), configure and build ViSP again to use this example"
-            << std::endl;
+    "Realsense2), configure and build ViSP again to use this example"
+    << std::endl;
 #else
   (void)argc;
   (void)argv;
   std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to "
-               "use this example"
-            << std::endl;
+    "use this example"
+    << std::endl;
 #endif
 }

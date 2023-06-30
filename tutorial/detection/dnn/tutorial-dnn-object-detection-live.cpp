@@ -6,6 +6,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -286,7 +290,7 @@ int main(int argc, const char *argv [])
 
     if (!opt_dnn_label_file.empty() && !vpIoTools::checkFilename(opt_dnn_label_file)) {
       throw(vpException(vpException::fatalError,
-        "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
+                        "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
     }
 
     vpDetectorDNNOpenCV dnn;

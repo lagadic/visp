@@ -51,6 +51,10 @@
 #include <visp3/visual_features/vpFeatureDepth.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
@@ -92,7 +96,7 @@ int main(int argc, char **argv)
     double depth = 1.;
     double lambda = 0.6;
     double coef = 1. / 6.77; // Scale parameter used to estimate the depth Z
-                             // of the blob from its surface
+    // of the blob from its surface
 
     vpRobotPioneer robot;
     ArArgumentParser parser(&argc, argv);
@@ -126,7 +130,7 @@ int main(int argc, char **argv)
     // calibration of the camera
     vpCameraParameters cam;
 
-// Create the camera framegrabber
+    // Create the camera framegrabber
 #if defined(HAVE_OPENCV_VIDEOIO)
     int device = 1;
     std::cout << "Use device: " << device << std::endl;
@@ -170,7 +174,7 @@ int main(int argc, char **argv)
     cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
 
-// Acquire an image from the grabber
+    // Acquire an image from the grabber
 #if defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
@@ -178,7 +182,7 @@ int main(int argc, char **argv)
     g.acquire(I);
 #endif
 
-// Create an image viewer
+    // Create an image viewer
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, 10, 10, "Current frame");
 #elif defined(VISP_HAVE_GDI)
@@ -194,8 +198,8 @@ int main(int argc, char **argv)
     dot.setEllipsoidShapePrecision(0.);       // to track a blob without any constraint on the shape
     dot.setGrayLevelPrecision(0.9);           // to set the blob gray level bounds for binarisation
     dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner
-                                              // and outside points with bad
-                                              // gray level
+    // and outside points with bad
+    // gray level
     dot.initTracking(I);
     vpDisplay::flush(I);
 
@@ -232,7 +236,7 @@ int main(int argc, char **argv)
     vpMatrix L;   // Interaction matrix
     L.stack(L_x); // constant since build with the desired feature
     L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that
-                  // evolves at each iteration
+    // evolves at each iteration
 
     vpColVector v; // vz, wx
 
@@ -240,7 +244,7 @@ int main(int argc, char **argv)
     s_Zd.buildFrom(0, 0, 1, 0); // The value of s* is 0 with Z=1 meter.
 
     while (1) {
-// Acquire a new image
+      // Acquire a new image
 #if defined(VISP_HAVE_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
@@ -266,9 +270,9 @@ int main(int argc, char **argv)
       vpMatrix L;
       L.stack(L_x); // constant since build with the desired feature
       L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that
-                    // evolves at each iteration
+      // evolves at each iteration
 
-      // Update the global error s-s*
+// Update the global error s-s*
       vpColVector error;
       error.stack(s_x.error(s_xd, vpFeaturePoint::selectX()));
       error.stack(s_Z.error(s_Zd));
@@ -298,7 +302,8 @@ int main(int argc, char **argv)
     // wait for the thread to stop
     robot.waitForRunExit();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

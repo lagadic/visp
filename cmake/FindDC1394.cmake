@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
 # Description:
 # Try to find libDC1394 for IEEE1394 camera. First search for libdc1394-2.x
 # and if not found, search for libdc1394-1.x
-# Once run this will define: 
+# Once run this will define:
 #
 # DC1394_FOUND
 # DC1394_INCLUDE_DIRS
@@ -39,17 +39,14 @@
 # DC1394_VERSION
 #
 # The two defines below are only useful to compile with libdc1394-2.x. In
-# that case DC1394_VERSION=2. Since the libdc1394-2.x API is not stable, we 
-# need to determine if dc1394_find_cameras() or dc1394_enumerate_cameras() 
-# functions are available. dc1394_enumerate_cameras() was introduced after 
-# libdc1394-2.0.0-rc7. DC1394_CAMERA_ENUMERATE_FOUND is TRUE when 
-# dc1394_camera_enumerate() function is found. DC1394_FIND_CAMERAS_FOUND is 
+# that case DC1394_VERSION=2. Since the libdc1394-2.x API is not stable, we
+# need to determine if dc1394_find_cameras() or dc1394_enumerate_cameras()
+# functions are available. dc1394_enumerate_cameras() was introduced after
+# libdc1394-2.0.0-rc7. DC1394_CAMERA_ENUMERATE_FOUND is TRUE when
+# dc1394_camera_enumerate() function is found. DC1394_FIND_CAMERAS_FOUND is
 # TRUE when dc1394_find_cameras() is found.
 # DC1394_CAMERA_ENUMERATE_FOUND
 # DC1394_FIND_CAMERAS_FOUND
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -62,11 +59,11 @@ else(NOT UNIX)
     $ENV{DC1394_HOME}/include
     $ENV{DC1394_DIR}/include
     /usr/include )
-  #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")  
+  #MESSAGE("DBG DC1394_INCLUDE_DIR=${DC1394_INCLUDE_DIR}")
 
   find_library(DC1394_LIBRARY
     NAMES dc1394
-    PATHS 
+    PATHS
     $ENV{DC1394_HOME}/lib
     $ENV{DC1394_DIR}/lib
     /usr/lib
@@ -87,10 +84,10 @@ else(NOT UNIX)
       # introduced after libdc1394-2.0.0-rc7
 
       include(CheckCXXSourceCompiles)
-	
+
       set(CMAKE_REQUIRED_LIBRARIES ${DC1394_LIBRARY})
       set(CMAKE_REQUIRED_INCLUDES ${DC1394_INCLUDE_DIR})
-	
+
       check_cxx_source_compiles("
         #include <dc1394/control.h>
         #include <dc1394/utils.h>

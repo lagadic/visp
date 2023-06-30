@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,11 +28,7 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Authors:
- * Eric Marchand
- * Christophe Collewet
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example photometricVisualServoingWithoutVpServo.cpp
@@ -209,8 +205,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -219,9 +215,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL, ipath, opt_niter);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -273,7 +269,7 @@ int main(int argc, const char **argv)
     sim.getImage(I, cam); // and aquire the image Id
     Id = I;
 
-// display the image
+    // display the image
 #if defined(VISP_HAVE_X11)
     vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
@@ -327,7 +323,7 @@ int main(int argc, const char **argv)
 
     vpImageTools::imageDifference(I, Id, Idiff);
 
-// Affiche de l'image de difference
+    // Affiche de l'image de difference
 #if defined(VISP_HAVE_X11)
     vpDisplayX d1;
 #elif defined(VISP_HAVE_GDI)
@@ -479,7 +475,8 @@ int main(int argc, const char **argv)
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -48,6 +48,10 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main()
 {
   try {
@@ -59,7 +63,7 @@ int main()
     // the background texture used in Ogre renderer will be also in color.
     vpImage<vpRGBa> I;
 
-// Now we try to find an available framegrabber
+    // Now we try to find an available framegrabber
 #if defined(VISP_HAVE_V4L2)
     // Video for linux 2 grabber
     vpV4l2Grabber grabber;
@@ -130,7 +134,7 @@ int main()
 
     // Rendering loop, ended with on escape
     while (ogre.continueRendering()) {
-// Acquire a new image
+      // Acquire a new image
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394)
       grabber.acquire(I);
 #elif defined(HAVE_OPENCV_VIDEOIO)
@@ -150,10 +154,12 @@ int main()
     std::cout << "You need Ogre3D to run this example" << std::endl;
 #endif
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return EXIT_FAILURE;
   }

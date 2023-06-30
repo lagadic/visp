@@ -9,6 +9,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main()
 {
 #if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)) &&             \
@@ -69,14 +73,16 @@ int main()
           //! [Init]
           init_done = true;
         }
-      } else {
+      }
+      else {
         //! [Track]
         blob.track(I);
         //! [Track]
       }
 
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       init_done = false;
     }
   }

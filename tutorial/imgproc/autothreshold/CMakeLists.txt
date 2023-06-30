@@ -1,6 +1,6 @@
-project(tutorial-autothreshold)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-autothreshold)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui visp_imgproc)
 

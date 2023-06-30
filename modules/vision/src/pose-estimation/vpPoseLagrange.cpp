@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,9 @@
  * Pose computation.
  *
  * Authors:
- * Eric Marchand
  * Francois Chaumette
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/vision/vpPose.h>
 
@@ -265,7 +264,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
 #endif
   // determination of the plane equation a X + b Y + c Z + d = 0
   double a, b, c, d;
-  
+
   // Checking if coplanar has already been called and if the plan coefficients have been given
   if((p_isPlan != NULL) && (p_a != NULL) && (p_b != NULL) && (p_c != NULL) && (p_d != NULL))
   {
@@ -293,7 +292,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
       throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but call to vpPose::coplanar indicates that the points are not coplanar");
     }
   }
-  
+
 
   if (c < 0.0) { // imposing c >= 0
     a = -a;

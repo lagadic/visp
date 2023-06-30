@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,15 +30,12 @@
 #
 # Description:
 # Try to find Intel RealSense SDK to work with R200, F200 and SR300 devices.
-# Once run this will define: 
+# Once run this will define:
 #
 # REALSENSE_FOUND
 # REALSENSE_INCLUDE_DIRS
 # REALSENSE_LIBRARIES
 # REALSENSE_VERSION
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -121,7 +118,7 @@ if(REALSENSE_LIBRARIES AND REALSENSE_INCLUDE_DIRS)
 else()
   set(REALSENSE_FOUND FALSE)
 endif()
-  
+
 mark_as_advanced(
   REALSENSE_INCLUDE_DIRS
   REALSENSE_LIBRARIES

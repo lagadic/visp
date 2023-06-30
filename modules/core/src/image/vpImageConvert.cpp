@@ -129,7 +129,7 @@ void vpImageConvert::convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest)
     for (unsigned int j = 0; j < src.getWidth(); j++) {
       for (unsigned int c = 0; c < 3; c++) {
         float val = 255.f * (reinterpret_cast<const float *>(&(src[i][j]))[c] - reinterpret_cast<float *>(&min)[c]) /
-            (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]);
+          (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]);
         if (val < 0)
           reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 0;
         else if (val > 255)
@@ -324,11 +324,13 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
         else
           dest[i][j] = rgbaVal;
       }
-  } else if (src.type() == CV_8UC3) {
+  }
+  else if (src.type() == CV_8UC3) {
     if (src.isContinuous() && !flip) {
       SimdRgbToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                     dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
-    } else {
+    }
+    else {
       vpRGBa rgbaVal;
       rgbaVal.A = vpRGBa::alpha_default;
       for (unsigned int i = 0; i < dest.getRows(); ++i) {
@@ -339,24 +341,28 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
           rgbaVal.B = tmp[0];
           if (flip) {
             dest[dest.getRows() - i - 1][j] = rgbaVal;
-          } else {
+          }
+          else {
             dest[i][j] = rgbaVal;
           }
         }
       }
     }
-  } else if (src.type() == CV_8UC1) {
+  }
+  else if (src.type() == CV_8UC1) {
     if (src.isContinuous() && !flip) {
       SimdGrayToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                      dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
-    } else {
+    }
+    else {
       vpRGBa rgbaVal;
       for (unsigned int i = 0; i < dest.getRows(); ++i) {
         for (unsigned int j = 0; j < dest.getCols(); ++j) {
           rgbaVal = src.at<unsigned char>((int)i, (int)j);
           if (flip) {
             dest[dest.getRows() - i - 1][j] = rgbaVal;
-          } else {
+          }
+          else {
             dest[i][j] = rgbaVal;
           }
         }
@@ -406,49 +412,57 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     if (src.isContinuous() && !flip) {
       memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols));
-    } else {
+    }
+    else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1(), (size_t)src.step);
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1(), (size_t)src.step);
         }
       }
     }
-  } else if (src.type() == CV_8UC3) {
+  }
+  else if (src.type() == CV_8UC3) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     if (src.isContinuous()) {
       BGRToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows,
                 flip, nThreads);
-    } else {
+    }
+    else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           BGRToGrey((unsigned char *)src.data + i * src.step1(),
                     (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
                     (unsigned int)dest.getCols(), 1, false);
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           BGRToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
                     (unsigned int)dest.getCols(), 1, false);
         }
       }
     }
-  } else if (src.type() == CV_8UC4) {
+  }
+  else if (src.type() == CV_8UC4) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
     if (src.isContinuous()) {
       BGRaToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols,
                  (unsigned int)src.rows, flip, nThreads);
-    } else {
+    }
+    else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           BGRaToGrey((unsigned char *)src.data + i * src.step1(),
                      (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
                      (unsigned int)dest.getCols(), 1, false);
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
           BGRaToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
                      (unsigned int)dest.getCols(), 1, false);
@@ -477,7 +491,8 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
         else
           dest[i][j] = src.at<float>((int)i, (int)j);
       }
-  } else {
+  }
+  else {
     throw vpException(vpException::badValue, "cv::Mat type is not supported!");
   }
 }
@@ -495,15 +510,17 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool f
 
   if (src.type() == CV_16UC1) {
     if (src.isContinuous()) {
-      memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols)*sizeof(uint16_t));
-    } else {
+      memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols) * sizeof(uint16_t));
+    }
+    else {
       if (flip) {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1()*sizeof(uint16_t), (size_t)src.step);
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1() * sizeof(uint16_t), (size_t)src.step);
         }
-      } else {
+      }
+      else {
         for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1()*sizeof(uint16_t), (size_t)src.step);
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1() * sizeof(uint16_t), (size_t)src.step);
         }
       }
     }
@@ -537,7 +554,8 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool fli
         else
           dest[i][j] = rgbVal;
       }
-  } else {
+  }
+  else {
     throw vpException(vpException::badValue, "cv::Mat type is not supported!");
   }
 }
@@ -606,7 +624,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) &&
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_IMGCODECS)
   vpImage<unsigned char> Ig; // A grayscale image
   cv::Mat Ip;
 
@@ -627,7 +645,8 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, b
   if (copyData) {
     cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
     dest = tmpMap.clone();
-  } else {
+  }
+  else {
     dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
   }
 }
@@ -637,7 +656,8 @@ void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copy
   if (copyData) {
     cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
     dest = tmpMap.clone();
-  } else {
+  }
+  else {
     dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
   }
 }
@@ -690,7 +710,8 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::Image
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
     memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth());
-  } else
+  }
+  else
     dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
 }
 
@@ -781,7 +802,8 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
     memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth() * sizeof(vpRGBa));
-  } else
+  }
+  else
     dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
 }
 
@@ -974,7 +996,7 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
       g = y1 - cg;
       vpSAT(r) vpSAT(g) vpSAT(b)
 
-          *d++ = static_cast<unsigned char>(r);
+        *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
       *d++ = static_cast<unsigned char>(b);
       *d++ = vpRGBa::alpha_default;
@@ -984,7 +1006,7 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
       g = y2 - cg;
       vpSAT(r) vpSAT(g) vpSAT(b)
 
-          *d++ = static_cast<unsigned char>(r);
+        *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
       *d++ = static_cast<unsigned char>(b);
       *d++ = vpRGBa::alpha_default;
@@ -1028,7 +1050,7 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
       g = y1 - cg;
       vpSAT(r) vpSAT(g) vpSAT(b)
 
-          *d++ = static_cast<unsigned char>(r);
+        *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
       *d++ = static_cast<unsigned char>(b);
 
@@ -1037,7 +1059,7 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
       g = y2 - cg;
       vpSAT(r) vpSAT(g) vpSAT(b)
 
-          *d++ = static_cast<unsigned char>(r);
+        *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
       *d++ = static_cast<unsigned char>(b);
     }
@@ -3175,7 +3197,8 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 {
   if (!flip) {
     SimdBgrToBgra(rgb, width, height, width * 3, rgba, width * 4, vpRGBa::alpha_default);
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3252,7 +3275,8 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 {
   if (!flip) {
     SimdRgbToGray(rgb, width, height, width * 3, grey, width);
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3400,7 +3424,8 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
 {
   if (!flip) {
     SimdRgbToBgra(bgr, width, height, width * 3, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3443,7 +3468,8 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 {
   if (!flip) {
     SimdBgraToRgba(bgra, width, height, width * 4, rgba, width * 4);
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
     int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
@@ -3499,7 +3525,8 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
     for (int i = 0; i < static_cast<int>(height); i++) {
       SimdBgrToGray(bgr + i * width * 3, width, 1, width * 3, grey + i * width, width);
     }
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3552,7 +3579,8 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
     for (int i = 0; i < static_cast<int>(height); i++) {
       SimdBgraToGray(bgra + i * width * 4, width, 1, width * 4, grey + i * width, width);
     }
-  } else {
+  }
+  else {
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
@@ -3918,16 +3946,16 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
                          src.getWidth());
 
     if (!pR) {
-      delete[] ptrR;
+      delete [] ptrR;
     }
     if (!pG) {
-      delete[] ptrG;
+      delete [] ptrG;
     }
     if (!pB) {
-      delete[] ptrB;
+      delete [] ptrB;
     }
     if (!pa) {
-      delete[] ptrA;
+      delete [] ptrA;
     }
   }
 }
@@ -3976,7 +4004,8 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
     if (R != NULL && G != NULL && B != NULL && a != NULL) {
       SimdInterleaveBgra(R->bitmap, width, G->bitmap, width, B->bitmap, width, a->bitmap, width, width, height,
                          reinterpret_cast<uint8_t *>(RGBa.bitmap), width * sizeof(vpRGBa));
-    } else {
+    }
+    else {
       unsigned int size = width * height;
       for (unsigned int i = 0; i < size; i++) {
         if (R != NULL) {
@@ -3996,7 +4025,8 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
         }
       }
     }
-  } else {
+  }
+  else {
     throw vpException(vpException::dimensionError, "Mismatched dimensions!");
   }
 }
@@ -4067,7 +4097,8 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
     if (vpMath::equal(saturation, 0.0, std::numeric_limits<double>::epsilon())) {
       hue = value;
       saturation = value;
-    } else {
+    }
+    else {
       double h = hue * 6.0;
       double s = saturation;
       double v = value;
@@ -4153,7 +4184,8 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     if (red > green) {
       max = ((std::max))(red, blue);
       min = ((std::min))(green, blue);
-    } else {
+    }
+    else {
       max = ((std::max))(green, blue);
       min = ((std::min))(red, blue);
     }
@@ -4162,13 +4194,15 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
 
     if (!vpMath::equal(max, 0.0, std::numeric_limits<double>::epsilon())) {
       s = (max - min) / max;
-    } else {
+    }
+    else {
       s = 0.0;
     }
 
     if (vpMath::equal(s, 0.0, std::numeric_limits<double>::epsilon())) {
       h = 0.0;
-    } else {
+    }
+    else {
       double delta = max - min;
       if (vpMath::equal(delta, 0.0, std::numeric_limits<double>::epsilon())) {
         delta = 1.0;
@@ -4176,16 +4210,19 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
 
       if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
         h = (green - blue) / delta;
-      } else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
+      }
+      else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
         h = 2 + (blue - red) / delta;
-      } else {
+      }
+      else {
         h = 4 + (red - green) / delta;
       }
 
       h /= 6.0;
       if (h < 0.0) {
         h += 1.0;
-      } else if (h > 1.0) {
+      }
+      else if (h > 1.0) {
         h -= 1.0;
       }
     }

@@ -32,7 +32,7 @@
  * Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker implemented
  * with opencv.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpKltOpencv.h

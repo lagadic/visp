@@ -409,9 +409,9 @@ $ cd $VISP_WS/my-project
 $ more CMakeLists.txt
 \endcode
 \code
-project(example-dummy)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(example-dummy)
 
 find_package(VISP REQUIRED visp_core visp_robot)
 

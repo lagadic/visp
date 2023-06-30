@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
  * Simple example to demonstrate how to control in velocity using mavsdk
  * a drone equipped with a Pixhawk connected to a Jetson TX2.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  * \example testPixhawkRoverVelocityControl.cpp
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
     vpTime::sleepMs(20);
     robot.setVelocity(frd_vel);
   }
-  while(vpTime::measureTimeMs() - t < 2000.); // 
+  while(vpTime::measureTimeMs() - t < 2000.); //
 
   robot.disarm();
   return EXIT_SUCCESS;

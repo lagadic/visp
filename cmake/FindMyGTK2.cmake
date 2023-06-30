@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,16 +30,13 @@
 #
 # Description:
 # Try to find GTK (and glib).
-# Once run this will define: 
+# Once run this will define:
 #
 # GTK2_INCLUDE_DIRS  - Directories to include to use GTK
 # GTK2_LIBRARIES     - Files to link against to use GTK
 # GTK2_FOUND         - If false, don't try to use GTK
 # GTK2_GL_FOUND      - If false, don't try to use GTK's GL features
 # GTK2_VERSION
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -243,7 +240,7 @@ if(UNIX OR WIN32)
       if(GTK2_harfbuzz_INCLUDE_PATH)
         LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_harfbuzz_INCLUDE_PATH} )
       endif()
-   
+
       set( GTK2_LIBRARIES ${GTK2_gtk_LIBRARY}
                           ${GTK2_gdk_LIBRARY}
                           ${GTK2_glib_LIBRARY}
@@ -296,7 +293,7 @@ if(UNIX OR WIN32)
     GTK2_atk_INCLUDE_PATH
     GTK2_gdkconfig_INCLUDE_PATH
     GTK2_gobject_LIBRARY
-    GTK2_pango_INCLUDE_PATH 
+    GTK2_pango_INCLUDE_PATH
     GTK2_cairo_INCLUDE_PATH
     GTK2_harfbuzz_INCLUDE_PATH
     GTK2_gdkpixbuf_INCLUDE_PATH
