@@ -1,22 +1,50 @@
 {
-    "camera": {
-        "px": 600,
-        "py": 600,
-        "u0": 320,
-        "v0": 240,
-        "h": 480,
-        "w": 640,
-        "randomize_params_percent": 5.0
+  "numpy_seed": 1994,
+  "blenderproc_seed": "69",
+  "camera": {
+    "px": 600,
+    "py": 600,
+    "u0": 320,
+    "v0": 240,
+    "h": 480,
+    "w": 640,
+    "randomize_params_percent": 5.0
+  },
+  "rendering": {
+    "max_num_samples": 64
+  },
+  "scene": {
+    "room_size_multiplier": 2.5,
+    "distractors": {
+      "min_count": 256,
+      "max_count": 257,
+      "min_size_rel_scene": 0.01,
+      "max_size_rel_scene": 0.05,
+      "displacement_max_amount": 0.1
     },
-
-    "dataset": {
-      "object_poses": true,
-      "depth": false,
-      "normals": false,
-      "segmentation": false,
-      "detection": true
+    "lights": {
+      "min_count": 4,
+      "max_count": 8,
+      "min_intensity": 100,
+      "max_intensity": 1000
     },
-    "models_path": "/home/sfelton/megapose-models",
-    "cc_textures_path": "/home/sfelton/cc0",
-    "output_path": "output"
+    "objects": {
+      "min_count": 1,
+      "max_count": 10,
+      "multiple_occurences": true,
+      "scale_noise": 0.2,
+      "displacement_max_amount": 0.001,
+      "pbr_noise": true
+    }
+  },
+  "dataset": {
+    "object_poses": true,
+    "depth": true,
+    "normals": true,
+    "segmentation": true,
+    "detection": true
+  },
+  "models_path": "/home/sfelton/models",
+  "cc_textures_path": "/home/sfelton/cc0",
+  "output_path": "output"
 }
