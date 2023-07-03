@@ -6,12 +6,10 @@
 
 #### Using a JSON file as configuration file
 To use a JSON file as configuration, you need to install [JSON for modern C++](https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json) and compile ViSP with it.
-Then, recompile the Trasys project as explained in section [Building the Trasys project](#building_trasys)
 
 To run the software on the synthetic images, please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ cd ${TRASYS_WS}/trasys-dev-build
 $ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json 
 ```
 
@@ -20,7 +18,6 @@ $ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TAR
 To run the software on the synthetic images without a JSON configuration file, please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ cd ${TRASYS_WS}/trasys-dev-build
 $ ./tutorial-circle-hough --input ${TARGET}_disks 
 ```
 
@@ -39,7 +36,6 @@ If the detections seem a bit off, you might need to change the parameters
 To run the software on an actual image without a JSON configuration file, please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ cd ${TRASYS_WS}/trasys-dev-build
 $ ./tutorial-circle-hough --input /path/to/my/image --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh -1. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --radius-thresh 2 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
 ```
 

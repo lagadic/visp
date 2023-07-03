@@ -13,6 +13,7 @@
 
 #include "drawingHelpers.h"
 
+//! [Enum input]
 typedef enum TypeInputImage
 {
   FULL_DISKS = 0,
@@ -39,6 +40,7 @@ std::string typeInputImageToString(const TypeInputImage &type)
   }
   return name;
 }
+//! [Enum input]
 
 TypeInputImage typeInputImageFromString(const std::string &name)
 {
@@ -64,9 +66,11 @@ std::string getAvailableTypeInputImage(const std::string &prefix = "<", const st
   return list;
 }
 
+//! [Draw disks]
 void
 drawDisk(vpImage<unsigned char> &I, const vpImagePoint &center, const unsigned int &radius
   , const unsigned int &borderColor, const unsigned int &fillingColor, const unsigned int &thickness, const unsigned int &bckg)
+//! [Draw disks]
 {
   vpImageDraw::drawCircle(I, center, radius, borderColor, thickness);
   vp::floodFill(I,
@@ -77,8 +81,10 @@ drawDisk(vpImage<unsigned char> &I, const vpImagePoint &center, const unsigned i
   );
 }
 
+//! [Draw synthetic]
 vpImage<unsigned char>
 generateImage(const TypeInputImage &inputType)
+//! [Draw synthetic]
 {
   // // Image dimensions and background
   const unsigned int width = 640;
@@ -151,17 +157,18 @@ generateImage(const TypeInputImage &inputType)
 bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode)
 {
   double t0 = vpTime::measureTimeMicros();
+  //! [Run detection]
   std::vector<vpCircleHoughTransform::vpCircle2D> detectedCircles = detector.detect(I_src, nbCirclesToDetect);
+  //! [Run detection]
   double tF = vpTime::measureTimeMicros();
   std::cout << "Process time = " << (tF - t0) * 0.001 << "ms" << std::endl << std::flush;
-  // vpImage<double> I_dX = detector.getGradientX();
-  // vpImage<double> I_dY = detector.getGradientY();
   vpImage<vpRGBa> I_disp;
   vpImageConvert::convert(I_src, I_disp);
 
   unsigned int id = 0;
   std::vector<vpColor> v_colors = { vpColor::red, vpColor::purple, vpColor::orange, vpColor::yellow, vpColor::blue };
   unsigned int idColor = 0;
+  //! [Iterate detections]
   for (auto circleCandidate : detectedCircles) {
     circleCandidate.display(I_disp, v_colors[idColor], 2);
     std::cout << "Circle #" << id << ":" << std::endl;
@@ -170,10 +177,9 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
     id++;
     idColor = (idColor + 1) % v_colors.size();
   }
+  //! [Iterate detections]
 
   return drawingHelpers::display(I_disp, "Detection results", blockingMode);
-  // drawingHelpers::display(I_dX, "Gradient along X", blockingMode);
-  // drawingHelpers::display(I_dY, "Gradient along Y", blockingMode);
 }
 
 int main(int argc, char **argv)
@@ -218,7 +224,7 @@ int main(int argc, char **argv)
       i++;
     }
 #ifdef VISP_HAVE_NLOHMANN_JSON
-    else if (argName == "--json" && i + 1 < argc) {
+    else if (argName == "--config" && i + 1 < argc) {
       opt_jsonFilePath = std::string(argv[i + 1]);
       i++;
     }
@@ -277,7 +283,7 @@ int main(int argc, char **argv)
       std::cout << "\t" << argv[0]
         << "\t [--input " << getAvailableTypeInputImage() << "]" << std::endl
 #ifdef VISP_HAVE_NLOHMANN_JSON
-        << "\t [--json <path/to/json/file>] (default: " << (def_jsonFilePath.empty() ? "unused" : def_jsonFilePath) << ")" << std::endl
+        << "\t [--config <path/to/json/file>] (default: " << (def_jsonFilePath.empty() ? "unused" : def_jsonFilePath) << ")" << std::endl
 #endif
         << "\t [--nb-circles <number-circles-to-detect>] (default: " << def_nbCirclesToDetect << ")" << std::endl
         << "\t [--gaussian-kernel <kernel-size>] (default: " << def_gaussianKernelSize << ")" << std::endl
@@ -299,7 +305,7 @@ int main(int argc, char **argv)
         << "\t\tDefault: " << def_input << std::endl
         << std::endl
 #ifdef VISP_HAVE_NLOHMANN_JSON
-        << "\t--json" << std::endl
+        << "\t--config" << std::endl
         << "\t\tPermit to configure the Hough Circle Algorithm using a JSON file." << std::endl
         << "\t\tDefault: " << (def_jsonFilePath.empty() ? "unused" : def_jsonFilePath) << std::endl
         << std::endl
@@ -396,6 +402,7 @@ int main(int argc, char **argv)
     }
   }
 
+  //! [Algo params]
   vpCircleHoughTransform::CHTransformParameters
     algoParams(opt_gaussianKernelSize
       , opt_gaussianSigma
@@ -410,7 +417,9 @@ int main(int argc, char **argv)
       , opt_centerDistanceThresh
       , opt_radiusDifferenceThresh
     );
+  //! [Algo params]
 
+  //! [Algo init]
   vpCircleHoughTransform detector;
   if (opt_jsonFilePath.empty()) {
     std::cout << "Initializing detector from the program arguments [...]" << std::endl;
@@ -424,11 +433,13 @@ int main(int argc, char **argv)
     throw(vpException(vpException::functionNotImplementedError, "You must install nlohmann JSON library to use this feature, see https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json for more information."));
 #endif
   }
+  //! [Algo init]
   std::cout << detector;
 
   vpImage<unsigned char> I_src;
   TypeInputImage inputType = typeInputImageFromString(opt_input);
   if (inputType == USER_IMG) {
+    //! [Manage video]
     if (opt_input.find("%") != std::string::npos) {
       // The user wants to read a sequence of images from different files
       bool hasToContinue = true;
@@ -441,7 +452,9 @@ int main(int argc, char **argv)
         vpTime::wait(40);
       }
     }
+    //! [Manage video]
     else {
+      //! [Manage single image]
       // Check if opt_input exists
       if (!vpIoTools::checkFilename(opt_input)) {
         throw(vpException(vpException::ioError, "Input file \"" + opt_input + "\" does not exist !"));
@@ -449,11 +462,14 @@ int main(int argc, char **argv)
       // Read the image and perform detection on it
       vpImageIo::read(I_src, opt_input);
       test_detection(I_src, detector, opt_nbCirclesToDetect, true);
+      //! [Manage single image]
     }
   }
   else {
+    //! [Manage synthetic image]
     I_src = generateImage(inputType);
     test_detection(I_src, detector, opt_nbCirclesToDetect, true);
+    //! [Manage synthetic image]
   }
   return EXIT_SUCCESS;
 }
