@@ -660,7 +660,7 @@ public:
 
     // current data values.
     vpMe::vpLikelihoodThresholdType d_edge_threshold_type = m_ecm.getLikelihoodThresholdType();
-    int d_edge_threshold = m_ecm.getThreshold();
+    double d_edge_threshold = m_ecm.getThreshold();
     double d_mu1 = m_ecm.getMu1();
     double d_mu2 = m_ecm.getMu2();
 
@@ -765,8 +765,8 @@ public:
     // Check to ensure that d_nb_mask > 0
     if (d_nb_mask == 0)
       throw(vpException(vpException::badValue, "Model-based tracker mask size "
-        "parameter should be different "
-        "from zero in xml file"));
+                        "parameter should be different "
+                        "from zero in xml file"));
     m_ecm.setMaskNumber(d_nb_mask);
 
     if (m_verbose) {
