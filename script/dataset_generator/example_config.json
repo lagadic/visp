@@ -14,9 +14,9 @@
     "max_num_samples": 64
   },
   "scene": {
-    "room_size_multiplier": 1.5,
+    "room_size_multiplier": 1.0,
     "distractors": {
-      "min_count": 5,
+      "min_count": 1,
       "max_count": 5,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
@@ -24,18 +24,20 @@
       "pbr_noise": 0.5
     },
     "lights": {
-      "min_count": 4,
+      "min_count": 2,
       "max_count": 8,
       "min_intensity": 100,
-      "max_intensity": 500
+      "max_intensity": 300
     },
     "objects": {
       "min_count": 1,
       "max_count": 10,
       "multiple_occurences": true,
       "scale_noise": 0.2,
-      "displacement_max_amount": 0.001,
-      "pbr_noise": 0.2
+      "displacement_max_amount": 0.01,
+      "pbr_noise": 0.2,
+      "cam_min_dist_rel": 0.8,
+      "cam_max_dist_rel": 5.0
     }
   },
   "dataset": {

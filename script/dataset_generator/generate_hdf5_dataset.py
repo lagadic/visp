@@ -65,6 +65,13 @@ def point_in_bounding_box(object: bproc.types.MeshObject, bb_scale=1.0):
   point = point[:3, 0]
   return point
 
+def object_bb_length(object: bproc.types.MeshObject) -> float:
+  size = 0.0
+  bb = object.get_bound_box()
+  for corner_index in range(len(bb) - 1):
+    dists = np.linalg.norm(bb[corner_index+1:] - bb[corner_index], axis=-1, ord=2)
+    size = max(np.max(dists), size)
+  return size
 
 def randomize_pbr(objects: List[bproc.types.MeshObject], noise):
   # set shading and physics properties and randomize PBR materials
@@ -85,7 +92,7 @@ def randomize_pbr(objects: List[bproc.types.MeshObject], noise):
         if new_value is not None:
           mat.set_principled_shader_value(k, new_value)
 
-def add_displacement(objects, max_displacement_strength=0.05):
+def add_displacement(objects: List[bproc.types.MeshObject], max_displacement_strength=0.05):
   for obj in objects:
     obj.add_uv_mapping("cylinder")
 
@@ -97,7 +104,7 @@ def add_displacement(objects, max_displacement_strength=0.05):
     obj.add_displace_modifier(
         texture=texture,
         strength=np.random.uniform(0, max_displacement_strength),
-        subdiv_level=np.random.randint(1, 3),
+        subdiv_level=1,
     )
 
 
@@ -318,10 +325,7 @@ class Generator:
     objects = self.create_target_objects()
 
     for object in objects:
-        bb = object.get_bound_box()
-        for corner_index in range(len(bb) - 1):
-          dists = np.linalg.norm(bb[corner_index+1:] - bb[corner_index], axis=-1, ord=2)
-          room_size = max(np.max(dists), room_size)
+        room_size = max(object_bb_length(object), room_size)
     size = room_size * room_size_multiplier
 
     ground = bproc.object.create_primitive('PLANE')
@@ -364,12 +368,18 @@ class Generator:
   def sample_camera_poses(self, scene: Scene) -> None:
     dataset_config = self.json_config['dataset']
     images_per_scene = dataset_config['images_per_scene']
+    cam_min_dist, cam_max_dist = itemgetter('cam_min_dist_rel', 'cam_max_dist_rel')(self.json_config['scene']['objects'])
     hs = scene.size / 2
     for i in range(images_per_scene):
-      poi = bproc.object.compute_poi(scene.target_objects)
-      location = np.random.uniform([-hs, -hs, -hs], [hs,hs,hs])
-      rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
-      cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
+      good = False
+      while not good:
+        object = scene.target_objects[np.random.choice(len(scene.target_objects))]
+        object_size = object_bb_length(object)
+        poi = point_in_bounding_box(object, bb_scale=1)
+        location = bproc.sampler.sphere(object.get_location(), np.random.uniform(cam_min_dist, cam_max_dist) * object_size, 'SURFACE')
+        rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
+        cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
+        good = object in bproc.camera.visible_objects(cam2world_matrix)
       bproc.camera.add_camera_pose(cam2world_matrix)
 
   def run(self):
@@ -384,8 +394,10 @@ class Generator:
       data = self.render()
       path = save_path / str(scene_idx)
       path.mkdir(exist_ok=True)
-      bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=True)
+      bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=False)
       scene.cleanup()
+      del scene
+      del data
 
 
 
