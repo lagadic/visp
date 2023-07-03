@@ -16,8 +16,8 @@
   "scene": {
     "room_size_multiplier": 1.5,
     "distractors": {
-      "min_count": 20,
-      "max_count": 50,
+      "min_count": 5,
+      "max_count": 5,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
       "displacement_max_amount": 0.1,
@@ -39,7 +39,7 @@
     }
   },
   "dataset": {
-    "num_scenes": 2,
+    "num_scenes": 5,
     "images_per_scene": 2,
     "object_poses": true,
     "depth": false,

@@ -333,6 +333,7 @@ class Generator:
       {'loc': [-size / 2, 0, 0], 'rot': [0, np.pi / 2, 0]},
       {'loc': [0, size / 2, 0], 'rot': [np.pi / 2, 0, 0]},
       {'loc': [0, -size / 2, 0], 'rot': [np.pi / 2, 0, 0]},
+      {'loc': [0, 0, size / 2], 'rot': [0.0, 0, 0]},
     ]
     for w_data in wall_data:
       wall = bproc.object.create_primitive('PLANE')
@@ -344,7 +345,7 @@ class Generator:
     for obj in room_objects:
       random_texture = np.random.choice(self.cc_textures)
       obj.replace_materials(random_texture)
-    #randomize_pbr(room_objects)
+    randomize_pbr(room_objects, 0.2)
 
     def sample_pose(obj: bproc.types.MeshObject):
       loc = np.random.uniform([-size / 2, -size / 2, -size / 2], [size / 2, size / 2, size / 2])
@@ -398,10 +399,10 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   generator = Generator(args.config)
-  RendererUtility.set_render_devices(use_only_cpu=True)
-  bproc.clean_up(clean_up_camera=True)
+  # RendererUtility.set_render_devices(use_only_cpu=True)
+  # bproc.clean_up(clean_up_camera=True)
 
-  # bproc.init() # Works if you have a GPU
+  bproc.init() # Works if you have a GPU
   generator.init()
   generator.run()
 
