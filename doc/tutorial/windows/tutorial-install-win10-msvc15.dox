@@ -161,7 +161,7 @@ where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install` is where you have ins
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
 `opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
