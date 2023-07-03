@@ -231,7 +231,7 @@ vpCircleHoughTransform::computeCenterCandidates()
 
         for (int k1 = 0; k1 < 2; k1++)
         {
-          for (int rad = m_algoParams.m_minRadius; rad <= m_algoParams.m_maxRadius; rad++)
+          for (unsigned int rad = m_algoParams.m_minRadius; rad <= m_algoParams.m_maxRadius; rad++)
           {
             double x1 = (double)c + (double) rad * sx;
             double y1 = (double)r + (double) rad * sy;
