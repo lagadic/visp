@@ -399,12 +399,12 @@ We give hereafter the two ways to get this data set:
 
 - Download the latest `visp-images-3.x.y.zip` from https://visp.inria.fr/download and uncompress it in your workspace
 `%%VISP_WS%`.
-\image html img-win11-msvc17-visp-images-3.5.0.jpg
+\image html img-win-visp-images-last-release.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.5.0`. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.5.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
@@ -415,7 +415,7 @@ C:\> exit
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-\image html img-win11-msvc17-visp-images.jpg
+\image html img-win-visp-images-git.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
