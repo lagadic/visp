@@ -41,12 +41,13 @@ int main()
       std::cout << "Failed to open the camera" << std::endl;
       return EXIT_FAILURE;
     }
+    cv::Mat frame;
 #endif
     //! [grabber container]
     //! [first image acquisition]
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394)
     g.acquire(I);
-#elif defined(VISP_HAVE_VIDEOIO)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
