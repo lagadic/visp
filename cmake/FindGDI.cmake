@@ -37,12 +37,14 @@
 #
 #############################################################################
 
-SET(GDI_FOUND "NO")
+set(GDI_FOUND "NO")
 
 # GDI (Graphics Device Interface)  is only available on Windows platforms
 IF(WIN32)
   IF(MINGW)
     FIND_LIBRARY(GDI_LIBRARY gdi32
+                 "C:/mingw64/lib"
+                 "C:/mingw64/x86_64-w64-mingw32/lib"
                  "C:/MinGW/lib"
                  "C:/mingw/mingw/lib"
                  "C:/mingw32/lib"
@@ -52,7 +54,7 @@ IF(WIN32)
                  DOC "Where can the GDI (Graphics Device Interface) library be found"
                  NO_DEFAULT_PATH
                 )
-  ELSE(MINGW)
+  ELSE()
     IF(CMAKE_CL_64)
       # Generic path search
       file(GLOB _gdi_search_path "C:/Program Files (x86)/Windows Kits/*/Lib/*/um/x64")
@@ -161,4 +163,4 @@ IF(WIN32)
   ENDIF(GDI_LIBRARY)
 
   MARK_AS_ADVANCED(GDI_LIBRARY)
-ENDIF(WIN32)
+ENDIF()
