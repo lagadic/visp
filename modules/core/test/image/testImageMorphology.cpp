@@ -45,6 +45,7 @@
 #define CATCH_CONFIG_RUNNER
 #include "common.hpp"
 #include <catch.hpp>
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageMorphology.h>
 
 TEST_CASE("Binary image morphology", "[image_morphology]")
