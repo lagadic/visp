@@ -402,6 +402,33 @@ public:
     }
   }
 
+
+  /*!
+  Insert array A at the given position in the current array.
+
+  \warning Throw vpException::dimensionError if the
+  dimensions of the matrices do not allow the operation.
+
+  \param A : The array to insert.
+  \param r : The index of the row to begin to insert data.
+  \param c : The index of the column to begin to insert data.
+  */
+  void insert(const vpArray2D<Type> &A, unsigned int r, unsigned int c)
+  {
+    if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
+      if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
+        memcpy(data + r * colNum, A.data, sizeof(Type) * A.size());
+      } else if (data != NULL && A.data != NULL && A.data != data) {
+        for (unsigned int i = r; i < (r + A.getRows()); i++) {
+          memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(Type) * A.colNum);
+        }
+      }
+    } else {
+      throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) array in (%dx%d) array at position (%d,%d)",
+                        A.getRows(), A.getCols(), rowNum, colNum, r, c);
+    }
+  }
+
   /*!
     Equal to comparison operator of a 2D array.
   */
@@ -522,6 +549,13 @@ public:
   }
 
   vpArray2D<Type> hadamard(const vpArray2D<Type> &m) const;
+
+  /**
+   * \brief  Compute the transpose of the array
+   * 
+   * @return vpArray2D<Type> C = A^T
+   */
+  vpArray2D<Type> t() const;
   //@}
 
   //---------------------------------
@@ -895,6 +929,61 @@ public:
   friend void to_json(nlohmann::json& j, const vpArray2D<T>& array);
 #endif
 
+  /*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First matrix.
+  \param kernel : Second matrix.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+  */
+  static vpArray2D<Type> conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, const std::string &mode);
+
+  /*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First array.
+  \param kernel : Second array.
+  \param res : Result.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+ */
+  static void conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode);
+
+  /*!
+  Insert array B in array A at the given position.
+
+  \param A : Main array.
+  \param B : Array to insert.
+  \param r : Index of the row where to add the array.
+  \param c : Index of the column where to add the array.
+  \return Array with B insert in A.
+
+  \warning Throw exception if the sizes of the arrays do not allow the
+  insertion.
+  */
+  vpArray2D<Type> insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, unsigned int r, unsigned int c);
+
+  /*!
+  \relates vpArray2D
+  Insert array B in array A at the given position.
+
+  \param A : Main array.
+  \param B : Array to insert.
+  \param C : Result array.
+  \param r : Index of the row where to insert array B.
+  \param c : Index of the column where to insert array B.
+
+  \warning Throw exception if the sizes of the arrays do not
+  allow the insertion.
+  */
+  static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
 };
 
@@ -952,6 +1041,116 @@ template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<
   }
 
   return out;
+}
+
+template <class Type> vpArray2D<Type> vpArray2D<Type>::t() const
+{
+  vpArray2D<Type> At(colNum, rowNum);
+  for (unsigned int i = 0; i < rowNum; i++) 
+  {
+    for (unsigned int j = 0; j < colNum; j++) 
+    {
+      At[j][i] = (*this)[i][j];
+    }
+  }
+  return At;
+} 
+
+template <class Type> vpArray2D<Type> vpArray2D<Type>::conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, const std::string &mode)
+{
+  vpArray2D<Type> res;
+  conv2(M, kernel, res, mode);
+  return res;
+}
+
+template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode)
+{
+  if (M.getRows() * M.getCols() == 0 || kernel.getRows() * kernel.getCols() == 0)
+    return;
+
+  if (mode == "valid") {
+    if (kernel.getRows() > M.getRows() || kernel.getCols() > M.getCols())
+      return;
+  }
+
+  vpArray2D<Type> M_padded, res_same;
+
+  if (mode == "full" || mode == "same") {
+    const unsigned int pad_x = kernel.getCols() - 1;
+    const unsigned int pad_y = kernel.getRows() - 1;
+    M_padded.resize(M.getRows() + 2 * pad_y, M.getCols() + 2 * pad_x, true, false);
+    M_padded.insert(M, pad_y, pad_x);
+
+    if (mode == "same") {
+      res.resize(M.getRows(), M.getCols(), false, false);
+      res_same.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    } else {
+      res.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+  } else if (mode == "valid") {
+    M_padded = M;
+    res.resize(M.getRows() - kernel.getRows() + 1, M.getCols() - kernel.getCols() + 1);
+  } else {
+    return;
+  }
+
+  if (mode == "same") {
+    for (unsigned int i = 0; i < res_same.getRows(); i++) {
+      for (unsigned int j = 0; j < res_same.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res_same[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+
+    const unsigned int start_i = kernel.getRows() / 2;
+    const unsigned int start_j = kernel.getCols() / 2;
+    for (unsigned int i = 0; i < M.getRows(); i++) {
+      memcpy(res.data + i * M.getCols(), res_same.data + (i + start_i) * res_same.getCols() + start_j,
+             sizeof(Type) * M.getCols());
+    }
+  } else {
+    for (unsigned int i = 0; i < res.getRows(); i++) {
+      for (unsigned int j = 0; j < res.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+  }
+}
+
+template<class Type> vpArray2D<Type> vpArray2D<Type>::insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, unsigned int r, unsigned int c)
+{
+  vpArray2D<Type> C;
+
+  insert(A, B, C, r, c);
+
+  return C;
+}
+
+template<class Type> void vpArray2D<Type>::insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c)
+{
+  if (((r + B.getRows()) <= A.getRows()) && ((c + B.getCols()) <= A.getCols())) {
+    C.resize(A.getRows(), A.getCols(), false, false);
+
+    for (unsigned int i = 0; i < A.getRows(); i++) {
+      for (unsigned int j = 0; j < A.getCols(); j++) {
+        if (i >= r && i < (r + B.getRows()) && j >= c && j < (c + B.getCols())) {
+          C[i][j] = B[i - r][j - c];
+        } else {
+          C[i][j] = A[i][j];
+        }
+      }
+    }
+  } else {
+    throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) array in (%dx%d) array at position (%d,%d)",
+                      B.getRows(), B.getCols(), A.getCols(), A.getRows(), r, c);
+  }
 }
 
 template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type> &A) const

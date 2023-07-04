@@ -677,13 +677,6 @@ vpMatrix M(R);
   static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
 
-  //-------------------------------------------------
-  // 2D Convolution Static Public Member Functions
-  //-------------------------------------------------
-  /** @name 2D Convolution with Static Public Member Functions  */
-  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode = "full");
-  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode = "full");
-
   //---------------------------------
   // Covariance computation Static Public Member Functions
   //---------------------------------
