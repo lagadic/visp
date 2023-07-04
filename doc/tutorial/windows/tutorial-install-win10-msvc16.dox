@@ -695,14 +695,14 @@ We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace
 `%%VISP_WS%`.
-\image html img-win10-visp-images-3.3.0.png
+\image html  img-win-visp-images-git.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
@@ -713,7 +713,7 @@ C:\> exit
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-\image html img-win10-visp-images.png
+\image html img-win-visp-images-last-release.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
