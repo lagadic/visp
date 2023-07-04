@@ -37,6 +37,9 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 void vpImageFilter::filter<float>(const vpImage<unsigned char> &I, vpImage<float> &If, const vpArray2D<float> &M, bool convolve);
 
@@ -50,6 +53,9 @@ void vpImageFilter::filter<float>(const vpImage<float> &I, vpImage<float> &Iu, v
 template <>
 void vpImageFilter::filter<double>(const vpImage<double> &I, vpImage<double> &Iu, vpImage<double> &Iv, const vpArray2D<double> &M,
   bool convolve);
+/**
+ * \endcond
+ */
 
 /*!
   Apply a filter to an image using two separable kernels. For instance,
@@ -186,6 +192,9 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
 }
 #endif
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 void vpImageFilter::filter<float>(const vpImage<unsigned char> &I, vpImage<float> &GI, const float *filter,
   unsigned int size);
@@ -207,6 +216,9 @@ void vpImageFilter::filterX<float>(const vpImage<unsigned char> &I, vpImage<floa
 template<>
 void vpImageFilter::filterX<double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter,
   unsigned int size);
+/**
+ * \endcond
+ */
 
 void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size)
 {
@@ -230,6 +242,9 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
   }
 }
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 void vpImageFilter::filterX<float>(const vpImage<float> &I, vpImage<float> &dIx, const float *filter, unsigned int size);
 
@@ -243,6 +258,9 @@ void vpImageFilter::filterY<float>(const vpImage<unsigned char> &I, vpImage<floa
 template<>
 void vpImageFilter::filterY<double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter,
   unsigned int size);
+/**
+ * \endcond
+ */
 
 void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter, unsigned int size)
 {
@@ -270,6 +288,9 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
   }
 }
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 void vpImageFilter::filterY<float>(const vpImage<float> &I, vpImage<float> &dIy, const float *filter, unsigned int size);
 
@@ -301,6 +322,9 @@ void vpImageFilter::gaussianBlur<float>(const vpImage<unsigned char> &I, vpImage
 template<>
 void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size, double sigma,
   bool normalize);
+/**
+ * \endcond
+ */
 
 /*!
   Apply a Gaussian blur to RGB color image.
@@ -325,6 +349,9 @@ void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, 
   delete [] fg;
 }
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 void vpImageFilter::gaussianBlur<float>(const vpImage<float> &I, vpImage<float> &GI, unsigned int size, float sigma,
   bool normalize);
@@ -335,9 +362,6 @@ void vpImageFilter::gaussianBlur<double>(const vpImage<double> &I, vpImage<doubl
 
 template<>
 void vpImageFilter::getGaussianKernel<float>(float *filter, unsigned int size, float sigma, bool normalize);
-
-// template<>
-// void vpImageFilter::getGaussianKernel<double>(double *filter, unsigned int size, double sigma, bool normalize);
 
 template <>
 void vpImageFilter::getGaussianDerivativeKernel<float>(float *filter, unsigned int size, float sigma, bool normalize);
@@ -412,6 +436,9 @@ void vpImageFilter::getGradYGauss2D<float, float>(const vpImage<float> &I, vpIma
 template<>
 void vpImageFilter::getGradYGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *gaussianKernel,
   const double *gaussianDerivativeKernel, unsigned int size);
+/**
+ * \endcond
+ */
 
 // operation pour pyramide gaussienne
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
@@ -487,6 +514,9 @@ void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<
 #endif
 }
 
+/**
+ * \cond DO_NOT_DOCUMENT
+ */
 template<>
 double vpImageFilter::getSobelKernelX<double>(double *filter, unsigned int size);
 
@@ -498,3 +528,6 @@ double vpImageFilter::getSobelKernelY<double>(double *filter, unsigned int size)
 
 template<>
 float vpImageFilter::getSobelKernelY<float>(float *filter, unsigned int size);
+/**
+ * \endcond
+ */
