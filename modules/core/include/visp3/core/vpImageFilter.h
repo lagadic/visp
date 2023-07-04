@@ -105,6 +105,7 @@ public:
   /*!
    Apply a 1 x size Derivative Filter in X to an image pixel.
 
+   \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
@@ -132,7 +133,8 @@ public:
 
   /*!
    Apply a size x 1 Derivative Filter in Y to an image pixel.
-
+   
+   \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
@@ -159,6 +161,7 @@ public:
 
   /*!
   Apply a filter to an image.
+  \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
   \param I : Image to filter
   \param If : Filtered image.
   \param M : Filter kernel.
@@ -229,7 +232,7 @@ public:
   \f[
     \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v =
   \textbf{M}^t \ast \textbf{I} \f]
-
+  \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
   \param I : Image to filter
   \param Iu : Filtered image along the horizontal axis (u = columns).
   \param Iv : Filtered image along the vertical axis (v = rows).
@@ -289,6 +292,11 @@ public:
   
   /*!
     Apply a separable filter.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \param I: The original image.
+    \param GI: The filtered image.
+    \param filter: The separable filter.
+    \param size: The size of the filter.
   */
   template <typename FilterType>
   static void filter(const vpImage<unsigned char> &I, vpImage<FilterType> &GI, const FilterType *filter,
@@ -302,6 +310,11 @@ public:
 
   /*!
     Apply a separable filter.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \param I: The original image.
+    \param GI: The filtered image.
+    \param filter: The separable filter.
+    \param size: The size of the filter.
   */
   template <typename FilterType>
   static void filter(const vpImage<FilterType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
@@ -873,6 +886,7 @@ public:
 
   /*!
     Apply a Gaussian blur to an image.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image.
     \param GI : Filtered image.
     \param size : Filter size. This value should be odd.
@@ -901,6 +915,7 @@ public:
   
   /*!
     Apply a Gaussian blur to a double image.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input double image.
     \param GI : Filtered image.
     \param size : Filter size. This value should be odd.
@@ -948,7 +963,7 @@ public:
 
   /*!
     Return the coefficients \f$G_i\f$ of a Gaussian filter.
-
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param[out] filter : Pointer to the half size filter kernel that should refer to a
     (size+1)/2 array. The first value refers to the central coefficient, the
     next one to the right coefficients. Left coefficients could be deduced by
@@ -994,6 +1009,7 @@ public:
     Return the coefficients of a Gaussian derivative filter that may be used to
     compute spatial image derivatives after applying a Gaussian blur.
 
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to the filter kernel that should refer to a
     (size+1)/2 array. The first value refers to the central coefficient, the
     next one to the right coefficients. Left coefficients could be deduced by
@@ -1072,6 +1088,7 @@ public:
   
   /*!
     Compute the gradient along X after applying a gaussian filter along Y.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image
     \param dIx : Gradient along X.
     \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
@@ -1133,6 +1150,7 @@ public:
 
   /*!
     Compute the gradient along Y after applying a gaussian filter along X.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image
     \param dIy : Gradient along Y.
     \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
@@ -1151,43 +1169,43 @@ public:
   
   /*!
   Get Sobel kernel for X-direction.
-
+  \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
   \param filter : Pointer to a double array already allocated.
   \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
   \return Scaling factor.
   */
-  template <typename T>
-  inline static T getSobelKernelX(T *filter, unsigned int size)
+  template <typename FilterType>
+  inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   {
     if (size == 0)
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
     if (size > 20)
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
 
-    vpArray2D<T> SobelY(size * 2 + 1, size * 2 + 1);
-    T norm = getSobelKernelY<T>(SobelY.data, size);
-    memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(T));
+    vpArray2D<FilterType> SobelY(size * 2 + 1, size * 2 + 1);
+    FilterType norm = getSobelKernelY<FilterType>(SobelY.data, size);
+    memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(FilterType));
     return norm;
   }
 
   /*!
   Get Sobel kernel for Y-direction.
-
+  \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
   \param filter : Pointer to a double array already allocated.
   \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
   \return Scaling factor.
  */
-  template <typename T>
-  inline static T getSobelKernelY(T *filter, unsigned int size)
+  template <typename FilterType>
+  inline static FilterType getSobelKernelY(FilterType *filter, unsigned int size)
   {
     // Sobel kernel pre-computed for the usual size
-    static const T SobelY3x3[9] = { -1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0 };
-    static const T SobelY5x5[25] = { -1.0, -4.0, -6.0, -4.0, -1.0, -2.0, -8.0, -12.0, -8.0, -2.0, 0.0, 0.0, 0.0,
+    static const FilterType SobelY3x3[9] = { -1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0 };
+    static const FilterType SobelY5x5[25] = { -1.0, -4.0, -6.0, -4.0, -1.0, -2.0, -8.0, -12.0, -8.0, -2.0, 0.0, 0.0, 0.0,
                                         0.0,  0.0,  2.0,  8.0,  12.0, 8.0,  2.0,  1.0,   4.0,  6.0,  4.0, 1.0 };
-    static const T SobelY7x7[49] = { -1,   -6,  -15, -20, -15, -6, -1, -4, -24, -60, -80, -60, -24, -4, -5,  -30, -75,
+    static const FilterType SobelY7x7[49] = { -1,   -6,  -15, -20, -15, -6, -1, -4, -24, -60, -80, -60, -24, -4, -5,  -30, -75,
                                         -100, -75, -30, -5,  0,   0,  0,  0,  0,   0,   0,   5,   30,  75, 100, 75,  30,
                                         5,    4,   24,  60,  80,  60, 24, 4,  1,   6,   15,  20,  15,  6,  1 };
-    const vpArray2D<T> smoothingKernel(3, 3);
+    const vpArray2D<FilterType> smoothingKernel(3, 3);
     smoothingKernel[0][0] = 1.0;
     smoothingKernel[0][1] = 2.0;
     smoothingKernel[0][2] = 1.0;
@@ -1205,25 +1223,25 @@ public:
 
     const unsigned int kernel_size = size * 2 + 1;
     if (kernel_size == 3) {
-      memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(T));
+      memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return 1 / 8.0;
     }
     if (kernel_size == 5) {
-      memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(T));
+      memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
       return 1 / 16.0;
     }
     if (kernel_size == 7) {
-      memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(T));
+      memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
       return 1 / 16.0;
     }
 
-    vpArray2D<T> sobelY(7, 7);
-    memcpy(sobelY.data, SobelY7x7, sobelY.getRows() * sobelY.getCols() * sizeof(T));
+    vpArray2D<FilterType> sobelY(7, 7);
+    memcpy(sobelY.data, SobelY7x7, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
     for (unsigned int i = 4; i <= size; i++) {
-      sobelY = vpArray2D<T>::conv2(sobelY, smoothingKernel, "full");
+      sobelY = vpArray2D<FilterType>::conv2(sobelY, smoothingKernel, "full");
     }
 
-    memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(T));
+    memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
 
     return 1 / 16.0;
   }
