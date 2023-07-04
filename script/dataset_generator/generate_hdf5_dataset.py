@@ -198,14 +198,23 @@ class Generator:
     if normals: # Ugly, but doesn't work if it isn't called every render
       bproc.renderer.enable_normals_output()
     data = bproc.renderer.render()
-    print(data.keys())
-    print(len(data['normals']))
+
     if segmentation:
       data.update(bproc.renderer.render_segmap(map_by=["instance", "class"]))
     return data
 
-  def save_data(self, objects: List[bproc.types.MeshObject], data: Dict):
-    pass
+  def save_data(self, path: Path, objects: List[bproc.types.MeshObject], data: Dict):
+    bb_data = []
+
+    for frame in bproc.utility.num_frames():
+      worldTcam = bproc.camera.get_camera_pose(frame)
+      visible_objects = bproc.camera.visible_objects(worldTcam)
+      for object in objects:
+        if object not in visible_objects:
+          continue
+        for k in data.keys():
+          print(f'{k}, data = {data[k]}')
+
 
   def set_camera_intrinsics(self) -> None:
     '''
@@ -320,6 +329,7 @@ class Generator:
 
     room_size = 0.0
     room_size_multiplier = self.json_config['scene']['room_size_multiplier']
+    simulate_physics = self.json_config['scene']['simulate_physics']
 
     assert room_size_multiplier >= 1.0, 'Room size multiplier should be more than one'
     objects = self.create_target_objects()
@@ -363,6 +373,15 @@ class Generator:
 
     distractors = self.create_distractors(size, room_objects + objects)
     lights = self.create_lights(size, objects)
+
+    if simulate_physics:
+      for object in objects + distractors:
+        object.enable_rigidbody(True)
+      for object in room_objects:
+        object.enable_rigidbody(False)
+
+      bproc.object.simulate_physics_and_fix_final_poses(min_simulation_time=3, max_simulation_time=3.5, check_object_interval=1)
+
     return Scene(size, objects, distractors,  room_objects, lights)
 
   def sample_camera_poses(self, scene: Scene) -> None:
@@ -394,6 +413,7 @@ class Generator:
       data = self.render()
       path = save_path / str(scene_idx)
       path.mkdir(exist_ok=True)
+      self.save_data(path, scene.target_objects, data)
       bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=False)
       scene.cleanup()
       del scene
@@ -411,10 +431,10 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   generator = Generator(args.config)
-  # RendererUtility.set_render_devices(use_only_cpu=True)
-  # bproc.clean_up(clean_up_camera=True)
+  RendererUtility.set_render_devices(use_only_cpu=True)
+  bproc.clean_up(clean_up_camera=True)
 
-  bproc.init() # Works if you have a GPU
+  # bproc.init() # Works if you have a GPU
   generator.init()
   generator.run()
 

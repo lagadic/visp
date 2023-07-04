@@ -15,9 +15,10 @@
   },
   "scene": {
     "room_size_multiplier": 1.0,
+    "simulate_physics": true,
     "distractors": {
-      "min_count": 1,
-      "max_count": 5,
+      "min_count": 25,
+      "max_count": 200,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
       "displacement_max_amount": 0.1,
@@ -26,26 +27,26 @@
     "lights": {
       "min_count": 2,
       "max_count": 8,
-      "min_intensity": 100,
+      "min_intensity": 50,
       "max_intensity": 300
     },
     "objects": {
       "min_count": 1,
-      "max_count": 10,
+      "max_count": 50,
       "multiple_occurences": true,
       "scale_noise": 0.2,
-      "displacement_max_amount": 0.01,
+      "displacement_max_amount": 0.005,
       "pbr_noise": 0.2,
-      "cam_min_dist_rel": 0.8,
+      "cam_min_dist_rel": 1.0,
       "cam_max_dist_rel": 5.0
     }
   },
   "dataset": {
-    "num_scenes": 5,
+    "num_scenes": 1,
     "images_per_scene": 2,
     "object_poses": true,
     "depth": false,
-    "normals": true,
+    "normals": false,
     "segmentation": false,
     "detection": true,
     "save_path": "output"
