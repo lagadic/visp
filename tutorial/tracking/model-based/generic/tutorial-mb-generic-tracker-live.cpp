@@ -375,7 +375,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                              \
     defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2)
       g.acquire(I);
-#elif defined(VISP_HAVE_VIDEOIO)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
