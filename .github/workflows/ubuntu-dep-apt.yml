@@ -104,9 +104,10 @@ jobs:
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
+        export VISP_INSTALL_PREFIX=/tmp/usr/local
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
-        /tmp/usr/local/bin/visp-config --cflags
-        /tmp/usr/local/bin/visp-config --libs
+        $VISP_INSTALL_PREFIX/bin/visp-config --cflags
+        $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config clean

@@ -111,7 +111,8 @@ jobs:
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
-        /tmp/usr/local/bin/visp-config --cflags
-        /tmp/usr/local/bin/visp-config --libs
+        export VISP_INSTALL_PREFIX=/tmp/usr/local
+        $VISP_INSTALL_PREFIX/bin/visp-config --cflags
+        $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config clean
