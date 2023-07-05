@@ -75,7 +75,7 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
 
   \param t : 3-dimension translation vector to add.
 
-  \return The sum of the current columnn vector (*this) and the translation
+  \return The sum of the current column vector (*this) and the translation
   vector to add.
 \code
   vpTranslationVector t1(1,2,3);
@@ -590,7 +590,7 @@ vpColVector &vpColVector::operator<<(const vpColVector &v)
 }
 
 /*!
-  Assigment operator.   Allow operation such as A = *v
+  Assignment operator. Allow operation such as A = *v
 
   The following example shows how to use this operator.
   \code
