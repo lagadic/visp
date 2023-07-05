@@ -39,10 +39,21 @@ def homogeneous_inverse(aTb):
   bTa[:3, 3] = -bTa[:3, :3] @ bTa[:3, 3]
   return bTa
 def homogeneous_no_scaling(object: bproc.types.MeshObject):
-  worldTlocal = np.eye(4)
-  worldTlocal[:3, :3] = object.get_rotation_mat()
-  worldTlocal[:3, 3] = object.get_location()
-  return worldTlocal
+  localTworld = np.eye(4)
+  localTworld[:3, :3] = object.get_rotation_mat()
+  localTworld[:3, 3] = object.get_location()
+  return localTworld
+
+def convert_to_visp_frame(aTb):
+  '''
+  Same as converting to an OpenCV frame
+  '''
+  return bproc.math.change_source_coordinate_frame_of_transformation_matrix(aTb, ["X", "-Y", "-Z"])
+def convert_points_to_visp_frame(points: np.ndarray):
+  new_points = points.copy()
+  for i in range(len(new_points)):
+    new_points[i] = bproc.math.change_coordinate_frame_of_point(new_points[i], ["X", "-Y", "-Z"])
+  return new_points
 
 def point_in_bounding_box(object: bproc.types.MeshObject, bb_scale=1.0):
   '''
@@ -76,7 +87,8 @@ def object_bb_length(object: bproc.types.MeshObject) -> float:
 def randomize_pbr(objects: List[bproc.types.MeshObject], noise):
   # set shading and physics properties and randomize PBR materials
   for j, obj in enumerate(objects):
-      obj.set_shading_mode('auto')
+      rand_angle = np.random.uniform(30, 90)
+      obj.set_shading_mode('auto', rand_angle)
       mat = obj.get_materials()[0]
       keys = ["Roughness", "Specular", "Metallic"]
       for k in keys:
@@ -131,6 +143,7 @@ class Generator:
       self.json_config = json.load(json_config_file)
     print(self.json_config)
     os.environ['BLENDER_PROC_RANDOM_SEED'] = self.json_config['blenderproc_seed']
+    
 
   def init(self):
     np.random.seed(self.json_config['numpy_seed'])
@@ -204,16 +217,62 @@ class Generator:
     return data
 
   def save_data(self, path: Path, objects: List[bproc.types.MeshObject], data: Dict):
-    bb_data = []
+    json_dataset = self.json_config['dataset']
 
-    for frame in bproc.utility.num_frames():
+    out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
+    filter_z, min_side_px, min_visibility = itemgetter('filter_when_object_mostly_behind', 'min_side_size_px', 'min_visibility_percentage')(json_dataset['detection_params'])
+    frames_data = []
+
+    for frame in range(bproc.utility.num_frames()):
       worldTcam = bproc.camera.get_camera_pose(frame)
+      camTworld = homogeneous_inverse(worldTcam)
+      K = bproc.camera.get_intrinsics_as_K_matrix()
       visible_objects = bproc.camera.visible_objects(worldTcam)
+      objects_data = []
       for object in objects:
         if object not in visible_objects:
           continue
-        for k in data.keys():
-          print(f'{k}, data = {data[k]}')
+        print(object.get_all_cps())
+        object_data = {
+          'class': object.get_cp('category_id', frame),
+          'name': object.get_name() 
+        }
+        if out_object_pose:
+          worldTobj = homogeneous_no_scaling(object)
+          camTobj = camTworld @ worldTobj
+          object_data['cTo'] = convert_to_visp_frame(camTobj)
+        if out_bounding_box:
+        # Get object bounding box in world, project in camera frame
+          bb3d_world = object.get_bound_box()
+          bb3d_cam = camTworld @ np.concatenate((bb3d_world, np.ones((8, 1))), axis=-1).T
+          bb3d_cam = convert_points_to_visp_frame(bb3d_cam.T[:, :3]) # 8 X 3
+          points_behind = bb3d_cam[bb3d_cam[:, 2] < 0]
+          # More than half the points of the bounding box are behind the camera, object will be visible because it is close, but probably not recognizable
+          if filter_z and len(points_behind) > 4:
+            continue
+          visible_bb3d_points = bb3d_cam[bb3d_cam[:, 2] > 0]
+          print(visible_bb3d_points.shape)
+          print(bb3d_cam)
+          # Project points that are in front of the camera in the image
+          visible_points_m_2d = visible_bb3d_points[:, :2] / visible_bb3d_points[:, 2, None]
+          visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
+          visible_points_px_2d = visible_points_px_2d.T[:, :2]
+
+          mins = np.min(visible_points_px_2d, axis=0)
+          maxes = np.max(visible_points_px_2d, axis=0)
+
+
+
+          print(f'x, y = ({mins[0]}, {mins[1]}), size = ({maxes[0] - mins[0]}, {maxes[1] - mins[1]})')
+
+          # object_data['bounding_box'] = ...
+        
+
+        objects_data.append(object_data)
+      frames_data.append(objects_data)
+    data['object_data'] = frames_data
+    bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=False)
+      
 
 
   def set_camera_intrinsics(self) -> None:
@@ -257,7 +316,8 @@ class Generator:
       random_texture = np.random.choice(self.cc_textures)
       obj.replace_materials(random_texture)
     randomize_pbr(distractors, pbr_noise)
-    add_displacement(distractors, displacement_strength)
+    if displacement_strength > 0.0:
+      add_displacement(distractors, displacement_strength)
     return distractors
 
   def create_lights(self, scene_size, target_objects) -> List[bproc.types.Light]:
@@ -266,7 +326,6 @@ class Generator:
     min_intensity, max_intensity = itemgetter('min_intensity', 'max_intensity')(light_json)
 
     count = np.random.randint(min_count, max_count + 1)
-
     point_light_count = np.sum(np.random.choice(2, size=count, replace=True))
     spot_light_count = count - point_light_count
 
@@ -285,11 +344,13 @@ class Generator:
       light = bproc.types.Light('SPOT')
       basic_light_sampling(light)
       looked_at_obj = np.random.choice(len(target_objects))
-      looked_at_obj = target_objects[looked_at_obj]
+      looked_at_obj: bproc.types.MeshObject = target_objects[looked_at_obj]
+      print(looked_at_obj, looked_at_obj.get_local2world_mat())
       poi = point_in_bounding_box(looked_at_obj)
       R = bproc.camera.rotation_from_forward_vec(poi - light.get_location())
       light.set_rotation_mat(R)
       lights.append(light)
+
     return lights
 
   def create_target_objects(self) -> List[bproc.types.MeshObject]:
@@ -317,27 +378,8 @@ class Generator:
       randomize_pbr(objects, pbr_noise)
 
     return objects
-
-  def create_scene(self):
-    '''
-    Create a basic scene, a square room.
-    The size of the room is dependent on the size of the biggest object multiplied by a user supplied param
-    Each wall has a random texture, sampled from cc0 materials
-    Distractors are added randomly in the room
-    Random lights are also placed
-    '''
-
-    room_size = 0.0
-    room_size_multiplier = self.json_config['scene']['room_size_multiplier']
-    simulate_physics = self.json_config['scene']['simulate_physics']
-
-    assert room_size_multiplier >= 1.0, 'Room size multiplier should be more than one'
-    objects = self.create_target_objects()
-
-    for object in objects:
-        room_size = max(object_bb_length(object), room_size)
-    size = room_size * room_size_multiplier
-
+  
+  def create_room(self, size: float) -> List[bproc.types.MeshObject]:
     ground = bproc.object.create_primitive('PLANE')
     ground.set_location([0, 0, -size / 2])
     ground.set_scale([size / 2, size / 2, 1])
@@ -360,6 +402,29 @@ class Generator:
       random_texture = np.random.choice(self.cc_textures)
       obj.replace_materials(random_texture)
     randomize_pbr(room_objects, 0.2)
+    return room_objects
+
+  def create_scene(self):
+    '''
+    Create a basic scene, a square room.
+    The size of the room is dependent on the size of the biggest object multiplied by a user supplied param
+    Each wall has a random texture, sampled from cc0 materials
+    Distractors are added randomly in the room
+    Random lights are also placed
+    '''
+
+    room_size = 0.0
+    room_size_multiplier_min, room_size_multiplier_max = itemgetter('room_size_multiplier_min', 'room_size_multiplier_max')(self.json_config['scene'])
+    simulate_physics = self.json_config['scene']['simulate_physics']
+
+    assert room_size_multiplier_min >= 1.0, 'Room size multiplier should be more than one'
+    objects = self.create_target_objects()
+
+    for object in objects:
+        room_size = max(object_bb_length(object), room_size)
+    size = room_size * np.random.uniform(room_size_multiplier_min, room_size_multiplier_max)
+
+    room_objects = self.create_room(size)
 
     def sample_pose(obj: bproc.types.MeshObject):
       loc = np.random.uniform([-size / 2, -size / 2, -size / 2], [size / 2, size / 2, size / 2])
@@ -372,24 +437,41 @@ class Generator:
     )
 
     distractors = self.create_distractors(size, room_objects + objects)
-    lights = self.create_lights(size, objects)
+
 
     if simulate_physics:
       for object in objects + distractors:
         object.enable_rigidbody(True)
       for object in room_objects:
-        object.enable_rigidbody(False)
+        object.enable_rigidbody(False, collision_shape='BOX')
 
       bproc.object.simulate_physics_and_fix_final_poses(min_simulation_time=3, max_simulation_time=3.5, check_object_interval=1)
 
-    return Scene(size, objects, distractors,  room_objects, lights)
+    def filter_objects_outside_room(objects: List[bproc.types.MeshObject]) -> List[bproc.types.MeshObject]:
+      inside = []
+      outside = []
+      is_inside = lambda loc: np.all(np.logical_and(loc < size / 2, loc > -size / 2))
+      for object in objects:
+        inside.append(object) if is_inside(object.get_location()) else outside.append(object)
+      for object in outside:
+        object.delete()
+
+      print(f'Filtered {len(objects) - len(inside)} objects')
+      return inside
+    
+    objects = filter_objects_outside_room(objects)
+    distractors = filter_objects_outside_room(distractors)
+    lights = self.create_lights(size, objects)
+
+    return Scene(size, objects, distractors, room_objects, lights)
 
   def sample_camera_poses(self, scene: Scene) -> None:
     dataset_config = self.json_config['dataset']
     images_per_scene = dataset_config['images_per_scene']
     cam_min_dist, cam_max_dist = itemgetter('cam_min_dist_rel', 'cam_max_dist_rel')(self.json_config['scene']['objects'])
     hs = scene.size / 2
-    for i in range(images_per_scene):
+    bvh = bproc.object.create_bvh_tree_multi_objects(scene.target_objects + scene.distractors + scene.room_objects)
+    for frame in range(images_per_scene):
       good = False
       while not good:
         object = scene.target_objects[np.random.choice(len(scene.target_objects))]
@@ -397,8 +479,16 @@ class Generator:
         poi = point_in_bounding_box(object, bb_scale=1)
         location = bproc.sampler.sphere(object.get_location(), np.random.uniform(cam_min_dist, cam_max_dist) * object_size, 'SURFACE')
         rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
+        import bpy
+        cam = bpy.context.scene.camera.data
+        clip_start = cam.clip_start
+        focal_length = cam.lens / 1000.0
+        
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
-        good = object in bproc.camera.visible_objects(cam2world_matrix)
+        if object in bproc.camera.visible_objects(cam2world_matrix) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
+          good = True
+        else:
+          good = False
       bproc.camera.add_camera_pose(cam2world_matrix)
 
   def run(self):
@@ -414,7 +504,7 @@ class Generator:
       path = save_path / str(scene_idx)
       path.mkdir(exist_ok=True)
       self.save_data(path, scene.target_objects, data)
-      bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=False)
+      
       scene.cleanup()
       del scene
       del data
@@ -431,7 +521,7 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   generator = Generator(args.config)
-  RendererUtility.set_render_devices(use_only_cpu=True)
+  # RendererUtility.set_render_devices(use_only_cpu=True)
   bproc.clean_up(clean_up_camera=True)
 
   # bproc.init() # Works if you have a GPU

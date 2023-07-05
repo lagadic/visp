@@ -14,14 +14,15 @@
     "max_num_samples": 64
   },
   "scene": {
-    "room_size_multiplier": 1.0,
+    "room_size_multiplier_min": 2.0,
+    "room_size_multiplier_max": 5.0,
     "simulate_physics": true,
     "distractors": {
-      "min_count": 25,
-      "max_count": 200,
+      "min_count": 5,
+      "max_count": 20,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
-      "displacement_max_amount": 0.1,
+      "displacement_max_amount": 0.0,
       "pbr_noise": 0.5
     },
     "lights": {
@@ -32,23 +33,28 @@
     },
     "objects": {
       "min_count": 1,
-      "max_count": 50,
+      "max_count": 10,
       "multiple_occurences": true,
       "scale_noise": 0.2,
-      "displacement_max_amount": 0.005,
+      "displacement_max_amount": 0.0,
       "pbr_noise": 0.2,
       "cam_min_dist_rel": 1.0,
       "cam_max_dist_rel": 5.0
     }
   },
   "dataset": {
-    "num_scenes": 1,
-    "images_per_scene": 2,
-    "object_poses": true,
+    "num_scenes": 5,
+    "images_per_scene": 10,
+    "pose": true,
     "depth": false,
     "normals": false,
     "segmentation": false,
     "detection": true,
+    "detection_params": {
+      "filter_when_object_mostly_behind": true,
+      "min_side_size_px": 10,
+      "min_visibility_percentage": 0.3
+    },
     "save_path": "output"
   },
   "models_path": "/home/sfelton/megapose-models",
