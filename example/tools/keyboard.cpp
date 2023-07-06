@@ -31,7 +31,6 @@
  * Description:
  * Example of keyboard management.
  *
- *
 *****************************************************************************/
 
 /*!
@@ -43,10 +42,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <iostream>
-#include <signal.h>
-#include <stdio.h>
 
 #include <visp3/io/vpKeyboard.h>
 
@@ -77,10 +73,3 @@ int main()
 
   return EXIT_SUCCESS;
 }
-#else
-int main()
-{
-  std::cout << "vpKeyboard class works only on unix..." << std::endl;
-  return EXIT_SUCCESS;
-}
-#endif
