@@ -191,6 +191,8 @@ int main(int argc, char **argv)
   const double def_gaussianSigma = 1.;
   const int def_sobelKernelSize = 3;
   const double def_cannyThresh = 150.;
+  const std::pair<int, int> def_centerXlimits = std::pair<int, int>(0, 640);
+  const std::pair<int, int> def_centerYlimits = std::pair<int, int>(0, 480);
   const unsigned int def_minRadius = 0;
   const unsigned int def_maxRadius = 1000;
   const int def_dilatationRepet = 1;
@@ -198,7 +200,7 @@ int main(int argc, char **argv)
   const double def_radiusThreshRatio = -1.;
   const double def_circlePerfectness = 0.85;
   const double def_centerDistanceThresh = 15;
-  const double def_radiusDifferenceThresh = 1.5 * def_centerDistanceThresh;
+  const double def_radiusDifferenceThresh = 15;
 
 
   std::string opt_input(def_input);
@@ -208,6 +210,8 @@ int main(int argc, char **argv)
   double opt_gaussianSigma = def_gaussianSigma;
   int opt_sobelKernelSize = def_sobelKernelSize;
   double opt_cannyThresh = def_cannyThresh;
+  std::pair<int, int> opt_centerXlimits = def_centerXlimits;
+  std::pair<int, int> opt_centerYlimits = def_centerYlimits;
   unsigned int opt_minRadius = def_minRadius;
   unsigned int opt_maxRadius = def_maxRadius;
   int opt_dilatationRepet = def_dilatationRepet;
@@ -262,6 +266,14 @@ int main(int argc, char **argv)
       opt_centerThresh = atof(argv[i + 1]);
       i++;
     }
+    else if (argName == "--center-xlim" && i + 2 < argc) {
+      opt_centerXlimits = std::pair<int, int> (atoi(argv[i + 1]), atoi(argv[i + 2]));
+      i+=2;
+    }
+    else if (argName == "--center-ylim" && i + 2 < argc) {
+      opt_centerYlimits = std::pair<int, int> (atoi(argv[i + 1]), atoi(argv[i + 2]));
+      i+=2;
+    }
     else if (argName == "--radius-thresh" && i + 1 < argc) {
       opt_radiusThreshRatio = atof(argv[i + 1]);
       i++;
@@ -293,6 +305,8 @@ int main(int argc, char **argv)
         << "\t [--radius-limits <radius-min> <radius-max>] (default: min = " << def_minRadius << ", max = " << def_maxRadius << ")" << std::endl
         << "\t [--dilatation-repet <nb-repetitions>] (default: " << def_dilatationRepet << ")" << std::endl
         << "\t [--center-thresh <center-detection-threshold>] (default: " << (def_centerThresh < 0 ? "auto" : std::to_string(def_centerThresh)) << ")" << std::endl
+        << "\t [--center-xlim <center-horizontal-min center-horizontal-max>] (default: " << def_centerXlimits.first << " , " << def_centerXlimits.second  << ")" << std::endl
+        << "\t [--center-ylim <center-vertical-min center-vertical-max>] (default: " << def_centerYlimits.first << " , " << def_centerYlimits.second  << ")" << std::endl
         << "\t [--radius-thresh <radius-detection-threshold>] (default: " << (def_radiusThreshRatio < 0 ? "auto" : std::to_string(def_radiusThreshRatio)) << ")" << std::endl
         << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_radiusThreshRatio << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
@@ -334,8 +348,6 @@ int main(int argc, char **argv)
         << "\t\tPermit to set the minimum and maximum radii of the circles we are looking for." << std::endl
         << "\t\tDefault: min = " << def_minRadius << ", max = " << def_maxRadius << std::endl
         << std::endl
-        << "\t--merging-thresh" << std::endl
-        << std::endl
         << "\t--dilatation-repet" << std::endl
         << "\t\tPermit to set the number of iterations of the dilatation operation used to detect the maxima of the centers votes." << std::endl
         << "\t\tMinimum tolerated value is 1." << std::endl
@@ -347,6 +359,16 @@ int main(int argc, char **argv)
         << "\t\tOtherwise, if the input is a synthetic image and the value is negative, a fine-tuned value will be used." << std::endl
         << "\t\tDefault: " << (def_centerThresh < 0 ? "auto" : std::to_string(def_centerThresh)) << std::endl
         << std::endl
+        << "\t--center-xlim" << std::endl
+        << "\t\tPermit to set the minimum and maximum horizontal position to be considered as a center candidate." << std::endl
+        << "\t\tThe search area is limited to [-maxRadius; +image.width + maxRadius]." << std::endl
+        << "\t\tDefault: " << def_centerXlimits.first << " , " << def_centerXlimits.second << std::endl
+        << std::endl
+        << "\t--center-ylim" << std::endl
+        << "\t\tPermit to set the minimum and maximum vertical position to be considered as a center candidate." << std::endl
+        << "\t\tThe search area is limited to [-maxRadius; +image.height + maxRadius]." << std::endl
+        << "\t\tDefault: " << def_centerYlimits.first << " , " << def_centerYlimits.second << std::endl
+        << std::endl
         << "\t--radius-thresh" << std::endl
         << "\t\tPermit to to set the minimum number of votes per radian a radius must reach to be considered as a circle candidate a given pair (center candidate, radius candidate)." << std::endl
         << "\t\tDefault: " << (def_radiusThreshRatio < 0 ? "auto" : std::to_string(def_radiusThreshRatio)) << std::endl
@@ -357,6 +379,7 @@ int main(int argc, char **argv)
         << "\t\tThe scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij." << std::endl
         << "\t\tDefault: " << def_circlePerfectness << std::endl
         << std::endl
+        << "\t--merging-thresh" << std::endl
         << "\t\tPermit to set the thresholds used during the merging stage of the algorithm." << std::endl
         << "\t\tThe center distance threshold indicates the maximum distance the centers can be in order to be merged." << std::endl
         << "\t\tThe radius difference threshold indicates the maximum absolute difference between the two circle candidates in order to be merged." << std::endl
@@ -371,13 +394,13 @@ int main(int argc, char **argv)
     TypeInputImage inputType = typeInputImageFromString(opt_input);
     switch (inputType) {
     case TypeInputImage::FULL_DISKS:
-      opt_centerThresh = 50.;
+      opt_centerThresh = 100.;
       break;
     case TypeInputImage::HALF_DISKS:
-      opt_centerThresh = 25.;
+      opt_centerThresh = 50.;
       break;
     case TypeInputImage::QUARTER_DISKS:
-      opt_centerThresh = 15.;
+      opt_centerThresh = 25.;
       break;
     default:
       throw(vpException(vpException::badValue, "Missing center threshold value to use with actual pictures as input. See the help for more information."));
@@ -408,6 +431,8 @@ int main(int argc, char **argv)
       , opt_gaussianSigma
       , opt_sobelKernelSize
       , opt_cannyThresh
+      , opt_centerXlimits
+      , opt_centerYlimits
       , opt_minRadius
       , opt_maxRadius
       , opt_dilatationRepet

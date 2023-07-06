@@ -70,28 +70,30 @@ public:
     private:
       // // Gaussian smoothing attributes
       int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
-      double m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+      float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
       
       // // Gradient computation attributes
       int m_sobelKernelSize; /*!< Size of the Sobel kernels used to compute the gradients. Must be an odd number.*/
 
       // // Edge detection attributes
-      double m_cannyThresh; /*!< The threshold for the Canny operator. Only value greater than this value are marked as an edge.
+      float m_cannyThresh; /*!< The threshold for the Canny operator. Only value greater than this value are marked as an edge.
                                  A negative value makes the algorithm compute this threshold automatically.*/
 
       // // Center candidates computation attributes
+      std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
+      std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
       unsigned int m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
       unsigned int m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
       int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
-      double m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+      float m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
       
       // // Circle candidates computation attributes
-      double m_radiusRatioThresh;  /*!< Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.*/
-      double m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
+      float m_radiusRatioThresh;  /*!< Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.*/
+      float m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
       
       // // Circle candidates merging atttributes
-      double m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
-      double m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
+      float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
+      float m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
 
       friend vpCircleHoughTransform;
     public:
@@ -100,6 +102,8 @@ public:
         , m_gaussianStdev(1.)
         , m_sobelKernelSize(3)
         , m_cannyThresh(-1)
+        , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
+        , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
         , m_minRadius(0)
         , m_maxRadius(1000)
         , m_dilatationNbIter(1)
@@ -107,7 +111,7 @@ public:
         , m_radiusRatioThresh(2.)
         , m_circlePerfectness(0.9)
         , m_centerMinDist(15.)
-        , m_mergingRadiusDiffThresh(1.5 * (double)m_centerMinDist)
+        , m_mergingRadiusDiffThresh(1.5 * (float)m_centerMinDist)
       {
 
       }
@@ -120,6 +124,8 @@ public:
        * \param[in] sobelKernelSize Size of the Sobel kernels used to compute the gradients. Must be an odd number. 
        * \param[in] cannyThresh The threshold for the Canny operator. Only value greater than this value are marked as an edge.
                             A negative value makes the algorithm compute this threshold automatically.
+       * \param[in] centerXlimits Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.
+       * \param[in] centerYlimits Minimum and maximum position on the vertical axis of the center of the circle we want to detect.
        * \param[in] minRadius Minimum radius of the circles we want to detect.
        * \param[in] maxRadius Maximum radius of the circles we want to detect.
        * \param[in] dilatationNbIter Number of times dilatation is performed to detect the maximum number of votes for the center candidates
@@ -131,22 +137,26 @@ public:
        */
       CHTransformParameters(
           const int &gaussianKernelSize
-        , const double &gaussianStdev
+        , const float &gaussianStdev
         , const int &sobelKernelSize
-        , const double &cannyThresh
+        , const float &cannyThresh
+        , const std::pair<int, int> &centerXlimits
+        , const std::pair<int, int> &centerYlimits
         , const unsigned int &minRadius
         , const unsigned int &maxRadius
         , const int &dilatationNbIter
-        , const double &centerThresh
-        , const double &radiusThreshRatio
-        , const double &circlePerfectness
-        , const double &centerMinDistThresh
-        , const double &mergingRadiusDiffThresh
+        , const float &centerThresh
+        , const float &radiusThreshRatio
+        , const float &circlePerfectness
+        , const float &centerMinDistThresh
+        , const float &mergingRadiusDiffThresh
         )
         : m_gaussianKernelSize(gaussianKernelSize)
         , m_gaussianStdev(gaussianStdev)
         , m_sobelKernelSize(sobelKernelSize)
         , m_cannyThresh(cannyThresh)
+        , m_centerXlimits(centerXlimits)
+        , m_centerYlimits(centerYlimits)
         , m_minRadius(std::min(minRadius, maxRadius))
         , m_maxRadius(std::max(minRadius, maxRadius))
         , m_dilatationNbIter(dilatationNbIter)
@@ -166,6 +176,8 @@ public:
         txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
         txt += "\tSobel filter kernel size = " + std::to_string(m_sobelKernelSize) + "\n"; 
         txt += "\tCanny edge filter threshold = " + std::to_string(m_cannyThresh) + "\n";
+        txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) +"\n";
+        txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
         txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
         txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
         txt += "\tCenters votes threshold = " + std::to_string(m_centerThresh) + "\n";
@@ -253,6 +265,8 @@ public:
 
         params.m_cannyThresh = j.value("cannyThresh", params.m_cannyThresh);
 
+        params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
+        params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
         std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
         params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
         params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
@@ -302,6 +316,8 @@ public:
             {"gaussianStdev", params.m_gaussianStdev},
             {"sobelKernelSize", params.m_sobelKernelSize},
             {"cannyThresh", params.m_cannyThresh},
+            {"centerXlimits", params.m_centerXlimits},
+            {"centerYlimits", params.m_centerYlimits},
             {"radiusLimits", radiusLimits},
             {"dilatationNbIter", params.m_dilatationNbIter},
             {"centerThresh", params.m_centerThresh},
@@ -327,7 +343,7 @@ public:
       /*!
       * Constructor from a center and radius.
       */
-      vpCircle2D(const vpImagePoint &center, double radius) : m_center(center), m_radius(radius) { }
+      vpCircle2D(const vpImagePoint &center, const float &radius) : m_center(center), m_radius(radius) { }
 
       /*!
       * Constructor from an OpenCV vector that contains [center_x, center_y, radius].
@@ -347,7 +363,7 @@ public:
       /*!
       * Return the radius of the 2D circle.
       */
-      double getRadius() const { return m_radius; };
+      float getRadius() const { return m_radius; };
 
       /*!
       * Return the 2D circle bounding box.
@@ -361,24 +377,24 @@ public:
       /*!
       * Return normalized moment \f$n_{20}\f$.
       */
-      double get_n20() const { return m_radius * m_radius / 4; };
+      float get_n20() const { return m_radius * m_radius / 4; };
 
       /*!
       * Return normalized moment \f$n_{02}\f$.
       */
-      double get_n02() const { return m_radius * m_radius / 4; };
+      float get_n02() const { return m_radius * m_radius / 4; };
 
       /*!
       * Return normalized moment \f$n_{02}\f$.
       */
-      double get_n11() const { return 0.; };
+      float get_n11() const { return 0.; };
 
       template < typename Type >
-      void display( vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1, unsigned int size = 5 ) const;
+      void display( vpImage< Type > &img, const vpColor &color = vpColor::blue, const unsigned int &thickness = 1, const unsigned int &size = 5 ) const;
 
     private:
       vpImagePoint m_center;
-      double m_radius;
+      float m_radius;
   };
 
   /**
@@ -504,7 +520,7 @@ public:
    * \param[in] kernelSize The size of the Gaussian kernel. Must be an odd value.
    * \param[in] stdev The standard deviation of the Gaussian function.
    */
-  inline void setGaussianParameters(const int &kernelSize, const double &stdev)
+  inline void setGaussianParameters(const int &kernelSize, const float &stdev)
   {
     m_algoParams.m_gaussianKernelSize = kernelSize;
     m_algoParams.m_gaussianStdev = stdev;
@@ -529,7 +545,7 @@ public:
    * \param[in] canny_threshold : Canny filter upper threshold. When set to -1 (default), compute
    * automatically this threshold.
    */
-  inline void setCannyThreshold(double canny_threshold)
+  inline void setCannyThreshold(const float &canny_threshold)
   {
     m_algoParams.m_cannyThresh = canny_threshold;
   }
@@ -540,7 +556,7 @@ public:
    *
    * \param[in] center_min_dist : Center min distance in pixels.
    */
-  inline void setCircleCenterMinDist(double center_min_dist)
+  inline void setCircleCenterMinDist(const float &center_min_dist)
   {
     m_algoParams.m_centerMinDist = center_min_dist;
 
@@ -551,10 +567,31 @@ public:
   }
 
   /*!
+   * Set circles center min and max location in the image.
+   * If one value is equal to \b std::numeric_limits<int>::min or 
+   * \b std::numeric_limits<int>::max(), the algorithm will set it 
+   * either to -maxRadius or +maxRadius depending on if
+   * it is the lower or upper limit that is missing.
+   *
+   * \param[in] center_min_x : Center min location on the horizontal axis, expressed in pixels.
+   * \param[in] center_max_x : Center max location on the horizontal axis, expressed in pixels.
+   * \param[in] center_min_y : Center min location on the vertical axis, expressed in pixels.
+   * \param[in] center_max_y : Center max location on the vertical axis, expressed in pixels.
+   */
+  void setCircleCenterBoundingBox(const int &center_min_x, const int &center_max_x,
+                                          const int &center_min_y, const int &center_max_y)
+  {
+    m_algoParams.m_centerXlimits.first = center_min_x;
+    m_algoParams.m_centerXlimits.second = center_max_x;
+    m_algoParams.m_centerYlimits.first = center_min_y;
+    m_algoParams.m_centerYlimits.second = center_max_y;
+  }
+
+  /*!
    * Set circles min radius.
    * \param[in] circle_min_radius : Min radius in pixels.
    */
-  inline void setCircleMinRadius(double circle_min_radius)
+  inline void setCircleMinRadius(const float &circle_min_radius)
   {
     m_algoParams.m_minRadius = circle_min_radius;
   }
@@ -563,7 +600,7 @@ public:
    * Set circles max radius.
    * \param[in] circle_max_radius : Max radius in pixels.
    */
-  inline void setCircleMaxRadius(double circle_max_radius)
+  inline void setCircleMaxRadius(const float &circle_max_radius)
   {
     m_algoParams.m_maxRadius = circle_max_radius;
   }
@@ -572,7 +609,7 @@ public:
    * Set circles perfectness. The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
    * \param[in] circle_perfectness : Circle perfectness. Value between 0 and 1. A perfect circle has value 1.
    */
-  void setCirclePerfectness(double circle_perfectness)
+  void setCirclePerfectness(const float &circle_perfectness)
   {
     m_algoParams.m_circlePerfectness = circle_perfectness;
     if (m_algoParams.m_circlePerfectness <= 0 || m_algoParams.m_circlePerfectness > 1)
@@ -587,7 +624,7 @@ public:
    * \param[in] dilatationRepet Number of repetition of the dilatation operation to detect the maxima in the center accumulator.
    * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
    */
-  inline void setCenterComputationParameters(const int &dilatationRepet, const double &centerThresh)
+  inline void setCenterComputationParameters(const int &dilatationRepet, const float &centerThresh)
   {
     m_algoParams.m_dilatationNbIter = dilatationRepet;
     m_algoParams.m_centerThresh = centerThresh;
@@ -603,7 +640,7 @@ public:
    *
    * \param[in] radiusRatioThresh Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.
    */
-  inline void setRadiusRatioThreshold( const double &radiusRatioThresh )
+  inline void setRadiusRatioThreshold( const float &radiusRatioThresh )
   {
     m_algoParams.m_radiusRatioThresh = radiusRatioThresh;
 
@@ -619,7 +656,7 @@ public:
    *
    * \param[in] radiusDifferenceThresh Maximum radius difference between two circle candidates to consider merging them.
    */
-  inline void setRadiusMergingThresholds(const double &radiusDifferenceThresh)
+  inline void setRadiusMergingThresholds(const float &radiusDifferenceThresh)
   {
     m_algoParams.m_mergingRadiusDiffThresh = radiusDifferenceThresh;
 
@@ -636,7 +673,7 @@ public:
    *
    * \return std::vector<std::pair<unsigned int, unsigned int>> The list of Center Candidates, stored as pair <idRow, idCol>
    */
-  inline std::vector<std::pair<unsigned int, unsigned int>> getCenterCandidatesList()
+  inline std::vector<std::pair<int, int>> getCenterCandidatesList()
   {
     return m_centerCandidatesList;
   }
@@ -644,9 +681,9 @@ public:
   /**
    * \brief Get the gradient along the horizontal axis of the image.
    *
-   * \return vpImage<double> The gradient along the horizontal axis of  the image.
+   * \return vpImage<float> The gradient along the horizontal axis of  the image.
    */
-  inline vpImage<double> getGradientX()
+  inline vpImage<float> getGradientX()
   {
     return m_dIx;
   }
@@ -654,9 +691,9 @@ public:
   /**
    * \brief Get the gradient along the vertical axis of the image.
    *
-   * \return vpImage<double> The gradient along the vertical axis of  the image.
+   * \return vpImage<float> The gradient along the vertical axis of  the image.
    */
-  inline vpImage<double> getGradientY()
+  inline vpImage<float> getGradientY()
   {
     return m_dIy;
   }
@@ -665,7 +702,7 @@ public:
    * Get internal Canny filter upper threshold. When value is equal to -1 (default), it means that the threshold is computed
    * automatically.
    */
-  inline double getCannyThreshold() const
+  inline float getCannyThreshold() const
   {
     return m_algoParams.m_cannyThresh;
   }
@@ -673,7 +710,7 @@ public:
   /*!
    * Get circles center min distance in pixels.
    */
-  inline double getCircleCenterMinDist() const
+  inline float getCircleCenterMinDist() const
   {
     return m_algoParams.m_centerMinDist;
   }
@@ -681,7 +718,7 @@ public:
   /*!
    * Get circles min radius in pixels.
    */
-  inline double getCircleMinRadius() const
+  inline float getCircleMinRadius() const
   {
     return m_algoParams.m_minRadius;
   }
@@ -689,7 +726,7 @@ public:
   /*!
    * Get circles max radius in pixels.
    */
-  inline double getCircleMaxRadius() const
+  inline float getCircleMaxRadius() const
   {
     return m_algoParams.m_maxRadius;
   }
@@ -748,20 +785,20 @@ private:
 
   CHTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
-  vpMatrix m_fg;
-  vpMatrix m_fgDg;
-  vpImage<double> m_Ifilt; /*!< Filtered version of the input image, after having used a Gaussian filter.*/
+  vpArray2D<float> m_fg;
+  vpArray2D<float> m_fgDg;
+  vpImage<float> m_Ifilt; /*!< Filtered version of the input image, after having used a Gaussian filter.*/
 
   // // Gradient computation attributes
-  vpImage<double> m_dIx; /*!< Gradient along the x-axis of the input image.*/
-  vpImage<double> m_dIy; /*!< Gradient along the y-axis of the input image.*/
+  vpImage<float> m_dIx; /*!< Gradient along the x-axis of the input image.*/
+  vpImage<float> m_dIy; /*!< Gradient along the y-axis of the input image.*/
 
   // // Edge detection attributes
   vpImage<unsigned char> m_edgeMap; /*!< Edge map resulting from the edge detection algorithm.*/
 
   // // Center candidates computation attributes
   std::vector<std::pair<unsigned int, unsigned int>> m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
-  std::vector<std::pair<unsigned int, unsigned int>> m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<int, int>> m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
 
   // // Circle candidates computation attributes
   std::vector<vpCircle2D> m_circleCandidates;        /*!< List of the candidate circles.*/
@@ -780,7 +817,7 @@ private:
  */
 template < typename Type >
 inline void
-vpCircleHoughTransform::vpCircle2D::display( vpImage< Type > &img, const vpColor &color, unsigned int thickness, unsigned int size ) const
+vpCircleHoughTransform::vpCircle2D::display( vpImage< Type > &img, const vpColor &color, const unsigned int &thickness, const unsigned int &size ) const
 {
   vpImageDraw::drawCross(img, m_center, size, color, thickness);
   vpImageDraw::drawCircle(img, m_center, m_radius, color, thickness);
