@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Keybord management.
+ * Keyboard management.
  *
 *****************************************************************************/
 
@@ -38,7 +38,7 @@
 
 /*!
   \file vpKeyboard.h
-  \brief Keybord management under unix.
+  \brief Keyboard management under unix.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -55,7 +55,7 @@
 
   \class vpKeyboard
   \ingroup group_io_keyboard
-  \brief Keybord management under unix (Linux or OSX). This class is not
+  \brief Keyboard management under unix (Linux or OSX). This class is not
   available under windows.
 
   Gets a key from the keyboard without waiting for the "Enter" key.
