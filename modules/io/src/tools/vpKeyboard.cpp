@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Keybord management.
+ * Keyboard management.
  *
 *****************************************************************************/
 
@@ -44,7 +44,7 @@
 
 /*!
   \file vpKeyboard.cpp
-  \brief Keybord management under unix.
+  \brief Keyboard management under unix.
 */
 
 /*!
