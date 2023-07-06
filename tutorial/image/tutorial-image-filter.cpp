@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     //! [Gaussian blur]
     display(F, "Blur (default)");
 
-    vpImageFilter::gaussianBlur(I, F, 7, 2);
+    vpImageFilter::gaussianBlur(I, F, 7, 2.);
     display(F, "Blur (var=2)");
 
     //! [Gradients x]
