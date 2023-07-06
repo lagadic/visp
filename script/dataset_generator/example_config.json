@@ -14,9 +14,9 @@
     "max_num_samples": 64
   },
   "scene": {
-    "room_size_multiplier_min": 2.0,
+    "room_size_multiplier_min": 4.0,
     "room_size_multiplier_max": 5.0,
-    "simulate_physics": true,
+    "simulate_physics": false,
     "distractors": {
       "min_count": 5,
       "max_count": 20,
@@ -33,9 +33,9 @@
     },
     "objects": {
       "min_count": 1,
-      "max_count": 10,
+      "max_count": 1,
       "multiple_occurences": true,
-      "scale_noise": 0.2,
+      "scale_noise": 0.0,
       "displacement_max_amount": 0.0,
       "pbr_noise": 0.2,
       "cam_min_dist_rel": 1.0,

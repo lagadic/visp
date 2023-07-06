@@ -17,12 +17,6 @@ $ blenderproc quickstart # verify that it works, install minor dependencies
 
 '''
 
-'''
-TODO:
- - Random objects selection: max number of objects, location, rotation, sample_on_surface tuto
- - Random distractors
- - Random : color and orientation for spot
-'''
 import os
 import numpy as np
 import argparse
@@ -32,6 +26,84 @@ from pathlib import Path
 from typing import Callable, Dict, List
 
 from blenderproc.python.types import MeshObjectUtility, EntityUtility
+
+def get_obb(object: bproc.types.MeshObject) -> np.ndarray:
+    '''
+    Get oriented bounding box in world space
+    Adapted from
+    https://blender.stackexchange.com/questions/261070/python-how-to-make-box-out-of-selected-verts-bounding-box-in-local-space/261076#261076
+    '''
+    obj = object.blender_obj
+    verts = [v.co for v in obj.data.vertices]
+    points = np.asarray(verts)
+    print(points.shape)
+    # means = np.mean(points, axis=1)
+
+    cov = np.cov(points, y = None,rowvar = 0,bias = 1)
+
+    v, vect = np.linalg.eig(cov)
+
+    tvect = np.transpose(vect)
+    points_r = np.dot(points, np.linalg.inv(tvect))
+
+    co_min = np.min(points_r, axis=0)
+    co_max = np.max(points_r, axis=0)
+
+    xmin, xmax = co_min[0], co_max[0]
+    ymin, ymax = co_min[1], co_max[1]
+    zmin, zmax = co_min[2], co_max[2]
+
+    xdif = (xmax - xmin) * 0.5
+    ydif = (ymax - ymin) * 0.5
+    zdif = (zmax - zmin) * 0.5
+
+    cx = xmin + xdif
+    cy = ymin + ydif
+    cz = zmin + zdif
+
+    corners = np.array([
+        [cx - xdif, cy - ydif, cz - zdif],
+        [cx - xdif, cy + ydif, cz - zdif],
+        [cx + xdif, cy + ydif, cz - zdif],
+        [cx + xdif, cy - ydif, cz - zdif],
+        [cx - xdif, cy - ydif, cz + zdif],
+        [cx - xdif, cy + ydif, cz + zdif],
+        [cx + xdif, cy + ydif, cz + zdif],
+        [cx + xdif, cy - ydif, cz + zdif],
+    ])
+
+    corners = np.dot(corners, tvect)
+    worldTlocal = object.get_local2world_mat()
+    corners = worldTlocal @ np.concatenate((corners, np.ones((len(corners), 1))), axis=-1).T
+    corners = corners.T[:, :3] / corners.T[:, 3, None]
+
+    return corners
+
+def bounding_box_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, camTworld: np.ndarray, width: int, height: int) -> np.ndarray:
+  worldTobj = homogeneous_no_scaling(object)
+  obj = object.blender_obj
+  verts = verts = [v.co for v in obj.data.vertices]
+  points = np.asarray(verts)
+  camTobj = camTworld @ worldTobj
+  points_cam = camTobj @ np.concatenate((points, np.ones((len(points), 1))), axis=-1).T
+  points_cam = convert_points_to_visp_frame((points_cam[:3] / points_cam[3, None]).T)
+
+  visible_points = points_cam[points_cam[:, 2] > 0]
+  visible_points_m_2d = visible_points[:, :2] / visible_points[:, 2, None]
+  visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
+  visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
+  # print(f'OBB = {get_obb(object)}, AABB = {object.get_bound_box()}')
+  mins = np.min(visible_points_px_2d, axis=0)
+  assert len(mins) == 2
+  maxes = np.max(visible_points_px_2d, axis=0)
+  original_size = maxes - mins
+
+  mins = np.maximum(mins, [0, 0])
+  maxes = np.minimum(maxes, [width, height])
+  size = maxes - mins
+  return [mins[0], mins[1], size[0], size[1]]
+
+
 
 def homogeneous_inverse(aTb):
   bTa = aTb.copy()
@@ -143,7 +215,7 @@ class Generator:
       self.json_config = json.load(json_config_file)
     print(self.json_config)
     os.environ['BLENDER_PROC_RANDOM_SEED'] = self.json_config['blenderproc_seed']
-    
+
 
   def init(self):
     np.random.seed(self.json_config['numpy_seed'])
@@ -188,6 +260,7 @@ class Generator:
           if len(models) > 1:
             model.join_with_other_objects(models[1:])
           model.set_cp('category_id', cls)
+          model.set_location([-1000.0, -1000.0, -1000.0]) # Avoid warning about collisions with other objects in the scene
           model.hide() # Hide by default
           models_dict[model_name] = model
           class_dict[model_name] = cls
@@ -196,7 +269,7 @@ class Generator:
     return models_dict, class_dict
 
   def setup_renderer(self):
-    depth, normals = itemgetter('depth', 'normals')(self.json_config['dataset'])
+    depth = itemgetter('depth')(self.json_config['dataset'])
     bproc.renderer.set_max_amount_of_samples(self.json_config['rendering']['max_num_samples'])
     if depth:
       bproc.renderer.enable_depth_output(activate_antialiasing=False)
@@ -221,58 +294,61 @@ class Generator:
 
     out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
     filter_z, min_side_px, min_visibility = itemgetter('filter_when_object_mostly_behind', 'min_side_size_px', 'min_visibility_percentage')(json_dataset['detection_params'])
+    width, height = itemgetter('w', 'h')(self.json_config['camera'])
     frames_data = []
 
     for frame in range(bproc.utility.num_frames()):
       worldTcam = bproc.camera.get_camera_pose(frame)
       camTworld = homogeneous_inverse(worldTcam)
       K = bproc.camera.get_intrinsics_as_K_matrix()
-      visible_objects = bproc.camera.visible_objects(worldTcam)
+      visible_objects = bproc.camera.visible_objects(worldTcam, 20)
       objects_data = []
       for object in objects:
         if object not in visible_objects:
           continue
-        print(object.get_all_cps())
         object_data = {
           'class': object.get_cp('category_id', frame),
-          'name': object.get_name() 
+          'name': object.get_name()
         }
         if out_object_pose:
           worldTobj = homogeneous_no_scaling(object)
           camTobj = camTworld @ worldTobj
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
-        # Get object bounding box in world, project in camera frame
-          bb3d_world = object.get_bound_box()
+          # Get object oriented bounding box in world, project in camera frame
+          bb3d_world = get_obb(object)
           bb3d_cam = camTworld @ np.concatenate((bb3d_world, np.ones((8, 1))), axis=-1).T
-          bb3d_cam = convert_points_to_visp_frame(bb3d_cam.T[:, :3]) # 8 X 3
+          bb3d_cam = convert_points_to_visp_frame(bb3d_cam.T[:, :3] / bb3d_cam.T[:, 3, None]) # 8 X 3
           points_behind = bb3d_cam[bb3d_cam[:, 2] < 0]
           # More than half the points of the bounding box are behind the camera, object will be visible because it is close, but probably not recognizable
           if filter_z and len(points_behind) > 4:
             continue
           visible_bb3d_points = bb3d_cam[bb3d_cam[:, 2] > 0]
-          print(visible_bb3d_points.shape)
-          print(bb3d_cam)
           # Project points that are in front of the camera in the image
           visible_points_m_2d = visible_bb3d_points[:, :2] / visible_bb3d_points[:, 2, None]
           visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
-          visible_points_px_2d = visible_points_px_2d.T[:, :2]
-
+          visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
+          # print(f'OBB = {get_obb(object)}, AABB = {object.get_bound_box()}')
           mins = np.min(visible_points_px_2d, axis=0)
+          assert len(mins) == 2
           maxes = np.max(visible_points_px_2d, axis=0)
+          original_size = maxes - mins
 
+          mins = np.maximum(mins, [0, 0])
+          maxes = np.minimum(maxes, [width, height])
+          size = maxes - mins
 
-
+          bb = bounding_box_from_vertices(object, K, camTworld, width, height)
           print(f'x, y = ({mins[0]}, {mins[1]}), size = ({maxes[0] - mins[0]}, {maxes[1] - mins[1]})')
 
-          # object_data['bounding_box'] = ...
-        
+          object_data['bounding_box'] = bb
+
 
         objects_data.append(object_data)
       frames_data.append(objects_data)
     data['object_data'] = frames_data
     bproc.writer.write_hdf5(str(path.absolute()), data, append_to_existing_output=False)
-      
+
 
 
   def set_camera_intrinsics(self) -> None:
@@ -371,6 +447,8 @@ class Generator:
       if scale_noise > 0.0:
         random_scale = np.random.uniform(-scale_noise, scale_noise) + 1.0
         object.set_scale([random_scale, random_scale, random_scale]) # Uniform scaling
+      object.set_location([0.0, 0.0, 0.0])
+      object.persist_transformation_into_mesh()
 
     if displacement_amount > 0.0:
       add_displacement(objects, displacement_amount)
@@ -378,7 +456,7 @@ class Generator:
       randomize_pbr(objects, pbr_noise)
 
     return objects
-  
+
   def create_room(self, size: float) -> List[bproc.types.MeshObject]:
     ground = bproc.object.create_primitive('PLANE')
     ground.set_location([0, 0, -size / 2])
@@ -430,11 +508,20 @@ class Generator:
       loc = np.random.uniform([-size / 2, -size / 2, -size / 2], [size / 2, size / 2, size / 2])
       obj.set_location(loc)
       obj.set_rotation_euler(bproc.sampler.uniformSO3())
+
     bproc.object.sample_poses(
       objects,
       sample_pose_func=sample_pose,
       objects_to_check_collisions=None
     )
+
+    for object in objects:
+      object.persist_transformation_into_mesh()
+      obb = get_obb(object)
+      for point in obb:
+        s = bproc.object.create_primitive('SPHERE')
+        s.set_location(point)
+        s.set_scale([0.05 * object_bb_length(object) for _ in range(3)])
 
     distractors = self.create_distractors(size, room_objects + objects)
 
@@ -446,7 +533,8 @@ class Generator:
         object.enable_rigidbody(False, collision_shape='BOX')
 
       bproc.object.simulate_physics_and_fix_final_poses(min_simulation_time=3, max_simulation_time=3.5, check_object_interval=1)
-
+    for object in objects:
+      object.persist_transformation_into_mesh()
     def filter_objects_outside_room(objects: List[bproc.types.MeshObject]) -> List[bproc.types.MeshObject]:
       inside = []
       outside = []
@@ -458,7 +546,7 @@ class Generator:
 
       print(f'Filtered {len(objects) - len(inside)} objects')
       return inside
-    
+
     objects = filter_objects_outside_room(objects)
     distractors = filter_objects_outside_room(distractors)
     lights = self.create_lights(size, objects)
@@ -472,8 +560,9 @@ class Generator:
     hs = scene.size / 2
     bvh = bproc.object.create_bvh_tree_multi_objects(scene.target_objects + scene.distractors + scene.room_objects)
     for frame in range(images_per_scene):
+      tries = 0
       good = False
-      while not good:
+      while not good and tries < 1000:
         object = scene.target_objects[np.random.choice(len(scene.target_objects))]
         object_size = object_bb_length(object)
         poi = point_in_bounding_box(object, bb_scale=1)
@@ -483,12 +572,15 @@ class Generator:
         cam = bpy.context.scene.camera.data
         clip_start = cam.clip_start
         focal_length = cam.lens / 1000.0
-        
+
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
         if object in bproc.camera.visible_objects(cam2world_matrix) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
           good = True
         else:
           good = False
+        tries += 1
+      if tries >= 1000:
+        print('Warning! Could not correctly place camera, results may be wrong')
       bproc.camera.add_camera_pose(cam2world_matrix)
 
   def run(self):
@@ -504,7 +596,7 @@ class Generator:
       path = save_path / str(scene_idx)
       path.mkdir(exist_ok=True)
       self.save_data(path, scene.target_objects, data)
-      
+
       scene.cleanup()
       del scene
       del data
