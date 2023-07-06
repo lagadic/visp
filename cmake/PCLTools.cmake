@@ -283,6 +283,9 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(QHULL_INCLUDE_DIRS)
   mark_as_advanced(QHULL_LIBRARY)
   mark_as_advanced(QHULL_LIBRARY_DEBUG)
+  mark_as_advanced(QHULL_LIBRARY_STATIC)       # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_DEBUG_STATIC) # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_SHARED)       # Requested for pcl 1.13.1 on windows
   mark_as_advanced(Qhull_DIR)                  # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
@@ -303,13 +306,16 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(USB_10_INCLUDE_DIR)
   mark_as_advanced(USB_10_LIBRARY)
 
-  mark_as_advanced(Boost_THREAD_LIBRARY_RELEASE)        # Requested on Ubuntu 20.04
-  mark_as_advanced(Boost_DATE_TIME_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_FILESYSTEM_LIBRARY_RELEASE)    # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_INCLUDE_DIR)                   # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_IOSTREAMS_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SERIALIZATION_LIBRARY_RELEASE) # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SYSTEM_LIBRARY_RELEASE)        # Requested on macOS with pcl 1.12.1
+  mark_as_advanced(Boost_INCLUDE_DIR)                       # Requested on macOS with pcl 1.12.1
+  set(configuration "RELEASE;DEBUG")                        # Requested for pcl 1.13.1 on windows
+  foreach(config ${configuration})
+    mark_as_advanced(Boost_THREAD_LIBRARY_${config})        # Requested on Ubuntu 20.04
+    mark_as_advanced(Boost_DATE_TIME_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_FILESYSTEM_LIBRARY_${config})    # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_IOSTREAMS_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SERIALIZATION_LIBRARY_${config}) # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SYSTEM_LIBRARY_${config})        # Requested on macOS with pcl 1.12.1
+  endforeach()
 
   mark_as_advanced(libusb_INCLUDE_DIR)                  # Requested on macOS with pcl 1.12.1
   mark_as_advanced(netCDF_DIR)                          # Requested on macOS with pcl 1.12.1
@@ -321,4 +327,8 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(VTK_MPI_NUMPROCS)
 
   mark_as_advanced(TBB_DIR)
+
+  mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)            # Requested for pcl 1.13.1 on windows
 endmacro()
