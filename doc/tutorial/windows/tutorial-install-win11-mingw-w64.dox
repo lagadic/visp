@@ -165,7 +165,7 @@ First you have to get OpenCV:
 `opencv-4.6.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win11-extract-opencv.jpg
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\opencv`.
 - We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.6.0`.
 
