@@ -80,7 +80,7 @@ double computeCannyThreshold(const cv::Mat &cv_I)
   resize(cv_I_blur, cv_I_scaled_down, cv::Size(), scale_down, scale_down, cv::INTER_NEAREST);
 
   double median_pix = ImageFilter::median(cv_I_scaled_down);
-  double lower = std::max(0., 0.7 * median_pix);
+  // double lower = std::max(0., 0.7 * median_pix); // Unused, but to know the formula exists
   double upper = std::min(255., 1.3 * median_pix);
   upper = std::max(1., upper);
   return upper;
