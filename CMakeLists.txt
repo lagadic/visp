@@ -1508,6 +1508,14 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 
 # ===================== Optional 3rd parties =====================
 status("")
+status("  OpenCV: ")
+status("    Version:"             USE_OPENCV         THEN "${OpenCV_VERSION}" ELSE "n/a")
+if(USE_OPENCV)
+  vp_list_replace_string(OpenCV_LIB_COMPONENTS OpenCV_LIB_COMPONENTS_FILTERED "^opencv_+" "")
+  status("    Modules:"    "${OpenCV_LIB_COMPONENTS_FILTERED}")
+  status("    OpenCV dir:" "${OpenCV_DIR}")
+endif()
+status("")
 status("  Mathematics: ")
 status("    Blas/Lapack:"            (USE_LAPACK OR WITH_LAPACK) THEN "yes" ELSE "no")
 status("    \\- Use MKL:"            USE_MKL            THEN "yes" ELSE "no")
