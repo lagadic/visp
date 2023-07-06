@@ -151,14 +151,14 @@ First you have to get OpenCV:
 - From https://opencv.org/releases download the latest OpenCV for Windows. In our case we got
 `opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
-- Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win10-extract-opencv.png
-- The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
+- Extract the content of the archive in your workspace `%%VISP_WS%\3rdparty`.
+\image html img-win-extract-opencv.jpg
+- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
 
 \note OpenCV 4.5.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
-and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.5.1\build\x64\vc14` and
-`%%VISP_WS%\opencv-4.5.1\build\x64\vc15` respectively.
+and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc14` and
+`%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc15` respectively.
 
 <b>2. Complete OpenCV installation</b>
 
@@ -166,15 +166,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
+where `%%VISP_WS%\3rdparty\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
 file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 14 2016 usage in the
 `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%%VISP_WS%\opencv-4.5.1\build\x64\vc14\bin`.
+`%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc14\bin`.
 
 \subsubsection install_win10_msvc14_3rdparty_realsense librealsense 3rd party
 

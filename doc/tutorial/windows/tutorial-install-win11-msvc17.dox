@@ -115,31 +115,30 @@ Other 3rd parties are optional and should be considered only by expert developer
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From https://opencv.org/releases download the latest OpenCV for Windows. In our case we got
-`opencv-4.6.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
+`opencv-4.8.0-windows.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
-\image html img-win11-extract-opencv.jpg
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.6.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.8.0`.
 
-\note OpenCV 4.6.0 win pack installer doesn't contain prebuild OpenCV libraries build with
-Visual Studio 17 2022. It contains only prebuild libraries build with previous Visual Studio version
-(vc14 and vc15). That's why we need to build OpenCV from source.
+\note OpenCV 4.8.0 win pack installer doesn't contain prebuild OpenCV libraries build with
+Visual Studio 17 2022. It contains only prebuild libraries build with Visual Studio 16 2019
+(vc16). That's why we need to build OpenCV from source.
 
 <b>2. Build OpenCV from source</b>
 
 - Create a build directory
 \verbatim
-C:\> cd %VISP_WS%\3rdparty\opencv-4.6.0
+C:\> cd %VISP_WS%\3rdparty\opencv-4.8.0
 C:\> mkdir build-vc17
 C:\> cd build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022) and installation dir is set
-to the existing folder `%%VISP_WS%\3rdparty\opencv-4.6.0\build`:
+to the existing folder `%%VISP_WS%\3rdparty\opencv-4.8.0\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.6.0\build \
-           -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.8.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -154,15 +153,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.6.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.8.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\opencv-4.6.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.8.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\vc17\bin`.
+line with `%%VISP_WS%\3rdparty\opencv-4.8.0\build\x64\vc17\bin`.
 
 \subsubsection install_win11_msvc17_3rdparty_eigen Eigen3 3rd party
 
@@ -186,8 +185,7 @@ C:\> cd build-vc17
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022 and installation folder is set
  to `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. \
-           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
@@ -208,6 +206,25 @@ where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` is where you have ins
 Inside the folder `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake` you should have a file
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
+
+\subsubsection install_win11_msvc17_3rdparty_realsense librealsense 3rd party
+
+I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use
+vpRealSense2 class. Otherwise you can skip this section.
+
+<b>1. Install Intel Realsense SDK 2.0</b>
+
+Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
+- Go to https://github.com/IntelRealSense/librealsense/releases
+- Download `Intel.RealSense.SDK-WIN10-<version>.exe` corresponding to the last Intel Realsense SDK 2.0 release.
+At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.54.1.5216.exe`.
+- Execute `Intel.RealSense.SDK-WIN10-<version>.exe` and follow default installation steps.
+
+<b>2. Complete Intel Realsense SDK 2.0 installation</b>
+
+To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
+Open the "Edit environment variable" UI, and modify `Path` to add a new line with
+`C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
 \subsubsection install_win11_msvc17_3rdparty_json JSON 3rd party
 
@@ -295,13 +312,11 @@ CMake Warning at CMakeLists.txt:1156 (message):
     At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
-\image html img-cmake-win11-msvc17-visp-config2.jpg
 \note The default configuration lead to the creation of a shared library (with `.dll` extension). This is
 the default configuration that is recommended. If you want to create rather a static library
 (with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
-\image html img-cmake-win11-msvc17-visp-generate.jpg
 
 - Once the generation is done, in `%%VISP_WS%/visp-build-vc17` folder you have the Visual Studio
 `VISP.sln` generated solution file.
@@ -331,7 +346,7 @@ subfolders respectively.
 \image html img-win11-msvc17-visp-explorer-install.jpg
 
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed
-by "d" character (`libvisp_core340d.dll`...).
+by "d" character (`libvisp_core351d.dll`...).
 
 \subsection install_win11_msvc17_build_visp_doc Build ViSP documentation
 

@@ -119,28 +119,28 @@ parties are optional and should be considered only by expert developers.
 
 First you have to get OpenCV:
 - From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
-`opencv-4.6.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
+`opencv-4.8.0-windows.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
-\image html img-win10-extract-opencv-3rdparty.jpg
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.6.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.8.0`.
 
-\note OpenCV 4.6.0 win pack installer doesn't contain prebuild OpenCV libraries build with
-Visual Studio 17 2022. It contains only prebuild libraries build with previous Visual Studio version
-(vc14 and vc15). That's why we need to build OpenCV from source.
+\note OpenCV 4.8.0 win pack installer doesn't contain prebuild OpenCV libraries build with
+Visual Studio 17 2022. It contains only prebuild libraries build with Visual Studio 16 2019
+(vc16). That's why we need to build OpenCV from source.
 
 <b>2. Build OpenCV from source</b>
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\3rdparty\opencv-4.6.0\build-vc17
-C:\> cd %VISP_WS%\3rdparty\opencv-4.6.0\build-vc17
+C:\> mkdir %VISP_WS%\3rdparty\opencv-4.8.0\build-vc17
+C:\> cd %VISP_WS%\3rdparty\opencv-4.8.0\build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022) and installation dir is set
-to the existing folder `%%VISP_WS%\3rdparty\opencv-4.6.0\build`:
+to the existing folder `%%VISP_WS%\3rdparty\opencv-4.8.0\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\3rdparty\opencv-4.6.0\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.6.0\build
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\3rdparty\opencv-4.8.0\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.8.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -155,15 +155,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.6.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.8.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\opencv-4.6.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.8.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\vc17\bin`.
+line with `%%VISP_WS%\3rdparty\opencv-4.8.0\build\x64\vc17\bin`.
 
 \subsubsection install_win10_msvc17_3rdparty_eigen Eigen3 3rd party
 
@@ -219,7 +219,7 @@ vpRealSense2 class. Otherwise you can skip this section.
 Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 - Go to https://github.com/IntelRealSense/librealsense/releases
 - Download `Intel.RealSense.SDK-WIN10-<version>.exe` corresponding to the last Intel Realsense SDK 2.0 release.
-At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.50.0.3785.exe`.
+At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.54.1.5216.exe`.
 - Execute `Intel.RealSense.SDK-WIN10-<version>.exe` and follow default installation steps.
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
@@ -235,20 +235,25 @@ to consider a point cloud as depth feature in the generic model-based tracker wh
 If you don't have an Intel Realsense Depth camera (SR300 or D400 series) or if you are not interested in model-based
 tracking using depth as feature you can skip this section.
 
-<b>1. Install PCL from source</b>
+At the time this tutorial was updated, in https://github.com/PointCloudLibrary/pcl/releases
+there was the PCL 1.13.1 release that came with `PCL-1.13.1-AllInOne-msvc2022-win64.exe` installer.
 
-At the time this tutorial was written, in https://github.com/PointCloudLibrary/pcl/releases there was no all-in-one installer for Visual Studio 17 2022.
+\note Be careful to use the version that match your compiler.
 
-You need here to install PCL from source.
+For Visual Studio 17 2022:
+- Go to https://github.com/PointCloudLibrary/pcl/releases
+- From the Assets section, download `PCL-1.13.1-AllInOne-msvc2022-win64.exe`
+- Execute `PCL-1.13.1-AllInOne-msvc2022-win64.exe`, add PCL to the system path for all users and follow default
+installation steps.
 
 <b>2. Complete PCL installation</b>
 
 To complete PCL installation, you need to add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll`
 libraries in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify by hand `Path` to add respectively:
-- a new line with `C:\Program Files\PCL 1.12.1\bin`
+- a new line with `C:\Program Files\PCL 1.13.1\bin`
 - a new line with `C:\Program Files\OpenNI2\Redist`
-- a new line with `C:\Program Files\PCL 1.12.1\3rdParty\VTK\bin`
+- a new line with `C:\Program Files\PCL 1.13.1\3rdParty\VTK\bin`
 
 \subsubsection install_win10_msvc17_3rdparty_flycapture FlyCapture 3rd party
 
@@ -485,8 +490,8 @@ will be located in `%%VISP_WS%/visp-build-vc17`.
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc17` folder.
 - Select then your compiler "Visual Studio 17 2022" and click on "Finish" button.
 \image html img-cmake-win10-msvc17-msvc-version.jpg
-- This will start CMake configuration. As shown in the next image, Eigen3, FlyCapture, GDI (Graphical
-Device Interface), Kinova Jaco SDK, OpenCV,  OpenMP, Realsense2 and uEye 3rd parties are automatically detected.
+- This will start CMake configuration. As shown in the next image, in our case Eigen3, GDI (Graphical
+Device Interface), JSON, OpenCV, OpenMP, PCL and Realsense2 3rd parties were installed and detected.
 \image html img-cmake-win10-msvc17-visp-config.jpg
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc17/install`. If you want to change the
 installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges
@@ -509,13 +514,11 @@ CMake Warning at CMakeLists.txt:1156 (message):
     At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
-\image html img-cmake-win10-msvc17-visp-config2.jpg
 \note The default configuration lead to the creation of a shared library (with `.dll` extension). This is
 the default configuration that is recommended. If you want to create rather a static library
 (with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
-\image html img-cmake-win10-msvc17-visp-generate.jpg
 
 - Once the generation is done, in `%%VISP_WS%/visp-build-vc17` folder you have the Visual Studio
 `VISP.sln` generated solution file.
@@ -548,7 +551,7 @@ subfolders respectively.
 \image html img-win10-msvc17-visp-explorer-install.jpg
 
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed
-by "d" character (`libvisp_core340d.dll`...).
+by "d" character (`libvisp_core351d.dll`...).
 
 \subsection install_win10_msvc17_build_visp_doc Build ViSP documentation
 
@@ -718,46 +721,65 @@ that contains also build info.
 \verbatim
 C:\> type $VISP_WS/visp-build-vc17/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.4.1
+General configuration information for ViSP 3.5.1
 
-  Version control:               3.0.1-2979-ge6882015c
+  Version control:               43c8720f4
 
   Platform:
-    Timestamp:                   2021-12-31T12:38:10Z
-    Host:                        Windows 10.0.17763 AMD64
-    CMake:                       3.22.1
+    Timestamp:                   2023-07-06T09:32:23Z
+    Host:                        Windows 10.0.19044 AMD64
+    CMake:                       3.26.4
     CMake generator:             Visual Studio 17 2022
     CMake build tool:            C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe
-    MSVC:                        1930
+    MSVC:                        1935
+
+  System information:
+    Number of CPU logical cores: 4
+    Number of CPU physical cores: 4
+    Total physical memory (in MiB): 16057
+    OS name:                     Windows
+    OS release:                  Professional
+    OS version:                  (Build 19044)
+    OS platform:                 AMD64
+    CPU name:                    Pentium II (0.25 micron)
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3 SSE4_1 SSE4_2
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe  (ver 19.30.30706.0)
-    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
-    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
-    C Compiler:                  C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe
-    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MD /O2 /Ob2 /DNDEBUG
-    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MDd /Zi /Ob0 /Od /RTC1
+    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/Hostx64/x64/cl.exe  (ver 19.35.32215.0)
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP4   /EHa -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP4   /EHa -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C Compiler:                  C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.35.32215/bin/Hostx64/x64/cl.exe
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP4   /EHa -openmp /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP4   /EHa -openmp /MDd /Zi /Ob0 /Od /RTC1
     Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
     Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+    Use cxx standard:            17
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 java
 
   Windows RT support:            no
 
-  Python (for build):            NO
+  Python (for build):            C:/Python310/python.exe
 
   Java:
-    ant:                         NO
-    JNI:                         NO
+    ant:                         no
+    JNI:                         C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include/win32 C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include
 
   Build options:
     Build deprecated:            yes
     Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.8.0
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.8.0/build
 
   Mathematics:
     Blas/Lapack:                 yes
@@ -768,7 +790,7 @@ General configuration information for ViSP 3.4.1
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.4.0)
-    Use OpenCV:                  yes (ver 4.5.5)
+    Use OpenCV:                  yes (ver 4.8.0)
 
   Simulator:
     Ogre simulator:
@@ -787,8 +809,9 @@ General configuration information for ViSP 3.4.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.5)
-    Use stb_image (built-in):    no
+    Use OpenCV:                  yes (ver 4.8.0)
+    Use stb_image (built-in):    yes (ver 2.27.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.2)
 
   Real robots:
     Use Afma4:                   no
@@ -796,11 +819,13 @@ General configuration information for ViSP 3.4.1
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
-    Use Kinova Jaco:             yes
+    Use ur_rtde:                 no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
     Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
     Use Parrot ARSDK:            no
     \-Use ffmpeg:                no
     Use Virtuose:                no
@@ -810,7 +835,7 @@ General configuration information for ViSP 3.4.1
   GUI:
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.5)
+    Use OpenCV:                  yes (ver 4.8.0)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -819,25 +844,30 @@ General configuration information for ViSP 3.4.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.5)
-    Use FLIR Flycapture:         yes
+    Use OpenCV:                  yes (ver 4.8.0)
+    Use FLIR Flycapture:         no
     Use Basler Pylon:            no
-    Use IDS uEye:                yes (ver 4.95.0)
+    Use IDS uEye:                no
 
   RGB-D sensors:
     Use Realsense:               no
-    Use Realsense2:              yes (ver 2.50.0)
+    Use Realsense2:              yes (ver 2.54.1)
+    Use Occipital Structure:     no
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
     \- Use pthread:              no
-    Use PCL:                     no
+    Use PCL:                     yes (ver 1.13.1)
     \- Use VTK:                  no
 
   F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
 
   Detection:
     Use zbar:                    no
@@ -849,19 +879,21 @@ General configuration information for ViSP 3.4.1
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
+    Use json (nlohmann):         yes (ver 3.11.2)
 
   Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
-    Use cxx standard:            11
+    Use Simd (built-in):         yes (ver 4.9.109)
 
   DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
   Documentation:
-    Use doxygen:                 no
+    Use doxygen:                 yes
+    \- Use mathjax:              no
 
   Tests and samples:
     Use catch2 (built-in):       yes (ver 2.13.7)
@@ -869,6 +901,12 @@ General configuration information for ViSP 3.4.1
     Demos:                       yes
     Examples:                    yes
     Tutorials:                   yes
+    Dataset found:               yes (ver 3.6.0 in C:\visp-ws\visp-images)
+
+  Library dirs:
+    Eigen3 include dir:          C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17/install/share/eigen3/cmake
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.8.0/build
+    PCL dir:                     C:/Program Files/PCL 1.13.1/cmake
 
   Install path:                  C:/visp-ws/visp-build-vc17/install
 
