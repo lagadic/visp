@@ -33,9 +33,13 @@
  *
 *****************************************************************************/
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdio.h>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <sys/select.h>
+#elif defined(_WIN32)
+#include <conio.h>
+#endif
 #include <visp3/io/vpKeyboard.h>
 
 /*!
@@ -46,12 +50,27 @@
 /*!
   Activates the raw mode to read keys in an non blocking way.
 */
-vpKeyboard::vpKeyboard() : initial_settings(), new_settings() { init(); }
+vpKeyboard::vpKeyboard()
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  : initial_settings(), new_settings()
+{
+  init();
+}
+#else
+{}
+#endif
+
+
 
 /*!
   Stops the raw mode.
 */
-vpKeyboard::~vpKeyboard() { end(); }
+vpKeyboard::~vpKeyboard()
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  end();
+#endif 
+}
 
 /*!
 
@@ -59,9 +78,16 @@ vpKeyboard::~vpKeyboard() { end(); }
 */
 int vpKeyboard::getchar()
 {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   int c;
   c = ::getchar();
   return c;
+#elif defined(_WIN32)
+  return _getch();
+#else
+  std::cout << "vpKeyboard class is not supported by your system!" << std::endl;
+  return 0;
+#endif
 }
 
 /*!
@@ -71,6 +97,7 @@ int vpKeyboard::getchar()
 */
 int vpKeyboard::kbhit()
 {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) 
   struct timeval tv = {0, 0};
   fd_set readfds;
 
@@ -78,19 +105,32 @@ int vpKeyboard::kbhit()
   FD_SET(STDIN_FILENO, &readfds);
 
   return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv) == 1;
+#elif defined(_WIN32)
+  return _kbhit();
+#else
+  std::cout << "vpKeyboard class is not supported by your system!" << std::endl;
+  return 0;
+#endif
 }
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 /*!
 
   Activates the raw mode to read keys in an non blocking way.
 */
-void vpKeyboard::init() { setRawMode(true); }
+void vpKeyboard::init()
+{ 
+  setRawMode(true);
+}
 
 /*!
 
   Stops the raw mode.
 */
-void vpKeyboard::end() { setRawMode(false); }
+void vpKeyboard::end()
+{
+  setRawMode(false);
+}
 
 /*!
   Turns on/off the 'raw' mode.

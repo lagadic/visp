@@ -43,12 +43,13 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-
 #include <iostream>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#endif // defined UNIX
 
 /*!
 
@@ -88,6 +89,7 @@ public:
   int kbhit();
   int getchar();
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 private:
   void init();
   void end();
@@ -95,8 +97,7 @@ private:
   void setRawMode(bool active);
 
   struct termios initial_settings, new_settings;
-};
-
 #endif // defined UNIX
+};
 
 #endif
