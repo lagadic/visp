@@ -19,6 +19,4 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 # Copy the data files to the same location than the target
-foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-circle-hough.cpp ${data})
-endforeach()
+visp_copy_dir(tutorial-circle-hough "${CMAKE_CURRENT_SOURCE_DIR}" config)
