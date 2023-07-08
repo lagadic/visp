@@ -69,7 +69,7 @@ vpKeyboard::~vpKeyboard()
 {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   end();
-#endif 
+#endif
 }
 
 /*!
@@ -82,11 +82,10 @@ int vpKeyboard::getchar()
   int c;
   c = ::getchar();
   return c;
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(WINRT)
   return _getch();
-#else
-  std::cout << "vpKeyboard class is not supported by your system!" << std::endl;
-  return 0;
+#elif defined(_WIN32) && defined(WINRT)
+  throw(vpException(vpException::fatalError, "vpKeyboard::getchar() is not supported on UWP platform!"));
 #endif
 }
 
@@ -97,19 +96,18 @@ int vpKeyboard::getchar()
 */
 int vpKeyboard::kbhit()
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) 
-  struct timeval tv = {0, 0};
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  struct timeval tv = { 0, 0 };
   fd_set readfds;
 
   FD_ZERO(&readfds);
   FD_SET(STDIN_FILENO, &readfds);
 
   return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv) == 1;
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(WINRT)
   return _kbhit();
-#else
-  std::cout << "vpKeyboard class is not supported by your system!" << std::endl;
-  return 0;
+#elif defined(_WIN32) && defined(WINRT)
+  throw(vpException(vpException::fatalError, "vpKeyboard::kbhit() is not supported on UWP platform!"));
 #endif
 }
 
@@ -119,7 +117,7 @@ int vpKeyboard::kbhit()
   Activates the raw mode to read keys in an non blocking way.
 */
 void vpKeyboard::init()
-{ 
+{
   setRawMode(true);
 }
 
@@ -159,7 +157,8 @@ void vpKeyboard::setRawMode(bool active)
     new_settings.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_settings);
 
-  } else {
+  }
+  else {
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
 }
