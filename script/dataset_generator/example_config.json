@@ -15,26 +15,26 @@
   },
   "scene": {
     "room_size_multiplier_min": 2.0,
-    "room_size_multiplier_max": 5.0,
+    "room_size_multiplier_max": 4.0,
     "simulate_physics": true,
-    "max_num_textures": 5,
+    "max_num_textures": 100,
     "distractors": {
-      "min_count": 50,
-      "max_count": 100,
+      "min_count": 100,
+      "max_count": 200,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
-      "displacement_max_amount": 0.0,
+      "displacement_max_amount": 0.01,
       "pbr_noise": 0.5
     },
     "lights": {
-      "min_count": 3,
+      "min_count": 4,
       "max_count": 6,
       "min_intensity": 50,
       "max_intensity": 300
     },
     "objects": {
-      "min_count": 10,
-      "max_count": 20,
+      "min_count": 20,
+      "max_count": 30,
       "multiple_occurences": true,
       "scale_noise": 0.2,
       "displacement_max_amount": 0.0,
@@ -44,20 +44,21 @@
     }
   },
   "dataset": {
-    "num_scenes": 100,
-    "images_per_scene": 50,
+    "scenes_per_run": 1,
+    "num_scenes": 50,
+    "images_per_scene": 100,
     "pose": true,
     "depth": false,
     "normals": false,
     "segmentation": false,
     "detection": true,
     "detection_params": {
-      "min_proportion_object_vertices_in_front": 0.5,
       "min_side_size_px": 10,
-      "min_visibility_percentage": 0.2
+      "min_visibility_percentage": 0.3,
+      "points_sampling_occlusion": 100
     },
     "save_path": "output"
   },
-  "models_path": "/home/sfelton/megapose-models",
-  "cc_textures_path": "/home/sfelton/cc0_full"
+  "models_path": "../megapose-models",
+  "cc_textures_path": "../cc0"
 }

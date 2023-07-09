@@ -24,32 +24,39 @@ import json
 from operator import itemgetter
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
+import time
 
 from blenderproc.python.types import MeshObjectUtility, EntityUtility
 
 
-def bounding_box_2d_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, camTworld: np.ndarray) -> Tuple[List[float], float]:
+def bounding_box_2d_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, camTworld: np.ndarray) -> Tuple[List[float], float, np.ndarray]:
   '''
   Compute the 2D bounding from an object's vertices
-  returns A tuple containing [xmin, ymin, xmax, ymax] in pixels as well as the proportion of visible vertices (that are not behind the camera, i.e., negative Z)
+  returns A tuple containing:
+    [xmin, ymin, xmax, ymax] in pixels 
+    the proportion of visible vertices (that are not behind the camera, i.e., negative Z)
+    The 2D points, in meters in camera space, in ViSP/OpenCV frame
   '''
   worldTobj = homogeneous_no_scaling(object)
   obj = object.blender_obj
-  verts = verts = [v.co for v in obj.data.vertices]
-  points = np.asarray(verts)
+  verts = np.ones(len(obj.data.vertices) * 3)
+  obj.data.vertices.foreach_get("co", verts)
+  points = verts.reshape(-1, 3)
+  # verts = [v.co for v in obj.data.vertices]
   camTobj = camTworld @ worldTobj
   points_cam = camTobj @ np.concatenate((points, np.ones((len(points), 1))), axis=-1).T
   points_cam = convert_points_to_visp_frame((points_cam[:3] / points_cam[3, None]).T)
-
+  
   visible_points = points_cam[points_cam[:, 2] > 0]
   visible_points_m_2d = visible_points[:, :2] / visible_points[:, 2, None]
   visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
   visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
+  
   mins = np.min(visible_points_px_2d, axis=0)
   assert len(mins) == 2
   maxes = np.max(visible_points_px_2d, axis=0)
   
-  return [mins[0], mins[1], maxes[0], maxes[1]], len(visible_points) / len(points_cam)
+  return [mins[0], mins[1], maxes[0], maxes[1]], len(visible_points) / len(points_cam), visible_points_m_2d
 
 def homogeneous_inverse(aTb):
   bTa = aTb.copy()
@@ -68,11 +75,10 @@ def convert_to_visp_frame(aTb):
   Same as converting to an OpenCV frame
   '''
   return bproc.math.change_source_coordinate_frame_of_transformation_matrix(aTb, ["X", "-Y", "-Z"])
+
 def convert_points_to_visp_frame(points: np.ndarray):
-  new_points = points.copy()
-  for i in range(len(new_points)):
-    new_points[i] = bproc.math.change_coordinate_frame_of_point(new_points[i], ["X", "-Y", "-Z"])
-  return new_points
+  points[:, 1:3] = -points[:, 1:3]
+  return points
 
 def point_in_bounding_box(object: bproc.types.MeshObject, bb_scale=1.0):
   '''
@@ -156,13 +162,14 @@ class Scene:
       light.delete(True)
 
 class Generator:
-  def __init__(self, config_path: Path, scene_index: int):
+  def __init__(self, config_path: Path, scene_index: int, scene_count: int):
     self.config_path = config_path
     with open(self.config_path, 'r') as json_config_file:
       self.json_config = json.load(json_config_file)
     print(self.json_config)
     np.random.seed(self.json_config['numpy_seed'] * (scene_index + 1))
     self.scene_index = scene_index
+    self.scene_count = scene_count
     blender_seed_int = int(self.json_config['blenderproc_seed'])
     os.environ['BLENDER_PROC_RANDOM_SEED'] = str(blender_seed_int * (scene_index + 1))
     self.objects = None
@@ -250,14 +257,24 @@ class Generator:
     json_dataset = self.json_config['dataset']
 
     out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
-    min_z_filter, min_side_px, min_visibility = itemgetter('min_proportion_object_vertices_in_front', 'min_side_size_px', 'min_visibility_percentage')(json_dataset['detection_params'])
+    keys = [
+      'min_side_size_px', 'min_visibility_percentage',
+      'points_sampling_occlusion'
+    ]
+    min_side_px, min_visibility, points_sampling_occlusion = itemgetter(*keys)(json_dataset['detection_params'])
+    
     width, height = itemgetter('w', 'h')(self.json_config['camera'])
     frames_data = []
-
+    import time
     for frame in range(bproc.utility.num_frames()):
+      
       worldTcam = bproc.camera.get_camera_pose(frame)
       camTworld = homogeneous_inverse(worldTcam)
       K = bproc.camera.get_intrinsics_as_K_matrix()
+      
+      minx, miny = (-K[0, 2]) / K[0, 0], (-K[1, 2]) / K[1, 1]
+      maxx, maxy = (width -K[0, 2]) / K[0, 0], (height -K[1, 2]) / K[1, 1]
+
       visible_objects = bproc.camera.visible_objects(worldTcam, min(width, height) // min_side_px)
       objects_data = []
       for object in objects:
@@ -272,8 +289,9 @@ class Generator:
           camTobj = camTworld @ worldTobj
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
-          bb_corners, z_front_proportion = bounding_box_2d_from_vertices(object, K, camTworld)
-          if z_front_proportion < min_z_filter:
+          t = time.time()
+          bb_corners, z_front_proportion, points_im = bounding_box_2d_from_vertices(object, K, camTworld)
+          if z_front_proportion < min_visibility:
             continue
           mins = np.array([bb_corners[0], bb_corners[1]])
           maxes = np.array([bb_corners[2], bb_corners[3]])
@@ -285,13 +303,38 @@ class Generator:
           size = maxes - mins
           area = np.prod(size)
 
-          # If clipping removes too much of the actual object, discard the detection. TODO: take into account occlusions
-          if area / original_area < min_visibility:
-            continue
-
           # Filter objects that are too small to be believably detectable
           if size[0] < min_side_px or size[1] < min_side_px:
             continue
+
+          
+          vis_points_in_image = points_im[(points_im[:, 0] > minx) & ((points_im[:, 0] < maxx)) & (points_im[:, 1] > miny) & ((points_im[:, 1] < maxy))]
+
+          base_visibility = z_front_proportion * (len(vis_points_in_image) / len(points_im))
+          # Camera clipping removes too much of the object
+          if base_visibility < min_visibility:
+            continue
+          if points_sampling_occlusion > 0:
+            point_count = len(vis_points_in_image)
+            points = vis_points_in_image[np.random.choice(point_count, size=min(point_count, points_sampling_occlusion))]
+            points = np.concatenate((points, np.ones((len(points), 1))), axis=-1)
+            
+            points_cam = convert_points_to_visp_frame(points) # Convert back to blender frame
+            points_world = worldTcam @ np.concatenate((points_cam, np.ones((len(points_cam), 1))), axis=-1).T
+            points_world = (points_world[:3] / points_world[3, None]).T
+            ray_directions = points_world - worldTcam[None, :3, 3]
+            hit_count = 0
+            for ray in ray_directions:
+              hit_object = bproc.object.scene_ray_cast(worldTcam[:3, 3], ray)[-2]
+              if hit_object == object:
+                hit_count += 1
+
+            final_visibility = base_visibility * (hit_count / len(ray_directions))
+            print(final_visibility)
+            # Including occlusions, the object is now not visible enough to be detectable
+            if final_visibility < min_visibility:
+              print(f'Filtered object {object.get_name()}, because of occlusions: {final_visibility}')
+              continue
           object_data['bounding_box'] = [mins[0], mins[1], size[0], size[1]]
 
 
@@ -514,19 +557,23 @@ class Generator:
         object = scene.target_objects[np.random.choice(len(scene.target_objects))]
         object_size = object_bb_length(object)
         poi = point_in_bounding_box(object, bb_scale=1)
-        location = bproc.sampler.sphere(object.get_location(), np.random.uniform(cam_min_dist, cam_max_dist) * object_size, 'SURFACE')
-        rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
-        import bpy
-        cam = bpy.context.scene.camera.data
-        clip_start = cam.clip_start
-        focal_length = cam.lens / 1000.0
+        tries_distance = 0
+        distance = np.random.uniform(cam_min_dist, cam_max_dist)
+        while not good and tries_distance < 100:
+          location = bproc.sampler.sphere(object.get_location(), distance * object_size, 'SURFACE')
+          rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
+          import bpy
+          cam = bpy.context.scene.camera.data
+          clip_start = cam.clip_start
+          focal_length = cam.lens / 1000.0
 
-        cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
-        if object in bproc.camera.visible_objects(cam2world_matrix, 20) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
-          good = True
-        else:
-          good = False
-        tries += 1
+          cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
+          if object in bproc.camera.visible_objects(cam2world_matrix, 20) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
+            good = True
+          else:
+            good = False
+          tries += 1
+          tries_distance += 1
       if tries >= 1000:
         print('Warning! Could not correctly place camera, results may be wrong')
       bproc.camera.add_camera_pose(cam2world_matrix)
@@ -534,17 +581,20 @@ class Generator:
   def run(self):
     save_path = Path(self.json_config['dataset']['save_path'])
     save_path.mkdir(exist_ok=True)
-    
-    bproc.utility.reset_keyframes()
     self.init()
-    self.set_camera_intrinsics()
-    scene = self.create_scene()
-    bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'], fill_used_empty_materials=True)
-    self.sample_camera_poses(scene)
-    data = self.render()
-    path = save_path / str(self.scene_index)
-    path.mkdir(exist_ok=True)
-    self.save_data(path, scene.target_objects, data)
+    import bpy
+    for i in range(self.scene_count):
+      bproc.utility.reset_keyframes()
+      self.set_camera_intrinsics()
+      scene = self.create_scene()
+      bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'], fill_used_empty_materials=True)
+      self.sample_camera_poses(scene)
+      bpy.context.scene.render.use_persistent_data = True
+      data = self.render()
+      path = save_path / str(self.scene_index + i)
+      path.mkdir(exist_ok=True)
+      self.save_data(path, scene.target_objects, data)
+      scene.cleanup()
 
       
 
@@ -557,10 +607,11 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser()
   parser.add_argument('--config', required=True, type=str, help='Path to the JSON configuration file for the dataset generation script')
-  parser.add_argument('--scene-index', required=True, type=int, help='Index of the scene to generate')
+  parser.add_argument('--scene-index', required=True, type=int, help='Index of the first scene to generate')
+  parser.add_argument('--scene-count', required=True, type=int, help='Number of scenes to render')
   args = parser.parse_args()
 
-  generator = Generator(args.config, args.scene_index)
+  generator = Generator(args.config, args.scene_index, args.scene_count)
   # RendererUtility.set_render_devices(use_only_cpu=True)
   bproc.clean_up(clean_up_camera=True)
   bproc.init() # Works if you have a GPU

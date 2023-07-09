@@ -36,6 +36,8 @@ if __name__ == '__main__':
     json_config = json.load(json_config_file)
   
   num_scenes = json_config['dataset']['num_scenes']
+  scenes_per_run = json_config['dataset']['scenes_per_run']
+  
   print(__file__)
   scene_generator = (Path(__file__).parent / 'generate_scene.py').absolute()
   import time
@@ -43,7 +45,8 @@ if __name__ == '__main__':
     args = [
       'blenderproc', 'run', str(scene_generator),
       '--config', str(config_path.absolute()),
-      '--scene-index', str(i)
+      '--scene-index', str(i * scenes_per_run),
+      '--scene-count', str(scenes_per_run)
     ]
     t = time.time()
     result = subprocess.run(args)
