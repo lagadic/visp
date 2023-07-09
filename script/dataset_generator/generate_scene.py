@@ -23,63 +23,16 @@ import argparse
 import json
 from operator import itemgetter
 from pathlib import Path
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Tuple
 
 from blenderproc.python.types import MeshObjectUtility, EntityUtility
 
-def get_obb(object: bproc.types.MeshObject) -> np.ndarray:
-    '''
-    Get oriented bounding box in world space
-    Adapted from
-    https://blender.stackexchange.com/questions/261070/python-how-to-make-box-out-of-selected-verts-bounding-box-in-local-space/261076#261076
-    '''
-    obj = object.blender_obj
-    verts = [v.co for v in obj.data.vertices]
-    points = np.asarray(verts)
-    print(points.shape)
-    # means = np.mean(points, axis=1)
 
-    cov = np.cov(points, y = None,rowvar = 0,bias = 1)
-
-    v, vect = np.linalg.eig(cov)
-
-    tvect = np.transpose(vect)
-    points_r = np.dot(points, np.linalg.inv(tvect))
-
-    co_min = np.min(points_r, axis=0)
-    co_max = np.max(points_r, axis=0)
-
-    xmin, xmax = co_min[0], co_max[0]
-    ymin, ymax = co_min[1], co_max[1]
-    zmin, zmax = co_min[2], co_max[2]
-
-    xdif = (xmax - xmin) * 0.5
-    ydif = (ymax - ymin) * 0.5
-    zdif = (zmax - zmin) * 0.5
-
-    cx = xmin + xdif
-    cy = ymin + ydif
-    cz = zmin + zdif
-
-    corners = np.array([
-        [cx - xdif, cy - ydif, cz - zdif],
-        [cx - xdif, cy + ydif, cz - zdif],
-        [cx + xdif, cy + ydif, cz - zdif],
-        [cx + xdif, cy - ydif, cz - zdif],
-        [cx - xdif, cy - ydif, cz + zdif],
-        [cx - xdif, cy + ydif, cz + zdif],
-        [cx + xdif, cy + ydif, cz + zdif],
-        [cx + xdif, cy - ydif, cz + zdif],
-    ])
-
-    corners = np.dot(corners, tvect)
-    worldTlocal = object.get_local2world_mat()
-    corners = worldTlocal @ np.concatenate((corners, np.ones((len(corners), 1))), axis=-1).T
-    corners = corners.T[:, :3] / corners.T[:, 3, None]
-
-    return corners
-
-def bounding_box_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, camTworld: np.ndarray, width: int, height: int) -> np.ndarray:
+def bounding_box_2d_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, camTworld: np.ndarray) -> Tuple[List[float], float]:
+  '''
+  Compute the 2D bounding from an object's vertices
+  returns A tuple containing [xmin, ymin, xmax, ymax] in pixels as well as the proportion of visible vertices (that are not behind the camera, i.e., negative Z)
+  '''
   worldTobj = homogeneous_no_scaling(object)
   obj = object.blender_obj
   verts = verts = [v.co for v in obj.data.vertices]
@@ -92,24 +45,18 @@ def bounding_box_from_vertices(object: bproc.types.MeshObject, K: np.ndarray, ca
   visible_points_m_2d = visible_points[:, :2] / visible_points[:, 2, None]
   visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
   visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
-  # print(f'OBB = {get_obb(object)}, AABB = {object.get_bound_box()}')
   mins = np.min(visible_points_px_2d, axis=0)
   assert len(mins) == 2
   maxes = np.max(visible_points_px_2d, axis=0)
-  original_size = maxes - mins
-
-  mins = np.maximum(mins, [0, 0])
-  maxes = np.minimum(maxes, [width, height])
-  size = maxes - mins
-  return [mins[0], mins[1], size[0], size[1]]
-
-
+  
+  return [mins[0], mins[1], maxes[0], maxes[1]], len(visible_points) / len(points_cam)
 
 def homogeneous_inverse(aTb):
   bTa = aTb.copy()
   bTa[:3, :3] = bTa[:3, :3].T
   bTa[:3, 3] = -bTa[:3, :3] @ bTa[:3, 3]
   return bTa
+
 def homogeneous_no_scaling(object: bproc.types.MeshObject):
   localTworld = np.eye(4)
   localTworld[:3, :3] = object.get_rotation_mat()
@@ -209,18 +156,29 @@ class Scene:
       light.delete(True)
 
 class Generator:
-  def __init__(self, config_path):
+  def __init__(self, config_path: Path, scene_index: int):
     self.config_path = config_path
     with open(self.config_path, 'r') as json_config_file:
       self.json_config = json.load(json_config_file)
     print(self.json_config)
-    os.environ['BLENDER_PROC_RANDOM_SEED'] = self.json_config['blenderproc_seed']
+    np.random.seed(self.json_config['numpy_seed'] * (scene_index + 1))
+    self.scene_index = scene_index
+    blender_seed_int = int(self.json_config['blenderproc_seed'])
+    os.environ['BLENDER_PROC_RANDOM_SEED'] = str(blender_seed_int * (scene_index + 1))
+    self.objects = None
+    self.classes = None
+    
 
 
   def init(self):
-    np.random.seed(self.json_config['numpy_seed'])
+    print('Loading objects...')
+    if self.objects is not None:
+      for k in self.objects:
+        self.objects[k].delete()
     self.objects, self.classes = self.load_objects()
-    self.cc_textures = bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'])
+    print('Preloading CC0 textures...')
+    self.cc_textures = bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'], preload=True)
+    self.cc_textures = np.random.choice(self.cc_textures, size=self.json_config['scene']['max_num_textures'])
     self.setup_renderer()
 
   def load_objects(self) -> Dict[str, bproc.types.MeshObject]:
@@ -242,11 +200,11 @@ class Generator:
     models_path = Path(self.json_config['models_path']).absolute()
     cls = 1
     assert models_path.exists() and models_path.is_dir(), f'Models path {models_path} must exist and be a directory'
-    for model_dir in models_path.iterdir():
+    for model_dir in sorted(models_path.iterdir()):
       if not model_dir.is_dir():
         continue
       model_name = model_dir.name
-      for content in model_dir.iterdir():
+      for content in sorted(model_dir.iterdir()):
         if not content.is_file():
           continue
         load_fn: Callable[[str], List[bproc.types.MeshObject]] = None
@@ -265,7 +223,6 @@ class Generator:
           models_dict[model_name] = model
           class_dict[model_name] = cls
           cls += 1
-
     return models_dict, class_dict
 
   def setup_renderer(self):
@@ -293,7 +250,7 @@ class Generator:
     json_dataset = self.json_config['dataset']
 
     out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
-    filter_z, min_side_px, min_visibility = itemgetter('filter_when_object_mostly_behind', 'min_side_size_px', 'min_visibility_percentage')(json_dataset['detection_params'])
+    min_z_filter, min_side_px, min_visibility = itemgetter('min_proportion_object_vertices_in_front', 'min_side_size_px', 'min_visibility_percentage')(json_dataset['detection_params'])
     width, height = itemgetter('w', 'h')(self.json_config['camera'])
     frames_data = []
 
@@ -301,7 +258,7 @@ class Generator:
       worldTcam = bproc.camera.get_camera_pose(frame)
       camTworld = homogeneous_inverse(worldTcam)
       K = bproc.camera.get_intrinsics_as_K_matrix()
-      visible_objects = bproc.camera.visible_objects(worldTcam, 20)
+      visible_objects = bproc.camera.visible_objects(worldTcam, min(width, height) // min_side_px)
       objects_data = []
       for object in objects:
         if object not in visible_objects:
@@ -315,33 +272,27 @@ class Generator:
           camTobj = camTworld @ worldTobj
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
-          # Get object oriented bounding box in world, project in camera frame
-          bb3d_world = get_obb(object)
-          bb3d_cam = camTworld @ np.concatenate((bb3d_world, np.ones((8, 1))), axis=-1).T
-          bb3d_cam = convert_points_to_visp_frame(bb3d_cam.T[:, :3] / bb3d_cam.T[:, 3, None]) # 8 X 3
-          points_behind = bb3d_cam[bb3d_cam[:, 2] < 0]
-          # More than half the points of the bounding box are behind the camera, object will be visible because it is close, but probably not recognizable
-          if filter_z and len(points_behind) > 4:
+          bb_corners, z_front_proportion = bounding_box_2d_from_vertices(object, K, camTworld)
+          if z_front_proportion < min_z_filter:
             continue
-          visible_bb3d_points = bb3d_cam[bb3d_cam[:, 2] > 0]
-          # Project points that are in front of the camera in the image
-          visible_points_m_2d = visible_bb3d_points[:, :2] / visible_bb3d_points[:, 2, None]
-          visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
-          visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
-          # print(f'OBB = {get_obb(object)}, AABB = {object.get_bound_box()}')
-          mins = np.min(visible_points_px_2d, axis=0)
-          assert len(mins) == 2
-          maxes = np.max(visible_points_px_2d, axis=0)
-          original_size = maxes - mins
+          mins = np.array([bb_corners[0], bb_corners[1]])
+          maxes = np.array([bb_corners[2], bb_corners[3]])
 
+          original_size = maxes - mins
+          original_area = np.prod(original_size)
           mins = np.maximum(mins, [0, 0])
           maxes = np.minimum(maxes, [width, height])
           size = maxes - mins
+          area = np.prod(size)
 
-          bb = bounding_box_from_vertices(object, K, camTworld, width, height)
-          print(f'x, y = ({mins[0]}, {mins[1]}), size = ({maxes[0] - mins[0]}, {maxes[1] - mins[1]})')
+          # If clipping removes too much of the actual object, discard the detection. TODO: take into account occlusions
+          if area / original_area < min_visibility:
+            continue
 
-          object_data['bounding_box'] = bb
+          # Filter objects that are too small to be believably detectable
+          if size[0] < min_side_px or size[1] < min_side_px:
+            continue
+          object_data['bounding_box'] = [mins[0], mins[1], size[0], size[1]]
 
 
         objects_data.append(object_data)
@@ -374,12 +325,14 @@ class Generator:
     displacement_strength, pbr_noise = itemgetter('displacement_max_amount', 'pbr_noise')(json_distractors)
 
     count = np.random.randint(min_count, max_count + 1)
+    if count == 0:
+      return []
     def sample_pose(obj: bproc.types.MeshObject):
       loc = np.random.uniform([-scene_size / 2, -scene_size / 2, -scene_size / 2], [scene_size / 2, scene_size / 2, scene_size / 2])
       obj.set_location(loc)
       obj.set_scale(np.random.uniform(scene_size * min_size, scene_size * max_size, size=3))
       obj.set_rotation_euler(bproc.sampler.uniformSO3())
-    distractor_type = np.random.choice(['CUBE', 'CYLINDER', 'CONE', 'PLANE', 'SPHERE', 'MONKEY'], size=count, replace=True)
+    distractor_type = np.random.choice(['CUBE', 'CYLINDER', 'CONE', 'SPHERE', 'MONKEY'], size=count, replace=True)
     distractors = [bproc.object.create_primitive(distractor_type[c]) for c in range(count)]
 
     bproc.object.sample_poses(
@@ -517,11 +470,6 @@ class Generator:
 
     for object in objects:
       object.persist_transformation_into_mesh()
-      obb = get_obb(object)
-      for point in obb:
-        s = bproc.object.create_primitive('SPHERE')
-        s.set_location(point)
-        s.set_scale([0.05 * object_bb_length(object) for _ in range(3)])
 
     distractors = self.create_distractors(size, room_objects + objects)
 
@@ -574,7 +522,7 @@ class Generator:
         focal_length = cam.lens / 1000.0
 
         cam2world_matrix = bproc.math.build_transformation_mat(location, rotation_matrix)
-        if object in bproc.camera.visible_objects(cam2world_matrix) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
+        if object in bproc.camera.visible_objects(cam2world_matrix, 20) and bproc.camera.perform_obstacle_in_view_check(cam2world_matrix, {'min': focal_length + clip_start}, bvh):
           good = True
         else:
           good = False
@@ -584,22 +532,21 @@ class Generator:
       bproc.camera.add_camera_pose(cam2world_matrix)
 
   def run(self):
-    num_scenes = self.json_config['dataset']['num_scenes']
     save_path = Path(self.json_config['dataset']['save_path'])
     save_path.mkdir(exist_ok=True)
-    for scene_idx in range(num_scenes):
-      bproc.utility.reset_keyframes()
-      self.set_camera_intrinsics()
-      scene = self.create_scene()
-      self.sample_camera_poses(scene)
-      data = self.render()
-      path = save_path / str(scene_idx)
-      path.mkdir(exist_ok=True)
-      self.save_data(path, scene.target_objects, data)
+    
+    bproc.utility.reset_keyframes()
+    self.init()
+    self.set_camera_intrinsics()
+    scene = self.create_scene()
+    bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'], fill_used_empty_materials=True)
+    self.sample_camera_poses(scene)
+    data = self.render()
+    path = save_path / str(self.scene_index)
+    path.mkdir(exist_ok=True)
+    self.save_data(path, scene.target_objects, data)
 
-      scene.cleanup()
-      del scene
-      del data
+      
 
 
 
@@ -610,22 +557,13 @@ if __name__ == '__main__':
 
   parser = argparse.ArgumentParser()
   parser.add_argument('--config', required=True, type=str, help='Path to the JSON configuration file for the dataset generation script')
+  parser.add_argument('--scene-index', required=True, type=int, help='Index of the scene to generate')
   args = parser.parse_args()
 
-  generator = Generator(args.config)
+  generator = Generator(args.config, args.scene_index)
   # RendererUtility.set_render_devices(use_only_cpu=True)
   bproc.clean_up(clean_up_camera=True)
-
-  # bproc.init() # Works if you have a GPU
-  generator.init()
+  bproc.init() # Works if you have a GPU
   generator.run()
-
-
-  # Write the rendering into an hdf5 file
-  # bproc.writer.write_coco_annotations('output/coco',
-  #                                   instance_segmaps=seg_data["instance_segmaps"],
-  #                                   instance_attribute_maps=seg_data["instance_attribute_maps"],
-  #                                   colors=data["colors"],
-  #                                   color_file_format="PNG")
 
 
