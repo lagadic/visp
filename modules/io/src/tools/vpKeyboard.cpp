@@ -40,6 +40,7 @@
 #elif defined(_WIN32)
 #include <conio.h>
 #endif
+#include <visp3/core/vpException.h>
 #include <visp3/io/vpKeyboard.h>
 
 /*!
