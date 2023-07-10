@@ -15,38 +15,38 @@
   },
   "scene": {
     "room_size_multiplier_min": 2.0,
-    "room_size_multiplier_max": 4.0,
+    "room_size_multiplier_max": 3.0,
     "simulate_physics": true,
-    "max_num_textures": 100,
+    "max_num_textures": 50,
     "distractors": {
-      "min_count": 100,
-      "max_count": 200,
+      "min_count": 20,
+      "max_count": 50,
       "min_size_rel_scene": 0.01,
       "max_size_rel_scene": 0.05,
       "displacement_max_amount": 0.01,
       "pbr_noise": 0.5
     },
     "lights": {
-      "min_count": 4,
+      "min_count": 3,
       "max_count": 6,
       "min_intensity": 50,
       "max_intensity": 300
     },
     "objects": {
-      "min_count": 20,
-      "max_count": 30,
+      "min_count": 3,
+      "max_count": 10,
       "multiple_occurences": true,
       "scale_noise": 0.2,
       "displacement_max_amount": 0.0,
-      "pbr_noise": 0.2,
+      "pbr_noise": 0.3,
       "cam_min_dist_rel": 1.0,
       "cam_max_dist_rel": 5.0
     }
   },
   "dataset": {
     "scenes_per_run": 1,
-    "num_scenes": 50,
-    "images_per_scene": 100,
+    "num_scenes": 100,
+    "images_per_scene": 50,
     "pose": true,
     "depth": false,
     "normals": false,

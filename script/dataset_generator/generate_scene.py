@@ -183,6 +183,7 @@ class Generator:
       for k in self.objects:
         self.objects[k].delete()
     self.objects, self.classes = self.load_objects()
+    self.save_class_file()
     print('Preloading CC0 textures...')
     self.cc_textures = bproc.loader.load_ccmaterials(self.json_config['cc_textures_path'], preload=True)
     self.cc_textures = np.random.choice(self.cc_textures, size=self.json_config['scene']['max_num_textures'])
@@ -227,11 +228,23 @@ class Generator:
           model.set_cp('category_id', cls)
           model.set_location([-1000.0, -1000.0, -1000.0]) # Avoid warning about collisions with other objects in the scene
           model.hide() # Hide by default
+          model.set_name(model_name)
           models_dict[model_name] = model
           class_dict[model_name] = cls
           cls += 1
     return models_dict, class_dict
-
+  def save_class_file(self):
+    save_path = Path(self.json_config['dataset']['save_path']).absolute()
+    cls_file = save_path / 'classes.txt'
+    if self.scene_index == 0 or not cls_file.exists():
+      with open(cls_file, 'w') as f:
+        cls_to_model_name = {self.classes[k]: k for k in self.classes.keys()}
+        cls_indices = sorted(cls_to_model_name.keys())
+        lines = []
+        for i in cls_indices:
+          lines.append(cls_to_model_name[i])
+        print(f'Writing classes to file: \n {lines}')
+        f.writelines(lines)
   def setup_renderer(self):
     depth = itemgetter('depth')(self.json_config['dataset'])
     bproc.renderer.set_max_amount_of_samples(self.json_config['rendering']['max_num_samples'])
@@ -417,7 +430,6 @@ class Generator:
       basic_light_sampling(light)
       looked_at_obj = np.random.choice(len(target_objects))
       looked_at_obj: bproc.types.MeshObject = target_objects[looked_at_obj]
-      print(looked_at_obj, looked_at_obj.get_local2world_mat())
       poi = point_in_bounding_box(looked_at_obj)
       R = bproc.camera.rotation_from_forward_vec(poi - light.get_location())
       light.set_rotation_mat(R)
