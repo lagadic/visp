@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Benchmark image morphology.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -56,7 +56,7 @@ TEST_CASE("Benchmark binary image morphology", "[benchmark]")
 
   vpImage<unsigned char> I_Klimt_binarized = I;
   vpImageTools::binarise(I_Klimt_binarized, (unsigned char)127, (unsigned char)127, (unsigned char)0, (unsigned char)1,
-                         (unsigned char)1, true);
+    (unsigned char)1, true);
 
   SECTION("Dilatation")
   {
@@ -155,7 +155,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark dilatation (ViSP)")
       {
-        vpImageMorphology::dilatation(I, connexity);
+        vpImageMorphology::dilatation<unsigned char>(I, connexity);
         return I;
       };
 
@@ -177,7 +177,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark dilatation (ViSP)")
       {
-        vpImageMorphology::dilatation(I, connexity);
+        vpImageMorphology::dilatation<unsigned char>(I, connexity);
         return I;
       };
 
@@ -202,7 +202,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark erosion (ViSP)")
       {
-        vpImageMorphology::erosion(I, connexity);
+        vpImageMorphology::erosion<unsigned char>(I, connexity);
         return I;
       };
 
@@ -224,7 +224,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 
       BENCHMARK("Benchmark erosion (ViSP)")
       {
-        vpImageMorphology::erosion(I, connexity);
+        vpImageMorphology::erosion<unsigned char>(I, connexity);
         return I;
       };
 
@@ -238,7 +238,7 @@ TEST_CASE("Benchmark gray image morphology", "[benchmark]")
 }
 #endif
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
 
@@ -246,9 +246,9 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark?");   // description string for the help output
+    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+    ["--benchmark"] // the option names it will respond to
+    ("run benchmark?");   // description string for the help output
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);

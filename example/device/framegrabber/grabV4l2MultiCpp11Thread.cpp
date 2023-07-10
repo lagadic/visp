@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Acquire images using 1394 device with cfox (MAC OSX) and display it
  * using GTK or GTK.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example grabV4l2MultiCpp11Thread.cpp
@@ -140,13 +137,12 @@ class FrameQueue
 {
 
 public:
-  struct cancelled {
-  };
+  struct cancelled
+  { };
 
   FrameQueue()
     : m_cancelled(false), m_cond(), m_queueColor(), m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex()
-  {
-  }
+  { }
 
   void cancel()
   {
@@ -209,8 +205,7 @@ class StorageWorker
 public:
   StorageWorker(FrameQueue &queue, const std::string &filename, unsigned int width, unsigned int height)
     : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
-  {
-  }
+  { }
 
   // Thread main loop
   void run()
@@ -231,7 +226,8 @@ public:
           writer.saveFrame(image);
         }
       }
-    } catch (FrameQueue::cancelled &) {
+    }
+    catch (FrameQueue::cancelled &) {
     }
   }
 
@@ -253,15 +249,15 @@ private:
   unsigned int m_totalSize;
 
 public:
-  struct cancelled {
-  };
+  struct cancelled
+  { };
 
-  ShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) {}
+  ShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) { }
 
   virtual ~ShareImage()
   {
     if (m_pImgData != NULL) {
-      delete[] m_pImgData;
+      delete [] m_pImgData;
     }
   }
 
@@ -290,7 +286,8 @@ public:
     // Copy to imageData
     if (totalSize <= m_totalSize) {
       memcpy(imageData, m_pImgData, totalSize * sizeof(unsigned char));
-    } else {
+    }
+    else {
       std::cerr << "totalSize <= m_totalSize !" << std::endl;
     }
   }
@@ -310,7 +307,7 @@ public:
       m_totalSize = totalSize;
 
       if (m_pImgData != NULL) {
-        delete[] m_pImgData;
+        delete [] m_pImgData;
       }
 
       m_pImgData = new unsigned char[m_totalSize];
@@ -365,7 +362,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
 
     vpImage<unsigned char> I_red(height, width), I_green(height, width), I_blue(height, width), I_alpha(height, width);
     vpImage<unsigned char> I_red_gaussian(height, width), I_green_gaussian(height, width),
-        I_blue_gaussian(height, width);
+      I_blue_gaussian(height, width);
     vpImage<double> I_red_gaussian_double, I_green_gaussian_double, I_blue_gaussian_double;
 
     bool exit = false, gaussian_blur = false;
@@ -421,7 +418,8 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
         }
       }
     }
-  } catch (ShareImage::cancelled &) {
+  }
+  catch (ShareImage::cancelled &) {
     std::cout << "Cancelled!" << std::endl;
   }
 
@@ -430,7 +428,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
 
 } // Namespace
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   unsigned int deviceCount = 1;
   unsigned int cameraScale = 1; // 640x480
@@ -453,7 +451,8 @@ int main(int argc, char *argv[])
       pGrabber->setScale(cameraScale);
 
       grabbers.push_back(pGrabber);
-    } catch (const vpException &e) {
+    }
+    catch (const vpException &e) {
       std::cerr << "Exception: " << e.what() << std::endl;
     }
   }

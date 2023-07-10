@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Hand-eye calibration example to estimate hand to eye transformation.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example calibrate-hand-eye.cpp
@@ -82,7 +79,7 @@ int main()
     std::cout << "Simulated hand-eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
-              << std::endl;
+      << std::endl;
 
     vpColVector v_c(6); // camera velocity used to produce 6 simulated poses
     for (unsigned int i = 0; i < N; i++) {
@@ -91,7 +88,8 @@ int main()
         // Initialize first poses
         cMo[0].buildFrom(0, 0, 0.5, 0, 0, 0); // z=0.5 m
         wMe[0].buildFrom(0, 0, 0, 0, 0, 0);   // Id
-      } else if (i == 1)
+      }
+      else if (i == 1)
         v_c[3] = M_PI / 8;
       else if (i == 2)
         v_c[4] = M_PI / 8;
@@ -143,23 +141,25 @@ int main()
       std::cout << "** Corresponding pose vector: " << vpPoseVector(eMc).t() << std::endl;
       eMc.extract(erc);
       std::cout << std::endl
-                << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
+        << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
       std::cout << "** Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
       std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1])
-                << " " << vpMath::deg(erc[2]) << std::endl;
+        << " " << vpMath::deg(erc[2]) << std::endl;
       vpQuaternionVector quaternion(eMc.getRotationMatrix());
       std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
-    } else {
+    }
+    else {
       std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
       std::cout << std::endl
-                << "Check your input data and ensure they are covering the half sphere over the chessboard."
-                << std::endl;
+        << "Check your input data and ensure they are covering the half sphere over the chessboard."
+        << std::endl;
       std::cout << std::endl
-                << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+        << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

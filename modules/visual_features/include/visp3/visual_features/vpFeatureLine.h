@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * 2D line visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpFeatureLine_H
-#define vpFeatureLine_H
+#ifndef _vpFeatureLine_h_
+#define _vpFeatureLine_h_
 
 /*!
   \file vpFeatureLine.h
@@ -102,29 +99,29 @@ int main()
   vpServo task; // Visual servoing task
 
   vpFeatureLine sd; //The desired line feature.
-  //Sets the desired features rho and theta
+  // Sets the desired features rho and theta
   double rhod = 0;
   double thetad = 0;
-  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
-  //The line described by the features belongs to this plan.
-  //Normally two plans are needed to describe a line. But to compute the interaction matrix only
-  //one equation of the two plans is needed.
-  //Notes that the Dd value must not be equal to zero !
+  // Sets the parameters which describe the equation of a plane in the camera frame : AX+BY+CZ+D=0.
+  // The line described by the features belongs to this plan.
+  // Normally two plans are needed to describe a line. But to compute the interaction matrix only
+  // one equation of the two plans is needed.
+  // Notes that the Dd value must not be equal to zero !
   double Ad = 0;
   double Bd = 0;
   double Cd = 1;
   double Dd = -1;
-  //Set the line feature thanks to the desired parameters.
+  // Set the line feature thanks to the desired parameters.
   sd.buildfrom(rhod, thetad, Ad,Bd, Cd, Dd);
 
   vpFeatureLine s; //The current line feature.
-  //Sets the current features rho and theta
-  double rho;  //You have to compute the value of rho.
-  double theta;  //You have to compute the value of theta.
-  //Set the line feature thanks to the current parameters.
+  // Sets the current features rho and theta
+  double rho;  // You have to compute the value of rho.
+  double theta;  // You have to compute the value of theta.
+  // Set the line feature thanks to the current parameters.
   s.buildfrom(rho, theta);
-  //In this case the parameters A, B, C, D are not needed because the interaction matrix is computed
-  //with the desired visual feature.
+  // In this case the parameters A, B, C, D are not needed because the interaction matrix is computed
+  // with the desired visual feature.
 
   // Set eye-in-hand control law.
   // The computed velocities will be expressed in the camera frame
@@ -142,7 +139,7 @@ int main()
     // Update the current line visual feature
     s.buildfrom(rho, theta);
 
-    // compute the control law
+    // Compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
   return 0;
@@ -161,24 +158,24 @@ interaction matrix \f$L_s\f$.
 int main()
 {
   vpFeatureLine sd; //The desired line feature.
-  //Sets the desired features rho and theta
+  // Sets the desired features rho and theta
   double rhod = 0;
   double thetad = 0;
-  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
+  // Sets the parameters which describe the equation of a plane in the camera frame : AX+BY+CZ+D=0.
   double Ad = 0; double Bd = 0; double Cd = 1; double Dd = -1;
-  //Set the line feature thanks to the desired parameters.
+  // Set the line feature thanks to the desired parameters.
   sd.buildfrom(rhod, thetad, Ad,Bd, Cd, Dd);
 
-  vpFeatureLine s; //The current line feature.
-  //Sets the current features rho and theta
-  double rho;  //You have to compute the value of rho.
-  double theta;  //You have to compute the value of theta.
-  //Sets the parameters which describe the equation of a plan in the camera frame : AX+BY+CZ+D=0.
-  double A;  //You have to compute the value of A.
-  double B;  //You have to compute the value of B.
-  double C;  //You have to compute the value of C.
-  double D;  //You have to compute the value of D. D must not be equal to zero !
-  //Set the line feature thanks to the current parameters.
+  vpFeatureLine s; // The current line feature.
+  // Sets the current features rho and theta
+  double rho;    // You have to compute the value of rho.
+  double theta;  // You have to compute the value of theta.
+  // Sets the parameters which describe the equation of a plane in the camera frame : AX+BY+CZ+D=0.
+  double A;  // You have to compute the value of A.
+  double B;  // You have to compute the value of B.
+  double C;  // You have to compute the value of C.
+  double D;  // You have to compute the value of D. D must not be equal to zero !
+  // Set the line feature thanks to the current parameters.
   s.buildfrom(rho, theta, A, B, C, D);
 
   // Compute the interaction matrix L_s for the current line feature
@@ -206,7 +203,7 @@ private:
 public:
   vpFeatureLine();
   //! Destructor.
-  virtual ~vpFeatureLine() {}
+  virtual ~vpFeatureLine() { }
 
   //  void buildFrom(const vpLine &l) ;
   //  void buildFrom(const vpCylinder &c, int l) ;

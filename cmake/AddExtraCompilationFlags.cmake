@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP overall configuration file. Add extra compilation flags.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -86,9 +83,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #
   add_extra_compiler_option_enabling(-Wfloat-equal       ACTIVATE_WARNING_FLOAT_EQUAL     OFF)
   add_extra_compiler_option_enabling(-Wsign-conversion   ACTIVATE_WARNING_SIGN_CONVERSION OFF)
   add_extra_compiler_option_enabling(-Wshadow            ACTIVATE_WARNING_SHADOW          OFF)
+  add_extra_compiler_option_enabling(-ffast-math         ENABLE_FAST_MATH                 OFF)
 elseif(MSVC)
   # Add specific compilation flags for Windows Visual
   add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             OFF)
+  add_extra_compiler_option_enabling(/fp:fast            ENABLE_FAST_MATH                 OFF)
   if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.

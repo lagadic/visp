@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test RealSense RGB-D sensor.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example grabRealSense.cpp
@@ -98,7 +95,8 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
         viewer->addPointCloud<pcl::PointXYZRGB>(pointcloud_, rgb, "sample cloud");
         viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
         update = true;
-      } else {
+      }
+      else {
         viewer->updatePointCloud<pcl::PointXYZRGB>(pointcloud_, rgb, "sample cloud");
       }
 
@@ -122,9 +120,9 @@ int main()
     rs.open();
 
     std::cout << rs.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithoutDistortion)
-              << std::endl;
+      << std::endl;
     std::cout << rs.getCameraParameters(rs::stream::color, vpCameraParameters::perspectiveProjWithDistortion)
-              << std::endl;
+      << std::endl;
     std::cout << "Extrinsics cMd: \n" << rs.getTransformation(rs::stream::color, rs::stream::depth) << std::endl;
     std::cout << "Extrinsics dMc: \n" << rs.getTransformation(rs::stream::depth, rs::stream::color) << std::endl;
     std::cout << "Extrinsics cMi: \n" << rs.getTransformation(rs::stream::color, rs::stream::infrared) << std::endl;
@@ -179,7 +177,8 @@ int main()
       if (use_infrared_y16) {
         rs.acquire(color, infrared_y16, depth, pointcloud);
         vpImageConvert::convert(infrared_y16, infrared_display);
-      } else {
+      }
+      else {
 #ifdef VISP_HAVE_PCL
         rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
                    (unsigned char *)infrared_display.bitmap);
@@ -202,7 +201,8 @@ int main()
         viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
         viewer->setPosition(color.getWidth() + 80, color.getHeight() + 80);
         update = true;
-      } else {
+      }
+      else {
         viewer->updatePointCloud<pcl::PointXYZRGB>(pointcloud, rgb, "sample cloud");
       }
 
@@ -240,12 +240,15 @@ int main()
 #endif
 
     rs.close();
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const rs::error &e) {
+  }
+  catch (const rs::error &e) {
     std::cerr << "RealSense error calling " << e.get_failed_function() << "(" << e.get_failed_args()
-              << "): " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+      << "): " << e.what() << std::endl;
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 

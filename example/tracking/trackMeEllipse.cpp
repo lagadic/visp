@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Tracking of an ellipse.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file trackMeEllipse.cpp
@@ -69,7 +69,7 @@
 #include <visp3/me/vpMeEllipse.h>
 
 // List of allowed command line options
-#define GETOPTARGS "Aacdf:hi:l:p:r:s:S:t:vw:"
+#define GETOPTARGS "Aabcdf:hi:l:p:r:s:S:t:vw:"
 
 /*!
   Print the program options.
@@ -86,14 +86,14 @@
   \param me_threshold : Moving-edges threshold.
 */
 void usage(const char *name, const char *badparam, const std::string &video_in_ipath, const std::string &video_in_ppath,
-           unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
+  unsigned video_in_first, int video_in_last, int video_in_step, int me_range, int me_sample_step, int me_threshold)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
   std::string ext("pgm");
 #endif
-   fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
 Example of ellipse/circle or arc of ellipse/circle tracking using vpMeEllipse.\n\
 \n\
 SYNOPSIS\n\
@@ -101,8 +101,8 @@ SYNOPSIS\n\
      [-f <video first image>] [-l <video last image>] [-s <video step>]\n\
      [-r <moving-edge range] [-t <moving-edge threshold] [-S <moving-edge sample step>]\n\
      [-w <output images sequence name>] \n\
-     [-c] [-d] [-a] [-A] [-v] [-h]\n",
-          name);
+     [-c] [-d] [-a] [-A] [-b] [-v] [-h]\n",
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -145,12 +145,8 @@ OPTIONS:                                               Default\n\
      When set to -1, use default value.             \n\
   \n\
   -t <moving-edge threshold>                                 %d\n\
-     Moving-edge threshold.                         \n\
-     When the contrast is high between the two sides of the\n\
-     ellipse (for example white/black or black/white) a\n\
-     threshold of 1500 is sufficient. On the other hand, when\n\
-     the contrast is less strong, it is necessary to increase\n\
-     this threshold according to the images until 20000.\n\
+     Moving-edge threshold corresponding to the minimum        \n\
+     contrast to consider. Value in range [0 ; 255] \n\
      When set to -1, use default value.             \n\
   \n\
   -c\n\
@@ -179,8 +175,8 @@ OPTIONS:                                               Default\n\
   \n\
   -h\n\
      Print the help.\n",
-          video_in_ipath.c_str(), ext.c_str(), video_in_ppath.c_str(), ext.c_str(), video_in_first, video_in_last,
-          video_in_step, me_range, me_sample_step, me_threshold);
+    video_in_ipath.c_str(), ext.c_str(), video_in_ppath.c_str(), ext.c_str(), video_in_first, video_in_last,
+    video_in_step, me_range, me_sample_step, me_threshold);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -200,6 +196,7 @@ OPTIONS:                                               Default\n\
   \param video_in_step : Step between two images.
   \param display : Display activation.
   \param display_scale_auto : When display is activated, enable windows auto scaling.
+  \param track_circle : Enable circle tracking.
   \param track_arc : Enable arc of an ellipse or circle tracking.
   \param video_out_save : Save resulting images sequence with tracking results in overlay.
   \param me_range : Moving-edges range.
@@ -211,9 +208,9 @@ OPTIONS:                                               Default\n\
 
 */
 bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::string &video_in_ppath,
-                int &video_in_first, int &video_in_last, int &video_in_step,
-                bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_arc,
-                std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &verbose)
+  int &video_in_first, int &video_in_last, int &video_in_step,
+  bool &click_allowed, bool &display, bool &display_scale_auto, bool &track_circle, bool &track_arc,
+  std::string &video_out_save, int &me_range, int &me_sample_step, int &me_threshold, bool &verbose)
 {
   const char *optarg_;
   int c;
@@ -225,6 +222,9 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
       break;
     case 'a':
       track_arc = true;
+      break;
+    case 'b':
+      track_circle = true;
       break;
     case 'c':
       click_allowed = false;
@@ -298,10 +298,11 @@ int main(int argc, const char **argv)
   int opt_step = 1;
   int opt_me_range = 30;
   int opt_me_sample_step = 5;
-  int opt_me_threshold = -1;
+  int opt_me_threshold = 20; // Value in [0 ; 255]
   bool opt_click_allowed = true;
   bool opt_display = true;
   bool opt_display_scale_auto = false;
+  bool opt_track_circle = false;
   bool opt_track_arc = false;
   bool opt_verbose = false;
   std::string opt_save;
@@ -325,8 +326,8 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
-                   opt_display, opt_display_scale_auto, opt_track_arc, opt_save,
-                   opt_me_range, opt_me_sample_step, opt_me_threshold, opt_verbose) == false) {
+      opt_display, opt_display_scale_auto, opt_track_circle, opt_track_arc, opt_save,
+      opt_me_range, opt_me_sample_step, opt_me_threshold, opt_verbose) == false) {
       return EXIT_FAILURE;
     }
 
@@ -340,8 +341,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -350,19 +351,19 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_me_range, opt_me_sample_step, opt_me_threshold);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << "  Use -p <personal image path> option if you want to " << std::endl
-                << "  use personal images." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << "  Use -p <personal image path> option if you want to " << std::endl
+        << "  use personal images." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
 
     // Create output folder if needed
-    if (! opt_save.empty()) {
+    if (!opt_save.empty()) {
       std::string parent = vpIoTools::getParent(opt_save);
-      if (! parent.empty()) {
+      if (!parent.empty()) {
         std::cout << "Create output directory: " << parent << std::endl;
         vpIoTools::makeDirectory(parent);
       }
@@ -394,15 +395,15 @@ int main(int argc, const char **argv)
 
     if (opt_display) {
       // We open a window using either X11, GTK or GDI.
-  #if defined(VISP_HAVE_X11)
+#if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
-  #elif defined(VISP_HAVE_GTK)
+#elif defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK;
-  #elif defined(VISP_HAVE_GDI)
+#elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI;
-  #elif defined(HAVE_OPENCV_HIGHGUI)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV;
-  #endif
+#endif
       if (opt_display_scale_auto) {
         display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
       }
@@ -419,7 +420,7 @@ int main(int argc, const char **argv)
 
     vpVideoWriter *writer = NULL;
     vpImage<vpRGBa> O;
-    if (! opt_save.empty()) {
+    if (!opt_save.empty()) {
       writer = new vpVideoWriter();
       writer->setFileName(opt_save);
       writer->open(O);
@@ -434,6 +435,7 @@ int main(int argc, const char **argv)
       me.setSampleStep(opt_me_sample_step);
     }
     if (opt_me_threshold > 0) {
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
       me.setThreshold(opt_me_threshold);
     }
 
@@ -448,12 +450,13 @@ int main(int argc, const char **argv)
     std::cout << "  Image size : " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
     std::cout << "Moving-edges settings" << std::endl;
-    std::cout << "  Sample step: " << me_ellipse.getMe()->getSampleStep() << std::endl;
-    std::cout << "  Range      : " << me_ellipse.getMe()->getRange() << std::endl;
-    std::cout << "  Threshold  : " << me_ellipse.getMe()->getThreshold() << std::endl;
+    std::cout << "  Sample step   : " << me_ellipse.getMe()->getSampleStep() << std::endl;
+    std::cout << "  Range         : " << me_ellipse.getMe()->getRange() << std::endl;
+    std::cout << "  Threshold type: " << (me_ellipse.getMe()->getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD ? "normalized" : "old threshold (to be avoided)") << std::endl;
+    std::cout << "  Threshold     : " << me_ellipse.getMe()->getThreshold() << std::endl;
 
     if (opt_click_allowed) {
-      me_ellipse.initTracking(I, opt_track_arc);
+      me_ellipse.initTracking(I, opt_track_circle, opt_track_arc);
     }
     else {
       // Create a list of clockwise points to automate the test
@@ -464,7 +467,7 @@ int main(int argc, const char **argv)
       ip.push_back(vpImagePoint(83, 126));
       ip.push_back(vpImagePoint(33, 276));
 
-      me_ellipse.initTracking(I, ip, opt_track_arc);
+      me_ellipse.initTracking(I, ip, opt_track_circle, opt_track_arc);
     }
     if (opt_display) {
       me_ellipse.display(I, vpColor::green, thickness);
@@ -498,7 +501,7 @@ int main(int argc, const char **argv)
         me_ellipse.display(I, vpColor::green, thickness);
         vpDisplay::flush(I);
       }
-      if (! opt_save.empty()) {
+      if (!opt_save.empty()) {
         vpDisplay::getImage(I, O);
         writer->saveFrame(O);
       }
@@ -520,7 +523,8 @@ int main(int argc, const char **argv)
       delete display;
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     if (opt_display && opt_click_allowed) {
       vpDisplay::getClick(I);
@@ -539,8 +543,8 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
-               "functionalities are required..."
-            << std::endl;
+    "functionalities are required..."
+    << std::endl;
   return EXIT_SUCCESS;
 }
 

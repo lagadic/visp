@@ -1,4 +1,4 @@
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -18,9 +18,6 @@
 # FTIIT_FOUND
 # FTIIT_INCLUDE_DIRS
 # FTIIT_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 

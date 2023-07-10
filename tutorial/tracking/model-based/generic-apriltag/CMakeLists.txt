@@ -1,6 +1,6 @@
-project(tutorial-tracking-mb-aprilTag-init)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-tracking-mb-aprilTag-init)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_gui visp_vision visp_mbt visp_detection)
 

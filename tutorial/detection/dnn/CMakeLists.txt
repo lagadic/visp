@@ -1,6 +1,6 @@
-project(tutorial-dnn-object-detection-live)
-
 cmake_minimum_required(VERSION 3.0)
+
+project(tutorial-dnn-object-detection-live)
 
 find_package(VISP REQUIRED visp_detection visp_gui)
 

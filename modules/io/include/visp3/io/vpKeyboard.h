@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,35 +29,33 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Keybord management.
+ * Keyboard management.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpKeyboard_h
 #define vpKeyboard_h
 
 /*!
   \file vpKeyboard.h
-  \brief Keybord management under unix.
+  \brief Keyboard management under unix.
 */
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-
 #include <iostream>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#endif // defined UNIX
 
 /*!
 
   \class vpKeyboard
   \ingroup group_io_keyboard
-  \brief Keybord management under unix (Linux or OSX). This class is not
+  \brief Keyboard management under unix (Linux or OSX). This class is not
   available under windows.
 
   Gets a key from the keyboard without waiting for the "Enter" key.
@@ -91,6 +89,7 @@ public:
   int kbhit();
   int getchar();
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 private:
   void init();
   void end();
@@ -98,8 +97,7 @@ private:
   void setRawMode(bool active);
 
   struct termios initial_settings, new_settings;
-};
-
 #endif // defined UNIX
+};
 
 #endif

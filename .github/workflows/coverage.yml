@@ -46,7 +46,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_COVERAGE=ON
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_COVERAGE=ON -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -58,10 +58,22 @@ jobs:
       working-directory: build
       run: |
         lcov --zerocounters --directory .
-        cmake --build . --target all
-        cmake --build . --target test
+        cmake --build . --target all -j$(nproc)
+        cmake --build . --target test -j$(nproc)
         lcov --directory . --capture --output-file visp-coverage.info
-        lcov --remove visp-coverage.info '/usr/*' '/home/runner/work/visp/visp/3rdparty/*' --output-file visp-coverage.cleaned
+        lcov --remove visp-coverage.info \
+          '/usr/*' \
+          '*/private/*' \
+          '*/test/*' \
+          "/home/runner/work/visp/visp/3rdparty/*" \
+          "/home/runner/work/visp/visp/demo/*" \
+          "/home/runner/work/visp/visp/example/*" \
+          "/home/runner/work/visp/visp/samples/*" \
+          "/home/runner/work/visp/visp/modules/gui*" \
+          "/home/runner/work/visp/visp/modules/io/src/parallel-port*" \
+          "/home/runner/work/visp/visp/modules/robot*" \
+          "/home/runner/work/visp/visp/modules/sensor*" \
+          --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
       uses: codecov/codecov-action@v2

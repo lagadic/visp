@@ -1,4 +1,4 @@
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -19,8 +19,6 @@
 # JACOSDK_INCLUDE_DIRS
 # JACOSDK_LIBRARIES
 #
-# Authors:
-# Fabien Spindler
 #############################################################################
 
 set(JACOSDK_INC_SEARCH_PATH /usr/JACO-SDK/API)
@@ -39,7 +37,7 @@ if(UNIX)
 else()
   set(JACOSDK_LIBRARIES "")
 endif()
-  
+
 if(JACOSDK_INCLUDE_DIRS)
   set(JACOSDK_FOUND TRUE)
 else()

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Provide some simple operation on column vectors.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpColVector.cpp
@@ -78,7 +75,7 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
 
   \param t : 3-dimension translation vector to add.
 
-  \return The sum of the current columnn vector (*this) and the translation
+  \return The sum of the current column vector (*this) and the translation
   vector to add.
 \code
   vpTranslationVector t1(1,2,3);
@@ -593,7 +590,7 @@ vpColVector &vpColVector::operator<<(const vpColVector &v)
 }
 
 /*!
-  Assigment operator.   Allow operation such as A = *v
+  Assignment operator. Allow operation such as A = *v
 
   The following example shows how to use this operator.
   \code

@@ -31,8 +31,8 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-              << "xml,"
-              << "cao or wrl]" << std::endl;
+      << "xml,"
+      << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
     vpImage<unsigned char> I;
@@ -68,7 +68,8 @@ int main(int argc, char **argv)
       me.setMaskSize(5);
       me.setMaskNumber(180);
       me.setRange(8);
-      me.setThreshold(10000);
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+      me.setThreshold(20);
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
@@ -91,9 +92,9 @@ int main(int argc, char **argv)
     tracker.setDisplayFeatures(true);
     tracker.initClick(I, objectname + ".init", true);
     tracker.track(I);
-//! [MBT code]
+    //! [MBT code]
 
-//! [Keypoint selection]
+    //! [Keypoint selection]
 #if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) ||                                    \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     std::string detectorName = "SIFT";
@@ -115,7 +116,8 @@ int main(int argc, char **argv)
       //! [Keypoint xml config]
       keypoint_learning.loadConfigFile(configurationFile);
       //! [Keypoint xml config]
-    } else {
+    }
+    else {
       //! [Keypoint code config]
       keypoint_learning.setDetector(detectorName);
       keypoint_learning.setExtractor(extractorName);
@@ -164,7 +166,8 @@ int main(int argc, char **argv)
     vpKeyPoint keypoint_detection;
     if (usexml) {
       keypoint_detection.loadConfigFile(configurationFile);
-    } else {
+    }
+    else {
       keypoint_detection.setDetector(detectorName);
       keypoint_detection.setExtractor(extractorName);
       keypoint_detection.setMatcher(matcherName);
@@ -213,7 +216,8 @@ int main(int argc, char **argv)
     }
     if (!click_done)
       vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else

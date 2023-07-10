@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Matrix manipulation.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpMatrix_H
 #define vpMatrix_H
@@ -676,13 +676,6 @@ vpMatrix M(R);
   // Compute Kronecker product matrix
   static vpMatrix kron(const vpMatrix &m1, const vpMatrix &m2);
   //@}
-
-  //-------------------------------------------------
-  // 2D Convolution Static Public Member Functions
-  //-------------------------------------------------
-  /** @name 2D Convolution with Static Public Member Functions  */
-  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode = "full");
-  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode = "full");
 
   //---------------------------------
   // Covariance computation Static Public Member Functions

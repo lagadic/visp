@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Visual feature manipulation (segment).
  *
- * Author:
- * Filip Novotny
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <fstream>
 #include <iostream>
@@ -78,7 +75,7 @@ int main(int argc, const char **argv)
     int opt_normalized = 1;
 
     // Parse the command line to set the variables
-    vpParseArgv::vpArgvInfo argTable[] = {
+    vpParseArgv::vpArgvInfo argTable [] = {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
       {"-d", vpParseArgv::ARGV_CONSTANT_INT, 0, (char *)&opt_no_display, "Disable display and graphics viewer."},
 #endif
@@ -91,7 +88,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable,
                            vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_ABBREV |
-                               vpParseArgv::ARGV_NO_DEFAULTS)) {
+                           vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (false);
     }
 
@@ -149,7 +146,8 @@ int main(int argc, const char **argv)
       if (opt_normalized) {
         seg_cur[i].setNormalized(true);
         seg_des[i].setNormalized(true);
-      } else {
+      }
+      else {
         seg_cur[i].setNormalized(false);
         seg_des[i].setNormalized(false);
       }
@@ -251,7 +249,8 @@ int main(int argc, const char **argv)
 
     std::cout << "final error=" << (task.getError()).sumSquare() << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

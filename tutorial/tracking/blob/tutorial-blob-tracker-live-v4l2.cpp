@@ -9,6 +9,10 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main(int argc, char **argv)
 {
 #if ((defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&                                            \
@@ -72,11 +76,13 @@ int main(int argc, char **argv)
           blob.initTracking(I, germ);
           init_done = true;
         }
-      } else {
+      }
+      else {
         blob.track(I);
       }
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       init_done = false;
     }
   }

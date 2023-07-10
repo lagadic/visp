@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,19 +29,18 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the simulator classes.
+ * Exceptions that can be emitted by the simulator classes.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /* \file vpSimulatorException.h
-   \brief error that can be emited by the vpSimulator class and its derivates
+   \brief error that can be emitted by the vpSimulator class and its derivatives
  */
 /* Classes standards. */
 
 #include <visp3/ar/vpSimulatorException.h>
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 
 vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
 {
@@ -55,3 +54,9 @@ vpSimulatorException::vpSimulatorException(int id, const char *format, ...)
 vpSimulatorException::vpSimulatorException(int id, const std::string &msg) : vpException(id, msg) { ; }
 
 vpSimulatorException::vpSimulatorException(int id) : vpException(id) { ; }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_ar.a(vpSimulatorException.cpp.o) has no symbols
+void dummy_vpSimulatorException(){};
+
+#endif

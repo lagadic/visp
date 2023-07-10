@@ -170,9 +170,9 @@ First you have to get OpenCV:
 `opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win10-extract-opencv.png
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
 
 \note OpenCV 4.5.1 win pack installer doesn't contain prebuild OpenCV libraries build with
 Visual Studio 16 2019. It contains only prebuild libraries build with previous Visual Studio version
@@ -182,13 +182,13 @@ Visual Studio 16 2019. It contains only prebuild libraries build with previous V
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\opencv-4.5.1\build-vc16
-C:\> cd %VISP_WS%\opencv-4.5.1\build-vc16
+C:\> mkdir %VISP_WS%\3rdparty\opencv-4.5.1\build-vc16
+C:\> cd %VISP_WS%\3rdparty\opencv-4.5.1\build-vc16
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set
-to the existing folder `%%VISP_WS%\opencv-4.5.1\build`:
+to the existing folder `%%VISP_WS%\3rdparty\opencv-4.5.1\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\opencv-4.5.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.1\build
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\3rdparty\opencv-4.5.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.5.1\build
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -211,7 +211,7 @@ have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 16 2019 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\opencv-4.5.1\build\x64\vc16\bin`.
+line with `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\vc16\bin`.
 
 \subsubsection install_win10_msvc16_3rdparty_realsense librealsense 3rd party
 
@@ -695,14 +695,14 @@ We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace
 `%%VISP_WS%`.
-\image html img-win10-visp-images-3.3.0.png
+\image html  img-win-visp-images-git.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
@@ -713,7 +713,7 @@ C:\> exit
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-\image html img-win10-visp-images.png
+\image html img-win-visp-images-last-release.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run

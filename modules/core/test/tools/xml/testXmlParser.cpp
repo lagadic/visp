@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example which describes how to use the xml parser class.
  *
- * Author:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testXmlParser.cpp
@@ -70,15 +67,15 @@
 
 /* --------------------------------------------------------------------------
  */
-/*                               CLASS EXAMPLE */
-/* --------------------------------------------------------------------------
- */
+ /*                               CLASS EXAMPLE */
+ /* --------------------------------------------------------------------------
+  */
 
-/*!
-  \class vpExampleDataParser
-  \brief Class example used to show how to implement a xml parser based on the
-  vpXmlParser
-*/
+  /*!
+    \class vpExampleDataParser
+    \brief Class example used to show how to implement a xml parser based on the
+    vpXmlParser
+  */
 class vpExampleDataParser : public vpXmlParser
 {
 protected:
@@ -128,7 +125,7 @@ vpExampleDataParser::vpExampleDataParser() : m_range(0.), m_step(0), m_size_filt
   Destructor.
 
 */
-vpExampleDataParser::~vpExampleDataParser() {}
+vpExampleDataParser::~vpExampleDataParser() { }
 
 /*!
   Read the main class. This method corresponds to the parsing of the main
@@ -185,11 +182,11 @@ void vpExampleDataParser::writeMainClass(xmlNodePtr node)
 
 /* --------------------------------------------------------------------------
  */
-/*                         COMMAND LINE OPTIONS */
-/* --------------------------------------------------------------------------
- */
+ /*                         COMMAND LINE OPTIONS */
+ /* --------------------------------------------------------------------------
+  */
 
-// List of allowed command line options
+  // List of allowed command line options
 #define GETOPTARGS "cdo:h"
 
 void usage(const char *name, const char *badparam, const std::string &opath, const std::string &user);
@@ -280,9 +277,9 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 
 /* --------------------------------------------------------------------------
  */
-/*                               MAIN FUNCTION */
-/* --------------------------------------------------------------------------
- */
+ /*                               MAIN FUNCTION */
+ /* --------------------------------------------------------------------------
+  */
 
 int main(int argc, const char **argv)
 {
@@ -298,7 +295,7 @@ int main(int argc, const char **argv)
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
-// Set the default output path
+    // Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -325,7 +322,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(dirname);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], NULL, opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
@@ -366,7 +364,8 @@ int main(int argc, const char **argv)
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

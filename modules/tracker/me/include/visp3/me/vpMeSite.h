@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -38,8 +38,8 @@
   \brief Moving edges
 */
 
-#ifndef vpMeSite_H
-#define vpMeSite_H
+#ifndef _vpMeSite_h_
+#define _vpMeSite_h_
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -71,20 +71,20 @@ public:
   /// Moving-edge site state
   typedef enum
   {
-    NO_SUPPRESSION = 0, ///< Point used by the tracker.
-    CONTRAST = 1,       ///< Point removed due to a contrast problem.
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-    CONSTRAST = CONTRAST, ///< Point removed due to a contrast problem (kept for compatibility with previous releases).
+    NO_SUPPRESSION = 0,   ///< Point used by the tracker.
+    CONTRAST = 1,         ///< Point removed due to a contrast problem.
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+    CONSTRAST = CONTRAST, ///< Point removed due to a contrast problem.
 #endif
-    THRESHOLD = 2,      ///< Point removed due to a threshold problem.
-    M_ESTIMATOR = 3,    ///< Point removed during virtual visual-servoing because considered as an outlier.
-    TOO_NEAR = 4,       ///< Point removed because too near image borders.
-    UNKNOW = 5          ///< Reserved.
+    THRESHOLD = 2,        ///< Point removed due to a threshold problem.
+    M_ESTIMATOR = 3,      ///< Point removed during virtual visual-servoing because considered as an outlier.
+    TOO_NEAR = 4,         ///< Point removed because too near image borders.
+    UNKNOW = 5            ///< Reserved.
   } vpMeSiteState;
 
 public:
   int i, j;
-  int i_1, j_1;
+  int i_1, j_1; // TODO FABIEN REMOVE
   double ifloat, jfloat;
   unsigned char v;
   int mask_sign;
@@ -119,7 +119,7 @@ public:
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
 
-  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_contrast = true);
+  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_likelihood = true);
 
   /*!
     Set the angle of tangent at site
@@ -210,25 +210,32 @@ public:
 
   // Static functions
   /*!
-    Compute the distance \f$ |S1 - S2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
+    Compute the square root distance between two moving-edges sites
+    \f$ |S1 - S2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
 
     \param S1 : First site
     \param S2 : Second site
 
     \return the distance between the two sites.
+
+    \sa sqrDistance()
   */
   static double distance(const vpMeSite &S1, const vpMeSite &S2)
   {
-    return (sqrt(vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat)));
+    //return (sqrt(sqrDistance(S1, S2)));
+    return (sqrt(vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat))); // TODO FABIEN REMOVE
   }
 
   /*!
-    Compute the distance \f$ |S1 - S2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
+    Compute the square distance between two moving-edges sites
+    \f$ |S1 - S2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
 
     \param S1 : First site
     \param S2 : Second site
 
-    \return the distance between the two sites.
+    \return The square distance between the two sites.
+
+    \sa distance()
   */
   static double sqrDistance(const vpMeSite &S1, const vpMeSite &S2)
   {

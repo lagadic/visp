@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,20 +30,17 @@
 #
 # Description:
 # Try to find libjpeg library.
-# Once run this will define: 
+# Once run this will define:
 #
 # JPEG_FOUND
 # JPEG_INCLUDE_DIRS
 # JPEG_LIBRARIES
 #
-# Authors:
-# Nicolas Melchior
-#
 #############################################################################
 
 # detection of the Libjpeg headers location
 if(MINGW)
-  find_path(JPEG_INCLUDE_DIR 
+  find_path(JPEG_INCLUDE_DIR
     NAMES
     jpeglib.h
     PATHS
@@ -60,7 +57,7 @@ if(MINGW)
     C:/mingw/lib64
     )
 else()
-  find_path(JPEG_INCLUDE_DIR 
+  find_path(JPEG_INCLUDE_DIR
     NAMES
     jpeglib.h
     PATHS
@@ -92,26 +89,26 @@ endif()
     JPEG_LIBRARY
     JPEG_INCLUDE_DIR
   )
-  
+
 ## --------------------------------
-  
+
 IF(JPEG_LIBRARY AND JPEG_INCLUDE_DIR)
     # The material is found. Check if it works on the requested architecture
     include(CheckCXXSourceCompiles)
-	
+
     SET(CMAKE_REQUIRED_LIBRARIES ${JPEG_LIBRARY})
     SET(CMAKE_REQUIRED_INCLUDES ${JPEG_INCLUDE_DIR})
     CHECK_CXX_SOURCE_COMPILES("
-      #include <stdio.h>  
+      #include <stdio.h>
       #include <jpeglib.h> // Contrib for jpeg image io
-      #include <jerror.h>  
+      #include <jerror.h>
       int main()
       {
         struct jpeg_decompress_struct cinfo;
         struct jpeg_error_mgr jerr;
         cinfo.err = jpeg_std_error(&jerr);
       }
-      " JPEG_BUILD_TEST) 
+      " JPEG_BUILD_TEST)
     #MESSAGE("JPEG_BUILD_TEST: ${JPEG_BUILD_TEST}")
     IF(JPEG_BUILD_TEST)
       SET(JPEG_INCLUDE_DIRS ${JPEG_INCLUDE_DIR})
@@ -120,7 +117,7 @@ IF(JPEG_LIBRARY AND JPEG_INCLUDE_DIR)
     ELSE()
       SET(JPEG_FOUND FALSE)
       #MESSAGE("libjpeg library found but not compatible with architecture.")
-    ENDIF() 
+    ENDIF()
 
 ELSE(JPEG_LIBRARY AND JPEG_INCLUDE_DIR)
   SET(JPEG_FOUND FALSE)

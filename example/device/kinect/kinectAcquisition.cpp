@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Kinect example.
  *
- * Authors:
- * Celine Teuliere
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example kinectAcquisition.cpp
@@ -61,7 +58,7 @@
 int main()
 {
   try {
-// Init Kinect
+    // Init Kinect
 #ifdef VISP_HAVE_LIBFREENECT_OLD
     // This is the way to initialize Freenect with an old version of
     // libfreenect packages under ubuntu lucid 10.04
@@ -78,17 +75,17 @@ int main()
       kinect.setTiltDegrees(angle);
     }
 
-// Init display
+    // Init display
 #if 1
     kinect.start(vpKinect::DMAP_MEDIUM_RES); // Start acquisition thread with
-                                             // a depth map resolution of
-                                             // 480x640
+    // a depth map resolution of
+    // 480x640
     vpImage<unsigned char> Idmap(480, 640);  // for medium resolution
     vpImage<float> dmap(480, 640);           // for medium resolution
 #else
     kinect.start(vpKinect::DMAP_LOW_RES);   // Start acquisition thread with a
-                                            // depth map resolution of 240x320
-                                            // (default resolution)
+    // depth map resolution of 240x320
+    // (default resolution)
     vpImage<unsigned char> Idmap(240, 320); // for low resolution
     vpImage<float> dmap(240, 320);          // for low resolution
 #endif
@@ -135,10 +132,12 @@ int main()
     std::cout << "Stop acquisition" << std::endl;
     kinect.stop(); // Stop acquisition thread
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
-  } catch (...) {
+  }
+  catch (...) {
     std::cout << "Catch an exception " << std::endl;
     return EXIT_FAILURE;
   }
@@ -149,8 +148,8 @@ int main()
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK, or OpenCV functionalities to display "
-               "images..."
-            << std::endl;
+    "images..."
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

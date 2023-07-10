@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,10 +33,7 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 
@@ -129,7 +126,8 @@ int main()
     vpMe me;
     me.setRange(10);
     me.setPointsToTrack(100);
-    me.setThreshold(50000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(15);
     me.setSampleStep(10);
 
     // Initialize the tracking. Define the two lines to track
@@ -241,7 +239,8 @@ int main()
         if (iter == 0)
           vpDisplay::getClick(I);
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      } catch (...) {
+      }
+      catch (...) {
         v = 0;
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
         robot.stopMotion();
@@ -255,7 +254,8 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

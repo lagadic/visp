@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,14 +30,11 @@
 #
 # Description:
 # Try to find pthread library.
-# Once run this will define: 
+# Once run this will define:
 #
 # PTHREAD_FOUND
 # PTHREAD_INCLUDE_DIRS
 # PTHREAD_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -70,31 +67,31 @@ else()
     "$ENV{PTHREAD_DIR}/lib"
     /usr/lib
     /usr/local/lib
-    /lib    
+    /lib
     )
 endif()
   #MESSAGE("DBG PTHREAD_INCLUDE_DIR=${PTHREAD_INCLUDE_DIR}")
   #MESSAGE(STATUS "DBG PTHREAD_LIBRARY=${PTHREAD_LIBRARY}")
-  
+
   ## --------------------------------
-  
+
   IF(PTHREAD_LIBRARY)
     SET(PTHREAD_LIBRARIES ${PTHREAD_LIBRARY})
   ELSE(PTHREAD_LIBRARY)
     #MESSAGE(SEND_ERROR "pthread library not found.")
   ENDIF(PTHREAD_LIBRARY)
-  
+
   IF(NOT PTHREAD_INCLUDE_DIR)
     #MESSAGE(SEND_ERROR "pthread include dir not found.")
   ENDIF(NOT PTHREAD_INCLUDE_DIR)
-  
+
   IF(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
     SET(PTHREAD_INCLUDE_DIRS ${PTHREAD_INCLUDE_DIR})
     SET(PTHREAD_FOUND TRUE)
   ELSE(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
     SET(PTHREAD_FOUND FALSE)
   ENDIF(PTHREAD_LIBRARIES AND PTHREAD_INCLUDE_DIR)
-  
+
   MARK_AS_ADVANCED(
     PTHREAD_INCLUDE_DIR
     PTHREAD_LIBRARY

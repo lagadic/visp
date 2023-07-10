@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,7 +32,7 @@
  * Colormap class to recolor an image with different grayscale values into
  * some corresponding color values, for better visualisation for example.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpColormap.h>
 

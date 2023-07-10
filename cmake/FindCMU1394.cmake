@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,16 +29,13 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find CMU 1394 Digital Camera SDK to acquire images from firewire 
+# Try to find CMU 1394 Digital Camera SDK to acquire images from firewire
 # cameras on Windows.
-# Once run this will define: 
+# Once run this will define:
 #
 # CMU1394_FOUND
 # CMU1394_INCLUDE_DIRS
 # CMU1394_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -48,20 +45,20 @@ if(WIN32)
 	"C:/Program Files (x86)/CMU/1394Camera/include"
 	"C:/Program Files/CMU/1394Camera/include"
     )
-  #MESSAGE("DBG CMU1394_INCLUDE_DIR=${CMU1394_INCLUDE_DIR}")  
-  
+  #MESSAGE("DBG CMU1394_INCLUDE_DIR=${CMU1394_INCLUDE_DIR}")
+
   if(CMAKE_CL_64)
     FIND_LIBRARY(CMU1394_LIBRARY_DEBUG
       NAMES 1394camerad
-      PATHS 
+      PATHS
       $ENV{CMU1394_HOME}/lib64/x64
 	  "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
 	  "C:/Program Files/CMU/1394Camera/lib64/x64"
       )
-  
+
     FIND_LIBRARY(CMU1394_LIBRARY_RELEASE
       NAMES 1394camera
-      PATHS 
+      PATHS
       $ENV{CMU1394_HOME}/lib64/x64
 	  "C:/Program Files (x86)/CMU/1394Camera/lib64/x64"
 	  "C:/Program Files/CMU/1394Camera/lib64/x64"
@@ -69,15 +66,15 @@ if(WIN32)
   else()
     FIND_LIBRARY(CMU1394_LIBRARY_DEBUG
       NAMES 1394camerad
-      PATHS 
+      PATHS
       $ENV{CMU1394_HOME}/lib
 	  "C:/Program Files (x86)/CMU/1394Camera/lib"
 	  "C:/Program Files/CMU/1394Camera/lib"
       )
-  
+
     FIND_LIBRARY(CMU1394_LIBRARY_RELEASE
       NAMES 1394camera
-      PATHS 
+      PATHS
       $ENV{CMU1394_HOME}/lib
 	  "C:/Program Files (x86)/CMU/1394Camera/lib"
 	  "C:/Program Files/CMU/1394Camera/lib"

@@ -300,23 +300,26 @@ We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
-$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+$ unzip ~/Downloads/visp-images-3.6.0.zip -d $VISP_WS
 \endverbatim
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.6.0`.
 \verbatim
-$ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
-AprilTag   README.md      cube       endianness   line    mire          warp
-Klimt      calibration    ellipse    faces        mbt     mire-2        xml
+$ ls $VISP_WS/visp-images-3.6.0
+3dmodel          README.md    ellipse     mbt        video
+AprilTag         Solvay       ellipse-1   mbt-cao    warp
+Bayer            calibration  endianness  mbt-depth  xml
+Gaussian-filter  circle       faces       memorial
+Klimt            cube         iv          mire
+LICENSE.txt      dnn          line        mire-2
 \endverbatim
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
-automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`.
+automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`.
 It is more convenient if this environment variables is automatically added to your bash session every time a new
 shell is launched:
 \verbatim
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -1507,6 +1507,14 @@ status("    Build deprecated:"           BUILD_DEPRECATED_FUNCTIONS      THEN "y
 status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "yes" ELSE "no")
 
 # ===================== Optional 3rd parties =====================
+status("")
+status("  OpenCV: ")
+status("    Version:"             USE_OPENCV         THEN "${OpenCV_VERSION}" ELSE "n/a")
+if(USE_OPENCV)
+  vp_list_replace_string(OpenCV_LIB_COMPONENTS OpenCV_LIB_COMPONENTS_FILTERED "^opencv_+" "")
+  status("    Modules:"    "${OpenCV_LIB_COMPONENTS_FILTERED}")
+  status("    OpenCV dir:" "${OpenCV_DIR}")
+endif()
 status("")
 status("  Mathematics: ")
 status("    Blas/Lapack:"            (USE_LAPACK OR WITH_LAPACK) THEN "yes" ELSE "no")
