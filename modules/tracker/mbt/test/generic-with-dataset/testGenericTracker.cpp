@@ -380,7 +380,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #endif
 #else
   map_thresh[vpMbGenericTracker::EDGE_TRACKER] =
-    useScanline ? std::pair<double, double>(0.007, 2.3) : std::pair<double, double>(0.007, 2.1);
+    useScanline ? std::pair<double, double>(0.008, 2.3) : std::pair<double, double>(0.007, 2.1);
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
     useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
