@@ -1,0 +1,62 @@
+name: Windows - Visual 2019
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: cmd
+    strategy:
+      fail-fast: false
+      matrix:
+        name: [windows-latest]
+
+        include:
+          - name: windows-latest
+            os: windows-2019
+
+    steps:
+    # https://github.com/marketplace/actions/cancel-workflow-action
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Display the workspace path
+      working-directory: ${{ github.workspace }}
+      run: pwd
+
+    - name: Clone visp-images
+      shell: bash
+      # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+
+    - name: Configure ViSP
+      working-directory: ${{ github.workspace }}
+      run: |
+        mkdir build
+        cd build
+        cmake .. -G "Visual Studio 16 2019" -A "x64" -DCMAKE_GENERATOR_PLATFORM=x64
+        type ViSP-third-party.txt
+
+    - name: Build ViSP
+      working-directory: build
+      run: |
+        cmake --build . --config Release
+
+    - name: Test ViSP
+      working-directory: build
+      run: |
+        echo "VISP_INPUT_IMAGE_PATH: ${{ env.VISP_INPUT_IMAGE_PATH }}"
+        set PATH=%PATH%;${{ github.workspace }}\build\install\x64\vc16\bin
+        echo "PATH: "
+        echo %PATH%
+        ctest --output-on-failure -C Release -V
