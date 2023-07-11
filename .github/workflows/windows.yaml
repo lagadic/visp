@@ -52,6 +52,16 @@ jobs:
       run: |
         cmake --build . --config Release
 
+    - name: Install ViSP
+      working-directory: build
+      run: |
+        cmake --build . --config Release --target install
+
+    - name: Check installation folder
+      working-directory: build
+      run: |
+        dir ${{ github.workspace }}\build\install\x64\vc16\bin
+
     - name: Test ViSP
       working-directory: build
       run: |
