@@ -525,6 +525,11 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
   std::string _sub_path;
   for (size_t pos = 0; (pos = _path.find(vpIoTools::separator)) != std::string::npos;) {
     _sub_path += _path.substr(0, pos + 1);
+    // Continue if sub_path = separator
+    if (pos == 0) {
+      _path.erase(0, pos + 1);
+      continue;
+    }
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
     if (mkdir(_sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
