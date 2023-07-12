@@ -36,8 +36,10 @@ def export_split(hdf5_paths: List[Path], images_export_path: Path, labels_export
           for object in object_data:
             if 'bounding_box' in object:
               bb = object['bounding_box']
-              x, width = bb[0] / w, bb[2] / w
-              y, height = bb[1] / h, bb[3] / h
+              # Yolo format: [x_center, y_center, width, height]. all coordinates normalized by image dimensions
+              x_center, y_center = bb[0] + bb[2] / 2, bb[1] + bb[3] / 2
+              x, width = x_center / w, bb[2] / w
+              y, height = y_center / h, bb[3] / h
               bb = [x, y, width, height]
               cls = object['class']
               fmt = f'{cls - 1} {x} {y} {width} {height}\n'
