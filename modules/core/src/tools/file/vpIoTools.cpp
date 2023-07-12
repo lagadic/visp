@@ -301,7 +301,7 @@ void vpIoTools::getUserName(std::string &username)
   else {
     username = infoBuf;
   }
-  delete [] infoBuf;
+  delete[] infoBuf;
 #else
   // Universal platform
   username = "unknown";
@@ -366,7 +366,7 @@ std::string vpIoTools::getenv(const std::string &env)
 {
 #if defined(_WIN32) && defined(WINRT)
   throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value: not "
-    "implemented on Universal Windows Platform"));
+                      "implemented on Universal Windows Platform"));
 #else
   std::string value;
   // Get the environment variable value.
@@ -517,57 +517,51 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-// See:
-// https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
-int vpIoTools::mkdir_p(const char *path, int mode)
+int vpIoTools::mkdir_p(const std::string &path, int mode)
 {
-  /* Adapted from http://stackoverflow.com/a/2336245/119527 */
-  const size_t len = strlen(path);
-  char _path[PATH_MAX];
-  const char sep = vpIoTools::separator;
-
-  std::fill(_path, _path + PATH_MAX, 0);
-
   errno = 0;
-  if (len > sizeof(_path) - 1) {
+  if (path.size() > PATH_MAX) {
     errno = ENAMETOOLONG;
     return -1;
   }
-  /* Copy string so its mutable */
-  strcpy(_path, path);
 
-  /* Iterate over the string */
-  for (char *p = _path + 1; *p; p++) { // path cannot be empty
-    if (*p == sep) {
-      /* Temporarily truncate */
-      *p = '\0';
-
+  // Iterate over the string
+  std::string _path = path;
+  std::string _sub_path;
+  for (size_t pos = 0; (pos = _path.find(vpIoTools::separator)) != std::string::npos;) {
+    _sub_path += _path.substr(0, pos + 1);
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-      if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
+    if (mkdir(_sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
-      (void)mode; // var not used
-      if (!checkDirectory(_path) && _mkdir(_path) != 0)
+    (void)mode; // var not used
+    if (!checkDirectory(_sub_path) && _mkdir(_sub_path.c_str()) != 0)
 #endif
-      {
-        if (errno != EEXIST)
-          return -1;
+    {
+      if (errno != EEXIST) {
+        return -1;
       }
-      *p = sep;
     }
+    _path.erase(0, pos + 1);
   }
 
+  if (!_path.empty()) {
+    _sub_path += _path;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-  if (mkdir(_path, static_cast<mode_t>(mode)) != 0)
+    if (mkdir(_sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
-  if (_mkdir(_path) != 0)
+
+    if (_mkdir(_sub_path.c_str()) != 0)
 #endif
-  {
-    if (errno != EEXIST)
-      return -1;
+    {
+      if (errno != EEXIST) {
+        return -1;
+      }
+    }
   }
 
   return 0;
 }
+
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -611,7 +605,7 @@ void vpIoTools::makeDirectory(const std::string &dirname)
   if (_stat(_dirname.c_str(), &stbuf) != 0)
 #endif
   {
-    if (vpIoTools::mkdir_p(_dirname.c_str(), 0755) != 0) {
+    if (vpIoTools::mkdir_p(_dirname, 0755) != 0) {
       throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'", dirname.c_str()));
     }
   }
@@ -640,18 +634,18 @@ void vpIoTools::makeFifo(const std::string &fifoname)
   // If dirname is a directory, we throw an error
   if (vpIoTools::checkDirectory(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName,
-      "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
+                        "Unable to create fifo file. '%s' is an existing directory.", fifoname.c_str()));
   }
 
   // If dirname refers to an already existing file, we throw an error
   else if (vpIoTools::checkFilename(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. File already exists.",
-      fifoname.c_str()));
+                        fifoname.c_str()));
     // If dirname refers to an already existing fifo, we throw an error
   }
   else if (vpIoTools::checkFifo(fifoname)) {
     throw(vpIoException(vpIoException::invalidDirectoryName, "Unable to create fifo file '%s'. Fifo already exists.",
-      fifoname.c_str()));
+                        fifoname.c_str()));
   }
 
   else if (mkfifo(fifoname.c_str(), 0666) < 0) {
@@ -791,12 +785,12 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   char *computedDirname = mkdtemp(dirname_char);
 
   if (!computedDirname) {
-    delete [] dirname_char;
+    delete[] dirname_char;
     throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create directory '%s'.", dirname_cpy.c_str()));
   }
 
   std::string res(computedDirname);
-  delete [] dirname_char;
+  delete[] dirname_char;
   return res;
 #elif defined(_WIN32) && !defined(WINRT)
   makeDirectory(dirname_cpy);
@@ -876,7 +870,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
-      dst.c_str()));
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -892,7 +886,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-      src.c_str(), dst.c_str()));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   }
@@ -913,7 +907,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
-      dst.c_str()));
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -929,7 +923,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on Universal Windows Platform",
-      src.c_str(), dst.c_str()));
+                        src.c_str(), dst.c_str()));
 #endif
 #endif
   }
@@ -979,7 +973,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform",
-      file_or_dir.c_str()));
+                        file_or_dir.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -994,7 +988,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     return true;
 #else
     throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on Universal Windows Platform",
-      file_or_dir.c_str()));
+                        file_or_dir.c_str()));
 #endif
 #endif
   }
@@ -1744,9 +1738,9 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
   return real_path_str;
 #else
   throw(vpIoException(vpException::fatalError,
-    "Cannot get absolute path of %s: not implemented on "
-    "Universal Windows Platform",
-    pathname.c_str()));
+                      "Cannot get absolute path of %s: not implemented on "
+                      "Universal Windows Platform",
+                      pathname.c_str()));
 #endif
 #endif
 }
@@ -2074,9 +2068,9 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 
 #else
   throw(vpIoException(vpException::fatalError,
-    "Cannot read files of directory %s: not implemented on "
-    "Universal Windows Platform",
-    dirName.c_str()));
+                      "Cannot read files of directory %s: not implemented on "
+                      "Universal Windows Platform",
+                      dirName.c_str()));
 #endif
 #endif
 }

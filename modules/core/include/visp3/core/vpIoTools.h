@@ -33,13 +33,13 @@
  *
 *****************************************************************************/
 
-#ifndef vpIoTools_HH
-#define vpIoTools_HH
+#ifndef _vpIoTools_h_
+#define _vpIoTools_h_
 
 /*!
   \file vpIoTools.h
   \brief File and directories basic tools.
- */
+*/
 
 #include <visp3/core/vpConfig.h>
 
@@ -182,9 +182,9 @@ public:
    */
   static const char separator =
 #if defined(_WIN32)
-      '\\';
+    '\\';
 #else
-      '/';
+    '/';
 #endif
   static std::string toUpperCase(const std::string &input);
   static std::string toLowerCase(const std::string &input);
@@ -255,7 +255,7 @@ protected:
   static std::vector<std::string> configValues;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static int mkdir_p(const char *path, int mode);
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  static int mkdir_p(const std::string &path, int mode);
+#endif
 };
 #endif
