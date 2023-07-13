@@ -170,7 +170,7 @@ $ cd librealsense
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
 \verbatim
-$ ./scripts/setup_udev_rules.sh
+$ sudo ./scripts/setup_udev_rules.sh
 \endverbatim
 
 5. Build and install librealsense
