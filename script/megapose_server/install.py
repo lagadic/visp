@@ -4,21 +4,30 @@ import json
 import subprocess
 from subprocess import CalledProcessError
 import os
+from typing import Union
 megapose_url = 'https://github.com/megapose6d/megapose6d.git'
 
-def get_megapose_bin_conda_env(megapose_env: str) -> Path:
+def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
   env_data = str(subprocess.check_output('conda info --envs', shell=True).decode())
   env_lines = env_data.split('\n')
   megapose_env_line = [line for line in env_lines if line.startswith(megapose_env)]
-  assert(len(megapose_env_line) == 1, 'Found multiple environment names with same name, shouldnt happen')
+  assert(len(megapose_env_line) <= 1, 'Found multiple environment names with same name, this should not happen')
+  if len(megapose_env_line) == 0:
+    return None
   megapose_env_line = megapose_env_line[0]
   megapose_env_path = Path(megapose_env_line.split()[-1])
   assert(megapose_env_path.exists())
+  return megapose_env_path
+
+def get_megapose_bin_conda_env(megapose_env: str) -> Path:
+  megapose_env_path = get_megapose_env_path(megapose_env)
+  assert megapose_env_path is not None
   megapose_env_bin = megapose_env_path / 'bin'
   return megapose_env_bin
 
 def get_pip_for_conda_env(megapose_env: str):
   return get_megapose_bin_conda_env(megapose_env) / 'pip'
+
 def get_rclone_for_conda_env(megapose_env: str):
   return get_megapose_bin_conda_env(megapose_env) / 'rclone'
 
@@ -26,7 +35,7 @@ def megapose_already_cloned(megapose_path: Path) -> bool:
   return megapose_path.exists() and (megapose_path / 'rclone.conf').exists() and ((megapose_path / 'src') / 'megapose').exists()
 
 def conda_env_already_exists(megapose_env: str) -> bool:
-  return get_megapose_bin_conda_env(megapose_env).exists()
+  return get_megapose_env_path(megapose_env) is not None
 
 def clone_megapose(megapose_path: Path):
   print('Cloning megapose git repo...')
@@ -62,7 +71,7 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
   conf_path = megapose_path / 'rclone.conf'
   rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
   arguments = [rclone, 'copyto', 'inria_data:megapose-models/',
-                   str(models_path), '--exclude="**epoch**"', '--config', str(conf_path), '--progress']
+                   str(models_path), '--exclude', '*epoch*', '--config', str(conf_path), '--progress']
   print(' '.join(arguments))
   subprocess.run(arguments, check=True)
 
@@ -78,9 +87,7 @@ if __name__ == "__main__":
   with open('./megapose_variables.json', 'r') as variables:
     megapose_variables = json.load(variables)
 
-
   megapose_server_dir = Path(os.path.dirname(os.path.abspath(__file__)))
-
 
   megapose_dir = Path(megapose_variables['megapose_dir']).absolute()
   megapose_data_dir = Path(megapose_variables['megapose_data_dir']).absolute()
