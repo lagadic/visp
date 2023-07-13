@@ -101,7 +101,7 @@ std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv [])
 {
   bool opt_verbose = true;
   bool opt_plot = true;
@@ -109,10 +109,10 @@ int main(int argc, char **argv)
   double convergence_threshold_tu = 0.5;   // Value in [deg]
 
   unsigned width = 640, height = 480;
-  std::string megaposeAddress = "131.254.20.153";
+  std::string megaposeAddress = "127.0.0.1";
   unsigned megaposePort = 5555;
   int refinerIterations = 1, coarseNumSamples = 1024;
-  std::string objectName = "castle_v2";
+  std::string objectName = "";
 
   std::string desiredPosFile = "desired.pos";
   std::string initialPosFile = "init.pos";
@@ -264,8 +264,6 @@ int main(int argc, char **argv)
     bool final_quit = false;
     bool has_converged = false;
     bool send_velocities = false;
-    bool servo_started = false;
-    static double t_init_servo = vpTime::measureTimeMs();
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
     vpColVector vLastUpdate(6);
@@ -275,8 +273,6 @@ int main(int argc, char **argv)
     vpColVector v(6);
 
     bool callMegapose = true;
-    bool updatedThisIter = true;
-    double timeLastUpdate = vpTime::measureTimeMs();
     vpMegaPoseEstimate  megaposeEstimate;
 
     while (!has_converged && !final_quit) {
@@ -289,9 +285,6 @@ int main(int argc, char **argv)
 
         cTo = megaposeEstimate.cTo;
         callMegapose = true;
-        updatedThisIter = true;
-        timeLastUpdate = vpTime::measureTimeMs();
-
         if (megaposeEstimate.score < 0.2) { // If confidence is low, exit
           final_quit = true;
           std::cout << "Low confidence, exiting" << std::endl;
@@ -322,7 +315,6 @@ int main(int argc, char **argv)
       cdTc_true = cdTw * cTw.inverse();
       vpPoseVector cdrc(cdTc_true);
       error.push_back(cdrc);
-      updatedThisIter = false;
 
       // Display desired and current pose features
       vpDisplay::displayFrame(I, cdTo, cam, 0.05, vpColor::yellow, 2);
