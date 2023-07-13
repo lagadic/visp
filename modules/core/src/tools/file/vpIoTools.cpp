@@ -94,6 +94,16 @@
 #endif
 #endif
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#define VP_STAT stat
+#elif defined(_WIN32) && defined(__MINGW32__)
+#define VP_STAT stat
+#elif defined(_WIN32)
+#define VP_STAT _stat
+#else
+#define VP_STAT stat
+#endif
+
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -448,31 +458,25 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
 
   std::string _dirname = path(dirname);
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  if (stat(_dirname.c_str(), &stbuf) != 0) {
-    return false;
-  }
-#elif defined(_WIN32) && defined(__MINGW32__)
-  std::cout << "DEBUG FS case 2 defined(_WIN32) && defined(__MINGW32__)" << std::endl;
-  if (stat(_dirname.c_str(), &stbuf) != 0) {
-    // Test again adding the separator to consider the specific case of a drive like "C:" that is not considered as a directory,
-    // while "C:\" is considered as a directory
-    if (stat((_dirname + separator).c_str(), &stbuf) != 0) {
-      std::cout << "DEBUG FS 2 checkDirectory(" << _dirname << ") return false" << std::endl;
-      return false;
+  if (VP_STAT(_dirname.c_str(), &stbuf) != 0) {
+    std::cout << "DEBUG 1 _dirname: " << _dirname << " is not a dir" << std::endl;
+    // Test adding the separator if not already present
+    if (_dirname.at(_dirname.size() - 1) != separator) {
+      std::cout << "DEBUG 2 test if _dirname + separator: " << _dirname + separator << " is a dir ?" << std::endl;
+      if (VP_STAT((_dirname + separator).c_str(), &stbuf) != 0) {
+        std::cout << "DEBUG 2 _dirname + separator: " << _dirname + separator << " is not a dir" << std::endl;
+        return false;
+      }
+    }
+    // Test removing the separator if already present
+    if (_dirname.at(_dirname.size() - 1) == separator) {
+      std::cout << "DEBUG 2 test if _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is a dir ?" << std::endl;
+      if (VP_STAT((_dirname.substr(0, _dirname.size() - 1)).c_str(), &stbuf) != 0) {
+        std::cout << "DEBUG 3 _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is not a dir" << std::endl;
+        return false;
+      }
     }
   }
-#elif defined(_WIN32)
-  std::cout << "DEBUG FS case 3 defined(_WIN32) && defined(__MINGW32__)" << std::endl;
-  if (_stat(_dirname.c_str(), &stbuf) != 0) {
-    // Test again adding the separator to consider the specific case of a drive like "C:" that is not considered as a directory,
-    // while "C:\" is considered as a directory
-    if (_stat((_dirname + separator).c_str(), &stbuf) != 0) {
-      std::cout << "DEBUG FS 13 checkDirectory(" << _dirname << ") return false" << std::endl;
-      return false;
-    }
-  }
-#endif
 
 #if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   if ((stbuf.st_mode & S_IFDIR) == 0)
