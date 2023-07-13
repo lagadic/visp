@@ -457,7 +457,7 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   if (stat(_dirname.c_str(), &stbuf) != 0) {
     // Test again adding the separator to consider the specific case of a drive like "C:" that is not considered as a directory,
     // while "C:\" is considered as a directory
-    if (_stat((_dirname + separator).c_str(), &stbuf) != 0) {
+    if (stat((_dirname + separator).c_str(), &stbuf) != 0) {
       std::cout << "DEBUG FS 2 checkDirectory(" << _dirname << ") return false" << std::endl;
       return false;
     }
