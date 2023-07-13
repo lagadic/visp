@@ -60,6 +60,7 @@ int main()
   vpIoTools::makeDirectory(tmp_dir);
 
   {
+    std::cout << "-- Test to save/load one single camera without distortion in a single file" << std::endl;
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(278.4691184118, 273.9196496040, 162.0747539621, 113.1741829586);
     std::string filename = tmp_dir + "test_write_cam_without_distortion.xml";
@@ -72,8 +73,8 @@ int main()
       }
     }
 
-    vpCameraParameters cam_read;
     {
+      vpCameraParameters cam_read;
       vpXmlParserCamera xml;
       xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithoutDistortion, 320, 240, false);
       std::cout << "Cam write:\n" << cam << std::endl;
@@ -83,27 +84,12 @@ int main()
         return EXIT_FAILURE;
       }
     }
-  }
 
-  {
-    std::cout << std::endl;
-    vpCameraParameters cam;
-    cam.initPersProjWithDistortion(276.2969237503, 271.9362132652, 162.3242102636, 113.4435399636, 0.0272549570,
-                                   -0.0270531436);
-    std::string filename = tmp_dir + "test_write_cam_with_distortion.xml";
     {
+      // Without specifying image size
+      vpCameraParameters cam_read;
       vpXmlParserCamera xml;
-      std::cout << "Write to: " << filename << std::endl;
-      if (xml.save(cam, filename, "Camera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
-        std::cerr << "Cannot save XML file: " << filename << std::endl;
-        return EXIT_FAILURE;
-      }
-    }
-
-    vpCameraParameters cam_read;
-    {
-      vpXmlParserCamera xml;
-      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithDistortion, 320, 240);
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithoutDistortion, 0, 0, false);
       std::cout << "Cam write:\n" << cam << std::endl;
       std::cout << "Cam read:\n" << cam_read << std::endl;
       if (cam != cam_read) {
@@ -114,7 +100,139 @@ int main()
   }
 
   {
-    std::cout << std::endl;
+    std::cout << "-- Test to save/load one single camera with distortion in a single file" << std::endl;
+    std::string filename = tmp_dir + "test_write_cam_with_distortion.xml";
+    vpCameraParameters cam;
+    cam.initPersProjWithDistortion(200, 200, 160, 120, 0.02, -0.02);
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << std::endl;
+      if (xml.save(cam, filename, "Camera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    {
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithDistortion, 320, 240, false);
+      std::cout << "Cam write:\n" << cam << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    {
+      // Without specifying image size
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithDistortion, 0, 0, false);
+      std::cout << "Cam write:\n" << cam << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+  }
+
+  {
+    std::cout << "-- Test to save/load multiple cameras with and without distortion in a single file" << std::endl;
+    std::string filename = tmp_dir + "test_write_cam_multiple.xml";
+    vpCameraParameters cam1_w_d;
+    cam1_w_d.initPersProjWithDistortion(200, 200, 160, 120, 0.02, -0.02);
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << " camera:\n" << cam1_w_d << std::endl;
+      if (xml.save(cam1_w_d, filename, "Camera 1", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    vpCameraParameters cam1_wo_d;
+    cam1_wo_d.initPersProjWithoutDistortion(200, 200, 160, 120);
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << " camera:\n" << cam1_wo_d << std::endl;
+      if (xml.save(cam1_wo_d, filename, "Camera 1", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    vpCameraParameters cam2_w_d;
+    cam2_w_d.initPersProjWithDistortion(400, 400, 320, 240, 0.02, -0.02);
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << " camera:\n" << cam2_w_d << std::endl;
+      if (xml.save(cam2_w_d, filename, "Camera 2", 640, 480) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    vpCameraParameters cam2_wo_d;
+    cam2_wo_d.initPersProjWithoutDistortion(400, 400, 320, 240);
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << " camera:\n" << cam2_wo_d << std::endl;
+      if (xml.save(cam2_wo_d, filename, "Camera 2", 640, 480) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    {
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera 1", vpCameraParameters::perspectiveProjWithDistortion, 320, 240, false);
+      std::cout << "Cam write:\n" << cam1_w_d << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam1_w_d != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    {
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera 1", vpCameraParameters::perspectiveProjWithoutDistortion, 320, 240, false);
+      std::cout << "Cam write:\n" << cam1_wo_d << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam1_wo_d != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    {
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera 2", vpCameraParameters::perspectiveProjWithDistortion, 640, 480, false);
+      std::cout << "Cam write:\n" << cam2_w_d << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam2_w_d != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    {
+      vpCameraParameters cam_read;
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera 2", vpCameraParameters::perspectiveProjWithoutDistortion, 640, 480, false);
+      std::cout << "Cam write:\n" << cam2_wo_d << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam2_wo_d != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+  }
+
+  {
+    std::cout << "-- Test to save/load one single camera with Kannala Brandt distortion in a single file" << std::endl;
     vpCameraParameters cam;
     std::vector<double> distortion_coeffs;
     distortion_coeffs.push_back(-0.00297341705299914);
@@ -137,7 +255,7 @@ int main()
     vpCameraParameters cam_read;
     {
       vpXmlParserCamera xml;
-      xml.parse(cam_read, filename, "Camera", vpCameraParameters::ProjWithKannalaBrandtDistortion, 800, 848);
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::ProjWithKannalaBrandtDistortion, 800, 848, false);
       std::cout << "Cam write:\n" << cam << std::endl;
       std::cout << "Cam read:\n" << cam_read << std::endl;
       if (cam != cam_read) {
