@@ -29,21 +29,21 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Data acquisition with RealSense RGB-D sensor and Franka robot.
+ * Pose-based visual servoing using MegaPose, on an Afma6 platform.
  *
  *****************************************************************************/
 
  /*!
    \example servoAfma6MegaposePBVS.cpp
-   Example of eye-in-hand image-based control law. We control here the Afma6 robot
+   Example of eye-in-hand pose-based control law. We control here the Afma6 robot
    at Inria. The velocity is computed in the camera frame. Visual features
-   correspond to the 3D pose of the target (an AprilTag) in the camera frame.
+   correspond to the 3D pose of the target (a known of object, for which we have the 3D model) in the camera frame.
 
    The device used to acquire images is a Realsense D435 device.
 
    Camera intrinsic parameters are retrieved from the Realsense SDK.
 
-   The target is an object of which we have the 3D model (in .obj format). We use MegaPose to estimate the object pose in the camera frame,
+   The target is an object for which we have the 3D model (in .obj format). We use MegaPose to estimate the object pose in the camera frame,
    which we plug into the Pose-Based control law.
  */
 
@@ -62,43 +62,17 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 #include <visp3/core/vpImageFilter.h>
-#include <optional>
 #include <visp3/io/vpVideoWriter.h>
 
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_MODULE_DNN_TRACKER)
 
+#include <optional>
 #include <visp3/io/vpJsonArgumentParser.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 
 using json = nlohmann::json;
-
-void overlayRender(vpImage<vpRGBa> &I, const vpImage<vpRGBa> &overlay, bool contour)
-{
-  if (!contour) {
-    const vpRGBa black = vpRGBa(0, 0, 0);
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        if (overlay[i][j] != black) {
-          I[i][j] = overlay[i][j];
-        }
-      }
-    }
-  }
-  else {
-    vpImage<unsigned char> overlayGray, canny;
-    vpImageConvert::convert(overlay, overlayGray);
-    vpImageFilter::canny(overlayGray, canny, 3, 30, 3);
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        if (canny[i][j] > 0) {
-          I[i][j] = vpColor::green;
-        }
-      }
-    }
-  }
-}
 
 std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
 {
@@ -140,14 +114,24 @@ int main(int argc, char **argv)
   int refinerIterations = 1, coarseNumSamples = 1024;
   std::string objectName = "castle_v2";
 
-  std::string desiredPosFile = "desired2.pos";
+  std::string desiredPosFile = "desired.pos";
   std::string initialPosFile = "init.pos";
 
+  vpJsonArgumentParser parser("Pose-based visual servoing with Megapose on an Afma6, with a Realsense D435.", "--config", "/");
+  parser
+    .addArgument("initialPose", initialPosFile, true, "Path to the file that contains that the desired pose. Can be acquired with Afma6_office.")
+    .addArgument("desiredPose", desiredPosFile, true, "Path to the file that contains that the desired pose. Can be acquired with Afma6_office.")
+    .addArgument("object", objectName, true, "Name of the object to track with megapose.")
+    .addArgument("megapose/address", megaposeAddress, true, "IP address of the Megapose server.")
+    .addArgument("megapose/port", megaposePort, true, "Port on which the Megapose server listens for connections.")
+    .addArgument("megapose/refinerIterations", refinerIterations, false, "Number of Megapose refiner model iterations."
+                 "A higher count may lead to better accuracy, at the cost of more processing time")
+    .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of Megapose renderings used for the initial pose estimation.");
+  parser.parse(argc, argv);
 
   vpRobotAfma6 robot;
 
   try {
-
     std::cout << "WARNING: This example will move the robot! "
       << "Please make sure to have the user stop button at hand!" << std::endl
       << "Press Enter to continue..." << std::endl;
@@ -169,7 +153,7 @@ int main(int argc, char **argv)
     std::cout << "Move to joint position: " << q.t() << std::endl;
     vpHomogeneousMatrix cdTw = robot.get_fMc(q).inverse();
 
-
+    // Setup camera
     vpRealSense2 rs;
     rs2::config config;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, 30);
@@ -179,7 +163,7 @@ int main(int argc, char **argv)
     vpCameraParameters cam =
       rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
     std::cout << "cam:\n" << cam << "\n";
-
+    // Initialize Megapose
     std::shared_ptr<vpMegaPose> megapose;
     try {
       megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
@@ -214,16 +198,13 @@ int main(int argc, char **argv)
 
     vpHomogeneousMatrix cdTo = megaposeTracker.init(I, *detection).get().cTo; //get camera pose relative to object, not world
 
-    // Go to desired pose, save true desired pose
+    // Go to starting pose, save true starting pose in world frame
     robot.readPosFile(initialPosFile, q);
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
     robot.setPosition(vpRobot::ARTICULAR_FRAME, q); // Move to the joint position
     std::cout << "Move to joint position: " << q.t() << std::endl;
     vpHomogeneousMatrix cTw = robot.get_fMc(q).inverse();
-
-    vpHomogeneousMatrix cdTc_true = cdTw * cTw.inverse();
-
-
+    vpHomogeneousMatrix cdTc_true = cdTw * cTw.inverse(); // ground truth error
 
     detection = std::nullopt;
     while (!detection) {
@@ -240,8 +221,6 @@ int main(int argc, char **argv)
     writer.open(I);
 
     //vpHomogeneousMatrix oTw = cTo.inverse() * cTw;
-
-
     vpHomogeneousMatrix cdTc = cdTo * cTo.inverse();
     vpFeatureTranslation t(vpFeatureTranslation::cdMc);
     vpFeatureThetaU tu(vpFeatureThetaU::cdRc);
@@ -308,7 +287,7 @@ int main(int argc, char **argv)
       if (!callMegapose && trackerFuture.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
         megaposeEstimate = trackerFuture.get();
 
-        cTo = megaposeEstimate.cTo;        
+        cTo = megaposeEstimate.cTo;
         callMegapose = true;
         updatedThisIter = true;
         timeLastUpdate = vpTime::measureTimeMs();
@@ -319,7 +298,7 @@ int main(int argc, char **argv)
         }
       }
 
-      if(callMegapose) {
+      if (callMegapose) {
         std::cout << "Calling megapose" << std::endl;
         trackerFuture = megaposeTracker.track(I);
         callMegapose = false;
@@ -329,26 +308,18 @@ int main(int argc, char **argv)
       ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot") << ", right click to quit.";
       vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
 
-
-
-
       // Update visual features
-
       cdTc = cdTo * cTo.inverse();
       t.buildFrom(cdTc);
       tu.buildFrom(cdTc);
       v = task.computeControlLaw();
-
-
+      velocities.push_back(v);
 
       // Update true pose
       vpPoseVector p;
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q);
       cTw = robot.get_fMc(q).inverse();
-      
       cdTc_true = cdTw * cTw.inverse();
-
-      velocities.push_back(v);
       vpPoseVector cdrc(cdTc_true);
       error.push_back(cdrc);
       updatedThisIter = false;
@@ -356,7 +327,7 @@ int main(int argc, char **argv)
       // Display desired and current pose features
       vpDisplay::displayFrame(I, cdTo, cam, 0.05, vpColor::yellow, 2);
       vpDisplay::displayFrame(I, cTo, cam, 0.05, vpColor::none, 3);
-      
+
       if (opt_plot) {
         plotter->plot(0, iter_plot, task.getError());
         plotter->plot(1, iter_plot, v);
@@ -392,7 +363,6 @@ int main(int argc, char **argv)
         vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
       }
 
-
       // Send to the robot
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
@@ -424,7 +394,8 @@ int main(int argc, char **argv)
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
 
-    json j = json{
+    // Save results to JSON
+    json j = json {
       {"velocities", velocities},
       {"error", error}
     };
@@ -432,7 +403,6 @@ int main(int argc, char **argv)
     jsonFile.open("results.json");
     jsonFile << j.dump(4);
     jsonFile.close();
-
 
     if (opt_plot && plotter != nullptr) {
       delete plotter;
@@ -454,9 +424,6 @@ int main(int argc, char **argv)
         vpDisplay::flush(I);
       }
     }
-
-
-    
   }
   catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
@@ -477,11 +444,11 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x" << std::endl;
 #endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
+  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=17)." << std::endl;
 #endif
 #if !defined(VISP_HAVE_AFMA6)
-  std::cout << "ViSP is not build with Afma-6 robot support..." << std::endl;
+  std::cout << "ViSP is not built with Afma-6 robot support..." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }
