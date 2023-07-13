@@ -449,19 +449,36 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   std::string _dirname = path(dirname);
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  if (stat(_dirname.c_str(), &stbuf) != 0)
-#elif defined(_WIN32) && defined(__MINGW32__)
-  if (stat(_dirname.c_str(), &stbuf) != 0)
-#elif defined(_WIN32)
-  if (_stat(_dirname.c_str(), &stbuf) != 0)
-#endif
-  {
+  if (stat(_dirname.c_str(), &stbuf) != 0) {
     return false;
   }
+#elif defined(_WIN32) && defined(__MINGW32__)
+  std::cout << "DEBUG FS case 2 defined(_WIN32) && defined(__MINGW32__)" << std::endl;
+  if (stat(_dirname.c_str(), &stbuf) != 0) {
+    // Test again adding the separator to consider the specific case of a drive like "C:" that is not considered as a directory,
+    // while "C:\" is considered as a directory
+    if (_stat((_dirname + separator).c_str(), &stbuf) != 0) {
+      std::cout << "DEBUG FS 2 checkDirectory(" << _dirname << ") return false" << std::endl;
+      return false;
+    }
+  }
+#elif defined(_WIN32)
+  std::cout << "DEBUG FS case 3 defined(_WIN32) && defined(__MINGW32__)" << std::endl;
+  if (_stat(_dirname.c_str(), &stbuf) != 0) {
+    // Test again adding the separator to consider the specific case of a drive like "C:" that is not considered as a directory,
+    // while "C:\" is considered as a directory
+    if (_stat((_dirname + separator).c_str(), &stbuf) != 0) {
+      std::cout << "DEBUG FS 13 checkDirectory(" << _dirname << ") return false" << std::endl;
+      return false;
+    }
+  }
+#endif
+
 #if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   if ((stbuf.st_mode & S_IFDIR) == 0)
 #endif
   {
+    std::cout << "DEBUG FS 4 checkDirectory(" << _dirname << ") return false" << std::endl;
     return false;
   }
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -470,8 +487,10 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   if ((stbuf.st_mode & S_IWRITE) == 0)
 #endif
   {
+    std::cout << "DEBUG FS 5 checkDirectory(" << _dirname << ") return false" << std::endl;
     return false;
   }
+  std::cout << "DEBUG FS 6 checkDirectory(" << _dirname << ") return true" << std::endl;
   return true;
 }
 
