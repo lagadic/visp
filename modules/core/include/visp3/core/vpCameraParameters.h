@@ -40,8 +40,8 @@
 
 */
 
-#ifndef vpCameraParameters_H
-#define vpCameraParameters_H
+#ifndef _vpCameraParameters_h_
+#define _vpCameraParameters_h_
 
 #include <vector>
 
@@ -483,6 +483,8 @@ inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
     j["dist_coeffs"] = cam.m_dist_coefs;
     break;
   }
+  case vpCameraParameters::perspectiveProjWithoutDistortion:
+    break;
   default:
     break;
   }
