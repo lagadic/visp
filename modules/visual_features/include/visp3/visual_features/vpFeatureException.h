@@ -90,8 +90,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFeatureException(int id) : vpException(id) { ; }
+  vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpFeatureException(int id) : vpException(id) { }
 };
 
 #endif

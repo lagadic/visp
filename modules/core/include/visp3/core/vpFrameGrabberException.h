@@ -84,8 +84,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFrameGrabberException(int id) : vpException(id) { ; }
+  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpFrameGrabberException(int id) : vpException(id) { }
 };
 
 #endif /* #ifndef _vpFrameGrabberException_h_ */
