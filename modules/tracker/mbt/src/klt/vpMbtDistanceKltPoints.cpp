@@ -106,7 +106,7 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     }
 
     if (add) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
       initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
       curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
       curPointsInd[(int)id] = (int)i;
@@ -158,7 +158,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
     if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, (unsigned int)y, (unsigned int)x)) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
 #else

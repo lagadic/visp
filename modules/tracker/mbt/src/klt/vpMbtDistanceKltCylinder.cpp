@@ -148,7 +148,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
       vpPixelMeterConversion::convertPoint(cam, x_tmp, y_tmp, xm, ym);
       double Z = computeZ(xm, ym);
       if (!vpMath::isNaN(Z)) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
         initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
         curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
         curPointsInd[(int)id] = (int)i;
@@ -162,7 +162,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
 
         vpPoint p;
         p.setWorldCoordinates(xm * Z, ym * Z, Z);
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
         initPoints3D[(int)id] = p;
 #else
         initPoints3D[id] = p;
@@ -201,7 +201,7 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpenc
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
     if (isTrackedFeature((int)id)) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
 #else
