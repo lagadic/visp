@@ -91,8 +91,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpImageException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpImageException(int id) : vpException(id) { ; }
+  vpImageException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpImageException(int id) : vpException(id) { }
 };
 
 #endif
