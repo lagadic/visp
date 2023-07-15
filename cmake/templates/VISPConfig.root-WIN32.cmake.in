@@ -102,11 +102,7 @@ elseif(MSVC)
 elseif(MINGW)
   set(VISP_RUNTIME mingw)
 
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
-                  OUTPUT_VARIABLE VISP_GCC_TARGET_MACHINE
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(VISP_GCC_TARGET_MACHINE MATCHES "64")
-    set(MINGW64 1)
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*")
     set(VISP_ARCH x64)
   else()
     set(VISP_ARCH x86)
