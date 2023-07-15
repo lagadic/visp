@@ -149,10 +149,10 @@ private:
 public:
   /*!
     Constructor.
-    \param file Should be the name of the file where this constructor was
-    called. \param line Should be the line in file where this constructor was
-    called. \param func Should be the name of the function where this
-    constructor was called. \param error If true, writes to the error stream.
+    \param file Should be the name of the file where this constructor was called.
+    \param line Should be the line in file where this constructor was called.
+    \param func Should be the name of the function where this constructor was called.
+    \param error If true, writes to the error stream.
     \param s String to print before any other message (acts like a header).
     \note Call the constructor with something like
     vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
