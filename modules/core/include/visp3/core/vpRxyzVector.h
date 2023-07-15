@@ -34,8 +34,8 @@
  *
 *****************************************************************************/
 
-#ifndef vpRxyzVECTOR_H
-#define vpRxyzVECTOR_H
+#ifndef _vpRxyzVector_h_
+#define _vpRxyzVector_h_
 
 /*!
   \file vpRxyzVector.h
@@ -192,7 +192,7 @@ public:
   explicit vpRxyzVector(const std::vector<double> &rxyz);
 
   //! Destructor.
-  virtual ~vpRxyzVector(){};
+  virtual ~vpRxyzVector(){}
 
   // convert a rotation matrix into Rxyz vector
   vpRxyzVector buildFrom(const vpRotationMatrix &R);

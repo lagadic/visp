@@ -33,8 +33,8 @@
  *
 *****************************************************************************/
 
-#ifndef vpRotationVECTOR_H
-#define vpRotationVECTOR_H
+#ifndef _vpRotationVector_h_
+#define _vpRotationVector_h_
 
 /*!
   \file vpRotationVector.h
@@ -112,7 +112,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpRotationVector(){};
+  virtual ~vpRotationVector(){}
 
   /** @name Inherited functionalities from vpRotationVector */
   //@{

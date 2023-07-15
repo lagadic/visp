@@ -182,7 +182,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpForceTwistMatrix(){};
+  virtual ~vpForceTwistMatrix(){}
 
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
@@ -215,7 +215,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a velocity twist matrix"));
-  };
+  }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -226,7 +226,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){};
+  vp_deprecated void init(){}
   /*!
      \deprecated You should rather use eye().
    */
