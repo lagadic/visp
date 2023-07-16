@@ -38,7 +38,6 @@ jobs:
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
-        echo "VISP_INPUT_IMAGE_PATH: ${{ env.VISP_INPUT_IMAGE_PATH }}"
 
     - name: Configure ViSP
       working-directory: ${{ github.workspace }}
@@ -66,7 +65,9 @@ jobs:
     - name: Test ViSP
       working-directory: build
       run: |
-        echo "VISP_INPUT_IMAGE_PATH: ${{ env.VISP_INPUT_IMAGE_PATH }}"
+        set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
+        echo "VISP_INPUT_IMAGE_PATH: "
+        echo %VISP_INPUT_IMAGE_PATH%
         set PATH=%PATH%;${{ github.workspace }}\build\install\x64\vc16\bin
         echo "PATH: "
         echo %PATH%
