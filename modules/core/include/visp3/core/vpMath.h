@@ -51,7 +51,9 @@
 // Define _USE_MATH_DEFINES before including <math.h> to expose these macro
 // definitions for common math constants.  These are placed under an #ifdef
 // since these commonly-defined names are not part of the C or C++ standards
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #endif
 #include <math.h>
 #include <vector>
