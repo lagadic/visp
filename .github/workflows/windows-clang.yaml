@@ -16,7 +16,7 @@ jobs:
 
         include:
           - name: windows-latest-clang
-            os: windows-2019
+            os: windows-2022
             compiler: clang-cl
 
     steps:
@@ -46,7 +46,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -G "Visual Studio 16 2019" -T "ClangCl" -A "x64"
+        cmake .. -G "Visual Studio 17 2022" -T "ClangCl" -A "x64"
         type ViSP-third-party.txt
 
     - name: Build ViSP
