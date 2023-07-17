@@ -76,7 +76,7 @@ jobs:
 
     - name: Run unit tests
       working-directory: build
-      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
+      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure -V
 
     - name: ViSP as 3rdparty with cmake
       run: |
