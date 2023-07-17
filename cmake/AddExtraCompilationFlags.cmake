@@ -180,7 +180,7 @@ if(MSVC)
     # Avoid build error C1128
     list(APPEND VISP_EXTRA_CXX_FLAGS "/bigobj")
   endif()
-  if((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+  if(REMOVE_FS AND (CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
     add_extra_compiler_option("-Wno-c++98-compat")                  # turn off warning due to json
     add_extra_compiler_option("-Wno-c++98-compat-pedantic")
     add_extra_compiler_option("-Wno-c11-extensions")
