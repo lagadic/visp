@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -72,7 +72,9 @@
 #include <visp3/io/vpJsonArgumentParser.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
 using json = nlohmann::json;
+#endif
 
 std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
 {
@@ -117,6 +119,7 @@ int main(int argc, const char *argv [])
   std::string desiredPosFile = "desired.pos";
   std::string initialPosFile = "init.pos";
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
   vpJsonArgumentParser parser("Pose-based visual servoing with Megapose on an Afma6, with a Realsense D435.", "--config", "/");
   parser
     .addArgument("initialPose", initialPosFile, true, "Path to the file that contains that the desired pose. Can be acquired with Afma6_office.")
@@ -128,6 +131,7 @@ int main(int argc, const char *argv [])
                  "A higher count may lead to better accuracy, at the cost of more processing time")
     .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of Megapose renderings used for the initial pose estimation.");
   parser.parse(argc, argv);
+#endif
 
   vpRobotAfma6 robot;
 
@@ -386,6 +390,7 @@ int main(int argc, const char *argv [])
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
     // Save results to JSON
     json j = json {
       {"velocities", velocities},
@@ -395,6 +400,7 @@ int main(int argc, const char *argv [])
     jsonFile.open("results.json");
     jsonFile << j.dump(4);
     jsonFile.close();
+#endif
 
     if (opt_plot && plotter != nullptr) {
       delete plotter;
