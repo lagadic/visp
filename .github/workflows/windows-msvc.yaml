@@ -42,6 +42,9 @@ jobs:
     - name: Configure ViSP
       working-directory: ${{ github.workspace }}
       run: |
+        set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
+        echo "VISP_INPUT_IMAGE_PATH: "
+        echo %VISP_INPUT_IMAGE_PATH%
         mkdir build
         cd build
         cmake .. -G "Visual Studio 16 2019" -A "x64"
