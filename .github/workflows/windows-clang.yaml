@@ -38,15 +38,11 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
-        echo "VISP_INPUT_IMAGE_PATH: ${{ env.VISP_INPUT_IMAGE_PATH }}"
+        echo "VISP_INPUT_IMAGE_PATH=C:\Users\runneradmin\visp-images" >> $GITHUB_ENV
 
     - name: Configure ViSP
       working-directory: ${{ github.workspace }}
       run: |
-        set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
-        echo "VISP_INPUT_IMAGE_PATH: "
-        echo %VISP_INPUT_IMAGE_PATH%
         mkdir build
         cd build
         cmake .. -G "Visual Studio 17 2022" -T "ClangCl" -A "x64"
@@ -73,9 +69,6 @@ jobs:
     - name: Test ViSP
       working-directory: build
       run: |
-        set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
-        echo "VISP_INPUT_IMAGE_PATH: "
-        echo %VISP_INPUT_IMAGE_PATH%
         set PATH=%PATH%;${{ github.workspace }}\build\install\x64\vc17\bin
         echo "PATH: "
         echo %PATH%
