@@ -7,7 +7,6 @@ channels:
 dependencies:
   - python=3.9
   - pip
-  - wget
   - python-wget
   - joblib
   - pytorch==1.11.0
@@ -57,7 +56,6 @@ dependencies:
       - seaborn
       - kornia
       - pyarrow
-      - dt_apriltags
       - open3d
       - structlog
       - imageio
