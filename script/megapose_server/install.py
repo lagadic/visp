@@ -5,7 +5,12 @@ import subprocess
 from subprocess import CalledProcessError
 import os
 from typing import Union
+import shutil
 megapose_url = 'https://github.com/megapose6d/megapose6d.git'
+
+conda_exe = shutil.which('conda')
+if conda_exe is None:
+  raise RuntimeError('Conda was not found with shutil.which')
 
 def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
   env_data = str(subprocess.check_output('conda info --envs', shell=True).decode())
@@ -15,7 +20,7 @@ def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
   if len(megapose_env_line) == 0:
     return None
   megapose_env_line = megapose_env_line[0]
-  megapose_env_path = Path(megapose_env_line.split()[-1])
+  megapose_env_path = Path(megapose_env_line.split()[-1]).absolute()
   assert(megapose_env_path.exists())
   return megapose_env_path
 
@@ -26,7 +31,13 @@ def get_megapose_bin_conda_env(megapose_env: str) -> Path:
   return megapose_env_bin
 
 def get_pip_for_conda_env(megapose_env: str):
-  return get_megapose_bin_conda_env(megapose_env) / 'pip'
+  conda_bin = get_megapose_bin_conda_env(megapose_env)
+  # On windows, pip is not in the bin directory but rather in scripts
+  if os.name == 'nt':
+    return conda_bin.parent / 'Scripts' / 'pip'
+  else:
+    return conda_bin / 'pip'
+
 
 def get_rclone_for_conda_env(megapose_env: str):
   return get_megapose_bin_conda_env(megapose_env) / 'rclone'
@@ -55,14 +66,14 @@ def clone_megapose(megapose_path: Path):
 def install_dependencies(megapose_path: Path, megapose_environment: str):
   try:
     if not conda_env_already_exists(megapose_environment):
-      subprocess.run(['conda', 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
+      subprocess.run([conda_exe, 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
     else:
-      print(f'Conda environment {megapose_environment} already exists, updating dependencies')
-      subprocess.run(['conda', 'env', 'update', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
+      print(f'Conda environment {megapose_environment} already exists, updating dependencies...')
+      subprocess.run([conda_exe, 'env', 'update', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
     megapose_env_pip = get_pip_for_conda_env(megapose_environment)
-    subprocess.run([megapose_env_pip, 'install', '-e',  str(megapose_path)], check=True)
+    subprocess.run([str(megapose_env_pip.absolute()), 'install', '-e',  str(megapose_path)], check=True, shell=True) # shell=True because without it the custom pip cannot be found
   except CalledProcessError as e:
-    print('Could create conda environment')
+    print('Could not create conda environment')
     exit(1)
 
 
@@ -71,7 +82,8 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
   conf_path = megapose_path / 'rclone.conf'
   rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
   arguments = [rclone, 'copyto', 'inria_data:megapose-models/',
-                   str(models_path), '--exclude', '*epoch*', '--config', str(conf_path), '--progress']
+                str(models_path), '--exclude', '*epoch*',
+                '--config', str(conf_path), '--progress']
   print(' '.join(arguments))
   subprocess.run(arguments, check=True)
 
@@ -133,5 +145,3 @@ Try:
   $ conda activate {megapose_environment}
   $ python -m megapose_server.run -h
   ''')
-
-

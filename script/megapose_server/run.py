@@ -10,6 +10,17 @@ with open(variables_file, 'r') as f:
     os.environ['MEGAPOSE_DIR'] = json_vars['megapose_dir']
     os.environ['MEGAPOSE_DATA_DIR'] = json_vars['megapose_data_dir']
 
+if 'HOME' not in os.environ: # Home is always required by megapose but is not always set
+    if os.name == 'nt':
+      if 'HOMEPATH' in os.environ:
+        os.environ['HOME'] = os.environ['HOMEPATH']
+      elif 'HOMEDIR' in os.environ:
+        os.environ['HOME'] = os.environ['HOMEDIR']
+      else:
+        os.environ['HOME'] = '.'
+    else:
+      os.environ['HOME'] = '.'
+
 
 # Third Party
 import numpy as np
@@ -17,10 +28,7 @@ import argparse
 import json
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
-
-import numpy as np
 from PIL import Image
-
 import socket
 import struct
 import io
@@ -486,8 +494,3 @@ if __name__ == '__main__':
     server = MegaposeServer(args.host, args.port, megapose_models[args.model][0], mesh_dir, camera_data, optimize=args.optimize, num_workers=args.num_workers)
 
     server.run()
-
-
-
-
-
