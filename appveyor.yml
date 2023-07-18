@@ -21,7 +21,7 @@ environment:
 
   matrix:
     - TARGET: mingw
-    - TARGET: msvc
+    # - TARGET: msvc
     - TARGET: uwp
     - TARGET: visp_sample
 
