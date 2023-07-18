@@ -39,7 +39,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Configure CMake
