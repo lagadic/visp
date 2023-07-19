@@ -137,7 +137,7 @@ if(X86 OR X86_64)
             set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -Wno-missing-field-initializers")
         endif()
 
-        if((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+        if(MSVC AND ((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
             # Clang under windows needs AVX flags
             set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} ${AVX_FLAG} ${AVX2_FLAG}")
         endif()
