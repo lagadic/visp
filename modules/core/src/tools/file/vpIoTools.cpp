@@ -482,7 +482,6 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   if ((stbuf.st_mode & S_IFDIR) == 0)
 #endif
   {
-    std::cout << "DEBUG FS 4 checkDirectory(" << _dirname << ") return false" << std::endl;
     return false;
   }
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -491,10 +490,8 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   if ((stbuf.st_mode & S_IWRITE) == 0)
 #endif
   {
-    std::cout << "DEBUG FS 5 checkDirectory(" << _dirname << ") return false" << std::endl;
     return false;
   }
-  std::cout << "DEBUG FS 6 checkDirectory(" << _dirname << ") return true" << std::endl;
   return true;
 }
 
