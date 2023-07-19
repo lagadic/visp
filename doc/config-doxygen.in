@@ -915,6 +915,8 @@ EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/modules" \
+                         "@VISP_SOURCE_DIR@/script" \
+
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
