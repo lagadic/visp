@@ -52,9 +52,6 @@ def export_split(hdf5_paths: List[Path], images_export_path: Path, labels_export
   for cls in detection_data.keys():
     print(f'\tClass: {cls}\t Detection count: {detection_data[cls]}')
 
-
-
-
 if __name__ == '__main__':
   parser = argparse.ArgumentParser('Convert an HDF5 dataset generated with Blenderproc to a YoloV7-ready format')
   parser.add_argument('--input', type=str, required=True, help='''Path to the HDF5 dataset. It is the root folder of the dataset,

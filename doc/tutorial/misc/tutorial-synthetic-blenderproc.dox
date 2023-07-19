@@ -53,7 +53,7 @@ Once Blenderproc is done, you can check its output with:
 (blenderproc) $ blenderproc vis hdf5 output/0.hdf5
 \endcode
 
-Blenderproc stores its output in HDF5 file format. Each HDF5 **may** contain the RGB image, along with depth, normals, and other modalities. 
+Blenderproc stores its output in HDF5 file format. Each HDF5 **may** contain the RGB image, along with depth, normals, and other modalities.
 
 For the simulator to provide useful data, we should obtain a set of realistic textures (thus helping close the Sim2Real gap).
 Thankfully, Blenderproc provides a helpful script to download a dataset of materials from cc0textures.com, containing more than 1500 high resolution materials.
@@ -66,8 +66,11 @@ To download the materials, run
 
 \section dnn_synthetic_script Running the object-centric generation script
 
-We will now run the generation script. 
+We will now run the generation script.
 The script places a random set of objects in a simple cubic room, with added distractors. Materials of the walls and distractors are randomized.
+
+This script and an example configuration file can be found in the `script/dataset_generator` folder of your ViSP <b>source</b> directory.
+
 
 The basic algorithm is:
 \verbatim
@@ -108,6 +111,8 @@ For each scene:
     - If required, save object pose in camera frame
 \endverbatim
 Many randomization parameters can be modified to alter the rendering, as explained in \ref dnn_input_configuration.
+
+
 
 With this simple approach, we can obtain images such as:
 \image html misc/blenderproc_rgb_example.png
@@ -162,7 +167,390 @@ The general parameters are:
   </tr>
 </table>
 
+You can also control some of the rendering parameters. This will impact the rendering time and the quality of the generated RGB images.
+These parameters are located in the "rendering" field.
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>max_num_samples</td>
+    <td>Int > 0</td>
+    <td>Number of rays per pixels. A lower number results in noisier images (especially in scenes with large variations).</td>
+  </tr>
+  <tr>
+    <td>denoiser</td>
+    <td>One of [null, "INTEL", "OPTIX"]</td>
+    <td>Which denoiser to use after performing ray tracing. null indicates that no denoiser is used. "OPTIX" requires a compatible Nvidia GPU.
+    Using a denoiser allows to obtain a clean image, with a low number of rays per pixels.</td>
+  </tr>
+</table>
 
+You can also modify the camera's intrinsic parameters. The camera uses an undistorted perspective projection model. For more information on camera parameters, see vpCameraParameters.
+These parameters are found in the "camera" field of the configuration.
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>px</td>
+    <td>float</td>
+    <td>See vpCameraParameters</td>
+  </tr>
+  <tr>
+    <td>py</td>
+    <td>float</td>
+    <td>See vpCameraParameters</td>
+  </tr>
+  <tr>
+    <td>v0</td>
+    <td>float</td>
+    <td>See vpCameraParameters</td>
+  </tr>
+  <tr>
+    <td>u0</td>
+    <td>float</td>
+    <td>See vpCameraParameters</td>
+  </tr>
+  <tr>
+    <td>h</td>
+    <td>Int</td>
+    <td>Height of the generated images.</td>
+  </tr>
+  <tr>
+    <td>w</td>
+    <td>Int</td>
+    <td>Width of the generated images.</td>
+  </tr>
+  <tr>
+    <td>randomize_params_percent</td>
+    <td>float, [0, 1)</td>
+    <td>
+      Controls the randomization of the camera parameters \f$p_x, p_y, u_0, v_0\f$. If randomize_params_percent > 0, then, each time a scene is created the intrinsics are perturbed around the given values.
+      For example, if this parameters is equal to 10 and \f$p_x = 500\f$, then the used \f$p_x\f$ when generating images will be in the range [450, 550].
+    </td>
+  </tr>
+</table>
+
+
+To customize the scene, you can change the parameters in the "scene" field:
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>room_size_multiplier_min</td>
+    <td>float > 1.0, < room_size_multiplier_max</td>
+    <td>
+      Minimum room size as a factor of the biggest sampled target object. The room is cubic.
+      The size of the biggest object is the length of the largest diagonal of its axis-aligned bounding box. This tends to overestimate the size of the object.
+      If the size of the biggest object is 0.5m, room_size_multiplier_max = 2 and room_size_multiplier_max = 4, then the room's size will be randomly sampled to be between 1m and 2m.
+    </td>
+  </tr>
+  <tr>
+    <td>room_size_multiplier_max</td>
+    <td>float > room_size_multiplier_min</td>
+    <td>
+      Minimum room size as a factor of the biggest sampled target object. The room is cubic.
+      The size of the biggest object is the length of the largest diagonal of its axis-aligned bounding box. This tends to overestimate the size of the object.
+      If the size of the biggest object is 0.5m, room_size_multiplier_max = 2 and room_size_multiplier_max = 4, then the room's size will be randomly sampled to be between 1m and 2m.
+    </td>
+  </tr>
+
+  <tr>
+    <td>simulate_physics</td>
+    <td>Boolean</td>
+    <td>Whether to simulate physics. If false, then objects will be floating across the room. If true, then objects will fall to the ground.</td>
+  </tr>
+  <tr>
+    <td>max_num_textures</td>
+    <td>Int > 0</td>
+    <td>Max number of textures per blenderproc run. If scenes_per_run is 1, max_num_textures = 50 and the number of distractors is more than 50, then the 50 textures will be used across all distractors (and walls). In this case, new materials will be sampled for each scene.</td>
+  </tr>
+  <tr>
+    <td>distractors</td>
+    <td>Dictionary</td>
+    <td>See below</td>
+  </tr>
+  <tr>
+    <td>lights</td>
+    <td>Dictionary</td>
+    <td>See below</td>
+  </tr>
+  <tr>
+    <td>objects</td>
+    <td>Dictionary</td>
+    <td>See below</td>
+  </tr>
+</table>
+
+Distractors are small, simple objects that are added along with the target objects to create some variations and occlusions.
+To modify their properties, you can change the "distractors" field of the scene
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>min_count</td>
+    <td>Int >= 0, < max_count</td>
+    <td>
+      Minimum number of distractors to place in the room.
+    </td>
+  </tr>
+  <tr>
+    <td>max_count</td>
+    <td>Int > min_count</td>
+    <td>
+      Maximum number of distractors to place in the room.
+    </td>
+  </tr>
+  <tr>
+    <td>min_size_rel_scene</td>
+    <td>float > 0.0</td>
+    <td>
+      Minimum size of the distractors, relative to the room size.
+      If the room size is 0.5m and min_size_rel_scene = 0.1, then the minimum size of distractor will be 0.05m.
+      Scale is applied independently on each axis.
+    </td>
+  </tr>
+  <tr>
+    <td>max_size_rel_scene</td>
+    <td>float < 1.0, > min_size_rel_scene</td>
+    <td>
+      maximum size of the distractors, relative to the room size.
+      If the room size is 0.5m and max_size_rel_scene = 0.2, then the maximum size of distractor will be 0.1m.
+      Scale is applied independently on each axis.
+    </td>
+  </tr>
+  <tr>
+    <td>displacement_max_amount</td>
+    <td>float >= 0.0 </td>
+    <td>
+      Amount of displacement to apply to distractors.
+      Displacement subdivides the mesh and displaces each of the distractor's vertices according to a random noise pattern.
+      <b>This option greatly slows down rendering: set it to 0 if needed.</b>
+    </td>
+  </tr>
+  <tr>
+    <td>pbr_noise</td>
+    <td>float >= 0.0 </td>
+    <td>
+      Amount of noise to add to the material properties of the distractors.
+      These properties include the specularity, the "metallicness" and the roughness of the material, according to Blender's principled BSDF.
+    </td>
+  </tr>
+  <tr>
+    <td>emissive_prob</td>
+    <td>float >= 0.0 , <= 1.0</td>
+    <td>
+      Probability that a distractor becomes a light source: its surface emits light. Set to more than 0 to add more light variations and shadows.
+    </td>
+  </tr>
+  <tr>
+    <td>emissive_min_strength</td>
+    <td>float >= 0.0, < emissive_max_strength</td>
+    <td>
+      Minimum emission strength for a distractor that emits lights. In Watts/m².
+    </td>
+  </tr>
+  <tr>
+    <td>emissive_max_strength</td>
+    <td>float > emissive_min_strength</td>
+    <td>
+      Maxmimum emission strength for a distractor that emits lights. In Watts/m².
+    </td>
+  </tr>
+</table>
+
+To change the lighting behaviour, see the options below:
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>min_count</td>
+    <td>Int >= 0, < max_count</td>
+    <td>
+      Minimum number of lights in the scene.
+    </td>
+  </tr>
+  <tr>
+    <td>max_count</td>
+    <td>Int > min_count</td>
+    <td>
+      Maximum number of lights in the scene
+    </td>
+  </tr>
+  <tr>
+    <td>min_intensity</td>
+    <td>float > 0.0, < max_intensity</td>
+    <td>
+      Minimum intensity of a light. In Watts.
+    </td>
+  </tr>
+  <tr>
+    <td>max_intensity</td>
+    <td>float > min_intensity</td>
+    <td>
+      Maximum intensity of a light. In Watts.
+    </td>
+  </tr>
+</table>
+
+To change the sampling behaviour of target objects, see the properties below:
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>min_count</td>
+    <td>Int >= 0, < max_count</td>
+    <td>
+      Minimum number of target objects in the scene.
+    </td>
+  </tr>
+  <tr>
+    <td>max_count</td>
+    <td>Int > min_count</td>
+    <td>
+      Maximum number of target objects in the scene.
+    </td>
+  </tr>
+  <tr>
+    <td>multiple_occurences</td>
+    <td>Boolean</td>
+    <td>
+      Whether a single object can appear multiple times in the same scene (sampling with replacement).
+    </td>
+  </tr>
+  <tr>
+    <td>scale_noise</td>
+    <td>float >= 0.0</td>
+    <td>
+      Object size noise. if scale_noise > 0.0, the object is scaled uniformly on all axes (it does not appear stretched)
+    </td>
+  </tr>
+  <tr>
+    <td>displacement_max_amount</td>
+    <td>float >= 0.0 </td>
+    <td>
+      Amount of displacement to apply to target objects.
+      Displacement subdivides the mesh and displaces each of the distractor's vertices according to a random noise pattern.
+      <b>This option greatly slows down rendering: set it to 0 if needed.</b>
+      Note that this is in absolute units: and does not vary depending on the size of the object.
+    </td>
+  </tr>
+  <tr>
+    <td>pbr_noise</td>
+    <td>float >= 0.0 </td>
+    <td>
+      Amount of noise to add to the material properties of the target objects.
+      These properties include the specularity, the "metallicness" and the roughness of the material, according to Blender's principled BSDF.
+    </td>
+  </tr>
+  <tr>
+    <td>cam_min_dist_rel</td>
+    <td>float >= 0.0, < cam_max_dist_rel </td>
+    <td>
+      Minimum distance of the camera to the point of interest of the object when sampling camera poses. This is expressed in terms of the size of the target object.
+      If the target object has a size of 0.5m and cam_min_dist_rel = 1.5, then the closest possible camera will be at 0.75m away from the point of interest.
+    </td>
+  </tr>
+  <tr>
+    <td>cam_max_dist_rel</td>
+    <td>float >= cam_min_dist_rel</td>
+    <td>
+      Maximum distance of the camera to the point of interest of the object when sampling camera poses. This is expressed in terms of the size of the target object.
+      If the target object has a size of 0.5m and cam_max_dist_rel = 2.0, then the farthest possible camera will be 1m away from the point of interest.
+    </td>
+  </tr>
+</table>
+
+Finally, we can customize the dataset that we will generate from the given scenes.
+This includes the number of scenes, images, and what information to save.
+
+All the data will be stored in HDF5 format, which can then be unpacked later.
+
+To customize the dataset, modify the options in the "dataset" field:
+<table>
+  <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
+  <tr>
+    <td>save_path</td>
+    <td>String</td>
+    <td>Path to the folder that will contain the final dataset. This folder will contain one folder per scene, and each sample of a scene will be its own HDF5 file.</td>
+  </tr>
+  <tr>
+    <td>scenes_per_run</td>
+    <td>Int > 0</td>
+    <td>
+      Number of scenes to generate per blenderproc run. Between blenderproc runs, Blender is restarted in order to avoid memory issues.
+    </td>
+  </tr>
+  <tr>
+    <td>num_scenes</td>
+    <td>Int > 0</td>
+    <td>
+      Total number of scenes to generate. Generating many scenes will add more diversity to the dataset as object placement, materials and lighting are randomized once per scene.
+    </td>
+  </tr>
+  <tr>
+    <td>images_per_scene</td>
+    <td>Int > 0</td>
+    <td>
+      Number of images to generate per scene. The total number of samples in the dataset will be num_scenes * images_per_scene.
+    </td>
+  </tr>
+  <tr>
+    <td>pose</td>
+    <td>Boolean</td>
+    <td>
+      Whether to save the pose of target objects that are visible in the camera. The pose of the objects are expressed in the camera frame as an homogeneous matrix \f$^{c}\mathbf{T}_{o}\f$
+    </td>
+  </tr>
+  <tr>
+    <td>depth</td>
+    <td>Boolean</td>
+    <td>
+      Whether to save the depth buffer associated to the RGB image. Same size as the RGB image.
+    </td>
+  </tr>
+  <tr>
+    <td>normals</td>
+    <td>Boolean</td>
+    <td>
+      Whether to save the normal map associated to the RGB image. Same size as the RGB image.
+      The normals are 3D unit vectors, expressed in the camera frame.
+    </td>
+  </tr>
+  <tr>
+    <td>segmentation</td>
+    <td>Boolean</td>
+    <td>
+      Whether to save the segmentation maps (by class and by instance).
+      Segmentation by class only contains the target objects (class >= 1).
+      Segmentation by instance includes every visible object.
+    </td>
+  </tr>
+  <tr>
+    <td>detection</td>
+    <td>Boolean</td>
+    <td>
+      Whether to save the bounding box detections. In this case, bounding boxes are not computed from the segmentation map (also possible with Blenderproc), but rather in way such that occlusion does not influence the final bounding box.
+      The detections can be filtered with the parameters in "detection_params".
+    </td>
+  </tr>
+  <tr>
+    <td>detection_params:min_size_size_px</td>
+    <td>Int > 0</td>
+    <td>
+      Minimum side length of a detection for it to be considered as valid. Used to filter really far or small objects, for which detection would be hard.
+    </td>
+  </tr>
+  <tr>
+    <td>detection_params:min_visibility</td>
+    <td>float [0.0, 1.0]</td>
+    <td>
+      Percentage of the object that must be visible for a detection to be considered as valid. The visibility score is computed as such:
+      First, the vertices of the mesh that are behind the camera are filtered. Then, the vertices that are outside of the camera's field of view are filtered. Then, we randomly sample "detection_params:points_sampling_occlusion" points to test whether the object is occluded (test done through ray casting).
+      If too many points are filtered, then the object is considered as not visible and detection is invalid.
+    </td>
+  </tr>
+</table>
+
+
+\section dnn_run_script Running the script to generate data
+
+\code{.sh}
+(blenderproc) $ python
+\endcode
 
 
 \section dnn_output Using and parsing the generation output
