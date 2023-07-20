@@ -530,7 +530,7 @@ To customize the dataset, modify the options in the "dataset" field:
   </tr>
   <tr>
     <td>detection_params:min_size_size_px</td>
-    <td>Int > 0</td>
+    <td>Int >= 0</td>
     <td>
       Minimum side length of a detection for it to be considered as valid. Used to filter really far or small objects, for which detection would be hard.
     </td>
@@ -589,25 +589,75 @@ There is one subfolder per scene, and each HDF5 file is a single sample that may
 You can visualise the generated images (RGB, depth, normals, segmentation maps) by running
 \code{.sh}
 (blenderproc) $ blenderproc vis hdf5 path/to/your/output/0/*.hdf5
-\endcode 
+\endcode
 
 You will then see something that looks like this, depending on the outputs that you chose in the configuration file:
 \image html blenderproc_viz.png
 
-where you can replace the "0" in the path with another number, which corresponds to the generated scene index. 
+where you can replace the "0" in the path with another number, which corresponds to the generated scene index.
 You can also specify the path to a single HDF5 file to view one sample at a time.
 
 \subsection dnn_output_yolov7 Using detections to finetune a YoloV7
 
+To help, we provide a script that reformats a blenderproc dataset to the format expected by YoloV7
+This script can be run like this:
 \code{.sh}
-(blenderproc) $ python export_for_yolov7.py --input path/to/dataset --output path/to/yolodataset --train-split
+(blenderproc) $ python export_for_yolov7.py --input path/to/dataset --output path/to/yolodataset --train-split 0.8
 \endcode
 
+here "--input" indicates the path to the location of the blenderproc dataset, while "--output" points to the folder where the dataset in the format that YoloV7 expects will be saved. "--train-split" is an argument that indicates how much of the dataset is kept for training. A value of 0.8 indicates that 80% of the dataset is used for training, while 20% is used for validation. The split is performed randomly across all scenes (a scene may be visible in both train and validation sets).
+
+Once the script has run, the folder "path/to/yolodataset" should be created and contain the dataset as expected by YoloV7.
+This folder contains a "dataset.yml" file, which will be used when training a YoloV7. It contains:
+the following:
+
+```
+names:
+- esa
+nc: 1
+train: /local/sfelton/yolov7_esa_dataset/images/train
+val: /local/sfelton/yolov7_esa_dataset/images/val
+```
+where nc is the number of class, "names" are the class names, and "train" and "val" are the paths to the dataset splits.
+
+To start training a YoloV7, you should download the <a href="">repository</a> and install the required dependencies. Again, we will create a conda environment. You can also use a docker container, as explained in the documentation. We also download the pretrained yolo model, that we will finetune on our own dataset.
+```
+~ $ git clone https://github.com/WongKinYiu/yolov7.git
+~ $ cd yolov7
+~/yolov7 $ conda create --name yolov7 pip
+~/yolov7 $ conda activate yolov7
+(yolov7) ~/yolov7 $ pip install -r requirements.txt
+(yolov7) ~/yolov7 $ wget https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt
+```
+
+To fine-tune a YoloV7, we should create two new files: the network configuration and the hyperparameters. We will reuse the ones provided for the tiny model.
+```
+CFG=cfg/training/yolov7-tiny-custom.yaml
+cp cfg/training/yolov7-tiny.yaml $CFG
+
+HYP=data/hyp.scratch.custom.yaml
+cp data/hyp.scratch.tiny.yaml $HYP
+```
+Next open the new cfg file, and modify the number of classes (set "nc" from 80 to the number classes you have in your dataset)
+
+You can also modify the hyperparameters file to add more augmentation during training.
+
+To fine-tune the YoloV7-tiny on our data, run
+```
+YOLO_DATASET=/path/to/dataset
+IMG_SIZE=640
+YOLO_NAME=blenderproc-tiny
+python train.py --workers 8 --device 0 --batch-size 64 --data "${YOLO_DATASET}/dataset.yaml" --img $IMG_SIZE $IMG_SIZE --cfg $CFG --weights yolov7-tiny.pt --name  $YOLO_NAME --hyp $HYP
+```
+
+Note that if your run finetuning multiple times, then a number will be appended to the name that you have given to your model.
+
+If you run out of memory during training, change the batch size to a lower value.
 
 
 \subsection dnn_output_custom_parsing Parsing HDF5 with a custom script
 
-In Python, an HDF5 file can be read like a dictionary. 
+In Python, an HDF5 file can be read like a dictionary.
 
 With the following script, you can inspect the content of an HDF5 file:
 \code{.py}
@@ -644,7 +694,7 @@ if __name__ == '__main__':
           if 'object_data' in f:
             text = np.array(f['object_data']).tobytes()
             json_rep = json.loads(text)
-            
+
             for object_idx, object_data in enumerate(json_rep):
               print(f'\t\tObject {object_idx} data: ')
               for obj_k in object_data.keys():
@@ -670,8 +720,8 @@ Reading scene 4
     Object 0 data:
       class = 2
       name = cube.001
-      cTo = [[-0.9067991971969604, -0.12124679982662201, 0.40374961495399475, 0.06561152129493264], 
-            [-0.399792343378067, 0.5511342883110046, -0.7324047088623047, 0.31461843930247957], 
+      cTo = [[-0.9067991971969604, -0.12124679982662201, 0.40374961495399475, 0.06561152129493264],
+            [-0.399792343378067, 0.5511342883110046, -0.7324047088623047, 0.31461843930247957],
             [-0.1337185800075531, -0.8255603313446045, -0.548241913318634, 0.01648345626311576],
             [0.0, 0.0, 0.0, 1.0]]
       bounding_box = [138.9861569133729, 254.62236838239235, 100.20349472431002, 107.79005297420909]
