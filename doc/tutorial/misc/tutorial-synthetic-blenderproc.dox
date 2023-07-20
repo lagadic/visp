@@ -53,6 +53,7 @@ Once Blenderproc is done, you can check its output with:
 (blenderproc) $ blenderproc vis hdf5 output/0.hdf5
 \endcode
 
+
 Blenderproc stores its output in HDF5 file format. Each HDF5 **may** contain the RGB image, along with depth, normals, and other modalities.
 
 For the simulator to provide useful data, we should obtain a set of realistic textures (thus helping close the Sim2Real gap).
@@ -190,22 +191,22 @@ These parameters are found in the "camera" field of the configuration.
   <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
   <tr>
     <td>px</td>
-    <td>float</td>
+    <td>Float</td>
     <td>See vpCameraParameters</td>
   </tr>
   <tr>
     <td>py</td>
-    <td>float</td>
+    <td>Float</td>
     <td>See vpCameraParameters</td>
   </tr>
   <tr>
     <td>v0</td>
-    <td>float</td>
+    <td>Float</td>
     <td>See vpCameraParameters</td>
   </tr>
   <tr>
     <td>u0</td>
-    <td>float</td>
+    <td>Float</td>
     <td>See vpCameraParameters</td>
   </tr>
   <tr>
@@ -220,7 +221,7 @@ These parameters are found in the "camera" field of the configuration.
   </tr>
   <tr>
     <td>randomize_params_percent</td>
-    <td>float, [0, 1)</td>
+    <td>Float, [0, 1)</td>
     <td>
       Controls the randomization of the camera parameters \f$p_x, p_y, u_0, v_0\f$. If randomize_params_percent > 0, then, each time a scene is created the intrinsics are perturbed around the given values.
       For example, if this parameters is equal to 10 and \f$p_x = 500\f$, then the used \f$p_x\f$ when generating images will be in the range [450, 550].
@@ -234,7 +235,7 @@ To customize the scene, you can change the parameters in the "scene" field:
   <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
   <tr>
     <td>room_size_multiplier_min</td>
-    <td>float > 1.0, < room_size_multiplier_max</td>
+    <td>Float > 1.0, < room_size_multiplier_max</td>
     <td>
       Minimum room size as a factor of the biggest sampled target object. The room is cubic.
       The size of the biggest object is the length of the largest diagonal of its axis-aligned bounding box. This tends to overestimate the size of the object.
@@ -243,7 +244,7 @@ To customize the scene, you can change the parameters in the "scene" field:
   </tr>
   <tr>
     <td>room_size_multiplier_max</td>
-    <td>float > room_size_multiplier_min</td>
+    <td>Float > room_size_multiplier_min</td>
     <td>
       Minimum room size as a factor of the biggest sampled target object. The room is cubic.
       The size of the biggest object is the length of the largest diagonal of its axis-aligned bounding box. This tends to overestimate the size of the object.
@@ -298,7 +299,7 @@ To modify their properties, you can change the "distractors" field of the scene
   </tr>
   <tr>
     <td>min_size_rel_scene</td>
-    <td>float > 0.0</td>
+    <td>Float > 0.0</td>
     <td>
       Minimum size of the distractors, relative to the room size.
       If the room size is 0.5m and min_size_rel_scene = 0.1, then the minimum size of distractor will be 0.05m.
@@ -307,7 +308,7 @@ To modify their properties, you can change the "distractors" field of the scene
   </tr>
   <tr>
     <td>max_size_rel_scene</td>
-    <td>float < 1.0, > min_size_rel_scene</td>
+    <td>Float < 1.0, > min_size_rel_scene</td>
     <td>
       maximum size of the distractors, relative to the room size.
       If the room size is 0.5m and max_size_rel_scene = 0.2, then the maximum size of distractor will be 0.1m.
@@ -316,7 +317,7 @@ To modify their properties, you can change the "distractors" field of the scene
   </tr>
   <tr>
     <td>displacement_max_amount</td>
-    <td>float >= 0.0 </td>
+    <td>Float >= 0.0 </td>
     <td>
       Amount of displacement to apply to distractors.
       Displacement subdivides the mesh and displaces each of the distractor's vertices according to a random noise pattern.
@@ -325,7 +326,7 @@ To modify their properties, you can change the "distractors" field of the scene
   </tr>
   <tr>
     <td>pbr_noise</td>
-    <td>float >= 0.0 </td>
+    <td>Float >= 0.0 </td>
     <td>
       Amount of noise to add to the material properties of the distractors.
       These properties include the specularity, the "metallicness" and the roughness of the material, according to Blender's principled BSDF.
@@ -333,21 +334,21 @@ To modify their properties, you can change the "distractors" field of the scene
   </tr>
   <tr>
     <td>emissive_prob</td>
-    <td>float >= 0.0 , <= 1.0</td>
+    <td>Float >= 0.0 , <= 1.0</td>
     <td>
       Probability that a distractor becomes a light source: its surface emits light. Set to more than 0 to add more light variations and shadows.
     </td>
   </tr>
   <tr>
     <td>emissive_min_strength</td>
-    <td>float >= 0.0, < emissive_max_strength</td>
+    <td>Float >= 0.0, < emissive_max_strength</td>
     <td>
       Minimum emission strength for a distractor that emits lights. In Watts/m².
     </td>
   </tr>
   <tr>
     <td>emissive_max_strength</td>
-    <td>float > emissive_min_strength</td>
+    <td>Float > emissive_min_strength</td>
     <td>
       Maxmimum emission strength for a distractor that emits lights. In Watts/m².
     </td>
@@ -373,14 +374,14 @@ To change the lighting behaviour, see the options below:
   </tr>
   <tr>
     <td>min_intensity</td>
-    <td>float > 0.0, < max_intensity</td>
+    <td>Float > 0.0, < max_intensity</td>
     <td>
       Minimum intensity of a light. In Watts.
     </td>
   </tr>
   <tr>
     <td>max_intensity</td>
-    <td>float > min_intensity</td>
+    <td>Float > min_intensity</td>
     <td>
       Maximum intensity of a light. In Watts.
     </td>
@@ -413,14 +414,14 @@ To change the sampling behaviour of target objects, see the properties below:
   </tr>
   <tr>
     <td>scale_noise</td>
-    <td>float >= 0.0</td>
+    <td>Float >= 0.0</td>
     <td>
       Object size noise. if scale_noise > 0.0, the object is scaled uniformly on all axes (it does not appear stretched)
     </td>
   </tr>
   <tr>
     <td>displacement_max_amount</td>
-    <td>float >= 0.0 </td>
+    <td>Float >= 0.0 </td>
     <td>
       Amount of displacement to apply to target objects.
       Displacement subdivides the mesh and displaces each of the distractor's vertices according to a random noise pattern.
@@ -430,7 +431,7 @@ To change the sampling behaviour of target objects, see the properties below:
   </tr>
   <tr>
     <td>pbr_noise</td>
-    <td>float >= 0.0 </td>
+    <td>Float >= 0.0 </td>
     <td>
       Amount of noise to add to the material properties of the target objects.
       These properties include the specularity, the "metallicness" and the roughness of the material, according to Blender's principled BSDF.
@@ -438,7 +439,7 @@ To change the sampling behaviour of target objects, see the properties below:
   </tr>
   <tr>
     <td>cam_min_dist_rel</td>
-    <td>float >= 0.0, < cam_max_dist_rel </td>
+    <td>Float >= 0.0, < cam_max_dist_rel </td>
     <td>
       Minimum distance of the camera to the point of interest of the object when sampling camera poses. This is expressed in terms of the size of the target object.
       If the target object has a size of 0.5m and cam_min_dist_rel = 1.5, then the closest possible camera will be at 0.75m away from the point of interest.
@@ -446,7 +447,7 @@ To change the sampling behaviour of target objects, see the properties below:
   </tr>
   <tr>
     <td>cam_max_dist_rel</td>
-    <td>float >= cam_min_dist_rel</td>
+    <td>Float >= cam_min_dist_rel</td>
     <td>
       Maximum distance of the camera to the point of interest of the object when sampling camera poses. This is expressed in terms of the size of the target object.
       If the target object has a size of 0.5m and cam_max_dist_rel = 2.0, then the farthest possible camera will be 1m away from the point of interest.
@@ -536,7 +537,7 @@ To customize the dataset, modify the options in the "dataset" field:
   </tr>
   <tr>
     <td>detection_params:min_visibility</td>
-    <td>float [0.0, 1.0]</td>
+    <td>Float [0.0, 1.0]</td>
     <td>
       Percentage of the object that must be visible for a detection to be considered as valid. The visibility score is computed as such:
       First, the vertices of the mesh that are behind the camera are filtered. Then, the vertices that are outside of the camera's field of view are filtered. Then, we randomly sample "detection_params:points_sampling_occlusion" points to test whether the object is occluded (test done through ray casting).
@@ -548,19 +549,150 @@ To customize the dataset, modify the options in the "dataset" field:
 
 \section dnn_run_script Running the script to generate data
 
+Once you have configured the generation to your liking, navigate to the `script/dataset_generator` located in your ViSP source directory.
+
+You can then run the `generate_dataset.py` script as such
 \code{.sh}
-(blenderproc) $ python
+(blenderproc) user@machine:~/visp/script/dataset_generator $ python generate_dataset.py --config path/to/config.json
 \endcode
 
+If all is well setup, then the dataset generation should start and run.
+
+
+\warning If during generation, you encounter a message about invalid camera placement, try to make room_size_multiplier_min and room_size_multiplier_max larger, so that more space is available for object placement.
+
+To give an idea of generation time, generating 1000 images (with a resolution of 640 x 480) and detections of a single object, with a few added distractors, takes around 30mins on a Quadro RTX 6000.
+
+Once generation is finished, you are ready to leverage the data to train your neural network.
 
 \section dnn_output Using and parsing the generation output
 
-\subsection dnn_output_yolov7 Using detections to train a YoloV7
+The dataset generated by Blender is located in the "dataset:save_path" path that you specified in your JSON configuration file.
+
+The dataset has the following structure
+\verbatim
+- dataset
+  - 0
+    - 0.hdf5
+    - 1.hdf5
+    - ...
+  - 1
+    - 0.hdf5
+    - 1.hdf5
+    - ...
+  - ...
+  - classes.txt
+\endverbatim
+
+There is one subfolder per scene, and each HDF5 file is a single sample that may contain RGB, depth, normals, etc.
+
+You can visualise the generated images (RGB, depth, normals, segmentation maps) by running
+\code{.sh}
+(blenderproc) $ blenderproc vis hdf5 path/to/your/output/0/*.hdf5
+\endcode 
+
+You will then see something that looks like this, depending on the outputs that you chose in the configuration file:
+\image html blenderproc_viz.png
+
+where you can replace the "0" in the path with another number, which corresponds to the generated scene index. 
+You can also specify the path to a single HDF5 file to view one sample at a time.
+
+\subsection dnn_output_yolov7 Using detections to finetune a YoloV7
+
+\code{.sh}
+(blenderproc) $ python export_for_yolov7.py --input path/to/dataset --output path/to/yolodataset --train-split
+\endcode
+
+
 
 \subsection dnn_output_custom_parsing Parsing HDF5 with a custom script
 
-link tuto blenderproc
+In Python, an HDF5 file can be read like a dictionary. 
 
+With the following script, you can inspect the content of an HDF5 file:
+\code{.py}
+from pathlib import Path
+import numpy as np
+import h5py
+import json
+
+if __name__ == '__main__':
+  dataset_path = Path('output')
+  for scene_folder in dataset_path.iterdir():
+    if not scene_folder.is_dir():
+      continue
+    print(f'Reading scene {scene_folder.name}')
+    for sample in scene_folder.iterdir():
+      if not sample.name.endswith('.hdf5'):
+          continue
+      print(f'\tReading sample {sample.name}')
+      with h5py.File(sample) as f:
+          # Image data
+          keys = ['colors', 'depth', 'normals', 'class_segmaps', 'instance_segmaps']
+          for key in keys:
+             if key in f:
+                data = np.array(f[key])
+                print(f'\t\t{key}: shape = {data.shape}, type = {data.dtype}')
+          # Json objects
+          if 'instance_attribute_maps' in f:
+            print('\t\tMapping between instance and class:')
+            text = np.array(f['instance_attribute_maps']).tobytes()
+            json_rep = json.loads(text)
+            print(json_rep)
+            print()
+
+          if 'object_data' in f:
+            text = np.array(f['object_data']).tobytes()
+            json_rep = json.loads(text)
+            
+            for object_idx, object_data in enumerate(json_rep):
+              print(f'\t\tObject {object_idx} data: ')
+              for obj_k in object_data.keys():
+                print(f'\t\t\t{obj_k} = {object_data[obj_k]}')
+              print()
+\endcode
+
+Running on a custom dataset with all outputs enabled (see \ref dnn_input_configuration) we obtain the following output:
+\verbatim
+...
+Reading scene 4
+  Reading sample 0.hdf5
+    colors: shape = (480, 640, 3), type = uint8
+    depth: shape = (480, 640), type = float32
+    normals: shape = (480, 640, 3), type = float32
+    class_segmaps: shape = (480, 640), type = uint8
+    instance_segmaps: shape = (480, 640), type = uint8
+    Mapping between instance and class:
+      [{'idx': 5, 'category_id': 2}, {'idx': 7, 'category_id': 3}, {'idx': 10, 'category_id': 0}, {'idx': 11, 'category_id': 0},
+       {'idx': 14, 'category_id': 0}, {'idx': 18, 'category_id': 0}, {'idx': 22, 'category_id': 0}, {'idx': 32, 'category_id': 0},
+       {'idx': 37, 'category_id': 0}]
+
+    Object 0 data:
+      class = 2
+      name = cube.001
+      cTo = [[-0.9067991971969604, -0.12124679982662201, 0.40374961495399475, 0.06561152129493264], 
+            [-0.399792343378067, 0.5511342883110046, -0.7324047088623047, 0.31461843930247957], 
+            [-0.1337185800075531, -0.8255603313446045, -0.548241913318634, 0.01648345626311576],
+            [0.0, 0.0, 0.0, 1.0]]
+      bounding_box = [138.9861569133729, 254.62236838239235, 100.20349472431002, 107.79005297420909]
+
+    Object 1 data:
+      class = 3
+      name = dragon.002
+      cTo = [[-0.9067991971969604, -0.12124679982662201, 0.40374961495399475, 0.06561152129493264],
+             [-0.399792343378067, 0.5511342883110046, -0.7324047088623047, 0.31461843930247957],
+             [-0.1337185800075531, -0.8255603313446045, -0.548241913318634, 0.01648345626311576],
+             [0.0, 0.0, 0.0, 1.0]]
+      bounding_box = [314.54058632091767, 202.86607727119753, 70.64506150004479, 90.54480823214647]
+...
+\endverbatim
+
+- Both depth and normals are represented as floating points, conserving accuracy.
+- The object data is represented as a JSON document. Which you can directly save or reparse to save only the information of interest.
+- Object poses are expressed in the camera frame and are represented as homogeneous matrix.
+- Bounding boxes coordinates are in pixels, and the values are [x_min, y_min, width, height]
+
+You can modify this script to export the dataset to another format, has it was done in \ref dnn_output_yolov7.
 
 \section dnn_synthetic_next Next steps
 

@@ -303,6 +303,6 @@ You may wish to save the results. You can do so by serializing to JSON, as expla
 This program can run with new 3D models, as MegaPose does require retraining. To adapt this script to your problem, you will require multiple things:
 - The intrinsic parameters of your camera. To calibrate your camera, see \ref tutorial-calibration-intrinsic
 - The 3D model of your object. See \ref tutorial-megapose-model
-- Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn.
+- Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn. Since you already have your 3D model, you can use Blender to generate a synthetic dataset and train a detection network without manually annotating images. This process is explained in \ref tutorial-synthetic-blenderproc
 
 */

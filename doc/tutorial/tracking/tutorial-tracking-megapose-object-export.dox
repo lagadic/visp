@@ -259,9 +259,9 @@ When using with MegaPose, you may encounter multiple issues:
  - MegaPose relies on Panda3D to perform 3D rendering. Using gltf (or their binary version, glb) files requires a different rendering pipeline which is not the default choice for megapose
  - Prefer an export to .obj
 
-\section megapose_model_testing Testing your model
+\section megapose_model_testing Next steps
 
-To test whether your model is correct and can be used for pose estimation or tracking, you should follow \ref tutorial-tracking-megapose and run the sample program.
-
+- To test whether your model is correct and can be used for pose estimation or tracking, you should follow \ref tutorial-tracking-megapose and run the sample program.
+- Since Megapose requires a way to detect the object, you can train a neural network to do so entirely from synthetic data by using the 3D model that you just obtained. The process is detailed in \ref tutorial-synthetic-blenderproc
 
 */

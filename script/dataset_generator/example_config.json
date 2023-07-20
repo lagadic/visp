@@ -50,11 +50,11 @@
   "dataset": {
     "scenes_per_run": 1,
     "num_scenes": 50,
-    "images_per_scene": 20,
+    "images_per_scene": 1,
     "pose": true,
-    "depth": false,
-    "normals": false,
-    "segmentation": false,
+    "depth": true,
+    "normals": true,
+    "segmentation": true,
     "detection": true,
     "detection_params": {
       "min_side_size_px": 10,
@@ -63,6 +63,6 @@
     },
     "save_path": "output_cube"
   },
-  "models_path": "/home/sfelton/megapose-cube",
+  "models_path": "/home/sfelton/megapose-models",
   "cc_textures_path": "/home/sfelton/cc0"
 }
