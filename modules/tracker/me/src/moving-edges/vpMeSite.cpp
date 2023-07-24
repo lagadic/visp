@@ -331,7 +331,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
   \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
 
 */
-void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_likelihood)
+void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_contrast)
 {
   int max_rank = -1;
   double max_convolution = 0;
@@ -359,7 +359,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
     threshold = me->getThreshold() / (100.0 * n_d * trunc(n_d / 2.0));
   }
 
-  if (test_likelihood) {
+  if (test_contrast) {
     double diff = 1e6;
     for (unsigned int n = 0; n < 2 * range + 1; n++) {
       //   convolution results
@@ -408,8 +408,8 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
 
     convlt = max_convolution;
 
-    delete [] list_query_pixels;
-    delete [] likelihood;
+    delete[] list_query_pixels;
+    delete[] likelihood;
   }
   else // none of the query sites is better than the threshold
   {
@@ -424,8 +424,8 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
     else
       state = THRESHOLD; // threshold suppression
 
-    delete [] list_query_pixels;
-    delete [] likelihood; // modif portage
+    delete[] list_query_pixels;
+    delete[] likelihood; // modif portage
   }
 }
 
