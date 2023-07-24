@@ -162,7 +162,7 @@ static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, do
       /* NE TRIE PLUS LE RESULTAT ! S_relative() en tient compte
   { if(P[0].x < P[1].x) // Rend le couple de points
       { Ac=P[0];  Bc=P[1]; }  //  clippes (ordonnes selon
-  else  { Ac=P[1];  Bc=P[0]; }  //  leur abscise x)
+  else  { Ac=P[1];  Bc=P[0]; }  //  leur abscisse x)
       */
     {
       Ac = P[0];
@@ -209,28 +209,28 @@ static double S_relative(point P, point Q, double Xmin, double Ymin, double Xmax
 {
 
   if (Q.x < P.x)   // tri le couple de points
-    permute(P, Q); //  selon leur abscise x
+    permute(P, Q); //  selon leur abscisse x
 
   recale(P, Xmin, Ymin, Xmax, Ymax); // permet des calculs de S_relative
   recale(Q, Xmin, Ymin, Xmax, Ymax); //  moins approximatifs.
 
   // if(P.x==Xmin && Q.x==Xmax)
   if ((std::fabs(P.x - Xmin) <=
-    vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon()) &&
+       vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon()) &&
     (std::fabs(Q.x - Xmax) <=
-      vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))
+     vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))
     return (fabs(Ymax + Ymin - P.y - Q.y));
 
   // if( (P.y==Ymin && Q.y==Ymax) ||
   //  (Q.y==Ymin && P.y==Ymax))
   if (((std::fabs(P.y - Ymin) <=
-    vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()) &&
-    (std::fabs(Q.y - Ymax) <=
-      vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())) ||
+        vpMath::maximum(std::fabs(P.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()) &&
+       (std::fabs(Q.y - Ymax) <=
+        vpMath::maximum(std::fabs(Q.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())) ||
     ((std::fabs(Q.y - Ymin) <=
       vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon()) &&
-      (std::fabs(P.y - Ymax) <=
-        vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())))
+     (std::fabs(P.y - Ymax) <=
+      vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())))
     return (fabs(Xmax + Xmin - P.x - Q.x));
 
   // if( P.x==Xmin && Q.y==Ymax )
@@ -334,7 +334,7 @@ static void calcul_masques(vpColVector &angle, // definitions des angles theta
 void vpMe::initMask()
 {
   if (mask != NULL)
-    delete [] mask;
+    delete[] mask;
 
   mask = new vpMatrix[n_mask];
 
@@ -371,8 +371,8 @@ vpMe::vpMe()
   mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0), range(4), sample_step(10),
   ntotal_sample(0), points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
 {
-  // ntotal_sample = 0; // not sure that it is used -> DEBUG Fabien
-  // points_to_track = 500; // not sure that it is used -> DEBUG Fabien
+  // ntotal_sample = 0; // not sure that it is used -> Fabien
+  // points_to_track = 500; // not sure that it is used -> Fabien
   anglestep = (180 / n_mask);
 
   initMask();
@@ -390,7 +390,7 @@ vpMe::vpMe(const vpMe &me)
 vpMe &vpMe::operator=(const vpMe &me)
 {
   if (mask != NULL) {
-    delete [] mask;
+    delete[] mask;
     mask = NULL;
   }
 
@@ -418,7 +418,7 @@ vpMe &vpMe::operator=(const vpMe &me)
 vpMe &vpMe::operator=(const vpMe &&me)
 {
   if (mask != NULL) {
-    delete [] mask;
+    delete[] mask;
     mask = NULL;
   }
   m_likelihood_threshold_type = std::move(me.m_likelihood_threshold_type);
@@ -444,7 +444,7 @@ vpMe &vpMe::operator=(const vpMe &&me)
 vpMe::~vpMe()
 {
   if (mask != NULL) {
-    delete [] mask;
+    delete[] mask;
     mask = NULL;
   }
 }

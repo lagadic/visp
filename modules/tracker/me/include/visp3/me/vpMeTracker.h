@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +38,8 @@
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-#ifndef vpMeTracker_HH
-#define vpMeTracker_HH
+#ifndef _vpMeTracker_h_
+#define _vpMeTracker_h_
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpTracker.h>
