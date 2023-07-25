@@ -100,6 +100,18 @@ bool test(const std::string &s, const vpRotationVector &v, const double &bench)
   return true;
 }
 
+bool test_matrix_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2, double epsilon = 1e-10)
+{
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      if (!vpMath::equal(M1[i][j], M2[i][j], epsilon)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 int main()
 {
   try {
@@ -410,9 +422,25 @@ int main()
         std::cout << rzyx_final << std::endl;
       }
     }
+    {
+      // Test rotation_matrix * homogeneous_matrix
+      vpHomogeneousMatrix _1_M_2_truth { 0.9835,  -0.0581, 0.1716, 0, -0.0489, -0.9972,
+                          -0.0571, 0,  0.1744, 0.0478, -0.9835, 0 };
+      vpHomogeneousMatrix _2_M_3_ { 0.9835,  -0.0581, 0.1716, 0.0072, -0.0489, -0.9972,
+                          -0.0571, 0.0352,  0.1744, 0.0478, -0.9835, 0.9470 };
+      vpRotationMatrix _1_R_2_ = _1_M_2_truth.getRotationMatrix();
+      vpHomogeneousMatrix _1_M_3_(_1_R_2_* _2_M_3_);
+      vpHomogeneousMatrix _1_M_3_truth(_1_M_2_truth * _2_M_3_);
+      bool success = test_matrix_equal(_1_M_3_, _1_M_3_truth);
+      std::cout << "Test vpHomogeneousMatrix vpRotationMatrix::operator*(vpHomogeneousMatrix) " << (success ? "succeed" : "failed") << std::endl;
+      if (!success) {
+        return EXIT_FAILURE;
+      }
+    }
     std::cout << "All tests succeed" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
