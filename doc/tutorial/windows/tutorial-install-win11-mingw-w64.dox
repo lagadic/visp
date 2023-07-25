@@ -348,7 +348,7 @@ C:\> exit
 Some ViSP examples and tests require a dataset that contains images, video, models that is not part of ViSP
 source code. This dataset is available in Github (https://github.com/lagadic/visp-images) or as a release
 in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from
-http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 

@@ -4,7 +4,7 @@
 
 \section basic_drawings_intro Introduction
 
-In this tutorial you will learn how to modify the content of an image adding basic drawings without the need of an image display window. This functionality could be useful if none of the following 3rd parties are available: <a href="http://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>.
+In this tutorial you will learn how to modify the content of an image adding basic drawings without the need of an image display window. This functionality could be useful if none of the following 3rd parties are available: <a href="https://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>.
 
 \section basic_drawings_draw Modify an image with basic drawings
 
@@ -18,9 +18,9 @@ $ ./testImageDraw
 it will create `canvas_color.png` and `canvas_gray.png` images that give a good overview.
 
 - Content of `canvas_color.png` image that shows basic drawings inserted in a color image implemented as a `vpImage<vpRGBa>` is the following:
-\image html img-tutorial-drawings-color.png 
+\image html img-tutorial-drawings-color.png
 - Content of `canvas_gray.png` image that shows basic drawings inserted in a gray level image implemented as a `vpImage<unsigned char>` is the following:
-\image html img-tutorial-drawings-gray.png 
+\image html img-tutorial-drawings-gray.png
 
 \subsection basic_drawings_point Draw a point in an image
 
