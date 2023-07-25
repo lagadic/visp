@@ -202,10 +202,14 @@ TEST_CASE("ENU to NED conversion", "[enu2ned]")
 TEST_CASE("vpHomogenousMatrix * vpRotationMatrix", "[operator*]")
 {
   // Test rotation_matrix * homogeneous_matrix
-  vpHomogeneousMatrix _1_M_2_ { 0.9835,  -0.0581, 0.1716, 0.0072, -0.0489, -0.9972,
-                      -0.0571, 0.0352,  0.1744, 0.0478, -0.9835, 0.9470 };
-  vpHomogeneousMatrix _2_M_3_truth { 0.9835,  -0.0581, 0.1716, 0, -0.0489, -0.9972,
- -0.0571, 0,  0.1744, 0.0478, -0.9835, 0 };
+  vpHomogeneousMatrix _1_M_2_;
+  _1_M_2_[0][0] = 0.9835; _1_M_2_[0][1] = -0.0581; _1_M_2_[0][2] = 0.1716; _1_M_2_[0][3] = 0.0072;
+  _1_M_2_[1][0] = -0.0489; _1_M_2_[1][1] = -0.9972; _1_M_2_[1][2] = -0.0571; _1_M_2_[1][3] = 0.0352;
+  _1_M_2_[2][0] = 0.1744; _1_M_2_[2][1] = 0.0478; _1_M_2_[2][2] = -0.9835; _1_M_2_[2][3] = 0.9470;
+  vpHomogeneousMatrix  _2_M_3_truth;
+  _2_M_3_truth[0][0] = 0.9835; _2_M_3_truth[0][1] = -0.0581; _2_M_3_truth[0][2] = 0.1716; _2_M_3_truth[0][3] = 0;
+  _2_M_3_truth[1][0] = -0.0489; _2_M_3_truth[1][1] = -0.9972; _2_M_3_truth[1][2] = -0.0571; _2_M_3_truth[1][3] = 0;
+  _2_M_3_truth[2][0] = 0.1744; _2_M_3_truth[2][1] = 0.0478; _2_M_3_truth[2][2] = -0.9835; _2_M_3_truth[2][3] = 0;
 
   vpRotationMatrix _2_R_3_ = _2_M_3_truth.getRotationMatrix();
   vpHomogeneousMatrix _1_M_3_(_1_M_2_* _2_R_3_);
