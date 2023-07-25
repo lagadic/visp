@@ -38,8 +38,8 @@
   \brief Definition and computation on the homogeneous matrices
 */
 
-#ifndef VPHOMOGENEOUSMATRIX_HH
-#define VPHOMOGENEOUSMATRIX_HH
+#ifndef _vpHomogeneousMatrix_h_
+#define _vpHomogeneousMatrix_h_
 
 class vpTranslationVector;
 class vpPoseVector;
@@ -268,6 +268,7 @@ public:
 
   vpColVector operator*(const vpColVector &v) const;
   vpTranslationVector operator*(const vpTranslationVector &t) const;
+  vpHomogeneousMatrix operator*(const vpRotationMatrix &R) const;
 
   // Multiply by a point
   vpPoint operator*(const vpPoint &bP) const;
