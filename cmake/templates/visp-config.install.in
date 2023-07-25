@@ -60,7 +60,7 @@ usage()
     cat <<EOF
 
 ViSP $VERSION (Visual Servoing Platform)
-Copyright (C) 2005 - 2019 Inria. All rights reserved.
+Copyright (C) 2005 - 2023 Inria. All rights reserved.
 
 Usage: $0 [--prefix] [--cflags] [--libs] [--version] [--dumpversion]  [--help]
 
@@ -90,7 +90,7 @@ for arg in $@; do
   --version)
       echo "ViSP $VERSION (Visual Servoing Platform)"
       echo ""
-      echo "Copyright (C) 2005 - 2019 Inria. All rights reserved.";;
+      echo "Copyright (C) 2005 - 2023 Inria. All rights reserved.";;
   --dumpversion) echo $NO_NEWLINE_OPTION "$VERSION$NO_NEWLINE_CHARACTER";;
         *) usage; exit 0 ;;
     esac;

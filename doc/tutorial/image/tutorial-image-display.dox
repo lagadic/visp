@@ -17,16 +17,16 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 
 \section image_display_default Create and display an image in a window
 
-ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities that allows to display a vpImage in a window. To this end you may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>. We recommend to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. If none of these classes are available, you may use vpDisplayOpenCV instead.
+ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities that allows to display a vpImage in a window. To this end you may use several optional third-party libraries which are: <a href="https://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>. We recommend to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. If none of these classes are available, you may use vpDisplayOpenCV instead.
 
-The following example also available in tutorial-image-display.cpp shows how to create a gray level 3840x2160 image with all the pixels set to 128, and display a red circle with 200 pixel radius in the middle of the image. 
+The following example also available in tutorial-image-display.cpp shows how to create a gray level 3840x2160 image with all the pixels set to 128, and display a red circle with 200 pixel radius in the middle of the image.
 
 \include tutorial-image-display.cpp
 
 Depending on your screen resolution you may just see a part of the image, and certainly not the full red circle. Next image shows an example of this behavior when screen resolution is less than image size:
 \image html img-tutorial-display.png
 
-\note A vpImage can only be associated to one display window. In the previous example, image `I` is associated to display `d`. Depending on your platform, object `d` is either a vpDisplayX or a vpDisplayGDI. 
+\note A vpImage can only be associated to one display window. In the previous example, image `I` is associated to display `d`. Depending on your platform, object `d` is either a vpDisplayX or a vpDisplayGDI.
 
 \section image_display_scaled Display an image that is larger than the screen resolution
 

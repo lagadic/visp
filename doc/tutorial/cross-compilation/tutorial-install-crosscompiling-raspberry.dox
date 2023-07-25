@@ -115,7 +115,7 @@ $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz
 $ git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-- Or you can download the <a href="http://visp.inria.fr/download">latest release</a> (should be at least 3.0.1) as a zip or a tarball. Once downloaded, uncompress the file using either
+- Or you can download the <a href="https://visp.inria.fr/download">latest release</a> (should be at least 3.0.1) as a zip or a tarball. Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz
 \endverbatim
