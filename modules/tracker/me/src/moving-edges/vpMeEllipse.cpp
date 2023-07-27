@@ -1143,6 +1143,8 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle
   std::vector<vpImagePoint> iP(n);
   m_trackArc = trackArc;
 
+  vpDisplay::flush(I);
+
   if (m_trackCircle) {
     if (m_trackArc) {
       std::cout << "First and third points specify the extremities of the arc of circle (clockwise)" << std::endl;
