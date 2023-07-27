@@ -236,14 +236,16 @@ void vpMeLine::initTracking(const vpImage<unsigned char> &I)
 {
   vpImagePoint ip1, ip2;
 
+  vpDisplay::flush(I);
+
   std::cout << "Click on the line first point..." << std::endl;
-  while (vpDisplay::getClick(I, ip1) != true)
-    ;
+  while (vpDisplay::getClick(I, ip1) != true) { }
+
   vpDisplay::displayCross(I, ip1, 7, vpColor::red);
   vpDisplay::flush(I);
   std::cout << "Click on the line second point..." << std::endl;
-  while (vpDisplay::getClick(I, ip2) != true)
-    ;
+  while (vpDisplay::getClick(I, ip2) != true) { }
+
   vpDisplay::displayCross(I, ip2, 7, vpColor::red);
   vpDisplay::flush(I);
 
@@ -900,8 +902,8 @@ void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
         end = false;
         if (incr == 1) {
           throw(vpException(vpException::fatalError, "In vpMeLine cannot determine rho sign, since "
-            "there is no gray level difference between both "
-            "sides of the line"));
+                            "there is no gray level difference between both "
+                            "sides of the line"));
         }
       }
       update_indices(theta, i, j, incr, i1, i2, j1, j2);
