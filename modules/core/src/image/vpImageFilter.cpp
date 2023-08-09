@@ -184,20 +184,24 @@ double vpImageFilter::median(const vpImage<unsigned char> &Isrc)
 }
 
 /**
- * \brief Calculates the median value of a single channel
- * The algorithm is based on based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
+ * \brief Calculates the median value of a vpRGBa image.
+ * The result is ordered in RGB format.
  * \param[in] Isrc RGB image in ViSP format. Alpha channel is ignored.
+ * \return std::vector<double> meds such as meds[0] = red-channel-median meds[1] = green-channel-median
+ * and meds[2] = blue-channel-median.
  * \sa \ref vpImageFilter::median() "vpImageFilter::median(const cv::Mat)"
  */
 std::vector<double> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
 {
-  cv::Mat cv_I;
-  vpImageConvert::convert(Isrc, cv_I);
+  cv::Mat cv_I_bgr;
+  vpImageConvert::convert(Isrc, cv_I_bgr);
   std::vector<cv::Mat> channels;
-  cv::split(cv_I, channels);
-  std::vector<double> meds;
-  for (unsigned char i = 0; i < 3; i++) {
-    meds.push_back(median(channels[i]));
+  cv::split(cv_I_bgr, channels);
+  std::vector<double> meds(3);
+  const int orderMeds[] = { 2, 1, 0 }; // To keep the order R, G, B
+  const int orderCvChannels[] = { 0, 1, 2 }; // Because the order of the cv::Mat is B, G, R
+  for (unsigned int i = 0; i < 3; i++) {
+    meds[orderMeds[i]] = median(channels[orderCvChannels[i]]);
   }
   return meds;
 }
