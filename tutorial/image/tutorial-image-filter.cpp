@@ -54,7 +54,8 @@ int main(int argc, char **argv)
 
     try {
       vpImageIo::read(I, argv[1]);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
       return EXIT_FAILURE;
     }
@@ -83,11 +84,11 @@ int main(int argc, char **argv)
     display(dIy, "Gradient dIy");
 
     //! [Canny]
-  #if defined(HAVE_OPENCV_IMGPROC)
+#if defined(HAVE_OPENCV_IMGPROC)
     vpImage<unsigned char> C;
-    vpImageFilter::canny(I, C, 5, 15, 3);
+    vpImageFilter::canny(I, C, 5, -1., 3);
     display(C, "Canny");
-  #endif
+#endif
     //! [Canny]
 
     //! [Convolution kernel]
@@ -118,7 +119,8 @@ int main(int argc, char **argv)
     }
     //! [Gaussian pyramid]
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
