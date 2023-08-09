@@ -13,7 +13,7 @@
     "randomize_params_percent": 5.0
   },
   "rendering": {
-    "max_num_samples": 64,
+    "max_num_samples": 32,
     "denoiser": "OPTIX"
   },
   "scene": {
@@ -29,7 +29,7 @@
       "displacement_max_amount": 0.0,
       "pbr_noise": 0.5,
       "emissive_prob": 0.0,
-      "emissive_min_strength": 1.0,
+      "emissive_min_strength": 2.0,
       "emissive_max_strength": 5.0
     },
     "lights": {
@@ -40,13 +40,13 @@
     },
     "objects": {
       "min_count": 1,
-      "max_count": 1,
+      "max_count": 3,
       "multiple_occurences": true,
       "scale_noise": 0.2,
       "displacement_max_amount": 0.0,
       "pbr_noise": 0.3,
       "cam_min_dist_rel": 1.0,
-      "cam_max_dist_rel": 6.0
+      "cam_max_dist_rel": 3.0
     }
   },
   "dataset": {

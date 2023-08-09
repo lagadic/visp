@@ -650,7 +650,7 @@ YOLO_NAME=blenderproc-tiny
 python train.py --workers 8 --device 0 --batch-size 64 --data "${YOLO_DATASET}/dataset.yaml" --img $IMG_SIZE $IMG_SIZE --cfg $CFG --weights yolov7-tiny.pt --name  $YOLO_NAME --hyp $HYP
 ```
 
-Note that if your run finetuning multiple times, then a number will be appended to the name that you have given to your model.
+Note that if your run fine-tuning multiple times, then a number will be appended to the name that you have given to your model.
 
 If you run out of memory during training, change the batch size to a lower value.
 
