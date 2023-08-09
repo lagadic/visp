@@ -19,25 +19,25 @@ Let us consider the following source code that comes from tutorial-image-filter.
 
 \include tutorial-image-filter.cpp
 
-Once build, you should have \c tutorial-image-filter binary. It shows how to apply different filters on an input image. Here we will consider monkey.pgm as input image. 
+Once build, you should have \c tutorial-image-filter binary. It shows how to apply different filters on an input image. Here we will consider monkey.pgm as input image.
 
 \image html img-monkey-gray.png
 
 To see the resulting filtered images, just run:
 
-\code 
+\code
 ./tutorial-image-filter monkey.pgm
-\endcode 
+\endcode
 
 The following sections give a line by line explanation of the source code dedicated to image filtering capabilities.
- 
+
 \section blur Gaussian blur
 
-Monkey input image is read from disk and is stored in  \c I which is a gray level image declared as 
+Monkey input image is read from disk and is stored in  \c I which is a gray level image declared as
 
 \snippet tutorial-image-filter.cpp vpImage construction
 
-To apply a Gaussian blur to this image we first have to declare a resulting floating-point image \c F. Then the blurred image could be obtained using the default Gaussian filter: 
+To apply a Gaussian blur to this image we first have to declare a resulting floating-point image \c F. Then the blurred image could be obtained using the default Gaussian filter:
 
 \snippet tutorial-image-filter.cpp Gaussian blur
 
@@ -47,9 +47,9 @@ The resulting image is the following:
 
 It is also possible to specify the Gaussian filter kernel size and the Gaussian standard deviation (sigma) using:
 
-\code 
+\code
 vpImageFilter::gaussianBlur(I, F, 7, 2); // Kernel size: 7, sigma: 2
-\endcode 
+\endcode
 
 We thus obtain the following image:
 
@@ -77,15 +77,16 @@ After the declaration of a new image container \c C, Canny edge detector is appl
 \snippet tutorial-image-filter.cpp Canny
 
 Where:
-- 5: is the low threshold
-- 15: is the high threshold set in the program as three times the lower threshold (following Canny’s recommendation)
+- 5: is the size of the Gaussian kernel used to blur the image before applying the Canny edge detector.
+- -1.: is the upper threshold set in the program. Setting it to a negative value asks ViSP to compute automatically the lower and upper thresholds. Otherwise,
+the lower threshold is set to be equal to one third of the upper threshold, following Canny’s recommendation.
 - 3: is the size of the Sobel kernel used internally.
 
 The resulting image \c C is the following:
- 
+
 \image html img-monkey-canny.png
 
-\section convolution Convolution 
+\section convolution Convolution
 
 To apply a convolution to an image, we first have to define a kernel.
 For example, let us consider the 3x3 Sobel kernel defined in \c K.
@@ -104,7 +105,7 @@ For example, let us consider the 3x3 Sobel kernel defined in \c K.
 
 \snippet tutorial-image-filter.cpp Convolution kernel
 
-After the declaration of a new floating-point image \c Gx, the convolution is obtained using: 
+After the declaration of a new floating-point image \c Gx, the convolution is obtained using:
 \snippet tutorial-image-filter.cpp Convolution
 
 The content of the filtered image \c Gx is the following.
