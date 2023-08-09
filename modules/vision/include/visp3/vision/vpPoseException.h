@@ -89,8 +89,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpPoseException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpPoseException(int id) : vpException(id) { ; }
+  vpPoseException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpPoseException(int id) : vpException(id) { }
   // vpPoseException() : vpException() { ;}
 };
 

@@ -74,8 +74,8 @@ void vpJsonArgumentParser::parse(int argc, const char *argv [])
   const auto jsonFileArgumentPos = std::find(arguments.begin(), arguments.end(), jsonFileArgumentName);
   // Load JSON file if present
   if (jsonFileArgumentPos != arguments.end()) {
-    ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 1);
-    ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 2);
+    ignoredArguments.push_back(static_cast<unsigned>(jsonFileArgumentPos - arguments.begin() + 1));
+    ignoredArguments.push_back(static_cast<unsigned>(jsonFileArgumentPos - arguments.begin() + 2));
 
     if (jsonFileArgumentPos == arguments.end() - 1) {
       throw vpException(vpException::ioError, "No JSON file was provided");

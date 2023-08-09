@@ -93,7 +93,7 @@ ccache version 4.2
   <a href="https://developer.android.com/studio/">Android Studio</a>,
   download and install Android Studio for Windows 64-bit. Once installed start Android Studio using default settings.
   This allows to download Android SDK. Now to install Android NDK, with Android Studio create a new Android project.
-  From this new project enter `"File > Settings... > Appearence & Behavior > System Settings > Android SDK"` menu. 
+  From this new project enter `"File > Settings... > Appearence & Behavior > System Settings > Android SDK"` menu.
   Select the `"SDK Tools"` tab and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
   Once all the tools are downloaded, you can exit Android Studio.
 - Now install <a href="https://www.python.org/downloads/">Python Interpreter</a> without forgetting to add Python to environment variables.
@@ -120,7 +120,7 @@ C:\>ninja --version
 C:\>ccache --version
 ccache version 3.7.2
 \endcode
-  
+
 \section android_sdk_ws Create a workspace
 
 Create a workspace in `$HOME/visp-ws` that will contain ViSP sources, build and dataset.
@@ -133,7 +133,7 @@ $ mkdir -p $VISP_WS
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \code
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endcode
@@ -142,7 +142,7 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endcode
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \code
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endcode
@@ -193,7 +193,7 @@ This will speed up the installation process.
 
 Once build ViSP Android SDK will be available in `$VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk` folder. Its content should be similar to the following:
 \code
-$ cd $VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk 
+$ cd $VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk
 $ find . -maxdepth 3 -type d
 ./native
 ./native/3rdparty

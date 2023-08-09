@@ -33,8 +33,8 @@
  *
 *****************************************************************************/
 
-#ifndef vpROTATIONMATRIX_H
-#define vpROTATIONMATRIX_H
+#ifndef _vpRotationMatrix_h_
+#define _vpRotationMatrix_h_
 
 /*!
   \file vpRotationMatrix.h
@@ -138,7 +138,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpRotationMatrix() {}
+  virtual ~vpRotationMatrix() { }
 
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
   vpRotationMatrix buildFrom(const vpThetaUVector &v);
@@ -171,6 +171,7 @@ public:
   // operation C = A * B (A is unchanged)
   vpRotationMatrix operator*(const vpRotationMatrix &R) const;
   // operation C = A * B (A is unchanged)
+  vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
   vpMatrix operator*(const vpMatrix &M) const;
   // operation v2 = A * v1 (A is unchanged)
   vpColVector operator*(const vpColVector &v) const;
@@ -212,12 +213,12 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-//@}
+  //@}
 #endif
 
 protected:

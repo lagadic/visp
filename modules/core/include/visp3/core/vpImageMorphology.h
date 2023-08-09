@@ -298,7 +298,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
   // Copy I to J and add border
   J.insert(I, vpImagePoint(1, 1));
 
-  if (connexity == vpImageMorphology::vpConnexityType::CONNEXITY_4) {
+  if (connexity == vpImageMorphology::CONNEXITY_4) {
     const int nbOffset = 5;
     int offset_x[nbOffset] = { 0, -1, 0, 1, 0 };
     int offset_y[nbOffset] = { -1,  0, 0, 0, 1 };

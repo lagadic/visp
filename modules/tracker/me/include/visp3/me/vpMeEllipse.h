@@ -28,9 +28,6 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description:
- * Moving edges.
- *
 *****************************************************************************/
 
 /*!
@@ -165,6 +162,11 @@ public:
   unsigned int getExpectedDensity() const { return m_expectedDensity; }
 
   /*!
+   \return Number of valid edges tracked along the ellipse.
+  */
+  unsigned int getNumberOfGoodPoints() const { return m_numberOfGoodPoints; }
+
+  /*!
     Gets the first endpoint of the ellipse arc (corresponding to alpha1,
     not alphamin) when an arc is tracked.
 
@@ -198,9 +200,9 @@ public:
 
   void initTracking(const vpImage<unsigned char> &I, bool trackCircle = false, bool trackArc = false);
   void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackCircle = false,
-    bool trackArc = false);
+                    bool trackArc = false);
   void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL,
-    const vpImagePoint *pt2 = NULL, bool trackCircle = false);
+                    const vpImagePoint *pt2 = NULL, bool trackCircle = false);
   void printParameters() const;
 
   /*!
@@ -234,6 +236,10 @@ public:
     }
   }
 
+  /*!
+    Track a set of MEs along an ellipse or a circle.
+    The number of valid tracked MEs is obtained from getNumberOfGoodPoints().
+  */
   void track(const vpImage<unsigned char> &I);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -349,7 +355,7 @@ public:
     E = e;
   }
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p,
-    double e_p, double low_alpha, double high_alpha);
+                                  double e_p, double low_alpha, double high_alpha);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j);
   //@}
@@ -397,7 +403,7 @@ protected:
   double ce;
   //! Value of sin(e).
   double se;
-  //! Stores the value in increasing order of the \f$ alpha \f$ angle on the ellipse for each vpMeSite .
+  //! Stores the value in increasing order of the \f$ alpha \f$ angle on the ellipse for each vpMeSite.
   std::list<double> angle;
   //! Ellipse area
   double m00;
@@ -412,11 +418,6 @@ protected:
 
   //! Threshold on the weights for the robust least square.
   double thresholdWeight;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  //! Expected number of points to track along the ellipse.
-  double expecteddensity;
-#endif
 
   /*! The smallest angle \f$ \alpha_{min} \in [\alpha_1;\alpha_2]\f$
       of the current moving edge list
@@ -453,7 +454,7 @@ protected:
   double computeTheta(double u, double v) const;
   void getParameters();
   void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
-  void leastSquareRobust(const vpImage<unsigned char> &I);
+  unsigned int leastSquareRobust(const vpImage<unsigned char> &I);
   unsigned int plugHoles(const vpImage<unsigned char> &I);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -471,8 +472,8 @@ private:
   // Static Function
 public:
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
-    const double &E, const double &smallalpha, const double &highalpha,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                      const double &E, const double &smallalpha, const double &highalpha,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
     const double &E, const double &smallalpha, const double &highalpha,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
@@ -483,8 +484,8 @@ public:
     const double &E, const double &smallalpha, const double &highalpha,
     const vpColor &color = vpColor::green, unsigned int thickness = 1);
   vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-    const double &E, const double &smallalpha, const double &highalpha,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                      const double &E, const double &smallalpha, const double &highalpha,
+                      const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
 };
 

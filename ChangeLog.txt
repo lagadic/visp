@@ -8,7 +8,7 @@
 ViSP 3.5.1 (under development)
   - Contributors:
     . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
-      Francois Chaumette
+      Francois Chaumette, Olivier Roussel
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
     . Introduce Universal Robots support with new vpRobotUniversalRobots class that
@@ -38,6 +38,11 @@ ViSP 3.5.1 (under development)
     . Minimum OpenCV version is 2.4.8
     . New vpMegaPose and vpMegaPoseTracker classes that are wrapper over MegaPose
       https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
+    . Introduce a new moving-edges threshold parameter for the contrast between each side
+      of the feature to track. Its value corresponds to a gray level in range [0; 255]
+    . In moving-edges ellipse tracker (vpMeEllipse and vpMbTracker and its derived classes),
+      change sample step parameter to consider the distance between moving-edges in pixels
+      rather than an angular value in deg as it was in the previous releases
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -69,6 +74,8 @@ ViSP 3.5.1 (under development)
     . New tutorial: Exporting a 3D model to MegaPose
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-megapose-model.html
   - Bug fixed
+    . [#1041] [example/device/framegrabber/saveRealSenseData] Wrong camera parameters
+              and depth_M_color homogeneous matrix when aligned depth is requested
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
     . [#1046] vpIoTools::getParent() returns an empty string when folder separator is not found
@@ -81,6 +88,7 @@ ViSP 3.5.1 (under development)
     . [#1155] Wrong representation of the ellipse in model-based tracker
     . [#1160] MBT does not estimate dof set by the user using vpMbTracker::setEstimatedDoF()
     . [#1176] ViSP cannot be built with a subset of OpenCV modules
+    . [#1198] Unable to save multiple cameras in a same xml file
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
@@ -620,7 +628,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . Compatibility with Odroid XU4
     . Source code migrates to GitHub: http://github.com/lagadic/visp
     . Introduce Travis continuous integration
-    . New website: http://visp.inria.fr
+    . New website: https://visp.inria.fr
     . Reorganize source in modules (core, vision, mbt, tt, …) with a library
       per module named libvisp_<module>. Keep compat with previous releases.
     . Allow to link contributions to ViSP source code using

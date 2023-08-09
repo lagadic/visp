@@ -2,7 +2,8 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_DNN)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_DNN) && \
+  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
 
 #include <optional>
 
@@ -274,7 +275,7 @@ int main(int argc, const char *argv [])
   vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d;
-#elif defined(HAVE_OPENCV_HUIGUI)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d;
 #endif
   //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);

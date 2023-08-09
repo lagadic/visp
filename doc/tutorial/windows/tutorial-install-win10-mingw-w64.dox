@@ -13,20 +13,23 @@ These steps have been tested with CMake 3.19.0 and MinGW-W64 - GCC for Windows 6
 \subsection install_win10_mingw_required_mingw MinGW-W64
 
 - MinGW64 can be downloaded from [here](https://winlibs.com/#download-release).
-\note At the time this tutorial was created, we downloaded the latest UCRT version for Win64
-`"GCC 12.2.0 + LLVM/Clang/LLD/LLDB 14.0.6 + MinGW-w64 10.0.0 (UCRT) - release 2"` that brings `winlibs-i686-dwarf-gcc-12.2.0-llvm-14.0.6-mingw-w64ucrt-10.0.0-r2` file.
-- After downloading, you should unzip mingw64 file to a folder. We recommend to unzip in to C drive disk in `C:\mingw32`
+\note At the time this tutorial was created, we downloaded the latest UCRT runtime Win64 Zip archive Version
+`"GCC 13.1.0 (with POSIX threads) + LLVM/Clang/LLD/LLDB 16.0.5 + MinGW-w64 11.0.0 (UCRT) - release 5 (LATEST)"`
+that brings `winlibs-x86_64-posix-seh-gcc-13.1.0-llvm-16.0.5-mingw-w64ucrt-11.0.0-r5.zip` file.
+- After downloading, you should unzip the file to a folder. We recommend to unzip in to `C:\` root drive.
+- At this point, in `C:\mingw64` folder you should have something similar to
+\image html img-mingw-explorator.jpg
 - Then you have to set up path. For that follow these steps:
   - Open settings
   - Search for Edit environment variables for your account
   - Choose path variable and then select edit
-  - Select New and add the path to Mingw-w64 bin folder. In our case, you may add `C:\mingw32\bin`
+  - Select New and add the path to Mingw-w64 bin folder. In our case, you may add `C:\mingw64\bin`
   - Select OK to save the updated path
   - Now reopen your `cmd` and check if everything is good by typing:
 \verbatim
 C:\> gcc --version
-gcc (MinGW-W64 i686-ucrt-posix-dwarf, built by Brecht Sanders) 12.2.0
-Copyright (C) 2022 Free Software Foundation, Inc.
+gcc (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders) 13.1.0
+Copyright (C) 2023 Free Software Foundation, Inc.
 This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \endverbatim
@@ -34,7 +37,7 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \subsection install_win10_mingw_3rd_cmake CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64
-platform (at the time this tutorial was written it was the file `cmake-3.19.0-win64-x64.msi`).
+platform (at the time this tutorial was written it was the file `cmake-3.26.4-win64-x64.msi`).
 To install just double click on the msi file.
 
 \subsection install_win10_mingw_3rd_git Git
@@ -109,8 +112,8 @@ just build or jump to \ref install_win10_mingw_next. You can later come back to 
 
 ViSP is interfaced with several 3rd party libraries.
 Follow the link to see the complete list of \ref supported-third-parties.
-We recommend to install \ref install_win10_mingw_3rdparty_eigen and
-\ref install_win10_mingw_3rdparty_opencv in the workspace.
+We recommend to install \ref install_win10_mingw_3rdparty_eigen,
+\ref install_win10_mingw_3rdparty_opencv and \ref install_win10_mingw_3rdparty_json in the workspace.
 
 \subsubsection install_win10_mingw_3rdparty_eigen Eigen3 3rd party
 
@@ -119,28 +122,28 @@ Even if Eigen3 is designed as a template we recommend to install the library wit
 <b>1. Get Eigen3</b>
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
-written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
+written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 - Extract the content of the archive in `%%VISP_WS%\3rdparty`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.3.9`
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.4.0`
 
 <b>2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
-C:\> cd %%VISP_WS%\3rdparty\eigen-3.3.9
+C:\> cd %%VISP_WS%\3rdparty\eigen-3.4.0
 C:\> mkdir build-mingw
 C:\> cd build-mingw
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to
-`%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install` folder):
+`%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` folder):
 \verbatim
-C:\> cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install
+C:\> cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.°\build-mingw\install` folder.
+- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` folder.
 
 <b>3. Complete Eigen3 installation</b>
 
@@ -148,11 +151,11 @@ Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
 \verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install\share\eigen3\cmake"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install` is where you have installed Eigen3. Inside the folder
-`%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` is where you have installed Eigen3. Inside the folder
+`%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 \subsubsection install_win10_mingw_3rdparty_opencv OpenCV 3rd party
@@ -160,38 +163,38 @@ where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install` is where you have in
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
-- From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
+- From https://opencv.org/releases/ download the latest OpenCV for Windows. In our case we got
+`opencv-4.8.0-windows.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%\3rdparty`.
-\image html img-win11-extract-opencv.jpg
+\image html img-win-extract-opencv.jpg
 - The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.8.0`.
 
-\note OpenCV 4.6.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
-and Visual Studio 15 2017 (vc15) but there is no build for MinGW. That's why you need to build yourself OpenCV
-from source and install the libraries in `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\mingw`.
+\note OpenCV 4.7.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 16 2019 (vc16)
+but there is no build for MinGW. That's why you need to build yourself OpenCV
+from source and install the libraries in `%%VISP_WS%\3rdparty\opencv-4.8.0\build\x64\mingw`.
 
 <b>2. Configure, build and install OpenCV from source</b>
 
 - Open a `cmd` Command Prompt and create a build folder
 \verbatim
-C:\> cd %VISP_WS%\3rdparty\opencv-4.5.1
+C:\> cd %VISP_WS%\3rdparty\opencv-4.8.0
 C:\> mkdir build-mingw
 C:\> cd build-mingw
 \endverbatim
-- Run CMake in build directory and set the install dir to `%VISP_WS%\3rdparty\opencv-4.5.1\build`. We disable also
+- Run CMake in build directory and set the install dir to `%VISP_WS%\3rdparty\opencv-4.8.0\build`. We disable also
 tests build in order to speed up the build process:
 \verbatim
-C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.5.1\build \
-     -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.8.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
 \endverbatim
 - Build and install OpenCV for MinGW (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
-- OpenCV is now installed in `%%VISP_WS%\opencv-4.5.1\build` folder
+- OpenCV is now installed in `%%VISP_WS%\opencv-4.8.0\build` folder
 
+\note - With OpenCV 4.7.0 and 4.8.0 if you don't set `WITH_OBSENSOR=OFF` during cmake configuration you will get an \ref issue_win10_mingw_opencv_obsensor.
 \note - With OpenCV 4.5.0 if you don't set `OPENCV_ENABLE_ALLOCATOR_STATS=OFF` you will get an
 \ref issue_win10_mingw_opencv_allocator.
 \note - With OpenCV 4.1.0 if you don't set `WITH_OPENCL_D3D11_NV=OFF` you will get an
@@ -206,15 +209,39 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.5.1\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.8.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\opencv-4.6.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.8.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to MinGW usage in the `Path`
 environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\mingw\bin`.
+`%%VISP_WS%\3rdparty\opencv-4.8.0\build\x64\mingw\bin`.
+
+\subsubsection install_win10_mingw_3rdparty_json JSON 3rd party
+
+<a href="https://json.nlohmann.me/">JSON for modern C++</a> installation need to be installed from source for MinGW.
+
+- Open a `cmd` Command Prompt and follow the instructions below
+\verbatim
+C:\> cd %VISP_WS%\3rdparty
+C:\> git clone https://github.com/nlohmann/json.git
+C:\> cd json && mkdir build-mingw && cd build-mingw
+C:\> cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-mingw\install -DBUILD_TESTING=OFF -DJSON_BuildTests=OFF
+C:\> cmake --build . --config Release --target install
+\endverbatim
+  JSON is now installed in `%%VISP_WS%\3rdparty\json\build-mingw\install` folder.
+  Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
+  Start up a `cmd` Command Prompt and enter:
+\verbatim
+C:\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-mingw\install\share\cmake\nlohmann_json"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\3rdparty\json\build-mingw\install` is where you have installed JSON.
+Inside the folder `%%VISP_WS%\3rdparty\json\build-mingw\install\share\cmake\nlohmann_json` you should have a file
+named `nlohmann_jsonConfig.cmake`.
+There is no need to set `Path` environment var since JSON has only a header and no library.
 
 \subsection install_win10_mingw_get_source Get ViSP source code
 
@@ -249,9 +276,8 @@ will be located in `%%VISP_WS%/visp-build-mingw`.
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-mingw` folder.
 - Select then your compiler "MinGW Makefiles" and click on "Finish" button.
 \image html img-cmake-win10-mingw-makefiles.png
-- This will start CMake configuration. As shown in the next image, OpenCV
-and Eigen3 3rd parties are automatically detected.
-\image html img-cmake-win10-mingw-visp-config.png
+- This will start CMake configuration. As shown in the next image, Eigen3, GDI, JSON, OpenCV and OpenMP 3rd parties are automatically detected.
+\image html img-cmake-win10-mingw-visp-config.jpg
 \note - If OpenCV is not detected, you may encounter the following issue \ref issue_win10_mingw_opencv_not_detected.
 
 \note - Installation folder is set to `%%VISP_WS%/visp-build-mingw/install`. If you want to change the installation
@@ -264,7 +290,6 @@ the default configuration that is recommended. If you want to create rather a st
 (with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
-\image html img-cmake-win10-mingw-visp-generate.png
 
 - Once the generation is done, in `%%VISP_WS%/visp-build-mingw` folder you have the Makefile file that
 will be used by MinGW to build the whole project.
@@ -285,7 +310,7 @@ C:\> mingw32-make -j4 install
 
 - At the end, in `%%VISP_WS%/visp-build-mingw/install/x64/mingw/bin` folder you will find ViSP DLL libraries
 corresponding to the build modules.
-\image html img-win10-mingw-visp-explorer-install.png
+\image html img-win10-mingw-visp-explorer-install.jpg
 
 \note When `CMAKE_BUILD_TYPE` is set to Debug, the library names are suffixed by "d".
 
@@ -347,20 +372,20 @@ C:\> exit
 Some ViSP examples and tests require a dataset that contains images, video, models that is not part of ViSP
 source code. This dataset is available in Github (https://github.com/lagadic/visp-images) or as a release
 in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from
-http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
 - Download the latest dataset release from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`.
-At the time this tutorial was written, the latest release was `visp-images-3.3.0.zip`.
-\image html img-win10-visp-images-3.3.0.png
+At the time this tutorial was written, the latest release was `visp-images-3.6.0.zip`.
+\image html  img-win-visp-images-git.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.6.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.6.0
 C:\> exit
 \endverbatim
 
@@ -371,7 +396,7 @@ C:\> exit
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-\image html img-win10-visp-images.png
+\image html img-win-visp-images-last-release.jpg
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests
 to detect automatically the location of the requested data. In our case, this variable should be set to
 `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
@@ -456,47 +481,67 @@ located in `%VISP_WS%/visp-build-mingw`. We provide hereafter an example of a po
 file that contains also build info.
 \verbatim
 $ type %VISP_WS%/visp-build-mingw/ViSP-third-party.txt
-==========================================================
-General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-1289-g02f11a7de-dirty
+==========================================================
+General configuration information for ViSP 3.5.1
+
+  Version control:               08a979a03-dirty
 
   Platform:
-    Timestamp:                   2020-12-02T15:54:52Z
-    Host:                        Windows 10.0.17763 AMD64
-    CMake:                       3.19.0
+    Timestamp:                   2023-07-06T14:34:24Z
+    Host:                        Windows 10.0.19044 AMD64
+    CMake:                       3.26.4
     CMake generator:             MinGW Makefiles
-    CMake build tool:            C:/PROGRA~1/MINGW-~1/X86_64~1.0-P/mingw64/bin/mingw32-make.exe
+    CMake build tool:            C:/mingw64/bin/mingw32-make.exe
     Configuration:               Release
+
+  System information:
+    Number of CPU logical cores: 4
+    Number of CPU physical cores: 4
+    Total physical memory (in MiB): 16057
+    OS name:                     Windows
+    OS release:                  Professional
+    OS version:                  (Build 19044)
+    OS platform:                 AMD64
+    CPU name:                    Pentium II (0.25 micron)
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/g++.exe  (ver 8.1.0)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
-    C Compiler:                  C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/gcc.exe
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
+    C++ Compiler:                C:/mingw64/bin/c++.exe  (ver 13.1.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
+    C Compiler:                  C:/mingw64/bin/gcc.exe
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
     Linker flags (Release):
     Linker flags (Debug):
+    Use cxx standard:            17
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    To be built:                 core dnn_tracker gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 java
 
   Windows RT support:            no
 
-  Python (for build):            no
+  Python (for build):            C:/Python310/python.exe
 
   Java:
     ant:                         no
-    JNI:                         no
+    JNI:                         C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include/win32 C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include
 
   Build options:
     Build deprecated:            yes
     Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.8.0
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.8.0/build
 
   Mathematics:
     Blas/Lapack:                 yes
@@ -506,8 +551,8 @@ General configuration information for ViSP 3.3.1
     \- Use Netlib:               no
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.8)
-    Use OpenCV:                  yes (ver 4.5.1)
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.8.0)
 
   Simulator:
     Ogre simulator:
@@ -526,8 +571,9 @@ General configuration information for ViSP 3.3.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use stb_image (built-in):    no
+    Use OpenCV:                  yes (ver 4.8.0)
+    Use stb_image (built-in):    yes (ver 2.27.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.2)
 
   Real robots:
     Use Afma4:                   no
@@ -535,11 +581,13 @@ General configuration information for ViSP 3.3.1
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use ur_rtde:                 no
     Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
     Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
     Use Parrot ARSDK:            no
     \-Use ffmpeg:                no
     Use Virtuose:                no
@@ -549,8 +597,8 @@ General configuration information for ViSP 3.3.1
   GUI:
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use GDI:                     no
+    Use OpenCV:                  yes (ver 4.8.0)
+    Use GDI:                     yes
     Use Direct3D:                no
 
   Cameras:
@@ -558,13 +606,15 @@ General configuration information for ViSP 3.3.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use Flycapture:              no
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.8.0)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
 
   RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
+    Use Occipital Structure:     no
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
@@ -577,6 +627,10 @@ General configuration information for ViSP 3.3.1
     Use comedi:                  no
     Use IIT SDK:                 no
 
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
+
   Detection:
     Use zbar:                    no
     Use dmtx:                    no
@@ -587,31 +641,64 @@ General configuration information for ViSP 3.3.1
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
+    Use json (nlohmann):         yes (ver 3.11.2)
 
   Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
-    Use cxx standard:            11
+    Use Simd (built-in):         yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
 
   Documentation:
     Use doxygen:                 yes
+    \- Use mathjax:              no
 
   Tests and samples:
-    Use catch2 (built-in):       yes (ver 2.9.2)
+    Use catch2 (built-in):       yes (ver 2.13.7)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
     Tutorials:                   yes
+    Dataset found:               yes (ver 3.6.0 in C:\visp-ws\visp-images)
 
-  Install path:                  C:/visp-ws/visp-fspindle-build-mingw/install
+  Library dirs:
+    Eigen3 include dir:          C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17/install/share/eigen3/cmake
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.8.0/build
+
+  Install path:                  C:/visp-ws/visp-build-mingw/install
 
 ==========================================================
 \endverbatim
 
 \section issue_win10_mingw Known issues
 
-\subsection issue_win10_mingw_opencv_allocator gcc: error: long: No such file or directory
+\subsection issue_win10_mingw_opencv_obsensor OpenCV 4.7.0 and 4.8.0 compilation problem in obsensor_stream_channel_msmf.cpp
+
+This issue occurs with OpenCV 4.7.0 and OpenCV 4.8.0.
+
+\verbatim
+In file included from C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsensor_stream_channel_msmf.hpp:41,
+                 from C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsensor_stream_channel_msmf.cpp:25:
+C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsensor_stream_channel_msmf.hpp: In instantiation of 'class cv::obsensor::ComPtr<IMFAttributes>':
+C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsensor_stream_channel_msmf.hpp:145:42:   required from here
+C:\visp-ws\3rdparty\opencv-4.7.0\sources\modules\videoio\src\cap_obsensor\obsensor_stream_channel_msmf.hpp:106:27: error: could not convert template argument 'cv::obsensor::ComPtr<IMFAttributes>::__T_IID_getter' from 'const IID& (cv::obsensor::ComPtr<IMFAttributes>:()' {aka 'const GUID& (cv::obsensor::ComPtr<IMFAttributes>:()'} to 'const IID& ()' {aka 'const GUID& ()'}
+  106 |     _COM_SMARTPTR_TYPEDEF(T, __uuidof(T));
+\endverbatim
+
+The workaround is to configure OpenCV using `cmake -DWITH_OBSENSOR=OFF` like:
+\verbatim
+C:\> cd %VISP_WS%\opencv-4.7.0\build-mingw
+C:\> C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.7.0\build -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OBSENSOR=OFF
+C:\> cmake --build . --config Release --target install -j4
+\endverbatim
+
+\note Previous instructions need to be adapted to your OpenCV version.
+
+\subsection issue_win10_mingw_opencv_allocator OpenCV 4.5.0 compilation problem gcc: error: long: No such file or directory
 
 This issue occurs with OpenCV 4.5.0 and is referenced
 [here](https://answers.opencv.org/question/228737/gcc-error-long-no-such-file-or-directory/).
@@ -627,7 +714,7 @@ mingw32-make.exe[1]: *** [CMakeFiles\Makefile2:1770: modules/core/CMakeFiles/ope
 mingw32-make.exe: *** [Makefile:181: all] Error 2
 \endverbatim
 
-The workaround is to configure OpenCV build using `cmake -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF` like:
+The workaround is to configure OpenCV using `cmake -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF` like:
 \verbatim
 C:\> cd %VISP_WS%\opencv-4.5.0\build-mingw
 C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.0\build \

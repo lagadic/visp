@@ -245,7 +245,7 @@ int main(int argc, char **argv)
 
     while (1) {
       // Acquire a new image
-#if defined(VISP_HAVE_VIDEOIO)
+#if defined(HAVE_OPENCV_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #else

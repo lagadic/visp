@@ -61,6 +61,3 @@ endforeach()
 
 # Copy the data files
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd-structure-core.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)

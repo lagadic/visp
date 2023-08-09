@@ -84,7 +84,6 @@ public:
 
 public:
   int i, j;
-  int i_1, j_1; // TODO FABIEN REMOVE
   double ifloat, jfloat;
   unsigned char v;
   int mask_sign;
@@ -222,8 +221,7 @@ public:
   */
   static double distance(const vpMeSite &S1, const vpMeSite &S2)
   {
-    //return (sqrt(sqrDistance(S1, S2)));
-    return (sqrt(vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat))); // TODO FABIEN REMOVE
+    return (sqrt(sqrDistance(S1, S2)));
   }
 
   /*!

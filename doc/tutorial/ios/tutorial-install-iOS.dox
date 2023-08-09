@@ -55,12 +55,12 @@ $ cd $HOME/framework
 $ git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $HOME/framework
 \endverbatim
 
-- Or you can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- Or you can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $HOME/framework
 \endverbatim

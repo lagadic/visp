@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Keybord management.
+ * Keyboard management.
  *
 *****************************************************************************/
 
@@ -38,23 +38,24 @@
 
 /*!
   \file vpKeyboard.h
-  \brief Keybord management under unix.
+  \brief Keyboard management under unix.
 */
 
 #include <visp3/core/vpConfig.h>
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-
 #include <iostream>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#endif // defined UNIX
 
 /*!
 
   \class vpKeyboard
   \ingroup group_io_keyboard
-  \brief Keybord management under unix (Linux or OSX). This class is not
+  \brief Keyboard management under unix (Linux or OSX). This class is not
   available under windows.
 
   Gets a key from the keyboard without waiting for the "Enter" key.
@@ -88,6 +89,7 @@ public:
   int kbhit();
   int getchar();
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 private:
   void init();
   void end();
@@ -95,8 +97,7 @@ private:
   void setRawMode(bool active);
 
   struct termios initial_settings, new_settings;
-};
-
 #endif // defined UNIX
+};
 
 #endif

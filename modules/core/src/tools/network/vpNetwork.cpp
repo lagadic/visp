@@ -47,7 +47,7 @@ vpNetwork::vpNetwork()
     tv_sec(0), tv_usec(10), verboseMode(false)
 {
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -656,7 +656,7 @@ int vpNetwork::_receiveRequestOnce()
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -743,7 +743,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;

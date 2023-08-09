@@ -43,7 +43,7 @@ Finally, to track a line with the moving edges, we include the header of the vpM
 
 In the main() function, The source code is build only if one of the grabbers is available.
 
-\snippet tutorial-me-line-tracker.cpp defines
+\snippet tutorial-me-line-tracker.cpp me line headers
 
 Here we create a gray level image container \c I that will contain the images acquired by our camera.
 

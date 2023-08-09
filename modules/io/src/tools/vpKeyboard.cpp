@@ -29,29 +29,49 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Keybord management.
+ * Keyboard management.
  *
 *****************************************************************************/
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <stdio.h>
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 #include <sys/select.h>
+#elif defined(_WIN32)
+#include <conio.h>
+#endif
+#include <visp3/core/vpException.h>
 #include <visp3/io/vpKeyboard.h>
 
 /*!
   \file vpKeyboard.cpp
-  \brief Keybord management under unix.
+  \brief Keyboard management under unix.
 */
 
 /*!
   Activates the raw mode to read keys in an non blocking way.
 */
-vpKeyboard::vpKeyboard() : initial_settings(), new_settings() { init(); }
+vpKeyboard::vpKeyboard()
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  : initial_settings(), new_settings()
+{
+  init();
+}
+#else
+{}
+#endif
+
+
 
 /*!
   Stops the raw mode.
 */
-vpKeyboard::~vpKeyboard() { end(); }
+vpKeyboard::~vpKeyboard()
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  end();
+#endif
+}
 
 /*!
 
@@ -59,9 +79,15 @@ vpKeyboard::~vpKeyboard() { end(); }
 */
 int vpKeyboard::getchar()
 {
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   int c;
   c = ::getchar();
   return c;
+#elif defined(_WIN32) && !defined(WINRT)
+  return _getch();
+#elif defined(_WIN32) && defined(WINRT)
+  throw(vpException(vpException::fatalError, "vpKeyboard::getchar() is not supported on UWP platform!"));
+#endif
 }
 
 /*!
@@ -71,26 +97,39 @@ int vpKeyboard::getchar()
 */
 int vpKeyboard::kbhit()
 {
-  struct timeval tv = {0, 0};
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
+  struct timeval tv = { 0, 0 };
   fd_set readfds;
 
   FD_ZERO(&readfds);
   FD_SET(STDIN_FILENO, &readfds);
 
   return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv) == 1;
+#elif defined(_WIN32) && !defined(WINRT)
+  return _kbhit();
+#elif defined(_WIN32) && defined(WINRT)
+  throw(vpException(vpException::fatalError, "vpKeyboard::kbhit() is not supported on UWP platform!"));
+#endif
 }
 
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
 /*!
 
   Activates the raw mode to read keys in an non blocking way.
 */
-void vpKeyboard::init() { setRawMode(true); }
+void vpKeyboard::init()
+{
+  setRawMode(true);
+}
 
 /*!
 
   Stops the raw mode.
 */
-void vpKeyboard::end() { setRawMode(false); }
+void vpKeyboard::end()
+{
+  setRawMode(false);
+}
 
 /*!
   Turns on/off the 'raw' mode.
@@ -119,7 +158,8 @@ void vpKeyboard::setRawMode(bool active)
     new_settings.c_cc[VTIME] = 0;
     tcsetattr(STDIN_FILENO, TCSANOW, &new_settings);
 
-  } else {
+  }
+  else {
     tcsetattr(STDIN_FILENO, TCSANOW, &initial_settings);
   }
 }

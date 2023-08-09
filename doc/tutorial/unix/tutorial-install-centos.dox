@@ -93,7 +93,7 @@ $ sudo yum install libjpeg-devel libpng-devel
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endverbatim
@@ -102,7 +102,7 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endverbatim
@@ -182,26 +182,31 @@ $ source ~/.bashrc
 
 \section install_centos_dataset Install ViSP dataset
 
-Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
-$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+$ unzip ~/Downloads/visp-images-3.6.0.zip -d $VISP_WS
 \endverbatim
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.6.0`.
 \verbatim
-$ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
-AprilTag   README.md      cube       endianness   line    mire          warp
-Klimt      calibration    ellipse    faces        mbt     mire-2        xml
+$ ls $VISP_WS/visp-images-3.6.0
+3dmodel          README.md    ellipse     mbt        video
+AprilTag         Solvay       ellipse-1   mbt-cao    warp
+Bayer            calibration  endianness  mbt-depth  xml
+Gaussian-filter  circle       faces       memorial
+Klimt            cube         iv          mire
+LICENSE.txt      dnn          line        mire-2
 \endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically
+  the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`. It is more convenient if
+  this environment variables is automatically added to your bash session every time a new shell is launched:
 \verbatim
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 

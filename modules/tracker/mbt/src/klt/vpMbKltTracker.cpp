@@ -383,7 +383,7 @@ std::map<int, vpImagePoint> vpMbKltTracker::getKltImagePointsWithId() const
     long id;
     float x_tmp, y_tmp;
     tracker.getFeature((int)i, id, x_tmp, y_tmp);
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
     kltPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
 #else
     kltPoints[id] = vpImagePoint(y_tmp, x_tmp);
@@ -497,7 +497,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
         std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
         // nbCur+= (unsigned int)kltpoly->getCurrentPoints().size();
         for (; iter != kltpoly->getCurrentPoints().end(); ++iter) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
           if (std::find(init_ids.begin(), init_ids.end(), (long)(kltpoly->getCurrentPointsInd())[(int)iter->first]) !=
               init_ids.end())
 #else
@@ -517,7 +517,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
 
           cv::Point2f p((float)cdp[0], (float)cdp[1]);
           init_pts.push_back(p);
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(int)iter->first]);
 #else
           init_ids.push_back((size_t)(kltpoly->getCurrentPointsInd())[(size_t)iter->first]);

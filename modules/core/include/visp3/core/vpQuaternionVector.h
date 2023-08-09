@@ -123,7 +123,7 @@ public:
   explicit vpQuaternionVector(const std::vector<double> &q);
 
   //! Destructor.
-  virtual ~vpQuaternionVector(){};
+  virtual ~vpQuaternionVector(){}
 
   vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
   vpQuaternionVector buildFrom(const vpRotationMatrix &R);

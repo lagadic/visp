@@ -138,11 +138,11 @@ public:
   /*!
     Return the current image number.
   */
-  inline long getImageNumber() const { return m_image_number; };
+  inline long getImageNumber() const { return m_image_number; }
   /*!
    * Return the name of the file in which the last frame was read.
    */
-  inline std::string getImageName() const { return m_image_name; };
+  inline std::string getImageName() const { return m_image_name; }
 
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);

@@ -29,8 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Example of keybord management.
- *
+ * Example of parallel port management.
  *
 *****************************************************************************/
 
@@ -72,7 +71,7 @@ Send a data to the parallel port.\n\
 SYNOPSIS\n\
   %s [-d <data>] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -117,7 +116,8 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
         std::cerr << "ERROR: " << std::endl;
         std::cerr << "  Bad value \"-d " << optarg << "\"" << std::endl << std::endl;
         return false;
-      } else {
+      }
+      else {
         data = (unsigned char)value;
       }
       break;
@@ -166,7 +166,8 @@ int main(int argc, const char **argv)
     printf("Send data \"%d\" to the parallel port\n", data);
     parport.sendData(data);
 
-  } catch (vpParallelPortException &e) {
+  }
+  catch (vpParallelPortException &e) {
     switch (e.getCode()) {
     case vpParallelPortException::opening:
       printf("Can't open the parallel port\n");
@@ -175,7 +176,8 @@ int main(int argc, const char **argv)
       printf("Can't close the parallel port\n");
       break;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "An error occurs: " << e.getMessage() << std::endl;
   }
   return EXIT_SUCCESS;

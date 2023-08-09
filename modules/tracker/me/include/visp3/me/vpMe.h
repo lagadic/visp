@@ -141,7 +141,7 @@ private:
   unsigned int anglestep;
   int mask_sign;
   unsigned int range; //! Seek range - on both sides of the reference pixel
-  double sample_step; //! Distance between sampled points (in pixels or degrees)
+  double sample_step; //! Distance between sampled points in pixels
   int ntotal_sample;
   int points_to_track;
   //! Convolution masks' size in pixels (masks are square), \warning should
@@ -349,16 +349,14 @@ public:
   void setRange(const unsigned int &r) { range = r; }
 
   /*!
-    Set the minimum distance in pixel (or in degree for ellipse and
-    circle tracking) between two discretized points.
+    Set the minimum distance in pixel between two discretized points.
 
     \param s : new sample_step.
   */
   void setSampleStep(const double &s) { sample_step = s; }
 
   /*!
-    Get the minimum distance in pixel (or in degree for ellipse and
-    circle tracking) between two discretized points.
+    Get the minimum distance in pixel between two discretized points.
 
     \return Value of sample_step.
   */
@@ -449,7 +447,7 @@ inline void to_json(nlohmann::json &j, const vpMe &me)
  *
  * JSON content (key: type):
  *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
- *  - threshold: int, vpMe::setThreshold()
+ *  - threshold: double, vpMe::setThreshold()
  *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2()
  *  - minSampleStep: double, vpMe::setMinSampleStep()
  *  - angleStep: double, vpMe::setAngleStep()
@@ -480,7 +478,7 @@ inline void to_json(nlohmann::json &j, const vpMe &me)
     "sampleStep": 4.0,
     "strip": 2,
     "thresholdType": 1
-    "threshold": 20
+    "threshold": 20.0
   }
  * \endcode
  *

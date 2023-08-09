@@ -23,7 +23,7 @@ jobs:
         access_token: ${{ github.token }}
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Print system information
       run: |
@@ -49,7 +49,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Clone visp_sample
@@ -76,7 +76,7 @@ jobs:
 
     - name: Run unit tests
       working-directory: build
-      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
+      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure -V
 
     - name: ViSP as 3rdparty with cmake
       run: |
