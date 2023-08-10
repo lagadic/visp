@@ -15,7 +15,7 @@ dependencies:
   - ipython
   - ipykernel
   - jupyterlab
-  - notebook
+  - notebook=6.5.4
   - nb_conda_kernels
   - jupyter_contrib_nbextensions
   - pinocchio
