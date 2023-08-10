@@ -81,7 +81,7 @@ class MegaposeServer():
     '''
     A TCP-based server that can be interrogated to estimate the pose of an object  with MegaPose
     '''
-    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int, warmup=True):
+    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int, warmup=True, verbose=False):
         """Create a TCP server that listens for an incoming connection
         and can be used to answer client queries about an object pose with respect to the camera frame
 
@@ -103,6 +103,8 @@ class MegaposeServer():
                 K: The 3X3 intrinsics matrix
             optimize (bool): Whether to optimize the deep network models for faster inference.
                 Still very experimental, and may result in a loss of accuracy with no performance gain!
+            warmup (bool): Whether to perform model warmup in order to avoid a slow first inference pass
+            verbose (bool): print additional information
         """
         self.host = host
         self.port = port
@@ -127,22 +129,10 @@ class MegaposeServer():
         torch.backends.cudnn.deterministic = False
         self.optimize = optimize
         self.warmup = warmup
+        self.verbose = verbose
         if self.optimize:
+            print('Optimizing Pytorch models...')
             class Optimized(nn.Module):
-                def delete_weights(self):
-                    from torch.nn.utils import prune
-
-                    parameters_to_prune = [
-                        (module, "weight") for module in filter(lambda m: type(m) == torch.nn.Conv2d, self.m.modules())
-                    ]
-                    prune.global_unstructured(
-                        parameters_to_prune,
-                        pruning_method=prune.L1Unstructured,
-                        amount=0.25,
-                    )
-                    for p in parameters_to_prune:
-                        prune.remove(*p)
-                        print(list(p[0].named_parameters()))
                 def __init__(self, m: nn.Module, inp):
                     super().__init__()
                     self.m = m.eval()
@@ -164,7 +154,6 @@ class MegaposeServer():
                                                         np.random.rand(h, w).astype(np.float32) if self.model_info['requires_depth'] else None).cuda()
             detections = self._make_detections(labels, np.asarray([[0, 0, w, h] for _ in range(len(labels))], dtype=np.float32)).cuda()
             self.model.run_inference_pipeline(observation, detections, **self.model_info['inference_parameters'])
-
 
 
 
@@ -210,6 +199,7 @@ class MegaposeServer():
                 'instance_id': [i for i in range(len(cTos_np))]
             })
             coarse_estimates = PoseEstimatesType(infos, poses=tensor)
+        input_proc_time = time.time() - t
         # print(f'Input buffer processing took: {time.time() - t}s')
         detections = self._make_detections(labels, detections).cuda() if detections is not None else None
         observation = self._make_observation_tensor(img, depth).cuda()
@@ -217,10 +207,29 @@ class MegaposeServer():
         if 'refiner_iterations' in json_object:
             inference_params['n_refiner_iterations'] = json_object['refiner_iterations']
         t = time.time()
-
         output, extra_data = self.model.run_inference_pipeline(
             observation, detections=detections, **inference_params, coarse_estimates=coarse_estimates
         )
+        inference_time = time.time() - t
+        if self.verbose:
+            print('Timings:')
+            print(f'\tInput processing: {int(input_proc_time * 1000)} ms')
+            print(f'\tInference: {int(inference_time * 1000)} ms')
+            dict = {
+                'Coarse': 'coarse',
+                'Refiner': 'refiner_all_hypotheses',
+                'Scoring': 'scoring'
+            }
+            for k in dict:
+                v = dict[k]
+                if v in extra_data and 'data' in extra_data[v] and extra_data[v]['data'] is not None:
+                    print(f'\t{k}')
+                    print(f'\t\t\tTotal time: {int(extra_data[v]["data"]["time"] * 1000)}ms')
+                    if 'render_time' in extra_data[v]['data']:
+                        print(f'\t\t\tRender time: {int(extra_data[v]["data"]["render_time"] * 1000)}ms')
+
+            # print(extra_data)
+
         # print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
         # print(extra_data)
 
@@ -469,6 +478,7 @@ if __name__ == '__main__':
     parser.add_argument('--optimize', action='store_true', help='Experimental: Optimize network for inference speed. This may incur a loss of accuracy.')
     parser.add_argument('--num-workers', type=int, default=4, help='Number of workers for rendering')
     parser.add_argument('--no-warmup', action='store_true', help='Whether to perform model warmup before starting the server. Warmup will avoid a slow first pose estimation.')
+    parser.add_argument('--verbose', action='store_true', help='Whether to print additional information such as execution time and results.')
 
 
     args = parser.parse_args()
@@ -481,12 +491,13 @@ if __name__ == '__main__':
             [0.0, 700, 240],
             [0.0, 0.0, 1.0]
         ]),
-        'h': 480,
-        'w': 640
+        'h': 240,
+        'w': 320
     }
 
     server = MegaposeServer(args.host, args.port, megapose_models[args.model][0],
                             mesh_dir, camera_data, optimize=args.optimize,
-                            num_workers=args.num_workers, warmup=not args.no_warmup)
+                            num_workers=args.num_workers, warmup=not args.no_warmup,
+                            verbose=args.verbose)
 
     server.run()
