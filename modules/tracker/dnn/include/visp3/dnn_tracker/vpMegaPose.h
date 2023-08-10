@@ -142,19 +142,20 @@ public:
   */
   enum ServerMessage
   {
-      UNKNOWN = 0,
-      ERR = 1, //! An error occurred server side
-      OK = 2, //! Server has successfully completed operation, no return value expected
-      GET_POSE = 3, //! Ask the server to estimate poses
-      RET_POSE = 4, //! Code sent when server returns pose estimates
-      GET_VIZ = 5, //! Ask the server for a rendering of the object
-      RET_VIZ = 6, //! Code sent when server returns the rendering of an object
-      SET_INTR = 7, //! Set the intrinsics for the MegaPose server
-      GET_SCORE = 8, //! Ask the server to score a pose estimate
-      RET_SCORE = 9, //! Code sent when server returns a pose score
-      SET_SO3_GRID_SIZE = 10, //! Ask the server to set the number of samples for coarse estimation
-      GET_LIST_OBJECTS = 11,
-      RET_LIST_OBJECTS = 12
+    UNKNOWN = 0,
+    ERR = 1, //! An error occurred server side
+    OK = 2, //! Server has successfully completed operation, no return value expected
+    GET_POSE = 3, //! Ask the server to estimate poses
+    RET_POSE = 4, //! Code sent when server returns pose estimates
+    GET_VIZ = 5, //! Ask the server for a rendering of the object
+    RET_VIZ = 6, //! Code sent when server returns the rendering of an object
+    SET_INTR = 7, //! Set the intrinsics for the MegaPose server
+    GET_SCORE = 8, //! Ask the server to score a pose estimate
+    RET_SCORE = 9, //! Code sent when server returns a pose score
+    SET_SO3_GRID_SIZE = 10, //! Ask the server to set the number of samples for coarse estimation
+    GET_LIST_OBJECTS = 11,
+    RET_LIST_OBJECTS = 12,
+    EXIT = 13
   };
   /**
   * Instantiates a connection to a MegaPose server.

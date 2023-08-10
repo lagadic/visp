@@ -438,8 +438,9 @@ class MegaposeServer():
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind((self.host, self.port))
                 s.listen()
-                print('MegaPose server listening for connections')
+                print(f'MegaPose server listening for connections on {self.host}:{self.port}')
                 while True:
+                    print('Waiting for connection')
                     connection, address = s.accept()
                     print(f'Connected to {address}')
                     with connection:
@@ -448,7 +449,12 @@ class MegaposeServer():
                                 import time
                                 t = time.time()
                                 code, buffer = receive_message(connection)
-                                self.operations[code](connection, buffer)
+                                if code == ServerMessage.EXIT.value:
+                                    connection.close()
+                                    print(f'Connection to {address} closed.')
+                                    break
+                                else:
+                                    self.operations[code](connection, buffer)
                             except:
                                 traceback.print_exc()
                                 print('Connection broken')
@@ -491,8 +497,8 @@ if __name__ == '__main__':
             [0.0, 700, 240],
             [0.0, 0.0, 1.0]
         ]),
-        'h': 240,
-        'w': 320
+        'h': 480,
+        'w': 640
     }
 
     server = MegaposeServer(args.host, args.port, megapose_models[args.model][0],
