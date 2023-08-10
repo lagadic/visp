@@ -31,10 +31,10 @@ It has however, several drawbacks:
 
 The MegaPose integration in ViSP is based on a client-server model:
 - The client, that uses either vpMegaPose or vpMegaPoseTracker, is C++-based. It sends pose estimation requests to the server.
-- The server is written in Python. It wraps around the MegaPose model. Each time a pose estimation is requested, the server reshapes the data and forwards it to MegaPose. 
-  It then sends back the information to the client. 
+- The server is written in Python. It wraps around the MegaPose model. Each time a pose estimation is requested, the server reshapes the data and forwards it to MegaPose.
+  It then sends back the information to the client.
 
-\note The computer running the server needs a GPU. The client can run on the same computer as the server. It can also run on another computer without a GPU. 
+\note The computer running the server needs a GPU. The client can run on the same computer as the server. It can also run on another computer without a GPU.
   As Ethernet is used to communicate between client and server, both computers must be accessible on the Ethernet network.
 
 This tutorial will explain how to install and run MegaPose and
@@ -65,6 +65,8 @@ The MegaPose client, written in C++, is included directly in ViSP. It can be ins
   As explained previously, see \ref soft_tool_json installation procedure and build again ViSP.
 
 \subsection megapose_server_install Installing the server
+
+\warning The megapose server cannot directly be installed and used on Windows. A workaround is to install it in a <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL container</a>. A WSL container works as a Linux (Ubuntu) distribution. The client still works on Windows, and WSL allows for port forwarding, making its usage seamless from the perspective of the client.
 
 MegaPose server should be installed on a computer equipped with a GPU. To install the MegaPose server, there are two dependencies:
   - Conda: MegaPose will be installed in a new virtual environment in order to avoid potential conflicts with python and other packages you have already installed
@@ -200,6 +202,8 @@ To start the server, you should enter in your terminal:
 (megapose) $ python -m megapose_server.run --host 127.0.0.1 --port 5555 --model RGB --meshes-directory data/models
 \endcode
 Note that this assumes that your current directory is the tutorial folder.
+
+\warning If you are running on Windows through WSL, you may encounter an error mentioning that a CUDA/CUDNN-related .so file is not found. To resolve this issue, enter \code export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH\endcode before starting the server.
 
 Your server should now be started and waiting for incoming connections. You can now launch the tracking tutorial.
 
