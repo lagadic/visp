@@ -137,18 +137,63 @@ class MegaposeServer():
                     super().__init__()
                     self.m = m.eval()
                     self.m = fuse(self.m, inplace=False)
+                    # self.prune(inp, 0.5)
+
                     self.m = torch.jit.trace(self.m, torch.rand(inp).cuda())
                     self.m = torch.jit.freeze(self.m)
+                def prune(self, input, factor: float):
+                    try:
+                        import torch_pruning as tp
+                        self.m.train()
+                        print(self.m)
+                        # Importance criteria
+
+                        imp = tp.importance.MagnitudeImportance()
+                        inp = torch.randn(input).cuda()
+                        ignored_layers = []
+                        for name, m in self.m.named_modules():
+                            if name == 'conv1':
+                                print('IGNORING conv1')
+                                ignored_layers.append(m)
+                            if isinstance(m, torch.nn.Linear):
+                                ignored_layers.append(m) # DO NOT prune the final classifier!
+
+                        iterative_steps = 1 # progressive pruning
+                        pruner = tp.pruner.MagnitudePruner(
+                            self.m,
+                            inp,
+                            importance=imp,
+                            iterative_steps=iterative_steps,
+                            ch_sparsity=factor,
+                            ignored_layers=ignored_layers,
+                        )
+                        macs, nparams = tp.utils.count_ops_and_params(self.m, inp)
+                        print(macs, nparams)
+                        for i in range(iterative_steps):
+
+                            # # Taylor expansion requires gradients for importance estimation
+                            # if isinstance(imp, tp.importance.TaylorImportance):
+                            #     # A dummy loss, please replace it with your loss function and data!
+                            #     loss = self.m(example_inputs).sum()
+                            #     loss.backward() # before pruner.step()
+                            pruner.step()
+                        macs, nparams = tp.utils.count_ops_and_params(self.m, inp)
+                        print(macs, nparams)
+                        print(self.m)
+                        self.m.eval()
+                    except ImportError:
+                        print('To perform pruning, install the torch_pruning library')
 
                 def forward(self, x):
                     return self.m(x).float()
 
             h, w = self.camera_data.resolution
-            self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (1, 9, h, w))
-            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (1, 32 if self.model_info['requires_depth'] else 27, h, w))
+            self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (5, 9, h, w))
+            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (5, 32 if self.model_info['requires_depth'] else 27, h, w))
 
         if self.warmup:
             print('Warming up models...')
+            h, w = self.camera_data.resolution
             labels = self.object_dataset.label_to_objects.keys()
             observation = self._make_observation_tensor(np.random.randint(0, 255, (h, w, 3), dtype=np.uint8),
                                                         np.random.rand(h, w).astype(np.float32) if self.model_info['requires_depth'] else None).cuda()
