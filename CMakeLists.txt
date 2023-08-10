@@ -701,6 +701,7 @@ VP_CHECK_PACKAGE(IsInf)
 VP_CHECK_PACKAGE(Round)
 VP_CHECK_PACKAGE(Erfc)
 VP_CHECK_PACKAGE(Strtof)
+VP_CHECK_PACKAGE(IsFinite)
 VP_CHECK_PACKAGE(Log1p)
 
 #----------------------------------------------------------------------
