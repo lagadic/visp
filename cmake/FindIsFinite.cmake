@@ -36,5 +36,5 @@
 include(VISPFindUtils)
 
 check_math_expr("isfinite(1.0)"         "<math.h>"        HAVE_FUNC_ISFINITE)
-check_math_expr("std::isfinite(1.0))"   "<cmath>"         HAVE_FUNC_STD_ISFINITE)
-check_math_expr("_finite(1.0))"         "<float.h>"       HAVE_FUNC__FINITE)
+check_math_expr("std::isfinite(1.0)"    "<cmath>"         HAVE_FUNC_STD_ISFINITE)
+check_math_expr("_finite(1.0)"          "<float.h>"       HAVE_FUNC__FINITE)

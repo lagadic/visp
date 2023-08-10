@@ -36,5 +36,5 @@
 include(VISPFindUtils)
 
 check_math_expr("isnan(1.0)"          "<math.h>"        HAVE_FUNC_ISNAN)
-check_math_expr("std::isnan(1.0))"    "<cmath>"         HAVE_FUNC_STD_ISNAN)
-check_math_expr("_isnan(1.0))"        "<float.h>"       HAVE_FUNC__ISNAN)
+check_math_expr("std::isnan(1.0)"     "<cmath>"         HAVE_FUNC_STD_ISNAN)
+check_math_expr("_isnan(1.0)"         "<float.h>"       HAVE_FUNC__ISNAN)
