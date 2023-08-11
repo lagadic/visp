@@ -326,7 +326,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
 #else
-  size_t readCount = _read(m_serverSocket, &size, sizeof(uint32_t));
+  size_t readCount = recv(m_serverSocket, reinterpret_cast<char*>(&size), sizeof(uint32_t), 0);
 #endif
   if (readCount != sizeof(uint32_t)) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -337,7 +337,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
 #else
-  readCount = _read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
+  readCount = recv(m_serverSocket, reinterpret_cast<char*>(code), MEGAPOSE_CODE_SIZE, 0);
 #endif
   if (readCount != MEGAPOSE_CODE_SIZE) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -351,7 +351,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int actually_read = read(m_serverSocket, &data[read_total], read_size);
 #else
-    int actually_read = _read(m_serverSocket, &data[read_total], read_size);
+    int actually_read = recv(m_serverSocket, reinterpret_cast<char*>(&data[read_total]), read_size, 0);
 #endif
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
