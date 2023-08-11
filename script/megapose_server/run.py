@@ -81,7 +81,7 @@ class MegaposeServer():
     '''
     A TCP-based server that can be interrogated to estimate the pose of an object  with MegaPose
     '''
-    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int, warmup=True, verbose=False):
+    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int, image_batch_size=256, warmup=True, verbose=False):
         """Create a TCP server that listens for an incoming connection
         and can be used to answer client queries about an object pose with respect to the camera frame
 
@@ -123,6 +123,7 @@ class MegaposeServer():
         self.model_info = model_tuple[0]
         self.model = model_tuple[1]
         self.model.eval()
+        self.model.bsz_images = image_batch_size
         self.camera_data = self._make_camera_data(camera_data)
         self.renderer = Panda3dSceneRenderer(self.object_dataset)
         torch.backends.cudnn.benchmark = True
@@ -137,59 +138,15 @@ class MegaposeServer():
                     super().__init__()
                     self.m = m.eval()
                     self.m = fuse(self.m, inplace=False)
-                    # self.prune(inp, 0.5)
-
                     self.m = torch.jit.trace(self.m, torch.rand(inp).cuda())
                     self.m = torch.jit.freeze(self.m)
-                def prune(self, input, factor: float):
-                    try:
-                        import torch_pruning as tp
-                        self.m.train()
-                        print(self.m)
-                        # Importance criteria
-
-                        imp = tp.importance.MagnitudeImportance()
-                        inp = torch.randn(input).cuda()
-                        ignored_layers = []
-                        for name, m in self.m.named_modules():
-                            if name == 'conv1':
-                                print('IGNORING conv1')
-                                ignored_layers.append(m)
-                            if isinstance(m, torch.nn.Linear):
-                                ignored_layers.append(m) # DO NOT prune the final classifier!
-
-                        iterative_steps = 1 # progressive pruning
-                        pruner = tp.pruner.MagnitudePruner(
-                            self.m,
-                            inp,
-                            importance=imp,
-                            iterative_steps=iterative_steps,
-                            ch_sparsity=factor,
-                            ignored_layers=ignored_layers,
-                        )
-                        macs, nparams = tp.utils.count_ops_and_params(self.m, inp)
-                        print(macs, nparams)
-                        for i in range(iterative_steps):
-
-                            # # Taylor expansion requires gradients for importance estimation
-                            # if isinstance(imp, tp.importance.TaylorImportance):
-                            #     # A dummy loss, please replace it with your loss function and data!
-                            #     loss = self.m(example_inputs).sum()
-                            #     loss.backward() # before pruner.step()
-                            pruner.step()
-                        macs, nparams = tp.utils.count_ops_and_params(self.m, inp)
-                        print(macs, nparams)
-                        print(self.m)
-                        self.m.eval()
-                    except ImportError:
-                        print('To perform pruning, install the torch_pruning library')
 
                 def forward(self, x):
                     return self.m(x).float()
 
             h, w = self.camera_data.resolution
-            self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (5, 9, h, w))
-            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (5, 32 if self.model_info['requires_depth'] else 27, h, w))
+            self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (1, 9, h, w))
+            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (1, 32 if self.model_info['requires_depth'] else 27, h, w))
 
         if self.warmup:
             print('Warming up models...')
@@ -197,7 +154,7 @@ class MegaposeServer():
             labels = self.object_dataset.label_to_objects.keys()
             observation = self._make_observation_tensor(np.random.randint(0, 255, (h, w, 3), dtype=np.uint8),
                                                         np.random.rand(h, w).astype(np.float32) if self.model_info['requires_depth'] else None).cuda()
-            detections = self._make_detections(labels, np.asarray([[0, 0, w, h] for _ in range(len(labels))], dtype=np.float32)).cuda()
+            detections = self._make_detections(labels, np.asarray([[0, 0, w//2, h//2] for _ in range(len(labels))], dtype=np.float32)).cuda()
             self.model.run_inference_pipeline(observation, detections, **self.model_info['inference_parameters'])
 
 
@@ -521,7 +478,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', type=str, default='127.0.0.1', help='IP or hostname to bind the server to. Set to 0.0.0.0 if you wish to listen for incoming connections from any source (dangerous)')
     parser.add_argument('--port', type=int, default=5555, help='The port on which to listen for new connections')
-    parser.add_argument('--model', type=str, choices=megapose_models.keys(), default='RGB-multi-hypothesis', help='''
+    parser.add_argument('--model', type=str, choices=megapose_models.keys(), default='RGB', help='''
                         Which MegaPose model to use. Some models require the depth map.
                         Some models generate multiple hypotheses when estimating the pose, at the cost of more computation.
                         Options: RGB, RGBD, RGB-multi-hypothesis, RGBD-multi-hypothesis''')
@@ -530,9 +487,8 @@ if __name__ == '__main__':
     parser.add_argument('--num-workers', type=int, default=4, help='Number of workers for rendering')
     parser.add_argument('--no-warmup', action='store_true', help='Whether to perform model warmup before starting the server. Warmup will avoid a slow first pose estimation.')
     parser.add_argument('--verbose', action='store_true', help='Whether to print additional information such as execution time and results.')
-
-
     args = parser.parse_args()
+
     mesh_dir = Path(args.meshes_directory).absolute()
     assert mesh_dir.exists(), 'Mesh directory does not exist, cannot start server'
     # Default camera data
