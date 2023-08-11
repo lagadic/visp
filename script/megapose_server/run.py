@@ -3,7 +3,7 @@ import os
 import json
 import megapose_server
 megapose_server_install_dir = os.path.dirname(megapose_server.__file__)
-variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables.json')
+variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables_final.json')
 with open(variables_file, 'r') as f:
     json_vars = json.load(f)
     print('Loaded megapose variables', json_vars)

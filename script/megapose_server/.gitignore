@@ -2,3 +2,4 @@ __pycache__
 megapose_server.egg-info
 *.tmp
 megapose6d
+megapose_variables_final.json
