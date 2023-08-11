@@ -309,4 +309,8 @@ This program can run with new 3D models, as MegaPose does require retraining. To
 - The 3D model of your object. See \ref tutorial-megapose-model
 - Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn.
 
+\subsection megapose_next_steps Next steps
+
+To go further, you can look at an example of visual servoing using Megapose, available at \ref servoAfma6MegaposePBVS.cpp
+
 */
