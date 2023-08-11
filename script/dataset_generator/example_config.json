@@ -51,17 +51,18 @@
     "scenes_per_run": 1,
     "num_scenes": 50,
     "images_per_scene": 1,
+    "empty_images_per_scene": 1,
     "pose": true,
-    "depth": true,
-    "normals": true,
-    "segmentation": true,
+    "depth": false,
+    "normals": false,
+    "segmentation": false,
     "detection": true,
     "detection_params": {
       "min_side_size_px": 10,
       "min_visibility_percentage": 0.3,
       "points_sampling_occlusion": 100
     },
-    "save_path": "output_cube"
+    "save_path": "output"
   },
   "models_path": "/home/sfelton/megapose-models",
   "cc_textures_path": "/home/sfelton/cc0"

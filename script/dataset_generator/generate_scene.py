@@ -680,7 +680,22 @@ class Generator:
       if tries >= 1000:
         print('Warning! Could not correctly place camera, results may be wrong')
       bproc.camera.add_camera_pose(cam2world_matrix)
-
+  def add_empty_images(self, count: int, scene: Scene):
+    '''
+    Add empty images to the rendering queue. The camera poses for the empty images are sampled from already existing poses (where the target object should be visible)
+    The number of empty images cannot thus be more than the number of images with target objects present.
+    '''
+    num_frames = bproc.utility.num_frames()
+    assert count <= num_frames, 'Number of empty images cannot be greater than the number of images with objects'
+    empty_frame_chosen_indices = np.random.choice(num_frames, size=count, replace=False)
+    for object in scene.target_objects:
+      location = object.get_location()
+      for i in range(num_frames):
+        object.set_location(location, frame=i)
+    for i, f in enumerate(empty_frame_chosen_indices):
+      bproc.camera.add_camera_pose(bproc.camera.get_camera_pose(f))
+      for object in scene.target_objects:
+        object.set_location([10000.0, 10000.0, 10000.0], frame=num_frames + i)
   def run(self):
     '''
     Generate the scenes and save the results.
@@ -701,13 +716,13 @@ class Generator:
         scene.cleanup()
         scene = self.create_scene()
       self.sample_camera_poses(scene)
+      self.add_empty_images(self.json_config['dataset']['empty_images_per_scene'], scene)
       # bpy.context.scene.render.use_persistent_data = False
       data = self.render()
       path = save_path / str(self.scene_index + i)
       path.mkdir(exist_ok=True)
       self.save_data(path, scene.target_objects, data)
       scene.cleanup()
-    # # ... do something ...
     # pr.disable()
     # s = io.StringIO()
     # sortby = SortKey.CUMULATIVE
