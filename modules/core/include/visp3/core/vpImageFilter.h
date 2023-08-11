@@ -69,10 +69,8 @@
 class VISP_EXPORT vpImageFilter
 {
 public:
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
                     double thresholdCanny, unsigned int apertureSobel);
-#endif
 
   /*!
    Apply a 1x3 derivative filter to an image pixel.
@@ -85,7 +83,7 @@ public:
   {
     return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
             112.0 * (I[r][c + 3] - I[r][c - 3])) /
-           8418.0;
+      8418.0;
   }
 
   /*!
@@ -99,7 +97,7 @@ public:
   {
     return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
             112.0 * (I[r + 3][c] - I[r - 3][c])) /
-           8418.0;
+      8418.0;
   }
 
   /*!
@@ -133,7 +131,7 @@ public:
 
   /*!
    Apply a size x 1 Derivative Filter in Y to an image pixel.
-   
+
    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
    \param I : Image to filter
    \param r : coordinates (row) of the pixel
@@ -289,7 +287,7 @@ public:
 
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
                         const vpColVector &kernelV);
-  
+
   /*!
     Apply a separable filter.
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
@@ -353,7 +351,7 @@ public:
       }
     }
   }
-  
+
   template<typename FilterType>
   static void filterX(const vpImage<FilterType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
@@ -628,12 +626,12 @@ public:
       }
     }
   }
-  
+
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-  
+
   template<typename FilterType>
   static void filterY(const vpImage<FilterType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
@@ -907,12 +905,12 @@ public:
     vpImageFilter::filterX<FilterType>(I, GIx, fg, size);
     vpImageFilter::filterY<FilterType>(GIx, GI, fg, size);
     GIx.destroy();
-    delete [] fg;
+    delete[] fg;
   }
 
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0.,
                            bool normalize = true);
-  
+
   /*!
     Apply a Gaussian blur to a double image.
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
@@ -935,9 +933,9 @@ public:
     vpImageFilter::filterX<FilterType>(I, GIx, fg, size);
     vpImageFilter::filterY<FilterType>(GIx, GI, fg, size);
     GIx.destroy();
-    delete [] fg;
+    delete[] fg;
   }
-  
+
   /*!
    Apply a 5x5 Gaussian filter to an image pixel.
 
@@ -954,7 +952,7 @@ public:
             4.0 * (fr[r - 2][c + 1] + fr[r - 2][c - 1] + fr[r - 1][c - 2] + fr[r + 1][c - 2] + fr[r + 2][c - 1] +
                    fr[r + 2][c + 1] + fr[r - 1][c + 2] + fr[r + 1][c + 2]) +
             2.0 * (fr[r - 2][c - 2] + fr[r + 2][c - 2] + fr[r - 2][c + 2] + fr[r + 2][c + 2])) /
-           159.0;
+      159.0;
   }
   // Gaussain pyramid operation
   static void getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
@@ -1067,7 +1065,7 @@ public:
       }
     }
   }
-  
+
   template <typename ImageType, typename FilterType>
   static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter,
   unsigned int size)
@@ -1085,7 +1083,7 @@ public:
       }
     }
   }
-  
+
   /*!
     Compute the gradient along X after applying a gaussian filter along Y.
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
@@ -1104,7 +1102,7 @@ public:
     vpImageFilter::filterY<FilterType>(I, GIy, gaussianKernel, size);
     vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size);
   }
-  
+
   // Gradient along Y
   template <typename FilterType>
   static void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy)
@@ -1126,7 +1124,7 @@ public:
       }
     }
   }
-  
+
   template <typename ImageType, typename FilterType>
   static void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
@@ -1166,7 +1164,7 @@ public:
     vpImageFilter::filterX<FilterType>(I, GIx, gaussianKernel, size);
     vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size);
   }
-  
+
   /*!
   Get Sobel kernel for X-direction.
   \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.

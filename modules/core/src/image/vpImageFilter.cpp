@@ -33,6 +33,7 @@
  *
 *****************************************************************************/
 
+#include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -57,58 +58,58 @@ void vpImageFilter::filter<double>(const vpImage<double> &I, vpImage<double> &Iu
  * \endcond
  */
 
-/*!
-  Apply a filter to an image using two separable kernels. For instance,
-  the Sobel kernel can be decomposed to:
-  \f[
-    \left [
-    \begin{matrix}
-    1 & 0 & -1 \\
-    2 & 0 & -2 \\
-    1 & 0 & -1
-    \end{matrix}
-    \right ] =
-    \left [
-    \begin{matrix}
-    1 \\
-    2 \\
-    1
-    \end{matrix}
-    \right ] \ast
-    \left [
-    \begin{matrix}
-    1 && 0 && -1
-    \end{matrix}
-    \right ]
-  \f]
-  Thus, the convolution operation can be performed as:
-  \f[
-    G_x =
-    \left [
-    \begin{matrix}
-    1 \\
-    2 \\
-    1
-    \end{matrix}
-    \right ] \ast
-    \left (
-    \left [
-    \begin{matrix}
-    1 && 0 && -1
-    \end{matrix}
-    \right ] \ast I
-    \right )
-  \f]
-  Using two separable kernels reduce the number of operations and can be
-  faster for large kernels.
+ /*!
+   Apply a filter to an image using two separable kernels. For instance,
+   the Sobel kernel can be decomposed to:
+   \f[
+     \left [
+     \begin{matrix}
+     1 & 0 & -1 \\
+     2 & 0 & -2 \\
+     1 & 0 & -1
+     \end{matrix}
+     \right ] =
+     \left [
+     \begin{matrix}
+     1 \\
+     2 \\
+     1
+     \end{matrix}
+     \right ] \ast
+     \left [
+     \begin{matrix}
+     1 && 0 && -1
+     \end{matrix}
+     \right ]
+   \f]
+   Thus, the convolution operation can be performed as:
+   \f[
+     G_x =
+     \left [
+     \begin{matrix}
+     1 \\
+     2 \\
+     1
+     \end{matrix}
+     \right ] \ast
+     \left (
+     \left [
+     \begin{matrix}
+     1 && 0 && -1
+     \end{matrix}
+     \right ] \ast I
+     \right )
+   \f]
+   Using two separable kernels reduce the number of operations and can be
+   faster for large kernels.
 
-  \param I : Image to filter
-  \param If : Filtered image.
-  \param kernelH : Separable kernel (performed first).
-  \param kernelV : Separable kernel (performed last).
-  \note Only pixels in the input image fully covered by the kernel are
-  considered.
-*/
+   \param I : Image to filter
+   \param If : Filtered image.
+   \param kernelH : Separable kernel (performed first).
+   \param kernelV : Separable kernel (performed last).
+   \note Only pixels in the input image fully covered by the kernel are
+   considered.
+ */
 void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
   const vpColVector &kernelV)
 {
@@ -141,7 +142,6 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
   }
 }
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 /*!
   Apply the Canny edge operator on the image \e Isrc and return the resulting
   image \e Ires.
@@ -154,7 +154,6 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;
@@ -168,7 +167,6 @@ int main()
 
   // Apply the Canny edge operator and set the Icanny image.
   vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny, apertureSobel);
-#endif
   return (0);
 }
   \endcode
@@ -184,13 +182,18 @@ int main()
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
   unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
 {
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img_cvmat, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
   cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
   cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny, (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
-}
+#else
+  (void)apertureSobel;
+  vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
+  Ires = edgeDetector.detect(Isrc);
 #endif
+}
 
 /**
  * \cond DO_NOT_DOCUMENT
@@ -326,17 +329,17 @@ void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImag
  * \endcond
  */
 
-/*!
-  Apply a Gaussian blur to RGB color image.
-  \param I : Input image.
-  \param GI : Filtered image.
-  \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+ /*!
+   Apply a Gaussian blur to RGB color image.
+   \param I : Input image.
+   \param GI : Filtered image.
+   \param size : Filter size. This value should be odd.
+   \param sigma : Gaussian standard deviation. If it is equal to zero or
+   negative, it is computed from filter size as sigma = (size-1)/6.
+   \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
-  \sa getGaussianKernel() to know which kernel is used.
- */
+   \sa getGaussianKernel() to know which kernel is used.
+  */
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma,
   bool normalize)
 {
@@ -346,7 +349,7 @@ void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, 
   vpImageFilter::filterX(I, GIx, fg, size);
   vpImageFilter::filterY(GIx, GI, fg, size);
   GIx.destroy();
-  delete [] fg;
+  delete[] fg;
 }
 
 /**
@@ -440,7 +443,7 @@ void vpImageFilter::getGradYGauss2D<double, double>(const vpImage<double> &I, vp
  * \endcond
  */
 
-// operation pour pyramide gaussienne
+ // operation pour pyramide gaussienne
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
   vpImage<unsigned char> GIx;
