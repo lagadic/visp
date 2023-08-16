@@ -1,0 +1,4 @@
+*.egg-info
+src/generated
+src/main.cpp
+build

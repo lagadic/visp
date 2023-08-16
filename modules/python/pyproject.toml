@@ -1,0 +1,28 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "pybind11>=2.10.0",
+    "pcpp",
+    "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+test-command = "python {project}/tests/test.py"
+
+[tool.ruff]
+extend-select = [
+  "B",   # flake8-bugbear
+  "I",   # isort
+  "PGH", # pygrep-hooks
+  "RUF", # Ruff-specific
+  "UP",  # pyupgrade
+]
+extend-ignore = [
+  "E501",   # Line too long
+]
+target-version = "py39"
+dependencies = [
+  "pcpp",
+  "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
+]
