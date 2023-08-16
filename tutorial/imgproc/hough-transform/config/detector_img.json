@@ -1,24 +1,25 @@
 {
   "cannyThresh": -1.0,
-  "centerMinDistance": 2.0,
-  "centerThresh": 200.0,
+  "centerMinDistance": 5.0,
+  "centerThresh": 100.0,
   "centerXlimits": [
-    -1000000,
-    1000000
+    0,
+    1920
   ],
   "centerYlimits": [
-    -1000000,
-    1000000
+    0,
+    1080
   ],
-  "circlePerfectnessThreshold": 0.9,
+  "circlePerfectnessThreshold": 0.95,
   "dilatationNbIter": 1,
-  "gaussianKernelSize": 5,
-  "gaussianStdev": 1.0,
-  "mergingRadiusDiffThresh": 2.0,
+  "edgeMapFilteringNbIter" : 5,
+  "gaussianKernelSize": 25,
+  "gaussianStdev": 2.5,
+  "mergingRadiusDiffThresh": 5.0,
   "radiusLimits": [
-    80,
-    90
+    34,
+    75
   ],
-  "radiusThreshRatio": 2,
-  "sobelKernelSize": 3
+  "radiusThreshRatio": 4.0,
+  "sobelKernelSize": 7
 }

@@ -70,7 +70,7 @@ std::string getAvailableTypeInputImage(const std::string &prefix = "<", const st
 void
 drawDisk(vpImage<unsigned char> &I, const vpImagePoint &center, const unsigned int &radius
   , const unsigned int &borderColor, const unsigned int &fillingColor, const unsigned int &thickness, const unsigned int &bckg)
-//! [Draw disks]
+  //! [Draw disks]
 {
   vpImageDraw::drawCircle(I, center, radius, borderColor, thickness);
   vp::floodFill(I,
@@ -154,7 +154,7 @@ generateImage(const TypeInputImage &inputType)
   return I_src;
 }
 
-bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode)
+bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &detector, const int &nbCirclesToDetect, const bool &blockingMode, const bool &displayCanny)
 {
   double t0 = vpTime::measureTimeMicros();
   //! [Run detection]
@@ -179,6 +179,10 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
   }
   //! [Iterate detections]
 
+  if (displayCanny) {
+    vpImage<unsigned char> edgeMap = detector.getEdgeMap();
+    drawingHelpers::display(edgeMap, "Edge map", true);
+  }
   return drawingHelpers::display(I_disp, "Detection results", blockingMode);
 }
 
@@ -191,6 +195,7 @@ int main(int argc, char **argv)
   const double def_gaussianSigma = 1.;
   const int def_sobelKernelSize = 3;
   const double def_cannyThresh = 150.;
+  const int def_nbEdgeFilteringIter = 2;
   const std::pair<int, int> def_centerXlimits = std::pair<int, int>(0, 640);
   const std::pair<int, int> def_centerYlimits = std::pair<int, int>(0, 480);
   const unsigned int def_minRadius = 0;
@@ -210,6 +215,7 @@ int main(int argc, char **argv)
   double opt_gaussianSigma = def_gaussianSigma;
   int opt_sobelKernelSize = def_sobelKernelSize;
   double opt_cannyThresh = def_cannyThresh;
+  int opt_nbEdgeFilteringIter = def_nbEdgeFilteringIter;
   std::pair<int, int> opt_centerXlimits = def_centerXlimits;
   std::pair<int, int> opt_centerYlimits = def_centerYlimits;
   unsigned int opt_minRadius = def_minRadius;
@@ -220,6 +226,7 @@ int main(int argc, char **argv)
   double opt_circlePerfectness = def_circlePerfectness;
   double opt_centerDistanceThresh = def_centerDistanceThresh;
   double opt_radiusDifferenceThresh = def_radiusDifferenceThresh;
+  bool opt_displayCanny = false;
 
   for (int i = 1; i < argc; i++) {
     std::string argName(argv[i]);
@@ -253,6 +260,10 @@ int main(int argc, char **argv)
       opt_cannyThresh = atof(argv[i + 1]);
       i++;
     }
+    else if (argName == "--edge-filter" && i + 1 < argc) {
+      opt_nbEdgeFilteringIter = atoi(argv[i + 1]);
+      i++;
+    }
     else if (argName == "--dilatation-repet" && i + 1 < argc) {
       opt_dilatationRepet = atoi(argv[i + 1]);
       i++;
@@ -267,12 +278,12 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--center-xlim" && i + 2 < argc) {
-      opt_centerXlimits = std::pair<int, int> (atoi(argv[i + 1]), atoi(argv[i + 2]));
-      i+=2;
+      opt_centerXlimits = std::pair<int, int>(atoi(argv[i + 1]), atoi(argv[i + 2]));
+      i += 2;
     }
     else if (argName == "--center-ylim" && i + 2 < argc) {
-      opt_centerYlimits = std::pair<int, int> (atoi(argv[i + 1]), atoi(argv[i + 2]));
-      i+=2;
+      opt_centerYlimits = std::pair<int, int>(atoi(argv[i + 1]), atoi(argv[i + 2]));
+      i += 2;
     }
     else if (argName == "--radius-thresh" && i + 1 < argc) {
       opt_radiusThreshRatio = atof(argv[i + 1]);
@@ -286,6 +297,9 @@ int main(int argc, char **argv)
       opt_centerDistanceThresh = atof(argv[i + 1]);
       opt_radiusDifferenceThresh = atof(argv[i + 2]);
       i += 2;
+    }
+    else if (argName == "--display-edge-map") {
+      opt_displayCanny = true;
     }
     else if (argName == "--help" || argName == "-h") {
       std::cout << "NAME" << std::endl;
@@ -302,6 +316,7 @@ int main(int argc, char **argv)
         << "\t [--gaussian-sigma <stddev>] (default: " << def_gaussianSigma << ")" << std::endl
         << "\t [--sobel-kernel <kernel-size>] (default: " << def_sobelKernelSize << ")" << std::endl
         << "\t [--canny-thresh <canny-thresh>] (default: " << def_cannyThresh << ")" << std::endl
+        << "\t [--edge-filter <nb-iter>] (default: " << def_nbEdgeFilteringIter << ")" << std::endl
         << "\t [--radius-limits <radius-min> <radius-max>] (default: min = " << def_minRadius << ", max = " << def_maxRadius << ")" << std::endl
         << "\t [--dilatation-repet <nb-repetitions>] (default: " << def_dilatationRepet << ")" << std::endl
         << "\t [--center-thresh <center-detection-threshold>] (default: " << (def_centerThresh < 0 ? "auto" : std::to_string(def_centerThresh)) << ")" << std::endl
@@ -310,7 +325,8 @@ int main(int argc, char **argv)
         << "\t [--radius-thresh <radius-detection-threshold>] (default: " << (def_radiusThreshRatio < 0 ? "auto" : std::to_string(def_radiusThreshRatio)) << ")" << std::endl
         << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_radiusThreshRatio << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
-        << "\t [--help] [-h]" << std::endl
+        << "\t [--display-edge-map]" << std::endl
+        << "\t [--help, -h]" << std::endl
         << std::endl;
 
       std::cout << "DESCRIPTION" << std::endl
@@ -343,6 +359,11 @@ int main(int argc, char **argv)
         << "\t\tPermit to set the upper threshold of the Canny edge detector." << std::endl
         << "\t\tMust be a positive value." << std::endl
         << "\t\tDefault: " << def_cannyThresh << std::endl
+        << std::endl
+        << "\t--edge-filter" << std::endl
+        << "\t\tPermit to set the number of iteration of 8-neighbor filter iterations of the result of the Canny edge detector." << std::endl
+        << "\t\tIf negative, no filtering is performed." << std::endl
+        << "\t\tDefault: " << def_nbEdgeFilteringIter << std::endl
         << std::endl
         << "\t--radius-limits" << std::endl
         << "\t\tPermit to set the minimum and maximum radii of the circles we are looking for." << std::endl
@@ -384,7 +405,11 @@ int main(int argc, char **argv)
         << "\t\tThe center distance threshold indicates the maximum distance the centers can be in order to be merged." << std::endl
         << "\t\tThe radius difference threshold indicates the maximum absolute difference between the two circle candidates in order to be merged." << std::endl
         << "\t\tTwo circle candidates must met these two conditions in order to be merged together." << std::endl
-        << "\t\tDefault: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << std::endl;
+        << "\t\tDefault: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << std::endl
+        << "\t--display-edge-map" << std::endl
+        << "\t\tPermit to display the edge map used to detect the circles" << std::endl
+        << "\t\tDefault: off" << std::endl
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -431,6 +456,7 @@ int main(int argc, char **argv)
       , opt_gaussianSigma
       , opt_sobelKernelSize
       , opt_cannyThresh
+      , opt_nbEdgeFilteringIter
       , opt_centerXlimits
       , opt_centerYlimits
       , opt_minRadius
@@ -473,7 +499,7 @@ int main(int argc, char **argv)
       g.open(I_src);
       while (!g.end() && hasToContinue) {
         g.acquire(I_src);
-        hasToContinue = test_detection(I_src, detector, opt_nbCirclesToDetect, false);
+        hasToContinue = test_detection(I_src, detector, opt_nbCirclesToDetect, false, opt_displayCanny);
         vpTime::wait(40);
       }
     }
@@ -486,14 +512,14 @@ int main(int argc, char **argv)
       }
       // Read the image and perform detection on it
       vpImageIo::read(I_src, opt_input);
-      test_detection(I_src, detector, opt_nbCirclesToDetect, true);
+      test_detection(I_src, detector, opt_nbCirclesToDetect, true, opt_displayCanny);
       //! [Manage single image]
     }
   }
   else {
     //! [Manage synthetic image]
     I_src = generateImage(inputType);
-    test_detection(I_src, detector, opt_nbCirclesToDetect, true);
+    test_detection(I_src, detector, opt_nbCirclesToDetect, true, opt_displayCanny);
     //! [Manage synthetic image]
   }
   return EXIT_SUCCESS;

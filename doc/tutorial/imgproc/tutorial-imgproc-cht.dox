@@ -6,8 +6,8 @@
 \section imgproc_cht_intro Introduction
 
 The Circle Hough Transform (*CHT*) is an image processing algorithm that permits to
-detect circles in an image. We refer the interested reader to the 
-[Wikipedia page](https://en.wikipedia.org/wiki/Circle_Hough_Transform) to have a better 
+detect circles in an image. We refer the interested reader to the
+[Wikipedia page](https://en.wikipedia.org/wiki/Circle_Hough_Transform) to have a better
 understanding on the principles of the algorithm.
 
 The ViSP implementation relies on the Gradient-based implementation of the
@@ -17,15 +17,15 @@ During the step where the algorithm votes for center candidates, we use the grad
 in order to reduce the dimensionality of the search space. Instead of voting in circular pattern,
 we vote along a straight line that follows the gradient.
 
-\image html img-tutorial-cht-center-votes.png 
+\image html img-tutorial-cht-center-votes.png
 
 Then, during the step where the algorithm votes for radius candidates for each center candidate,
-we check the colinearity between the gradient at a considered point and the line which links the 
+we check the colinearity between the gradient at a considered point and the line which links the
 point towards the center candidate. If they are "enough" colinear, we increment the corresponding
 radius bin vote by 1. The "enough" characteristic is controlled by the circle perfectness
 parameter.
 
-\image html img-tutorial-cht-radius-votes.png 
+\image html img-tutorial-cht-radius-votes.png
 
 \section imgproc_cht_requirements Requirements
 
@@ -35,29 +35,29 @@ If you do not know how to do it, please refer to the installation guidelines of 
 \section imgproc_cht_howto How to use the tutorial
 
 It is possible to configure the `vpCircleHoughTransform` class using a JSON file.
-To do so, you need to install [JSON for modern C++](https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json) 
+To do so, you need to install [JSON for modern C++](https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json)
 and compile ViSP with it.
 
-You can also configure the `vpCircleHoughTransform` class using command line arguments. 
+You can also configure the `vpCircleHoughTransform` class using command line arguments.
 To know what are the different command line arguments the software accept, please run:
 ```
-$ ./tutorial-circle-hough --help 
+$ ./tutorial-circle-hough --help
 ```
 
 \subsection imgproc_cht_howto_synthetic How to use synthetic images
 
-To run the software on the synthetic images using a JSON configuration file, 
+To run the software on the synthetic images using a JSON configuration file,
 please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json 
+$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json
 ```
 
-To run the software on the synthetic images using the default parameters, 
+To run the software on the synthetic images using the default parameters,
 please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks 
+$ ./tutorial-circle-hough --input ${TARGET}_disks
 ```
 
 \subsection imgproc_cht_howto_images How to use actual images
@@ -67,7 +67,8 @@ To run the software on an actual image using a JSON configuration file, please r
 $ ./tutorial-circle-hough --input /path/to/my/image --config config/detector_img.json
 ```
 
-If the detections seem a bit off, you might need to change the parameters
+**NB**: the configuration file `config/detector_img.json` has been tuned to detect coins in the image `coins2.pgm`.
+If the detections seem a bit off, you might need to change the parameters.
 
 To run the software on an actual image using command line arguments instead, please run:
 ```
@@ -78,9 +79,9 @@ If the detections seem a bit off, you might need to change the parameters
 
 \subsection imgproc_cht_howto_video How to use a video
 
-You can use the software to run circle detection on a video saved as a 
-sequence of images that are named `${BASENAME}%d.png`. 
-For instance with `${BASENAME}` = `video_`, you can have the following list 
+You can use the software to run circle detection on a video saved as a
+sequence of images that are named `${BASENAME}%d.png`.
+For instance with `${BASENAME}` = `video_`, you can have the following list
 of images: `video_0001.png`, `video_0002.png` and so on.
 
 To run the software using a JSON configuration file, please run:
@@ -106,11 +107,11 @@ please run:
 $ ./tutorial-circle-hough --help
 ```
 
-If you decide to use a video as input, the relevant piece of code that permits to 
+If you decide to use a video as input, the relevant piece of code that permits to
 perform circle detection on the successive images of the video is the following:
 \snippet tutorial-circle-hough.cpp Manage video
 
-If you decide to use a single image as input, the relevant piece of code that permits to 
+If you decide to use a single image as input, the relevant piece of code that permits to
 perform circle detection on the image is the following:
 \snippet tutorial-circle-hough.cpp Manage single image
 
