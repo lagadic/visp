@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See https://visp.inria.fr for more information.
+# See http://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -29,11 +29,12 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find the isinf macro, the std::isinf function or _isinf function.
+# Try to find the isfinite macro, the std::isfinite function or the _finite function.
 #
 #############################################################################
 
 include(VISPFindUtils)
 
-check_math_expr("isinf(1.0)"          "<math.h>"        HAVE_FUNC_ISINF)
-check_math_expr("std::isinf(1.0)"     "<cmath>"         HAVE_FUNC_STD_ISINF)
+check_math_expr("isfinite(1.0)"         "<math.h>"        HAVE_FUNC_ISFINITE)
+check_math_expr("std::isfinite(1.0)"    "<cmath>"         HAVE_FUNC_STD_ISFINITE)
+check_math_expr("_finite(1.0)"          "<float.h>"       HAVE_FUNC__FINITE)
