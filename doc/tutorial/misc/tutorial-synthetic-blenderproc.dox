@@ -280,7 +280,7 @@ To customize the scene, you can change the parameters in the "scene" field:
   </tr>
 </table>
 
-Distractors are small, simple objects that are added along with the target objects to create some variations and occlusions.
+Distractors are small, simple objects that are added along with the target objects to create some variations and occlusions. You can also load custom objects as distractors.
 To modify their properties, you can change the "distractors" field of the scene
 <table>
   <tr><th>Name</th><th>Type, possible values</th><th>Description</th></tr>
@@ -296,6 +296,20 @@ To modify their properties, you can change the "distractors" field of the scene
     <td>Int > min_count</td>
     <td>
       Maximum number of distractors to place in the room.
+    </td>
+  </tr>
+  <tr>
+    <td>custom_distractors</td>
+    <td>string, or null</td>
+    <td>
+      If not null, path to a folder containing custom distractor objects, in .obj or .ply format.
+    </td>
+  </tr>
+  <tr>
+    <td>custom_distractor_proba</td>
+    <td>float, >= 0.0, <= 1.0 </td>
+    <td>
+      If custom_distractors is not null, probability that a distractor is sampled from the user specified distractors.
     </td>
   </tr>
   <tr>
@@ -753,6 +767,8 @@ Reading scene 4
 You can modify this script to export the dataset to another format, has it was done in \ref dnn_output_yolov7.
 
 \section dnn_synthetic_next Next steps
+
+If you use this generator to train a detection network, you can combine it with Megapose to perform 6D pose estimation and tracking. See \ref tutorial-tracking-megapose
 
 
 */
