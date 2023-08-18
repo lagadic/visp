@@ -39,6 +39,7 @@ First, you should start by installing blenderproc. First, start by creating a ne
 \code{.sh}
 $ conda create --name blenderproc python=3.10 pip
 $ conda activate blenderproc
+$ pip install blenderproc
 \endcode
 \note Our generation script has been tested with blenderproc 2.5.0 (with Blender 3.3 under the hood) and python 3.10.
 
@@ -486,7 +487,14 @@ To customize the dataset, modify the options in the "dataset" field:
     <td>images_per_scene</td>
     <td>Int > 0</td>
     <td>
-      Number of images to generate per scene. The total number of samples in the dataset will be num_scenes * images_per_scene.
+      Number of images to generate per scene. The total number of samples in the dataset will be num_scenes * (images_per_scene + empty_images_per_scene).
+    </td>
+  </tr>
+  <tr>
+    <td>empty_images_per_scene</td>
+    <td>Int >= 0, <= images_per_scene</td>
+    <td>
+      Number of images without target objects to generate per scene. The camera poses for these images are sampled from the poses used to generate images with target objects. Thus, the only difference will be that the objects are not present, the rest of the scene is left untouched.
     </td>
   </tr>
   <tr>

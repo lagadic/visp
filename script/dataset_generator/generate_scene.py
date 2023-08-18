@@ -68,14 +68,14 @@ def homogeneous_inverse(aTb):
   bTa[:3, 3] = -bTa[:3, :3] @ bTa[:3, 3]
   return bTa
 
-def homogeneous_no_scaling(object: bproc.types.MeshObject):
+def homogeneous_no_scaling(object: bproc.types.MeshObject, frame=None):
   '''
   Get the homogeneous transformation of an object, but without potential scaling
   object.local2world() may contain scaling factors.
   '''
   localTworld = np.eye(4)
-  localTworld[:3, :3] = object.get_rotation_mat()
-  localTworld[:3, 3] = object.get_location()
+  localTworld[:3, :3] = object.get_rotation_mat(frame)
+  localTworld[:3, 3] = object.get_location(frame)
   return localTworld
 
 def convert_to_visp_frame(aTb):
@@ -307,6 +307,7 @@ class Generator:
     path: Path to the folder in which to save the HDF5 files
     '''
     json_dataset = self.json_config['dataset']
+    num_frames_objects = json_dataset['images_per_scene']
 
     out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
     keys = [
@@ -329,6 +330,9 @@ class Generator:
 
       visible_objects = bproc.camera.visible_objects(worldTcam, min(width, height) // min_side_px)
       objects_data = []
+      if frame >= num_frames_objects:
+        frames_data.append({})
+        continue 
       for object in objects:
         if object not in visible_objects:
           continue
@@ -337,7 +341,7 @@ class Generator:
           'name': object.get_name()
         }
         if out_object_pose:
-          worldTobj = homogeneous_no_scaling(object)
+          worldTobj = homogeneous_no_scaling(object, frame)
           camTobj = camTworld @ worldTobj
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
@@ -411,8 +415,65 @@ class Generator:
     ]
     bproc.camera.set_intrinsics_from_K_matrix(K, w, h)
 
+  def create_distractors(self, scene_size: float) -> List[bproc.types.MeshObject]:
+    '''
+    Add distractor objects
+    '''
+    json_distractors = self.json_config['scene']['distractors']
+    min_count, max_count = itemgetter('min_count', 'max_count')(json_distractors)
+    
+    custom_distractors_path, custom_distractors_proba = itemgetter('custom_distractors', 'custom_distractor_proba')(json_distractors)
+    count = np.random.randint(min_count, max_count + 1)
+    if custom_distractors_path is not None:
+      custom_count = np.sum(np.random.choice(2, size=count, replace=True, p=[1 - custom_distractors_proba, custom_distractors_proba]))
+    else:
+      custom_count = 0
+    simple_count = count - custom_count
+    return self.create_simple_distractors(scene_size, simple_count) + self.create_custom_distractors(scene_size, custom_count)
 
-  def create_distractors(self, scene_size: float, other_objects: List[bproc.types.MeshObject]) -> List[bproc.types.MeshObject]:
+  def create_custom_distractors(self, scene_size, count: int) -> List[bproc.types.MeshObject]:
+    json_distractors = self.json_config['scene']['distractors']
+    min_size, max_size, pbr_noise = itemgetter('min_size_rel_scene', 'max_size_rel_scene', 'pbr_noise')(json_distractors)
+    custom_distractors_path = itemgetter('custom_distractors')(json_distractors)
+    if count == 0:
+      return []
+    distractor_files = []
+    assert Path(custom_distractors_path).exists(), f'Custom distractors folder {custom_distractors_path} does not exist'
+    for file in Path(custom_distractors_path).iterdir():
+      if file.name.endswith(('.ply', '.obj')):
+        distractor_files.append(file)
+    assert len(distractor_files) > 0, f'Requested custom distractors from folder but {custom_distractors_path} did not find any!'
+
+    chosen_files_list = np.random.choice(distractor_files, size=count, replace=True)
+    chosen_files_set = set(chosen_files_list)
+    path_to_object = {}
+    for path in chosen_files_set:
+      obj = bproc.loader.load_obj(str(path.absolute()))[0]
+      obj.set_location([100000.0, 100000.0, 10000.0])
+      path_to_object[path] = obj
+
+    chosen_distractors = []
+    for path in chosen_files_list:
+      distractor = path_to_object[path].duplicate()
+      chosen_distractors.append(distractor)
+      object_size = object_bb_length(distractor)
+      rescale_size = np.random.uniform((scene_size * min_size) / object_size, (scene_size * max_size) / object_size)
+      distractor.set_scale([rescale_size, rescale_size, rescale_size])
+
+    def sample_pose(obj: bproc.types.MeshObject):
+      loc = np.random.uniform([-scene_size / 2, -scene_size / 2, -scene_size / 2], [scene_size / 2, scene_size / 2, scene_size / 2])
+      obj.set_location(loc)
+      obj.set_rotation_euler(bproc.sampler.uniformSO3())
+
+    bproc.object.sample_poses(
+      chosen_distractors,
+      sample_pose_func=sample_pose,
+      objects_to_check_collisions=None
+    )
+    randomize_pbr(chosen_distractors, pbr_noise)
+    return chosen_distractors
+
+  def create_simple_distractors(self, scene_size: float, count: int) -> List[bproc.types.MeshObject]:
     '''
     Add simple objects to the scene. 
     These objects have no class (no bounding box computed and does not appear in segmentation)
@@ -422,12 +483,9 @@ class Generator:
     The 3D models are simple primitives (cube, sphere, cone, etc.) and they are distorted through the displacement_max_amount_params
     '''
     json_distractors = self.json_config['scene']['distractors']
-    min_count, max_count = itemgetter('min_count', 'max_count')(json_distractors)
     min_size, max_size = itemgetter('min_size_rel_scene', 'max_size_rel_scene')(json_distractors)
     displacement_strength, pbr_noise = itemgetter('displacement_max_amount', 'pbr_noise')(json_distractors)
     emissive_proba, emissive_min_strength, emissive_max_strength = itemgetter(*['emissive_' + s for s in ['prob', 'min_strength', 'max_strength']])(json_distractors)
-
-    count = np.random.randint(min_count, max_count + 1)
     if count == 0:
       return []
     def sample_pose(obj: bproc.types.MeshObject):
@@ -608,7 +666,7 @@ class Generator:
     for object in objects:
       object.persist_transformation_into_mesh()
 
-    distractors = self.create_distractors(size, room_objects + objects)
+    distractors = self.create_distractors(size)
 
     if simulate_physics:
       for object in objects + distractors:
@@ -680,7 +738,22 @@ class Generator:
       if tries >= 1000:
         print('Warning! Could not correctly place camera, results may be wrong')
       bproc.camera.add_camera_pose(cam2world_matrix)
-
+  def add_empty_images(self, count: int, scene: Scene):
+    '''
+    Add empty images to the rendering queue. The camera poses for the empty images are sampled from already existing poses (where the target object should be visible)
+    The number of empty images cannot thus be more than the number of images with target objects present.
+    '''
+    num_frames = bproc.utility.num_frames()
+    assert count <= num_frames, 'Number of empty images cannot be greater than the number of images with objects'
+    empty_frame_chosen_indices = np.random.choice(num_frames, size=count, replace=False)
+    for object in scene.target_objects:
+      location = object.get_location()
+      for i in range(num_frames):
+        object.set_location(location, frame=i)
+    for i, f in enumerate(empty_frame_chosen_indices):
+      bproc.camera.add_camera_pose(bproc.camera.get_camera_pose(f))
+      for object in scene.target_objects:
+        object.set_location([10000.0, 10000.0, 10000.0], frame=num_frames + i)
   def run(self):
     '''
     Generate the scenes and save the results.
@@ -701,13 +774,13 @@ class Generator:
         scene.cleanup()
         scene = self.create_scene()
       self.sample_camera_poses(scene)
+      self.add_empty_images(self.json_config['dataset']['empty_images_per_scene'], scene)
       # bpy.context.scene.render.use_persistent_data = False
       data = self.render()
       path = save_path / str(self.scene_index + i)
       path.mkdir(exist_ok=True)
       self.save_data(path, scene.target_objects, data)
       scene.cleanup()
-    # # ... do something ...
     # pr.disable()
     # s = io.StringIO()
     # sortby = SortKey.CUMULATIVE

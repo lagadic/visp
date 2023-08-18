@@ -12,12 +12,13 @@ def show(file: h5py.File):
     rgb = np.array(file['colors'])
     text = np.array(f["object_data"]).tostring()
     print(text)
-    object_data = json.loads(text)
-    for object in object_data:
-      if 'bounding_box' in object:
-        bb = object['bounding_box']
-        rect = patches.Rectangle((bb[0], bb[1]), bb[2], bb[3], linewidth=1, edgecolor='r', facecolor='none')
-        plt.gca().add_patch(rect)
+    if len(text) > 0:
+      object_data = json.loads(text)
+      for object in object_data:
+        if 'bounding_box' in object:
+          bb = object['bounding_box']
+          rect = patches.Rectangle((bb[0], bb[1]), bb[2], bb[3], linewidth=1, edgecolor='r', facecolor='none')
+          plt.gca().add_patch(rect)
     plt.imshow(rgb)
     plt.show()
 

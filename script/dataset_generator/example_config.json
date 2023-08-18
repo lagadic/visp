@@ -1,7 +1,8 @@
 {
   "numpy_seed": 19,
   "blenderproc_seed": "69",
-  "models_path": "../megapose-esa",
+
+  "models_path": "../megapose-cube",
   "cc_textures_path": "../cc0",
   "camera": {
     "px": 600,
@@ -17,15 +18,17 @@
     "denoiser": "OPTIX"
   },
   "scene": {
-    "room_size_multiplier_min": 4.0,
-    "room_size_multiplier_max": 10.0,
+    "room_size_multiplier_min": 3.0,
+    "room_size_multiplier_max": 8.0,
     "simulate_physics": true,
     "max_num_textures": 50,
     "distractors": {
-      "min_count": 20,
-      "max_count": 100,
-      "min_size_rel_scene": 0.02,
-      "max_size_rel_scene": 0.05,
+      "min_count": 10,
+      "max_count": 50,
+      "min_size_rel_scene": 0.05,
+      "max_size_rel_scene": 0.1,
+      "custom_distractors": "../megapose-distractors",
+      "custom_distractor_proba": 0.5,
       "displacement_max_amount": 0.0,
       "pbr_noise": 0.5,
       "emissive_prob": 0.0,
@@ -39,8 +42,8 @@
       "max_intensity": 200
     },
     "objects": {
-      "min_count": 1,
-      "max_count": 3,
+      "min_count": 2,
+      "max_count": 5,
       "multiple_occurences": true,
       "scale_noise": 0.2,
       "displacement_max_amount": 0.0,
@@ -50,10 +53,11 @@
     }
   },
   "dataset": {
-    "save_path": "output_esa_v2",
+    "save_path": "output_cube",
     "scenes_per_run": 1,
     "num_scenes": 100,
-    "images_per_scene": 20,
+    "images_per_scene": 10,
+    "empty_images_per_scene": 2,
     "pose": true,
     "depth": false,
     "normals": false,
