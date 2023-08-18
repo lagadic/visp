@@ -1,16 +1,52 @@
-from typing import List, Tuple
-from cxxheaderparser.parserstate import ClassBlockState
+from typing import List, Optional, Set, Tuple
+from cxxheaderparser.parserstate import ClassBlockState, State
 import pcpp
 import cxxheaderparser
 from cxxheaderparser.visitor import CxxVisitor
 from cxxheaderparser.parser import CxxParser
 from pathlib import Path
 import json
+
+def filter_includes(include_names: Set[str]) -> List[str]:
+  result = []
+  for include_name in include_names:
+    if include_name.startswith('"') and include_name.endswith('"'):
+      continue
+    forbidden_strs = ['opencv2', 'Eigen', 'libxml', 'winsock']
+    forbidden_found = False
+    for forbidden_str in forbidden_strs:
+      if forbidden_str in include_name:
+        forbidden_found = True
+        break
+    if forbidden_found:
+      continue
+
+    result.append(include_name)
+  return result
+
 class Visitor(CxxVisitor):
   def __init__(self):
     self.result = ''
+    self.includes = []
+    self.current_class: Optional[ClassBlockState] = None
+
   def on_class_start(self, state: ClassBlockState) -> None:
     print(state.class_decl.typename)
+    self.current_class = state
+    
+    if self.current_class.class_decl.template is None:
+      name_cpp = '::'.join([seg.name for seg in self.current_class.class_decl.typename.segments])
+      name_python = name_cpp.replace('vp', '')
+      self.result += f'py::class_ {name_python} = py::class_<{name_cpp}>(sub, "{name_python}");'
+
+  def on_include(self, state: State, filename: str) -> None:
+    self.includes.append(filename)
+
+
+  def on_class_end(self, state: ClassBlockState) -> None:
+    self.current_class = None
+  
+    
 
 class Submodule():
   def __init__(self, name: str, include_path: Path, submodule_file_path: Path):
@@ -24,17 +60,28 @@ class Submodule():
     assert self.include_path.exists(), f'Submodule path {self.include_path} not found'
 
   def generate(self) -> None:
-
+    header_code = []
+    includes = []
     for include_file in self.include_path.iterdir():
       if not include_file.name.endswith('.h') and not include_file.name.endswith('.hpp'):
         continue
       if include_file.name in self.config['ignored_headers']:
         continue
       header = HeaderFile(include_file, self)
-    body = f'py::module_ submodule = m.def_submodule("{self.name}");'
+      header_code.append(header.binding_code)
+      includes.extend(header.includes)
+    includes_set = filter_includes(set(includes))
+    
+    body = f'py::module_ submodule = m.def_submodule("{self.name}");\n' + '\n'.join(header_code)
+    includes_strs = [f'#include {include}' for include in includes_set]
+    includes_str = '\n'.join(includes_strs)
     format_str = f'''
 #include <pybind11/pybind11.h>
+{includes_str}
+
 namespace py = pybind11;
+
+
 void {self.generation_function_name()}(py::module_ &m) {{
   {body}
 }}
@@ -59,7 +106,10 @@ class HeaderFile():
     self.path = path
     self.submodule = submodule
     content = self.run_preprocessor()
+    self.includes = None
+    self.binding_code = None
     self.generate_binding_code(content)
+
   def run_preprocessor(self):
     tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
     argv = [
@@ -76,10 +126,13 @@ class HeaderFile():
     with open(tmp_file_path, 'r') as header_file:
       preprocessed_header_content = '\n'.join(header_file.readlines())
     return preprocessed_header_content
-  def generate_binding_code(self, content: str) -> str:
+  def generate_binding_code(self, content: str) -> None:
     visitor = Visitor()
     parser = CxxParser(None, content, visitor)
     parser.parse()
+    self.binding_code = visitor.result
+    self.includes = visitor.includes
+
 
 
 

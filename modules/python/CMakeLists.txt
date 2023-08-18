@@ -1,0 +1,7 @@
+vp_add_module(python visp_core OPTIONAL visp_sensor visp_vs)
+include(${CMAKE_CURRENT_SOURCE_DIR}/common.cmake)
+get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+foreach(dir ${dirs})
+  message(STATUS "dir='${dir}'")
+endforeach()
+vp_create_module()
