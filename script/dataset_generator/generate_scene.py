@@ -34,7 +34,7 @@ def bounding_box_2d_from_vertices(object: bproc.types.MeshObject, K: np.ndarray,
   '''
   Compute the 2D bounding from an object's vertices
   returns A tuple containing:
-    [xmin, ymin, xmax, ymax] in pixels 
+    [xmin, ymin, xmax, ymax] in pixels
     the proportion of visible vertices (that are not behind the camera, i.e., negative Z)
     The 2D points, in normalized units in camera space, in ViSP/OpenCV frame
   '''
@@ -47,16 +47,16 @@ def bounding_box_2d_from_vertices(object: bproc.types.MeshObject, K: np.ndarray,
   camTobj = camTworld @ worldTobj
   points_cam = camTobj @ np.concatenate((points, np.ones((len(points), 1))), axis=-1).T
   points_cam = convert_points_to_visp_frame((points_cam[:3] / points_cam[3, None]).T)
-  
+
   visible_points = points_cam[points_cam[:, 2] > 0]
   visible_points_m_2d = visible_points[:, :2] / visible_points[:, 2, None]
   visible_points_px_2d = K @ np.concatenate((visible_points_m_2d, np.ones((len(visible_points_m_2d), 1))), axis=-1).T
   visible_points_px_2d = visible_points_px_2d.T[:, :2] / visible_points_px_2d.T[:, 2, None]
-  
+
   mins = np.min(visible_points_px_2d, axis=0)
   assert len(mins) == 2
   maxes = np.max(visible_points_px_2d, axis=0)
-  
+
   return [mins[0], mins[1], maxes[0], maxes[1]], len(visible_points) / len(points_cam), visible_points_m_2d
 
 def homogeneous_inverse(aTb):
@@ -218,7 +218,7 @@ class Generator:
     ----- model.obj
     --- obj_2_name/
     ----- model.obj
-    Returns 
+    Returns
       - a dict where keys are the model names
       (from the containing folder name of each object,
       in the example case: 'obj_1_name' and 'obj_2_name')
@@ -281,8 +281,7 @@ class Generator:
     RendererUtility.set_denoiser(self.json_config['rendering']['denoiser'])
     if depth:
       bproc.renderer.enable_depth_output(activate_antialiasing=False)
-    # if normals:
-    #   bproc.renderer.enable_normals_output()
+
 
   def render(self) -> Dict:
     '''
@@ -291,7 +290,7 @@ class Generator:
     This returns a dictionary where each key (e.g "colors" for RGB rendering) contains a list of numpy arrays (1 numpy array per frame)
     '''
     normals, segmentation = itemgetter('normals', 'segmentation')(self.json_config['dataset'])
-    if normals: # Ugly, but doesn't work if it isn't called every render
+    if normals: # Enabling normals should be done every at every render
       bproc.renderer.enable_normals_output()
     data = bproc.renderer.render()
 
@@ -310,29 +309,26 @@ class Generator:
     num_frames_objects = json_dataset['images_per_scene']
 
     out_object_pose, out_bounding_box = itemgetter('pose', 'detection')(json_dataset)
-    keys = [
-      'min_side_size_px', 'min_visibility_percentage',
-      'points_sampling_occlusion'
-    ]
+    keys = ['min_side_size_px', 'min_visibility_percentage', 'points_sampling_occlusion']
     min_side_px, min_visibility, points_sampling_occlusion = itemgetter(*keys)(json_dataset['detection_params'])
-    
+
     width, height = itemgetter('w', 'h')(self.json_config['camera'])
     frames_data = []
-    import time
+
     for frame in range(bproc.utility.num_frames()):
-      
       worldTcam = bproc.camera.get_camera_pose(frame)
       camTworld = homogeneous_inverse(worldTcam)
       K = bproc.camera.get_intrinsics_as_K_matrix()
-      
+
       minx, miny = (-K[0, 2]) / K[0, 0], (-K[1, 2]) / K[1, 1]
       maxx, maxy = (width -K[0, 2]) / K[0, 0], (height -K[1, 2]) / K[1, 1]
 
       visible_objects = bproc.camera.visible_objects(worldTcam, min(width, height) // min_side_px)
       objects_data = []
+      # Stop when parsing frames with no objects: blenderproc API still detects objects even though they're not here for these frames
       if frame >= num_frames_objects:
         frames_data.append({})
-        continue 
+        continue
       for object in objects:
         if object not in visible_objects:
           continue
@@ -345,7 +341,6 @@ class Generator:
           camTobj = camTworld @ worldTobj
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
-          t = time.time()
           bb_corners, z_front_proportion, points_im = bounding_box_2d_from_vertices(object, K, camTworld)
           if z_front_proportion < min_visibility:
             continue
@@ -363,18 +358,18 @@ class Generator:
           if size[0] < min_side_px or size[1] < min_side_px:
             continue
 
-          
           vis_points_in_image = points_im[(points_im[:, 0] > minx) & ((points_im[:, 0] < maxx)) & (points_im[:, 1] > miny) & ((points_im[:, 1] < maxy))]
-
           base_visibility = z_front_proportion * (len(vis_points_in_image) / len(points_im))
+
           # Camera clipping removes too much of the object
           if base_visibility < min_visibility:
             continue
+
           if points_sampling_occlusion > 0:
             point_count = len(vis_points_in_image)
             points = vis_points_in_image[np.random.choice(point_count, size=min(point_count, points_sampling_occlusion))]
             points = np.concatenate((points, np.ones((len(points), 1))), axis=-1)
-            
+
             points_cam = convert_points_to_visp_frame(points) # Convert back to blender frame
             points_world = worldTcam @ np.concatenate((points_cam, np.ones((len(points_cam), 1))), axis=-1).T
             points_world = (points_world[:3] / points_world[3, None]).T
@@ -421,7 +416,7 @@ class Generator:
     '''
     json_distractors = self.json_config['scene']['distractors']
     min_count, max_count = itemgetter('min_count', 'max_count')(json_distractors)
-    
+
     custom_distractors_path, custom_distractors_proba = itemgetter('custom_distractors', 'custom_distractor_proba')(json_distractors)
     count = np.random.randint(min_count, max_count + 1)
     if custom_distractors_path is not None:
@@ -475,7 +470,7 @@ class Generator:
 
   def create_simple_distractors(self, scene_size: float, count: int) -> List[bproc.types.MeshObject]:
     '''
-    Add simple objects to the scene. 
+    Add simple objects to the scene.
     These objects have no class (no bounding box computed and does not appear in segmentation)
     They are meant to add variation to the scene
     Their position, texture and shape are randomized.
@@ -700,7 +695,7 @@ class Generator:
     Sample camera poses in a scene.
     Camera are sampled as such:
       - Select a target object: choose a point of interest in its bounding box
-      - Choose a camera position in a "hollow ball": the position should be at at least (cam_min_dist_rel * object_size) meters from the object 
+      - Choose a camera position in a "hollow ball": the position should be at at least (cam_min_dist_rel * object_size) meters from the object
         and at at most (cam_max_dist_rel * object_size). Note that the object size is computed from the largest diagonal of the axis aligned bounding box and is thus overestimated.
       - Fix camera orientation so that it points towards the point of interest
     '''
@@ -723,7 +718,7 @@ class Generator:
         while not good and tries_distance < 100:
           location = bproc.sampler.sphere(object.get_location(), distance * object_size, 'SURFACE')
           rotation_matrix = bproc.camera.rotation_from_forward_vec(poi - location, inplane_rot=np.random.uniform(-0.7854, 0.7854))
-          
+
           cam = bpy.context.scene.camera.data
           clip_start = cam.clip_start
           focal_length = cam.lens / 1000.0
@@ -758,10 +753,6 @@ class Generator:
     '''
     Generate the scenes and save the results.
     '''
-    # import cProfile, pstats, io
-    # from pstats import SortKey
-    # pr = cProfile.Profile()
-    # pr.enable()
 
     save_path = Path(self.json_config['dataset']['save_path'])
     save_path.mkdir(exist_ok=True)
@@ -781,12 +772,6 @@ class Generator:
       path.mkdir(exist_ok=True)
       self.save_data(path, scene.target_objects, data)
       scene.cleanup()
-    # pr.disable()
-    # s = io.StringIO()
-    # sortby = SortKey.CUMULATIVE
-    # ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
-    # ps.print_stats()
-    # print(s.getvalue())
 
 if __name__ == '__main__':
 
@@ -800,7 +785,7 @@ if __name__ == '__main__':
   # RendererUtility.set_render_devices(use_only_cpu=True)
   bproc.clean_up(clean_up_camera=True)
   bproc.init() # Works if you have a GPU
-  
+
   generator.run()
 
 

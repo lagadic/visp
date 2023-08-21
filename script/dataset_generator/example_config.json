@@ -2,8 +2,8 @@
   "numpy_seed": 19,
   "blenderproc_seed": "69",
 
-  "models_path": "../megapose-esa",
-  "cc_textures_path": "../cc0",
+  "models_path": "./megapose-models",
+  "cc_textures_path": "./cc0",
   "camera": {
     "px": 600,
     "py": 600,
@@ -27,7 +27,7 @@
       "max_count": 50,
       "min_size_rel_scene": 0.05,
       "max_size_rel_scene": 0.1,
-      "custom_distractors": "../megapose-distractors",
+      "custom_distractors": "./megapose-distractors",
       "custom_distractor_proba": 0.5,
       "displacement_max_amount": 0.0,
       "pbr_noise": 0.5,
@@ -53,7 +53,7 @@
     }
   },
   "dataset": {
-    "save_path": "output_esa_v3",
+    "save_path": "./output_blenderproc",
     "scenes_per_run": 1,
     "num_scenes": 100,
     "images_per_scene": 10,
