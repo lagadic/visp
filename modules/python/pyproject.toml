@@ -1,7 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    "pybind11>=2.10.0",
     "pcpp",
     "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
 ]

@@ -8,8 +8,10 @@ from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, Cla
 from pathlib import Path
 import json
 
-
-def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str]) -> Optional[str]:
+def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str:
+  '''Resolve the string representation of a raw type, resolving template specializations and using complete typenames
+  (aliases, shortened name when in same namescope).
+  '''
   def segment_repr(segment: types.PQNameSegment) -> str:
     spec_str = ''
     if isinstance(segment, types.FundamentalSpecifier):
@@ -20,22 +22,30 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
     if segment.specialization is not None:
       template_strs = []
       for arg in segment.specialization.args:
-        template_strs.append(get_type(arg.arg, owner_specs))
+        template_strs.append(get_type(arg.arg, owner_specs, header_env_mapping))
 
       spec_str = f'<{",".join(template_strs)}>'
 
     return segment.name + spec_str
+  return '::'.join(list(map(segment_repr, typename.segments)))
+
+def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
+
   if isinstance(param, types.Value):
     return ''.join([token.value for token in param.tokens])
   if isinstance(param, types.FunctionType):
     return 'FUNCTION'
   if isinstance(param, types.Type):
-    repr_str = '::'.join(list(map(segment_repr, param.typename.segments)))
+    repr_str = get_typename(param.typename, owner_specs, header_env_mapping)
+    split = repr_str.split('<')
+    if split[0] in header_env_mapping:
+      split[0] = header_env_mapping[split[0]]
+    repr_str = '<'.join(split)
     if param.const:
       repr_str = 'const ' + repr_str
     return repr_str
   elif isinstance(param, types.Reference):
-    repr_str = get_type(param.ref_to, owner_specs)
+    repr_str = get_type(param.ref_to, owner_specs, header_env_mapping)
     if repr_str is not None:
       return repr_str + '&'
     else:
@@ -149,7 +159,7 @@ class HeaderEnvironment():
   def build_mapping(self, data: Union[NamespaceScope, ClassScope], mapping={}, scope: str = ''):
     if isinstance(data, NamespaceScope):
       for alias in data.using_alias:
-        mapping[alias.alias] = get_type(alias.type)
+        mapping[alias.alias] = get_type(alias.type, {}, mapping)
       for enum in data.enums:
         print(enum)
         enum_name = '::'.join([seg.name for seg in enum.base.segments])
@@ -163,7 +173,7 @@ class HeaderEnvironment():
 
     elif isinstance(data, ClassScope):
       for alias in data.using_alias:
-        mapping[alias.alias] = get_type(alias.type)
+        mapping[alias.alias] = get_type(alias.type, {}, mapping)
       for typedef in data.typedefs:
         mapping[typedef.name] = scope + typedef.name
       for enum in data.enums:
@@ -207,9 +217,11 @@ class HeaderFile():
     preprocessed_header_content = None
     with open(tmp_file_path, 'r') as header_file:
       preprocessed_header_content = '\n'.join(header_file.readlines())
+      preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <')
     return preprocessed_header_content
 
   def generate_binding_code(self, content: str) -> None:
+    print('Before parsing cpp structure for file: ', self.path)
     parsed_data = parse_string(content)
     self.binding_code = self.parse_data(parsed_data)
 
@@ -230,16 +242,46 @@ class HeaderFile():
       name_cpp = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
       name_python = name_cpp.replace('vp', '')
       python_ident = f'py{name_python}'
+
+      base_classes_str=''
+      for base_class in cls.class_decl.bases:
+        if base_class.access == 'public':
+          base_classes_str += ', ' + get_typename(base_class.typename, {}, header_env.mapping)
       # if name_cpp == 'vpColVector':
-      cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}>(submodule, "{name_python}");'
+      cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
       methods_str = ''
       skip_class = False
+      # Skip classes that have pure virtual methods since they cannot be instantiated
       for method in cls.methods:
         if method.pure_virtual:
           skip_class = True
           break
-      if skip_class:
-        continue
+      # if skip_class:
+      #   continue
+
+      # Add to string representation
+      to_string_str = ''
+      for friend in cls.friends:
+        if friend.fn is not None:
+          is_ostream_operator = True
+          fn = friend.fn
+          if fn.return_type is None:
+            is_ostream_operator = False
+          else:
+            return_str = get_type(fn.return_type, {}, {})
+            if return_str != 'std::ostream&':
+              is_ostream_operator = False
+          if not is_ostream_operator:
+            continue
+          if is_ostream_operator:
+            to_string_str = f'''
+            {python_ident}.def("__repr__", []({name_cpp} &a) {{
+              std::stringstream s;
+              s << a;
+              return s.str();
+          }});'''
+
+
 
       for method in cls.methods:
         if method.access is not None and method.access != 'public':
@@ -248,14 +290,11 @@ class HeaderFile():
           params_strs = []
           skip_constructor = False
           for param in method.parameters:
-            param_str = get_type(param.type, {})
-            if 'vpFont' in self.path.name:
-              print(param_str)
+            param_str = get_type(param.type, {}, header_env.mapping)
+
             if param_str in header_env.mapping: # TODO: replace param str with raw type: no const or ref
               param_str = header_env.mapping[param_str]
-            if 'vpFont' in self.path.name:
-              print(param_str)
-              time.sleep(1)
+
             print(param_str)
             if param_str is None:
               print('Skipping constructor', method)
@@ -267,22 +306,15 @@ class HeaderFile():
             argument_types = ', '.join(params_strs)
             print(argument_types)
             ctor_str = f'''
-              {python_ident}.def(py::init<{argument_types}>());
-            '''
+              {python_ident}.def(py::init<{argument_types}>());'''
             methods_str += ctor_str
         else:
           pass
       result += cls_result
-      result += methods_str
-
-
-
+      if not skip_class:
+        result += methods_str
+        result += to_string_str
     return result
-
-
-
-
-
 
 def generate_module(generate_path: Path) -> None:
   main_path = generate_path / 'main.cpp'

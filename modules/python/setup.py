@@ -21,7 +21,7 @@ class build(build_module.build):
   def run(self):
     import os
     print('Generating binding code...')
-    output = subprocess.run('python generator/generator.py', env=os.environ, shell=True, capture_output=True, check=True)
+    #output = subprocess.run('python generator/generator.py', env=os.environ, shell=True, capture_output=True, check=True)
     build_module.build.run(self)
 # A CMakeExtension needs a sourcedir instead of a file list.
 # The name must be the _single_ output extension from the CMake build.
