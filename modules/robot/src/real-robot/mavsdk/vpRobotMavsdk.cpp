@@ -757,7 +757,7 @@ public:
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
       auto handle_odom = m_telemetry.get()->subscribe_odometry(
           [this, &landing_finished_promise, &handle](mavsdk::Telemetry::Odometry odom) {
-            if (odom.position_body.z_m < 0.20) {
+            if (odom.position_body.z_m < 0.30) {
               std::cout << "Landed \n.";
 
               m_telemetry.get()->unsubscribe_odometry(handle_odom);
@@ -767,7 +767,7 @@ public:
 #else
       m_telemetry.get()->subscribe_odometry(
           [this, &landing_finished_promise, &Z_init](mavsdk::Telemetry::Odometry odom) {
-            if (odom.position_body.z_m < 0.20) {
+            if (odom.position_body.z_m < 0.30) {
               std::cout << "Landing altitude reached\n.";
 
               m_telemetry.get()->subscribe_odometry(nullptr);
@@ -787,8 +787,10 @@ public:
 
       sleep_for(seconds(10));
       this->holdPosition();
+      sleep_for(seconds(1));
       this->kill();
       return true;
+
     } else {
       if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Land) {
         std::cout << "Landing...\n";
