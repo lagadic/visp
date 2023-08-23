@@ -8,6 +8,39 @@ from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, Cla
 from pathlib import Path
 import json
 
+def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
+  def add_level(result: List['HeaderFile'], remainder: List['HeaderFile'], dependencies: Set[str]):
+    if len(remainder) == 0:
+      return
+    print(dependencies)
+    print('Result = ', [r.path.name for r in result])
+
+    print([r.path.name for r in remainder])
+
+    include_in_result_fn = None
+    if len(result) == 0:
+      include_in_result_fn = lambda h: len(h.depends) == 0
+    else:
+      include_in_result_fn = lambda h: any(map(lambda x: x in dependencies, h.depends))
+    new_remainder = []
+    new_dependencies = []
+    for header_file in remainder:
+      has_dependency = include_in_result_fn(header_file)
+      print(header_file.path.name)
+      print(header_file.contains, header_file.depends)
+      if has_dependency:
+        new_dependencies.extend(header_file.contains)
+        result.append(header_file)
+      else:
+        new_remainder.append(header_file)
+    print(new_dependencies)
+    add_level(result, new_remainder, set(new_dependencies))
+  result = []
+  add_level(result, headers, set())
+  return result
+
+
+
 def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str:
   '''Resolve the string representation of a raw type, resolving template specializations and using complete typenames
   (aliases, shortened name when in same namescope).
@@ -110,14 +143,20 @@ class Submodule():
     assert self.include_path.exists(), f'Submodule path {self.include_path} not found'
 
   def generate(self) -> None:
-    header_code = []
-    includes = []
+    headers = []
     for include_file in self.include_path.iterdir():
       if not include_file.name.endswith('.h') and not include_file.name.endswith('.hpp'):
         continue
       if include_file.name in self.config['ignored_headers']:
         continue
       header = HeaderFile(include_file, self)
+      headers.append(header)
+    # Sort by dependency level so that generation is in correct order
+    headers = sort_headers(headers)
+
+    header_code = []
+    includes = []
+    for header in headers:
       header_code.append(header.binding_code)
       includes.extend(header.includes)
     includes_set = filter_includes(set(includes))
@@ -197,6 +236,8 @@ class HeaderFile():
     content = self.run_preprocessor()
     self.includes = [f'<visp3/{self.submodule.name}/{self.path.name}>']
     self.binding_code = None
+    self.contains = []
+    self.depends = []
     self.generate_binding_code(content)
 
   def run_preprocessor(self): # TODO: run without generating a new file
@@ -236,10 +277,12 @@ class HeaderFile():
     print(f'Parsing namespace "{data.namespace.name}"')
     for cls in data.namespace.classes:
       print(f'Parsing class "{cls.class_decl.typename}"')
+      name_cpp = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+      self.contains.append(name_cpp)
       if cls.class_decl.template is not None:
         print('Skipping because class is templated')
         continue
-      name_cpp = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+
       name_python = name_cpp.replace('vp', '')
       python_ident = f'py{name_python}'
 
@@ -247,6 +290,9 @@ class HeaderFile():
       for base_class in cls.class_decl.bases:
         if base_class.access == 'public':
           base_classes_str += ', ' + get_typename(base_class.typename, {}, header_env.mapping)
+          base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
+          if base_class_str_no_template.startswith('vp'):
+            self.depends.append(base_class_str_no_template)
       # if name_cpp == 'vpColVector':
       cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
       methods_str = ''

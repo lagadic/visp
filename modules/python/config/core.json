@@ -1,3 +1,13 @@
 {
-  "ignored_headers": ["vpGEMM.h"]
+  "ignored_headers": ["vpGEMM.h"],
+  "classes": {
+    "vpArray2D": {
+      "specializations": [
+        {
+          "python_name": "ArrayDouble2D",
+          "arguments": ["double"]
+        }
+      ]
+    }
+  }
 }
