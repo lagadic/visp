@@ -1,5 +1,8 @@
 {
   "ignored_headers": ["vpGEMM.h"],
+  "ignored_classes": ["vpException", "vpImageException", "vpTrackingException",
+                      "vpFrameGrabberException", "vpIoException",
+                      "vpDisplayException", "vpMatrixException"],
   "classes": {
     "vpArray2D": {
       "specializations": [
