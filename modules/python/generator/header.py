@@ -138,6 +138,12 @@ class HeaderFile():
       python_ident = f'py{name_python}'
 
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
+      if cls.class_decl.template is not None:
+        template_strs = []
+        for template in cls.class_decl.template.params:
+          template_strs.append(owner_specs[template.name])
+        template_str = f'<{", ".join(template_strs)}>'
+        name_cpp += template_str
 
       base_classes_str = ''
       for base_class in cls.class_decl.bases:

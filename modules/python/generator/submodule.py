@@ -66,11 +66,11 @@ void {self.generation_function_name()}(py::module_ &m) {{
     return f'init_submodule_{self.name}'
 
   def class_should_be_ignored(self, class_name: str) -> bool:
-    if self.config['ignored_classes'] is None:
+    if 'ignored_classes' not in self.config:
       return False
     return class_name in self.config['ignored_classes']
   def header_should_be_ignored(self, header_name: str) -> bool:
-    if self.config['ignored_headers'] is None:
+    if 'ignored_headers' not in self.config:
       return False
     return header_name in self.config['ignored_headers']
 
@@ -88,6 +88,7 @@ void {self.generation_function_name()}(py::module_ &m) {{
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   return [
     Submodule('core', include_path / 'core', generate_path / 'core.cpp'),
-    # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
+    # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
+    Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
 
   ]
