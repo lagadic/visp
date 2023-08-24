@@ -187,27 +187,53 @@ class HeaderFile():
       for method in cls.methods:
         if method.access is not None and method.access != 'public':
           continue
+        params_strs = []
+        skip_method = False
+        for param in method.parameters:
+          param_str = get_type(param.type, owner_specs, header_env.mapping)
+
+          if param_str in header_env.mapping: # Convert to fully qualified names
+            param_str = header_env.mapping[param_str]
+
+          if param_str is None:
+            print('Skipping constructor', method)
+            skip_method = True
+            break
+          else:
+            params_strs.append(param_str)
+        argument_types_str = ', '.join(params_strs)
+        if skip_method:
+          print(f'Skipping method because of args return type')
+          continue
         if method.constructor:
-          params_strs = []
-          skip_constructor = False
-          for param in method.parameters:
-            param_str = get_type(param.type, owner_specs, header_env.mapping)
-
-            if param_str in header_env.mapping:
-              param_str = header_env.mapping[param_str]
-
-            if param_str is None:
-              print('Skipping constructor', method)
-              skip_constructor = True
-              break
-            else:
-              params_strs.append(param_str)
-          if not skip_constructor:
-            argument_types = ', '.join(params_strs)
-            ctor_str = f'''
-              {python_ident}.def(py::init<{argument_types}>());'''
-            methods_str += ctor_str
+          ctor_str = f'''
+            {python_ident}.def(py::init<{argument_types_str}>());'''
+          methods_str += ctor_str
         else:
+          method_name = '::'.join([segment.name for segment in method.name.segments])
+          if method.destructor or method_name.startswith('operator'):
+            continue
+          def_type = 'def' # Def for object methods
+          pointer_to_type = f'({name_cpp}::*)'
+          if method.template is not None:
+            print(f'Skipping method {name_cpp}::{method_name} because it is templated')
+            continue
+          if method.static:
+            continue
+            def_type = 'def_static'
+            pointer_to_type = '(*)'
+          if method.inline:
+            continue
+          return_type = get_type(method.return_type, owner_specs, header_env.mapping)
+          if return_type is None:
+            print(f'Skipping method {name_cpp}::{method_name} because of unhandled return type')
+            continue
+          maybe_const = ''
+          if method.const:
+            maybe_const = 'const'
+          cast_str = f'{return_type} {pointer_to_type}({argument_types_str}) {maybe_const}'
+          method_str = f'{python_ident}.{def_type}("{method_name}", static_cast<{cast_str}>(&{name_cpp}::{method_name}));\n'
+          methods_str += method_str
           pass
       spec_result += cls_result
       if not skip_class:
