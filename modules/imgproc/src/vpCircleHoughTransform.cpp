@@ -69,9 +69,9 @@ void
 vpCircleHoughTransform::initGaussianFilters()
 {
   m_fg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
+  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
   m_fgDg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
+  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
 }
 
 std::vector<vpCircleHoughTransform::vpCircle2D>
