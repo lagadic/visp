@@ -34,15 +34,14 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext: CMakeExtension) -> None:
-        print('RUNNING CMAKE\n' * 10)
         # Must be in this form due to bug in .resolve() only fixed in Python 3.10+
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)
         extdir = ext_fullpath.parent.resolve()
 
         # Using this requires trailing slash for auto-detection & inclusion of
         # auxiliary "native" libs
-
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
+        print('DEBUG', debug)
         cfg = "Debug" if debug else "Release"
 
         # CMake lets you override the generator - we need to check this.

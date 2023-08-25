@@ -4,7 +4,7 @@ import pcpp
 import cxxheaderparser
 from cxxheaderparser.visitor import CxxVisitor
 from cxxheaderparser import types
-from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
+from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope, parse_file
 from pathlib import Path
 import json
 from utils import *
@@ -98,12 +98,15 @@ class HeaderFile():
 
   def run_preprocessor(self): # TODO: run without generating a new file
     tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
+    print('Preprocessing', self.path)
     argv = [
       '',
-      # '-N', 'VISP_EXPORT',
-      '-D', 'visp_deprecated=""',
-      '-I', '/usr/local/include',
-      '--passthru-includes', "^((?!vpConfig.h).)*$",
+      '-D', 'vp_deprecated=',
+      '-D', 'VISP_EXPORT=',
+      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/usr/include',
+      '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
+      '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
       '--passthru-comments',
       '--line-directive', '',
@@ -120,6 +123,8 @@ class HeaderFile():
   def generate_binding_code(self, content: str) -> None:
     print('Before parsing cpp structure for file: ', self.path)
     parsed_data = parse_string(content)
+    # tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
+    # parsed_data = parse_file(str(tmp_file_path))
     self.binding_code = self.parse_data(parsed_data)
 
 
@@ -219,7 +224,7 @@ class HeaderFile():
             print(f'Skipping method {name_cpp}::{method_name} because it is templated')
             continue
           if method.static:
-            continue
+            #continue
             def_type = 'def_static'
             pointer_to_type = '(*)'
           if method.inline:

@@ -157,7 +157,8 @@ public:
     Method used to compute the determinant of a square matrix.
     \sa det()
   */
-  typedef enum {
+  typedef enum
+  {
     LU_DECOMPOSITION /*!< LU decomposition method. */
   } vpDetMethod;
 
@@ -166,7 +167,7 @@ public:
     Basic constructor of a matrix of double. Number of columns and rows are
     zero.
   */
-  vpMatrix() : vpArray2D<double>(0, 0) {}
+  vpMatrix() : vpArray2D<double>(0, 0) { }
 
   /*!
     Constructor that initialize a matrix of double with 0.
@@ -174,7 +175,7 @@ public:
     \param r : Matrix number of rows.
     \param c : Matrix number of columns.
   */
-  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) {}
+  vpMatrix(unsigned int r, unsigned int c) : vpArray2D<double>(r, c) { }
 
   /*!
     Constructor that initialize a matrix of double with \e val.
@@ -183,7 +184,7 @@ public:
     \param c : Matrix number of columns.
     \param val : Each element of the matrix is set to \e val.
   */
-  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) {}
+  vpMatrix(unsigned int r, unsigned int c, double val) : vpArray2D<double>(r, c, val) { }
   vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
 
   /*!
@@ -198,9 +199,9 @@ vpRotationMatrix R;
 vpMatrix M(R);
 \endcode
    */
-  vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) {}
+  vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) { }
 
-  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) {}
+  vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
@@ -210,7 +211,7 @@ vpMatrix M(R);
 #endif
 
   //! Destructor (Memory de-allocation)
-  virtual ~vpMatrix() {}
+  virtual ~vpMatrix() { }
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -582,7 +583,6 @@ vpMatrix M(R);
   //-------------------------------------------------
   /** @name Norms  */
   //@{
-  double euclideanNorm() const;
   double frobeniusNorm() const;
   double inducedL2Norm() const;
   double infinityNorm() const;
@@ -993,6 +993,8 @@ vpMatrix M(R);
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  double euclideanNorm() const;
+
   /*!
     @name Deprecated functions
   */
@@ -1001,7 +1003,7 @@ vpMatrix M(R);
      \deprecated Only provided for compatibilty with ViSP previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
 
   /*!
      \deprecated You should rather use stack(const vpMatrix &A)
