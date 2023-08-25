@@ -9,6 +9,8 @@ from pathlib import Path
 import json
 from utils import *
 
+
+
 def filter_includes(include_names: Set[str]) -> List[str]:
   result = []
   for include_name in include_names:
@@ -103,8 +105,8 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
-      '-I', '/usr/include',
+      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/usr/local/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -193,23 +195,15 @@ class HeaderFile():
         if method.access is not None and method.access != 'public':
           continue
         params_strs = []
-        skip_method = False
-        for param in method.parameters:
-          param_str = get_type(param.type, owner_specs, header_env.mapping)
-
-          if param_str in header_env.mapping: # Convert to fully qualified names
-            param_str = header_env.mapping[param_str]
-
-          if param_str is None:
-            print('Skipping constructor', method)
-            skip_method = True
-            break
-          else:
-            params_strs.append(param_str)
-        argument_types_str = ', '.join(params_strs)
-        if skip_method:
-          print(f'Skipping method because of args return type')
+        params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+        if any(map(lambda param_str: param_str is None, params_strs)):
+          print(f'Skipping method {name_cpp}{method.name} because of argument type')
           continue
+        method_signature_internal = get_method_signature(method.name, get_type(method.return_type, owner_specs, header_env.mapping) or "", params_strs)
+
+        argument_types_str = ', '.join(params_strs)
+
+
         if method.constructor:
           ctor_str = f'''
             {python_ident}.def(py::init<{argument_types_str}>());'''
@@ -231,7 +225,7 @@ class HeaderFile():
             continue
           return_type = get_type(method.return_type, owner_specs, header_env.mapping)
           if return_type is None:
-            print(f'Skipping method {name_cpp}::{method_name} because of unhandled return type')
+            print(f'Skipping method {name_cpp}::{method_name} because of unhandled return type {method.return_type}')
             continue
           maybe_const = ''
           if method.const:

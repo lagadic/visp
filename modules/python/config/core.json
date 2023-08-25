@@ -11,6 +11,16 @@
           "arguments": ["double"]
         }
       ]
+    },
+    "vpPolygon": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const PointInPolygonMethod&)",
+          "custom_name": "isInsideFromPoints"
+        }
+      ]
     }
   }
 }

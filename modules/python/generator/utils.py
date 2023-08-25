@@ -52,3 +52,18 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
       return None
   else:
     return None
+
+def get_method_signature(name: str, return_type: str, params: List[str]) -> str:
+  print(return_type, name)
+  return f'{return_type} {name}({", ".join(params)})'
+
+def method_matches_config(method: types.Method, config: Dict, owner_specs, header_mapping) -> bool:
+  params_strs = []
+  if config['static'] != method.static:
+    return False
+  params_strs = [get_type(param.type, owner_specs, header_mapping) or '<unparsed>' for param in method.parameters]
+  signature = get_method_signature(method.name, get_type(method.return_type, owner_specs, header_mapping) or '', params_strs)
+  if signature.replace(' ', '') != config['signature']:
+    return False
+
+  return True
