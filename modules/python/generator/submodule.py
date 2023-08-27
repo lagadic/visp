@@ -9,7 +9,7 @@ from pathlib import Path
 import json
 
 from header import HeaderFile, sort_headers, filter_includes
-
+from utils import *
 
 class Submodule():
   def __init__(self, name: str, include_path: Path, submodule_file_path: Path):
@@ -81,13 +81,34 @@ void {self.generation_function_name()}(py::module_ &m) {{
       return None
     return self.config['classes'][class_name]
 
+  def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
+    res = {
+      'ignore': False,
+      'custom_name': None,
+      'custom_code': None
+    }
+    functions_container = None
+    keys = ['classes', class_name, 'methods'] if class_name is not None else ['functions']
+    tmp = self.config
+    for k in keys:
+      if k not in tmp:
+        return res
+      tmp = tmp[k]
+    functions_container = tmp
+    # print(functions_container)
+    for function_config in functions_container:
+      if method_matches_config(method, function_config, owner_specs, header_mapping):
+        return function_config
+
+    #import sys; sys.exit()
+    return res
 
 
 
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   return [
-    Submodule('core', Path('/home/sfelton/software/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
+    Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
     # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
     # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
 

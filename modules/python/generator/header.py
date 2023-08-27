@@ -8,7 +8,7 @@ from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, Cla
 from pathlib import Path
 import json
 from utils import *
-
+from dataclasses import dataclass
 
 
 def filter_includes(include_names: Set[str]) -> List[str]:
@@ -100,13 +100,14 @@ class HeaderFile():
 
   def run_preprocessor(self): # TODO: run without generating a new file
     tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
-    print('Preprocessing', self.path)
+
     argv = [
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -123,10 +124,7 @@ class HeaderFile():
     return preprocessed_header_content
 
   def generate_binding_code(self, content: str) -> None:
-    print('Before parsing cpp structure for file: ', self.path)
     parsed_data = parse_string(content)
-    # tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
-    # parsed_data = parse_file(str(tmp_file_path))
     self.binding_code = self.parse_data(parsed_data)
 
 
@@ -160,14 +158,13 @@ class HeaderFile():
       # if name_cpp == 'vpColVector':
       cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
       methods_str = ''
-      skip_class = False
+      contains_pure_virtual_methods = False
       # Skip classes that have pure virtual methods since they cannot be instantiated
       for method in cls.methods:
         if method.pure_virtual:
-          skip_class = True
+          contains_pure_virtual_methods = True
           break
-      # if skip_class:
-      #   continue
+
 
       # Add to string representation
       to_string_str = ''
@@ -191,38 +188,44 @@ class HeaderFile():
               return s.str();
           }});'''
 
+
+      generated_methods = []
       for method in cls.methods:
         if method.access is not None and method.access != 'public':
+          continue
+        if method.pure_virtual:
           continue
         params_strs = []
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
         if any(map(lambda param_str: param_str is None, params_strs)):
-          print(f'Skipping method {name_cpp}{method.name} because of argument type')
+          print(f'Skipping method {name_cpp}{get_name(method.name)} because of argument type')
           continue
         method_signature_internal = get_method_signature(method.name, get_type(method.return_type, owner_specs, header_env.mapping) or "", params_strs)
 
         argument_types_str = ', '.join(params_strs)
-
-
-        if method.constructor:
+        method_config = self.submodule.get_method_config(name_cpp_no_template, method, owner_specs, header_env.mapping)
+        py_arg_str = ', '.join([f'py::arg("{param.name}")' for param in method.parameters])
+        if len(py_arg_str) > 0:
+          py_arg_str = ', ' + py_arg_str
+        if method_config['custom_name'] is not None:
+          print(method_config)
+        if method.constructor and not contains_pure_virtual_methods:
           ctor_str = f'''
             {python_ident}.def(py::init<{argument_types_str}>());'''
           methods_str += ctor_str
         else:
-          method_name = '::'.join([segment.name for segment in method.name.segments])
+          method_name = get_name(method.name)
+          py_method_name = method_config.get('custom_name') or method_name
           if method.destructor or method_name.startswith('operator'):
             continue
           def_type = 'def' # Def for object methods
           pointer_to_type = f'({name_cpp}::*)'
-          if method.template is not None:
+          if method.template is not None and method_config.get('specializations') is None:
             print(f'Skipping method {name_cpp}::{method_name} because it is templated')
             continue
           if method.static:
-            #continue
             def_type = 'def_static'
             pointer_to_type = '(*)'
-          if method.inline:
-            continue
           return_type = get_type(method.return_type, owner_specs, header_env.mapping)
           if return_type is None:
             print(f'Skipping method {name_cpp}::{method_name} because of unhandled return type {method.return_type}')
@@ -231,13 +234,20 @@ class HeaderFile():
           if method.const:
             maybe_const = 'const'
           cast_str = f'{return_type} {pointer_to_type}({argument_types_str}) {maybe_const}'
-          method_str = f'{python_ident}.{def_type}("{method_name}", static_cast<{cast_str}>(&{name_cpp}::{method_name}));\n'
+          method_str = f'{python_ident}.{def_type}("{py_method_name}", static_cast<{cast_str}>(&{name_cpp}::{method_name}){py_arg_str});\n'
           methods_str += method_str
-          pass
+          generated_methods.append((py_method_name, method))
+
+
+      error_generating_overloads = get_static_and_instance_overloads(generated_methods)
+      for error_overload in error_generating_overloads:
+        print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
+      if len(error_generating_overloads) > 0:
+        raise RuntimeError
+
       spec_result += cls_result
-      if not skip_class:
-        spec_result += methods_str
-        spec_result += to_string_str
+      spec_result += methods_str
+      spec_result += to_string_str
       return spec_result
 
     print(f'Parsing class "{cls.class_decl.typename}"')
@@ -267,11 +277,10 @@ class HeaderFile():
         specs = cls_config['specializations']
         template_names = [t.name for t in cls.class_decl.template.params]
         for spec in specs:
-          print('AAAAA' * 100)
           python_name = spec['python_name']
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
           spec_dict = {k[0]: k[1] for k in zip(template_names, args)}
           specialization_strs.append(generate_class_with_potiental_specialization(python_name, spec_dict))
-          print(specialization_strs[-1])
+
         return '\n'.join(specialization_strs)

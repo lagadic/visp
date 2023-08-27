@@ -10,6 +10,119 @@
           "python_name": "ArrayDouble2D",
           "arguments": ["double"]
         }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        }
+      ]
+    },
+    "vpTranslationVector": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "vpMatrix skew(const vpTranslationVector &)",
+          "custom_name": "skewOf"
+        },
+        {
+          "static": true,
+          "signature": "void skew(const vpTranslationVector &, vpMatrix&)",
+          "custom_name": "skewOf"
+        }
+      ]
+    },
+    "vpColVector": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpColVector stack(const vpColVector &, const vpColVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpColVector &, const vpColVector &, vpColVector &)",
+          "custom_name": "stackVectors"
+        }
+      ]
+    },
+    "vpRowVector": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpRowVector stack(const vpRowVector &, const vpRowVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpRowVector &, const vpRowVector &, vpRowVector &)",
+          "custom_name": "stackVectors"
+        }
+      ]
+    },
+    "vpMatrix": {
+      "methods":
+      [
+
+        {
+
+          "static": true,
+          "signature": "vpMatrix insert(const vpMatrix &, const vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void insert(const vpMatrix &, const vpMatrix &, vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void kron(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "static": true,
+          "signature": "vpMatrix kron(const vpMatrix &, const vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "static": true,
+          "signature": "vpMatrix stack(const vpMatrix &, const vpRowVector &)",
+          "custom_name": "stackRow"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpColVector &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpRowVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackRow"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpColVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        }
       ]
     },
     "vpPolygon": {
@@ -17,10 +130,51 @@
       [
         {
           "static": true,
-          "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const PointInPolygonMethod&)",
+          "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const vpPolygon::PointInPolygonMethod&)",
           "custom_name": "isInsideFromPoints"
+        }
+      ]
+    },
+    "vpBSpline": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "unsigned int findSpan(double, unsigned int, std::vector<double> &)",
+          "custom_name": "findSpanFromSpline"
+        },
+        {
+          "static": true,
+          "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint>&)",
+          "custom_name": "computeCurvePointFromSpline"
+        }
+      ]
+    },
+    "vpQuadProg": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "bool solveQPe(const vpMatrix &, const vpColVector &, vpMatrix, vpColVector, vpColVector &, const double &)",
+          "custom_name": "solveQPeStatic"
+        }
+      ]
+    },
+    "vpDisplay": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "unsigned int getDownScalingFactor(const vpImage<unsigned char> &)",
+          "custom_name": "getImageDownScalingFactor"
+        },
+        {
+          "static": true,
+          "signature": "unsigned int getDownScalingFactor(const vpImage<vpRGBa> &)",
+          "custom_name": "getImageDownScalingFactor"
         }
       ]
     }
   }
+
 }
