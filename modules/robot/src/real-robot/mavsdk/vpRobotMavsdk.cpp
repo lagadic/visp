@@ -786,36 +786,29 @@ public:
       }
 
       sleep_for(seconds(10));
-      this->holdPosition();
-      sleep_for(seconds(1));
-      this->kill();
-      return true;
-
-    } else {
-      if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Land) {
-        std::cout << "Landing...\n";
-        const mavsdk::Action::Result land_result = m_action.get()->land();
-        if (land_result != mavsdk::Action::Result::Success) {
-          std::cerr << "Land failed: " << land_result << std::endl;
-          return false;
-        }
-
-        // Check if vehicle is still in air
-        while (m_telemetry.get()->in_air()) {
-          std::cout << "Vehicle is landing..." << std::endl;
-          sleep_for(seconds(1));
-        }
-      }
-
-      std::cout << "Landed!" << std::endl;
-      // We are relying on auto-disarming but let's keep watching the telemetry
-      // for a bit longer.
-      sleep_for(seconds(5));
-      std::cout << "Finished..." << std::endl;
-      return true;
     }
 
-    return false;
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Land) {
+      std::cout << "Landing...\n";
+      const mavsdk::Action::Result land_result = m_action.get()->land();
+      if (land_result != mavsdk::Action::Result::Success) {
+        std::cerr << "Land failed: " << land_result << std::endl;
+        return false;
+      }
+
+      // Check if vehicle is still in air
+      while (m_telemetry.get()->in_air()) {
+        std::cout << "Vehicle is landing..." << std::endl;
+        sleep_for(seconds(1));
+      }
+    }
+
+    std::cout << "Landed!" << std::endl;
+    // We are relying on auto-disarming but let's keep watching the telemetry
+    // for a bit longer.
+    sleep_for(seconds(5));
+    std::cout << "Finished..." << std::endl;
+    return true;
   }
 
   bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking, int timeout_sec)
