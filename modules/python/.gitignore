@@ -2,3 +2,4 @@
 src/generated
 src/main.cpp
 build
+stubs

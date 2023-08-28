@@ -105,7 +105,7 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
       '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',

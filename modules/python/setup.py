@@ -146,6 +146,8 @@ setup(
     ext_modules=[CMakeExtension("visp_python")],
     cmdclass={"build_ext": CMakeBuild, 'build': build},
     zip_safe=False,
+    package_data={"visp-stubs": ["visp"]},
+    packages=['visp-stubs'],
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
 )
