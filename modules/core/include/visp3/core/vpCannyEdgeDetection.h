@@ -53,9 +53,9 @@ class vpCannyEdgeDetection
 private:
   typedef enum EdgeType
   {
-    STRONG_EDGE,
-    WEAK_EDGE,
-    ON_CHECK
+    STRONG_EDGE, /*!< This pixel exceeds the upper threshold of the double hysteresis phase, it is thus for sure an edge point.*/
+    WEAK_EDGE,/*!< This pixel is between the lower and upper threshold of the double hysteresis phase, it is an edge point only if it is linked at some point to an edge point.*/
+    ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
   } EdgeType;
 
   // // Gaussian smoothing attributes
@@ -63,7 +63,7 @@ private:
   float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
 
   // // Gradient computation attributes
-  bool m_areGradientAvailable; /*!< Set to true if the user gave the gradient images, false otherwise. In the later case, the class will compute the gradients.*/
+  bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
   vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
   vpArray2D<float> m_fgDg; /*!< Array that contains the derivative of the Gaussian kernel.*/
   vpImage<float> m_dIx; /*!< X-axis gradient.*/
@@ -72,9 +72,9 @@ private:
   // // Edge thining attributes
   std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
 
-  // // Histeresis thresholding attributes
-  float m_lowerThreshold; /*!< Lower threshold for the histeresis step. If negative, it will be deduced as from m_upperThreshold. */
-  float m_upperThreshold; /*!< Upper threshold for the histeresis step.*/
+  // // Hysteresis thresholding attributes
+  float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced as from m_upperThreshold. */
+  float m_upperThreshold; /*!< Upper threshold for the hysteresis step.*/
 
   // // Edge tracking attributes
   std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
@@ -156,8 +156,8 @@ public:
    * \param[in] lowerThreshold The lower threshold of the hysteresis thresholding step. If negative, will be computed from the upper threshold.
    * \param[in] upperThreshold The upper threshold of the hysteresis thresholding step. If negative, will be computed from the median of the gray values of the image.
    */
-  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
-                      , const float &lowerThreshold = -1., const float &upperThreshold = -1.);
+  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
+                       const float &lowerThreshold = -1., const float &upperThreshold = -1.);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -216,7 +216,7 @@ public:
    * Convert the color image into a ViSP gray-scale image.
    *
    * \param[in] cv_I A color image, in OpenCV format.
-   * \return vpImage<unsigned char> 255 means an edge, 0 means not an adge.
+   * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const cv::Mat &cv_I);
 
@@ -225,7 +225,7 @@ public:
    * Convert the color image into a gray-scale image.
    *
    * \param[in] I_color An RGB image, in ViSP format.
-   * \return vpImage<unsigned char> 255 means an edge, 0 means not an adge.
+   * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<vpRGBa> &I_color);
 
@@ -233,7 +233,7 @@ public:
    * \brief Detect the edges in a gray-scale image.
    *
    * \param[in] I A gray-scale image, in ViSP format.
-   * \return vpImage<unsigned char> 255 means an edge, 0 means not an adge.
+   * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<unsigned char> &I);
   //@}
