@@ -60,6 +60,9 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
 void
 vpCannyEdgeDetection::initGaussianFilters()
 {
+  if ((m_gaussianKernelSize % 2) == 0) {
+    throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
+  }
   m_fg.resize(1, (m_gaussianKernelSize + 1)/2);
   vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, false);
   m_fgDg.resize(1, (m_gaussianKernelSize + 1)/2);
