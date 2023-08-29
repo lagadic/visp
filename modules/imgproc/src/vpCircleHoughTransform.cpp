@@ -82,6 +82,7 @@ vpCircleHoughTransform::detect(const vpImage<vpRGBa> &I)
   return detect(I_gray);
 }
 
+#ifdef HAVE_OPENCV_CORE
 std::vector<vpCircleHoughTransform::vpCircle2D>
 vpCircleHoughTransform::detect(const cv::Mat &cv_I)
 {
@@ -89,6 +90,7 @@ vpCircleHoughTransform::detect(const cv::Mat &cv_I)
   vpImageConvert::convert(cv_I, I_gray);
   return detect(I_gray);
 }
+#endif
 
 std::vector<vpCircleHoughTransform::vpCircle2D>
 vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCircles)

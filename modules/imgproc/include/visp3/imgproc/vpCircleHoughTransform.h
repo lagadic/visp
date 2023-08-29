@@ -346,10 +346,12 @@ public:
     */
     vpCircle2D(const vpImagePoint &center, const float &radius) : m_center(center), m_radius(radius) { }
 
+#ifdef HAVE_OPENCV_CORE
     /*!
     * Constructor from an OpenCV vector that contains [center_x, center_y, radius].
     */
     vpCircle2D(const cv::Vec3f &vec) : m_center(vec[1], vec[0]), m_radius(vec[2]) { }
+#endif
 
     /*!
     * Default destructor.
@@ -417,6 +419,7 @@ public:
 
   // // Detection methods
 
+#ifdef HAVE_OPENCV_CORE
   /**
    * \brief Perform Circle Hough Transform to detect the circles in an OpenCV image.
    *
@@ -424,6 +427,7 @@ public:
    * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
    */
   std::vector<vpCircle2D> detect(const cv::Mat &cv_I);
+#endif
 
   /**
    * \brief Convert the input image in a gray-scale image and then
