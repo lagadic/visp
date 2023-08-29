@@ -19,6 +19,7 @@ set(tutorial_cpp
   tutorial-draw-line.cpp
   tutorial-draw-rectangle.cpp
   tutorial-draw-point.cpp
+  tutorial-draw-circle.cpp
   tutorial-draw-cross.cpp
   tutorial-draw-text.cpp
   tutorial-draw-frame.cpp

@@ -356,6 +356,19 @@ void vpImageDraw::drawCircle(vpImage<unsigned char> &I, const vpImagePoint &cent
 /*!
   Draw a circle in an image.
   \param[in,out] I : Image where to draw the circle.
+  \param[in] circle : Circle to draw.
+  \param[in] color : Circle color.
+  \param[in] thickness : Thickness of the circle.
+*/
+void vpImageDraw::drawCircle(vpImage<vpRGBa> &I, const vpImageCircle &circle, const vpColor &color,
+                             unsigned int thickness)
+{
+  DrawCircle(I, circle.getCenter(), static_cast<int>(circle.getRadius()), vpRGBa(color.R, color.G, color.B), thickness);
+}
+
+/*!
+  Draw a circle in an image.
+  \param[in,out] I : Image where to draw the circle.
   \param[in] center : Circle center position.
   \param[in] radius : Circle radius.
   \param[in] color : Circle color.

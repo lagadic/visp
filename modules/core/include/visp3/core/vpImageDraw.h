@@ -68,6 +68,8 @@ public:
                          unsigned char color, unsigned int thickness = 1);
   static void drawCircle(vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
                          unsigned char color, unsigned int thickness = 1);
+  static void drawCircle(vpImage<vpRGBa> &I, const vpImageCircle &circle,
+                         const vpColor &color, unsigned int thickness = 1);
   static void drawCircle(vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius, const vpColor &color,
                          unsigned int thickness = 1);
 
