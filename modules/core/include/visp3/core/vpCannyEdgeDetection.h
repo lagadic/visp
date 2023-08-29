@@ -211,6 +211,7 @@ public:
 
   /** @name  Detection methods */
   //@{
+#ifdef HAVE_OPENCV_CORE
   /**
    * \brief Detect the edges in an image.
    * Convert the color image into a ViSP gray-scale image.
@@ -219,6 +220,7 @@ public:
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const cv::Mat &cv_I);
+#endif
 
   /**
    * \brief Detect the edges in an image.

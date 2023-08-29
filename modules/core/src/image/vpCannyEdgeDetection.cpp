@@ -70,6 +70,7 @@ vpCannyEdgeDetection::initGaussianFilters()
 }
 
 // // Detection methods
+#ifdef HAVE_OPENCV_CORE
 vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const cv::Mat &cv_I)
 {
@@ -77,6 +78,7 @@ vpCannyEdgeDetection::detect(const cv::Mat &cv_I)
   vpImageConvert::convert(cv_I, I_gray);
   return detect(I_gray);
 }
+#endif
 
 vpImage<unsigned char>
 vpCannyEdgeDetection::detect(const vpImage<vpRGBa> &I_color)
