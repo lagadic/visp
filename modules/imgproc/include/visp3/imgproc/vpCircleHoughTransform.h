@@ -53,6 +53,7 @@ using json = nlohmann::json;
 #endif
 
 /**
+ * \ingroup group_hough_transform
  * \brief Class that permits to detect 2D circles in a image using
  * the gradient-based Circle Hough transform.
  * Please find more information on the algorithm
@@ -246,8 +247,8 @@ public:
      * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
      * the default value defined in the constructor is kept
      *
-     * \param[in] j The JSON object, resulting from the parsing of a JSON file.
-     * \param[out] detector The detector, that will be initialized from the JSON data.
+     * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
+     * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
     inline friend void from_json(const json &j, CHTransformParameters &params)
     {
@@ -304,8 +305,8 @@ public:
     /**
      * \brief Parse a vpCircleHoughTransform into JSON format.
      *
-     * \param[out] j A JSON parser object.
-     * \param[in] config The vpCircleHoughTransform that must be parsed into JSON format.
+     * \param[out] j : A JSON parser object.
+     * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
     inline friend void to_json(json &j, const CHTransformParameters &params)
     {
@@ -502,7 +503,7 @@ public:
    * \brief Parse a vpCircleHoughTransform into JSON format.
    *
    * \param[out] j A JSON parser object.
-   * \param[in] config The vpCircleHoughTransform that must be parsed into JSON format.
+   * \param[in] detector The vpCircleHoughTransform that must be parsed into JSON format.
    */
   inline friend void to_json(json &j, const vpCircleHoughTransform &detector)
   {
@@ -853,7 +854,7 @@ private:
   std::vector<vpCircle2D> m_circleCandidates;        /*!< List of the candidate circles.*/
   std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of votes for the candidate circles.*/
 
-  // // Circle candidates merging atttributes
+  // // Circle candidates merging attributes
   std::vector<vpCircle2D> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the candidate circles.*/
 };
@@ -864,6 +865,7 @@ private:
  * \param[in] img : Image used as background.
  * \param[in] color : Color used to draw the CAD model.
  * \param[in] thickness : Thickness used to draw the CAD model.
+ * \param[in] size : Size of the cross used to display the center of the circle.
  */
 template < typename Type >
 inline void

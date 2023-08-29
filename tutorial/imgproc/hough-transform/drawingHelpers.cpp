@@ -1,5 +1,7 @@
 #include "drawingHelpers.h"
 
+#include <visp3/core/vpImageConvert.h>
+
 #if defined(VISP_HAVE_X11)
 vpDisplayX drawingHelpers::d;
 #elif defined(VISP_HAVE_OPENCV)

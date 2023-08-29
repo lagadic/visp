@@ -105,10 +105,9 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   }
 
   bool (*hasMoreVotes)(std::pair<vpCircle2D, unsigned int>, std::pair<vpCircle2D, unsigned int>)
-    = [](std::pair<vpCircle2D, unsigned int> a, std::pair<vpCircle2D, unsigned int> b)
-    {
-      // We divide the number of votes by the radius to avoid to favour big circles
-      return (a.second / a.first.getRadius() > b.second / b.first.getRadius());
+    = [](std::pair<vpCircle2D, unsigned int> a, std::pair<vpCircle2D, unsigned int> b) {
+    // We divide the number of votes by the radius to avoid to favour big circles
+    return (a.second / a.first.getRadius() > b.second / b.first.getRadius());
     };
 
   std::sort(detectionsWithVotes.begin(), detectionsWithVotes.end(), hasMoreVotes);
@@ -191,7 +190,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
   if (m_algoParams.m_cannyThresh < 0.) {
-    cannyThresh = ImageFilter::computeCannyThreshold(I);
+    cannyThresh = vp::computeCannyThreshold(I);
   }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, cannyThresh, m_algoParams.m_sobelKernelSize);
 #else
@@ -295,7 +294,7 @@ vpCircleHoughTransform::computeCenterCandidates()
 
         for (int k1 = 0; k1 < 2; k1++) {
           bool hasToStopLoop = false;
-          for (int rad = m_algoParams.m_minRadius; rad <= m_algoParams.m_maxRadius && !hasToStopLoop; rad++) {
+          for (unsigned int rad = m_algoParams.m_minRadius; rad <= m_algoParams.m_maxRadius && !hasToStopLoop; rad++) {
             float x1 = (float)c + (float)rad * sx;
             float y1 = (float)r + (float)rad * sy;
 
@@ -329,18 +328,17 @@ vpCircleHoughTransform::computeCenterCandidates()
                   const unsigned int &x, const unsigned int &y,
                   const int &offsetX, const int &offsetY,
                   const unsigned int &nbCols, const unsigned int &nbRows,
-                  vpImage<float> &accum, bool &hasToStop)
-              {
-                if (x - offsetX >= nbCols ||
-                    y - offsetY >= nbRows
-                  ) {
-                  hasToStop = true;
-                }
-                else {
-                  float dx = (x_orig - (float)x);
-                  float dy = (y_orig - (float)y);
-                  accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
-                }
+                  vpImage<float> &accum, bool &hasToStop) {
+                    if (x - offsetX >= nbCols ||
+                        y - offsetY >= nbRows
+                      ) {
+                      hasToStop = true;
+                    }
+                    else {
+                      float dx = (x_orig - (float)x);
+                      float dy = (y_orig - (float)y);
+                      accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+                    }
               };
 
             updateAccumulator(x1, y1, x_low, y_low,

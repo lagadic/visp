@@ -32,12 +32,20 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#if defined(HAVE_OPENCV_IMGPROC)
+
 #include <visp3/imgproc/vpImageMedian.h>
 
-namespace ImageFilter
+namespace vp
 {
-// calculates the median value of a single channel
-// based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
+/**
+ * \ingroup group_image_median
+ * Calculates the median value of a single channel
+ * based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
+ *
+ * \param[in] channel : OpenCV input image.
+ * \return The median value of the input image.
+ */
 double median(const cv::Mat &channel)
 {
   double m = (channel.rows * channel.cols) / 2;
@@ -45,7 +53,7 @@ double median(const cv::Mat &channel)
   double med = -1.0;
 
   int histSize = 256;
-  float range [] = { 0, 256 };
+  float range[] = { 0, 256 };
   const float *histRange = { range };
   bool uniform = true;
   bool accumulate = false;
@@ -62,10 +70,12 @@ double median(const cv::Mat &channel)
 }
 
 /**
- * \brief Compute the upper Canny edge filter threshold.
- * 
- * \param[in] cv_I The image, in cv format.
- * \return double The upper Canny edge filter threshold.
+ * \ingroup group_image_median
+ * \brief Compute the upper Canny edge filter threshold based on image median.
+ *
+ * \param[in] cv_I : The image, in cv format.
+ * \return The upper Canny edge filter threshold.
+ * \sa median()
  */
 double computeCannyThreshold(const cv::Mat &cv_I)
 {
@@ -79,7 +89,7 @@ double computeCannyThreshold(const cv::Mat &cv_I)
   cv::Mat cv_I_scaled_down;
   resize(cv_I_blur, cv_I_scaled_down, cv::Size(), scale_down, scale_down, cv::INTER_NEAREST);
 
-  double median_pix = ImageFilter::median(cv_I_scaled_down);
+  double median_pix = vp::median(cv_I_scaled_down);
   // double lower = std::max(0., 0.7 * median_pix); // Unused, but to know the formula exists
   double upper = std::min(255., 1.3 * median_pix);
   upper = std::max(1., upper);
@@ -87,10 +97,12 @@ double computeCannyThreshold(const cv::Mat &cv_I)
 }
 
 /**
- * \brief Compute the upper Canny edge filter threshold.
- * 
- * \param[in] I The gray-scale image, in ViSP format.
- * \return double The upper Canny edge filter threshold.
+ * \ingroup group_image_median
+ * \brief Compute the upper Canny edge filter threshold based on image median.
+ *
+ * \param[in] I : The gray-scale image, in ViSP format.
+ * \return The upper Canny edge filter threshold.
+ * \sa median()
  */
 double computeCannyThreshold(const vpImage<unsigned char> &I)
 {
@@ -99,3 +111,5 @@ double computeCannyThreshold(const vpImage<unsigned char> &I)
   return computeCannyThreshold(cv_I);
 }
 } // namespace ImageFilter
+
+#endif

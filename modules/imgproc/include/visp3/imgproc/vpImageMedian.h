@@ -33,37 +33,27 @@
 #ifndef _vpImageMedian_h_
 #define _vpImageMedian_h_
 
-#include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImage.h>
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(HAVE_OPENCV_IMGPROC)
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
 #include <opencv2/imgproc/imgproc.hpp>
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 #include <opencv2/imgproc/imgproc_c.h>
-#elif defined(VISP_HAVE_OPENCV)
+#else
 #include <cv.h>
 #endif
 
-namespace ImageFilter
+namespace vp
 {
-// calculates the median value of a single channel
-// based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
-double median(const cv::Mat &channel);
+VISP_EXPORT double median(const cv::Mat &channel);
 
-/**
- * \brief Compute the upper Canny edge filter threshold.
- * 
- * \param[in] cv_I The image, in cv format.
- * \return double The upper Canny edge filter threshold.
- */
-double computeCannyThreshold(const cv::Mat &cv_I);
+VISP_EXPORT double computeCannyThreshold(const cv::Mat &cv_I);
 
-/**
- * \brief Compute the upper Canny edge filter threshold.
- * 
- * \param[in] I The gray-scale image, in ViSP format.
- * \return double The upper Canny edge filter threshold.
- */
-double computeCannyThreshold(const vpImage<unsigned char> &I);
-} // namespace ImageFilter
+VISP_EXPORT double computeCannyThreshold(const vpImage<unsigned char> &I);
+}
 
+#endif
 #endif
