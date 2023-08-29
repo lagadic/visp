@@ -55,60 +55,59 @@ void vpImageFilter::filter<double>(const vpImage<double> &I, vpImage<double> &Iu
   bool convolve);
 /**
  * \endcond
- */
+*/
 
- /*!
-   Apply a filter to an image using two separable kernels. For instance,
-   the Sobel kernel can be decomposed to:
-   \f[
-     \left [
-     \begin{matrix}
-     1 & 0 & -1 \\
-     2 & 0 & -2 \\
-     1 & 0 & -1
-     \end{matrix}
-     \right ] =
-     \left [
-     \begin{matrix}
-     1 \\
-     2 \\
-     1
-     \end{matrix}
-     \right ] \ast
-     \left [
-     \begin{matrix}
-     1 && 0 && -1
-     \end{matrix}
-     \right ]
-   \f]
-   Thus, the convolution operation can be performed as:
-   \f[
-     G_x =
-     \left [
-     \begin{matrix}
-     1 \\
-     2 \\
-     1
-     \end{matrix}
-     \right ] \ast
-     \left (
-     \left [
-     \begin{matrix}
-     1 && 0 && -1
-     \end{matrix}
-     \right ] \ast I
-     \right )
-   \f]
-   Using two separable kernels reduce the number of operations and can be
-   faster for large kernels.
+/*!
+  Apply a filter to an image using two separable kernels. For instance,
+  the Sobel kernel can be decomposed to:
+  \f[
+    \left [
+    \begin{matrix}
+    1 & 0 & -1 \\
+    2 & 0 & -2 \\
+    1 & 0 & -1
+    \end{matrix}
+    \right ] =
+    \left [
+    \begin{matrix}
+    1 \\
+    2 \\
+    1
+    \end{matrix}
+    \right ] \ast
+    \left [
+    \begin{matrix}
+    1 & 0 & -1
+    \end{matrix}
+    \right ]
+  \f]
+  Thus, the convolution operation can be performed as:
+  \f[
+    G_x =
+    \left [
+    \begin{matrix}
+    1 \\
+    2 \\
+    1
+    \end{matrix}
+    \right ] \ast
+    \left (
+    \left [
+    \begin{matrix}
+    1 & 0 & -1
+    \end{matrix}
+    \right ] \ast I
+    \right )
+  \f]
+  Using two separable kernels reduce the number of operations and can be
+  faster for large kernels.
 
-   \param I : Image to filter
-   \param If : Filtered image.
-   \param kernelH : Separable kernel (performed first).
-   \param kernelV : Separable kernel (performed last).
-   \note Only pixels in the input image fully covered by the kernel are
-   considered.
- */
+  \param I : Image to filter
+  \param If : Filtered image.
+  \param kernelH : Separable kernel (performed first).
+  \param kernelV : Separable kernel (performed last).
+  \note Only pixels in the input image fully covered by the kernel are considered.
+*/
 void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
   const vpColVector &kernelV)
 {
@@ -143,9 +142,9 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 /**
- * \brief Calculates the median value of a single channel
+ * \brief Calculates the median value of a single channel.
  * The algorithm is based on based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
- * \param[in] channel Single channel image in OpenCV format.
+ * \param[in] channel : Single channel image in OpenCV format.
  */
 double vpImageFilter::median(const cv::Mat &channel)
 {
@@ -171,9 +170,9 @@ double vpImageFilter::median(const cv::Mat &channel)
 }
 
 /**
- * \brief Calculates the median value of a single channel
+ * \brief Calculates the median value of a single channel.
  * The algorithm is based on based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
- * \param[in] Isrc Gray-level image in ViSP format.
+ * \param[in] Isrc : Gray-level image in ViSP format.
  * \sa \ref vpImageFilter::median() "vpImageFilter::median(const cv::Mat)"
  */
 double vpImageFilter::median(const vpImage<unsigned char> &Isrc)
@@ -186,7 +185,7 @@ double vpImageFilter::median(const vpImage<unsigned char> &Isrc)
 /**
  * \brief Calculates the median value of a vpRGBa image.
  * The result is ordered in RGB format.
- * \param[in] Isrc RGB image in ViSP format. Alpha channel is ignored.
+ * \param[in] Isrc : RGB image in ViSP format. Alpha channel is ignored.
  * \return std::vector<double> meds such as meds[0] = red-channel-median meds[1] = green-channel-median
  * and meds[2] = blue-channel-median.
  * \sa \ref vpImageFilter::median() "vpImageFilter::median(const cv::Mat)"
@@ -242,7 +241,7 @@ double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, doub
 /**
  * \brief Compute the upper Canny edge filter threshold.
  *
- * \param[in] I The gray-scale image, in ViSP format.
+ * \param[in] I : The gray-scale image, in ViSP format.
  * \return double The upper Canny edge filter threshold.
  */
 double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh)
@@ -294,7 +293,7 @@ int main()
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-  unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
+                          unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
 {
   cv::Mat img_cvmat, cv_I_blur, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
@@ -441,21 +440,20 @@ void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImag
   bool normalize);
 /**
  * \endcond
- */
+*/
 
- /*!
-   Apply a Gaussian blur to RGB color image.
-   \param I : Input image.
-   \param GI : Filtered image.
-   \param size : Filter size. This value should be odd.
-   \param sigma : Gaussian standard deviation. If it is equal to zero or
-   negative, it is computed from filter size as sigma = (size-1)/6.
-   \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+/*!
+  Apply a Gaussian blur to RGB color image.
+  \param I : Input image.
+  \param GI : Filtered image.
+  \param size : Filter size. This value should be odd.
+  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  negative, it is computed from filter size as sigma = (size-1)/6.
+  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
-   \sa getGaussianKernel() to know which kernel is used.
-  */
-void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma,
-  bool normalize)
+  \sa getGaussianKernel() to know which kernel is used.
+*/
+void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma, bool normalize)
 {
   double *fg = new double[(size + 1) / 2];
   vpImageFilter::getGaussianKernel(fg, size, sigma, normalize);
@@ -470,12 +468,10 @@ void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, 
  * \cond DO_NOT_DOCUMENT
  */
 template<>
-void vpImageFilter::gaussianBlur<float>(const vpImage<float> &I, vpImage<float> &GI, unsigned int size, float sigma,
-  bool normalize);
+void vpImageFilter::gaussianBlur<float>(const vpImage<float> &I, vpImage<float> &GI, unsigned int size, float sigma, bool normalize);
 
 template<>
-void vpImageFilter::gaussianBlur<double>(const vpImage<double> &I, vpImage<double> &GI, unsigned int size, double sigma,
-  bool normalize);
+void vpImageFilter::gaussianBlur<double>(const vpImage<double> &I, vpImage<double> &GI, unsigned int size, double sigma, bool normalize);
 
 template<>
 void vpImageFilter::getGaussianKernel<float>(float *filter, unsigned int size, float sigma, bool normalize);
@@ -524,40 +520,40 @@ void vpImageFilter::getGradY<double, double>(const vpImage<double> &I, vpImage<d
 
 template<>
 void vpImageFilter::getGradXGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIx, const float *gaussianKernel,
-  const float *gaussianDerivativeKernel, unsigned int size);
+                                                          const float *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradXGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
-  const double *gaussianDerivativeKernel, unsigned int size);
+                                                           const double *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradXGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIx, const float *gaussianKernel,
-  const float *gaussianDerivativeKernel, unsigned int size);
+                                                  const float *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradXGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIx, const double *gaussianKernel,
-  const double *gaussianDerivativeKernel, unsigned int size);
+                                                    const double *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradYGauss2D<unsigned char, float>(const vpImage<unsigned char> &I, vpImage<float> &dIy, const float *gaussianKernel,
-  const float *gaussianDerivativeKernel, unsigned int size);
+                                                          const float *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradYGauss2D<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *gaussianKernel,
-  const double *gaussianDerivativeKernel, unsigned int size);
+                                                           const double *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradYGauss2D<float, float>(const vpImage<float> &I, vpImage<float> &dIy, const float *gaussianKernel,
-  const float *gaussianDerivativeKernel, unsigned int size);
+                                                  const float *gaussianDerivativeKernel, unsigned int size);
 
 template<>
 void vpImageFilter::getGradYGauss2D<double, double>(const vpImage<double> &I, vpImage<double> &dIy, const double *gaussianKernel,
-  const double *gaussianDerivativeKernel, unsigned int size);
+                                                    const double *gaussianDerivativeKernel, unsigned int size);
 /**
  * \endcond
- */
+*/
 
- // operation pour pyramide gaussienne
+// Operation for Gaussian pyramid
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
   vpImage<unsigned char> GIx;
@@ -581,16 +577,6 @@ void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<u
 
 void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
-#if 0
-  GI.resize(I.getHeight(), (int)((I.getWidth() + 1.) / 2.));
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    GI[i][0] = I[i][0];
-    for (unsigned int j = 1; j < ((I.getWidth() + 1.) / 2.) - 1; j++) {
-      GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, 2 * j);
-    }
-    GI[i][(int)((I.getWidth() + 1.) / 2.) - 1] = I[i][2 * ((int)((I.getWidth() + 1.) / 2.) - 1)];
-  }
-#else
   unsigned int w = I.getWidth() / 2;
 
   GI.resize(I.getHeight(), w);
@@ -601,23 +587,10 @@ void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<
     }
     GI[i][w - 1] = I[i][2 * w - 1];
   }
-
-#endif
 }
+
 void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
-
-#ifdef ORIG
-  GI.resize((int)((I.getHeight() + 1.) / 2.), I.getWidth());
-  for (unsigned int j = 0; j < I.getWidth(); j++) {
-    GI[0][j] = I[0][j];
-    for (unsigned int i = 1; i < ((I.getHeight() + 1.) / 2.) - 1; i++) {
-      GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
-    }
-    GI[(int)((I.getHeight() + 1.) / 2.) - 1][j] = I[2 * ((int)((I.getHeight() + 1.) / 2.) - 1)][j];
-  }
-
-#else
   unsigned int h = I.getHeight() / 2;
 
   GI.resize(h, I.getWidth());
@@ -628,7 +601,6 @@ void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<
     }
     GI[h - 1][j] = I[2 * h - 1][j];
   }
-#endif
 }
 
 /**

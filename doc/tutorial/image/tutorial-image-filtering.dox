@@ -91,17 +91,13 @@ The resulting image \c C is the following:
 To apply a convolution to an image, we first have to define a kernel.
 For example, let us consider the 3x3 Sobel kernel defined in \c K.
 
-  \f[
-  {\bf K} = \begin{tabular}{|c|c|c|}
-  \hline
-  1 & 0 & -1 \\
-  \hline
-  2 & 0 & -2 \\
-  \hline
-  1 & 0 & -1 \\
-  \hline
-  \end{tabular}
-  \f]
+\f[
+{\bf K} = \left[ \begin{matrix}
+1 & 0 & -1 \\
+2 & 0 & -2 \\
+1 & 0 & -1 \\
+\end{matrix} \right]
+\f]
 
 \snippet tutorial-image-filter.cpp Convolution kernel
 
