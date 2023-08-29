@@ -1,3 +1,35 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+*****************************************************************************/
+
 #include <visp3/core/vpCannyEdgeDetection.h>
 
 #include <visp3/core/vpImageConvert.h>
@@ -110,7 +142,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 
   float lowerThreshold = m_lowerThreshold;
   if (m_lowerThreshold < 0) {
-    // Applying Canny recommandation to have the upper threshold 3 times greater than the lower threshold.
+    // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
     lowerThreshold = m_upperThreshold / 3.;
   }
 
@@ -139,14 +171,14 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
 }
 
 /**
- * \brief Get the Theta Quadrant in which lies absoluteTheta and the offset along the horizontal
+ * \brief Get the theta quadrant in which lies absoluteTheta and the offset along the horizontal
  * and vertical direction where to look for the neighbors.
  *
- * \param[in] absoluteTheta The absolute value of the angle of the edge, expressed in degrees.
- * \param[out] dRowGradPlus The offset in the vertical positive direction.
- * \param[out] dRowGradMinus The offset in the vertical negative direction.
- * \param[out] dColGradPlus The offset in the horizontal positive direction.
- * \param[out] dColGradMinus The offset in the horizontal negative direction.
+ * \param[in] absoluteTheta : The absolute value of the angle of the edge, expressed in degrees.
+ * \param[out] dRowGradPlus : The offset in the vertical positive direction.
+ * \param[out] dRowGradMinus : The offset in the vertical negative direction.
+ * \param[out] dColGradPlus : The offset in the horizontal positive direction.
+ * \param[out] dColGradMinus : The offset in the horizontal negative direction.
  * \return float The quadrant in which lies the angle of the edge, expressed in degrees.
  */
 float
@@ -192,12 +224,12 @@ getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMin
 }
 
 /**
- * @brief Get the Manhattan Gradient, i.e. abs(dIx) + abs(dIy) at the index \b row \b col .
+ * @brief Get the Manhattan Gradient, i.e. abs(dIx) + abs(dIy) at the index \b row \b col.
  * If one of the index is outside the limits of the image, return 0.
- * @param dIx Gradient along the horizontal axis.
- * @param dIy Gradient along the vertical axis.
- * @param row Index along the vertical axis.
- * @param col Index along the horizontal axis.
+ * @param dIx : Gradient along the horizontal axis.
+ * @param dIy : Gradient along the vertical axis.
+ * @param row : Index along the vertical axis.
+ * @param col : Index along the horizontal axis.
  * @return float grad = abs(dIx) + abs(dIy) if row and col are valid, 0 otherwise.
  */
 float
@@ -221,10 +253,10 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
 /**
  * @brief Get the absolute value of the gradient orientation.
  *
- * @param dIx Gradient along the horizontal axis.
- * @param dIy Gradient along the vertical axis.
- * @param row Index along the vertical axis.
- * @param col Index along the horizontal axis.
+ * @param dIx : Gradient along the horizontal axis.
+ * @param dIy : Gradient along the vertical axis.
+ * @param row : Index along the vertical axis.
+ * @param col : Index along the horizontal axis.
  * @return float The absolute value of the gradient orientation, expressed in degrees.
  */
 float

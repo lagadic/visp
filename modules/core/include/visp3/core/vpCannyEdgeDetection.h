@@ -92,17 +92,17 @@ private:
 
   /** @name Different steps methods */
   /**
-   * \brief  Step 1: filtering + Step 2: gradient computation
+   * \brief Step 1: filtering + Step 2: gradient computation
    * \details First, perform Gaussian blur to the input image.
    * Then, compute the x-axis and y-axis gradients of the image.
-   * \param[in] I The image we want to compute the gradients.
+   * \param[in] I : The image we want to compute the gradients.
    */
   void performFilteringAndGradientComputation(const vpImage<unsigned char> &I);
 
   /**
-   * \brief Step 3: edge thining
+   * \brief Step 3: Edge thining.
    * \details Perform the edge thining step.
-   * Perform a non-maximum suppresion to keep only local maxima as edge candidates.
+   * Perform a non-maximum suppression to keep only local maxima as edge candidates.
    */
   void performEdgeThining();
 
@@ -110,7 +110,7 @@ private:
    * \brief Perform hysteresis thresholding.
    * \details Edge candidates that are greater than \b m_upperThreshold are saved in \b m_strongEdgePoints
    * and will be kept in the final edge map.
-   * Edge candidates that are bewteen \b m_lowerThreshold and \b m_upperThreshold are saved in
+   * Edge candidates that are between \b m_lowerThreshold and \b m_upperThreshold are saved in
    * \b m_weakEdgePoints and will be kept in the final edge map only if they are connected
    * to a strong edge point.
    * Edge candidates that are below \b m_lowerThreshold are discarded.
@@ -124,7 +124,7 @@ private:
   /**
    * @brief Search recursively for a strong edge in the neighborhood of a weak edge.
    *
-   * \param[in] coordinates The coordinates we are checking.
+   * \param[in] coordinates : The coordinates we are checking.
    * \return true We found a strong edge point in its 8-connected neighborhood.
    * \return false We did not found a strong edge point in its 8-connected neighborhood.
    */
@@ -151,10 +151,10 @@ public:
   /**
    * \brief Construct a new vpCannyEdgeDetection object.
    *
-   * \param[in] gaussianKernelSize The size of the Gaussian filter kernel. Must be odd.
-   * \param[in] gaussianStdev The standard deviation of the Gaussian filter.
-   * \param[in] lowerThreshold The lower threshold of the hysteresis thresholding step. If negative, will be computed from the upper threshold.
-   * \param[in] upperThreshold The upper threshold of the hysteresis thresholding step. If negative, will be computed from the median of the gray values of the image.
+   * \param[in] gaussianKernelSize : The size of the Gaussian filter kernel. Must be odd.
+   * \param[in] gaussianStdev : The standard deviation of the Gaussian filter.
+   * \param[in] lowerThreshold : The lower threshold of the hysteresis thresholding step. If negative, will be computed from the upper threshold.
+   * \param[in] upperThreshold : The upper threshold of the hysteresis thresholding step. If negative, will be computed from the median of the gray values of the image.
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
                        const float &lowerThreshold = -1., const float &upperThreshold = -1.);
@@ -164,7 +164,7 @@ public:
   /**
    * \brief Construct a new vpCannyEdgeDetection object.
    *
-   * \param[in] jsonPath The path towards the JSON file to use to initialize the vpCannyEdgeDetection object.
+   * \param[in] jsonPath : The path towards the JSON file to use to initialize the vpCannyEdgeDetection object.
    */
   vpCannyEdgeDetection(const std::string &jsonPath);
 
@@ -173,7 +173,7 @@ public:
    * whose path is \b jsonPath. Throw a \b vpException error if the file
    * does not exist.
    *
-   * \param[in] jsonPath The path towards the JSON configuration file.
+   * \param[in] jsonPath : The path towards the JSON configuration file.
    */
   void initFromJSON(const std::string &jsonPath);
 
@@ -181,8 +181,8 @@ public:
    * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
    * the default value defined in the constructor is kept
    *
-   * \param j The JSON object, resulting from the parsing of a JSON file.
-   * \param detector The detector, that will be initialized from the JSON data.
+   * \param j : The JSON object, resulting from the parsing of a JSON file.
+   * \param detector : The detector that will be initialized from the JSON data.
    */
   inline friend void from_json(const json &j, vpCannyEdgeDetection &detector)
   {
@@ -195,8 +195,8 @@ public:
   /**
    * \brief Parse a vpCircleHoughTransform into JSON format.
    *
-   * \param j A JSON parser object.
-   * \param config The vpCircleHoughTransform that must be parsed into JSON format.
+   * \param j : A JSON parser object.
+   * \param detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
   inline friend void to_json(json &j, const vpCannyEdgeDetection &detector)
   {
@@ -226,7 +226,7 @@ public:
    * \brief Detect the edges in an image.
    * Convert the color image into a gray-scale image.
    *
-   * \param[in] I_color An RGB image, in ViSP format.
+   * \param[in] I_color : An RGB image, in ViSP format.
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<vpRGBa> &I_color);
@@ -234,7 +234,7 @@ public:
   /**
    * \brief Detect the edges in a gray-scale image.
    *
-   * \param[in] I A gray-scale image, in ViSP format.
+   * \param[in] I : A gray-scale image, in ViSP format.
    * \return vpImage<unsigned char> 255 means an edge, 0 means not an edge.
    */
   vpImage<unsigned char> detect(const vpImage<unsigned char> &I);
@@ -245,8 +245,8 @@ public:
   /**
    * \brief Set the Gradients of the image that will be processed.
    *
-   * \param[in] dIx Gradient along the horizontal axis of the image.
-   * \param[in] dIy Gradient along the vertical axis of the image.
+   * \param[in] dIx : Gradient along the horizontal axis of the image.
+   * \param[in] dIy : Gradient along the vertical axis of the image.
    */
   inline void setGradients(const vpImage<float> &dIx, const vpImage<float> &dIy)
   {
@@ -260,8 +260,8 @@ public:
    * Edge point candidates whose gradient is between these two values is kept only if it
    * linked somehow to a strong edge point.
    *
-   * \param[in] lowerThresh The lower threshold: each point whose gradient is below this threshold is discarded.
-   * \param[in] upperThresh The upper threshold: each point whose gradient is greater than this threshold is
+   * \param[in] lowerThresh : The lower threshold: each point whose gradient is below this threshold is discarded.
+   * \param[in] upperThresh : The upper threshold: each point whose gradient is greater than this threshold is
    * said to be a strong edge point and is kept.
    */
   inline void setCannyThresholds(const float &lowerThresh, const float &upperThresh)
@@ -274,8 +274,8 @@ public:
    * @brief Set the Gaussian Filters kernel size and standard deviation
    * and initialize the aforementioned filters.
    *
-   * \param[in] kernelSize The size of the Gaussian filters kernel.
-   * \param[in] stdev The standard deviation of the Gaussian filters used to blur and
+   * \param[in] kernelSize : The size of the Gaussian filters kernel.
+   * \param[in] stdev : The standard deviation of the Gaussian filters used to blur and
    * compute the gradient of the image.
    */
   inline void setGaussianFilterParameters(const int &kernelSize, const float &stdev)
