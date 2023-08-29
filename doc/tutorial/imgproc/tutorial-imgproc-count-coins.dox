@@ -37,7 +37,7 @@ $ ./tutorial-count-coins
 To run the demo code for the sample image 2:
 
 \code
-$ ./tutorial-count-coins --input coins2.pgm --white_foreground
+$ ./tutorial-count-coins --input coins2.jpg --white_foreground
 \endcode
 
 The functions we will use needs the following includes:
