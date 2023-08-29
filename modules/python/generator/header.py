@@ -94,20 +94,21 @@ class HeaderFile():
     content = self.run_preprocessor()
     self.includes = [f'<visp3/{self.submodule.name}/{self.path.name}>']
     self.binding_code = None
+    self.class_decls = []
     self.contains = []
     self.depends = []
     self.generate_binding_code(content)
 
   def run_preprocessor(self): # TODO: run without generating a new file
     tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
-
+    print(f'preprocessing {self.path}')
     argv = [
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -133,6 +134,11 @@ class HeaderFile():
     header_env = HeaderEnvironment(data)
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
+    for enum in data.namespace.enums:
+      print('=====')
+      print(enum)
+      print('=====')
+
     return result
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
@@ -157,6 +163,7 @@ class HeaderFile():
 
       # if name_cpp == 'vpColVector':
       cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
+      self.class_decls.append(cls_result)
       methods_str = ''
       contains_pure_virtual_methods = False
       # Skip classes that have pure virtual methods since they cannot be instantiated
@@ -211,7 +218,7 @@ class HeaderFile():
           print(method_config)
         if method.constructor and not contains_pure_virtual_methods:
           ctor_str = f'''
-            {python_ident}.def(py::init<{argument_types_str}>());'''
+            {python_ident}.def(py::init<{argument_types_str}>(){py_arg_str});'''
           methods_str += ctor_str
         else:
           method_name = get_name(method.name)
@@ -239,13 +246,28 @@ class HeaderFile():
           generated_methods.append((py_method_name, method))
 
 
+      for enum in cls.enums:
+
+        print('============')
+        print(get_type(enum.typename, owner_specs, header_env.mapping))
+        print(enum.values)
+        print('=============')
+      for typedef in cls.typedefs:
+        print('typedef============')
+        print(typedef)
+        print(get_type(typedef.type, owner_specs, header_env.mapping))
+        print(typedef.name)
+        print('=============')
+
+
+
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       for error_overload in error_generating_overloads:
         print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
       if len(error_generating_overloads) > 0:
         raise RuntimeError
 
-      spec_result += cls_result
+      #spec_result += cls_result
       spec_result += methods_str
       spec_result += to_string_str
       return spec_result

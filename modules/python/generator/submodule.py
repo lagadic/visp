@@ -36,13 +36,16 @@ class Submodule():
     headers = sort_headers(headers)
 
     header_code = []
+    declarations = []
     includes = []
     for header in headers:
       header_code.append(header.binding_code)
+      declarations.extend(header.class_decls)
       includes.extend(header.includes)
     includes_set = filter_includes(set(includes))
-
-    body = f'py::module_ submodule = m.def_submodule("{self.name}");\n' + '\n'.join(header_code)
+    submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
+    bindings = '\n'.join(header_code)
+    declarations = '\n'.join(declarations)
     includes_strs = [f'#include {include}' for include in includes_set]
     includes_str = '\n'.join(includes_strs)
     format_str = f'''
@@ -56,7 +59,9 @@ namespace py = pybind11;
 
 
 void {self.generation_function_name()}(py::module_ &m) {{
-  {body}
+{submodule_declaration}
+{declarations}
+{bindings}
 }}
 '''
     with open(self.submodule_file_path, 'w') as submodule_file:
