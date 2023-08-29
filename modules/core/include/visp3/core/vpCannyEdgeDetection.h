@@ -48,7 +48,7 @@
 using json = nlohmann::json;
 #endif
 
-class vpCannyEdgeDetection
+class VISP_EXPORT vpCannyEdgeDetection
 {
 private:
   typedef enum EdgeType
