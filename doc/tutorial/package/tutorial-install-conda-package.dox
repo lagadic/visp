@@ -26,7 +26,7 @@ We recommend to install Conda from the installers provided by the conda-forge co
 <a href=https://github.com/conda-forge/miniforge#mambaforge>Mambaforge</a>, which already includes 
 <a href=https://github.com/mamba-org/mamba>Mamba</a> tools.
 
-The use of Mamba is highly recommanded, as it provides a much more faster way to install Conda packages.
+The use of Mamba is highly recommended, as it provides a much more faster way to install Conda packages.
 To use Mamba instead of Conda, just replace `conda` by `mamba` in your command line invocation, e.g. replace:
 \verbatim
 conda install my-package
@@ -72,7 +72,7 @@ $ conda config --add channels conda-forge
 If the order in the list (channel priority) is reversed, just type re-add 
 the conda-forge channel using the previous command and you should get the desired output.
 
-We also strongly advise that you use the strict channel priority mode, as recommanded by Conda
+We also strongly advise that you use the strict channel priority mode, as recommended by Conda
  <a href=https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html#strict>here</a>:
 \verbatim
 $ conda config --show channel_priority    
