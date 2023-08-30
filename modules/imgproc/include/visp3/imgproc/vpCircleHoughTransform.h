@@ -54,6 +54,7 @@ using json = nlohmann::json;
 #endif
 
 /**
+ * \ingroup group_hough_transform
  * \brief Class that permits to detect 2D circles in a image using
  * the gradient-based Circle Hough transform.
  * Please find more information on the algorithm
@@ -247,8 +248,8 @@ public:
      * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
      * the default value defined in the constructor is kept
      *
-     * \param[in] j The JSON object, resulting from the parsing of a JSON file.
-     * \param[out] detector The detector, that will be initialized from the JSON data.
+     * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
+     * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
     inline friend void from_json(const json &j, CHTransformParameters &params)
     {
@@ -305,8 +306,8 @@ public:
     /**
      * \brief Parse a vpCircleHoughTransform into JSON format.
      *
-     * \param[out] j A JSON parser object.
-     * \param[in] config The vpCircleHoughTransform that must be parsed into JSON format.
+     * \param[out] j : A JSON parser object.
+     * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
     inline friend void to_json(json &j, const CHTransformParameters &params)
     {
@@ -433,7 +434,7 @@ public:
    * \brief Parse a vpCircleHoughTransform into JSON format.
    *
    * \param[out] j A JSON parser object.
-   * \param[in] config The vpCircleHoughTransform that must be parsed into JSON format.
+   * \param[in] detector The vpCircleHoughTransform that must be parsed into JSON format.
    */
   inline friend void to_json(json &j, const vpCircleHoughTransform &detector)
   {

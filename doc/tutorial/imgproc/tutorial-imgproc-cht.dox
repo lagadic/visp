@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-imgproc-cht Gradient-based Circle Hough Transform
+\page tutorial-imgproc-cht Tutorial: Gradient-based Circle Hough Transform
 \tableofcontents
 
 \section imgproc_cht_intro Introduction
@@ -41,10 +41,12 @@ and compile ViSP with it.
 You can also configure the `vpCircleHoughTransform` class using command line arguments.
 To know what are the different command line arguments the software accept, please run:
 ```
+$ cd tutorial/imgproc/hough-transform
 $ ./tutorial-circle-hough --help
 ```
 
 \subsection imgproc_cht_howto_synthetic How to use synthetic images
+
 
 To run the software on the synthetic images using a JSON configuration file,
 please run:
@@ -62,13 +64,13 @@ $ ./tutorial-circle-hough --input ${TARGET}_disks
 
 \subsection imgproc_cht_howto_images How to use actual images
 
-To run the software on an actual image using a JSON configuration file, please run:
+To run the software on an actual image like `coins2.jpg` provided with the tutorial and using a JSON configuration file, please run:
 ```
-$ ./tutorial-circle-hough --input /path/to/my/image --config config/detector_img.json
+$ ./tutorial-circle-hough --input coins2.jpg --config config/detector_img.json
 ```
 
-__NB__ : the configuration file `config/detector_img.json` has been tuned to detect coins in the image `coins2.pgm`.
-If the detections seem a bit off, you might need to change the parameters.
+\note The configuration file `config/detector_img.json` has been tuned to detect circles in the image `coins2.jpg`.
+If the detections seem a bit off, you might need to change the parameters in `config/detector_img.json`.
 
 To run the software on an actual image using command line arguments instead, please run:
 ```

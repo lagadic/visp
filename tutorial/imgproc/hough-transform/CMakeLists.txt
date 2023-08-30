@@ -1,4 +1,4 @@
-project(tutorial-)
+project(tutorial-hough)
 
 cmake_minimum_required(VERSION 3.0)
 
@@ -10,7 +10,7 @@ set(tutorial_cpp
   )
 
 # list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/config")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins2.pgm")
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coins2.jpg")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp} drawingHelpers.cpp)
