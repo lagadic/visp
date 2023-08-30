@@ -67,7 +67,7 @@ To run the software on an actual image using a JSON configuration file, please r
 $ ./tutorial-circle-hough --input /path/to/my/image --config config/detector_img.json
 ```
 
-**NB**: the configuration file `config/detector_img.json` has been tuned to detect coins in the image `coins2.pgm`.
+__NB__ : the configuration file `config/detector_img.json` has been tuned to detect coins in the image `coins2.pgm`.
 If the detections seem a bit off, you might need to change the parameters.
 
 To run the software on an actual image using command line arguments instead, please run:
@@ -142,7 +142,7 @@ You could have also used the following method to get only the `num_best` best
 detections:
 \code
 int num_best; // Set it to the number of circles you want to keep
-std::vector<vpCircleHoughTransform::vpCircle2D> detections = detector.detect(I, num_best);
+std::vector<vvpImageCircle> detections = detector.detect(I, num_best);
 \endcode
 
 Then, you can iterate on the vector of detections using a synthax similar to the following:

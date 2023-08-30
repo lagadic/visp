@@ -74,7 +74,7 @@ vpCircleHoughTransform::initGaussianFilters()
   vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
 }
 
-std::vector<vpCircleHoughTransform::vpCircle2D>
+std::vector<vpImageCircle>
 vpCircleHoughTransform::detect(const vpImage<vpRGBa> &I)
 {
   vpImage<unsigned char> I_gray;
@@ -83,7 +83,7 @@ vpCircleHoughTransform::detect(const vpImage<vpRGBa> &I)
 }
 
 #ifdef HAVE_OPENCV_CORE
-std::vector<vpCircleHoughTransform::vpCircle2D>
+std::vector<vpImageCircle>
 vpCircleHoughTransform::detect(const cv::Mat &cv_I)
 {
   vpImage<unsigned char> I_gray;
@@ -92,20 +92,20 @@ vpCircleHoughTransform::detect(const cv::Mat &cv_I)
 }
 #endif
 
-std::vector<vpCircleHoughTransform::vpCircle2D>
+std::vector<vpImageCircle>
 vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCircles)
 {
-  std::vector<vpCircle2D> detections = detect(I);
+  std::vector<vpImageCircle> detections = detect(I);
   size_t nbDetections = detections.size();
-  std::vector<vpCircle2D> bestCircles;
-  std::vector<std::pair<vpCircle2D, unsigned int>> detectionsWithVotes;
+  std::vector<vpImageCircle> bestCircles;
+  std::vector<std::pair<vpImageCircle, unsigned int>> detectionsWithVotes;
   for (size_t i = 0; i < nbDetections; i++) {
-    std::pair<vpCircle2D, unsigned int> detectionWithVote(detections[i], m_finalCircleVotes[i]);
+    std::pair<vpImageCircle, unsigned int> detectionWithVote(detections[i], m_finalCircleVotes[i]);
     detectionsWithVotes.push_back(detectionWithVote);
   }
 
-  bool (*hasMoreVotes)(std::pair<vpCircle2D, unsigned int>, std::pair<vpCircle2D, unsigned int>)
-    = [](std::pair<vpCircle2D, unsigned int> a, std::pair<vpCircle2D, unsigned int> b)
+  bool (*hasMoreVotes)(std::pair<vpImageCircle, unsigned int>, std::pair<vpImageCircle, unsigned int>)
+    = [](std::pair<vpImageCircle, unsigned int> a, std::pair<vpImageCircle, unsigned int> b)
     {
       // We divide the number of votes by the radius to avoid to favour big circles
       return (a.second / a.first.getRadius() > b.second / b.first.getRadius());
@@ -127,7 +127,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   return bestCircles;
 }
 
-std::vector<vpCircleHoughTransform::vpCircle2D>
+std::vector<vpImageCircle>
 vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
 {
   // Cleaning results of potential previous detection
@@ -261,7 +261,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int offsetX = minimumXposition;
   int accumulatorWidth = maximumXposition - minimumXposition + 1;
   if (accumulatorWidth <= 0) {
-    std::cout << "Width <= 0 !" << std::endl << std::flush;
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator width <= 0!"));
   }
 
   // Computing the minimum and maximum vertical position of the center candidates
@@ -275,7 +275,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int offsetY = minimumYposition;
   int accumulatorHeight = maximumYposition - minimumYposition + 1;
   if (accumulatorHeight <= 0) {
-    std::cout << "accumulatorHeight <= 0 !" << std::endl << std::flush;
+    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
   }
 
   vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Matrix that contains the votes for the center candidates.*/
@@ -293,9 +293,12 @@ vpCircleHoughTransform::computeCenterCandidates()
         float sx = m_dIx[r][c] / mag;
         float sy = m_dIy[r][c] / mag;
 
+        int int_minRad = (int)m_algoParams.m_minRadius;
+        int int_maxRad = (int)m_algoParams.m_maxRadius;
+
         for (int k1 = 0; k1 < 2; k1++) {
           bool hasToStopLoop = false;
-          for (int rad = m_algoParams.m_minRadius; rad <= m_algoParams.m_maxRadius && !hasToStopLoop; rad++) {
+          for (int rad = int_minRad; rad <= int_maxRad && !hasToStopLoop; rad++) {
             float x1 = (float)c + (float)rad * sx;
             float y1 = (float)r + (float)rad * sy;
 
@@ -449,8 +452,8 @@ vpCircleHoughTransform::computeCircleCandidates()
       // of Circle Candidates
       float r_effective = radiusActualValueList[idBin] / (float)radiusAccumList[idBin];
       if ((float)radiusAccumList[idBin] / r_effective > m_algoParams.m_radiusRatioThresh) {
-        m_circleCandidates.push_back(vpCircle2D(vpImagePoint(centerCandidate.first, centerCandidate.second)
-                                                , r_effective
+        m_circleCandidates.push_back(vpImageCircle(vpImagePoint(centerCandidate.first, centerCandidate.second)
+                                                   , r_effective
         )
         );
         m_circleCandidatesVotes.push_back(radiusAccumList[idBin]);
@@ -463,15 +466,14 @@ void
 vpCircleHoughTransform::mergeCircleCandidates()
 {
   // For each circle candidate CiC_i do:
-  std::vector<vpCircle2D> circleCandidates = m_circleCandidates;
+  std::vector<vpImageCircle> circleCandidates = m_circleCandidates;
   std::vector<unsigned int> circleCandidatesVotes = m_circleCandidatesVotes;
   size_t nbCandidates = m_circleCandidates.size();
   for (size_t i = 0; i < nbCandidates; i++) {
-    vpCircle2D cic_i = circleCandidates[i];
+    vpImageCircle cic_i = circleCandidates[i];
     // // For each other circle candidate CiC_j do:
-    std::cout << "< CiC_" << i << " >" << std::endl;
     for (size_t j = i + 1; j < nbCandidates; j++) {
-      vpCircle2D cic_j = circleCandidates[j];
+      vpImageCircle cic_j = circleCandidates[j];
       // // // Compute the similarity between CiC_i and CiC_j
       double distanceBetweenCenters = vpImagePoint::distance(cic_i.getCenter(), cic_j.getCenter());
       double radiusDifference = std::abs(cic_i.getRadius() - cic_j.getRadius());
@@ -484,12 +486,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
         unsigned int totalVotes = circleCandidatesVotes[i] + circleCandidatesVotes[j];
         float newRadius = (cic_i.getRadius() * circleCandidatesVotes[i] + cic_j.getRadius() * circleCandidatesVotes[j]) / totalVotes;
         vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesVotes[i]+ cic_j.getCenter()  * circleCandidatesVotes[j]) / totalVotes;
-        std::cout << "\tPrev centers =\n\t" << cic_i.getCenter() << "\n\t" << cic_j.getCenter() << std::endl;
-        std::cout << "\tNew center = " << newCenter << std::endl;
-        std::cout << "\tPrev radii =\n\t" << cic_i.getRadius() << "\n\t" << cic_j.getRadius() << std::endl;
-        std::cout << "\tNew radius = " << newRadius << std::endl;
-        std::cout << "\tVotes =\n\t" << circleCandidatesVotes[i] << "\n\t" << circleCandidatesVotes[j] << std::endl;
-        cic_i = vpCircle2D(newCenter, newRadius);
+        cic_i = vpImageCircle(newCenter, newRadius);
         circleCandidates[j] = circleCandidates[nbCandidates - 1];
         circleCandidatesVotes[i] = totalVotes;
         circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
@@ -501,16 +498,14 @@ vpCircleHoughTransform::mergeCircleCandidates()
     }
     // // Add the circle candidate CiC_i, potentially merged with other circle candidates, to the final list of detected circles
     m_finalCircles.push_back(cic_i);
-    std::cout << "</ CiC_" << i << " >" << std::endl;
   }
 
   nbCandidates = m_finalCircles.size();
   for (size_t i = 0; i < nbCandidates; i++) {
-    vpCircle2D cic_i = m_finalCircles[i];
+    vpImageCircle cic_i = m_finalCircles[i];
     // // For each other circle candidate CiC_j do:
-    std::cout << "< CiC_" << i << " >" << std::endl;
     for (size_t j = i + 1; j < nbCandidates; j++) {
-      vpCircle2D cic_j = m_finalCircles[j];
+      vpImageCircle cic_j = m_finalCircles[j];
       // // // Compute the similarity between CiC_i and CiC_j
       double distanceBetweenCenters = vpImagePoint::distance(cic_i.getCenter(), cic_j.getCenter());
       double radiusDifference = std::abs(cic_i.getRadius() - cic_j.getRadius());
@@ -523,11 +518,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
         unsigned int totalVotes = circleCandidatesVotes[i] + circleCandidatesVotes[j];
         vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesVotes[i]+ cic_j.getCenter()  * circleCandidatesVotes[j]) / totalVotes;
         float newRadius = (cic_i.getRadius() * circleCandidatesVotes[i] + cic_j.getRadius() * circleCandidatesVotes[j]) / totalVotes;
-        std::cout << "Prev centers =\n\t" << cic_i.getCenter() << "\n\t" << cic_j.getCenter() << std::endl;
-        std::cout << "New center = " << newCenter << std::endl;
-        std::cout << "Prev radii =\n\t" << cic_i.getRadius() << "\n\t" << cic_j.getRadius() << std::endl;
-        std::cout << "New radius = " << newRadius << std::endl;
-        cic_i = vpCircle2D(newCenter, newRadius);
+        cic_i = vpImageCircle(newCenter, newRadius);
         m_finalCircles[j] = m_finalCircles[nbCandidates - 1];
         circleCandidatesVotes[i] = totalVotes;
         circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
@@ -539,7 +530,6 @@ vpCircleHoughTransform::mergeCircleCandidates()
     }
     // // Add the circle candidate CiC_i, potentially merged with other circle candidates, to the final list of detected circles
     m_finalCircles[i] = cic_i;
-    std::cout << "</ CiC_" << i << " >" << std::endl;
   }
   m_finalCircleVotes = circleCandidatesVotes;
 }

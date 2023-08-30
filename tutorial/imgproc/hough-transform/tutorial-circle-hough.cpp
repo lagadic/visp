@@ -158,7 +158,7 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
 {
   double t0 = vpTime::measureTimeMicros();
   //! [Run detection]
-  std::vector<vpCircleHoughTransform::vpCircle2D> detectedCircles = detector.detect(I_src, nbCirclesToDetect);
+  std::vector<vpImageCircle> detectedCircles = detector.detect(I_src, nbCirclesToDetect);
   //! [Run detection]
   double tF = vpTime::measureTimeMicros();
   std::cout << "Process time = " << (tF - t0) * 0.001 << "ms" << std::endl << std::flush;
@@ -170,7 +170,7 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
   unsigned int idColor = 0;
   //! [Iterate detections]
   for (auto circleCandidate : detectedCircles) {
-    circleCandidate.display(I_disp, v_colors[idColor], 2);
+    vpImageDraw::drawCircle(I_disp, circleCandidate, v_colors[idColor], 2);
     std::cout << "Circle #" << id << ":" << std::endl;
     std::cout << "\tCenter: (" << circleCandidate.getCenter() << ")" << std::endl;
     std::cout << "\tRadius: (" << circleCandidate.getRadius() << ")" << std::endl;

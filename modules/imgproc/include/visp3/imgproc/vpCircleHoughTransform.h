@@ -40,6 +40,7 @@
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImageDraw.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
@@ -331,76 +332,6 @@ public:
   };
 
   /**
-   * \brief Class that defines a 2D circle in an image.
-   */
-  class vpCircle2D
-  {
-  public:
-    /*!
-    * Default constructor.
-    */
-    vpCircle2D() : m_center(), m_radius(0.) { }
-
-    /*!
-    * Constructor from a center and radius.
-    */
-    vpCircle2D(const vpImagePoint &center, const float &radius) : m_center(center), m_radius(radius) { }
-
-#ifdef HAVE_OPENCV_CORE
-    /*!
-    * Constructor from an OpenCV vector that contains [center_x, center_y, radius].
-    */
-    vpCircle2D(const cv::Vec3f &vec) : m_center(vec[1], vec[0]), m_radius(vec[2]) { }
-#endif
-
-    /*!
-    * Default destructor.
-    */
-    virtual ~vpCircle2D() { };
-
-    /*!
-    * Return the center of the 2D circle.
-    */
-    vpImagePoint getCenter() const { return m_center; };
-
-    /*!
-    * Return the radius of the 2D circle.
-    */
-    float getRadius() const { return m_radius; };
-
-    /*!
-    * Return the 2D circle bounding box.
-    */
-    vpRect getBBox() const
-    {
-      vpRect bbox(m_center - vpImagePoint(m_radius, m_radius), 2 * m_radius, 2 * m_radius);
-      return bbox;
-    };
-
-    /*!
-    * Return normalized moment \f$n_{20}\f$.
-    */
-    float get_n20() const { return m_radius * m_radius / 4; };
-
-    /*!
-    * Return normalized moment \f$n_{02}\f$.
-    */
-    float get_n02() const { return m_radius * m_radius / 4; };
-
-    /*!
-    * Return normalized moment \f$n_{02}\f$.
-    */
-    float get_n11() const { return 0.; };
-
-    template < typename Type >
-    void display(vpImage< Type > &img, const vpColor &color = vpColor::blue, const unsigned int &thickness = 1, const unsigned int &size = 5) const;
-
-  private:
-    vpImagePoint m_center;
-    float m_radius;
-  };
-
-  /**
    * \brief Construct a new vpCircleHoughTransform object with default parameters.
    */
   vpCircleHoughTransform();
@@ -424,9 +355,9 @@ public:
    * \brief Perform Circle Hough Transform to detect the circles in an OpenCV image.
    *
    * \param[in] I The input gray scale image.
-   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpCircle2D> detect(const cv::Mat &cv_I);
+  std::vector<vpImageCircle> detect(const cv::Mat &cv_I);
 #endif
 
   /**
@@ -434,17 +365,17 @@ public:
    * perform Circle Hough Transform to detect the circles in it
    *
    * \param[in] I The input color image.
-   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpCircle2D> detect(const vpImage<vpRGBa> &I);
+  std::vector<vpImageCircle> detect(const vpImage<vpRGBa> &I);
 
   /**
    * \brief Perform Circle Hough Transform to detect the circles in a gray-scale image
    *
    * \param[in] I The input gray scale image.
-   * \return std::vector<vpCircle2D> The list of 2D circles detected in the image.
+   * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpCircle2D> detect(const vpImage<unsigned char> &I);
+  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
   /**
    * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
@@ -453,10 +384,10 @@ public:
    * \param[in] I The input gray scale image.
    * \param[in] nbCircles The number of circles we want to get. If negative, all the circles will be
    * returned, sorted such as result[0] has the highest number of votes and result[end -1] the lowest.
-   * \return std::vector<vpCircle2D> The list of 2D circles with the most number
+   * \return std::vector<vpImageCircle> The list of 2D circles with the most number
    * of votes detected in the image.
    */
-  std::vector<vpCircle2D> detect(const vpImage<unsigned char> &I, const int &nbCircles);
+  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -689,10 +620,10 @@ public:
   /**
    * \brief Get the Circle Candidates before merging step.
    *
-   * \return std::vector<vpCircle2D> The list of circle candidates
+   * \return std::vector<vpImageCircle> The list of circle candidates
    * that were obtained before the merging step.
    */
-  inline std::vector<vpCircle2D> getCircleCandidates()
+  inline std::vector<vpImageCircle> getCircleCandidates()
   {
     return m_circleCandidates;
   }
@@ -850,26 +781,11 @@ private:
   std::vector<int> m_centerVotes; /*!< Number of votes for the center candidates that are kept.*/
 
   // // Circle candidates computation attributes
-  std::vector<vpCircle2D> m_circleCandidates;        /*!< List of the candidate circles.*/
+  std::vector<vpImageCircle> m_circleCandidates;        /*!< List of the candidate circles.*/
   std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of votes for the candidate circles.*/
 
   // // Circle candidates merging atttributes
-  std::vector<vpCircle2D> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
+  std::vector<vpImageCircle> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the candidate circles.*/
 };
-
-/*!
- * Display the \b vpCircle2D  in an image.
- *
- * \param[in] img : Image used as background.
- * \param[in] color : Color used to draw the CAD model.
- * \param[in] thickness : Thickness used to draw the CAD model.
- */
-template < typename Type >
-inline void
-vpCircleHoughTransform::vpCircle2D::display(vpImage< Type > &img, const vpColor &color, const unsigned int &thickness, const unsigned int &size) const
-{
-  vpImageDraw::drawCross(img, m_center, size, color, thickness);
-  vpImageDraw::drawCircle(img, m_center, m_radius, color, thickness);
-}
 #endif
