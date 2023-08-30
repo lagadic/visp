@@ -197,7 +197,42 @@ class HeaderFile():
 
       #Operator definitions
       for method, method_config in operators:
-        pass
+        method_name = get_name(method.name)
+        params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+        if len(params_strs) > 1:
+          print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
+          continue
+        elif len(params_strs) < 1:
+          print(f'Found unary operator {name_cpp}::{method_name}, skipping')
+          continue
+        binary_operators = [
+          ('==', 'eq'),
+          ('!=', 'ne'),
+          ('<', 'lt'),
+          ('>', 'gt'),
+          ('<=', 'le'),
+          ('>=', 'ge'),
+          ('+', 'add'),
+          ('-', 'sub'),
+          ('*', 'mul'),
+          ('/', 'truediv'),
+          ('%', 'mod'),
+          # ('<<', 'lshift'),
+          # ('>>', 'rshift'),
+          ('&', 'and'),
+          ('|', 'or'),
+          ('^', 'xor'),
+        ]
+        binary_op_tuple = None
+        for tuple in binary_operators:
+          if method_name == f'operator{tuple[0]}':
+            operator_str = f'''
+{python_ident}.def("__{tuple[1]}__", [](const {name_cpp}& self, {params_strs[0]} o) {{
+  return (self {tuple[0]} o);
+}}, py::is_operator());'''
+            method_strs.append(operator_str)
+            break
+
 
       # Define classical methods
       for method, method_config in basic_methods:
