@@ -78,8 +78,9 @@ After the declaration of a new image container \c C, Canny edge detector is appl
 \snippet tutorial-image-filter.cpp Canny
 
 Where:
-- 5: is the low threshold
-- 15: is the high threshold set in the program as three times the lower threshold (following Canny’s recommendation)
+- 5: is the size of the Gaussian kernel used to blur the image before applying the Canny edge detector.
+- -1.: is the upper threshold set in the program. Setting it to a negative value asks ViSP to compute automatically the lower and upper thresholds. Otherwise,
+the lower threshold is set to be equal to one third of the upper threshold, following Canny’s recommendation.
 - 3: is the size of the Sobel kernel used internally.
 
 The resulting image \c C is the following:
@@ -93,13 +94,9 @@ For example, let us consider the 3x3 Sobel kernel defined in \c K.
 
 \f[
 {\bf K} = \left[ \begin{matrix}
-\hline
 1 & 0 & -1 \\
-\hline
 2 & 0 & -2 \\
-\hline
 1 & 0 & -1 \\
-\hline
 \end{matrix} \right]
 \f]
 

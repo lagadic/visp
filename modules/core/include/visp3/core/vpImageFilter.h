@@ -73,26 +73,25 @@ public:
                     double thresholdCanny, unsigned int apertureSobel);
 
   /*!
-   Apply a 1x3 derivative filter to an image pixel.
+    Apply a 1x3 derivative filter to an image pixel.
 
-   \param I : Image to filter
-   \param r : coordinates (row) of the pixel
-   \param c : coordinates (column) of the pixel
-   */
+    \param I : Image to filter
+    \param r : coordinates (row) of the pixel
+    \param c : coordinates (column) of the pixel
+  */
   template <class T> static double derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
-            112.0 * (I[r][c + 3] - I[r][c - 3])) /
-      8418.0;
+            112.0 * (I[r][c + 3] - I[r][c - 3])) / 8418.0;
   }
 
   /*!
-   Apply a 3x1 derivative filter to an image pixel.
+    Apply a 3x1 derivative filter to an image pixel.
 
-   \param I : Image to filter
-   \param r : coordinates (row) of the pixel
-   \param c : coordinates (column) of the pixel
-   */
+    \param I : Image to filter
+    \param r : coordinates (row) of the pixel
+    \param c : coordinates (column) of the pixel
+  */
   template <class T> static double derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
@@ -100,19 +99,18 @@ public:
   }
 
   /*!
-   Apply a 1 x size Derivative Filter in X to an image pixel.
+    Apply a 1 x size Derivative Filter in X to an image pixel.
 
-   \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   \param I : Image to filter
-   \param r : coordinates (row) of the pixel
-   \param c : coordinates (column) of the pixel
-   \param filter : coefficients of the filter to be initialized using
-   vpImageFilter::getGaussianDerivativeKernel(). \param size : size of the
-   filter
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    \param I : Image to filter
+    \param r : Coordinates(row) of the pixel
+    \param c : Coordinates(column) of the pixel
+    \param filter : Coefficients of the filter to be initialized using
+    vpImageFilter::getGaussianDerivativeKernel().
+    \param size : Size of the filter.
 
-   \sa vpImageFilter::getGaussianDerivativeKernel()
-   */
-
+    \sa vpImageFilter::getGaussianDerivativeKernel()
+    */
   template <class T, typename FilterType>
   static FilterType derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -675,6 +673,7 @@ public:
     }
     return result + filter[0] * I[r][c].G;
   }
+
   static inline double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -870,8 +869,7 @@ public:
     \param size : Filter size. This value should be odd.
     \param sigma : Gaussian standard deviation. If it is equal to zero or
     negative, it is computed from filter size as sigma = (size-1)/6.
-    \param normalize : Flag indicating whether to normalize the filter coefficients or
-    not.
+    \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
     \sa getGaussianKernel() to know which kernel is used.
   */
@@ -914,12 +912,12 @@ public:
   }
 
   /*!
-   Apply a 5x5 Gaussian filter to an image pixel.
+    Apply a 5x5 Gaussian filter to an image pixel.
 
-   \param fr : Image to filter
-   \param r : coordinates (row) of the pixel
-   \param c : coordinates (column) of the pixel
-   */
+    \param fr : Image to filter
+    \param r : coordinates (row) of the pixel
+    \param c : coordinates (column) of the pixel
+  */
   template <class T> static double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
   {
     return (15.0 * fr[r][c] + 12.0 * (fr[r - 1][c] + fr[r][c - 1] + fr[r + 1][c] + fr[r][c + 1]) +
@@ -1042,8 +1040,7 @@ public:
   }
 
   template <typename ImageType, typename FilterType>
-  static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter,
-  unsigned int size)
+  static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
     dIx.resize(I.getHeight(), I.getWidth());
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -1071,7 +1068,7 @@ public:
   */
   template <typename ImageType, typename FilterType>
   static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
-    const FilterType *gaussianDerivativeKernel, unsigned int size)
+                              const FilterType *gaussianDerivativeKernel, unsigned int size)
   {
     vpImage<FilterType> GIy;
     vpImageFilter::filterY<FilterType>(I, GIy, gaussianKernel, size);
@@ -1133,7 +1130,7 @@ public:
   */
   template <typename ImageType, typename FilterType>
   static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
-    const FilterType *gaussianDerivativeKernel, unsigned int size)
+                              const FilterType *gaussianDerivativeKernel, unsigned int size)
   {
     vpImage<FilterType> GIx;
     vpImageFilter::filterX<FilterType>(I, GIx, gaussianKernel, size);
@@ -1141,11 +1138,11 @@ public:
   }
 
   /*!
-  Get Sobel kernel for X-direction.
-  \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-  \param filter : Pointer to a double array already allocated.
-  \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-  \return Scaling factor.
+    Get Sobel kernel for X-direction.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \param filter : Pointer to a double array already allocated.
+    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+    \return Scaling factor.
   */
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
@@ -1218,6 +1215,12 @@ public:
 
     return 1 / 16.0;
   }
+
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+  static double median(const cv::Mat &cv_I);
+  static double median(const vpImage<unsigned char> &Isrc);
+  static std::vector<double> median(const vpImage<vpRGBa> &Isrc);
+#endif
 };
 
 #endif
