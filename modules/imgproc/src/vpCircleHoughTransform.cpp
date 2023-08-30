@@ -188,9 +188,6 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
   int cannyThresh = m_algoParams.m_cannyThresh;
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
-  if (m_algoParams.m_cannyThresh < 0.) {
-    cannyThresh = vp::computeCannyThreshold(I);
-  }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, cannyThresh, m_algoParams.m_sobelKernelSize);
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
@@ -328,16 +325,16 @@ vpCircleHoughTransform::computeCenterCandidates()
                   const int &offsetX, const int &offsetY,
                   const unsigned int &nbCols, const unsigned int &nbRows,
                   vpImage<float> &accum, bool &hasToStop) {
-                  if (x - offsetX >= nbCols ||
-                      y - offsetY >= nbRows
-                    ) {
-                    hasToStop = true;
-                  }
-                  else {
-                    float dx = (x_orig - (float)x);
-                    float dy = (y_orig - (float)y);
-                    accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
-                  }
+                    if (x - offsetX >= nbCols ||
+                        y - offsetY >= nbRows
+                      ) {
+                      hasToStop = true;
+                    }
+                    else {
+                      float dx = (x_orig - (float)x);
+                      float dy = (y_orig - (float)y);
+                      accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+                    }
               };
 
             updateAccumulator(x1, y1, x_low, y_low,

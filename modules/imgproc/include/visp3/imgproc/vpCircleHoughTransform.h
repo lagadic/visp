@@ -42,10 +42,10 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImageDraw.h>
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRect.h>
-#include <visp3/imgproc/vpImageMedian.h>
 
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
