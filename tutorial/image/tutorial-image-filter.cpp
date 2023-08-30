@@ -84,11 +84,9 @@ int main(int argc, char **argv)
     display(dIy, "Gradient dIy");
 
     //! [Canny]
-#if defined(HAVE_OPENCV_IMGPROC)
     vpImage<unsigned char> C;
     vpImageFilter::canny(I, C, 5, -1., 3);
     display(C, "Canny");
-#endif
     //! [Canny]
 
     //! [Convolution kernel]
