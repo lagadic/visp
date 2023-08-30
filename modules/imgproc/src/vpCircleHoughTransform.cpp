@@ -185,7 +185,6 @@ vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<uns
 void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
-#if defined(HAVE_OPENCV_IMGPROC)
   int cannyThresh = m_algoParams.m_cannyThresh;
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
@@ -193,9 +192,6 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     cannyThresh = vp::computeCannyThreshold(I);
   }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, cannyThresh, m_algoParams.m_sobelKernelSize);
-#else
-  throw(vpException(vpException::functionNotImplementedError, "Canny edge detection has not been implemented yet !"));
-#endif
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
     filterEdgeMap();
