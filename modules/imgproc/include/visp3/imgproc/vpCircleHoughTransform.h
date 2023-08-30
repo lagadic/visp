@@ -67,7 +67,7 @@ public:
   /**
    * \brief Class that gather the algorithm parameters.
    */
-  class CHTransformParameters
+  class vpCircleHoughTransformParameters
   {
   private:
     // // Gaussian smoothing attributes
@@ -100,7 +100,7 @@ public:
 
     friend vpCircleHoughTransform;
   public:
-    CHTransformParameters()
+    vpCircleHoughTransformParameters()
       : m_gaussianKernelSize(5)
       , m_gaussianStdev(1.)
       , m_sobelKernelSize(3)
@@ -121,7 +121,7 @@ public:
     }
 
     /**
-     * \brief Construct a new CHTransformParameters object.
+     * \brief Construct a new vpCircleHoughTransformParameters object.
      *
      * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
      * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
@@ -140,7 +140,7 @@ public:
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
      */
-    CHTransformParameters(
+    vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
       , const float &gaussianStdev
       , const int &sobelKernelSize
@@ -199,12 +199,12 @@ public:
     // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
-   * \brief Create a new CHTransformParameters from a JSON file.
+   * \brief Create a new vpCircleHoughTransformParameters from a JSON file.
    *
    * \param[in] jsonFile The path towards the JSON file.
-   * \return CHTransformParameters The corresponding CHTransformParameters object.
+   * \return vpCircleHoughTransformParameters The corresponding vpCircleHoughTransformParameters object.
    */
-    inline static CHTransformParameters createFromJSON(const std::string &jsonFile)
+    inline static vpCircleHoughTransformParameters createFromJSON(const std::string &jsonFile)
     {
       std::ifstream file(jsonFile);
       if (!file.good()) {
@@ -224,7 +224,7 @@ public:
         msg << "Byte position of error: " << e.byte;
         throw vpException(vpException::ioError, msg.str());
       }
-      CHTransformParameters params = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+      vpCircleHoughTransformParameters params = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
       file.close();
       return params;
     }
@@ -251,7 +251,7 @@ public:
      * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
      * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
-    inline friend void from_json(const json &j, CHTransformParameters &params)
+    inline friend void from_json(const json &j, vpCircleHoughTransformParameters &params)
     {
       params.m_gaussianKernelSize = j.value("gaussianKernelSize", params.m_gaussianKernelSize);
       if ((params.m_gaussianKernelSize % 2) != 1) {
@@ -309,7 +309,7 @@ public:
      * \param[out] j : A JSON parser object.
      * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
-    inline friend void to_json(json &j, const CHTransformParameters &params)
+    inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
       std::pair<unsigned int, unsigned int> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
@@ -339,10 +339,10 @@ public:
 
   /**
    * \brief Construct a new vpCircleHoughTransform object
-   * from a \b CHTransformParameters object.
+   * from a \b vpCircleHoughTransformParameters object.
    * \param[in] algoParams The parameters of the Circle Hough Transform.
    */
-  vpCircleHoughTransform(const CHTransformParameters &algoParams);
+  vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams);
 
   /**
    * \brief Destroy the vp Circle Hough Transform object
@@ -448,7 +448,7 @@ public:
    *
    * \param[in] algoParams The algorithm parameters.
    */
-  void init(const CHTransformParameters &algoParams);
+  void init(const vpCircleHoughTransformParameters &algoParams);
 
   /**
    * \brief Set the parameters of the Gaussian filter, that computes the
@@ -763,7 +763,7 @@ private:
   void mergeCircleCandidates();
 
 
-  CHTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
+  vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
   vpArray2D<float> m_fg;
   vpArray2D<float> m_fgDg;

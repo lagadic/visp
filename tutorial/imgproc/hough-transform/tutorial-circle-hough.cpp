@@ -451,7 +451,7 @@ int main(int argc, char **argv)
   }
 
   //! [Algo params]
-  vpCircleHoughTransform::CHTransformParameters
+  vpCircleHoughTransform::vpCircleHoughTransformParameters
     algoParams(opt_gaussianKernelSize
       , opt_gaussianSigma
       , opt_sobelKernelSize
