@@ -1,6 +1,6 @@
 # tutorial-cht
 
-## Running the tutorial-cht software
+## Running the circle detection tutorial
 
 ### On synthetic images
 
@@ -10,7 +10,7 @@ To use a JSON file as configuration, you need to install [JSON for modern C++](h
 To run the software on the synthetic images, please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json 
+$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json
 ```
 
 #### Using command lines
@@ -18,7 +18,7 @@ $ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TAR
 To run the software on the synthetic images without a JSON configuration file, please run:
 ```
 $ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks 
+$ ./tutorial-circle-hough --input ${TARGET}_disks
 ```
 
 ### On actual images
