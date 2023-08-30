@@ -106,7 +106,7 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
       #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
@@ -132,6 +132,7 @@ class HeaderFile():
   def parse_data(self, data: ParsedData):
     result = ''
     header_env = HeaderEnvironment(data)
+    print(data.namespace.doxygen)
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
     for enum in data.namespace.enums:
@@ -143,7 +144,7 @@ class HeaderFile():
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
     result = ''
-
+    print('Doxygen', cls.class_decl.doxygen)
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: Dict[str, str]) -> str:
       spec_result = ''
       python_ident = f'py{name_python}'
@@ -214,8 +215,7 @@ class HeaderFile():
         py_arg_str = ', '.join([f'py::arg("{param.name}")' for param in method.parameters])
         if len(py_arg_str) > 0:
           py_arg_str = ', ' + py_arg_str
-        if method_config['custom_name'] is not None:
-          print(method_config)
+
         if method.constructor and not contains_pure_virtual_methods:
           ctor_str = f'''
             {python_ident}.def(py::init<{argument_types_str}>(){py_arg_str});'''
@@ -223,8 +223,10 @@ class HeaderFile():
         else:
           method_name = get_name(method.name)
           py_method_name = method_config.get('custom_name') or method_name
-          if method.destructor or method_name.startswith('operator'):
+          if method.destructor:
             continue
+          if method_name.startswith('operator'):
+            print(f'Found operator {method_name}')
           def_type = 'def' # Def for object methods
           pointer_to_type = f'({name_cpp}::*)'
           if method.template is not None and method_config.get('specializations') is None:
@@ -247,7 +249,6 @@ class HeaderFile():
 
 
       for enum in cls.enums:
-
         print('============')
         print(get_type(enum.typename, owner_specs, header_env.mapping))
         print(enum.values)
@@ -255,7 +256,7 @@ class HeaderFile():
       for typedef in cls.typedefs:
         print('typedef============')
         print(typedef)
-        print(get_type(typedef.type, owner_specs, header_env.mapping))
+        # print(get_type(typedef.type, owner_specs, header_env.mapping))
         print(typedef.name)
         print('=============')
 
