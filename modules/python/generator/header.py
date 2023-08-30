@@ -7,8 +7,9 @@ from cxxheaderparser import types
 from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope, parse_file
 from pathlib import Path
 import json
-from utils import *
 from dataclasses import dataclass
+from utils import *
+from methods import *
 
 
 def filter_includes(include_names: Set[str]) -> List[str]:
@@ -106,7 +107,7 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
       #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
@@ -165,7 +166,7 @@ class HeaderFile():
       # if name_cpp == 'vpColVector':
       cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
       self.class_decls.append(cls_result)
-      methods_str = ''
+
       contains_pure_virtual_methods = False
       # Skip classes that have pure virtual methods since they cannot be instantiated
       for method in cls.methods:
@@ -174,78 +175,52 @@ class HeaderFile():
           break
 
 
-      # Add to string representation
-      to_string_str = ''
-      for friend in cls.friends:
-        if friend.fn is not None:
-          is_ostream_operator = True
-          fn = friend.fn
-          if fn.return_type is None:
-            is_ostream_operator = False
-          else:
-            return_str = get_type(fn.return_type, {}, {})
-            if return_str != 'std::ostream&':
-              is_ostream_operator = False
-          if not is_ostream_operator:
-            continue
-          if is_ostream_operator:
-            to_string_str = f'''
-            {python_ident}.def("__repr__", []({name_cpp} &a) {{
-              std::stringstream s;
-              s << a;
-              return s.str();
-          }});'''
-
 
       generated_methods = []
-      for method in cls.methods:
-        if method.access is not None and method.access != 'public':
-          continue
-        if method.pure_virtual:
-          continue
-        params_strs = []
+      method_strs = []
+      bindable_methods_and_config, filtered_strs = get_bindable_methods_with_config(self.submodule, cls.methods,
+                                                                                    name_cpp_no_template, owner_specs, header_env.mapping)
+      print('\n'.join(filtered_strs))
+
+      constructors, non_constructors = split_methods_with_config(bindable_methods_and_config, lambda m: m.constructor)
+
+      cpp_operator_names = cpp_operator_list()
+      operators, basic_methods = split_methods_with_config(non_constructors, lambda m: get_name(m.name) in cpp_operator_names)
+
+      # Constructors definitions
+      if not contains_pure_virtual_methods:
+        for method, method_config in constructors:
+          params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+          py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
+          ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
+          method_strs.append(ctor_str)
+
+      #Operator definitions
+      for method, method_config in operators:
+        pass
+
+      # Define classical methods
+      for method, method_config in basic_methods:
+
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
-        if any(map(lambda param_str: param_str is None, params_strs)):
-          print(f'Skipping method {name_cpp}{get_name(method.name)} because of argument type')
-          continue
-        method_signature_internal = get_method_signature(method.name, get_type(method.return_type, owner_specs, header_env.mapping) or "", params_strs)
+        py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
 
-        argument_types_str = ', '.join(params_strs)
-        method_config = self.submodule.get_method_config(name_cpp_no_template, method, owner_specs, header_env.mapping)
-        py_arg_str = ', '.join([f'py::arg("{param.name}")' for param in method.parameters])
-        if len(py_arg_str) > 0:
-          py_arg_str = ', ' + py_arg_str
+        method_name = get_name(method.name)
+        py_method_name = method_config.get('custom_name') or method_name
 
-        if method.constructor and not contains_pure_virtual_methods:
-          ctor_str = f'''
-            {python_ident}.def(py::init<{argument_types_str}>(){py_arg_str});'''
-          methods_str += ctor_str
-        else:
-          method_name = get_name(method.name)
-          py_method_name = method_config.get('custom_name') or method_name
-          if method.destructor:
-            continue
-          if method_name.startswith('operator'):
-            print(f'Found operator {method_name}')
-          def_type = 'def' # Def for object methods
-          pointer_to_type = f'({name_cpp}::*)'
-          if method.template is not None and method_config.get('specializations') is None:
-            print(f'Skipping method {name_cpp}::{method_name} because it is templated')
-            continue
-          if method.static:
-            def_type = 'def_static'
-            pointer_to_type = '(*)'
-          return_type = get_type(method.return_type, owner_specs, header_env.mapping)
-          if return_type is None:
-            print(f'Skipping method {name_cpp}::{method_name} because of unhandled return type {method.return_type}')
-            continue
-          maybe_const = ''
-          if method.const:
-            maybe_const = 'const'
-          cast_str = f'{return_type} {pointer_to_type}({argument_types_str}) {maybe_const}'
-          method_str = f'{python_ident}.{def_type}("{py_method_name}", static_cast<{cast_str}>(&{name_cpp}::{method_name}){py_arg_str});\n'
-          methods_str += method_str
-          generated_methods.append((py_method_name, method))
+        return_type = get_type(method.return_type, owner_specs, header_env.mapping)
+        method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
+        method_str = define_method(py_method_name, method_ref_str, py_arg_strs, method.static)
+        method_str = f'{python_ident}.{method_str};'
+        method_strs.append(method_str)
+        generated_methods.append((py_method_name, method))
+
+
+      # Add to string representation
+      to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
+      if len(to_string_str) > 0:
+        method_strs.append(to_string_str)
+
 
 
       for enum in cls.enums:
@@ -269,8 +244,7 @@ class HeaderFile():
         raise RuntimeError
 
       #spec_result += cls_result
-      spec_result += methods_str
-      spec_result += to_string_str
+      spec_result += '\n'.join(method_strs)
       return spec_result
 
     print(f'Parsing class "{cls.class_decl.typename}"')
