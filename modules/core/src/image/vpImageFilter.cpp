@@ -33,6 +33,7 @@
  *
 *****************************************************************************/
 
+#include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -263,7 +264,6 @@ double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThres
 
 int main()
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;
@@ -277,7 +277,6 @@ int main()
 
   // Apply the Canny edge operator and set the Icanny image.
   vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, thresholdCanny, apertureSobel);
-#endif
   return (0);
 }
   \endcode
@@ -305,8 +304,12 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
   }
   cv::Canny(cv_I_blur, edges_cvmat, lowerCannyThresh, upperCannyThresh, (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
-}
+#else
+(void)apertureSobel;
+vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
+Ires = edgeDetector.detect(Isrc);
 #endif
+}
 
 /**
  * \cond DO_NOT_DOCUMENT
@@ -432,12 +435,10 @@ void vpImageFilter::filterY<double>(const vpImage<double> &I, vpImage<double> &d
 }
 
 template<>
-void vpImageFilter::gaussianBlur<float>(const vpImage<unsigned char> &I, vpImage<float> &GI, unsigned int size, float sigma,
-  bool normalize);
+void vpImageFilter::gaussianBlur<float>(const vpImage<unsigned char> &I, vpImage<float> &GI, unsigned int size, float sigma, bool normalize);
 
 template<>
-void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size, double sigma,
-  bool normalize);
+void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImage<double> &GI, unsigned int size, double sigma, bool normalize);
 /**
  * \endcond
 */
@@ -452,7 +453,7 @@ void vpImageFilter::gaussianBlur<double>(const vpImage<unsigned char> &I, vpImag
   \param normalize : Flag indicating whether to normalize the filter coefficients or not.
 
   \sa getGaussianKernel() to know which kernel is used.
-*/
+ */
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma, bool normalize)
 {
   double *fg = new double[(size + 1) / 2];

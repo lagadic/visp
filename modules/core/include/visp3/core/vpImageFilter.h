@@ -69,10 +69,8 @@
 class VISP_EXPORT vpImageFilter
 {
 public:
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
                     double thresholdCanny, unsigned int apertureSobel);
-#endif
 
   /*!
     Apply a 1x3 derivative filter to an image pixel.
@@ -105,14 +103,14 @@ public:
 
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Image to filter
-    \param r : Coordinates (row) of the pixel
-    \param c : Coordinates (column) of the pixel
+    \param r : Coordinates(row) of the pixel
+    \param c : Coordinates(column) of the pixel
     \param filter : Coefficients of the filter to be initialized using
     vpImageFilter::getGaussianDerivativeKernel().
     \param size : Size of the filter.
 
     \sa vpImageFilter::getGaussianDerivativeKernel()
-  */
+    */
   template <class T, typename FilterType>
   static FilterType derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -131,14 +129,15 @@ public:
     Apply a size x 1 Derivative Filter in Y to an image pixel.
 
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Image to filter
-    \param r : Coordinates (row) of the pixel
-    \param c : Coordinates (column) of the pixel
-    \param filter : Coefficients of the filter to be initialized using vpImageFilter::getGaussianDerivativeKernel().
+    \param I : Image to filter.
+    \param r : Coordinates (row) of the pixel.
+    \param c : Coordinates (column) of the pixel.
+    \param filter : Coefficients of the filter to be initialized using
+    vpImageFilter::getGaussianDerivativeKernel().
     \param size : Size of the filter.
 
     \sa vpImageFilter::getGaussianDerivativeKernel()
-   */
+  */
   template <class T, typename FilterType>
   static FilterType derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -226,7 +225,7 @@ public:
     \f[
       \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v =
     \textbf{M}^t \ast \textbf{I} \f]
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Image to filter
     \param Iu : Filtered image along the horizontal axis (u = columns).
     \param Iv : Filtered image along the vertical axis (v = rows).
@@ -285,11 +284,11 @@ public:
 
   /*!
     Apply a separable filter.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I: The original image.
-    \param GI: The filtered image.
-    \param filter: The separable filter.
-    \param size: The size of the filter.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    \param I : The original image.
+    \param GI : The filtered image.
+    \param filter : The separable filter.
+    \param size : The size of the filter.
   */
   template <typename FilterType>
   static void filter(const vpImage<unsigned char> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
@@ -302,7 +301,7 @@ public:
 
   /*!
     Apply a separable filter.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I: The original image.
     \param GI: The filtered image.
     \param filter: The separable filter.
@@ -319,18 +318,15 @@ public:
 
   static inline unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return (unsigned char)((1. * I[i][j - 2] + 4. * I[i][j - 1] + 6. * I[i][j] + 4. * I[i][j + 1] + 1. * I[i][j + 2]) /
-                           16.);
+    return (unsigned char)((1. * I[i][j - 2] + 4. * I[i][j - 1] + 6. * I[i][j] + 4. * I[i][j + 1] + 1. * I[i][j + 2]) / 16.);
   }
   static inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return (unsigned char)((1. * I[i - 2][j] + 4. * I[i - 1][j] + 6. * I[i][j] + 4. * I[i + 1][j] + 1. * I[i + 2][j]) /
-                           16.);
+    return (unsigned char)((1. * I[i - 2][j] + 4. * I[i - 1][j] + 6. * I[i][j] + 4. * I[i + 1][j] + 1. * I[i + 2][j]) / 16.);
   }
 
   template <typename FilterType>
-  static void filterX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const FilterType *filter,
-  unsigned int size)
+  static void filterX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
     dIx.resize(I.getHeight(), I.getWidth());
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -548,8 +544,8 @@ public:
   }
 
   template <typename FilterType>
-  static inline FilterType filterX(const vpImage<FilterType> &I, unsigned int r, unsigned int c, const FilterType *filter,
-                                   unsigned int size)
+  static inline FilterType filterX(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
+                                   const FilterType *filter, unsigned int size)
   {
     FilterType result;
 
@@ -562,8 +558,8 @@ public:
   }
 
   template <typename FilterType>
-  static inline FilterType filterXLeftBorder(const vpImage<FilterType> &I, unsigned int r, unsigned int c, const FilterType *filter,
-                                             unsigned int size)
+  static inline FilterType filterXLeftBorder(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
+                                             const FilterType *filter, unsigned int size)
   {
     FilterType result;
 
@@ -867,7 +863,7 @@ public:
 
   /*!
     Apply a Gaussian blur to an image.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image.
     \param GI : Filtered image.
     \param size : Filter size. This value should be odd.
@@ -893,7 +889,7 @@ public:
 
   /*!
     Apply a Gaussian blur to a double image.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input double image.
     \param GI : Filtered image.
     \param size : Filter size. This value should be odd.
@@ -929,8 +925,7 @@ public:
             5.0 * (fr[r - 2][c] + fr[r][c - 2] + fr[r + 2][c] + fr[r][c + 2]) +
             4.0 * (fr[r - 2][c + 1] + fr[r - 2][c - 1] + fr[r - 1][c - 2] + fr[r + 1][c - 2] + fr[r + 2][c - 1] +
                    fr[r + 2][c + 1] + fr[r - 1][c + 2] + fr[r + 1][c + 2]) +
-            2.0 * (fr[r - 2][c - 2] + fr[r + 2][c - 2] + fr[r - 2][c + 2] + fr[r + 2][c + 2])) /
-      159.0;
+            2.0 * (fr[r - 2][c - 2] + fr[r + 2][c - 2] + fr[r - 2][c + 2] + fr[r + 2][c + 2])) / 159.0;
   }
   // Gaussian pyramid operation
   static void getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
@@ -939,7 +934,7 @@ public:
 
   /*!
     Return the coefficients \f$G_i\f$ of a Gaussian filter.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param[out] filter : Pointer to the half size filter kernel that should refer to a
     (size+1)/2 array. The first value refers to the central coefficient, the
     next one to the right coefficients. Left coefficients could be deduced by
@@ -985,7 +980,7 @@ public:
     Return the coefficients of a Gaussian derivative filter that may be used to
     compute spatial image derivatives after applying a Gaussian blur.
 
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to the filter kernel that should refer to a
     (size+1)/2 array. The first value refers to the central coefficient, the
     next one to the right coefficients. Left coefficients could be deduced by
@@ -1063,7 +1058,7 @@ public:
 
   /*!
     Compute the gradient along X after applying a gaussian filter along Y.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image
     \param dIx : Gradient along X.
     \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
@@ -1125,7 +1120,7 @@ public:
 
   /*!
     Compute the gradient along Y after applying a gaussian filter along X.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param I : Input image
     \param dIy : Gradient along Y.
     \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
@@ -1165,7 +1160,7 @@ public:
 
   /*!
     Get Sobel kernel for Y-direction.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
     \return Scaling factor.
