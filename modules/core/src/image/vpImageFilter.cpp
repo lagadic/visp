@@ -251,6 +251,7 @@ double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThres
   vpImageConvert::convert(I, cv_I);
   return computeCannyThreshold(cv_I, nullptr, lowerThresh);
 }
+#endif
 
 /*!
   Apply the Canny edge operator on the image \e Isrc and return the resulting
@@ -294,6 +295,7 @@ int main()
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
 {
+#if defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img_cvmat, cv_I_blur, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
   cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
@@ -305,9 +307,9 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
   cv::Canny(cv_I_blur, edges_cvmat, lowerCannyThresh, upperCannyThresh, (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
 #else
-(void)apertureSobel;
-vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
-Ires = edgeDetector.detect(Isrc);
+  (void)apertureSobel;
+  vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
+  Ires = edgeDetector.detect(Isrc);
 #endif
 }
 
