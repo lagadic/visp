@@ -556,7 +556,7 @@ int main(int argc, const char *argv[])
       std::vector<double> expected_median_rgba = { 4, 8, 12 };
       for (unsigned int i = 0; i < 3; i++) {
         bool test_local = (median_rgba[i] == expected_median_rgba[i]);
-        test &= test;
+        test &= test_local;
         std::cout << "(median_rgba[" << i << "] (=" << median_rgba[i] << ") == expected_median_rgba[" << i << "] ( " << expected_median_rgba[i] << "))? " << test_local << std::endl;
       }
       if (!test) {
