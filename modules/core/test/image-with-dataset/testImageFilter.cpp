@@ -224,8 +224,8 @@ int main(int argc, const char *argv[])
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -306,14 +306,14 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest correlation on small image:" << std::endl;
       std::cout << "(I_correlation_1 == matImg_correlation_1)? "
-                << check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+        << std::endl;
       std::cout << "(I_correlation_2 == matImg_correlation_2)? "
-                << check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+        << std::endl;
       std::cout << "(I_correlation_3 == matImg_correlation_3)? "
-                << check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+        << std::endl;
 #endif
 
       // Test convolution
@@ -348,19 +348,20 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest convolution on small image:" << std::endl;
       std::cout << "(I_convolution_1 == matImg_convolution_1)? "
-                << check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+        << std::endl;
       std::cout << "(I_convolution_2 == matImg_convolution_2)? "
-                << check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+        << std::endl;
       std::cout << "(I_convolution_3 == matImg_convolution_3)? "
-                << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+        << std::endl;
 #endif
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
         vpImageIo::read(I, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -472,8 +473,8 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest Sobel on Klimt image:" << std::endl;
       std::cout << "(I_sobel_x == matImg_sobel_x)? "
-                << check_results(matImg_sobel_x, I_sobel_x, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_x, I_sobel_x, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
 #endif
 
       vpImage<double> I_double, Iu, Iv;
@@ -488,11 +489,11 @@ int main(int argc, const char *argv[])
       cv::Sobel(matImg, matImg_sobel_y, CV_64F, 0, 1, 5);
 
       std::cout << "(Iu == matImg_sobel_x)? "
-                << check_results(matImg_sobel_x, Iu, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_x, Iu, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
       std::cout << "(Iv == matImg_sobel_y)? "
-                << check_results(matImg_sobel_y, Iv, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_y, Iv, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
 #endif
 
       // Test Sobel separable filters
@@ -523,6 +524,45 @@ int main(int argc, const char *argv[])
         std::cerr << "Failed separable filter!" << std::endl;
         return EXIT_FAILURE;
       }
+
+      // Test median filter on gray-scale image
+      std::cout << "\nTest median on grayscale image:" << std::endl;
+      vpImage<unsigned char> I_median(3, 3);
+      for (unsigned int r = 0; r < 3; r++) {
+        for (unsigned int c = 0; c < 3; c++) {
+          I_median[r][c] = r * 3 + c;
+        }
+      }
+      double median = vpImageFilter::median(I_median);
+      double expectedMedian = 4.;
+      test = (median == expectedMedian);
+      std::cout << "(median (=" << median << ") == expectedMedian(" << expectedMedian << "))? " << test << std::endl;
+
+      if (!test) {
+        std::cerr << "Failed median filter on gray-scale image!" << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      std::cout << "\nTest median on vpRGBa image:" << std::endl;
+      vpImage<vpRGBa> I_median_rgba(3, 3);
+      for (unsigned int r = 0; r < 3; r++) {
+        for (unsigned int c = 0; c < 3; c++) {
+          I_median_rgba[r][c].R = r * 3 + c;
+          I_median_rgba[r][c].G = 2 * (r * 3 + c);
+          I_median_rgba[r][c].B = 3 * (r * 3 + c);
+        }
+      }
+      std::vector<double> median_rgba = vpImageFilter::median(I_median_rgba);
+      std::vector<double> expected_median_rgba = { 4, 8, 12 };
+      for (unsigned int i = 0; i < 3; i++) {
+        bool test_local = (median_rgba[i] == expected_median_rgba[i]);
+        test &= test_local;
+        std::cout << "(median_rgba[" << i << "] (=" << median_rgba[i] << ") == expected_median_rgba[" << i << "] ( " << expected_median_rgba[i] << "))? " << test_local << std::endl;
+      }
+      if (!test) {
+        std::cerr << "Failed median filter on vpRGBa image!" << std::endl;
+        return EXIT_FAILURE;
+      }
 #endif
     }
     {
@@ -536,7 +576,8 @@ int main(int argc, const char *argv[])
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
         vpImageIo::read(I, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -579,7 +620,8 @@ int main(int argc, const char *argv[])
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
         vpImageIo::read(I_rgb, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I_rgb, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -612,7 +654,8 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
