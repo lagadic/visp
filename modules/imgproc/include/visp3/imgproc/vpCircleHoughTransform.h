@@ -39,6 +39,7 @@
 
 // ViSP includes
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImageDraw.h>
@@ -774,6 +775,7 @@ private:
   vpImage<float> m_dIy; /*!< Gradient along the y-axis of the input image.*/
 
   // // Edge detection attributes
+  vpCannyEdgeDetection m_cannyVisp; /*!< Edge detector ViSP implementation, used if ViSP has not been compiled with OpenCV imgproc module*/
   vpImage<unsigned char> m_edgeMap; /*!< Edge map resulting from the edge detection algorithm.*/
 
   // // Center candidates computation attributes

@@ -194,7 +194,11 @@ int main(int argc, char **argv)
   const int def_gaussianKernelSize = 5;
   const double def_gaussianSigma = 1.;
   const int def_sobelKernelSize = 3;
+#ifdef HAVE_OPENCV_IMGPROC
   const double def_cannyThresh = 150.;
+#else
+  const double def_cannyThresh = 25.;
+#endif
   const int def_nbEdgeFilteringIter = 2;
   const std::pair<int, int> def_centerXlimits = std::pair<int, int>(0, 640);
   const std::pair<int, int> def_centerYlimits = std::pair<int, int>(0, 480);
@@ -419,13 +423,25 @@ int main(int argc, char **argv)
     TypeInputImage inputType = typeInputImageFromString(opt_input);
     switch (inputType) {
     case TypeInputImage::FULL_DISKS:
+#ifdef HAVE_OPENCV_IMGPROC
       opt_centerThresh = 100.;
+#else
+      opt_centerThresh = 75.;
+#endif
       break;
     case TypeInputImage::HALF_DISKS:
+#ifdef HAVE_OPENCV_IMGPROC
       opt_centerThresh = 50.;
+#else
+      opt_centerThresh = 25.;
+#endif
       break;
     case TypeInputImage::QUARTER_DISKS:
+#ifdef HAVE_OPENCV_IMGPROC
       opt_centerThresh = 25.;
+#else
+      opt_centerThresh = 15.;
+#endif
       break;
     default:
       throw(vpException(vpException::badValue, "Missing center threshold value to use with actual pictures as input. See the help for more information."));
@@ -437,7 +453,11 @@ int main(int argc, char **argv)
     TypeInputImage inputType = typeInputImageFromString(opt_input);
     switch (inputType) {
     case TypeInputImage::FULL_DISKS:
+#ifdef HAVE_OPENCV_IMGPROC
       opt_radiusThreshRatio = 5.;
+#else
+      opt_radiusThreshRatio = 1.;
+#endif
       break;
     case TypeInputImage::HALF_DISKS:
       opt_radiusThreshRatio = 2.;
@@ -523,4 +543,4 @@ int main(int argc, char **argv)
     //! [Manage synthetic image]
   }
   return EXIT_SUCCESS;
-}
+  }
