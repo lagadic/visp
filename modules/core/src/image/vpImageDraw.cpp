@@ -531,7 +531,7 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
@@ -646,7 +646,7 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
