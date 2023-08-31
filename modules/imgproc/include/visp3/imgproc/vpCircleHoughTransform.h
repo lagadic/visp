@@ -601,9 +601,9 @@ public:
   /**
    * \brief Get the list of Center Candidates, stored as pair <idRow, idCol>
    *
-   * \return std::vector<std::pair<unsigned int, unsigned int>> The list of Center Candidates, stored as pair <idRow, idCol>
+   * \return std::vector<std::pair<unsigned int, unsigned int> > The list of Center Candidates, stored as pair <idRow, idCol>
    */
-  inline std::vector<std::pair<int, int>> getCenterCandidatesList()
+  inline std::vector<std::pair<int, int> > getCenterCandidatesList()
   {
     return m_centerCandidatesList;
   }
@@ -777,8 +777,8 @@ private:
   vpImage<unsigned char> m_edgeMap; /*!< Edge map resulting from the edge detection algorithm.*/
 
   // // Center candidates computation attributes
-  std::vector<std::pair<unsigned int, unsigned int>> m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
-  std::vector<std::pair<int, int>> m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<unsigned int, unsigned int> > m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<int, int> > m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
   std::vector<int> m_centerVotes; /*!< Number of votes for the center candidates that are kept.*/
 
   // // Circle candidates computation attributes

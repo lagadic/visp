@@ -300,7 +300,7 @@ vpCannyEdgeDetection::performEdgeThining()
       int thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
 
       bool isGradientInTheSameDirection = true;
-      std::vector<std::pair<int, int>> pixelsSeen;
+      std::vector<std::pair<int, int> > pixelsSeen;
       std::pair<int, int> bestPixel(row, col);
       float bestGrad = grad;
       int rowCandidate = row + dRowGradPlus;
@@ -343,7 +343,7 @@ vpCannyEdgeDetection::performEdgeThining()
       m_edgeCandidateAndGradient[bestPixel] = bestGrad;
 
       // Suppressing non-maximum gradient
-      for (std::vector<std::pair<int, int>>::iterator it = pixelsSeen.begin(); it != pixelsSeen.end(); it++) {
+      for (std::vector<std::pair<int, int> >::iterator it = pixelsSeen.begin(); it != pixelsSeen.end(); it++) {
         // Suppressing non-maximum gradient
         int row_temp = it->first;
         int col_temp = it->second;

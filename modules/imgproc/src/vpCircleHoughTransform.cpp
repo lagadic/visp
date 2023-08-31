@@ -98,7 +98,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   std::vector<vpImageCircle> detections = detect(I);
   size_t nbDetections = detections.size();
   std::vector<vpImageCircle> bestCircles;
-  std::vector<std::pair<vpImageCircle, unsigned int>> detectionsWithVotes;
+  std::vector<std::pair<vpImageCircle, unsigned int> > detectionsWithVotes;
   for (size_t i = 0; i < nbDetections; i++) {
     std::pair<vpImageCircle, unsigned int> detectionWithVote(detections[i], m_finalCircleVotes[i]);
     detectionsWithVotes.push_back(detectionWithVote);
