@@ -676,6 +676,16 @@ Note that if your run fine-tuning multiple times, then a number will be appended
 
 If you run out of memory during training, change the batch size to a lower value.
 
+Here is an overview of the generated images and the resulting detections for a simple model (cube) and a NeRF-reconstructed one:
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ftCLH96Rh0g" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/8t1P7Q7iP2w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
+
+
 
 \subsection dnn_output_custom_parsing Parsing HDF5 with a custom script
 
