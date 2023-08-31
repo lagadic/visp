@@ -1217,6 +1217,8 @@ public:
   }
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+  static double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh);
+  static double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh);
   static double median(const cv::Mat &cv_I);
   static double median(const vpImage<unsigned char> &Isrc);
   static std::vector<double> median(const vpImage<vpRGBa> &Isrc);

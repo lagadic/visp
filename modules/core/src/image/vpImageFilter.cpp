@@ -34,6 +34,7 @@
 *****************************************************************************/
 
 #include <visp3/core/vpCannyEdgeDetection.h>
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
@@ -214,7 +215,7 @@ std::vector<double> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
  * \param[out] lowerThresh The lower threshold for the Canny edge filter.
  * \return double The upper Canny edge filter threshold.
  */
-double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh)
+double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh)
 {
   cv::Mat cv_I_blur;
   if (p_cv_blur != nullptr) {
@@ -245,7 +246,7 @@ double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, doub
  * \param[in] I : The gray-scale image, in ViSP format.
  * \return double The upper Canny edge filter threshold.
  */
-double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh)
+double vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh)
 {
   cv::Mat cv_I;
   vpImageConvert::convert(I, cv_I);
@@ -308,6 +309,9 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
   vpImageConvert::convert(edges_cvmat, Ires);
 #else
   (void)apertureSobel;
+  if (thresholdCanny < 0) {
+    throw(vpException(vpException::badValue, "OpenCV imgproc module missing to be able to compute automatically the Canny thresholds"));
+  }
   vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
   Ires = edgeDetector.detect(Isrc);
 #endif

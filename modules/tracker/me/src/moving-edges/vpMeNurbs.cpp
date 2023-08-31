@@ -299,7 +299,7 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   vpImagePoint pt_1(-rows, -cols);
   while (u <= 1.0) {
     if (pt != NULL)
-      delete [] pt;
+      delete[] pt;
     pt = nurbs.computeCurveDersPoint(u, 1);
     double delta = computeDelta(pt[1].get_i(), pt[1].get_j());
 
@@ -316,7 +316,7 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     u = u + step;
   }
   if (pt != NULL)
-    delete [] pt;
+    delete[] pt;
 }
 
 /*!
@@ -364,7 +364,7 @@ void vpMeNurbs::updateDelta()
 
     u -= step;
     if (der != NULL)
-      delete [] der;
+      delete[] der;
     der = nurbs.computeCurveDersPoint(u, 1);
     // vpImagePoint toto(der[0].get_i(),der[0].get_j());
     // vpDisplay::displayCross(I,toto,4,vpColor::red);
@@ -376,7 +376,7 @@ void vpMeNurbs::updateDelta()
     d_1 = 1.5e6;
   }
   if (der != NULL)
-    delete [] der;
+    delete[] der;
 }
 
 /*!
@@ -492,8 +492,8 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   else {
     list.pop_front();
   }
-  /*if(begin != NULL)*/ delete [] begin;
-  /*if(end != NULL)  */ delete [] end;
+  /*if(begin != NULL)*/ delete[] begin;
+  /*if(end != NULL)  */ delete[] end;
 }
 
 /*!
@@ -509,7 +509,6 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 */
 void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
 {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   vpMeSite pt = list.front();
   vpImagePoint firstPoint(pt.ifloat, pt.jfloat);
   pt = list.back();
@@ -635,7 +634,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       me->setRange(memory_range);
     }
 
-    /* if (begin != NULL) */ delete [] begin;
+    /* if (begin != NULL) */ delete[] begin;
     beginPtFound = 0;
   }
 
@@ -711,7 +710,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       //      list.end();
       vpMeSite s;
 
-      for (std::list<vpMeSite>::iterator it=list.begin(); it!=list.end(); ++it) {
+      for (std::list<vpMeSite>::iterator it = list.begin(); it!=list.end(); ++it) {
         s = *it;
         vpImagePoint iP(s.ifloat, s.jfloat);
         if (inRectangle(iP, rect)) {
@@ -765,13 +764,9 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       me->setRange(memory_range);
     }
 
-    /* if (end != NULL) */ delete [] end;
+    /* if (end != NULL) */ delete[] end;
     endPtFound = 0;
   }
-#else
-  (void)I;
-  throw(vpException(vpException::fatalError, "To use the canny detection, OpenCV has to be installed."));
-#endif
 }
 
 /*!
@@ -858,7 +853,7 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
         while (vpImagePoint::sqrDistance(iP[0], iPend) > vpMath::sqr(me->getSampleStep()) && u < uend) {
           u += 0.01;
           /*if (iP!=NULL)*/ {
-            delete [] iP;
+            delete[] iP;
             iP = NULL;
           }
           iP = nurbs.computeCurveDersPoint(u, 1);
@@ -876,7 +871,7 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
           }
         }
         /*if (iP!=NULL)*/ {
-          delete [] iP;
+          delete[] iP;
           iP = NULL;
         }
       }

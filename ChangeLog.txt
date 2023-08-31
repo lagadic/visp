@@ -9,12 +9,22 @@ ViSP 3.5.1 (under development)
   - Contributors:
     . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
       Francois Chaumette, Olivier Roussel
+  - New classes
+    . vpMocapVicon an interface over Vicon motion capture system
+    . vpMocapQualisys an interface over Qualisys motion capture system
+    . vpPclViewer that enables real time plotting of 3D point clouds based on PCL library
+    . vpRobotUniversalRobots that allows to control an Universal Robots robot
+    . vpRobotMavsdk that allows to control a robot equiped with a Pixhawk (drone, rover...)
+    . vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
+      to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
+      Yolo v5, Yolo v7 and Yolo v8 convolutional networks
+    . vpImageCircle that refers to a 2D circle in an image
+    . vpCircleHoughTransform that allows to detect circles in an image
+    . vpCannyEdgeDetection that allows to detect Canny edges without using OpenCV
+    . vpMegaPose and vpMegaPoseTracker classes that are wrapper over MegaPose
+      https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
-    . Introduce Universal Robots support with new vpRobotUniversalRobots class that
-      allows to control an UR robot
-    . Introduce Vicon and Qualisys motion capture system interfaces in vpMocapVicon and
-      vpMocapQualisys classes respectively
     . Image-based and position-based examples with UR robot
     . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
@@ -24,20 +34,16 @@ ViSP 3.5.1 (under development)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
-    . New vpDetectorDNNOpenCV class a wrapper over the OpenCV DNN module that allows
-      to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
-      Yolo v5, Yolo v7 and Yolo v8 convolutional networks
+    . New capabilities to ease C++ inference to detect objects using convolutional networks
+      (see vpDetectorDNNOpenCV)
     . Support of JSON for modern C++ third-party to enable serialization capabilities
-      in vpMbGenericTracker, vpCameraParameters, vpPoseVector, vpHomogeneousMatrix,
-      vpPolygon3D to load/save internal data or settings from/to JSON files
-    . New vpPclViewer class that enables real time plotting of 3D point clouds based on
-      PCL library
+      in vpArray2D, vpCameraParameters, vpCircleHoughTransform, vpColVector, vpDetectorDNNOpenCV,
+      vpHomogeneousMatrix, vpMbGenericTracker, vpMe, vpPolygon3D, vpPoseVector to load/save
+      internal data or settings from/to JSON files
     . Remove deprecated OpenCV IplImage interfaces
     . Remove deprecated vpOpenCVGrabber, vpKeyPointSurf classes and corresponding
       tutorials
     . Minimum OpenCV version is 2.4.8
-    . New vpMegaPose and vpMegaPoseTracker classes that are wrapper over MegaPose
-      https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
     . Introduce a new moving-edges threshold parameter for the contrast between each side
       of the feature to track. Its value corresponds to a gray level in range [0; 255]
     . In moving-edges ellipse tracker (vpMeEllipse and vpMbTracker and its derived classes),
@@ -73,6 +79,8 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
     . New tutorial: Exporting a 3D model to MegaPose
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-megapose-model.html
+    . New tutorial: Gradient-based Circle Hough Transform
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-imgproc-cht.html
   - Bug fixed
     . [#1041] [example/device/framegrabber/saveRealSenseData] Wrong camera parameters
               and depth_M_color homogeneous matrix when aligned depth is requested

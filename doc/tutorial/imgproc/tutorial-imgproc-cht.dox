@@ -1,0 +1,152 @@
+/**
+
+\page tutorial-imgproc-cht Tutorial: Gradient-based Circle Hough Transform
+\tableofcontents
+
+\section imgproc_cht_intro Introduction
+
+The Circle Hough Transform (*CHT*) is an image processing algorithm that permits to
+detect circles in an image. We refer the interested reader to the
+[Wikipedia page](https://en.wikipedia.org/wiki/Circle_Hough_Transform) to have a better
+understanding on the principles of the algorithm.
+
+The ViSP implementation relies on the Gradient-based implementation of the
+algorithm.
+
+During the step where the algorithm votes for center candidates, we use the gradient information
+in order to reduce the dimensionality of the search space. Instead of voting in circular pattern,
+we vote along a straight line that follows the gradient.
+
+\image html img-tutorial-cht-center-votes.png
+
+Then, during the step where the algorithm votes for radius candidates for each center candidate,
+we check the colinearity between the gradient at a considered point and the line which links the
+point towards the center candidate. If they are "enough" colinear, we increment the corresponding
+radius bin vote by 1. The "enough" characteristic is controlled by the circle perfectness
+parameter.
+
+\image html img-tutorial-cht-radius-votes.png
+
+\section imgproc_cht_requirements Requirements
+
+With the current implementation, the `vpCircleHoughTransform` requires ViSP to be compiled with OpenCV.
+If you do not know how to do it, please refer to the installation guidelines of \ref soft_vision_opencv.
+
+\section imgproc_cht_howto How to use the tutorial
+
+It is possible to configure the `vpCircleHoughTransform` class using a JSON file.
+To do so, you need to install [JSON for modern C++](https://visp-doc.inria.fr/doxygen/visp-daily/supported-third-parties.html#soft_tool_json)
+and compile ViSP with it.
+
+You can also configure the `vpCircleHoughTransform` class using command line arguments.
+To know what are the different command line arguments the software accept, please run:
+```
+$ cd tutorial/imgproc/hough-transform
+$ ./tutorial-circle-hough --help
+```
+
+\subsection imgproc_cht_howto_synthetic How to use synthetic images
+
+
+To run the software on the synthetic images using a JSON configuration file,
+please run:
+```
+$ TARGET=full # or TARGET=half # or TARGET=quarter
+$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json
+```
+
+To run the software on the synthetic images using the default parameters,
+please run:
+```
+$ TARGET=full # or TARGET=half # or TARGET=quarter
+$ ./tutorial-circle-hough --input ${TARGET}_disks
+```
+
+\subsection imgproc_cht_howto_images How to use actual images
+
+To run the software on an actual image like `coins2.jpg` provided with the tutorial and using a JSON configuration file, please run:
+```
+$ ./tutorial-circle-hough --input coins2.jpg --config config/detector_img.json
+```
+
+\note The configuration file `config/detector_img.json` has been tuned to detect circles in the image `coins2.jpg`.
+If the detections seem a bit off, you might need to change the parameters in `config/detector_img.json`.
+
+To run the software on an actual image using command line arguments instead, please run:
+```
+$ ./tutorial-circle-hough --input /path/to/my/image --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh -1. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --radius-thresh 2 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
+```
+
+If the detections seem a bit off, you might need to change the parameters
+
+\subsection imgproc_cht_howto_video How to use a video
+
+You can use the software to run circle detection on a video saved as a
+sequence of images that are named `${BASENAME}%d.png`.
+For instance with `${BASENAME}` = `video_`, you can have the following list
+of images: `video_0001.png`, `video_0002.png` and so on.
+
+To run the software using a JSON configuration file, please run:
+```
+$ ./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png --config config/detector_img.json
+```
+
+To run the software using the command arguments, please run:
+```
+./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh -1. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --radius-thresh 2 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
+```
+
+\section imgproc_cht_explanations Detailed explanations about the tutorial
+
+An enumeration permits to choose between the different types of synthetic images
+or using actual images or videos:
+
+\snippet tutorial-circle-hough.cpp Enum input
+
+You can choose the type you want using the command line arguments. To know how to do it,
+please run:
+```
+$ ./tutorial-circle-hough --help
+```
+
+If you decide to use a video as input, the relevant piece of code that permits to
+perform circle detection on the successive images of the video is the following:
+\snippet tutorial-circle-hough.cpp Manage video
+
+If you decide to use a single image as input, the relevant piece of code that permits to
+perform circle detection on the image is the following:
+\snippet tutorial-circle-hough.cpp Manage single image
+
+If you decide to use a synthetic image as input, the relevant piece of code that
+launches the detection on the synthetic image is the following:
+\snippet tutorial-circle-hough.cpp Manage synthetic image
+
+The function that draws the synthetic image is the following:
+\snippet tutorial-circle-hough.cpp Draw synthetic
+
+It relies on the following function to draw the disks:
+\snippet tutorial-circle-hough.cpp Draw disks
+
+If you did not use a JSON file to configure the `vpCircleHoughTransform` detector,
+the following structure defines the parameters of the algorithm based on the
+command line arguments:
+\snippet tutorial-circle-hough.cpp Algo params
+
+The initialization of the algorithm is performed in the following piece of code.
+If a JSON configuration file is given as input configuration, it will be preferred
+to the command line arguments:
+\snippet tutorial-circle-hough.cpp Algo init
+
+To run the circle detection, you must call the following method:
+\snippet tutorial-circle-hough.cpp Run detection
+
+You could have also used the following method to get only the `num_best` best
+detections:
+\code
+int num_best; // Set it to the number of circles you want to keep
+std::vector<vvpImageCircle> detections = detector.detect(I, num_best);
+\endcode
+
+Then, you can iterate on the vector of detections using a synthax similar to the following:
+\snippet tutorial-circle-hough.cpp Iterate detections
+*/
