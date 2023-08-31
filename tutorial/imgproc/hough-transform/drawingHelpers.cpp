@@ -19,10 +19,12 @@ vpImage<vpRGBa> drawingHelpers::I_disp;
 bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const bool &blockingMode)
 {
   I_disp = I;
+#if defined(VISP_HAVE_DISLAY)
   if (!d.isInitialised()) {
     d.init(I_disp);
     vpDisplay::setTitle(I_disp, title.c_str());
   }
+#endif
 
   vpDisplay::display(I_disp);
   vpDisplay::displayText(I_disp, 15, 15, "Left click to continue...", vpColor::red);
