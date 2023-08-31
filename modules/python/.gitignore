@@ -3,3 +3,4 @@ src/generated
 src/main.cpp
 build
 stubs
+docs/_build
