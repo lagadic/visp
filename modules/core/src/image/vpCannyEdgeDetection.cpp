@@ -414,7 +414,7 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
           hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
         }
       }
-      catch (std::out_of_range &e) {
+      catch (...) {
         continue;
       }
     }

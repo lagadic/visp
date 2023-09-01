@@ -47,6 +47,8 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRect.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
@@ -94,11 +96,11 @@ public:
     float m_radiusRatioThresh;  /*!< Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.*/
     float m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
 
-    // // Circle candidates merging atttributes
+    // // Circle candidates merging attributes
     float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
     float m_mergingRadiusDiffThresh; /*!< Maximum radius difference between two circle candidates to consider merging them.*/
 
-    friend vpCircleHoughTransform;
+    friend class vpCircleHoughTransform;
   public:
     CHTransformParameters()
       : m_gaussianKernelSize(5)
@@ -378,6 +380,7 @@ public:
    */
   std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /**
    * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
    * Get only the \b nbCircles circles having the greatest number of votes.
@@ -389,6 +392,7 @@ public:
    * of votes detected in the image.
    */
   std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
+#endif
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -785,8 +789,9 @@ private:
   std::vector<vpImageCircle> m_circleCandidates;        /*!< List of the candidate circles.*/
   std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of votes for the candidate circles.*/
 
-  // // Circle candidates merging atttributes
+  // // Circle candidates merging attributes
   std::vector<vpImageCircle> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the candidate circles.*/
 };
+#endif
 #endif
