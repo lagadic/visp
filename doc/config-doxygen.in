@@ -314,7 +314,7 @@ OPTIMIZE_OUTPUT_SLICE  = NO
 # Note that for custom extensions you also need to set FILE_PATTERNS otherwise
 # the files are not read by doxygen.
 
-EXTENSION_MAPPING      =
+EXTENSION_MAPPING      = json=JavaScript
 
 # If the MARKDOWN_SUPPORT tag is enabled then doxygen pre-processes all comments
 # according to the Markdown format, which allows for more readable
@@ -857,7 +857,8 @@ FILE_PATTERNS          = *.h \
                          *.cpp \
                          *.doc \
                          *.dox \
-                         *.mm
+                         *.mm \
+                         *.json
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -915,6 +916,8 @@ EXAMPLE_PATH           = "@VISP_SOURCE_DIR@/example" \
                          "@VISP_SOURCE_DIR@/tutorial" \
                          "@VISP_SOURCE_DIR@/demo" \
                          "@VISP_SOURCE_DIR@/modules" \
+                         "@VISP_SOURCE_DIR@/script" \
+
 
 # If the value of the EXAMPLE_PATH tag contains directories, you can use the
 # EXAMPLE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp and
