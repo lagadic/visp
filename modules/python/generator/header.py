@@ -136,10 +136,6 @@ class HeaderFile():
     print(data.namespace.doxygen)
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
-    for enum in data.namespace.enums:
-      print('=====')
-      print(enum)
-      print('=====')
 
     return result
 
