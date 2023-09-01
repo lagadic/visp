@@ -1,3 +1,5 @@
+#include <iostream>
+
 // ViSP includes
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
@@ -10,6 +12,8 @@
 #include <visp3/imgproc/vpImgproc.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpVideoReader.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include "drawingHelpers.h"
 
@@ -543,4 +547,11 @@ int main(int argc, char **argv)
     //! [Manage synthetic image]
   }
   return EXIT_SUCCESS;
-  }
+}
+#else
+int main()
+{
+  std::cout << "This tutorial needs to be build at least with cxx 11 standard!" << std::endl;
+  return EXIT_SUCCESS;
+}
+#endif

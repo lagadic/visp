@@ -89,6 +89,12 @@ $ ls $HOME/framework/ios
 build			opencv2.framework	visp3.framework
 \endverbatim
 
+- There is also the possibility to build ViSP framework specifying the deployment target and the arch
+\verbatim
+$ cd $HOME/framework
+$ python3 visp/platforms/ios/build_framework.py ios --iphoneos_deployment_target 11.0 --iphoneos_archs arm64 --build_only_specified_archs True
+\endverbatim
+
 \note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
 
 \section install_iOS_know_issue Known issues

@@ -193,7 +193,7 @@ public:
   }
 
   /**
-   * \brief Parse a vpCircleHoughTransform into JSON format.
+   * \brief Parse a vpCannyEdgeDetection object into JSON format.
    *
    * \param j : A JSON parser object.
    * \param detector : The vpCannyEdgeDetection object that must be parsed into JSON format.

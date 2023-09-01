@@ -54,7 +54,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 /*!
   \file vpImgproc.cpp
@@ -68,6 +68,8 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_brightness
 
@@ -78,7 +80,7 @@
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<unsigned char> &I, double alpha, double beta)
+void adjust(vpImage<unsigned char> &I, double alpha, double beta)
 {
   // Construct the look-up table
   unsigned char lut[256];
@@ -101,7 +103,7 @@ void vp::adjust(vpImage<unsigned char> &I, double alpha, double beta)
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta)
+void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -119,7 +121,7 @@ void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, do
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<vpRGBa> &I, double alpha, double beta)
+void adjust(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   // Construct the look-up table
   vpRGBa lut[256];
@@ -145,7 +147,7 @@ void vp::adjust(vpImage<vpRGBa> &I, double alpha, double beta)
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta)
+void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -162,7 +164,7 @@ void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, do
 
   \param I : The grayscale image to apply histogram equalization.
 */
-void vp::equalizeHistogram(vpImage<unsigned char> &I)
+void equalizeHistogram(vpImage<unsigned char> &I)
 {
   if (I.getWidth() * I.getHeight() == 0) {
     return;
@@ -176,8 +178,8 @@ void vp::equalizeHistogram(vpImage<unsigned char> &I)
   unsigned int cdf[256];
   unsigned int cdfMin = /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX, cdfMax = 0;
   unsigned int minValue =
-                   /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX,
-               maxValue = 0;
+    /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX,
+    maxValue = 0;
   cdf[0] = hist[0];
 
   if (cdf[0] < cdfMin && cdf[0] > 0) {
@@ -224,7 +226,7 @@ void vp::equalizeHistogram(vpImage<unsigned char> &I)
   \param I1 : The first grayscale image.
   \param I2 : The second grayscale image after histogram equalization.
 */
-void vp::equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
 {
   I2 = I1;
   vp::equalizeHistogram(I2);
@@ -243,7 +245,7 @@ void vp::equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned ch
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
+void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 {
   if (I.getWidth() * I.getHeight() == 0) {
     return;
@@ -285,7 +287,8 @@ void vp::equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 
       cpt++;
     }
-  } else {
+  }
+  else {
     vpImage<unsigned char> hue(I.getHeight(), I.getWidth());
     vpImage<unsigned char> saturation(I.getHeight(), I.getWidth());
     vpImage<unsigned char> value(I.getHeight(), I.getWidth());
@@ -318,7 +321,7 @@ void vp::equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV)
+void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV)
 {
   I2 = I1;
   vp::equalizeHistogram(I2, useHSV);
@@ -332,12 +335,13 @@ void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool 
   \param I : The grayscale image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<unsigned char> &I, double gamma)
+void gammaCorrection(vpImage<unsigned char> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
     inverse_gamma = 1.0 / gamma;
-  } else {
+  }
+  else {
     throw vpException(vpException::badValue, "The gamma value must be positive !");
   }
 
@@ -359,7 +363,7 @@ void vp::gammaCorrection(vpImage<unsigned char> &I, double gamma)
   \param I2 : The second grayscale image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma)
+void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
@@ -373,12 +377,13 @@ void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char
   \param I : The color image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<vpRGBa> &I, double gamma)
+void gammaCorrection(vpImage<vpRGBa> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
     inverse_gamma = 1.0 / gamma;
-  } else {
+  }
+  else {
     throw vpException(vpException::badValue, "The gamma value must be positive !");
   }
 
@@ -403,7 +408,7 @@ void vp::gammaCorrection(vpImage<vpRGBa> &I, double gamma)
   \param I2 : The second color image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma)
+void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
@@ -416,7 +421,7 @@ void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double 
 
   \param I : The grayscale image to stretch the contrast.
 */
-void vp::stretchContrast(vpImage<unsigned char> &I)
+void stretchContrast(vpImage<unsigned char> &I)
 {
   // Find min and max intensity values
   unsigned char min = 255, max = 0;
@@ -430,7 +435,8 @@ void vp::stretchContrast(vpImage<unsigned char> &I)
     for (unsigned int x = min; x <= max; x++) {
       lut[x] = 255 * (x - min) / range;
     }
-  } else {
+  }
+  else {
     lut[min] = min;
   }
 
@@ -445,7 +451,7 @@ void vp::stretchContrast(vpImage<unsigned char> &I)
   \param I1 : The first input grayscale image.
   \param I2 : The second output grayscale image.
 */
-void vp::stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -459,7 +465,7 @@ void vp::stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char
 
   \param I : The color image to stretch the contrast.
 */
-void vp::stretchContrast(vpImage<vpRGBa> &I)
+void stretchContrast(vpImage<vpRGBa> &I)
 {
   // Find min and max intensity values
   vpRGBa min = 255, max = 0;
@@ -496,7 +502,8 @@ void vp::stretchContrast(vpImage<vpRGBa> &I)
     for (unsigned int x = min.R; x <= max.R; x++) {
       lut[x].R = 255 * (x - min.R) / rangeR;
     }
-  } else {
+  }
+  else {
     lut[min.R].R = min.R;
   }
 
@@ -505,7 +512,8 @@ void vp::stretchContrast(vpImage<vpRGBa> &I)
     for (unsigned int x = min.G; x <= max.G; x++) {
       lut[x].G = 255 * (x - min.G) / rangeG;
     }
-  } else {
+  }
+  else {
     lut[min.G].G = min.G;
   }
 
@@ -514,7 +522,8 @@ void vp::stretchContrast(vpImage<vpRGBa> &I)
     for (unsigned int x = min.B; x <= max.B; x++) {
       lut[x].B = 255 * (x - min.B) / rangeB;
     }
-  } else {
+  }
+  else {
     lut[min.B].B = min.B;
   }
 
@@ -523,7 +532,8 @@ void vp::stretchContrast(vpImage<vpRGBa> &I)
     for (unsigned int x = min.A; x <= max.A; x++) {
       lut[x].A = 255 * (x - min.A) / rangeA;
     }
-  } else {
+  }
+  else {
     lut[min.A].A = min.A;
   }
 
@@ -538,7 +548,7 @@ void vp::stretchContrast(vpImage<vpRGBa> &I)
   \param I1 : The first input color image.
   \param I2 : The second output color image.
 */
-void vp::stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
+void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -551,15 +561,15 @@ void vp::stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   Stretch the contrast of a color image in the HSV color space.
   The saturation and value components are stretch so the hue is preserved.
 
-  \param I : The color image to stetch the contrast in the HSV color space.
+  \param I : The color image to stretch the contrast in the HSV color space.
 */
-void vp::stretchContrastHSV(vpImage<vpRGBa> &I)
+void stretchContrastHSV(vpImage<vpRGBa> &I)
 {
   unsigned int size = I.getWidth() * I.getHeight();
 
   // Convert RGB to HSV
   vpImage<double> hueImage(I.getHeight(), I.getWidth()), saturationImage(I.getHeight(), I.getWidth()),
-      valueImage(I.getHeight(), I.getWidth());
+    valueImage(I.getHeight(), I.getWidth());
   vpImageConvert::RGBaToHSV((unsigned char *)I.bitmap, hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap,
                             size);
 
@@ -606,7 +616,7 @@ void vp::stretchContrastHSV(vpImage<vpRGBa> &I)
   \param I1 : The first input color image.
   \param I2 : The second output color image.
 */
-void vp::stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
+void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -622,7 +632,7 @@ void vp::stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   \param sigma : Standard deviation for Gaussian kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
+void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -648,7 +658,7 @@ void vp::unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
   \param sigma : Standard deviation for Gaussian kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, float sigma, double weight)
+void unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, float sigma, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -664,7 +674,7 @@ void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
   \param sigma : Standard deviation for Gaussian kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
+void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -695,7 +705,7 @@ void vp::unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
   \param sigma : Standard deviation for Gaussian kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, float sigma, double weight)
+void unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, float sigma, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -715,7 +725,7 @@ void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, float sigma
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight)
+void unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -743,7 +753,7 @@ void vp::unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size, double weight)
+void unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -779,7 +789,7 @@ void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<vpRGBa> &I, unsigned int size, double weight)
+void unsharpMask(vpImage<vpRGBa> &I, unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -817,7 +827,7 @@ void vp::unsharpMask(vpImage<vpRGBa> &I, unsigned int size, double weight)
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned int size, double weight)
+void unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned int size, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -850,3 +860,4 @@ void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned in
 #endif
 }
 #endif // Deprecated
+};

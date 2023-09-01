@@ -27,7 +27,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
   std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-  vpDisplay::setTitle(I, title.c_str());
+  vpDisplay::setTitle(I, title);
   vpDisplay::display(I);
   vpDisplay::displayText(I, 15, 15, "Click to continue...", vpColor::red);
   vpDisplay::flush(I);

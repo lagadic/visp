@@ -1,6 +1,6 @@
 project(tutorial-calibration)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui)
 

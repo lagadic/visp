@@ -302,7 +302,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImage
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param use_normalized_centered_moments : When false,
   the parameters coef1, coef2, coef3 are the parameters \f$a, b, e\f$. When
@@ -346,7 +346,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).

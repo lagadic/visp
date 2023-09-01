@@ -210,9 +210,9 @@ std::vector<double> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
 /**
  * \brief Compute the upper Canny edge filter threshold.
  *
- * \param[in] cv_I The image, in cv format.
- * \param[in] p_cv_blur If different from nullptr, must contain a blurred version of cv_I.
- * \param[out] lowerThresh The lower threshold for the Canny edge filter.
+ * \param[in] cv_I : The image, in cv format.
+ * \param[in] p_cv_blur : If different from nullptr, must contain a blurred version of cv_I.
+ * \param[out] lowerThresh : The lower threshold for the Canny edge filter.
  * \return double The upper Canny edge filter threshold.
  */
 double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh)
@@ -244,6 +244,7 @@ double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *
  * \brief Compute the upper Canny edge filter threshold.
  *
  * \param[in] I : The gray-scale image, in ViSP format.
+ * \param[in] lowerThresh : Canny lower threshold.
  * \return double The upper Canny edge filter threshold.
  */
 double vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh)

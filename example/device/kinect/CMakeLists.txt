@@ -35,7 +35,7 @@
 
 project(example-device-kinect)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_gui)
 
@@ -53,4 +53,3 @@ endforeach()
 if(VISP_HAVE_LIBFREENECT)
   visp_set_source_file_compile_flag(kinectAcquisition.cpp -Wno-unused-parameter)
 endif()
-

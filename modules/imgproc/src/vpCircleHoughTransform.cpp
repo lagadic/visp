@@ -36,6 +36,7 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
@@ -131,7 +132,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   std::vector<vpImageCircle> detections = detect(I);
   size_t nbDetections = detections.size();
   std::vector<vpImageCircle> bestCircles;
-  std::vector<std::pair<vpImageCircle, unsigned int>> detectionsWithVotes;
+  std::vector<std::pair<vpImageCircle, unsigned int> > detectionsWithVotes;
   for (size_t i = 0; i < nbDetections; i++) {
     std::pair<vpImageCircle, unsigned int> detectionWithVote(detections[i], m_finalCircleVotes[i]);
     detectionsWithVotes.push_back(detectionWithVote);
@@ -579,3 +580,5 @@ std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detecto
   os << detector.toString();
   return os;
 }
+
+#endif
