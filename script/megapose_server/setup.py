@@ -63,7 +63,7 @@ setup(
     },
     package_dir={'megapose_server': '.'},
     include_package_data=True,
-    package_data={'': [fixed_json_filename]},
+    package_data={'megapose_server': [fixed_json_filename]},
     author='Samuel Felton',
     author_email='samuel.felton@irisa.fr',
 )
