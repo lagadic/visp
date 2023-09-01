@@ -53,22 +53,20 @@
 */
 vpDisplay::vpDisplay()
   : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0), m_width(0), m_height(0), m_title(),
-    m_scale(1), m_scaleType(SCALE_DEFAULT)
-{
-}
+  m_scale(1), m_scaleType(SCALE_DEFAULT)
+{ }
 
 /*!
   Copy constructor.
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
   : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized), m_windowXPosition(d.m_windowXPosition),
-    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
-    m_scale(d.m_scale), m_scaleType(d.m_scaleType)
-{
-}
+  m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
+  m_scale(d.m_scale), m_scaleType(d.m_scaleType)
+{ }
 
 /*!
-  Destructor that desallocates memory.
+  Destructor that deallocates memory.
 */
 vpDisplay::~vpDisplay() { m_displayHasBeenInitialized = false; }
 
@@ -141,7 +139,8 @@ void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Id
 {
   if (Isrc.display != NULL) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     vpImageConvert::convert(Isrc, Idest);
   }
 }
@@ -214,7 +213,8 @@ void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
   if (Isrc.display != NULL) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     Idest = Isrc;
   }
 }
@@ -230,7 +230,7 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
     m_scale = scale;
   else {
     std::cout << "Warning: Cannot apply the down scaling factor " << scale
-              << " to the display window since the display is initialized yet..." << std::endl;
+      << " to the display window since the display is initialized yet..." << std::endl;
   }
 }
 

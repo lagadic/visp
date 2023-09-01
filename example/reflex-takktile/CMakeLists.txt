@@ -35,7 +35,7 @@
 
 project(example-reflex-takktile)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
@@ -80,4 +80,3 @@ endforeach()
 
 # Copy the data files
 visp_copy_dir(takktile2-read-data.cpp "${CMAKE_CURRENT_SOURCE_DIR}" yaml)
-

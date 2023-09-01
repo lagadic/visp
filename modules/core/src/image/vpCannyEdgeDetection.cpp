@@ -179,11 +179,10 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
  * \param[out] dRowGradMinus : The offset in the vertical negative direction.
  * \param[out] dColGradPlus : The offset in the horizontal positive direction.
  * \param[out] dColGradMinus : The offset in the horizontal negative direction.
- * \return float The quadrant in which lies the angle of the edge, expressed in degrees.
+ * \return The quadrant in which lies the angle of the edge, expressed in degrees.
  */
-float
-getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMinus,
-      int &dColGradPlus, int &dColGradMinus)
+int
+getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMinus, int &dColGradPlus, int &dColGradMinus)
 {
   if (absoluteTheta < 22.5) {
     // Angles between -22.5 and 22.5 are mapped to be horizontal axis
@@ -196,14 +195,14 @@ getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMin
     // Angles between 22.5 and 67.5 are mapped to the diagonal 45degree
     dRowGradMinus = dColGradMinus = -1;
     dRowGradPlus = dColGradPlus = 1;
-    return 45.;
+    return 45;
   }
   else if (absoluteTheta >= 67.5 && absoluteTheta < 112.5) {
     // Angles between 67.5 and 112.5 are mapped to the vertical axis
     dColGradMinus = dColGradPlus = 0;
     dRowGradMinus = -1;
     dRowGradPlus = 1;
-    return 90.;
+    return 90;
   }
   else if (absoluteTheta >= 112.5 && absoluteTheta < 157.5) {
     // Angles between 112.5 and 157.5 are mapped to the diagonal -45degree
@@ -211,16 +210,16 @@ getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMin
     dColGradMinus = 1;
     dRowGradPlus = 1;
     dColGradPlus = -1;
-    return 135.;
+    return 135;
   }
   else {
     // Angles greater than 157.5 are mapped to be horizontal axis
     dColGradMinus = 1;
     dColGradPlus = -1;
     dRowGradMinus = dRowGradPlus = 0;
-    return 180.;
+    return 180;
   }
-  return -1.; // Should not reach this point
+  return -1; // Should not reach this point
 }
 
 /**
@@ -298,10 +297,10 @@ vpCannyEdgeDetection::performEdgeThining()
       // depending on the gradient orientation
       int dRowGradPlus = 0, dRowGradMinus = 0;
       int dColGradPlus = 0, dColGradMinus = 0;
-      float thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
+      int thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
 
       bool isGradientInTheSameDirection = true;
-      std::vector<std::pair<int, int>> pixelsSeen;
+      std::vector<std::pair<int, int> > pixelsSeen;
       std::pair<int, int> bestPixel(row, col);
       float bestGrad = grad;
       int rowCandidate = row + dRowGradPlus;
@@ -318,7 +317,7 @@ vpCannyEdgeDetection::performEdgeThining()
         int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
         int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
         float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
-        float thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
+        int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
         if (thetaQuadrantCandidate != thetaQuadrant) {
           isGradientInTheSameDirection = false;
           break;
@@ -344,7 +343,7 @@ vpCannyEdgeDetection::performEdgeThining()
       m_edgeCandidateAndGradient[bestPixel] = bestGrad;
 
       // Suppressing non-maximum gradient
-      for (std::vector<std::pair<int, int>>::iterator it = pixelsSeen.begin(); it != pixelsSeen.end(); it++) {
+      for (std::vector<std::pair<int, int> >::iterator it = pixelsSeen.begin(); it != pixelsSeen.end(); it++) {
         // Suppressing non-maximum gradient
         int row_temp = it->first;
         int col_temp = it->second;
@@ -415,7 +414,7 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
           hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
         }
       }
-      catch (std::out_of_range &e) {
+      catch (...) {
         continue;
       }
     }

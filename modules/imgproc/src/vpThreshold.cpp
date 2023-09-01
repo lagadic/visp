@@ -361,6 +361,8 @@ int computeThresholdTriangle(vpHistogram &hist)
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_threshold
 
@@ -371,8 +373,8 @@ int computeThresholdTriangle(vpHistogram &hist)
   \param backgroundValue : Value to set to the background.
   \param foregroundValue : Value to set to the foreground.
 */
-unsigned char vp::autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
-                                const unsigned char backgroundValue, const unsigned char foregroundValue)
+unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
+                            const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
   if (I.getSize() == 0) {
     return 0;
@@ -419,3 +421,4 @@ unsigned char vp::autoThreshold(vpImage<unsigned char> &I, const vpAutoThreshold
 
   return threshold;
 }
+};

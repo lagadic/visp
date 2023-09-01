@@ -1,6 +1,6 @@
 project(tutorial-detection-face)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_detection visp_io visp_gui visp_sensor)
 
@@ -24,4 +24,3 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-face-detector-live.cpp ${data})
 endforeach()
-
