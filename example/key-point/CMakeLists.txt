@@ -35,7 +35,7 @@
 
 project(example-keypoint)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_vision visp_sensor visp_io visp_gui)
 

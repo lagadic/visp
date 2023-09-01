@@ -176,7 +176,7 @@ private:
   std::vector<vpFeaturePoint> m_desiredFeatures;
   std::vector<vpPoseVector> m_trajectory;
   std::vector<double> m_errorNorms;
-  std::vector<std::vector<vpFeaturePoint>> m_points3D;
+  std::vector<std::vector<vpFeaturePoint> > m_points3D;
   std::vector<vpColVector> m_velocities;
   std::vector<vpMatrix> m_interactionMatrices;
   friend void to_json(json &j, const ServoingExperimentData &res);
@@ -206,7 +206,7 @@ void saveResults(const ServoingExperimentData &results, const std::string &path)
 }
 //! [write json to file]
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   //! [Main parsing]
   std::string arguments_path = "";

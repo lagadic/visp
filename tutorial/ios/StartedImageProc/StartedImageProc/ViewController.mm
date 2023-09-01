@@ -119,7 +119,6 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:gray]];
   }
-#if defined(VISP_HAVE_OPENCV)
   else if([myButton.currentTitle isEqualToString:[process objectAtIndex: 3]]){
     // canny detector
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 3]);
@@ -130,7 +129,6 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
     vpImageFilter::canny(gray, canny, 5, 15, 3);
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:canny]];
   }
-#endif
 }
 
 - (void)didReceiveMemoryWarning {
@@ -141,4 +139,3 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 @end
 
 #endif
-

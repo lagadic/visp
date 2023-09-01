@@ -92,10 +92,10 @@ const double vpMath::ang_min_mc = 2.5e-4;
  */
 bool vpMath::isNaN(double value)
 {
-#if defined(VISP_HAVE_FUNC_ISNAN)
-  return isnan(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISNAN)
+#if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
+#elif defined(VISP_HAVE_FUNC_ISNAN)
+  return isnan(value);
 #elif defined(VISP_HAVE_FUNC__ISNAN)
   return (_isnan(value) != 0);
 #else
@@ -113,10 +113,10 @@ bool vpMath::isNaN(double value)
  */
 bool vpMath::isNaN(float value)
 {
-#if defined(VISP_HAVE_FUNC_ISNAN)
-  return isnan(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISNAN)
+#if defined(VISP_HAVE_FUNC_STD_ISNAN)
   return std::isnan(value);
+#elif defined(VISP_HAVE_FUNC_ISNAN)
+  return isnan(value);
 #elif defined(VISP_HAVE_FUNC__ISNAN)
   return (_isnan(value) != 0);
 #else
@@ -136,10 +136,10 @@ bool vpMath::isNaN(float value)
  */
 bool vpMath::isInf(double value)
 {
-#if defined(VISP_HAVE_FUNC_ISINF)
-  return isinf(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISINF)
+#if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
+#elif defined(VISP_HAVE_FUNC_ISINF)
+  return isinf(value);
 #else
   // Taken from OpenCV source code CvIsInf()
   Vp64suf ieee754;
@@ -157,10 +157,10 @@ bool vpMath::isInf(double value)
  */
 bool vpMath::isInf(float value)
 {
-#if defined(VISP_HAVE_FUNC_ISINF)
-  return isinf(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISINF)
+#if defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
+#elif defined(VISP_HAVE_FUNC_ISINF)
+  return isinf(value);
 #else
   // Taken from OpenCV source code CvIsInf()
   Vp32suf ieee754;
@@ -177,10 +177,10 @@ bool vpMath::isInf(float value)
  */
 bool vpMath::isFinite(double value)
 {
-#if defined(VISP_HAVE_FUNC_ISFINITE)
-  return isfinite(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISFINITE)
+#if defined(VISP_HAVE_FUNC_STD_ISFINITE)
   return std::isfinite(value);
+#elif defined(VISP_HAVE_FUNC_ISFINITE)
+  return isfinite(value);
 #elif defined(VISP_HAVE_FUNC__FINITE)
   return _finite(value);
 #else
@@ -196,10 +196,10 @@ bool vpMath::isFinite(double value)
  */
 bool vpMath::isFinite(float value)
 {
-#if defined(VISP_HAVE_FUNC_ISFINITE)
-  return isfinite(value);
-#elif defined(VISP_HAVE_FUNC_STD_ISFINITE)
+#if defined(VISP_HAVE_FUNC_STD_ISFINITE)
   return std::isfinite(value);
+#elif defined(VISP_HAVE_FUNC_ISFINITE)
+  return isfinite(value);
 #elif defined(VISP_HAVE_FUNC__FINITE)
   return _finitef(value);
 #else

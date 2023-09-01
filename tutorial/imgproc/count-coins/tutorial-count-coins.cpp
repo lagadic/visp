@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 #if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
-  std::string input_filename = "coins1.pgm";
+  std::string input_filename = "coins1.jpg";
   vp::vpAutoThresholdMethod method = vp::AUTO_THRESHOLD_OTSU;
   bool white_foreground = false;
 

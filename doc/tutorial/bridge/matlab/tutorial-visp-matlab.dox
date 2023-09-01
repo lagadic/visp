@@ -24,7 +24,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/matlab
 In order to build a source code that mix ViSP and MATLAB you should first create a `CMakeLists.txt` file that tries to find ViSP and MATLAB. In the following example we consider the case of the tutorial-matlab.cpp source file.
 
 \code
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 project(visp-matlab)
 

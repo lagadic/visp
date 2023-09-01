@@ -885,7 +885,7 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
           nbVisible++;
         } else {
           distance = it->distance;
-          // Cannot use epsilon for comparison as ray lenght is slightly
+          // Cannot use epsilon for comparison as ray length is slightly
           // different from the collision distance returned by
           // Ogre::RaySceneQueryResult.
           if (distance > distanceCollision || std::fabs(distance - distanceCollision) <
