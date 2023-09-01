@@ -137,6 +137,23 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j,
 /*!
   Display a circle.
   \param I : The image associated to the display.
+  \param circle : Circle to display.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
+  \param thickness : Thickness of the circle. This parameter is only useful
+  when \e fill is set to false.
+*/
+void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImageCircle &circle,
+                              const vpColor &color, bool fill, unsigned int thickness)
+{
+  vp_display_display_circle(I, circle.getCenter(), circle.getRadius(), color, fill, thickness);
+}
+
+/*!
+  Display a circle.
+  \param I : The image associated to the display.
   \param center : Circle center position.
   \param radius : Circle radius.
   \param color : Circle color.
@@ -388,7 +405,7 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
 */
 void vpDisplay::displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness,
-                             const vpImagePoint &offset, const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
+                             const vpImagePoint &offset, const std::string &frameName, const vpColor &textColor, const vpImagePoint &textOffset)
 {
   vp_display_display_frame(I, cMo, cam, size, color, thickness, offset, frameName, textColor, textOffset);
 }
@@ -424,7 +441,8 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
 {
   if (segment) {
     vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
-  } else {
+  }
+  else {
     // line equation in image: i = a * j + b
     double delta_j = static_cast<double>(j2) - static_cast<double>(j1);
     double delta_i = static_cast<double>(i2) - static_cast<double>(i1);
@@ -435,7 +453,8 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
     // Test if vertical line
     else if (std::fabs(delta_j) <= std::numeric_limits<double>::epsilon()) {
       vp_display_display_line(I, 0, j1, (I.getHeight() - 1), j1, color, thickness);
-    } else {
+    }
+    else {
       double a = delta_i / delta_j;
       double b = static_cast<double>(i1) - a * static_cast<double>(j1);
       std::vector<vpImagePoint> vip; // Image points that intersect image borders

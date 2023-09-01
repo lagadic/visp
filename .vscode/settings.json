@@ -11,7 +11,7 @@
   "C_Cpp.clang_format_style": "Visual Studio",
   "C_Cpp.vcFormat.newLine.beforeOpenBrace.function": "newLine",
   "C_Cpp.vcFormat.space.pointerReferenceAlignment": "right",
-  "C_Cpp.vcFormat.space.beforeEmptySquareBrackets": true,
+  "C_Cpp.vcFormat.space.beforeEmptySquareBrackets": false,
   "C_Cpp.vcFormat.space.beforeOpenSquareBracket": false,
   "files.associations": {
     "bitset": "cpp",
@@ -108,7 +108,8 @@
     "__nullptr": "cpp",
     "__string": "cpp",
     "compare": "cpp",
-    "concepts": "cpp"
+    "concepts": "cpp",
+    "*.ipp": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,
@@ -117,5 +118,14 @@
   "C_Cpp.vcFormat.indent.preprocessor": "leftmostColumn",
   "C_Cpp.vcFormat.indent.multiLineRelativeTo": "innermostParenthesis",
   "C_Cpp.vcFormat.indent.withinParentheses": "alignToParenthesis",
-  "editor.detectIndentation": false
+  "editor.detectIndentation": false,
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "editor.defaultFormatter": "ms-vscode.cpptools",
+  "editor.formatOnSaveMode": "file",
+  "C_Cpp.formatting": "vcFormat",
+  "C_Cpp.vcFormat.space.aroundBinaryOperator": "ignore",
+  "editor.comments.insertSpace": true,
+  "C_Cpp.vcFormat.indent.preserveComments": false,
+  "C_Cpp.doxygen.generatedStyle": "/*!"
 }

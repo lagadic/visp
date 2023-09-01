@@ -37,7 +37,7 @@ if(NOT BUILD_SHARED_LIBS)
   vp_install_target(${LAPACK_LIBRARY} EXPORT VISPModules ARCHIVE DESTINATION ${VISP_3P_LIB_INSTALL_PATH} COMPONENT dev)
 endif()
 
-if(MSVC)
+if(MSVC AND NOT ((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang")))
   # Disable Visual C++ warnings
   foreach(f ${lib_srcs})
     vp_set_source_file_compile_flag(${f} /wd4244 /wd4267 /wd4273 /wd4554 /wd4723 /wd4996)

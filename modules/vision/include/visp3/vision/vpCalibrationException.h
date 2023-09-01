@@ -96,8 +96,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpCalibrationException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpCalibrationException(int id) : vpException(id) { ; }
+  vpCalibrationException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpCalibrationException(int id) : vpException(id) { }
 };
 
 #endif

@@ -51,7 +51,9 @@
 // Define _USE_MATH_DEFINES before including <math.h> to expose these macro
 // definitions for common math constants.  These are placed under an #ifdef
 // since these commonly-defined names are not part of the C or C++ standards
+#ifndef _USE_MATH_DEFINES
 #define _USE_MATH_DEFINES
+#endif
 #endif
 #include <math.h>
 #include <vector>
@@ -322,12 +324,12 @@ long double vpMath::comb(unsigned int n, unsigned int p)
 */
 int vpMath::round(double x)
 {
-#if defined(VISP_HAVE_FUNC_ROUND)
+#if defined(VISP_HAVE_FUNC_STD_ROUND)
+  return (int)std::round(x);
+#elif defined(VISP_HAVE_FUNC_ROUND)
   //:: to design the global namespace and avoid to call recursively
   // vpMath::round
   return (int)::round(x);
-#elif defined(VISP_HAVE_FUNC_STD_ROUND)
-  return (int)std::round(x);
 #else
   return (x > 0.0) ? ((int)floor(x + 0.5)) : ((int)ceil(x - 0.5));
 #endif

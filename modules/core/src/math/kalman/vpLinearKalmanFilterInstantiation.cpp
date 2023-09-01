@@ -806,7 +806,6 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
     case unknown:
       vpERROR_TRACE("Kalman state model is not set");
       throw(vpException(vpException::notInitialized, "Kalman state model is not set"));
-      break;
     }
     iter++;
 

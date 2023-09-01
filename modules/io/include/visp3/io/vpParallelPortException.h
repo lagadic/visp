@@ -94,8 +94,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpParallelPortException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpParallelPortException(int id) : vpException(id) { ; }
+  vpParallelPortException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpParallelPortException(int id) : vpException(id) { }
 };
 
 #endif

@@ -80,6 +80,7 @@ set(example_cpp
   servoAfma62DhalfCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocity.cpp
   servoAfma6Segment2DCamVelocity.cpp
+  servoAfma6MegaposePBVS.cpp
 )
 
 if(NOT DEFINED WINRT_8_1)

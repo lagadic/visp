@@ -330,12 +330,13 @@ endif()
 # add the path to detect Ogre3D
 if(WIN32)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
 endif(WIN32)
 
 if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
@@ -700,6 +701,7 @@ VP_CHECK_PACKAGE(IsInf)
 VP_CHECK_PACKAGE(Round)
 VP_CHECK_PACKAGE(Erfc)
 VP_CHECK_PACKAGE(Strtof)
+VP_CHECK_PACKAGE(IsFinite)
 VP_CHECK_PACKAGE(Log1p)
 
 #----------------------------------------------------------------------

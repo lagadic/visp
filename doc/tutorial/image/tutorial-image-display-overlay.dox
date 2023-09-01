@@ -14,9 +14,9 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 
 \section display_overlay_default Load and display an image
 
-ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. To this end you may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>. In the next example, we will use the first 3rd party that is available from the previous list.
+ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. To this end you may use several optional third-party libraries which are: <a href="https://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>. In the next example, we will use the first 3rd party that is available from the previous list.
 
-The following example also available in tutorial-viewer.cpp shows how to read and display an image. 
+The following example also available in tutorial-viewer.cpp shows how to read and display an image.
 
 \include tutorial-viewer.cpp
 
@@ -32,7 +32,7 @@ It will open a window containing `monkey.png` image:
 Here is the detailed explanation of the source, line by line :
 \snippet tutorial-viewer.cpp Include display
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available.
 
 \snippet tutorial-viewer.cpp Include io
 Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
@@ -44,10 +44,10 @@ Create an instance of a color image where each pixel is coded in RGBa.
 The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
 
 \snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
+Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display.
 
 \snippet tutorial-viewer.cpp vpDisplay set title
-The title of the display is then set to \c "My image".  
+The title of the display is then set to \c "My image".
 
 \snippet tutorial-viewer.cpp vpDisplay display
 First we display the content of the image \c I, then we flush the display to render the image.

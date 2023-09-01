@@ -30,6 +30,12 @@
  *
 *****************************************************************************/
 
+/*!
+  \example readRealSenseData.cpp
+
+  \brief Example that show how to replay realsense data saved with saveRealSenseData.cpp
+*/
+
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -149,7 +155,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) {}
+  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) { }
 
   void run()
   {
@@ -183,7 +189,8 @@ public:
           viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           first_init = false;
-        } else {
+        }
+        else {
           viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
         }
       }
@@ -281,7 +288,8 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
         point_cloud->points[(size_t)(i * width + j)].z = z;
       }
     }
-  } else {
+  }
+  else {
     if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
       std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
     }

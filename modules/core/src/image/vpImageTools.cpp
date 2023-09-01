@@ -357,7 +357,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   float v0 = static_cast<float>(cam.get_v0());
   float px = static_cast<float>(cam.get_px());
   float py = static_cast<float>(cam.get_py());
-  float kud;
+  float kud = 0;
   std::vector<double> dist_coefs;
 
   if (!is_KannalaBrandt)
@@ -381,8 +381,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   }
 
   float invpx, invpy;
-  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py;
-  float fr1, fr2;
+  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py = 0;
+  float fr1 = 0, fr2;
   float deltav, deltau;
   float u_float, v_float;
   int u_round, v_round;

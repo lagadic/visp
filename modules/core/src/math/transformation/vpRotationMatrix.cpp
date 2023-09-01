@@ -127,10 +127,11 @@ vpRotationMatrix &vpRotationMatrix::operator=(const std::initializer_list<double
   if (!isARotationMatrix()) {
     if (isARotationMatrix(1e-3)) {
       orthogonalize();
-    } else {
+    }
+    else {
       throw(vpException(
-          vpException::fatalError,
-          "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+        vpException::fatalError,
+        "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
     }
   }
 
@@ -169,8 +170,8 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
 
   if (isARotationMatrix() == false) {
     throw(vpException(vpException::fatalError, "Cannot set a rotation matrix "
-                                               "from a matrix that is not a "
-                                               "rotation matrix"));
+                      "from a matrix that is not a "
+                      "rotation matrix"));
   }
 
   return *this;
@@ -267,19 +268,23 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
   }
   return p;
 }
+
 /*!
   Operator that allows to multiply a rotation matrix by a 3-by-3 matrix.
   Allows for example to multiply a rotation matrix by a skew matrix.
+
+  \param[in] M : 3-by-3 matrix.
+
+  \return The product between the rotation matrix and the 3-by-3 matrix `M`.
+  \exception vpException::dimensionError : If \e M is not  a 3-by-3 dimension matrix.
+
+  The following snippet shows how to use this method:
   \code
   vpRotationMatrix R;
   vpTranslationVector t;
   vpMatrix M = t.skew();
   vpMatrix RM = R * M;
   \endcode
-
-  \exception vpException::dimensionError : If \e M is not
-  a 3-by-3 dimension matrix.
-
 */
 vpMatrix vpRotationMatrix::operator*(const vpMatrix &M) const
 {
@@ -298,6 +303,25 @@ vpMatrix vpRotationMatrix::operator*(const vpMatrix &M) const
     }
   }
   return p;
+}
+
+/*!
+  Operator that allows to multiply a rotation matrix by a homogeneous matrix.
+
+  \param[in] M : Homogeneous matrix.
+
+  \return The product between the rotation matrix and the homogeneous matrix `M`.
+
+  The following snippet shows how to use this method:
+  \code
+  vpRotationMatrix c1_R_c2;
+  vpHomogeneousMatrix c2_M_c3;
+  vpHomogeneousMatrix c1_M_c3 = c1_R_c2 * c2_M_c3;
+  \endcode
+*/
+vpHomogeneousMatrix vpRotationMatrix::operator*(const vpHomogeneousMatrix &M) const
+{
+  return (vpHomogeneousMatrix(*this * M.getTranslationVector(), *this * M.getRotationMatrix()));
 }
 
 /*!
@@ -421,7 +445,8 @@ bool vpRotationMatrix::isARotationMatrix(double threshold) const
         if (fabs(RtR[i][j] - 1) > threshold) {
           isRotation = false;
         }
-      } else {
+      }
+      else {
         if (fabs(RtR[i][j]) > threshold) {
           isRotation = false;
         }
@@ -544,10 +569,11 @@ vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list)
   if (!isARotationMatrix()) {
     if (isARotationMatrix(1e-3)) {
       orthogonalize();
-    } else {
+    }
+    else {
       throw(vpException(
-          vpException::fatalError,
-          "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+        vpException::fatalError,
+        "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
     }
   }
 }
@@ -836,8 +862,8 @@ vpThetaUVector vpRotationMatrix::getThetaUVector()
 /*!
   Extract a column vector from a rotation matrix.
   \warning All the indexes start from 0 in this function.
-  \param j : Index of the column to extract. If j=0, the first column is
-extracted. \return The extracted column vector.
+  \param j : Index of the column to extract. If j=0, the first column is extracted.
+  \return The extracted column vector.
 
   The following example shows how to use this function:
   \code
@@ -852,7 +878,7 @@ int main()
   std::cout << "Last column: \n" << r << std::endl;
 }
   \endcode
-It produces the following output:
+  It produces the following output:
   \code
 Last column:
 0
@@ -897,7 +923,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  } else {
+  }
+  else {
     vpMatrix D(3, 3);
     D = 0.0;
     D[0][0] = D[1][1] = 1.0;
@@ -933,7 +960,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  } else {
+  }
+  else {
     vpMatrix D(3, 3);
     D = 0.0;
     D[0][0] = D[1][1] = 1.0;
