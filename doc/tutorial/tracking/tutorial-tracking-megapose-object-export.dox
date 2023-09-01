@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-megapose-model Tutorial: Exporting a 3D model to MegaPose
+\page tutorial-megapose-model Tutorial: Exporting a 3D model to MegaPose after reconstruction with NeRF
 \tableofcontents
 
 This tutorial follows \ref tutorial-tracking-megapose and details how to export your 3D model for usage with MegaPose.
@@ -262,6 +262,6 @@ When using with MegaPose, you may encounter multiple issues:
 \section megapose_model_testing Next steps
 
 - To test whether your model is correct and can be used for pose estimation or tracking, you should follow \ref tutorial-tracking-megapose and run the sample program.
-- Since Megapose requires a way to detect the object, you can train a neural network to do so entirely from synthetic data by using the 3D model that you just obtained. The process is detailed in \ref tutorial-synthetic-blenderproc
+- Since Megapose requires a way to detect the object, you can train a neural network to do so entirely from synthetic data by using the 3D model that you just obtained. The process is detailed in \ref tutorial-synthetic-blenderproc.
 
 */

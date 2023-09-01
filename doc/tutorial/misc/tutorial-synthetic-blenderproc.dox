@@ -225,7 +225,7 @@ These parameters are found in the "camera" field of the configuration.
     <td>Float, [0, 1)</td>
     <td>
       Controls the randomization of the camera parameters \f$p_x, p_y, u_0, v_0\f$. If randomize_params_percent > 0, then, each time a scene is created the intrinsics are perturbed around the given values.
-      For example, if this parameters is equal to 10 and \f$p_x = 500\f$, then the used \f$p_x\f$ when generating images will be in the range [450, 550].
+      For example, if this parameters is equal to 0.10 and \f$p_x = 500\f$, then the used \f$p_x\f$ when generating images will be in the range [450, 550].
     </td>
   </tr>
 </table>
@@ -621,7 +621,7 @@ You can also specify the path to a single HDF5 file to view one sample at a time
 
 \subsection dnn_output_yolov7 Using detections to finetune a YoloV7
 
-To help, we provide a script that reformats a blenderproc dataset to the format expected by YoloV7
+To help, we provide a script that reformats a blenderproc dataset to the format expected by YoloV7.
 This script can be run like this:
 \code{.sh}
 (blenderproc) $ python export_for_yolov7.py --input path/to/dataset --output path/to/yolodataset --train-split 0.8
@@ -774,11 +774,10 @@ Reading scene 4
 - Object poses are expressed in the camera frame and are represented as homogeneous matrix.
 - Bounding boxes coordinates are in pixels, and the values are [x_min, y_min, width, height]
 
-You can modify this script to export the dataset to another format, has it was done in \ref dnn_output_yolov7.
+You can modify this script to export the dataset to another format, as it was done in \ref dnn_output_yolov7.
 
 \section dnn_synthetic_next Next steps
 
-If you use this generator to train a detection network, you can combine it with Megapose to perform 6D pose estimation and tracking. See \ref tutorial-tracking-megapose
-
+If you use this generator to train a detection network, you can combine it with Megapose to perform 6D pose estimation and tracking. See \ref tutorial-tracking-megapose.
 
 */

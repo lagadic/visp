@@ -66,8 +66,10 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
     . New tutorial: Tracking with MegaPose
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
-    . New tutorial: Exporting a 3D model to MegaPose
+    . New tutorial: Exporting a 3D model to MegaPose after reconstruction with NeRF
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-megapose-model.html
+    . New tutorial: Generating synthetic data for deep learning with Blenderproc
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-synthetic-blenderproc.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
