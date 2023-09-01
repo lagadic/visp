@@ -61,7 +61,7 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- */
+*/
 
 /*!
   \file vpFloodFill.cpp
@@ -71,6 +71,8 @@
 #include <queue>
 #include <visp3/imgproc/vpImgproc.h>
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_connected_components
 
@@ -82,8 +84,8 @@
   \param newValue : New value to flood fill.
   \param connexity : Type of connexity.
 */
-void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
-                   const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
+void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
+               const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Code from Lode Vandevenne tutorial.
   // Naive modification for 8-connexity implementation
@@ -134,7 +136,8 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
             seed_queue.push(vpImagePoint(y - 1, x1 + 1));
           }
         }
-      } else if (spanAbove && y > 0 && I[y - 1][x1] != oldValue) {
+      }
+      else if (spanAbove && y > 0 && I[y - 1][x1] != oldValue) {
         spanAbove = false;
       }
 
@@ -157,7 +160,8 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
             spanBelow = true;
           }
         }
-      } else if (spanBelow && y < I.getHeight() - 1 && I[y + 1][x1] != oldValue) {
+      }
+      else if (spanBelow && y < I.getHeight() - 1 && I[y + 1][x1] != oldValue) {
         spanBelow = false;
       }
 
@@ -171,3 +175,4 @@ void vp::floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, con
     }
   }
 }
+};

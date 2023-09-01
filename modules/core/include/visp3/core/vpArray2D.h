@@ -1205,6 +1205,9 @@ template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double> &A
   return true;
 }
 
+/*!
+ * \relates vpArray2D
+ */
 template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
@@ -1220,6 +1223,9 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
   return true;
 }
 
+/*!
+ * \relates vpArray2D
+ */
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

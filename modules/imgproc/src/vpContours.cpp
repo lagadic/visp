@@ -246,6 +246,8 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_contours
 
@@ -255,8 +257,7 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
   \param contours : Detected contours.
   \param grayValue : Drawing grayscale color.
 */
-void vp::drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
-  unsigned char grayValue)
+void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours, unsigned char grayValue)
 {
   if (I.getSize() == 0) {
     return;
@@ -280,7 +281,7 @@ void vp::drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<v
   \param contours : Detected contours.
   \param color : Drawing color.
 */
-void vp::drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
+void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
 {
   if (I.getSize() == 0) {
     return;
@@ -301,12 +302,13 @@ void vp::drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImageP
   Extract contours from a binary image.
 
   \param I_original : Input binary image (0 means background, 1 means
-  foreground, other values are not allowed). \param contours : Detected
-  contours. \param contourPts : List of contours, each contour contains a list
-  of contour points. \param retrievalMode : Contour retrieval mode.
+  foreground, other values are not allowed).
+  \param contours : Detected contours.
+  \param contourPts : List of contours, each contour contains a list of contour points.
+  \param retrievalMode : Contour retrieval mode.
 */
-void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
-  std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
+void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
+                  std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
 {
   if (I_original.getSize() == 0) {
     return;
@@ -478,3 +480,4 @@ void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &conto
   delete root;
   root = NULL;
 }
+};
