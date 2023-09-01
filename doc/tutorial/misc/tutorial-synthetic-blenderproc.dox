@@ -222,7 +222,7 @@ These parameters are found in the "camera" field of the configuration.
   </tr>
   <tr>
     <td>randomize_params_percent</td>
-    <td>Float, [0, 1)</td>
+    <td>Float, [0, 100)</td>
     <td>
       Controls the randomization of the camera parameters \f$p_x, p_y, u_0, v_0\f$. If randomize_params_percent > 0, then, each time a scene is created the intrinsics are perturbed around the given values.
       For example, if this parameters is equal to 0.10 and \f$p_x = 500\f$, then the used \f$p_x\f$ when generating images will be in the range [450, 550].
