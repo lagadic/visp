@@ -134,6 +134,8 @@ class HeaderFile():
     result = ''
     header_env = HeaderEnvironment(data)
     print(data.namespace.doxygen)
+    from enum_binding import enum_bindings
+    enum_bindings(data.namespace, header_env.mapping)
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
 

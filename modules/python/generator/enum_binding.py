@@ -17,5 +17,10 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict) -> List[Tuple[str, 
     if isinstance(scope, NamespaceScope):
       for namespace in scope.namespaces:
         accumulate_data(namespace, data)
+    for enum in scope.enums:
+      pass
+
   enum_data = {} # Need to go through an intermediate rep, as some enum are typedefed and others are not
   for typedef in root_scope.typedefs:
+    print(typedef)
+    import sys; sys.exit()
