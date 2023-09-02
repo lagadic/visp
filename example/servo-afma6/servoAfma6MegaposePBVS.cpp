@@ -39,12 +39,25 @@
    at Inria. The velocity is computed in the camera frame. Visual features
    correspond to the 3D pose of the target (a known of object, for which we have the 3D model) in the camera frame.
 
-   The device used to acquire images is a Realsense D435 device.
-
-   Camera intrinsic parameters are retrieved from the Realsense SDK.
+   The device used to acquire images is a Realsense D435 device. Camera intrinsic parameters are retrieved from the Realsense SDK.
 
    The target is an object for which we have the 3D model (in .obj format). We use MegaPose to estimate the object pose in the camera frame,
    which we plug into the Pose-Based control law.
+
+  To install and use megapose, see \ref tutorial-tracking-megapose.
+
+  This example was used to validate Megapose: as such, we provide the initial and desired poses in world frame and use megapose to match them with the object's pose in the camera at the initial and desired locations.
+  Thus, this example takes as input two pose files, acquired with Afma6_office, where the poses are expressed in the world frame. The robot is then moved to these poses and Megapose is used to estimate the object pose in the camera frames. The object detection in the image is performed by click.
+  This allows to compare the ground truth pose error (computed in world frame) with the one estimated thanks to megapose.
+
+  In a more practical example, the desired pose would directly be given in the camera frame (as used by megapose) and the robot would thus not need to move to the desired pose before actually servoing.
+
+  To start this example enter:
+  \code
+  $ ./servoAfma6MegaposePBVS initialPose init.pos desiredPose desired.pos object myObjectName megapose/address 127.0.0.1 megapose/port 5555
+  \endcode
+  where init.pos and desired.pos are files obtained through Afma6_office, and myObjectName is the name of an object known by the megapose server.
+
  */
 
 #include <iostream>
@@ -103,7 +116,7 @@ std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
   }
 }
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   bool opt_verbose = true;
   bool opt_plot = true;
