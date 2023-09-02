@@ -144,7 +144,7 @@ You could have also used the following method to get only the `num_best` best
 detections:
 \code
 int num_best; // Set it to the number of circles you want to keep
-std::vector<vvpImageCircle> detections = detector.detect(I, num_best);
+std::vector<vpImageCircle> detections = detector.detect(I, num_best);
 \endcode
 
 Then, you can iterate on the vector of detections using a synthax similar to the following:

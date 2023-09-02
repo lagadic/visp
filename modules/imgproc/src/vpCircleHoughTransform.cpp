@@ -43,14 +43,14 @@ vpCircleHoughTransform::vpCircleHoughTransform()
   initGaussianFilters();
 }
 
-vpCircleHoughTransform::vpCircleHoughTransform(const CHTransformParameters &algoParams)
+vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams)
   : m_algoParams(algoParams)
 {
   initGaussianFilters();
 }
 
 void
-vpCircleHoughTransform::init(const CHTransformParameters &algoParams)
+vpCircleHoughTransform::init(const vpCircleHoughTransformParameters &algoParams)
 {
   m_algoParams = algoParams;
   initGaussianFilters();
@@ -105,6 +105,7 @@ vpCircleHoughTransform::initGaussianFilters()
   vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
   m_fgDg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
   vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
+  m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
 }
 
 std::vector<vpImageCircle>
@@ -218,10 +219,20 @@ vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<uns
 void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
-  int cannyThresh = m_algoParams.m_cannyThresh;
+#if defined(HAVE_OPENCV_IMGPROC)
+  float cannyThresh = m_algoParams.m_cannyThresh;
+  double lowerThresh;
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
+  if (m_algoParams.m_cannyThresh < 0.) {
+    cannyThresh = vpImageFilter::computeCannyThreshold(I, lowerThresh);
+  }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, cannyThresh, m_algoParams.m_sobelKernelSize);
+#else
+  m_cannyVisp.setCannyThresholds(-1, m_algoParams.m_cannyThresh);
+  m_cannyVisp.setGradients(m_dIx, m_dIy);
+  m_edgeMap = m_cannyVisp.detect(I);
+#endif
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
     filterEdgeMap();

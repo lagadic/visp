@@ -47,6 +47,10 @@
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRect.h>
 
+#if defined(VISP_HAVE_OPENCV)
+#include <opencv2/core.hpp>
+#endif
+
 /**
    * \brief Class that defines a 2D circle in an image.
    */
