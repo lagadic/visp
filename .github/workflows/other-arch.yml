@@ -26,14 +26,14 @@ jobs:
           #   distro: ubuntu20.04
           #   target: ARMV7
           - arch: aarch64
-            distro: ubuntu20.04 #fedora_latest
+            distro: ubuntu22.04 #fedora_latest
             target: ARMV8
             endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
           - arch: s390x
-            distro: ubuntu20.04
+            distro: ubuntu22.04
             target: Z13
             endianness: (Big Endian)
 
