@@ -805,10 +805,10 @@ macro(_vp_create_module)
       ${VISP_MODULE_${the_module}_DEPS_TO_LINK}
       ${VISP_MODULE_${the_module}_DEPS_EXT}
       ${VISP_MODULE_${the_module}_LINK_DEPS}
-      ${VISP_LINKER_LIBS}
     LINK_PRIVATE
       ${VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS}
-      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS})
+      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS}
+      ${VISP_LINKER_LIBS})
   add_dependencies(visp_modules ${the_module})
 
   if(ENABLE_SOLUTION_FOLDERS)
