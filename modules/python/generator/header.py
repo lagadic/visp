@@ -107,9 +107,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -137,7 +137,7 @@ class HeaderFile():
     from enum_binding import enum_bindings
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
-    enum_decls_and_bindings = enum_bindings(data.namespace, header_env.mapping)
+    enum_decls_and_bindings = enum_bindings(data.namespace, header_env.mapping, self.submodule)
     for declaration, binding in enum_decls_and_bindings:
       self.class_decls.append(declaration)
       result += binding

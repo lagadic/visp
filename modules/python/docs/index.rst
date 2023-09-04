@@ -3,7 +3,8 @@ ViSP Python Documentation
 
 Contents:
 
-.. toctree::
-  :maxdepth: 2
+.. autosummary::
+   :toctree: generated
+   :recursive:
 
-  visp
+   visp
