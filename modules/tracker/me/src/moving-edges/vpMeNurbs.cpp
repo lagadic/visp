@@ -593,7 +593,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       std::list<vpMeSite>::iterator itList = list.begin();
       double convlt;
       double delta = 0;
-      int nbr = 0;
+      unsigned int nbr = 0;
       std::list<vpMeSite> addedPt;
       for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
         ++itEdges) {
@@ -724,7 +724,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       --itList; // Move on the last element
       double convlt;
       double delta;
-      int nbr = 0;
+      unsigned int nbr = 0;
       std::list<vpMeSite> addedPt;
       for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
         ++itEdges) {
