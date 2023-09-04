@@ -135,10 +135,12 @@ class HeaderFile():
     header_env = HeaderEnvironment(data)
     print(data.namespace.doxygen)
     from enum_binding import enum_bindings
-    enum_bindings(data.namespace, header_env.mapping)
     for cls in data.namespace.classes:
       result += self.generate_class(cls, header_env)
-
+    enum_decls_and_bindings = enum_bindings(data.namespace, header_env.mapping)
+    for declaration, binding in enum_decls_and_bindings:
+      self.class_decls.append(declaration)
+      result += binding
     return result
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
@@ -253,21 +255,6 @@ class HeaderFile():
       to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
       if len(to_string_str) > 0:
         method_strs.append(to_string_str)
-
-
-
-      for enum in cls.enums:
-        print('============')
-        print(get_type(enum.typename, owner_specs, header_env.mapping))
-        print(enum.values)
-        print('=============')
-      for typedef in cls.typedefs:
-        print('typedef============')
-        print(typedef)
-        # print(get_type(typedef.type, owner_specs, header_env.mapping))
-        print(typedef.name)
-        print('=============')
-
 
 
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)

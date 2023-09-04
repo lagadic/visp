@@ -20,6 +20,8 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
       return segment.name
     if segment.name in owner_specs:
       segment.name = owner_specs[segment.name]
+    if segment.name in header_env_mapping:
+      segment.name = header_env_mapping[segment.name]
 
     if segment.specialization is not None:
       template_strs = []
