@@ -114,11 +114,8 @@ if(USE_OPENMP)
 endif()
 
 if(USE_PTHREAD)
-  if(TARGET Threads::Threads)
-    get_target_property(prop_threads_compile_option Threads::Threads INTERFACE_COMPILE_OPTIONS)
-    if (prop_threads_compile_option)
-      add_extra_compiler_option(${prop_threads_compile_option})
-    endif()
+  if(THREADS_HAVE_PTHREAD_ARG)
+    add_extra_compiler_option("-pthread")
   endif()
 endif()
 
