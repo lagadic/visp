@@ -10,6 +10,7 @@ import json
 from dataclasses import dataclass
 from utils import *
 from methods import *
+from collections import OrderedDict
 
 
 def filter_includes(include_names: Set[str]) -> List[str]:
@@ -95,7 +96,7 @@ class HeaderFile():
     content = self.run_preprocessor()
     self.includes = [f'<visp3/{self.submodule.name}/{self.path.name}>']
     self.binding_code = None
-    self.class_decls = []
+    self.declarations = []
     self.contains = []
     self.depends = []
     self.generate_binding_code(content)
@@ -107,9 +108,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      # '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -133,20 +134,18 @@ class HeaderFile():
   def parse_data(self, data: ParsedData):
     result = ''
     header_env = HeaderEnvironment(data)
-    print(data.namespace.doxygen)
     from enum_binding import enum_bindings
     for cls in data.namespace.classes:
-      result += self.generate_class(cls, header_env)
+      result += self.generate_class(cls, header_env) + '\n'
     enum_decls_and_bindings = enum_bindings(data.namespace, header_env.mapping, self.submodule)
     for declaration, binding in enum_decls_and_bindings:
-      self.class_decls.append(declaration)
+      self.declarations.append(declaration)
       result += binding
     return result
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
     result = ''
-    print('Doxygen', cls.class_decl.doxygen)
-    def generate_class_with_potiental_specialization(name_python: str, owner_specs: Dict[str, str]) -> str:
+    def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
       spec_result = ''
       python_ident = f'py{name_python}'
 
@@ -163,27 +162,26 @@ class HeaderFile():
         if base_class.access == 'public':
           base_classes_str += ', ' + get_typename(base_class.typename, owner_specs, header_env.mapping)
 
-      # if name_cpp == 'vpColVector':
       cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
-      self.class_decls.append(cls_result)
+      self.declarations.append(cls_result)
 
-      contains_pure_virtual_methods = False
       # Skip classes that have pure virtual methods since they cannot be instantiated
+      contains_pure_virtual_methods = False
       for method in cls.methods:
         if method.pure_virtual:
           contains_pure_virtual_methods = True
           break
 
-
-
+      # Find bindable methods
       generated_methods = []
       method_strs = []
       bindable_methods_and_config, filtered_strs = get_bindable_methods_with_config(self.submodule, cls.methods,
                                                                                     name_cpp_no_template, owner_specs, header_env.mapping)
       print('\n'.join(filtered_strs))
-
+      # Split between constructors and other methods
       constructors, non_constructors = split_methods_with_config(bindable_methods_and_config, lambda m: m.constructor)
 
+      # Split between "normal" methods and operators, which require a specific definition
       cpp_operator_names = cpp_operator_list()
       operators, basic_methods = split_methods_with_config(non_constructors, lambda m: get_name(m.name) in cpp_operator_names)
 
@@ -195,7 +193,7 @@ class HeaderFile():
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           method_strs.append(ctor_str)
 
-      #Operator definitions
+      # Operator definitions
       for method, method_config in operators:
         method_name = get_name(method.name)
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
@@ -252,9 +250,24 @@ class HeaderFile():
 
 
       # Add to string representation
-      to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
-      if len(to_string_str) > 0:
-        method_strs.append(to_string_str)
+      print(name_python, cls_config)
+      if not cls_config['ignore_repr']:
+        to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
+        if len(to_string_str) > 0:
+          method_strs.append(to_string_str)
+
+      # Add call to user defined bindings function
+      # Binding function should be defined in the static part of the generator
+      # It should have the signature void fn(py::class_& cls);
+      # If it is for a templated class, it should also be templated in the same way (same order of parameters etc.)
+      if cls_config['additional_bindings'] is not None:
+        template_str = ''
+        if len(owner_specs.keys()) > 0:
+          template_types = owner_specs.values()
+          template_str = f'<{", ".join([template_type for template_type in template_types])}>'
+
+        method_strs.append(f'{cls_config["additional_bindings"]}{template_str}({python_ident});')
+
 
 
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
@@ -281,12 +294,12 @@ class HeaderFile():
         if base_class_str_no_template.startswith('vp'):
             self.depends.append(base_class_str_no_template)
 
+    cls_config = self.submodule.get_class_config(name_cpp_no_template)
     if cls.class_decl.template is None:
       name_python = name_cpp_no_template.replace('vp', '')
-      return generate_class_with_potiental_specialization(name_python, {})
+      return generate_class_with_potiental_specialization(name_python, {}, cls_config)
     else:
-      cls_config = self.submodule.get_class_config(name_cpp_no_template)
-      if cls_config is None or 'specializations' not in cls_config:
+      if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         print(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
         return ''
       else:
@@ -297,7 +310,8 @@ class HeaderFile():
           python_name = spec['python_name']
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
-          spec_dict = {k[0]: k[1] for k in zip(template_names, args)}
-          specialization_strs.append(generate_class_with_potiental_specialization(python_name, spec_dict))
+
+          spec_dict = OrderedDict(k for k in zip(template_names, args))
+          specialization_strs.append(generate_class_with_potiental_specialization(python_name, spec_dict, cls_config))
 
         return '\n'.join(specialization_strs)

@@ -40,7 +40,7 @@ class Submodule():
     includes = []
     for header in headers:
       header_code.append(header.binding_code)
-      declarations.extend(header.class_decls)
+      declarations.extend(header.declarations)
       includes.extend(header.includes)
     includes_set = filter_includes(set(includes))
     submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
@@ -59,9 +59,20 @@ namespace py = pybind11;
 
 
 void {self.generation_function_name()}(py::module_ &m) {{
+/*
+Submodule declaration
+*/
 {submodule_declaration}
+
+/*
+Class and enums declarations
+*/
 {declarations}
 
+
+/*
+Bindings for methods and enum values
+*/
 {bindings}
 }}
 '''
@@ -81,11 +92,19 @@ void {self.generation_function_name()}(py::module_ &m) {{
     return header_name in self.config['ignored_headers']
 
   def get_class_config(self, class_name: str) -> Optional[Dict]:
+    default_config = {
+      'methods': [],
+      'operators': [],
+      'use_buffer_protocol': False,
+      'additional_bindings': None,
+      'ignore_repr': False
+    }
     if 'classes' not in self.config:
-      return None
+      return default_config
     if class_name not in self.config['classes']:
-      return None
-    return self.config['classes'][class_name]
+      return default_config
+    default_config.update(self.config['classes'][class_name])
+    return default_config
 
   def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
     res = {
@@ -114,7 +133,7 @@ void {self.generation_function_name()}(py::module_ &m) {{
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   return [
-    Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
+    Submodule('core', Path('/home/sfelton/software/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
     # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
     # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
 

@@ -129,17 +129,23 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
   accumulate_data(root_scope)
   result = []
 
+  for repr in temp_data:
+    print(f'Enum {repr} was ignored, because it is either marked as private or it is incomplete (missing values or name)')
+
   for enum_repr in final_data:
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
+    # If an owner class is ignored, don't export this enum
     parent_ignored = False
+    ignored_parent_name = None
     for segment in name_segments[:-1]:
       full_segment_name = mapping.get(segment)
       if full_segment_name is not None and submodule.class_should_be_ignored(full_segment_name):
         parent_ignored = True
+        ignored_parent_name = full_segment_name
         break
     if parent_ignored:
-      print(f'Ignoring subenum {py_name}')
+      print(f'Ignoring enum {py_name} because {ignored_parent_name} is ignored')
       continue
 
     owner_full_name = '::'.join(name_segments[:-1])

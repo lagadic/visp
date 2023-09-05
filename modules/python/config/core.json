@@ -5,6 +5,7 @@
                       "vpDisplayException", "vpMatrixException"],
   "classes": {
     "vpArray2D": {
+      "additional_bindings": "bindings_vpArray2D",
       "specializations": [
         {
           "python_name": "ArrayDouble2D",
@@ -64,6 +65,7 @@
       ]
     },
     "vpMatrix": {
+      "ignore_repr": true,
       "methods":
       [
 

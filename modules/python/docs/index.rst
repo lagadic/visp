@@ -3,8 +3,6 @@ ViSP Python Documentation
 
 Contents:
 
-.. autosummary::
-   :toctree: generated
-   :recursive:
-
-   visp
+.. automodule:: visp.core
+   :members:
+   :undoc-members:
