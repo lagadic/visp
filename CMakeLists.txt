@@ -572,7 +572,7 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
+VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON IF NOT (WIN32 OR MINGW))
 
 # We need threads with c++11
 if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_PTHREAD)
