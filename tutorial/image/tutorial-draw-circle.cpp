@@ -20,10 +20,10 @@ int main()
       vpDisplay::setTitle(I, "Gray image");
       vpDisplay::display(I);
       //! [Circle display]
-      vpImageCircle circle(vpImagePoint(I.getHeight()/3, I.getWidth()/3), I.getWidth()/10);
+      vpImageCircle circle(vpImagePoint(I.getHeight()/3, I.getWidth()/3), I.getWidth()/10.f);
       // Displays in overlay a red circle on the image
       // i.e. does not modify I
-      vpDisplay::displayCircle(I, circle, vpColor::red, 2);
+      vpDisplay::displayCircle(I, circle, vpColor::red, false, 2);
       //! [Circle display]
       vpDisplay::flush(I);
       vpDisplay::setTitle(I, "Overlay");
@@ -32,7 +32,7 @@ int main()
       vpDisplay::getClick(I);
 
       //! [Circle draw uchar]
-      vpImageCircle circle2(vpImagePoint(I.getHeight()/3, 2*I.getWidth()/3), I.getWidth()/10);
+      vpImageCircle circle2(vpImagePoint(I.getHeight()/3, 2*I.getWidth()/3), I.getWidth()/10.f);
       // Draws a white circle on the image
       // i.e. modifies I
       vpImageDraw::drawCircle(I, circle2, 255, 2);
@@ -47,7 +47,7 @@ int main()
 
     {
       //! [Circle draw color]
-      vpImageCircle circle3(vpImagePoint(2*I.getHeight()/3, I.getWidth()/2), I.getWidth()/10);
+      vpImageCircle circle3(vpImagePoint(2*I.getHeight()/3, I.getWidth()/2), I.getWidth()/10.f);
       // Draws a blue circle on the image
       // i.e. modifies I_rgb
       vpImageDraw::drawCircle(I_rgb, circle3, vpColor::blue, 2);

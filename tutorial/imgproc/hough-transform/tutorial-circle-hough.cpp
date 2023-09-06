@@ -72,8 +72,8 @@ std::string getAvailableTypeInputImage(const std::string &prefix = "<", const st
 
 //! [Draw disks]
 void
-drawDisk(vpImage<unsigned char> &I, const vpImagePoint &center, const unsigned int &radius
-  , const unsigned int &borderColor, const unsigned int &fillingColor, const unsigned int &thickness, const unsigned int &bckg)
+drawDisk(vpImage<unsigned char> &I, const vpImagePoint &center, const unsigned int &radius,
+         const unsigned int &borderColor, const unsigned int &fillingColor, const unsigned int &thickness, const unsigned int &bckg)
   //! [Draw disks]
 {
   vpImageDraw::drawCircle(I, center, radius, borderColor, thickness);
@@ -146,13 +146,13 @@ generateImage(const TypeInputImage &inputType)
   }
 
   drawDisk(I_src, vpImagePoint(top, left), circleRadius, circleColor, circleColor, circleThickness, bckg);
-  drawDisk(I_src, vpImagePoint(top, left), circleRadius * 0.50, circleColor / 2, circleColor / 2, circleThickness, circleColor);
+  drawDisk(I_src, vpImagePoint(top, left), circleRadius / 2, circleColor / 2, circleColor / 2, circleThickness, circleColor);
   drawDisk(I_src, vpImagePoint(bottom, left), circleRadius, circleColor, circleColor, circleThickness, bckg);
-  drawDisk(I_src, vpImagePoint(bottom, left), circleRadius * 0.50, circleColor / 2, circleColor / 2, circleThickness, circleColor);
+  drawDisk(I_src, vpImagePoint(bottom, left), circleRadius / 2, circleColor / 2, circleColor / 2, circleThickness, circleColor);
   drawDisk(I_src, vpImagePoint(top, right), circleRadius, circleColor, circleColor, circleThickness, bckg);
-  drawDisk(I_src, vpImagePoint(top, right), circleRadius * 0.50, circleColor / 2, circleColor / 2, circleThickness, circleColor);
+  drawDisk(I_src, vpImagePoint(top, right), circleRadius / 2, circleColor / 2, circleColor / 2, circleThickness, circleColor);
   drawDisk(I_src, vpImagePoint(bottom, right), circleRadius, circleColor, circleColor, circleThickness, bckg);
-  drawDisk(I_src, vpImagePoint(bottom, right), circleRadius * 0.50, circleColor / 2, circleColor / 2, circleThickness, circleColor);
+  drawDisk(I_src, vpImagePoint(bottom, right), circleRadius / 2, circleColor / 2, circleColor / 2, circleThickness, circleColor);
 
   std::cout << "Done drawing" << std::endl << std::flush;
   return I_src;
@@ -196,12 +196,12 @@ int main(int argc, char **argv)
   const std::string def_jsonFilePath = std::string("");
   const int def_nbCirclesToDetect = -1;
   const int def_gaussianKernelSize = 5;
-  const double def_gaussianSigma = 1.;
+  const float def_gaussianSigma = 1.f;
   const int def_sobelKernelSize = 3;
 #ifdef HAVE_OPENCV_IMGPROC
-  const double def_cannyThresh = 150.;
+  const float def_cannyThresh = 150.f;
 #else
-  const double def_cannyThresh = 25.;
+  const float def_cannyThresh = 25.f;
 #endif
   const int def_nbEdgeFilteringIter = 2;
   const std::pair<int, int> def_centerXlimits = std::pair<int, int>(0, 640);
@@ -209,31 +209,30 @@ int main(int argc, char **argv)
   const unsigned int def_minRadius = 0;
   const unsigned int def_maxRadius = 1000;
   const int def_dilatationRepet = 1;
-  const double def_centerThresh = -1.;
-  const double def_radiusThreshRatio = -1.;
-  const double def_circlePerfectness = 0.85;
-  const double def_centerDistanceThresh = 15;
-  const double def_radiusDifferenceThresh = 15;
-
+  const float def_centerThresh = -1.f;
+  const float def_radiusThreshRatio = -1.f;
+  const float def_circlePerfectness = 0.85f;
+  const float def_centerDistanceThresh = 15.f;
+  const float def_radiusDifferenceThresh = 15.f;
 
   std::string opt_input(def_input);
   std::string opt_jsonFilePath = def_jsonFilePath;
   int opt_nbCirclesToDetect = def_nbCirclesToDetect;
   int opt_gaussianKernelSize = def_gaussianKernelSize;
-  double opt_gaussianSigma = def_gaussianSigma;
+  float opt_gaussianSigma = def_gaussianSigma;
   int opt_sobelKernelSize = def_sobelKernelSize;
-  double opt_cannyThresh = def_cannyThresh;
+  float opt_cannyThresh = def_cannyThresh;
   int opt_nbEdgeFilteringIter = def_nbEdgeFilteringIter;
   std::pair<int, int> opt_centerXlimits = def_centerXlimits;
   std::pair<int, int> opt_centerYlimits = def_centerYlimits;
   unsigned int opt_minRadius = def_minRadius;
   unsigned int opt_maxRadius = def_maxRadius;
   int opt_dilatationRepet = def_dilatationRepet;
-  double opt_centerThresh = def_centerThresh;
-  int opt_radiusThreshRatio = def_radiusThreshRatio;
-  double opt_circlePerfectness = def_circlePerfectness;
-  double opt_centerDistanceThresh = def_centerDistanceThresh;
-  double opt_radiusDifferenceThresh = def_radiusDifferenceThresh;
+  float opt_centerThresh = def_centerThresh;
+  float opt_radiusThreshRatio = def_radiusThreshRatio;
+  float opt_circlePerfectness = def_circlePerfectness;
+  float opt_centerDistanceThresh = def_centerDistanceThresh;
+  float opt_radiusDifferenceThresh = def_radiusDifferenceThresh;
   bool opt_displayCanny = false;
 
   for (int i = 1; i < argc; i++) {
@@ -257,7 +256,7 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--gaussian-sigma" && i + 1 < argc) {
-      opt_gaussianSigma = atof(argv[i + 1]);
+      opt_gaussianSigma = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--sobel-kernel" && i + 1 < argc) {
@@ -265,7 +264,7 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--canny-thresh" && i + 1 < argc) {
-      opt_cannyThresh = atof(argv[i + 1]);
+      opt_cannyThresh = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--edge-filter" && i + 1 < argc) {
@@ -282,7 +281,7 @@ int main(int argc, char **argv)
       i += 2;
     }
     else if (argName == "--center-thresh" && i + 1 < argc) {
-      opt_centerThresh = atof(argv[i + 1]);
+      opt_centerThresh = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--center-xlim" && i + 2 < argc) {
@@ -294,16 +293,16 @@ int main(int argc, char **argv)
       i += 2;
     }
     else if (argName == "--radius-thresh" && i + 1 < argc) {
-      opt_radiusThreshRatio = atof(argv[i + 1]);
+      opt_radiusThreshRatio = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--circle-perfectness" && i + 1 < argc) {
-      opt_circlePerfectness = atof(argv[i + 1]);
+      opt_circlePerfectness = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--merging-thresh" && i + 2 < argc) {
-      opt_centerDistanceThresh = atof(argv[i + 1]);
-      opt_radiusDifferenceThresh = atof(argv[i + 2]);
+      opt_centerDistanceThresh = static_cast<float>(atof(argv[i + 1]));
+      opt_radiusDifferenceThresh = static_cast<float>(atof(argv[i + 2]));
       i += 2;
     }
     else if (argName == "--display-edge-map") {
