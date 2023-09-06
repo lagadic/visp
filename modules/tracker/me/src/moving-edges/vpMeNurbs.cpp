@@ -593,7 +593,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       std::list<vpMeSite>::iterator itList = list.begin();
       double convlt;
       double delta = 0;
-      int nbr = 0;
+      unsigned int nbr = 0;
       std::list<vpMeSite> addedPt;
       for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
         ++itEdges) {
@@ -625,7 +625,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       unsigned int memory_range = me->getRange();
       me->setRange(3);
       std::list<vpMeSite>::iterator itList2 = list.begin();
-      for (int j = 0; j < nbr; j++) {
+      for (unsigned int j = 0; j < nbr; j++) {
         vpMeSite s = *itList2;
         s.track(I, me, false);
         *itList2 = s;
@@ -724,7 +724,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       --itList; // Move on the last element
       double convlt;
       double delta;
-      int nbr = 0;
+      unsigned int nbr = 0;
       std::list<vpMeSite> addedPt;
       for (std::list<vpImagePoint>::const_iterator itEdges = ip_edges_list.begin(); itEdges != ip_edges_list.end();
         ++itEdges) {
@@ -755,7 +755,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       me->setRange(3);
       std::list<vpMeSite>::iterator itList2 = list.end();
       --itList2; // Move to the last element
-      for (int j = 0; j < nbr; j++) {
+      for (unsigned int j = 0; j < nbr; j++) {
         vpMeSite me_s = *itList2;
         me_s.track(I, me, false);
         *itList2 = me_s;
