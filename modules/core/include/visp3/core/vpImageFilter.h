@@ -70,7 +70,7 @@ class VISP_EXPORT vpImageFilter
 {
 public:
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
-                    double thresholdCanny, unsigned int apertureSobel);
+                    float thresholdCanny, unsigned int apertureSobel);
 
   /*!
     Apply a 1x3 derivative filter to an image pixel.
@@ -1222,11 +1222,11 @@ public:
   }
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-  static double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh);
-  static double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh);
-  static double median(const cv::Mat &cv_I);
-  static double median(const vpImage<unsigned char> &Isrc);
-  static std::vector<double> median(const vpImage<vpRGBa> &Isrc);
+  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh);
+  static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh);
+  static float median(const cv::Mat &cv_I);
+  static float median(const vpImage<unsigned char> &Isrc);
+  static std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
 };
 
