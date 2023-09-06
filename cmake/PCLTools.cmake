@@ -254,6 +254,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
 
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
 
+  mark_as_advanced(flann_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIRS)
   mark_as_advanced(FLANN_LIBRARY)
@@ -295,6 +296,17 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(Qt5Quick_DIR)               # Requested on macOS with pcl 1.12.1
   mark_as_advanced(Qt5_DIR)                    # Requested on macOS with pcl 1.12.1
 
+  # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(Qt6CoreTools_DIR Qt6Core_DIR Qt6BusTools_DIR Qt6GuiTools_DIR Qt6Gui_DIR Qt6OpenGLWidgets_DIR)
+  mark_as_advanced(Qt6OpenGL_DIR Qt6WidgetsTools_DIR Qt6Widgets_DIR)
+  mark_as_advanced(Qt6DBusTools_DIR Qt6DBus_DIR Qt6Network_DIR Qt6QmlCompilerPlusPrivate_DIR)
+  mark_as_advanced(Qt6QmlIntegration_DIR Qt6QmlModels_DIR Qt6QmlTools_DIR Qt6Qml_DIR Qt6Quick_DIR Qt6Sql_DIR)
+  mark_as_advanced(Qt6_DIR)
+  mark_as_advanced(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(QT_ADDITIONAL_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(MACDEPLOYQT_EXECUTABLE)
+  mark_as_advanced(WrapOpenGL_AGL)
+
   mark_as_advanced(OPENNI2_INCLUDE_DIR)
   mark_as_advanced(OPENNI2_INCLUDE_DIRS)
   mark_as_advanced(OPENNI2_LIBRARY)
@@ -302,6 +314,9 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENNI_INCLUDE_DIR)
   mark_as_advanced(OPENNI_INCLUDE_DIRS)
   mark_as_advanced(OPENNI_LIBRARY)
+
+  mark_as_advanced(PCAP_INCLUDE_DIR)                        # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(PCAP_LIBRARY)                            # Requested on macOS with pcl 1.13.1
 
   mark_as_advanced(USB_10_INCLUDE_DIR)
   mark_as_advanced(USB_10_LIBRARY)
@@ -325,6 +340,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENGL_GLES3_INCLUDE_DIR)
 
   mark_as_advanced(VTK_MPI_NUMPROCS)
+  mark_as_advanced(VTK_DIR)                             # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(TBB_DIR)
 
