@@ -39,6 +39,11 @@
 set(opt_incs "")
 set(opt_libs "")
 
+# Add library ws2_32.a or ws2_32.lib for vpNetwork class
+if(WS2_32_FOUND)
+  list(APPEND opt_libs ${WS2_32_LIBRARY})
+endif()
+
 # OpenCV
 if(USE_OPENCV)
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
