@@ -148,7 +148,7 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j,
 void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImageCircle &circle,
                               const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_circle(I, circle.getCenter(), circle.getRadius(), color, fill, thickness);
+  vp_display_display_circle(I, circle.getCenter(), static_cast<unsigned int>(circle.getRadius()), color, fill, thickness);
 }
 
 /*!
