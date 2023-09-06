@@ -50,7 +50,6 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #include <visp3/core/vpList.h>
 #endif
-#include <visp3/core/vpThread.h>
 
 #include <list>
 #include <math.h>
@@ -412,11 +411,11 @@ public:
       (void)ip_unused;
       if (pts.find(ip_id) == end(pts)) {
         throw(vpException(vpException::fatalError,
-          "Cannot compute pose with points and image points which do not have the same IDs"));
+                          "Cannot compute pose with points and image points which do not have the same IDs"));
       }
     }
 
-    std::vector<vpPoint> P{}, Q {};
+    std::vector<vpPoint> P {}, Q {};
     // The next line in C++17 produces a build error with Visual Studio 2017, that's why we
     // use rather C++11 to loop through std::map
     // for (auto [pt_id, pt] : pts) {
