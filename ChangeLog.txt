@@ -8,7 +8,7 @@
 ViSP 3.5.1 (under development)
   - Contributors:
     . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
-      Francois Chaumette, Olivier Roussel
+      Francois Chaumette, Olivier Roussel, Julien Dufour, Joudy Nader
   - New classes
     . vpMocapVicon an interface over Vicon motion capture system
     . vpMocapQualisys an interface over Qualisys motion capture system
@@ -49,6 +49,7 @@ ViSP 3.5.1 (under development)
     . In moving-edges ellipse tracker (vpMeEllipse and vpMbTracker and its derived classes),
       change sample step parameter to consider the distance between moving-edges in pixels
       rather than an angular value in deg as it was in the previous releases
+    . ViSP is available as a Conda package
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -99,6 +100,7 @@ ViSP 3.5.1 (under development)
     . [#1160] MBT does not estimate dof set by the user using vpMbTracker::setEstimatedDoF()
     . [#1176] ViSP cannot be built with a subset of OpenCV modules
     . [#1198] Unable to save multiple cameras in a same xml file
+    . [#1228] Unable to use visp conda package to link visp as a 3rd party
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
