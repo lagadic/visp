@@ -108,9 +108,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      # '-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -150,22 +150,26 @@ class HeaderFile():
       python_ident = f'py{name_python}'
 
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
-      if cls.class_decl.template is not None:
+      # Declaration
+      # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
+      template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
+      if template_decl is not None:
         template_strs = []
-        for template in cls.class_decl.template.params:
-          template_strs.append(owner_specs[template.name])
+        template_strs = map(lambda t: owner_specs[t.name], template_decl.params)
         template_str = f'<{", ".join(template_strs)}>'
         name_cpp += template_str
 
-      base_classes_str = ''
-      for base_class in cls.class_decl.bases:
-        if base_class.access == 'public':
-          base_classes_str += ', ' + get_typename(base_class.typename, owner_specs, header_env.mapping)
+      # Reference base classes when creating pybind class binding
+      base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
+                            filter(lambda b: b.access == 'public', cls.class_decl.bases))
+      class_template_str = ', '.join([name_cpp] + list(base_class_strs))
 
-      cls_result = f'\tpy::class_ {python_ident} = py::class_<{name_cpp}{base_classes_str}>(submodule, "{name_python}");'
-      self.declarations.append(cls_result)
+      cls_argument_strs = ['submodule', f'"{name_python}"'] + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
 
-      # Skip classes that have pure virtual methods since they cannot be instantiated
+      class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
+      self.declarations.append(class_decl)
+
+      # Skip constructors for classes that have pure virtual methods since they cannot be instantiated
       contains_pure_virtual_methods = False
       for method in cls.methods:
         if method.pure_virtual:
@@ -194,6 +198,8 @@ class HeaderFile():
           method_strs.append(ctor_str)
 
       # Operator definitions
+      binary_return_ops = supported_const_return_binary_op_map()
+      binary_in_place_ops = supported_in_place_binary_op_map()
       for method, method_config in operators:
         method_name = get_name(method.name)
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
@@ -203,33 +209,25 @@ class HeaderFile():
         elif len(params_strs) < 1:
           print(f'Found unary operator {name_cpp}::{method_name}, skipping')
           continue
-        binary_operators = [
-          ('==', 'eq'),
-          ('!=', 'ne'),
-          ('<', 'lt'),
-          ('>', 'gt'),
-          ('<=', 'le'),
-          ('>=', 'ge'),
-          ('+', 'add'),
-          ('-', 'sub'),
-          ('*', 'mul'),
-          ('/', 'truediv'),
-          ('%', 'mod'),
-          # ('<<', 'lshift'),
-          # ('>>', 'rshift'),
-          ('&', 'and'),
-          ('|', 'or'),
-          ('^', 'xor'),
-        ]
-        binary_op_tuple = None
-        for tuple in binary_operators:
-          if method_name == f'operator{tuple[0]}':
+        for cpp_op, python_op_name in binary_return_ops.items():
+          if method_name == f'operator{cpp_op}':
             operator_str = f'''
-{python_ident}.def("__{tuple[1]}__", [](const {name_cpp}& self, {params_strs[0]} o) {{
-  return (self {tuple[0]} o);
+{python_ident}.def("__{python_op_name}__", [](const {name_cpp}& self, {params_strs[0]} o) {{
+  return (self {cpp_op} o);
 }}, py::is_operator());'''
             method_strs.append(operator_str)
             break
+        for cpp_op, python_op_name in binary_in_place_ops.items():
+          if method_name == f'operator{cpp_op}':
+            operator_str = f'''
+{python_ident}.def("__{python_op_name}__", []({name_cpp}& self, {params_strs[0]} o) {{
+  self {cpp_op} o;
+  return self;
+}}, py::is_operator());'''
+            method_strs.append(operator_str)
+            break
+
+
 
 
       # Define classical methods
@@ -269,7 +267,7 @@ class HeaderFile():
         method_strs.append(f'{cls_config["additional_bindings"]}{template_str}({python_ident});')
 
 
-
+      # Check for potential error generating definitions
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       for error_overload in error_generating_overloads:
         print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
@@ -307,11 +305,11 @@ class HeaderFile():
         specs = cls_config['specializations']
         template_names = [t.name for t in cls.class_decl.template.params]
         for spec in specs:
-          python_name = spec['python_name']
+          name_python = spec['python_name']
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
 
           spec_dict = OrderedDict(k for k in zip(template_names, args))
-          specialization_strs.append(generate_class_with_potiental_specialization(python_name, spec_dict, cls_config))
+          specialization_strs.append(generate_class_with_potiental_specialization(name_python, spec_dict, cls_config))
 
         return '\n'.join(specialization_strs)

@@ -6,6 +6,7 @@
   "classes": {
     "vpArray2D": {
       "additional_bindings": "bindings_vpArray2D",
+      "use_buffer_protocol": true,
       "specializations": [
         {
           "python_name": "ArrayDouble2D",
@@ -37,6 +38,8 @@
       ]
     },
     "vpColVector": {
+      "additional_bindings": "bindings_vpColVector",
+      "use_buffer_protocol": true,
       "methods": [
         {
           "static": true,
@@ -126,6 +129,10 @@
           "custom_name": "stackColumn"
         }
       ]
+    },
+    "vpRotationMatrix": {
+      "additional_bindings": "bindings_vpRotationMatrix",
+      "use_buffer_protocol": true
     },
     "vpPolygon": {
       "methods":

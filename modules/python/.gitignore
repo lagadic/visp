@@ -2,5 +2,8 @@
 src/generated
 src/main.cpp
 build
-stubs
+stubs/visp
+stubs/build
+*.eggs
 docs/_build
+docs/_autosummary

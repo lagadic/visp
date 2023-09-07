@@ -6,9 +6,13 @@ from pathlib import Path
 
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
+from setuptools.command.install import install
 from distutils.command import build as build_module
 from pathlib import Path
 
+package_name = 'visp'
+version = '0.0.3'
+stubs_path = Path('stubs')
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -17,11 +21,19 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
+def generate_stubs():
+  subprocess.run('pip install ./stubs', env=os.environ, shell=True, capture_output=True, check=True)
+
+class CustomInstall(install):
+  def run(self):
+    install.run(self)
+    generate_stubs()
+
+
 class build(build_module.build):
   def run(self):
     import os
-    print('Generating binding code...')
-    #output = subprocess.run('python generator/generator.py', env=os.environ, shell=True, capture_output=True, check=True)
+    output = subprocess.run('python generator/generator.py', env=os.environ, shell=True, capture_output=True, check=True)
     build_module.build.run(self)
 # A CMakeExtension needs a sourcedir instead of a file list.
 # The name must be the _single_ output extension from the CMake build.
@@ -133,21 +145,22 @@ class CMakeBuild(build_ext):
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
-    name="visp",
-    version="0.0.2",
+    name=package_name,
+    version=version,
     author="Samuel Felton",
     author_email="samuel.felton@irisa.fr",
     description="Python wrapper for the Visual Servoing Platform",
     long_description="",
     setup_requires=[
       "pcpp",
-      "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
+      "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master",
+      'mypy'
     ],
-    ext_modules=[CMakeExtension("visp_python")],
-    cmdclass={"build_ext": CMakeBuild, 'build': build},
+    ext_modules=[CMakeExtension("visp")],
+    cmdclass={"build_ext": CMakeBuild, 'build': build, 'install': CustomInstall},
     zip_safe=False,
-    # package_data={"visp-stubs": ["visp"]},
-    # packages=['visp-stubs'],
+    include_package_data=True,
+    # package_data={'visp': ["py.typed", *find_stubs(path=stubs_path)]},
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
 )

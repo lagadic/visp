@@ -53,6 +53,9 @@ class Submodule():
 #include <pybind11/stl.h>
 #include <vector>
 #include <map>
+
+#include "core.hpp"
+
 {includes_str}
 
 namespace py = pybind11;
@@ -133,7 +136,7 @@ Bindings for methods and enum values
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   return [
-    Submodule('core', Path('/home/sfelton/software/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
+    Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
     # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
     # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
 

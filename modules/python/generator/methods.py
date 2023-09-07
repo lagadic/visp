@@ -11,6 +11,10 @@ from utils import *
 from dataclasses import dataclass
 
 def cpp_operator_list():
+  '''
+  List of cpp methods that are considered operators.
+  Not all of them have a direct mapping to Python
+  '''
   symbols = [
     '-', '+', '*', '/',
     '++', '--', '%',
@@ -27,8 +31,34 @@ def cpp_operator_list():
   ]
   return [f'operator{s}' for s in symbols] + ['operator']
 
-
-
+def supported_const_return_binary_op_map():
+  '''
+  Mapping between CPP operator symbols and their python equivalence, for binary operators that return a value and do not modify self.
+  a binary operator takes as argument self and an another parameter.
+  '''
+  return {
+    '==': 'eq',
+    '!=': 'ne',
+    '<': 'lt',
+    '>': 'gt',
+    '<=': 'le',
+    '>=': 'ge',
+    '+': 'add',
+    '-': 'sub',
+    '*': 'mul',
+    '/': 'truediv',
+    '%': 'mod',
+    '&': 'and',
+    '|': 'or',
+    '^': 'xor',
+  }
+def supported_in_place_binary_op_map():
+  return {
+    '+=': 'iadd',
+    '*=': 'imul',
+    '-=': 'isub',
+    '/=': 'itruediv',
+  }
 def find_and_define_repr_str(cls: ClassScope, cls_name: str, python_ident: str) -> str:
   for friend in cls.friends:
     if friend.fn is not None:
