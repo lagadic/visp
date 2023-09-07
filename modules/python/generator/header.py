@@ -108,9 +108,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -148,8 +148,8 @@ class HeaderFile():
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
       spec_result = ''
       python_ident = f'py{name_python}'
-
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
+
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
@@ -169,6 +169,7 @@ class HeaderFile():
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
       self.declarations.append(class_decl)
 
+      # Definitions
       # Skip constructors for classes that have pure virtual methods since they cannot be instantiated
       contains_pure_virtual_methods = False
       for method in cls.methods:
@@ -256,7 +257,7 @@ class HeaderFile():
 
       # Add call to user defined bindings function
       # Binding function should be defined in the static part of the generator
-      # It should have the signature void fn(py::class_& cls);
+      # It should have the signature void fn(py::class_<Type>& cls);
       # If it is for a templated class, it should also be templated in the same way (same order of parameters etc.)
       if cls_config['additional_bindings'] is not None:
         template_str = ''

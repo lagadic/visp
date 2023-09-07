@@ -11,7 +11,7 @@ from distutils.command import build as build_module
 from pathlib import Path
 
 package_name = 'visp'
-version = '0.0.3'
+version = '0.0.4'
 stubs_path = Path('stubs')
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -27,7 +27,7 @@ def generate_stubs():
 class CustomInstall(install):
   def run(self):
     install.run(self)
-    generate_stubs()
+    #generate_stubs()
 
 
 class build(build_module.build):
@@ -153,8 +153,7 @@ setup(
     long_description="",
     setup_requires=[
       "pcpp",
-      "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master",
-      'mypy'
+      "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
     ],
     ext_modules=[CMakeExtension("visp")],
     cmdclass={"build_ext": CMakeBuild, 'build': build, 'install': CustomInstall},

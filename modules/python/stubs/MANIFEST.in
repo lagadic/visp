@@ -1,1 +1,1 @@
-recursive-include . *.pyi
+recursive-include visp *.pyi
