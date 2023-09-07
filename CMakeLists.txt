@@ -382,39 +382,14 @@ if(WIN32)
   endif()
 endif()
 
-# Add library ws2_32.a or ws2_32.lib for vpNetwork class
 if(WIN32 AND NOT CYGWIN)
-  if(MINGW)
-    set(WS2_32_LIBRARY "ws2_32.a")
-    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
-    else()
-      find_library(HAVE_LIBWS2_32 ${WS2_32_LIBRARY}
-        "$ENV{MINGW_DIR}/lib"
-        "$ENV{MINGW_DIR}/mingw/lib"
-        C:/mingw/mingw/lib)
-      if(HAVE_LIBWS2_32)
-        list(APPEND VISP_LINKER_LIBS "${WS2_32_LIBRARY}")
-      endif()
-    endif()
-  elseif(WINRT)
-    # Since check_library_exists() and find_library() does't work to detect ws2_32.lib we add the lib that is part of Windows SDK
-    set(WS2_32_LIBRARY "ws2_32.lib")
-    list(APPEND VISP_LINKER_LIBS  ${WS2_32_LIBRARY})
-  else() # pure WIN32
-    set(WS2_32_LIBRARY "ws2_32.lib")
-    #check_library_exists("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
-    endif()
-  endif()
-  mark_as_advanced(HAVE_LIBWS2_32)
+  VP_CHECK_PACKAGE(WS2_32)
+  # Should be before include(cmake/VISPDetectCXXStandard.cmake)
+  VP_CHECK_FUNCTION_EXISTS(inet_ntop "${WS2_32_LIBRARY}")
+else()
+  # Should be before include(cmake/VISPDetectCXXStandard.cmake)
+  VP_CHECK_FUNCTION_EXISTS(inet_ntop "")
 endif()
-
-# Should be before include(cmake/VISPDetectCXXStandard.cmake)
-VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
 
 #--------------------------------------------------------------------
 # Option management
@@ -571,19 +546,18 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
   VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-if (ANDROID)
-  VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
-else()
-  VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
-endif()
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON IF NOT (WIN32 OR MINGW))
+
 # We need threads with c++11
 if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_PTHREAD)
-  if(Threads_FOUND OR PTHREAD_FOUND)
+  if(Threads_FOUND)
     message(WARNING "We need threads. Turn USE_PTHREAD=ON.")
     unset(USE_PTHREAD)
     set(USE_PTHREAD ON CACHE BOOL "Include pthread support" FORCE)
   endif()
 endif()
+
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON IF NOT WINRT)
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi

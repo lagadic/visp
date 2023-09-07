@@ -48,7 +48,7 @@
 #include <visp3/core/vpRect.h>
 
 #if defined(VISP_HAVE_OPENCV)
-#include <opencv2/core.hpp>
+#include <opencv2/core/core.hpp>
 #endif
 
 /**
