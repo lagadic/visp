@@ -552,8 +552,8 @@ int main(int argc, const char *argv[])
           I_median_rgba[r][c].B = 3 * (r * 3 + c);
         }
       }
-      std::vector<double> median_rgba = vpImageFilter::median(I_median_rgba);
-      std::vector<double> expected_median_rgba = { 4, 8, 12 };
+      std::vector<float> median_rgba = vpImageFilter::median(I_median_rgba);
+      std::vector<float> expected_median_rgba = { 4.f, 8.f, 12.f };
       for (unsigned int i = 0; i < 3; i++) {
         bool test_local = (median_rgba[i] == expected_median_rgba[i]);
         test &= test_local;

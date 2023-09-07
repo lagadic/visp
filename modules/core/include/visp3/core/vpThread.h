@@ -61,7 +61,7 @@
    Windows.
 
    There are two examples implemented in testMutex.cpp and testThread.cpp to
-   show how to use this class. The content of test-thread.cpp that hightlights
+   show how to use this class. The content of test-thread.cpp that highlights
    the main functionalities of this class is given hereafter: \snippet
    testThread.cpp Code
 
@@ -86,7 +86,7 @@ public:
      Default constructor that does nothing. To attach a function to this
      thread of execution you need to call create().
    */
-  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false) {}
+  vpThread() : m_handle(), m_isCreated(false), m_isJoinable(false) { }
 
   /*!
      Construct a thread object that represents a new joinable thread of

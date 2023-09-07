@@ -148,11 +148,11 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
  * The algorithm is based on based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
  * \param[in] channel : Single channel image in OpenCV format.
  */
-double vpImageFilter::median(const cv::Mat &channel)
+float vpImageFilter::median(const cv::Mat &channel)
 {
-  double m = (channel.rows * channel.cols) / 2;
+  float m = (channel.rows * channel.cols) / 2.f;
   int bin = 0;
-  double med = -1.0;
+  float med = -1.0f;
 
   int histSize = 256;
   float range[] = { 0, 256 };
@@ -165,7 +165,7 @@ double vpImageFilter::median(const cv::Mat &channel)
   for (int i = 0; i < histSize && med < 0.0; ++i) {
     bin += cvRound(hist.at<float>(i));
     if (bin > m && med < 0.0)
-      med = i;
+      med = static_cast<float>(i);
   }
 
   return med;
@@ -175,9 +175,10 @@ double vpImageFilter::median(const cv::Mat &channel)
  * \brief Calculates the median value of a single channel.
  * The algorithm is based on based on https://github.com/arnaudgelas/OpenCVExamples/blob/master/cvMat/Statistics/Median/Median.cpp
  * \param[in] Isrc : Gray-level image in ViSP format.
+ * \return Gray level image median value.
  * \sa \ref vpImageFilter::median() "vpImageFilter::median(const cv::Mat)"
  */
-double vpImageFilter::median(const vpImage<unsigned char> &Isrc)
+float vpImageFilter::median(const vpImage<unsigned char> &Isrc)
 {
   cv::Mat cv_I;
   vpImageConvert::convert(Isrc, cv_I);
@@ -188,17 +189,17 @@ double vpImageFilter::median(const vpImage<unsigned char> &Isrc)
  * \brief Calculates the median value of a vpRGBa image.
  * The result is ordered in RGB format.
  * \param[in] Isrc : RGB image in ViSP format. Alpha channel is ignored.
- * \return std::vector<double> meds such as meds[0] = red-channel-median meds[1] = green-channel-median
+ * \return std::vector<float> meds such as meds[0] = red-channel-median, meds[1] = green-channel-median
  * and meds[2] = blue-channel-median.
  * \sa \ref vpImageFilter::median() "vpImageFilter::median(const cv::Mat)"
  */
-std::vector<double> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
+std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
 {
   cv::Mat cv_I_bgr;
   vpImageConvert::convert(Isrc, cv_I_bgr);
   std::vector<cv::Mat> channels;
   cv::split(cv_I_bgr, channels);
-  std::vector<double> meds(3);
+  std::vector<float> meds(3);
   const int orderMeds[] = { 2, 1, 0 }; // To keep the order R, G, B
   const int orderCvChannels[] = { 0, 1, 2 }; // Because the order of the cv::Mat is B, G, R
   for (unsigned int i = 0; i < 3; i++) {
@@ -213,9 +214,9 @@ std::vector<double> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
  * \param[in] cv_I : The image, in cv format.
  * \param[in] p_cv_blur : If different from nullptr, must contain a blurred version of cv_I.
  * \param[out] lowerThresh : The lower threshold for the Canny edge filter.
- * \return double The upper Canny edge filter threshold.
+ * \return The upper Canny edge filter threshold.
  */
-double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh)
+float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh)
 {
   cv::Mat cv_I_blur;
   if (p_cv_blur != nullptr) {
@@ -232,10 +233,10 @@ double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *
   cv::Mat cv_I_scaled_down;
   resize(cv_I_blur, cv_I_scaled_down, cv::Size(), scale_down, scale_down, cv::INTER_NEAREST);
 
-  double median_pix = vpImageFilter::median(cv_I_scaled_down);
-  double lower = std::max(0., 0.7 * median_pix);
-  double upper = std::min(255., 1.3 * median_pix);
-  upper = std::max(1., upper);
+  float median_pix = vpImageFilter::median(cv_I_scaled_down);
+  float lower = std::max(0.f, 0.7f * median_pix);
+  float upper = std::min(255.f, 1.3f * median_pix);
+  upper = std::max(1.f, upper);
   lowerThresh = lower;
   return upper;
 }
@@ -245,9 +246,9 @@ double vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *
  *
  * \param[in] I : The gray-scale image, in ViSP format.
  * \param[in] lowerThresh : Canny lower threshold.
- * \return double The upper Canny edge filter threshold.
+ * \return The upper Canny edge filter threshold.
  */
-double vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh)
+float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh)
 {
   cv::Mat cv_I;
   vpImageConvert::convert(I, cv_I);
@@ -295,14 +296,14 @@ int main()
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
+                          unsigned int gaussianFilterSize, float thresholdCanny, unsigned int apertureSobel)
 {
 #if defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img_cvmat, cv_I_blur, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
   cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
-  double upperCannyThresh = thresholdCanny;
-  double lowerCannyThresh = thresholdCanny / 3.;
+  float upperCannyThresh = thresholdCanny;
+  float lowerCannyThresh = thresholdCanny / 3.f;
   if (upperCannyThresh < 0) {
     upperCannyThresh = computeCannyThreshold(img_cvmat, &cv_I_blur, lowerCannyThresh);
   }

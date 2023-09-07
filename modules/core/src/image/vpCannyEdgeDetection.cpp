@@ -143,7 +143,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   float lowerThreshold = m_lowerThreshold;
   if (m_lowerThreshold < 0) {
     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
-    lowerThreshold = m_upperThreshold / 3.;
+    lowerThreshold = m_upperThreshold / 3.f;
   }
 
   performHysteresisThresholding(lowerThreshold, upperThreshold);
@@ -269,7 +269,7 @@ getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int
     absoluteTheta = 90.;
   }
   else {
-    absoluteTheta = vpMath::deg(std::abs(std::atan(dy / dx)));
+    absoluteTheta = static_cast<float>(vpMath::deg(std::abs(std::atan(dy / dx))));
   }
   return absoluteTheta;
 }

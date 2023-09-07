@@ -216,7 +216,7 @@ vpMeNurbs::vpMeNurbs()
 */
 vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   : vpMeTracker(menurbs), nurbs(menurbs.nurbs), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0),
-  enableCannyDetection(false), cannyTh1(100.), cannyTh2(200.)
+  enableCannyDetection(false), cannyTh1(100.f), cannyTh2(200.f)
 {
   dist = menurbs.dist;
   nbControlPoints = menurbs.nbControlPoints;
@@ -547,8 +547,8 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
     std::list<vpImagePoint> ip_edges_list;
     if (firstBorder != vpImagePoint(-1, -1)) {
       unsigned int dir;
-      double fi = firstBorder.get_i();
-      double fj = firstBorder.get_j();
+      double fi = static_cast<double>(firstBorder.get_i());
+      double fj = static_cast<double>(firstBorder.get_j());
       double w = Isub.getWidth() - 1;
       double h = Isub.getHeight() - 1;
       // if (firstBorder.get_i() == 0) dir = 4;

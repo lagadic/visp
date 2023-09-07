@@ -151,9 +151,9 @@ private:
   //! search.
   bool enableCannyDetection;
   //! First canny threshold
-  double cannyTh1;
+  float cannyTh1;
   //! Second canny threshold
-  double cannyTh2;
+  float cannyTh2;
 
 public:
   vpMeNurbs();
@@ -181,7 +181,7 @@ public:
     \param th1 : The first threshold;
     \param th2 : The second threshold;
   */
-  void setCannyThreshold(double th1, double th2)
+  void setCannyThreshold(float th1, float th2)
   {
     this->cannyTh1 = th1;
     this->cannyTh2 = th2;

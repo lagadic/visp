@@ -33,8 +33,8 @@
  *
 *****************************************************************************/
 
-#ifndef vpDisplay_h
-#define vpDisplay_h
+#ifndef _vpDisplay_h_
+#define _vpDisplay_h_
 
 #include <list>
 #include <sstream>
@@ -309,9 +309,9 @@ public:
     when \e fill is set to false.
   */
   inline virtual void displayCircle(const vpImageCircle &circle, const vpColor &color, bool fill = false,
-                             unsigned int thickness = 1)
+                                    unsigned int thickness = 1)
   {
-    this->displayCircle(circle.getCenter(), circle.getRadius(), color, fill, thickness);
+    this->displayCircle(circle.getCenter(), static_cast<unsigned int>(circle.getRadius()), color, fill, thickness);
   }
 
   /*!

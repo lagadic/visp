@@ -70,7 +70,7 @@ class VISP_EXPORT vpImageFilter
 {
 public:
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
-                    double thresholdCanny, unsigned int apertureSobel);
+                    float thresholdCanny, unsigned int apertureSobel);
 
   /*!
     Apply a 1x3 derivative filter to an image pixel.
@@ -955,12 +955,14 @@ public:
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
 
     if (sigma <= 0)
-      sigma = (size - 1) / 6.0;
+      sigma = static_cast<FilterType>((size - 1) / 6.0);
 
     int middle = (int)(size - 1) / 2;
-    FilterType sigma2 = vpMath::sqr(sigma);
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
+    FilterType coef1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
+    FilterType _2_sigma2 = static_cast<FilterType>(2. * sigma2);
     for (int i = 0; i <= middle; i++) {
-      filter[i] = (1. / (sigma * sqrt(2. * M_PI))) * exp(-(i * i) / (2. * sigma2));
+      filter[i] = coef1 * exp(-(i * i) / _2_sigma2);
     }
     if (normalize) {
       // renormalization
@@ -997,22 +999,25 @@ public:
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
 
     if (sigma <= 0)
-      sigma = (size - 1) / 6.0;
+      sigma = static_cast<FilterType>((size - 1) / 6.0);
 
     int middle = (int)(size - 1) / 2;
-    FilterType sigma2 = vpMath::sqr(sigma);
+    FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
+    FilterType coef_1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
+    FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
+    FilterType _2_coef_1 = static_cast<FilterType>(2.) * coef_1;
+    FilterType _2_sigma2 = static_cast<FilterType>(2. * sigma2);
     filter[0] = 0.;
     for (int i = 1; i <= middle; i++) {
-      filter[i] = -(1. / (sigma * sqrt(2. * M_PI))) *
-        (exp(-((i + 1) * (i + 1)) / (2. * sigma2)) - exp(-((i - 1) * (i - 1)) / (2. * sigma2))) / 2.;
+      filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-((i + 1) * (i + 1)) / _2_sigma2)) - static_cast<FilterType>(exp(-((i - 1) * (i - 1)) / _2_sigma2)));
     }
 
     if (normalize) {
       FilterType sum = 0;
       for (int i = 1; i <= middle; i++) {
-        sum += 2. * (1. / (sigma * sqrt(2. * M_PI))) * exp(-(i * i) / (2. * sigma2));
+        sum += _2_coef_1 * static_cast<FilterType>(exp(-(i * i) / _2_sigma2));
       }
-      sum += (1. / (sigma * sqrt(2. * M_PI)));
+      sum += coef_1;
 
       for (int i = 1; i <= middle; i++) {
         filter[i] = filter[i] / sum;
@@ -1217,11 +1222,11 @@ public:
   }
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-  static double computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, double &lowerThresh);
-  static double computeCannyThreshold(const vpImage<unsigned char> &I, double &lowerThresh);
-  static double median(const cv::Mat &cv_I);
-  static double median(const vpImage<unsigned char> &Isrc);
-  static std::vector<double> median(const vpImage<vpRGBa> &Isrc);
+  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh);
+  static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh);
+  static float median(const cv::Mat &cv_I);
+  static float median(const vpImage<unsigned char> &Isrc);
+  static std::vector<float> median(const vpImage<vpRGBa> &Isrc);
 #endif
 };
 

@@ -105,20 +105,20 @@ public:
   public:
     vpCircleHoughTransformParameters()
       : m_gaussianKernelSize(5)
-      , m_gaussianStdev(1.)
+      , m_gaussianStdev(1.f)
       , m_sobelKernelSize(3)
-      , m_cannyThresh(-1)
+      , m_cannyThresh(-1.f)
       , m_edgeMapFilteringNbIter(1)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_minRadius(0)
       , m_maxRadius(1000)
       , m_dilatationNbIter(1)
-      , m_centerThresh(50.)
-      , m_radiusRatioThresh(2.)
-      , m_circlePerfectness(0.9)
-      , m_centerMinDist(15.)
-      , m_mergingRadiusDiffThresh(1.5 * (float)m_centerMinDist)
+      , m_centerThresh(50.f)
+      , m_radiusRatioThresh(2.f)
+      , m_circlePerfectness(0.9f)
+      , m_centerMinDist(15.f)
+      , m_mergingRadiusDiffThresh(1.5f * m_centerMinDist)
     {
 
     }
@@ -532,7 +532,7 @@ public:
    */
   inline void setCircleMinRadius(const float &circle_min_radius)
   {
-    m_algoParams.m_minRadius = circle_min_radius;
+    m_algoParams.m_minRadius = static_cast<unsigned int>(circle_min_radius);
   }
 
   /*!
@@ -541,7 +541,7 @@ public:
    */
   inline void setCircleMaxRadius(const float &circle_max_radius)
   {
-    m_algoParams.m_maxRadius = circle_max_radius;
+    m_algoParams.m_maxRadius = static_cast<unsigned int>(circle_max_radius);
   }
 
   /*!
@@ -694,7 +694,7 @@ public:
   /*!
    * Get circles min radius in pixels.
    */
-  inline float getCircleMinRadius() const
+  inline unsigned int getCircleMinRadius() const
   {
     return m_algoParams.m_minRadius;
   }
@@ -702,7 +702,7 @@ public:
   /*!
    * Get circles max radius in pixels.
    */
-  inline float getCircleMaxRadius() const
+  inline unsigned int getCircleMaxRadius() const
   {
     return m_algoParams.m_maxRadius;
   }

@@ -36,5 +36,5 @@ foreach(data ${tutorial_data})
 endforeach()
 
 if(USE_TENSORT)
-  vp_set_source_file_compile_flag(tutorial-dnn-tensorrt-live.cpp -Wno-deprecated-declarations)
+  visp_set_source_file_compile_flag(tutorial-dnn-tensorrt-live.cpp -Wno-deprecated-declarations)
 endif()

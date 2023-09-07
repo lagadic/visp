@@ -221,7 +221,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
 #if defined(HAVE_OPENCV_IMGPROC)
   float cannyThresh = m_algoParams.m_cannyThresh;
-  double lowerThresh;
+  float lowerThresh;
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
   if (m_algoParams.m_cannyThresh < 0.) {
@@ -293,7 +293,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumXposition = std::max(m_algoParams.m_centerXlimits.first, -1 * (int)m_algoParams.m_maxRadius);
   int maximumXposition = std::min(m_algoParams.m_centerXlimits.second, (int)(m_algoParams.m_maxRadius + nbCols));
   minimumXposition = std::min(minimumXposition, maximumXposition - 1);
-  float minimumXpositionDouble = minimumXposition;
+  float minimumXpositionFloat = static_cast<float>(minimumXposition);
   int offsetX = minimumXposition;
   int accumulatorWidth = maximumXposition - minimumXposition + 1;
   if (accumulatorWidth <= 0) {
@@ -307,7 +307,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int minimumYposition = std::max(m_algoParams.m_centerYlimits.first, -1 * (int)m_algoParams.m_maxRadius);
   int maximumYposition = std::min(m_algoParams.m_centerYlimits.second, (int)(m_algoParams.m_maxRadius + nbRows));
   minimumYposition = std::min(minimumYposition, maximumYposition - 1);
-  float minimumYpositionDouble = minimumYposition;
+  float minimumYpositionFloat = static_cast<float>(minimumYposition);
   int offsetY = minimumYposition;
   int accumulatorHeight = maximumYposition - minimumYposition + 1;
   if (accumulatorHeight <= 0) {
@@ -338,7 +338,7 @@ vpCircleHoughTransform::computeCenterCandidates()
             float x1 = (float)c + (float)rad * sx;
             float y1 = (float)r + (float)rad * sy;
 
-            if (x1 < minimumXpositionDouble || y1 < minimumYpositionDouble) {
+            if (x1 < minimumXpositionFloat || y1 < minimumYpositionFloat) {
               continue; // If either value is lower than maxRadius, it means that the center is outside the search region.
             }
 
@@ -346,21 +346,21 @@ vpCircleHoughTransform::computeCenterCandidates()
             int y_low, y_high;
 
             if (x1 > 0.) {
-              x_low = std::floor(x1);
-              x_high = std::ceil(x1);
+              x_low = static_cast<int>(std::floor(x1));
+              x_high = static_cast<int>(std::ceil(x1));
             }
             else {
-              x_low = -1 * std::ceil(-1. * x1);
-              x_high = -1 * std::floor(-1. * x1);
+              x_low = -(static_cast<int>(std::ceil(-x1)));
+              x_high = -(static_cast<int>(std::floor(-x1)));
             }
 
             if (y1 > 0.) {
-              y_low = std::floor(y1);
-              y_high = std::ceil(y1);
+              y_low = static_cast<int>(std::floor(y1));
+              y_high = static_cast<int>(std::ceil(y1));
             }
             else {
-              y_low = -1 * std::ceil(-1. * y1);
-              y_high = -1 * std::floor(-1. * y1);
+              y_low = -(static_cast<int>(std::ceil(-1. * y1)));
+              y_high = -(static_cast<int>(std::floor(-1. * y1)));
             }
 
             auto updateAccumulator =
@@ -441,14 +441,14 @@ void
 vpCircleHoughTransform::computeCircleCandidates()
 {
   size_t nbCenterCandidates = m_centerCandidatesList.size();
-  unsigned int nbBins = (m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_centerMinDist;
+  unsigned int nbBins = static_cast<unsigned int>((m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_centerMinDist);
   nbBins = std::max((unsigned int)1, nbBins); // Avoid having 0 bins, which causes segfault
   std::vector<unsigned int> radiusAccumList; /*!< Radius accumulator for each center candidates.*/
   std::vector<float> radiusActualValueList; /*!< Vector that contains the actual distance between the edge points and the center candidates.*/
 
   unsigned int rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
-  unsigned int rmax2 = m_algoParams.m_maxRadius * m_algoParams.m_maxRadius;
-  int circlePerfectness2 = m_algoParams.m_circlePerfectness  * m_algoParams.m_circlePerfectness;
+  unsigned int rmax2 = static_cast<unsigned int>(m_algoParams.m_maxRadius * m_algoParams.m_maxRadius);
+  int circlePerfectness2 = static_cast<int>(m_algoParams.m_circlePerfectness * m_algoParams.m_circlePerfectness);
 
   for (size_t i = 0; i < nbCenterCandidates; i++) {
     std::pair<int, int> centerCandidate = m_centerCandidatesList[i];
@@ -469,12 +469,12 @@ vpCircleHoughTransform::computeCircleCandidates()
         float gy = m_dIy[edgePoint.first][edgePoint.second];
         float grad2 = gx * gx + gy * gy;
 
-        int scalProd = rx * gx + ry * gy;
-        int scalProd2 = scalProd * scalProd;
+        float scalProd = rx * gx + ry * gy;
+        float scalProd2 = scalProd * scalProd;
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
           // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
-          float r = std::sqrt(r2);
-          unsigned int r_bin = std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist);
+          float r = static_cast<float>(std::sqrt(r2));
+          unsigned int r_bin = static_cast<unsigned int>(std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist));
           r_bin = std::min(r_bin, nbBins - 1);
           radiusAccumList[r_bin]++;
           radiusActualValueList[r_bin] += r;
