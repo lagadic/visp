@@ -1,5 +1,5 @@
 import visp
-from visp.core import ArrayDouble2D, RotationMatrix, Matrix
+from visp.core import ArrayDouble2D, RotationMatrix, Matrix, HomogeneousMatrix
 
 import numpy as np
 import pytest
@@ -13,8 +13,6 @@ def test_np_array_modifies_vp_array():
   assert np.all(array_np == 1.0)
   array_np[0:2, 0:2] = 2
   assert array.getMinValue() == 1 and array.getMaxValue() == 2
-
-
 
 def test_array_operations():
   array1 = ArrayDouble2D(2, 2, 1)
@@ -33,8 +31,29 @@ def test_matrix_operations():
   assert m2 * 2 == m1
 
 def test_rotation_representations_not_writable():
-  # Test that some class have non writable numpy arrays
+  # Test that some classes have non writable numpy arrays
   R = RotationMatrix()
   R_np = np.array(R, copy=False)
   with pytest.raises(ValueError):
     R_np[0, 0] = 1
+  T = HomogeneousMatrix()
+  T_np = np.array(T, copy=False)
+  with pytest.raises(ValueError):
+    T_np[0, 0] = 1
+  # q = visp.core.QuaternionVector()
+  # q_np = np.array(q, copy=False)
+  # with pytest.raises(ValueError):
+  #   q_np[0] = 1
+
+def test_numpy_constructor():
+  n_invalid = np.array([1, 2, 3])
+  with pytest.raises(RuntimeError):
+    a = ArrayDouble2D(n_invalid)
+  n_valid = np.array([[1, 2, 3], [4, 5, 6]])
+  a = ArrayDouble2D(n_valid)
+
+
+
+
+def test_rotation_repr_can_be_defined_by_hand():
+  R = RotationMatrix()
