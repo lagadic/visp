@@ -855,7 +855,6 @@ macro(VP_CHECK_FUNCTION_EXISTS function libraries)
   string(TOUPPER "${ALIAS}" ALIAS_UPPER)
   set(ALIAS_HAVE            HAVE_FUNC_${ALIAS_UPPER})
   set(CMAKE_REQUIRED_LIBRARIES "${libraries}")
-  message("  -------> CMAKE_REQUIRED_LIBRARIES: ${CMAKE_REQUIRED_LIBRARIES}")
   check_function_exists(${ALIAS} ${ALIAS_HAVE})
 endmacro()
 
