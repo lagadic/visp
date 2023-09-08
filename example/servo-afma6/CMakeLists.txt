@@ -106,4 +106,5 @@ if(VISP_HAVE_REALSENSE2)
 
   visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(servoAfma6MegaposePBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
