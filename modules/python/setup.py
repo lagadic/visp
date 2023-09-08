@@ -28,6 +28,7 @@ class CustomInstall(install):
   def run(self):
     install.run(self)
     #generate_stubs()
+    # subprocess.run('sphinx-build -b html docs docs/build/html', shell=True, check=True)
 
 
 class build(build_module.build):
@@ -154,6 +155,9 @@ setup(
     setup_requires=[
       "pcpp",
       "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
+      # "sphinx",
+      # "sphinx-rtd-theme",
+      # "sphinx-autopackagesummary"
     ],
     ext_modules=[CMakeExtension("visp")],
     cmdclass={"build_ext": CMakeBuild, 'build': build, 'install': CustomInstall},

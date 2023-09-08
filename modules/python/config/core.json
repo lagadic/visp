@@ -22,6 +22,40 @@
         }
       ]
     },
+    "vpImage": {
+      "additional_bindings": "bindings_vpImage",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ImageGray",
+          "arguments": ["unsigned char"]
+        },
+        {
+          "python_name": "ImageFloat",
+          "arguments": ["float"]
+        },
+        {
+          "python_name": "ImageDouble",
+          "arguments": ["double"]
+        },
+        {
+          "python_name": "ImageUInt16",
+          "arguments": ["uint16_t"]
+        }
+        {
+          "python_name": "ImageRGBA",
+          "arguments": ["vpRGBa"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        }
+      ]
+    },
     "vpTranslationVector": {
       "methods":
       [
