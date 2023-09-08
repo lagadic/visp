@@ -54,6 +54,8 @@
       ]
     },
     "vpRowVector": {
+      "additional_bindings": "bindings_vpRowVector",
+      "use_buffer_protocol": true,
       "methods": [
         {
           "static": true,
@@ -132,6 +134,10 @@
     },
     "vpRotationMatrix": {
       "additional_bindings": "bindings_vpRotationMatrix",
+      "use_buffer_protocol": true
+    },
+    "vpHomogeneousMatrix": {
+      "additional_bindings": "bindings_vpHomogeneousMatrix",
       "use_buffer_protocol": true
     },
     "vpPolygon": {
