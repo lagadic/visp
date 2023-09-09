@@ -95,11 +95,7 @@ public:
   vpMeEllipse(const vpMeEllipse &me_ellipse);
   virtual ~vpMeEllipse();
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1) override;
-#else
   void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
-#endif
 
   /*!
     Gets the second order normalized centered moment \f$ n_{ij} \f$

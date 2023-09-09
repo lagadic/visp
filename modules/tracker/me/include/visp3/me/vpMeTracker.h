@@ -94,9 +94,8 @@ public:
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
-  virtual void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness) = 0;
-  virtual void display(const vpImage<unsigned char> &I);
-  virtual void display(const vpImage<vpRGBa> &I);
+  void display(const vpImage<unsigned char> &I);
+  void display(const vpImage<vpRGBa> &I);
   void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
   static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
