@@ -10,6 +10,8 @@
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpImage.h>
+
 
 
 namespace py = pybind11;
@@ -118,7 +120,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }));
+                         }));
 }
 
 
@@ -150,6 +152,26 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<doub
     return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
   });
 }
+
+// template<typename T>
+// void bindings_vpImage(py::class_<vpImage<T>> &pyImage) = delete;
+
+template<typename T>
+typename std::enable_if<std::is_fundamental<T>::value, void>::type
+bindings_vpImage(py::class_<vpImage<T>> &pyImage)
+{
+  pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
+    return make_array_buffer<T, 2>(image.bitmap, { image.getHeight(), image.getWidth() }, false);
+  });
+}
+template<>
+void bindings_vpImage(py::class_<vpImage<vpRGBa>> &pyImage)
+{ }
+template<>
+void bindings_vpImage<vpRGBf>(py::class_<vpImage<vpRGBf>> &pyImage)
+{ }
+
+
 
 
 #endif

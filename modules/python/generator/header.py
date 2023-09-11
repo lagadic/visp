@@ -108,9 +108,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -146,6 +146,7 @@ class HeaderFile():
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
     result = ''
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
+
       spec_result = ''
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
@@ -201,9 +202,16 @@ class HeaderFile():
       # Operator definitions
       binary_return_ops = supported_const_return_binary_op_map()
       binary_in_place_ops = supported_in_place_binary_op_map()
+
       for method, method_config in operators:
+        if name_cpp_no_template == 'vpImage':
+          print('\t\t', owner_specs)
+          print('\t\t', header_env.mapping)
+
         method_name = get_name(method.name)
+        method_is_const = method.const
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+        print('\t\t', params_strs)
         if len(params_strs) > 1:
           print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
           continue
@@ -213,7 +221,7 @@ class HeaderFile():
         for cpp_op, python_op_name in binary_return_ops.items():
           if method_name == f'operator{cpp_op}':
             operator_str = f'''
-{python_ident}.def("__{python_op_name}__", [](const {name_cpp}& self, {params_strs[0]} o) {{
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
   return (self {cpp_op} o);
 }}, py::is_operator());'''
             method_strs.append(operator_str)
@@ -221,7 +229,7 @@ class HeaderFile():
         for cpp_op, python_op_name in binary_in_place_ops.items():
           if method_name == f'operator{cpp_op}':
             operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({name_cpp}& self, {params_strs[0]} o) {{
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
   self {cpp_op} o;
   return self;
 }}, py::is_operator());'''
@@ -265,7 +273,7 @@ class HeaderFile():
           template_types = owner_specs.values()
           template_str = f'<{", ".join([template_type for template_type in template_types])}>'
 
-        method_strs.append(f'{cls_config["additional_bindings"]}{template_str}({python_ident});')
+        method_strs.append(f'{cls_config["additional_bindings"]}({python_ident});')
 
 
       # Check for potential error generating definitions

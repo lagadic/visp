@@ -41,7 +41,7 @@
         {
           "python_name": "ImageUInt16",
           "arguments": ["uint16_t"]
-        }
+        },
         {
           "python_name": "ImageRGBA",
           "arguments": ["vpRGBa"]

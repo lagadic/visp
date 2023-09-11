@@ -18,10 +18,11 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
     spec_str = ''
     if isinstance(segment, types.FundamentalSpecifier):
       return segment.name
+    segment_name = segment.name
     if segment.name in owner_specs:
-      segment.name = owner_specs[segment.name]
+      segment_name = owner_specs[segment.name]
     if segment.name in header_env_mapping:
-      segment.name = header_env_mapping[segment.name]
+      segment_name = header_env_mapping[segment.name]
 
     if segment.specialization is not None:
       template_strs = []
@@ -30,15 +31,14 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
 
       spec_str = f'<{",".join(template_strs)}>'
 
-    return segment.name + spec_str
+    return segment_name + spec_str
   return '::'.join(list(map(segment_repr, typename.segments)))
 
 def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
 
   if isinstance(param, types.Value):
     return ''.join([token.value for token in param.tokens])
-  if isinstance(param, types.FunctionType):
-    return 'FUNCTION'
+
   if isinstance(param, types.Type):
     repr_str = get_typename(param.typename, owner_specs, header_env_mapping)
     split = repr_str.split('<')
