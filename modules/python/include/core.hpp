@@ -11,6 +11,7 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpRGBf.h>
 
 
 
@@ -164,11 +165,13 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
     return make_array_buffer<T, 2>(image.bitmap, { image.getHeight(), image.getWidth() }, false);
   });
 }
-template<>
-void bindings_vpImage(py::class_<vpImage<vpRGBa>> &pyImage)
+template<typename T>
+typename std::enable_if<std::is_same<vpRGBa, T>::value, void>::type
+bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 { }
-template<>
-void bindings_vpImage<vpRGBf>(py::class_<vpImage<vpRGBf>> &pyImage)
+template<typename T>
+typename std::enable_if<std::is_same<vpRGBf, T>::value, void>::type
+bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 { }
 
 
