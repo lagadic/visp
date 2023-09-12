@@ -108,9 +108,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -204,14 +204,9 @@ class HeaderFile():
       binary_in_place_ops = supported_in_place_binary_op_map()
 
       for method, method_config in operators:
-        if name_cpp_no_template == 'vpImage':
-          print('\t\t', owner_specs)
-          print('\t\t', header_env.mapping)
-
         method_name = get_name(method.name)
         method_is_const = method.const
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
-        print('\t\t', params_strs)
         if len(params_strs) > 1:
           print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
           continue

@@ -112,44 +112,40 @@ void copy_data_from_np(np_array_cf<Item> src, Item *dest)
 /*Array2D and its children*/
 
 /*Get buffer infos : used in def_buffer and the .numpy() function*/
-template<typename T> std::function<py::buffer_info(T &)> get_buffer_info() = delete;
+template<typename T> py::buffer_info get_buffer_info(T &) = delete;
 template<typename T,
   template <typename> class Array,
   typename std::enable_if<std::is_same<vpArray2D<T>, Array<T>>::value, bool>::type = true>
-std::function<py::buffer_info(Array<T> &)> get_buffer_info()
+py::buffer_info get_buffer_info(Array<T> &array)
 {
-  return [](vpArray2D<T> &array) -> py::buffer_info {
-    return make_array_buffer<T, 2>(array.data, { array.getRows(), array.getCols() }, false);
-  };
+  return make_array_buffer<T, 2>(array.data, { array.getRows(), array.getCols() }, false);
 }
 
 template<>
-std::function<py::buffer_info(vpColVector &)> get_buffer_info()
+py::buffer_info get_buffer_info(vpMatrix &array)
 {
-  return [](vpColVector &array) -> py::buffer_info {
-    return make_array_buffer<double, 1>(array.data, { array.getRows() }, false);
-  };
+  return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, false);
+}
+
+template<>
+py::buffer_info get_buffer_info(vpColVector &array)
+{
+  return make_array_buffer<double, 1>(array.data, { array.getRows() }, false);
 }
 template<>
-std::function<py::buffer_info(vpRowVector &)> get_buffer_info()
+py::buffer_info get_buffer_info(vpRowVector &array)
 {
-  return [](vpRowVector &array) -> py::buffer_info {
-    return make_array_buffer<double, 1>(array.data, { array.getCols() }, false);
-  };
+  return make_array_buffer<double, 1>(array.data, { array.getCols() }, false);
 }
 template<>
-std::function<py::buffer_info(vpRotationMatrix &)> get_buffer_info()
+py::buffer_info get_buffer_info(vpRotationMatrix &array)
 {
-  return [](vpRotationMatrix &array) -> py::buffer_info {
-    return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
-  };
+  return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
 }
 template<>
-std::function<py::buffer_info(vpHomogeneousMatrix &)> get_buffer_info()
+py::buffer_info get_buffer_info(vpHomogeneousMatrix &array)
 {
-  return [](vpHomogeneousMatrix &array) -> py::buffer_info {
-    return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
-  };
+  return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
 }
 
 /*Array 2D indexing*/
@@ -185,19 +181,6 @@ void define_get_item_2d_array(PyClass &pyClass, bool readonly)
     if (i < 0) {
       i = rows + i;
     }
-    return np_array_cf<Item>(make_array_buffer<Item, 1>(self[i], { self.getCols() }, readonly));
-  });
-  pyClass.def("__getitem__", [readonly](const Class &self, int i) -> np_array_cf<Item> {
-    const unsigned int rows = self.getRows();
-    if (abs(i) > rows) {
-      std::stringstream ss;
-      ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
-        << " but array has " << rows << " rows";
-      throw std::runtime_error(ss.str());
-    }
-    if (i < 0) {
-      i = rows + i;
-    }
     return np_array_cf<Item>(make_array_buffer<Item, 1>(self[i], { self.getCols() }, readonly), py::cast(self));
   });
   pyClass.def("__getitem__", [readonly](const Class &self, py::slice slice) {
@@ -215,13 +198,12 @@ void define_get_item_2d_array(PyClass &pyClass, bool readonly)
 template<typename T>
 void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
 {
-  const auto buffer_fn = get_buffer_info<T, vpArray2D>();
-  pyArray2D.def_buffer(buffer_fn);
-  pyArray2D.def("numpy", [buffer_fn](vpArray2D<T> &self) -> np_array_cf<T> {
-    return np_array_cf<T>(buffer_fn(self), py::cast(self));
+
+  pyArray2D.def_buffer(&get_buffer_info<T, vpArray2D>);
+  pyArray2D.def("numpy", [](vpArray2D<T> &self) -> np_array_cf<T> {
+    return np_array_cf<T>(get_buffer_info<T, vpArray2D>(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data)doc");
-  pyArray2D.def(py::init(
-    [](np_array_cf<T> np_array) {
+  pyArray2D.def(py::init([](np_array_cf<T> np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP 2D array");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpArray2D<T> result(shape[0], shape[1]);
@@ -231,53 +213,63 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
   define_get_item_2d_array<py::class_<vpArray2D<T>>, vpArray2D<T>, T>(pyArray2D, false);
 }
 
+void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
+{
+
+  pyMatrix.def_buffer(&get_buffer_info<vpMatrix>);
+  pyMatrix.def("numpy", [](vpMatrix &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpMatrix>(self), py::cast(self));
+  }, R"doc(Numpy view of the underlying array data)doc");
+  pyMatrix.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, 2, "ViSP Matrix");
+    const std::vector<ssize_t> shape = np_array.request().shape;
+    vpMatrix result(shape[0], shape[1]);
+    copy_data_from_np(np_array, result.data);
+    return result;
+  }));
+  define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix, false);
+}
+
 
 void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
 {
-  const auto buffer_fn = get_buffer_info<vpColVector>();
-  pyColVector.def_buffer(buffer_fn);
-  pyColVector.def("numpy", [buffer_fn](vpColVector &self) -> np_array_cf<double> {
-    return np_array_cf<double>(buffer_fn(self), py::cast(self));
+  pyColVector.def_buffer(&get_buffer_info<vpColVector>);
+  pyColVector.def("numpy", [](vpColVector &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpColVector>(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data)doc");
-  pyColVector.def(py::init(
-    [](np_array_cf<double> np_array) {
+  pyColVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  })
-  );
+  }));
 }
 
 void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
 {
-  const auto buffer_fn = get_buffer_info<vpRowVector>();
-  pyRowVector.def_buffer(buffer_fn);
-  pyRowVector.def("numpy", [buffer_fn](vpRowVector &self) -> np_array_cf<double> {
-    return np_array_cf<double>(buffer_fn(self), py::cast(self));
+  pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
+  pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpRowVector>(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data)doc");
-  pyRowVector.def(py::init(
-    [](np_array_cf<double> np_array) {
+  pyRowVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  })
-  );
+  }));
 }
 
 
 void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &pyRotationMatrix)
 {
-  const auto buffer_fn = get_buffer_info<vpRotationMatrix>();
-  pyRotationMatrix.def_buffer(buffer_fn);
-  pyRotationMatrix.def("numpy", [buffer_fn](vpRotationMatrix &self) -> np_array_cf<double> {
-    return np_array_cf<double>(buffer_fn(self), py::cast(self));
+
+  pyRotationMatrix.def_buffer(&get_buffer_info<vpRotationMatrix>);
+  pyRotationMatrix.def("numpy", [](vpRotationMatrix &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpRotationMatrix>(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data. Cannot be written to.)doc");
-  pyRotationMatrix.def(py::init(
-    [](np_array_cf<double> np_array) {
+  pyRotationMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 3, 3 }, "ViSP rotation matrix");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpRotationMatrix result;
@@ -292,14 +284,13 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
 
 void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<double>> &pyHomogeneousMatrix)
 {
-  const auto buffer_fn = get_buffer_info<vpHomogeneousMatrix>();
-  pyHomogeneousMatrix.def_buffer(buffer_fn);
-  pyHomogeneousMatrix.def("numpy", [buffer_fn](vpHomogeneousMatrix &self) -> np_array_cf<double> {
-    return np_array_cf<double>(buffer_fn(self), py::cast(self));
+
+  pyHomogeneousMatrix.def_buffer(get_buffer_info<vpHomogeneousMatrix>);
+  pyHomogeneousMatrix.def("numpy", [](vpHomogeneousMatrix &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpHomogeneousMatrix>(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data. Cannot be written to.)doc");
 
-  pyHomogeneousMatrix.def(py::init(
-    [](np_array_cf<double> np_array) {
+  pyHomogeneousMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 4, 4 }, "ViSP homogeneous matrix");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpHomogeneousMatrix result;

@@ -109,6 +109,8 @@
     },
     "vpMatrix": {
       "ignore_repr": true,
+      "additional_bindings": "bindings_vpMatrix",
+      "use_buffer_protocol": true,
       "methods":
       [
 
