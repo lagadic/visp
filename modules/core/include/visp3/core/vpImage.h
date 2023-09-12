@@ -1793,6 +1793,49 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 }
 
 /*!
+  \relates vpImage
+ */
+template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
+{
+  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
+  }
+  if (height * width == 0) {
+    throw vpException(vpImageException::notInitializedError, "Empty image!");
+  }
+
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
+
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
+
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
+
+  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
+  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+
+  double valueR =
+    (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
+    cfrac +
+    (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) *
+    cratio;
+  double valueG =
+    (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) *
+    cfrac +
+    (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) *
+    cratio;
+  double valueB =
+    (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) *
+    cfrac +
+    (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) *
+    cratio;
+
+  return vpRGBf(static_cast<float>(valueR), static_cast<float>(valueG), static_cast<float>(valueB));
+}
+
+/*!
   Retrieves pixel value from an image containing values of type \e Type with
   sub-pixel accuracy.
 
@@ -1857,6 +1900,21 @@ template <class Type> inline double vpImage<Type>::getSum() const
  * \relates vpImage
  */
 template <> inline double vpImage<vpRGBa>::getSum() const
+{
+  if ((height == 0) || (width == 0))
+    return 0.0;
+
+  double res = 0.0;
+  for (unsigned int i = 0; i < height * width; ++i) {
+    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+  }
+  return res;
+}
+
+/**
+ * \relates vpImage
+ */
+template <> inline double vpImage<vpRGBf>::getSum() const
 {
   if ((height == 0) || (width == 0))
     return 0.0;

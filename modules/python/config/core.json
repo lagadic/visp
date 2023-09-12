@@ -45,6 +45,10 @@
         {
           "python_name": "ImageRGBA",
           "arguments": ["vpRGBa"]
+        },
+        {
+          "python_name": "ImageRGBf",
+          "arguments": ["vpRGBf"]
         }
       ],
       "methods":
