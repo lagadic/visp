@@ -14,7 +14,7 @@ ViSP 3.5.1 (under development)
     . vpMocapQualisys an interface over Qualisys motion capture system
     . vpPclViewer that enables real time plotting of 3D point clouds based on PCL library
     . vpRobotUniversalRobots that allows to control an Universal Robots robot
-    . vpRobotMavsdk that allows to control a robot equiped with a Pixhawk (drone, rover...)
+    . vpRobotMavsdk that allows to control a robot equipped with a Pixhawk (drone, rover...)
     . vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
       to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
       Yolo v5, Yolo v7 and Yolo v8 convolutional networks
@@ -25,12 +25,12 @@ ViSP 3.5.1 (under development)
       https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
-    . Image-based and position-based examples with UR robot
+    . New image-based and position-based examples with UR robot
     . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
     . Introduce MAVLink interface using MAVSDK 3rd party library interfaced in vpRobotMavsdk
-      class that allows to control a robot equiped with a Pixhawk (drone, rover...)
+      class that allows to control a robot equipped with a Pixhawk (drone, rover...)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
@@ -50,6 +50,7 @@ ViSP 3.5.1 (under development)
       change sample step parameter to consider the distance between moving-edges in pixels
       rather than an angular value in deg as it was in the previous releases
     . ViSP is available as a Conda package
+    . Fix compatibility with Debian GNU/Hurd
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
