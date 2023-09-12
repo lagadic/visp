@@ -220,16 +220,19 @@ void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
 #if defined(HAVE_OPENCV_IMGPROC)
-  float cannyThresh = m_algoParams.m_cannyThresh;
-  float lowerThresh;
+  float upperCannyThresh = m_algoParams.m_upperCannyThresh;
+  float lowerCannyThresh = m_algoParams.m_lowerCannyThresh;
   // Apply the Canny edge operator to compute the edge map
   // The canny method performs Gaussian blur and gradient computation
-  if (m_algoParams.m_cannyThresh < 0.) {
-    cannyThresh = vpImageFilter::computeCannyThreshold(I, lowerThresh);
+  if (m_algoParams.m_upperCannyThresh < 0.) {
+    upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
   }
-  vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, cannyThresh, m_algoParams.m_sobelKernelSize);
+  else if (m_algoParams.m_lowerCannyThresh < 0) {
+    lowerCannyThresh = upperCannyThresh / 3.;
+  }
+  vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
 #else
-  m_cannyVisp.setCannyThresholds(-1, m_algoParams.m_cannyThresh);
+  m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
   m_cannyVisp.setGradients(m_dIx, m_dIy);
   m_edgeMap = m_cannyVisp.detect(I);
 #endif

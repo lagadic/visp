@@ -1,5 +1,6 @@
 {
-  "cannyThresh": -1.0,
+  "lowerCannyThresh": -1.0,
+  "upperCannyThresh": -1.0,
   "centerMinDistance": 5.0,
   "centerThresh": 100.0,
   "centerXlimits": [
