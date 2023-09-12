@@ -1,5 +1,8 @@
 Here we give the list of the main changes introduced in Simdlib for ViSP
 
+- 2023.09.12 (see PR #1230)
+  - Fix compatibility with Debian GNU/Hurd defining PATH_MAX macro
+
 - 2022.10.19: (see PR #1108)
 
   - Update Simd lib using https://github.com/ermig1979/Simd
