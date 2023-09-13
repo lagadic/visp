@@ -81,8 +81,10 @@ public:
     int m_sobelKernelSize; /*!< Size of the Sobel kernels used to compute the gradients. Must be an odd number.*/
 
     // // Edge detection attributes
-    float m_cannyThresh; /*!< The threshold for the Canny operator. Only value greater than this value are marked as an edge.
-                               A negative value makes the algorithm compute this threshold automatically.*/
+    float m_lowerCannyThresh; /*!< The lower threshold for the Canny operator. Values lower than this value are rejected.
+                               A negative value makes the algorithm compute the lower threshold automatically.*/
+    float m_upperCannyThresh; /*!< The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
+                               A negative value makes the algorithm compute the upper and lower thresholds automatically.*/
     int m_edgeMapFilteringNbIter; /*!< Number of iterations of 8-neighbor connectivity filtering to apply to the edge map*/
 
     // // Center candidates computation attributes
@@ -107,7 +109,8 @@ public:
       : m_gaussianKernelSize(5)
       , m_gaussianStdev(1.f)
       , m_sobelKernelSize(3)
-      , m_cannyThresh(-1.f)
+      , m_lowerCannyThresh(-1.f)
+      , m_upperCannyThresh(-1.f)
       , m_edgeMapFilteringNbIter(1)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
@@ -129,8 +132,10 @@ public:
      * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
      * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
      * \param[in] sobelKernelSize Size of the Sobel kernels used to compute the gradients. Must be an odd number.
-     * \param[in] cannyThresh The threshold for the Canny operator. Only value greater than this value are marked as an edge.
-                          A negative value makes the algorithm compute this threshold automatically.
+     * \param[in] lowerCannyThresh The lower threshold for the Canny operator. Values lower than this value are rejected.
+                          A negative value makes the algorithm compute this threshold and the lower one automatically.
+     * \param[in] upperCannyThresh The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
+                          A negative value makes the algorithm compute this threshold and the lower one automatically.
      * \param[in] edgeMapFilterNbIter Number of 8-neighbor connectivity filtering iterations to apply to the edge map.
      * \param[in] centerXlimits Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.
      * \param[in] centerYlimits Minimum and maximum position on the vertical axis of the center of the circle we want to detect.
@@ -147,7 +152,8 @@ public:
         const int &gaussianKernelSize
       , const float &gaussianStdev
       , const int &sobelKernelSize
-      , const float &cannyThresh
+      , const float &lowerCannyThresh
+      , const float &upperCannyThresh
       , const int &edgeMapFilterNbIter
       , const std::pair<int, int> &centerXlimits
       , const std::pair<int, int> &centerYlimits
@@ -163,7 +169,8 @@ public:
       : m_gaussianKernelSize(gaussianKernelSize)
       , m_gaussianStdev(gaussianStdev)
       , m_sobelKernelSize(sobelKernelSize)
-      , m_cannyThresh(cannyThresh)
+      , m_lowerCannyThresh(lowerCannyThresh)
+      , m_upperCannyThresh(upperCannyThresh)
       , m_edgeMapFilteringNbIter(edgeMapFilterNbIter)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
@@ -185,7 +192,7 @@ public:
       txt += "\tGaussian filter kernel size = " + std::to_string(m_gaussianKernelSize) + "\n";
       txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
       txt += "\tSobel filter kernel size = " + std::to_string(m_sobelKernelSize) + "\n";
-      txt += "\tCanny edge filter threshold = " + std::to_string(m_cannyThresh) + "\n";
+      txt += "\tCanny edge filter thresholds = [" + std::to_string(m_lowerCannyThresh) + " ; " + std::to_string(m_upperCannyThresh) + "]\n";
       txt += "\tEdge map 8-neighbor connectivity filtering number of iterations = " + std::to_string(m_edgeMapFilteringNbIter) + "\n";
       txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) +"\n";
       txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
@@ -271,7 +278,8 @@ public:
         throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
       }
 
-      params.m_cannyThresh = j.value("cannyThresh", params.m_cannyThresh);
+      params.m_lowerCannyThresh = j.value("lowerCannyThresh", params.m_lowerCannyThresh);
+      params.m_upperCannyThresh = j.value("upperCannyThresh", params.m_upperCannyThresh);
       params.m_edgeMapFilteringNbIter = j.value("edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter);
 
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
@@ -320,7 +328,8 @@ public:
           {"gaussianKernelSize", params.m_gaussianKernelSize},
           {"gaussianStdev", params.m_gaussianStdev},
           {"sobelKernelSize", params.m_sobelKernelSize},
-          {"cannyThresh", params.m_cannyThresh},
+          {"lowerCannyThresh", params.m_lowerCannyThresh},
+          {"upperCannyThresh", params.m_upperCannyThresh},
           {"edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter},
           {"centerXlimits", params.m_centerXlimits},
           {"centerYlimits", params.m_centerYlimits},
@@ -482,12 +491,15 @@ public:
    * Set the threshold for the Canny operator.
    * Only value greater than this value are marked as an edge.
    * If negative, the threshold is automatically computed.
-   * \param[in] canny_threshold : Canny filter upper threshold. When set to -1 (default), compute
+   * \param[in] lowerCannyThreshold : Canny filter lower threshold. When set to -1 (default), compute
+   * automatically this threshold.
+   * \param[in] upperCannyThreshold : Canny filter upper threshold. When set to -1 (default), compute
    * automatically this threshold.
    */
-  inline void setCannyThreshold(const float &canny_threshold)
+  inline void setCannyThreshold(const float &lowerCannyThreshold, const float &upperCannyThreshold)
   {
-    m_algoParams.m_cannyThresh = canny_threshold;
+    m_algoParams.m_lowerCannyThresh = lowerCannyThreshold;
+    m_algoParams.m_upperCannyThresh = upperCannyThreshold;
   }
 
   /*!
@@ -680,7 +692,7 @@ public:
    */
   inline float getCannyThreshold() const
   {
-    return m_algoParams.m_cannyThresh;
+    return m_algoParams.m_upperCannyThresh;
   }
 
   /*!

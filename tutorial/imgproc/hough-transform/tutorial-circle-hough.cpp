@@ -199,9 +199,11 @@ int main(int argc, char **argv)
   const float def_gaussianSigma = 1.f;
   const int def_sobelKernelSize = 3;
 #ifdef HAVE_OPENCV_IMGPROC
-  const float def_cannyThresh = 150.f;
+  const float def_lowerCannyThresh = 50.f;
+  const float def_upperCannyThresh = 150.f;
 #else
-  const float def_cannyThresh = 25.f;
+  const float def_lowerCannyThresh = 8.f;
+  const float def_upperCannyThresh = 25.f;
 #endif
   const int def_nbEdgeFilteringIter = 2;
   const std::pair<int, int> def_centerXlimits = std::pair<int, int>(0, 640);
@@ -221,7 +223,8 @@ int main(int argc, char **argv)
   int opt_gaussianKernelSize = def_gaussianKernelSize;
   float opt_gaussianSigma = def_gaussianSigma;
   int opt_sobelKernelSize = def_sobelKernelSize;
-  float opt_cannyThresh = def_cannyThresh;
+  float opt_lowerCannyThresh = def_lowerCannyThresh;
+  float opt_upperCannyThresh = def_upperCannyThresh;
   int opt_nbEdgeFilteringIter = def_nbEdgeFilteringIter;
   std::pair<int, int> opt_centerXlimits = def_centerXlimits;
   std::pair<int, int> opt_centerYlimits = def_centerYlimits;
@@ -263,9 +266,10 @@ int main(int argc, char **argv)
       opt_sobelKernelSize = atoi(argv[i + 1]);
       i++;
     }
-    else if (argName == "--canny-thresh" && i + 1 < argc) {
-      opt_cannyThresh = static_cast<float>(atof(argv[i + 1]));
-      i++;
+    else if (argName == "--canny-thresh" && i + 2 < argc) {
+      opt_lowerCannyThresh = static_cast<float>(atof(argv[i + 1]));
+      opt_upperCannyThresh = static_cast<float>(atof(argv[i + 2]));
+      i += 2;
     }
     else if (argName == "--edge-filter" && i + 1 < argc) {
       opt_nbEdgeFilteringIter = atoi(argv[i + 1]);
@@ -322,7 +326,7 @@ int main(int argc, char **argv)
         << "\t [--gaussian-kernel <kernel-size>] (default: " << def_gaussianKernelSize << ")" << std::endl
         << "\t [--gaussian-sigma <stddev>] (default: " << def_gaussianSigma << ")" << std::endl
         << "\t [--sobel-kernel <kernel-size>] (default: " << def_sobelKernelSize << ")" << std::endl
-        << "\t [--canny-thresh <canny-thresh>] (default: " << def_cannyThresh << ")" << std::endl
+        << "\t [--canny-thresh <lower-canny-thresh upper-canny-thresh>] (default: " << def_lowerCannyThresh << " ; " << def_upperCannyThresh << ")" << std::endl
         << "\t [--edge-filter <nb-iter>] (default: " << def_nbEdgeFilteringIter << ")" << std::endl
         << "\t [--radius-limits <radius-min> <radius-max>] (default: min = " << def_minRadius << ", max = " << def_maxRadius << ")" << std::endl
         << "\t [--dilatation-repet <nb-repetitions>] (default: " << def_dilatationRepet << ")" << std::endl
@@ -363,9 +367,9 @@ int main(int argc, char **argv)
         << "\t\tDefault: " << def_gaussianSigma << std::endl
         << std::endl
         << "\t--canny-thresh" << std::endl
-        << "\t\tPermit to set the upper threshold of the Canny edge detector." << std::endl
-        << "\t\tMust be a positive value." << std::endl
-        << "\t\tDefault: " << def_cannyThresh << std::endl
+        << "\t\tPermit to set the lower and upper thresholds of the Canny edge detector." << std::endl
+        << "\t\tIf a value is negative, it will be automatically computed." << std::endl
+        << "\t\tDefault: " << def_upperCannyThresh << std::endl
         << std::endl
         << "\t--edge-filter" << std::endl
         << "\t\tPermit to set the number of iteration of 8-neighbor filter iterations of the result of the Canny edge detector." << std::endl
@@ -478,7 +482,8 @@ int main(int argc, char **argv)
     algoParams(opt_gaussianKernelSize
       , opt_gaussianSigma
       , opt_sobelKernelSize
-      , opt_cannyThresh
+      , opt_lowerCannyThresh
+      , opt_upperCannyThresh
       , opt_nbEdgeFilteringIter
       , opt_centerXlimits
       , opt_centerYlimits

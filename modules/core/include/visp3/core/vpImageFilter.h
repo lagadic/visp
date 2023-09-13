@@ -72,6 +72,9 @@ public:
   static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
                     float thresholdCanny, unsigned int apertureSobel);
 
+  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
+                    float lowerThresholdCanny, float higherThresholdCanny, unsigned int apertureSobel);
+
   /*!
     Apply a 1x3 derivative filter to an image pixel.
 

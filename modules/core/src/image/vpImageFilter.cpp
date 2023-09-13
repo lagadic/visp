@@ -298,23 +298,82 @@ int main()
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           unsigned int gaussianFilterSize, float thresholdCanny, unsigned int apertureSobel)
 {
+  vpImageFilter::canny(Isrc, Ires, gaussianFilterSize, thresholdCanny / 3.f, thresholdCanny, apertureSobel);
+}
+
+/*!
+  Apply the Canny edge operator on the image \e Isrc and return the resulting
+  image \e Ires.
+
+  The following example shows how to use the method:
+
+  \code
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageFilter.h>
+
+int main()
+{
+  // Constants for the Canny operator.
+  const unsigned int gaussianFilterSize = 5;
+  const float upperThresholdCanny = 15;
+  const float lowerThresholdCanny = 5;
+  const unsigned int apertureSobel = 3;
+
+  // Image for the Canny edge operator
+  vpImage<unsigned char> Isrc;
+  vpImage<unsigned char> Icanny;
+
+  // First grab the source image Isrc.
+
+  // Apply the Canny edge operator and set the Icanny image.
+  vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel);
+  return (0);
+}
+  \endcode
+
+  \param Isrc : Image to apply the Canny edge detector to.
+  \param Ires : Filtered image (255 means an edge, 0 otherwise).
+  \param gaussianFilterSize : The size of the mask of the Gaussian filter to
+  apply (an odd number).
+  \param lowerThreshold : The lower threshold for the Canny operator. Values lower
+  than this value are rejected. If negative, it will be set to one third
+  of the thresholdCanny .
+  \param upperThreshold : The upper threshold for the Canny operator. Only value
+  greater than this value are marked as an edge. If negative, it will be automatically
+  computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
+  of the thresholdCanny .
+  \param apertureSobel : Size of the mask for the Sobel operator (odd number).
+*/
+void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
+                          unsigned int gaussianFilterSize, float lowerThreshold, float upperThreshold, unsigned int apertureSobel)
+{
 #if defined(HAVE_OPENCV_IMGPROC)
-  cv::Mat img_cvmat, cv_I_blur, edges_cvmat;
+  cv::Mat img_cvmat, cv_I_blur, cv_dx, cv_dy, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
   cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
-  float upperCannyThresh = thresholdCanny;
-  float lowerCannyThresh = thresholdCanny / 3.f;
+  cv::Sobel(cv_I_blur, cv_dx, CV_16S, 1, 0, apertureSobel);
+  cv::Sobel(cv_I_blur, cv_dy, CV_16S, 0, 1, apertureSobel);
+  float upperCannyThresh = upperThreshold;
+  float lowerCannyThresh = lowerThreshold;
   if (upperCannyThresh < 0) {
     upperCannyThresh = computeCannyThreshold(img_cvmat, &cv_I_blur, lowerCannyThresh);
   }
-  cv::Canny(cv_I_blur, edges_cvmat, lowerCannyThresh, upperCannyThresh, (int)apertureSobel);
+  else if (lowerCannyThresh < 0) {
+    lowerCannyThresh = upperCannyThresh / 3.f;
+  }
+  cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
   vpImageConvert::convert(edges_cvmat, Ires);
 #else
   (void)apertureSobel;
-  if (thresholdCanny < 0) {
+  float upperCannyThresh = upperThreshold;
+  float lowerCannyThresh = lowerThreshold;
+  if (upperCannyThresh < 0) {
     throw(vpException(vpException::badValue, "OpenCV imgproc module missing to be able to compute automatically the Canny thresholds"));
   }
-  vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, thresholdCanny * 0.5, thresholdCanny);
+  else if (lowerCannyThresh < 0) {
+    lowerCannyThresh = upperCannyThresh / 3.;
+  }
+  vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, lowerCannyThresh, upperCannyThresh);
   Ires = edgeDetector.detect(Isrc);
 #endif
 }
