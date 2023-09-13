@@ -108,8 +108,6 @@ public:
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
   void error(const vpBasicFeature &s_star, vpColVector &e);
-  //! Compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_Z() const;
 

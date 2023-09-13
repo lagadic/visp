@@ -79,6 +79,8 @@ void vpFeatureEllipse::init()
 }
 
 vpFeatureEllipse::vpFeatureEllipse() : A(0), B(0), C(0) { init(); }
+vpFeatureEllipse::vpFeatureEllipse(double x, double y, double n20, double n11, double n02) { this->buildFrom(x, y, n20, n11, n02); }
+
 
 //! compute the interaction matrix from a subset a the possible features
 vpMatrix vpFeatureEllipse::interaction(unsigned int select)
@@ -250,7 +252,8 @@ vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, unsigned int s
       e = vpColVector::stack(e, ey);
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 

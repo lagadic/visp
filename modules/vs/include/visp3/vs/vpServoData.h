@@ -93,8 +93,6 @@ public:
   void open(const std::string &directory);
   void close();
 
-  void empty();
-  void display(vpImage<unsigned char> &I);
 };
 
 #endif

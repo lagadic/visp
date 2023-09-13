@@ -185,7 +185,7 @@ private:
 public:
   vpFeaturePoint();
   //! Destructor.
-  virtual ~vpFeaturePoint() {}
+  virtual ~vpFeaturePoint() { }
 
   void buildFrom(double x, double y, double Z);
 
@@ -197,8 +197,6 @@ public:
   vpFeaturePoint *duplicate() const;
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
-  //! Compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_x() const;
 
@@ -226,7 +224,8 @@ public:
   /*!
     @name Deprecated functions
   */
-  typedef enum {
+  typedef enum
+  {
     X = 1, // x coordinates
     Y = 2  // y coordinates
   } vpFeaturePointType;

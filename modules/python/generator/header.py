@@ -68,7 +68,6 @@ class HeaderEnvironment():
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
       for enum in data.enums:
-        print(enum)
         enum_name = '::'.join([seg.name for seg in enum.base.segments])
         mapping[enum_name] = scope + enum_name
       for cls in data.classes:
