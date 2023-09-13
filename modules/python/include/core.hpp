@@ -185,11 +185,15 @@ void define_get_item_2d_array(PyClass &pyClass, bool readonly)
   });
   pyClass.def("__getitem__", [readonly](const Class &self, py::slice slice) {
     auto as_array = np_array_cf<Item>(make_array_buffer<Item, 2>(self.data, { self.getRows(), self.getCols() }, readonly), py::cast(self));
-    return as_array[slice].template cast<py::array_t<Item>>();
+    auto view = as_array[slice].template cast<py::array_t<Item>>();
+    return py::array_t<Item>(view.request(!readonly), py::cast(self));
   });
   pyClass.def("__getitem__", [readonly](const Class &self, py::tuple tuple) {
     auto as_array = np_array_cf<Item>(make_array_buffer<Item, 2>(self.data, { self.getRows(), self.getCols() }, readonly), py::cast(self));
-    return as_array[tuple].template cast<py::array_t<Item>>();
+    // py::detail::generic_item acc = as_array[tuple];
+    auto view = as_array[tuple].template cast<py::array_t<Item>>();
+    return py::array_t<Item>(view.request(!readonly), py::cast(self));
+
   });
 
 }
@@ -267,7 +271,7 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
 
   pyRotationMatrix.def_buffer(&get_buffer_info<vpRotationMatrix>);
   pyRotationMatrix.def("numpy", [](vpRotationMatrix &self) -> np_array_cf<double> {
-    return np_array_cf<double>(get_buffer_info<vpRotationMatrix>(self), py::cast(self));
+    return np_array_cf<double>(get_buffer_info(self), py::cast(self));
   }, R"doc(Numpy view of the underlying array data. Cannot be written to.)doc");
   pyRotationMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 3, 3 }, "ViSP rotation matrix");

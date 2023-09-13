@@ -1,0 +1,25 @@
+{
+  "ignored_headers": ["vpPoseException.h", "vpCalibrationException.h", "vpPoseFeatures.h"],
+  "classes": {
+    "vpHomography" : {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void computeDisplacement(const vpHomography &, const vpColVector &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)",
+          "custom_name": "computeHomographyDisplacement"
+        },
+        {
+          "static": true,
+          "signature": "void computeDisplacement(const vpHomography &, vpRotationMatrix &, vpTranslationVector &, vpColVector &)",
+          "custom_name": "computeHomographyDisplacement"
+        },
+        {
+          "static": true,
+          "signature": "void computeDisplacement(const vpHomography &, double , double , std::list<vpRotationMatrix> &, std::list<vpTranslationVector> &, std::list<vpColVector> &)",
+          "custom_name": "computeHomographyDisplacement"
+        }
+      ]
+    }
+  }
+}

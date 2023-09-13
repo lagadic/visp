@@ -36,12 +36,14 @@ def test_representations_not_writable():
   R_np = np.array(R, copy=False)
   with pytest.raises(ValueError):
     R_np[0, 0] = 1
-  # with pytest.raises(ValueError):
-  #   R.numpy()[:1] = 0
+  with pytest.raises(ValueError):
+    R.numpy()[:1] = 0
   with pytest.raises(ValueError):
     row = R[0]
     row[0] = 1
-
+  with pytest.raises(ValueError):
+    sub = R[:2, :2]
+    sub[0, :] = 1
   T = HomogeneousMatrix()
   T_np = np.array(T, copy=False)
   with pytest.raises(ValueError):

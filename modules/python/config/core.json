@@ -3,6 +3,7 @@
   "ignored_classes": ["vpException", "vpImageException", "vpTrackingException",
                       "vpFrameGrabberException", "vpIoException",
                       "vpDisplayException", "vpMatrixException"],
+  "user_defined_headers": ["core.hpp"],
   "classes": {
     "vpArray2D": {
       "additional_bindings": "bindings_vpArray2D",

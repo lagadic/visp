@@ -34,6 +34,7 @@ class Submodule():
       headers.append(header)
     # Sort by dependency level so that generation is in correct order
     headers = sort_headers(headers)
+    print([h.path for h in headers])
 
     header_code = []
     declarations = []
@@ -48,13 +49,14 @@ class Submodule():
     declarations = '\n'.join(declarations)
     includes_strs = [f'#include {include}' for include in includes_set]
     includes_str = '\n'.join(includes_strs)
+    user_defined_headers = '\n'.join(self.get_user_defined_headers())
     format_str = f'''
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <vector>
 #include <map>
 
-#include "core.hpp"
+{user_defined_headers}
 
 {includes_str}
 
@@ -93,6 +95,12 @@ Bindings for methods and enum values
     if 'ignored_headers' not in self.config:
       return False
     return header_name in self.config['ignored_headers']
+
+  def get_user_defined_headers(self) -> List[str]:
+    if 'user_defined_headers' in self.config:
+      header_names = self.config['user_defined_headers']
+      return [f'#include "{header_name}"' for header_name in header_names]
+    return []
 
   def get_class_config(self, class_name: str) -> Optional[Dict]:
     default_config = {
@@ -135,9 +143,18 @@ Bindings for methods and enum values
 
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
-  return [
-    Submodule('core', Path('/home/sfelton/software/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
-    # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
-    # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
+  modules = ['core', 'vision', 'visual_features', 'vs']
+  result = []
+  for module in modules:
+    result.append(Submodule(module, Path(f'/home/sfelton/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+  return result
+  # return [
+  #   Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
+  #   Submodule('vision', Path('/home/sfelton/visp-sfelton/modules/vision/include/visp3/vision'), generate_path / 'vision.cpp'),
+  #   Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'visual_features.cpp'),
+  #   Submodule('vision', Path('/home/sfelton/visp-sfelton/modules/vision/include/visp3/vision'), generate_path / 'vs.cpp'),
 
-  ]
+  #   # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
+  #   # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
+
+  # ]

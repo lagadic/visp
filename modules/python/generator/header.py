@@ -36,7 +36,7 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
       return
 
     include_in_result_fn = None
-    if len(result) == 0:
+    if len(result) == 0: # First iteration, query all headers that have no dependencies
       include_in_result_fn = lambda h: len(h.depends) == 0
     else:
       include_in_result_fn = lambda h: any(map(lambda x: x in dependencies, h.depends))
@@ -49,7 +49,11 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
         result.append(header_file)
       else:
         new_remainder.append(header_file)
-    add_level(result, new_remainder, set(new_dependencies))
+    if new_remainder == remainder:
+      print('Warning: Could not completely solve dependencies, generating but might have some errors')
+      result.extend(remainder)
+    else:
+      add_level(result, new_remainder, set(new_dependencies))
   result = []
   add_level(result, headers, set())
   return result
@@ -108,9 +112,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -276,6 +280,7 @@ class HeaderFile():
       for error_overload in error_generating_overloads:
         print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
       if len(error_generating_overloads) > 0:
+        print(generated_methods)
         raise RuntimeError
 
       #spec_result += cls_result
