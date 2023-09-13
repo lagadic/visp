@@ -1,4 +1,4 @@
-from typing import Callable, List, Optional, Set, Tuple, Dict, Union
+from typing import Any, Callable, List, Optional, Set, Tuple, Dict, Union
 from cxxheaderparser.parserstate import ClassBlockState, State
 import pcpp
 import cxxheaderparser
@@ -9,6 +9,7 @@ from pathlib import Path
 import json
 from utils import *
 from dataclasses import dataclass
+from enum import Enum
 
 def cpp_operator_list():
   '''
@@ -103,16 +104,45 @@ def define_constructor(params: List[str], additional_args: List[str]) -> str:
 
   return f'def(py::init<{", ".join(params)}>(){additional_args_str})'
 
-def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types.Method], cls_name: str, specializations, mapping) -> List[Tuple[types.Method, Dict]]:
+
+class NotGeneratedReason(Enum):
+  UserIgnored = 'user_ignored',
+  Access = 'access',
+  Destructor = 'destructor',
+  ReturnType = 'return_type'
+  ArgumentType = 'argument_type'
+  PureVirtual = 'pure_virtual'
+  UnspecifiedTemplateSpecialization = 'missing_template'
+
+  @staticmethod
+  def is_non_trivial_reason(reason: 'NotGeneratedReason') -> bool:
+    return reason in [NotGeneratedReason.ArgumentType,
+                       NotGeneratedReason.ReturnType,
+                       NotGeneratedReason.UnspecifiedTemplateSpecialization]
+
+@dataclass
+class RejectedMethod:
+  cls_name: Optional[str]
+  method: types.Method
+  method_config: Dict[str, Any]
+  signature: str
+  rejection_reason: NotGeneratedReason
+
+
+
+
+def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types.Method], cls_name: str, specializations, mapping) -> Tuple[List[Tuple[types.Method, Dict]], List[RejectedMethod]]:
   bindable_methods = []
-  rejection_strs = []
+  rejected_methods = []
+  # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
-    (lambda m, _: m.pure_virtual, 'Method is pure virtual'),
-    (lambda m, _: m.access is None or m.access != 'public', 'Method visibility is not public'),
-    (lambda m, _: m.destructor, 'Method is destructor'),
-    (lambda m, conf: m.template is not None and conf.get('specializations') is None, 'Method is templated but no template is provided'),
-    (lambda m, _: any(get_type(param.type, specializations, mapping) is None for param in m.parameters), 'Method has an unsupported argument type'),
-    (lambda m, _: not m.constructor and get_type(m.return_type, specializations, mapping) is None, 'Method has an unsupported return type')
+    (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: m.pure_virtual, NotGeneratedReason.PureVirtual),
+    (lambda m, _: m.access is None or m.access != 'public', NotGeneratedReason.Access),
+    (lambda m, _: m.destructor, NotGeneratedReason.Destructor),
+    (lambda m, conf: m.template is not None and conf.get('specializations') is None, NotGeneratedReason.UnspecifiedTemplateSpecialization),
+    (lambda m, _: any(get_type(param.type, specializations, mapping) is None for param in m.parameters), NotGeneratedReason.ArgumentType),
+    (lambda m, _: not m.constructor and get_type(m.return_type, specializations, mapping) is None, NotGeneratedReason.ReturnType)
   ]
   for method in methods:
     method_config = submodule.get_method_config(cls_name, method, specializations, mapping)
@@ -122,13 +152,13 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
         return_str = '' if method.return_type is None else (get_type(method.return_type, specializations, mapping) or '<unparsed>')
         method_name = '::'.join(seg.name for seg in method.name.segments)
         param_strs = [get_type(param.type, specializations, mapping) or '<unparsed>' for param in method.parameters]
-        rejection_strs.append(f'{cls_name}  {get_method_signature(method_name, return_str, param_strs)} was filtered! Reason: {motive}')
+        rejected_methods.append(RejectedMethod(cls_name, method, method_config, get_method_signature(method_name, return_str, param_strs), motive))
         method_can_be_bound = False
         break
     if method_can_be_bound:
       bindable_methods.append((method, method_config))
 
-  return bindable_methods, rejection_strs
+  return bindable_methods, rejected_methods
 
 
 
@@ -141,9 +171,3 @@ def split_methods_with_config(methods: List[Tuple[types.Method, Dict]], predicat
     else:
       non_matching.append((method, method_config))
   return matching, non_matching
-
-
-
-
-def get_operators(methods: List[types.Method]) -> Tuple[List[types.Method], Tuple[List[types.Method]]]:
-  pass

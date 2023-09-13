@@ -112,9 +112,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -185,9 +185,17 @@ class HeaderFile():
       # Find bindable methods
       generated_methods = []
       method_strs = []
-      bindable_methods_and_config, filtered_strs = get_bindable_methods_with_config(self.submodule, cls.methods,
+      bindable_methods_and_config, rejected_methods = get_bindable_methods_with_config(self.submodule, cls.methods,
                                                                                     name_cpp_no_template, owner_specs, header_env.mapping)
-      print('\n'.join(filtered_strs))
+      # Display rejected methods
+      rejection_strs = []
+      for rejected_method in rejected_methods:
+        if NotGeneratedReason.is_non_trivial_reason(rejected_method.rejection_reason):
+          rejection_strs.append(f'\t{rejected_method.signature} was rejected! Reason: {rejected_method.rejection_reason}')
+      if len(rejection_strs) > 0:
+        print(f'Rejected method in class: {name_cpp}')
+        print('\n'.join(rejection_strs))
+
       # Split between constructors and other methods
       constructors, non_constructors = split_methods_with_config(bindable_methods_and_config, lambda m: m.constructor)
 
@@ -256,7 +264,6 @@ class HeaderFile():
 
 
       # Add to string representation
-      print(name_python, cls_config)
       if not cls_config['ignore_repr']:
         to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
         if len(to_string_str) > 0:
@@ -287,8 +294,8 @@ class HeaderFile():
       spec_result += '\n'.join(method_strs)
       return spec_result
 
-    print(f'Parsing class "{cls.class_decl.typename}"')
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+    print(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
       return ''

@@ -94,7 +94,6 @@ public:
   void close();
 
   void empty();
-  void push();
   void display(vpImage<unsigned char> &I);
 };
 

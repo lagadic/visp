@@ -12,7 +12,7 @@ def get_name(name: types.PQName) -> str:
 
 def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str:
   '''Resolve the string representation of a raw type, resolving template specializations and using complete typenames
-  (aliases, shortened name when in same namescope).
+  (aliases, shortened names when in same namescope).
   '''
   def segment_repr(segment: types.PQNameSegment) -> str:
     spec_str = ''
@@ -56,6 +56,48 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
       return None
   else:
     return None
+
+def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
+  ptr_to = param.ptr_to
+  if isinstance(ptr_to, types.Type):
+    if get_typename(ptr_to, {}, {}) == 'char' and ptr_to.const:
+      return True
+
+  return False
+
+def is_unsupported_return_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
+  '''
+  Return whether the passed param is supported as a return type for automatic code generation.
+  Pointers, arrays, functions are not supported.
+  '''
+  if isinstance(param, types.FunctionType):
+    return True
+  if isinstance(param, types.Array):
+    return True
+  if isinstance(param, types.Type):
+    return False
+  if isinstance(param, types.Reference):
+    return False
+  if isinstance(param, types.Pointer):
+    return not is_pointer_to_const_cstr(param)
+
+def is_unsupported_argument_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
+  '''
+  Return whether the passed param is supported for automatic code generation.
+  Pointers, arrays, functions are not supported.
+  '''
+  if isinstance(param, types.FunctionType):
+    return True
+  if isinstance(param, types.Array):
+    return True
+  if isinstance(param, types.Type):
+    return False
+  if isinstance(param, types.Reference):
+    return False
+  if isinstance(param, types.Pointer):
+    return not is_pointer_to_const_cstr(param)
+
+
 
 def get_method_signature(name: str, return_type: str, params: List[str]) -> str:
   return f'{return_type} {name}({", ".join(params)})'
