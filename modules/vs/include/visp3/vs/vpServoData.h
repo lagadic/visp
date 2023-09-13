@@ -93,9 +93,6 @@ public:
   void open(const std::string &directory);
   void close();
 
-  void empty();
-  void push();
-  void display(vpImage<unsigned char> &I);
 };
 
 #endif

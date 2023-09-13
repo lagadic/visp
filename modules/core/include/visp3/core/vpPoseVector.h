@@ -306,6 +306,7 @@ private:
   // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
   void convert_to_json(nlohmann::json &j) const;
+public:
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
