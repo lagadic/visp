@@ -87,7 +87,7 @@ class HeaderEnvironment():
         enum_name = '::'.join([seg.name for seg in enum.typename.segments if not isinstance(seg, types.AnonymousName)])
         mapping[enum_name] = scope + enum_name
       for cls in data.classes:
-        cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
+        cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments if not isinstance(seg, types.AnonymousName)])
         mapping[cls_name] = scope + cls_name
         mapping.update(self.build_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
 

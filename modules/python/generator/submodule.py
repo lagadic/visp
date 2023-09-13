@@ -143,7 +143,7 @@ Bindings for methods and enum values
 
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
-  modules = ['core', 'vision', 'visual_features', 'vs']
+  modules = ['core', 'vision', 'visual_features', 'vs', 'sensor']
   result = []
   for module in modules:
     result.append(Submodule(module, Path(f'/home/sfelton/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
