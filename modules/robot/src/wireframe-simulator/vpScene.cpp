@@ -235,7 +235,6 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
   bptr->point.nbr = (Index)nbPt;
   bptr->point.ptr = (Point3f *)malloc((unsigned int)nbPt * sizeof(Point3f));
 
-  ifs_list.front();
   unsigned int iter = 0;
   for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {
     indexFaceSet *ifs = *it;
@@ -248,7 +247,6 @@ void ifsToBound(Bound *bptr, std::list<indexFaceSet *> &ifs_list)
   }
 
   unsigned int nbFace = 0;
-  ifs_list.front();
   std::list<int> indSize;
   int indice = 0;
   for (std::list<indexFaceSet *>::const_iterator it = ifs_list.begin(); it != ifs_list.end(); ++it) {

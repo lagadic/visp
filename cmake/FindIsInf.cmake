@@ -36,4 +36,4 @@
 include(VISPFindUtils)
 
 check_math_expr("isinf(1.0)"          "<math.h>"        HAVE_FUNC_ISINF)
-check_math_expr("std::isinf(1.0))"    "<cmath>"         HAVE_FUNC_STD_ISINF)
+check_math_expr("std::isinf(1.0)"     "<cmath>"         HAVE_FUNC_STD_ISINF)

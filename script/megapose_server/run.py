@@ -3,7 +3,7 @@ import os
 import json
 import megapose_server
 megapose_server_install_dir = os.path.dirname(megapose_server.__file__)
-variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables.json')
+variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables_final.json')
 with open(variables_file, 'r') as f:
     json_vars = json.load(f)
     print('Loaded megapose variables', json_vars)
@@ -76,24 +76,12 @@ def make_object_dataset(meshes_dir: Path) -> RigidObjectDataset:
     rigid_object_dataset = RigidObjectDataset(rigid_objects)
     return rigid_object_dataset
 
-def fuse_resnet(model: nn.Module):
-    '''
-    Fuse layers of a resnet in place
-    '''
-    torch.quantization.fuse_modules(model, [["conv1", "bn1", "relu"]], inplace=True)
-    for module_name, module in model.named_children():
-        if "layer" in module_name:
-            for basic_block_name, basic_block in module.named_children():
-                torch.quantization.fuse_modules(basic_block, [["conv1", "bn1", "relu"], ["conv2", "bn2"]], inplace=True)
-                for sub_block_name, sub_block in basic_block.named_children():
-                    if sub_block_name == "downsample":
-                        torch.quantization.fuse_modules(sub_block, [["0", "1"]], inplace=True)
 
 class MegaposeServer():
     '''
     A TCP-based server that can be interrogated to estimate the pose of an object  with MegaPose
     '''
-    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int):
+    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int, image_batch_size=256, warmup=True, verbose=False):
         """Create a TCP server that listens for an incoming connection
         and can be used to answer client queries about an object pose with respect to the camera frame
 
@@ -115,6 +103,8 @@ class MegaposeServer():
                 K: The 3X3 intrinsics matrix
             optimize (bool): Whether to optimize the deep network models for faster inference.
                 Still very experimental, and may result in a loss of accuracy with no performance gain!
+            warmup (bool): Whether to perform model warmup in order to avoid a slow first inference pass
+            verbose (bool): print additional information
         """
         self.host = host
         self.port = port
@@ -133,27 +123,17 @@ class MegaposeServer():
         self.model_info = model_tuple[0]
         self.model = model_tuple[1]
         self.model.eval()
+        self.model.bsz_images = image_batch_size
         self.camera_data = self._make_camera_data(camera_data)
         self.renderer = Panda3dSceneRenderer(self.object_dataset)
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.deterministic = False
         self.optimize = optimize
+        self.warmup = warmup
+        self.verbose = verbose
         if self.optimize:
+            print('Optimizing Pytorch models...')
             class Optimized(nn.Module):
-                def delete_weights(self):
-                    from torch.nn.utils import prune
-
-                    parameters_to_prune = [
-                        (module, "weight") for module in filter(lambda m: type(m) == torch.nn.Conv2d, self.m.modules())
-                    ]
-                    prune.global_unstructured(
-                        parameters_to_prune,
-                        pruning_method=prune.L1Unstructured,
-                        amount=0.25,
-                    )
-                    for p in parameters_to_prune:
-                        prune.remove(*p)
-                        print(list(p[0].named_parameters()))
                 def __init__(self, m: nn.Module, inp):
                     super().__init__()
                     self.m = m.eval()
@@ -166,12 +146,18 @@ class MegaposeServer():
 
             h, w = self.camera_data.resolution
             self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (1, 9, h, w))
-            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (1, 27, h, w))
+            self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (1, 32 if self.model_info['requires_depth'] else 27, h, w))
 
-            #fuse_resnet(self.model.refiner_model.backbone)
-            print(self.model.refiner_model)
+        if self.warmup:
+            print('Warming up models...')
+            h, w = self.camera_data.resolution
+            labels = self.object_dataset.label_to_objects.keys()
+            observation = self._make_observation_tensor(np.random.randint(0, 255, (h, w, 3), dtype=np.uint8),
+                                                        np.random.rand(h, w).astype(np.float32) if self.model_info['requires_depth'] else None).cuda()
+            detections = self._make_detections(labels, np.asarray([[0, 0, w//2, h//2] for _ in range(len(labels))], dtype=np.float32)).cuda()
+            self.model.run_inference_pipeline(observation, detections, **self.model_info['inference_parameters'])
 
-        #torch.set_float32_matmul_precision('medium')
+
 
     def _load_model(self, model_name):
         return NAMED_MODELS[model_name], load_named_model(model_name, self.object_dataset, n_workers=self.num_workers).cuda()
@@ -202,7 +188,6 @@ class MegaposeServer():
                 depth = depth_raw * np.float32(json_object['depth_scale_to_m'])
                 depth = depth.astype(np.float32)
 
-
         labels = json_object['labels']
         detections = json_object.get('detections')
         initial_cTos = json_object.get('initial_cTos')
@@ -216,6 +201,7 @@ class MegaposeServer():
                 'instance_id': [i for i in range(len(cTos_np))]
             })
             coarse_estimates = PoseEstimatesType(infos, poses=tensor)
+        input_proc_time = time.time() - t
         # print(f'Input buffer processing took: {time.time() - t}s')
         detections = self._make_detections(labels, detections).cuda() if detections is not None else None
         observation = self._make_observation_tensor(img, depth).cuda()
@@ -223,11 +209,29 @@ class MegaposeServer():
         if 'refiner_iterations' in json_object:
             inference_params['n_refiner_iterations'] = json_object['refiner_iterations']
         t = time.time()
-
-
         output, extra_data = self.model.run_inference_pipeline(
             observation, detections=detections, **inference_params, coarse_estimates=coarse_estimates
         )
+        inference_time = time.time() - t
+        if self.verbose:
+            print('Timings:')
+            print(f'\tInput processing: {int(input_proc_time * 1000)} ms')
+            print(f'\tInference: {int(inference_time * 1000)} ms')
+            dict = {
+                'Coarse': 'coarse',
+                'Refiner': 'refiner_all_hypotheses',
+                'Scoring': 'scoring'
+            }
+            for k in dict:
+                v = dict[k]
+                if v in extra_data and 'data' in extra_data[v] and extra_data[v]['data'] is not None:
+                    print(f'\t{k}')
+                    print(f'\t\t\tTotal time: {int(extra_data[v]["data"]["time"] * 1000)}ms')
+                    if 'render_time' in extra_data[v]['data']:
+                        print(f'\t\t\tRender time: {int(extra_data[v]["data"]["render_time"] * 1000)}ms')
+
+            # print(extra_data)
+
         # print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
         # print(extra_data)
 
@@ -436,8 +440,9 @@ class MegaposeServer():
                 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
                 s.bind((self.host, self.port))
                 s.listen()
-                print('MegaPose server listening for connections')
+                print(f'MegaPose server listening for connections on {self.host}:{self.port}')
                 while True:
+                    print('Waiting for connection')
                     connection, address = s.accept()
                     print(f'Connected to {address}')
                     with connection:
@@ -446,7 +451,12 @@ class MegaposeServer():
                                 import time
                                 t = time.time()
                                 code, buffer = receive_message(connection)
-                                self.operations[code](connection, buffer)
+                                if code == ServerMessage.EXIT.value:
+                                    connection.close()
+                                    print(f'Connection to {address} closed.')
+                                    break
+                                else:
+                                    self.operations[code](connection, buffer)
                             except:
                                 traceback.print_exc()
                                 print('Connection broken')
@@ -468,16 +478,17 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--host', type=str, default='127.0.0.1', help='IP or hostname to bind the server to. Set to 0.0.0.0 if you wish to listen for incoming connections from any source (dangerous)')
     parser.add_argument('--port', type=int, default=5555, help='The port on which to listen for new connections')
-    parser.add_argument('--model', type=str, choices=megapose_models.keys(), default='RGB-multi-hypothesis', help='''
+    parser.add_argument('--model', type=str, choices=megapose_models.keys(), default='RGB', help='''
                         Which MegaPose model to use. Some models require the depth map.
                         Some models generate multiple hypotheses when estimating the pose, at the cost of more computation.
                         Options: RGB, RGBD, RGB-multi-hypothesis, RGBD-multi-hypothesis''')
     parser.add_argument('--meshes-directory', type=str, default='./meshes', help='Directory containing the 3D models. each 3D model must be in its own subfolder')
     parser.add_argument('--optimize', action='store_true', help='Experimental: Optimize network for inference speed. This may incur a loss of accuracy.')
     parser.add_argument('--num-workers', type=int, default=4, help='Number of workers for rendering')
-
-
+    parser.add_argument('--no-warmup', action='store_true', help='Whether to perform model warmup before starting the server. Warmup will avoid a slow first pose estimation.')
+    parser.add_argument('--verbose', action='store_true', help='Whether to print additional information such as execution time and results.')
     args = parser.parse_args()
+
     mesh_dir = Path(args.meshes_directory).absolute()
     assert mesh_dir.exists(), 'Mesh directory does not exist, cannot start server'
     # Default camera data
@@ -491,6 +502,9 @@ if __name__ == '__main__':
         'w': 640
     }
 
-    server = MegaposeServer(args.host, args.port, megapose_models[args.model][0], mesh_dir, camera_data, optimize=args.optimize, num_workers=args.num_workers)
+    server = MegaposeServer(args.host, args.port, megapose_models[args.model][0],
+                            mesh_dir, camera_data, optimize=args.optimize,
+                            num_workers=args.num_workers, warmup=not args.no_warmup,
+                            verbose=args.verbose)
 
     server.run()

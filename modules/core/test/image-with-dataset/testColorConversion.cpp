@@ -944,7 +944,7 @@ void readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
   std::fclose(f);
 }
 
-#if (VISP_HAVE_DATASET_VERSION >= 0x040500)
+#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 TEST_CASE("Bayer conversion", "[image_conversion]")
 {
   // Load original Klimt image

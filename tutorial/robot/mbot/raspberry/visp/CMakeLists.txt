@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 project(visp-mbot)
 
@@ -22,4 +22,3 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
-

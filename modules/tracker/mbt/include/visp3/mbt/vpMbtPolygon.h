@@ -131,7 +131,7 @@ public:
 
     \param min_line_length : threshold for the minimum line length in pixel.
     When a single line that doesn't belong to a face is considered by the
-    tracker, this line is tracked only if its lenght in pixel is greater than
+    tracker, this line is tracked only if its length in pixel is greater than
     \e min_line_length.
 
     \sa setLoD()

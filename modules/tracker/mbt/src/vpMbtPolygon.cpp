@@ -128,7 +128,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
         double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         //          std::cout << "Index=" << index << " ; Line length=" <<
         //          length << " ; clippingFlag=" << clippingFlag << std::endl;
-        //        vpTRACE("index=%d lenght=%f minLineLengthThresh=%f", index,
+        //        vpTRACE("index=%d length=%f minLineLengthThresh=%f", index,
         //        length, minLineLengthThresh);
 
         if (length < minLineLengthThresh) {
@@ -232,9 +232,9 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
 /*!
   Set the flag to consider if the level of detail (LOD) is used or not.
   When activated, lines and faces of the 3D model are tracked if respectively
-  their projected lenght and area in the image are significative enough. By
+  their projected length and area in the image are significative enough. By
   significative, we mean:
-  - if the lenght of the projected line in the image is greater that a
+  - if the length of the projected line in the image is greater that a
   threshold set by setMinLineLengthThresh()
   - if the area of the projected face in the image is greater that a threshold
   set by setMinPolygonAreaThresh().

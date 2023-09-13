@@ -33,7 +33,7 @@
 #
 #############################################################################
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 project(example-direct-vvs)
 
@@ -57,4 +57,3 @@ visp_set_source_file_compile_flag(photometricVisualServoingWithoutVpServo.cpp -W
 # Only if dataset found for isolated build
 visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
 visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
-

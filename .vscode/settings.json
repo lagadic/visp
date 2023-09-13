@@ -108,7 +108,8 @@
     "__nullptr": "cpp",
     "__string": "cpp",
     "compare": "cpp",
-    "concepts": "cpp"
+    "concepts": "cpp",
+    "*.ipp": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,

@@ -27,7 +27,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
   std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-  vpDisplay::setTitle(I, title.c_str());
+  vpDisplay::setTitle(I, title);
   vpDisplay::display(I);
   vpDisplay::displayText(I, 15, 15, "Click to continue...", vpColor::red);
   vpDisplay::flush(I);
@@ -54,7 +54,8 @@ int main(int argc, char **argv)
 
     try {
       vpImageIo::read(I, argv[1]);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
       return EXIT_FAILURE;
     }
@@ -83,11 +84,9 @@ int main(int argc, char **argv)
     display(dIy, "Gradient dIy");
 
     //! [Canny]
-  #if defined(HAVE_OPENCV_IMGPROC)
     vpImage<unsigned char> C;
-    vpImageFilter::canny(I, C, 5, 15, 3);
+    vpImageFilter::canny(I, C, 5, -1., 3);
     display(C, "Canny");
-  #endif
     //! [Canny]
 
     //! [Convolution kernel]
@@ -118,7 +117,8 @@ int main(int argc, char **argv)
     }
     //! [Gaussian pyramid]
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

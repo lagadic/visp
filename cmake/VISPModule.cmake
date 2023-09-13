@@ -785,7 +785,7 @@ endmacro()
 # creates ViSP module in current folder
 # creates new target, configures standard dependencies, compilers flags, install rules
 # Usage:
-#   vp_create_module(<extra link dependencies> LINK_PRIVATE <private link dependencies>)
+#   vp_create_module(<extra link dependencies>)
 #   vp_create_module()
 macro(vp_create_module)
   vp_debug_message("vp_create_module(" ${ARGN} ")")
@@ -801,14 +801,14 @@ macro(_vp_create_module)
   vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES})
 
   vp_target_link_libraries(${the_module}
-    LINK_PUBLIC
+    PUBLIC
       ${VISP_MODULE_${the_module}_DEPS_TO_LINK}
       ${VISP_MODULE_${the_module}_DEPS_EXT}
       ${VISP_MODULE_${the_module}_LINK_DEPS}
-      ${VISP_LINKER_LIBS}
-    LINK_PRIVATE
+    PRIVATE
       ${VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS}
-      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS})
+      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS}
+      ${VISP_LINKER_LIBS})
   add_dependencies(visp_modules ${the_module})
 
   if(ENABLE_SOLUTION_FOLDERS)
@@ -1016,7 +1016,7 @@ macro(vp_add_tests)
           # From source compile the binary and add link rules
           vp_add_executable(${the_target} ${t})
           vp_target_include_modules(${the_target} ${test_deps})
-          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
+          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS}) # should be removed ? ${VISP_LINKER_LIBS})
 
           # ctest only:
           # - if required dataset available

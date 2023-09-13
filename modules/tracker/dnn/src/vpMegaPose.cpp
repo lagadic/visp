@@ -67,70 +67,70 @@ Append the byte representation of an object to the byte buffer.
 By default a generic object cannot be encoded.
 */
 template<typename T>
-void encode(std::vector<uint8_t>& buffer, const T& object) = delete;
+void encode(std::vector<uint8_t> &buffer, const T &object) = delete;
 
 
 /*Single object specializations*/
 template<>
-void encode(std::vector<uint8_t>& buffer, const int& object)
+void encode(std::vector<uint8_t> &buffer, const int &object)
 {
   const uint32_t v = htonl(object);
-  const uint8_t* varr = (uint8_t*)&v;
+  const uint8_t *varr = (uint8_t *)&v;
   buffer.insert(buffer.end(), varr, varr + 4);
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const float& object)
+void encode(std::vector<uint8_t> &buffer, const float &object)
 {
   assert((sizeof(uint32_t) == sizeof(float)));
-  const uint32_t* pointer = reinterpret_cast<const uint32_t*>(&object);
+  const uint32_t *pointer = reinterpret_cast<const uint32_t *>(&object);
   const uint32_t v = htonl(*pointer);
-  const uint8_t* varr = (uint8_t*)&v;
+  const uint8_t *varr = (uint8_t *)&v;
   buffer.insert(buffer.end(), varr, varr + 4);
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const std::string& object)
+void encode(std::vector<uint8_t> &buffer, const std::string &object)
 {
   const int size = static_cast<int>(object.size());
   encode(buffer, size);
-  const uint8_t* chars = (uint8_t*)&object[0];
+  const uint8_t *chars = (uint8_t *)&object[0];
   buffer.insert(buffer.end(), chars, chars + size);
 }
 
 template<typename T>
-void encode(std::vector<uint8_t>& buffer, const std::vector<T>& object)
+void encode(std::vector<uint8_t> &buffer, const std::vector<T> &object)
 {
   const int size = static_cast<int>(object.size());
   encode(buffer, size);
-  for (const T& value : object) {
+  for (const T &value : object) {
     encode(buffer, value);
   }
 }
 
 /*Multiple arguments are processed one by one*/
 template<typename T, typename ...Rest>
-void encode(std::vector<uint8_t>& buffer, const T& object, const Rest& ...rest)
+void encode(std::vector<uint8_t> &buffer, const T &object, const Rest& ...rest)
 {
   encode(buffer, object);
   encode(buffer, rest...);
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const vpImage<vpRGBa>& object)
+void encode(std::vector<uint8_t> &buffer, const vpImage<vpRGBa> &object)
 {
   const int height = object.getHeight(), width = object.getWidth();
   encode(buffer, height, width, 4);
   const uint32_t sentSize = height * width * 4;
 
   buffer.reserve(buffer.size() + sentSize); // Avoid resizing multiple times as we iterate on pixels
-  const uint8_t* const bitmap = (uint8_t*)object.bitmap;
+  const uint8_t *const bitmap = (uint8_t *)object.bitmap;
   buffer.insert(buffer.end(), bitmap, bitmap + sentSize);
   //std::copy(bitmap, bitmap + sentSize, buffer.end());
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const vpImage<uint16_t>& object)
+void encode(std::vector<uint8_t> &buffer, const vpImage<uint16_t> &object)
 {
   const int height = object.getHeight(), width = object.getWidth();
   encode(buffer, height, width);
@@ -142,23 +142,23 @@ void encode(std::vector<uint8_t>& buffer, const vpImage<uint16_t>& object)
 
   buffer.reserve(buffer.size() + sentSize + 1);
   buffer.push_back(endianness);
-  const uint8_t* const bitmap = (uint8_t*)object.bitmap;
+  const uint8_t *const bitmap = (uint8_t *)object.bitmap;
   buffer.insert(buffer.end(), bitmap, bitmap + sentSize);
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const vpCameraParameters& object)
+void encode(std::vector<uint8_t> &buffer, const vpCameraParameters &object)
 {
   encode(buffer, (float)object.get_px(), (float)object.get_py(),
     (float)object.get_u0(), (float)object.get_v0());
 }
 
 template<>
-void encode(std::vector<uint8_t>& buffer, const vpHomogeneousMatrix& object)
+void encode(std::vector<uint8_t> &buffer, const vpHomogeneousMatrix &object)
 {
   std::vector<float> array;
   array.reserve(16);
-  const double* const data = object.data;
+  const double *const data = object.data;
   for (unsigned i = 0; i < 16; ++i) {
     array.push_back((float)data[i]);
   }
@@ -168,8 +168,7 @@ void encode(std::vector<uint8_t>& buffer, const vpHomogeneousMatrix& object)
 /*Decode elements (passed as references), given a buffer of bytes and an index (modified)*/
 
 void decode(const std::vector<uint8_t> &, unsigned int &)
-{
-}
+{ }
 
 /*
   Modify an object, given a byte array and an index reading into the byte array.
@@ -179,35 +178,35 @@ void decode(const std::vector<uint8_t> &, unsigned int &)
   There is no default decoding behaviour. As such, specializations must be written.
 */
 template<typename T>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, T& t) = delete;
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, T &t) = delete;
 
 template<>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, int& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, int &value)
 {
-  const uint8_t* ptr = &buffer[index];
-  value = ntohl(*((uint32_t*)ptr)); // Convert from network (big endian) representation to this machine's representation.
+  const uint8_t *ptr = &buffer[index];
+  value = ntohl(*((uint32_t *)ptr)); // Convert from network (big endian) representation to this machine's representation.
   index += sizeof(int);
 }
 template<>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, float& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, float &value)
 {
-  const uint8_t* ptr = &buffer[index];
-  const uint32_t v = ntohl(*((uint32_t*)ptr));
+  const uint8_t *ptr = &buffer[index];
+  const uint32_t v = ntohl(*((uint32_t *)ptr));
   memcpy(&value, &v, sizeof(uint32_t));
   index += sizeof(float);
 }
 template<>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, std::string& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, std::string &value)
 {
   int size;
   decode(buffer, index, size);
   value.resize(size);
-  value.replace(0, size, (char*)&buffer[index], size);
+  value.replace(0, size, (char *)&buffer[index], size);
   index += size;
 }
 
 template<typename T>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, std::vector<T>& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, std::vector<T> &value)
 {
   int size;
   decode(buffer, index, size);
@@ -220,7 +219,7 @@ void decode(const std::vector<uint8_t>& buffer, unsigned int& index, std::vector
 }
 
 template<>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpHomogeneousMatrix& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpHomogeneousMatrix &value)
 {
   std::vector<float> values;
   decode(buffer, index, values);
@@ -235,14 +234,14 @@ Decode multiple objects from a byte array.
 These objects can have different types. They are read from the buffer in the order that they are given to the function.
 */
 template<typename T, typename ...Rest>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, T& object, Rest& ...rest)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, T &object, Rest& ...rest)
 {
   decode(buffer, index, object);
   decode(buffer, index, rest...);
 }
 
 template<>
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpImage<vpRGBa>& value)
+void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpImage<vpRGBa> &value)
 {
   int height, width, channels;
   decode(buffer, index, height, width, channels);
@@ -257,14 +256,14 @@ void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpImage<vpR
   }
   else if (channels == 4) { // Despite having 4 channels, this is faster
     const unsigned copySize = height * width * channels;
-    memcpy((uint8_t*)value.bitmap, &buffer[index], copySize);
+    memcpy((uint8_t *)value.bitmap, &buffer[index], copySize);
     index += copySize;
   }
 }
 
 
 #define MEGAPOSE_CODE_SIZE 4
-void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<uint8_t>& buffer)
+void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<uint8_t> &buffer)
 {
   if (code != vpMegaPose::ServerMessage::ERR) {
     throw vpException(vpException::fatalError, "MegaPose: got an unexpected message from the server: " + std::to_string(code));
@@ -289,6 +288,8 @@ const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::m_c
     {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
     {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
     {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
+    {ServerMessage::EXIT, "EXIT"},
+
 };
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
@@ -296,7 +297,7 @@ std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageT
   return m_codeMap.at(messageType);
 }
 
-vpMegaPose::ServerMessage vpMegaPose::stringToMessage(const std::string& s)
+vpMegaPose::ServerMessage vpMegaPose::stringToMessage(const std::string &s)
 {
   for (auto it : m_codeMap) {
     if (it.second == s) {
@@ -306,14 +307,14 @@ vpMegaPose::ServerMessage vpMegaPose::stringToMessage(const std::string& s)
   return UNKNOWN;
 }
 
-void vpMegaPose::makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t>& data) const
+void vpMegaPose::makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t> &data) const
 {
   const uint32_t size = htonl(static_cast<uint32_t>(data.size()));
   const std::string code = messageToString(messageType);
   uint8_t arr[sizeof(size) + MEGAPOSE_CODE_SIZE];
-  memcpy(arr, (uint8_t*)&size, sizeof(size));
+  memcpy(arr, (uint8_t *)&size, sizeof(size));
 
-  memcpy(arr + sizeof(size), (uint8_t*)code.c_str(), MEGAPOSE_CODE_SIZE);
+  memcpy(arr + sizeof(size), (uint8_t *)code.c_str(), MEGAPOSE_CODE_SIZE);
 
   std::vector<uint8_t> header(arr, arr + sizeof(size) + MEGAPOSE_CODE_SIZE);
   data.insert(data.begin(), header.begin(), header.end());
@@ -325,7 +326,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
 #else
-  size_t readCount = _read(m_serverSocket, &size, sizeof(uint32_t));
+  size_t readCount = recv(m_serverSocket, reinterpret_cast<char*>(&size), sizeof(uint32_t), 0);
 #endif
   if (readCount != sizeof(uint32_t)) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -336,7 +337,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
 #else
-  readCount = _read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
+  readCount = recv(m_serverSocket, reinterpret_cast<char*>(code), MEGAPOSE_CODE_SIZE, 0);
 #endif
   if (readCount != MEGAPOSE_CODE_SIZE) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -350,7 +351,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int actually_read = read(m_serverSocket, &data[read_total], read_size);
 #else
-    int actually_read = _read(m_serverSocket, &data[read_total], read_size);
+    int actually_read = recv(m_serverSocket, reinterpret_cast<char*>(&data[read_total]), read_size, 0);
 #endif
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -362,7 +363,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   return std::make_pair(c, data);
 }
 
-vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParameters& cam, unsigned height, unsigned width)
+vpMegaPose::vpMegaPose(const std::string &host, int port, const vpCameraParameters &cam, unsigned height, unsigned width)
 {
 #if defined(_WIN32)
   WSADATA WSAData;
@@ -385,14 +386,18 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
     throw vpException(vpException::badValue, "Invalid ip address: " + host);
   }
   //Initiate connection
-  if ((m_fd = connect(m_serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
+  if ((m_fd = connect(m_serverSocket, (struct sockaddr *)&serv_addr, sizeof(serv_addr))) < 0) {
     throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
-}
+  }
 
 vpMegaPose::~vpMegaPose()
 {
+  std::vector<uint8_t> data;
+  makeMessage(ServerMessage::EXIT, data);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
+
 #if defined(_WIN32)
   WSACleanup();
 #else
@@ -401,9 +406,9 @@ vpMegaPose::~vpMegaPose()
 }
 
 std::vector<vpMegaPoseEstimate>
-vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::string>& labels,
-                          const vpImage<uint16_t>* const depth, const double depth_to_m,
-                          const std::vector<vpRect>* const detections, const std::vector<vpHomogeneousMatrix>* const initial_cTos,
+vpMegaPose::estimatePoses(const vpImage<vpRGBa>&image, const std::vector<std::string>&labels,
+                          const vpImage<uint16_t>*const depth, const double depth_to_m,
+                          const std::vector<vpRect>*const detections, const std::vector<vpHomogeneousMatrix>*const initial_cTos,
                           int refinerIterations)
 {
   const std::lock_guard<std::mutex> lock(m_mutex);
@@ -459,7 +464,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
     encode(data, *depth);
   }
   makeMessage(ServerMessage::GET_POSE, data);
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
   //std::cout<< "Encoding time = " << (vpTime::measureTimeMs() - beforeEncoding) << std::endl;
 
   ServerMessage code;
@@ -477,8 +482,8 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
   return result;
 }
 
-std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
-  const std::vector<std::string>& labels, const std::vector<vpHomogeneousMatrix>& cTos)
+std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>&image,
+  const std::vector<std::string>&labels, const std::vector<vpHomogeneousMatrix>&cTos)
 {
   const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
@@ -498,7 +503,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
 
   encode(data, parametersJson.dump());
   makeMessage(ServerMessage::GET_SCORE, data);
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
 
   ServerMessage code;
   std::vector<uint8_t> data_result;
@@ -532,7 +537,7 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   encode(data, message.dump());
   makeMessage(ServerMessage::SET_INTR, data);
 
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -541,8 +546,8 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   }
 }
 
-vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNames,
-                                        const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType)
+vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>&objectNames,
+                                        const std::vector<vpHomogeneousMatrix>&poses, const std::string& viewType)
 {
   const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
@@ -558,7 +563,7 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNa
   j["type"] = viewType;
   encode(data, j.dump());
   makeMessage(ServerMessage::GET_VIZ, data);
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -580,7 +585,7 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
   j["so3_grid_size"] = num;
   encode(data, j.dump());
   makeMessage(ServerMessage::SET_SO3_GRID_SIZE, data);
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();
@@ -594,7 +599,7 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   const std::lock_guard<std::mutex> lock(m_mutex);
   std::vector<uint8_t> data;
   makeMessage(ServerMessage::GET_LIST_OBJECTS, data);
-  send(m_serverSocket, reinterpret_cast<const char*>(data.data()), static_cast<int>(data.size()), 0);
+  send(m_serverSocket, reinterpret_cast<const char *>(data.data()), static_cast<int>(data.size()), 0);
   ServerMessage code;
   std::vector<uint8_t> data_result;
   std::tie(code, data_result) = readMessage();

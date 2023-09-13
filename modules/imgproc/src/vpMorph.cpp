@@ -41,6 +41,8 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_morph
 
@@ -48,7 +50,7 @@
 
   \param I : Input binary image (0 means background, 255 means foreground).
 */
-void vp::fillHoles(vpImage<unsigned char> &I
+void fillHoles(vpImage<unsigned char> &I
 #if USE_OLD_FILL_HOLE
   ,
   const vpImageMorphology::vpConnexityType &connexity
@@ -140,8 +142,8 @@ void vp::fillHoles(vpImage<unsigned char> &I
   \param h_kp1 : Image morphologically reconstructed.
   \param connexity : Type of connexity.
 */
-void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
-  vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
+void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
+    vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (marker.getHeight() != mask.getHeight() || marker.getWidth() != mask.getWidth()) {
     std::cerr << "marker.getHeight() != mask.getHeight() || "
@@ -176,3 +178,4 @@ void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigne
     h_k = h_kp1;
   } while (true);
 }
+};

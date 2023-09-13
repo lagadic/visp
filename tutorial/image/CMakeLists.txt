@@ -1,6 +1,6 @@
 project(tutorial-image)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
@@ -19,6 +19,7 @@ set(tutorial_cpp
   tutorial-draw-line.cpp
   tutorial-draw-rectangle.cpp
   tutorial-draw-point.cpp
+  tutorial-draw-circle.cpp
   tutorial-draw-cross.cpp
   tutorial-draw-text.cpp
   tutorial-draw-frame.cpp

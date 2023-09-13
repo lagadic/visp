@@ -28,18 +28,23 @@ It has however, several drawbacks:
     You may thus require a way to detect the object, such as an object detection neural network (available in ViSP with the class vpDetectorDNNOpenCV, see \ref tutorial-detection-dnn).
     For initial tests, the bounding box can also be provided by the user via click.
 
+To see some results, scroll to the the end of this tutorial.
+
+For the 3D model and detection inputs required by megapose, we provide tutorials to help you get setup. See \ref tutorial-megapose-model for the 3D model creation and \ref tutorial-synthetic-blenderproc to train a detection network.
+With these tutorials and the tools presented therein, the work to use megapose can be almost fully automated as summed up in the figure below:
+
+\image html tutorial/tracking/megapose/megapose_pipeline.png
 
 The MegaPose integration in ViSP is based on a client-server model:
 - The client, that uses either vpMegaPose or vpMegaPoseTracker, is C++-based. It sends pose estimation requests to the server.
-- The server is written in Python. It wraps around the MegaPose model. Each time a pose estimation is requested, the server reshapes the data and forwards it to MegaPose. 
-  It then sends back the information to the client. 
+- The server is written in Python. It wraps around the MegaPose model. Each time a pose estimation is requested, the server reshapes the data and forwards it to MegaPose.
+  It then sends back the information to the client.
 
-\note The computer running the server needs a GPU. The client can run on the same computer as the server. It can also run on another computer without a GPU. 
-  As Ethernet is used to communicate between client and server, both computers must be accessible on the Ethernet network.
+\note The computer running the server needs a GPU. The client can run on the same computer as the server. It can also run on another computer without a GPU.
+To obtain have a decent tracking speed, it is recommended to have both machines on the same network.
 
 This tutorial will explain how to install and run MegaPose and
 then demonstrate its usage with a simple object tracking application.
-
 
 \section megapose_install Installation
 
@@ -65,6 +70,8 @@ The MegaPose client, written in C++, is included directly in ViSP. It can be ins
   As explained previously, see \ref soft_tool_json installation procedure and build again ViSP.
 
 \subsection megapose_server_install Installing the server
+
+\warning The megapose server cannot directly be installed and used on Windows. A workaround is to install it in a <a href="https://learn.microsoft.com/en-us/windows/wsl/install">WSL container</a>. A WSL container works as a Linux (Ubuntu) distribution. The client still works on Windows, and WSL allows for port forwarding, making its usage seamless from the perspective of the client.
 
 MegaPose server should be installed on a computer equipped with a GPU. To install the MegaPose server, there are two dependencies:
   - Conda: MegaPose will be installed in a new virtual environment in order to avoid potential conflicts with python and other packages you have already installed
@@ -201,6 +208,8 @@ To start the server, you should enter in your terminal:
 \endcode
 Note that this assumes that your current directory is the tutorial folder.
 
+\warning If you are running on Windows through WSL, you may encounter an error mentioning that a CUDA/CUDNN-related .so file is not found. To resolve this issue, enter \code export LD_LIBRARY_PATH=/usr/lib/wsl/lib:$LD_LIBRARY_PATH\endcode before starting the server.
+
 Your server should now be started and waiting for incoming connections. You can now launch the tracking tutorial.
 
 \subsection megapose_run_command Running the tracking example
@@ -238,8 +247,9 @@ $ ./tutorial-megapose-live-single-object-tracking --config data/megapose_cube.js
 If the MegaPose server is running on another machine or uses another port, replace the arguments with your values.
 
 If everything goes well, you should obtain results similar to those displayed below:
+
 \htmlonly
-<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wq2vnzf1vv8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+<p align="center"><iframe width="560" height="315" src="https://youtube.com/embed/X5VdIjl5Lo0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 \endhtmlonly
 
 In this visualization, you can see the 3D model being displayed, as well as the object frame expressed in the camera.
@@ -298,11 +308,37 @@ Once MegaPose has been called, we can display the results in the image. We plot:
 We have walked through the code of a single object tracking with MegaPose.
 You may wish to save the results. You can do so by serializing to JSON, as explained in \ref tutorial-json
 
-\subsection megapose_adaptation Adapting this tutorial for your use case
+\section megapose_adaptation Adapting this tutorial for your use case
 
 This program can run with new 3D models, as MegaPose does require retraining. To adapt this script to your problem, you will require multiple things:
 - The intrinsic parameters of your camera. To calibrate your camera, see \ref tutorial-calibration-intrinsic
 - The 3D model of your object. See \ref tutorial-megapose-model
-- Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn.
+- Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn. Since you already have your 3D model, you can use Blender to generate a synthetic dataset and train a detection network without manually annotating images. This process is explained in \ref tutorial-synthetic-blenderproc.
+
+This tracking example has been used to illustrate some of MegaPose's properties.
+First, combining it with a deep learning detection method provides an automatic tracking initialization/reinitialization method.
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/kD2U3n9S0ww" title="Object tracking with MegaPose: automatic reinitialisation with a YoloV7" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Second, It is able to track reconstructed meshes and is resistant to occlusions as seen below.
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://youtube.com/embed/MrLiDORtnwA" title="Pose estimation of a reconstructed 3D model with megapose" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+It is also resistant to lighting variations and can track textureless objects.
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://youtube.com/embed/QwB3mTpNEo8" title="Pose Estimation of a textureless object" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Finally, MegaPose is an ideal candidate for Pose-Based Visual Servoing. The video below shows an example of a PBVS experiment where MegaPose provides the pose estimation that is given as input to the PBVS control law. See \ref megapose_next_steps for more information.
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://youtube.com/embed/jwUJySk9Kew" title="Pose Estimation of a textureless object" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+
+\subsection megapose_next_steps Next steps
+
+To go further, you can look at an example of visual servoing using Megapose, available at \ref servoAfma6MegaposePBVS.cpp
 
 */

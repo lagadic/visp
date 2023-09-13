@@ -35,7 +35,7 @@
 
 project(example-servo-universal-robots)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_robot visp_io)
 
@@ -71,7 +71,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 endif()
 
-vp_set_source_file_compile_flag(servoUniversalRobotsIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-vp_set_source_file_compile_flag(servoUniversalRobotsPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-vp_set_source_file_compile_flag(UniversalRobotsMoveToPosition.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-vp_set_source_file_compile_flag(UniversalRobotsSavePosition.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+visp_set_source_file_compile_flag(servoUniversalRobotsIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+visp_set_source_file_compile_flag(servoUniversalRobotsPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+visp_set_source_file_compile_flag(UniversalRobotsMoveToPosition.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+visp_set_source_file_compile_flag(UniversalRobotsSavePosition.cpp ${CXX_FLAGS_MUTE_WARNINGS})

@@ -60,12 +60,12 @@ void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpIma
 
 vpPlotGraph::vpPlotGraph()
   : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10), xdelt(1), ydelt(1), gridx(true),
-    gridy(true), gridColor(), curveNbr(1), curveList(NULL), scaleInitialized(false), firstPoint(true), nbDivisionx(10),
-    nbDivisiony(10), topLeft(), width(0), height(0), graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
-    dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0), w_yval(0), w_ysize(0), w_zval(0),
-    w_zsize(0), ptXorg(0), ptYorg(0), ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.), nbDivisionz(10), zorg(1.),
-    zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(), blockedr(false), blockedz(false), blocked(false),
-    epsi(5), epsj(6), dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
+  gridy(true), gridColor(), curveNbr(1), curveList(NULL), scaleInitialized(false), firstPoint(true), nbDivisionx(10),
+  nbDivisiony(10), topLeft(), width(0), height(0), graphZone(), dTopLeft(), dWidth(0), dHeight(0), dGraphZone(),
+  dTopLeft3D(), dGraphZone3D(), cam(), cMo(), cMf(), w_xval(0), w_xsize(0), w_yval(0), w_ysize(0), w_zval(0),
+  w_zsize(0), ptXorg(0), ptYorg(0), ptZorg(0), zoomx_3D(1.), zoomy_3D(1.), zoomz_3D(1.), nbDivisionz(10), zorg(1.),
+  zoomz(1.), zmax(10), zmin(-10), zdelt(1), old_iPr(), old_iPz(), blockedr(false), blockedz(false), blocked(false),
+  epsi(5), epsj(6), dispUnit(false), dispTitle(false), dispLegend(false), gridThickness(1)
 {
   gridColor.setColor(200, 200, 200);
 
@@ -88,7 +88,7 @@ void vpPlotGraph::initGraph(unsigned int nbCurve)
   curveList = new vpPlotCurve[nbCurve];
   curveNbr = nbCurve;
 
-  vpColor colors[6] = {vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple};
+  vpColor colors[6] = { vpColor::blue, vpColor::green, vpColor::red, vpColor::cyan, vpColor::orange, vpColor::purple };
 
   for (unsigned int i = 0; i < curveNbr; i++) {
     (curveList + i)->color = colors[i % 6];
@@ -129,7 +129,8 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w, unsigned int h
     w_yval = w_ysize / 2.0;
     w_xval = w_xsize / 2.0;
     w_zval = w_zsize / 2.0;
-  } else if (this->dWidth == this->dHeight) {
+  }
+  else if (this->dWidth == this->dHeight) {
     w_ysize = 1.0;
     w_xsize = 1.0;
     w_zsize = 1.0;
@@ -137,7 +138,8 @@ void vpPlotGraph::initSize(vpImagePoint top_left, unsigned int w, unsigned int h
     w_yval = 0.5;
     w_xval = 0.5;
     w_zval = 0.5;
-  } else if (this->dWidth < this->dHeight) {
+  }
+  else if (this->dWidth < this->dHeight) {
     w_xsize = 1.0;
     w_ysize = this->dHeight / this->dWidth;
     w_zsize = w_ysize;
@@ -174,8 +176,7 @@ void vpPlotGraph::findPose()
   vpPose pose;
   pose.clearPoint();
 
-  for (unsigned int i=0 ; i < 4 ; i++)
-  {
+  for (unsigned int i = 0; i < 4; i++) {
     vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
     point_[i].set_x(x);
     point_[i].set_y(y);
@@ -394,7 +395,7 @@ void vpPlotGraph::displayTitle(vpImage<unsigned char> &I)
   double size = (double)title.size();
   size = size / 2.0;
   vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() + dWidth / 2.0 - 4 * size),
-                         title.c_str(), vpColor::black);
+                         title, vpColor::black);
 }
 
 void vpPlotGraph::displayLegend(vpImage<unsigned char> &I)
@@ -544,7 +545,7 @@ void vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, double x
   (curveList + curveNb)->plotPoint(I, iP, x, y);
 #if (!defined VISP_HAVE_X11 && defined FLUSH_ON_PLOT)
   vpDisplay::flushROI(I, graphZone);
-// vpDisplay::flush(I);
+  // vpDisplay::flush(I);
 #endif
 }
 
@@ -624,7 +625,8 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
           iP2.set_i(dTopLeft_i);
         else
           iP2.set_i(dBottomRight_i);
-      } else if (!iP1In) {
+      }
+      else if (!iP1In) {
         if (iP1.get_j() < dTopLeft_j)
           iP1.set_j(dTopLeft_j);
         if (iP1.get_j() > dBottomRight_j)
@@ -634,7 +636,8 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
         if (iP1.get_i() > dBottomRight_i)
           iP1.set_i(dBottomRight_i);
         return true;
-      } else if (!iP2In) {
+      }
+      else if (!iP2In) {
         if (iP2.get_j() < dTopLeft_j)
           iP2.set_j(dTopLeft_j);
         if (iP2.get_j() > dBottomRight_j)
@@ -663,7 +666,8 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
           iP2.set_j(dTopLeft_j);
         else
           iP2.set_j(dBottomRight_j);
-      } else if (!iP1In) {
+      }
+      else if (!iP1In) {
         if (iP1.get_j() < dTopLeft_j)
           iP1.set_j(dTopLeft_j);
         if (iP1.get_j() > dBottomRight_j)
@@ -673,7 +677,8 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
         if (iP1.get_i() > dBottomRight_i)
           iP1.set_i(dBottomRight_i);
         return true;
-      } else if (!iP2In) {
+      }
+      else if (!iP2In) {
         if (iP2.get_j() < dTopLeft_j)
           iP2.set_j(dTopLeft_j);
         if (iP2.get_j() > dBottomRight_j)
@@ -727,23 +732,27 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
         if (sign == vpMath::sign(iP[0].get_j() - iP[1].get_j())) {
           iP1 = iP[0];
           iP2 = iP[1];
-        } else {
+        }
+        else {
           iP1 = iP[1];
           iP2 = iP[0];
         }
-      } else {
+      }
+      else {
         if (vpMath::sign(iP1.get_i() - iP[0].get_i()) == vpMath::sign(iP2.get_i() - iP[0].get_i()))
           return false;
         int sign = vpMath::sign(iP1.get_i() - iP2.get_i());
         if (sign == vpMath::sign(iP[0].get_i() - iP[1].get_i())) {
           iP1 = iP[0];
           iP2 = iP[1];
-        } else {
+        }
+        else {
           iP1 = iP[1];
           iP2 = iP[0];
         }
       }
-    } else if (!iP1In) {
+    }
+    else if (!iP1In) {
       vpImagePoint iPtemp = iP1;
       if (fabs(a) < 1) {
         int sign = vpMath::sign(iP1.get_j() - iP2.get_j());
@@ -752,20 +761,23 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
             iP1 = iP[0];
           else
             iP1 = iP[1];
-        } else {
+        }
+        else {
           if (sign == vpMath::sign(iP[1].get_j() - iP2.get_j()))
             iP1 = iP[1];
           else
             iP1 = iP[0];
         }
-      } else {
+      }
+      else {
         int sign = vpMath::sign(iP1.get_i() - iP2.get_i());
         if (fabs(iP[0].get_i() - iP2.get_i()) > 5) {
           if (sign == vpMath::sign(iP[0].get_i() - iP2.get_i()))
             iP1 = iP[0];
           else
             iP1 = iP[1];
-        } else {
+        }
+        else {
           if (sign == vpMath::sign(iP[1].get_i() - iP2.get_i()))
             iP1 = iP[1];
           else
@@ -776,7 +788,8 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
         iP1 = iPtemp;
         return false;
       }
-    } else if (!iP2In) {
+    }
+    else if (!iP2In) {
       vpImagePoint iPtemp = iP2;
       if (fabs(a) < 1) {
         int sign = vpMath::sign(iP2.get_j() - iP1.get_j());
@@ -785,20 +798,23 @@ bool vpPlotGraph::check3Dline(vpImagePoint &iP1, vpImagePoint &iP2)
             iP2 = iP[0];
           else
             iP2 = iP[1];
-        } else {
+        }
+        else {
           if (sign == vpMath::sign(iP[1].get_j() - iP1.get_j()))
             iP2 = iP[1];
           else
             iP2 = iP[0];
         }
-      } else {
+      }
+      else {
         int sign = vpMath::sign(iP2.get_i() - iP1.get_i());
         if (fabs(iP[0].get_i() - iP1.get_i()) > 5) {
           if (sign == vpMath::sign(iP[0].get_i() - iP1.get_i()))
             iP2 = iP[0];
           else
             iP2 = iP[1];
-        } else {
+        }
+        else {
           if (sign == vpMath::sign(iP[1].get_i() - iP1.get_i()))
             iP2 = iP[1];
           else
@@ -846,7 +862,8 @@ void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpIma
     ip1 = iPunit - vpImagePoint(3, 0);
     ip2 = iPunit + vpImagePoint(3, 0);
     ip3 = iPunit - vpImagePoint(6, 6);
-  } else {
+  }
+  else {
     ip1 = iPunit - vpImagePoint(0, 3);
     ip2 = iPunit + vpImagePoint(0, 3);
     ip3 = iPunit + vpImagePoint(6, 6);
@@ -1105,7 +1122,8 @@ vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, un
   if (x > xmax) {
     rescalex(1, x);
     changed = true;
-  } else if (x < xmin) {
+  }
+  else if (x < xmin) {
     rescalex(0, x);
     changed = true;
   }
@@ -1113,7 +1131,8 @@ vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, un
   if (y > ymax) {
     rescaley(1, y);
     changed = true;
-  } else if (y < ymin) {
+  }
+  else if (y < ymin) {
     rescaley(0, y);
     changed = true;
   }
@@ -1121,7 +1140,8 @@ vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, un
   if (z > zmax) {
     rescalez(1, z);
     changed = true;
-  } else if (z < zmin) {
+  }
+  else if (z < zmin) {
     rescalez(0, z);
     changed = true;
   }
@@ -1156,14 +1176,16 @@ vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, un
   if (iP.get_i() <= (curveList + curveNb)->lastPoint.get_i()) {
     top = iP.get_i() - 5;
     height_ = (curveList + curveNb)->lastPoint.get_i() - top + 10;
-  } else {
+  }
+  else {
     top = (curveList + curveNb)->lastPoint.get_i() - 5;
     height_ = iP.get_i() - top + 10;
   }
   if (iP.get_j() <= (curveList + curveNb)->lastPoint.get_j()) {
     left = iP.get_j() - 5;
     width_ = (curveList + curveNb)->lastPoint.get_j() - left + 10;
-  } else {
+  }
+  else {
     left = (curveList + curveNb)->lastPoint.get_j() - 5;
     width_ = iP.get_j() - left + 10;
   }
@@ -1336,6 +1358,6 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no
 // symbols
-void dummy_vpPlotGraph(){};
+void dummy_vpPlotGraph() { };
 #endif
 #endif

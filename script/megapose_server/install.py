@@ -71,7 +71,7 @@ def install_dependencies(megapose_path: Path, megapose_environment: str):
       print(f'Conda environment {megapose_environment} already exists, updating dependencies...')
       subprocess.run([conda_exe, 'env', 'update', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
     megapose_env_pip = get_pip_for_conda_env(megapose_environment)
-    subprocess.run([str(megapose_env_pip.absolute()), 'install', '-e',  str(megapose_path)], check=True, shell=True) # shell=True because without it the custom pip cannot be found
+    subprocess.run([str(megapose_env_pip.absolute()), 'install', '-e',  str(megapose_path)], check=True) # shell=True because without it the custom pip cannot be found
   except CalledProcessError as e:
     print('Could not create conda environment')
     exit(1)

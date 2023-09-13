@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 project(tutorial-dnn-object-detection-live)
 
@@ -36,5 +36,5 @@ foreach(data ${tutorial_data})
 endforeach()
 
 if(USE_TENSORT)
-  vp_set_source_file_compile_flag(tutorial-dnn-tensorrt-live.cpp -Wno-deprecated-declarations)
+  visp_set_source_file_compile_flag(tutorial-dnn-tensorrt-live.cpp -Wno-deprecated-declarations)
 endif()

@@ -31,7 +31,7 @@ vp_add_library(${the_module} ${__type}
     ${copied_files}
 )
 add_dependencies(${the_module} gen_visp_java_source)
- 
+
 vp_target_include_directories(${the_module} "${CMAKE_CURRENT_SOURCE_DIR}/../generator/src/cpp")
 vp_target_include_directories(${the_module} "${VISP_JAVA_BINDINGS_DIR}/gen/cpp")
 vp_target_include_modules(${the_module} ${VISP_MODULE_${the_module}_DEPS})
@@ -51,17 +51,17 @@ if(BUILD_FAT_JAVA_LIB)
   endif()
   if(APPLE)
     foreach(_dep ${__deps})
-      vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-force_load "${_dep}")
+      vp_target_link_libraries(${the_module} PRIVATE -Wl,-force_load "${_dep}")
     endforeach()
 	# TODO: Just check visp's file once, they had a condition I ignored
   elseif(((UNIX) OR (VISP_FORCE_FAT_JAVA_LIB_LD_RULES)) AND (NOT VISP_SKIP_FAT_JAVA_LIB_LD_RULES))
-    vp_target_link_libraries(${the_module} LINK_PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
+    vp_target_link_libraries(${the_module} PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
   else()
-    vp_target_link_libraries(${the_module} LINK_PRIVATE ${__deps})
+    vp_target_link_libraries(${the_module} PRIVATE ${__deps})
   endif()
-  vp_target_link_libraries(${the_module} LINK_PRIVATE ${__extradeps} ${VISP_LINKER_LIBS})
+  vp_target_link_libraries(${the_module} PRIVATE ${__extradeps} ${VISP_LINKER_LIBS})
 else()
-  vp_target_link_libraries(${the_module} LINK_PRIVATE ${__deps} ${VISP_LINKER_LIBS})
+  vp_target_link_libraries(${the_module} PRIVATE ${__deps} ${VISP_LINKER_LIBS})
 endif()
 
 # Additional target properties
@@ -74,8 +74,8 @@ set_target_properties(${the_module} PROPERTIES
     )
 
 if(ANDROID)
-  vp_target_link_libraries(${the_module} LINK_PUBLIC jnigraphics)
-  vp_target_link_libraries(${the_module} LINK_PUBLIC log dl z)
+  vp_target_link_libraries(${the_module} PUBLIC jnigraphics)
+  vp_target_link_libraries(${the_module} PUBLIC log dl z)
 
   # force strip library after the build command
   # because samples and tests will make a copy of the library before install

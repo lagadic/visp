@@ -113,6 +113,12 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
+if(USE_PTHREAD)
+  if(THREADS_HAVE_PTHREAD_ARG)
+    add_extra_compiler_option("-pthread")
+  endif()
+endif()
+
 if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
   add_extra_compiler_option("${CXX11_CXX_FLAGS}")
 elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
