@@ -119,7 +119,7 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0){};
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { };
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
@@ -131,7 +131,6 @@ public:
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
 
-  vp_deprecated double euclideanNorm() const;
   double frobeniusNorm() const;
 
   // operators
@@ -192,6 +191,15 @@ public:
   static vpTranslationVector mean(const std::vector<vpTranslationVector> &vec_t);
   static vpMatrix skew(const vpTranslationVector &tv);
   static void skew(const vpTranslationVector &tv, vpMatrix &M);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+      @name Deprecated functions
+  */
+  //@{
+  vp_deprecated double euclideanNorm() const;
+  //}
+#endif
 
 protected:
   unsigned int m_index; // index used for operator<< and operator, to fill a vector
