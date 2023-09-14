@@ -18,8 +18,6 @@ if __name__ == '__main__':
     parser.add_argument('--use-case', type=int, default=1, dest='use_case', help='Use case value 1, 2 or 3')
     parser.add_argument('--data', type=str, required=True, help='Path to data')
 
-
-
     args, unknown_args = parser.parse_known_args()
     if unknown_args:
         print("The following args are not recognized and will not be used: %s" % unknown_args)

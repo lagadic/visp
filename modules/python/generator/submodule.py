@@ -140,22 +140,9 @@ Bindings for methods and enum values
     #import sys; sys.exit()
     return res
 
-
-
-
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   modules = ['core', 'vision', 'visual_features', 'vs', 'sensor', 'io']
   result = []
   for module in modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
   return result
-  # return [
-  #   Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'core.cpp'),
-  #   Submodule('vision', Path('/home/sfelton/visp-sfelton/modules/vision/include/visp3/vision'), generate_path / 'vision.cpp'),
-  #   Submodule('core', Path('/home/sfelton/visp-sfelton/modules/core/include/visp3/core'), generate_path / 'visual_features.cpp'),
-  #   Submodule('vision', Path('/home/sfelton/visp-sfelton/modules/vision/include/visp3/vision'), generate_path / 'vs.cpp'),
-
-  #   # Submodule('visual_features', include_path / 'visual_features', generate_path / 'visual_features.cpp'),
-  #   # Submodule('vs', include_path / 'vs', generate_path / 'vs.cpp')
-
-  # ]

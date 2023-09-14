@@ -84,7 +84,6 @@ if __name__ == '__main__':
 
     h, w = image1.getRows(), image1.getCols()
 
-
     hbl = (int)(1.5*h)
     wbl = (int)(1.5*w)
     blendedImage = ImageGray(height=hbl, width=wbl, value=0)
