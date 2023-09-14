@@ -184,7 +184,7 @@ public:
    * \param j : The JSON object, resulting from the parsing of a JSON file.
    * \param detector : The detector that will be initialized from the JSON data.
    */
-  inline friend void from_json(const json &j, vpCannyEdgeDetection &detector)
+  friend inline void from_json(const json &j, vpCannyEdgeDetection &detector)
   {
     detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
     detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
@@ -198,7 +198,7 @@ public:
    * \param j : A JSON parser object.
    * \param detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
-  inline friend void to_json(json &j, const vpCannyEdgeDetection &detector)
+  friend inline void to_json(json &j, const vpCannyEdgeDetection &detector)
   {
     j = json {
             {"gaussianSize", detector.m_gaussianKernelSize},

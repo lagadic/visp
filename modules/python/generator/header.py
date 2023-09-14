@@ -111,9 +111,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -243,24 +243,33 @@ class HeaderFile():
             break
 
 
-
-
-      # Define classical methods
-      for method, method_config in basic_methods:
-
-        params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+      def define_classical_method(method, method_config, specs):
+        params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
         py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
 
         method_name = get_name(method.name)
         py_method_name = method_config.get('custom_name') or method_name
 
-        return_type = get_type(method.return_type, owner_specs, header_env.mapping)
+        return_type = get_type(method.return_type, specs, header_env.mapping)
         method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
         method_str = define_method(py_method_name, method_ref_str, py_arg_strs, method.static)
         method_str = f'{python_ident}.{method_str};'
         method_strs.append(method_str)
         generated_methods.append((py_method_name, method))
 
+      # Define classical methods
+      for method, method_config in basic_methods:
+        if method.template is not None and method_config.get('specializations') is not None:
+          method_template_names = [t.name for t in method.template.params]
+          specializations = method_config.get('specializations')
+          for method_spec in specializations:
+            new_specs = owner_specs.copy()
+            assert len(method_template_names) == len(method_spec)
+            method_spec_dict = OrderedDict(k for k in zip(method_template_names, method_spec))
+            new_specs.update(method_spec_dict)
+            define_classical_method(method, method_config, new_specs)
+        else:
+          define_classical_method(method, method_config, owner_specs)
 
       # Add to string representation
       if not cls_config['ignore_repr']:
@@ -285,8 +294,13 @@ class HeaderFile():
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       for error_overload in error_generating_overloads:
         print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
+        for method_str in method_strs:
+          if error_overload in method_str:
+            print(method_str)
+        print()
       if len(error_generating_overloads) > 0:
-        print(generated_methods)
+
+        print(error_generating_overloads)
         raise RuntimeError
 
       #spec_result += cls_result

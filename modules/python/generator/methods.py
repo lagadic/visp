@@ -140,7 +140,7 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
     (lambda m, _: m.pure_virtual, NotGeneratedReason.PureVirtual),
     (lambda m, _: m.access is None or m.access != 'public', NotGeneratedReason.Access),
     (lambda m, _: m.destructor, NotGeneratedReason.Destructor),
-    (lambda m, conf: m.template is not None and conf.get('specializations') is None, NotGeneratedReason.UnspecifiedTemplateSpecialization),
+    (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
     (lambda m, _: any(get_type(param.type, specializations, mapping) is None for param in m.parameters), NotGeneratedReason.ArgumentType),
     (lambda m, _: not m.constructor and get_type(m.return_type, specializations, mapping) is None, NotGeneratedReason.ReturnType)
   ]

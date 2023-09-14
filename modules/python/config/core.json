@@ -216,6 +216,21 @@
         }
       ]
     },
+    "vpImageTools": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void warpImage(const vpImage<Type>&, const vpMatrix&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, bool, bool)",
+          "specializations":
+          [
+            ["unsigned char"],
+            ["vpRGBa"]
+          ]
+        }
+      ]
+    },
+
     "vpDisplay": {
       "methods":
       [
@@ -228,6 +243,36 @@
           "static": true,
           "signature": "unsigned int getDownScalingFactor(const vpImage<vpRGBa> &)",
           "custom_name": "getImageDownScalingFactor"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, const vpImageCircle &, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, const vpImagePoint &, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, int, int, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, const vpImageCircle &, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, const vpImagePoint &, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, int, int, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
         }
       ]
     }
