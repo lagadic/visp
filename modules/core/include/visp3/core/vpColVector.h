@@ -242,7 +242,6 @@ public:
     return (*this);
   }
 
-  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-column vector from a column vector.
      \param r : Index of the row corresponding to the first element of the
@@ -263,9 +262,9 @@ public:
   {
     if (r >= rowNum || r + colsize > rowNum) {
       throw(vpException(vpException::fatalError,
-        "Cannot extract a (%dx1) column vector from a (%dx1) "
-        "column vector starting at index %d",
-        colsize, rowNum, r));
+                        "Cannot extract a (%dx1) column vector from a (%dx1) "
+                        "column vector starting at index %d",
+                        colsize, rowNum, r));
     }
 
     return vpColVector(*this, r, colsize);
@@ -368,9 +367,9 @@ public:
   {
     if (ncols != 1) {
       throw(vpException(vpException::fatalError,
-        "Cannot resize a column vector to a (%dx%d) "
-        "dimension vector that has more than one column",
-        nrows, ncols));
+                        "Cannot resize a column vector to a (%dx%d) "
+                        "dimension vector that has more than one column",
+                        nrows, ncols));
     }
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
@@ -455,6 +454,7 @@ public:
   }
 
   vp_deprecated void insert(const vpColVector &v, unsigned int r, unsigned int c = 0);
+  vp_deprecated double euclideanNorm() const;
   //@}
 #endif
 };

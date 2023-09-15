@@ -67,7 +67,7 @@ public:
   //! Default constructor.
   vpFeatureEllipse();
   //! Destructor.
-  virtual ~vpFeatureEllipse() {}
+  virtual ~vpFeatureEllipse() { }
 
   /*!
     \section Set coordinates
@@ -89,8 +89,7 @@ public:
   //! compute the error between two visual features from a subset
   //! a the possible features
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
-  //! compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
+
 
   /*!
    * Returns the visual feature corresponding to the ellipse centroid coordinate along camera x-axis.

@@ -64,7 +64,8 @@ void vpServoData::open(const std::string &directory)
     s = directory + "/sStar.dat";
     sStarFile.open(s.c_str());
 
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -99,9 +100,3 @@ void vpServoData::close()
   sFile.close();
   sStarFile.close();
 }
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

@@ -168,7 +168,7 @@ public:
     (*this) *= d2r;
   }
 
-  vp_deprecated double euclideanNorm() const;
+
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
@@ -335,6 +335,7 @@ public:
      \deprecated You should rather use eye()
    */
   vp_deprecated void setIdentity(const double &val = 1.0);
+  vp_deprecated double euclideanNorm() const;
 //@}
 #endif
 };

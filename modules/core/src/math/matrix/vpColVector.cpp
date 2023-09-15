@@ -1359,6 +1359,15 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
 }
+void vpColVector::insert(const vpColVector &v, unsigned int i)
+{
+  if (i + v.size() > this->size())
+    throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
+
+  if (data != NULL && v.data != NULL && v.rowNum > 0) {
+    memcpy(data + i, v.data, sizeof(double) * v.rowNum);
+  }
+}
 
 /*!
 
@@ -1413,7 +1422,8 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
     if (p == std::string::npos) {
       maxBefore = vpMath::maximum(maxBefore, thislen);
       // maxAfter remains the same
-    } else {
+    }
+    else {
       maxBefore = vpMath::maximum(maxBefore, p);
       maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
     }
@@ -1446,7 +1456,8 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
       if (p != std::string::npos) {
         s.width((std::streamsize)maxAfter);
         s << values[i].substr(p, maxAfter).c_str();
-      } else {
+      }
+      else {
         assert(maxAfter > 1);
         s.width((std::streamsize)maxAfter);
         s << ".0";
@@ -1478,17 +1489,7 @@ double vpColVector::sum() const { return SimdVectorSum(data, rowNum); }
   */
 double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum); }
 
-/*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Euclidean norm if the vector is initialized, 0 otherwise.
-
-  \sa frobeniusNorm(), infinityNorm()
-
-*/
-double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
   Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
@@ -1584,10 +1585,11 @@ std::ostream &vpColVector::cppPrint(std::ostream &os, const std::string &matrixN
 
     if (!octet) {
       os << matrixName << "[" << i << "] = " << (*this)[i] << "; " << std::endl;
-    } else {
+    }
+    else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
         os << "((unsigned char*)&(" << matrixName << "[" << i << "]) )[" << k << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; " << std::endl;
+          << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; " << std::endl;
       }
     }
   }
@@ -1711,7 +1713,8 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
     os << (*this)[i] << ", ";
     if (this->getRows() != i + 1) {
       os << ";" << std::endl;
-    } else {
+    }
+    else {
       os << "]" << std::endl;
     }
   }
@@ -1719,6 +1722,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   \deprecated You should rather use insert(unsigned int, const vpColVector &).
 
@@ -1738,4 +1742,16 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
   (void)c;
   insert(r, v);
 }
+
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm()
+
+*/
+double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

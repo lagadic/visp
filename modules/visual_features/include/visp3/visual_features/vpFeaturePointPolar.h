@@ -310,11 +310,6 @@ public:
   static unsigned int selectRho();
   static unsigned int selectTheta();
 
-  /*!
-    @name Deprecated functions
-  */
-  //! compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
 };
 
 #endif
