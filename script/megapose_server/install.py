@@ -30,7 +30,7 @@ def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
 
 def get_megapose_bin_conda_env(megapose_env: str) -> Path:
   '''
-  Retrive the bin folder of a conda environment
+  Retrieve the bin folder of a conda environment
   '''
   megapose_env_path = get_megapose_env_path(megapose_env)
   assert megapose_env_path is not None

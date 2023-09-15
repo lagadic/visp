@@ -268,7 +268,7 @@ void vpRobotViper850::init(void)
     throw(vpException(vpException::ioError, "ATI F/T calib file \"%s\" doesn't exist", calibfile.c_str()));
 #else
   throw(vpException(vpException::ioError, "You don't have access to Viper850 "
-                                          "data to retrive ATI F/T calib "
+                                          "data to retrieve ATI F/T calib "
                                           "file"));
 #endif
   m_ati.setCalibrationFile(calibfile);
