@@ -64,7 +64,6 @@ if(WIN32 AND NOT CYGWIN)
     set(WS2_32_LIBNAME "ws2_32.lib")
     check_library_exists(${WS2_32_LIBNAME} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
     if(HAVE_LIBWS2_32)
-      message("-----------> ${WS2_32_LIBNAME} is found")
       set(WS2_32_LIBRARY ${WS2_32_LIBNAME})
       set(WS2_32_FOUND TRUE)
     else()
