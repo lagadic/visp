@@ -228,7 +228,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
   }
   else if (m_algoParams.m_lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.;
+    lowerCannyThresh = upperCannyThresh / 3.f;
   }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
 #else
