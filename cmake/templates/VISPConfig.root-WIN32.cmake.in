@@ -64,8 +64,26 @@
 #     include(${VISP_USE_FILE})
 #   endif()
 #
-#
 #############################################################################
+
+function(check_one_config RES)
+  set(${RES} "" PARENT_SCOPE)
+  if(NOT VISP_RUNTIME OR NOT VISP_ARCH)
+    return()
+  endif()
+  set(candidates)
+  if(VISP_STATIC)
+    list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
+  endif()
+  list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/lib")
+  foreach(c ${candidates})
+    set(p "${VISP_CONFIG_PATH}/${c}")
+    if(EXISTS "${p}/VISPConfig.cmake")
+      set(${RES} "${p}" PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
+endfunction()
 
 # similar code exist in VISPDetectPlatform.cmake
 if(DEFINED VISP_ARCH AND DEFINED VISP_RUNTIME)
@@ -92,10 +110,34 @@ elseif(MSVC)
     set(VISP_RUNTIME vc14)
   elseif(MSVC_VERSION MATCHES "^191[0-9]$")
     set(VISP_RUNTIME vc15)
+    check_one_config(has_VS2017)
+    if(NOT has_VS2017)
+      set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+    endif()
   elseif(MSVC_VERSION MATCHES "^192[0-9]$")
     set(VISP_RUNTIME vc16)
+    check_one_config(has_VS2019)
+    if(NOT has_VS2019)
+      set(VISP_RUNTIME vc15) # selecting previous compatible runtime version
+      check_one_config(has_VS2017)
+      if(NOT has_VS2017)
+        set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+      endif()
+    endif()
   elseif(MSVC_VERSION MATCHES "^193[0-9]$")
     set(VISP_RUNTIME vc17)
+    check_one_config(has_VS2022)
+    if(NOT has_VS2022)
+     set(VISP_RUNTIME vc16)
+     check_one_config(has_VS2019)
+     if(NOT has_VS2019)
+       set(VISP_RUNTIME vc15) # selecting previous compatible runtime version
+       check_one_config(has_VS2017)
+       if(NOT has_VS2017)
+         set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+       endif()
+     endif()
+    endif()
   else()
     message(WARNING "ViSP does not recognize MSVC_VERSION \"${MSVC_VERSION}\". Cannot set VISP_RUNTIME")
   endif()
