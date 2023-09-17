@@ -66,6 +66,36 @@
 #
 #############################################################################
 
+if(NOT DEFINED VISP_STATIC)
+  # look for global setting
+  if (NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
+    set(VISP_STATIC OFF)
+  else()
+    set(VISP_STATIC ON)
+  endif()
+endif()
+
+function(check_one_config RES)
+  set($ { RES } "" PARENT_SCOPE)
+  if (NOT VISP_RUNTIME OR NOT VISP_ARCH)
+    return()
+  endif()
+  set(candidates)
+  if (VISP_STATIC)
+    list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
+  endif()
+  list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/lib")
+  foreach(c $ { candidates })
+    set(p "${VISP_CONFIG_PATH}/${c}")
+    if (EXISTS "${p}/VISPConfig.cmake")
+      set($ { RES } "${p}" PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
+endfunction()
+
+get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+
 function(check_one_config RES)
   set(${RES} "" PARENT_SCOPE)
   if(NOT VISP_RUNTIME OR NOT VISP_ARCH)
@@ -151,32 +181,16 @@ elseif(MINGW)
   endif()
 endif()
 
-if(CMAKE_VERSION VERSION_GREATER 2.6.2)
-  unset(VISP_CONFIG_PATH CACHE)
-endif()
+check_one_config(VISP_LIB_PATH)
 
 if(NOT VISP_FIND_QUIETLY)
   message(STATUS "ViSP ARCH: ${VISP_ARCH}")
   message(STATUS "ViSP RUNTIME: ${VISP_RUNTIME}")
-endif()
-
-get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH CACHE)
-if(VISP_RUNTIME AND VISP_ARCH)
-  if(NOT DEFINED VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib")
-  elseif(NOT DEFINED VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
-  elseif(VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
-  elseif(VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib")
-  endif()
+  message(STATUS "ViSP STATIC: ${VISP_STATIC}")
 endif()
 
 if(VISP_LIB_PATH AND EXISTS "${VISP_LIB_PATH}/VISPConfig.cmake")
   include("${VISP_LIB_PATH}/VISPConfig.cmake")
-
-  set(VISP_FOUND TRUE CACHE BOOL "" FORCE)
 
   if(NOT VISP_FIND_QUIETLY)
     message(STATUS "Found VISP ${VISP_VERSION} in ${VISP_LIB_PATH}")
@@ -193,5 +207,5 @@ else()
 You should manually point CMake variable VISP_DIR to your build of ViSP library."
     )
   endif()
-  set(VISP_FOUND FALSE CACHE BOOL "" FORCE)
+  set(VISP_FOUND FALSE)
 endif()
