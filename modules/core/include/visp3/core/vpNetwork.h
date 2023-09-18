@@ -155,13 +155,13 @@ protected:
   bool verboseMode;
 
 private:
-  std::vector<int> handleRequests();
-  int handleFirstRequest();
+  std::vector<int> privHandleRequests();
+  int privHandleFirstRequest();
 
-  void receiveRequest();
-  void receiveRequestFrom(const unsigned int &receptorEmitting);
-  int receiveRequestOnce();
-  int receiveRequestOnceFrom(const unsigned int &receptorEmitting);
+  void privReceiveRequest();
+  void privReceiveRequestFrom(const unsigned int &receptorEmitting);
+  int privReceiveRequestOnce();
+  int privReceiveRequestOnceFrom(const unsigned int &receptorEmitting);
 
 public:
   vpNetwork();
@@ -280,7 +280,7 @@ public:
   \param object : Received object.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occurred.
+  \return the number of bytes received, or -1 if an error occured.
 */
 template <typename T> int vpNetwork::receive(T *object, const unsigned int &sizeOfObject)
 {
@@ -363,7 +363,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
   \param receptorEmitting : Index of the receptor emitting the message.
   \param sizeOfObject : Size of the received object.
 
-  \return the number of bytes received, or -1 if an error occurred.
+  \return the number of bytes received, or -1 if an error occured.
 */
 template <typename T>
 int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, const unsigned int &sizeOfObject)

@@ -168,7 +168,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occurred.
+  \return The number of bytes that have been sent, -1 if an error occured.
 */
 int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
 
@@ -184,7 +184,7 @@ int vpNetwork::sendRequest(vpRequest &req) { return sendRequestTo(req, 0); }
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occurred.
+  \return The number of bytes that have been sent, -1 if an error occured.
 */
 int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -236,7 +236,7 @@ int vpNetwork::sendRequestTo(vpRequest &req, const unsigned int &dest)
 
   \param req : Request to send.
 
-  \return The number of bytes that have been sent, -1 if an error occurred.
+  \return The number of bytes that have been sent, -1 if an error occured.
 */
 int vpNetwork::sendAndEncodeRequest(vpRequest &req)
 {
@@ -256,7 +256,7 @@ int vpNetwork::sendAndEncodeRequest(vpRequest &req)
   \param req : Request to send.
   \param dest : Index of the receptor receiving the request.
 
-  \return The number of bytes that have been sent, -1 if an error occurred.
+  \return The number of bytes that have been sent, -1 if an error occured.
 */
 int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 {
@@ -280,8 +280,8 @@ int vpNetwork::sendAndEncodeRequestTo(vpRequest &req, const unsigned int &dest)
 */
 std::vector<int> vpNetwork::receiveRequest()
 {
-  receiveRequest();
-  return handleRequests();
+  privReceiveRequest();
+  return privHandleRequests();
 }
 
 /*!
@@ -303,8 +303,8 @@ std::vector<int> vpNetwork::receiveRequest()
 */
 std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
 {
-  receiveRequestFrom(receptorEmitting);
-  return handleRequests();
+  privReceiveRequestFrom(receptorEmitting);
+  return privHandleRequests();
 }
 
 /*!
@@ -323,12 +323,12 @@ std::vector<int> vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitt
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
 int vpNetwork::receiveRequestOnce()
 {
-  receiveRequestOnce();
-  return handleFirstRequest();
+  privReceiveRequestOnce();
+  return privHandleFirstRequest();
 }
 
 /*!
@@ -350,12 +350,12 @@ int vpNetwork::receiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
 int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
-  receiveRequestOnceFrom(receptorEmitting);
-  return handleFirstRequest();
+  privReceiveRequestOnceFrom(receptorEmitting);
+  return privHandleFirstRequest();
 }
 
 /*!
@@ -427,7 +427,7 @@ std::vector<int> vpNetwork::receiveAndDecodeRequestFrom(const unsigned int &rece
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
 int vpNetwork::receiveAndDecodeRequestOnce()
 {
@@ -457,7 +457,7 @@ int vpNetwork::receiveAndDecodeRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
 int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitting)
 {
@@ -483,14 +483,14 @@ int vpNetwork::receiveAndDecodeRequestOnceFrom(const unsigned int &receptorEmitt
   \return : The list of index corresponding to the requests that have been
   handled.
 */
-std::vector<int> vpNetwork::handleRequests()
+std::vector<int> vpNetwork::privHandleRequests()
 {
   std::vector<int> resIndex;
-  int index = handleFirstRequest();
+  int index = privHandleFirstRequest();
 
   while (index != -1) {
     resIndex.push_back(index);
-    index = handleFirstRequest();
+    index = privHandleFirstRequest();
   }
 
   return resIndex;
@@ -506,7 +506,7 @@ std::vector<int> vpNetwork::handleRequests()
 
   \return : The index of the request that has been handled.
 */
-int vpNetwork::handleFirstRequest()
+int vpNetwork::privHandleFirstRequest()
 {
   size_t indStart = currentMessageReceived.find(beginning);
   size_t indSep = currentMessageReceived.find(separator);
@@ -600,9 +600,9 @@ int vpNetwork::handleFirstRequest()
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 */
-void vpNetwork::receiveRequest()
+void vpNetwork::privReceiveRequest()
 {
-  while (receiveRequestOnce() > 0) {
+  while (privReceiveRequestOnce() > 0) {
   };
 }
 
@@ -623,9 +623,9 @@ void vpNetwork::receiveRequest()
 
   \param receptorEmitting : Index of the receptor emitting the message
 */
-void vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
+void vpNetwork::privReceiveRequestFrom(const unsigned int &receptorEmitting)
 {
-  while (receiveRequestOnceFrom(receptorEmitting) > 0) {
+  while (privReceiveRequestOnceFrom(receptorEmitting) > 0) {
   };
 }
 
@@ -645,9 +645,9 @@ void vpNetwork::receiveRequestFrom(const unsigned int &receptorEmitting)
   \sa vpNetwork::receiveAndDecodeRequestOnce()
   \sa vpNetwork::receiveAndDecodeRequestOnceFrom()
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::receiveRequestOnce()
+int vpNetwork::privReceiveRequestOnce()
 {
   if (receptor_list.size() == 0) {
     if (verboseMode)
@@ -733,9 +733,9 @@ int vpNetwork::receiveRequestOnce()
 
   \param receptorEmitting : Index of the receptor emitting the message.
 
-  \return The number of bytes received, -1 if an error occurred.
+  \return The number of bytes received, -1 if an error occured.
 */
-int vpNetwork::receiveRequestOnceFrom(const unsigned int &receptorEmitting)
+int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
 {
   int size = (int)receptor_list.size();
   int sizeMinusOne = (int)receptor_list.size() - 1;
