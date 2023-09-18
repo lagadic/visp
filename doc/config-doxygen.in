@@ -1,158 +1,158 @@
 # Doxyfile 1.8.17
 
 # This file describes the settings to be used by the documentation system
-# doxygen (www.doxygen.org) for a project.
+# doxygen(www.doxygen.org) for a project.
 #
-# All text after a double hash (##) is considered a comment and is placed in
+# All text after a double hash(##) is considered a comment and is placed in
 # front of the TAG it is preceding.
 #
-# All text after a single hash (#) is considered a comment and will be ignored.
-# The format is:
-# TAG = value [value, ...]
+# All text after a single hash(#) is considered a comment and will be ignored.
+# The format is :
+# TAG = value[value, ...]
 # For lists, items can also be appended using:
-# TAG += value [value, ...]
-# Values that contain spaces should be placed between quotes (\" \").
+# TAG += value[value, ...]
+# Values that contain spaces should be placed between quotes(\" \").
 
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
 
 # This tag specifies the encoding used for all characters in the configuration
-# file that follow. The default is UTF-8 which is also the encoding used for all
-# text before the first occurrence of this tag. Doxygen uses libiconv (or the
-# iconv built into libc) for the transcoding. See
+# file that follow.The default is UTF-8 which is also the encoding used for all
+# text before the first occurrence of this tag.Doxygen uses libiconv(or the
+                                                                     # iconv built into libc) for the transcoding.See
 # https://www.gnu.org/software/libiconv/ for the list of possible encodings.
-# The default value is: UTF-8.
+# The default value is : UTF-8.
 
-DOXYFILE_ENCODING      = UTF-8
+DOXYFILE_ENCODING = UTF-8
 
-# The PROJECT_NAME tag is a single word (or a sequence of words surrounded by
+# The PROJECT_NAME tag is a single word(or a sequence of words surrounded by
 # double-quotes, unless you are using Doxywizard) that should identify the
-# project for which the documentation is generated. This name is used in the
+# project for which the documentation is generated.This name is used in the
 # title of most generated pages and in a few other places.
-# The default value is: My Project.
+# The default value is : My Project.
 
-PROJECT_NAME           = "Visual Servoing Platform"
+PROJECT_NAME = "Visual Servoing Platform"
 
-# The PROJECT_NUMBER tag can be used to enter a project or revision number. This
+# The PROJECT_NUMBER tag can be used to enter a project or revision number.This
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = "version @VISP_VERSION@"
+PROJECT_NUMBER = "version @VISP_VERSION@"
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
-# quick idea about the purpose of the project. Keep the description short.
+# quick idea about the purpose of the project.Keep the description short.
 
-PROJECT_BRIEF          =
+PROJECT_BRIEF =
 
 # With the PROJECT_LOGO tag one can specify a logo or an icon that is included
-# in the documentation. The maximum height of the logo should not exceed 55
-# pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
+# in the documentation.The maximum height of the logo should not exceed 55
+# pixels and the maximum width should not exceed 200 pixels.Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = "@VISP_SOURCE_DIR@/doc/image/logo/img-logo-visp.png"
+PROJECT_LOGO = "@VISP_SOURCE_DIR@/doc/image/logo/img-logo-visp.png"
 
-# The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
-# into which the generated documentation will be written. If a relative path is
-# entered, it will be relative to the location where doxygen was started. If
+# The OUTPUT_DIRECTORY tag is used to specify the(relative or absolute) path
+# into which the generated documentation will be written.If a relative path is
+# entered, it will be relative to the location where doxygen was started.If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = doc
+OUTPUT_DIRECTORY = doc
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create 4096 sub-
-# directories (in 2 levels) under the output directory of each output format and
-# will distribute the generated files over these directories. Enabling this
+# directories(in 2 levels) under the output directory of each output format and
+# will distribute the generated files over these directories.Enabling this
 # option can be useful when feeding doxygen a huge amount of source files, where
 # putting all generated files in the same directory would otherwise causes
 # performance problems for the file system.
-# The default value is: NO.
+# The default value is : NO.
 
-CREATE_SUBDIRS         = NO
+CREATE_SUBDIRS = NO
 
 # If the ALLOW_UNICODE_NAMES tag is set to YES, doxygen will allow non-ASCII
-# characters to appear in the names of generated files. If set to NO, non-ASCII
+# characters to appear in the names of generated files.If set to NO, non-ASCII
 # characters will be escaped, for example _xE3_x81_x84 will be used for Unicode
 # U+3044.
-# The default value is: NO.
+# The default value is : NO.
 
-ALLOW_UNICODE_NAMES    = NO
+ALLOW_UNICODE_NAMES = NO
 
 # The OUTPUT_LANGUAGE tag is used to specify the language in which all
-# documentation generated by doxygen is written. Doxygen will use this
+# documentation generated by doxygen is written.Doxygen will use this
 # information to generate all constant output in the proper language.
-# Possible values are: Afrikaans, Arabic, Armenian, Brazilian, Catalan, Chinese,
-# Chinese-Traditional, Croatian, Czech, Danish, Dutch, English (United States),
-# Esperanto, Farsi (Persian), Finnish, French, German, Greek, Hungarian,
-# Indonesian, Italian, Japanese, Japanese-en (Japanese with English messages),
-# Korean, Korean-en (Korean with English messages), Latvian, Lithuanian,
-# Macedonian, Norwegian, Persian (Farsi), Polish, Portuguese, Romanian, Russian,
+# Possible values are : Afrikaans, Arabic, Armenian, Brazilian, Catalan, Chinese,
+# Chinese-Traditional, Croatian, Czech, Danish, Dutch, English(United States),
+# Esperanto, Farsi(Persian), Finnish, French, German, Greek, Hungarian,
+# Indonesian, Italian, Japanese, Japanese-en(Japanese with English messages),
+# Korean, Korean-en(Korean with English messages), Latvian, Lithuanian,
+# Macedonian, Norwegian, Persian(Farsi), Polish, Portuguese, Romanian, Russian,
 # Serbian, Serbian-Cyrillic, Slovak, Slovene, Spanish, Swedish, Turkish,
 # Ukrainian and Vietnamese.
-# The default value is: English.
+# The default value is : English.
 
-OUTPUT_LANGUAGE        = English
+OUTPUT_LANGUAGE = English
 
 # The OUTPUT_TEXT_DIRECTION tag is used to specify the direction in which all
-# documentation generated by doxygen is written. Doxygen will use this
+# documentation generated by doxygen is written.Doxygen will use this
 # information to generate all generated output in the proper direction.
-# Possible values are: None, LTR, RTL and Context.
-# The default value is: None.
+# Possible values are : None, LTR, RTL and Context.
+# The default value is : None.
 
-OUTPUT_TEXT_DIRECTION  = None
+OUTPUT_TEXT_DIRECTION = None
 
 # If the BRIEF_MEMBER_DESC tag is set to YES, doxygen will include brief member
 # descriptions after the members that are listed in the file and class
-# documentation (similar to Javadoc). Set to NO to disable this.
-# The default value is: YES.
+# documentation(similar to Javadoc).Set to NO to disable this.
+# The default value is : YES.
 
-BRIEF_MEMBER_DESC      = NO
+BRIEF_MEMBER_DESC = NO
 
 # If the REPEAT_BRIEF tag is set to YES, doxygen will prepend the brief
 # description of a member or function before the detailed description
 #
 # Note: If both HIDE_UNDOC_MEMBERS and BRIEF_MEMBER_DESC are set to NO, the
 # brief descriptions will be completely suppressed.
-# The default value is: YES.
+# The default value is : YES.
 
-REPEAT_BRIEF           = YES
+REPEAT_BRIEF = YES
 
 # This tag implements a quasi-intelligent brief description abbreviator that is
-# used to form the text in various listings. Each string in this list, if found
+# used to form the text in various listings.Each string in this list, if found
 # as the leading text of the brief description, will be stripped from the text
 # and the result, after processing the whole list, is used as the annotated
-# text. Otherwise, the brief description is used as-is. If left blank, the
-# following values are used ($name is automatically replaced with the name of
-# the entity):The $name class, The $name widget, The $name file, is, provides,
+# text.Otherwise, the brief description is used as-is.If left blank, the
+# following values are used($name is automatically replaced with the name of
+# the entity) :The $name class, The $name widget, The $name file, is, provides,
 # specifies, contains, represents, a, an and the.
 
-ABBREVIATE_BRIEF       =
+ABBREVIATE_BRIEF =
 
 # If the ALWAYS_DETAILED_SEC and REPEAT_BRIEF tags are both set to YES then
 # doxygen will generate a detailed section even if there is only a brief
 # description.
-# The default value is: NO.
+# The default value is : NO.
 
-ALWAYS_DETAILED_SEC    = YES
+ALWAYS_DETAILED_SEC = YES
 
 # If the INLINE_INHERITED_MEMB tag is set to YES, doxygen will show all
 # inherited members of a class in the documentation of that class as if those
-# members were ordinary class members. Constructors, destructors and assignment
+# members were ordinary class members.Constructors, destructors and assignment
 # operators of the base classes will not be shown.
-# The default value is: NO.
+# The default value is : NO.
 
-INLINE_INHERITED_MEMB  = YES
+INLINE_INHERITED_MEMB = YES
 
 # If the FULL_PATH_NAMES tag is set to YES, doxygen will prepend the full path
-# before files name in the file list and in the header files. If set to NO the
+# before files name in the file list and in the header files.If set to NO the
 # shortest path that makes the file name unique will be used
-# The default value is: YES.
+# The default value is : YES.
 
-FULL_PATH_NAMES        = YES
+FULL_PATH_NAMES = YES
 
 # The STRIP_FROM_PATH tag can be used to strip a user-defined part of the path.
 # Stripping is only done if one of the specified strings matches the left-hand
-# part of the path. The tag can be used to show relative paths in the file list.
+# part of the path.The tag can be used to show relative paths in the file list.
 # If left blank the directory from which doxygen is run is used as the path to
 # strip.
 #
@@ -160,33 +160,33 @@ FULL_PATH_NAMES        = YES
 # will be relative from the directory where doxygen is started.
 # This tag requires that the tag FULL_PATH_NAMES is set to YES.
 
-STRIP_FROM_PATH        =
+STRIP_FROM_PATH =
 
 # The STRIP_FROM_INC_PATH tag can be used to strip a user-defined part of the
 # path mentioned in the documentation of a class, which tells the reader which
-# header file to include in order to use a class. If left blank only the name of
-# the header file containing the class definition is used. Otherwise one should
+# header file to include in order to use a class.If left blank only the name of
+# the header file containing the class definition is used.Otherwise one should
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = @DOXYGEN_STRIP_FROM_INC_PATH@
+STRIP_FROM_INC_PATH = @DOXYGEN_STRIP_FROM_INC_PATH@
 
 
-# If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
-# less readable) file names. This can be useful is your file systems doesn't
+# If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter(but
+# less readable) file names.This can be useful is your file systems doesn't
 # support long names like on DOS, Mac, or CD-ROM.
-# The default value is: NO.
+# The default value is : NO.
 
-SHORT_NAMES            = NO
+SHORT_NAMES = NO
 
 # If the JAVADOC_AUTOBRIEF tag is set to YES then doxygen will interpret the
-# first line (until the first dot) of a Javadoc-style comment as the brief
-# description. If set to NO, the Javadoc-style will behave just like regular Qt-
-# style comments (thus requiring an explicit @brief command for a brief
+# first line(until the first dot) of a Javadoc-style comment as the brief
+# description.If set to NO, the Javadoc-style will behave just like regular Qt-
+# style comments(thus requiring an explicit @brief command for a brief
 # description.)
-# The default value is: NO.
+# The default value is : NO.
 
-JAVADOC_AUTOBRIEF      = NO
+JAVADOC_AUTOBRIEF = NO
 
 # If the JAVADOC_BANNER tag is set to YES then doxygen will interpret a line
 # such as
@@ -1979,7 +1979,7 @@ MAN_LINKS              = NO
 # captures the structure of the code including all documentation.
 # The default value is: NO.
 
-GENERATE_XML           = NO
+GENERATE_XML           = YES
 
 # The XML_OUTPUT tag is used to specify where the XML pages will be put. If a
 # relative path is entered the value of OUTPUT_DIRECTORY will be put in front of

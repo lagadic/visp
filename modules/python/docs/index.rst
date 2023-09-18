@@ -6,11 +6,13 @@ Contents:
 Todos and known issues
 ============================
 
+.. currentmodule:: visp
+
 .. toctree::
     :glob:
 
     static/*
-
+    generated/core*
 
 Core module
 ==============

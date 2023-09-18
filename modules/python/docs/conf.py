@@ -17,8 +17,12 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys
 import os
+import visp
 sys.path.insert(0, os.path.abspath('../build'))
-
+import pkgutil
+with open('res.txt', 'w') as f:
+  f.write(str(visp.__path__))
+  f.write(str(list(pkgutil.iter_modules(visp.__path__))))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -30,10 +34,16 @@ sys.path.insert(0, os.path.abspath('../build'))
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.autosummary",
+    "sphinx_immaterial",
+    "sphinx_immaterial.apidoc.python.apigen"
 ]
 
+python_apigen_modules = {
+      "visp.core": "generated/core",
+}
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
@@ -69,7 +79,7 @@ release = "0.0.1"
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'en'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -113,12 +123,15 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_immaterial'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
 # html_theme_options = {}
+html_theme_options = {
+    "toc_title_is_page_title": True,
+}
 
 # Add any paths that contain custom themes here, relative to this directory.
 # html_theme_path = []

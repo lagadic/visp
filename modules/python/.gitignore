@@ -7,3 +7,4 @@ stubs/build
 *.eggs
 docs/_build
 docs/_autosummary
+docs/generated

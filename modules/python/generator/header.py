@@ -2,15 +2,16 @@ from typing import List, Optional, Set, Tuple, Dict, Union
 from cxxheaderparser.parserstate import ClassBlockState, State
 import pcpp
 import cxxheaderparser
-from cxxheaderparser.visitor import CxxVisitor
 from cxxheaderparser import types
-from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope, parse_file
+from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
 from pathlib import Path
 import json
 from dataclasses import dataclass
+from collections import OrderedDict
+
 from utils import *
 from methods import *
-from collections import OrderedDict
+from doc_parser import *
 
 
 def filter_includes(include_names: Set[str]) -> List[str]:
@@ -111,9 +112,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
       '--passthru-unfound-includes',
@@ -167,8 +168,10 @@ class HeaderFile():
       base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases))
       class_template_str = ', '.join([name_cpp] + list(base_class_strs))
-
-      cls_argument_strs = ['submodule', f'"{name_python}"'] + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
+      doc_param = []
+      if name_cpp_no_template in documentation_holder.documentation_dict:
+        doc_param = [documentation_holder.documentation_dict[name_cpp_no_template]]
+      cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
 
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
       self.declarations.append(class_decl)
@@ -309,6 +312,8 @@ class HeaderFile():
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
     print(f'Parsing class "{name_cpp_no_template}"')
+
+    documentation_holder = DocumentationHolder(name_cpp_no_template, DocumentationObjectKind.Class, header_env.mapping)
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
       return ''
