@@ -16,7 +16,7 @@
   "files.associations": {
     "bitset": "cpp",
     "optional": "cpp",
-    "*.in": "cpp",
+    "*.in": "cmake",
     "cctype": "cpp",
     "clocale": "cpp",
     "cmath": "cpp",
