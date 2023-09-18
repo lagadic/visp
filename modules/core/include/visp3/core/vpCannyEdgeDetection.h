@@ -261,6 +261,8 @@ public:
    * linked somehow to a strong edge point.
    *
    * \param[in] lowerThresh : The lower threshold: each point whose gradient is below this threshold is discarded.
+   * When lower threshold value is negative, Canny recommendation is applied to have the lower threshold 3 times lower
+   * than the upper threshold.
    * \param[in] upperThresh : The upper threshold: each point whose gradient is greater than this threshold is
    * said to be a strong edge point and is kept.
    */

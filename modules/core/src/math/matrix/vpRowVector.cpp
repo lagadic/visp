@@ -1087,9 +1087,9 @@ double vpRowVector::sumSquare() const
 }
 
 /*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 */
 double vpRowVector::frobeniusNorm() const
 {
@@ -1102,7 +1102,7 @@ double vpRowVector::frobeniusNorm() const
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
 

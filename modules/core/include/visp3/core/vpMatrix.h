@@ -573,7 +573,7 @@ vpMatrix M(R);
   /** @name Eigen values  */
 
   //@{
-  // compute the eigen values using Lapack
+  // Compute the eigen values using Lapack.
   vpColVector eigenValues() const;
   void eigenValues(vpColVector &evalue, vpMatrix &evector) const;
   //@}

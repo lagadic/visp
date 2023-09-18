@@ -1,7 +1,7 @@
 <h1>ViSP: Open source Visual Servoing Platform</h1>
 
 [![Github Releases](https://img.shields.io/github/release/lagadic/visp.svg)](https://github.com/lagadic/visp/releases)
-[![License](https://img.shields.io/badge/License-GPLv2-bright)](https://opensource.org/licenses/GPL-2.0)
+[![License](https://eddelbuettel.github.io/badges/GPL2+.svg)](https://opensource.org/license/gpl-2-0/)
 
 Platform | Build Status |
 -------- | ------------ |

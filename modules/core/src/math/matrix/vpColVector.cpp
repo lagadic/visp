@@ -1492,9 +1492,9 @@ double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum)
 
 
 /*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 
   \sa infinityNorm()
 
@@ -1746,7 +1746,7 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
 

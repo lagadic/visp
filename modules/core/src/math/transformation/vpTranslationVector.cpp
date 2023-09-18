@@ -714,7 +714,7 @@ vpRowVector vpTranslationVector::t() const
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius nom of the translation vector
+  Compute and return the Euclidean norm also called Frobenius nom of the translation vector
   \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
@@ -726,9 +726,9 @@ double vpTranslationVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif
 
 /*!
-  Compute and return the Fronebius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
+  Compute and return the Frobenius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 */
 double vpTranslationVector::frobeniusNorm() const
 {

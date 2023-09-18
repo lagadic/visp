@@ -126,6 +126,6 @@
   "C_Cpp.formatting": "vcFormat",
   "C_Cpp.vcFormat.space.aroundBinaryOperator": "ignore",
   "editor.comments.insertSpace": true,
-  "C_Cpp.vcFormat.indent.preserveComments": false,
+  "C_Cpp.vcFormat.indent.preserveComments": true,
   "C_Cpp.doxygen.generatedStyle": "/*!"
 }
