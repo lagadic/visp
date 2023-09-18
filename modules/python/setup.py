@@ -21,14 +21,10 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
-def generate_stubs():
-  subprocess.run('pip install ./stubs', env=os.environ, shell=True, capture_output=True, check=True)
 
 class CustomInstall(install):
   def run(self):
     install.run(self)
-    #generate_stubs()
-    # subprocess.run('sphinx-build -b html docs docs/build/html', shell=True, check=True)
 
 
 class build(build_module.build):

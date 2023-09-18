@@ -10,13 +10,35 @@ except ImportError:
   print('Cannot import xml parser')
   import_failed = True
 
-
-class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
-
 class DocumentationObjectKind(Enum):
+  '''
+  Kind of the object for which we seek the documentation
+  '''
   Class = 'class'
   Struct = 'struct'
+  Method = 'method'
+
+class DocumentationData(object):
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
+
+  @staticmethod
+  def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
+    if import_failed:
+      return None
+
+    xml_root = DocumentationData.documentation_xml_location
+    if xml_root is None or not xml_root.exists():
+      return None
+    p = None
+    if kind == DocumentationObjectKind.Class:
+      p = xml_root / f'class{name}.xml'
+    else:
+      assert False, 'Seeking documentation for type other than class not handled for now'
+
+    if not p.exists():
+      return None
+    return p
+
 
 def to_cstring(s: str) -> str:
   s = s.replace('\t', '  ')
@@ -36,6 +58,7 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     return '**' + container.value.valueOf_ + '**'
   if container.name == 'emphasis':
     return '*' + container.value.valueOf_ + '*'
+
   if container.name == 'formula':
     v: str = container.value.valueOf_.strip()
     if v.startswith(('\\[', '$$')):
@@ -45,27 +68,29 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
       pure_math = v[1:-1].replace('\n', indent_str + one_indent)
       return ' :math:`' + pure_math.strip() + '` '
 
-  if container.name == 'ref':
+  if container.name == 'ref': # TODO: replace with Python refs if possible
     return ' ' + container.value.valueOf_ + ' '
+
   if container.name == 'verbatim':
     print(container.value.valueOf_)
     import sys; sys.exit()
+
   if container.name == 'simplesect':
     process_fn = lambda item: process_paragraph(item, level + 1)
     res = '\n'
     item_content = '\n'.join(map(process_fn, container.value.para))
     item_content = re.sub('\n\n\n+', '\n\n', item_content)
-    if container.value.kind == 'note':
+    kind = container.value.kind
+    if kind == 'note':
       res += '\n' + indent_str + '.. note:: ' + item_content + '\n' + indent_str
-    elif container.value.kind == 'warning':
+    elif kind == 'warning':
       res += '\n' + indent_str + '.. warning:: ' + item_content + '\n' + indent_str
-    elif container.value.kind == 'see':
+    elif kind == 'see':
       res += '\n' + indent_str + '.. note:: See' + item_content + '\n' + indent_str
-
-
-
-    print('res = ', res)
+    else:
+      res += '\n' + f'<unparsed SimpleSect of kind {kind}>'
     return res + '\n'
+
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
     res = '\n'
@@ -75,8 +100,8 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
       item_content = re.sub('\n\n\n+', '\n\n', item_content)
       #item_content = item_content.replace('\n' + indent_str, '\n' + indent_str + '  ')
       res += '\n' + indent_str + '* ' + item_content + '\n' + indent_str
-    print('res = ', res)
     return res + '\n'
+
   return f'<unparsed {container.value}>'
 
 
@@ -94,30 +119,24 @@ def process_description(brief: Optional[descriptionType]) -> str:
   return '\n\n'.join([process_paragraph(par, 0) for par in para])
 
 class DocumentationHolder(object):
-  def __init__(self, name: str, kind: DocumentationObjectKind, env_mapping: Dict[str, str]):
-    self.object_name = name
-    self.kind = kind
-    self.env_mapping = env_mapping
+  def __init__(self, path: Optional[Path] = None):
+    self.xml_path = path
 
-    self.documentation_dict = {}
     if not import_failed and DocumentationData.documentation_xml_location is not None:
-      assert self.kind == DocumentationObjectKind.Class
-      xml_path = DocumentationData.documentation_xml_location / f'class{name}.xml'
-      if not xml_path.exists():
-        print(f'Could not find documentation file for name {name}, looking in {str(xml_path)}')
+      if not self.xml_path.exists():
+        print(f'Could not find documentation file for name {name} when looking in {str(path)}')
       else:
-        self.documentation_dict = self.parse_xml(xml_path)
+        self.xml_doc = doxmlparser.compound.parse(str(path), True, False)
 
-  def parse_xml(self, xml_path: Path) -> Dict:
-    result_dict = {}
-    xml_doc = doxmlparser.compound.parse(str(xml_path), True, False)
-    for compounddef in xml_doc.get_compounddef():
+  def get_documentation_for_class(self, name: str) -> Optional[str]:
+    for compounddef in self.xml_doc.get_compounddef():
       compounddef: compounddefType  = compounddef
-      if compounddef.kind == DoxCompoundKind.CLASS:
-        print(f'Found class {compounddef.get_compoundname()}')
-        result_dict[compounddef.get_compoundname()] = self.generate_class_description_string(compounddef)
-    print(xml_doc)
-    return result_dict
+      if compounddef.kind == DoxCompoundKind.CLASS and compounddef.get_compoundname() == name:
+        return self.generate_class_description_string(compounddef)
+    return None
+
+  def get_documentation_for_method(self):
+    pass
 
   def generate_class_description_string(self, compounddef: compounddefType) -> str:
     brief = process_description(compounddef.get_briefdescription())

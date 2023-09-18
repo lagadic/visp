@@ -19,10 +19,10 @@ import sys
 import os
 import visp
 sys.path.insert(0, os.path.abspath('../build'))
-import pkgutil
-with open('res.txt', 'w') as f:
-  f.write(str(visp.__path__))
-  f.write(str(list(pkgutil.iter_modules(visp.__path__))))
+# import pkgutil
+# with open('res.txt', 'w') as f:
+#   f.write(str(visp.__path__))
+#   f.write(str(list(pkgutil.iter_modules(visp.__path__))))
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.

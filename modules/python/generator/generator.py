@@ -11,12 +11,34 @@ import json
 from header import *
 from submodule import *
 
+from multiprocessing import Pool
+def header_preprocess(header: HeaderFile):
+  header.preprocess()
+  return header
 
 
 def generate_module(generate_path: Path) -> None:
   main_path = generate_path / 'main.cpp'
   include_path = Path('/usr/local/include/visp3')
   submodules: List[Submodule] = get_submodules(include_path, generate_path / 'generated')
+
+  all_headers: List[HeaderFile] = []
+  for submodule in submodules:
+    all_headers.extend(submodule.headers)
+  from tqdm import tqdm
+  with Pool() as pool:
+    new_all_headers = []
+    for result in pool.map(header_preprocess, all_headers):
+      print(result.header_repr)
+      new_all_headers.append(result)
+
+  new_all_headers = sort_headers(new_all_headers)
+  for submodule in submodules:
+    submodule.set_headers_from_common_list(new_all_headers)
+  # for header in all_headers:
+  #   header.preprocess()
+
+
   for submodule in submodules:
     submodule.generate()
 

@@ -12,7 +12,6 @@ Todos and known issues
     :glob:
 
     static/*
-    generated/core*
 
 Core module
 ==============
