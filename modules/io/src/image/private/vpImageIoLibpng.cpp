@@ -89,7 +89,7 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
@@ -186,7 +186,7 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "PNG write error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
@@ -311,7 +311,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "error reading png file"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);
@@ -488,7 +488,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "PNG read error"));
   }
 
-  /* initialize the setjmp for returning properly after a libpng error occured
+  /* initialize the setjmp for returning properly after a libpng error occurred
    */
   if (setjmp(png_jmpbuf(png_ptr))) {
     fclose(file);

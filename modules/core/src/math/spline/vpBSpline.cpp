@@ -44,9 +44,8 @@
 */
 vpBSpline::vpBSpline()
   : controlPoints(), knots(), p(3), // By default : p=3 for clubic spline
-    crossingPoints()
-{
-}
+  crossingPoints()
+{ }
 
 /*!
   Copy constructor.
@@ -54,13 +53,12 @@ vpBSpline::vpBSpline()
 */
 vpBSpline::vpBSpline(const vpBSpline &bspline)
   : controlPoints(bspline.controlPoints), knots(bspline.knots), p(bspline.p), // By default : p=3 for clubic spline
-    crossingPoints(bspline.crossingPoints)
-{
-}
+  crossingPoints(bspline.crossingPoints)
+{ }
 /*!
   Basic destructor.
 */
-vpBSpline::~vpBSpline() {}
+vpBSpline::~vpBSpline() { }
 
 /*!
   Find the knot interval in which the parameter \f$ l_u \f$ lies. Indeed \f$
@@ -68,9 +66,9 @@ vpBSpline::~vpBSpline() {}
 
    Example : The knot vector is the following \f$ U = \{0,  0 , 1 , 2 ,3 , 3\}
   \f$ with \f$ p \f$ is equal to 1.
-    - For \f$ l_u \f$ equal to 0.5 the method will retun 1.
-    - For \f$ l_u \f$ equal to 2.5 the method will retun 3.
-    - For \f$ l_u \f$ equal to 3 the method will retun 3.
+    - For \f$ l_u \f$ equal to 0.5 the method will return 1.
+    - For \f$ l_u \f$ equal to 2.5 the method will return 3.
+    - For \f$ l_u \f$ equal to 3 the method will return 3.
 
   \param l_u : The knot whose knot interval is seeked.
   \param l_p : Degree of the B-Spline basis functions.
@@ -114,9 +112,9 @@ unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, std::vector<doubl
 
    Example : The knot vector is the following \f$ U = \{0,  0 , 1 , 2 ,3 , 3\}
   \f$ with \f$ p \f$ is equal to 1.
-    - For \f$ u \f$ equal to 0.5 the method will retun 1.
-    - For \f$ u \f$ equal to 2.5 the method will retun 3.
-    - For \f$ u \f$ equal to 3 the method will retun 3.
+    - For \f$ u \f$ equal to 0.5 the method will return 1.
+    - For \f$ u \f$ equal to 2.5 the method will return 3.
+    - For \f$ u \f$ equal to 3 the method will return 3.
 
   \param u : The knot whose knot interval is seeked.
 
@@ -455,7 +453,8 @@ vpImagePoint *vpBSpline::computeCurveDers(double l_u, unsigned int l_i, unsigned
   if (l_p < l_der) {
     vpTRACE("l_der must be under or equal to l_p");
     du = l_p;
-  } else
+  }
+  else
     du = l_der;
 
   for (unsigned int k = 0; k <= du; k++) {
@@ -500,7 +499,8 @@ vpImagePoint *vpBSpline::computeCurveDers(double u, unsigned int der)
   if (p < der) {
     vpTRACE("der must be under or equal to p");
     du = p;
-  } else
+  }
+  else
     du = der;
 
   for (unsigned int k = 0; k <= du; k++) {

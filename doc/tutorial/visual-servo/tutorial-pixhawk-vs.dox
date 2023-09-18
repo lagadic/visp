@@ -97,7 +97,7 @@ it will enable vpRobotMavlink usage.
   When using PX4, it is important to install [QGroundControl](http://qgroundcontrol.com/) (QGC) following instructions
 [here](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html).
 
-  \note When launching `QGroundControl` if you experience the following error (occured with Ubuntu 22.04):
+  \note When launching `QGroundControl` if you experience the following error (occurred with Ubuntu 22.04):
   \verbatim
   $ ./QGroundControl.AppImage
   dlopen(): error loading libfuse.so.2

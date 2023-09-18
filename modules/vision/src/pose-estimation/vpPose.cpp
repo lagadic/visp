@@ -580,7 +580,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
  *
  * @param cMo the pose of the object with regard to the camera.
  * @return true the pose computation was succesful.
- * @return false an error occured during the pose computation.
+ * @return false an error occurred during the pose computation.
  */
 bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo)
 {
