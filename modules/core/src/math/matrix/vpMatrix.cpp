@@ -1543,7 +1543,6 @@ void vpMatrix::negateMatrix(const vpMatrix &A, vpMatrix &C)
   double **ArowPtrs = A.rowPtrs;
   double **CrowPtrs = C.rowPtrs;
 
-  // 	t0=vpTime::measureTimeMicros();
   for (unsigned int i = 0; i < A.rowNum; i++)
     for (unsigned int j = 0; j < A.colNum; j++)
       CrowPtrs[i][j] = -ArowPtrs[i][j];

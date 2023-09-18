@@ -63,21 +63,21 @@ const double eps = 1e-6;
  *
  ****************************************************************************
  * ENTREES :
- * int pts_ref[4]	: Definit quels sont les points de reference, ils ne
- *			  seront pas affectes par le changement de repere
- * int nb_pts		: nombre de points a changer de repere
- * double **pd	: La matrice des coordonnees des points desires
- * double **p	: La matrice des coordonnees des points courants
+ * int pts_ref[4]  : Definit quels sont les points de reference, ils ne
+ *        seront pas affectes par le changement de repere
+ * int nb_pts    : nombre de points a changer de repere
+ * double **pd  : La matrice des coordonnees des points desires
+ * double **p  : La matrice des coordonnees des points courants
  *
  *
  * SORTIES :
  *
- * double **pt_des_nr 	: La matrice des coordonnees des points desires
- *			  dans le nouveau repere.
- * double **pt_cour_nr	: La matrice des coordonnees des points courants
- *			  dans le nouveau repere
- * double **M	: ??
- * double **Mpd	: pseudo inverse de M  ..
+ * double **pt_des_nr   : La matrice des coordonnees des points desires
+ *        dans le nouveau repere.
+ * double **pt_cour_nr  : La matrice des coordonnees des points courants
+ *        dans le nouveau repere
+ * double **M  : ??
+ * double **Mpd  : pseudo inverse de M  ..
  *
  *
  ****************************************************************************
@@ -161,13 +161,13 @@ void changeFrame(unsigned int *pts_ref, unsigned int nb_pts, vpMatrix &pd, vpMat
  *
  ****************************************************************************
  * ENTREES :
- * int 	Nb_pts : nombre de points
- * double	**pd : tableau des coordonnees des points desires
- * couble	**p : tableau des coordonnees des points courants
+ * int   Nb_pts : nombre de points
+ * double  **pd : tableau des coordonnees des points desires
+ * couble  **p : tableau des coordonnees des points courants
  *
  * SORTIES :
  *
- * double **H 			matrice d homographie
+ * double **H       matrice d homographie
  *
  ****************************************************************************
  * AUTEUR : BOSSARD Nicolas.  INSA Rennes 5eme annee.
@@ -225,7 +225,7 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
 
   /*****
         La meilleure solution est le vecteur de V associe
-        a la valeur singuliere la plus petite en valeur	absolu.
+        a la valeur singuliere la plus petite en valeur  absolu.
         Pour cela on parcourt la matrice des valeurs singulieres
         et on repere la plus petite valeur singuliere, on en profite
         pour effectuer un controle sur le rang de la matrice : pas plus
@@ -274,14 +274,14 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
  *
  ****************************************************************************
  * ENTREES :
- * int 	Nb_pts : nombre de points
- * double	**pd : tableau des coordonnees des points desires
- * couble	**p : tableau des coordonnees des points courants
+ * int   Nb_pts : nombre de points
+ * double  **pd : tableau des coordonnees des points desires
+ * couble  **p : tableau des coordonnees des points courants
  *
  * SORTIES :
  *
- * double **H 			matrice d'homographie
- * double epipole[3]		epipole
+ * double **H       matrice d'homographie
+ * double epipole[3]    epipole
  *
  ****************************************************************************
  **/
@@ -476,14 +476,14 @@ void HLM3D(unsigned int nb_pts, vpMatrix &pd, vpMatrix &p, vpMatrix &H)
 
     //     estimation de a = 1,b,c ; je cherche le min de somme(i=1:n)
     //     (0.5*(ei)^2)
-    // 	  e1 = V[1][.] * b - V[3][.] = 0 ;
-    // 	  e2 = V[2][.] * c - V[3][.] = 0 ;
-    // 	  e3 = V[2][.] * b - V[3][.] * c = 0 ;
-    // 	  e4 = V[4][.] * b - V[5][.] = 0 ;
-    // 	  e5 = V[4][.] * c - V[6][.] = 0 ;
-    // 	  e6 = V[6][.] * b - V[5][.] * c = 0 ;
-    // 	  e7 = V[7][.] * b - V[8][.] = 0 ;
-    // 	  e8 = V[7][.] * c - V[9][.] = 0 ;
+    //     e1 = V[1][.] * b - V[3][.] = 0 ;
+    //     e2 = V[2][.] * c - V[3][.] = 0 ;
+    //     e3 = V[2][.] * b - V[3][.] * c = 0 ;
+    //     e4 = V[4][.] * b - V[5][.] = 0 ;
+    //     e5 = V[4][.] * c - V[6][.] = 0 ;
+    //     e6 = V[6][.] * b - V[5][.] * c = 0 ;
+    //     e7 = V[7][.] * b - V[8][.] = 0 ;
+    //     e8 = V[7][.] * c - V[9][.] = 0 ;
     d[0] = V[2][vect];
     d[1] = V[4][vect];
     d[2] = V[1][vect];

@@ -42,10 +42,10 @@
 #define DEBUG_LEVEL2 0
 
 /**********************************************************************/
-/*	FONCTION 		:    CalculTranslation       */
-/*	ROLE  			: Calcul de la translation entre la   */
+/*  FONCTION     :    CalculTranslation       */
+/*  ROLE        : Calcul de la translation entre la   */
 /*                                camera et l'outil connaissant la    */
-/*                                rotation			      */
+/*                                rotation            */
 /**********************************************************************/
 
 static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigned int nc1, unsigned int nc3,
@@ -72,8 +72,8 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 
     vpMatrix cta;
     vpMatrix ctb;
-    cta = ct * a; /* C^T A	*/
-    ctb = ct * b; /* C^T B	*/
+    cta = ct * a; /* C^T A  */
+    ctb = ct * b; /* C^T B  */
 
 #if (DEBUG_LEVEL2)
     {
@@ -122,8 +122,8 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 //   FONCTION LAGRANGE :
 //   -------------------
 // Resolution d'un systeme lineaire de la forme A x1 + B x2 = 0
-//  		sous la contrainte || x1 || = 1
-//  		ou A est de dimension nl x nc1 et B nl x nc2
+//      sous la contrainte || x1 || = 1
+//      ou A est de dimension nl x nc1 et B nl x nc2
 //*********************************************************************
 
 //#define EPS 1.e-5
@@ -204,7 +204,7 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     //    vpMatrix v ;
     e.svd(x1, ata); // destructif sur e
     // calcul du vecteur propre de E correspondant a la valeur propre min.
-    /* calcul de SVmax	*/
+    /* calcul de SVmax  */
     imin = 0;
     // FC : Pourquoi calculer SVmax ??????
     //     double  svm = 0.0;
@@ -212,7 +212,7 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
     //    {
     //      if (x1[i] > svm) { svm = x1[i]; imin = i; }
     //    }
-    //    svm *= EPS;	/* pour le rang	*/
+    //    svm *= EPS;  /* pour le rang  */
 
     for (i = 0; i < x1.getRows(); i++)
       if (x1[i] < x1[imin])
@@ -404,7 +404,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   }
 #endif
 
-  if (X2[5] < 0.0) { /* to obtain Zo > 0	*/
+  if (X2[5] < 0.0) { /* to obtain Zo > 0  */
     for (unsigned int i = 0; i < 3; i++)
       X1[i] = -X1[i];
     for (unsigned int i = 0; i < 6; i++)
@@ -416,7 +416,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   }
   for (unsigned int i = 0; i < 3; i++) {
     X2[i] -= (s * X1[i]);
-  } /* X1^T X2 = 0	*/
+  } /* X1^T X2 = 0  */
 
   // s = 0.0;
   // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
@@ -439,7 +439,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   s = 1.0 / sqrt(s);
   for (unsigned int i = 0; i < 3; i++) {
     X2[i] *= s;
-  } /* X2^T X2 = 1	*/
+  } /* X2^T X2 = 1  */
 
   calculTranslation(A, B, nl, 3, 3, X1, X2);
 
@@ -454,7 +454,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   cMf[0][2] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
   cMf[1][2] = (X1[2] * X2[0]) - (X1[0] * X2[2]);
   cMf[2][2] = (X1[0] * X2[1]) - (X1[1] * X2[0]);
-  /* calcul de la matrice de passage	*/
+  /* calcul de la matrice de passage  */
   for (unsigned int i = 0; i < 3; i++) {
     cMf[i][0] = X1[i];
     cMf[i][1] = X2[i];
@@ -556,7 +556,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     }
 #endif
 
-    if (X2[8] < 0.0) { /* car Zo > 0	*/
+    if (X2[8] < 0.0) { /* car Zo > 0  */
       X1 *= -1;
       X2 *= -1;
     }
@@ -566,7 +566,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     }
     for (i = 0; i < 3; i++) {
       X2[i] -= (s * X1[i]);
-    } /* X1^T X2 = 0	*/
+    } /* X1^T X2 = 0  */
 
     // s = 0.0;
     // for (i=0;i<3;i++)  {s += (X2[i]*X2[i]);}
@@ -590,7 +590,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     s = 1.0 / sqrt(s);
     for (i = 0; i < 3; i++) {
       X2[i] *= s;
-    } /* X2^T X2 = 1	*/
+    } /* X2^T X2 = 1  */
 
     X2[3] = (X1[1] * X2[2]) - (X1[2] * X2[1]);
     X2[4] = (X1[2] * X2[0]) - (X1[0] * X2[2]);

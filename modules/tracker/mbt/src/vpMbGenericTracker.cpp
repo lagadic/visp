@@ -2223,7 +2223,7 @@ void vpMbGenericTracker::initFaceFromLines(vpMbtPolygon & /*polygon*/)
  4                 # Number of image points in the file (has to be the same as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		        #  /
+ 50 10             #  /
   \endcode
 
   \param I1 : Input grayscale image for the first camera.
@@ -2284,7 +2284,7 @@ void vpMbGenericTracker::initFromPoints(const vpImage<unsigned char> &I1, const 
  4                 # Number of image points in the file (has to be the same as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		        #  /
+ 50 10              #  /
   \endcode
 
   \param I_color1 : Input color image for the first camera.

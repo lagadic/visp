@@ -99,7 +99,7 @@ int main()
                         //only contain the basic moment.
   vpMomentBasic bm; //basic moment (this particular moment is nothing
                     //more than a shortcut to the vpMomentObject)
-  vpMomentGravityCenter	gc; //gravity center
+  vpMomentGravityCenter  gc; //gravity center
 
   bm.linkTo(mdb); //add basic moment to moment database
   gc.linkTo(mdb); //add gravity center to moment database

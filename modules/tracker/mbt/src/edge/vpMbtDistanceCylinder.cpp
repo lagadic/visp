@@ -72,8 +72,6 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
 */
 vpMbtDistanceCylinder::~vpMbtDistanceCylinder()
 {
-  //	cout << "Deleting cylinder " << index << endl;
-
   if (p1 != NULL)
     delete p1;
   if (p2 != NULL)

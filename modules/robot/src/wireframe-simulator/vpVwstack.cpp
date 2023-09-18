@@ -61,9 +61,9 @@ static View_parameters *sp = stack;
  * La procedure "fprintf_vwstack" affiche un parametre du sommet
  * de la pile des prises de vue.
  * Entree :
- * fp		Fichier de sortie.
- * argv		Argument a afficher.
- *		Si argv est nul, tous les parametres sont affiches.
+ * fp    Fichier de sortie.
+ * argv    Argument a afficher.
+ *    Si argv est nul, tous les parametres sont affiches.
  */
 void fprintf_vwstack(FILE *fp, char *argv)
 {
@@ -125,7 +125,7 @@ void fprintf_vwstack(FILE *fp, char *argv)
  * La procedure "get_vwstack" retourne le point de vue au sommet
  * de la pile des points de vue.
  * Sortie :
- * 		Pointeur sur le point de vue du sommet de la pile.
+ *     Pointeur sur le point de vue du sommet de la pile.
  */
 View_parameters *get_vwstack(void) { return (sp); }
 
@@ -133,7 +133,7 @@ View_parameters *get_vwstack(void) { return (sp); }
  * La procedure "load_vwstack" charge un point de vue au sommet
  * de la pile des points de vue.
  * Entree :
- * vp		Point de vue a charger.
+ * vp    Point de vue a charger.
  */
 void load_vwstack(View_parameters *vp) { *sp = *vp; }
 
@@ -182,7 +182,7 @@ void swap_vwstack(void)
  * La procedure "add_vwstack" modifie un agrument du point de vue au sommet
  * de la pile des points de vue.
  * Entree :
- * va_alist	Nom de l'argument a modifier suivi de ses parametres.
+ * va_alist  Nom de l'argument a modifier suivi de ses parametres.
  */
 
 void add_vwstack(const char *path, ...)
@@ -195,17 +195,17 @@ void add_vwstack(const char *path, ...)
   va_start(ap, path);
   argv = va_arg(ap, char *);
   if (strcmp(argv, "cop") == 0) {
-    /* initialise le centre de projection	*/
+    /* initialise le centre de projection  */
     SET_COORD3(sp->cop, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
   } else if (strcmp(argv, "depth") == 0) {
-    /* initialise les distances des plans de decoupage	*/
+    /* initialise les distances des plans de decoupage  */
     sp->depth.front = (float)va_arg(ap, double);
     sp->depth.back = (float)va_arg(ap, double);
   } else if (strcmp(argv, "type") == 0) {
-    /* initialise le type de projection	*/
+    /* initialise le type de projection  */
     sp->type = (Type)va_arg(ap, int);
   } else if (strcmp(argv, "vpn") == 0) {
-    /* initialise le vecteur normal au plan	*/
+    /* initialise le vecteur normal au plan  */
     float x = (float)va_arg(ap, double);
     float y = (float)va_arg(ap, double);
     float z = (float)va_arg(ap, double);
@@ -220,10 +220,10 @@ void add_vwstack(const char *path, ...)
       SET_COORD3(sp->vpn, x, y, z);
     }
   } else if (strcmp(argv, "vrp") == 0) {
-    /* initialise le vecteur de reference	*/
+    /* initialise le vecteur de reference  */
     SET_COORD3(sp->vrp, (float)va_arg(ap, double), (float)va_arg(ap, double), (float)va_arg(ap, double));
   } else if (strcmp(argv, "vup") == 0) {
-    /* initialise le vecteur haut du plan	*/
+    /* initialise le vecteur haut du plan  */
     float x = (float)va_arg(ap, double);
     float y = (float)va_arg(ap, double);
     float z = (float)va_arg(ap, double);
@@ -238,7 +238,7 @@ void add_vwstack(const char *path, ...)
       SET_COORD3(sp->vup, x, y, z);
     }
   } else if (strcmp(argv, "window") == 0) {
-    /* initialise la fenetre de projection	*/
+    /* initialise la fenetre de projection  */
     sp->vwd.umin = (float)va_arg(ap, double);
     sp->vwd.umax = (float)va_arg(ap, double);
     sp->vwd.vmin = (float)va_arg(ap, double);

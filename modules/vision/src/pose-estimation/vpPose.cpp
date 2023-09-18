@@ -326,7 +326,6 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest) {
       vpDEBUG_TRACE(10, " points are not coplanar ");
-      //	TRACE(" points are not coplanar ") ;
       return false;
     }
   }

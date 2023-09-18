@@ -1194,12 +1194,6 @@ void vpV4l2Grabber::startStreaming()
     memcpy(&buf_me[i].fmt, &fmt_me, sizeof(ng_video_fmt));
     buf_me[i].size = buf_me[i].fmt.bytesperline * buf_me[i].fmt.height;
 
-    // if (m_verbose)
-    //   std::cout << "1: buf_v4l2[" << i << "].length: " <<
-    //   buf_v4l2[i].length
-    // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
-    // 	   << std::endl;
-
     buf_me[i].data = (unsigned char *)v4l2_mmap(NULL, buf_v4l2[i].length, PROT_READ | PROT_WRITE, MAP_SHARED, fd,
       (off_t)buf_v4l2[i].m.offset);
 
@@ -1208,16 +1202,6 @@ void vpV4l2Grabber::startStreaming()
     }
 
     buf_me[i].refcount = 0;
-
-    //     if (m_verbose)
-    //     {
-    //       std::cout << "2: buf_v4l2[" << i << "].length: " <<
-    //       buf_v4l2[i].length
-    // 	   << " buf_v4l2[" << i << "].offset: " <<  buf_v4l2[i].m.offset
-    // 	   << std::endl;
-    //       std::cout << "2: buf_me[" << i << "].size: " << buf_me[i].size <<
-    //       std::endl;
-    //     }
 
     if (m_verbose)
       printBufInfo(buf_v4l2[i]);

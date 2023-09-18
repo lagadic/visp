@@ -284,7 +284,6 @@ int main()
         }
         h_s = beta * h_s / 2.0; // cost function
         e2 *= beta;
-        //	std::cout << e2.t() << std::endl;
         std::cout << "Cost function h_s: " << h_s << std::endl;
 
         sec_task = task.secondaryTask(e2, de2dt);

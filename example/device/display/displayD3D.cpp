@@ -88,7 +88,7 @@ the image and the overlayed features in an image on the disk\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
-     [-c] [-d] [-h]\n						      \
+     [-c] [-d] [-h]\n \
 ",
 name);
 

@@ -45,7 +45,7 @@
 /*!
  * \brief Contains various estimators for scale.
  * \n Methods : Median Absolute Deviation (MAD),
- * 							MPDE, Mean shift kernel
+ *              MPDE, Mean shift kernel
  * density estimation. \author Andrew Comport \date 24/10/03
  */
 // ==========================================================

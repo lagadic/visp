@@ -196,29 +196,20 @@ void vpPlot::initNbGraph(unsigned int nbGraph)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNbr : The number of curves belonging to the graphic
+  and 3.
+  \param curveNbr : The number of curves belonging to the graphic
 */
 void vpPlot::initGraph(unsigned int graphNum, unsigned int curveNbr) { (graphList + graphNum)->initGraph(curveNbr); }
-
-// void
-// vpPlot::initRange (const int graphNum,
-// 		   double xmin, double xmax, double /*xdelt*/,
-// 		   double ymin, double ymax, double /*ydelt*/,
-// 		   bool gx, bool gy)
-// {
-//   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
-// }
 
 /*!
   This method enables to set the initial range of the selected graphic.
 
   \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param xmin : The initial minimum value along the x axis given in the
-  user coordinates. \param xmax : The initial maximum value along the x axis
-  given in the user coordinates. \param ymin : The initial minimum value along
-  the y axis given in the user coordinates. \param ymax : The initial maximum
-  value along the y axis given in the user coordinates.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param xmin : The initial minimum value along the x axis given in the user coordinates.
+  \param xmax : The initial maximum value along the x axis given in the user coordinates.
+  \param ymin : The initial minimum value along the y axis given in the user coordinates.
+  \param ymax : The initial maximum value along the y axis given in the user coordinates.
 */
 void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax)
 {
@@ -229,15 +220,13 @@ void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double y
   This method enables to set the initial range of the selected graphic.
 
   \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param xmin : The initial minimum value along the x axis given in the
-  user coordinates. \param xmax : The initial maximum value along the x axis
-  given in the user coordinates. \param ymin : The initial minimum value along
-  the y axis given in the user coordinates. \param ymax : The initial maximum
-  value along the y axis given in the user coordinates. \param zmin : The
-  initial minimum value along the z axis given in the user coordinates. \param
-  zmax : The initial maximum value along the z axis given in the user
-  coordinates.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param xmin : The initial minimum value along the x axis given in the user coordinates.
+  \param xmax : The initial maximum value along the x axis given in the user coordinates.
+  \param ymin : The initial minimum value along the y axis given in the user coordinates.
+  \param ymax : The initial maximum value along the y axis given in the user coordinates.
+  \param zmin : The initial minimum value along the z axis given in the user coordinates.
+  \param zmax : The initial maximum value along the z axis given in the user coordinates.
 */
 void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
                        double zmax)
@@ -249,9 +238,9 @@ void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double y
   This function enables you to choose the color used to draw a given curve.
 
   \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNum : The index of the curve in the list of the curves
-  belonging to the graphic. \param color : The color you want to use
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param curveNum : The index of the curve in the list of the curves belonging to the graphic.
+  \param color : The color you want to use
 */
 void vpPlot::setColor(unsigned int graphNum, unsigned int curveNum, vpColor color)
 {
@@ -272,11 +261,10 @@ void vpPlot::displayGrid()
   drawn with the parameters of the curve.
 
   \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNum : The index of the curve in the list of the curves
-  belonging to the graphic. \param x : The coordinate of the new point along
-  the x axis and given in the user unit system. \param y : The coordinate of
-  the new point along the y axis and given in the user unit system.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param curveNum : The index of the curve in the list of the curves belonging to the graphic.
+  \param x : The coordinate of the new point along the x axis and given in the user unit system.
+  \param y : The coordinate of the new point along the y axis and given in the user unit system.
 */
 void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x, double y)
 {
@@ -288,11 +276,11 @@ void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x, double
   points are drawn with the parameters of the curves.
 
   \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The coordinates of the new points along the
+  y axis and given in the user unit system.
 */
 void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
 {
@@ -309,10 +297,11 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
+  and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The coordinates of the new points along
+  the y axis and given in the user unit system.
 */
 void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
 {
@@ -330,8 +319,10 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
+  and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
@@ -350,8 +341,10 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpPoseVector &v_y)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
+  and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
@@ -371,8 +364,10 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpTranslationVector &v_
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
+  and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
@@ -392,10 +387,14 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNum : The index of the curve in the list of the curves
-  belonging to the graphic. \param x : The coordinate of the new point along
-  the x axis and given in the user unit system. \param y : The coordinate of
-  the new point along the y axis and given in the user unit system. \param z :
+  and 3.
+  \param curveNum : The index of the curve in the list of the curves
+  belonging to the graphic.
+  \param x : The coordinate of the new point along
+  the x axis and given in the user unit system.
+  \param y : The coordinate of
+  the new point along the y axis and given in the user unit system.
+  \param z :
   The coordinate of the new point along the z axis and given in the user unit
   system.
 */
@@ -411,10 +410,13 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned in
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
+  and 3.
+  \param x : The coordinate of the new points along the x axis and
+  given in the user unit system.
+  \param v_y : y coordinates vector. The
   coordinates of the new points along the y axis and given in the user unit
-  system. \param v_z : z coordinates vector. The coordinates of the new points
+  system.
+  \param v_z : z coordinates vector. The coordinates of the new points
   along the z axis and given in the user unit system.
 */
 vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y,
@@ -435,7 +437,7 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, c
   3D graphic. The navigation is performed using the mouse.
   - A click on left mouse button allows rotations
   - A click on middle mouse button allows zoom
-  - A click on rigt mouse button quit the infinite navigation loop.
+  - A click on right mouse button quit the infinite navigation loop.
 */
 void vpPlot::navigate()
 {
@@ -495,7 +497,8 @@ void vpPlot::getPixelValue(bool block)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param title : The graphic title.
+  and 3.
+  \param title : The graphic title.
 */
 void vpPlot::setTitle(unsigned int graphNum, const std::string &title) { (graphList + graphNum)->setTitle(title); }
 
@@ -504,7 +507,8 @@ void vpPlot::setTitle(unsigned int graphNum, const std::string &title) { (graphL
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param unitx : The name of the unit of the x axis.
+  and 3.
+  \param unitx : The name of the unit of the x axis.
 */
 void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx) { (graphList + graphNum)->setUnitX(unitx); }
 
@@ -513,7 +517,8 @@ void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx) { (graphL
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param unity : The name of the unit of the y axis.
+  and 3.
+  \param unity : The name of the unit of the y axis.
 */
 void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity) { (graphList + graphNum)->setUnitY(unity); }
 
@@ -522,7 +527,8 @@ void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity) { (graphL
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param unitz : The name of the unit of the z axis.
+  and 3.
+  \param unitz : The name of the unit of the z axis.
 */
 void vpPlot::setUnitZ(unsigned int graphNum, const std::string &unitz) { (graphList + graphNum)->setUnitZ(unitz); }
 
@@ -531,8 +537,10 @@ void vpPlot::setUnitZ(unsigned int graphNum, const std::string &unitz) { (graphL
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNum : The index of the curve in the list of the curves
-  belonging to the graphic. \param legend : The legend of the curve.
+  and 3.
+  \param curveNum : The index of the curve in the list of the curves
+  belonging to the graphic.
+  \param legend : The legend of the curve.
 */
 void vpPlot::setLegend(unsigned int graphNum, unsigned int curveNum, const std::string &legend)
 {
@@ -554,12 +562,13 @@ void vpPlot::resetPointList(unsigned int graphNum)
 }
 
 /*!
-This function enables you to choose the thickness used to draw a given curve.
+  This function enables you to choose the thickness used to draw a given curve.
 
   \param graphNum : The index of the graph in the window. As the number of
-graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param curveNum : The index of the curve in the list of the curves belonging
-to the graphic. \param thickness : The thickness you want to use
+  to the graphic.
+  \param thickness : The thickness you want to use
 */
 void vpPlot::setThickness(unsigned int graphNum, unsigned int curveNum, unsigned int thickness)
 {
@@ -567,11 +576,11 @@ void vpPlot::setThickness(unsigned int graphNum, unsigned int curveNum, unsigned
 }
 
 /*!
-This function enables you to choose the thickness used to draw all the curves
-belonging to a given graphic.
+  This function enables you to choose the thickness used to draw all the curves
+  belonging to a given graphic.
 
   \param graphNum : The index of the graph in the window. As the number of
-graphic in a window is less or equal to 4, this parameter is between 0 and 3.
+  graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param thickness : The thickness you want to use
 */
 void vpPlot::setGraphThickness(unsigned int graphNum, unsigned int thickness)
@@ -586,7 +595,8 @@ void vpPlot::setGraphThickness(unsigned int graphNum, unsigned int thickness)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param thickness : The thickness you want to use
+  and 3.
+  \param thickness : The thickness you want to use
 */
 void vpPlot::setGridThickness(unsigned int graphNum, unsigned int thickness)
 {
@@ -599,7 +609,8 @@ void vpPlot::setGridThickness(unsigned int graphNum, unsigned int thickness)
 
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param curveNum : The index of the curve in the list of the curves
+  and 3.
+  \param curveNum : The index of the curve in the list of the curves
   belonging to the graphic.
 */
 void vpPlot::resetPointList(unsigned int graphNum, unsigned int curveNum)
@@ -625,13 +636,14 @@ void vpPlot::resetPointList(unsigned int graphNum, unsigned int curveNum)
 
   The columns are delimited thanks to tabulations.
 
-  \param title_prefix : Prefix introducted in the first line of the saved
+  \param title_prefix : Prefix introduced in the first line of the saved
   file. To exploit a posteriori the resulting curves:
   - with gnuplot, set title_prefix to "# ".
   - with Matlab, set title_prefix to "% ".
   \param graphNum : The index of the graph in the window. As the number of
   graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param dataFile : Name of the text file.
+  and 3.
+  \param dataFile : Name of the text file.
 */
 void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix)
 {

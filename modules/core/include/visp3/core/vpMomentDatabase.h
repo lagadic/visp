@@ -119,8 +119,8 @@ int main()
 Gravity center:
 Xg=1.5, Yg=1.5
 Centered moments:
-2	0
-0	x
+2  0
+0  x
   \endcode
 
   A moment is identified in the database by it's vpMoment::name method.

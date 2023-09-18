@@ -81,7 +81,7 @@ Read a video file on the disk.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input video path>] \n\
-     [-h]\n						      \
+     [-h]\n\
 ",
           name);
 

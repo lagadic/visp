@@ -66,7 +66,6 @@ vpMbtDistanceLine::vpMbtDistanceLine()
 */
 vpMbtDistanceLine::~vpMbtDistanceLine()
 {
-  //	cout << "Deleting line " << index << endl;
   if (line != NULL)
     delete line;
 

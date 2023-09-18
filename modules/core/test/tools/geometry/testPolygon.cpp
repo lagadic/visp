@@ -68,7 +68,7 @@ void usage(const char *name, const char *badparam)
 test the generic 2D polygons.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n						      \
+  %s [-c] [-d] [-h]\n\
 ",
 name);
 

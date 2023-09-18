@@ -500,27 +500,10 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter> &_pCap
   if (FAILED(hr = pBuild->RenderStream(NULL, NULL, _pCapSource, NULL, _pGrabberFilter)))
     return false;
 
-  /*
-  //get the grabber's output pin
-  CComPtr<IPin> pGrabberOutputPin;
-  if(FAILED(pBuild->FindPin(_pGrabberFilter, PINDIR_OUTPUT, NULL, NULL, false,
-  0, &pGrabberOutputPin))) return false;
-  */
   // get the Null renderer
   CComPtr<IBaseFilter> pNull = NULL;
   if (FAILED(pNull.CoCreateInstance(CLSID_NullRenderer, NULL, CLSCTX_INPROC_SERVER)))
     return false;
-  /*
-          //get the null renderer's input pin
-          CComPtr<IPin> pNullInputPin;
-          if(FAILED(pBuild->FindPin(pNull, PINDIR_INPUT, NULL, NULL, false, 0,
-     &pNullInputPin))) return false;
-
-          //connect the grabber's output to the null renderer
-          if(	FAILED(pGraph->AddFilter(pNull, L"NullRenderer")) ||
-                  FAILED(pGraph->Connect(pGrabberOutputPin, pNullInputPin)))
-                  return false;
-  */
 
   if (FAILED(pGraph->AddFilter(pNull, L"NullRenderer")) ||
       FAILED(pBuild->RenderStream(NULL, NULL, _pGrabberFilter, NULL, pNull)))
@@ -538,8 +521,6 @@ bool vpDirectShowGrabberImpl::connectSourceToGrabber(CComPtr<IBaseFilter> &_pCap
   // release the remaining interfaces
   pCapSourcePin.Release();
   pNull.Release();
-  //	pGrabberOutputPin.Release();
-  //	pNullInputPin.Release();
 
   return true;
 }
@@ -803,17 +784,7 @@ bool vpDirectShowGrabberImpl::setFormat(unsigned int width, unsigned int height,
       VIDEO_STREAM_CONFIG_CAPS scc;
       AM_MEDIA_TYPE *pmtConfig;
       hr = pConfig->GetStreamCaps(iFormat, &pmtConfig, (BYTE *)&scc);
-      //			VIDEOINFOHEADER *pVih =
-      //(VIDEOINFOHEADER*)pmtConfig->pbFormat;
 
-      //			pVih->bmiHeader.biWidth;
-      //			pVih->bmiHeader.biHeight;
-      //			10000000 /pVih->AvgTimePerFrame;
-      //			std::cout<<"available image size :
-      //"<<pVih->bmiHeader.biWidth<<" x "<<pVih->bmiHeader.biHeight<<" at
-      //"<<10000000 /pVih->AvgTimePerFrame<<std::endl;
-      //			std::cout<<"compression :
-      //"<<pVih->bmiHeader.biCompression<<std::endl;
       if (SUCCEEDED(hr) && found == false) {
         /* Examine the format, and possibly use it. */
         if ((pmtConfig->majortype == sgCB.connectedMediaType.majortype) &&
@@ -937,12 +908,6 @@ bool vpDirectShowGrabberImpl::getStreamCapabilities()
         /* Examine the format, and possibly use it. */
         VIDEOINFOHEADER *pVih = (VIDEOINFOHEADER *)pmtConfig->pbFormat;
 
-        //				LONG lWidth = pVih->bmiHeader.biWidth;
-        //				LONG lHeight =
-        // pVih->bmiHeader.biHeight; 				SIZE
-        // dimensions={lWidth,lHeight};
-        //				LONGLONG lAvgTimePerFrame =
-        // pVih->AvgTimePerFrame;
         std::cout << "MediaType : " << iFormat << std::endl;
 
         if (pmtConfig->subtype == MEDIASUBTYPE_ARGB32)

@@ -510,13 +510,12 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   }
 
   // compute the initial pose using Dementhon method followed by a non linear
-  // minimisation method
+  // minimization method
 
   // Compute initial pose
   mPose->computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, *cMo);
 
-  // Display breifly just to have a glimpse a the ViSP pose
-  //	while(cpt<500){
+  // Display briefly just to have a glimpse a the ViSP pose
   if (opt_display) {
     // Display the computed pose
     mPose->display(I, *cMo, *mcam, 0.05, vpColor::red);

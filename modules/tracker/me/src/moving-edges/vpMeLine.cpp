@@ -838,25 +838,6 @@ void vpMeLine::computeRhoTheta(const vpImage<unsigned char> &I)
     theta += M_PI;
 
   if (_useIntensityForRho) {
-
-    /*  while(theta < -M_PI)	theta += 2*M_PI ;
-    while(theta >= M_PI)	theta -= 2*M_PI ;
-
-    // If theta is between -90 and -180 get the equivalent
-    // between 0 and 90
-    if(theta <-M_PI/2)
-      {
-        theta += M_PI ;
-        rho *= -1 ;
-      }
-    // If theta is between 90 and 180 get the equivalent
-    // between 0 and -90
-    if(theta >M_PI/2)
-      {
-        theta -= M_PI ;
-        rho *= -1 ;
-      }
-    */
     // convention pour choisir le signe de rho
     int i, j;
     i = vpMath::round((PExt[0].ifloat + PExt[1].ifloat) / 2);

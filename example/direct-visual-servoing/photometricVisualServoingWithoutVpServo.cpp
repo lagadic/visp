@@ -392,7 +392,7 @@ int main(int argc, const char **argv)
     vpColVector v; // camera velocity send to the robot
 
     // ----------------------------------------------------------
-    // Minimisation
+    // minimization
 
     double mu; // mu = 0 : Gauss Newton ; mu != 0  : LM
     double lambdaGN;
@@ -453,7 +453,7 @@ int main(int argc, const char **argv)
         {
           H = ((mu * diagHsd) + Hsd).inverseByLU();
         }
-        //	compute the control law
+        // Compute the control law
         e = H * Lsd.t() * error;
 
         v = -lambda * e;

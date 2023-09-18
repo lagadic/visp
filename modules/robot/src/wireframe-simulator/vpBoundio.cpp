@@ -58,25 +58,25 @@
 /*
  * La procedure "fscanf_Bound" lit en ascii une surface.
  * Entree :
- * bp		Surface a lire.
+ * bp    Surface a lire.
  */
 void fscanf_Bound(Bound *bp)
 {
-  /* Lecture du type polygonale de la surface.	*/
+  /* Lecture du type polygonale de la surface.  */
 
   skip_keyword(T_TYPE, "bound: keyword \"type\" expected");
   if (lex() != T_INT)
     lexerr("start", "bound_type: boolean expected (0=FALSE|~0=TRUE)", NULL);
   bp->is_polygonal = (myint ? 1 : 0);
 
-  /* Lecture de la liste de points de la surface.	*/
+  /* Lecture de la liste de points de la surface.  */
 
   skip_keyword(T_POINT_LIST, "bound: keyword \"point_list\" expected");
   pusherr("bound_point_list: ");
   fscanf_Point3f_list(&bp->point);
   poperr();
 
-  /* Lecture de la liste de faces de la surface.	*/
+  /* Lecture de la liste de faces de la surface.  */
 
   skip_keyword(T_FACE_LIST, "bound: keyword \"face_list\" expected");
   pusherr("bound_face_list: ");
@@ -87,20 +87,20 @@ void fscanf_Bound(Bound *bp)
 /*
  * La procedure "fscanf_Face_list" lit en ascii une liste de faces.
  * Entree :
- * lp		Liste de faces a lire.
+ * lp    Liste de faces a lire.
  */
 void fscanf_Face_list(Face_list *lp)
 {
-  Face *fp;   /* face courante	*/
-  Face *fend; /* borne de "fp"	*/
+  Face *fp;   /* face courante  */
+  Face *fend; /* borne de "fp"  */
 
-  /* Lecture du nombre de faces de la liste	*/
+  /* Lecture du nombre de faces de la liste  */
 
   if (lex() != T_INT)
     lexerr("start", "integer expected (number of faces)", NULL);
   lp->nbr = (Index)myint;
 
-  /* Allocation dynamique de la liste de faces.	*/
+  /* Allocation dynamique de la liste de faces.  */
 
   if (lp->nbr == 0)
     lp->ptr = NULL;
@@ -110,28 +110,28 @@ void fscanf_Face_list(Face_list *lp)
     throw vpException(vpException::fatalError, "Error in fscanf_Face_list");
   }
 
-  /* Lecture des faces de la liste une a une.	*/
+  /* Lecture des faces de la liste une a une.  */
 
   fp = lp->ptr;
   fend = fp + lp->nbr;
   for (; fp < fend; fp++) {
     Vertex_list *vlp = &fp->vertex;
-    Index *vp;   /* sommet courant	*/
-    Index *vend; /* borne de "vp"	*/
+    Index *vp;   /* sommet courant  */
+    Index *vend; /* borne de "vp"  */
 
-    /* Lecture du type polygonale de la face.	*/
+    /* Lecture du type polygonale de la face.  */
 
     if (lex() != T_INT)
       lexerr("start", "boolean expected (0=FALSE|~0=TRUE)", NULL);
     fp->is_polygonal = (myint ? 1 : 0);
 
-    /* Lecture du nombre de sommets de la face.	*/
+    /* Lecture du nombre de sommets de la face.  */
 
     if (lex() != T_INT)
       lexerr("start", "integer expected (number of vertices)", NULL);
     vlp->nbr = (Index)myint;
 
-    /* Allocation dynamique du polygone de la face.	*/
+    /* Allocation dynamique du polygone de la face.  */
 
     if (vlp->nbr <= DEFAULT_VSIZE)
       vlp->ptr = vlp->tbl;
@@ -141,7 +141,7 @@ void fscanf_Face_list(Face_list *lp)
       throw vpException(vpException::fatalError, "Error in fscanf_Face_list");
     }
 
-    /* Lecture des sommets de la face un a un.	*/
+    /* Lecture des sommets de la face un a un.  */
 
     vp = vlp->ptr;
     vend = vp + vlp->nbr;
@@ -154,21 +154,21 @@ void fscanf_Face_list(Face_list *lp)
 /*
  * La procedure "fscanf_Point_list" lit en ascii une liste de points 3D.
  * Entree :
- * lp		Liste de points a lire.
+ * lp    Liste de points a lire.
  */
 void fscanf_Point3f_list(Point3f_list *lp)
 {
   static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
-  Point3f *pp;   /* point courant	*/
-  Point3f *pend; /* borne de "pp"	*/
+  Point3f *pp;   /* point courant  */
+  Point3f *pend; /* borne de "pp"  */
 
-  /* Lecture du nombre de points de la liste.	*/
+  /* Lecture du nombre de points de la liste.  */
 
   if (lex() != T_INT)
     lexerr("start", "integer expected (number of points 3D)", NULL);
   lp->nbr = (Index)myint;
   /* FC printf("nbr %d\n",lp->nbr); */
-  /* Allocation dynamique la liste de points.	*/
+  /* Allocation dynamique la liste de points.  */
 
   if (lp->nbr == 0)
     lp->ptr = NULL;
@@ -178,7 +178,7 @@ void fscanf_Point3f_list(Point3f_list *lp)
     throw vpException(vpException::fatalError, "Error in fscanf_Point3f_list");
   }
 
-  /* Lecture des points de la liste un a un.	*/
+  /* Lecture des points de la liste un a un.  */
 
   pp = lp->ptr;
   pend = pp + lp->nbr;

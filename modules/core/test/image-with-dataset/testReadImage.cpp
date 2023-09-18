@@ -70,7 +70,7 @@ Read images on the disk.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
           name);
 

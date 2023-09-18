@@ -131,22 +131,22 @@ vpRobotAfma4::vpRobotAfma4(bool verbose) : vpAfma4(), vpRobot()
 {
 
   /*
-    #define	SIGHUP	1	// hangup
-    #define	SIGINT	2	// interrupt (rubout)
-    #define	SIGQUIT	3	// quit (ASCII FS)
-    #define	SIGILL	4	// illegal instruction (not reset when caught)
-    #define	SIGTRAP	5	// trace trap (not reset when caught)
-    #define	SIGIOT	6	// IOT instruction
-    #define	SIGABRT 6	// used by abort, replace SIGIOT in the future
-    #define	SIGEMT	7	// EMT instruction
-    #define	SIGFPE	8	// floating point exception
-    #define	SIGKILL	9	// kill (cannot be caught or ignored)
-    #define	SIGBUS	10	// bus error
-    #define	SIGSEGV	11	// segmentation violation
-    #define	SIGSYS	12	// bad argument to system call
-    #define	SIGPIPE	13	// write on a pipe with no one to read it
-    #define	SIGALRM	14	// alarm clock
-    #define	SIGTERM	15	// software termination signal from kill
+    #define  SIGHUP   1  // hangup
+    #define  SIGINT   2  // interrupt (rubout)
+    #define  SIGQUIT  3  // quit (ASCII FS)
+    #define  SIGILL   4  // illegal instruction (not reset when caught)
+    #define  SIGTRAP  5  // trace trap (not reset when caught)
+    #define  SIGIOT   6  // IOT instruction
+    #define  SIGABRT  6  // used by abort, replace SIGIOT in the future
+    #define  SIGEMT   7  // EMT instruction
+    #define  SIGFPE   8  // floating point exception
+    #define  SIGKILL  9  // kill (cannot be caught or ignored)
+    #define  SIGBUS  10  // bus error
+    #define  SIGSEGV 11  // segmentation violation
+    #define  SIGSYS  12  // bad argument to system call
+    #define  SIGPIPE 13  // write on a pipe with no one to read it
+    #define  SIGALRM 14  // alarm clock
+    #define  SIGTERM 15  // software termination signal from kill
   */
 
   signal(SIGINT, emergencyStopAfma4);
@@ -1215,7 +1215,7 @@ void vpRobotAfma4::setVelocity(const vpRobot::vpControlFrameType frame, const vp
     joint_vel = eJe_inverse * eVc * velocity;
 
     //     printf("Vitesse art: %f %f %f %f\n", joint_vel[0], joint_vel[1],
-    // 	   joint_vel[2], joint_vel[3]);
+    //      joint_vel[2], joint_vel[3]);
   }
 
   // Case of the joint control where we control all the joints

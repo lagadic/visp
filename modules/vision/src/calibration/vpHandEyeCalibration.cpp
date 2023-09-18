@@ -400,19 +400,6 @@ int vpHandEyeCalibration::calibrationRotationTsaiOld(const std::vector<vpHomogen
   x = Ap * A.t() * B;
   vpColVector x2 = x; /* pour calcul residu */
 
-  //     {
-  //       // Residual
-  //       vpColVector residual;
-  //       residual = A*x-B;
-  //       std::cout << "Residual: " << std::endl << residual << std::endl;
-
-  //       double res = 0;
-  //       for (int i=0; i < residual.getRows(); i++)
-  // 	res += residual[i]*residual[i];
-  //       res = sqrt(res/residual.getRows());
-  //       printf("Mean residual = %lf\n",res);
-  //     }
-
   // extraction of theta and U
   double theta;
   double d = x.sumSquare();
@@ -808,7 +795,7 @@ int vpHandEyeCalibration::calibrationVVS(const std::vector<vpHomogeneousMatrix> 
   } // end while
 #if DEBUG_LEVEL2
   {
-    printf(" Iteration number for NL hand-eye minimisation : %d\n", it);
+    printf(" Iteration number for NL hand-eye minimization : %d\n", it);
     vpThetaUVector ePc(eRc);
     std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2])
               << std::endl;

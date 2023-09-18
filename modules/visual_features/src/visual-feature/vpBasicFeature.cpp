@@ -102,7 +102,6 @@ unsigned int vpBasicFeature::getDimension(unsigned int select) const
   if (dim_s > 31)
     return dim_s;
   for (unsigned int i = 0; i < s.getRows(); i++) {
-    //	printf("%x %x %d \n",select, featureLine[i], featureLine[i] & select);
     if (FEATURE_LINE[i] & select)
       dim += 1;
   }

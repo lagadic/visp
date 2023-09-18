@@ -275,7 +275,7 @@ int main()
       }
 
       // During the servo, we compute the pose using a non linear method. For
-      // the initial pose used in the non linear minimisation we use the pose
+      // the initial pose used in the non linear minimization we use the pose
       // computed at the previous iteration.
       compute_pose(point, dot, cam, cMo, false);
 

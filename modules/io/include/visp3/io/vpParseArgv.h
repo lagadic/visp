@@ -100,7 +100,7 @@ int main(int argc, const char ** argv)
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
+#define GETOPTARGS "bi:l:f:d:h" // double point mean here that the preceding option request an argument
 
 // Usage : [-b] [-i <integer value>] [-l <long value>]
 //         [-f <float value>] [-d <double value>] [-s <string value>] [-h]
@@ -116,7 +116,7 @@ int main(int argc, const char ** argv)
 
   // Parse the command line to set the variables
   const char *optarg;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {

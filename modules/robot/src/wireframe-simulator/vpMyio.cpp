@@ -50,12 +50,12 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-extern char *mytext; /* chaine du symbole courant	*/
+extern char *mytext; /* chaine du symbole courant  */
 
 /*
  * La procedure "fscanf_float" lit en ascii un nombre flottant.
  * Entree :
- * fp		Nombre flottant a lire.
+ * fp    Nombre flottant a lire.
  */
 void fscanf_float(float *fp)
 {
@@ -69,7 +69,7 @@ void fscanf_float(float *fp)
 /*
  * La procedure "fscanf_Index" lit en ascii un indice.
  * Entree :
- * ip		Indice a lire.
+ * ip    Indice a lire.
  */
 void fscanf_Index(Index *ip)
 {
@@ -81,7 +81,7 @@ void fscanf_Index(Index *ip)
 /*
  * La procedure "fscanf_int" lit en ascii un nombre entier.
  * Entree :
- * ip		Nombre entier a lire.
+ * ip    Nombre entier a lire.
  */
 void fscanf_int(int *ip)
 {
@@ -93,7 +93,7 @@ void fscanf_int(int *ip)
 /*
  * La procedure "fscanf_string" lit en ascii une chaine de caracteres.
  * Entree :
- * str		Chaine a lire.
+ * str    Chaine a lire.
  */
 void fscanf_string(char **str)
 {
@@ -115,7 +115,7 @@ void fscanf_string(char **str)
 /*
  * La procedure "fscanf_Type" lit en ascii un octet.
  * Entree :
- * ip		Type a lire.
+ * ip    Type a lire.
  */
 void fscanf_Type(Type *ip)
 {

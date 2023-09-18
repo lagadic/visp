@@ -288,7 +288,7 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
 
     @Override
     public void onPreviewFrame(byte[] frame, Camera arg1) {
-		// TODO: This should happen only in debug mode. Will do it later when the SDK is complete
+    // TODO: This should happen only in debug mode. Will do it later when the SDK is complete
         if (true)
             Log.d(TAG, "Preview Frame received. Frame size: " + frame.length);
         synchronized (this) {
@@ -303,21 +303,21 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
     private class JavaCameraFrame implements VpCameraViewFrame {
         @Override
         public VpImageUChar gray() {
-			      if (gray == null)
-				      gray = new VpImageUChar(data,w,h,true);
+            if (gray == null)
+                gray = new VpImageUChar(data,w,h,true);
             return gray;
         }
 
         @Override
         public VpImageRGBa rgba() {
-			      if (rgba == null){
-		            if (mPreviewFormat == ImageFormat.NV21)
-		                rgba = new VpImageRGBa(data, w, h,true);
-		            //else if (mPreviewFormat == ImageFormat.YV12) .Dropping this format for now
-		            //    Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4);  // COLOR_YUV2RGBA_YV12 produces inverted colors
-		            else
-		                throw new IllegalArgumentException("Preview Format can be NV21");
-			      }
+            if (rgba == null){
+                if (mPreviewFormat == ImageFormat.NV21)
+                    rgba = new VpImageRGBa(data, w, h,true);
+                //else if (mPreviewFormat == ImageFormat.YV12) .Dropping this format for now
+                //    Imgproc.cvtColor(mYuvFrameData, mRgba, Imgproc.COLOR_YUV2RGB_I420, 4);  // COLOR_YUV2RGBA_YV12 produces inverted colors
+                else
+                    throw new IllegalArgumentException("Preview Format can be NV21");
+            }
 
             return rgba;
         }
@@ -330,13 +330,13 @@ public class JavaCameraView extends CameraBridgeViewBase implements PreviewCallb
         }
 
         public void release() {
-			      // open-cv had release() method here. Check whether we need to
+            // open-cv had release() method here. Check whether we need to
         }
 
         private byte[] data;
-		    private int w;
-		    private int h;
-		    private VpImageUChar gray;
+        private int w;
+        private int h;
+        private VpImageUChar gray;
         private VpImageRGBa rgba;
     };
 

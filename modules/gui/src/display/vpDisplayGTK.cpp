@@ -474,15 +474,10 @@ public:
       GdkEvent *ev = NULL;
       while ((ev = gdk_event_get()) != NULL) {
         cpt++;
-        //	printf("event %d type %d on window %p My window %p\n",
-        // cpt, ev->type, ev->any.window, widget->window);
 
         if (ev->any.window == m_widget->window && ev->type == GDK_KEY_PRESS) {
-          // std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval)
-          // /*ev->key.string*/ << "\"" << std::endl;
           key = gdk_keyval_name(ev->key.keyval);
           ret = true;
-          // printf("Key press detection\n");
         }
         gdk_event_free(ev);
       }

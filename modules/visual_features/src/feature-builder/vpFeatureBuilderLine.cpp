@@ -221,30 +221,8 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpCameraParameters &cam, c
     while (theta < -M_PI) {
       theta += 2 * M_PI;
     }
-    //   vpTRACE("meter %f %f",rho, theta) ;
-    /*
 
-    while(theta < -M_PI)	theta += 2*M_PI ;
-    while(theta >= M_PI)	theta -= 2*M_PI ;
-
-    // If theta is between -90 and -180 get the equivalent
-    // between 0 and 90
-    if(theta <-M_PI/2)
-    {
-      theta += M_PI ;
-      rho *= -1 ;
-    }
-    // If theta is between 90 and 180 get the equivalent
-    // between 0 and -90
-    if(theta >M_PI/2)
-    {
-      theta -= M_PI ;
-      rho *= -1 ;
-    }
-    */
     s.buildFrom(rho, theta);
-    //   vpTRACE("meter %f %f",rho, theta) ;
-
   } catch (...) {
     vpERROR_TRACE("Error caught");
     throw;

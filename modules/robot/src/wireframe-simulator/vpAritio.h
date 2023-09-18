@@ -30,10 +30,10 @@
  *
  * Description:
  * Le module "aritio.c" contient les procedures d'entree/sortie
- *		  des types definis dans le module "arit.h".
- *		  Les entrees non specifiees sont effectuees
- *		  sur le fichier "source" du module "lex.c".
- *		  Pour les mots cles des "fprintf_..." voir "token.c".
+ *      des types definis dans le module "arit.h".
+ *      Les entrees non specifiees sont effectuees
+ *      sur le fichier "source" du module "lex.c".
+ *      Pour les mots cles des "fprintf_..." voir "token.c".
  *
  * Authors:
  * Jean-Luc CORRE

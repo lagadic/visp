@@ -717,20 +717,6 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigne
     double oY = *it_LoY;
     double oZ = *it_LoZ;
 
-    // double cX = oX*cMo[0][0]+oY*cMo[0][1]+oZ*cMo[0][2] + cMo[0][3];
-    // double cY = oX*cMo[1][0]+oY*cMo[1][1]+oZ*cMo[1][2] + cMo[1][3];
-    // double cZ = oX*cMo[2][0]+oY*cMo[2][1]+oZ*cMo[2][2] + cMo[2][3];
-
-    // double x = cX/cZ ;
-    // double y = cY/cZ ;
-
-    //     double xp = u0 + x*px ;
-    //     double yp = v0 + y*py ;
-
-    //     vpDisplay::displayCross(I,(int)vpMath::round(yp),
-    //     (int)vpMath::round(xp),
-    // 			    5,col) ;
-
     double cX = oX * cMo_dist[0][0] + oY * cMo_dist[0][1] + oZ * cMo_dist[0][2] + cMo_dist[0][3];
     double cY = oX * cMo_dist[1][0] + oY * cMo_dist[1][1] + oZ * cMo_dist[1][2] + cMo_dist[1][3];
     double cZ = oX * cMo_dist[2][0] + oY * cMo_dist[2][1] + oZ * cMo_dist[2][2] + cMo_dist[2][3];

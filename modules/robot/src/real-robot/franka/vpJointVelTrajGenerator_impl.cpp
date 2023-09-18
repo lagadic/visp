@@ -483,9 +483,9 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std:
 
   /*
    * Compute new command in case of
-   *		- acceleration
-   *		- deceleration
-   *		- stop
+   *    - acceleration
+   *    - deceleration
+   *    - stop
    */
   for (size_t i = 0; i < m_njoints; i++) {
     // Security joint limit

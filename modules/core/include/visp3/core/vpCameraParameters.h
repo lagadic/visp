@@ -292,8 +292,8 @@
   \code{.unparsed}
   Read camera parameters from cam.json:
   Camera parameters for perspective projection without distortion:
-    px = 801	 py = 802
-    u0 = 325	 v0 = 245
+    px = 801   py = 802
+    u0 = 325   v0 = 245
   \endcode
 
   The content of the `cam.json` file is the following:

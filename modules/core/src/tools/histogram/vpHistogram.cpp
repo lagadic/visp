@@ -601,11 +601,6 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   if (prev_slope > 0)
     peak[nbpeaks++] = (unsigned char)(size - 1);
 
-  //   vpTRACE("nb peaks: %d", nbpeaks);
-  //   for (unsigned i=0; i < nbpeaks; i ++)
-  //     vpTRACE("peak %d: pos %d value: %d", i, peak[i], histogram[ peak[i]
-  //     ]);
-
   // Get the global maximum
   index_highest_peak = 0;
   for (unsigned int i = 0; i < nbpeaks; i++) {
@@ -613,10 +608,6 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
       index_highest_peak = i;
     }
   }
-
-  //   vpTRACE("highest peak index: %d pos: %d value: %d",
-  // 	  index_highest_peak, peak[index_highest_peak],
-  // 	  histogram[ peak[index_highest_peak] ]);
 
   maxprof = 0;
   index_second_peak = index_highest_peak;
@@ -650,9 +641,6 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
       }
     }
   }
-  //   vpTRACE("second peak index: %d pos: %d value: %d",
-  // 	  index_second_peak, peak[index_second_peak],
-  // 	  histogram[ peak[index_second_peak] ]);
 
   // Determine position of the first and second highest peaks
   if (peak[index_highest_peak] < peak[index_second_peak]) {
@@ -879,16 +867,6 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       /* nbpeaks = */ getPeaks(peaks);
     }
 
-    //     if (1) {
-    //       //      vpTRACE("nb peaks: %d", nbpeaks);
-    //       peaks.front();
-    //       for (unsigned i=0; i < nbpeaks; i ++) {
-    // 	vpHistogramPeak p = peaks.value();
-    // // 	vpTRACE("peak index %d: pos %d value: %d",
-    // // 		i, p.getLevel(), p.getValue());
-    // 	peaks.next();
-    //       }
-    //     }
     // Go to the requested peak in the list
     std::list<vpHistogramPeak>::const_iterator it;
     unsigned index = 0;

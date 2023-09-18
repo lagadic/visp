@@ -52,10 +52,10 @@
 #include "vpVwstack.h"
 
 /*
- * POINT2I	:
+ * POINT2I  :
  * Tableau de points 2D dans l'espace ecran servant a l'affichage fil-de-fer.
  *
- * RENAME	:
+ * RENAME  :
  * Tableau de renommage des sommets ou tableau de compteurs associes aux
  * points.
  */
@@ -96,25 +96,25 @@ void close_display(void)
  * La procedure "point_3D_2D" projette les points 3D du volume canonique
  * dans l'espace image 2D.
  *
- *	Volume canonique	Espace image
- *	________________	____________
+ *  Volume canonique  Espace image
+ *  ________________  ____________
  *
- *	- 1 < X < 1		0 < X < xsize
- *	- 1 < Y < 1		0 < Y < ysize
- *	  0 < Z < 1
+ *  - 1 < X < 1    0 < X < xsize
+ *  - 1 < Y < 1    0 < Y < ysize
+ *    0 < Z < 1
  *
- *	      Z < 0		X = 0, Y = -1 non significatifs.
+ *        Z < 0    X = 0, Y = -1 non significatifs.
  *
  * Entree :
- * p3		Tableau de points 3D a projeter.
- * size		Taille du tableau de points "p3".
- * xsize, ysize	Tailles de l'espace image.
- * p2		Tableau de points 2D en sortie.
+ * p3    Tableau de points 3D a projeter.
+ * size    Taille du tableau de points "p3".
+ * xsize, ysize  Tailles de l'espace image.
+ * p2    Tableau de points 2D en sortie.
  */
 // static
 void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2)
 {
-  Point3f *pend = p3 + size; /* borne de p3	*/
+  Point3f *pend = p3 + size; /* borne de p3  */
   float xdiv2 = ((float)xsize) / (float)2.0;
   float ydiv2 = ((float)ysize) / (float)2.0;
 
@@ -130,18 +130,18 @@ void point_3D_2D(Point3f *p3, Index size, int xsize, int ysize, Point2i *p2)
  * Soit la face comportant le contour oriente suivant : (...,P2,P0,P1...).
  * La normale a la face au point P0 est obtenue par le produit vectoriel :
  *
- *				| x1 - x0	x2 - x0	|   | Nx |
- * N = (P1 - P0) ^ (P2 - P0) =	| y1 - y0	y2 - y0 | = | Ny |
- * 				| z1 - z0	z2 - z0 |   | Nz |
+ *        | x1 - x0  x2 - x0  |   | Nx |
+ * N = (P1 - P0) ^ (P2 - P0) =  | y1 - y0  y2 - y0 | = | Ny |
+ *         | z1 - z0  z2 - z0 |   | Nz |
  *
  * La face est dans le volume canonique de vision et dans un repere gauche.
  * L'observateur est situe a l'infini dans la direction [0, 0, -1].
- * IS_ABOVE	<=>	Ny < 0,		IS_BELOW	<=>	Ny > 0.
- * IS_RIGHT	<=>	Nx < 0,		IS_LEFT		<=>	Nx > 0.
- * IS_BACK	<=>	Nz < 0,		IS_FRONT	<=>	Nz > 0.
+ * IS_ABOVE  <=>  Ny < 0,    IS_BELOW  <=>  Ny > 0.
+ * IS_RIGHT  <=>  Nx < 0,    IS_LEFT    <=>  Nx > 0.
+ * IS_BACK  <=>  Nz < 0,    IS_FRONT  <=>  Nz > 0.
  * Entree :
- * bp		Surface a initialiser.
- * b		Drapeaux indiquant les faces non affichables.
+ * bp    Surface a initialiser.
+ * b    Drapeaux indiquant les faces non affichables.
  */
 void set_Bound_face_display(Bound *bp, Byte b)
 {
@@ -151,9 +151,9 @@ void set_Bound_face_display(Bound *bp, Byte b)
 
   for (; fp < fend; fp++) {
     Index *vp;
-    Point3f *p0; /* premier sommet	*/
-    Point3f *p1; /* second  sommet	*/
-    Point3f *p2; /* dernier sommet	*/
+    Point3f *p0; /* premier sommet  */
+    Point3f *p1; /* second  sommet  */
+    Point3f *p2; /* dernier sommet  */
 
     fp->is_visible = TRUE;
     if (b == IS_INSIDE)
@@ -199,12 +199,12 @@ void set_Bound_face_display(Bound *bp, Byte b)
  * Les points des sommets de la face sont contenu dans les points "pp"
  * de la surface contenant la face.
  * Entree :
- * fp		face a afficher.
- * pp		Points de la surface contenant la face.
+ * fp    face a afficher.
+ * pp    Points de la surface contenant la face.
  */
 void wireframe_Face(Face *fp, Point2i *pp)
 {
-  //	extern Window id_window;
+  //  extern Window id_window;
 
   Index *vp = fp->vertex.ptr;
   Index *vend = vp + fp->vertex.nbr;

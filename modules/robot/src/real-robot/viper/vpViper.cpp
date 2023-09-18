@@ -463,7 +463,6 @@ unsigned int vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw, 
     if (ok[i] == true) {
       nbsol++;
       sol = i;
-      //      dist[i] = vpColVector::distance(q, q_sol[i]);
       vpColVector weight(6);
       weight = 1;
       weight[0] = 8;
@@ -479,13 +478,11 @@ unsigned int vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw, 
           if (fabs(rought_dist + 2 * M_PI) < fabs(rought_dist))
             modulo_dist = rought_dist + 2 * M_PI;
         }
-        // std::cout << "dist " << i << ": " << rought_dist << " modulo: " <<
-        // modulo_dist << std::endl;
+
         dist[i] += weight[j] * vpMath::sqr(modulo_dist);
       }
     }
-    //  std::cout << "sol " << i << " [" << ok[i] << "] dist: " << dist[i] <<
-    //  " q: " << q_sol[i].t() << std::endl;
+
   }
   // std::cout << "dist: " << dist.t() << std::endl;
   if (nbsol) {
@@ -497,8 +494,6 @@ unsigned int vpViper::getInverseKinematicsWrist(const vpHomogeneousMatrix &fMw, 
     // Update the inverse kinematics solution
     q = q_sol[sol];
 
-    //     std::cout << "Nearest solution (" << sol << ") with distance ("
-    // 	      << dist[sol] << "): " << q_sol[sol].t() << std::endl;
   }
   return nbsol;
 }
@@ -722,11 +717,6 @@ void vpViper::get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const
   //  if positions are motor position.
   // double q6 = q[5] + c56 * q[4];
 
-  //   std::cout << "q6 motor: " << q[5] << " rad "
-  // 	    << vpMath::deg(q[5]) << " deg" << std::endl;
-  //   std::cout << "q6 joint: " << q6 << " rad "
-  // 	    << vpMath::deg(q6) << " deg" << std::endl;
-
   double c1 = cos(q1);
   double s1 = sin(q1);
   double c2 = cos(q2);
@@ -816,11 +806,6 @@ void vpViper::get_fMw(const vpColVector &q, vpHomogeneousMatrix &fMw) const
   //  taking into account the coupling factor. The coupling factor is relevant
   //  if positions are motor position.
   // double q6 = q[5] + c56 * q[4];
-
-  //   std::cout << "q6 motor: " << q[5] << " rad "
-  // 	    << vpMath::deg(q[5]) << " deg" << std::endl;
-  //   std::cout << "q6 joint: " << q6 << " rad "
-  // 	    << vpMath::deg(q6) << " deg" << std::endl;
 
   double c1 = cos(q1);
   double s1 = sin(q1);

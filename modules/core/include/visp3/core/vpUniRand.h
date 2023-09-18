@@ -116,8 +116,8 @@ typedef unsigned __int32 uint32_t;
   4.86741
   2
   5.65826
-  Original vector = [	0	1	2	3	4	5	6	7	8	9 ]
-  Shuffled vector = [	2	4	7	8	5	1	3	6	9	0 ]
+  Original vector = [ 0 1 2 3 4 5 6 7 8 9 ]
+  Shuffled vector = [ 2 4 7 8 5 1 3 6 9 0 ]
   \endcode
 */
 class VISP_EXPORT vpUniRand

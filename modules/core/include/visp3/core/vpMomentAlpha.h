@@ -178,7 +178,7 @@ This program outputs:
 \code
 --- Reference object ---
 alphaRef=25.3019 deg
-mu3=1.80552	0.921882	0.385828	0.122449
+mu3=1.80552  0.921882  0.385828  0.122449
 --- current object ---
 alpha=-25.3019 deg
 \endcode
