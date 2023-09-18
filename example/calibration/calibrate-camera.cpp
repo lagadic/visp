@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,12 @@
  * Description:
  * Camera calibration with chessboard or circle calibration grid.
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC)
 
 #include <map>
 
@@ -174,13 +174,13 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-#ifdef VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX d(I, vpDisplay::SCALE_AUTO);
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
 #endif
 
@@ -397,7 +397,7 @@ int main(int argc, const char *argv[])
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "Without distorsion results");
+      vpDisplay::setTitle(I, "Without distortion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual() / calibrator[i].get_npt());
@@ -467,7 +467,7 @@ int main(int argc, const char *argv[])
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "With distorsion results");
+      vpDisplay::setTitle(I, "With distortion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual_dist() / calibrator[i].get_npt());

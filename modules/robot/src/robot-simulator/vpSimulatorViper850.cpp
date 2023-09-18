@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Class which provides a simulator for the robot Viper850.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -69,19 +66,6 @@ vpSimulatorViper850::vpSimulatorViper850()
   tcur = vpTime::measureTimeMs();
 
 #if defined(_WIN32)
-#ifdef WINRT_8_1
-  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
-#else
-  mutex_fMi = CreateMutex(NULL, FALSE, NULL);
-  mutex_artVel = CreateMutex(NULL, FALSE, NULL);
-  mutex_artCoord = CreateMutex(NULL, FALSE, NULL);
-  mutex_velocity = CreateMutex(NULL, FALSE, NULL);
-  mutex_display = CreateMutex(NULL, FALSE, NULL);
-#endif
 
   DWORD dwThreadIdArray;
   hThread = CreateThread(NULL,              // default security attributes
@@ -91,12 +75,6 @@ vpSimulatorViper850::vpSimulatorViper850()
                          0,                 // use default creation flags
                          &dwThreadIdArray); // returns the thread identifier
 #elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_init(&mutex_fMi, NULL);
-  pthread_mutex_init(&mutex_artVel, NULL);
-  pthread_mutex_init(&mutex_artCoord, NULL);
-  pthread_mutex_init(&mutex_velocity, NULL);
-  pthread_mutex_init(&mutex_display, NULL);
-
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
@@ -122,20 +100,6 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
   tcur = vpTime::measureTimeMs();
 
 #if defined(_WIN32)
-#ifdef WINRT_8_1
-  mutex_fMi = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artVel = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_artCoord = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_velocity = CreateMutexEx(NULL, NULL, 0, NULL);
-  mutex_display = CreateMutexEx(NULL, NULL, 0, NULL);
-#else
-  mutex_fMi = CreateMutex(NULL, FALSE, NULL);
-  mutex_artVel = CreateMutex(NULL, FALSE, NULL);
-  mutex_artCoord = CreateMutex(NULL, FALSE, NULL);
-  mutex_velocity = CreateMutex(NULL, FALSE, NULL);
-  mutex_display = CreateMutex(NULL, FALSE, NULL);
-#endif
-
   DWORD dwThreadIdArray;
   hThread = CreateThread(NULL,              // default security attributes
                          0,                 // use default stack size
@@ -144,12 +108,6 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
                          0,                 // use default creation flags
                          &dwThreadIdArray); // returns the thread identifier
 #elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_init(&mutex_fMi, NULL);
-  pthread_mutex_init(&mutex_artVel, NULL);
-  pthread_mutex_init(&mutex_artCoord, NULL);
-  pthread_mutex_init(&mutex_velocity, NULL);
-  pthread_mutex_init(&mutex_display, NULL);
-
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
@@ -164,7 +122,9 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
 */
 vpSimulatorViper850::~vpSimulatorViper850()
 {
+  m_mutex_robotStop.lock();
   robotStop = true;
+  m_mutex_robotStop.unlock();
 
 #if defined(_WIN32)
 #if defined(WINRT_8_1)
@@ -173,19 +133,9 @@ vpSimulatorViper850::~vpSimulatorViper850()
   WaitForSingleObject(hThread, INFINITE);
 #endif
   CloseHandle(hThread);
-  CloseHandle(mutex_fMi);
-  CloseHandle(mutex_artVel);
-  CloseHandle(mutex_artCoord);
-  CloseHandle(mutex_velocity);
-  CloseHandle(mutex_display);
 #elif defined(VISP_HAVE_PTHREAD)
   pthread_attr_destroy(&attr);
   pthread_join(thread, NULL);
-  pthread_mutex_destroy(&mutex_fMi);
-  pthread_mutex_destroy(&mutex_artVel);
-  pthread_mutex_destroy(&mutex_artCoord);
-  pthread_mutex_destroy(&mutex_velocity);
-  pthread_mutex_destroy(&mutex_display);
 #endif
 
   if (robotArms != NULL) {
@@ -199,7 +149,7 @@ vpSimulatorViper850::~vpSimulatorViper850()
 }
 
 /*!
-  Method which initialises the parameters linked to the robot caracteristics.
+  Method which initialises the parameters linked to the robot characteristics.
 
   Set the path to the arm files (*.bnd and *.sln) used by the
   simulator.  If the path set in vpConfig.h in VISP_ROBOT_ARMS_DIR macro is
@@ -344,7 +294,10 @@ void vpSimulatorViper850::init(vpViper850::vpToolType tool, vpCameraParameters::
   }
 
   vpRotationMatrix eRc(erc);
+
+  m_mutex_eMc.lock();
   this->eMc.buildFrom(etc, eRc);
+  m_mutex_eMc.unlock();
 
   setToolType(tool);
   return;
@@ -449,13 +402,21 @@ void vpSimulatorViper850::updateArticularPosition()
   double tcur_1 = tcur; // temporary variable used to store the last time
                         // since the last command
 
-  while (!robotStop) {
+  bool stop = false;
+  bool setVelocityCalled_ = false;
+  while (!stop) {
     // Get current time
     tprev = tcur_1;
     tcur = vpTime::measureTimeMs();
 
-    if (setVelocityCalled || !constantSamplingTimeMode) {
+    m_mutex_setVelocityCalled.lock();
+    setVelocityCalled_ = setVelocityCalled;
+    m_mutex_setVelocityCalled.unlock();
+
+    if (setVelocityCalled_ || !constantSamplingTimeMode) {
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = false;
+      m_mutex_setVelocityCalled.unlock();
       computeArticularVelocity();
 
       double ellapsedTime = (tcur - tprev) * 1e-3;
@@ -517,8 +478,9 @@ void vpSimulatorViper850::updateArticularPosition()
       }
 
       if (displayType == MODEL_3D && displayAllowed) {
-        while (get_displayBusy())
+        while (get_displayBusy()) {
           vpTime::wait(2);
+        }
         vpSimulatorViper850::getExternalImage(I);
         set_displayBusy(false);
       }
@@ -558,6 +520,9 @@ void vpSimulatorViper850::updateArticularPosition()
     } else {
       vpTime::wait(tcur, vpTime::getMinTimeForUsleepCall());
     }
+    m_mutex_robotStop.lock();
+    stop = robotStop;
+    m_mutex_robotStop.unlock();
   }
 }
 
@@ -697,27 +662,19 @@ void vpSimulatorViper850::compute_fMi()
   fMit[6][1][3] = s1 * (c23 * (c4 * s5 * d6 - a3) + s23 * (c5 * d6 + d4) + a1 + a2 * c2) + c1 * s4 * s5 * d6;
   fMit[6][2][3] = s23 * (a3 - c4 * s5 * d6) + c23 * (c5 * d6 + d4) - a2 * s2 + d1;
 
-  vpHomogeneousMatrix cMe;
-  get_cMe(cMe);
-  cMe = cMe.inverse();
-  //   fMit[7] = fMit[6] * cMe;
+  // vpHomogeneousMatrix cMe;
+  // get_cMe(cMe);
+  // cMe = cMe.inverse();
+  // fMit[7] = fMit[6] * cMe;
+  m_mutex_eMc.lock();
   vpViper::get_fMc(q, fMit[7]);
+  m_mutex_eMc.unlock();
 
-#if defined(_WIN32)
-#if defined(WINRT_8_1)
-  WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
-#else // pure win32
-  WaitForSingleObject(mutex_fMi, INFINITE);
-#endif
-  for (int i = 0; i < 8; i++)
+  m_mutex_fMi.lock();
+  for (int i = 0; i < 8; i++) {
     fMi[i] = fMit[i];
-  ReleaseMutex(mutex_fMi);
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_mutex_lock(&mutex_fMi);
-  for (int i = 0; i < 8; i++)
-    fMi[i] = fMit[i];
-  pthread_mutex_unlock(&mutex_fMi);
-#endif
+  }
+  m_mutex_fMi.unlock();
 }
 
 /*!
@@ -924,8 +881,14 @@ void vpSimulatorViper850::setVelocity(const vpRobot::vpControlFrameType frame, c
   }
 
   set_velocity(vel * scale_sat);
+
+  m_mutex_frame.lock();
   setRobotFrame(frame);
+  m_mutex_frame.unlock();
+
+  m_mutex_setVelocityCalled.lock();
   setVelocityCalled = true;
+  m_mutex_setVelocityCalled.unlock();
 }
 
 /*!
@@ -933,7 +896,11 @@ void vpSimulatorViper850::setVelocity(const vpRobot::vpControlFrameType frame, c
 */
 void vpSimulatorViper850::computeArticularVelocity()
 {
-  vpRobot::vpControlFrameType frame = getRobotFrame();
+  vpRobot::vpControlFrameType frame;
+
+  m_mutex_frame.lock();
+  frame = getRobotFrame();
+  m_mutex_frame.unlock();
 
   double vel_rot_max = getMaxRotationVelocity();
 
@@ -1302,7 +1269,9 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
       articularCoordinates = get_artCoord();
       qdes = articularCoordinates;
       nbSol = getInverseKinematics(fMc2, qdes, verbose_);
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = true;
+      m_mutex_setVelocityCalled.unlock();
       if (nbSol > 0) {
         error = qdes - articularCoordinates;
         errsqr = error.sumSquare();
@@ -1331,7 +1300,9 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
       errsqr = error.sumSquare();
       // findHighestPositioningSpeed(error);
       set_artVel(error);
+      m_mutex_setVelocityCalled.lock();
       setVelocityCalled = true;
+      m_mutex_setVelocityCalled.unlock();
       if (errsqr < 1e-4) {
         set_artCoord(q);
         error = 0;
@@ -1366,7 +1337,9 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
         errsqr = error.sumSquare();
         // findHighestPositioningSpeed(error);
         set_artVel(error);
+        m_mutex_setVelocityCalled.lock();
         setVelocityCalled = true;
+        m_mutex_setVelocityCalled.unlock();
         if (errsqr < 1e-4) {
           set_artCoord(qdes);
           error = 0;
@@ -2262,6 +2235,7 @@ void vpSimulatorViper850::initArms()
 
 void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
 {
+  m_mutex_scene.lock();
   bool changed = false;
   vpHomogeneousMatrix displacement = navigation(I_, changed);
 
@@ -2333,6 +2307,7 @@ void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
     vp2jlc_matrix(fMo, w44o);
     display_scene(w44o, scene, I_, curColor);
   }
+  m_mutex_scene.unlock();
 }
 
 /*!
@@ -2396,11 +2371,13 @@ void vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMa
 {
   vpColVector stop(6);
   stop = 0;
+  m_mutex_scene.lock();
   set_artVel(stop);
   set_velocity(stop);
   vpHomogeneousMatrix fMit[8];
   get_fMi(fMit);
   fMo = fMit[7] * cMo_;
+  m_mutex_scene.unlock();
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

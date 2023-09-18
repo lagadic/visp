@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +32,9 @@
  * Make the complete tracking of an object by using its CAD model
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
 /*!
@@ -222,7 +220,7 @@ void vpMbtDistanceLine::addPolygon(const int &idx)
 
 /*!
   Set if the line has to considered during tracking phase.
-  Line won't be considered if all of its polygons are desactivated.
+  The line will not be taken into account if all its polygons are disabled.
 
   \param polyname : name of the polygons that have to be modified.
   \param track : True if the polygon has to be tracked, False otherwise.
@@ -254,8 +252,7 @@ void vpMbtDistanceLine::setTracked(const std::string &polyname, const bool &trac
 
 /*!
   Update the boolean specifying if the line has to be tracked.
-  It takes into account the desactivated polygons and the visibility of the
-  others.
+  It takes into account deactivated polygons and the visibility of other polygons.
 */
 void vpMbtDistanceLine::updateTracked()
 {
@@ -656,7 +653,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
+   (contrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase
    (threshold problem).
     - If blue : The point is removed because of the robust method in the

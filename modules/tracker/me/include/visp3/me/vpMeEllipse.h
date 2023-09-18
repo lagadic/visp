@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,21 +28,15 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- * Description:
- * Moving edges.
- *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeEllipse.h
   \brief Moving edges on an ellipse
 */
 
-#ifndef vpMeEllipse_HH
-#define vpMeEllipse_HH
+#ifndef _vpMeEllipse_h_
+#define _vpMeEllipse_h_
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMatrix.h>
@@ -78,10 +72,10 @@
   An ellipse is also represented thanks to five parameters that are
   the center \f$ (uc,vc) \f$ of the ellipse and either:
   - three normalized moments \f$ n_{ij} \f$ of order 2,
-  - or the semimajor axis \f$ A \f$, the semiminor
-  axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
-  defined by the angle between the major axis and the u axis of the image
-  frame.
+  - or the semi major axis \f$ A \f$, the semi minor
+    axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
+    defined by the angle between the major axis and the u axis of the image frame.
+
   For more details, see \cite Chaumette04a.
   The following figure illustrates these parameters.
 
@@ -101,12 +95,12 @@ public:
   vpMeEllipse(const vpMeEllipse &me_ellipse);
   virtual ~vpMeEllipse();
 
-  void display(const vpImage<unsigned char> &I, vpColor col);
+  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
 
   /*!
     Gets the second order normalized centered moment \f$ n_{ij} \f$
     as a 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$
-    such as \f$ n_{ij}  = \mu_{ij}/m_{00} \f$
+    such as \f$ n_{ij} = \mu_{ij}/m_{00} \f$
 
     \return The 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$.
 
@@ -126,7 +120,7 @@ public:
     Gets the ellipse parameters as a 3-dim vector containing \f$ A, B, E \f$.
 
     \return The 3-dim vector containing \f$ A, B, E \f$ corresponding respectively to
-    the semimajor axis, the semiminor axis and the angle in rad made by the major axis
+    the semi major axis, the semi minor axis and the angle in rad made by the major axis
     and the u axis of the image frame \f$ (u,v) \f$,  \f$ e \in [-\pi/2;pi/2] \f$.
 
     \sa getCenter(), get_nij(), getArea()
@@ -164,6 +158,11 @@ public:
   unsigned int getExpectedDensity() const { return m_expectedDensity; }
 
   /*!
+   \return Number of valid edges tracked along the ellipse.
+  */
+  unsigned int getNumberOfGoodPoints() const { return m_numberOfGoodPoints; }
+
+  /*!
     Gets the first endpoint of the ellipse arc (corresponding to alpha1,
     not alphamin) when an arc is tracked.
 
@@ -195,10 +194,11 @@ public:
   */
   inline double getSmallestAngle() const { return m_alphamin; }
 
-  void initTracking(const vpImage<unsigned char> &I, bool trackArc = false);
-  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackArc = false);
+  void initTracking(const vpImage<unsigned char> &I, bool trackCircle = false, bool trackArc = false);
+  void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackCircle = false,
+                    bool trackArc = false);
   void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL,
-                    const vpImagePoint *pt2 = NULL);
+                    const vpImagePoint *pt2 = NULL, bool trackCircle = false);
   void printParameters() const;
 
   /*!
@@ -223,13 +223,19 @@ public:
   {
     if (threshold < 0) {
       thresholdWeight = 0;
-    } else if (threshold > 1) {
+    }
+    else if (threshold > 1) {
       thresholdWeight = 1;
-    } else {
+    }
+    else {
       thresholdWeight = threshold;
     }
   }
 
+  /*!
+    Track a set of MEs along an ellipse or a circle.
+    The number of valid tracked MEs is obtained from getNumberOfGoodPoints().
+  */
   void track(const vpImage<unsigned char> &I);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -239,7 +245,7 @@ public:
   //@{
   /*!
     \deprecated You should rather use get_ABE().
-    Gets the semimajor axis of the ellipse.
+    Gets the semi major axis of the ellipse.
 
     \sa get_ABE()
   */
@@ -247,7 +253,7 @@ public:
 
   /*!
     \deprecated You should rather use get_ABE().
-    Gets the semiminor axis of the ellipse.
+    Gets the semi minor axis of the ellipse.
 
     \sa get_ABE()
   */
@@ -362,9 +368,9 @@ protected:
   vpColVector K;
   //! The coordinates of the ellipse center.
   vpImagePoint iPc;
-  //! \f$ a \f$ is the semimajor axis of the ellipse.
+  //! \f$ a \f$ is the semi major axis of the ellipse.
   double a;
-  //! \f$ b \f$ is the semiminor axis of the ellipse.
+  //! \f$ b \f$ is the semi minor axis of the ellipse.
   double b;
   /*! \f$ e \in [-\pi/2;\pi/2] \f$ is the angle made by the major axis
     and the u axis of the image frame \f$ (u,v) \f$.
@@ -393,7 +399,7 @@ protected:
   double ce;
   //! Value of sin(e).
   double se;
-  //! Stores the value in increasing order of the \f$ alpha \f$ angle on the ellipse for each vpMeSite .
+  //! Stores the value in increasing order of the \f$ alpha \f$ angle on the ellipse for each vpMeSite.
   std::list<double> angle;
   //! Ellipse area
   double m00;
@@ -408,11 +414,6 @@ protected:
 
   //! Threshold on the weights for the robust least square.
   double thresholdWeight;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  //! Expected number of points to track along the ellipse.
-  double expecteddensity;
-#endif
 
   /*! The smallest angle \f$ \alpha_{min} \in [\alpha_1;\alpha_2]\f$
       of the current moving edge list
@@ -432,7 +433,9 @@ protected:
   unsigned int m_expectedDensity;
   //! Number of correct points tracked along the ellipse.
   unsigned int m_numberOfGoodPoints;
-  //! Track an arc of ellipse (true) or a complete one (false).
+  //! Track a circle (true) or an ellipse (false).
+  bool m_trackCircle;
+  //! Track an arc of ellipse/circle (true) or a complete one (false).
   bool m_trackArc;
   //! Epsilon value used to check if arc angles are the same
   double m_arcEpsilon;
@@ -446,10 +449,15 @@ protected:
   double computeTheta(const vpImagePoint &iP) const;
   double computeTheta(double u, double v) const;
   void getParameters();
-  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP); // FC : new
-  void leastSquareRobust(const vpImage<unsigned char> &I);
+  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
+  unsigned int leastSquareRobust(const vpImage<unsigned char> &I);
   unsigned int plugHoles(const vpImage<unsigned char> &I);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
+#else
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
+#endif
   void updateTheta();
 
 private:
@@ -459,12 +467,22 @@ private:
 
   // Static Function
 public:
-  static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+  static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
                       const double &E, const double &smallalpha, const double &highalpha,
                       const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+  static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  // Marked deprecated since they override vpMeTracker::display(). Warning detected by mingw64
+  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+    const double &E, const double &smallalpha, const double &highalpha,
+    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
                       const double &E, const double &smallalpha, const double &highalpha,
                       const vpColor &color = vpColor::green, unsigned int thickness = 1);
+#endif
 };
 
 #endif

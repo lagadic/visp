@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,20 +31,15 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- * Andrew Comport
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
-        \file vpMe.h
-        \brief Moving edges
+  \file vpMe.h
+  \brief Moving edges
 */
 
-#ifndef vpMe_H
-#define vpMe_H
+#ifndef _vpMe_h_
+#define _vpMe_h_
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
@@ -56,40 +51,113 @@
 
   This class defines predetermined masks for sites and holds moving edges
   tracking parameters.
+
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMe.
+  The following sample code shows how to save moving-edges settings in a file named `me.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/me/vpMe.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "me.json";
+    {
+      vpMe me;
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+      me.setThreshold(20);    // Value in range [0 ; 255]
+      me.setMaskNumber(180);
+      me.setMaskSign(0);
+      me.setMu1(0.5);
+      me.setMu2(0.5);
+      me.setNbTotalSample(0);
+      me.setPointsToTrack(200);
+      me.setRange(5);
+      me.setStrip(2);
+
+      std::ofstream file(filename);
+      const nlohmann::json j = me;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpMe me;
+      me = j;
+      file.close();
+      std::cout << "Read moving-edges settings from " << filename << ":" << std::endl;
+      me.print();
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read moving-edges settings from me.json:
+
+  Moving edges settings
+
+   Size of the convolution masks....5x5 pixels
+   Number of masks..................180
+   Query range +/- J................5 pixels
+   Likelihood threshold type........normalized
+   Likelihood threshold.............20
+   Contrast tolerance +/-...........50% and 50%
+   Sample step......................10 pixels
+   Strip............................2 pixels
+   Min sample step..................4 pixels
+  \endcode
+
+  The content of the `me.json` file is the following:
+  \code{.unparsed}
+  $ cat me.json
+  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,"range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
+  \endcode
  */
 class VISP_EXPORT vpMe
 {
+public:
+  typedef enum
+  {
+    OLD_THRESHOLD = 0,        /*!< Old likelihood ratio threshold (to be avoided). */
+    NORMALIZED_THRESHOLD = 1, /*!< Easy-to-use normalized likelihood threshold corresponding to the minimal luminance contrast to consider with values in [0 ; 255]. */
+  } vpLikelihoodThresholdType;
+
+private:
+  vpLikelihoodThresholdType m_likelihood_threshold_type;
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
 #else
 private:
 #endif
-  double threshold; //! Likelihood ratio threshold
+  double threshold; //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
   double mu1;       //! Contrast continuity parameter (left boundary)
   double mu2;       //! Contrast continuity parameter (right boundary)
   double min_samplestep;
   unsigned int anglestep;
   int mask_sign;
   unsigned int range; //! Seek range - on both sides of the reference pixel
-  double sample_step; //! Distance between sampled points (in pixels)
+  double sample_step; //! Distance between sampled points in pixels
   int ntotal_sample;
   int points_to_track;
-  //! convolution masks' size in pixels (masks are square), \warning should
+  //! Convolution masks' size in pixels (masks are square), \warning should
   //! not be public, use setMaskSize() and getMaskSize() instead (kept public
   //! for compatibility reasons).
   unsigned int mask_size;
-  //! the number of convolution masks available for tracking ; defines
+  //! The number of convolution masks available for tracking ; defines
   //! resolution. \warning Should not be public, use setMaskNumber() and
   //! getMaskNumber() instead (kept public for compatibility reasons).
   unsigned int n_mask;
-  // strip: defines a "security strip" such that Seek_Extremities()
+  // Strip: defines a "security strip" such that Seek_Extremities()
   // cannot return a new extremity which is too close to the
   // frame borders which may cause Get_Sampling_Grid to refuse
   // the that extremity
   int strip;
-  // int graph ;
-  vpMatrix *mask; //! Array of matrices defining the different masks (one for
-                  //! every angle step).
+  vpMatrix *mask; //! Array of matrices defining the different masks (one for every angle step).
 
 public:
   vpMe();
@@ -185,12 +253,22 @@ public:
   inline int getStrip() const { return strip; }
 
   /*!
-    Return the likelihood threshold used to determined if the moving edge is
-    valid or not.
+    Return the likelihood threshold used to determine if the moving edge is valid or not.
 
-    \return Value of threshold.
+    \return Value of the likelihood threshold.
+
+    \sa setThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
   */
   inline double getThreshold() const { return threshold; }
+
+  /*!
+    Return the selected choice for the likelihood threshold.
+
+    \return The likelihood threshold type to consider.
+
+    \sa setLikelihoodThresholdType(), setThreshold(), getThreshold()
+  */
+  inline vpLikelihoodThresholdType getLikelihoodThresholdType() const { return m_likelihood_threshold_type; }
 
   void initMask(); // convolution masks - offset computation
   void print();
@@ -292,12 +370,155 @@ public:
   void setStrip(const int &a) { strip = a; }
 
   /*!
-    Set the likelihood threshold used to determined if the moving edge is
-    valid or not.
+    Set the likelihood threshold used to determined if the moving edge is valid or not.
 
-    \param t : new threshold.
+    \param t : Threshold to consider. Two different cases need to be considered depending on the likelihood threshold type that
+    can be set using setLikelihoodThresholdType() or get using getLikelihoodThresholdType(). The default likelihood threshold type
+    is set to OLD_THRESHOLD to keep compatibility with ViSP previous releases, but it is recommended to use rather the NORMALIZED_THRESHOLD
+    type like in the following sample code. When doing so, the threshold is more easy to set since it corresponds to the minimal luminance
+    contrast to consider with values in range [0 ; 255].
+
+    \code
+    vpMe me;
+    me.setLikelihoodThresholdType(NORMALIZED_THRESHOLD);
+    me.setThreshold(20); // Value in range [0 ; 255]
+    \endcode
+
+    When the likelihood threshold type is set by default to OLD_THRESHOLD like in the next example, values of the likelihood threshold
+    depends on the minimal luminance contrast to consider and the mask size that can be set using setMaskSize() and retrieved using getMaskSize().
+    \code
+    vpMe me;                // By default the constructor set the threshold type to OLD_THRESHOLD
+    me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+    \endcode
+    The previous sample code is similar to the next one:
+    \code
+    vpMe me;
+    me.setLikelihoodThresholdType(OLD_THRESHOLD);
+    me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+    \endcode
+    \sa getThreshold(), getLikelihoodThresholdType()
   */
   void setThreshold(const double &t) { threshold = t; }
+
+  /*!
+    Set the likelihood threshold type used to determine if the moving edge is valid or not.
+
+    \param likelihood_threshold_type : Likelihood threshold type. It is recommended to use NORMALIZED_THRESHOLD and set the threshold
+    using setThreshold() with a value corresponding to the minimal luminance contrast to consider that can handle values in range [0 ; 255].
+
+    \sa setThreshold()
+  */
+  void setLikelihoodThresholdType(const vpLikelihoodThresholdType likelihood_threshold_type) { m_likelihood_threshold_type = likelihood_threshold_type; }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json &j, const vpMe &me);
+  friend void from_json(const nlohmann::json &j, vpMe &me);
+#endif
 };
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+
+/**
+ * @brief Convert a vpMe object to a JSON representation
+ *
+ * @param j resulting json object
+ * @param me the object to convert
+ */
+inline void to_json(nlohmann::json &j, const vpMe &me)
+{
+  j = {
+    {"thresholdType", me.getLikelihoodThresholdType()},
+    {"threshold", me.getThreshold()},
+    {"mu", {me.getMu1(), me.getMu2()}},
+    {"minSampleStep", me.getMinSampleStep()},
+    {"sampleStep", me.getSampleStep()},
+    {"range", me.getRange()},
+    {"ntotalSample", me.getNbTotalSample()},
+    {"pointsToTrack", me.getPointsToTrack()},
+    {"maskSize", me.getMaskSize()},
+    {"nMask", me.getMaskNumber()},
+    {"maskSign", me.getMaskSign()},
+    {"strip", me.getStrip()}
+  };
+}
+
+/**
+ * @brief Retrieve a vpMe object from a JSON representation
+ *
+ * JSON content (key: type):
+ *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
+ *  - threshold: double, vpMe::setThreshold()
+ *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2()
+ *  - minSampleStep: double, vpMe::setMinSampleStep()
+ *  - angleStep: double, vpMe::setAngleStep()
+ *  - sampleStep: double, vpMe::setSampleStep()
+ *  - range: int, vpMe::setRange()
+ *  - ntotal_sample: int, vpMe::setNbTotalSample()
+ *  - pointsToTrack: int, vpMe::setPointsToTrack()
+ *  - maskSize: int, vpMe::setMaskSize()
+ *  - nMask: int, vpMe::setMaskNumber()
+ *  - maskSign: int, vpMe::setMaskSign()
+ *  - strip: int, vpMe::setStrip()
+ *
+ * Example:
+ * \code{.json}
+ * {
+ *  "angleStep": 1,
+    "maskSign": 0,
+    "maskSize": 5,
+    "minSampleStep": 4.0,
+    "mu": [
+        0.5,
+        0.5
+    ],
+    "nMask": 180,
+    "ntotal_sample": 0,
+    "pointsToTrack": 500,
+    "range": 7,
+    "sampleStep": 4.0,
+    "strip": 2,
+    "thresholdType": 1
+    "threshold": 20.0
+  }
+ * \endcode
+ *
+ * @param j JSON representation to convert
+ * @param me converted object
+ */
+inline void from_json(const nlohmann::json &j, vpMe &me)
+{
+  if (j.contains("thresholdType")) {
+    me.setLikelihoodThresholdType(j.value("thresholdType", me.getLikelihoodThresholdType()));
+  }
+  me.setThreshold(j.value("threshold", me.getThreshold()));
+
+  if (j.contains("mu")) {
+    std::vector<double> mus = j.at("mu").get<std::vector<double>>();
+    assert((mus.size() == 2));
+    me.setMu1(mus[0]);
+    me.setMu2(mus[1]);
+  }
+  me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
+
+  me.setRange(j.value("range", me.getRange()));
+  me.setNbTotalSample(j.value("ntotalSample", me.getNbTotalSample()));
+  me.setPointsToTrack(j.value("pointsToTrack", me.getPointsToTrack()));
+  me.setMaskSize(j.value("maskSize", me.getMaskSize()));
+  me.setMaskSign(j.value("maskSign", me.getMaskSign()));
+  me.setStrip(j.value("strip", me.getStrip()));
+  if (j.contains("angleStep") && j.contains("nMask")) {
+    std::cerr << "both angle step and number of masks are defined, number of masks will take precedence" << std::endl;
+    me.setMaskNumber(j["nMask"]);
+  }
+  else if (j.contains("angleStep")) {
+    me.setAngleStep(j["angleStep"]);
+  }
+  else if (j.contains("nMask")) {
+    me.setMaskNumber(j["nMask"]);
+  }
+  me.initMask();
+}
+
+#endif
 
 #endif

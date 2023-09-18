@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,21 +31,18 @@
  * Description:
  * Exemple of a B-Spline curve.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
-/*!
-  \file BSpline.cpp
+*****************************************************************************/
+ /*!
+   \file BSpline.cpp
 
-  \brief Describe a curve thanks to a BSpline.
-*/
+   \brief Describe a curve thanks to a BSpline.
+ */
 
-/*!
-  \example BSpline.cpp
+ /*!
+   \example BSpline.cpp
 
-  Describe a curve thanks to a BSpline.
-*/
+   Describe a curve thanks to a BSpline.
+ */
 
 #include <visp3/core/vpDebug.h>
 
@@ -71,7 +68,7 @@
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) ||         \
     defined(VISP_HAVE_D3D9)
 
-// List of allowed command line options
+ // List of allowed command line options
 #define GETOPTARGS "cdh"
 
 void usage(const char *name, const char *badparam);
@@ -97,8 +94,8 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -177,15 +174,15 @@ int main(int argc, const char **argv)
     // We open a window using either X11, GTK or GDI.
 
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display;
 #endif
 
@@ -287,15 +284,16 @@ int main(int argc, const char **argv)
     }
 
     if (N != NULL)
-      delete[] N;
+      delete [] N;
     if (N2 != NULL) {
       for (unsigned int j = 0; j <= 2; j++)
-        delete[] N2[j];
-      delete[] N2;
+        delete [] N2[j];
+      delete [] N2;
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -305,8 +303,8 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout
-      << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
-      << std::endl;
+    << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

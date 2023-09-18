@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -53,16 +50,16 @@
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
-vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() {}
+vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() { }
 
 /*!
   Copy constructor.
 */
-vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) {}
+vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) { }
 /*!
   Destructor.
 */
-vpMbtMeEllipse::~vpMbtMeEllipse() {}
+vpMbtMeEllipse::~vpMbtMeEllipse() { }
 
 /*!
   Compute the projection error of the ellipse.
@@ -170,7 +167,8 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
           vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length * cos(angle)),
                                   static_cast<int>(it->get_j() + length * sin(angle)), vpColor::red,
                                   length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
-        } else {
+        }
+        else {
           vpDisplay::displayArrow(I, it->get_i(), it->get_j(),
                                   static_cast<int>(it->get_i() + length * cos(angle + M_PI)),
                                   static_cast<int>(it->get_j() + length * sin(angle + M_PI)), vpColor::red,
@@ -212,7 +210,8 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
     // useful for track(I)
     iP1 = *pt1;
     iP2 = *pt2;
-  } else {
+  }
+  else {
     alpha1 = 0.0;
     alpha2 = 2.0 * M_PI;
     // useful for track(I)
@@ -228,7 +227,8 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
   try {
     if (!doNotTrack)
       track(I);
-  } catch (const vpException &exception) {
+  }
+  catch (const vpException &exception) {
     throw(exception);
   }
 }
@@ -246,7 +246,8 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       m_expectedDensity = static_cast<unsigned int>(list.size());
     }
-  } catch (const vpException &exception) {
+  }
+  catch (const vpException &exception) {
     throw(exception);
   }
 }
@@ -333,9 +334,6 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   double incr = vpMath::rad(me->getSampleStep()); // angle increment
   // alpha2 - alpha1 = 2 * M_PI for a complete ellipse
   m_expectedDensity = static_cast<unsigned int>(floor((alpha2 - alpha1) / incr));
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  expecteddensity = static_cast<double>(m_expectedDensity);
-#endif
 
   // starting angle for sampling
   double ang = alpha1 + ((alpha2 - alpha1) - static_cast<double>(m_expectedDensity) * incr) / 2.0;

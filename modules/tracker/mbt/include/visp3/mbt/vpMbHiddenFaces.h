@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Romain Tallonneau
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 #pragma once
 
 #ifndef vpMbHiddenFaces_HH
@@ -885,7 +885,7 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
           nbVisible++;
         } else {
           distance = it->distance;
-          // Cannot use epsilon for comparison as ray lenght is slightly
+          // Cannot use epsilon for comparison as ray length is slightly
           // different from the collision distance returned by
           // Ogre::RaySceneQueryResult.
           if (distance > distanceCollision || std::fabs(distance - distanceCollision) <

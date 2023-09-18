@@ -24,7 +24,7 @@ jobs:
         access_token: ${{ github.token }}
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Print system information
       run: lscpu
@@ -37,11 +37,11 @@ jobs:
 
     - name: Install dependencies for ubuntu 18.04 and 20.04
       if: matrix.os != 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Install dependencies for ubuntu 22.04
       if: matrix.os == 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Clone camera_localization
       run: |

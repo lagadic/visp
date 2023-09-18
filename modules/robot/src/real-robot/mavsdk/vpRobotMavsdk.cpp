@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
  * Description:
  * Interface to mavlink compatible controller using mavsdk 3rd party
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -234,8 +234,6 @@ public:
     m_action = std::make_shared<mavsdk::Action>(m_system);
     m_telemetry = std::make_shared<mavsdk::Telemetry>(m_system);
     m_offboard = std::make_shared<mavsdk::Offboard>(m_system);
-
-    
   }
 
   bool hasFlyingCapability(MAV_TYPE mav_type)
@@ -320,7 +318,7 @@ public:
     flu_M_frd.eye();
     flu_M_frd[1][1] = -1;
     flu_M_frd[2][2] = -1;
-  
+
     vpHomogeneousMatrix enu_M_frd = enu_M_flu * flu_M_frd;
     auto mocap = mavsdk::Mocap{m_system};
     mavsdk::Mocap::VisionPositionEstimate pose_estimate;
@@ -517,7 +515,7 @@ public:
 
       // Takeoff
       if (m_telemetry.get()->gps_info().fix_type == mavsdk::Telemetry::FixType::NoGps) {
-        // No GPS connected. 
+        // No GPS connected.
         // When using odometry from MoCap, Action::takeoff() behavior is to takeoff at 0,0,0,alt
         // that is weird when the drone is not placed at 0,0,0.
         // That's why here use set_position_ned() to takeoff
@@ -643,7 +641,7 @@ public:
           std::cout << "state: " << state << std::endl;
         });
   #endif
-        if (in_air_future.wait_for(seconds(3)) == std::future_status::timeout) {
+        if (in_air_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
           // Add check with Altitude
           std::cerr << "Takeoff timed out.\n";
   #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
@@ -651,7 +649,6 @@ public:
   #else
           m_telemetry.get()->subscribe_landed_state(nullptr);
   #endif
-          //return false;
         }
         // Add check with Altitude
         auto takeoff_finished_promise = std::promise<void>{};
@@ -684,7 +681,9 @@ public:
 #endif
           return false;
         }
-      } 
+        // Start off-board or guided mode
+        takeControl();
+      }
     }
     return true;
   }
@@ -750,7 +749,7 @@ public:
         vpRxyzVector rxyz(R);
         double odom_yaw = vpMath::deg(rxyz[2]);
         double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m)
-             + vpMath::sqr(odom.position_body.y_m - position_target.east_m) 
+             + vpMath::sqr(odom.position_body.y_m - position_target.east_m)
              + vpMath::sqr(odom.position_body.z_m - position_target.down_m));
         if (distance_to_target < m_position_incertitude && std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude)
         {
@@ -766,7 +765,7 @@ public:
         vpRxyzVector rxyz(R);
         double odom_yaw = vpMath::deg(rxyz[2]);
         double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m)
-             + vpMath::sqr(odom.position_body.y_m - position_target.east_m) 
+             + vpMath::sqr(odom.position_body.y_m - position_target.east_m)
              + vpMath::sqr(odom.position_body.z_m - position_target.down_m));
         if (distance_to_target < m_position_incertitude && std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude)
         {
@@ -1008,7 +1007,7 @@ std::cout << "---- DEBUG timeout: " << timeout_sec << std::endl;
 
   // void waitSystemReady()
   // {
-  //   if (! m_system_ready) 
+  //   if (! m_system_ready)
   //   {
   //     while (!m_telemetry.get()->health_all_ok()) {
   //       std::cout << "Waiting for system to be ready\n";
@@ -1058,8 +1057,8 @@ private:
  * These default values are used to determine when a position is reached and could be changed using setPositioningIncertitude().
  * When the vehicle has flying capabilities, call by default land() in the destructor. This behavior could be changed
  * using setAutoLand().
- * 
- * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the 
+ *
+ * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the
  * guided mode with Ardupilot. After this call you can call setPosition() to move the vehicle to a desired position
  * and yaw orientation or call setVelocity() to move the vehicle in velocity.
  *
@@ -1073,7 +1072,7 @@ private:
  * For more information see [here](https://mavsdk.mavlink.io/main/en/cpp/guide/connections.html).
  *
  * \exception vpException::fatalError : If the program failed to connect to the vehicle.
- * 
+ *
  * \sa setPositioningIncertitude(), setAutoLand(), takeControl(), releaseControl()
  */
 vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vpRobotMavsdkImpl(connection_info))
@@ -1088,14 +1087,14 @@ vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vp
  * These default values are used to determine when a position is reached and could be changed using setPositioningIncertitude().
  * When the vehicle has flying capabilities, call by default land() in the destructor. This behavior could be changed
  * using setAutoLand().
- * 
- * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the 
+ *
+ * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the
  * guided mode with Ardupilot. After this call you can call setPosition() to move the vehicle to a desired position
  * and yaw orientation or call setVelocity() to move the vehicle in velocity.
  *
  * \sa connect(), setPositioningIncertitude()
  */
-vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl()) 
+vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl())
 {
   m_impl->setPositioningIncertitude(0.05, vpMath::rad(5));
 }
@@ -1104,7 +1103,7 @@ vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl())
  * Destructor.
  * When the vehicle has flying capabilities and when auto land mode is enabled, lands the vehicle if not landed
  * and safely disconnects everything.
- * 
+ *
  * \sa setAutoLand()
  */
 vpRobotMavsdk::~vpRobotMavsdk() { delete m_impl; }
@@ -1134,16 +1133,16 @@ bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
  * We consider here that the MoCap global reference frame is ENU (East-North-Up).
  * The vehicle body frame if FLU (Front-Left-Up) where X axis is aligned
  * with the vehicle front axis and Z axis going upward.
- * 
+ *
  * Internally, this pose called `enu_M_flu` is transformed to match the requirements of the Pixhawk
- * into `ned_M_frd` corresponding to the FRD (Front-Right-Down) body frame position in the NED (North-East-Down) 
+ * into `ned_M_frd` corresponding to the FRD (Front-Right-Down) body frame position in the NED (North-East-Down)
  * local reference frame.
  *
  * \return true if the MoCap data was successfully sent to the vehicle, false otherwise.
  * \param[in] enu_M_flu : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
  * To be more precise, this matrix gives the pose of the vehicle FLU body frame returned by the MoCap where
  * MoCap global reference frame is defined as ENU.
- * \param[in] display_fps : Display `ned_M_frd` pose internally sent through mavlink at the given framerate. A value of 0 can 
+ * \param[in] display_fps : Display `ned_M_frd` pose internally sent through mavlink at the given framerate. A value of 0 can
  * be used to disable this display.
  *
  * Internally we transform this FRD pose in a NED global reference frame as expected by Pixhawk convention.
@@ -1183,7 +1182,7 @@ void vpRobotMavsdk::getPosition(vpHomogeneousMatrix &ned_M_frd) const { m_impl->
  */
 void vpRobotMavsdk::getPosition(float &ned_north, float &ned_east, float &ned_down, float &ned_yaw) const
 {
-  m_impl->getPosition(ned_north, ned_east, ned_down, ned_yaw); 
+  m_impl->getPosition(ned_north, ned_east, ned_down, ned_yaw);
 }
 
 /*!
@@ -1226,7 +1225,7 @@ bool vpRobotMavsdk::disarm() { return m_impl->disarm(); }
  * Sends take off command when the vehicle has flying capabilities.
  * \param[in] interactive : If true asks the user if the offboard mode is to be forced through the terminal. If false
  * offboard mode is automatically set.
- * \param[in] timeout_sec : Time out in seconds to acchieve takeoff.
+ * \param[in] timeout_sec : Time out in seconds to achieve takeoff.
  * \return
  * - If the vehicle has flying capabilities, returns true if the take off is successful, false otherwise,
  *   typically when a timeout occurs. If the vehicle has flying capabilities and is already flying, return true.
@@ -1241,7 +1240,7 @@ bool vpRobotMavsdk::takeOff(bool interactive, int timeout_sec) { return m_impl->
  * \param[in] interactive : If true asks the user if the offboard mode is to be forced through the terminal. If false
  * offboard mode is automatically set.
  * \param[in] takeoff_altitude : Take off altitude in [m]. Should be a positive value.
- * \param[in] timeout_sec : Time out in seconds to acchieve takeoff.
+ * \param[in] timeout_sec : Time out in seconds to achieve takeoff.
  * \return
  * - If the vehicle has flying capabilities, returns true if the take off is successful, false otherwise,
  *   typically when a timeout occurs.
@@ -1249,16 +1248,16 @@ bool vpRobotMavsdk::takeOff(bool interactive, int timeout_sec) { return m_impl->
  * \warning This function is blocking.
  * \sa setTakeOffAlt(), land(), hasFlyingCapability()
  */
-bool vpRobotMavsdk::takeOff(bool interactive, double takeoff_altitude, int timeout_sec) 
+bool vpRobotMavsdk::takeOff(bool interactive, double takeoff_altitude, int timeout_sec)
 {
   m_impl->setTakeOffAlt(takeoff_altitude);
-  return m_impl->takeOff(interactive, timeout_sec); 
+  return m_impl->takeOff(interactive, timeout_sec);
 }
 
 /*!
  * Makes the vehicle hold its position.
  * \warning When the vehicle is equipped with a GPS, switches to hold mode. It means that takeControl()
- * needs to be called after. 
+ * needs to be called after.
  *
  * \return true when success, false otherwise.
  */
@@ -1269,7 +1268,7 @@ bool vpRobotMavsdk::holdPosition() { return m_impl->holdPosition(); };
  * \warning Depending on the speed of the vehicle when the function is called, it may still move a bit until it
  * stabilizes.
  */
-bool vpRobotMavsdk::stopMoving() { return m_impl->stopMoving(); }; 
+bool vpRobotMavsdk::stopMoving() { return m_impl->stopMoving(); };
 
 /*!
  * Sends landing command if the vehicle has flying capabilities.
@@ -1289,7 +1288,7 @@ bool vpRobotMavsdk::land() { return m_impl->land(); }
  * \param[in] ned_yaw : Absolute position to reach of the heading (radians).
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position.
  *
  * \sa setPosition(const vpHomogeneousMatrix &, bool, float)
  * \sa setPositionRelative(float, float, float, float, bool, float)
@@ -1306,7 +1305,7 @@ bool vpRobotMavsdk::setPosition(float ned_north, float ned_east, float ned_down,
  * in the NED global reference frame.
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position.
  *
  * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
  * cannot rotate around these axes.
@@ -1315,9 +1314,9 @@ bool vpRobotMavsdk::setPosition(float ned_north, float ned_east, float ned_down,
  * \sa setPosition(float, float, float, float, bool, float)
  * \sa setPositionRelative(const vpHomogeneousMatrix &, bool, float)
  */
-bool vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking, int timeout_sec) 
+bool vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking, int timeout_sec)
 {
-  return m_impl->setPosition(ned_M_frd, blocking, timeout_sec); 
+  return m_impl->setPosition(ned_M_frd, blocking, timeout_sec);
 }
 
 /*!
@@ -1329,7 +1328,7 @@ bool vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_frd, bool block
  * \param[in] ned_delta_yaw : Relative rotation of the heading (radians).
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position.
  *
  * \sa setPositionRelative(const vpHomogeneousMatrix &, bool, float)
  * \sa setPosition(float, float, float, float, bool, float)
@@ -1346,7 +1345,7 @@ bool vpRobotMavsdk::setPositionRelative(float ned_delta_north, float ned_delta_e
  * in the NED global reference frame.
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position.
  *
  * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
  * cannot rotate around these axes.
@@ -1357,7 +1356,7 @@ bool vpRobotMavsdk::setPositionRelative(float ned_delta_north, float ned_delta_e
  */
 bool vpRobotMavsdk::setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking, int timeout_sec)
 {
-  return m_impl->setPositionRelative(delta_frd_M_frd, blocking, timeout_sec); 
+  return m_impl->setPositionRelative(delta_frd_M_frd, blocking, timeout_sec);
 }
 
 /*!
@@ -1438,7 +1437,7 @@ bool vpRobotMavsdk::setGPSGlobalOrigin(double latitude, double longitude, double
  * \return true when off-board or guided mode are successfully started, false otherwise.
  *
  * This method should be called before using setPosition(), setVelocity()
- * 
+ *
  * \sa releaseControl()
  */
 bool vpRobotMavsdk::takeControl()
@@ -1464,7 +1463,7 @@ bool vpRobotMavsdk::releaseControl()
  * Enable/disable auto land mode in the destructor.
  * \param[in] auto_land : When true auto land mode is enabled and the destructor calls land() when
  * the vehicle has flying capabilities. When false the destructor doesn't call land().
- * 
+ *
  * \sa land()
  */
 void vpRobotMavsdk::setAutoLand(bool auto_land)

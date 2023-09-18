@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Save data during the task execution.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpServoData_H
 #define vpServoData_H
@@ -53,10 +53,7 @@
 */
 class VISP_EXPORT vpServoData
 {
-
 private:
-  char baseDirectory[FILENAME_MAX];
-
   std::ofstream velocityFile;
   std::ofstream errorFile;
   std::ofstream errorNormFile;
@@ -93,9 +90,6 @@ public:
   void open(const std::string &directory);
   void close();
 
-  void empty();
-  void push();
-  void display(vpImage<unsigned char> &I);
 };
 
 #endif

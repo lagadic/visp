@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Check that MBT is deterministic.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -184,7 +184,7 @@ TEST_CASE("Check MBT determinism parallel", "[MBT_determinism]")
 
   vpHomogeneousMatrix cMo1 = res_cMo1.get();
   vpHomogeneousMatrix cMo2 = res_cMo2.get();
-  std::cout << "Run both trackers in seperate threads" << std::endl;
+  std::cout << "Run both trackers in separate threads" << std::endl;
   std::cout << "First tracker, final cMo:\n" << cMo1 << std::endl;
   std::cout << "Second tracker, final cMo:\n" << cMo2 << std::endl;
 
@@ -226,7 +226,7 @@ TEST_CASE("Check Stereo MBT determinism parallel", "[MBT_determinism]")
 
   vpHomogeneousMatrix cMo1 = res_cMo1.get();
   vpHomogeneousMatrix cMo2 = res_cMo2.get();
-  std::cout << "Run both stereo trackers in seperate threads" << std::endl;
+  std::cout << "Run both stereo trackers in separate threads" << std::endl;
   std::cout << "First tracker, final cMo:\n" << cMo1 << std::endl;
   std::cout << "Second tracker, final cMo:\n" << cMo2 << std::endl;
 

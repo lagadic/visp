@@ -1,6 +1,6 @@
-project(visp-mbot)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(visp-mbot)
 
 # By default set release configuration
 if(NOT CMAKE_BUILD_TYPE)
@@ -22,4 +22,3 @@ foreach(cpp ${tutorial_cpp})
     visp_add_dependency(${cpp} "tutorials")
   endif()
 endforeach()
-

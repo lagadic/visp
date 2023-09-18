@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Odile Bourquardez
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeatureVanishingPoint_H
 #define vpFeatureVanishingPoint_H
@@ -62,7 +62,7 @@
     \f[ L_x = \left[ \begin{array}{cccccc} 0 & 0 & 0 & x y & -(1 + x^2) & y \end{array} \right] \f]
     \f[ L_y = \left[ \begin{array}{cccccc} 0 & 0 & 0 & 1 + y * y & -xy & -x \end{array} \right] \f]
 
-  - Rather features fonction of the polar coordinates of the vanishing point obtained themselves from the polar
+  - Rather features function of the polar coordinates of the vanishing point obtained themselves from the polar
   coordinates of the two lines \f$(\rho_1, \theta_1)\f$ and \f$(\rho_2, \theta_2)\f$; in that case \f$ {\bf s} =
   (\arctan(1/\rho), 1/\rho, \alpha) \f$ with: \f[ 1/\rho = \frac{\sin(\theta_1 - \theta_2)}{\sqrt{\rho_1^2 + \rho_2^2 -
   2 \rho_1 \rho_2 cos(\theta_1 - \theta_2)}} \f] \f[ \alpha = \frac{\rho_1 \cos \theta_2 - \rho_2 cos

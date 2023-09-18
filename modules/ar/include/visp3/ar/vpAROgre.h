@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Bertrand Delabarre
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpAROgre.h
@@ -125,7 +125,7 @@ public:
   */
   inline void addResource(const std::string &resourceLocation)
   {
-    mOptionnalResourceLocation.push_back(resourceLocation);
+    mOptionalResourceLocation.push_back(resourceLocation);
   }
 
   void addRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
@@ -388,7 +388,7 @@ protected:
   bool mshowConfigDialog; /** if true, shows the dialog window (used to set
                              the display options) */
 
-  std::list<std::string> mOptionnalResourceLocation; /** Optional resource location (used to
+  std::list<std::string> mOptionalResourceLocation; /** Optional resource location (used to
                                                         load mesh and material) */
 };
 

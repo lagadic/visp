@@ -7,11 +7,11 @@
 
 This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine. The MATLAB C/C++ engine library contains routines that allow you to call MATLAB from your own programs, using MATLAB as a computation engine. This can be used to extend ViSP functionality using MATLAB.
 
-Standalone programs written using MATLAB engine communicates with MATLAB process using pipes on UNIX system and Component Object Model (COM) interface on a Microsoft Windows system. MATLAB provides an API to start and end MATLAB process, send and receive data, and send commands to be processed in MATLAB. 
+Standalone programs written using MATLAB engine communicates with MATLAB process using pipes on UNIX system and Component Object Model (COM) interface on a Microsoft Windows system. MATLAB provides an API to start and end MATLAB process, send and receive data, and send commands to be processed in MATLAB.
 
 Using the MATLAB engine requires an installed version of MATLAB; you cannot run the MATLAB engine on a machine that only has the MATLAB Runtime. Also, path to MATLAB runtime must be set in the PATH environment variable. For a 64bit machine running Windows, the path is `path\to\MATLAB\R20XXy\bin\win64`.
 
-For this tutorial, we create a vpMatrix object containing a 3x3 matrix and pass it to MATLAB sum function to compute a column wise sum of the vpMatrix. 
+For this tutorial, we create a vpMatrix object containing a 3x3 matrix and pass it to MATLAB sum function to compute a column wise sum of the vpMatrix.
 
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -24,9 +24,9 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/matlab
 In order to build a source code that mix ViSP and MATLAB you should first create a `CMakeLists.txt` file that tries to find ViSP and MATLAB. In the following example we consider the case of the tutorial-matlab.cpp source file.
 
 \code
-project(visp-matlab)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(visp-matlab)
 
 find_package(VISP REQUIRED visp_core)
 include_directories(${VISP_INCLUDE_DIRS})

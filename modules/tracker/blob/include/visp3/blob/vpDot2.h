@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Track a white dot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*
   \file vpDot2.h
@@ -377,7 +374,7 @@ private:
      u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
      with \f$i = j = 0 \f$. This moment corresponds to the dot
      surface.
- 
+
      \sa setComputeMoments()
          */
   double m10;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -385,7 +382,7 @@ private:
      u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
      obtained with \f$i = 1 \f$ and \f$ j = 0 \f$. \f$ m_{10} \f$
      corresponds to the inertia first order moment along the v axis.
- 
+
      \sa setComputeMoments()
          */
   double m01;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -393,14 +390,14 @@ private:
      u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
      obtained with \f$i = 0 \f$ and \f$ j = 1 \f$. \f$ m_{01} \f$
      corresponds to the inertia first order moment along the u axis.
- 
+
      \sa setComputeMoments()
          */
   double m11;  /*!< Considering the general distribution moments for \f$ N \f$
      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
      u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
      obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
- 
+
      \sa setComputeMoments()
          */
   double m20;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -409,7 +406,7 @@ private:
      obtained with \f$i = 2 \f$ and \f$ j = 0 \f$. \f$ m_{20} \f$
      corresponds to the inertia second order moment along the v
      axis.
- 
+
      \sa setComputeMoments()
          */
   double m02;  /*!< Considering the general distribution moments for \f$ N \f$
@@ -418,7 +415,7 @@ private:
      obtained with \f$i = 0 \f$ and \f$ j = 2 \f$. \f$ m_{02} \f$
      corresponds to the inertia second order moment along the u
      axis.
- 
+
      \sa setComputeMoments()
          */
   double mu11; /*!< \f$ \mu_{11} \f$ is a second order centered moment defined

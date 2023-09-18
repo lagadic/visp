@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * 3D translation visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeatureTranslation_H
 #define vpFeatureTranslation_H
@@ -112,8 +108,8 @@ to \f$ s \f$ is given by \f[ L = [ -I_3 \;\; [^{c}t_{c^*}]_\times] \f]
   -I_3 \;\; [^{c}t_o]_\times] \f]
 
   To initialize the feature \f$(t_x, t_y, t_z)\f$ you may use member
-  fonctions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
-  fonctions.
+  functions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
+  functions.
 
   The interaction() method allows to compute the interaction matrix
   \f$ L\f$ associated to the translation visual feature, while the

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Simulation of a 2 1/2 D visual servoing using theta U visual features.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoSimuPoint2DhalfCamVelocity2.cpp
@@ -319,7 +315,7 @@ int main(int argc, const char **argv)
       cdMc = cdMo * cMo.inverse();
       tu.buildFrom(cdMc);
 
-      // there is no feature for logZ, we explicitely build
+      // there is no feature for logZ, we explicitly build
       // the related interaction matrix") ;
       logZ.set_s(log(point.get_Z() / pointd.get_Z()));
       vpMatrix LlogZ(1, 6);

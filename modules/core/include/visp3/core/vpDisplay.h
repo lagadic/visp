@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,10 @@
  * Description:
  * Image display.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpDisplay_h
-#define vpDisplay_h
+#ifndef _vpDisplay_h_
+#define _vpDisplay_h_
 
 #include <list>
 #include <sstream>
@@ -48,6 +44,7 @@
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMouseButton.h>
 #include <visp3/core/vpRect.h>
@@ -64,7 +61,7 @@
 
   \ingroup group_core_gui
 
-  \brief Class that defines generic functionnalities for display.
+  \brief Class that defines generic functionalities for display.
 
   The \ref tutorial-getting-started is a good starting point to know
   how to use this class to display an image in a window.
@@ -108,7 +105,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -179,7 +176,8 @@ class VISP_EXPORT vpDisplay
 public:
   //! Values that could be applied to a display to down scale the size of the
   //! display.
-  typedef enum {
+  typedef enum
+  {
     SCALE_AUTO,   /*!< Auto down scaling factor computed fom the screen
                      resolution. */
     SCALE_1,      /*!< Display and image have the same size. */
@@ -301,6 +299,21 @@ public:
     \sa setFont()
   */
   virtual void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green) = 0;
+
+  /*!
+    Display a circle.
+    \param circle : Circle to display.
+    \param color : Circle color.
+    \param fill : When set to true fill the circle.
+    \param thickness : Thickness of the circle. This parameter is only useful
+    when \e fill is set to false.
+  */
+  inline virtual void displayCircle(const vpImageCircle &circle, const vpColor &color, bool fill = false,
+                                    unsigned int thickness = 1)
+  {
+    this->displayCircle(circle.getCenter(), static_cast<unsigned int>(circle.getRadius()), color, fill, thickness);
+  }
+
   /*!
     Display a circle.
     \param center : Circle center position.
@@ -644,7 +657,7 @@ public:
       d = new vpDisplayGDI;
     #elif defined(VISP_HAVE_D3D9)
       d = new vpDisplayD3D;
-    #elif defined(VISP_HAVE_OPENCV)
+    #elif defined(HAVE_OPENCV_HIGHGUI)
       d = new vpDisplayOpenCV;
     #else
       std::cout << "Sorry, no video device is available" << std::endl;
@@ -699,7 +712,7 @@ public:
 
   */
   virtual void setWindowPosition(int x, int y) = 0;
-//@}
+  //@}
 #endif // ifndef DOXYGEN_SHOULD_SKIP_THIS
 
   /*!
@@ -720,6 +733,8 @@ public:
                                 const vpColor &color);
   static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
                                 const vpColor &color);
+  static void displayCircle(const vpImage<unsigned char> &I, const vpImageCircle &circle,
+                            const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
                             const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<unsigned char> &I, int i, int j, unsigned int radius, const vpColor &color,
@@ -747,7 +762,7 @@ public:
   static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                            const vpCameraParameters &cam, double size, const vpColor &color = vpColor::none,
                            unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0),
-                           const std::string& frameName = "", const vpColor& textColor = vpColor::black, const vpImagePoint& textOffset = vpImagePoint(15,15) );
+                           const std::string &frameName = "", const vpColor &textColor = vpColor::black, const vpImagePoint &textOffset = vpImagePoint(15, 15));
   static void displayLine(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                           const vpColor &color, unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
@@ -826,6 +841,8 @@ public:
   static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
                                 const vpColor &color);
   static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color);
+  static void displayCircle(const vpImage<vpRGBa> &I, const vpImageCircle &circle,
+                            const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
                             const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color,
@@ -851,8 +868,8 @@ public:
                              bool display_center = false, bool display_arc = false);
   static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                            double size, const vpColor &color = vpColor::none, unsigned int thickness = 1,
-                           const vpImagePoint &offset = vpImagePoint(0, 0), const std::string& frameName = "",
-                           const vpColor& textColor = vpColor::black, const vpImagePoint& textOffset = vpImagePoint(15,15) );
+                           const vpImagePoint &offset = vpImagePoint(0, 0), const std::string &frameName = "",
+                           const vpColor &textColor = vpColor::black, const vpImagePoint &textOffset = vpImagePoint(15, 15));
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                           const vpColor &color, unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,

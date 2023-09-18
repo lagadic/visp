@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -49,7 +49,7 @@
 // Debug trace
 #include <visp3/core/vpDebug.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#if defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
 #endif
 
@@ -113,7 +113,7 @@ vpMatrix vpMatrix::inverseByCholesky() const
 {
 #if defined(VISP_HAVE_LAPACK)
   return inverseByCholeskyLapack();
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#elif defined(VISP_HAVE_OPENCV)
   return inverseByCholeskyOpenCV();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
@@ -215,10 +215,10 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 /*!
   Compute the inverse of a n-by-n matrix using the Cholesky decomposition with
-OpenCV 3rd party. The matrix must be real symmetric positive defined.
+  OpenCV 3rd party. The matrix must be real symmetric positive defined.
 
   \return The inverse matrix.
 

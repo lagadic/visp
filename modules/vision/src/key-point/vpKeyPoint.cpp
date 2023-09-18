@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Key point functionalities.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iomanip>
 #include <limits>
@@ -42,11 +39,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpKeyPoint.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-#include <opencv2/calib3d/calib3d.hpp>
-#endif
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 
 #include <pugixml.hpp>
 
@@ -917,7 +910,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
       (cv::Mat_<double>(3, 3) << cam.get_px(), 0, cam.get_u0(), 0, cam.get_py(), cam.get_v0(), 0, 0, 1);
   cv::Mat rvec, tvec;
 
-  // Bug with OpenCV < 2.4.0 when zero distorsion is provided by an empty
+  // Bug with OpenCV < 2.4.0 when zero distortion is provided by an empty
   // array.  http://code.opencv.org/issues/1700 ;
   // http://code.opencv.org/issues/1718  what(): Distortion coefficients must
   // be 1x4, 4x1, 1x5, 5x1, 1x8 or 8x1 floating-point vector in function
@@ -4899,7 +4892,6 @@ void vpKeyPoint::PyramidAdaptedFeatureDetector::detectImpl(const cv::Mat &image,
 #endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_vision.a(vpKeyPoint.cpp.o) has no symbols
 void dummy_vpKeyPoint(){};
 #endif

@@ -13,7 +13,7 @@ This tutorial has been tested on Windows 10 (64 bit), with CMake 3.22.1 and Visu
 
 \subsection install_msvc17_uwp_msvc Visual Studio
 
-Visual Studio Community 2022 could be downloaded from https://www.visualstudio.com/downloads/. During a fresh installation enable "Universal Windows App Development Tools". Without this workload, you won't be able to create your universal apps. 
+Visual Studio Community 2022 could be downloaded from https://www.visualstudio.com/downloads/. During a fresh installation enable "Universal Windows App Development Tools". Without this workload, you won't be able to create your universal apps.
 
 If you already have Visual Studio Community 2022, you can check if "Universal Windows App Development" workload is activated following instructions given <a href="https://docs.microsoft.com/en-us/visualstudio/install/modify-visual-studio?view=vs-2022">here</a> that we resume:
 
@@ -29,7 +29,7 @@ After Visual Studio installation, you need to <a href="https://msdn.microsoft.co
 
 \subsection install_msvc17_uwp_3rd_cmake CMake
 
-CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform 
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform
 (at the time this tutorial was written it was the file `cmake-3.22.1-windows-x86_64.msi`).
 To install just double click on the `msi` file.
 
@@ -78,7 +78,7 @@ With CMake configure ViSP specifying options for cross compiling for `"Windows S
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc17-uwp-ws-10-x86
 C:\> cd %VISP_WS%\visp-build-vc17-uwp-ws-10-x86
-C:\> cmake.exe -G "Visual Studio 17 2022" -A "Win32" -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 17 2022" -A "Win32" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
@@ -96,10 +96,7 @@ The same process could be applied except that during cmake configuration you hav
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc17-uwp-ws-10-x64
 C:\> cd %VISP_WS%\visp-build-vc17-uwp-ws-10-x64
-C:\> cmake.exe -G "Visual Studio 17 2022" -A "x64" -DCMAKE_SYSTEM_NAME:String=WindowsStore \
-               -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF \
-               -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF                                     \
-               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 17 2022" -A "x64" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
@@ -112,10 +109,7 @@ The same process could be applied except that during cmake configuration you hav
 \verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc17-uwp-ws-10-arm
 C:\> cd %VISP_WS%\visp-build-vc17-uwp-ws-10-arm
-C:\> cmake.exe -G "Visual Studio 17 2022" -A "ARM" -DCMAKE_SYSTEM_NAME:String=WindowsStore \
-               -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF \
-               -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF                                     \
-               -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
+C:\> cmake.exe -G "Visual Studio 17 2022" -A "ARM" -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_INSTALL_PREFIX=%VISP_WS%\visp-build-vc17-uwp-ws-10-install ..\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 

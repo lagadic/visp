@@ -9,9 +9,10 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
@@ -93,7 +94,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Check if we need to initialize the display with the first frame
       if (!display_initialized_) {
-// Initialize the display
+        // Initialize the display
 #if defined(VISP_HAVE_X11)
         d_ = new vpDisplayX(I_);
         display_initialized_ = true;
@@ -115,7 +116,8 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Update the display
       vpDisplay::flush(I_);
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);
@@ -130,7 +132,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 //! [capture-multi-threaded displayFunction]
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc, const char *argv[])
+int main(int argc, const char *argv [])
 {
   int opt_device = 0;
 
@@ -144,7 +146,7 @@ int main(int argc, const char *argv[])
     }
   }
 
-  // Instanciate the capture
+  // Instantiate the capture
   cv::VideoCapture cap;
   cap.open(opt_device);
 
@@ -164,7 +166,7 @@ int main(int argc, const char *argv[])
 int main()
 {
 #ifndef VISP_HAVE_OPENCV
-  std::cout << "You should install OpenCV to make this example working..." << std::endl;
+  std::cout << "You should install OpenCV videoio module to make this example working..." << std::endl;
 #elif !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::cout << "You should enable pthread usage and rebuild ViSP..." << std::endl;
 #else

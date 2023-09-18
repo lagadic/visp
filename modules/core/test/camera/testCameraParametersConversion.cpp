@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Performs various tests on the vpPixelMeterConversion and
  * vpPixelMeterConversion class.
  *
- * Authors:
- * Anthony saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file testCameraParametersConversion.cpp
@@ -101,7 +98,7 @@ int main()
     double v1 = 240;
     double x1 = 0, y1 = 0;
     double u2 = 0, v2 = 0;
-    std::cout << "* Test point conversion without distorsion" << std::endl;
+    std::cout << "* Test point conversion without distortion" << std::endl;
     vpPixelMeterConversion::convertPoint(cam, u1, v1, x1, y1);
     vpMeterPixelConversion::convertPoint(cam, x1, y1, u2, v2);
     if (!vpMath::equal(u1, u2) || !vpMath::equal(v1, v2)) {
@@ -111,7 +108,7 @@ int main()
       return EXIT_FAILURE;
     }
 
-    std::cout << "* Test point conversion with distorsion" << std::endl;
+    std::cout << "* Test point conversion with distortion" << std::endl;
     vpPixelMeterConversion::convertPoint(camDist, u1, v1, x1, y1);
     vpMeterPixelConversion::convertPoint(camDist, x1, y1, u2, v2);
     if (!vpMath::equal(u1, u2) || !vpMath::equal(v1, v2)) {
@@ -121,9 +118,9 @@ int main()
       return EXIT_FAILURE;
     }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
     {
-      std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
       double x2, y2;
@@ -145,7 +142,7 @@ int main()
         return EXIT_FAILURE;
       }
 
-      std::cout << "* Compare ViSP and OpenCV point meter pixel conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV point meter pixel conversion without distortion" << std::endl;
       vpMeterPixelConversion::convertPoint(cam, x1, y1, u1, v1);
       vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, x1, y1, u2, v2);
       if (!vpMath::equal(u1, u2, 1e-6) || !vpMath::equal(v1, v2, 1e-6)) {
@@ -165,7 +162,7 @@ int main()
     }
 
     {
-      std::cout << "* Compare ViSP and OpenCV point pixel meter conversion with distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV point pixel meter conversion with distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px_dist, 0, u0_dist, 0, py_dist, v0_dist, 0, 0, 1);
       cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
       distCoeffs.at<double>(0, 0) = kdu_dist;
@@ -179,7 +176,7 @@ int main()
         return EXIT_FAILURE;
       }
 
-      std::cout << "* Compare ViSP and OpenCV point meter pixel conversion with distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV point meter pixel conversion with distortion" << std::endl;
       distCoeffs.at<double>(0, 0) = kud_dist;
       vpMeterPixelConversion::convertPoint(camDist, x1, y1, u1, v1);
       vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, x1, y1, u2, v2);
@@ -191,7 +188,7 @@ int main()
     }
 
     {
-      std::cout << "* Compare ViSP and OpenCV line pixel meter conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV line pixel meter conversion without distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       double rho_p = 100, theta_p = vpMath::rad(45);
       double rho_m1, theta_m1, rho_m2, theta_m2;
@@ -204,7 +201,7 @@ int main()
         return EXIT_FAILURE;
       }
 
-      std::cout << "* Compare ViSP and OpenCV line meter pixel conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV line meter pixel conversion without distortion" << std::endl;
       double rho_p1, theta_p1, rho_p2, theta_p2;
       vpMeterPixelConversion::convertLine(cam, rho_m1, theta_m1, rho_p1, theta_p1);
       vpMeterPixelConversion::convertLine(cameraMatrix, rho_m1, theta_m1, rho_p2, theta_p2);
@@ -216,7 +213,7 @@ int main()
     }
 
     {
-      std::cout << "* Compare ViSP and OpenCV moments pixel meter conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV moments pixel meter conversion without distortion" << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       unsigned int order = 3;
       double m00 = 2442, m10 = 414992, m01 = 470311, m11 = 7.99558e+07, m02 = 9.09603e+07, m20 = 7.11158e+07;
@@ -246,7 +243,7 @@ int main()
     }
 
     {
-      std::cout << "* Compare ViSP and OpenCV ellipse from circle meter pixel conversion without distorsion"
+      std::cout << "* Compare ViSP and OpenCV ellipse from circle meter pixel conversion without distortion"
                 << std::endl;
       cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       vpCircle circle;
@@ -273,7 +270,7 @@ int main()
         return EXIT_FAILURE;
       }
 
-      std::cout << "* Compare ViSP and OpenCV ellipse from sphere meter pixel conversion without distorsion"
+      std::cout << "* Compare ViSP and OpenCV ellipse from sphere meter pixel conversion without distortion"
                 << std::endl;
       vpSphere sphere;
       sphere.setWorldCoordinates(0, 0, 0, 0.1); // X0=0,Y0=0,Z0=0,R=0.1
@@ -297,7 +294,7 @@ int main()
     }
 #endif
 
-    std::cout << "Test succesful" << std::endl;
+    std::cout << "Test successful" << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

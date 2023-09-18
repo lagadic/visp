@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,16 +31,13 @@
  * Description:
  * Klt cylinder, containing points of interest.
  *
- * Authors:
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpPolygon.h>
 #include <visp3/mbt/vpMbtDistanceKltCylinder.h>
 #include <visp3/mbt/vpMbtDistanceKltPoints.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #if defined(VISP_HAVE_CLIPPER)
 #include <clipper.hpp> // clipper private library
@@ -151,7 +148,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
       vpPixelMeterConversion::convertPoint(cam, x_tmp, y_tmp, xm, ym);
       double Z = computeZ(xm, ym);
       if (!vpMath::isNaN(Z)) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
         initPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
         curPoints[(int)id] = vpImagePoint(y_tmp, x_tmp);
         curPointsInd[(int)id] = (int)i;
@@ -165,7 +162,7 @@ void vpMbtDistanceKltCylinder::init(const vpKltOpencv &_tracker, const vpHomogen
 
         vpPoint p;
         p.setWorldCoordinates(xm * Z, ym * Z, Z);
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
         initPoints3D[(int)id] = p;
 #else
         initPoints3D[id] = p;
@@ -204,7 +201,7 @@ unsigned int vpMbtDistanceKltCylinder::computeNbDetectedCurrent(const vpKltOpenc
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
     if (isTrackedFeature((int)id)) {
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
 #else
@@ -349,7 +346,7 @@ void vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogen
 }
 
 /*!
-  Test whether the feature with identifier id in paramters is in the list of
+  Test whether the feature with identifier id in parameters is in the list of
   tracked features.
 
   \param _id : the id of the current feature to test
@@ -369,25 +366,16 @@ bool vpMbtDistanceKltCylinder::isTrackedFeature(int _id)
   default is 255).
 
   \param mask : the mask to update (0, not in the object, _nb otherwise).
-  \param nb : Optionnal value to set to the pixels included in the face.
-  \param shiftBorder : Optionnal shift for the border in pixel (sort of
+  \param nb : Optional value to set to the pixels included in the face.
+  \param shiftBorder : Optional shift for the border in pixel (sort of
   built-in erosion) to avoid to consider pixels near the limits of the face.
 */
 void vpMbtDistanceKltCylinder::updateMask(
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     cv::Mat &mask,
-#else
-    IplImage *mask,
-#endif
     unsigned char nb, unsigned int shiftBorder)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   int width = mask.cols;
   int height = mask.rows;
-#else
-  int width = mask->width;
-  int height = mask->height;
-#endif
 
   for (unsigned int kc = 0; kc < listIndicesCylinderBBox.size(); kc++) {
     if ((*hiddenface)[(unsigned int)listIndicesCylinderBBox[kc]]->isVisible() &&
@@ -464,7 +452,6 @@ void vpMbtDistanceKltCylinder::updateMask(
         j_max = width;
       }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       for (int i = i_min; i < i_max; i++) {
         double i_d = (double)i;
 
@@ -493,33 +480,6 @@ void vpMbtDistanceKltCylinder::updateMask(
 #endif
         }
       }
-#else
-      unsigned char *ptrData = (unsigned char *)mask->imageData + i_min * mask->widthStep + j_min;
-      for (int i = i_min; i < i_max; i++) {
-        double i_d = (double)i;
-        for (int j = j_min; j < j_max; j++) {
-          double j_d = (double)j;
-          if (shiftBorder != 0) {
-            if (vpPolygon::isInside(roi, i_d, j_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d + shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d + shiftBorder_d, j_d - shiftBorder_d) &&
-                vpPolygon::isInside(roi, i_d - shiftBorder_d, j_d - shiftBorder_d)) {
-              *(ptrData++) = nb;
-            } else {
-              ptrData++;
-            }
-          } else {
-            if (vpPolygon::isInside(roi, i, j)) {
-              *(ptrData++) = nb;
-            } else {
-              ptrData++;
-            }
-          }
-        }
-        ptrData += mask->widthStep - j_max + j_min;
-      }
-#endif
     }
   }
 }

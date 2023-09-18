@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,9 @@
  * Camera intrinsic parameters.
  *
  * Authors:
- * Eric Marchand
  * Anthony Saunier
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpCameraParameters.cpp
@@ -130,7 +129,7 @@ vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_
 
   \param cam_px,cam_py : pixel size
   \param cam_u0,cam_v0 : principal points
-  \param coefficients  : distorsion model coefficients
+  \param coefficients  : distortion model coefficients
 
  */
 vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0, double cam_v0,
@@ -206,11 +205,13 @@ void vpCameraParameters::initPersProjWithoutDistortion(double cam_px, double cam
   this->kud = 0;
   this->kdu = 0;
 
+  this->m_dist_coefs.clear();
+
   if (fabs(px) < 1e-6) {
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
+    throw(vpException(vpException::divideByZeroError, "Camera parameter py = 0"));
   }
   this->inv_px = 1. / px;
   this->inv_py = 1. / py;
@@ -269,6 +270,7 @@ void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py
   this->v0 = cam_v0;
   this->kud = cam_kud;
   this->kdu = cam_kdu;
+  this->m_dist_coefs.clear();
 
   if (fabs(px) < 1e-6) {
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
@@ -284,7 +286,7 @@ void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py
   Initialization with specific parameters using Kannala-Brandt distortion model
   \param cam_px,cam_py : The ratio between the focal length and the size of a pixel.
   \param cam_u0,cam_v0 : Principal points coordinates in pixels.
-  \param coefficients  : Distorsion coefficients.
+  \param coefficients  : Distortion coefficients.
 */
 void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, double cam_py, double cam_u0, double cam_v0,
                                                              const std::vector<double> &coefficients)
@@ -295,6 +297,9 @@ void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, doub
   this->py = cam_py;
   this->u0 = cam_u0;
   this->v0 = cam_v0;
+
+  this->kud = 0.0;
+  this->kdu = 0.0;
 
   if (fabs(px) < 1e-6) {
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
@@ -346,7 +351,7 @@ void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &_K)
 }
 
 /*!
-   Initialize the camera model without distorsion from the image dimension and
+   Initialize the camera model without distortion from the image dimension and
 the camera field of view. \param w : Image width. \param h : Image height.
    \param hfov : Camera horizontal field of view angle expressed in radians.
    \param vfov : Camera vertical field of view angle expressed in radians.
@@ -436,6 +441,9 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const
       !vpMath::equal(kdu, c.kdu, std::numeric_limits<double>::epsilon()) ||
       !vpMath::equal(inv_px, c.inv_px, std::numeric_limits<double>::epsilon()) ||
       !vpMath::equal(inv_py, c.inv_py, std::numeric_limits<double>::epsilon()))
+    return false;
+
+  if(m_dist_coefs.size() != c.m_dist_coefs.size())
     return false;
 
   for (unsigned int i = 0; i < m_dist_coefs.size(); i++)

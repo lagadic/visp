@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Additional image morphology functions.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMorph.cpp
@@ -44,6 +41,8 @@
 #include <visp3/core/vpImageTools.h>
 #include <visp3/imgproc/vpImgproc.h>
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_morph
 
@@ -51,10 +50,10 @@
 
   \param I : Input binary image (0 means background, 255 means foreground).
 */
-void vp::fillHoles(vpImage<unsigned char> &I
+void fillHoles(vpImage<unsigned char> &I
 #if USE_OLD_FILL_HOLE
-                   ,
-                   const vpImageMorphology::vpConnexityType &connexity
+  ,
+  const vpImageMorphology::vpConnexityType &connexity
 #endif
 )
 {
@@ -86,7 +85,8 @@ void vp::fillHoles(vpImage<unsigned char> &I
       for (unsigned int j = 0; j < marker.getWidth(); j++) {
         marker[i][j] = 255;
       }
-    } else {
+    }
+    else {
       marker[i][0] = 255;
       marker[i][marker.getWidth() - 1] = 255;
     }
@@ -142,13 +142,13 @@ void vp::fillHoles(vpImage<unsigned char> &I
   \param h_kp1 : Image morphologically reconstructed.
   \param connexity : Type of connexity.
 */
-void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
-                     vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
+void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
+    vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (marker.getHeight() != mask.getHeight() || marker.getWidth() != mask.getWidth()) {
     std::cerr << "marker.getHeight() != mask.getHeight() || "
-                 "marker.getWidth() != mask.getWidth()"
-              << std::endl;
+      "marker.getWidth() != mask.getWidth()"
+      << std::endl;
     return;
   }
 
@@ -162,7 +162,7 @@ void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigne
 
   do {
     // Dilatation
-    vpImageMorphology::dilatation(h_kp1, connexity);
+    vpImageMorphology::dilatation<unsigned char>(h_kp1, connexity);
 
     // Keep min
     for (unsigned int i = 0; i < h_kp1.getHeight(); i++) {
@@ -178,3 +178,4 @@ void vp::reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigne
     h_k = h_kp1;
   } while (true);
 }
+};

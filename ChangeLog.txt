@@ -7,22 +7,50 @@
 
 ViSP 3.5.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton
+    . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
+      Francois Chaumette, Olivier Roussel, Julien Dufour, Joudy Nader
+  - New classes
+    . vpMocapVicon an interface over Vicon motion capture system
+    . vpMocapQualisys an interface over Qualisys motion capture system
+    . vpPclViewer that enables real time plotting of 3D point clouds based on PCL library
+    . vpRobotUniversalRobots that allows to control an Universal Robots robot
+    . vpRobotMavsdk that allows to control a robot equipped with a Pixhawk (drone, rover...)
+    . vpDetectorDNNOpenCV a wrapper over the OpenCV DNN module that allows
+      to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
+      Yolo v5, Yolo v7 and Yolo v8 convolutional networks
+    . vpImageCircle that refers to a 2D circle in an image
+    . vpCircleHoughTransform that allows to detect circles in an image
+    . vpCannyEdgeDetection that allows to detect Canny edges without using OpenCV
+    . vpMegaPose and vpMegaPoseTracker classes that are wrapper over MegaPose
+      https://megapose6d.github.io/ that allows 6D pose estimation using a DNN approach
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
-    . Introduce Universal Robots support with new vpRobotUniversalRobots class that
-      allows to control an UR robot
-    . Introduce Vicon and Qualisys motion capture system interfaces in vpMocapVicon and
-      vpMocapQualisys classes respectively
-    . Image-based and position-based examples with UR robot
+    . New image-based and position-based examples with UR robot
     . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
     . Introduce MAVLink interface using MAVSDK 3rd party library interfaced in vpRobotMavsdk
-      class that allows to control a robot equiped with a Pixhawk (drone, rover...)
+      class that allows to control a robot equipped with a Pixhawk (drone, rover...)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
+    . New capabilities to ease C++ inference to detect objects using convolutional networks
+      (see vpDetectorDNNOpenCV)
+    . Support of JSON for modern C++ third-party to enable serialization capabilities
+      in vpArray2D, vpCameraParameters, vpCircleHoughTransform, vpColVector, vpDetectorDNNOpenCV,
+      vpHomogeneousMatrix, vpMbGenericTracker, vpMe, vpPolygon3D, vpPoseVector to load/save
+      internal data or settings from/to JSON files
+    . Remove deprecated OpenCV IplImage interfaces
+    . Remove deprecated vpOpenCVGrabber, vpKeyPointSurf classes and corresponding
+      tutorials
+    . Minimum OpenCV version is 2.4.8
+    . Introduce a new moving-edges threshold parameter for the contrast between each side
+      of the feature to track. Its value corresponds to a gray level in range [0; 255]
+    . In moving-edges ellipse tracker (vpMeEllipse and vpMbTracker and its derived classes),
+      change sample step parameter to consider the distance between moving-edges in pixels
+      rather than an angular value in deg as it was in the previous releases
+    . ViSP is available as a Conda package
+    . Fix compatibility with Debian GNU/Hurd
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -37,11 +65,29 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-universal-robot-pbvs.html
     . New tutorial: Image-based visual-servoing on a drone equipped with a Pixhawk
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pixhawk-vs.html
-    . New Tutorial: Installation from source for Windows 11 with MinGW-w64
+    . New tutorial: Installation from source for Windows 11 with MinGW-w64
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-mingw-w64.html
-    . New Tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
+    . New tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc17.html
+    . New tutorial: Deep learning object detection
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
+    . New tutorial: Using JSON serialization to save your data and read program arguments
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-json.html
+    . New tutorial: Loading a model-based generic tracker from JSON
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
+    . New tutorial: Threaded PCL viewer
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
+    . New tutorial: Tracking with MegaPose
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-megapose.html
+    . New tutorial: Exporting a 3D model to MegaPose after reconstruction with NeRF
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-megapose-model.html
+    . New tutorial: Generating synthetic data for deep learning with Blenderproc
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-synthetic-blenderproc.html
+    . New tutorial: Gradient-based Circle Hough Transform
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-imgproc-cht.html
   - Bug fixed
+    . [#1041] [example/device/framegrabber/saveRealSenseData] Wrong camera parameters
+              and depth_M_color homogeneous matrix when aligned depth is requested
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
     . [#1046] vpIoTools::getParent() returns an empty string when folder separator is not found
@@ -51,6 +97,11 @@ ViSP 3.5.1 (under development)
     . [#1094] vpIoTools::makeTempDirectory() fails to create a temporary directory inside
       a parent directory on Unix
     . [#1106] SIFT Illegal Instruction error on macOS Intel with OpenCV 4.6.0 installed with brew
+    . [#1155] Wrong representation of the ellipse in model-based tracker
+    . [#1160] MBT does not estimate dof set by the user using vpMbTracker::setEstimatedDoF()
+    . [#1176] ViSP cannot be built with a subset of OpenCV modules
+    . [#1198] Unable to save multiple cameras in a same xml file
+    . [#1228] Unable to use visp conda package to link visp as a 3rd party
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
@@ -159,7 +210,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#763] VISP does not support the latest PCL release 1.11.0
     . [#767] Compile from source on Ubuntu Focal raises CMake error with Ogre 1.9 or 2.1
     . [#777] Issue when calling vpMatrix::eigenValues() using lapack built-in
-    . [#780] Projects have to explicitely link against Boost when compiling ViSP with ar module
+    . [#780] Projects have to explicitly link against Boost when compiling ViSP with ar module
     . [#781] Wrong share install path on unix-like system
     . [#785] Static variable in vpServo
     . [#787] Unable to build simdlib 3rd party for iOS
@@ -590,7 +641,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . Compatibility with Odroid XU4
     . Source code migrates to GitHub: http://github.com/lagadic/visp
     . Introduce Travis continuous integration
-    . New website: http://visp.inria.fr
+    . New website: https://visp.inria.fr
     . Reorganize source in modules (core, vision, mbt, tt, …) with a library
       per module named libvisp_<module>. Keep compat with previous releases.
     . Allow to link contributions to ViSP source code using
@@ -648,7 +699,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
     . [#3]  Issue when comparing two vpRGBa
-    . [#5]  Unable to get calibration matrix K when model with distorsion is
+    . [#5]  Unable to get calibration matrix K when model with distortion is
       used
     . [#6]  Issue with vpMath::round()
     . [#18] Issues with vpColVector::median() + with assignment operator of
@@ -790,7 +841,7 @@ ViSP 2.8.0 (released July 24th, 2013)
       tracing when faces are concave or not oriented counter clockwise.
     . Still in model-based trackers, add functionalities to use clipping planes.
     . ViSP can now be used with pkg-config
-    . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
+    . New functions in vp1394TwoGrabber to turn auto shutter and auto gain
       on. Also new getter for auto shutter and auto gain min/max values.
     . Support Visual Studio 2012 (MSVC11)
     . Introduce C++ visibility support as described here
@@ -889,7 +940,7 @@ ViSP 2.6.2 (released July 15, 2012)
      - New vpClient and vpServer classes for a multiclients TCP network.
      - New vpPoseFeatures class for pose computation from any visual features.
        To be able to consider other user defined features the compiler should
-       be compatible with C++ 11 standart.
+       be compatible with C++ 11 standard.
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.
@@ -1163,7 +1214,7 @@ ViSP 2.4.4-rc1 (released December 21th, 2009)
     - [7994] vpMeLine : initialization problem for horizontal lines
     - [8001] Coin and SoQt are not detected during CMake configuration
 	     under Fedora 10
-    - [8032] Link error whith GSL while compiling HelloWorld.cpp on OSX
+    - [8032] Link error with GSL while compiling HelloWorld.cpp on OSX
     - [8225] Bug in the multiplication of a twist matrix (6x6) by a matrix (6xn)
     - [8248] Compilation error under Windows MSCV8 if deprecated functions
 	     are not build
@@ -1318,7 +1369,7 @@ ViSP 2.4.2 (released March 27th, 2008)
         in your programs. Otherwise an exception
         vpServoException::notKilledProperly is launched by
         vpServo::~vpServo() destructor.
-    - vpMatrix : Change Infinity Norm and Euclidian Norm formula to match with
+    - vpMatrix : Change Infinity Norm and Euclidean Norm formula to match with
 	the standard matrix norms definitions.
         Change determinant formula for 3x3 matrices to match with
         the standard determinant definition.

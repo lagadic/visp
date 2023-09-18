@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * IBVS on Pioneer P3DX mobile platform
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -68,7 +65,7 @@
   servoing with respect to a segment. The segment consists in two horizontal
   dots. The current visual features that are used are \f${\bf s} = (x_n, l_n,
   \alpha)\f$. The desired one are \f${\bf s^*} = (0, l_n*, 0)\f$, with:
-  - \f$x_n\f$ the normalized abscisse of the point corresponding to segment
+  - \f$x_n\f$ the normalized abscise of the point corresponding to segment
   - \f$l_n\f$ the normalized segment length
   - \f$\alpha\f$ the segment orientation.
 

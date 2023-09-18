@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -282,13 +279,11 @@ set(${list_var}_DST_${__id} \"${${list_var}_DST_${__id}}\")
   endforeach()
 endmacro()
 
-
 macro(vp_copyfiles_make_config_file filename_var list_var)
   vp_copyfiles_make_config_string(${list_var}_CONFIG ${list_var})
   set(${filename_var} "${CMAKE_CURRENT_BINARY_DIR}/copyfiles-${list_var}.cmake")
   file(WRITE "${${filename_var}}" "${${list_var}_CONFIG}")
 endmacro()
-
 
 macro(vp_copyfiles_add_forced_target target list_var comment_str)
   vp_copyfiles_make_config_file(CONFIG_FILE ${list_var})
@@ -340,6 +335,15 @@ endmacro()
 macro(vp_debug_message)
   #string(REPLACE ";" " " __msg "${ARGN}")
   #message(STATUS "${__msg}")
+endmacro()
+
+# remove all matching elements from the list
+macro(vp_list_filterout lst regex)
+  foreach(item ${${lst}})
+    if(item MATCHES "${regex}")
+      list(REMOVE_ITEM ${lst} "${item}")
+    endif()
+  endforeach()
 endmacro()
 
 # remove all matching elements from the list
@@ -432,14 +436,14 @@ macro(vp_list_remove_separator __lst)
   endif()
 endmacro()
 
-# remove cmake ; list separator
+# replace cmake ; list separator
 macro(vp_list_replace_separator __lst __separator)
   if(${__lst})
     list(GET ${__lst} 0 __lst_reformated)
-    list(LENGTH ${__lst} __lenght)
-    if(__lenght GREATER 1)
-      MATH(EXPR __lenght "${__lenght} - 1")
-      foreach(_i RANGE 1 ${__lenght}-1)
+    list(LENGTH ${__lst} __length)
+    if(__length GREATER 1)
+      MATH(EXPR __length "${__length} - 1")
+      foreach(_i RANGE 1 ${__length}-1)
         list(GET ${__lst} ${_i} element)
        set(__lst_reformated "${__lst_reformated}${__separator}${element}")
       endforeach()
@@ -461,7 +465,6 @@ endmacro()
 # Example:
 #   VP_OPTION(USE_VTK "VTK" "QUIET" "Include vtk support" "" ON)
 #   VP_OPTION(USE_VTK "VTK;COMPONENTS;vtkCommonCore;vtkFiltersSources" "" "Include vtk support" "" ON)
-
 macro(VP_OPTION variable package quiet description advanced value)
   set(__option TRUE)
   set(__value ${value})
@@ -925,12 +928,34 @@ macro(vp_check_compiler_flag LANG FLAG RESULT)
       else()
         set(__msg "")
       endif()
+      if(CMAKE_REQUIRED_LIBRARIES)
+        set(__link_libs LINK_LIBRARIES ${CMAKE_REQUIRED_LIBRARIES})
+      else()
+        set(__link_libs)
+      endif()
+      set(__cmake_flags "")
+      if(CMAKE_EXE_LINKER_FLAGS)  # CMP0056 do this on new CMake
+        list(APPEND __cmake_flags "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}")
+      endif()
+
+      # CMP0067 do this on new CMake
+      if(DEFINED CMAKE_CXX_STANDARD)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}")
+      endif()
+      if(DEFINED CMAKE_CXX_STANDARD_REQUIRED)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_STANDARD_REQUIRED=${CMAKE_CXX_STANDARD_REQUIRED}")
+      endif()
+      if(DEFINED CMAKE_CXX_EXTENSIONS)
+        list(APPEND __cmake_flags "-DCMAKE_CXX_EXTENSIONS=${CMAKE_CXX_EXTENSIONS}")
+      endif()
+
       message(STATUS "Performing Test ${RESULT}${__msg}")
       try_compile(${RESULT}
         "${CMAKE_BINARY_DIR}"
         "${_fname}"
-        CMAKE_FLAGS "-DCMAKE_EXE_LINKER_FLAGS=${CMAKE_EXE_LINKER_FLAGS}"   # CMP0056 do this on new CMake
+        CMAKE_FLAGS ${__cmake_flags}
         COMPILE_DEFINITIONS "${FLAG}"
+        ${__link_libs}
         OUTPUT_VARIABLE OUTPUT)
 
       if(${RESULT})
@@ -990,8 +1015,10 @@ macro(vp_check_flag_support lang flag varname base_options)
   endif()
   string(TOUPPER "${flag}" ${varname})
   string(REGEX REPLACE "^(/|-)" "HAVE_${_lang}_" ${varname} "${${varname}}")
-  string(REGEX REPLACE " -|-|=| |\\." "_" ${varname} "${${varname}}")
-  vp_check_compiler_flag("${_lang}" "${base_options} ${flag}" ${${varname}} ${ARGN})
+  string(REGEX REPLACE " -|-|=| |\\.|," "_" ${varname} "${${varname}}")
+  if(DEFINED CMAKE_${_lang}_COMPILER)
+    vp_check_compiler_flag("${_lang}" "${base_options} ${flag}" ${${varname}} ${ARGN})
+  endif()
 endmacro()
 
 # turns off warnings
@@ -1618,7 +1645,7 @@ macro(vp_get_all_libs _modules _extra_opt _extra_dbg _3rdparty)
       endif()
     endforeach()
 
-    foreach (dep ${deps} ${VISP_LINKER_LIBS})
+    foreach (dep ${deps}) # Should be remove ? ${VISP_LINKER_LIBS})
       if (NOT DEFINED VISP_MODULE_${dep}_LOCATION)
         if(dep MATCHES "^\\$<LINK_ONLY:([^>]+)>$")
           set(dep_dbg "${CMAKE_MATCH_1}")
@@ -1918,4 +1945,27 @@ macro(vp_system_information NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOT
   set(${IS_64BIT} ${__IS_64BIT})
   set(${HAS_FPU} ${__HAS_FPU})
   set(${CPU_OPTIM} ${__CPU_OPTIM})
+endmacro()
+
+# Replace regular expression in a var
+macro(vp_replace_string var_in var_out regular_expression replacement_expression)
+  set(__var_out ${var_out})
+  if(${var_in} MATCHES "${regular_expression}")
+    string(REGEX REPLACE "${regular_expression}" "${replacement_expression}" ${var_out} ${${var_in}})
+  else()
+    set(${__var_out} ${${var_in}})
+  endif()
+endmacro()
+
+macro(vp_list_replace_string list_in list_out regular_expression replacement_expression)
+  set(__list_out ${var_out})
+  foreach(item ${${list_in}})
+    if(item MATCHES "${regular_expression}")
+      string(REGEX REPLACE "${regular_expression}" "${replacement_expression}" var_out ${item})
+    else()
+      set(var_out ${item})
+    endif()
+    list(APPEND __list_out ${var_out})
+  endforeach()
+  set(${list_out} ${__list_out})
 endmacro()

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test image morphology.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testImageMorphology.cpp
@@ -45,15 +45,19 @@
 #define CATCH_CONFIG_RUNNER
 #include "common.hpp"
 #include <catch.hpp>
+#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageMorphology.h>
 
 TEST_CASE("Binary image morphology", "[image_morphology]")
 {
-  unsigned char image_data[8 * 16] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0,
-                                      0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,
-                                      1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0,
-                                      0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1,
-                                      0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0};
+  unsigned char image_data[8 * 16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
+                                      0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0,
+                                      0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
+                                      0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+                                      1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
+                                      1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
 
   vpImage<unsigned char> I(image_data, 8, 16, true);
 
@@ -68,7 +72,7 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       common_tools::imageDilatationRef(I_morpho_ref, connexity);
       vpImageMorphology::dilatation(I_morpho_tpl, (unsigned char)1, (unsigned char)0, connexity);
-      vpImageMorphology::dilatation(I_morpho, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
@@ -82,7 +86,7 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       common_tools::imageDilatationRef(I_morpho_ref, connexity);
       vpImageMorphology::dilatation(I_morpho_tpl, (unsigned char)1, (unsigned char)0, connexity);
-      vpImageMorphology::dilatation(I_morpho, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
@@ -100,7 +104,7 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       common_tools::imageErosionRef(I_morpho_ref, connexity);
       vpImageMorphology::erosion(I_morpho_tpl, (unsigned char)1, (unsigned char)0, connexity);
-      vpImageMorphology::erosion(I_morpho, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
@@ -115,7 +119,7 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
 
       common_tools::imageErosionRef(I_morpho_ref, connexity);
       vpImageMorphology::erosion(I_morpho_tpl, (unsigned char)1, (unsigned char)0, connexity);
-      vpImageMorphology::erosion(I_morpho, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
@@ -128,24 +132,24 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
     {
       const vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_4;
       vpImage<unsigned char> I_dilatation = I;
-      vpImageMorphology::dilatation(I_dilatation, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_dilatation, connexity);
 
       unsigned char image_data_dilatation[8 * 16] = {
           0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0,
           0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1,
           1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1,
-          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1};
+          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 8, 16, true);
       CHECK((I_dilatation_ref == I_dilatation));
 
       vpImage<unsigned char> I_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_erosion, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
 
       unsigned char image_data_erosion[8 * 16] = {
           0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 0,
           0, 0, 0, 0, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1,
           0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-          1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0};
+          1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 8, 16, true);
       CHECK((I_erosion_ref == I_erosion));
     }
@@ -154,24 +158,24 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
     {
       const vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_8;
       vpImage<unsigned char> I_dilatation = I;
-      vpImageMorphology::dilatation(I_dilatation, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_dilatation, connexity);
 
       unsigned char image_data_dilatation[8 * 16] = {
           0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1,
           0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
           1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1,
-          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1};
+          1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 8, 16, true);
       CHECK((I_dilatation_ref == I_dilatation));
 
       vpImage<unsigned char> I_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_erosion, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
 
       unsigned char image_data_erosion[8 * 16] = {
           0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0,
           0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1,
           0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1,
-          1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1};
+          1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 8, 16, true);
       CHECK((I_erosion_ref == I_erosion));
     }
@@ -192,7 +196,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImage<unsigned char> I_morpho = I;
 
       common_tools::imageDilatationRef(I_morpho_ref, connexity);
-      vpImageMorphology::dilatation(I_morpho, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
     }
@@ -203,7 +207,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImage<unsigned char> I_morpho = I;
 
       common_tools::imageDilatationRef(I_morpho_ref, connexity);
-      vpImageMorphology::dilatation(I_morpho, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
     }
@@ -218,7 +222,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImage<unsigned char> I_morpho = I;
 
       common_tools::imageErosionRef(I_morpho_ref, connexity);
-      vpImageMorphology::erosion(I_morpho, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
     }
@@ -230,7 +234,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImage<unsigned char> I_morpho = I;
 
       common_tools::imageErosionRef(I_morpho_ref, connexity);
-      vpImageMorphology::erosion(I_morpho, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
     }
@@ -242,7 +246,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
     {
       const vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_4;
       vpImage<unsigned char> I_dilatation = I;
-      vpImageMorphology::dilatation(I_dilatation, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_dilatation, connexity);
 
       unsigned char image_data_dilatation[17 * 17] = {
           174, 193, 212, 231, 250, 255, 255, 255, 255, 39,  58,  77,  96,  115, 134, 153, 154, 192, 211, 230, 249,
@@ -258,12 +262,12 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           198, 217, 236, 255, 255, 255, 255, 255, 44,  63,  81,  119, 121, 140, 159, 178, 197, 216, 235, 254, 255,
           255, 255, 255, 43,  62,  81,  99,  136, 139, 158, 177, 196, 215, 234, 253, 255, 255, 255, 255, 42,  61,
           80,  99,  117, 138, 157, 176, 195, 214, 233, 252, 255, 255, 255, 255, 41,  60,  79,  98,  117, 135, 156,
-          175, 194, 213, 232, 251, 255, 255, 255, 255, 40,  59,  78,  97,  116, 135, 135};
+          175, 194, 213, 232, 251, 255, 255, 255, 255, 40,  59,  78,  97,  116, 135, 135 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 17, 17, true);
       CHECK((I_dilatation_ref == I_dilatation));
 
       vpImage<unsigned char> I_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_erosion, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
 
       unsigned char image_data_erosion[17 * 17] = {
           174, 174, 193, 212, 231, 250, 255, 255, 38,  39,  39,  58,  77,  96,  115, 134, 153, 174, 192, 211, 230,
@@ -279,7 +283,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           179, 198, 217, 236, 255, 255, 255, 43,  44,  44,  63,  101, 119, 121, 140, 159, 178, 197, 216, 235, 254,
           255, 255, 42,  43,  43,  62,  81,  119, 121, 139, 158, 177, 196, 215, 234, 253, 255, 255, 41,  42,  42,
           61,  80,  99,  136, 138, 157, 176, 195, 214, 233, 252, 255, 255, 40,  41,  41,  60,  79,  98,  117, 138,
-          156, 175, 194, 213, 232, 251, 255, 255, 40,  40,  40,  59,  78,  97,  116, 135};
+          156, 175, 194, 213, 232, 251, 255, 255, 40,  40,  40,  59,  78,  97,  116, 135 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 17, 17, true);
       CHECK((I_erosion_ref == I_erosion));
     }
@@ -288,7 +292,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
     {
       const vpImageMorphology::vpConnexityType connexity = vpImageMorphology::CONNEXITY_8;
       vpImage<unsigned char> I_dilatation = I;
-      vpImageMorphology::dilatation(I_dilatation, connexity);
+      vpImageMorphology::dilatation<unsigned char>(I_dilatation, connexity);
 
       unsigned char image_data_dilatation[17 * 17] = {
           192, 211, 230, 249, 255, 255, 255, 255, 255, 57,  76,  95,  114, 133, 152, 154, 154, 210, 229, 248, 255,
@@ -304,12 +308,12 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           216, 235, 254, 255, 255, 255, 255, 255, 255, 81,  81,  120, 139, 158, 177, 196, 215, 234, 253, 255, 255,
           255, 255, 255, 255, 80,  99,  99,  138, 157, 176, 195, 214, 233, 252, 255, 255, 255, 255, 255, 255, 79,
           98,  117, 117, 156, 175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 255, 78,  97,  116, 135, 135, 156,
-          175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 59,  78,  97,  116, 135, 135};
+          175, 194, 213, 232, 251, 255, 255, 255, 255, 255, 59,  78,  97,  116, 135, 135 };
       vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 17, 17, true);
       CHECK((I_dilatation_ref == I_dilatation));
 
       vpImage<unsigned char> I_erosion = I_dilatation;
-      vpImageMorphology::erosion(I_erosion, connexity);
+      vpImageMorphology::erosion<unsigned char>(I_erosion, connexity);
 
       unsigned char image_data_erosion[17 * 17] = {
           192, 192, 211, 230, 249, 255, 255, 255, 57,  57,  57,  76,  95,  114, 133, 152, 154, 192, 192, 211, 230,
@@ -325,14 +329,14 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
           179, 198, 217, 236, 255, 255, 255, 80,  80,  63,  63,  119, 119, 121, 140, 159, 178, 197, 216, 235, 254,
           255, 255, 79,  79,  79,  80,  81,  120, 120, 139, 158, 177, 196, 215, 234, 253, 255, 255, 78,  78,  78,
           79,  80,  99,  138, 138, 157, 176, 195, 214, 233, 252, 255, 255, 59,  59,  59,  78,  79,  98,  117, 156,
-          156, 175, 194, 213, 232, 251, 255, 255, 255, 59,  59,  59,  78,  97,  116, 135};
+          156, 175, 194, 213, 232, 251, 255, 255, 255, 59,  59,  59,  78,  97,  116, 135 };
       vpImage<unsigned char> I_erosion_ref(image_data_erosion, 17, 17, true);
       CHECK((I_erosion_ref == I_erosion));
     }
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
 

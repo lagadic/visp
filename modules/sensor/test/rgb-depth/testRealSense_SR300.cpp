@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test Intel RealSense acquisition.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testRealSense_SR300.cpp
@@ -456,7 +456,6 @@ int main(int argc, char *argv[])
                "SR300_DEPTH_ALIGNED_TO_COLOR_Z16_640x480_30FPS",
                true, rs::stream::color, rs::stream::depth_aligned_to_color);
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020409
     rs.setEnableStream(rs::stream::color, true);
     rs.setEnableStream(rs::stream::depth, false);
     rs.setEnableStream(rs::stream::infrared, true);
@@ -482,8 +481,6 @@ int main(int argc, char *argv[])
         break;
       }
     }
-#endif
-
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
   } catch (const rs::error &e) {

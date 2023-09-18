@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Biclops robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRobotBiclops_h_
 #define _vpRobotBiclops_h_
@@ -74,7 +71,7 @@
 
   This class provide a position and a speed control interface for the biclops
   head. To manage the biclops joint limits in speed control, a control loop is
-  running in a seperate thread implemented in vpRobotBiclopsSpeedControlLoop().
+  running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
 
   The control of the head is done by vpRobotBiclopsController class.
 

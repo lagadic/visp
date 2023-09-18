@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Make the complete tracking of an object by using its CAD model
  *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMbEdgeTracker.cpp
@@ -176,8 +171,8 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
 
   bool reloop = true;
 
-  bool isoJoIdentity_ = isoJoIdentity; // Backup since it can be modified if L is not full rank
-  if (isoJoIdentity_)
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
     oJo.eye();
 
   /*** First phase ***/
@@ -192,7 +187,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
       reloop = false;
     }
 
-    computeVVSFirstPhasePoseEstimation(iter, isoJoIdentity_);
+    computeVVSFirstPhasePoseEstimation(iter, isoJoIdentity);
 
     iter++;
   }
@@ -234,7 +229,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
 
       if (computeCovariance) {
         L_true = m_L_edge;
-        if (!isoJoIdentity_) {
+        if (!isoJoIdentity) {
           cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_edge * cVo * oJo);
         }
@@ -271,7 +266,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
       residu_1 = r;
       r = sqrt(num / den); // Le critere d'arret prend en compte le poids
 
-      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L_edge, LTL, m_weightedError_edge, m_error_edge, m_error_prev,
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L_edge, LTL, m_weightedError_edge, m_error_edge, m_error_prev,
                                LTR, mu, v, &m_w_edge, &m_w_prev);
 
       cMoPrev = m_cMo;
@@ -282,7 +277,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
     iter++;
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMoPrev, L_true, LVJ_true, m_error_edge);
+  computeCovarianceMatrixVVS(isoJoIdentity, W_true, cMoPrev, L_true, LVJ_true, m_error_edge);
 
   updateMovingEdgeWeights();
 }
@@ -579,7 +574,6 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
         }
       }
 
-      unsigned int indexFeature = 0;
       for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::const_iterator itListLine;
         if (l->meline[a] != NULL) {
@@ -591,7 +585,6 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
             if (site.getState() != vpMeSite::NO_SUPPRESSION)
               m_factor[n + i] = 0.2;
             ++itListLine;
-            indexFeature++;
           }
           n += l->nbFeature[a];
         }
@@ -653,7 +646,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
   }
 }
 
-void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_)
+void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity)
 {
   unsigned int nerror = m_weightedError_edge.getRows();
 
@@ -682,9 +675,9 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
 
   // If all the 6 dof should be estimated, we check if the interaction matrix
   // is full rank. If not we remove automatically the dof that cannot be
-  // estimated This is particularly useful when consering circles (rank 5) and
+  // estimated This is particularly useful when considering circles (rank 5) and
   // cylinders (rank 4)
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     cVo.buildFrom(m_cMo);
 
     vpMatrix K; // kernel
@@ -697,7 +690,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
       I.eye(6);
       oJo = I - K.AtA();
 
-      isoJoIdentity_ = false;
+      isoJoIdentity = false;
     }
   }
 
@@ -705,7 +698,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
   vpMatrix LTL;
   vpColVector LTR;
 
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     LTL = m_L_edge.AtA();
     computeJTR(m_L_edge, m_weightedError_edge, LTR);
     v = -0.7 * LTL.pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR;
@@ -1454,7 +1447,7 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char> &I)
         vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
         break;
 
-      case vpMeSite::CONSTRAST:
+      case vpMeSite::CONTRAST:
         vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
         break;
 
@@ -1489,7 +1482,7 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<vpRGBa> &I)
         vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
         break;
 
-      case vpMeSite::CONSTRAST:
+      case vpMeSite::CONTRAST:
         vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
         break;
 
@@ -2598,7 +2591,7 @@ void vpMbEdgeTracker::setScales(const std::vector<bool> &scale)
   if (scale.empty() || (nbActivatedLevels == 0)) {
     vpERROR_TRACE(" !! WARNING : must use at least one level for the "
                   "tracking. Use the global one");
-    this->scales.resize(0);
+    this->scales.clear();
     this->scales.push_back(true);
 
     lines.resize(1);
@@ -2737,23 +2730,11 @@ void vpMbEdgeTracker::initPyramid(const vpImage<unsigned char> &_I,
     if (scales[i]) {
       unsigned int cScale = static_cast<unsigned int>(pow(2., (int)i));
       vpImage<unsigned char> *I = new vpImage<unsigned char>(_I.getHeight() / cScale, _I.getWidth() / cScale);
-#if (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION < 0x020408))
-      IplImage *vpI0 = cvCreateImageHeader(cvSize((int)_I.getWidth(), (int)_I.getHeight()), IPL_DEPTH_8U, 1);
-      vpI0->imageData = (char *)(_I.bitmap);
-      IplImage *vpI =
-          cvCreateImage(cvSize((int)(_I.getWidth() / cScale), (int)(_I.getHeight() / cScale)), IPL_DEPTH_8U, 1);
-      cvResize(vpI0, vpI, CV_INTER_NN);
-      vpImageConvert::convert(vpI, *I);
-      cvReleaseImage(&vpI);
-      vpI0->imageData = NULL;
-      cvReleaseImageHeader(&vpI0);
-#else
       for (unsigned int k = 0, ii = 0; k < I->getHeight(); k += 1, ii += cScale) {
         for (unsigned int l = 0, jj = 0; l < I->getWidth(); l += 1, jj += cScale) {
           (*I)[k][l] = _I[ii][jj];
         }
       }
-#endif
       _pyramid[i] = I;
     } else {
       _pyramid[i] = NULL;

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeNurbs.h
@@ -90,7 +87,8 @@ int main()
   vpMe me;
   me.setRange(25);
   me.setPointsToTrack(20);
-  me.setThreshold(15000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
   me.setSampleStep(10);
 
   // Initialize the moving-edges tracker parameters
@@ -122,9 +120,10 @@ int main()
   must use the display function of the class vpMeNurbs.
 
   \note In case of an edge which is not smooth, it can be interesting to use
-the canny detection to find the extremities. In this case, use the method
-  setEnableCannyDetection to enable it. Warning : This function requires
-OpenCV.
+  the canny detection to find the extremities. In this case, use the method
+  setEnableCannyDetection to enable it.
+
+  \warning : This function requires OpenCV.
 */
 
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
@@ -152,9 +151,9 @@ private:
   //! search.
   bool enableCannyDetection;
   //! First canny threshold
-  double cannyTh1;
+  float cannyTh1;
   //! Second canny threshold
-  double cannyTh2;
+  float cannyTh2;
 
 public:
   vpMeNurbs();
@@ -182,7 +181,7 @@ public:
     \param th1 : The first threshold;
     \param th2 : The second threshold;
   */
-  void setCannyThreshold(double th1, double th2)
+  void setCannyThreshold(float th1, float th2)
   {
     this->cannyTh1 = th1;
     this->cannyTh2 = th2;
@@ -209,7 +208,7 @@ public:
   */
   inline vpNurbs getNurbs() const { return nurbs; }
 
-  void display(const vpImage<unsigned char> &I, vpColor col);
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
 private:
   bool computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element);
@@ -223,8 +222,8 @@ private:
   bool farFromImageEdge(const vpImage<unsigned char> &I, const vpImagePoint &iP);
 
 public:
-  static void display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor color = vpColor::green);
-  static void display(const vpImage<vpRGBa> &I, vpNurbs &n, vpColor color = vpColor::green);
+  static void display(const vpImage<unsigned char> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP overall configuration file. Detect third party libraries (X11, GTK, ...)
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -81,7 +78,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-cmake_minimum_required(VERSION 3.0) # needs to be before project() for policy CMP0025
+cmake_minimum_required(VERSION 3.5) # needs to be before project() for policy CMP0025
 
 # Detect if the toolchain is for Aldebaran naoqi
 if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
@@ -284,7 +281,7 @@ VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAK
 VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86_64)) ) # X86 disabled since it produces an issue on Debian i386
 if(X86_64)
-  VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitely enabled, used in matrix transpose code
+  VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitly enabled, used in matrix transpose code
 endif()
 
 #----------------------------------------------------------------------
@@ -333,12 +330,13 @@ endif()
 # add the path to detect Ogre3D
 if(WIN32)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
-  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
 endif(WIN32)
 
 if(UNIX)
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/cmake")
   list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}/CMake")
+  list(APPEND CMAKE_MODULE_PATH "${OGRE_DIR}")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/lib/OGRE/cmake")
   list(APPEND CMAKE_MODULE_PATH "/usr/local/lib64/OGRE/cmake")
@@ -384,39 +382,14 @@ if(WIN32)
   endif()
 endif()
 
-# Add library ws2_32.a or ws2_32.lib for vpNetwork class
 if(WIN32 AND NOT CYGWIN)
-  if(MINGW)
-    set(WS2_32_LIBRARY "ws2_32.a")
-    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
-    else()
-      find_library(HAVE_LIBWS2_32 ${WS2_32_LIBRARY}
-        "$ENV{MINGW_DIR}/lib"
-        "$ENV{MINGW_DIR}/mingw/lib"
-        C:/mingw/mingw/lib)
-      if(HAVE_LIBWS2_32)
-        list(APPEND VISP_LINKER_LIBS "${WS2_32_LIBRARY}")
-      endif()
-    endif()
-  elseif(WINRT)
-    # Since check_library_exists() and find_library() does't work to detect ws2_32.lib we add the lib that is part of Windows SDK
-    set(WS2_32_LIBRARY "ws2_32.lib")
-    list(APPEND VISP_LINKER_LIBS  ${WS2_32_LIBRARY})
-  else() # pure WIN32
-    set(WS2_32_LIBRARY "ws2_32.lib")
-    #check_library_exists("ws2_32.lib" getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    check_library_exists(${WS2_32_LIBRARY} getch "" HAVE_LIBWS2_32) # for inet_ntoa() and socket functionalities
-    if(HAVE_LIBWS2_32)
-      list(APPEND VISP_LINKER_LIBS ${WS2_32_LIBRARY})
-    endif()
-  endif()
-  mark_as_advanced(HAVE_LIBWS2_32)
+  VP_CHECK_PACKAGE(WS2_32)
+  # Should be before include(cmake/VISPDetectCXXStandard.cmake)
+  VP_CHECK_FUNCTION_EXISTS(inet_ntop "${WS2_32_LIBRARY}")
+else()
+  # Should be before include(cmake/VISPDetectCXXStandard.cmake)
+  VP_CHECK_FUNCTION_EXISTS(inet_ntop "")
 endif()
-
-# Should be before include(cmake/VISPDetectCXXStandard.cmake)
-VP_CHECK_FUNCTION_EXISTS(inet_ntop "${VISP_LINKER_LIBS}")
 
 #--------------------------------------------------------------------
 # Option management
@@ -573,19 +546,18 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
   VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-if (ANDROID)
-  VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON)
-else()
-  VP_OPTION(USE_PTHREAD     PTHREAD     ""    "Include pthread support"      "" ON)
-endif()
+set(THREADS_PREFER_PTHREAD_FLAG ON)
+VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON IF NOT (WIN32 OR MINGW))
+
 # We need threads with c++11
 if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_PTHREAD)
-  if(Threads_FOUND OR PTHREAD_FOUND)
+  if(Threads_FOUND)
     message(WARNING "We need threads. Turn USE_PTHREAD=ON.")
     unset(USE_PTHREAD)
     set(USE_PTHREAD ON CACHE BOOL "Include pthread support" FORCE)
   endif()
 endif()
+
 VP_OPTION(USE_XML2        XML2        ""    "Include xml support"          "" ON IF NOT WINRT)
 if(CMAKE_TOOLCHAIN_FILE)
   # Find opencv2.framework for ios and naoqi
@@ -610,6 +582,7 @@ VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" O
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_NLOHMANN_JSON  nlohmann_json QUIET "Include nlohmann json support" "" ON)
 
 # ----------------------------------------------------------------------------
 # Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
@@ -702,6 +675,7 @@ VP_CHECK_PACKAGE(IsInf)
 VP_CHECK_PACKAGE(Round)
 VP_CHECK_PACKAGE(Erfc)
 VP_CHECK_PACKAGE(Strtof)
+VP_CHECK_PACKAGE(IsFinite)
 VP_CHECK_PACKAGE(Log1p)
 
 #----------------------------------------------------------------------
@@ -918,6 +892,7 @@ VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 VP_SET(VISP_HAVE_TENSORRT    TRUE IF (BUILD_MODULE_visp_core AND USE_TENSORRT))
+VP_SET(VISP_HAVE_NLOHMANN_JSON   TRUE IF (BUILD_MODULE_visp_core AND USE_NLOHMANN_JSON))
 
 VP_SET(VISP_HAVE_OGRE        TRUE IF (BUILD_MODULE_visp_ar AND USE_OGRE))
 VP_SET(VISP_HAVE_OIS         TRUE IF (BUILD_MODULE_visp_ar AND USE_OIS))
@@ -1041,12 +1016,6 @@ if(USE_OPENCV)
   else()
     message(STATUS "opencv nonfree not found")
     set(VISP_HAVE_OPENCV_VERSION "(0)") # for vpConfig.h
-  endif()
-  if(OPENCV_DNN_FOUND)
-    set(VISP_HAVE_OPENCV_DNN TRUE)  # for header vpConfig.h
-  endif()
-  if(OPENCV_OBJDETECT_FOUND)
-    set(VISP_HAVE_OPENCV_OBJDETECT TRUE)  # for header vpConfig.h
   endif()
 endif()
 
@@ -1515,6 +1484,14 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 
 # ===================== Optional 3rd parties =====================
 status("")
+status("  OpenCV: ")
+status("    Version:"             USE_OPENCV         THEN "${OpenCV_VERSION}" ELSE "n/a")
+if(USE_OPENCV)
+  vp_list_replace_string(OpenCV_LIB_COMPONENTS OpenCV_LIB_COMPONENTS_FILTERED "^opencv_+" "")
+  status("    Modules:"    "${OpenCV_LIB_COMPONENTS_FILTERED}")
+  status("    OpenCV dir:" "${OpenCV_DIR}")
+endif()
+status("")
 status("  Mathematics: ")
 status("    Blas/Lapack:"            (USE_LAPACK OR WITH_LAPACK) THEN "yes" ELSE "no")
 status("    \\- Use MKL:"            USE_MKL            THEN "yes" ELSE "no")
@@ -1617,6 +1594,7 @@ status("  Misc: ")
 status("    Use Clipper (built-in):"  WITH_CLIPPER     THEN "yes (ver ${CLIPPER_VERSION})" ELSE "no")
 status("    Use pugixml (built-in):"                        "yes (ver ${PUGIXML_VERSION})")
 status("    Use libxml2:"             USE_XML2         THEN "yes (ver ${XML2_VERSION_STRING})" ELSE "no")
+status("    Use json (nlohmann):"     USE_NLOHMANN_JSON THEN "yes (ver ${nlohmann_json_VERSION})" ELSE "no")
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")

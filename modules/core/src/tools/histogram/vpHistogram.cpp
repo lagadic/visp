@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Gray level histogram manipulation.
  *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpHistogram.cpp
@@ -89,12 +86,6 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
   unsigned char *ptrStart = (unsigned char *)(I->bitmap) + start_index;
   unsigned char *ptrEnd = (unsigned char *)(I->bitmap) + end_index;
   unsigned char *ptrCurrent = ptrStart;
-
-  //    while(ptrCurrent != ptrEnd) {
-  //      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ]
-  //      ] ++;
-  //      ++ptrCurrent;
-  //    }
 
   if (end_index - start_index >= 8) {
     // Unroll loop version
@@ -962,13 +953,11 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     }
     // Go to the requested peak in the list
     std::list<vpHistogramPeak>::const_iterator it;
-    unsigned index = 0;
     for (it = peaks.begin(); it != peaks.end(); ++it) {
       if (peak == *it) {
         // we are on the peak.
         break;
       }
-      index++;
     }
 
     bool found = false;

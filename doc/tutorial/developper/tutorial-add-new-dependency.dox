@@ -18,7 +18,7 @@ Let us consider the case where we want to implement a new class with name `vpDum
                        |- lib     --- libdummy_sdk.so
 \endcode
 
-To illustrate this tutorial, let us consider that `<dummy sdk root path>` is equal to `/home/user/visp_ws/3rdparty/dummy-sdk` folder.
+To illustrate this tutorial, let us consider that `<dummy sdk root path>` is equal to `/home/user/visp-ws/3rdparty/dummy-sdk` folder.
 
 In order that ViSP remains cross-platform, here we should consider that this dummy SDK is used only if `VISP_HAVE_DUMMY_SDK` macro is defined. We suppose here that this macro is automatically defined (or not) in `visp3/core/vpConfig.h` file that is located in ViSP build tree, more precisely in `$VISP_WS/visp-build/include` folder.
 
@@ -104,7 +104,7 @@ status("    Use Dummy SDK:"        USE_DUMMYSDK      THEN "yes" ELSE "no")
 - At this point before continuing, test if your SDK is detected. First set `DUMMYSDK_HOME` environment variable and run cmake over ViSP source code. On unix-like OS, this could be achieved running:
 \code
 $ cd $VISP_WS/visp-build
-$ export DUMMYSDK_HOME=/home/user/visp_ws/3rdparty/dummy-sdk
+$ export DUMMYSDK_HOME=/home/user/visp-ws/3rdparty/dummy-sdk
 $ ccmake ../visp
 \endcode
 Here you should see appearing a new line like the following that shows that your `DummySDK` package is found by CMake:
@@ -113,8 +113,8 @@ Here you should see appearing a new line like the following that shows that your
 \endcode
 Entering advanced mode by pressing `[t]` key, you should be also able to see the following lines that indicate the full path to `DummySDK` headers folder and library:
 \code
- DUMMYSDK_INCLUDE_DIR             /home/user/visp_ws/3rdparty/dummy-sdk/include/dummy_sdk_header.h
- DUMMYSDK_LIBRARY                 /home/user/visp_ws/3rdparty/dummy-sdk/lib/libdummy_sdk.so
+ DUMMYSDK_INCLUDE_DIR             /home/user/visp-ws/3rdparty/dummy-sdk/include/dummy_sdk_header.h
+ DUMMYSDK_LIBRARY                 /home/user/visp-ws/3rdparty/dummy-sdk/lib/libdummy_sdk.so
 \endcode
 
 \subsection add_new_dep_modif_macro Add VISP_HAVE 3rd-party macro
@@ -144,7 +144,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
 - At this point, you can test if `VISP_HAVE_DUMMY_SDK` macro is correctly set after CMake configuration in `$VISP_WS/visp-build/include/visp3/core/vpConfig.h`. To this end, under linux-like OS run simply:
 \code
 $ cd $VISP_WS/visp-build
-$ export DUMMYSDK_HOME=/home/user/visp_ws/3rdparty/dummy-sdk
+$ export DUMMYSDK_HOME=/home/user/visp-ws/3rdparty/dummy-sdk
 $ cmake ../visp
 \endcode
 Here you should see that `DummySDK` is well detected:
@@ -305,7 +305,7 @@ $ more CMakeLists.txt
 \code
 project(example-dummy)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_robot)
 
@@ -409,9 +409,9 @@ $ cd $VISP_WS/my-project
 $ more CMakeLists.txt
 \endcode
 \code
-project(example-dummy)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(example-dummy)
 
 find_package(VISP REQUIRED visp_core visp_robot)
 

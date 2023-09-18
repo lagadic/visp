@@ -217,9 +217,9 @@ Now you have to create a `CMakeLists.txt` file that gives the instructions on ho
 
 Open your editor and copy/paste the following lines in `VISP_WS/started/CMakeLists.txt` file.
 \code
-project(tutorial-image)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-image)
 
 find_package(VISP REQUIRED)
 
@@ -237,9 +237,9 @@ The `find_package()` CMake command searches for a `VISPConfig.cmake` file that w
 
 Note that the previous `CMakeLists.txt` file can also be:
 \code
-project(tutorial-image)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-image)
 
 find_package(VISP REQUIRED)
 if(VISP_FOUND)

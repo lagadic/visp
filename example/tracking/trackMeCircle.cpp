@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,8 @@
  * Description:
  * Tracking of an ellipse.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
+
 /*!
   \file trackMeCircle.cpp
 
@@ -97,7 +94,7 @@ Test auto detection of dots using vpDot2.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-c] [-d] [-h]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -110,15 +107,15 @@ OPTIONS:                                               Default\n\
      this option.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str(), ext.c_str());
+    ipath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -216,8 +213,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -226,9 +223,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -250,25 +247,26 @@ int main(int argc, const char **argv)
       vpCTRACE << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
-    } catch (...) {
+    }
+    catch (...) {
       // If an exception is throwned it is catched here and will result in the end of the program.
       // Note that another error message can be printed from vpImageIo::read() to give more
       // information about the error
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+        << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       return EXIT_FAILURE;
     }
 
-// We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+    // We open a window using either X11, GTK or GDI.
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #endif
 
@@ -278,7 +276,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -289,7 +287,8 @@ int main(int argc, const char **argv)
     vpMe me;
     me.setRange(20);
     me.setSampleStep(2);
-    me.setThreshold(15000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(20);
 
     E1.setMe(&me);
     E1.setDisplay(vpMeSite::RANGE_RESULT);
@@ -297,7 +296,8 @@ int main(int argc, const char **argv)
     // on the ellipse
     if (opt_display && opt_click_allowed) {
       E1.initTracking(I);
-    } else {
+    }
+    else {
       // Create a list of points to automate the test
       std::vector<vpImagePoint> ip;
       ip.push_back(vpImagePoint(78, 203));
@@ -327,7 +327,8 @@ int main(int argc, const char **argv)
     }
     std::cout << "------------------------------------------------------------" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -343,8 +344,8 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
-               "functionalities are required..."
-            << std::endl;
+    "functionalities are required..."
+    << std::endl;
   return EXIT_SUCCESS;
 }
 

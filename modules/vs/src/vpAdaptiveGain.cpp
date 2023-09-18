@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Nicolas Mansard
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
 \file vpAdaptiveGain.cpp
 */
@@ -196,7 +196,7 @@ double vpAdaptiveGain::setConstant(void)
   \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.
@@ -231,7 +231,7 @@ double vpAdaptiveGain::limitValue_const(void) const
   This value is stored as a parameter of the class.
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.
@@ -270,7 +270,7 @@ double vpAdaptiveGain::limitValue(void) const
   \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
   \param x : Input value to consider. During a visual servo this value can be
-  the euclidian norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+  the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
   e}||_{\infty}\f$ of the task function.
 
   \return It returns the value of the computed gain.

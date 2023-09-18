@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -152,7 +152,7 @@ int main()
   std::cout << obj << std::endl;
 
   // 3. Directly indexing the moment object
-  std::cout << std::endl << "Direct acces to some basic moments: " << std::endl;
+  std::cout << std::endl << "Direct access to some basic moments: " << std::endl;
   std::cout << "m00: " << obj.get(0, 0) << std::endl;
   std::cout << "m10: " << obj.get(1, 0) << std::endl;
   std::cout << "m01: " << obj.get(0, 1) << std::endl;
@@ -201,7 +201,7 @@ Basic moment available:
 0.00080625	-7.125e-05	x	x	x	x
 -6.59375e-05	x	x	x	x	x
 
-Direct acces to some basic moments:
+Direct access to some basic moments:
 m00: 4
 m10: 0.1
 m01: -0.05

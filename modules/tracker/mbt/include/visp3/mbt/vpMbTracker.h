@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -36,7 +36,7 @@
  * Romain Tallonneau
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMbTracker.h
@@ -114,7 +114,7 @@ protected:
   //! The Degrees of Freedom to estimate
   vpMatrix oJo;
   //! Boolean to know if oJo is identity (for fast computation)
-  bool isoJoIdentity;
+  bool m_isoJoIdentity;
   //! The name of the file containing the model (it is used to create a file
   //! name.0.pos used to store the compute pose in the initClick method).
   std::string modelFileName;
@@ -794,7 +794,7 @@ protected:
   void createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const double &radius,
                           std::vector<std::vector<vpPoint> > &listFaces);
 
-  virtual void computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true,
+  virtual void computeCovarianceMatrixVVS(const bool isoJoIdentity, const vpColVector &w_true,
                                           const vpHomogeneousMatrix &cMoPrev, const vpMatrix &L_true,
                                           const vpMatrix &LVJ_true, const vpColVector &error);
 
@@ -809,7 +809,7 @@ protected:
                                                  const vpColVector *const m_w_prev = NULL);
   virtual void computeVVSInit() = 0;
   virtual void computeVVSInteractionMatrixAndResidu() = 0;
-  virtual void computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
+  virtual void computeVVSPoseEstimation(const bool isoJoIdentity, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
                                         vpColVector &R, const vpColVector &error, vpColVector &error_prev,
                                         vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w = NULL,
                                         vpColVector *const m_w_prev = NULL);

@@ -1,6 +1,6 @@
 project(tutorial-grabber)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_sensor visp_io visp_gui)
 
@@ -57,6 +57,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unused-parameter")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS_RS "-Wno-unqualified-std-cast-call")
 endif()
 if(VISP_HAVE_OCCIPITAL_STRUCTURE)
   # Add specific build flag to turn off warnings coming from Occipital SDK 3rd party

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test for mouse click manipulations.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -86,7 +83,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, vpDisplayType &
 void usage(const char *name, const char *badparam, std::string ipath, vpDisplayType &dtype)
 {
   fprintf(stdout, "\n\
-Test click functionnalities in video devices or display.\n\
+Test click functionalities in video devices or display.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] \n\
@@ -136,8 +133,8 @@ OPTIONS:                                               Default\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -241,13 +238,13 @@ int main(int argc, const char **argv)
     bool opt_display = true;
 
 // Default display is one available
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
     opt_dtype = vpGTK;
-#elif defined VISP_HAVE_X11
+#elif defined(VISP_HAVE_X11)
     opt_dtype = vpX11;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     opt_dtype = vpGDI;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     opt_dtype = vpD3D;
 #elif defined VISP_HAVE_OPENCV
     opt_dtype = vpCV;
@@ -270,19 +267,20 @@ int main(int argc, const char **argv)
     if (opt_list) {
       unsigned nbDevices = 0;
       std::cout << "List of video-devices available: \n";
-#if defined VISP_HAVE_GTK
+#if defined(VISP_HAVE_GTK)
       std::cout << "  GTK (use \"-t GTK\" option to use it)\n";
       nbDevices++;
 #endif
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       std::cout << "  X11 (use \"-t X11\" option to use it)\n";
       nbDevices++;
 #endif
-#if defined VISP_HAVE_GDI
+#if defined(VISP_HAVE_GDI)
+
       std::cout << "  GDI (use \"-t GDI\" option to use it)\n";
       nbDevices++;
 #endif
-#if defined VISP_HAVE_D3D9
+#if defined(VISP_HAVE_D3D9)
       std::cout << "  D3D (use \"-t D3D\" option to use it)\n";
       nbDevices++;
 #endif
@@ -335,8 +333,8 @@ int main(int argc, const char **argv)
 
     switch (opt_dtype) {
     case vpX11:
-      std::cout << "Requested X11 display functionnalities..." << std::endl;
-#if defined VISP_HAVE_X11
+      std::cout << "Requested X11 display functionalities..." << std::endl;
+#if defined(VISP_HAVE_X11)
       display = new vpDisplayX;
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
@@ -345,8 +343,8 @@ int main(int argc, const char **argv)
 #endif
       break;
     case vpGTK:
-      std::cout << "Requested GTK display functionnalities..." << std::endl;
-#if defined VISP_HAVE_GTK
+      std::cout << "Requested GTK display functionalities..." << std::endl;
+#if defined(VISP_HAVE_GTK)
       display = new vpDisplayGTK;
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
@@ -355,8 +353,9 @@ int main(int argc, const char **argv)
 #endif
       break;
     case vpGDI:
-      std::cout << "Requested GDI display functionnalities..." << std::endl;
-#if defined VISP_HAVE_GDI
+      std::cout << "Requested GDI display functionalities..." << std::endl;
+#if defined(VISP_HAVE_GDI)
+
       display = new vpDisplayGDI;
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
@@ -365,8 +364,8 @@ int main(int argc, const char **argv)
 #endif
       break;
     case vpD3D:
-      std::cout << "Requested D3D display functionnalities..." << std::endl;
-#if defined VISP_HAVE_D3D9
+      std::cout << "Requested D3D display functionalities..." << std::endl;
+#if defined(VISP_HAVE_D3D9)
       display = new vpDisplayD3D;
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
@@ -375,8 +374,8 @@ int main(int argc, const char **argv)
 #endif
       break;
     case vpCV:
-      std::cout << "Requested OpenCV display functionnalities..." << std::endl;
-#if defined(VISP_HAVE_OPENCV)
+      std::cout << "Requested OpenCV display functionalities..." << std::endl;
+#if defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV;
 #else
       std::cout << "  Sorry, OpenCV video device is not available.\n";
@@ -395,7 +394,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       // Flush the display

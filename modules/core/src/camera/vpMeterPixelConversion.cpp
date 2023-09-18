@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Meter to pixel conversion.
  *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeterPixelConversion.cpp
@@ -49,13 +45,13 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 
 /*!
-   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
-   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distorsion
-   coefficients.
+  Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
+  to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distortion
+  coefficients.
 
-   \param[in] cam : camera parameters.
-   \param[in] rho_p, theta_p : Line parameters expressed in pixels.
-   \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
+  \param[in] cam : camera parameters.
+  \param[in] rho_p, theta_p : Line parameters expressed in pixels.
+  \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
 */
 void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m,
                                          double &rho_p, double &theta_p)
@@ -84,9 +80,10 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
 
   \param[in] cam : Intrinsic camera parameters.
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
-  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
+  pixels. 
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
@@ -126,9 +123,10 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
 
   \param[in] cam : Intrinsic camera parameters.
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
-  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
+  pixels. 
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
   The following code shows how to use this function:
@@ -169,8 +167,10 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
   \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
-  meter. \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
-  expressed in pixels. \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
+  meter.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
+  expressed in pixels.
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
   area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area)
   expressed in pixels.
 
@@ -186,15 +186,15 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, doubl
   n02_p = n02_m * vpMath::sqr(cam.get_py());
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
 /*!
-   Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
-   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distorsion
-   coefficients.
+  Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
+  to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distortion
+  coefficients.
 
-   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
-   1\end{bmatrix}\f$ \param[in] rho_p, theta_p : Line parameters expressed in pixels. \param[out] rho_m, theta_m : Line
-   parameters expressed in meters in the image plane.
+  \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
+  1\end{bmatrix}\f$ \param[in] rho_p, theta_p : Line parameters expressed in pixels.
+  \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
 
 */
 void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const double &rho_m, const double &theta_m,
@@ -228,7 +228,7 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix, const doub
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
-  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
@@ -277,7 +277,7 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const v
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
-  in the image plane. These parameters are internaly updated after perspective projection of the sphere.
+  in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
@@ -327,8 +327,10 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, const v
   \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
   \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in
-  meter. \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
-  expressed in pixels. \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
+  meter.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates
+  expressed in pixels.
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its
   area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area)
   expressed in pixels.
  */

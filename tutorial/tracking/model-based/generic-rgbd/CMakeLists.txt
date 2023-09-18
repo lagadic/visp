@@ -1,6 +1,6 @@
 project(tutorial-tracking-mb-generic-rgbd)
 
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui visp_sensor)
 
@@ -8,7 +8,8 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui visp_sensor)
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
   tutorial-mb-generic-tracker-rgbd-realsense.cpp
-  tutorial-mb-generic-tracker-rgbd-structure-core.cpp)
+  tutorial-mb-generic-tracker-rgbd-structure-core.cpp
+  tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -34,6 +35,7 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
   endif()
 
   if(VISP_HAVE_OCCIPITAL_STRUCTURE)
@@ -59,5 +61,3 @@ endforeach()
 
 # Copy the data files
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd-structure-core.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)

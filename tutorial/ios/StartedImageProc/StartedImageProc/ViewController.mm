@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,7 +28,7 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -46,7 +46,7 @@
 
 // Define the different process we want to apply to the input image
 NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to gray", @"compute gradient",
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
                     @"canny detector",
 #endif
                     nil];
@@ -55,22 +55,22 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 #endif
 
 - (void)viewDidLoad {
-  
+
   [super viewDidLoad];
-  
+
   // create an image
   UIImage *myScreenShot = [UIImage imageNamed:@"monkey.png"];
-  
+
   // image view instance to display the image
   self.myImageView = [[UIImageView alloc] initWithImage:myScreenShot];
-  
+
   // set the frame for the image view
   CGRect myFrame = CGRectMake(0.0f, 0.0f, self.myImageView.frame.size.width*2, self.myImageView.frame.size.height*2);
   [self.myImageView setFrame:myFrame];
-  
+
   // add the image view to the current view
   [self.view addSubview:self.myImageView];
-  
+
   // create buttons
   CGFloat posx=140, posy=350;
   CGFloat padding = 50;
@@ -79,7 +79,7 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
     UIButton *button = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     [button addTarget:self action:@selector(checkButtonClick:) forControlEvents:UIControlEventTouchUpInside];
     [button setTitle:[process objectAtIndex: i] forState:UIControlStateNormal];
-    
+
     button.frame = CGRectMake(posx, posy+i*padding, button_size.width, button_size.height);
     [button setBackgroundColor:[UIColor blueColor]];
     [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -89,20 +89,20 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 }
 
 - (void) checkButtonClick:(UIButton *)paramSender{
-  
+
   UIButton *myButton = paramSender;
-  
+
   //check which button was tapped
   if([myButton.currentTitle isEqualToString:[process objectAtIndex: 0]]){
     // load image
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 0]);
-    
+
     [myImageView setImage:[UIImage imageNamed:@"monkey.png"]];
   }
   else if([myButton.currentTitle isEqualToString:[process objectAtIndex: 1]]){
     // convert to gray
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 1]);
-    
+
     UIImage *img = [UIImage imageNamed:@"monkey.png"];
     vpImage<unsigned char> gray = [ImageConversion vpImageGrayFromUIImage:img];
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:gray]];
@@ -110,27 +110,25 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
   else if([myButton.currentTitle isEqualToString:[process objectAtIndex: 2]]){
     // compute gradient
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 2]);
-    
+
     UIImage *img = [UIImage imageNamed:@"monkey.png"];
     vpImage<unsigned char> gray = [ImageConversion vpImageGrayFromUIImage:img];
     vpImage<double> dIx;
     vpImageFilter::getGradX(gray, dIx);
     vpImageConvert::convert(dIx, gray);
-    
+
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:gray]];
   }
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   else if([myButton.currentTitle isEqualToString:[process objectAtIndex: 3]]){
     // canny detector
     NSLog(@"Clicked on \"%@\" button ", [process objectAtIndex: 3]);
-    
+
     UIImage *img = [UIImage imageNamed:@"monkey.png"];
     vpImage<unsigned char> gray = [ImageConversion vpImageGrayFromUIImage:img];
     vpImage<unsigned char> canny;
     vpImageFilter::canny(gray, canny, 5, 15, 3);
     [myImageView setImage:[ImageConversion UIImageFromVpImageGray:canny]];
   }
-#endif
 }
 
 - (void)didReceiveMemoryWarning {
@@ -141,4 +139,3 @@ NSArray *process = [[NSArray alloc]initWithObjects:@"load image", @"convert to g
 @end
 
 #endif
-

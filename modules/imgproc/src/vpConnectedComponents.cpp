@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Souriya Trinh
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpConnectedComponents.cpp
@@ -71,7 +71,8 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
     if (I[i + 1][j] == currValue) {
       listOfNeighbors.push(vpImagePoint(i + 1, j));
     }
-  } else {
+  }
+  else {
     for (int cpt1 = -1; cpt1 <= 1; cpt1++) {
       for (int cpt2 = -1; cpt2 <= 1; cpt2++) {
         // Everything except the current position
@@ -106,6 +107,8 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_connected_components
 
@@ -113,11 +116,10 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
 
   \param I : Input image (0 means background).
   \param labels : Label image that contain for each position the component
-  label. \param nbComponents : Number of connected components. \param
-  connexity : Type of connexity.
+  label. \param nbComponents : Number of connected components.
+  \param connexity : Type of connexity.
 */
-void vp::connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
-                             const vpImageMorphology::vpConnexityType &connexity)
+void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {
     return;
@@ -130,7 +132,8 @@ void vp::connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labe
   for (unsigned int i = 0; i < I_copy.getHeight(); i++) {
     if (i == 0 || i == I_copy.getHeight() - 1) {
       memset(I_copy[i], 0, sizeof(unsigned char) * I_copy.getWidth());
-    } else {
+    }
+    else {
       I_copy[i][0] = 0;
       memcpy(I_copy[i] + 1, I[i - 1], sizeof(unsigned char) * I.getWidth());
       I_copy[i][I_copy.getWidth() - 1] = 0;
@@ -170,3 +173,4 @@ void vp::connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labe
 
   nbComponents = current_label - 1;
 }
+};

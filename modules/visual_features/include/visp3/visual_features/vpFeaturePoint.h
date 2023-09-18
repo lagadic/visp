@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D point visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeaturePoint_H
 #define vpFeaturePoint_H
@@ -188,7 +185,7 @@ private:
 public:
   vpFeaturePoint();
   //! Destructor.
-  virtual ~vpFeaturePoint() {}
+  virtual ~vpFeaturePoint() { }
 
   void buildFrom(double x, double y, double Z);
 
@@ -200,8 +197,6 @@ public:
   vpFeaturePoint *duplicate() const;
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
-  //! Compute the error between a visual features and zero
-  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_x() const;
 
@@ -229,7 +224,8 @@ public:
   /*!
     @name Deprecated functions
   */
-  typedef enum {
+  typedef enum
+  {
     X = 1, // x coordinates
     Y = 2  // y coordinates
   } vpFeaturePointType;

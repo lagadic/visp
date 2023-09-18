@@ -1,6 +1,6 @@
-project(tutorial-tracking-me)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(tutorial-tracking-me)
 
 find_package(VISP REQUIRED visp_core visp_me visp_io visp_gui visp_sensor)
 

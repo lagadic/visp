@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,12 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpFeature class and its derivates.
+ * Exception that can be emitted by the vpFeature class and its derivatives.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpFeatureException_h_
 #define _vpFeatureException_h_
@@ -47,7 +44,7 @@
  */
 
 /* \file vpFeatureException.h
-   \brief error that can be emited by the vpFeature class and its derivates
+   \brief error that can be emitted by the vpFeature class and its derivatives
  */
 /* Classes standards. */
 
@@ -66,14 +63,14 @@
 /*!
   \class vpFeatureException
   \ingroup group_visual_features
-  \brief Error that can be emited by the vpBasicFeature class and its
+  \brief Error that can be emitted by the vpBasicFeature class and its
   derivates.
  */
 class VISP_EXPORT vpFeatureException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpFeature member
  */
   enum errorFeatureCodeEnum {
@@ -93,8 +90,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFeatureException(int id) : vpException(id) { ; }
+  vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpFeatureException(int id) : vpException(id) { }
 };
 
 #endif

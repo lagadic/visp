@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Plot curves.
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -59,8 +56,7 @@
 
 */
 vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
-{
-}
+{ }
 /*!
   This constructor creates a new window where the curves
   will be drawn. The number of graphics in the window must be set.
@@ -101,19 +97,19 @@ void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int widt
 {
   I.init(height, width, 255);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   display = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   display = new vpDisplayGDI;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   display = new vpDisplayOpenCV;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   display = new vpDisplayGTK;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   display = new vpDisplayD3D;
 #endif
 
-  display->init(I, x, y, title.c_str());
+  display->init(I, x, y, title);
 
   vpDisplay::display(I);
 
@@ -303,7 +299,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
 }
 /*!
@@ -322,7 +319,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
 }
 
@@ -342,7 +340,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpPoseVector &v_y)
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
 }
 /*!
@@ -361,7 +360,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpTranslationVector &v_
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
 }
 
@@ -381,7 +381,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
   if ((graphList + graphNum)->curveNbr == v_y.size()) {
     for (unsigned int i = 0; i < v_y.size(); ++i)
       this->plot(graphNum, i, x, v_y[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
 }
 
@@ -423,7 +424,8 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, c
   if ((graphList + graphNum)->curveNbr == v_y.getRows() && (graphList + graphNum)->curveNbr == v_z.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
       button = this->plot(graphNum, i, x, v_y[i], v_z[i]);
-  } else
+  }
+  else
     vpTRACE("error in plot vector : not the right dimension");
   return button;
 }
@@ -456,7 +458,8 @@ void vpPlot::navigate()
         (graphList + iblocked)->replot3D(I);
       }
       blocked = (graphList + iblocked)->blocked;
-    } else {
+    }
+    else {
       if ((graphList + iblocked)->move(I, b)) {
         (graphList + iblocked)->replot3D(I);
       }
@@ -691,7 +694,8 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
             (vec_iter_pointListy[ind] != (graphList + graphNum)->curveList[ind].pointListy.end()) &&
             (vec_iter_pointListz[ind] != (graphList + graphNum)->curveList[ind].pointListz.end()))
           end = false;
-      } else {
+      }
+      else {
         //        p[0] =
         //        (graphList+graphNum)->curveList[ind].pointListx.value();
         //        p[1] =
@@ -713,5 +717,5 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpPlot.cpp.o) has no symbols
-void dummy_vpPlot(){};
+void dummy_vpPlot() { };
 #endif

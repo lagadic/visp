@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test threading capabilities.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 
@@ -51,8 +48,11 @@
 //! [Code]
 #include <iostream>
 
+#include <visp3/core/vpMutex.h>
 #include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
+
+vpMutex g_mutex_cout;
 
 vpThread::Return myFooFunction(vpThread::Args args)
 {
@@ -71,7 +71,9 @@ vpThread::Return myBarFunction(vpThread::Args args)
 vpThread::Return myQuxFunction(vpThread::Args args)
 {
   unsigned int args_ = *((unsigned int *)args);
+  g_mutex_cout.lock();
   std::cout << "qux arg: " << args_ << std::endl;
+  g_mutex_cout.unlock();
   // do stuff...
   return 0;
 }
@@ -85,17 +87,21 @@ int main()
                (vpThread::Args)&qux_arg); // Pass qux_arg to myQuxFunction() function
 
   vpTime::wait(1000); // Sleep 1s to ensure myQuxFunction() internal printings
+  g_mutex_cout.lock();
   std::cout << "Joinable after construction:" << std::endl;
   std::cout << "foo: " << foo.joinable() << std::endl;
   std::cout << "bar: " << bar.joinable() << std::endl;
   std::cout << "qux: " << qux.joinable() << std::endl;
+  g_mutex_cout.unlock();
 
   foo.create((vpThread::Fn)myFooFunction);
 
+  g_mutex_cout.lock();
   std::cout << "Joinable after creation:" << std::endl;
   std::cout << "foo: " << foo.joinable() << std::endl;
   std::cout << "bar: " << bar.joinable() << std::endl;
   std::cout << "qux: " << qux.joinable() << std::endl;
+  g_mutex_cout.unlock();
 
   if (foo.joinable())
     foo.join();
@@ -104,10 +110,12 @@ int main()
   if (qux.joinable())
     qux.join();
 
+  g_mutex_cout.lock();
   std::cout << "Joinable after joining:" << std::endl;
   std::cout << "foo: " << foo.joinable() << std::endl;
   std::cout << "bar: " << bar.joinable() << std::endl;
   std::cout << "qux: " << qux.joinable() << std::endl;
+  g_mutex_cout.unlock();
 
   return EXIT_SUCCESS;
 }

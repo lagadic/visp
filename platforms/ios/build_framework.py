@@ -206,15 +206,12 @@ class Builder:
         toolchain = self.getToolchain(arch, target)
         cmakecmd = self.getCMakeArgs(arch, target) + \
             (["-DCMAKE_TOOLCHAIN_FILE=%s" % toolchain] if toolchain is not None else [])
-        if target.lower().startswith("iphoneos"):
-            cmakecmd.append("-DCPU_BASELINE=DETECT")
         if target.lower().startswith("iphonesimulator"):
             build_arch = check_output(["uname", "-m"]).decode('utf-8').rstrip()
             if build_arch != arch:
                 print("build_arch (%s) != arch (%s)" % (build_arch, arch))
                 cmakecmd.append("-DCMAKE_SYSTEM_PROCESSOR=" + arch)
                 cmakecmd.append("-DCMAKE_OSX_ARCHITECTURES=" + arch)
-                cmakecmd.append("-DCPU_BASELINE=DETECT")
                 cmakecmd.append("-DCMAKE_CROSSCOMPILING=ON")
         if target.lower() == "catalyst":
             build_arch = check_output(["uname", "-m"]).decode('utf-8').rstrip()
@@ -222,7 +219,6 @@ class Builder:
                 print("build_arch (%s) != arch (%s)" % (build_arch, arch))
                 cmakecmd.append("-DCMAKE_SYSTEM_PROCESSOR=" + arch)
                 cmakecmd.append("-DCMAKE_OSX_ARCHITECTURES=" + arch)
-                cmakecmd.append("-DCPU_BASELINE=DETECT")
                 cmakecmd.append("-DCMAKE_CROSSCOMPILING=ON")
         if target.lower() == "macosx":
             build_arch = check_output(["uname", "-m"]).decode('utf-8').rstrip()
@@ -230,7 +226,6 @@ class Builder:
                 print("build_arch (%s) != arch (%s)" % (build_arch, arch))
                 cmakecmd.append("-DCMAKE_SYSTEM_PROCESSOR=" + arch)
                 cmakecmd.append("-DCMAKE_OSX_ARCHITECTURES=" + arch)
-                cmakecmd.append("-DCPU_BASELINE=DETECT")
                 cmakecmd.append("-DCMAKE_CROSSCOMPILING=ON")
 
         cmakecmd.append(dir)
@@ -310,6 +305,13 @@ class Builder:
                 "-framework", "AVFoundation", "-framework", "AppKit", "-framework", "CoreGraphics",
                 "-framework", "CoreImage", "-framework", "CoreMedia", "-framework", "QuartzCore",
                 "-framework", "Accelerate", "-framework", "OpenCL",
+            ]
+        elif target_platform == "iphoneos" or target_platform == "iphonesimulator":
+            framework_options = [
+                "-iframework", "%s/System/iOSSupport/System/Library/Frameworks" % sdk_dir,
+                "-framework", "AVFoundation", "-framework", "CoreGraphics",
+                "-framework", "CoreImage", "-framework", "CoreMedia", "-framework", "QuartzCore",
+                "-framework", "Accelerate", "-framework", "UIKit", "-framework", "CoreVideo",
             ]
         execute([
             "clang++",
@@ -409,8 +411,8 @@ if __name__ == "__main__":
     parser.add_argument('--disable-bitcode', default=False, dest='bitcodedisabled', action='store_true', help='disable bitcode (enabled by default)')
     parser.add_argument('--iphoneos_deployment_target', default=os.environ.get('IPHONEOS_DEPLOYMENT_TARGET', IPHONEOS_DEPLOYMENT_TARGET), help='specify IPHONEOS_DEPLOYMENT_TARGET')
     parser.add_argument('--build_only_specified_archs', default=False, action='store_true', help='if enabled, only directly specified archs are built and defaults are ignored')
-    parser.add_argument('--iphoneos_archs', default='armv7,armv7s,arm64', help='select iPhoneOS target ARCHS')
-    parser.add_argument('--iphonesimulator_archs', default='i386,x86_64', help='select iPhoneSimulator target ARCHS')
+    parser.add_argument('--iphoneos_archs', default=None, help='select iPhoneOS target ARCHS. Default is "armv7,armv7s,arm64"')
+    parser.add_argument('--iphonesimulator_archs', default=None, help='select iPhoneSimulator target ARCHS. Default is "i386,x86_64"')
     parser.add_argument('--debug', default=False, dest='debug', action='store_true', help='Build "Debug" binaries (disabled by default)')
     parser.add_argument('--debug_info', default=False, dest='debug_info', action='store_true', help='Build with debug information (useful for Release mode: BUILD_WITH_DEBUG_INFO=ON)')
     parser.add_argument('--framework_name', default='visp3', dest='framework_name', help='Name of ViSP framework (default: visp3, will change to ViSP in future version)')

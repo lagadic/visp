@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 #if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
 
-  std::string input_filename = "coins1.pgm";
+  std::string input_filename = "coins1.jpg";
   vp::vpAutoThresholdMethod method = vp::AUTO_THRESHOLD_OTSU;
   bool white_foreground = false;
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
   vpDisplayX d, d2, d3, d4, d5;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d, d2, d3, d4, d5;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d, d2, d3, d4, d5;
 #endif
   d.init(I, 0, 0, "Coins");
@@ -73,14 +73,14 @@ int main(int argc, char *argv[])
 
   //! [Opening]
   vpImage<unsigned char> I_open = I_fill;
-  vpImageMorphology::erosion(I_open, vpImageMorphology::CONNEXITY_4);
-  vpImageMorphology::dilatation(I_open, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::erosion<unsigned char>(I_open, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::dilatation<unsigned char>(I_open, vpImageMorphology::CONNEXITY_4);
   //! [Opening]
 
   //! [Closing]
   vpImage<unsigned char> I_close = I_open;
-  vpImageMorphology::dilatation(I_close, vpImageMorphology::CONNEXITY_4);
-  vpImageMorphology::erosion(I_close, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::dilatation<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
+  vpImageMorphology::erosion<unsigned char>(I_close, vpImageMorphology::CONNEXITY_4);
   //! [Closing]
   d4.init(I_close, I.getWidth(), I.getHeight() + 80, "Closing");
 

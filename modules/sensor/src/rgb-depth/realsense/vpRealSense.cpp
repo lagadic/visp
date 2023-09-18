@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * RealSense SDK wrapper.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iomanip>
 #include <iostream>
@@ -279,7 +276,7 @@ void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
    Return camera parameters corresponding to a specific stream. This function
    has to be called after open(). \param stream : color, depth, infrared or
    infrared2 stream for which camera intrinsic parameters are returned. \param
-   type : Indicate if the model should include distorsion paramater or not.
+   type : Indicate if the model should include distortion paramater or not.
 
    \sa getIntrinsics()
  */

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,13 +29,13 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Basic contours extraction based on the orignal work of
+ * Basic contours extraction based on the original work of
  * Sina Samangooei (ss@ecs.soton.ac.uk).
  *
  * Authors:
  * Souriya Trinh
  *
- *****************************************************************************/
+*****************************************************************************/
 /**
  * Copyright (c) 2011, The University of Southampton and the individual
  * contributors. All rights reserved.
@@ -67,10 +67,10 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*!
-  \file vpContours.cpp
-  \brief Basic contours extraction.
-*/
+ /*!
+   \file vpContours.cpp
+   \brief Basic contours extraction.
+ */
 
 #include <map>
 #include <visp3/imgproc/vpImgproc.h>
@@ -86,23 +86,30 @@ bool fromTo(const vpImagePoint &from, const vpImagePoint &to, vpDirection &direc
   if (std::fabs(from.get_i() - to.get_i()) < std::numeric_limits<double>::epsilon()) {
     if (from.get_j() < to.get_j()) {
       direction.m_direction = EAST;
-    } else {
+    }
+    else {
       direction.m_direction = WEST;
     }
-  } else if (from.get_i() < to.get_i()) {
+  }
+  else if (from.get_i() < to.get_i()) {
     if (std::fabs(from.get_j() - to.get_j()) < std::numeric_limits<double>::epsilon()) {
       direction.m_direction = SOUTH;
-    } else if (from.get_j() < to.get_j()) {
+    }
+    else if (from.get_j() < to.get_j()) {
       direction.m_direction = SOUTH_EAST;
-    } else {
+    }
+    else {
       direction.m_direction = SOUTH_WEST;
     }
-  } else {
+  }
+  else {
     if (std::fabs(from.get_j() - to.get_j()) < std::numeric_limits<double>::epsilon()) {
       direction.m_direction = NORTH;
-    } else if (from.get_j() < to.get_j()) {
+    }
+    else if (from.get_j() < to.get_j()) {
       direction.m_direction = NORTH_EAST;
-    } else {
+    }
+    else {
       direction.m_direction = NORTH_WEST;
     }
   }
@@ -138,7 +145,8 @@ void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint 
 
   if (crossesEastBorder(I, checked, point)) {
     I[i][j] = -nbd;
-  } else if (I[i][j] == 1) {
+  }
+  else if (I[i][j] == 1) {
     // Only set if the pixel has not been visited before (3.4) (b)
     I[i][j] = nbd;
   } // Otherwise leave it alone
@@ -174,7 +182,7 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
   i2j2 = i1j1;
   vpImagePoint i3j3 = ij; //(3.2)
 
-  bool checked[8] = {false, false, false, false, false, false, false, false};
+  bool checked[8] = { false, false, false, false, false, false, false, false };
 
   while (true) {
     if (!fromTo(i3j3, i2j2, dir)) {
@@ -238,6 +246,8 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_contours
 
@@ -247,8 +257,7 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
   \param contours : Detected contours.
   \param grayValue : Drawing grayscale color.
 */
-void vp::drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
-                      unsigned char grayValue)
+void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours, unsigned char grayValue)
 {
   if (I.getSize() == 0) {
     return;
@@ -272,7 +281,7 @@ void vp::drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<v
   \param contours : Detected contours.
   \param color : Drawing color.
 */
-void vp::drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
+void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
 {
   if (I.getSize() == 0) {
     return;
@@ -293,12 +302,13 @@ void vp::drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImageP
   Extract contours from a binary image.
 
   \param I_original : Input binary image (0 means background, 1 means
-  foreground, other values are not allowed). \param contours : Detected
-  contours. \param contourPts : List of contours, each contour contains a list
-  of contour points. \param retrievalMode : Contour retrieval mode.
+  foreground, other values are not allowed).
+  \param contours : Detected contours.
+  \param contourPts : List of contours, each contour contains a list of contour points.
+  \param retrievalMode : Contour retrieval mode.
 */
-void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
-                      std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
+void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
+                  std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
 {
   if (I_original.getSize() == 0) {
     return;
@@ -312,7 +322,8 @@ void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &conto
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     if (i == 0 || i == I.getHeight() - 1) {
       memset(I.bitmap, 0, sizeof(int) * I.getWidth());
-    } else {
+    }
+    else {
       I[i][0] = 0;
       for (unsigned int j = 0; j < I_original.getWidth(); j++) {
         I[i][j + 1] = I_original[i - 1][j];
@@ -368,7 +379,8 @@ void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &conto
           default:
             break;
           }
-        } else {
+        }
+        else {
           //(1) (b)
           nbd++;
 
@@ -451,14 +463,16 @@ void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &conto
       }
       contourPts.push_back((*it)->m_points);
     }
-  } else if (retrievalMode == CONTOUR_RETR_LIST) {
+  }
+  else if (retrievalMode == CONTOUR_RETR_LIST) {
     getContoursList(*root, 0, contours);
 
     // Set parent to root
     for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
       (*it)->m_parent = &contours;
     }
-  } else {
+  }
+  else {
     // CONTOUR_RETR_TREE
     contours = *root;
   }
@@ -466,3 +480,4 @@ void vp::findContours(const vpImage<unsigned char> &I_original, vpContour &conto
   delete root;
   root = NULL;
 }
+};

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -73,21 +70,9 @@ if(MSVC AND CMAKE_C_COMPILER MATCHES "icc|icl")
   set(CV_ICC __INTEL_COMPILER_FOR_WINDOWS)
 endif()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-  if(WIN32)
-    execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
-              OUTPUT_VARIABLE VISP_GCC_TARGET_MACHINE
-              OUTPUT_STRIP_TRAILING_WHITESPACE)
-    if(VISP_GCC_TARGET_MACHINE MATCHES "amd64|x86_64|AMD64")
-      set(MINGW64 1)
-    endif()
-  endif()
-endif()
-
-if(MSVC64 OR MINGW64)
-  set(X86_64 1)
-elseif(MINGW OR (MSVC AND NOT CMAKE_CROSSCOMPILING))
-  set(X86 1)
+message(STATUS "Detected processor: ${CMAKE_SYSTEM_PROCESSOR}")
+if(VISP_SKIP_SYSTEM_PROCESSOR_DETECTION)
+  # custom setup: required variables are passed through cache / CMake's command-line
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*")
   set(X86_64 1)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i686.*|i386.*|x86.*")
@@ -104,13 +89,21 @@ elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(mips.*|MIPS.*)")
   set(MIPS 1)
 elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(riscv.*|RISCV.*)")
   set(RISCV 1)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(loongarch64.*|LOONGARCH64.*)")
+  set(LOONGARCH64 1)
+else()
+  if(NOT VISP_SUPPRESS_MESSAGE_UNRECOGNIZED_SYSTEM_PROCESSOR)
+    message(WARNING "ViSP: unrecognized target processor configuration")
+  endif()
 endif()
 
 # Workaround for 32-bit operating systems on 64-bit x86_64 processor
 if(X86_64 AND CMAKE_SIZEOF_VOID_P EQUAL 4 AND NOT FORCE_X86_64)
   message(STATUS "sizeof(void) = 4 on x86 / x86_64 processor. Assume 32-bit compilation mode (X86=1)")
-  unset(X86_64)
-  set(X86 1)
+  if (X86_64)
+    unset(X86_64)
+    set(X86 1)
+  endif()
 endif()
 # Workaround for 32-bit operating systems on aarch64 processor
 if(CMAKE_SIZEOF_VOID_P EQUAL 4 AND AARCH64 AND NOT FORCE_AARCH64)
@@ -168,11 +161,7 @@ elseif(MSVC)
 elseif(MINGW)
   set(VISP_RUNTIME mingw)
 
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
-                  OUTPUT_VARIABLE VISP_GCC_TARGET_MACHINE
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(VISP_GCC_TARGET_MACHINE MATCHES "64")
-    set(MINGW64 1)
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*")
     set(VISP_ARCH x64)
   else()
     set(VISP_ARCH x86)

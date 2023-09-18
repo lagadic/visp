@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,12 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpTracking class and its derivates.
+ * Exceptions that can be emitted by the vpTracking class and its derivatives.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpTrackingException_H
 #define _vpTrackingException_H
@@ -47,7 +44,7 @@
  */
 
 /* \file vpTrackingException.h
-   \brief error that can be emited by the vpTracker class and its derivates
+   \brief error that can be emitted by the vpTracker class and its derivatives
  */
 /* Classes standards. */
 
@@ -64,13 +61,13 @@
 /*!
   \class vpTrackingException
   \ingroup group_core_debug
-  \brief Error that can be emited by the vpTracker class and its derivates.
+  \brief Error that can be emitted by the vpTracker class and its derivatives.
  */
 class VISP_EXPORT vpTrackingException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpTracking member
  */
   enum errorTrackingCodeEnum {
@@ -91,8 +88,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpTrackingException(int id) : vpException(id) { ; }
+  vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpTrackingException(int id) : vpException(id) { }
 };
 
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Biclops robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <cmath> // std::fabs
 #include <errno.h>
@@ -269,7 +266,7 @@ void vpRobotBiclops::init()
 /*
   Control loop to manage the biclops joint limits in speed control.
 
-  This control loop is running in a seperate thread in order to detect each 5
+  This control loop is running in a separate thread in order to detect each 5
   ms joint limits during the speed control. If a joint limit is detected the
   axis should be halted.
 

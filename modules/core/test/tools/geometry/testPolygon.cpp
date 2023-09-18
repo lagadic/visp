@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example which test the polygon.
  *
- * Author:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpPolygon.h>
@@ -73,7 +70,7 @@ test the generic 2D polygons.\n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n						      \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS: \n\
@@ -100,7 +97,7 @@ OPTIONS: \n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param opt_display : optionnal flag to turn off the display.
+  \param opt_display : Optional flag to turn off the display.
   \param opt_click : activates the mouse click.
   \return false if the program has to be stopped, true otherwise.
 */
@@ -145,9 +142,9 @@ bool getOptions(int argc, const char **argv, bool &opt_display, bool &opt_click,
 
 /* --------------------------------------------------------------------------
  */
-/*                               MAIN FUNCTION */
-/* --------------------------------------------------------------------------
- */
+ /*                               MAIN FUNCTION */
+ /* --------------------------------------------------------------------------
+  */
 
 int main(int argc, const char **argv)
 {
@@ -181,11 +178,11 @@ int main(int argc, const char **argv)
     std::vector<vpImagePoint> vec3;
     vpPolygon p3(vec3);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
 #else
     opt_display = false;
@@ -292,11 +289,11 @@ int main(int argc, const char **argv)
         t_benchmark = vpTime::measureTimeMs() - t_benchmark;
         std::cout << "PnPolyRayCasting: " << t_benchmark << " ms" << std::endl;
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
         vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
         vpDisplayGTK display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
         vpDisplayGDI display1, display2;
 #endif
 
@@ -316,7 +313,8 @@ int main(int argc, const char **argv)
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

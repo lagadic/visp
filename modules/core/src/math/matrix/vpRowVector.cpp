@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Operation on row vectors.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpRowVector.cpp
@@ -61,7 +58,8 @@ vpRowVector &vpRowVector::operator=(const vpRowVector &v)
   if (colNum != k) {
     try {
       resize(k);
-    } catch (...) {
+    }
+    catch (...) {
       throw;
     }
   }
@@ -702,7 +700,8 @@ void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
   try {
     if ((M.getRows() != nrows) || (M.getCols() != ncols))
       M.resize(nrows, ncols);
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
   for (unsigned int i = 0; i < nrows; i++)
@@ -992,7 +991,8 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
     if (p == std::string::npos) {
       maxBefore = vpMath::maximum(maxBefore, thislen);
       // maxAfter remains the same
-    } else {
+    }
+    else {
       maxBefore = vpMath::maximum(maxBefore, p);
       maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
     }
@@ -1025,7 +1025,8 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
       if (p != std::string::npos) {
         s.width((std::streamsize)maxAfter);
         s << values[j].substr(p, maxAfter).c_str();
-      } else {
+      }
+      else {
         assert(maxAfter > 1);
         s.width((std::streamsize)maxAfter);
         s << ".0";
@@ -1086,20 +1087,9 @@ double vpRowVector::sumSquare() const
 }
 
 /*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Euclidean norm if the vector is initialized, 0 otherwise.
-
-  \sa frobeniusNorm()
-*/
-double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
-
-/*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 */
 double vpRowVector::frobeniusNorm() const
 {
@@ -1107,6 +1097,19 @@ double vpRowVector::frobeniusNorm() const
 
   return sqrt(norm);
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm()
+*/
+double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
+#endif
 
 /*!
   Initialize the row vector from a part of an input row vector \e v.
@@ -1194,10 +1197,11 @@ std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixN
   for (unsigned int j = 0; j < this->getCols(); ++j) {
     if (!octet) {
       os << matrixName << "[" << j << "] = " << (*this)[j] << "; " << std::endl;
-    } else {
+    }
+    else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
         os << "((unsigned char*)&(" << matrixName << "[" << j << "]) )[" << k << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; " << std::endl;
+          << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; " << std::endl;
       }
     }
   }

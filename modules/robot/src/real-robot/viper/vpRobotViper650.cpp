@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Irisa's Viper S650 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -132,7 +129,7 @@ void emergencyStopViper650(int signo)
 
   To set the extrinsic camera parameters related to the \f$^e{\bf
   M}_c\f$ matrix obtained with a camera perspective projection model
-  including the distorsion, use the code below:
+  including the distortion, use the code below:
 
   \code
 #include <visp3/core/vpCameraParameters.h>
@@ -146,7 +143,7 @@ int main()
   vpRobotViper650 robot;
 
   // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distorsion parameter
+  // projection model including a distortion parameter
   robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA,
        vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
@@ -165,7 +162,7 @@ int main()
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
   // In cam, you get the intrinsic parameters of the projection model
-  // with distorsion.
+  // with distortion.
 #endif
 }
   \endcode
@@ -234,10 +231,10 @@ vpRobotViper650::vpRobotViper650(bool verbose) : vpViper650(), vpRobot()
 
   \warning This method sets the camera extrinsic parameters (matrix
   eMc) to the one obtained by calibration with a camera projection
-  model without distorsion by calling
+  model without distortion by calling
   init(vpViper650::defaultCameraRobot). If you want to set the extrinsic
   camera parameters to those obtained with a camera perspective model
-  including the distorsion you have to call the
+  including the distortion you have to call the
   init(vpViper650::vpToolType, vpCameraParameters::vpCameraParametersProjType)
   method. If you want to set custom extrinsic camera parameters you have to
   call the init(vpViper650::vpToolType, const vpHomogeneousMatrix&) method.
@@ -362,7 +359,7 @@ void vpRobotViper650::init(void)
 
   To set the extrinsic camera parameters related to the \f$^e{\bf
   M}_c\f$ matrix obtained with a camera perspective projection model
-  including the distorsion, use the code below:
+  including the distortion, use the code below:
 
   \code
 #include <visp3/core/vpCameraParameters.h>
@@ -376,7 +373,7 @@ int main()
   vpRobotViper650 robot;
 
   // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distorsion parameter
+  // projection model including a distortion parameter
   robot.init(vpViper650::TOOL_MARLIN_F033C_CAMERA, vpCameraParameters::perspectiveProjWithDistortion);
   \endcode
 
@@ -394,7 +391,7 @@ int main()
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
   // In cam, you get the intrinsic parameters of the projection model
-  // with distorsion.
+  // with distortion.
 #endif
 }
   \endcode

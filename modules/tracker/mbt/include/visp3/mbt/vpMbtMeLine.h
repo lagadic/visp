@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +32,9 @@
  * Implementation of a line used by the model-based tracker.
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpMbtMeLine.h
@@ -80,7 +78,7 @@ public:
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
                               unsigned int thickness);
 
-  void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
+  void display(const vpImage<unsigned char> & /* I */, const vpColor &/* col */, unsigned int /* thickness */) { ; }
   using vpMeTracker::display;
 
   /*!

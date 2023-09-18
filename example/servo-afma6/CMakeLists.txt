@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
-project(example-servo-afma6)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(example-servo-afma6)
 
 if(CMAKE_SYSTEM_NAME MATCHES WindowsPhone OR CMAKE_SYSTEM_NAME MATCHES WindowsStore)
   set(WINRT TRUE)
@@ -83,6 +80,7 @@ set(example_cpp
   servoAfma62DhalfCamVelocity.cpp
   servoAfma6Cylinder2DCamVelocity.cpp
   servoAfma6Segment2DCamVelocity.cpp
+  servoAfma6MegaposePBVS.cpp
 )
 
 if(NOT DEFINED WINRT_8_1)
@@ -104,7 +102,9 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 
   visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(servoAfma6MegaposePBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()

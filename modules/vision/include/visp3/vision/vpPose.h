@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,7 @@
  * Description:
  * Pose computation.
  *
- * Authors:
- * Eric Marchand
- * Francois Chaumette
- * Aurelien Yol
- * Fabien Spindler
- * Julien Dufour
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPose.h
@@ -48,6 +41,7 @@
 #ifndef _vpPose_h_
 #define _vpPose_h_
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
@@ -56,7 +50,6 @@
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 #include <visp3/core/vpList.h>
 #endif
-#include <visp3/core/vpThread.h>
 
 #include <list>
 #include <math.h>
@@ -90,7 +83,8 @@ class VISP_EXPORT vpPose
 {
 public:
   //! Methods that could be used to estimate the pose from points.
-  typedef enum {
+  typedef enum
+  {
     LAGRANGE,             /*!< Linear Lagrange approach (doesn't need an initialization) */
     DEMENTHON,            /*!< Linear Dementhon aproach (doesn't need an initialization) */
     LOWE,                 /*!< Lowe aproach based on a Levenberg Marquartd non linear
@@ -112,7 +106,8 @@ public:
                              depending on which method has the smallest residual. */
   } vpPoseMethodType;
 
-  enum RANSAC_FILTER_FLAGS {
+  enum RANSAC_FILTER_FLAGS
+  {
     NO_FILTER,
     PREFILTER_DEGENERATE_POINTS, /*!< Remove degenerate points (same 3D or 2D coordinates) before the RANSAC. */
     CHECK_DEGENERATE_POINTS      /*!< Check for degenerate points during the RANSAC. */
@@ -167,14 +162,13 @@ private:
   {
   public:
     RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_, const int ransacMaxTrials_,
-                  double ransacThreshold_, unsigned int initial_seed_, bool checkDegeneratePoints_,
-                  const std::vector<vpPoint> &listOfUniquePoints_, bool (*func_)(const vpHomogeneousMatrix &))
+      double ransacThreshold_, unsigned int initial_seed_, bool checkDegeneratePoints_,
+      const std::vector<vpPoint> &listOfUniquePoints_, bool (*func_)(const vpHomogeneousMatrix &))
       : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
-        m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0), m_ransacMaxTrials(ransacMaxTrials_),
-        m_ransacNbInlierConsensus(ransacNbInlierConsensus_), m_ransacThreshold(ransacThreshold_),
-        m_uniRand(initial_seed_)
-    {
-    }
+      m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0), m_ransacMaxTrials(ransacMaxTrials_),
+      m_ransacNbInlierConsensus(ransacNbInlierConsensus_), m_ransacThreshold(ransacThreshold_),
+      m_uniRand(initial_seed_)
+    { }
 
     void operator()() { m_foundSolution = poseRansacImpl(); }
 
@@ -221,6 +215,8 @@ public:
   bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   bool computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
+  double computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam) const;
+  double computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, vpColVector &squaredResidual) const;
   bool coplanar(int &coplanar_plane_type, double *p_a = NULL, double *p_b = NULL, double *p_c = NULL, double *p_d = NULL);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
@@ -234,14 +230,15 @@ public:
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
-  void setDementhonSvThreshold(const double& svThresh);
+  void setDementhonSvThreshold(const double &svThresh);
   void setDistanceToPlaneForCoplanarityTest(double d);
   void setLambda(double a) { lambda = a; }
   void setVvsEpsilon(const double eps)
   {
     if (eps >= 0) {
       vvsEpsilon = eps;
-    } else {
+    }
+    else {
       throw vpException(vpException::badValue, "Epsilon value must be >= 0.");
     }
   }
@@ -253,7 +250,8 @@ public:
     // Test whether or not t is > 0
     if (t > std::numeric_limits<double>::epsilon()) {
       ransacThreshold = t;
-    } else {
+    }
+    else {
       throw vpException(vpException::badValue, "The Ransac threshold must be positive as we deal with distance.");
     }
   }
@@ -283,7 +281,7 @@ public:
   {
     if (!computeCovariance)
       vpTRACE("Warning : The covariance matrix has not been computed. See "
-              "setCovarianceComputation() to do it.");
+        "setCovarianceComputation() to do it.");
 
     return covarianceMatrix;
   }
@@ -344,32 +342,32 @@ public:
   }
 
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                              const vpCameraParameters &colorIntrinsics,
-                                              const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
-                                              double *confidence_index = NULL);
+    const vpCameraParameters &colorIntrinsics,
+    const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+    double *confidence_index = NULL);
 
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
-                                              const std::vector<std::vector<vpImagePoint> > &corners,
-                                              const vpCameraParameters &colorIntrinsics,
-                                              const std::vector<std::vector<vpPoint> > &point3d,
-                                              vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
-                                              bool coplanar_points = true);
+    const std::vector<std::vector<vpImagePoint> > &corners,
+    const vpCameraParameters &colorIntrinsics,
+    const std::vector<std::vector<vpPoint> > &point3d,
+    vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
+    bool coplanar_points = true);
   static int computeRansacIterations(double probability, double epsilon, const int sampleSize = 4,
-                                     int maxIterations = 2000);
+    int maxIterations = 2000);
 
   static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
-                      vpColor col = vpColor::none);
+    vpColor col = vpColor::none);
   static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
-                      vpColor col = vpColor::none);
+    vpColor col = vpColor::none);
 
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
-                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
-                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
-                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+    const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
+    unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
+    const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
+    bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
-                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
+    vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
     (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
@@ -390,14 +388,14 @@ public:
    */
   template <typename DataId>
   static std::optional<vpHomogeneousMatrix> computePlanarObjectPoseWithAtLeast3Points(
-      const vpPlane &plane_in_camera_frame, const std::map<DataId, vpPoint> &pts,
-      const std::map<DataId, vpImagePoint> &ips, const vpCameraParameters &camera_intrinsics,
-      std::optional<vpHomogeneousMatrix> cMo_init = std::nullopt, bool enable_vvs = true)
+    const vpPlane &plane_in_camera_frame, const std::map<DataId, vpPoint> &pts,
+    const std::map<DataId, vpImagePoint> &ips, const vpCameraParameters &camera_intrinsics,
+    std::optional<vpHomogeneousMatrix> cMo_init = std::nullopt, bool enable_vvs = true)
   {
     if (cMo_init && !enable_vvs) {
       throw(vpException(
-          vpException::fatalError,
-          "It doesn't make sense to use an initialized pose without enabling VVS to compute the pose from 4 points"));
+        vpException::fatalError,
+        "It doesn't make sense to use an initialized pose without enabling VVS to compute the pose from 4 points"));
     }
 
     // Check if detection and model fit
@@ -417,7 +415,7 @@ public:
       }
     }
 
-    std::vector<vpPoint> P{}, Q{};
+    std::vector<vpPoint> P {}, Q {};
     // The next line in C++17 produces a build error with Visual Studio 2017, that's why we
     // use rather C++11 to loop through std::map
     // for (auto [pt_id, pt] : pts) {
@@ -450,7 +448,7 @@ public:
   }
 
   static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(const std::vector<vpPoint> &points,
-                                                                   const vpHomogeneousMatrix &cMo);
+    const vpHomogeneousMatrix &cMo);
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

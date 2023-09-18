@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,9 +33,8 @@
  *
  * Authors:
  * Gatien Gaumerais
- * Fabien Spindler
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testRobotBebop2.cpp
@@ -104,7 +103,7 @@ int main(int argc, char **argv)
       vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d(I);
 #else
       std::cout << "No image viewer is available..." << std::endl;

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Demonstration of the wireframe simulator with a simple visual servoing
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example servoSimuSphere.cpp
@@ -177,7 +174,7 @@ void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s)
   // if (gx != 0 || gy != 0)
   if (std::fabs(gx) > std::numeric_limits<double>::epsilon() || std::fabs(gy) > std::numeric_limits<double>::epsilon())
     h2 = (vpMath::sqr(gx) + vpMath::sqr(gy)) /
-         (4 * n20 * vpMath::sqr(gy) + 4 * n02 * vpMath::sqr(gx) - 8 * n11 * gx * gy);
+    (4 * n20 * vpMath::sqr(gy) + 4 * n02 * vpMath::sqr(gx) - 8 * n11 * gx * gy);
   else
     h2 = 1 / (4 * n20);
 
@@ -229,15 +226,15 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> Iext1(480, 640, 255);
     vpImage<vpRGBa> Iext2(480, 640, 255);
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display[3];
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display[3];
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display[3];
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display[3];
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display[3];
 #endif
 
@@ -492,7 +489,8 @@ int main(int argc, const char **argv)
 
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -507,7 +505,7 @@ int main()
 int main()
 {
   std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..."
-            << std::endl;
+    << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

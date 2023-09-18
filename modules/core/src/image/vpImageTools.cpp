@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Image tools.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageConvert.h>
@@ -360,7 +357,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   float v0 = static_cast<float>(cam.get_v0());
   float px = static_cast<float>(cam.get_px());
   float py = static_cast<float>(cam.get_py());
-  float kud;
+  float kud = 0;
   std::vector<double> dist_coefs;
 
   if (!is_KannalaBrandt)
@@ -384,8 +381,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   }
 
   float invpx, invpy;
-  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py;
-  float fr1, fr2;
+  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py = 0;
+  float fr1 = 0, fr2;
   float deltav, deltau;
   float u_float, v_float;
   int u_round, v_round;

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * This class implements the Non Uniform Rational B-Spline (NURBS)
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpNurbs_H
 #define vpNurbs_H
@@ -83,7 +80,7 @@
   - The control points \f$ {P_i} \f$ which are defined by the coordinates \f$
   (i,j) \f$ of a point in an image.
 
-  - The weight \f$ {w_i} \f$ associated to each control points.The wheights
+  - The weight \f$ {w_i} \f$ associated to each control points. The weights
   value is upper than 0.
 
   It is possible to compute the coordinates of a point corresponding to the

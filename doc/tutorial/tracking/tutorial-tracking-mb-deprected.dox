@@ -8,7 +8,7 @@
 \warning
 This tutorial can be considered obsolete since ViSP 3.1.0 version as we have introduced a generic tracker (vpMbGenericTracker) that can replace the vpMbEdgeTracker, vpMbKltTracker and vpMbEdgeKltTracker classes that are used in this tutorial. Thus we recommend rather to follow \ref tutorial-tracking-mb-generic.
 
-ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format. 
+ViSP allows simultaneously the tracking of a markerless object using the knowledge of its CAD model while providing its 3D localization (i.e., the object pose expressed in the camera frame) when a calibrated camera is used \cite Comport06b. Considered objects should be modeled by lines, circles or cylinders. The CAD model of the object could be defined in vrml format (except for circles), or in cao format.
 
 To follow this tutorial depending on your interest you should be sure that ViSP was build with the following third-parties:
 - \c OpenCV: Useful if you want to investigate the KLT keypoint tracker implemented in vpMbKltTracker or its hybrid version vpMbEdgeKltTracker. We recommend to install \c OpenCV. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
@@ -142,22 +142,22 @@ tracker->loadModel(objectname + ".wrl");
 Once the model of the object to track is loaded, with the next line the display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
 \snippet tutorial-mb-tracker.cpp Set display
 
-Now we have to initialize the tracker. With the next line we choose to use a user interaction. 
+Now we have to initialize the tracker. With the next line we choose to use a user interaction.
 \snippet tutorial-mb-tracker.cpp Init
 
 The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image shows where the user has to click.
 
-\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker. 
+\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker.
 
 Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that sould be \c ".ppm". In our case it will be \c "teabox.ppm".
 
-The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user intialization is provided hereafter. Note that all the characters after character '#' are considered as comments.
 
 \includelineno tracking/model-based/generic/model/teabox/teabox.init
 
 We give now the signification of each line of this file:
 - line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
-- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.  
+- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.
 - line 3: 3D coordinates of vertex 3.
 - line 4: 3D coordinates of vertex 2.
 - line 5: 3D coordinates of vertex 5.
@@ -200,8 +200,8 @@ We make the choice to describe the faces of the box from the 3D points that corr
 - line 5: 3D point with coordinate (0,0,-0.08) corresponding to vertex 1.
 - line 6 to 11: The other 3D points corresponding to vertices 2 to 7 respectively.
 - line 13: Number of 3D lines defined from two 3D points. It is possible to introduce 3D lines and then use these lines to define faces from these 3D lines. This is particularly useful to define faces from non-closed polygons. For instance, it can be used to specify the tracking of only 3 edges of a rectangle. Notice also that a 3D line that doesn't belong to a face is always visible and consequently always tracked.
-- line 15: Number of faces defined from 3D lines. In our teabox example we decide to define all the faces from 3D points, that is why this value is set to 0. 
-- line 17: The number of faces defined by a set of 3D points. Here our teabox has 6 faces. Thus, next 6 lines describe each face from the 3D points defined previously line 4 to 11. Notice here that all the faces defined from 3D points corresponds to closed polygons. 
+- line 15: Number of faces defined from 3D lines. In our teabox example we decide to define all the faces from 3D points, that is why this value is set to 0.
+- line 17: The number of faces defined by a set of 3D points. Here our teabox has 6 faces. Thus, next 6 lines describe each face from the 3D points defined previously line 4 to 11. Notice here that all the faces defined from 3D points corresponds to closed polygons.
 - line 18: First face defined by 4 3D points, respectively vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
 - line 19: Second face also defined by 4 points, respectively vertices 1,6,5,2 to have a counter clockwise orientation.
 - line 20 to 23: The four other faces of the box.
@@ -218,14 +218,14 @@ This file describes the model of the tea box corresponding to the next image:
 
 \image html img-teabox-cao-triangle.jpg Index of the vertices used to model the tea box in cao format with triangles.
 
-Until line 15, the content of this file is similar to the one described in 
+Until line 15, the content of this file is similar to the one described in
 \ref mbdep_teabox_cao. Line 17 we specify that the model contains 12 faces. Each face is then described as a triangle.
 
-\note Since some lines of the model (for example the one between points 0 and 2, or 7 and 3...) don't correspond to teabox edges, this CAD model is not suited for moving-edges and hybrid trackers. 
+\note Since some lines of the model (for example the one between points 0 and 2, or 7 and 3...) don't correspond to teabox edges, this CAD model is not suited for moving-edges and hybrid trackers.
 
 \subsection mbdep_teabox_vrml teabox.wrl example
 
-The content of the \c teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mbdep_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces. 
+The content of the \c teabox.wrl file used in tutorial-mb-tracker-full.cpp and tutorial-mb-edge-tracker.cpp when \c teabox.cao is missing is given hereafter. This content is to make into relation with \c teabox.cao described in \ref mbdep_teabox_cao. As for the cao format, \c teabox.wrl describes first the vertices of the box, then the edges that corresponds to the faces.
 
 \includelineno tracking/model-based/generic/model/teabox/teabox.wrl
 
@@ -259,7 +259,8 @@ The content of the XML file teabox.xml that is considered by default is the foll
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -268,24 +269,24 @@ The content of the XML file teabox.xml that is considered by default is the foll
     </sample>
   </ecm>
   <klt>
-    <mask_border>5</mask_border> 
-    <max_features>300</max_features> 
-    <window_size>5</window_size> 
-    <quality>0.015</quality> 
-    <min_distance>8</min_distance> 
+    <mask_border>5</mask_border>
+    <max_features>300</max_features>
+    <window_size>5</window_size>
+    <quality>0.015</quality>
+    <min_distance>8</min_distance>
     <harris>0.01</harris>
-    <size_block>3</size_block> 
-    <pyramid_lvl>3</pyramid_lvl> 
+    <size_block>3</size_block>
+    <pyramid_lvl>3</pyramid_lvl>
   </klt>
   <camera>
-    <u0>325.66776</u0> 
-    <v0>243.69727</v0> 
-    <px>839.21470</px> 
-    <py>839.44555</py> 
+    <u0>325.66776</u0>
+    <v0>243.69727</v0>
+    <px>839.21470</px>
+    <py>839.44555</py>
   </camera>
   <face>
-    <angle_appear>70</angle_appear> 
-    <angle_disappear>80</angle_disappear> 
+    <angle_appear>70</angle_appear>
+    <angle_disappear>80</angle_disappear>
     <near_clipping>0.1</near_clipping>
     <far_clipping>100</far_clipping>
     <fov_clipping>1</fov_clipping>
@@ -314,7 +315,8 @@ These settings could be tuned either from XML using \<ecm\> tag as:
       <tracking>8</tracking>
     </range>
     <contrast>
-      <edge_threshold>10000</edge_threshold>
+      <edge_threshold_type>1</edge_threshold_type>
+      <edge_threshold>20</edge_threshold>
       <mu1>0.5</mu1>
       <mu2>0.5</mu2>
     </contrast>
@@ -332,7 +334,7 @@ of from source code using vpMbEdgeTracker::setMovingEdge() method:
 Either from xml or from the previous source code you can set:
 - mask_size: defines the size of the convolution mask used to detect an edge.
 - nb_mask: number of mask applied to determine the object contour. The number of mask determines the precision of the normal of the edge for every sample. If precision is 2deg, then there are 360/2 = 180 masks.
-- range_tracking: range on both sides of the reference pixel along the normal of the contour used to track a moving-edge. If the displacement of the tracked object in two successive images is large, you have to increase this parameter. 
+- range_tracking: range on both sides of the reference pixel along the normal of the contour used to track a moving-edge. If the displacement of the tracked object in two successive images is large, you have to increase this parameter.
 - edge_threshold: likelihood threshold used to determined if the moving edge is valid or not.
 - mu1: minimum image contrast allowed to detect a contour.
 - mu2: maximum image contrast allowed to detect a contour.
@@ -342,21 +344,21 @@ Either from xml or from the previous source code you can set:
 
 
 \subsection mbdep_settings_klt Keypoints settings
-Keypoint settings affect tracking of keypoints on visible faces using KLT. 
+Keypoint settings affect tracking of keypoints on visible faces using KLT.
 These settings could be tuned either from XML using \<klt\> tag as:
 
 \code
 <conf>
   ...
   <klt>
-    <mask_border>5</mask_border> 
-    <max_features>300</max_features> 
-    <window_size>5</window_size> 
-    <quality>0.015</quality> 
-    <min_distance>8</min_distance> 
+    <mask_border>5</mask_border>
+    <max_features>300</max_features>
+    <window_size>5</window_size>
+    <quality>0.015</quality>
+    <min_distance>8</min_distance>
     <harris>0.01</harris>
-    <size_block>3</size_block> 
-    <pyramid_lvl>3</pyramid_lvl> 
+    <size_block>3</size_block>
+    <pyramid_lvl>3</pyramid_lvl>
   </klt>
   ...
 </conf>
@@ -369,7 +371,7 @@ With the previous parameters you can set:
 - mask_border: erosion number of the mask used on each face.
 - max_features: maximum number of keypoint features to track in the image.
 - window_size: window size used to refine the corner locations.
-- quality: parameter characterizing the minimal accepted quality of image corners. Corners with quality measure less than this parameter are rejected. This means that if you want to have more keypoints on a face, you have to reduce this parameter. 
+- quality: parameter characterizing the minimal accepted quality of image corners. Corners with quality measure less than this parameter are rejected. This means that if you want to have more keypoints on a face, you have to reduce this parameter.
 - min_distance: minimal Euclidean distance between detected corners during keypoint detection stage used to initialize keypoint location.
 - harris: free parameter of the Harris detector.
 - size_block: size of the averaging block used to track the keypoint features.
@@ -378,17 +380,17 @@ With the previous parameters you can set:
 \note Most important parameters are \e min_distance and \e quality.
 
 \subsection mbdep_settings_cam Camera settings
-Camera settings correspond to the intrinsic camera parameters without distorsion. If images are acquired by a camera that has a large field of view that introduce distorsion, images need to be undistorded before processed by the tracker. The camera parameters are then the one obtained on undistorded images.
+Camera settings correspond to the intrinsic camera parameters without distortion. If images are acquired by a camera that has a large field of view that introduce distortion, images need to be undistorded before processed by the tracker. The camera parameters are then the one obtained on undistorded images.
 
 Camera settings could be set from XML using \<camera\> tag as:
 \code
 <conf>
   ...
   <camera>
-    <u0>325.66776</u0> 
-    <v0>243.69727</v0> 
-    <px>839.21470</px> 
-    <py>839.44555</py> 
+    <u0>325.66776</u0>
+    <v0>243.69727</v0>
+    <px>839.21470</px>
+    <py>839.44555</py>
   </camera>
   ...
 </conf>
@@ -402,10 +404,10 @@ As described in vpCameraParameters class, these parameters correspond to \f$(p_x
 
 \subsection mbdep_settings_visibility Visibility settings
 
-An important setting concerns the visibility test that is used to determine if a face is visible or not. Note that moving-edges and keypoints are only tracked on visible faces. Three different visibility tests are implemented; with or without Ogre ray tracing and with or without scanline rendering. The default test is the one without Ogre and scanline. The functions vpMbTracker::setOgreVisibilityTest() and vpMbTracker::setScanLineVisibilityTest() allow to select which test to use. 
+An important setting concerns the visibility test that is used to determine if a face is visible or not. Note that moving-edges and keypoints are only tracked on visible faces. Three different visibility tests are implemented; with or without Ogre ray tracing and with or without scanline rendering. The default test is the one without Ogre and scanline. The functions vpMbTracker::setOgreVisibilityTest() and vpMbTracker::setScanLineVisibilityTest() allow to select which test to use.
 
 \subsubsection mbdep_settings_visibility_default Default visibility based on normals
-Let us now highlight how the default visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible. 
+Let us now highlight how the default visibility test works. As illustrated in the following figure, the angle \f$ \alpha \f$ between the normal of the face and the line going from the camera to the center of gravity of the face is used to determine if the face is visible.
 
 \image html img-tracker-mb-visibility.jpg Principle of the visibility test used to determine if a face is visible.
 
@@ -414,8 +416,8 @@ When no advanced visibility test is enable (we recall that this is the default b
 <conf>
   ...
   <face>
-    <angle_appear>70</angle_appear> 
-    <angle_disappear>80</angle_disappear> 
+    <angle_appear>70</angle_appear>
+    <angle_disappear>80</angle_disappear>
   </face>
 \endcode
 or in the code:
@@ -423,7 +425,7 @@ or in the code:
 
 Here the face is considered as appearing if \f$ \alpha \leq 70\f$ degrees, and disappearing if \f$ \alpha > 80\f$ degrees.
 
-\note When these two angle parameters are not set, their default values set to 89 degrees are used. 
+\note When these two angle parameters are not set, their default values set to 89 degrees are used.
 
 \subsubsection mbdep_settings_visibility_ogre Advanced visibility via Ogre3D
 
@@ -462,9 +464,9 @@ Even if this approach requires a bit <b>more computing power</b>, it is a <b>pix
 
 \subsection mbdep_settings_clipping Clipping settings
 
-Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.  
+Additionally to the visibility test described above, it is also possible to use clipping. Firstly, the algorithm removes the faces that are not visibles, according to the visibility test used, then it will also remove the faces or parts of the faces that are out of the clipping planes. As illustrated in the following figure, different clipping planes can be enabled.
 
-\image html img-fov.png Camera field of view and clipping planes. 
+\image html img-fov.png Camera field of view and clipping planes.
 
 Let us consider two plane categories: the ones belonging to the field of view or FOV (Left, Right, Up and Down), and the Near and Far clipping planes. The FOV planes can be enabled by:
 
@@ -473,9 +475,9 @@ Let us consider two plane categories: the ones belonging to the field of view or
 which is equivalent to:
 
 \code
-  tracker->setClipping(vpMbtPolygon::LEFT_CLIPPING 
+  tracker->setClipping(vpMbtPolygon::LEFT_CLIPPING
                     | vpMbtPolygon::RIGHT_CLIPPING
-                    | vpMbtPolygon::UP_CLIPPING 
+                    | vpMbtPolygon::UP_CLIPPING
                     | vpMbtPolygon::DOWN_CLIPPING);
 \endcode
 
@@ -510,18 +512,18 @@ It is also possible to enable them in the XML file. This is done with the follow
 
 Here for simplicity, the user just has the possibility to either activate all the FOV clipping planes or none of them (fov_clipping requires a boolean).
 
-\note When clipping parameters are not set in the XML file, nor in the code, clipping is not used. Usually clipping is not helpful when the oject to track is simple.  
+\note When clipping parameters are not set in the XML file, nor in the code, clipping is not used. Usually clipping is not helpful when the oject to track is simple.
 
 
 \section mbdep_advanced Advanced
 \subsection mbdep_advanced_model How to manipulate the model
 
 The following code shows how to access to the CAD model
-- to check if a face is visible, 
+- to check if a face is visible,
 - to get the name of the face (only with models in \c .cao format for the moment)
 - to check if the level of detail is enable/disable (only with models in \c .cao format for the moment)
 - to access to the coordinates of the 3D points used to model a face
-- from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image 
+- from the pose \e cMo estimated by the tracker to compute the coordinates of the 3D points in the image
 
 \code
        vpMbHiddenFaces<vpMbtPolygon> &faces = tracker.getFaces();
@@ -531,9 +533,9 @@ The following code shows how to access to the CAD model
          std::cout << "face " << i << " with index: " << poly[i]->getIndex()
              << (poly[i]->getName().empty() ? "" : (" with name: " + poly[i]->getName()))
              << " is " << (poly[i]->isVisible() ? "visible" : "not visible")
-             << " and has " << poly[i]->getNbPoint() << " points" 
+             << " and has " << poly[i]->getNbPoint() << " points"
              << " and LOD is " << (poly[i]->useLod ? "enabled" : "disabled") << std::endl;
-             
+
          for (unsigned int j=0; j<poly[i]->getNbPoint(); j++) {
            vpPoint P = poly[i]->getPoint(j);
            P.project(cMo);
@@ -550,7 +552,7 @@ The following code shows how to access to the CAD model
 
 \subsection mbdep_advanced_lod Level of detail (LOD)
 
-The level of detail (LOD) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used 
+The level of detail (LOD) consists in introducing additional constraints to the visibility check to determine if the features of a face have to be tracked or not. Two parameters are used
 - the line length (in pixel)
 - the area of the face (in pixel²), that could be closed or not (you can define an open face by adding all the segments without the last one which closes the face)
 
@@ -803,7 +805,7 @@ The natural order would be to load first the configuration file and after the CA
 
 To exploit the name of a face in the code, see sections about \ref mbdep_advanced_lod and \ref mbdep_advanced_exclude.
 
-When using a wrml file, names are associated with shapes. In the example below (the model of a teabox), as only one shape is defined, all its faces will have the same name: "teabox_name". 
+When using a wrml file, names are associated with shapes. In the example below (the model of a teabox), as only one shape is defined, all its faces will have the same name: "teabox_name".
 
 \note If you want to set different names for different faces, you have to define them in different shapes.
 
@@ -819,7 +821,7 @@ DEF teabox_name Shape {
 
 geometry DEF cube IndexedFaceSet {
 
-coord Coordinate { 
+coord Coordinate {
 point [
 0     0      0   ,
 0     0     -0.08,
@@ -854,7 +856,7 @@ If you want to enable (default behavior) or disable the edge tracking on specifi
 vpMbEdgeTracker::setUseEdgeTracking("name of the face", boolean);
 \endcode
 
-If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable. 
+If the boolean is set to False, the tracking of the edges of the faces that have the given name will be disable. If it is set to True (default behavior), it will be enable.
 
 As for the edge tracking, the same functionnality is also available when using keypoints via:
 
@@ -926,7 +928,7 @@ This issue is similar to \ref mbdep_known_issues_example_with_ogre. It may occur
   tracker.setOgreShowConfigDialog(true);
 \endcode
 - build the modified tutorial
-- run the binary. Now the binary should open the Ogre configuration window where you have to select an Ogre renderer that is working on your computer. 
+- run the binary. Now the binary should open the Ogre configuration window where you have to select an Ogre renderer that is working on your computer.
 \image html img-win8.1-msvc-mbtracker-ogre-opengl.jpg
 - Press then OK to continue and start the tracking of the object.
 

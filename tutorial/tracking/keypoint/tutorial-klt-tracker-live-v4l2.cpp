@@ -8,9 +8,13 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/klt/vpKltOpencv.h>
 
-int main(int argc, const char *argv[])
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
+int main(int argc, const char *argv [])
 {
-#if defined(VISP_HAVE_OPENCV) && (defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if (defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_V4L2)) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   try {
     bool opt_init_by_click = false;
     int opt_device = 0;
@@ -35,7 +39,7 @@ int main(int argc, const char *argv[])
     g.setDevice(device.str());
     g.open(I);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
@@ -46,11 +50,7 @@ int main(int argc, const char *argv[])
     vpImageConvert::convert(frame, I);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    IplImage *cvI = NULL;
-#else
     cv::Mat cvI;
-#endif
     vpImageConvert::convert(I, cvI);
 
     // Display initialisation
@@ -71,7 +71,6 @@ int main(int argc, const char *argv[])
 
     // Initialise the tracking
     if (opt_init_by_click) {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
       vpMouseButton::vpMouseButtonType button;
       std::vector<cv::Point2f> guess;
       vpImagePoint ip;
@@ -88,15 +87,15 @@ int main(int argc, const char *argv[])
         vpTime::wait(20);
       } while (button != vpMouseButton::button3);
       tracker.initTracking(cvI, guess);
-#endif
-    } else {
+    }
+    else {
       tracker.initTracking(cvI);
     }
 
     while (1) {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -111,12 +110,8 @@ int main(int argc, const char *argv[])
       if (vpDisplay::getClick(I, false))
         break;
     }
-
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    cvReleaseImage(&cvI);
-#endif
-
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

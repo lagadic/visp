@@ -8,14 +8,18 @@
 #include <visp3/sensor/vpV4l2Grabber.h>
 #endif
 
-int main(int argc, const char *argv[])
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
+int main(int argc, const char *argv [])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
     unsigned int opt_device = 0;
     unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn
-                                // it to 1 to avoid subsampling
+    // it to 1 to avoid subsampling
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--haar")
@@ -26,25 +30,25 @@ int main(int argc, const char *argv[])
         opt_scale = (unsigned int)atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
         std::cout << "Usage: " << argv[0]
-                  << " [--haar <haarcascade xml filename>] [--device <camera "
-                     "device>] [--scale <subsampling factor>] [--help]"
-                  << std::endl;
+          << " [--haar <haarcascade xml filename>] [--device <camera "
+          "device>] [--scale <subsampling factor>] [--help]"
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
 
     vpImage<unsigned char> I; // for gray images
 
-//! [Construct grabber]
+    //! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
     std::ostringstream device;
     device << "/dev/video" << opt_device;
     g.setDevice(device.str());
     g.setScale(opt_scale); // Default value is 2 in the constructor. Turn it
-                           // to 1 to avoid subsampling
+    // to 1 to avoid subsampling
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     cv::VideoCapture cap(opt_device); // open the default camera
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     int width = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -71,7 +75,7 @@ int main(int argc, const char *argv[])
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
@@ -81,7 +85,7 @@ int main(int argc, const char *argv[])
 
     while (1) {
       double t = vpTime::measureTimeMs();
-//! [Acquisition]
+      //! [Acquisition]
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
       bool face_found = face_detector.detect(I);
@@ -112,7 +116,8 @@ int main(int argc, const char *argv[])
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << e.getMessage() << std::endl;
   }
 #else

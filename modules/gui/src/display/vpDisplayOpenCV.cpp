@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Image display.
  *
- * Authors:
- * Christophe Collewet
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpDisplayOpenCV.cpp
@@ -45,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV)
+#if defined(HAVE_OPENCV_HIGHGUI)
 
 #include <cmath> // std::fabs
 #include <iostream>
@@ -64,14 +59,14 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-
 #include <opencv2/core/core_c.h> // for CV_FILLED versus cv::FILLED
+
+#if defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
+#endif
 
 #ifndef CV_RGB
 #define CV_RGB(r, g, b) cv::Scalar((b), (g), (r), 0)
-#endif
 #endif
 
 #ifdef VISP_HAVE_X11

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Video capture example based on CMU 1394 Digital Camera SDK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file grab1394CMU.cpp
@@ -208,16 +208,16 @@ int main(int argc, const char **argv)
 
   std::cout << "Image size: width : " << I.getWidth() << " height: " << I.getHeight() << std::endl;
 
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
 
 // Creates a display
-#if defined VISP_HAVE_OPENCV
+#if defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display;
 #endif
   if (opt_display) {
-    display.init(I, 100, 100, "DirectShow Framegrabber");
+    display.init(I, 100, 100, "Current image");
   }
 #endif
 
@@ -231,7 +231,7 @@ int main(int argc, const char **argv)
       // Acquires an RGBa image
       g.acquire(I);
 
-#if (defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
       if (opt_display) {
         // Displays the grabbed rgba image
         vpDisplay::display(I);

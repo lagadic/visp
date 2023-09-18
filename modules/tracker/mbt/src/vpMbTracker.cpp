@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Generic model based tracker
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMbTracker.cpp
@@ -90,10 +90,17 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <mutex>
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::mutex g_mutex_cout;
+#endif
 /*!
   Structure to store info about segment in CAO model files.
  */
@@ -170,7 +177,7 @@ std::istream &safeGetline(std::istream &is, std::string &t)
 
 */
 vpMbTracker::vpMbTracker()
-  : m_cam(), m_cMo(), oJo(6, 6), isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
+  : m_cam(), m_cMo(), oJo(6, 6), m_isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
     computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
     displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
     angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
@@ -269,7 +276,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     finitpos.close();
     last_cMo.buildFrom(init_pos);
 
-    std::cout << "last_cMo : " << std::endl << last_cMo << std::endl;
+    std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
     if (I) {
       vpDisplay::display(*I);
@@ -367,11 +374,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
         if (foundHelpImg) {
           std::cout << "Load image to help initialization: " << dispF << std::endl;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
           d_help = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
           d_help = new vpDisplayGDI;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
           d_help = new vpDisplayOpenCV;
 #endif
 
@@ -564,7 +571,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  \param displayHelp : Optional display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
@@ -601,7 +608,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   \param initFile : File containing the coordinates of at least 4 3D points
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
-  \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
+  \param displayHelp : Optional display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
   should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
@@ -641,9 +648,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   if (vpIoTools::checkFilename(displayFile)) {
     try {
       std::cout << "Load image to help initialization: " << displayFile << std::endl;
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
       d_help = new vpDisplayX;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
       d_help = new vpDisplayGDI;
 #elif defined VISP_HAVE_OPENCV
       d_help = new vpDisplayOpenCV;
@@ -1786,6 +1793,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPoints += caoNbrPoint;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
@@ -1832,6 +1842,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     nbLines += caoNbrLine;
     unsigned int *caoLinePoints = NULL;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
@@ -1910,6 +1923,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonLines += caoNbrPolygonLine;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
@@ -1996,6 +2012,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonPoints += caoNbrPolygonPoint;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
@@ -2066,6 +2085,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCylinders += caoNbCylinder;
       if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
@@ -2144,6 +2166,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCircles += caoNbCircle;
       if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
       }
 
@@ -2205,6 +2230,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     if (header && parent) {
       if (verbose) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
         std::cout << "Total nb of points : " << nbPoints << std::endl;
         std::cout << "Total nb of lines : " << nbLines << std::endl;
@@ -2213,6 +2241,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
         std::cout << "Total nb of circles : " << nbCircles << std::endl;
       } else {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << nbPoints << " points" << std::endl;
         std::cout << "> " << nbLines << " lines" << std::endl;
         std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
@@ -2766,7 +2797,7 @@ void vpMbTracker::setClipping(const unsigned int &flags)
     faces[i]->setClipping(clippingFlag);
 }
 
-void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true,
+void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity, const vpColVector &w_true,
                                              const vpHomogeneousMatrix &cMoPrev, const vpMatrix &L_true,
                                              const vpMatrix &LVJ_true, const vpColVector &error)
 {
@@ -2776,7 +2807,7 @@ void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vp
 
     // Note that here the covariance is computed on cMoPrev for time
     // computation efficiency
-    if (isoJoIdentity_) {
+    if (isoJoIdentity) {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, L_true, D);
     } else {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, LVJ_true, D);
@@ -2785,8 +2816,7 @@ void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vp
 }
 
 /*!
-  Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of
-  residu.
+  Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of residuals.
 
   \throw vpMatrixException::incorrectMatrixSizeError if the sizes of the
   matrices do not allow the computation.
@@ -2830,12 +2860,12 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
   }
 }
 
-void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
+void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
                                            vpColVector &R, const vpColVector &error, vpColVector &error_prev,
                                            vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w,
                                            vpColVector *const m_w_prev)
 {
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     LTL = L.AtA();
     computeJTR(L, R, LTR);
 
@@ -2936,14 +2966,14 @@ vpColVector vpMbTracker::getEstimatedDoF() const
 void vpMbTracker::setEstimatedDoF(const vpColVector &v)
 {
   if (v.getRows() == 6) {
-    isoJoIdentity = true;
+    m_isoJoIdentity = true;
     for (unsigned int i = 0; i < 6; i++) {
       // if(v[i] != 0){
       if (std::fabs(v[i]) > std::numeric_limits<double>::epsilon()) {
         oJo[i][i] = 1.0;
       } else {
         oJo[i][i] = 0.0;
-        isoJoIdentity = false;
+        m_isoJoIdentity = false;
       }
     }
   }

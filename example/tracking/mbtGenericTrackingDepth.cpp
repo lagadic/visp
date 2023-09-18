@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Example of tracking with vpGenericTracker on Castel.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example mbtGenericTrackingDepth.cpp
@@ -77,7 +77,7 @@ void usage(const char *name, const char *badparam)
     [-m <model name>] [-M <model name depth>] [-n <initialisation file base name>]\n\
     [-f] [-c] [-d] [-h] [-o] [-w] [-l] [-v] [-p]\n\
     [-t <tracker type>] [-T <tracker type>] [-e <last frame index>]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
   OPTIONS:                                               \n\
@@ -152,10 +152,10 @@ void usage(const char *name, const char *badparam)
 }
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &configFile_depth,
-                std::string &modelFile, std::string &modelFile_depth, std::string &initFile, bool &displayFeatures,
-                bool &click_allowed, bool &display, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-                bool &computeCovariance, bool &projectionError, int &trackerType, int &tracker_type_depth,
-                int &lastFrame)
+  std::string &modelFile, std::string &modelFile_depth, std::string &initFile, bool &displayFeatures,
+  bool &click_allowed, bool &display, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
+  bool &computeCovariance, bool &projectionError, int &trackerType, int &tracker_type_depth,
+  int &lastFrame)
 {
   const char *optarg_;
   int c;
@@ -236,7 +236,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
   return true;
 }
 
-struct rs_intrinsics {
+struct rs_intrinsics
+{
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
                       as a pixel offset from the left edge */
   float ppy;       /**< Vertical coordinate of the principal point of the image, as
@@ -267,8 +268,8 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
 }
 
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
-               vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
-               unsigned int &pointcloud_height)
+  vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
+  unsigned int &pointcloud_height)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
@@ -338,7 +339,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
     for (unsigned int j = 0; j < width; j++) {
       float scaled_depth = I_depth_raw[i][j] * depth_scale;
       float point[3];
-      float pixel[2] = {(float)j, (float)i};
+      float pixel[2] = { (float)j, (float)i };
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
 
       vpColVector data_3D(3);
@@ -354,14 +355,14 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 }
 
 void loadConfiguration(vpMbTracker *const tracker,
-                       const std::string &
+  const std::string &
 #if USE_XML
-                           configFile
+  configFile
 #endif
-                       ,
-                       const std::string &
+  ,
+  const std::string &
 #if USE_XML
-                           configFile_depth
+  configFile_depth
 #endif
 )
 {
@@ -374,14 +375,15 @@ void loadConfiguration(vpMbTracker *const tracker,
   me.setMaskSize(5);
   me.setMaskNumber(180);
   me.setRange(8);
-  me.setThreshold(10000);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(10);
   me.setMu1(0.5);
   me.setMu2(0.5);
   me.setSampleStep(4);
   dynamic_cast<vpMbGenericTracker *>(tracker)->setMovingEdge(me);
 
-// Klt
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  // Klt
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   vpKltOpencv klt;
   klt.setMaxFeatures(10000);
   klt.setWindowSize(5);
@@ -397,7 +399,7 @@ void loadConfiguration(vpMbTracker *const tracker,
 
   // Depth
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthNormalFeatureEstimationMethod(
-      vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthNormalPclPlaneEstimationMethod(2);
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthNormalPclPlaneEstimationRansacMaxIter(200);
   dynamic_cast<vpMbGenericTracker *>(tracker)->setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
@@ -418,9 +420,9 @@ void loadConfiguration(vpMbTracker *const tracker,
   tracker->setNearClippingDistance(0.01);
   tracker->setFarClippingDistance(2.0);
   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::FOV_CLIPPING);
-//   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
-//   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
-//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+  //   tracker->setClipping(tracker->getClipping() | vpMbtPolygon::LEFT_CLIPPING
+  //   | vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+  //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 }
 } // namespace
@@ -464,17 +466,17 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_configFile_depth, opt_modelFile, opt_modelFile_depth,
-                    opt_initFile, displayFeatures, opt_click_allowed, opt_display, useOgre, showOgreConfigDialog,
-                    useScanline, computeCovariance, projectionError, trackerType_image, trackerType_depth,
-                    opt_lastFrame)) {
+      opt_initFile, displayFeatures, opt_click_allowed, opt_display, useOgre, showOgreConfigDialog,
+      useScanline, computeCovariance, projectionError, trackerType_image, trackerType_depth,
+      opt_lastFrame)) {
       return EXIT_FAILURE;
     }
 
-#if !defined(VISP_HAVE_MODULE_KLT) || (!defined(VISP_HAVE_OPENCV) || (VISP_HAVE_OPENCV_VERSION < 0x020100))
-    if (trackerType_image == /*vpMbGenericTracker::KLT_TRACKER*/ 2) {
-      std::cout << "KLT only features cannot be used: ViSP is not built with "
-                   "KLT module or OpenCV is not available."
-                << std::endl;
+#if !(defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO))
+    if (trackerType_image == 2 || trackerType_image == 3) { // Use vpMbGenericTracker::KLT_TRACKER
+      std::cout << "KLT features cannot be used: ViSP is not built with "
+        "KLT module or OpenCV imgproc and video modules are not available."
+        << std::endl;
       return EXIT_SUCCESS;
     }
 #endif
@@ -484,9 +486,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -505,13 +507,13 @@ int main(int argc, const char **argv)
       configFile = opt_configFile;
     else
       configFile =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.xml");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.xml");
 
     if (!opt_configFile_depth.empty())
       configFile_depth = opt_configFile_depth;
     else
       configFile_depth =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_depth.xml");
 
     std::string modelFile, modelFile_depth;
     if (!opt_modelFile.empty())
@@ -519,7 +521,7 @@ int main(int argc, const char **argv)
     else {
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
       modelFile =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_gantry.wrl");
+        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau_gantry.wrl");
 #else
       modelFile = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
 #endif
@@ -529,20 +531,20 @@ int main(int argc, const char **argv)
       modelFile_depth = opt_modelFile_depth;
     else
       modelFile_depth =
-          vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/chateau.cao");
 
     std::string vrml_ext = ".wrl";
     bool use_vrml =
-        (modelFile.compare(modelFile.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0) ||
-        (modelFile_depth.compare(modelFile_depth.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0);
+      (modelFile.compare(modelFile.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0) ||
+      (modelFile_depth.compare(modelFile_depth.length() - vrml_ext.length(), vrml_ext.length(), vrml_ext) == 0);
 
     if (use_vrml) {
 #if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION == 2 || COIN_MAJOR_VERSION == 3 || COIN_MAJOR_VERSION == 4)
       std::cout << "use_vrml: " << use_vrml << std::endl;
 #else
       std::cerr << "Error: vrml model file is only supported if ViSP is "
-                   "build with Coin3D 3rd party"
-                << std::endl;
+        "build with Coin3D 3rd party"
+        << std::endl;
       return EXIT_FAILURE;
 #endif
     }
@@ -563,16 +565,16 @@ int main(int argc, const char **argv)
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-// initialise a  display
-#if defined VISP_HAVE_X11
+    // initialise a  display
+#if defined(VISP_HAVE_X11)
     vpDisplayX display1, display2;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display1, display2;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display1, display2;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display1, display2;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display1, display2;
 #else
     opt_display = false;
@@ -583,7 +585,7 @@ int main(int argc, const char **argv)
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display1.init(I, 100, 100, "Test tracking (Left)");
       display2.init(I_depth, (int)(I.getWidth() / vpDisplay::getDownScalingFactor(I)) + 110, 100,
-                    "Test tracking (Right)");
+        "Test tracking (Right)");
 #endif
       vpDisplay::display(I);
       vpDisplay::display(I_depth);
@@ -603,7 +605,7 @@ int main(int argc, const char **argv)
 
     vpHomogeneousMatrix depth_M_color;
     std::string depth_M_color_filename =
-        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
+      vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/castel/depth_M_color.txt");
     {
       std::ifstream depth_M_color_file(depth_M_color_filename.c_str());
       depth_M_color.load(depth_M_color_file);
@@ -656,7 +658,8 @@ int main(int argc, const char **argv)
       dynamic_cast<vpMbGenericTracker *>(tracker)->getPose(c1Mo, c2Mo);
       // display the 3D model at the given pose
       dynamic_cast<vpMbGenericTracker *>(tracker)->display(I, I_depth, c1Mo, c2Mo, cam1, cam2, vpColor::red);
-    } else {
+    }
+    else {
       vpHomogeneousMatrix c1Moi(0.06846423368, 0.09062570884, 0.3401096693, -2.671882598, 0.1174275908, -0.6011935263);
       vpHomogeneousMatrix c2Moi(0.04431452054, 0.09294637757, 0.3357760654, -2.677922443, 0.121297639, -0.6028463357);
       dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I, I_depth, c1Moi, c2Moi);
@@ -685,7 +688,7 @@ int main(int argc, const char **argv)
     unsigned int frame_index = 0;
     std::vector<double> time_vec;
     while (read_data(frame_index, ipath, I, I_depth_raw, pointcloud, pointcloud_width, pointcloud_height) && !quit &&
-           (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
+      (opt_lastFrame > 0 ? (int)frame_index <= opt_lastFrame : true)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       if (opt_display) {
@@ -717,7 +720,7 @@ int main(int argc, const char **argv)
         dynamic_cast<vpMbGenericTracker *>(tracker)->initFromPose(I, I_depth, c1Mo, c2Mo);
       }
 
-// Test to set an initial pose
+      // Test to set an initial pose
 #if USE_SMALL_DATASET
       if (frame_index == 20) {
         c1Mo.buildFrom(0.07734634051, 0.08993639906, 0.342344402, -2.708409543, 0.0669276477, -0.3798958303);
@@ -770,8 +773,8 @@ int main(int argc, const char **argv)
           {
             std::stringstream ss;
             ss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge() << ", klt "
-               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt() << ", depth "
-               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
+              << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt() << ", depth "
+              << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
             vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
           }
         }
@@ -810,12 +813,12 @@ int main(int argc, const char **argv)
       }
 
       frame_index++;
-    }
+      }
 
     std::cout << "\nFinal poses, c1Mo:\n" << c1Mo << "\nc2Mo:\n" << c2Mo << std::endl;
     std::cout << "\nComputation time, Mean: " << vpMath::getMean(time_vec)
-              << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
-              << std::endl;
+      << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
+      << std::endl;
 
     if (opt_click_allowed && !quit) {
       vpDisplay::getClick(I);
@@ -825,11 +828,12 @@ int main(int argc, const char **argv)
     tracker = NULL;
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+      }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
-}
+    }
 
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()

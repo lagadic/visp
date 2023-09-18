@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,18 +31,15 @@
  * Description:
  * Directory management.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpIoTools_HH
-#define vpIoTools_HH
+#ifndef _vpIoTools_h_
+#define _vpIoTools_h_
 
 /*!
   \file vpIoTools.h
   \brief File and directories basic tools.
- */
+*/
 
 #include <visp3/core/vpConfig.h>
 
@@ -185,11 +182,12 @@ public:
    */
   static const char separator =
 #if defined(_WIN32)
-      '\\';
+    '\\';
 #else
-      '/';
+    '/';
 #endif
-
+  static std::string toUpperCase(const std::string &input);
+  static std::string toLowerCase(const std::string &input);
   static std::string getAbsolutePathname(const std::string &pathname);
   static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
   static long getIndex(const std::string &filename, const std::string &format);
@@ -257,7 +255,7 @@ protected:
   static std::vector<std::string> configValues;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static int mkdir_p(const char *path, int mode);
-#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+  static int mkdir_p(const std::string &path, int mode);
+#endif
 };
 #endif

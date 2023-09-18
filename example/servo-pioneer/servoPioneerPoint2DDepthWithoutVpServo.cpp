@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * IBVS on Pioneer P3DX mobile platform
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 #include <iostream>
 
 #include <visp3/blob/vpDot2.h>
@@ -49,14 +46,16 @@
 #include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/sensor/vpOpenCVGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureDepth.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) ||                              \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
 #define TEST_COULD_BE_ACHIEVED
@@ -73,9 +72,9 @@
   Example that shows how to control the Pioneer mobile robot by IBVS visual
   servoing with respect to a blob. The current visual features that are used
   are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
-  - x the abscisse of the point corresponding to the blob center of gravity
+  - x the abscise of the point corresponding to the blob center of gravity
   measured at each iteration,
-  - x* the desired abscisse position of the point (x* = 0)
+  - x* the desired abscise position of the point (x* = 0)
   - Z the depth of the point measured at each iteration
   - Z* the desired depth of the point equal to the initial one.
 
@@ -97,7 +96,7 @@ int main(int argc, char **argv)
     double depth = 1.;
     double lambda = 0.6;
     double coef = 1. / 6.77; // Scale parameter used to estimate the depth Z
-                             // of the blob from its surface
+    // of the blob from its surface
 
     vpRobotPioneer robot;
     ArArgumentParser parser(&argc, argv);
@@ -131,8 +130,8 @@ int main(int argc, char **argv)
     // calibration of the camera
     vpCameraParameters cam;
 
-// Create the camera framegrabber
-#if defined(VISP_HAVE_OPENCV)
+    // Create the camera framegrabber
+#if defined(HAVE_OPENCV_VIDEOIO)
     int device = 1;
     std::cout << "Use device: " << device << std::endl;
     cv::VideoCapture g(device); // open the default camera
@@ -175,15 +174,15 @@ int main(int argc, char **argv)
     cam.initPersProjWithoutDistortion(800, 795, 320, 216);
 #endif
 
-// Acquire an image from the grabber
-#if defined(VISP_HAVE_OPENCV)
+    // Acquire an image from the grabber
+#if defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #else
     g.acquire(I);
 #endif
 
-// Create an image viewer
+    // Create an image viewer
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I, 10, 10, "Current frame");
 #elif defined(VISP_HAVE_GDI)
@@ -199,8 +198,8 @@ int main(int argc, char **argv)
     dot.setEllipsoidShapePrecision(0.);       // to track a blob without any constraint on the shape
     dot.setGrayLevelPrecision(0.9);           // to set the blob gray level bounds for binarisation
     dot.setEllipsoidBadPointsPercentage(0.5); // to be accept 50% of bad inner
-                                              // and outside points with bad
-                                              // gray level
+    // and outside points with bad
+    // gray level
     dot.initTracking(I);
     vpDisplay::flush(I);
 
@@ -237,7 +236,7 @@ int main(int argc, char **argv)
     vpMatrix L;   // Interaction matrix
     L.stack(L_x); // constant since build with the desired feature
     L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that
-                  // evolves at each iteration
+    // evolves at each iteration
 
     vpColVector v; // vz, wx
 
@@ -245,8 +244,8 @@ int main(int argc, char **argv)
     s_Zd.buildFrom(0, 0, 1, 0); // The value of s* is 0 with Z=1 meter.
 
     while (1) {
-// Acquire a new image
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+      // Acquire a new image
+#if defined(HAVE_OPENCV_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #else
@@ -271,9 +270,9 @@ int main(int argc, char **argv)
       vpMatrix L;
       L.stack(L_x); // constant since build with the desired feature
       L.stack(L_Z); // not constant since it corresponds to log(Z/Z*) that
-                    // evolves at each iteration
+      // evolves at each iteration
 
-      // Update the global error s-s*
+// Update the global error s-s*
       vpColVector error;
       error.stack(s_x.error(s_xd, vpFeaturePoint::selectX()));
       error.stack(s_Z.error(s_Zd));
@@ -303,7 +302,8 @@ int main(int argc, char **argv)
     // wait for the thread to stop
     robot.waitForRunExit();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

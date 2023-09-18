@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,17 +31,13 @@
  * Description:
  * Read an image on the disk and display it using X11.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file displayXMulti.cpp
 
   \brief Read a grey level image and a color image on the disk.
   Display these two images using vpDisplayX class, display some
-  features (line, circle, caracters) in overlay and finaly write the image and
+  features (line, circle, characters) in overlay and finally write the image and
   the overlayed features in an image on the disk.
 
 */
@@ -65,7 +61,7 @@
 
   Read a grey level image and a color image on the disk.
   Display these two images using vpDisplayX class, display some
-  features (line, circle, caracters) in overlay and finaly write the image and
+  features (line, circle, characters) in overlay and finally write the image and
   the overlayed features in an image on the disk.
 
 */
@@ -88,14 +84,14 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using X11, display some\n\
-features (line, circle, caracters) in overlay and finaly write \n\
+features (line, circle, characters) in overlay and finally write \n\
 the image and the overlayed features in an image on the disk.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-c] [-d] [-h]\n						      \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -115,7 +111,7 @@ OPTIONS:                                               Default\n\
 \n\
   -c\n\
      Disable the mouse click. Useful to automate the \n\
-     execution of this program without humain intervention.\n\
+     execution of this program without human intervention.\n\
 \n\
   -d                                             \n\
      Disable the image display. This can be useful \n\
@@ -213,7 +209,7 @@ int main(int argc, const char **argv)
     if (!env_ipath.empty())
       ipath = env_ipath;
 
-// Set the default output path
+    // Set the default output path
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     opt_opath = "/tmp";
 #elif defined(_WIN32)
@@ -242,7 +238,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(odirname);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], NULL, ipath, opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << odirname << std::endl;
@@ -257,8 +254,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -267,9 +264,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL, ipath, opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -281,22 +278,24 @@ int main(int argc, const char **argv)
       // Load a grey image from the disk
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
       vpImageIo::read(I1, filename);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+        << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       return EXIT_FAILURE;
     }
     try {
       // Load a color image from the disk
       filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
       vpImageIo::read(I2, filename);
-    } catch (...) {
+    }
+    catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+        << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -369,7 +368,8 @@ int main(int argc, const char **argv)
         std::cout << "Cross position: " << ip << std::endl;
         vpDisplay::displayCross(I1, ip, 15, vpColor::red);
         vpDisplay::flush(I1);
-      } else {
+      }
+      else {
         ip.set_i(50);
         ip.set_j(50);
         // Display a red cross at position ip in the first display
@@ -391,14 +391,15 @@ int main(int argc, const char **argv)
       // If click is allowed, wait for a mouse click to close the display
       if (opt_click_allowed) {
         std::cout << "\nA click in the second display to close the windows "
-                     "and exit..."
-                  << std::endl;
+          "and exit..."
+          << std::endl;
         // Wait for a blocking mouse click
         vpDisplay::getClick(I2);
       }
     }
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

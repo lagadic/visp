@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * Theta U parameterization for the rotation.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpTHETAUVECTOR_H
-#define vpTHETAUVECTOR_H
+#ifndef _vpThetaUVector_h_
+#define _vpThetaUVector_h_
 
 /*!
   \file vpThetaUVector.h
@@ -132,7 +129,7 @@ class vpQuaternionVector;
 
   The code below shows first how to initialize a \f$\theta {\bf u}\f$
   vector, than how to contruct a rotation matrix from a vpThetaUVector
-  and finaly how to extract the theta U angles from the build rotation
+  and finally how to extract the theta U angles from the build rotation
   matrix.
 
   \code
@@ -196,7 +193,7 @@ public:
 
   vpThetaUVector(double tux, double tuy, double tuz);
   //! Destructor.
-  virtual ~vpThetaUVector(){};
+  virtual ~vpThetaUVector(){}
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);

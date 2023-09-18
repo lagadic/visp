@@ -10,10 +10,9 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT) &&                                   \
-    (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if defined(HAVE_OPENCV_OBJDETECT) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
 
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/videoio.hpp>
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
@@ -32,14 +31,14 @@ vpThread::Return captureFunction(vpThread::Args args)
 {
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber cap = *(static_cast<vpV4l2Grabber *>(args));
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture cap = *((cv::VideoCapture *)args);
 #endif
 
-// If the image is larger than 640 by 480, we subsample
+  // If the image is larger than 640 by 480, we subsample
 #if defined(VISP_HAVE_V4L2)
   vpImage<unsigned char> frame_;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::Mat frame_;
 #endif
   bool stop_capture_ = false;
@@ -103,7 +102,7 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Check if we need to initialize the display with the first frame
       if (!display_initialized_) {
-// Initialize the display
+        // Initialize the display
 #if defined(VISP_HAVE_X11)
         d_ = new vpDisplayX(I_);
         display_initialized_ = true;
@@ -137,7 +136,8 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Update the display
       vpDisplay::flush(I_);
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);
@@ -184,7 +184,8 @@ vpThread::Return detectionFunction(vpThread::Args args)
         s_face_available = true;
         s_face_bbox = face_detector_.getBBox(0); // Get largest face bounding box
       }
-    } else {
+    }
+    else {
       vpTime::wait(2); // Sleep 2ms
     }
   } while (capture_state_ != capture_stopped);
@@ -195,12 +196,12 @@ vpThread::Return detectionFunction(vpThread::Args args)
 //! [face-detection-threaded detectionFunction]
 
 //! [face-detection-threaded mainFunction]
-int main(int argc, const char *argv[])
+int main(int argc, const char *argv [])
 {
   std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
   unsigned int opt_device = 0;
   unsigned int opt_scale = 2; // Default value is 2 in the constructor. Turn
-                              // it to 1 to avoid subsampling
+  // it to 1 to avoid subsampling
 
   for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--haar")
@@ -211,21 +212,21 @@ int main(int argc, const char *argv[])
       opt_scale = (unsigned int)atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
       std::cout << "Usage: " << argv[0]
-                << " [--haar <haarcascade xml filename>] [--device <camera "
-                   "device>] [--scale <subsampling factor>] [--help]"
-                << std::endl;
+        << " [--haar <haarcascade xml filename>] [--device <camera "
+        "device>] [--scale <subsampling factor>] [--help]"
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
-// Instanciate the capture
+  // Instantiate the capture
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber cap;
   std::ostringstream device;
   device << "/dev/video" << opt_device;
   cap.setDevice(device.str());
   cap.setScale(opt_scale);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture cap;
   cap.open(opt_device);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)

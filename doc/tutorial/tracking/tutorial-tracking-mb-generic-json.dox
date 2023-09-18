@@ -1,0 +1,277 @@
+/**
+
+\page tutorial-mb-generic-json Tutorial: Loading a model-based generic tracker from JSON
+\tableofcontents
+
+\section tutorial-mb-generic-json-intro Introduction
+
+Since ViSP 3.6.0, a 3rd party library was introduced to allow the seamless use of JSON (JavaScript Object Notation) in ViSP.
+The library that is used is <a target="_blank" href="https://github.com/nlohmann/json">JSON for modern C++</a>.
+To install it on your system, look at \ref soft_tool_json installation instructions for your system.
+
+With the inclusion of <a target="_blank" href="https://github.com/nlohmann/json">JSON for modern C++</a> 3rd party
+library into ViSP, it is now possible to store and load a variety of ViSP datatypes in JSON format.
+
+A case that is of particular interest is the configuration of the generic Model-Based Tracker. As this tracker is complex, providing an easy to use configuration file is essential.
+Loading the configuration for each camera is already possible with XML (already used in \ref tutorial-tracking-mb-generic-rgbd).
+This however, does not load the full state of the tracker but rather the configuration of each camera and combining everything is left to the user.
+
+With JSON serialization, a single file stores the full configuration of the generic tracker, containing the configuration of each camera, their associated name as well as their transformation with respect to the reference camera.
+Moreover, the path to the 3D model can be given in the JSON file and the model will be directly loaded.
+
+\section tutorial-mb-generic-json-structure JSON file structure
+Let us first examine the structure of a JSON file used to load a vpMbGenericTracker, given below:
+\include realsense-color-and-depth.json
+
+Many settings are optional: if a setting is not present in the .json file, then the value already set in the tracker is kept.
+This means that the .json can contain a partial configuration, while the rest of the configuration is done in the code.
+Beware however, that previously defined cameras that are not in the .json file are removed.
+
+As this file is fairly dense, let us examine each part separetely so that you may tweak it for your use case.
+
+\subsection json-global-tracker-settings Global tracker settings
+
+Let us first examine the global settings (located at the root of the JSON structure). Some settings are optional such as:
+
+\code{.json}
+    //...
+    "model": "../models/cube/cube.cao",
+    "display": {
+        "features": true,
+        "projectionError": true
+    },
+    "visibilityTest": {
+        "ogre": false,
+        "scanline": true
+    }
+\endcode
+
+If they are defined globally, they will take precedence over the values defined per tracker.
+
+<table>
+<tr><th colspan="2">Key</th><th>Type</th><th>Description</th><th>Optional</th></tr>
+<tr>
+    <td colspan="2">version</td>
+    <td>String</td>
+    <td>Version of the JSON parsing for the MBT tracker</td>
+    <td>No</td>
+</tr>
+<tr>
+    <td colspan="2">referenceCameraName</td>
+    <td>String</td>
+    <td>The name of the reference camera, see vpMbGenericTracker::getReferenceCameraName()</td>
+    <td>No</td>
+</tr>
+<tr>
+    <td colspan="2">trackers</td>
+    <td>Dictionary</td>
+    <td>The set of camera trackers. Each element of the dictionary associates a camera name to a tracker, that is parsed with vpMbGenericTracker::from_json()</td>
+    <td>No</td>
+</tr>
+<tr>
+    <td colspan="2">model</td>
+    <td>String</td>
+    <td>The path to a .cao model file, describing the object to track. See vpMbGenericTracker::loadModel()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">display:features</td>
+    <td>boolean</td>
+    <td>Show features when calling vpMbGenericTracker::display()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">display:projectionError</td>
+    <td>boolean</td>
+    <td>Whether to display the projection error when calling vpMbGenericTracker::display()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">visibilityTest:scanline</td>
+    <td>boolean</td>
+    <td>Whether to use scanline for visibility testing. see vpMbGenericTracker::setScanLineVisibilityTest()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">visibilityTest:ogre</td>
+    <td>boolean</td>
+    <td>Whether to use ogre for visibility testing. OGRE must be installed, otherwise ignored. See vpMbGenericTracker::setOgreVisibilityTest()</td>
+    <td>Yes</td>
+</tr>
+</table>
+
+\subsection json-per-tracker-settings Individual camera tracker settings
+
+Each camera has a name (the key in the "trackers" dictionary, e.g., "Color", "Depth") and is associated to a combination of tracker.
+
+First, consider, the tracker for the key "Color":
+\snippet realsense-color-and-depth.json.example Color
+
+This JSON object contains multiple components which we'll go through one by one.
+
+First each camera-specific tracker definition must contain its type. Here, it is defined as:
+\snippet realsense-color-and-depth.json.example Features
+stating that this tracker uses both edge (see the vpMe class) and KLT (see vpKltOpencv) features. other possible values are "depthDense" and "depthNormal" for depth-related features.
+
+The next important definition is:
+\snippet realsense-color-and-depth.json.example Transformation
+Describing the transformation between this camera and the reference camera. It can also be given as a vpPoseVector JSON representation.
+If the current camera is the reference, then "camTref" may be ommitted or set as the identity transformation.
+
+Next, we must define the camera intrinsics (see vpCameraParameters):
+\snippet realsense-color-and-depth.json.example Camera
+This JSON object follows the convention defined in vpCameraParameters::from_json().
+
+Other common settings include:
+<table>
+<tr><th>Key</th><th>Type</th><th>Description</th><th>Reference</th><th>Optional</th></tr>
+<tr>
+    <td>angleAppear</td>
+    <td>float</td>
+    <td>Angle at which a face is considered as appearing, defined in degrees.</td>
+    <td>vpMbTracker::setAngleAppear()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>angleDisappear</td>
+    <td>float</td>
+    <td>Angle at which a face is considered as disappearing, defined in degrees.</td>
+    <td>vpMbTracker::setAngleDisappear()</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">clipping (optional)</th></tr>
+<tr>
+    <td>flags</td>
+    <td>List of vpPolygon3D::vpPolygon3DClippingType</td>
+    <td>The clipping flags used for this tracker. a list that can combine different values in:
+    ["none", "all", "fov", "left", "right", "top", "down", "near", "far"]
+    </td>
+    <td>vpPolygon3D, vpMbTracker::setClipping()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>near</td>
+    <td>float</td>
+    <td>Near plane clipping distance.</td>
+    <td>vpMbTracker::setNearClippingDistance()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>far</td>
+    <td>float</td>
+    <td>Far plane clipping distance. </td>
+    <td>vpMbTracker::setFarClippingDistance()</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">lod (optional)</th></tr>
+<tr>
+    <td>useLod</td>
+    <td>boolean</td>
+    <td>Whether to use level of detail.</td>
+    <td>vpMbTracker::setLod()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>minLineLengthThresholdGeneral</td>
+    <td>float</td>
+    <td>Minimum line length to be considered as visible in LOD.</td>
+    <td>vpMbTracker::setMinLineLengthThresh()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>minPolygonAreaThresholdGeneral</td>
+    <td>float</td>
+    <td>Minimum polygon area to be considered as visible in LOD. </td>
+    <td>vpMbTracker::setMinPolygonAreaThresh()</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">display (optional)</th></tr>
+<tr><td colspan="5">See \ref json-global-tracker-settings</td></tr>
+<tr><th colspan="5">visibilityTest (optional)</th></tr>
+<tr><td colspan="5">See \ref json-global-tracker-settings</td></tr>
+</table>
+
+\subsection json-feature-settings Tracker Feature settings
+
+Each type of tracked feature can be customized in the JSON file.
+
+<h4>Edge</h4>
+Edge feature parameters are defined by the conversion vpMe::from_json().
+All parameters are optional: if not filled in the JSON file, then the value that is already set will be used.
+
+Example configuration (all parameters):
+\snippet realsense-color-and-depth.json.example Edge
+
+<h4>KLT</h4>
+Each parameter of the KLT tracker (see vpKltOpencv) is optional: if not present it will be set to a fixed default value.
+
+The default configuration is:
+\snippet realsense-color-and-depth.json.example KLT
+<h4>Depth normals</h4>
+The configuration for the depth normal features is the following
+\snippet realsense-color-and-depth.json.example DepthNormal
+
+the "featureEstimationMethod" must be one of "robust", "robustSVD" or "pcl". The latter requires PCL to be installed
+following \ref soft_tool_pcl installation instructions.
+
+See vpMbDepthNormalTracker for more details.
+
+<h4>Dense depth</h4>
+The configuration for the dense depth features only contain the sampling step, as shown below:
+\snippet realsense-color-and-depth.json.example DepthDense
+
+\section json-settings-usage Example: Initializing a tracker from a JSON file
+
+Let's now look at an example of how to use JSON to track an object.
+
+This example is similar to tutorial-mb-generic-tracker-rgbd-realsense.cpp, where an XML configuration file is used to configure camera per camera.
+Instead, here, we will use a JSON file to fully configure the tracker.
+
+The full code can be found in tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp
+
+To run the example:
+\code{.sh}
+// If no CAD model is defined in the JSON file
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic-rgbd
+$ ./tutorial-mb-generic-tracker-rgbd-realsense-json-settings \
+    --config model/cube/realsense-color-and-depth.json \
+    --model model/cube/cube.cao
+
+// If CAD model is defined in JSON
+$ ./tutorial-mb-generic-tracker-rgbd-realsense-json-settings \
+    --config model/cube/realsense-color-and-depth.json
+\endcode
+
+The main difference between tutorial-mb-generic-tracker-rgbd-realsense.cpp and
+tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp is that in the latter we specify which features
+to use in the JSON config file.
+
+First, we initialize the camera (here, a vpRealsense2 camera) and query the camera intrinsics,
+as well as declare the vpImage we will use to store the data feed and display it:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init
+
+To load the json configuration, we simply call:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Loading
+
+We then query what features are used by the tracker and update its input accordingly
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init maps
+
+To finish with the configuration, we load the 3D CAD model if none was defined in the JSON file.
+If none is given by the user, then an exception is thrown.
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Load 3D model
+
+To ensure the best performance, we might still prefer to use the camera intrinsics and transformation
+between color and depth cameras provided by the Realsense SDK.
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Update params
+
+We then initialize tracking by click:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init tracking
+
+Finally, we can start tracking:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Tracking
+
+\section json-settings-next Next tutorial
+
+If you want to introduce JSON usage in your code, you can continue with \ref tutorial-json.
+
+*/

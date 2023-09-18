@@ -23,7 +23,7 @@ jobs:
         access_token: ${{ github.token }}
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Print system information
       run: |
@@ -34,7 +34,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar pkg-config
+      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
     - name: Install java dependencies
       run: |
@@ -49,7 +49,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Clone visp_sample
@@ -76,7 +76,7 @@ jobs:
 
     - name: Run unit tests
       working-directory: build
-      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
+      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure -V
 
     - name: ViSP as 3rdparty with cmake
       run: |
@@ -111,7 +111,8 @@ jobs:
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
-        /tmp/usr/local/bin/visp-config --cflags
-        /tmp/usr/local/bin/visp-config --libs
+        export VISP_INSTALL_PREFIX=/tmp/usr/local
+        $VISP_INSTALL_PREFIX/bin/visp-config --cflags
+        $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config clean

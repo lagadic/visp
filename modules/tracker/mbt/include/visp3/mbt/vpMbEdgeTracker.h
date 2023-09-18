@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Make the complete tracking of an object by using its CAD model
  *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpMbEdgeTracker.h
@@ -75,14 +70,9 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
-#ifdef VISP_HAVE_OPENCV
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
-#include <opencv2/core/core.hpp>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
-#else
-#include <cv.h>
-#endif
 #endif
 
 /*!
@@ -94,13 +84,12 @@
 
   This class allows to track an object or a scene given its 3D model. A
   video can be found on YouTube \e https://www.youtube.com/watch?v=UK10KMMJFCI
-. The \ref tutorial-tracking-mb-deprecated is also a good starting point to use this
-class.
+  The \ref tutorial-tracking-mb-deprecated is also a good starting point to use this class.
 
   The tracker requires the knowledge of the 3D model that could be provided in
-a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
-also use an xml file used to tune the behavior of the tracker and an init file
-used to compute the pose at the very first image.
+  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+  also use an xml file used to tune the behavior of the tracker and an init file
+  used to compute the pose at the very first image.
 
   The following code shows the simplest way to use the tracker.
 
@@ -122,7 +111,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
@@ -149,8 +138,8 @@ int main()
 \endcode
 
   For application with large inter-images displacement, multi-scale tracking
-is also possible, by setting the number of scales used and by activating (or
-not) them using a vector of booleans, as presented in the following code:
+  is also possible, by setting the number of scales used and by activating (or
+  not) them using a vector of booleans, as presented in the following code:
 
 \code
   ...
@@ -170,7 +159,7 @@ not) them using a vector of booleans, as presented in the following code:
 
   The tracker can also be used without display, in that case the initial pose
   must be known (object always at the same initial pose for example) or
-computed using another method:
+  computed using another method:
 
 \code
 #include <visp3/core/vpCameraParameters.h>
@@ -204,7 +193,7 @@ int main()
 \endcode
 
   Finally it can be used not to track an object but just to display a model at
-a given pose:
+  a given pose:
 
 \code
 #include <visp3/core/vpCameraParameters.h>
@@ -224,7 +213,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Edge Tracker");
 #endif
@@ -497,7 +486,7 @@ protected:
   void computeVVS(const vpImage<unsigned char> &_I, unsigned int lvl);
   void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count, unsigned int lvl = 0);
   void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl = 0);
-  void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_);
+  void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);

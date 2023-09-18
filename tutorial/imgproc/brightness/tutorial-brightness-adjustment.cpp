@@ -72,7 +72,7 @@ int main(int argc, const char **argv)
   vpDisplayX d(I_color_res);
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I_color_res);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d(I_color_res);
 #endif
 

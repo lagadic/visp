@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
 
   try {
     std::string opt_videoname = "teabox.mp4";
@@ -28,9 +28,9 @@ int main(int argc, char **argv)
         opt_tracker = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
-                  << " [--video <video name>] [--model <model name>] "
-                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
-                  << std::endl;
+          << " [--video <video name>] [--model <model name>] "
+          "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
     display = new vpDisplayGDI;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     display = new vpDisplayOpenCV;
 #endif
     display->init(I, 100, 100, "Model-based tracker");
@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     vpMbTracker *tracker;
     if (opt_tracker == 0)
       tracker = new vpMbEdgeTracker;
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     else if (opt_tracker == 1)
       tracker = new vpMbKltTracker;
     else
@@ -78,8 +78,8 @@ int main(int argc, char **argv)
 #else
     else {
       std::cout << "klt and hybrid model-based tracker are not available "
-                   "since visp_klt module is missing"
-                << std::endl;
+        "since visp_klt module is missing"
+        << std::endl;
       return EXIT_FAILURE;
     }
 #endif
@@ -91,14 +91,15 @@ int main(int argc, char **argv)
       me.setMaskSize(5);
       me.setMaskNumber(180);
       me.setRange(8);
-      me.setThreshold(10000);
+      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+      me.setThreshold(20);
       me.setMu1(0.5);
       me.setMu2(0.5);
       me.setSampleStep(4);
       dynamic_cast<vpMbEdgeTracker *>(tracker)->setMovingEdge(me);
     }
 
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_tracker == 1 || opt_tracker == 2) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -154,7 +155,8 @@ int main(int argc, char **argv)
     delete display;
     delete tracker;
     //! [Cleanup]
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

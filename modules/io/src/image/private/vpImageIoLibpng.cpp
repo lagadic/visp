@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Libpng backend for PNG image I/O operations.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpImageIoLibpng.cpp
@@ -253,7 +253,7 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
 /*!
   Read the contents of the PNG file, allocate memory
   for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
+  gray level, and set the bitmap with the gray level data. That means that
   the image \e I is a "black and white" rendering of the original image in \e
   filename, as in a black and white photograph. If necessary, the quantization
   formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
@@ -429,7 +429,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
 
   Read the contents of the PNG file, allocate
   memory for the corresponding image, and set
-  the bitmap whith the content of
+  the bitmap with the content of
   the file.
 
   If the image has been already initialized, memory allocation is done

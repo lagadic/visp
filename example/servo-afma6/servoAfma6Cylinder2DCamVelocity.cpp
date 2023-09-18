@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -33,23 +33,20 @@
  *   eye-in-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Nicolas Melchior
- *
- *****************************************************************************/
+*****************************************************************************/
 
-/*!
+ /*!
 
-  \file servoAfma6Cylinder2DCamVelocity.cpp
+   \file servoAfma6Cylinder2DCamVelocity.cpp
 
-  \example servoAfma6Cylinder2DCamVelocity.cpp
+   \example servoAfma6Cylinder2DCamVelocity.cpp
 
-  Example of eye-in-hand control law. We control here a real robot,
-  the Afma6 robot (cartesian robot, with 6 degrees of freedom). The
-  velocity is computed in the camera frame. Visual features are the
-  two lines corresponding to the edges of a cylinder.
+   Example of eye-in-hand control law. We control here a real robot,
+   the Afma6 robot (cartesian robot, with 6 degrees of freedom). The
+   velocity is computed in the camera frame. Visual features are the
+   two lines corresponding to the edges of a cylinder.
 
-*/
+ */
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -76,7 +73,7 @@
 
 #include <visp3/robot/vpRobotAfma6.h>
 
-// Exception
+ // Exception
 #include <visp3/core/vpException.h>
 #include <visp3/vs/vpServoDisplay.h>
 
@@ -94,7 +91,7 @@ int main()
 
 #ifdef VISP_HAVE_X11
     vpDisplayX display(I, 100, 100, "Current image");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display(I, 100, 100, "Current image");
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display(I, 100, 100, "Current image");
@@ -120,7 +117,8 @@ int main()
     vpMe me;
     me.setRange(10);
     me.setPointsToTrack(100);
-    me.setThreshold(30000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(15);
     me.setSampleStep(10);
 
     // Initialize the tracking of the two edges of the cylinder
@@ -225,7 +223,8 @@ int main()
         if (iter == 0)
           vpDisplay::getClick(I);
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-      } catch (...) {
+      }
+      catch (...) {
         v = 0;
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
         robot.stopMotion();
@@ -239,7 +238,8 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

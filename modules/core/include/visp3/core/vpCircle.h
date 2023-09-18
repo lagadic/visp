@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Visual feature circle.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpCircle.h
@@ -65,7 +62,7 @@
   the 3D sphere center (oX,oY,oZ) and the 3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
   parameters registered in vpForwardProjection::oP internal 7-dim vector are set using the constructors
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R),
-  vpCircle(const vpColVector &oP) or the fonctions
+  vpCircle(const vpColVector &oP) or the functions
   setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
   and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
 

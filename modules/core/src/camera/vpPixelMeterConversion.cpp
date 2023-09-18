@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Pixel to meter conversion.
  *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPixelMeterConversion.cpp
@@ -71,12 +67,12 @@ void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam, const
 }
 
 /*!
-   Line parameters conversion from pixel \f$(\rho_p,\theta_p)\f$ to normalized coordinates \f$(\rho_m,\theta_m)\f$
-   in meter using ViSP camera parameters. This function doesn't use distorsion coefficients.
+  Line parameters conversion from pixel \f$(\rho_p,\theta_p)\f$ to normalized coordinates \f$(\rho_m,\theta_m)\f$
+  in meter using ViSP camera parameters. This function doesn't use distortion coefficients.
 
-   \param[in] cam : camera parameters.
-   \param[in] rho_p, theta_p : Line parameters expressed in pixels.
-   \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
+  \param[in] cam : camera parameters.
+  \param[in] rho_p, theta_p : Line parameters expressed in pixels.
+  \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
 
 */
 void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const double &rho_p, const double &theta_p,
@@ -95,16 +91,16 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const do
 }
 
 /*!
-   Moments conversion from pixel to normalized coordinates in meter using ViSP camera parameters.
-   This function doesn't use distorsion coefficients.
+  Moments conversion from pixel to normalized coordinates in meter using ViSP camera parameters.
+  This function doesn't use distortion coefficients.
 
-   \param[in] cam : camera parameters.
-   \param[in] order : Moment order.
-   \param[in] moment_pixel : Moment values in pixels.
-   \param[out] moment_meter : Moment values in meters in the image plane.
+  \param[in] cam : camera parameters.
+  \param[in] order : Moment order.
+  \param[in] moment_pixel : Moment values in pixels.
+  \param[out] moment_meter : Moment values in meters in the image plane.
 
-   The following example show how to use this function.
-   \code
+  The following example show how to use this function.
+  \code
   unsigned int order = 3;
   vpMatrix M_p(order, order); // 3-by-3 matrix with mij moments expressed in pixels
   M_p = 0;
@@ -128,7 +124,7 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const do
   double m02 = M_m[0][2];
   double m11 = M_m[1][1];
   double m20 = M_m[2][0];
-   \endcode
+  \endcode
 
 */
 void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsigned int order,
@@ -169,18 +165,19 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
         }
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
 /*!
  * Convert ellipse parameters (ie ellipse center and normalized centered moments)
  * from pixels \f$(u_c, v_c, n_{{20}_p}, n_{{11}_p}, n_{{02}_p})\f$
  * to meters \f$(x_c, y_c, n_{{20}_m}, n_{{11}_m}, n_{{02}_m})\f$ in the image plane.
- * \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
- * 1\end{bmatrix}\f$ \param[in] distCoeffs : Input vector of distortion coefficients \f$(k_1, k_2, p_1, p_2[, k_3[, k_4,
+ * \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
+ * \param[in] distCoeffs : Input vector of distortion coefficients \f$(k_1, k_2, p_1, p_2[, k_3[, k_4,
  * k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of 4, 5, 8, 12 or 14 elements. If the vector is NULL/empty,
- * the zero distortion coefficients are assumed. \param[in] center_p : Center of the ellipse (uc, vc) with pixel
- * coordinates. \param[in] n20_p, n11_p, n02_p : Normalized second order moments of the ellipse in pixels. \param[out]
- * xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane. \param[out] n20_m, n11_m, n02_m :
- * Normalized second order moments of the ellipse in meters in the image plane.
+ * the zero distortion coefficients are assumed.
+ * \param[in] center_p : Center of the ellipse (uc, vc) with pixel coordinates.
+ * \param[in] n20_p, n11_p, n02_p : Normalized second order moments of the ellipse in pixels.
+ * \param[out] xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane.
+ * \param[out] n20_m, n11_m, n02_m : Normalized second order moments of the ellipse in meters in the image plane.
  */
 void vpPixelMeterConversion::convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
                                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
@@ -197,7 +194,7 @@ void vpPixelMeterConversion::convertEllipse(const cv::Mat &cameraMatrix, const c
 
 /*!
   Line parameters conversion from pixel \f$(\rho_p,\theta_p)\f$ to normalized coordinates \f$(\rho_m,\theta_m)\f$
-  in meter using OpenCV camera parameters. This function doesn't use distorsion coefficients.
+  in meter using OpenCV camera parameters. This function doesn't use distortion coefficients.
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] rho_p, theta_p : Line parameters expressed in pixels.
@@ -225,12 +222,13 @@ void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix, const doub
 }
 
 /*!
-   Moments conversion from pixel to normalized coordinates in meter using OpenCV camera parameters.
-   This function doesn't use distorsion coefficients.
+  Moments conversion from pixel to normalized coordinates in meter using OpenCV camera parameters.
+  This function doesn't use distortion coefficients.
 
-   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
-   1\end{bmatrix}\f$ \param[in] order : Moment order. \param[in] moment_pixel : Moment values in pixels. \param[out]
-   moment_meter : Moment values in meters in the image plane.
+  \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
+  \param[in] order : Moment order.
+  \param[in] moment_pixel : Moment values in pixels.
+  \param[out] moment_meter : Moment values in meters in the image plane.
 
 */
 void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix, unsigned int order,

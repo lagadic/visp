@@ -38,7 +38,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
   - Since Ubuntu 20.04 or Debian 11
   \verbatim
   $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
-    libzbar-dev libpthread-stubs0-dev libdc1394-dev
+    libzbar-dev libpthread-stubs0-dev libdc1394-dev nlohmann-json3-dev
   \endverbatim
 
   - On older Ubuntu or Debian distros
@@ -74,7 +74,8 @@ To have a trial, just jump to \ref install_ubuntu_dataset before running some bi
 
 \subsection install_ubuntu_3rdparty Install 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do
 not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
@@ -94,19 +95,22 @@ We recommend to install the following 3rd parties:
 - libv4l to grab images from usb or analogic cameras
 - libzbar to be able to detect QR codes
 - pthread library
+- <a href="https://json.nlohmann.me/">JSON for modern C++</a> if you wish to save or load JSON representations of ViSP objects
 
 Installation of recommended 3rd parties could be performed running:
 
 - Since Ubuntu 20.04 or Debian 11
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev \
-  libpthread-stubs0-dev libdc1394-dev
+  libpthread-stubs0-dev libdc1394-dev nlohmann-json3-dev
 \endverbatim
 - On older Ubuntu or Debian distros
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev \
   libpthread-stubs0-dev libdc1394-22-dev
 \endverbatim
+
+Note that on older distributions, the apt package for the JSON library is outdated. If needed, you may install \ref soft_tool_json from source.
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
@@ -129,14 +133,15 @@ $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
 3. Get `librealsense` from github:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
 \endverbatim
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
 \verbatim
-$ ./scripts/setup_udev_rules.sh
+$ sudo ./scripts/setup_udev_rules.sh
 \endverbatim
 
 5. Build and install librealsense
@@ -439,12 +444,16 @@ $ sudo apt-get install libdmtx-dev
 \verbatim
 $ sudo apt-get install libgsl-dev
 \endverbatim
+- JSON for modern C++
+\verbatim
+$ sudo apt-get install nlohmann-json3-dev
+\endverbatim
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
   Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
@@ -454,7 +463,7 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>.
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
   Once downloaded, uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
@@ -550,28 +559,31 @@ $ source ~/.bashrc
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code.
 This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`.
-This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+This archive could be downloaded from https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
+- Download `visp-images-3.6.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
-$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+$ unzip ~/Downloads/visp-images-3.6.0.zip -d $VISP_WS
 \endverbatim
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.6.0`.
 \verbatim
-$ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
-AprilTag   README.md      cube       endianness   line    mire          warp
-Klimt      calibration    ellipse    faces        mbt     mire-2        xml
+$ ls $VISP_WS/visp-images-3.6.0
+3dmodel          README.md    ellipse     mbt        video
+AprilTag         Solvay       ellipse-1   mbt-cao    warp
+Bayer            calibration  endianness  mbt-depth  xml
+Gaussian-filter  circle       faces       memorial
+Klimt            cube         iv          mire
+LICENSE.txt      dnn          line        mire-2
 \endverbatim
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
-  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`.
+  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.6.0`.
   It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
 \verbatim
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.6.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
@@ -763,7 +775,7 @@ General configuration information for ViSP 3.3.1
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.5)
-    JNI:                         /home/fspindle/visp_ws/java/jdk-11.0.6/include /home/fspindle/visp_ws/java/jdk-11.0.6/include/linux /home/fspindle/visp_ws/java/jdk-11.0.6/include
+    JNI:                         /home/fspindle/visp-ws/java/jdk-11.0.6/include /home/fspindle/visp-ws/java/jdk-11.0.6/include/linux /home/fspindle/visp-ws/java/jdk-11.0.6/include
 
   Build options:
     Build deprecated:            yes

@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,11 @@
 # Description:
 # Try to find Coin library. Try first to see if Coin3D-3 is available. If not,
 # check for Coin3D-2.
-# Once run this will define: 
+# Once run this will define:
 #
 # COIN3D_FOUND
 # COIN3D_LIBRARIES
 # COIN3D_INCLUDE_DIRS
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -57,7 +54,7 @@ macro(TRY_COMPILE_WITH_COIN COIN3D_LIB COIN3D_INC)
     SoSeparator *scene = new SoSeparator;
     return 0;
   }
-  " IS_COMPILER_COMPATIBLE) 
+  " IS_COMPILER_COMPATIBLE)
   #message("DBG1 IS_COMPILER_COMPATIBLE ${IS_COMPILER_COMPATIBLE}")
 endmacro()
 

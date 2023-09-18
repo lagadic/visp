@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,23 +31,19 @@
  * Description:
  * Images grabbing example.
  *
- * Authors:
- * Anthony Saunier
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file manGrabV4l2.cpp
 
   \brief Images grabbing example with the vpV4l2Grabber class.
 
  */
-/*!
-  \example manGrabV4l2.cpp
+ /*!
+   \example manGrabV4l2.cpp
 
-  \brief Images grabbing example with the vpV4l2Grabber class.
+   \brief Images grabbing example with the vpV4l2Grabber class.
 
- */
+  */
 
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
@@ -69,7 +65,8 @@ int main()
 #endif
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Display implementation.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpDisplay.h>
 
@@ -131,6 +131,23 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &
 void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color)
 {
   vp_display_display_char_string(I, i, j, string, color);
+}
+
+/*!
+  Display a circle.
+  \param I : The image associated to the display.
+  \param circle: Circle to display.
+  \param color : Circle color.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
+  \param thickness : Thickness of the circle. This parameter is only useful
+  when \e fill is set to false.
+*/
+void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImageCircle &circle,
+                              const vpColor &color, bool fill, unsigned int thickness)
+{
+  vp_display_display_circle(I, circle.getCenter(), static_cast<unsigned int>(circle.getRadius()), color, fill, thickness);
 }
 
 /*!
@@ -285,7 +302,7 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImage
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param use_normalized_centered_moments : When false,
   the parameters coef1, coef2, coef3 are the parameters \f$a, b, e\f$. When
@@ -329,7 +346,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
@@ -387,7 +404,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
 */
 void vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                              double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset,
-                             const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
+                             const std::string &frameName, const vpColor &textColor, const vpImagePoint &textOffset)
 {
   vp_display_display_frame(I, cMo, cam, size, color, thickness, offset, frameName, textColor, textOffset);
 }
@@ -423,7 +440,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
 {
   if (segment) {
     vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
-  } else {
+  }
+  else {
     // line equation in image: i = a * j + b
     double delta_j = static_cast<double>(j2) - static_cast<double>(j1);
     double delta_i = static_cast<double>(i2) - static_cast<double>(i1);
@@ -434,7 +452,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
     // Test if vertical line
     else if (std::fabs(delta_j) <= std::numeric_limits<double>::epsilon()) {
       vp_display_display_line(I, 0, j1, (I.getHeight() - 1), j1, color, thickness);
-    } else {
+    }
+    else {
       double a = delta_i / delta_j;
       double b = static_cast<double>(i1) - a * static_cast<double>(j1);
       std::vector<vpImagePoint> vip; // Image points that intersect image borders
@@ -746,7 +765,7 @@ int main() {
   unsigned int radius = 100;
   vpDisplay::displayCircle(I, center, radius, vpColor::red);
 
-  vpDisplay::flush(I); // Mendatory to display the requested features.
+  vpDisplay::flush(I); // Mandatory to display the requested features.
 }
   \endcode
 
@@ -759,7 +778,7 @@ void vpDisplay::flush(const vpImage<vpRGBa> &I) { vp_display_flush(I); }
   It's necessary to use this function to see the results of any drawing.
 
   \warning This function is particular and must be called
-  to show the overlay. Because it's time spending, use it parcimoniously.
+  to show the overlay. Because it's time spending, use it parsimoniously.
 
   \sa flush()
 */
@@ -962,7 +981,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
@@ -1051,7 +1070,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
@@ -1142,7 +1161,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;

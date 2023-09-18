@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,13 +29,9 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exception that can be emited by the vpRobot class and its derivates.
+ * Exception that can be emitted by the vpRobot class and its derivatives.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRobotException_h_
 #define _vpRobotException_h_
@@ -48,7 +44,7 @@
  */
 
 /* \file vpRobotException.h
-   \brief error that can be emited by the vpRobot class and its derivates
+   \brief error that can be emitted by the vpRobot class and its derivatives
  */
 /* Classes standards. */
 
@@ -66,13 +62,13 @@
 
 /*!
   \class vpRobotException
-  \brief Error that can be emited by the vpRobot class and its derivates.
+  \brief Error that can be emitted by the vpRobot class and its derivatives.
  */
 class VISP_EXPORT vpRobotException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpRobot member
   */
   enum errorRobotCodeEnum {

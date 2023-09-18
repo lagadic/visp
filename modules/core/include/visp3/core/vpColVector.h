@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,9 +32,8 @@
  * Provide some simple operation on column vectors.
  *
  * Authors:
- * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpColVector_h_
 #define _vpColVector_h_
@@ -71,61 +70,102 @@ class vpPoseVector;
 
   The code below shows how to create a 3-element column vector of doubles, set the element values and access them:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = -1; v[1] = -2.1; v[2] = -3;
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = -1; v[1] = -2.1; v[2] = -3;
 
-  std::cout << "v:" << std::endl;
-  for (unsigned int i = 0; i < v.size(); i++) {
-    std::cout << v[i] << std::endl;
+    std::cout << "v:" << std::endl;
+    for (unsigned int i = 0; i < v.size(); i++) {
+      std::cout << v[i] << std::endl;
+    }
   }
-}
   \endcode
   Once build, this previous code produces the following output:
-  \code
-v:
--1
--2.1
--3
+  \code{.unparsed}
+  v:
+  -1
+  -2.1
+  -3
   \endcode
   You can also use operator<< to initialize a column vector as previously:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-  vpColVector v;
-  v << -1, -2.1, -3;
-  std::cout << "v:" << v << std::endl;
-}
+  int main()
+  {
+    vpColVector v;
+    v << -1, -2.1, -3;
+    std::cout << "v:" << v << std::endl;
+  }
   \endcode
 
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpColVector v({-1, -2.1, -3});
-  std::cout << "v:\n" << v << std::endl;
-#endif
-}
+  int main()
+  {
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpColVector v({-1, -2.1, -3});
+    std::cout << "v:\n" << v << std::endl;
+  #endif
+  }
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpColVector v;
-  v = {-1, -2.1, -3};
-#endif
-}
+  int main()
+  {
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpColVector v;
+    v = {-1, -2.1, -3};
+  #endif
+  }
   \endcode
 
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpColVector.
+  The following sample code shows how to save a pose vector in a file named `col-vector.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/core/vpColVector.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "col-vector.json";
+    {
+      vpColVector v({ 1, 2, 3, 4 });
+      std::ofstream file(filename);
+      const nlohmann::json j = v;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpColVector v;
+      v = j.get<vpColVector>();
+      file.close();
+      std::cout << "Read homogeneous matrix from " << filename << ":\n" << v.t() << std::endl;
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read homogeneous matrix from col-vector.json:
+  1  2  3  4
+  \endcode
+
+  The content of the `pose-vector.json` file is the following:
+  \code{.unparsed}
+  $ cat col-vector.json
+  {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
+  \endcode
 */
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {
@@ -133,16 +173,16 @@ class VISP_EXPORT vpColVector : public vpArray2D<double>
 
 public:
   //! Basic constructor that creates an empty 0-size column vector.
-  vpColVector() : vpArray2D<double>() {}
+  vpColVector() : vpArray2D<double>() { }
   //! Construct a column vector of size n. \warning Elements are not
   //! initialized. If you want to set an initial value use
   //! vpColVector(unsigned int, double).
-  explicit vpColVector(unsigned int n) : vpArray2D<double>(n, 1) {}
+  explicit vpColVector(unsigned int n) : vpArray2D<double>(n, 1) { }
   //! Construct a column vector of size n. Each element is set to \e val.
-  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) {}
+  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) { }
   //! Copy constructor that allows to construct a column vector from an other
   //! one.
-  vpColVector(const vpColVector &v) : vpArray2D<double>(v) {}
+  vpColVector(const vpColVector &v) : vpArray2D<double>(v) { }
   vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows);
   //! Constructor that initialize a column vector from a 3-dim (Euler or
   //! \f$\theta {\bf u}\f$) or 4-dim (quaternion) rotation vector.
@@ -166,7 +206,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpColVector() {}
+  virtual ~vpColVector() { }
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -202,7 +242,6 @@ public:
     return (*this);
   }
 
-  vp_deprecated double euclideanNorm() const;
   /*!
      Extract a sub-column vector from a column vector.
      \param r : Index of the row corresponding to the first element of the
@@ -264,7 +303,9 @@ public:
 #endif
   //! Comparison operator.
   bool operator==(const vpColVector &v) const;
+  bool operator==(double v) const;
   bool operator!=(const vpColVector &v) const;
+  bool operator!=(double v) const;
 
   double operator*(const vpColVector &x) const;
   vpMatrix operator*(const vpRowVector &v) const;
@@ -368,6 +409,11 @@ public:
 
   static double stdev(const vpColVector &v, bool useBesselCorrection = false);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json &j, const vpColVector &cam);
+  friend void from_json(const nlohmann::json &j, vpColVector &cam);
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -377,7 +423,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use extract().
    */
@@ -408,7 +454,8 @@ public:
   }
 
   vp_deprecated void insert(const vpColVector &v, unsigned int r, unsigned int c = 0);
-//@}
+  vp_deprecated double euclideanNorm() const;
+  //@}
 #endif
 };
 
@@ -416,5 +463,24 @@ public:
 VISP_EXPORT
 #endif
 vpColVector operator*(const double &x, const vpColVector &v);
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void to_json(nlohmann::json &j, const vpColVector &v)
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
+  to_json(j, *asArray);
+  j["type"] = "vpColVector";
+}
+inline void from_json(const nlohmann::json &j, vpColVector &v)
+{
+  vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
+  from_json(j, *asArray);
+  if (v.getCols() != 1) {
+    throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
+  }
+}
+
+
+#endif
 
 #endif

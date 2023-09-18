@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Bertrand Delabarre
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpAROgre.cpp
@@ -80,7 +80,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
     keepOn(true), // When created no reason to stop displaying
     mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL), mBackgroundHeight(0), mBackgroundWidth(0),
     mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
-    mshowConfigDialog(true), mOptionnalResourceLocation()
+    mshowConfigDialog(true), mOptionalResourceLocation()
 {
 }
 
@@ -301,9 +301,9 @@ void vpAROgre::init(bool
     }
   }
   std::cout << "##################### add resources" << std::endl;
-  // Add optionnal resources (given by the user).
-  for (std::list<std::string>::const_iterator iter = mOptionnalResourceLocation.begin();
-       iter != mOptionnalResourceLocation.end(); ++iter) {
+  // Add Optional resources (given by the user).
+  for (std::list<std::string>::const_iterator iter = mOptionalResourceLocation.begin();
+       iter != mOptionalResourceLocation.end(); ++iter) {
     Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
         *iter, "FileSystem", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   }

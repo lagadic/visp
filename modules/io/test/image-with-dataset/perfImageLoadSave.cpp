@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Benchmark color image conversion.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -58,7 +58,7 @@ static std::vector<vpImageIo::vpImageIoBackendType> backends
 #if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
       vpImageIo::IO_OPENCV_BACKEND,
 #endif
       vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
@@ -68,7 +68,7 @@ static std::vector<std::string> backendNamesJpeg
 #if defined(VISP_HAVE_JPEG)
   "libjpeg",
 #endif
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
       "OpenCV",
 #endif
       "simd", "stb"
@@ -78,7 +78,7 @@ static std::vector<std::string> backendNamesPng
 #if defined(VISP_HAVE_PNG)
   "libpng",
 #endif
-#if defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
       "OpenCV",
 #endif
       "simd", "stb"

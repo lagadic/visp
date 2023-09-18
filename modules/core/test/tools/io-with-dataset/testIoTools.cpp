@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test functions in vpIoTools.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example testIoTools.cpp
 
@@ -776,6 +776,62 @@ int main(int argc, const char **argv)
       std::cout << "Cannot open file: " << filename_endianness << std::endl;
     }
   }
+
+  // Test vpIoTools::toLowerCase
+  {
+    int nbFail = 0;
+    int nbOk = 0;
+    std::string testString = std::string("Yolo-V3");
+    std::string expectedLower = std::string("yolo-v3");
+    std::string expectedUpper = std::string("YOLO-V3");
+    #if defined(_WIN32)
+
+    if (strcmp(vpIoTools::toLowerCase(testString).c_str(), expectedLower.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toLowerCase(testString).c_str() << " should be=" << expectedLower << std::endl;
+    }
+
+    if (strcmp(vpIoTools::toUpperCase(testString).c_str(), expectedUpper.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toUpperCase(testString).c_str() << " should be=" << expectedUpper << std::endl;
+    }
+
+    std::cout << "Test vpIoTools::toLowerCase (WIN32 platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
+              << std::endl;
+
+    if (nbFail) {
+      std::cerr << "Failed test: vpIoTools::toLowerCase (WIN32 platform)" << std::endl;
+      return EXIT_FAILURE;
+    }
+  #else
+    if (strcmp(vpIoTools::toLowerCase(testString).c_str(), expectedLower.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toLowerCase(testString).c_str() << " should be=" << expectedLower << std::endl;
+    }
+
+    if (strcmp(vpIoTools::toUpperCase(testString).c_str(), expectedUpper.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toUpperCase(testString).c_str() << " should be=" << expectedUpper << std::endl;
+    }
+
+    std::cout << "Test vpIoTools::toLowerCase (Unix-like platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
+              << std::endl;
+
+    if (nbFail) {
+      std::cerr << "Failed test: vpIoTools::toLowerCase (Unix-like platform)" << std::endl;
+      return EXIT_FAILURE;
+    }
+  #endif
+  }
+
 
   std::cout << std::endl << "Test succeed" << std::endl;
   return EXIT_SUCCESS;

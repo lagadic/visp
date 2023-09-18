@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Display implementation.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -310,7 +310,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     zAxisColor = vpColor::blue;
   }
   else
-  { 
+  {
     xAxisColor = color;
     yAxisColor = color;
     zAxisColor = color;
@@ -339,7 +339,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     ipz.set_v( ipz.get_v() + v_size * cMo[1][2]);
     vpDisplay::displayArrow(I, ipo + offset, ipz + offset, zAxisColor, 4 * thickness, 2 * thickness, thickness);
   }
-  
+
   // If frameName != empty, computing the image coordinates (u v) of the text
   // such as we avoid as much as we can to cross an axis
   if(!frameName.empty())
@@ -394,7 +394,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     }
 
     // The offset of the text is set in the opposite direction of the object frame axes
-    // having the greastest projection in the camera frame in order to limit
+    // having the greatest projection in the camera frame in order to limit
     // the risk of crossing a frame axis in the image
     actualTextOffset.set_u(-1. * u_direction * textOffset.get_u());
     actualTextOffset.set_v(-1. * v_direction * textOffset.get_v());

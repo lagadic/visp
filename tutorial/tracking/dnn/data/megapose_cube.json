@@ -1,0 +1,44 @@
+{
+  "height": 480,
+  "width": 640,
+  "video-device": "0",
+  "object": "cube",
+  "detectionMethod": "click",
+  "reinitThreshold": 0.5,
+  "camera": {
+    "model": "perspectiveWithoutDistortion",
+    "px": 605.146728515625,
+    "py": 604.79150390625,
+    "u0": 325.53253173828125,
+    "v0": 244.95083618164063
+  },
+  "detector": {
+    "model-path": "/path/to/cube/cube_detector.onnx",
+    "config": "none",
+    "type": "yolov7",
+    "framework": "onnx",
+    "labels": [
+      "cube"
+    ],
+    "mean":{
+      "red": 0,
+      "blue": 0,
+      "green": 0
+    },
+    "confidenceThreshold": 0.65,
+    "nmsThreshold": 0.5,
+    "filterThreshold": -0.25,
+    "scaleFactor": 0.003921569,
+    "swapRedAndBlue": false
+  },
+
+  "megapose": {
+    "address": "127.0.0.1",
+    "port": 5555,
+    "refinerIterations": 1,
+    "initialisationNumSamples": 576
+  },
+  "megaposeObjectToDetectorClass": {
+    "cube": "cube"
+  }
+}

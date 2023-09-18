@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,14 +32,10 @@
  * Rxyz angle parameterization for the rotation.
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpRxyzVECTOR_H
-#define vpRxyzVECTOR_H
+#ifndef _vpRxyzVector_h_
+#define _vpRxyzVector_h_
 
 /*!
   \file vpRxyzVector.h
@@ -141,7 +137,7 @@ class vpThetaUVector;
 
   The code below shows first how to initialize this representation of
   Euler angles, than how to contruct a rotation matrix from a
-  vpRxyzVector and finaly how to extract the vpRxyzVector Euler angles
+  vpRxyzVector and finally how to extract the vpRxyzVector Euler angles
   from the build rotation matrix.
 
   \code
@@ -196,7 +192,7 @@ public:
   explicit vpRxyzVector(const std::vector<double> &rxyz);
 
   //! Destructor.
-  virtual ~vpRxyzVector(){};
+  virtual ~vpRxyzVector(){}
 
   // convert a rotation matrix into Rxyz vector
   vpRxyzVector buildFrom(const vpRotationMatrix &R);

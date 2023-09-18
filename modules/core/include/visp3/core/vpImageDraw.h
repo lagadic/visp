@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Drawing functions.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpImageDraw_h_
 #define _vpImageDraw_h_
@@ -45,6 +45,7 @@
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 
@@ -63,8 +64,12 @@ public:
   static void drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                         unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
 
+  static void drawCircle(vpImage<unsigned char> &I, const vpImageCircle &circle,
+                         unsigned char color, unsigned int thickness = 1);
   static void drawCircle(vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
                          unsigned char color, unsigned int thickness = 1);
+  static void drawCircle(vpImage<vpRGBa> &I, const vpImageCircle &circle,
+                         const vpColor &color, unsigned int thickness = 1);
   static void drawCircle(vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius, const vpColor &color,
                          unsigned int thickness = 1);
 

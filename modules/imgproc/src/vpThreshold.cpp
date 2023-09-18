@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Souriya Trinh
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpThreshold.cpp
@@ -361,6 +361,8 @@ int computeThresholdTriangle(vpHistogram &hist)
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_threshold
 
@@ -371,8 +373,8 @@ int computeThresholdTriangle(vpHistogram &hist)
   \param backgroundValue : Value to set to the background.
   \param foregroundValue : Value to set to the foreground.
 */
-unsigned char vp::autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
-                                const unsigned char backgroundValue, const unsigned char foregroundValue)
+unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
+                            const unsigned char backgroundValue, const unsigned char foregroundValue)
 {
   if (I.getSize() == 0) {
     return 0;
@@ -419,3 +421,4 @@ unsigned char vp::autoThreshold(vpImage<unsigned char> &I, const vpAutoThreshold
 
   return threshold;
 }
+};

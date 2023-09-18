@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -27,9 +27,6 @@
 #
 # This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -788,7 +785,7 @@ endmacro()
 # creates ViSP module in current folder
 # creates new target, configures standard dependencies, compilers flags, install rules
 # Usage:
-#   vp_create_module(<extra link dependencies> LINK_PRIVATE <private link dependencies>)
+#   vp_create_module(<extra link dependencies>)
 #   vp_create_module()
 macro(vp_create_module)
   vp_debug_message("vp_create_module(" ${ARGN} ")")
@@ -804,14 +801,14 @@ macro(_vp_create_module)
   vp_add_library(${the_module} ${VISP_MODULE_TYPE} ${VISP_MODULE_${the_module}_HEADERS} ${VISP_MODULE_${the_module}_SOURCES})
 
   vp_target_link_libraries(${the_module}
-    LINK_PUBLIC
+    PUBLIC
       ${VISP_MODULE_${the_module}_DEPS_TO_LINK}
       ${VISP_MODULE_${the_module}_DEPS_EXT}
       ${VISP_MODULE_${the_module}_LINK_DEPS}
-      ${VISP_LINKER_LIBS}
-    LINK_PRIVATE
+    PRIVATE
       ${VISP_MODULE_${the_module}_PRIVATE_REQ_DEPS}
-      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS})
+      ${VISP_MODULE_${the_module}_PRIVATE_OPT_DEPS}
+      ${VISP_LINKER_LIBS})
   add_dependencies(visp_modules ${the_module})
 
   if(ENABLE_SOLUTION_FOLDERS)
@@ -1019,7 +1016,7 @@ macro(vp_add_tests)
           # From source compile the binary and add link rules
           vp_add_executable(${the_target} ${t})
           vp_target_include_modules(${the_target} ${test_deps})
-          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
+          vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS}) # should be removed ? ${VISP_LINKER_LIBS})
 
           # ctest only:
           # - if required dataset available

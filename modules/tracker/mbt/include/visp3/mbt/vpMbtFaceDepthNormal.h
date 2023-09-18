@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Manage depth normal features for a particular face.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpMbtFaceDepthNormal_h_
 #define _vpMbtFaceDepthNormal_h_
@@ -301,4 +301,21 @@ protected:
 
   bool samePoint(const vpPoint &P1, const vpPoint &P2) const;
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include<nlohmann/json.hpp>
+#ifdef VISP_HAVE_PCL
+NLOHMANN_JSON_SERIALIZE_ENUM( vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},
+    {vpMbtFaceDepthNormal::PCL_PLANE_ESTIMATION, "pcl"}
+});
+#else
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
+    {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
+    {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"}
+});
+#endif
+#endif
+
 #endif

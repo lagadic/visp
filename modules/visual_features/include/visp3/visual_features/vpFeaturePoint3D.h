@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * 3D point visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeaturePoint3d_H
 #define vpFeaturePoint3d_H
@@ -73,7 +69,7 @@ by: \f[ L = \left[ \begin{array}{rrrrrr}
   Two ways are allowed to initialize the feature.
 
   - The first way by setting the feature values \f$(X,Y,Z)\f$ using
-    vpFeaturePoint3D member fonctions like set_X(), set_Y(), set_Z(),
+    vpFeaturePoint3D member functions like set_X(), set_Y(), set_Z(),
     or also buildFrom().
 
   - The second by using the feature builder functionalities to

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,12 +32,10 @@
  * Make the complete tracking of an object by using its CAD model
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <limits.h>
 
@@ -130,7 +128,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
         double length = std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
         //          std::cout << "Index=" << index << " ; Line length=" <<
         //          length << " ; clippingFlag=" << clippingFlag << std::endl;
-        //        vpTRACE("index=%d lenght=%f minLineLengthThresh=%f", index,
+        //        vpTRACE("index=%d length=%f minLineLengthThresh=%f", index,
         //        length, minLineLengthThresh);
 
         if (length < minLineLengthThresh) {
@@ -234,9 +232,9 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
 /*!
   Set the flag to consider if the level of detail (LOD) is used or not.
   When activated, lines and faces of the 3D model are tracked if respectively
-  their projected lenght and area in the image are significative enough. By
+  their projected length and area in the image are significative enough. By
   significative, we mean:
-  - if the lenght of the projected line in the image is greater that a
+  - if the length of the projected line in the image is greater that a
   threshold set by setMinLineLengthThresh()
   - if the area of the projected face in the image is greater that a threshold
   set by setMinPolygonAreaThresh().

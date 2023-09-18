@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Sphere feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpSphere.h
@@ -60,7 +57,7 @@
   A sphere has the followings parameters:
   - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
   parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double
-  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX,
+  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the functions setWorldCoordinates(double oX,
   double oY, double oZ, double R) and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
 
   - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These

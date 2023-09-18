@@ -69,7 +69,7 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI displayInt(Iint, 0, 0, "Internal view");
     vpDisplayGDI displayExt(Iext, 670, 0, "External view");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV displayInt(Iint, 0, 0, "Internal view");
     vpDisplayOpenCV displayExt(Iext, 670, 0, "External view");
 #else

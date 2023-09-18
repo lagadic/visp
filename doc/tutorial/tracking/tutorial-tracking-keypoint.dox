@@ -39,11 +39,8 @@ Here is the line by line explanation of the source :
 
 \snippet tutorial-klt-tracker.cpp Include
 
-We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV IplImage or cv::Mat structures used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation. 
-
-\note 
-- If OpenCV version is less that 2.8.0, vpKltOpencv class takes as input an IplImage.
-- If OpenCV version is 2.8.0 or ;ore recent, vpKltOpencv class takes as input a cv::Mat image.
+We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV
+cv::Mat structures used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation.
 
 We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
 
@@ -92,10 +89,6 @@ Until the end of the video, we get \c I the next image in ViSP format, display a
 We are waiting for a mouse click event on image \c I to end the program.
 
 \snippet tutorial-klt-tracker.cpp Wait click
-
-With the following line, we release the memory allocated for the OpenCV IplImage \c cvI before ending the program. This has to be done only if OpenCV version is less than 2.8.0. 
-
-\snippet tutorial-klt-tracker.cpp Release IplImage
 
 \section tracking_keypoint_klt_init KLT tracker with re-initialisation
 

@@ -11,6 +11,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 typedef enum { state_detection, state_tracking, state_quit } state_t;
 
 // Creates a cube.cao file in your current directory
@@ -51,7 +55,7 @@ void createCaoFile(double cubeEdgeSize)
 
 #if defined(VISP_HAVE_APRILTAG)
 state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector, double tagSize,
-                       const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
+  const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
@@ -75,7 +79,7 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
 #endif // #if defined(VISP_HAVE_APRILTAG)
 
 state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, double projection_error_threshold,
-              vpHomogeneousMatrix &cMo)
+  vpHomogeneousMatrix &cMo)
 {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
@@ -83,7 +87,8 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
   // Track the object
   try {
     tracker.track(I);
-  } catch (...) {
+  }
+  catch (...) {
     return state_detection;
   }
 
@@ -110,9 +115,8 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, doub
 
 int main(int argc, const char **argv)
 {
-//! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_OPENCV)) &&                           \
-    defined(VISP_HAVE_MODULE_MBT)
+  //! [Macro defined]
+#if defined(VISP_HAVE_APRILTAG) && (defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&  defined(VISP_HAVE_MODULE_MBT)
   //! [Macro defined]
 
   int opt_device = 0;
@@ -137,35 +141,46 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       opt_tag_size = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       opt_device = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       opt_quad_decimate = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       opt_nthreads = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       opt_intrinsic_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--display_off") {
+    }
+    else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
-    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       opt_tag_family = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--cube_size" && i + 1 < argc) {
       opt_cube_size = atof(argv[i + 1]);
 #ifdef VISP_HAVE_OPENCV
-    } else if (std::string(argv[i]) == "--texture") {
+    }
+    else if (std::string(argv[i]) == "--texture") {
       opt_use_texture = true;
 #endif
-    } else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
       opt_projection_error_threshold = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
-                   " [--quad_decimate <decimation>] [--nthreads <nb>]"
-                   " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
-                   " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
-                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
+        << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
+        " [--quad_decimate <decimation>] [--nthreads <nb>]"
+        " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
+        " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
+        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
@@ -196,7 +211,7 @@ int main(int argc, const char **argv)
     g.setDevice(device.str());
     g.setScale(1);
     g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
     std::cout << "Use device " << opt_device << " (OpenCV grabber)" << std::endl;
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
@@ -222,9 +237,9 @@ int main(int argc, const char **argv)
     std::cout << "  Use edges  : 1" << std::endl;
     std::cout << "  Use texture: "
 #ifdef VISP_HAVE_OPENCV
-              << opt_use_texture << std::endl;
+      << opt_use_texture << std::endl;
 #else
-              << " na" << std::endl;
+      << " na" << std::endl;
 #endif
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
@@ -235,7 +250,7 @@ int main(int argc, const char **argv)
       d = new vpDisplayX(I);
 #elif defined(VISP_HAVE_GDI)
       d = new vpDisplayGDI(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       d = new vpDisplayOpenCV(I);
 #endif
     }
@@ -247,7 +262,7 @@ int main(int argc, const char **argv)
 
     // Prepare MBT
     vpMbGenericTracker tracker;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
     else
@@ -258,13 +273,14 @@ int main(int argc, const char **argv)
     me.setMaskSize(5);
     me.setMaskNumber(180);
     me.setRange(12);
-    me.setThreshold(10000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(20);
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
     tracker.setMovingEdge(me);
 
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     if (opt_use_texture) {
       vpKltOpencv klt_settings;
       klt_settings.setMaxFeatures(300);
@@ -295,7 +311,7 @@ int main(int argc, const char **argv)
 
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       cap >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -327,7 +343,8 @@ int main(int argc, const char **argv)
 
     if (!display_off)
       delete d;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 

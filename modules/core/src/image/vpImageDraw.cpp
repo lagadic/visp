@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Drawing functions.
  *
- *****************************************************************************/
+*****************************************************************************/
 // Contains code from:
 /*
  * Simd Library (http://ermig1979.github.io/Simd).
@@ -77,10 +77,12 @@ void DrawLine(vpImage<Type> &canvas, int x1, int y1, int x2, int y2, const Type 
     if (y1 == y2) {
       x1 = std::min<int>(std::max<int>(x1, 0), w);
       x2 = std::min<int>(std::max<int>(x2, 0), w);
-    } else if (x1 == x2) {
+    }
+    else if (x1 == x2) {
       y1 = std::min<int>(std::max<int>(y1, 0), h);
       y2 = std::min<int>(std::max<int>(y2, 0), h);
-    } else {
+    }
+    else {
       int x0 = (x1 * y2 - y1 * x2) / (y2 - y1);
       int y0 = (y1 * x2 - x1 * y2) / (x2 - x1);
       int xh = (x1 * y2 - y1 * x2 + h * (x2 - x1)) / (y2 - y1);
@@ -152,7 +154,8 @@ void DrawLine(vpImage<Type> &canvas, int x1, int y1, int x2, int y2, const Type 
           if (y < w) {
             canvas[x][y] = color;
           }
-        } else {
+        }
+        else {
           if (y < h) {
             canvas[y][x] = color;
           }
@@ -208,7 +211,8 @@ void DrawPolygon(vpImage<Type> &canvas, const std::vector<vpImagePoint> &polygon
       DrawLine(canvas, static_cast<int>(p1.get_u()), static_cast<int>(p1.get_v()), static_cast<int>(p2.get_u()),
                static_cast<int>(p2.get_v()), color, width);
     }
-  } else {
+  }
+  else {
     for (size_t i = 1; i < polygon.size(); i++) {
       DrawLine(canvas, static_cast<int>(polygon[i - 1].get_u()), static_cast<int>(polygon[i - 1].get_v()),
                static_cast<int>(polygon[i].get_u()), static_cast<int>(polygon[i].get_v()), color, width);
@@ -248,7 +252,8 @@ void vpImageDraw::drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, 
   if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
       (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
     // DisplayCrossLarge(i1,j1,3,col) ;
-  } else {
+  }
+  else {
     a /= lg;
     b /= lg;
 
@@ -293,7 +298,8 @@ void vpImageDraw::drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const v
   if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
       (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
     // DisplayCrossLarge(i1,j1,3,col) ;
-  } else {
+  }
+  else {
     a /= lg;
     b /= lg;
 
@@ -323,6 +329,19 @@ void vpImageDraw::drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const v
 /*!
   Draw a circle in an image.
   \param[in,out] I : Image where to draw the circle.
+  \param[in] circle : Circle to draw.
+  \param[in] color : Circle color.
+  \param[in] thickness : Thickness of the circle.
+*/
+void vpImageDraw::drawCircle(vpImage<unsigned char> &I, const vpImageCircle &circle,
+                             unsigned char color, unsigned int thickness)
+{
+  DrawCircle(I, circle.getCenter(), static_cast<int>(circle.getRadius()), color, thickness);
+}
+
+/*!
+  Draw a circle in an image.
+  \param[in,out] I : Image where to draw the circle.
   \param[in] center : Circle center position.
   \param[in] radius : Circle radius.
   \param[in] color : Circle color.
@@ -332,6 +351,19 @@ void vpImageDraw::drawCircle(vpImage<unsigned char> &I, const vpImagePoint &cent
                              unsigned char color, unsigned int thickness)
 {
   DrawCircle(I, center, static_cast<int>(radius), color, thickness);
+}
+
+/*!
+  Draw a circle in an image.
+  \param[in,out] I : Image where to draw the circle.
+  \param[in] circle : Circle to draw.
+  \param[in] color : Circle color.
+  \param[in] thickness : Thickness of the circle.
+*/
+void vpImageDraw::drawCircle(vpImage<vpRGBa> &I, const vpImageCircle &circle, const vpColor &color,
+                             unsigned int thickness)
+{
+  DrawCircle(I, circle.getCenter(), static_cast<int>(circle.getRadius()), vpRGBa(color.R, color.G, color.B), thickness);
 }
 
 /*!
@@ -416,7 +448,8 @@ void vpImageDraw::drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &
     if (ip2_.get_i() < ip1_.get_i()) {
       std::swap(ip1_, ip2_);
     }
-  } else if (ip2_.get_j() < ip1_.get_j()) {
+  }
+  else if (ip2_.get_j() < ip1_.get_j()) {
     std::swap(ip1_, ip2_);
   }
 
@@ -432,7 +465,8 @@ void vpImageDraw::drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &
       double j = ip1_.get_j();
       drawLine(I, vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness);
     }
-  } else {
+  }
+  else {
     for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j();
          j += static_cast<unsigned int>(2 * deltaj)) {
       double i = slope * j + orig;
@@ -461,7 +495,8 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
     if (ip2_.get_i() < ip1_.get_i()) {
       std::swap(ip1_, ip2_);
     }
-  } else if (ip2_.get_j() < ip1_.get_j()) {
+  }
+  else if (ip2_.get_j() < ip1_.get_j()) {
     std::swap(ip1_, ip2_);
   }
 
@@ -477,7 +512,8 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
       double j = ip1_.get_j();
       drawLine(I, vpImagePoint(i, j), vpImagePoint(i + deltai, j), color, thickness);
     }
-  } else {
+  }
+  else {
     for (unsigned int j = static_cast<unsigned int>(ip1_.get_j()); j < ip2_.get_j();
          j += static_cast<unsigned int>(2 * deltaj)) {
       double i = slope * j + orig;
@@ -495,7 +531,7 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
@@ -540,14 +576,16 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
     if (d <= std::numeric_limits<double>::epsilon()) { // circle
       e = 0.0;                                         // case n20 = n02 and n11 = 0 : circle, e undefined
       a = b = 2.0 * sqrt(n20_p);
-    } else {                             // real ellipse
+    }
+    else {                             // real ellipse
       e = atan2(2.0 * n11_p, num) / 2.0; // e in [-Pi/2 ; Pi/2]
       d = sqrt(d);                       // d in sqrt always >= 0
       num = n20_p + n02_p;
       a = sqrt(2.0 * (num + d)); // term in sqrt always > 0
       b = sqrt(2.0 * (num - d)); // term in sqrt always > 0
     }
-  } else {
+  }
+  else {
     a = coef1;
     b = coef2;
     e = coef3;
@@ -608,7 +646,7 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   - second order centered moments of the ellipse normalized by its area
     (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
     centered moments and a the area) expressed in pixels.
-  - the major and minor axis lenght in pixels and the excentricity of the
+  - the major and minor axis length in pixels and the eccentricity of the
   ellipse in radians: \f$a, b, e\f$.
   \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
   \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
@@ -653,14 +691,16 @@ void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, do
     if (d <= std::numeric_limits<double>::epsilon()) { // circle
       e = 0.0;                                         // case n20 = n02 and n11 = 0 : circle, e undefined
       a = b = 2.0 * sqrt(n20_p);
-    } else {                             // real ellipse
+    }
+    else {                             // real ellipse
       e = atan2(2.0 * n11_p, num) / 2.0; // e in [-Pi/2 ; Pi/2]
       d = sqrt(d);                       // d in sqrt always >= 0
       num = n20_p + n02_p;
       a = sqrt(2.0 * (num + d)); // term in sqrt always > 0
       b = sqrt(2.0 * (num - d)); // term in sqrt always > 0
     }
-  } else {
+  }
+  else {
     a = coef1;
     b = coef2;
     e = coef3;
@@ -795,7 +835,8 @@ void vpImageDraw::drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
 
     vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
     drawArrow(I, ipo + offset, ip1 + offset, vpColor::blue, 4 * thickness, 2 * thickness, thickness);
-  } else {
+  }
+  else {
     vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
 
     vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
@@ -907,7 +948,8 @@ void vpImageDraw::drawRectangle(vpImage<unsigned char> &I, const vpRect &rectang
 {
   if (fill) {
     DrawFilledRectangle(I, rectangle, color);
-  } else {
+  }
+  else {
     DrawRectangle(I, rectangle, color, thickness);
   }
 }
@@ -929,7 +971,8 @@ void vpImageDraw::drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, con
 {
   if (fill) {
     DrawFilledRectangle(I, rectangle, vpRGBa(color.R, color.G, color.B));
-  } else {
+  }
+  else {
     DrawRectangle(I, rectangle, vpRGBa(color.R, color.G, color.B), thickness);
   }
 }

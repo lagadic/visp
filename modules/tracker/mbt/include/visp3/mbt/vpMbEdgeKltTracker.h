@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,23 +31,19 @@
  * Description:
  * Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
  *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpMbEdgeKltTracker.h
  \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
 */
 
-#ifndef vpMbEdgeKltTracker_HH
-#define vpMbEdgeKltTracker_HH
+#ifndef _vpMbEdgeKltTracker_h_
+#define _vpMbEdgeKltTracker_h_
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpPoseVector.h>
@@ -97,7 +93,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
@@ -185,7 +181,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Hybrid Tracker");
 #endif
@@ -209,7 +205,11 @@ int main()
 }
 \endcode
 */
-class VISP_EXPORT vpMbEdgeKltTracker : public vpMbKltTracker, public vpMbEdgeTracker
+class VISP_EXPORT vpMbEdgeKltTracker :
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+  public vpMbKltTracker,
+#endif
+  public vpMbEdgeTracker
 {
 protected:
   //! The threshold used in the robust estimation of KLT.

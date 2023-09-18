@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * 2D ellipse visual feature.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpFeatureEllipse.cpp
@@ -82,6 +79,8 @@ void vpFeatureEllipse::init()
 }
 
 vpFeatureEllipse::vpFeatureEllipse() : A(0), B(0), C(0) { init(); }
+vpFeatureEllipse::vpFeatureEllipse(double x, double y, double n20, double n11, double n02) { this->buildFrom(x, y, n20, n11, n02); }
+
 
 //! compute the interaction matrix from a subset a the possible features
 vpMatrix vpFeatureEllipse::interaction(unsigned int select)
@@ -253,7 +252,8 @@ vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, unsigned int s
       e = vpColVector::stack(e, ey);
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 

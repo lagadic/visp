@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Filip Novotny
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file vpMomentAreaNormalized.h
   \brief 2D normalized surface moment descriptor (usually described as An).
@@ -143,7 +143,7 @@ private:
 
 public:
   vpMomentAreaNormalized(double a_star, double Z_star);
-  virtual ~vpMomentAreaNormalized(){};
+  virtual ~vpMomentAreaNormalized() { };
   void compute();
   /*!
     Retrieves the desired surface \e a* as specified in the constructor.
@@ -153,11 +153,7 @@ public:
     Retrieves the desired depth \e Z* as specified in the constructor.
   */
   double getDesiredDepth() const { return desiredDepth; }
-  /*!
-    \deprecated Use rather getDesiredArea()
-    Retrieves the desired surface \e a* as specified in the constructor.
-  */
-  vp_deprecated double getDesiredSurface() const { return desiredSurface; }
+
   /*!
     Set the desired depth \e Z* to a new value than the one specified in the constructor.
     This value has to be set before calling compute().
@@ -168,6 +164,20 @@ public:
     This value has to be set before calling compute().
   */
   void setDesiredArea(double a_star) { desiredSurface = a_star; }
+
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+    \deprecated Use rather getDesiredArea()
+    Retrieves the desired surface \e a* as specified in the constructor.
+  */
+  vp_deprecated double getDesiredSurface() const { return desiredSurface; }
+  //@}
+#endif
 
   /*!
     Moment name.

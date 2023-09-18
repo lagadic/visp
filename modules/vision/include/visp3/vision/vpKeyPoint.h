@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Key point functionalities.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef _vpKeyPoint_h_
 #define _vpKeyPoint_h_
 
@@ -66,16 +63,10 @@
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
 // Require at least OpenCV >= 2.1.1
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-
-#include <opencv2/calib3d/calib3d.hpp>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
-#include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
-#endif
 
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
 #include <opencv2/xfeatures2d.hpp>
@@ -183,7 +174,7 @@ int main()
   //First grab the reference image Irefrence
   //Add your code to load the reference image in Ireference
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   vpImagePoint corners[2];
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Ireference, corners[i]);
@@ -198,7 +189,7 @@ int main()
 
   //Then grab another image which represents the current image Icurrent
 
-  //Select a part of the image by clincking on two points which define a rectangle
+  //Select a part of the image by clicking on two points which define a rectangle
   for (int i=0 ; i < 2 ; i++) {
     vpDisplay::getClick(Icurrent, corners[i]);
   }
@@ -915,7 +906,7 @@ public:
 
   /*!
    * Set maximum number of keypoints to extract.
-   * \warning This functionality is only available for ORB and SIFT extactors.
+   * \warning This functionality is only available for ORB and SIFT extractors.
    * \param maxFeatures : Maximum number of keypoints to extract. Set -1 to use default values.
    */
   void setMaxFeatures(int maxFeatures) { m_maxFeatures = maxFeatures; }

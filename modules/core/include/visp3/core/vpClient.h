@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpClient_H
 #define vpClient_H
@@ -46,7 +46,7 @@
 #include <visp3/core/vpRequest.h>
 #include <visp3/core/vpTime.h>
 
-// inet_ntop() not supported on win XP
+ // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 /*!
@@ -60,8 +60,8 @@
   on one computer to another program on another computer.
 
   Exemple of client's code, receiving and sending basic message
-  It corresponds to the client used in the first exemple of vpServer class'
-documentation:
+  It corresponds to the client used in the first example of vpServer class'
+  documentation:
 
   \code
 #include <iostream>
@@ -98,8 +98,8 @@ int main()
   \endcode
 
   Exemple of client's code, sending a vpImage on request form.
-  It correspond to the server used in the second exemple of vpServer class'
-documentation.
+  It correspond to the server used in the second example of vpServer class'
+  documentation.
 
   \code
 #include <iostream>

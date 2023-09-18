@@ -45,7 +45,8 @@ At the time it was written, in https://mirrors.edge.kernel.org/pub/linux/kernel/
 in patch-5.15.70-rt50.patch.gz. If you choose a different version, simply substitute the numbers. Having decided on a version,
 use curl to download the source files:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ mkdir $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
 $ mkdir rt-linux; cd rt-linux
 $ $ curl -SLO https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.70.tar.gz
 $ curl -SLO https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.70-rt50.patch.gz
@@ -150,7 +151,7 @@ to install the Franka library, follow the steps:
 
 \verbatim
 $ sudo apt install build-essential cmake git libpoco-dev libeigen3-dev
-$ cd ~/visp_ws/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone --recursive https://github.com/frankaemika/libfranka
 $ cd libfranka
 $ mkdir build
@@ -177,14 +178,14 @@ $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
 3. Get `librealsense` from github:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
 \endverbatim
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
 \verbatim
-$ ./scripts/setup_udev_rules.sh
+$ sudo ./scripts/setup_udev_rules.sh
 \endverbatim
 
 5. Build and install librealsense

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,10 +32,7 @@
  * Interface for the Irisa's Viper S650 robot controlled by an Adept
  *MotionBlox.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRobotViper650_h
 #define vpRobotViper650_h
@@ -94,7 +91,7 @@ extern "C" {
   \end{tabular}
   \f]
 
-  In this modelisation, different frames have to be considered.
+  In this modelization, different frames have to be considered.
 
   - \f$ {\cal F}_f \f$: the reference frame, also called world frame
 

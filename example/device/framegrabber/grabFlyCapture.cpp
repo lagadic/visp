@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,14 +29,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Acquire images using OpenCV cv::VideoCapture.
+ * Acquire images using FlyCapture SDK.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example grabFlyCapture.cpp
 
-  \brief Example of framegrabbing using OpenCV cv::VideoCapture class.
+  \brief Example of framegrabbing using vpFlyCaptureGrabber class.
 
 */
 
@@ -195,7 +195,7 @@ int main(int argc, const char **argv)
       display = new vpDisplayX(I);
 #elif defined(VISP_HAVE_GDI)
       display = new vpDisplayGDI(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       display = new vpDisplayOpenCV(I);
 #else
       std::cout << "No image viewer is available..." << std::endl;

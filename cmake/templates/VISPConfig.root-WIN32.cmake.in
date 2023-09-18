@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -64,10 +64,56 @@
 #     include(${VISP_USE_FILE})
 #   endif()
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
+
+if(NOT DEFINED VISP_STATIC)
+  # look for global setting
+  if (NOT DEFINED BUILD_SHARED_LIBS OR BUILD_SHARED_LIBS)
+    set(VISP_STATIC OFF)
+  else()
+    set(VISP_STATIC ON)
+  endif()
+endif()
+
+function(check_one_config RES)
+  set($ { RES } "" PARENT_SCOPE)
+  if (NOT VISP_RUNTIME OR NOT VISP_ARCH)
+    return()
+  endif()
+  set(candidates)
+  if (VISP_STATIC)
+    list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
+  endif()
+  list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/lib")
+  foreach(c $ { candidates })
+    set(p "${VISP_CONFIG_PATH}/${c}")
+    if (EXISTS "${p}/VISPConfig.cmake")
+      set($ { RES } "${p}" PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
+endfunction()
+
+get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
+
+function(check_one_config RES)
+  set(${RES} "" PARENT_SCOPE)
+  if(NOT VISP_RUNTIME OR NOT VISP_ARCH)
+    return()
+  endif()
+  set(candidates)
+  if(VISP_STATIC)
+    list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
+  endif()
+  list(APPEND candidates "${VISP_ARCH}/${VISP_RUNTIME}/lib")
+  foreach(c ${candidates})
+    set(p "${VISP_CONFIG_PATH}/${c}")
+    if(EXISTS "${p}/VISPConfig.cmake")
+      set(${RES} "${p}" PARENT_SCOPE)
+      return()
+    endif()
+  endforeach()
+endfunction()
 
 # similar code exist in VISPDetectPlatform.cmake
 if(DEFINED VISP_ARCH AND DEFINED VISP_RUNTIME)
@@ -94,53 +140,57 @@ elseif(MSVC)
     set(VISP_RUNTIME vc14)
   elseif(MSVC_VERSION MATCHES "^191[0-9]$")
     set(VISP_RUNTIME vc15)
+    check_one_config(has_VS2017)
+    if(NOT has_VS2017)
+      set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+    endif()
   elseif(MSVC_VERSION MATCHES "^192[0-9]$")
     set(VISP_RUNTIME vc16)
+    check_one_config(has_VS2019)
+    if(NOT has_VS2019)
+      set(VISP_RUNTIME vc15) # selecting previous compatible runtime version
+      check_one_config(has_VS2017)
+      if(NOT has_VS2017)
+        set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+      endif()
+    endif()
   elseif(MSVC_VERSION MATCHES "^193[0-9]$")
     set(VISP_RUNTIME vc17)
+    check_one_config(has_VS2022)
+    if(NOT has_VS2022)
+     set(VISP_RUNTIME vc16)
+     check_one_config(has_VS2019)
+     if(NOT has_VS2019)
+       set(VISP_RUNTIME vc15) # selecting previous compatible runtime version
+       check_one_config(has_VS2017)
+       if(NOT has_VS2017)
+         set(VISP_RUNTIME vc14) # selecting previous compatible runtime version
+       endif()
+     endif()
+    endif()
   else()
     message(WARNING "ViSP does not recognize MSVC_VERSION \"${MSVC_VERSION}\". Cannot set VISP_RUNTIME")
   endif()
 elseif(MINGW)
   set(VISP_RUNTIME mingw)
 
-  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpmachine
-                  OUTPUT_VARIABLE VISP_GCC_TARGET_MACHINE
-                  OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(VISP_GCC_TARGET_MACHINE MATCHES "64")
-    set(MINGW64 1)
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*")
     set(VISP_ARCH x64)
   else()
     set(VISP_ARCH x86)
   endif()
 endif()
 
-if(CMAKE_VERSION VERSION_GREATER 2.6.2)
-  unset(VISP_CONFIG_PATH CACHE)
-endif()
+check_one_config(VISP_LIB_PATH)
 
 if(NOT VISP_FIND_QUIETLY)
   message(STATUS "ViSP ARCH: ${VISP_ARCH}")
   message(STATUS "ViSP RUNTIME: ${VISP_RUNTIME}")
-endif()
-
-get_filename_component(VISP_CONFIG_PATH "${CMAKE_CURRENT_LIST_FILE}" PATH CACHE)
-if(VISP_RUNTIME AND VISP_ARCH)
-  if(NOT DEFINED VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib")
-  elseif(NOT DEFINED VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
-  elseif(VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/staticlib")
-  elseif(VISP_STATIC AND EXISTS "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib/VISPConfig.cmake")
-    set(VISP_LIB_PATH "${VISP_CONFIG_PATH}/${VISP_ARCH}/${VISP_RUNTIME}/lib")
-  endif()
+  message(STATUS "ViSP STATIC: ${VISP_STATIC}")
 endif()
 
 if(VISP_LIB_PATH AND EXISTS "${VISP_LIB_PATH}/VISPConfig.cmake")
   include("${VISP_LIB_PATH}/VISPConfig.cmake")
-
-  set(VISP_FOUND TRUE CACHE BOOL "" FORCE)
 
   if(NOT VISP_FIND_QUIETLY)
     message(STATUS "Found VISP ${VISP_VERSION} in ${VISP_LIB_PATH}")
@@ -157,5 +207,5 @@ else()
 You should manually point CMake variable VISP_DIR to your build of ViSP library."
     )
   endif()
-  set(VISP_FOUND FALSE CACHE BOOL "" FORCE)
+  set(VISP_FOUND FALSE)
 endif()

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * ViSP configuration.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpConfig_h
-#define vpConfig_h
+#ifndef _vpConfig_h_
+#define _vpConfig_h_
 
 // To get access to EXIT_SUCCESS and EXIT_FAILURE
 #include <cstdlib>
@@ -164,15 +161,15 @@
 // Defined if OpenCV xfeatures2d module available. Only since OpenCV >= 3.0.0
 #cmakedefine VISP_HAVE_OPENCV_XFEATURES2D
 
-// Defined if OpenCV dnn module available.
-#cmakedefine VISP_HAVE_OPENCV_DNN
-
-// Defined if OpenCV objdetect module available.
-#cmakedefine VISP_HAVE_OPENCV_OBJDETECT
-
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
 #  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}
+#  include <opencv2/opencv.hpp>
+#endif
+
+// For compat with previous releases
+#if defined(HAVE_OPENCV_OBJDETECT)
+#define VISP_HAVE_OPENCV_OBJDETECT
 #endif
 
 // Defined if gtk+-2.0 library available
@@ -480,6 +477,9 @@
 
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
+
+// Defined if nlohmann json parser is found
+#cmakedefine VISP_HAVE_NLOHMANN_JSON
 
 // Define c++ standard values also available in __cplusplus when gcc is used
 #define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}

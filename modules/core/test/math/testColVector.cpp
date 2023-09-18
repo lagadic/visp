@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test some vpColVector functionalities.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testColVector.cpp
@@ -370,6 +367,23 @@ int main()
     std_vector.clear();
     std_vector = v.toStdVector();
     if (test("v", v, std_vector) == false)
+      return EXIT_FAILURE;
+  }
+
+  {
+    std::cout << "** Test operator == and operator !=" << std::endl;
+    vpColVector v(3, 1.);
+    double val = 1.;
+    std::cout << "v: " << v.t() << " != " << val << std::endl;
+    if (v != val)
+      return EXIT_FAILURE;
+    val = 0.;
+    std::cout << "v: " << v.t() << " == " << val << std::endl;
+    if (v == val)
+      return EXIT_FAILURE;
+    v[1] = val;
+    std::cout << "v: " << v.t() << " == " << val << std::endl;
+    if (v == val)
       return EXIT_FAILURE;
   }
   std::cout << "\nAll tests succeed" << std::endl;

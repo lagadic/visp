@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Example of dot tracking.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file trackKltOpencv.cpp
 
@@ -46,10 +46,9 @@
 #include <stdio.h>
 #include <vector>
 
-#if defined(VISP_HAVE_MODULE_KLT) &&                                                                                   \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
@@ -135,8 +134,8 @@ OPTIONS:                                               Default\n\
      Step between two images.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
@@ -286,11 +285,7 @@ int main(int argc, const char **argv)
     // it size is not defined yet, it will be defined when the image will
     // read on the disk
     vpImage<unsigned char> vpI; // This is a ViSP image used for display only
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    IplImage *cvI = NULL; // This is an OpenCV IPL image used by the tracker
-#else
     cv::Mat cvI;
-#endif
 
     unsigned iter = opt_first;
     std::ostringstream s;
@@ -346,13 +341,13 @@ int main(int argc, const char **argv)
     }
 
 // We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #endif
 
@@ -362,7 +357,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(vpI);
       vpDisplay::flush(vpI);
@@ -414,7 +409,7 @@ int main(int argc, const char **argv)
       // track the dot and returns its coordinates in the image
       // results are given in float since many many are usually considered
       //
-      // an expcetion is thrown by the track method if
+      // an exception is thrown by the track method if
       //  - dot is lost
 
       if (opt_display) {

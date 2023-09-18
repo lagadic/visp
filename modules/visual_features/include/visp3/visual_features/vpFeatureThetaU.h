@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * ThetaU visual feature.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeatureThetaU_H
 #define vpFeatureThetaU_H
@@ -113,8 +109,8 @@
   vpFeatureThetaU::vpFeatureThetaURotationRepresentationType.
 
   To initialize the feature \f$(\theta u_x, \theta u_y, \theta u_z)\f$
-  you may use vpFeatureThetaU member fonctions like set_TUx(),
-  set_TUy(), set_TUz(), or also buildFrom() fonctions.
+  you may use vpFeatureThetaU member functions like set_TUx(),
+  set_TUy(), set_TUz(), or also buildFrom() functions.
 
   Depending on the choice of the visual feature representation, the
   interaction() method allows to compute the interaction matrix \f$

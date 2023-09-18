@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Tracking of a nurbs.
  *
- * Authors:
- * Nicolas Melchior
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file trackMeNurbs.cpp
@@ -92,16 +88,16 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 void usage(const char *name, const char *badparam, std::string ipath)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
+  std::string ext("png");
 #else
-    std::string ext("pgm");
+  std::string ext("pgm");
 #endif
   fprintf(stdout, "\n\
 Tracking of a nurbs using vpMe.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-c] [-d] [-h]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -114,15 +110,15 @@ OPTIONS:                                               Default\n\
      this option.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -d \n\
      Turn off the display.\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str(), ext.c_str());
+    ipath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -218,8 +214,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -228,9 +224,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -249,14 +245,14 @@ int main(int argc, const char **argv)
     reader.setFirstFrameIndex(1);
     reader.open(I);
 
-// We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+    // We open a window using either X11, GTK or GDI.
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
 #endif
 
@@ -266,7 +262,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       vpDisplay::flush(I);
@@ -278,7 +274,8 @@ int main(int argc, const char **argv)
     me.setRange(30);
     me.setSampleStep(5);
     me.setPointsToTrack(60);
-    me.setThreshold(15000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(20);
 
     nurbs.setMe(&me);
     nurbs.setDisplay(vpMeSite::RANGE_RESULT);
@@ -288,7 +285,8 @@ int main(int argc, const char **argv)
       std::cout << "Click on points along the edge with the left button." << std::endl;
       std::cout << "Then click on the right button to continue." << std::endl;
       nurbs.initTracking(I);
-    } else {
+    }
+    else {
       // Create a list of points to automate the test
       std::list<vpImagePoint> list;
       list.push_back(vpImagePoint(178, 357));
@@ -332,7 +330,8 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I);
     }
     return EXIT_SUCCESS;
-  } catch (vpException &e) {
+  }
+  catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_SUCCESS;
   }
@@ -343,8 +342,8 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_me module or X11, GTK, GDI or OpenCV display "
-               "functionalities are required..."
-            << std::endl;
+    "functionalities are required..."
+    << std::endl;
 }
 
 #endif

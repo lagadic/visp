@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,14 +30,11 @@
 #
 # Description:
 # Try to find libBiclops, libPMD and libUtils for Biclops head.
-# Once run this will define: 
+# Once run this will define:
 #
 # BICLOPS_FOUND
 # BICLOPS_INCLUDE_DIRS
 # BICLOPS_LIBRARIES
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -50,8 +47,8 @@ ELSE(NOT UNIX AND NOT WIN32)
   FIND_PATH(BICLOPS_INCLUDE_DIR Biclops.h
     $ENV{BICLOPS_HOME}/include
     /usr/include )
-  	
-  #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")  
+
+  #MESSAGE("DBG BICLOPS_INCLUDE_DIR=${BICLOPS_INCLUDE_DIR}")
 
   FIND_PATH(PMD_INCLUDE_DIR PMD.h
     $ENV{BICLOPS_HOME}/include
@@ -65,14 +62,14 @@ ELSE(NOT UNIX AND NOT WIN32)
 
   FIND_LIBRARY(BICLOPS_LIBRARY
     NAMES Biclops libBiclops libBiclopsD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     /usr/lib
     )
 
   FIND_LIBRARY(PMD_LIBRARY
     NAMES PMD libPMD libPMDD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     $ENV{BICLOPS_PMD_HOME}/lib
     /usr/lib
@@ -80,7 +77,7 @@ ELSE(NOT UNIX AND NOT WIN32)
 
   FIND_LIBRARY(UTILS_LIBRARY
     NAMES Utils libUtils libUtilsD
-    PATHS 
+    PATHS
     $ENV{BICLOPS_HOME}/lib
     $ENV{BICLOPS_UTILS_HOME}/lib
     /usr/lib
@@ -98,11 +95,11 @@ ELSE(NOT UNIX AND NOT WIN32)
   IF(NOT BICLOPS_INCLUDE_DIR)
 #     MESSAGE(SEND_ERROR "Biclops include dir not found. Set USE_BICLOPS option OFF")
   ENDIF(NOT BICLOPS_INCLUDE_DIR)
- 
+
   IF(NOT PMD_INCLUDE_DIR)
 #     MESSAGE(SEND_ERROR "PMD include dir not found. Set USE_BICLOPS option OFF")
   ENDIF(NOT PMD_INCLUDE_DIR)
-  
+
   IF(NOT UTILS_INCLUDE_DIR)
 #     MESSAGE(SEND_ERROR "Utils include dir not found. Set USE_BICLOPS option OFF ")
   ENDIF(NOT UTILS_INCLUDE_DIR)

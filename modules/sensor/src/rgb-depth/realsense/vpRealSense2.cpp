@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * librealSense2 interface.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -666,7 +666,7 @@ void vpRealSense2::close()
    Return the camera parameters corresponding to a specific stream. This
    function has to be called after open().
    \param stream : Stream for which camera intrinsic parameters are returned.
-   \param type   : Indicates if the model should include distorsion parameters or not.
+   \param type   : Indicates if the model should include distortion parameters or not.
    \param index  : Index of camera in T265 device, 1: Left  2. Right. Otherwise: -1(default)
 
    \sa getIntrinsics()

@@ -9,9 +9,13 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main(int argc, char **argv)
 {
-#if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) &&                                            \
+#if ((defined(VISP_HAVE_V4L2) || defined(HAVE_OPENCV_VIDEOIO)) &&                                            \
      (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
 
   int device = 0;
@@ -28,7 +32,7 @@ int main(int argc, char **argv)
   vpV4l2Grabber g;
   g.setDevice(ss.str());
   g.open(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture g(device); // open the default camera
   if (!g.isOpened()) {        // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
@@ -43,7 +47,7 @@ int main(int argc, char **argv)
   vpDisplayX d(I, 0, 0, "Camera view");
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d(I, 0, 0, "Camera view");
 #elif defined(VISP_HAVE_GTK)
   vpDisplayGTK d(I, 0, 0, "Camera view");
@@ -60,7 +64,7 @@ int main(int argc, char **argv)
     try {
 #if defined(VISP_HAVE_V4L2)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -72,11 +76,13 @@ int main(int argc, char **argv)
           blob.initTracking(I, germ);
           init_done = true;
         }
-      } else {
+      }
+      else {
         blob.track(I);
       }
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       init_done = false;
     }
   }

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,12 +30,9 @@
  *
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
- *estimation.
+ * estimation.
  *
- * Authors:
- * Andrew Comport
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpScale.cpp
@@ -171,7 +168,6 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
   double density_gradient = 0;
   double sum_delta = 0;
   double delta = 0;
-  int nx = 0;
 
   double inside_kernel = 1;
   unsigned int j = position;
@@ -185,9 +181,9 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j++;
-      nx++;
-    } else
+    } else {
       inside_kernel = 0;
+    }
   }
 
   inside_kernel = 1;
@@ -200,9 +196,9 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j--;
-      nx++;
-    } else
+    } else {
       inside_kernel = 0;
+    }
   }
 
   density_gradient = KernelDensityGradient_EPANECHNIKOV(sum_delta, n);
@@ -210,7 +206,7 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
   return density_gradient;
 }
 
-// Epanechnikov_kernel for an d dimensional Euclidian space R^d
+// Epanechnikov_kernel for an d dimensional Euclidean space R^d
 double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
 {
 
@@ -238,7 +234,7 @@ double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
     return 0;
 }
 
-// Epanechnikov_kernel for an d dimensional Euclidian space R^d
+// Epanechnikov_kernel for an d dimensional Euclidean space R^d
 double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
 {
 

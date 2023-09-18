@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Souriya Trinh
  *
- *****************************************************************************/
+*****************************************************************************/
 /**
  * License: GPL
  *
@@ -50,7 +50,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
+*/
 /**
  * &lsquot;Contrast Limited Adaptive Histogram Equalization&rsquot; as
  * described in
@@ -74,7 +74,7 @@
  *
  * @author Stephan Saalfeld <saalfeld@mpi-cbg.de>
  * @version 0.3b
- */
+*/
 
 /*!
   \file vpCLAHE.cpp
@@ -196,13 +196,15 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 }
 } // namespace
 
+namespace vp
+{
 /*!
   \ingroup group_imgproc_brightness
 
   Adjust the contrast of a grayscale image locally using the Contrast Limited
   Adaptative Histogram Equalization method. The limit parameter allows to
   limit the slope of the transformation function to prevent the
-  overamplification of noise. This method is a transcription of the CLAHE
+  over amplification of noise. This method is a transcription of the CLAHE
   ImageJ plugin code by Stephan Saalfeld.
 
   \param I1 : The first grayscale image.
@@ -225,8 +227,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope,
-               bool fast)
+void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
@@ -240,8 +241,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
 
   if ((unsigned int)(2 * blockRadius + 1) > I1.getWidth() || (unsigned int)(2 * blockRadius + 1) > I1.getHeight()) {
     std::cerr << "Error: (unsigned int) (2*blockRadius+1) > I1.getWidth() || "
-                 "(unsigned int) (2*blockRadius+1) > I1.getHeight()!"
-              << std::endl;
+      "(unsigned int) (2*blockRadius+1) > I1.getHeight()!"
+      << std::endl;
     return;
   }
 
@@ -328,7 +329,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
       tr = createTransfer(hist, limit, cdfs);
       if (r0 == r1) {
         br = tr;
-      } else {
+      }
+      else {
         createHistogram(blockRadius, bins, cs[0], rs[r1], I1, hist);
         br = createTransfer(hist, limit, cdfs);
       }
@@ -349,7 +351,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
           tr = createTransfer(hist, limit, cdfs);
           if (r0 == r1) {
             br = tr;
-          } else {
+          }
+          else {
             createHistogram(blockRadius, bins, cs[c1], rs[r1], I1, hist);
             br = createTransfer(hist, limit, cdfs);
           }
@@ -372,7 +375,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
             if (c0 == c1) {
               t0 = t00;
               t1 = t10;
-            } else {
+            }
+            else {
               t0 = wx * t00 + (1.0f - wx) * t01;
               t1 = wx * t10 + (1.0f - wx) * t11;
             }
@@ -383,7 +387,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
         }
       }
     }
-  } else {
+  }
+  else {
     std::vector<int> hist(bins + 1), prev_hist(bins + 1);
     std::vector<int> clippedHist(bins + 1);
 
@@ -413,7 +418,8 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
             ++hist[fastRound(I1[yi][xi] / 255.0f * bins)];
           }
         }
-      } else {
+      }
+      else {
         hist = prev_hist;
 
         if (yMin > 0) {
@@ -490,7 +496,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
+void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   // Split
   vpImage<unsigned char> pR(I1.getHeight(), I1.getWidth());
@@ -529,3 +535,4 @@ void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, 
     cpt++;
   }
 }
+};

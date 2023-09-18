@@ -317,4 +317,83 @@ a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-
 - MacOS \ref install_brew_3rdparty_vicon installation instructions
 - Windows 10 \ref install_win10_msvc17_3rdparty_vicon installation instructions
 
+\section soft_tool Toolbox
+
+These are the optional 3rd-parties supported by ViSP that can bring helpful tools.
+
+\subsection soft_tool_json JSON for modern C++
+
+Since ViSP 3.6.0 we introduced JSON serialization capabilities that may be helpful
+to load and save parameters from a YAML file.
+
+To this end, <a href="https://json.nlohmann.me/">JSON for modern C++</a> is supported by ViSP
+and can be used to load and save JSON representations of ViSP objects.
+
+Thus installing this 3rd-party allows serialization of vpMbGenericTracker, vpCameraParameters,
+vpPoseVector, vpHomogeneousMatrix, and vpPolygon3D objects to load/save internal data or settings
+from/to JSON files.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install nlohmann-json3-dev
+\endverbatim
+
+- <b>Fedora installation</b>
+\verbatim
+$ sudo dnf install nlohmann-json-devel
+\endverbatim
+
+- <b>CentOS installation</b>
+\verbatim
+$ sudo yum install json-devel
+\endverbatim
+
+- <b>MacOS installation</b>
+\verbatim
+$ brew install nlohmann-json
+\endverbatim
+
+- <b>Windows installation</b>
+
+  To install JSON on windows, follow \ref install_win11_msvc17_3rdparty_json installation instructions.
+
+- <b>Installation from source</b>
+
+  If the package is not available for your distribution, you can install JSON from source:
+\verbatim
+$ cd $VISP_WS/3rdparty
+$ git clone https://github.com/nlohmann/json.git
+$ cd json && mkdir build && cd build
+$ cmake ..
+$ make -j$(nproc) && sudo make install
+\endverbatim
+
+\subsection soft_tool_pcl Point Cloud Library (PCL)
+
+[Point Cloud Library](https://pointclouds.org/) can optionnally be installed to extend vpRealSense2 capabilities
+to acquire a point cloud. It could be also used to consider a point cloud as depth feature in the generic
+model-based tracker when using vpMbGenericTracker class. If you don't have an Intel Realsense Depth camera
+(SR300 or D400 series) or if you are not interested in model-based tracking using depth as feature, installing
+PCL is not recommended.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libpcl-dev
+\endverbatim
+
+- <b>Fedora installation</b>
+\verbatim
+$ sudo dnf install pcl-devel
+\endverbatim
+
+- <b>MacOS installation</b>
+\verbatim
+$ brew install pcl
+\endverbatim
+  On MacOS, if ViSP is not able to detect PCL, follow instructions described in
+  \ref install_brew_issues_pcl_1_12_1 known issue.
+
+- <b>Windows installation</b>
+
+  To install PCL on windows, follow \ref install_win10_msvc17_3rdparty_pcl installation instructions.
 */

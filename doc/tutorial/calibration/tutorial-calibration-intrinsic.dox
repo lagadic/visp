@@ -9,35 +9,35 @@ This tutorial focuses on pinhole camera calibration. The goal of the calibration
 
 If we denote \f$(u,v)\f$ the position of a pixel in the
 digitized image, this position is related to the corresponding
-coordinates \f$(x,y)\f$ in the normalized space. 
+coordinates \f$(x,y)\f$ in the normalized space.
 
 In ViSP we consider two unit conversions:
 - From meters to pixels we consider the following formula:
   \f[ \begin{array}{l}
-  u = u_0 + x p_x (1+k_{ud} r^2) \\ 
+  u = u_0 + x p_x (1+k_{ud} r^2) \\
   v = v_0 + y p_y (1+k_{ud} r^2)
-  \end{array} 
+  \end{array}
   \f]
-  with \f$ r^2 = x^2+y^2 \f$ 
+  with \f$ r^2 = x^2+y^2 \f$
 
 - From pixels to meters we consider the following formula:
   \f[ \begin{array}{l}
   x = (u-u_0)*(1+k_{du} r^2)/p_x \\
-  y = (v-v_0)*(1+k_{du} r^2)/p_y 
-  \end{array} 
+  y = (v-v_0)*(1+k_{du} r^2)/p_y
+  \end{array}
   \f]
   with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$
 
 In this model we consider the parameters \f$(u_0,v_0,p_x,p_y, k_{ud}, k_{du})\f$ where:
 - \f$(u_0, v_0)\f$ are the coordinates of the principal point in pixel;
 - \f$(p_x, p_y)\f$ are the ratio between the focal length and the size of a pixel;
-- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion. \f$k_{ud}\f$ is the distortion parameter used to transform the coordinates from \e undistorted to \e distorted images, while \f$k_{du}\f$ is used to transform the coordinates from \e distorted to \e undistorted images. 
+- \f$(k_{ud}, k_{du})\f$ are the parameters used to correct the distortion. \f$k_{ud}\f$ is the distortion parameter used to transform the coordinates from \e undistorted to \e distorted images, while \f$k_{du}\f$ is used to transform the coordinates from \e distorted to \e undistorted images.
 
 \note It may be useful to make a tour in \ref tutorial-bridge-opencv that makes in relation the camera model used in ViSP with the one proposed by OpenCV.
 
-\note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion. 
+\note Note also that the container dedicated to camera parameters is implemented in the vpCameraParameters class. It allows to consider two kind of models; with or without distortion.
 
-The calibration process allows to estimate the values of these parameters. 
+The calibration process allows to estimate the values of these parameters.
 
 \section calibration_recommendation Recommendations
 
@@ -66,7 +66,7 @@ How to improve calibration accuracy:
 
 To calibrate your camera you need to take snapshots of one of these two patterns with your camera. At least 5 good snapshots of the input pattern acquired at different positions are requested for good results.
 
-To this end see \ref tutorial-grabber and use one of the binaries that could be found in `tutorial/grabber` folder to grab single shot images of the grid. 
+To this end see \ref tutorial-grabber and use one of the binaries that could be found in `tutorial/grabber` folder to grab single shot images of the grid.
 
 For example, with a webcam connected to a laptop running Linux (Ubuntu, Fedora...) use one of the following:
 \verbatim
@@ -130,11 +130,11 @@ We will not describe in detail the source, but just mention that:
 - the image processing is performed using OpenCV;
 - the estimation of the parameters is done using a virtual visual servoing scheme;
 - the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the images (chessboard or circles grid), and the location of the images used as input. If \c libjpeg and \c libpng 3rd party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images. Default configuration files are provided in \c example/calibration folder;
-- the resulting parameters are saved in \c camera.xml file. 
+- the resulting parameters are saved in \c camera.xml file.
 
 \subsection calibration_chessboard With a chessboard
 
-In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. A set of 13 images extracted from OpenCV dataset are provided `chessboard-01.jpg`, `chessboard-02.jpg`, ..., `chessboard-13.jpg`. Hereafter we give an example of one of these images. 
+In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. A set of 13 images extracted from OpenCV dataset are provided `chessboard-01.jpg`, `chessboard-02.jpg`, ..., `chessboard-13.jpg`. Hereafter we give an example of one of these images.
 
 \image html img-chessboard-01.jpg Snapshot example of the 9 by 6 chessboard used to calibrate the camera.
 
@@ -147,7 +147,7 @@ BoardSize_Height: 6
 # The size of a square in meters
 Square_Size: 0.025
 
-# The type of pattern used for camera calibration. 
+# The type of pattern used for camera calibration.
 # One of: CHESSBOARD or CIRCLES_GRID
 Calibrate_Pattern: CHESSBOARD
 
@@ -158,7 +158,7 @@ Input: chessboard-%02d.jpg
 Tempo: 1
 \endverbatim
 
-\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary.
 
 To estimate the camera parameters, just enter in ViSP `\<binary_dir\>/examples/calibration` and run:
 \verbatim
@@ -167,7 +167,7 @@ To estimate the camera parameters, just enter in ViSP `\<binary_dir\>/examples/c
 
 This command will produce the following output:
 \verbatim
-$ ./calibrate-camera default-chessboard.cfg 
+$ ./calibrate-camera default-chessboard.cfg
 Settings from config file: default-chessboard.cfg
 grid width : 9
 grid height: 6
@@ -176,10 +176,10 @@ pattern    : CHESSBOARD
 input seq  : chessboard-%02d.jpg
 tempo      : 1
 
-Settings from command line options: 
+Settings from command line options:
 Ouput xml file : camera.xml
 Camera name    : Camera
-Initialize camera parameters with default values 
+Initialize camera parameters with default values
 Camera parameters used for initialization:
 Camera parameters for perspective projection without distortion:
   px = 600	 py = 600
@@ -268,7 +268,7 @@ The resulting parameters are also saved in `./camera.xml` file.
 
 \subsection calibration_circle With a circles grid
 
-In this section we consider the ViSP symmetric circles grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 5 images called \c circles-01.jpg, \c circles-02.jpg, ..., \c circles-05.jpg. Hereafter we give an example of such an image. 
+In this section we consider the ViSP symmetric circles grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 5 images called \c circles-01.jpg, \c circles-02.jpg, ..., \c circles-05.jpg. Hereafter we give an example of such an image.
 
 \image html img-circles-grid-02.jpg Snapshot example of the symmetric circles grid used to calibrate the camera.
 
@@ -281,7 +281,7 @@ BoardSize_Height: 6
 # The size of a square in meters
 Square_Size: 0.034
 
-# The type of pattern used for camera calibration. 
+# The type of pattern used for camera calibration.
 # One of: CHESSBOARD or CIRCLES_GRID
 Calibrate_Pattern: CIRCLES_GRID
 
@@ -292,7 +292,7 @@ Input: circles-%02d.jpg
 Tempo: 1
 \endverbatim
 
-\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
+\note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary.
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
 \verbatim
@@ -309,10 +309,10 @@ pattern    : CIRCLES_GRID
 input seq  : circles-%02d.jpg
 tempo      : 1
 
-Settings from command line options: 
+Settings from command line options:
 Ouput xml file : camera.xml
 Camera name    : Camera
-Initialize camera parameters with default values 
+Initialize camera parameters with default values
 Camera parameters used for initialization:
 Camera parameters for perspective projection without distortion:
   px = 600	 py = 600
@@ -383,7 +383,7 @@ A good calibration is obtained when the patterns cover most part of the image.
 Reprojection error could be seen in the next image. It shows the current reprojection error, the extracted points and the projected points using the estimated `cMo` camera pose and camera parameters:
 \image html img-calib-reprojection-error.jpg
 
-On the console, the global reprojection error is also given for the model without distorsion parameters:
+On the console, the global reprojection error is also given for the model without distortion parameters:
 \verbatim
 Calibration without distortion in progress on 13 images...
 Camera parameters for perspective projection without distortion:
@@ -407,7 +407,7 @@ Image chessboard-13.jpg reprojection error: 1.254269691
 Global reprojection error: 1.552697985
 \endverbatim
 
-and for the model with both distorsion parameters:
+and for the model with both distortion parameters:
 \verbatim
 Calibration with distortion in progress on 13 images...
 Camera parameters for perspective projection with distortion:
@@ -492,10 +492,10 @@ pattern    : CHESSBOARD
 input seq  : image%01d.png
 tempo      : 1
 
-Settings from command line options: 
+Settings from command line options:
 Ouput xml file : camera.xml
 Camera name    : Camera
-Initialize camera parameters with default values 
+Initialize camera parameters with default values
 Camera parameters used for initialization:
 Camera parameters for perspective projection without distortion:
   px = 600	 py = 600
@@ -506,7 +506,7 @@ frame: image1.png, unable to calibrate from single image, image rejected
 Process frame: image2.png, grid detection status: 1, image used as input data
 frame: image2.png, unable to calibrate from single image, image rejected
 Unable to calibrate. Image processing failed !
-\endverbatim 
+\endverbatim
 
 The work around is here to give an initial guess not so far from the solution so that it allows the algorithm to converge.
 
@@ -548,7 +548,7 @@ pattern    : CHESSBOARD
 input seq  : image%01d.png
 tempo      : 1
 
-Settings from command line options: 
+Settings from command line options:
 Init parameters: camera-init.xml
 Ouput xml file : camera.xml
 Camera name    : Camera
@@ -574,11 +574,11 @@ Global reprojection error: 0.7628504889
 Camera parameters without distortion successfully saved in "camera.xml"
 \endverbatim
 
-\section calibration_undistort Distorsion removal
+\section calibration_undistort Distortion removal
 
-Once the camera is calibrated, you can remove distortion in an image to generate an undistorted image. 
+Once the camera is calibrated, you can remove distortion in an image to generate an undistorted image.
 
-\subsection calibration_undistort_single Undistort a single image 
+\subsection calibration_undistort_single Undistort a single image
 The following example available in tutorial-undistort.cpp shows how to do it.
 
 \include tutorial-undistort.cpp
@@ -595,11 +595,11 @@ If vpXmlParserCamera is not available, we initialize the camera parameters "by h
 
 Finally, we create a new image `Iud` where distortion is removed. This image is saved in `chessboard-undistort.jpg`.
 
-\snippet tutorial-undistort.cpp Create image without distorsion
+\snippet tutorial-undistort.cpp Create image without distortion
 
 Results are shown in the next images:
 - left image is the input image `chessboard.jpg`
-- right image is the resulting `chessboard-undistort.jpg` image where distorsion is removed thanks to the camera intrinsic parameters. Here you can see that chessboard lines are straight.
+- right image is the resulting `chessboard-undistort.jpg` image where distortion is removed thanks to the camera intrinsic parameters. Here you can see that chessboard lines are straight.
 
 \image html img-chessboard-undistort.jpg
 
@@ -615,7 +615,7 @@ The pseudo code is the following:
       vpImage<unsigned char> Iundist; // Undistorted output image
       vpCameraParameters cam;
       bool init_done = false;
-  
+
       while (! end) {
         acquire(I);
         if (! init_done) {

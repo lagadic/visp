@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Example of model based tracking.
  *
- * Authors:
- * Nicolas Melchior
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example mbtEdgeTracking.cpp
@@ -81,7 +76,7 @@ SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
   [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n",
-          name);
+    name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -119,7 +114,7 @@ OPTIONS:                                               \n\
 \n\
   -n <initialisation file base name>                                            \n\
      Base name of the initialisation file. The file will be 'base_name'.init .\n\
-     This base name is also used for the optionnal picture specifying where to \n\
+     This base name is also used for the Optional picture specifying where to \n\
      click (a .ppm picture).\n\
 \n\
   -t \n\
@@ -129,8 +124,8 @@ OPTIONS:                                               \n\
      Turn off the display.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -o\n\
      Use Ogre3D for visibility tests.\n\
@@ -149,16 +144,16 @@ OPTIONS:                                               \n\
 \n\
   -h \n\
      Print the help.\n\n",
-          ext.c_str());
+    ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 bool getOptions(int argc, const char **argv, std::string &ipath, std::string &configFile, std::string &modelFile,
-                std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
-                bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
-                bool &computeCovariance, bool &projectionError)
+  std::string &initFile, long &lastFrame, bool &displayFeatures, bool &click_allowed, bool &display,
+  bool &cao3DModel, bool &trackCylinder, bool &useOgre, bool &showOgreConfigDialog, bool &useScanline,
+  bool &computeCovariance, bool &projectionError)
 {
   const char *optarg_;
   int c;
@@ -274,8 +269,8 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
-                    opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-                    useScanline, computeCovariance, projectionError)) {
+      opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
+      useScanline, computeCovariance, projectionError)) {
       return EXIT_FAILURE;
     }
 
@@ -284,9 +279,9 @@ int main(int argc, const char **argv)
       usage(argv[0], NULL);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -306,13 +301,15 @@ int main(int argc, const char **argv)
 
     if (!opt_modelFile.empty()) {
       modelFile = opt_modelFile;
-    } else {
+    }
+    else {
       std::string modelFileCao;
       std::string modelFileWrl;
       if (trackCylinder) {
         modelFileCao = "mbt/cube_and_cylinder.cao";
         modelFileWrl = "mbt/cube_and_cylinder.wrl";
-      } else {
+      }
+      else {
         modelFileCao = "mbt/cube.cao";
         modelFileWrl = "mbt/cube.wrl";
       }
@@ -320,7 +317,8 @@ int main(int argc, const char **argv)
       if (!opt_ipath.empty()) {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
@@ -328,10 +326,12 @@ int main(int argc, const char **argv)
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
         }
-      } else {
+      }
+      else {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
@@ -355,7 +355,8 @@ int main(int argc, const char **argv)
     reader.setFileName(ipath);
     try {
       reader.open(I);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -365,16 +366,16 @@ int main(int argc, const char **argv)
 
     reader.acquire(I);
 
-// initialise a  display
-#if defined VISP_HAVE_X11
+    // initialise a  display
+#if defined(VISP_HAVE_X11)
     vpDisplayX display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
 #else
     opt_display = false;
@@ -403,7 +404,8 @@ int main(int argc, const char **argv)
     me.setMaskSize(5);
     me.setMaskNumber(180);
     me.setRange(7);
-    me.setThreshold(5000);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(10);
     me.setMu1(0.5);
     me.setMu2(0.5);
     me.setSampleStep(4);
@@ -415,9 +417,9 @@ int main(int argc, const char **argv)
     tracker.setNearClippingDistance(0.01);
     tracker.setFarClippingDistance(0.90);
     tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
-//   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
-//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+    //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
+    //   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+    //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 
     // Display the moving edges, see documentation for the signification of
@@ -458,13 +460,14 @@ int main(int argc, const char **argv)
     //   - a ./cube/cube.init file that defines the 3d coordinates (in meter,
     //   in the object basis) of the points used for the initialisation
     //   - a ./cube/cube.ppm file to display where the user have to click
-    //   (optionnal, set by the third parameter)
+    //   (Optional, set by the third parameter)
     if (opt_display && opt_click_allowed) {
       tracker.initClick(I, initFile, true);
       tracker.getPose(cMo);
       // display the 3D model at the given pose
       tracker.display(I, cMo, cam, vpColor::red);
-    } else {
+    }
+    else {
       vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
       tracker.initFromPose(I, cMoi);
     }
@@ -499,7 +502,8 @@ int main(int argc, const char **argv)
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(7);
-        me.setThreshold(5000);
+        me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me.setThreshold(10);
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
@@ -511,9 +515,9 @@ int main(int argc, const char **argv)
         tracker.setNearClippingDistance(0.01);
         tracker.setFarClippingDistance(0.90);
         tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
-//   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
-//   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
-//   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+        //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
+        //   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+        //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
         tracker.loadModel(modelFile);
         tracker.setCameraParameters(cam);
@@ -543,7 +547,7 @@ int main(int argc, const char **argv)
 
       // track the object: stop tracking from frame 40 to 50
       if (reader.getFrameIndex() - reader.getFirstFrameIndex() < 40 ||
-          reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
+        reader.getFrameIndex() - reader.getFirstFrameIndex() >= 50) {
         tracker.track(I);
         tracker.getPose(cMo);
         if (opt_display) {
@@ -582,7 +586,8 @@ int main(int argc, const char **argv)
     reader.close();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

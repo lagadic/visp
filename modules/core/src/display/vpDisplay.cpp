@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Image display.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <limits>
 
@@ -57,22 +53,20 @@
 */
 vpDisplay::vpDisplay()
   : m_displayHasBeenInitialized(false), m_windowXPosition(0), m_windowYPosition(0), m_width(0), m_height(0), m_title(),
-    m_scale(1), m_scaleType(SCALE_DEFAULT)
-{
-}
+  m_scale(1), m_scaleType(SCALE_DEFAULT)
+{ }
 
 /*!
   Copy constructor.
 */
 vpDisplay::vpDisplay(const vpDisplay &d)
   : m_displayHasBeenInitialized(d.m_displayHasBeenInitialized), m_windowXPosition(d.m_windowXPosition),
-    m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
-    m_scale(d.m_scale), m_scaleType(d.m_scaleType)
-{
-}
+  m_windowYPosition(d.m_windowYPosition), m_width(d.m_width), m_height(d.m_height), m_title(d.m_title),
+  m_scale(d.m_scale), m_scaleType(d.m_scaleType)
+{ }
 
 /*!
-  Destructor that desallocates memory.
+  Destructor that deallocates memory.
 */
 vpDisplay::~vpDisplay() { m_displayHasBeenInitialized = false; }
 
@@ -106,7 +100,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -145,7 +139,8 @@ void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Id
 {
   if (Isrc.display != NULL) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     vpImageConvert::convert(Isrc, Idest);
   }
 }
@@ -179,7 +174,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -218,7 +213,8 @@ void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
   if (Isrc.display != NULL) {
     (Isrc.display)->getImage(Idest);
-  } else {
+  }
+  else {
     Idest = Isrc;
   }
 }
@@ -234,7 +230,7 @@ void vpDisplay::setDownScalingFactor(unsigned int scale)
     m_scale = scale;
   else {
     std::cout << "Warning: Cannot apply the down scaling factor " << scale
-              << " to the display window since the display is initialized yet..." << std::endl;
+      << " to the display window since the display is initialized yet..." << std::endl;
   }
 }
 
@@ -309,7 +305,7 @@ int main()
   vpImage<unsigned char> I(480, 640); // Black 640 by 480 image
 #ifdef VISP_HAVE_X11
   vpDisplayX d;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d;
 #endif
   // Display in a 160 by 120 windows size

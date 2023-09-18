@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * This class implements an 2D array as a template class.
  *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef _vpArray2D_h_
 #define _vpArray2D_h_
 
@@ -46,6 +46,10 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
 
 /*!
   \class vpArray2D
@@ -146,7 +150,7 @@ public:
   Basic constructor of a 2D array.
   Number of columns and rows are set to zero.
   */
-  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL) {}
+  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL) { }
 
   /*!
   Copy constructor of a 2D array.
@@ -154,9 +158,9 @@ public:
   vpArray2D<Type>(const vpArray2D<Type> &A)
     :
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      vpArray2D<Type>()
+    vpArray2D<Type>()
 #else
-      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
 #endif
   {
     resize(A.rowNum, A.colNum, false, false);
@@ -172,9 +176,9 @@ public:
   vpArray2D<Type>(unsigned int r, unsigned int c)
     :
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      vpArray2D<Type>()
+    vpArray2D<Type>()
 #else
-      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
 #endif
   {
     resize(r, c);
@@ -190,9 +194,9 @@ public:
   vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
     :
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      vpArray2D<Type>()
+    vpArray2D<Type>()
 #else
-      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
 #endif
   {
     resize(r, c, false, false);
@@ -252,7 +256,7 @@ public:
 #endif
 
   /*!
-  Destructor that desallocate memory.
+  Destructor that deallocate memory.
   */
   virtual ~vpArray2D<Type>()
   {
@@ -306,7 +310,8 @@ public:
       if (flagNullify && this->data != NULL) {
         memset(this->data, 0, this->dsize * sizeof(Type));
       }
-    } else {
+    }
+    else {
       bool recopy = !flagNullify && recopy_; // priority to flagNullify
       const bool recopyNeeded = (ncols != this->colNum && this->colNum > 0 && ncols > 0 && (!flagNullify || recopy));
       Type *copyTmp = NULL;
@@ -354,7 +359,8 @@ public:
       // Recopy of this->data array values or nullify
       if (flagNullify) {
         memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
-      } else if (recopyNeeded && this->rowPtrs != NULL) {
+      }
+      else if (recopyNeeded && this->rowPtrs != NULL) {
         // Recopy...
         unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
         unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
@@ -362,7 +368,8 @@ public:
           for (unsigned int j = 0; j < this->colNum; ++j) {
             if ((minRow > i) && (minCol > j)) {
               (*this)[i][j] = copyTmp[i * colTmp + j];
-            } else {
+            }
+            else {
               (*this)[i][j] = 0;
             }
           }
@@ -395,6 +402,35 @@ public:
     Type **t_ = rowPtrs;
     for (unsigned int i = 0; i < dsize; i += ncols) {
       *t_++ = data + i;
+    }
+  }
+
+
+  /*!
+  Insert array A at the given position in the current array.
+
+  \warning Throw vpException::dimensionError if the
+  dimensions of the matrices do not allow the operation.
+
+  \param A : The array to insert.
+  \param r : The index of the row to begin to insert data.
+  \param c : The index of the column to begin to insert data.
+  */
+  void insert(const vpArray2D<Type> &A, unsigned int r, unsigned int c)
+  {
+    if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
+      if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
+        memcpy(data + r * colNum, A.data, sizeof(Type) * A.size());
+      }
+      else if (data != NULL && A.data != NULL && A.data != data) {
+        for (unsigned int i = r; i < (r + A.getRows()); i++) {
+          memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(Type) * A.colNum);
+        }
+      }
+    }
+    else {
+      throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) array in (%dx%d) array at position (%d,%d)",
+                        A.getRows(), A.getCols(), rowNum, colNum, r, c);
     }
   }
 
@@ -476,6 +512,10 @@ public:
 
     return *this;
   }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  vpArray2D<Type> &operator=(const nlohmann::json &j) = delete;
+#endif
 #endif
 
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x
@@ -514,13 +554,19 @@ public:
   }
 
   vpArray2D<Type> hadamard(const vpArray2D<Type> &m) const;
+
+  /**
+   * \brief  Compute the transpose of the array
+   *
+   * @return vpArray2D<Type> C = A^T
+   */
+  vpArray2D<Type> t() const;
   //@}
 
   //---------------------------------
   // Inherited array I/O  Static Public Member Functions
   //---------------------------------
-  /** @name Inherited I/O from vpArray2D with Static Public Member Functions
-   */
+  /** @name Inherited I/O from vpArray2D with Static Public Member Functions */
   //@{
   /*!
     Load a matrix from a file.
@@ -541,7 +587,8 @@ public:
 
     if (!binary) {
       file.open(filename.c_str(), std::fstream::in);
-    } else {
+    }
+    else {
       file.open(filename.c_str(), std::fstream::in | std::fstream::binary);
     }
 
@@ -567,7 +614,8 @@ public:
             h += "\n";
           }
           h += line_.substr(2); // Remove "# "
-        } else {
+        }
+        else {
           // rewind before the line
           file.seekg(pos, file.beg);
           headerIsDecoded = true;
@@ -600,7 +648,8 @@ public:
           A[i][j] = value;
         }
       }
-    } else {
+    }
+    else {
       char c = '0';
       std::string h;
       // Decode header until '\0' char that ends the header string
@@ -670,16 +719,20 @@ public:
           std::stringstream ss(line);
           ss >> subs;
           ss >> rows;
-        } else if (cols == 0 && line.compare(0, 5, "cols:") == 0) {
+        }
+        else if (cols == 0 && line.compare(0, 5, "cols:") == 0) {
           std::stringstream ss(line);
           ss >> subs;
           ss >> cols;
-        } else if (line.compare(0, 5, "data:") == 0) {
+        }
+        else if (line.compare(0, 5, "data:") == 0) {
           inheader = false;
-        } else {
+        }
+        else {
           h += line + "\n";
         }
-      } else {
+      }
+      else {
         // if i == 0, we just got out of the header: initialize matrix
         // dimensions
         if (i == 0) {
@@ -736,7 +789,8 @@ public:
 
     if (!binary) {
       file.open(filename.c_str(), std::fstream::out);
-    } else {
+    }
+    else {
       file.open(filename.c_str(), std::fstream::out | std::fstream::binary);
     }
 
@@ -758,7 +812,8 @@ public:
       file << std::endl;
       file << A.getRows() << "\t" << A.getCols() << std::endl;
       file << A << std::endl;
-    } else {
+    }
+    else {
       int headerSize = 0;
       while (header[headerSize] != '\0') {
         headerSize++;
@@ -842,13 +897,15 @@ public:
         if (inIndent) {
           if (header[i] == ' ') {
             indent += " ";
-          } else if (indent.length() > 0) {
+          }
+          else if (indent.length() > 0) {
             checkIndent = false;
           }
         }
         if (header[i] == '\n' || (inIndent && header[i] == ' ')) {
           inIndent = true;
-        } else {
+        }
+        else {
           inIndent = false;
         }
       }
@@ -878,6 +935,70 @@ public:
     file.close();
     return true;
   }
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  //template<typename Type>
+  template<class T>
+  friend void from_json(const nlohmann::json &j, vpArray2D<T> &array);
+  //template<typename Type>
+  template<class T>
+  friend void to_json(nlohmann::json &j, const vpArray2D<T> &array);
+#endif
+
+  /*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First matrix.
+  \param kernel : Second matrix.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+  */
+  static vpArray2D<Type> conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, const std::string &mode);
+
+  /*!
+  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
+
+  \param M : First array.
+  \param kernel : Second array.
+  \param res : Result.
+  \param mode : Convolution mode: "full" (default), "same", "valid".
+
+  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
+
+  \note This is a very basic implementation that does not use FFT.
+ */
+  static void conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode);
+
+  /*!
+  Insert array B in array A at the given position.
+
+  \param A : Main array.
+  \param B : Array to insert.
+  \param r : Index of the row where to add the array.
+  \param c : Index of the column where to add the array.
+  \return Array with B insert in A.
+
+  \warning Throw exception if the sizes of the arrays do not allow the
+  insertion.
+  */
+  vpArray2D<Type> insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, unsigned int r, unsigned int c);
+
+  /*!
+  \relates vpArray2D
+  Insert array B in array A at the given position.
+
+  \param A : Main array.
+  \param B : Array to insert.
+  \param C : Result array.
+  \param r : Index of the row where to insert array B.
+  \param c : Index of the column where to insert array B.
+
+  \warning Throw exception if the sizes of the arrays do not
+  allow the insertion.
+  */
+  static void insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c);
   //@}
 };
 
@@ -937,6 +1058,120 @@ template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<
   return out;
 }
 
+template <class Type> vpArray2D<Type> vpArray2D<Type>::t() const
+{
+  vpArray2D<Type> At(colNum, rowNum);
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < colNum; j++) {
+      At[j][i] = (*this)[i][j];
+    }
+  }
+  return At;
+}
+
+template <class Type> vpArray2D<Type> vpArray2D<Type>::conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, const std::string &mode)
+{
+  vpArray2D<Type> res;
+  conv2(M, kernel, res, mode);
+  return res;
+}
+
+template <class Type> void vpArray2D<Type>::conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode)
+{
+  if (M.getRows() * M.getCols() == 0 || kernel.getRows() * kernel.getCols() == 0)
+    return;
+
+  if (mode == "valid") {
+    if (kernel.getRows() > M.getRows() || kernel.getCols() > M.getCols())
+      return;
+  }
+
+  vpArray2D<Type> M_padded, res_same;
+
+  if (mode == "full" || mode == "same") {
+    const unsigned int pad_x = kernel.getCols() - 1;
+    const unsigned int pad_y = kernel.getRows() - 1;
+    M_padded.resize(M.getRows() + 2 * pad_y, M.getCols() + 2 * pad_x, true, false);
+    M_padded.insert(M, pad_y, pad_x);
+
+    if (mode == "same") {
+      res.resize(M.getRows(), M.getCols(), false, false);
+      res_same.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+    else {
+      res.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
+    }
+  }
+  else if (mode == "valid") {
+    M_padded = M;
+    res.resize(M.getRows() - kernel.getRows() + 1, M.getCols() - kernel.getCols() + 1);
+  }
+  else {
+    return;
+  }
+
+  if (mode == "same") {
+    for (unsigned int i = 0; i < res_same.getRows(); i++) {
+      for (unsigned int j = 0; j < res_same.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res_same[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+
+    const unsigned int start_i = kernel.getRows() / 2;
+    const unsigned int start_j = kernel.getCols() / 2;
+    for (unsigned int i = 0; i < M.getRows(); i++) {
+      memcpy(res.data + i * M.getCols(), res_same.data + (i + start_i) * res_same.getCols() + start_j,
+             sizeof(Type) * M.getCols());
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < res.getRows(); i++) {
+      for (unsigned int j = 0; j < res.getCols(); j++) {
+        for (unsigned int k = 0; k < kernel.getRows(); k++) {
+          for (unsigned int l = 0; l < kernel.getCols(); l++) {
+            res[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
+          }
+        }
+      }
+    }
+  }
+}
+
+template<class Type> vpArray2D<Type> vpArray2D<Type>::insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, unsigned int r, unsigned int c)
+{
+  vpArray2D<Type> C;
+
+  insert(A, B, C, r, c);
+
+  return C;
+}
+
+template<class Type> void vpArray2D<Type>::insert(const vpArray2D<Type> &A, const vpArray2D<Type> &B, vpArray2D<Type> &C, unsigned int r, unsigned int c)
+{
+  if (((r + B.getRows()) <= A.getRows()) && ((c + B.getCols()) <= A.getCols())) {
+    C.resize(A.getRows(), A.getCols(), false, false);
+
+    for (unsigned int i = 0; i < A.getRows(); i++) {
+      for (unsigned int j = 0; j < A.getCols(); j++) {
+        if (i >= r && i < (r + B.getRows()) && j >= c && j < (c + B.getCols())) {
+          C[i][j] = B[i - r][j - c];
+        }
+        else {
+          C[i][j] = A[i][j];
+        }
+      }
+    }
+  }
+  else {
+    throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) array in (%dx%d) array at position (%d,%d)",
+                      B.getRows(), B.getCols(), A.getCols(), A.getRows(), r, c);
+  }
+}
+
 template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
@@ -970,6 +1205,9 @@ template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double> &A
   return true;
 }
 
+/*!
+ * \relates vpArray2D
+ */
 template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
@@ -985,6 +1223,82 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
   return true;
 }
 
+/*!
+ * \relates vpArray2D
+ */
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+
+
+template <class Type>
+inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
+{
+  if (j.is_array()) {
+    const unsigned int nrows = static_cast<unsigned int>(j.size());
+    if (nrows == 0) { // Initialize an empty array, Finished
+      array.resize(0, 0);
+      return;
+    }
+    unsigned int ncols = 0;
+    bool first = true;
+    for (const auto &item: j) { // Find number of columns, validate that all rows have same number of cols
+      if (!item.is_array()) {
+        throw vpException(vpException::badValue, "Trying to instantiate a 2D array with a JSON object that is not an array of array");
+      }
+      if (first) {
+        first = false;
+        ncols = static_cast<unsigned int>(item.size());
+      }
+      else if (ncols != item.size()) {
+        throw vpException(vpException::badValue, "Trying to instantiate a 2D array with JSON row arrays that are not of the same size");
+      }
+    }
+    array.resize(nrows, ncols);
+    unsigned i = 0;
+    for (const auto &item: j) {
+      std::vector<Type> row = item;
+      std::copy(row.begin(), row.end(), array.rowPtrs[i]);
+      ++i;
+    }
+  }
+  else if (j.is_object()) {
+    const unsigned ncols = j.at("cols");
+    const unsigned nrows = j.at("rows");
+    array.resize(nrows, ncols);
+    const nlohmann::json jData = j.at("data");
+    if (!jData.is_array() || jData.size() != nrows * ncols) {
+      std::stringstream ss;
+      ss << "JSON \"data\" field must be an array of size " << nrows * ncols;
+      throw vpException(vpException::badValue, ss.str());
+    }
+    unsigned i = 0;
+    for (const auto &jValue: jData) {
+      array.data[i] = jValue;
+      ++i;
+    }
+  }
+  else {
+    throw vpException(vpException::badValue, "Trying to read a vpArray2D from something that is not an array or object");
+  }
+}
+
+
+template <class Type>
+inline void to_json(nlohmann::json &j, const vpArray2D<Type> &array)
+{
+  j = {
+    {"cols", array.colNum},
+    {"rows", array.rowNum},
+    {"type", "vpArray2D"}
+  };
+
+  nlohmann::json::array_t data;
+  data.reserve(array.size());
+  for (unsigned i = 0; i < array.size(); ++i) {
+    data.push_back(array.data[i]);
+  }
+  j["data"] = data;
+}
+#endif
 #endif

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Example of sequential calls to QP solver with constant equality constraint
  *
- * Authors:
- * Olivier Kermorgant
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \file quadprog_eq.cpp
 
@@ -75,26 +72,26 @@ int main(int argc, char **argv)
       opt_click_allowed = false;
     else
 #endif
-        if (std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
-      std::cout << "\nOptions: \n"
+      if (std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
+        std::cout << "\nOptions: \n"
 #ifdef VISP_HAVE_DISPLAY
-                   "  -d \n"
-                   "     Disable the image display. This can be useful \n"
-                   "     for automatic tests using crontab under Unix or \n"
-                   "     using the task manager under Windows.\n"
-                   "\n"
-                   "  -c \n"
-                   "     Disable the mouse click. Useful to automate the \n"
-                   "     execution of this program without humain intervention.\n"
-                   "\n"
+          "  -d \n"
+          "     Disable the image display. This can be useful \n"
+          "     for automatic tests using crontab under Unix or \n"
+          "     using the task manager under Windows.\n"
+          "\n"
+          "  -c \n"
+          "     Disable the mouse click. Useful to automate the \n"
+          "     execution of this program without human intervention.\n"
+          "\n"
 #endif
-                   "  -h, --help\n"
-                   "     Print the help.\n"
-                << std::endl;
+          "  -h, --help\n"
+          "     Print the help.\n"
+          << std::endl;
 
-      return EXIT_SUCCESS;
-    }
+        return EXIT_SUCCESS;
+      }
   }
   std::srand((long)vpTime::measureTimeMs());
 
@@ -129,7 +126,7 @@ int main(int argc, char **argv)
   QPlot *plot = NULL;
   if (opt_display)
     plot = new QPlot(2, total,
-                     {"only equalities", "pre-solving", "equalities + inequalities", "pre-solving / warm start"});
+                     { "only equalities", "pre-solving", "equalities + inequalities", "pre-solving / warm start" });
 #endif
 
   for (int k = 0; k < total; ++k) {
@@ -195,7 +192,7 @@ int main(int argc, char **argv)
   std::cout << "With inequality constraints\n";
   std::cout << "   Warm start: t = " << t_ineq_WS << " ms (for 1 QP = " << t_ineq_WS / total << " ms)\n";
   std::cout << "   No warm start: t = " << t_ineq_noWS << " ms (for 1 QP = " << t_ineq_noWS / total << " ms)"
-            << std::endl;
+    << std::endl;
 
 #ifdef VISP_HAVE_DISPLAY
   if (opt_display) {

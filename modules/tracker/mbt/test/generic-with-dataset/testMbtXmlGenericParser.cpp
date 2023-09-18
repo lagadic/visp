@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test vpMbtXmlGenericParser parse / save.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file testMbtXmlGenericParser.cpp
@@ -51,31 +51,42 @@ int main()
     {
       std::string filename = visp_images_dir + "/xml/chateau.xml";
       vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::EDGE_PARSER | vpMbtXmlGenericParser::KLT_PARSER);
+      std::cout << "Parse config: " << filename << std::endl;
       xml.parse(filename);
 
       vpMe me_ref;
       me_ref.setMaskSize(5);
       me_ref.setMaskNumber(180);
       me_ref.setRange(8);
-      me_ref.setThreshold(10000);
       me_ref.setMu1(0.5);
       me_ref.setMu2(0.5);
       me_ref.setSampleStep(5);
 
       vpMe me;
       xml.getEdgeMe(me);
+      // Due to changes in visp-images/xml/chateau.xml where it can be now possible to have a normalized me threshold,
+      // two cases have to be considered depending on visp-images version
+      if (me.getLikelihoodThresholdType() == vpMe::NORMALIZED_THRESHOLD) {
+        me_ref.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me_ref.setThreshold(5);
+      }
+      else {
+        me_ref.setLikelihoodThresholdType(vpMe::OLD_THRESHOLD);
+        me_ref.setThreshold(10000);
+      }
+
       if (me.getMaskSize() != me_ref.getMaskSize() || me.getMaskNumber() != me_ref.getMaskNumber() ||
-          me.getRange() != me_ref.getRange() || !vpMath::equal(me.getThreshold(), me_ref.getThreshold(), eps) ||
-          !vpMath::equal(me.getMu1(), me_ref.getMu1(), eps) || !vpMath::equal(me.getMu2(), me_ref.getMu2(), eps) ||
-          !vpMath::equal(me.getSampleStep(), me_ref.getSampleStep(), eps)) {
+        me.getRange() != me_ref.getRange() || !vpMath::equal(me.getThreshold(), me_ref.getThreshold(), eps) ||
+        !vpMath::equal(me.getMu1(), me_ref.getMu1(), eps) || !vpMath::equal(me.getMu2(), me_ref.getMu2(), eps) ||
+        !vpMath::equal(me.getSampleStep(), me_ref.getSampleStep(), eps)) {
         std::cerr << "Issue when parsing xml: " << filename << " (ME)" << std::endl;
         return EXIT_FAILURE;
       }
 
       if (xml.getKltMaskBorder() != 5 || xml.getKltMaxFeatures() != 10000 || xml.getKltWindowSize() != 5 ||
-          !vpMath::equal(xml.getKltQuality(), 0.01, eps) || !vpMath::equal(xml.getKltMinDistance(), 5.0, eps) ||
-          !vpMath::equal(xml.getKltHarrisParam(), 0.02, eps) || xml.getKltBlockSize() != 3 ||
-          xml.getKltPyramidLevels() != 3) {
+        !vpMath::equal(xml.getKltQuality(), 0.01, eps) || !vpMath::equal(xml.getKltMinDistance(), 5.0, eps) ||
+        !vpMath::equal(xml.getKltHarrisParam(), 0.02, eps) || xml.getKltBlockSize() != 3 ||
+        xml.getKltPyramidLevels() != 3) {
         std::cerr << "Issue when parsing xml: " << filename << " (KLT)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -90,8 +101,8 @@ int main()
       }
 
       if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) || !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
-          !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
-          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
+        !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
+        !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
         std::cerr << "Issue when parsing xml: " << filename << " (visibility)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -100,6 +111,7 @@ int main()
     {
       std::string filename = visp_images_dir + "/xml/chateau.xml";
       vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
+      std::cout << "Parse config: " << filename << std::endl;
       xml.parse(filename);
       vpMe me_proj;
       xml.getProjectionErrorMe(me_proj);
@@ -112,12 +124,13 @@ int main()
     {
       std::string filename = visp_images_dir + "/xml/chateau_depth.xml";
       vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER | vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
+      std::cout << "Parse config: " << filename << std::endl;
       xml.parse(filename);
 
       if (xml.getDepthNormalFeatureEstimationMethod() != 0 || xml.getDepthNormalPclPlaneEstimationMethod() != 2 ||
-          xml.getDepthNormalPclPlaneEstimationRansacMaxIter() != 200 ||
-          !vpMath::equal(xml.getDepthNormalPclPlaneEstimationRansacThreshold(), 0.001, eps) ||
-          xml.getDepthNormalSamplingStepX() != 2 || xml.getDepthNormalSamplingStepY() != 2) {
+        xml.getDepthNormalPclPlaneEstimationRansacMaxIter() != 200 ||
+        !vpMath::equal(xml.getDepthNormalPclPlaneEstimationRansacThreshold(), 0.001, eps) ||
+        xml.getDepthNormalSamplingStepX() != 2 || xml.getDepthNormalSamplingStepY() != 2) {
         std::cerr << "Issue when parsing xml: " << filename << " (depth normal)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -137,8 +150,8 @@ int main()
       }
 
       if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) || !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
-          !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
-          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
+        !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
+        !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
         std::cerr << "Issue when parsing xml: " << filename << " (visibility)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -148,5 +161,6 @@ int main()
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
 #endif
 
+  std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }

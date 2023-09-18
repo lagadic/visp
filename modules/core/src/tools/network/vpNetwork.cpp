@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpNetwork.h>
 
@@ -47,7 +47,7 @@ vpNetwork::vpNetwork()
     tv_sec(0), tv_usec(10), verboseMode(false)
 {
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -656,7 +656,7 @@ int vpNetwork::_receiveRequestOnce()
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;
@@ -743,7 +743,7 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
   }
 
   tv.tv_sec = tv_sec;
-#if TARGET_OS_IPHONE
+#ifdef TARGET_OS_IPHONE
   tv.tv_usec = (int)tv_usec;
 #else
   tv.tv_usec = tv_usec;

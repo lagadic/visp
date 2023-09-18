@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,7 +34,7 @@
  * Authors:
  * Olivier Kermorgant
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpLinProgh
 #define vpLinProgh
@@ -80,7 +80,7 @@ public:
                   & \text{s.t.}& x, y, z \geq 0\\
                   & \text{s.t.}& z \leq 6\end{array}\f$
 
-    Here the lower bound is built explicitely while the upper one is built during the call to solveLP():
+    Here the lower bound is built explicitly while the upper one is built during the call to solveLP():
 
     \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using
     cmake -DUSE_CXX_STANDARD=11.
@@ -97,7 +97,7 @@ public:
       C[0][0] = 3;    C[0][1] = 2; C[0][2] = 1; d[0] = 10;
       C[1][0] = 2; C[1][1] = 5; C[1][2] = 3;  d[1] = 15;
 
-      // build lower bounds explicitely as a std::vector of std::pair<int, double>
+      // build lower bounds explicitly as a std::vector of std::pair<int, double>
       std::vector<vpLinProg::BoundedIndex> lower_bound;
       for(unsigned int i = 0; i < 3; ++i)
       {

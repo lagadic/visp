@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,12 +31,7 @@
  * Description:
  * Pose computation.
  *
- * Authors:
- * Eric Marchand
- * Aurelien Yol
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPoseRansac.cpp
@@ -603,14 +598,12 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
 {
   vpPose pose;
 
-  int nbPts = 0;
   for (unsigned int i = 0; i < p2D.size(); i++) {
     for (unsigned int j = 0; j < p3D.size(); j++) {
       vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());
       pose.addPoint(pt);
-      nbPts++;
     }
   }
 

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,13 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exceptions that can be emited by the vpFrameGrabber class and its
+ * Exceptions that can be emitted by the vpFrameGrabber class and its
  *derivates.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpFrameGrabberException_h_
 #define _vpFrameGrabberException_h_
@@ -48,7 +45,7 @@
  */
 
 /* \file vpFrameGrabberException.h
-   \brief error that can be emited by the vpFrameGrabber class and its
+   \brief error that can be emitted by the vpFrameGrabber class and its
    derivates
  */
 /* Classes standards. */
@@ -66,14 +63,14 @@
  */
 
 /*!
-  \brief Error that can be emited by the vpFrameGrabber class and its
+  \brief Error that can be emitted by the vpFrameGrabber class and its
   derivates
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emmited while calling
+  \brief Lists the possible error than can be emitted while calling
   vpFrameGrabber member
  */
   enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };
@@ -87,8 +84,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFrameGrabberException(int id) : vpException(id) { ; }
+  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { }
+  explicit vpFrameGrabberException(int id) : vpException(id) { }
 };
 
 #endif /* #ifndef _vpFrameGrabberException_h_ */

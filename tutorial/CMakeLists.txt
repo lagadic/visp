@@ -1,6 +1,6 @@
-project(ViSP-tutorial)
+cmake_minimum_required(VERSION 3.5)
 
-cmake_minimum_required(VERSION 3.0)
+project(ViSP-tutorial)
 
 find_package(VISP REQUIRED)
 
@@ -29,6 +29,7 @@ visp_add_subdirectory(bridge/opencv                        REQUIRED_DEPS visp_co
 visp_add_subdirectory(calibration                          REQUIRED_DEPS visp_core visp_robot visp_vision visp_io visp_gui)
 visp_add_subdirectory(computer-vision                      REQUIRED_DEPS visp_core visp_blob visp_vision visp_io visp_gui visp_detection visp_sensor)
 visp_add_subdirectory(grabber                              REQUIRED_DEPS visp_core visp_sensor visp_io visp_gui)
+visp_add_subdirectory(gui/pcl-visualizer                   REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(detection/barcode                    REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(detection/dnn                        REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
 visp_add_subdirectory(detection/face                       REQUIRED_DEPS visp_core visp_detection visp_io visp_gui visp_sensor)
@@ -43,6 +44,7 @@ visp_add_subdirectory(imgproc/contour                      REQUIRED_DEPS visp_co
 visp_add_subdirectory(imgproc/contrast-sharpening          REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(imgproc/count-coins                  REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
 visp_add_subdirectory(imgproc/flood-fill                   REQUIRED_DEPS visp_core visp_io visp_gui visp_imgproc)
+visp_add_subdirectory(imgproc/hough-transform              REQUIRED_DEPS visp_core visp_gui visp_imgproc)
 visp_add_subdirectory(munkres                              REQUIRED_DEPS visp_core visp_gui)
 visp_add_subdirectory(robot/flir-ptu                       REQUIRED_DEPS visp_core visp_robot visp_sensor visp_vision visp_gui visp_vs visp_visual_features visp_detection)
 visp_add_subdirectory(robot/pioneer                        REQUIRED_DEPS visp_core visp_robot visp_vs visp_gui)
@@ -62,4 +64,5 @@ visp_add_subdirectory(tracking/model-based/old/hybrid      REQUIRED_DEPS visp_co
 visp_add_subdirectory(tracking/model-based/old/keypoint    REQUIRED_DEPS visp_core visp_mbt visp_klt visp_io visp_gui)
 visp_add_subdirectory(tracking/template-tracker            REQUIRED_DEPS visp_core visp_tt visp_io visp_gui)
 visp_add_subdirectory(tracking/moving-edges                REQUIRED_DEPS visp_core visp_me visp_io visp_gui visp_sensor)
+visp_add_subdirectory(tracking/dnn                         REQUIRED_DEPS visp_core visp_detection visp_dnn_tracker visp_io visp_gui visp_sensor)
 visp_add_subdirectory(visual-servo/ibvs                    REQUIRED_DEPS visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui visp_ar)

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test some functions from vpImageFilter class.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example testImageFilter.cpp
 
@@ -45,10 +45,6 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
-
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-#include <opencv2/imgproc/imgproc.hpp>
-#endif
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:p:h"
@@ -144,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   return true;
 }
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int half_size_y, unsigned int half_size_x)
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
@@ -228,8 +224,8 @@ int main(int argc, const char *argv[])
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -278,7 +274,7 @@ int main(int argc, const char *argv[])
       std::cout << "I_correlation_2:\n" << I_correlation_2 << std::endl;
       std::cout << "I_correlation_3:\n" << I_correlation_3 << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg;
       vpImageConvert::convert(I, matImg);
 
@@ -310,14 +306,14 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest correlation on small image:" << std::endl;
       std::cout << "(I_correlation_1 == matImg_correlation_1)? "
-                << check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_1, I_correlation_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+        << std::endl;
       std::cout << "(I_correlation_2 == matImg_correlation_2)? "
-                << check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_2, I_correlation_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+        << std::endl;
       std::cout << "(I_correlation_3 == matImg_correlation_3)? "
-                << check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_correlation_3, I_correlation_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+        << std::endl;
 #endif
 
       // Test convolution
@@ -330,7 +326,7 @@ int main(int argc, const char *argv[])
       std::cout << "I_convolution_2:\n" << I_convolution_2 << std::endl;
       std::cout << "I_convolution_3:\n" << I_convolution_3 << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat mat_kernel_1_flip, mat_kernel_2_flip, mat_kernel_3_flip;
       cv::flip(mat_kernel_1, mat_kernel_1_flip, -1);
       cv::flip(mat_kernel_2, mat_kernel_2_flip, -1);
@@ -352,19 +348,20 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest convolution on small image:" << std::endl;
       std::cout << "(I_convolution_1 == matImg_convolution_1)? "
-                << check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_1, I_convolution_1, kernel_1.getRows() / 2, kernel_1.getCols() / 2)
+        << std::endl;
       std::cout << "(I_convolution_2 == matImg_convolution_2)? "
-                << check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_2, I_convolution_2, kernel_2.getRows() / 2, kernel_2.getCols() / 2)
+        << std::endl;
       std::cout << "(I_convolution_3 == matImg_convolution_3)? "
-                << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_convolution_3, I_convolution_3, kernel_3.getRows() / 2, kernel_3.getCols() / 2)
+        << std::endl;
 #endif
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
         vpImageIo::read(I, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -378,7 +375,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do 3 correlation filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       vpImageConvert::convert(I, matImg);
 
       t = vpTime::measureTimeMs();
@@ -419,7 +416,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do 3 convolution filtering: " << t << " ms ; Mean: " << t / 3.0 << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 
       t = vpTime::measureTimeMs();
       cv::filter2D(matImg, matImg_convolution_1, CV_64F, mat_kernel_1_flip, anchor1);
@@ -467,7 +464,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do Sobel: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_sobel_x;
       t = vpTime::measureTimeMs();
       cv::Sobel(matImg, matImg_sobel_x, CV_64F, 1, 0, 5);
@@ -476,8 +473,8 @@ int main(int argc, const char *argv[])
 
       std::cout << "\nTest Sobel on Klimt image:" << std::endl;
       std::cout << "(I_sobel_x == matImg_sobel_x)? "
-                << check_results(matImg_sobel_x, I_sobel_x, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_x, I_sobel_x, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
 #endif
 
       vpImage<double> I_double, Iu, Iv;
@@ -487,16 +484,16 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do Sobel Iu and Iv: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_sobel_y;
       cv::Sobel(matImg, matImg_sobel_y, CV_64F, 0, 1, 5);
 
       std::cout << "(Iu == matImg_sobel_x)? "
-                << check_results(matImg_sobel_x, Iu, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_x, Iu, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
       std::cout << "(Iv == matImg_sobel_y)? "
-                << check_results(matImg_sobel_y, Iv, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
-                << std::endl;
+        << check_results(matImg_sobel_y, Iv, kernel_sobel_x.getRows() / 2, kernel_sobel_x.getCols() / 2)
+        << std::endl;
 #endif
 
       // Test Sobel separable filters
@@ -519,12 +516,51 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "\nTime to do sepFilter: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       test = check_results(matImg_sobel_x, Iu, I_sep_filtered.getRows() / 2, kernel_sobel_x.getCols() / 2);
       std::cout << "(I_sep_filtered == matImg_sobel_x)? " << test << std::endl;
 
       if (!test) {
         std::cerr << "Failed separable filter!" << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      // Test median filter on gray-scale image
+      std::cout << "\nTest median on grayscale image:" << std::endl;
+      vpImage<unsigned char> I_median(3, 3);
+      for (unsigned int r = 0; r < 3; r++) {
+        for (unsigned int c = 0; c < 3; c++) {
+          I_median[r][c] = r * 3 + c;
+        }
+      }
+      double median = vpImageFilter::median(I_median);
+      double expectedMedian = 4.;
+      test = (median == expectedMedian);
+      std::cout << "(median (=" << median << ") == expectedMedian(" << expectedMedian << "))? " << test << std::endl;
+
+      if (!test) {
+        std::cerr << "Failed median filter on gray-scale image!" << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      std::cout << "\nTest median on vpRGBa image:" << std::endl;
+      vpImage<vpRGBa> I_median_rgba(3, 3);
+      for (unsigned int r = 0; r < 3; r++) {
+        for (unsigned int c = 0; c < 3; c++) {
+          I_median_rgba[r][c].R = r * 3 + c;
+          I_median_rgba[r][c].G = 2 * (r * 3 + c);
+          I_median_rgba[r][c].B = 3 * (r * 3 + c);
+        }
+      }
+      std::vector<float> median_rgba = vpImageFilter::median(I_median_rgba);
+      std::vector<float> expected_median_rgba = { 4.f, 8.f, 12.f };
+      for (unsigned int i = 0; i < 3; i++) {
+        bool test_local = (median_rgba[i] == expected_median_rgba[i]);
+        test &= test_local;
+        std::cout << "(median_rgba[" << i << "] (=" << median_rgba[i] << ") == expected_median_rgba[" << i << "] ( " << expected_median_rgba[i] << "))? " << test_local << std::endl;
+      }
+      if (!test) {
+        std::cerr << "Failed median filter on vpRGBa image!" << std::endl;
         return EXIT_FAILURE;
       }
 #endif
@@ -540,7 +576,8 @@ int main(int argc, const char *argv[])
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
         vpImageIo::read(I, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -553,7 +590,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do ViSP Gaussian Blur on grayscale images: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg, matImg_blur;
       vpImageConvert::convert(I, matImg);
       t = vpTime::measureTimeMs();
@@ -583,7 +620,8 @@ int main(int argc, const char *argv[])
       if (opt_ppath.empty()) {
         filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
         vpImageIo::read(I_rgb, filename);
-      } else {
+      }
+      else {
         filename = opt_ppath;
         vpImageIo::read(I_rgb, filename);
         printf("Image \"%s\" read successfully\n", filename.c_str());
@@ -596,7 +634,7 @@ int main(int argc, const char *argv[])
       t = vpTime::measureTimeMs() - t;
       std::cout << "Time to do ViSP Gaussian Blur on color images: " << t << " ms" << std::endl;
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat matImg_rgb, matImg_rgb_blur;
       vpImageConvert::convert(I_rgb, matImg_rgb);
       t = vpTime::measureTimeMs();
@@ -616,7 +654,8 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

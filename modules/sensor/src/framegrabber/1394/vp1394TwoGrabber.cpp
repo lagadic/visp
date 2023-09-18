@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Firewire cameras video capture.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vp1394TwoGrabber.cpp
@@ -405,7 +402,7 @@ to the new video capture mode.
 
   The iso transmission (setTransmission()) and the dma capture (see
   setCapture()) are first stopped. Then, the camera video capture mode is
-  set. Finaly, the dma capture and the iso transmission are re-started.
+  set. finally, the dma capture and the iso transmission are re-started.
 
   \param videomode : The camera video capture mode. The current camera mode is
   given by getVideoMode(). The camera supported modes are given by
@@ -659,7 +656,7 @@ bool vp1394TwoGrabber::isColor()
 
   The iso transmission (setTransmission()) and the dma capture (see
   setCapture()) are first stopped. Then, the camera framerate capture mode is
-  set. Finaly, the dma capture and the iso transmission are re-started.
+  set. finally, the dma capture and the iso transmission are re-started.
 
   If the current video mode is scalable (Format 7), this function is without
   effect.
@@ -898,7 +895,7 @@ bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode, vp1394T
 
   The iso transmission (setTransmission()) and the dma capture (see
   setCapture()) are first stopped. Then, the active camera Format 7 is
-  set. Finaly, the dma capture and the iso transmission are re-started.
+  set. finally, the dma capture and the iso transmission are re-started.
 
   \warning Setting color coding for non format 7 video mode will be
   without effect.
@@ -1162,7 +1159,7 @@ bool vp1394TwoGrabber::isColorCodingSupported(vp1394TwoVideoModeType mode, vp139
 
   The iso transmission (setTransmission()) and the dma capture (see
   setCapture()) are first stopped. Then, the format 7 roi is
-  set. Finaly, the dma capture and the iso transmission are re-started.
+  set. finally, the dma capture and the iso transmission are re-started.
 
   \warning Setting format 7 roi takes only effect if video mode is
   format 7 like.

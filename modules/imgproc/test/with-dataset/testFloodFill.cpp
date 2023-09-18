@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test flood fill algorithm.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <iomanip>
 
@@ -179,6 +176,7 @@ void printImage(const vpImage<unsigned char> &I, const std::string &name)
 
 int main(int argc, const char **argv)
 {
+#if defined(HAVE_OPENCV_IMGPROC)
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -327,7 +325,6 @@ int main(int argc, const char **argv)
     filename = vpIoTools::createFilePath(opath, "Klimt_flood_fill_8_connexity.pgm");
     vpImageIo::write(I_klimt_flood_fill_8_connexity, filename);
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020408
     cv::Mat matImg_klimt_4_connexity, matImg_klimt_8_connexity;
     vpImageConvert::convert(I_klimt, matImg_klimt_4_connexity);
     vpImageConvert::convert(I_klimt, matImg_klimt_8_connexity);
@@ -374,7 +371,6 @@ int main(int argc, const char **argv)
       throw vpException(vpException::fatalError, "(I_klimt_flood_fill_8_connexity != "
                                                  "I_klimt_flood_fill_8_connexity_check)");
     }
-#endif
 
     std::cout << "\nTest flood fill is ok!" << std::endl;
     return EXIT_SUCCESS;
@@ -382,4 +378,10 @@ int main(int argc, const char **argv)
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void) argc;
+  (void) argv;
+  std::cout << "Install OpenCV imgproc module required by this test" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

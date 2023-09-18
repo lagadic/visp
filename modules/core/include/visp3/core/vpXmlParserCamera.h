@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * XML parser to load and save camera intrinsic parameters.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpXmlParserCamera.h
@@ -138,7 +138,7 @@ int main()
 {
   // Create a camera parameter container. We want to set these parameters
   // for a 320x240 image, and we want to use the perspective projection
-  // modelisation without distortion.
+  // modelization without distortion.
   vpCameraParameters cam;
 
   // Set the principal point coordinates (u0,v0)
@@ -179,10 +179,11 @@ public:
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int image_width = 0,
-            unsigned int image_height = 0);
+            unsigned int image_height = 0, bool verbose = true);
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-           unsigned int image_width = 0, unsigned int image_height = 0, const std::string &additionalInfo = "");
+           unsigned int image_width = 0, unsigned int image_height = 0, const std::string &additionalInfo = "",
+           bool verbose = true);
 
   void setCameraName(const std::string &name);
   void setHeight(unsigned int height);

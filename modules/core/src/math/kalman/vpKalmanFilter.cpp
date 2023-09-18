@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Kalman filtering.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpKalmanFilter.cpp
@@ -86,7 +82,7 @@ void vpKalmanFilter::init(unsigned int size_state_vector, unsigned int size_meas
 /*!
   Construct a default Kalman filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
 */
 vpKalmanFilter::vpKalmanFilter()
@@ -98,7 +94,7 @@ vpKalmanFilter::vpKalmanFilter()
 /*!
   Construct a default Kalman filter by setting the number of signal to filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
   \param n_signal : Number of signal to filter.
 */
@@ -111,7 +107,7 @@ vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
 /*!
   Construct a Kalman filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
   \param size_state_vector : Size of the state vector \f${\bf x}_{(k)}\f$ for
   one signal.

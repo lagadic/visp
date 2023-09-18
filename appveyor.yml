@@ -21,7 +21,7 @@ environment:
 
   matrix:
     - TARGET: mingw
-    - TARGET: msvc
+    # - TARGET: msvc
     - TARGET: uwp
     - TARGET: visp_sample
 
@@ -130,7 +130,7 @@ build_script:
   - if "%TARGET%"=="msvc" ctest --output-on-failure
 
   # uwp case
-  - if "%TARGET%"=="uwp" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp
+  - if "%TARGET%"=="uwp" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp
   - if "%TARGET%"=="uwp" cmake --build . --config %configuration% -- /m:2
 
   # visp_sample case: ViSP as 3rdparty with cmake

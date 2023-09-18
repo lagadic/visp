@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Sick LD-MRS laser driver.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example SickLDMRS-Process.cpp
@@ -118,9 +118,9 @@ void *laser_display_and_save_loop(void *)
 
   vpDisplay *display = NULL;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   display = new vpDisplayX;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   display = new vpDisplayGTK;
 #endif
   display->init(map, 10, 10, "Laser scan");
@@ -211,7 +211,6 @@ void *laser_acq_loop(void *)
   laser.setup();
   vpLaserScan laserscan[4];
 
-  unsigned int iter = 0;
   for (;;) {
     double t1 = vpTime::measureTimeMs();
     if (laser.measure(laserscan) == false)
@@ -226,7 +225,6 @@ void *laser_acq_loop(void *)
     pthread_mutex_unlock(&shm_mutex);
 #endif
 
-    iter++;
     std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
   }
 
@@ -254,9 +252,9 @@ void *camera_acq_and_display_loop(void *)
 
     vpDisplay *display = NULL;
 #ifdef VISP_HAVE_MODULE_GUI
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     display = new vpDisplayGTK;
 #endif
     display->init(Q, 320, 10, "Camera");

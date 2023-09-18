@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -34,11 +34,11 @@
  * Authors:
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpPolygon3D.h
- \brief Implements a 3D polygon with render functionnalities like clipping.
+ \brief Implements a 3D polygon with render functionalities like clipping.
 */
 
 #ifndef vpPolygon3D_HH
@@ -53,7 +53,7 @@
 /*!
   \class vpPolygon3D
   \ingroup group_core_geometry
-  \brief Implements a 3D polygon with render functionnalities like clipping.
+  \brief Implements a 3D polygon with render functionalities like clipping.
 
 */
 class VISP_EXPORT vpPolygon3D
@@ -218,5 +218,44 @@ public:
   static void getMinMaxRoi(const std::vector<vpImagePoint> &roi, int &i_min, int &i_max, int &j_min, int &j_max);
   static bool roiInsideImage(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &corners);
 };
+
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#include <visp3/core/vpJsonParsing.h>
+NLOHMANN_JSON_SERIALIZE_ENUM( vpPolygon3D::vpPolygon3DClippingType, {
+    {vpPolygon3D::NO_CLIPPING, "none"},
+    {vpPolygon3D::NEAR_CLIPPING, "near"},
+    {vpPolygon3D::FAR_CLIPPING, "far"},
+    {vpPolygon3D::LEFT_CLIPPING, "left"},
+    {vpPolygon3D::RIGHT_CLIPPING, "right"},
+    {vpPolygon3D::UP_CLIPPING, "up"},
+    {vpPolygon3D::DOWN_CLIPPING, "down"},
+    {vpPolygon3D::FOV_CLIPPING, "fov"},
+    {vpPolygon3D::ALL_CLIPPING, "all"}
+});
+
+inline nlohmann::json clippingFlagsToJSON(const int flags) {
+  constexpr std::array<vpPolygon3D::vpPolygon3DClippingType, 3> specificFlags = {
+    vpPolygon3D::ALL_CLIPPING,
+    vpPolygon3D::FOV_CLIPPING,
+    vpPolygon3D::NO_CLIPPING
+  };
+  for(const auto f: specificFlags) {
+    if(flags == f) {
+      return nlohmann::json::array({ f });
+    }
+  }
+  return flagsToJSON<vpPolygon3D::vpPolygon3DClippingType>(flags, {
+    vpPolygon3D::NEAR_CLIPPING,
+    vpPolygon3D::FAR_CLIPPING,
+    vpPolygon3D::LEFT_CLIPPING,
+    vpPolygon3D::RIGHT_CLIPPING,
+    vpPolygon3D::UP_CLIPPING,
+    vpPolygon3D::DOWN_CLIPPING,
+  });
+}
+
+#endif
 
 #endif

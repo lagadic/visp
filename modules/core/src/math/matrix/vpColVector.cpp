@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Provide some simple operation on column vectors.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpColVector.cpp
@@ -78,7 +75,7 @@ vpColVector vpColVector::operator+(const vpColVector &v) const
 
   \param t : 3-dimension translation vector to add.
 
-  \return The sum of the current columnn vector (*this) and the translation
+  \return The sum of the current column vector (*this) and the translation
   vector to add.
 \code
   vpTranslationVector t1(1,2,3);
@@ -593,7 +590,7 @@ vpColVector &vpColVector::operator<<(const vpColVector &v)
 }
 
 /*!
-  Assigment operator.   Allow operation such as A = *v
+  Assignment operator. Allow operation such as A = *v
 
   The following example shows how to use this operator.
   \code
@@ -756,6 +753,12 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
 }
 #endif
 
+/*!
+ * Compare two column vectors.
+ * \param v : Vector to compare with.
+ * \return true when their respective size and their respective values are the same,
+ * false when their size or values differ.
+ */
 bool vpColVector::operator==(const vpColVector &v) const
 {
   if (rowNum != v.rowNum || colNum != v.colNum /* should not happen */)
@@ -769,7 +772,36 @@ bool vpColVector::operator==(const vpColVector &v) const
   return true;
 }
 
+/*!
+ * Compare a column vector to a floating point value.
+ * \param v : Floating point value to compare with.
+ * \return true when all the values of the vector are equal to the floating point value `v`,
+ * false otherwise.
+ */
+bool vpColVector::operator==(double v) const
+{
+  for (unsigned int i = 0; i < rowNum; i++) {
+    if (!vpMath::equal(data[i], v, std::numeric_limits<double>::epsilon()))
+      return false;
+  }
+
+  return true;
+}
+
+/*!
+ * Compare two column vectors.
+ * \param v : Vector to compare with.
+ * \return true when their respective size or their values differ, false when their size and values are the same.
+ */
 bool vpColVector::operator!=(const vpColVector &v) const { return !(*this == v); }
+
+/*!
+ * Compare a column vector to a floating point value.
+ * \param v : Floating point value to compare with.
+ * \return true when at least one value of the vector differ from the floating point value `v`.
+ * false when all the vector values are equal to `v`.
+ */
+bool vpColVector::operator!=(double v) const { return !(*this == v); }
 
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.
@@ -1327,6 +1359,15 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
 }
+void vpColVector::insert(const vpColVector &v, unsigned int i)
+{
+  if (i + v.size() > this->size())
+    throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
+
+  if (data != NULL && v.data != NULL && v.rowNum > 0) {
+    memcpy(data + i, v.data, sizeof(double) * v.rowNum);
+  }
+}
 
 /*!
 
@@ -1381,7 +1422,8 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
     if (p == std::string::npos) {
       maxBefore = vpMath::maximum(maxBefore, thislen);
       // maxAfter remains the same
-    } else {
+    }
+    else {
       maxBefore = vpMath::maximum(maxBefore, p);
       maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
     }
@@ -1414,7 +1456,8 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
       if (p != std::string::npos) {
         s.width((std::streamsize)maxAfter);
         s << values[i].substr(p, maxAfter).c_str();
-      } else {
+      }
+      else {
         assert(maxAfter > 1);
         s.width((std::streamsize)maxAfter);
         s << ".0";
@@ -1446,22 +1489,12 @@ double vpColVector::sum() const { return SimdVectorSum(data, rowNum); }
   */
 double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum); }
 
-/*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Euclidean norm if the vector is initialized, 0 otherwise.
-
-  \sa frobeniusNorm(), infinityNorm()
-
-*/
-double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 
   \sa infinityNorm()
 
@@ -1552,10 +1585,11 @@ std::ostream &vpColVector::cppPrint(std::ostream &os, const std::string &matrixN
 
     if (!octet) {
       os << matrixName << "[" << i << "] = " << (*this)[i] << "; " << std::endl;
-    } else {
+    }
+    else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
         os << "((unsigned char*)&(" << matrixName << "[" << i << "]) )[" << k << "] = 0x" << std::hex
-           << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; " << std::endl;
+          << (unsigned int)((unsigned char *)&((*this)[i]))[k] << "; " << std::endl;
       }
     }
   }
@@ -1679,7 +1713,8 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
     os << (*this)[i] << ", ";
     if (this->getRows() != i + 1) {
       os << ";" << std::endl;
-    } else {
+    }
+    else {
       os << "]" << std::endl;
     }
   }
@@ -1687,6 +1722,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   \deprecated You should rather use insert(unsigned int, const vpColVector &).
 
@@ -1706,4 +1742,16 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
   (void)c;
   insert(r, v);
 }
+
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm()
+
+*/
+double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

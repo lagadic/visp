@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -28,7 +28,13 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
- *****************************************************************************/
+*****************************************************************************/
+
+/*!
+  \example readRealSenseData.cpp
+
+  \brief Example that show how to replay realsense data saved with saveRealSenseData.cpp
+*/
 
 #include <iostream>
 
@@ -149,7 +155,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) {}
+  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) { }
 
   void run()
   {
@@ -183,7 +189,8 @@ public:
           viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           first_init = false;
-        } else {
+        }
+        else {
           viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
         }
       }
@@ -281,7 +288,8 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
         point_cloud->points[(size_t)(i * width + j)].z = z;
       }
     }
-  } else {
+  }
+  else {
     if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
       std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
     }

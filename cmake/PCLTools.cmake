@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP configuration file.
-#
-# Authors:
-# Fabien Spindler
 #
 #############################################################################
 
@@ -223,7 +220,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
     endforeach()
 
     # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
-    # Here we explicitely add opengl
+    # Here we explicitly add opengl
     if(OPENGL_LIBRARIES)
       list(APPEND ${pcl_deps_libraries} ${OPENGL_LIBRARIES})
     endif()
@@ -257,6 +254,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
 
   mark_as_advanced(ENSENSO_INCLUDE_DIR ENSENSO_LIBRARY)
 
+  mark_as_advanced(flann_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIR)
   mark_as_advanced(FLANN_INCLUDE_DIRS)
   mark_as_advanced(FLANN_LIBRARY)
@@ -286,6 +284,9 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(QHULL_INCLUDE_DIRS)
   mark_as_advanced(QHULL_LIBRARY)
   mark_as_advanced(QHULL_LIBRARY_DEBUG)
+  mark_as_advanced(QHULL_LIBRARY_STATIC)       # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_DEBUG_STATIC) # Requested for pcl 1.13.1 on windows
+  mark_as_advanced(QHULL_LIBRARY_SHARED)       # Requested for pcl 1.13.1 on windows
   mark_as_advanced(Qhull_DIR)                  # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
@@ -295,6 +296,17 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(Qt5Quick_DIR)               # Requested on macOS with pcl 1.12.1
   mark_as_advanced(Qt5_DIR)                    # Requested on macOS with pcl 1.12.1
 
+  # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(Qt6CoreTools_DIR Qt6Core_DIR Qt6BusTools_DIR Qt6GuiTools_DIR Qt6Gui_DIR Qt6OpenGLWidgets_DIR)
+  mark_as_advanced(Qt6OpenGL_DIR Qt6WidgetsTools_DIR Qt6Widgets_DIR)
+  mark_as_advanced(Qt6DBusTools_DIR Qt6DBus_DIR Qt6Network_DIR Qt6QmlCompilerPlusPrivate_DIR)
+  mark_as_advanced(Qt6QmlIntegration_DIR Qt6QmlModels_DIR Qt6QmlTools_DIR Qt6Qml_DIR Qt6Quick_DIR Qt6Sql_DIR)
+  mark_as_advanced(Qt6_DIR)
+  mark_as_advanced(QT_ADDITIONAL_HOST_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(QT_ADDITIONAL_PACKAGES_PREFIX_PATH)
+  mark_as_advanced(MACDEPLOYQT_EXECUTABLE)
+  mark_as_advanced(WrapOpenGL_AGL)
+
   mark_as_advanced(OPENNI2_INCLUDE_DIR)
   mark_as_advanced(OPENNI2_INCLUDE_DIRS)
   mark_as_advanced(OPENNI2_LIBRARY)
@@ -303,16 +315,22 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENNI_INCLUDE_DIRS)
   mark_as_advanced(OPENNI_LIBRARY)
 
+  mark_as_advanced(PCAP_INCLUDE_DIR)                        # Requested on macOS with pcl 1.13.1
+  mark_as_advanced(PCAP_LIBRARY)                            # Requested on macOS with pcl 1.13.1
+
   mark_as_advanced(USB_10_INCLUDE_DIR)
   mark_as_advanced(USB_10_LIBRARY)
 
-  mark_as_advanced(Boost_THREAD_LIBRARY_RELEASE)        # Requested on Ubuntu 20.04
-  mark_as_advanced(Boost_DATE_TIME_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_FILESYSTEM_LIBRARY_RELEASE)    # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_INCLUDE_DIR)                   # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_IOSTREAMS_LIBRARY_RELEASE)     # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SERIALIZATION_LIBRARY_RELEASE) # Requested on macOS with pcl 1.12.1
-  mark_as_advanced(Boost_SYSTEM_LIBRARY_RELEASE)        # Requested on macOS with pcl 1.12.1
+  mark_as_advanced(Boost_INCLUDE_DIR)                       # Requested on macOS with pcl 1.12.1
+  set(configuration "RELEASE;DEBUG")                        # Requested for pcl 1.13.1 on windows
+  foreach(config ${configuration})
+    mark_as_advanced(Boost_THREAD_LIBRARY_${config})        # Requested on Ubuntu 20.04
+    mark_as_advanced(Boost_DATE_TIME_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_FILESYSTEM_LIBRARY_${config})    # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_IOSTREAMS_LIBRARY_${config})     # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SERIALIZATION_LIBRARY_${config}) # Requested on macOS with pcl 1.12.1
+    mark_as_advanced(Boost_SYSTEM_LIBRARY_${config})        # Requested on macOS with pcl 1.12.1
+  endforeach()
 
   mark_as_advanced(libusb_INCLUDE_DIR)                  # Requested on macOS with pcl 1.12.1
   mark_as_advanced(netCDF_DIR)                          # Requested on macOS with pcl 1.12.1
@@ -322,6 +340,11 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(OPENGL_GLES3_INCLUDE_DIR)
 
   mark_as_advanced(VTK_MPI_NUMPROCS)
+  mark_as_advanced(VTK_DIR)                             # Requested on macOS with pcl 1.12.1
 
   mark_as_advanced(TBB_DIR)
+
+  mark_as_advanced(synchronization_LOCATION)            # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows
+  mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)            # Requested for pcl 1.13.1 on windows
 endmacro()

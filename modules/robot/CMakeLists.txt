@@ -1,7 +1,7 @@
 # ############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
 #
 # Description:
 # ViSP configuration file.
-#
-# Authors:
-# Fabien Spindler
 #
 # ############################################################################
 
@@ -53,8 +50,9 @@ if(USE_VIRTUOSE)
   list(APPEND opt_libs ${VIRTUOSE_LIBRARIES})
 
   if(USE_PTHREAD AND RT_FOUND AND DL_FOUND)
-    list(APPEND opt_incs ${PTHREAD_INCLUDE_DIRS})
-    list(APPEND opt_libs ${PTHREAD_LIBRARIES})
+    if(CMAKE_THREAD_LIBS_INIT)
+      list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
+    endif()
     list(APPEND opt_libs ${RT_LIBRARIES})
     list(APPEND opt_libs ${DL_LIBRARIES})
   endif()
@@ -126,8 +124,9 @@ if(USE_ARIA AND UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
   # Under Unix we need Aria, pthread, dl and rt libraries
   list(APPEND opt_incs ${ARIA_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARIA_LIBRARIES})
-  list(APPEND opt_incs ${PTHREAD_INCLUDE_DIRS})
-  list(APPEND opt_libs ${PTHREAD_LIBRARIES})
+  if(CMAKE_THREAD_LIBS_INIT)
+    list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
+  endif()
   list(APPEND opt_libs ${RT_LIBRARIES})
   list(APPEND opt_libs ${DL_LIBRARIES})
 elseif(USE_ARIA AND NOT UNIX)

@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,19 +31,15 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Andrew Comport
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMeTracker.h
   \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
-#ifndef vpMeTracker_HH
-#define vpMeTracker_HH
+#ifndef _vpMeTracker_h_
+#define _vpMeTracker_h_
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpTracker.h>
@@ -98,9 +94,8 @@ public:
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
-  virtual void display(const vpImage<unsigned char> &I, vpColor col) = 0;
-  virtual void display(const vpImage<unsigned char> &I);
-  virtual void display(const vpImage<vpRGBa> &I);
+  void display(const vpImage<unsigned char> &I);
+  void display(const vpImage<vpRGBa> &I);
   void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
   static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);

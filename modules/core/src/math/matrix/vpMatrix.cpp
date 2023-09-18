@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,10 @@
  * Description:
  * Matrix manipulation.
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
-\file vpMatrix.cpp
-\brief Definition of the vpMatrix class
+  \file vpMatrix.cpp
+  \brief Definition of the vpMatrix class
 */
 
 #include <algorithm>
@@ -238,7 +238,7 @@ M:
 4  5.5  6
    \endcode
  */
-vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
+vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 
 /*!
    Construct a matrix from a list of double values.
@@ -266,8 +266,7 @@ M:
  */
 vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list)
   : vpArray2D<double>(nrows, ncols, list)
-{
-}
+{ }
 
 /*!
    Construct a matrix from a list of double values.
@@ -291,7 +290,7 @@ M:
 4  5.5  6
    \endcode
  */
-vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) {}
+vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
 
 #endif
 
@@ -488,7 +487,8 @@ void vpMatrix::transpose(vpMatrix &At) const
         At[j][i] = (*this)[i][j];
       }
     }
-  } else {
+  }
+  else {
     SimdMatTranspose(data, rowNum, colNum, At.data);
   }
 }
@@ -539,7 +539,8 @@ void vpMatrix::AAt(vpMatrix &B) const
     vpMatrix::blas_dgemm(transa, transb, rowNum, rowNum, colNum, alpha, data, colNum, data, colNum, beta, B.data,
                          rowNum);
 #endif
-  } else {
+  }
+  else {
     // compute A*A^T
     for (unsigned int i = 0; i < rowNum; i++) {
       for (unsigned int j = i; j < rowNum; j++) {
@@ -591,7 +592,8 @@ void vpMatrix::AtA(vpMatrix &B) const
     vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data,
                          colNum);
 #endif
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < colNum; i++) {
       double *Bi = B[i];
       for (unsigned int j = 0; j < i; j++) {
@@ -973,7 +975,8 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
 
     vpMatrix::blas_dgemv(trans, A.colNum, A.rowNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
 #endif
-  } else {
+  }
+  else {
     w = 0.0;
     for (unsigned int j = 0; j < A.colNum; j++) {
       double vj = v[j]; // optimization em 5/12/2006
@@ -1022,7 +1025,8 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
                          C.data, B.colNum);
 #endif
-  } else {
+  }
+  else {
     // 5/12/06 some "very" simple optimization to avoid indexation
     const unsigned int BcolNum = B.colNum;
     const unsigned int BrowNum = B.rowNum;
@@ -1117,7 +1121,8 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneous
     vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
                          C.data, B.colNum);
 #endif
-  } else {
+  }
+  else {
     // 5/12/06 some "very" simple optimization to avoid indexation
     const unsigned int BcolNum = B.colNum;
     const unsigned int BrowNum = B.rowNum;
@@ -1255,7 +1260,8 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
     vpMatrix::blas_dgemm(trans, trans, V.colNum, rowNum, colNum, alpha, V.data, V.colNum, data, colNum, beta, M.data,
                          M.colNum);
 #endif
-  } else {
+  }
+  else {
     SimdMatMulTwist(data, rowNum, V.data, M.data);
   }
 
@@ -1294,7 +1300,8 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
     vpMatrix::blas_dgemm(trans, trans, V.getCols(), rowNum, colNum, alpha, V.data, V.getCols(), data, colNum, beta,
                          M.data, M.colNum);
 #endif
-  } else {
+  }
+  else {
     SimdMatMulTwist(data, rowNum, V.data, M.data);
   }
 
@@ -2024,7 +2031,7 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
   svdLapack(w, V);
 #elif defined(VISP_HAVE_EIGEN3)
   svdEigen3(w, V);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   svdOpenCV(w, V);
 #else
   (void)w;
@@ -2093,13 +2100,13 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
   return pseudoInverseLapack(Ap, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, svThreshold);
 #else
   (void)Ap;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -2169,13 +2176,13 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, int rank_in) const
   return pseudoInverseLapack(Ap, rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, rank_in);
 #else
   (void)Ap;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -2235,12 +2242,12 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
   return pseudoInverseLapack(svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(svThreshold);
 #else
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -2300,12 +2307,12 @@ vpMatrix vpMatrix::pseudoInverse(int rank_in) const
   return pseudoInverseLapack(rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(rank_in);
 #else
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -2361,7 +2368,8 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2428,7 +2436,8 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2501,7 +2510,8 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2636,7 +2646,8 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2704,7 +2715,8 @@ vpMatrix vpMatrix::pseudoInverseLapack(int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2778,7 +2790,8 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -2859,7 +2872,8 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3000,7 +3014,8 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3069,7 +3084,8 @@ vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3136,7 +3152,8 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) con
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3209,7 +3226,8 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3344,7 +3362,8 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3412,7 +3431,8 @@ vpMatrix vpMatrix::pseudoInverseEigen3(int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3486,7 +3506,8 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3567,7 +3588,8 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3708,7 +3730,8 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3726,7 +3749,7 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
 }
 
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
   matrix \f$\bf A\f$ using OpenCV 3rd party.
@@ -3777,7 +3800,8 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3844,7 +3868,8 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) con
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -3917,7 +3942,8 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4052,7 +4078,8 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4120,7 +4147,8 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4194,7 +4222,8 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4275,7 +4304,8 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4416,7 +4446,8 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   if (nrows < ncols) {
     U.resize(ncols, ncols, true);
     sv.resize(nrows, false);
-  } else {
+  }
+  else {
     U.resize(nrows, ncols, false);
     sv.resize(ncols, false);
   }
@@ -4503,14 +4534,14 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseLapack(Ap, sv, svThreshold);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold);
 #else
   (void)Ap;
   (void)sv;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -4586,14 +4617,14 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
   return pseudoInverseLapack(Ap, sv, rank_in);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, rank_in);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, rank_in);
 #else
   (void)Ap;
   (void)sv;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 /*!
@@ -4902,7 +4933,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, svThreshold, imA, imAt, kerAt);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold, imA, imAt, kerAt);
 #else
   (void)Ap;
@@ -4912,7 +4943,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   (void)imAt;
   (void)kerAt;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -4999,7 +5030,7 @@ int main()
   int rank_out = A.pseudoInverse(A_p, sv, rank_in, imA, imAt, kerAt);
   if (rank_out != rank_in) {
     std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
-    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
   }
 
   A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
@@ -5018,42 +5049,42 @@ int main()
 
   // Reconstruct matrix A from ImA, ImAt, KerAt
   vpMatrix S(rank, A.getCols());
-  for(unsigned int i = 0; i< rank_in; i++)
+  for (unsigned int i = 0; i< rank_in; i++)
     S[i][i] = sv[i];
   vpMatrix Vt(A.getCols(), A.getCols());
   Vt.insert(imAt.t(), 0, 0);
   Vt.insert(kerAt, rank, 0);
   (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
 }
-  \endcode
+\endcode
 
-  Once build, the previous example produces the following output:
-  \code
-A: [2,3]=
-   2  3  5
-  -4  2  3
-A^+ (pseudo-inverse): [3,2]=
-   0.117899 -0.190782
-   0.065380  0.039657
-   0.113612  0.052518
+Once build, the previous example produces the following output :
+\code
+A : [2, 3] =
+2  3  5
+-4  2  3
+A^+(pseudo-inverse) : [3, 2] =
+0.117899 -0.190782
+0.065380  0.039657
+0.113612  0.052518
 Rank in : 2
-Rank out: 2
-Singular values: 6.874359351  4.443330227
-Im(A): [2,2]=
-   0.81458 -0.58003
-   0.58003  0.81458
-Im(A^T): [3,2]=
-  -0.100515 -0.994397
-   0.524244 -0.024967
-   0.845615 -0.102722
-Ker(A): [3,1]=
-  -0.032738
-  -0.851202
-   0.523816
-Im(A) * S * [Im(A^T) | Ker(A)]^T:[2,3]=
-   2  3  5
-  -4  2  3
-  \endcode
+Rank out : 2
+Singular values : 6.874359351  4.443330227
+Im(A) : [2, 2] =
+0.81458 -0.58003
+0.58003  0.81458
+Im(A^T) : [3, 2] =
+-0.100515 -0.994397
+0.524244 -0.024967
+0.845615 -0.102722
+Ker(A) : [3, 1] =
+-0.032738
+-0.851202
+0.523816
+Im(A) * S *[Im(A^T) | Ker(A)]^T : [2, 3] =
+2  3  5
+-4  2  3
+\endcode
 */
 int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
                             vpMatrix &kerAt) const
@@ -5062,7 +5093,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix
   return pseudoInverseLapack(Ap, sv, rank_in, imA, imAt, kerAt);
 #elif defined(VISP_HAVE_EIGEN3)
   return pseudoInverseEigen3(Ap, sv, rank_in, imA, imAt, kerAt);
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+#elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, rank_in, imA, imAt, kerAt);
 #else
   (void)Ap;
@@ -5072,7 +5103,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix
   (void)imAt;
   (void)kerAt;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -5466,11 +5497,11 @@ void vpMatrix::stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C)
 */
 vpMatrix vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, unsigned int r, unsigned int c)
 {
-  vpMatrix C;
+  vpArray2D<double> C;
 
-  insert(A, B, C, r, c);
+  vpArray2D<double>::insert(A, B, C, r, c);
 
-  return C;
+  return vpMatrix(C);
 }
 
 /*!
@@ -5488,22 +5519,11 @@ vpMatrix vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, unsigned int r, 
 */
 void vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, unsigned int r, unsigned int c)
 {
-  if (((r + B.getRows()) <= A.getRows()) && ((c + B.getCols()) <= A.getCols())) {
-    C.resize(A.getRows(), A.getCols(), false, false);
+  vpArray2D<double> C_array;
 
-    for (unsigned int i = 0; i < A.getRows(); i++) {
-      for (unsigned int j = 0; j < A.getCols(); j++) {
-        if (i >= r && i < (r + B.getRows()) && j >= c && j < (c + B.getCols())) {
-          C[i][j] = B[i - r][j - c];
-        } else {
-          C[i][j] = A[i][j];
-        }
-      }
-    }
-  } else {
-    throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) matrix in (%dx%d) matrix at position (%d,%d)",
-                      B.getRows(), B.getCols(), A.getCols(), A.getRows(), r, c);
-  }
+  vpArray2D<double>::insert(A, B, C_array, r, c);
+
+  C = C_array;
 }
 
 /*!
@@ -5618,7 +5638,8 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
       if (p == std::string::npos) {
         maxBefore = vpMath::maximum(maxBefore, thislen);
         // maxAfter remains the same
-      } else {
+      }
+      else {
         maxBefore = vpMath::maximum(maxBefore, p);
         maxAfter = vpMath::maximum(maxAfter, thislen - p);
       }
@@ -5648,7 +5669,8 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
         if (p != std::string::npos) {
           s.width((std::streamsize)maxAfter);
           s << values[i * n + j].substr(p, maxAfter).c_str();
-        } else {
+        }
+        else {
           s.width((std::streamsize)maxAfter);
           s << ".0";
         }
@@ -5709,7 +5731,8 @@ std::ostream &vpMatrix::matlabPrint(std::ostream &os) const
     }
     if (this->getRows() != i + 1) {
       os << ";" << std::endl;
-    } else {
+    }
+    else {
       os << "]" << std::endl;
     }
   }
@@ -5842,10 +5865,11 @@ std::ostream &vpMatrix::cppPrint(std::ostream &os, const std::string &matrixName
     for (unsigned int j = 0; j < this->getCols(); ++j) {
       if (!octet) {
         os << matrixName << "[" << i << "][" << j << "] = " << (*this)[i][j] << "; " << std::endl;
-      } else {
+      }
+      else {
         for (unsigned int k = 0; k < sizeof(double); ++k) {
           os << "((unsigned char*)&(" << matrixName << "[" << i << "][" << j << "]) )[" << k << "] = 0x" << std::hex
-             << (unsigned int)((unsigned char *)&((*this)[i][j]))[k] << "; " << std::endl;
+            << (unsigned int)((unsigned char *)&((*this)[i][j]))[k] << "; " << std::endl;
         }
       }
     }
@@ -5862,7 +5886,8 @@ void vpMatrix::stack(const vpMatrix &A)
 {
   if (rowNum == 0) {
     *this = A;
-  } else if (A.getRows() > 0) {
+  }
+  else if (A.getRows() > 0) {
     if (colNum != A.getCols()) {
       throw(vpException(vpException::dimensionError, "Cannot stack (%dx%d) matrix with (%dx%d) matrix", rowNum, colNum,
                         A.getRows(), A.getCols()));
@@ -5893,7 +5918,8 @@ void vpMatrix::stack(const vpRowVector &r)
 {
   if (rowNum == 0) {
     *this = r;
-  } else {
+  }
+  else {
     if (colNum != r.getCols()) {
       throw(vpException(vpException::dimensionError, "Cannot stack (%dx%d) matrix with (1x%d) row vector", rowNum,
                         colNum, r.getCols()));
@@ -5933,7 +5959,8 @@ void vpMatrix::stack(const vpColVector &c)
 {
   if (colNum == 0) {
     *this = c;
-  } else {
+  }
+  else {
     if (rowNum != c.getRows()) {
       throw(vpException(vpException::dimensionError, "Cannot stack (%dx%d) matrix with (%dx1) column vector", rowNum,
                         colNum, c.getRows()));
@@ -5972,12 +5999,14 @@ void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
   if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
     if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
       memcpy(data + r * colNum, A.data, sizeof(double) * A.size());
-    } else if (data != NULL && A.data != NULL && A.data != data) {
+    }
+    else if (data != NULL && A.data != NULL && A.data != data) {
       for (unsigned int i = r; i < (r + A.getRows()); i++) {
         memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(double) * A.colNum);
       }
     }
-  } else {
+  }
+  else {
     throw vpException(vpException::dimensionError, "Cannot insert (%dx%d) matrix in (%dx%d) matrix at position (%d,%d)",
                       A.getRows(), A.getCols(), rowNum, colNum, r, c);
   }
@@ -6085,7 +6114,7 @@ vpColVector vpMatrix::eigenValues() const
 #else
   {
     throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
-                                                                "You should install Lapack 3rd party"));
+                      "You should install Lapack 3rd party"));
   }
 #endif
   return evalue;
@@ -6216,7 +6245,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
 #else
   {
     throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. "
-                                                                "You should install Lapack 3rd party"));
+                      "You should install Lapack 3rd party"));
   }
 #endif
 }
@@ -6474,7 +6503,8 @@ vpMatrix vpMatrix::expm() const
   if (colNum != rowNum) {
     throw(vpException(vpException::dimensionError, "Cannot compute the exponential of a non square (%dx%d) matrix",
                       rowNum, colNum));
-  } else {
+  }
+  else {
 #ifdef VISP_HAVE_GSL
     size_t size_ = rowNum * colNum;
     double *b = new double[size_];
@@ -6646,7 +6676,8 @@ double vpMatrix::cond(double svThreshold) const
 
   if (std::fabs(minsv) > std::numeric_limits<double>::epsilon()) {
     return maxsv / minsv;
-  } else {
+  }
+  else {
     return std::numeric_limits<double>::infinity();
   }
 }
@@ -6721,7 +6752,8 @@ double vpMatrix::inducedL2Norm() const
       }
     }
     return max;
-  } else {
+  }
+  else {
     return 0.;
   }
 }
@@ -6771,98 +6803,6 @@ double vpMatrix::sumSquare() const
 
   return sum_square;
 }
-
-/*!
-  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
-
-  \param M : First matrix.
-  \param kernel : Second matrix.
-  \param mode : Convolution mode: "full" (default), "same", "valid".
-
-  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
-
-  \note This is a very basic implementation that does not use FFT.
- */
-vpMatrix vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode)
-{
-  vpMatrix res;
-  conv2(M, kernel, res, mode);
-  return res;
-}
-
-/*!
-  Perform a 2D convolution similar to Matlab conv2 function: \f$ M \star kernel \f$.
-
-  \param M : First matrix.
-  \param kernel : Second matrix.
-  \param res : Result.
-  \param mode : Convolution mode: "full" (default), "same", "valid".
-
-  \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
-
-  \note This is a very basic implementation that does not use FFT.
- */
-void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode)
-{
-  if (M.getRows() * M.getCols() == 0 || kernel.getRows() * kernel.getCols() == 0)
-    return;
-
-  if (mode == "valid") {
-    if (kernel.getRows() > M.getRows() || kernel.getCols() > M.getCols())
-      return;
-  }
-
-  vpMatrix M_padded, res_same;
-
-  if (mode == "full" || mode == "same") {
-    const unsigned int pad_x = kernel.getCols() - 1;
-    const unsigned int pad_y = kernel.getRows() - 1;
-    M_padded.resize(M.getRows() + 2 * pad_y, M.getCols() + 2 * pad_x, true, false);
-    M_padded.insert(M, pad_y, pad_x);
-
-    if (mode == "same") {
-      res.resize(M.getRows(), M.getCols(), false, false);
-      res_same.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
-    } else {
-      res.resize(M.getRows() + pad_y, M.getCols() + pad_x, true, false);
-    }
-  } else if (mode == "valid") {
-    M_padded = M;
-    res.resize(M.getRows() - kernel.getRows() + 1, M.getCols() - kernel.getCols() + 1);
-  } else {
-    return;
-  }
-
-  if (mode == "same") {
-    for (unsigned int i = 0; i < res_same.getRows(); i++) {
-      for (unsigned int j = 0; j < res_same.getCols(); j++) {
-        for (unsigned int k = 0; k < kernel.getRows(); k++) {
-          for (unsigned int l = 0; l < kernel.getCols(); l++) {
-            res_same[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
-          }
-        }
-      }
-    }
-
-    const unsigned int start_i = kernel.getRows() / 2;
-    const unsigned int start_j = kernel.getCols() / 2;
-    for (unsigned int i = 0; i < M.getRows(); i++) {
-      memcpy(res.data + i * M.getCols(), res_same.data + (i + start_i) * res_same.getCols() + start_j,
-             sizeof(double) * M.getCols());
-    }
-  } else {
-    for (unsigned int i = 0; i < res.getRows(); i++) {
-      for (unsigned int j = 0; j < res.getCols(); j++) {
-        for (unsigned int k = 0; k < kernel.getRows(); k++) {
-          for (unsigned int l = 0; l < kernel.getCols(); l++) {
-            res[i][j] += M_padded[i + k][j + l] * kernel[kernel.getRows() - k - 1][kernel.getCols() - l - 1];
-          }
-        }
-      }
-    }
-  }
-}
-
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
@@ -6873,7 +6813,7 @@ void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, c
 
   \sa frobeniusNorm(), infinityNorm(), inducedL2Norm()
 */
-vp_deprecated double vpMatrix::euclideanNorm() const { return frobeniusNorm(); }
+double vpMatrix::euclideanNorm() const { return frobeniusNorm(); }
 
 vpMatrix vpMatrix::stackMatrices(const vpColVector &A, const vpColVector &B)
 {

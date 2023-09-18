@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Common functions for color conversion and image resize tests.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef common_HPP
 #define common_HPP
@@ -40,12 +40,8 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageMorphology.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-#include <opencv2/core.hpp>
-#else
+#if defined(VISP_HAVE_OPENCV)
 #include <opencv2/core/core.hpp>
-#endif
 #endif
 
 namespace common_tools
@@ -618,7 +614,7 @@ void BGRaToRGBaRef(unsigned char *bgra, unsigned char *rgba, unsigned int width,
   }
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
+#if defined(VISP_HAVE_OPENCV)
 void fill(cv::Mat &img)
 {
   for (int i = 0; i < img.rows; i++) {

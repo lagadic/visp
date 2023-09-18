@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Franka robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpRobotFranka_h_
 #define _vpRobotFranka_h_
@@ -202,13 +199,13 @@
   What is not implemented is:
   - move to a given cartesian end-effector position
   - gripper controller
-  - force/torque feadback and control
+  - force/torque feedback and control
 
   Known issues:
   - sometimes the joint to joint trajectory generator provided by Franka complains about discontinuities.
 
-  We provide also the getHandler() function that allows to acces to the robot handler and call the native
-  [libfranka API](https://frankaemika.github.io/libfranka/index.html) fonctionalities:
+  We provide also the getHandler() function that allows to access to the robot handler and call the native
+  [libfranka API](https://frankaemika.github.io/libfranka/index.html) functionalities:
   \code
     vpRobotFranka robot("192.168.1.1");
 

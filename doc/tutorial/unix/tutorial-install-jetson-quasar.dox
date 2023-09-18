@@ -72,7 +72,8 @@ To have a trial, just jump to \ref install_jetson_dataset before running some bi
 
 \subsection install_jetson_quasar_3rdparty Install 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_jetson_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_jetson_tips_new_3rdparty.
 
@@ -99,7 +100,8 @@ To do so, proceed as follows:
 
 - In `VISP_WS`, clone `opencv` and `opencv_contrib` repos:
 \code
-$ cd $VISP_WS
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/opencv/opencv
 $ git clone https://github.com/opencv/opencv_contrib
 \endcode
@@ -161,14 +163,14 @@ $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
 3. Get `librealsense` from github:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
 \endverbatim
 
 4. Run Intel Realsense permissions script located in `librealsense` root directory:
 \verbatim
-$ ./scripts/setup_udev_rules.sh
+$ sudo ./scripts/setup_udev_rules.sh
 \endverbatim
 
 5. Build and install librealsense
@@ -288,7 +290,7 @@ $ source ~/.bashrc
 
 \section install_jetson_quasar_dataset Install ViSP dataset
 
-Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from https://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 

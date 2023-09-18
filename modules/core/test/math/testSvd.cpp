@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,11 +31,7 @@
  * Description:
  * Test various svd decompositions.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \example testSvd.cpp
@@ -369,7 +365,7 @@ int test_eigen_values_lapack(bool verbose, const std::vector<vpMatrix> &bench, d
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 int test_svd_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
@@ -404,7 +400,7 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     unsigned int nb_matrices = 100;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -434,7 +430,7 @@ int main(int argc, const char *argv[])
       of << "\"SVD Eigen3\""
          << "\t";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       of << "\"SVD OpenCV\""
          << "\t";
 #endif
@@ -462,7 +458,7 @@ int main(int argc, const char *argv[])
       save_time("SVD (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       ret += test_svd_opencv(verbose, bench_random_matrices, time);
       save_time("SVD (OpenCV): ", verbose, use_plot_file, of, time);
 #endif

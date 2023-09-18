@@ -9,9 +9,13 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#if defined(HAVE_OPENCV_VIDEOIO)
+#include <opencv2/videoio.hpp>
+#endif
+
 int main()
 {
-#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) &&             \
+#if (defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)) &&             \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   vpImage<unsigned char> I; // Create a gray level image container
 
@@ -21,7 +25,7 @@ int main()
 #elif defined(VISP_HAVE_CMU1394)
   vp1394CMUGrabber g;
   g.open(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
   cv::VideoCapture g(0); // open the default camera
   if (!g.isOpened()) {   // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
@@ -36,7 +40,7 @@ int main()
   vpDisplayX d(I, 0, 0, "Camera view");
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I, 0, 0, "Camera view");
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d(I, 0, 0, "Camera view");
 #endif
 
@@ -55,7 +59,7 @@ int main()
     try {
 #if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394)
       g.acquire(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_VIDEOIO)
       g >> frame;
       vpImageConvert::convert(frame, I);
 #endif
@@ -69,14 +73,16 @@ int main()
           //! [Init]
           init_done = true;
         }
-      } else {
+      }
+      else {
         //! [Track]
         blob.track(I);
         //! [Track]
       }
 
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       init_done = false;
     }
   }

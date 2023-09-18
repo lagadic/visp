@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Interface for the Irisa's Afma4 robot.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
 
@@ -576,7 +573,7 @@ void vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe) const { vpAfma4::get_cMe(cM
 /*!
 
   Get the robot jacobian expressed in the end-effector frame. To have
-  acces to the analytic form of this jacobian see vpAfma4::get_eJe().
+  access to the analytic form of this jacobian see vpAfma4::get_eJe().
 
   To compute eJe, we communicate with the low level controller to get
   the articular joint position of the robot.
@@ -610,7 +607,7 @@ void vpRobotAfma4::get_eJe(vpMatrix &eJe)
 /*!
 
   Get the robot jacobian expressed in the robot reference frame also
-  called fix frame. To have acces to the analytic form of this
+  called fix frame. To have access to the analytic form of this
   jacobian see vpAfma4::get_fJe().
 
   To compute fJe, we communicate with the low level controller to get

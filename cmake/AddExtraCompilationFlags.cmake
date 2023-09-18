@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
 # GPL, please contact Inria about acquiring a ViSP Professional
 # Edition License.
 #
-# See http://visp.inria.fr for more information.
+# See https://visp.inria.fr for more information.
 #
 # This software was developed at:
 # Inria Rennes - Bretagne Atlantique
@@ -31,9 +31,6 @@
 # Description:
 # ViSP overall configuration file. Add extra compilation flags.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 # Warning: here ViSPDetectPlatform.cmake should be called before this file to set ARM var used below
@@ -45,14 +42,14 @@ macro(add_extra_compiler_option option)
   if(CMAKE_BUILD_TYPE)
     set(CMAKE_TRY_COMPILE_CONFIGURATION ${CMAKE_BUILD_TYPE})
   endif()
-  vp_check_flag_support(CXX "${option}" _varname "")
+  vp_check_flag_support(CXX "${option}" _varname "${VISP_EXTRA_CXX_FLAGS} ${ARGN}")
   if(_varname)
-    list(APPEND VISP_EXTRA_CXX_FLAGS ${option})
+    set(VISP_EXTRA_CXX_FLAGS "${VISP_EXTRA_CXX_FLAGS} ${option}")
   endif()
 
-  vp_check_flag_support(C "${option}" _varname "")
+  vp_check_flag_support(C "${option}" _varname "${VISP_EXTRA_C_FLAGS} ${ARGN}")
   if(_varname)
-    list(APPEND VISP_EXTRA_C_FLAGS ${option})
+    set(VISP_EXTRA_C_FLAGS "${VISP_EXTRA_C_FLAGS} ${option}")
   endif()
 endmacro()
 
@@ -86,9 +83,11 @@ if(CMAKE_COMPILER_IS_GNUCXX OR MINGW OR CMAKE_CXX_COMPILER_ID MATCHES "Clang") #
   add_extra_compiler_option_enabling(-Wfloat-equal       ACTIVATE_WARNING_FLOAT_EQUAL     OFF)
   add_extra_compiler_option_enabling(-Wsign-conversion   ACTIVATE_WARNING_SIGN_CONVERSION OFF)
   add_extra_compiler_option_enabling(-Wshadow            ACTIVATE_WARNING_SHADOW          OFF)
+  add_extra_compiler_option_enabling(-ffast-math         ENABLE_FAST_MATH                 OFF)
 elseif(MSVC)
   # Add specific compilation flags for Windows Visual
   add_extra_compiler_option_enabling(/Wall               ACTIVATE_WARNING_ALL             OFF)
+  add_extra_compiler_option_enabling(/fp:fast            ENABLE_FAST_MATH                 OFF)
   if(MSVC80 OR MSVC90 OR MSVC10 OR MSVC11 OR MSVC14)
     # To avoid compiler warning (level 4) C4571, compile with /EHa if you still want
     # your catch(...) blocks to catch structured exceptions.
@@ -114,6 +113,12 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
+if(USE_PTHREAD)
+  if(THREADS_HAVE_PTHREAD_ARG)
+    add_extra_compiler_option("-pthread")
+  endif()
+endif()
+
 if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
   add_extra_compiler_option("${CXX11_CXX_FLAGS}")
 elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
@@ -127,7 +132,9 @@ if(BUILD_COVERAGE)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-  add_extra_compiler_option(-fvisibility=hidden)
+  #if(NOT (WIN32 AND ((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))))
+    add_extra_compiler_option(-fvisibility=hidden)
+  #endif()
 
   if(ENABLE_AVX AND X86_64)
     add_extra_compiler_option(-mavx)
@@ -179,6 +186,59 @@ if(MSVC)
     # Avoid build error C1128
     list(APPEND VISP_EXTRA_CXX_FLAGS "/bigobj")
   endif()
+  #if((CMAKE_CXX_COMPILER MATCHES "clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+  #  add_extra_compiler_option("-Wno-c++98-compat")                  # turn off warning due to json
+  #  add_extra_compiler_option("-Wno-c++98-compat-pedantic")
+  #  add_extra_compiler_option("-Wno-c11-extensions")
+  #  add_extra_compiler_option("-Wno-covered-switch-default")
+  #  add_extra_compiler_option("-Wno-unused-template")               # turn off warning due to eigen
+  #  add_extra_compiler_option("-Wno-deprecated-copy-with-dtor")
+  #  add_extra_compiler_option("-Wno-anon-enum-enum-conversion")     # turn off warning due to opencv
+  #  add_extra_compiler_option("-Wno-cast-align")
+  #  add_extra_compiler_option("-Wno-cast-qual")
+  #  add_extra_compiler_option("-Wno-covered-switch-default")
+  #  add_extra_compiler_option("-Wno-deprecated-copy-with-user-provided-dtor")
+  #  add_extra_compiler_option("-Wno-documentation")
+  #  add_extra_compiler_option("-Wno-documentation-deprecated-sync")
+  #  add_extra_compiler_option("-Wno-documentation-unknown-command")
+  #  add_extra_compiler_option("-Wno-double-promotion")
+  #  add_extra_compiler_option("-Wno-enum-enum-conversion")
+  #  add_extra_compiler_option("-Wno-exit-time-destructors")
+  #  add_extra_compiler_option("-Wno-extra-semi")
+  #  add_extra_compiler_option("-Wno-extra-semi-stmt")
+  #  add_extra_compiler_option("-Wno-float-equal")
+  #  add_extra_compiler_option("-Wno-implicit-int-float-conversion")
+  #  add_extra_compiler_option("-Wno-implicit-float-conversion")
+  #  add_extra_compiler_option("-Wno-inconsistent-missing-destructor-override")
+  #  add_extra_compiler_option("-Wno-language-extension-token")
+  #  add_extra_compiler_option("-Wno-microsoft-enum-value")
+  #  add_extra_compiler_option("-Wno-newline-eof")
+  #  add_extra_compiler_option("-Wno-old-style-cast")
+  #  add_extra_compiler_option("-Wno-reserved-identifier")
+  #  add_extra_compiler_option("-Wno-shift-sign-overflow")
+  #  add_extra_compiler_option("-Wno-sign-conversion")
+  #  add_extra_compiler_option("-Wno-undefined-reinterpret-cast")
+  #  add_extra_compiler_option("-Wno-zero-as-null-pointer-constant")
+  #  add_extra_compiler_option("-Wno-cast-function-type")                # ViSP
+  #  add_extra_compiler_option("-Wno-comma")
+  #  add_extra_compiler_option("-Wno-deprecated-copy-dtor")
+  #  add_extra_compiler_option("-Wno-deprecated-dynamic-exception-spec")
+  #  add_extra_compiler_option("-Wno-format-nonliteral")
+  #  add_extra_compiler_option("-Wno-global-constructors")
+  #  add_extra_compiler_option("-Wno-implicit-int-conversion")
+  #  add_extra_compiler_option("-Wno-implicit-fallthrough")
+  #  add_extra_compiler_option("-Wno-missing-noreturn")
+  #  add_extra_compiler_option("-Wno-missing-variable-declarations")
+  #  add_extra_compiler_option("-Wno-missing-prototypes")
+  #  add_extra_compiler_option("-Wno-nonportable-system-include-path")
+  #  add_extra_compiler_option("-Wno-shadow")
+  #  add_extra_compiler_option("-Wno-suggest-destructor-override")
+  #  add_extra_compiler_option("-Wno-suggest-override")
+  #  add_extra_compiler_option("-Wno-switch-enum")
+  #  add_extra_compiler_option("-Wno-unreachable-code")
+  #  add_extra_compiler_option("-Wno-unused-macros")
+  #  add_extra_compiler_option("-Wno-unused-member-function")
+  #endif()
 endif()
 
 # adjust -Wl,-rpath-link

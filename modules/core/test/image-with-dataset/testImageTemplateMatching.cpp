@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Test vpImageTools::templateMatching().
  *
- *****************************************************************************/
+*****************************************************************************/
 /*!
   \example testImageTemplateMatching.cpp
 
@@ -46,10 +46,6 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoReader.h>
-
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x040000)
-#include <opencv2/imgproc.hpp>
-#endif
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:th"
@@ -133,7 +129,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click, bo
 
 int main(int argc, const char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
   {
     const int h = 5, w = 5;
     vpImage<unsigned char> I(h, w);
@@ -276,7 +272,7 @@ int main(int argc, const char **argv)
       vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
       vpDisplayGDI d;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
       vpDisplayOpenCV d;
 #endif
 

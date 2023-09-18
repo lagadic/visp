@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Operation on row vectors.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRowVector_H
 #define vpRowVector_H
@@ -171,7 +168,7 @@ public:
     (*this) *= d2r;
   }
 
-  vp_deprecated double euclideanNorm() const;
+
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
@@ -338,6 +335,7 @@ public:
      \deprecated You should rather use eye()
    */
   vp_deprecated void setIdentity(const double &val = 1.0);
+  vp_deprecated double euclideanNorm() const;
 //@}
 #endif
 };

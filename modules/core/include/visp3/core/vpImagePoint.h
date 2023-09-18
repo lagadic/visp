@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,14 +32,12 @@
  * 2D point useful for image processing
  *
  * Authors:
- * Nicolas Melchior
- * Fabien Spindler
  * Julien Dufour
  *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef vpImagePoint_H
-#define vpImagePoint_H
+#ifndef _vpImagePoint_h_
+#define _vpImagePoint_h_
 
 /*!
   \file vpImagePoint.h
@@ -223,18 +221,18 @@ public:
   {
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
-      double j = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
+      double j_ = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {end.get_i() - line_slope * (end.get_j() - j), j};
+      return {end.get_i() - line_slope * (end.get_j() - j_), j_};
 #else
-      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j), j);
+      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j_), j_);
 #endif
     } else {
-      double i = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
+      double i_ = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {i, end.get_j() - ((end.get_i() - i) / line_slope)};
+      return {i_, end.get_j() - ((end.get_i() - i_) / line_slope)};
 #else
-      return vpImagePoint(i, end.get_j() - ((end.get_i() - i) / line_slope));
+      return vpImagePoint(i_, end.get_j() - ((end.get_i() - i_) / line_slope));
 #endif
     }
   }

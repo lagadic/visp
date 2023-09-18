@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,22 +31,18 @@
  * Description:
  * Model based tracker using only KLT
  *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- *
- *****************************************************************************/
+*****************************************************************************/
 /*!
  \file vpMbKltTracker.h
  \brief Model based tracker using only KLT
 */
 
-#ifndef vpMbKltTracker_h
-#define vpMbKltTracker_h
+#ifndef _vpMbKltTracker_h_
+#define _vpMbKltTracker_h_
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
 
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -98,7 +94,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Klt Tracker");
 #endif
@@ -184,7 +180,7 @@ int main()
   // Acquire an image
   vpImageIo::read(I, "cube.pgm");
 
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
   vpDisplayX display;
   display.init(I,100,100,"Mb Klt Tracker");
 #endif
@@ -211,11 +207,7 @@ class VISP_EXPORT vpMbKltTracker : public virtual vpMbTracker
 {
 protected:
 //! Temporary OpenCV image for fast conversion.
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat cur;
-#else
-  IplImage *cur;
-#endif
   //! Initial pose.
   vpHomogeneousMatrix c0Mo;
   //! Flag to specify whether the init method is called the first or not
@@ -282,11 +274,7 @@ public:
 
    \return the list of KLT points through vpKltOpencv.
  */
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   inline std::vector<cv::Point2f> getKltPoints() const { return tracker.getFeatures(); }
-#else
-  inline CvPoint2D32f *getKltPoints() { return tracker.getFeatures(); }
-#endif
 
   std::vector<vpImagePoint> getKltImagePoints() const;
 

@@ -25,7 +25,7 @@ jobs:
         access_token: ${{ github.token }}
 
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Print system information
       run: lscpu
@@ -38,11 +38,11 @@ jobs:
 
     - name: Install dependencies for ubuntu 18.04 and 20.04
       if: matrix.os != 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Install dependencies for ubuntu 22.04
       if: matrix.os == 'ubuntu-22.04'
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 
     - name: Clone visp-images
       env:
@@ -50,7 +50,7 @@ jobs:
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
+        echo "VISP_INPUT_IMAGE_PATH=$HOME/visp-images" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
     - name: Clone visp_sample
@@ -104,9 +104,10 @@ jobs:
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
+        export VISP_INSTALL_PREFIX=/tmp/usr/local
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
-        /tmp/usr/local/bin/visp-config --cflags
-        /tmp/usr/local/bin/visp-config --libs
+        $VISP_INSTALL_PREFIX/bin/visp-config --cflags
+        $VISP_INSTALL_PREFIX/bin/visp-config --libs
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config clean

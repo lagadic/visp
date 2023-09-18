@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Load XML Parameter for Model Based Tracker.
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
 #include <clocale>
@@ -43,34 +43,47 @@
 #include <pugixml.hpp>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class vpMbtXmlGenericParser::Impl
 {
 public:
   Impl(int type = EDGE_PARSER)
     : m_parserType(type),
-      //<camera>
-      m_cam(),
-      //<face>
-      m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
-      m_farClipping(false), m_fovClipping(false),
-      //<lod>
-      m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
-      //<ecm>
-      m_ecm(),
-      //<klt>
-      m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
-      m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
-      //<depth_normal>
-      m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
-      m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
-      m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2),
-      m_depthNormalSamplingStepY(2),
-      //<depth_dense>
-      m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
-      //<projection_error>
-      m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
-      m_nodeMap(), m_verbose(true)
+    //<camera>
+    m_cam(),
+    //<face>
+    m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
+    m_farClipping(false), m_fovClipping(false),
+    //<lod>
+    m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
+    //<ecm>
+    m_ecm(),
+    //<klt>
+    m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
+    m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
+    //<depth_normal>
+    m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
+    m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
+    m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2),
+    m_depthNormalSamplingStepY(2),
+    //<depth_dense>
+    m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
+    //<projection_error>
+    m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
+    m_nodeMap(), m_verbose(true)
   {
+    // std::setlocale() is not thread safe and need to be called once
+    // https://stackoverflow.com/questions/41117179/undefined-behavior-with-setlocale-and-multithreading
+    if (m_call_setlocale) {
+      // https://pugixml.org/docs/manual.html#access.attrdata
+      // https://en.cppreference.com/w/cpp/locale/setlocale
+      // When called from Java binding, the locale seems to be changed to the default system locale
+      // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
+      if (std::setlocale(LC_ALL, "C") == NULL) {
+        std::cerr << "Cannot set locale to C" << std::endl;
+      }
+      m_call_setlocale = false;
+    }
     init();
   }
 
@@ -168,11 +181,12 @@ public:
       if (m_parserType == PROJECTION_ERROR_PARSER) {
         if (!projection_error_node) {
           std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)"
-                    << std::endl;
+            << std::endl;
           std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize * 2 + 1 << "x"
-                    << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
+            << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
         }
-      } else {
+      }
+      else {
         if (!camera_node) {
           std::cout << "camera : u0 : " << m_cam.get_u0() << " (default)" << std::endl;
           std::cout << "camera : v0 : " << m_cam.get_v0() << " (default)" << std::endl;
@@ -192,13 +206,14 @@ public:
         }
 
         if (!ecm_node && (m_parserType & EDGE_PARSER)) {
-          std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
-          std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
-          std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
-          std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+          std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+          std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+          std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+          std::cout << "me : contrast : threshold type : " << m_ecm.getLikelihoodThresholdType() << " (default)" << std::endl;
+          std::cout << "me : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
+          std::cout << "me : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
+          std::cout << "me : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
+          std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
         }
 
         if (!klt_node && (m_parserType & KLT_PARSER)) {
@@ -214,24 +229,24 @@ public:
 
         if (!depth_normal_node && (m_parserType & DEPTH_NORMAL_PARSER)) {
           std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod
-                    << " (default)" << std::endl;
+            << " (default)" << std::endl;
           std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
-                    << " (default)" << std::endl;
+            << " (default)" << std::endl;
           std::cout << "depth normal : PCL_plane_estimation : max_iter : "
-                    << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)" << std::endl;
+            << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)" << std::endl;
           std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-                    << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
+            << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
           std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)"
-                    << std::endl;
+            << std::endl;
           std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)"
-                    << std::endl;
+            << std::endl;
         }
 
         if (!depth_dense_node && (m_parserType & DEPTH_DENSE_PARSER)) {
           std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)"
-                    << std::endl;
+            << std::endl;
           std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)"
-                    << std::endl;
+            << std::endl;
         }
       }
     }
@@ -330,7 +345,7 @@ public:
           switch (iter_data->second) {
           case feature_estimation_method:
             m_depthNormalFeatureEstimationMethod =
-                (vpMbtFaceDepthNormal::vpFeatureEstimationType)dataNode.text().as_int();
+              (vpMbtFaceDepthNormal::vpFeatureEstimationType)dataNode.text().as_int();
             feature_estimation_method_node = true;
             break;
 
@@ -354,24 +369,24 @@ public:
     if (m_verbose) {
       if (!feature_estimation_method_node)
         std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod
-                  << " (default)" << std::endl;
+        << " (default)" << std::endl;
       else
         std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << std::endl;
 
       if (!PCL_plane_estimation_node) {
         std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
-                  << " (default)" << std::endl;
+          << " (default)" << std::endl;
         std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
-                  << " (default)" << std::endl;
+          << " (default)" << std::endl;
         std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-                  << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
+          << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
       }
 
       if (!sampling_step_node) {
         std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)"
-                  << std::endl;
+          << std::endl;
         std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)"
-                  << std::endl;
+          << std::endl;
       }
     }
   }
@@ -417,24 +432,24 @@ public:
     if (m_verbose) {
       if (!PCL_plane_estimation_method_node)
         std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
-                  << " (default)" << std::endl;
+        << " (default)" << std::endl;
       else
         std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
-                  << std::endl;
+        << std::endl;
 
       if (!PCL_plane_estimation_ransac_max_iter_node)
         std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
-                  << " (default)" << std::endl;
+        << " (default)" << std::endl;
       else
         std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
-                  << std::endl;
+        << std::endl;
 
       if (!PCL_plane_estimation_ransac_threshold_node)
         std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-                  << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
+        << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
       else
         std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
-                  << m_depthNormalPclPlaneEstimationRansacThreshold << std::endl;
+        << m_depthNormalPclPlaneEstimationRansacThreshold << std::endl;
     }
   }
 
@@ -473,13 +488,13 @@ public:
     if (m_verbose) {
       if (!sampling_step_X_node)
         std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << " (default)"
-                  << std::endl;
+        << std::endl;
       else
         std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << std::endl;
 
       if (!sampling_step_Y_node)
         std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << " (default)"
-                  << std::endl;
+        << std::endl;
       else
         std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << std::endl;
     }
@@ -552,13 +567,13 @@ public:
     if (m_verbose) {
       if (!sampling_step_X_node)
         std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << " (default)"
-                  << std::endl;
+        << std::endl;
       else
         std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << std::endl;
 
       if (!sampling_step_Y_node)
         std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << " (default)"
-                  << std::endl;
+        << std::endl;
       else
         std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << std::endl;
     }
@@ -610,22 +625,23 @@ public:
 
     if (m_verbose) {
       if (!mask_node) {
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
       }
 
       if (!range_node) {
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
       }
 
       if (!contrast_node) {
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
+        std::cout << "me : contrast : threshold type " << m_ecm.getLikelihoodThresholdType() << " (default)" << std::endl;
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
       }
 
       if (!sample_node) {
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
       }
     }
   }
@@ -637,11 +653,13 @@ public:
   */
   void read_ecm_contrast(const pugi::xml_node &node)
   {
+    bool edge_threshold_type_node = false;
     bool edge_threshold_node = false;
     bool mu1_node = false;
     bool mu2_node = false;
 
     // current data values.
+    vpMe::vpLikelihoodThresholdType d_edge_threshold_type = m_ecm.getLikelihoodThresholdType();
     double d_edge_threshold = m_ecm.getThreshold();
     double d_mu1 = m_ecm.getMu1();
     double d_mu2 = m_ecm.getMu2();
@@ -651,8 +669,13 @@ public:
         std::map<std::string, int>::const_iterator iter_data = m_nodeMap.find(dataNode.name());
         if (iter_data != m_nodeMap.end()) {
           switch (iter_data->second) {
+          case edge_threshold_type:
+            d_edge_threshold_type = static_cast<vpMe::vpLikelihoodThresholdType>(dataNode.text().as_int());
+            edge_threshold_type_node = true;
+            break;
+
           case edge_threshold:
-            d_edge_threshold = dataNode.text().as_double();
+            d_edge_threshold = dataNode.text().as_int();
             edge_threshold_node = true;
             break;
 
@@ -675,23 +698,29 @@ public:
 
     m_ecm.setMu1(d_mu1);
     m_ecm.setMu2(d_mu2);
+    m_ecm.setLikelihoodThresholdType(d_edge_threshold_type);
     m_ecm.setThreshold(d_edge_threshold);
 
     if (m_verbose) {
-      if (!edge_threshold_node)
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+      if (!edge_threshold_type_node)
+        std::cout << "me : contrast : threshold type " << m_ecm.getLikelihoodThresholdType() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << std::endl;
+        std::cout << "me : contrast : threshold type " << m_ecm.getLikelihoodThresholdType() << std::endl;
+
+      if (!edge_threshold_node)
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+      else
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << std::endl;
 
       if (!mu1_node)
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << std::endl;
 
       if (!mu2_node)
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << std::endl;
     }
   }
 
@@ -736,20 +765,20 @@ public:
     // Check to ensure that d_nb_mask > 0
     if (d_nb_mask == 0)
       throw(vpException(vpException::badValue, "Model-based tracker mask size "
-                                               "parameter should be different "
-                                               "from zero in xml file"));
+                        "parameter should be different "
+                        "from zero in xml file"));
     m_ecm.setMaskNumber(d_nb_mask);
 
     if (m_verbose) {
       if (!size_node)
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
       else
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << std::endl;
 
       if (!nb_mask_node)
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
       else
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << std::endl;
     }
   }
 
@@ -786,9 +815,9 @@ public:
 
     if (m_verbose) {
       if (!tracking_node)
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
       else
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << std::endl;
     }
   }
 
@@ -825,9 +854,9 @@ public:
 
     if (m_verbose) {
       if (!step_node)
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
       else
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
     }
   }
 
@@ -1111,32 +1140,39 @@ public:
 
     if (kernel_size_str == "3x3") {
       m_projectionErrorKernelSize = 1;
-    } else if (kernel_size_str == "5x5") {
+    }
+    else if (kernel_size_str == "5x5") {
       m_projectionErrorKernelSize = 2;
-    } else if (kernel_size_str == "7x7") {
+    }
+    else if (kernel_size_str == "7x7") {
       m_projectionErrorKernelSize = 3;
-    } else if (kernel_size_str == "9x9") {
+    }
+    else if (kernel_size_str == "9x9") {
       m_projectionErrorKernelSize = 4;
-    } else if (kernel_size_str == "11x11") {
+    }
+    else if (kernel_size_str == "11x11") {
       m_projectionErrorKernelSize = 5;
-    } else if (kernel_size_str == "13x13") {
+    }
+    else if (kernel_size_str == "13x13") {
       m_projectionErrorKernelSize = 6;
-    } else if (kernel_size_str == "15x15") {
+    }
+    else if (kernel_size_str == "15x15") {
       m_projectionErrorKernelSize = 7;
-    } else {
+    }
+    else {
       std::cerr << "Unsupported kernel size." << std::endl;
     }
 
     if (m_verbose) {
       if (!step_node)
         std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)"
-                  << std::endl;
+        << std::endl;
       else
         std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << std::endl;
 
       if (!kernel_size_node)
         std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize * 2 + 1 << "x"
-                  << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
+        << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
       else
         std::cout << "projection_error : kernel_size : " << kernel_size_str << std::endl;
     }
@@ -1181,7 +1217,7 @@ public:
         std::cout << "[DEPRECATED] sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
 
       std::cout << "  WARNING : This node (sample) is deprecated." << std::endl;
-      std::cout << "  It should be moved in the ecm node (ecm : sample)." << std::endl;
+      std::cout << "  It should be moved in the ecm node (me : sample)." << std::endl;
     }
   }
 
@@ -1348,7 +1384,8 @@ protected:
   //! Verbose flag
   bool m_verbose;
 
-  enum vpDataToParseMb {
+  enum vpDataToParseMb
+  {
     //<conf>
     conf,
     //<face>
@@ -1379,6 +1416,7 @@ protected:
     tracking,
     contrast,
     edge_threshold,
+    edge_threshold_type,
     mu1,
     mu2,
     sample,
@@ -1449,6 +1487,7 @@ protected:
     m_nodeMap["range"] = range;
     m_nodeMap["tracking"] = tracking;
     m_nodeMap["contrast"] = contrast;
+    m_nodeMap["edge_threshold_type"] = edge_threshold_type;
     m_nodeMap["edge_threshold"] = edge_threshold;
     m_nodeMap["mu1"] = mu1;
     m_nodeMap["mu2"] = mu2;
@@ -1484,19 +1523,17 @@ protected:
     m_nodeMap["sample_step"] = projection_error_sample_step;
     m_nodeMap["kernel_size"] = projection_error_kernel_size;
   }
+
+private:
+  static bool m_call_setlocale;
 };
+
+bool vpMbtXmlGenericParser::Impl::m_call_setlocale = true;
+
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) : m_impl(new Impl(type))
-{
-  // https://pugixml.org/docs/manual.html#access.attrdata
-  // https://en.cppreference.com/w/cpp/locale/setlocale
-  // When called from Java binding, the locale seems to be changed to the default system locale
-  // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
-  if (std::setlocale(LC_ALL, "C") == NULL) {
-    std::cerr << "Cannot set locale to C" << std::endl;
-  }
-}
+{ }
 
 vpMbtXmlGenericParser::~vpMbtXmlGenericParser() { delete m_impl; }
 
@@ -1723,7 +1760,7 @@ void vpMbtXmlGenericParser::setDepthDenseSamplingStepY(unsigned int stepY)
   \param method : New feature estimation method
 */
 void vpMbtXmlGenericParser::setDepthNormalFeatureEstimationMethod(
-    const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
+  const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
 {
   m_impl->setDepthNormalFeatureEstimationMethod(method);
 }
@@ -1781,9 +1818,9 @@ void vpMbtXmlGenericParser::setDepthNormalSamplingStepY(unsigned int stepY)
 /*!
   Set moving edge parameters.
 
-  \param ecm : New moving edge parameters
+  \param moving_edge : New moving edge parameters
 */
-void vpMbtXmlGenericParser::setEdgeMe(const vpMe &ecm) { m_impl->setEdgeMe(ecm); }
+void vpMbtXmlGenericParser::setEdgeMe(const vpMe &moving_edge) { m_impl->setEdgeMe(moving_edge); }
 
 /*!
   Set the far clipping distance.

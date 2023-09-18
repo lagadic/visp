@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,12 +32,10 @@
  * Implements a polygon of the model used by the model-based tracker.
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  * Aurelien Yol
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
  \file vpMbtPolygon.h
@@ -133,7 +131,7 @@ public:
 
     \param min_line_length : threshold for the minimum line length in pixel.
     When a single line that doesn't belong to a face is considered by the
-    tracker, this line is tracked only if its lenght in pixel is greater than
+    tracker, this line is tracked only if its length in pixel is greater than
     \e min_line_length.
 
     \sa setLoD()

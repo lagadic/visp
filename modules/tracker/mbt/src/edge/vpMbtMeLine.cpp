@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +32,9 @@
  * Make the complete tracking of an object by using its CAD model
  *
  * Authors:
- * Nicolas Melchior
  * Romain Tallonneau
- * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -212,20 +210,20 @@ void vpMbtMeLine::suppressPoints(const vpImage<unsigned char> &I)
     if (fabs(sin(theta)) > 0.9) // Vertical line management
     {
       if ((s.i < imin) || (s.i > imax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
     else if (fabs(cos(theta)) > 0.9) // Horizontal line management
     {
       if ((s.j < jmin) || (s.j > jmax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
     else {
       if ((s.i < imin) || (s.i > imax) || (s.j < jmin) || (s.j > jmax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
