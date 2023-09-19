@@ -76,7 +76,12 @@ class MethodDocSignature:
   def __init__(self, name, ret, params, is_const, is_static):
     self.name = name.replace(' ', '')
     self.ret = self.post_process_type(ret)
-    self.params = [self.post_process_type(param) for param in params]
+    clean_params = []
+    for param in params:
+      if param == 'void':
+        continue
+      clean_params.append(self.post_process_type(param))
+    self.params = clean_params
     self.is_const = is_const
     self.is_static = is_static
 
