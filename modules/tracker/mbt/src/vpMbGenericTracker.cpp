@@ -43,7 +43,7 @@
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 vpMbGenericTracker::vpMbGenericTracker()

@@ -157,11 +157,11 @@ int main()
 class VISP_EXPORT vpFeatureMomentDatabase
 {
 private:
-  struct cmp_str {
+  struct vpCmpStr_t {
     bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; }
     char *operator=(const char *) { return NULL; } // Only to avoid a warning under Visual with /Wall flag
   };
-  std::map<const char *, vpFeatureMoment *, cmp_str> featureMomentsDataBase;
+  std::map<const char *, vpFeatureMoment *, vpCmpStr_t> featureMomentsDataBase;
   void add(vpFeatureMoment &featureMoment, char *name);
 
 public:

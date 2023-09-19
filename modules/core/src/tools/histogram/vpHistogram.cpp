@@ -52,7 +52,8 @@
 
 namespace
 {
-struct Histogram_Param_t {
+struct vpHistogram_Param_t
+{
   unsigned int m_start_index;
   unsigned int m_end_index;
 
@@ -60,14 +61,13 @@ struct Histogram_Param_t {
   unsigned int *m_histogram;
   const vpImage<unsigned char> *m_I;
 
-  Histogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) {}
+  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) { }
 
-  Histogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
+  vpHistogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I)
-  {
-  }
+  { }
 
-  ~Histogram_Param_t()
+  ~vpHistogram_Param_t()
   {
     if (m_histogram != NULL) {
       delete[] m_histogram;
@@ -77,7 +77,7 @@ struct Histogram_Param_t {
 
 vpThread::Return computeHistogramThread(vpThread::Args args)
 {
-  Histogram_Param_t *histogram_param = static_cast<Histogram_Param_t *>(args);
+  vpHistogram_Param_t *histogram_param = static_cast<vpHistogram_Param_t *>(args);
   unsigned int start_index = histogram_param->m_start_index;
   unsigned int end_index = histogram_param->m_end_index;
 
@@ -271,12 +271,13 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
       histogram[lut[*ptrCurrent]]++;
       ++ptrCurrent;
     }
-  } else {
+  }
+  else {
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     // Multi-threads
 
     std::vector<vpThread *> threadpool;
-    std::vector<Histogram_Param_t *> histogramParams;
+    std::vector<vpHistogram_Param_t *> histogramParams;
 
     unsigned int image_size = I.getSize();
     unsigned int step = image_size / nbThreads;
@@ -290,7 +291,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
         end_index = start_index + last_step;
       }
 
-      Histogram_Param_t *histogram_param = new Histogram_Param_t(start_index, end_index, &I);
+      vpHistogram_Param_t *histogram_param = new vpHistogram_Param_t(start_index, end_index, &I);
       histogram_param->m_histogram = new unsigned int[size];
       memset(histogram_param->m_histogram, 0, size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256 * sizeof(unsigned int));
@@ -646,7 +647,8 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   if (peak[index_highest_peak] < peak[index_second_peak]) {
     peakr.set(peak[index_second_peak], histogram[peak[index_second_peak]]);
     peakl.set(peak[index_highest_peak], histogram[peak[index_highest_peak]]);
-  } else {
+  }
+  else {
     peakl.set(peak[index_second_peak], histogram[peak[index_second_peak]]);
     peakr.set(peak[index_highest_peak], histogram[peak[index_highest_peak]]);
   }
@@ -685,7 +687,8 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
     delete[] peak;
 
     return false;
-  } else {
+  }
+  else {
     mini = sumindmini / nbmini; // mean
     valey.set((unsigned char)mini, histogram[mini]);
 
@@ -783,7 +786,8 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
   if (peak1.getLevel() > peak2.getLevel()) {
     peakl = peak2;
     peakr = peak1;
-  } else {
+  }
+  else {
     peakl = peak1;
     peakr = peak2;
   }
@@ -814,7 +818,8 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
     valey.set(0, 0);
 
     return false;
-  } else {
+  }
+  else {
     unsigned int minipos = sumindmini / nbmini; // position of the minimum
 
     valey.set((unsigned char)minipos, histogram[minipos]);
@@ -883,8 +888,9 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       // No chance to get a peak on the left
       // should not occur !
       peakl.set(0, 0);
-    } else {
-      // search for the nearest peak on the left that matches the distance
+    }
+    else {
+   // search for the nearest peak on the left that matches the distance
       std::list<vpHistogramPeak>::const_iterator lit; // left iterator
       for (lit = peaks.begin(); lit != it; ++lit) {
         if (abs((*lit).getLevel() - peak.getLevel()) > dist) {
@@ -917,7 +923,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     if (nbmini == 0) {
       valeyl.set(0, 0);
       ret &= 0x01;
-    } else {
+    }
+    else {
       unsigned int minipos = sumindmini / nbmini; // position of the minimum
       valeyl.set((unsigned char)minipos, histogram[minipos]);
       ret &= 0x11;
@@ -972,7 +979,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     if (nbmini == 0) {
       valeyr.set((unsigned char)(size - 1), 0);
       ret &= 0x10;
-    } else {
+    }
+    else {
       unsigned int minipos = sumindmini / nbmini; // position of the minimum
       valeyr.set((unsigned char)minipos, histogram[minipos]);
       ret &= 0x11;

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
  *
@@ -15,13 +14,9 @@
  * This file has been modified to be used only for argv parsing without
  * reference to tk, tcl or X11. Base on tk.h from tk2.3
  *
- * Description:
- * Command line argument parsing.
- *
- * Authors:
- * Fabien Spindler (modification of the original version)
- *
-*****************************************************************************/
+ * Modifications by Peter Neelin (November 27, 1992)
+ * Modifications by Fabien Spindler (June 20, 2006)
+ */
 
 /*!
   \file vpParseArgv.h

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeSite.cpp
@@ -70,7 +68,6 @@ void vpMeSite::init()
   // Pixel components
   i = 0;
   j = 0;
-  v = 0;
   ifloat = i;
   jfloat = j;
 
@@ -86,7 +83,7 @@ void vpMeSite::init()
 }
 
 vpMeSite::vpMeSite()
-  : i(0), j(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+  : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
   weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   ,
@@ -95,7 +92,7 @@ vpMeSite::vpMeSite()
 { }
 
 vpMeSite::vpMeSite(double ip, double jp)
-  : i(0), j(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+  : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
   weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   ,
@@ -108,11 +105,8 @@ vpMeSite::vpMeSite(double ip, double jp)
   jfloat = jp;
 }
 
-/*!
-  Copy constructor.
-*/
 vpMeSite::vpMeSite(const vpMeSite &mesite)
-  : i(0), j(0), ifloat(0), jfloat(0), v(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
+  : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
   weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   ,
@@ -135,11 +129,9 @@ void vpMeSite::init(double ip, double jp, double alphap)
   j = vpMath::round(jp);
   alpha = alphap;
   mask_sign = 1;
-
-  v = 0;
 }
 
-// initialise with convolution
+// initialise with convolution()
 void vpMeSite::init(double ip, double jp, double alphap, double convltp)
 {
   selectDisplay = NONE;
@@ -150,8 +142,6 @@ void vpMeSite::init(double ip, double jp, double alphap, double convltp)
   alpha = alphap;
   convlt = convltp;
   mask_sign = 1;
-
-  v = 0;
 }
 
 // initialise with convolution and sign
@@ -165,8 +155,6 @@ void vpMeSite::init(double ip, double jp, double alphap, double convltp, int sig
   alpha = alphap;
   convlt = convltp;
   mask_sign = sign;
-
-  v = 0;
 }
 
 vpMeSite &vpMeSite::operator=(const vpMeSite &m)
@@ -175,7 +163,6 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
   j = m.j;
   ifloat = m.ifloat;
   jfloat = m.jfloat;
-  v = m.v;
   mask_sign = m.mask_sign;
   alpha = m.alpha;
   convlt = m.convlt;
@@ -191,14 +178,6 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
   return *this;
 }
 
-/*!
- * Construct and return the list of vpMeSite along the normal to the contour,
- * in the given range.
- * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set.
- * \param I : Image in which the display is performed.
- * \param range :  +/- the range within which the pixel's correspondent will be sought.
- * \return Pointer to the list of query sites
- */
 vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int range)
 {
   unsigned int range_ = static_cast<unsigned int>(range);
@@ -324,13 +303,6 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
   return (conv);
 }
 
-/*!
-
-  Specific function for moving-edges.
-
-  \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
-
-*/
 void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_contrast)
 {
   int max_rank = -1;
@@ -447,21 +419,6 @@ void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, 
 
 // Static functions
 
-/*!
-  Display the moving edge site with a color corresponding to their state.
-
-  - If green : The vpMeSite is a good point.
-  - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
-  - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
-  - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
-  - If cyan : The point is removed because it's too close to another.
-  - Yellow otherwise.
-
-  \param I : The image.
-  \param i : Pixel i of the site.
-  \param j : Pixel j of the site.
-  \param state : State of the site.
-*/
 void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
   switch (state) {
@@ -490,21 +447,6 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const d
   }
 }
 
-/*!
-  Display the moving edge site with a color corresponding to their state.
-
-  - If green : The vpMeSite is a good point.
-  - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
-  - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
-  - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
-  - If cyan : The point is removed because it's too close to another.
-  - Yellow otherwise
-
-  \param I : The image.
-  \param i : Pixel i of the site.
-  \param j : Pixel j of the site.
-  \param state : State of the site.
-*/
 void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &j, const vpMeSiteState &state)
 {
   switch (state) {

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeNurbs.cpp
@@ -203,17 +201,11 @@ bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
 
 /***************************************/
 
-/*!
-  Basic constructor that calls the constructor of the class vpMeTracker.
-*/
 vpMeNurbs::vpMeNurbs()
   : nurbs(), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0), enableCannyDetection(false), cannyTh1(100.),
   cannyTh2(200.)
 { }
 
-/*!
-  Copy constructor.
-*/
 vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   : vpMeTracker(menurbs), nurbs(menurbs.nurbs), dist(0.), nbControlPoints(20), beginPtFound(0), endPtFound(0),
   enableCannyDetection(false), cannyTh1(100.f), cannyTh2(200.f)
@@ -227,17 +219,8 @@ vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   cannyTh2 = menurbs.cannyTh2;
 }
 
-/*!
-  Basic destructor.
-*/
 vpMeNurbs::~vpMeNurbs() { }
 
-/*!
-  Initialization of the tracking. Ask the user to click left on several points
-  along the edge to track and click right at the end.
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
 {
   std::list<vpImagePoint> ptList;
@@ -260,13 +243,6 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
     throw(vpException(vpException::notInitialized, "Not enough points to initialize the Nurbs"));
 }
 
-/*!
-  Initialization of the tracking. The Nurbs is initialized thanks to the
-  list of vpImagePoint.
-
-  \param I : Image in which the edge appears.
-  \param ptList  : List of point to initialize the Nurbs.
-*/
 void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ptList)
 {
   nurbs.globalCurveInterp(ptList);
@@ -277,13 +253,6 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vp
   track(I);
 }
 
-/*!
-  Construct a list of vpMeSite moving edges at a particular sampling
-  step between the two extremities of the nurbs.
-
-  \param I : Image in which the edge appears.
-  \param doNotTrack : Inherited parameter, not used.
-*/
 void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
@@ -319,12 +288,6 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     delete[] pt;
 }
 
-/*!
-  Suppression of the points which:
-
-  - belong no more to the edge.
-  - which are to closed to another point.
-*/
 void vpMeNurbs::suppressPoints()
 {
   for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();) {
@@ -338,10 +301,6 @@ void vpMeNurbs::suppressPoints()
   }
 }
 
-/*!
-  Set the alpha value (normal to the edge at this point)
-  of the different vpMeSite to a value computed thanks to the nurbs.
-*/
 void vpMeNurbs::updateDelta()
 {
   double u = 0.0;
@@ -379,13 +338,6 @@ void vpMeNurbs::updateDelta()
     delete[] der;
 }
 
-/*!
-  Seek along the edge defined by the nurbs, the two extremities of
-  the edge. This function is useful in case of translation of the
-  edge.
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
 {
   int rows = (int)I.getHeight();
@@ -496,17 +448,6 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   /*if(end != NULL)  */ delete[] end;
 }
 
-/*!
-  Seek the extremities of the edge thanks to a canny edge detection.
-  The edge detection enable to find the points belonging to the edge.
-  The any vpMesite  are initialized at this points.
-
-  This method is useful when the edge is not smooth.
-
-  \note To use the canny detection, OpenCV has to be installed.
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
 {
   vpMeSite pt = list.front();
@@ -769,16 +710,6 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
   }
 }
 
-/*!
-  Resample the edge if the number of sample is less than 70% of the
-  expected value.
-
-  \note The expected value is computed thanks to the length of the
-  nurbs and the parameter which indicates the number of pixel between
-  two points (vpMe::sample_step).
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::reSample(const vpImage<unsigned char> &I)
 {
   unsigned int n = numberOfSignal();
@@ -790,13 +721,6 @@ void vpMeNurbs::reSample(const vpImage<unsigned char> &I)
   }
 }
 
-/*!
-  Resample a part of the edge if two vpMeSite are too far from eachother.
-  In this case the method try to initialize any vpMeSite between the two
-  points.
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 {
   int rows = (int)I.getHeight();
@@ -882,11 +806,6 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
   me->setRange(range_tmp);
 }
 
-/*!
-  Suppress vpMeSites if they are too close to each other.
-
-  The goal is to keep the order of the vpMeSites in the list.
-*/
 void vpMeNurbs::supressNearPoints()
 {
 #if 0
@@ -932,11 +851,6 @@ void vpMeNurbs::supressNearPoints()
   }
 }
 
-/*!
-  Track the edge in the image I.
-
-  \param I : Image in which the edge appears.
-*/
 void vpMeNurbs::track(const vpImage<unsigned char> &I)
 {
   // Tracking des vpMeSites
@@ -983,17 +897,6 @@ void vpMeNurbs::track(const vpImage<unsigned char> &I)
   reSample(I);
 }
 
-/*!
-  Display edge.
-
-  \warning To effectively display the edge a call to
-  vpDisplay::flush() is needed.
-
-  \param I : Image in which the edge appears.
-  \param color : Color of the displayed line.
-  \param thickness : Drawings thickness.
-
- */
 void vpMeNurbs::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
   vpMeNurbs::display(I, nurbs, color, thickness);
@@ -1213,18 +1116,6 @@ bool vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> &I, const vpImageP
   return (iP.get_i() < height - 20 && iP.get_j() < width - 20 && iP.get_i() > 20 && iP.get_j() > 20);
 }
 
-/*!
-
-  Display of a moving nurbs.
-
-  \param I : The image used as background.
-
-  \param n : Nurbs to display
-
-  \param color : Color used to display the nurbs.
-
-  \param thickness : Drawings thickness.
-*/
 void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, const vpColor &color, unsigned int thickness)
 {
   double u = 0.0;
@@ -1236,18 +1127,6 @@ void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, const vpCol
   }
 }
 
-/*!
-
-  Display of a moving nurbs.
-
-  \param I : The image used as background.
-
-  \param n : Nurbs to display
-
-  \param color : Color used to display the nurbs.
-
-  \param thickness : Drawings thickness.
-*/
 void vpMeNurbs::display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color, unsigned int thickness)
 {
   double u = 0.0;

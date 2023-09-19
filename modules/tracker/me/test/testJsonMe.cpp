@@ -48,7 +48,7 @@
 #include <visp3/me/vpMe.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>

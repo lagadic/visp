@@ -127,11 +127,11 @@ int main() {
 #include <iostream>
 #include <visp3/core/vpUDPClient.h>
 
-struct DataType {
+struct vpDataType_t {
   double double_val;
   int int_val;
-  DataType() : double_val(0.0), int_val(0) {}
-  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
+  vpDataType_t() : double_val(0.0), int_val(0) {}
+  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 
 int main() {
@@ -139,7 +139,7 @@ int main() {
     std::string servername = "127.0.0.1";
     unsigned int port = 50037;
     vpUDPClient client(servername, port);
-    DataType data_type(1234.56789, 123450);
+    vpDataType_t data_type(1234.56789, 123450);
     char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
 
     memcpy(data, &data_type.double_val, sizeof(data_type.double_val));

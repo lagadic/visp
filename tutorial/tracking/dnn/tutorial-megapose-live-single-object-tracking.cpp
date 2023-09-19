@@ -21,7 +21,7 @@
 #include <opencv2/videoio.hpp>
 
 
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 /*
  * Interpolate two vpColors. Linear interpolation between each components (R, G, B)

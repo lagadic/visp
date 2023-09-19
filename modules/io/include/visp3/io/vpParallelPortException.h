@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,9 +29,8 @@
  *
  * Description:
  * Exceptions that can be emitted by the vpParallelPort class and its
- *derivates.
- *
-*****************************************************************************/
+ * derivates.
+ */
 
 #ifndef _vpParallelPortException_h_
 #define _vpParallelPortException_h_

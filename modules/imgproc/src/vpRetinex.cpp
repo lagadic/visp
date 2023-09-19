@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Convert image types.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /* Retinex_.java Using ImageJ Gaussian Filter
  * Retinex filter algorithm based on the plugin for GIMP.
  *
@@ -246,27 +241,6 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_retinex
-
-  Apply the Retinex algorithm (the input image is modified).
-  \param I : The color image after application of the Retinex technique.
-  \param scale : Specifies the depth of the retinex effect. Minimum value is
-  16, a value providing gross, unrefined filtering. Maximum value is 250.
-  Optimal and default value is 240.
-  \param scaleDiv : Specifies the number of
-  iterations of the multi scale filter. Values larger than 2 exploit the
-  "multiscale" nature of the algorithm.
-  \param level : Specifies distribution
-  of the Gaussian blurring kernel sizes for Scale division values > 2:
-    - 0, tends to treat all image intensities similarly,
-    - 1, enhances dark regions of the image,
-    - 2, enhances the bright regions of the image.
-  \param dynamic : Adjusts the color of the result. Large values produce less
-  saturated images.
-  \param kernelSize : Kernel size for the gaussian blur
-  operation. If -1, the kernel size is calculated from the image size.
-*/
 void retinex(vpImage<vpRGBa> &I, int scale, int scaleDiv, int level, const double dynamic, int kernelSize)
 {
   // Assert scale
@@ -288,26 +262,6 @@ void retinex(vpImage<vpRGBa> &I, int scale, int scaleDiv, int level, const doubl
   MSRCR(I, scale, scaleDiv, level, dynamic, kernelSize);
 }
 
-/*!
-  \ingroup group_imgproc_retinex
-
-  Apply the Retinex algorithm.
-  \param I1 : The input color image.
-  \param I2 : The output color image after application of the Retinex
-  technique. \param scale : Specifies the depth of the retinex effect. Minimum
-  value is 16, a value providing gross, unrefined filtering. Maximum value is
-  250. Optimal and default value is 240. \param scaleDiv : Specifies the
-  number of iterations of the multiscale filter. Values larger than 2 exploit
-  the "multiscale" nature of the algorithm. \param level : Specifies
-  distribution of the Gaussian blurring kernel sizes for Scale division values
-  > 2:
-    - 0, tends to treat all image intensities similarly,
-    - 1, enhances dark regions of the image,
-    - 2, enhances the bright regions of the image.
-  \param dynamic : Adjusts the color of the result. Large values produce less
-  saturated images. \param kernelSize : Kernel size for the gaussian blur
-  operation. If -1, the kernel size is calculated from the image size.
-*/
 void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale, int scaleDiv, int level, double dynamic,
                  int kernelSize)
 {

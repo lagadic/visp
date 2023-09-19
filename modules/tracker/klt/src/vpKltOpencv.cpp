@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Wrapper for the KLT (Kanade-Lucas-Tomasi) feature tracker implemented
  * with opencv.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpKltOpencv.cpp
@@ -51,9 +49,6 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/klt/vpKltOpencv.h>
 
-/*!
-  Default constructor.
- */
 vpKltOpencv::vpKltOpencv()
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
     m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
@@ -62,9 +57,6 @@ vpKltOpencv::vpKltOpencv()
   m_termcrit = cv::TermCriteria(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
 }
 
-/*!
-  Copy constructor.
- */
 vpKltOpencv::vpKltOpencv(const vpKltOpencv &copy)
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
     m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
@@ -73,9 +65,6 @@ vpKltOpencv::vpKltOpencv(const vpKltOpencv &copy)
   *this = copy;
 }
 
-/*!
-  Copy operator.
- */
 vpKltOpencv &vpKltOpencv::operator=(const vpKltOpencv &copy)
 {
   m_gray = copy.m_gray;
@@ -101,16 +90,6 @@ vpKltOpencv &vpKltOpencv::operator=(const vpKltOpencv &copy)
 
 vpKltOpencv::~vpKltOpencv() {}
 
-/*!
-  Initialise the tracking by extracting KLT keypoints on the provided image.
-
-  \param I : Grey level image used as input. This image should have only 1 channel.
-  \param mask : Image mask used to restrict the keypoint detection
-  area. If mask is NULL, all the image will be considered.
-
-  \exception vpTrackingException::initializationError : If the image I is not
-  initialized, or if the image or the mask have bad coding format.
-*/
 void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 {
   m_next_points_id = 0;
@@ -135,11 +114,6 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
   }
 }
 
-/*!
-   Track KLT keypoints using the iterative Lucas-Kanade method with pyramids.
-
-   \param I : Input image.
- */
 void vpKltOpencv::track(const cv::Mat &I)
 {
   if (m_points[1].size() == 0)
@@ -179,19 +153,6 @@ void vpKltOpencv::track(const cv::Mat &I)
   }
 }
 
-/*!
-
-  Get the 'index'th feature image coordinates.  Beware that
-  getFeature(i,...) may not represent the same feature before and
-  after a tracking iteration (if a feature is lost, features are
-  shifted in the array).
-
-  \param index : Index of feature.
-  \param id : id of the feature.
-  \param x : x coordinate.
-  \param y : y coordinate.
-
-*/
 void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) const
 {
   if ((size_t)index >= m_points[1].size()) {
@@ -203,30 +164,11 @@ void vpKltOpencv::getFeature(const int &index, long &id, float &x, float &y) con
   id = m_points_id[(size_t)index];
 }
 
-/*!
-  Display features position and id.
-
-  \param I : Image used as background. Display should be initialized on it.
-  \param color : Color used to display the features.
-  \param thickness : Thickness of the drawings.
-  */
 void vpKltOpencv::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
   vpKltOpencv::display(I, m_points[1], m_points_id, color, thickness);
 }
 
-/*!
-
-  Display features list.
-
-  \param I : The image used as background.
-
-  \param features : Vector of features.
-
-  \param color : Color used to display the points.
-
-  \param thickness : Thickness of the points.
-*/
 void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
                           const vpColor &color, unsigned int thickness)
 {
@@ -238,18 +180,6 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv:
   }
 }
 
-/*!
-
-  Display features list.
-
-  \param I : The image used as background.
-
-  \param features : Vector of features.
-
-  \param color : Color used to display the points.
-
-  \param thickness : Thickness of the points.
-*/
 void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features, const vpColor &color,
                           unsigned int thickness)
 {
@@ -261,20 +191,6 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2
   }
 }
 
-/*!
-
-  Display features list with ids.
-
-  \param I : The image used as background.
-
-  \param features : Vector of features.
-
-  \param featuresid : Vector of ids corresponding to the features.
-
-  \param color : Color used to display the points.
-
-  \param thickness : Thickness of the points
-*/
 void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv::Point2f> &features,
                           const std::vector<long> &featuresid, const vpColor &color, unsigned int thickness)
 {
@@ -291,20 +207,6 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I, const std::vector<cv:
   }
 }
 
-/*!
-
-  Display features list with ids.
-
-  \param I : The image used as background.
-
-  \param features : Vector of features.
-
-  \param featuresid : Vector of ids corresponding to the features.
-
-  \param color : Color used to display the points.
-
-  \param thickness : Thickness of the points
-*/
 void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2f> &features,
                           const std::vector<long> &featuresid, const vpColor &color, unsigned int thickness)
 {
@@ -321,101 +223,6 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2
   }
 }
 
-/*!
-  Set the maximum number of features to track in the image.
-
-  \param maxCount : Maximum number of features to detect and track. Default
-  value is set to 500.
-*/
-void vpKltOpencv::setMaxFeatures(int maxCount) { m_maxCount = maxCount; }
-
-/*!
-  Set the window size used to refine the corner locations.
-
-  \param winSize : Half of the side length of the search window. Default value
-  is set to 10. For example, if \e winSize=5 , then a 5*2+1 \f$\times\f$ 5*2+1
-  = 11 \f$\times\f$ 11 search window is used.
-*/
-void vpKltOpencv::setWindowSize(int winSize) { m_winSize = winSize; }
-
-/*!
-  Set the parameter characterizing the minimal accepted quality of image
-  corners.
-
-  \param qualityLevel : Quality level parameter. Default value is set to 0.01.
-  The parameter value is multiplied by the best corner quality measure, which
-  is the minimal eigenvalue or the Harris function response. The corners with
-  the quality measure less than the product are rejected. For example, if the
-  best corner has the quality measure = 1500, and the qualityLevel=0.01, then
-  all the corners with the quality measure less than 15 are rejected.
- */
-void vpKltOpencv::setQuality(double qualityLevel) { m_qualityLevel = qualityLevel; }
-
-/*!
-  Set the free parameter of the Harris detector.
-
-  \param harris_k : Free parameter of the Harris detector. Default value is
-  set to 0.04.
-*/
-void vpKltOpencv::setHarrisFreeParameter(double harris_k) { m_harris_k = harris_k; }
-
-/*!
-  Set the parameter indicating whether to use a Harris detector or
-  the minimal eigenvalue of gradient matrices for corner detection.
-  \param useHarrisDetector : If 1 (default value), use the Harris detector. If
-  0 use the eigenvalue.
-*/
-void vpKltOpencv::setUseHarris(int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
-
-/*!
-  Set the minimal Euclidean distance between detected corners during
-  initialization.
-
-  \param minDistance : Minimal possible Euclidean distance between the
-  detected corners. Default value is set to 15.
-*/
-void vpKltOpencv::setMinDistance(double minDistance) { m_minDistance = minDistance; }
-
-/*!
-  Set the minimal eigen value threshold used to reject a point during the
-  tracking. \param minEigThreshold : Minimal eigen value threshold. Default
-  value is set to 1e-4.
-*/
-void vpKltOpencv::setMinEigThreshold(double minEigThreshold) { m_minEigThreshold = minEigThreshold; }
-
-/*!
-  Set the size of the averaging block used to track the features.
-
-  \warning The input is a signed integer to be compatible with OpenCV.
-  However, it must be a positive integer.
-
-  \param blockSize : Size of an average block for computing a derivative
-  covariation matrix over each pixel neighborhood. Default value is set to 3.
-*/
-void vpKltOpencv::setBlockSize(int blockSize) { m_blockSize = blockSize; }
-
-/*!
-  Set the maximal pyramid level. If the level is zero, then no pyramid is
-  computed for the optical flow.
-
-  \param pyrMaxLevel : 0-based maximal pyramid level number; if set to 0,
-  pyramids are not used (single level), if set to 1, two levels are used, and
-  so on. Default value is set to 3.
-*/
-void vpKltOpencv::setPyramidLevels(int pyrMaxLevel) { m_pyrMaxLevel = pyrMaxLevel; }
-
-/*!
-  Set the points that will be used as initial guess during the next call to
-  track(). A typical usage of this function is to predict the position of the
-  features before the next call to track().
-
-  \param guess_pts : Vector of points that should be tracked. The size of this
-  vector should be the same as the one returned by getFeatures(). If this is
-  not the case, an exception is returned. Note also that the id of the points
-  is not modified.
-
-  \sa initTracking()
-*/
 void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
 {
   if (guess_pts.size() != m_points[1].size()) {
@@ -429,20 +236,6 @@ void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &guess_pts)
   m_initial_guess = true;
 }
 
-/*!
-  Set the points that will be used as initial guess during the next call to
-  track(). A typical usage of this function is to predict the position of the
-  features before the next call to track().
-
-  \param init_pts : Initial points (could be obtained from getPrevFeatures()
-  or getFeatures()). \param guess_pts : Prediction of the new position of the
-  initial points. The size of this vector must be the same as the size of the
-  vector of initial points. \param fid : Identifiers of the initial points.
-
-  \sa getPrevFeatures(),getPrevFeaturesId
-  \sa getFeatures(), getFeaturesId
-  \sa initTracking()
-*/
 void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts,
                                   const std::vector<long> &fid)
 {
@@ -459,14 +252,6 @@ void vpKltOpencv::setInitialGuess(const std::vector<cv::Point2f> &init_pts, cons
   m_initial_guess = true;
 }
 
-/*!
-  Set the points that will be used as initialization during the next call to
-  track().
-
-  \param I : Input image.
-  \param pts : Vector of points that should be tracked.
-
-*/
 void vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> &pts)
 {
   m_initial_guess = false;
@@ -503,13 +288,6 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> 
   I.copyTo(m_gray);
 }
 
-/*!
-
-  Add a keypoint at the end of the feature list. The id of the feature is set
-  to ensure that it is unique. \param x,y : Coordinates of the feature in the
-  image.
-
-*/
 void vpKltOpencv::addFeature(const float &x, const float &y)
 {
   cv::Point2f f(x, y);
@@ -517,18 +295,6 @@ void vpKltOpencv::addFeature(const float &x, const float &y)
   m_points_id.push_back(m_next_points_id++);
 }
 
-/*!
-
-  Add a keypoint at the end of the feature list.
-
- \warning This function doesn't ensure that the id of the feature is unique.
-  You should rather use addFeature(const float &, const float &) or
- addFeature(const cv::Point2f &).
-
-  \param id : Feature id. Should be unique
-  \param x,y : Coordinates of the feature in the image.
-
-*/
 void vpKltOpencv::addFeature(const long &id, const float &x, const float &y)
 {
   cv::Point2f f(x, y);
@@ -538,23 +304,12 @@ void vpKltOpencv::addFeature(const long &id, const float &x, const float &y)
     m_next_points_id = id + 1;
 }
 
-/*!
-
-  Add a keypoint at the end of the feature list. The id of the feature is set
-  to ensure that it is unique. \param f : Coordinates of the feature in the
-  image.
-
-*/
 void vpKltOpencv::addFeature(const cv::Point2f &f)
 {
   m_points[1].push_back(f);
   m_points_id.push_back(m_next_points_id++);
 }
 
-/*!
-   Remove the feature with the given index as parameter.
-   \param index : Index of the feature to remove.
- */
 void vpKltOpencv::suppressFeature(const int &index)
 {
   if ((size_t)index >= m_points[1].size()) {

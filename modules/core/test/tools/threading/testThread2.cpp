@@ -54,15 +54,14 @@
 namespace
 {
 //! [functor-thread-example declaration]
-class ArithmFunctor
+class vpArithmFunctor
 {
 public:
-  ArithmFunctor(const vpColVector &v1, const vpColVector &v2, unsigned int start, unsigned int end)
+  vpArithmFunctor(const vpColVector &v1, const vpColVector &v2, unsigned int start, unsigned int end)
     : m_add(), m_mul(), m_v1(v1), m_v2(v2), m_indexStart(start), m_indexEnd(end)
-  {
-  }
+  { }
 
-  ArithmFunctor() : m_add(), m_mul(), m_v1(), m_v2(), m_indexStart(0), m_indexEnd(0) {}
+  vpArithmFunctor() : m_add(), m_mul(), m_v1(), m_v2(), m_indexStart(0), m_indexEnd(0) { }
 
   void operator()() { computeImpl(); }
 
@@ -97,7 +96,7 @@ private:
 //! [functor-thread-example threadFunction]
 vpThread::Return arithmThread(vpThread::Args args)
 {
-  ArithmFunctor *f = static_cast<ArithmFunctor *>(args);
+  vpArithmFunctor *f = static_cast<vpArithmFunctor *>(args);
   (*f)();
   return 0;
 }
@@ -155,13 +154,14 @@ int main()
 
   //! [functor-thread-example threadCreation]
   std::vector<vpThread> threads(nb_threads);
-  std::vector<ArithmFunctor> functors(nb_threads);
+  std::vector<vpArithmFunctor> functors(nb_threads);
   unsigned int split = size / nb_threads;
   for (unsigned int i = 0; i < nb_threads; i++) {
     if (i < nb_threads - 1) {
-      functors[i] = ArithmFunctor(v1, v2, i * split, (i + 1) * split);
-    } else {
-      functors[i] = ArithmFunctor(v1, v2, i * split, size);
+      functors[i] = vpArithmFunctor(v1, v2, i * split, (i + 1) * split);
+    }
+    else {
+      functors[i] = vpArithmFunctor(v1, v2, i * split, size);
     }
 
     std::cout << "Create thread: " << i << std::endl;

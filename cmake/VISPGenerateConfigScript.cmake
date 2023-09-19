@@ -180,6 +180,8 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     VISP_RUNTIME
     VISP_HAVE_OPENMP
 
+    WITH_CATCH2
+
     FILE_VISP_SCRIPT_CONFIG
     FILE_VISP_SCRIPT_CONFIG_INSTALL
     FILE_VISP_SCRIPT_PC_INSTALL
@@ -272,11 +274,15 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
       "${_includes_modules}"
       "${_includes_extra}")
 
+    if(WITH_CATCH2)
+      list(APPEND VISP_SONARQUBE_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/catch2")
+    endif()
+
     vp_list_replace_separator(VISP_SONARQUBE_INCLUDE_DIRS ", ")
 
     configure_file("${VISP_SOURCE_DIR}/cmake/templates/sonar-project.properties.in"
       "${VISP_BINARY_DIR}/sonar-project.properties"
-      @ONLY )
+      @ONLY)
 
     #######################################################################
     #

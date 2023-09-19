@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Disk framegrabber.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpDiskGrabber.h
@@ -120,41 +118,155 @@ private:
   std::string m_image_name;
 
 public:
+  /*!
+   * Default constructor.
+   */
   vpDiskGrabber();
-  explicit vpDiskGrabber(const std::string &genericName);
-  explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
-                         const std::string &ext);
-  virtual ~vpDiskGrabber();
-
-  void acquire(vpImage<unsigned char> &I);
-  void acquire(vpImage<vpRGBa> &I);
-  void acquire(vpImage<float> &I);
-  void acquire(vpImage<unsigned char> &I, long image_number);
-  void acquire(vpImage<vpRGBa> &I, long image_number);
-  void acquire(vpImage<float> &I, long image_number);
-
-  void close();
 
   /*!
-    Return the current image number.
-  */
+   * Constructor that takes a generic image sequence as input.
+   */
+  explicit vpDiskGrabber(const std::string &genericName);
+
+  /*!
+   * Constructor.
+   *
+   * \param dir : Location of the image sequence.
+   * \param basename : Base name of each image.
+   * \param number : Initial image number.
+   * \param step : Increment between two images.
+   * \param noz : Number of zero to code the image number.
+   * \param ext : Extension of the image file.
+   */
+  explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
+                         const std::string &ext);
+
+  /*!
+   * Destructor.
+   * In fact nothing to destroy...
+   */
+  virtual ~vpDiskGrabber();
+
+  /*!
+   * Acquire an image reading the next image from the disk.
+   * After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   */
+  void acquire(vpImage<unsigned char> &I);
+
+  /*!
+   * Acquire an image reading the next image from the disk.
+   * After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   */
+  void acquire(vpImage<vpRGBa> &I);
+
+  /*!
+   * Acquire an image reading the next image from the disk.
+   * After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   */
+  void acquire(vpImage<float> &I);
+
+  /*!
+   * Acquire an image reading the image with number \e img_number from the disk.
+   * After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   * \param image_number : The number of the desired image.
+   */
+  void acquire(vpImage<unsigned char> &I, long image_number);
+
+  /*!
+   * Acquire an image reading the image with number \e img_number from the disk.
+   * After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   * \param image_number : The number of the desired image.
+   */
+  void acquire(vpImage<vpRGBa> &I, long image_number);
+
+  /*!
+   * Acquire an image reading the pfm image with number \e img_number from the
+   * disk. After this call, the image number is incremented considering the step.
+   *
+   * \param I : The image read from a file.
+   * \param image_number : The number of the desired image.
+   */
+  void acquire(vpImage<float> &I, long image_number);
+
+  /*!
+   * Not useful.
+   *
+   * Does nothing. Here for compatibility issue with the vpFrameGrabber class.
+   */
+  void close() { };
+
+  /*!
+   * Return the current image number.
+   */
   inline long getImageNumber() const { return m_image_number; }
+
   /*!
    * Return the name of the file in which the last frame was read.
    */
   inline std::string getImageName() const { return m_image_name; }
 
+  /*!
+   * Read the first image of the sequence.
+   * The image number is not incremented.
+   */
   void open(vpImage<unsigned char> &I);
+
+  /*!
+   * Read the first image of the sequence.
+   * The image number is not incremented.
+   */
   void open(vpImage<vpRGBa> &I);
+
+  /*!
+   * Read the first image of the sequence.
+   * The image number is not incremented.
+   */
   void open(vpImage<float> &I);
 
-  void setBaseName(const std::string &name);
-  void setDirectory(const std::string &dir);
-  void setExtension(const std::string &ext);
+  /*!
+   * Set the image base name.
+   */
+  void setBaseName(const std::string &name) { m_base_name = name; }
+
+  /*!
+   * Set the main directory name (ie location of the image sequence).
+   */
+  void setDirectory(const std::string &dir) { m_directory = dir; }
+
+  /*!
+   * Set the image extension.
+   */
+  void setExtension(const std::string &ext) { m_extension = ext; }
+
+  /*!
+   * Set the image generic name like `image-%04d.png`.
+   */
   void setGenericName(const std::string &genericName);
+
+  /*!
+   * Set the number of the image to be read.
+   */
   void setImageNumber(long number);
-  void setNumberOfZero(unsigned int noz);
-  void setStep(long step);
+
+  /*!
+   * Set the step between two images.
+   */
+  void setNumberOfZero(unsigned int noz) { m_number_of_zero = noz; }
+
+  /*!
+   * Set the step between two images.
+   */
+  void setStep(long step) { m_image_step = step; }
 };
 
 #endif

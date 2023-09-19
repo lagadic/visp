@@ -478,9 +478,18 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
   double lat = vpMath::rad(latDeg);
 
   vpHomogeneousMatrix ecef_M_ned;
-  ecef_M_ned[0][0] = -sin(lat) * cos(lon); ecef_M_ned[0][1] = -sin(lon); ecef_M_ned[0][2] = -cos(lat) * cos(lon); ecef_M_ned[0][3] = radius * cos(lon) * cos(lat);
-  ecef_M_ned[1][0] = -sin(lat) * sin(lon); ecef_M_ned[1][1] = cos(lon); ecef_M_ned[1][2] = -cos(lat) * sin(lon); ecef_M_ned[1][3] = radius * sin(lon) * cos(lat);
-  ecef_M_ned[2][0] = cos(lat);          ecef_M_ned[2][1] = 0;         ecef_M_ned[2][2] = -sin(lat);          ecef_M_ned[2][3] = radius * sin(lat);
+  ecef_M_ned[0][0] = -sin(lat) * cos(lon);
+  ecef_M_ned[0][1] = -sin(lon);
+  ecef_M_ned[0][2] = -cos(lat) * cos(lon);
+  ecef_M_ned[0][3] = radius * cos(lon) * cos(lat);
+  ecef_M_ned[1][0] = -sin(lat) * sin(lon);
+  ecef_M_ned[1][1] = cos(lon);
+  ecef_M_ned[1][2] = -cos(lat) * sin(lon);
+  ecef_M_ned[1][3] = radius * sin(lon) * cos(lat);
+  ecef_M_ned[2][0] = cos(lat);
+  ecef_M_ned[2][1] = 0;
+  ecef_M_ned[2][2] = -sin(lat);
+  ecef_M_ned[2][3] = radius * sin(lat);
 
   return ecef_M_ned;
 }
@@ -530,9 +539,18 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
   double lat = vpMath::rad(latDeg);
 
   vpHomogeneousMatrix ecef_M_enu;
-  ecef_M_enu[0][0] = -sin(lon); ecef_M_enu[0][1] = -sin(lat) * cos(lon); ecef_M_enu[0][2] = cos(lat) * cos(lon); ecef_M_enu[0][3] = radius * cos(lon) * cos(lat);
-  ecef_M_enu[1][0] = cos(lon); ecef_M_enu[1][1] = -sin(lat) * sin(lon); ecef_M_enu[1][2] = cos(lat) * sin(lon); ecef_M_enu[1][3] = radius * sin(lon) * cos(lat);
-  ecef_M_enu[2][0] = 0;        ecef_M_enu[2][1] = cos(lat);          ecef_M_enu[2][2] = sin(lat);          ecef_M_enu[2][3] = radius * sin(lat);
+  ecef_M_enu[0][0] = -sin(lon);
+  ecef_M_enu[0][1] = -sin(lat) * cos(lon);
+  ecef_M_enu[0][2] = cos(lat) * cos(lon);
+  ecef_M_enu[0][3] = radius * cos(lon) * cos(lat);
+  ecef_M_enu[1][0] = cos(lon);
+  ecef_M_enu[1][1] = -sin(lat) * sin(lon);
+  ecef_M_enu[1][2] = cos(lat) * sin(lon);
+  ecef_M_enu[1][3] = radius * sin(lon) * cos(lat);
+  ecef_M_enu[2][0] = 0;
+  ecef_M_enu[2][1] = cos(lat);
+  ecef_M_enu[2][2] = sin(lat);
+  ecef_M_enu[2][3] = radius * sin(lat);
 
   return ecef_M_enu;
 }
@@ -646,9 +664,18 @@ vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &t
   vpColVector up = vpColVector::crossProd(forward, right).normalize();
 
   vpHomogeneousMatrix wMc;
-  wMc[0][0] = right[0]; wMc[0][1] = up[0]; wMc[0][2] = forward[0]; wMc[0][3] = from[0];
-  wMc[1][0] = right[1]; wMc[1][1] = up[1]; wMc[1][2] = forward[1]; wMc[1][3] = from[1];
-  wMc[2][0] = right[2]; wMc[2][1] = up[2]; wMc[2][2] = forward[2]; wMc[2][3] = from[2];
+  wMc[0][0] = right[0];
+  wMc[0][1] = up[0];
+  wMc[0][2] = forward[0];
+  wMc[0][3] = from[0];
+  wMc[1][0] = right[1];
+  wMc[1][1] = up[1];
+  wMc[1][2] = forward[1];
+  wMc[1][3] = from[1];
+  wMc[2][0] = right[2];
+  wMc[2][1] = up[2];
+  wMc[2][2] = forward[2];
+  wMc[2][3] = from[2];
 
   return wMc;
 }

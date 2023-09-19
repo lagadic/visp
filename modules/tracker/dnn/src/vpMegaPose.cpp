@@ -50,7 +50,7 @@
 #include <stdexcept>
 #include <mutex>
 #include <thread>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 //// Network message utils
 

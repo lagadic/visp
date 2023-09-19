@@ -131,7 +131,9 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 std::string &ltrim(std::string &s)
 {
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {
+    return !std::isspace(c);
+                                  }));
 #else
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
 #endif
@@ -141,7 +143,9 @@ std::string &ltrim(std::string &s)
 std::string &rtrim(std::string &s)
 {
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {
+    return !std::isspace(c);
+                       }).base(), s.end());
 #else
   s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
 #endif

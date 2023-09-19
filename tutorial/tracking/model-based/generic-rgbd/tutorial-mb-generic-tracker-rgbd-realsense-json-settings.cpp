@@ -13,7 +13,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 
 int main(int argc, char *argv [])

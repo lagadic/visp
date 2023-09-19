@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -42,9 +40,7 @@
 #include <visp3/me/vpMe.h>
 #include <visp3/me/vpMeEllipse.h>
 
-/*!
-  Basic constructor that calls the constructor of the class vpMeTracker.
-*/
+
 vpMeEllipse::vpMeEllipse()
   : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2 * M_PI), ce(0.), se(0.), angle(), m00(0.),
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -60,9 +56,6 @@ vpMeEllipse::vpMeEllipse()
   iP2.set_ij(0, 0);
 }
 
-/*!
-  Copy constructor.
-*/
 vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
   : vpMeTracker(me_ellipse), K(me_ellipse.K), iPc(me_ellipse.iPc), a(me_ellipse.a), b(me_ellipse.b), e(me_ellipse.e),
   iP1(me_ellipse.iP1), iP2(me_ellipse.iP2), alpha1(me_ellipse.alpha1), alpha2(me_ellipse.alpha2), ce(me_ellipse.ce),
@@ -79,22 +72,12 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
   m_trackCircle(me_ellipse.m_trackCircle), m_trackArc(me_ellipse.m_trackArc)
 { }
 
-/*!
-  Basic destructor.
-*/
 vpMeEllipse::~vpMeEllipse()
 {
   list.clear();
   angle.clear();
 }
 
-/*!
-  Computes the \f$ \theta \f$ angle that represents the angle between the
-  tangent to the curve and the u axis. This angle is used for tracking the
-  vpMeSite.
-
-  \param iP : The point belonging to the ellipse where the angle is computed.
-*/
 double vpMeEllipse::computeTheta(const vpImagePoint &iP) const
 {
   double u = iP.get_u();
@@ -103,13 +86,6 @@ double vpMeEllipse::computeTheta(const vpImagePoint &iP) const
   return (computeTheta(u, v));
 }
 
-/*!
-  Computes the \f$ \theta \f$ angle that represents the angle between the
-  tangent to the curve and the u axis. This angle is used for tracking the
-  vpMeSite.
-
-  \param u,v : The point belonging to the ellipse where the angle is computed.
-*/
 double vpMeEllipse::computeTheta(double u, double v) const
 {
   double A = K[0] * u + K[2] * v + K[3];
@@ -122,11 +98,6 @@ double vpMeEllipse::computeTheta(double u, double v) const
   return (theta);
 }
 
-/*!
-  Compute the \f$ theta \f$ angle for each vpMeSite.
-
-  \note The \f$ theta \f$ angle is useful during the tracking part.
-*/
 void vpMeEllipse::updateTheta()
 {
   vpMeSite p_me;
@@ -140,13 +111,6 @@ void vpMeEllipse::updateTheta()
   }
 }
 
-/*!
-  Compute the coordinates of a point on an ellipse from its angle with respect
-  to the main orientation of the ellipse.
-
-  \param angle : Angle on the ellipse with respect to its major axis.
-  \param iP : Image point on the ellipse.
-*/
 void vpMeEllipse::computePointOnEllipse(const double angle, vpImagePoint &iP)
 {
   // Two versions are available. If you change from one version to the other
@@ -180,11 +144,6 @@ void vpMeEllipse::computePointOnEllipse(const double angle, vpImagePoint &iP)
   iP.set_uv(m_uc + ce * u - se * v, m_vc + se * u + ce * v);
 }
 
-/*!
-  Compute the angle of a point on the ellipse wrt the ellipse major axis.
-  \param pt : Image point on the ellipse.
-  \return The computed angle.
-*/
 double vpMeEllipse::computeAngleOnEllipse(const vpImagePoint &pt) const
 {
   // Two versions are available. If you change from one version to the other
@@ -225,12 +184,6 @@ double vpMeEllipse::computeAngleOnEllipse(const vpImagePoint &pt) const
   return (angle);
 }
 
-/*!
-  Computes the length of the semi major axis \f$ a \f$, the length of the
-  semi minor axis \f$ b \f$, and \f$ e \f$ that is the angle
-  made by the major axis and the u axis of the image frame \f$ (u,v) \f$.
-  They are computed from the normalized moments $ \f$ n_{ij} \f$.
-*/
 void vpMeEllipse::computeAbeFromNij()
 {
   double num = m_n20 - m_n02;
@@ -253,12 +206,6 @@ void vpMeEllipse::computeAbeFromNij()
   }
 }
 
-/*!
-  Computes the parameters \f$ K = {K_0, ...,  K_5} \f$ from the center of
-  the ellipse and the normalized moments \f$ n_{ij} \f$. The parameters
-  \f$ K \f$ are such that \f$ K0 = n02, K1 = n20 \f$, etc. as in Eq (25)
-  of Chaumette 2004 TRO paper.
-*/
 void vpMeEllipse::computeKiFromNij()
 {
   K[0] = m_n02;
@@ -269,11 +216,6 @@ void vpMeEllipse::computeKiFromNij()
   K[5] = m_n02 * m_uc * m_uc + m_n20 * m_vc * m_vc - 2.0 * m_n11 * m_uc * m_vc + 4.0 * (m_n11 * m_n11 - m_n20 * m_n02);
 }
 
-/*!
-  Computes the normalized moments \f$ n_{ij} \f$ from the \f$ A, B, E \f$
-  parameters as in Eq (24) of Chaumette 2004 TRO paper after simplifications
-  to deal with the case cos(e) = 0.0
-*/
 void vpMeEllipse::computeNijFromAbe()
 {
   m_n20 = 0.25 * (a * a * ce * ce + b * b * se * se);
@@ -281,15 +223,6 @@ void vpMeEllipse::computeNijFromAbe()
   m_n02 = 0.25 * (a * a * se * se + b * b * ce * ce);
 }
 
-/*!
-  Computes the coordinates of the ellipse center, the normalized
-  moments \f$ n_{ij} \f$, the length of the semi major axis \f$ a \f$, the
-  length of the semi minor axis \f$ b \f$, and \f$ e \f$ that is the angle
-  made by the major axis and the u axis of the image frame \f$ (u,v) \f$.
-
-  All those computations are made from the parameters \f$ K ={K_0, ..., K_5} \f$
-  so that \f$ K_0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 = 0 \f$.
-*/
 void vpMeEllipse::getParameters()
 {
   // Equations below from Chaumette PhD and TRO 2004 paper
@@ -319,10 +252,6 @@ void vpMeEllipse::getParameters()
   }
 }
 
-/*!
-  Print the parameters \f$ K = {K_0, ..., K_5} \f$, the coordinates of the
-  ellipse center, the normalized moments, and the A, B, E parameters.
-*/
 void vpMeEllipse::printParameters() const
 {
   std::cout << "K :" << K.t() << std::endl;
@@ -331,18 +260,6 @@ void vpMeEllipse::printParameters() const
   std::cout << "A = " << a << ", B = " << b << ", E (dg) " << vpMath::deg(e) << std::endl;
 }
 
-/*!
-  Construct a list of vpMeSite moving edges at a particular sampling
-  step between the two extremities. The two extremities are defined by
-  the points with the smallest and the biggest \f$ alpha \f$ angle.
-
-  \param I : Image in which the ellipse appears.
-  \param doNotTrack : If true, moving-edges are not tracked.
-
-  \exception vpTrackingException::initializationError : Moving edges not
-  initialized.
-
-*/
 void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   // Warning: similar code in vpMbtMeEllipse::sample()
@@ -404,17 +321,6 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   }
 }
 
-/*!
-  Seek along the ellipse or arc of ellipse its two extremities to try
-  recovering lost points. Try also to complete the parts with no tracked points.
-
-  \param I : Image in which the ellipse appears.
-
-  \return The function returns the number of points added to the list.
-
-  \exception vpTrackingException::initializationError : Moving edges not
-  initialized.
-*/
 unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 {
   if (!me) {
@@ -632,13 +538,6 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   return nb_pts_added;
 }
 
-/*!
-  Least squares method to compute the circle/ ellipse to which the points belong.
-
-  \param I : Image in which the circle/ellipse appears (useful just to get
-             its number of rows and columns...
-  \param iP : A vector of points belonging to the circle/ellipse.
-*/
 void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP)
 {
   double um = I.getWidth() / 2.;
@@ -721,14 +620,6 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
   getParameters();
 }
 
-/*!
-  Robust least squares method to compute the ellipse to which the vpMeSite
-  belong. Manage also the lists of vpMeSite and corresponding angles,
-  and update the expected density of points.
-
-  \param I : Image where tracking is done (useful just to get its number
-             of rows and columns...
-*/
 unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 {
   double um = I.getWidth() / 2.;
@@ -1106,34 +997,11 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
   return(numberOfGoodPoints);
 }
 
-/*!
-  Display the ellipse or arc of ellipse
-
-  \warning To effectively display the ellipse a call to
-  vpDisplay::flush() is needed.
-
-  \param I : Image in which the ellipse appears.
-  \param col : Color of the displayed ellipse.
-  \param thickness : Thickness of the drawing.
- */
 void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
   vpMeEllipse::displayEllipse(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
 }
 
-/*!
-  Initialize the tracking of an ellipse or an arc of an ellipse when \e trackArc is set to true.
-  Ask the user to click on five points located on the ellipse to be tracked.
-
-  \warning The points should be selected as far as possible from each other.
-  When an arc of an ellipse is tracked, it is recommended to select the 5 points clockwise.
-
-  \param I : Image in which the ellipse appears.
-  \param trackCircle : When true, track a circle, when false track an ellipse.
-  \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
-  last points specify the extremities of the arc (clockwise).
-  When false track the complete ellipse/circle.
-*/
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle, bool trackArc)
 {
   unsigned int n = 5; // by default, 5 points for an ellipse
@@ -1172,23 +1040,6 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle
   initTracking(I, iP, trackCircle, trackArc);
 }
 
-/*!
-  Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when \e trackArc is set to true.
-  The ellipse/circle is defined thanks to a vector of image points.
-
-  \warning It is mandatory to use at least five image points to estimate the
-  ellipse parameters while three points are needed to estimate the circle parameters.
-  \warning The image points should be selected as far as possible from each other.
-  When an arc of an ellipse/circle is tracked, it is recommended to select the 5/3 points clockwise.
-
-  \param I : Image in which the ellipse/circle appears.
-  \param iP : A vector of image points belonging to the ellipse/circle edge used to
-  initialize the tracking.
-  \param trackCircle : When true, track a circle, when false track an ellipse.
-  \param trackArc : When true track an arc of the ellipse/circle. In that case, first and
-  last points specify the extremities of the arc (clockwise).
-  When false track the complete ellipse/circle.
-*/
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP,
                                      bool trackCircle, bool trackArc)
 {
@@ -1222,21 +1073,6 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vecto
   vpDisplay::flush(I);
 }
 
-/*!
-  Initialize the tracking of an ellipse/circle or an arc of an ellipse/circle when arc extremities are given.
-  The ellipse/circle is defined by the vector containing the coordinates of its center and the three second order
-  centered normalized moments \f$ n_ij \f$. Without setting the arc extremities with
-  parameters \e pt1 and \e pt2, the complete ellipse/circle is considered. When extremities
-  are set, we consider an ellipse/circle arc defined clockwise from first extremity to second extremity.
-
-  \param I : Image in which the ellipse appears.
-  \param param : Vector with the five parameters \f$(u_c, v_c, n_{20}, n_{11}, n_{02})\f$ defining the ellipse
-  (expressed in pixels).
-  \param pt1 : Image point defining the first extremity of the arc or NULL to track a complete ellipse.
-  \param pt2 : Image point defining the second extremity of the arc or NULL to track a complete ellipse.
-  \param trackCircle : When true enable tracking of a circle, when false the tracking of an ellipse.
-
-*/
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1,
                                      const vpImagePoint *pt2, bool trackCircle)
 {
@@ -1531,65 +1367,17 @@ void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, 
 }
 #endif // Deprecated
 
-/*!
-  Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
 
-  \param I : The image used as background.
-
-  \param center : Center of the ellipse.
-
-  \param A : Semi major axis of the ellipse.
-
-  \param B : Semi minor axis of the ellipse.
-
-  \param E : Angle made by the major axis and the u axis of the image frame
-  \f$ (u,v) \f$ (in rad).
-
-  \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
-
-  \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
-
-  \param color : Color used to display the ellipse.
-
-  \param thickness : Thickness of the drawings.
-
-  \sa vpDisplay::displayEllipse()
-*/
 void vpMeEllipse::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A,
-  const double &B, const double &E, const double &smallalpha, const double &highalpha,
-  const vpColor &color, unsigned int thickness)
+                                 const double &B, const double &E, const double &smallalpha, const double &highalpha,
+                                 const vpColor &color, unsigned int thickness)
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }
 
-/*!
-
-  Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
-
-  \param I : The image used as background.
-
-  \param center : Center of the ellipse
-
-  \param A : Semimajor axis of the ellipse.
-
-  \param B : Semiminor axis of the ellipse.
-
-  \param E : Angle made by the major axis and the u axis of the image frame
-  \f$ (u,v) \f$ (in rad)
-
-  \param smallalpha : Smallest \f$ alpha \f$ angle in rad  (0 for a complete ellipse)
-
-  \param highalpha : Highest \f$ alpha \f$ angle in rad  (\f$ 2 \Pi \f$ for a complete ellipse)
-
-  \param color : Color used to display th lines.
-
-  \param thickness : Thickness of the drawings.
-
-  \sa vpDisplay::displayEllipse()
-*/
 void vpMeEllipse::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-  const double &E, const double &smallalpha, const double &highalpha,
-  const vpColor &color, unsigned int thickness)
+                                 const double &E, const double &smallalpha, const double &highalpha,
+                                 const vpColor &color, unsigned int thickness)
 {
   vpDisplay::displayEllipse(I, center, A, B, E, smallalpha, highalpha, false, color, thickness, true, true);
 }

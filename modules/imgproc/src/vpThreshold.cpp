@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Automatic thresholding functions.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpThreshold.cpp
@@ -363,16 +358,6 @@ int computeThresholdTriangle(vpHistogram &hist)
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_threshold
-
-  Automatic thresholding.
-
-  \param I : Input grayscale image.
-  \param method : Automatic thresholding method.
-  \param backgroundValue : Value to set to the background.
-  \param foregroundValue : Value to set to the foreground.
-*/
 unsigned char autoThreshold(vpImage<unsigned char> &I, const vpAutoThresholdMethod &method,
                             const unsigned char backgroundValue, const unsigned char foregroundValue)
 {

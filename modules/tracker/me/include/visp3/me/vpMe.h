@@ -120,6 +120,9 @@
 class VISP_EXPORT vpMe
 {
 public:
+  /*!
+   * Type of likelihood threshold to use.
+   */
   typedef enum
   {
     OLD_THRESHOLD = 0,        /*!< Old likelihood ratio threshold (to be avoided). */
@@ -160,19 +163,39 @@ private:
   vpMatrix *mask; //! Array of matrices defining the different masks (one for every angle step).
 
 public:
+  /*!
+   * Default constructor.
+   */
   vpMe();
+  /*!
+   * Copy constructor.
+   */
   vpMe(const vpMe &me);
+  /*!
+   * Destructor.
+   */
   virtual ~vpMe();
 
+  /*!
+   * Copy operator.
+   */
   vpMe &operator=(const vpMe &me);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  /*!
+   * Move operator.
+   */
   vpMe &operator=(const vpMe &&me);
 #endif
 
-  void checkSamplestep(double &a)
+  /*!
+   * Check sample step wrt min value.
+   * \param[inout] sample_step : When this value is lower than the min sample step value,
+   * it is modified to the min sample step value.
+   */
+  void checkSamplestep(double &sample_step)
   {
-    if (a < min_samplestep)
-      a = min_samplestep;
+    if (sample_step < min_samplestep)
+      sample_step = min_samplestep;
   }
   /*!
     Return the angle step.
@@ -270,7 +293,15 @@ public:
   */
   inline vpLikelihoodThresholdType getLikelihoodThresholdType() const { return m_likelihood_threshold_type; }
 
+  /*!
+    Initialise the array of matrices with the defined size and the number of
+    matrices to create.
+  */
   void initMask(); // convolution masks - offset computation
+
+  /*!
+   * Print using std::cout moving edges settings.
+   */
   void print();
 
   /*!
@@ -411,19 +442,63 @@ public:
   void setLikelihoodThresholdType(const vpLikelihoodThresholdType likelihood_threshold_type) { m_likelihood_threshold_type = likelihood_threshold_type; }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+  /*!
+   * @brief Convert a vpMe object to a JSON representation
+   *
+   * @param j resulting json object
+   * @param me the object to convert
+   */
   friend void to_json(nlohmann::json &j, const vpMe &me);
+
+  /**
+   * @brief Retrieve a vpMe object from a JSON representation
+   *
+   * JSON content (key: type):
+   *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
+   *  - threshold: double, vpMe::setThreshold()
+   *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2()
+   *  - minSampleStep: double, vpMe::setMinSampleStep()
+   *  - angleStep: double, vpMe::setAngleStep()
+   *  - sampleStep: double, vpMe::setSampleStep()
+   *  - range: int, vpMe::setRange()
+   *  - ntotal_sample: int, vpMe::setNbTotalSample()
+   *  - pointsToTrack: int, vpMe::setPointsToTrack()
+   *  - maskSize: int, vpMe::setMaskSize()
+   *  - nMask: int, vpMe::setMaskNumber()
+   *  - maskSign: int, vpMe::setMaskSign()
+   *  - strip: int, vpMe::setStrip()
+   *
+   * Example:
+   * \code{.json}
+   * {
+   *  "angleStep": 1,
+   *   "maskSign": 0,
+   *   "maskSize": 5,
+   *   "minSampleStep": 4.0,
+   *   "mu": [
+   *       0.5,
+   *       0.5
+   *   ],
+   *   "nMask": 180,
+   *   "ntotal_sample": 0,
+   *   "pointsToTrack": 500,
+   *   "range": 7,
+   *   "sampleStep": 4.0,
+   *   "strip": 2,
+   *   "thresholdType": 1
+   *   "threshold": 20.0
+   * }
+   * \endcode
+   *
+   * @param j JSON representation to convert
+   * @param me converted object
+   */
   friend void from_json(const nlohmann::json &j, vpMe &me);
 #endif
 };
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 
-/**
- * @brief Convert a vpMe object to a JSON representation
- *
- * @param j resulting json object
- * @param me the object to convert
- */
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {
   j = {
@@ -442,49 +517,6 @@ inline void to_json(nlohmann::json &j, const vpMe &me)
   };
 }
 
-/**
- * @brief Retrieve a vpMe object from a JSON representation
- *
- * JSON content (key: type):
- *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
- *  - threshold: double, vpMe::setThreshold()
- *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2()
- *  - minSampleStep: double, vpMe::setMinSampleStep()
- *  - angleStep: double, vpMe::setAngleStep()
- *  - sampleStep: double, vpMe::setSampleStep()
- *  - range: int, vpMe::setRange()
- *  - ntotal_sample: int, vpMe::setNbTotalSample()
- *  - pointsToTrack: int, vpMe::setPointsToTrack()
- *  - maskSize: int, vpMe::setMaskSize()
- *  - nMask: int, vpMe::setMaskNumber()
- *  - maskSign: int, vpMe::setMaskSign()
- *  - strip: int, vpMe::setStrip()
- *
- * Example:
- * \code{.json}
- * {
- *  "angleStep": 1,
-    "maskSign": 0,
-    "maskSize": 5,
-    "minSampleStep": 4.0,
-    "mu": [
-        0.5,
-        0.5
-    ],
-    "nMask": 180,
-    "ntotal_sample": 0,
-    "pointsToTrack": 500,
-    "range": 7,
-    "sampleStep": 4.0,
-    "strip": 2,
-    "thresholdType": 1
-    "threshold": 20.0
-  }
- * \endcode
- *
- * @param j JSON representation to convert
- * @param me converted object
- */
 inline void from_json(const nlohmann::json &j, vpMe &me)
 {
   if (j.contains("thresholdType")) {

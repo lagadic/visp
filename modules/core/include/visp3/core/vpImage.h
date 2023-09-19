@@ -486,7 +486,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 namespace
 {
-struct ImageLut_Param_t
+struct vpImageLut_Param_t
 {
   unsigned int m_start_index;
   unsigned int m_end_index;
@@ -494,16 +494,16 @@ struct ImageLut_Param_t
   unsigned char m_lut[256];
   unsigned char *m_bitmap;
 
-  ImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
+  vpImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
 
-  ImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
+  vpImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   { }
 };
 
 vpThread::Return performLutThread(vpThread::Args args)
 {
-  ImageLut_Param_t *imageLut_param = static_cast<ImageLut_Param_t *>(args);
+  vpImageLut_Param_t *imageLut_param = static_cast<vpImageLut_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -554,7 +554,7 @@ vpThread::Return performLutThread(vpThread::Args args)
   return 0;
 }
 
-struct ImageLutRGBa_Param_t
+struct vpImageLutRGBa_Param_t
 {
   unsigned int m_start_index;
   unsigned int m_end_index;
@@ -562,16 +562,16 @@ struct ImageLutRGBa_Param_t
   vpRGBa m_lut[256];
   unsigned char *m_bitmap;
 
-  ImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
+  vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
 
-  ImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
+  vpImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   { }
 };
 
 vpThread::Return performLutRGBaThread(vpThread::Args args)
 {
-  ImageLutRGBa_Param_t *imageLut_param = static_cast<ImageLutRGBa_Param_t *>(args);
+  vpImageLutRGBa_Param_t *imageLut_param = static_cast<vpImageLutRGBa_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -2060,7 +2060,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     // Multi-threads
 
     std::vector<vpThread *> threadpool;
-    std::vector<ImageLut_Param_t *> imageLutParams;
+    std::vector<vpImageLut_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
@@ -2074,7 +2074,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
         end_index = start_index + last_step;
       }
 
-      ImageLut_Param_t *imageLut_param = new ImageLut_Param_t(start_index, end_index, bitmap);
+      vpImageLut_Param_t *imageLut_param = new vpImageLut_Param_t(start_index, end_index, bitmap);
       memcpy(imageLut_param->m_lut, lut, 256 * sizeof(unsigned char));
 
       imageLutParams.push_back(imageLut_param);
@@ -2147,7 +2147,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     // Multi-threads
     std::vector<vpThread *> threadpool;
-    std::vector<ImageLutRGBa_Param_t *> imageLutParams;
+    std::vector<vpImageLutRGBa_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
     unsigned int step = image_size / nbThreads;
@@ -2161,7 +2161,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
         end_index = start_index + last_step;
       }
 
-      ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *)bitmap);
+      vpImageLutRGBa_Param_t *imageLut_param = new vpImageLutRGBa_Param_t(start_index, end_index, (unsigned char *)bitmap);
       memcpy(static_cast<void *>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);

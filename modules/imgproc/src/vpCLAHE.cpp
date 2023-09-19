@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * CLAHE (Contrast Limited Adaptive Histogram Equalization) algorithm.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /**
  * License: GPL
  *
@@ -198,35 +193,6 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the contrast of a grayscale image locally using the Contrast Limited
-  Adaptative Histogram Equalization method. The limit parameter allows to
-  limit the slope of the transformation function to prevent the
-  over amplification of noise. This method is a transcription of the CLAHE
-  ImageJ plugin code by Stephan Saalfeld.
-
-  \param I1 : The first grayscale image.
-  \param I2 : The second grayscale image after application of the CLAHE
-  method.
-  \param blockRadius : The size (2*blockRadius+1) of the local region
-  around a pixel for which the histogram is equalized. This size should be
-  larger than the size of features to be preserved.
-  \param bins : The number
-  of histogram bins used for histogram equalization (between 1 and 256). The
-  number of histogram bins should be smaller than the number of pixels in a
-  block.
-  \param slope : Limits the contrast stretch in the intensity transfer
-  function. Very large values will let the histogram equalization do whatever
-  it wants to do, that is result in maximal local contrast. The value 1 will
-  result in the original image.
-  \param fast : Use the fast but less accurate
-  version of the filter. The fast version does not evaluate the intensity
-  transfer function for each pixel independently but for a grid of adjacent
-  boxes of the given block size only and interpolates for locations in
-  between.
-*/
 void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   if (blockRadius < 0) {
@@ -471,31 +437,6 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
   }
 }
 
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the contrast of a color image locally using the Contrast Limited
-  Adaptative Histogram Equalization method. The limit parameter allows to
-  limit the slope of the transformation function to prevent the
-  overamplification of noise. This method is a transcription of the CLAHE
-  ImageJ plugin code by Stephan Saalfeld.
-
-  \param I1 : The first color image.
-  \param I2 : The second color image after application of the CLAHE method.
-  \param blockRadius : The size (2*blockRadius+1) of the local region around a
-  pixel for which the histogram is equalized. This size should be larger than
-  the size of features to be preserved. \param  bins : The number of histogram
-  bins used for histogram equalization (between 1 and 256). The number of
-  histogram bins should be smaller than the number of pixels in a block.
-  \param slope : Limits the contrast stretch in the intensity transfer
-  function. Very large values will let the histogram equalization do whatever
-  it wants to do, that is result in maximal local contrast. The value 1 will
-  result in the original image. \param fast : Use the fast but less accurate
-  version of the filter. The fast version does not evaluate the intensity
-  transfer function for each pixel independently but for a grid of adjacent
-  boxes of the given block size only and interpolates for locations in
-  between.
-*/
 void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   // Split

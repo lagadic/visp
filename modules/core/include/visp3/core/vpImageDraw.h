@@ -58,6 +58,7 @@
 */
 class VISP_EXPORT vpImageDraw
 {
+
 public:
   static void drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                         unsigned char color, unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);

@@ -131,7 +131,7 @@ unsigned int vpBSpline::findSpan(double u) { return findSpan(u, p, knots); }
   \f$, ... , \f$ N_{l_i-k,k}(l_u) \f$, ..., \f$ N_{l_i,k}(l_u) \f$, ... , \f$
   N_{l_i-p,p}(l_u) \f$, ... , \f$ N_{l_i,p}(l_u) \f$
 
-  \param l_u : A real number which is between the extrimities of the knot
+  \param l_u : A real number which is between the extremities of the knot
   vector \param l_i : the number of the knot interval in which \f$ l_u \f$
   lies \param l_p : Degree of the B-Spline basis functions. \param l_knots :
   The knot vector
@@ -185,7 +185,7 @@ vpBasisFunction *vpBSpline::computeBasisFuns(double l_u, unsigned int l_i, unsig
 
   where i the number of the knot interval in which \f$ u \f$ lies.
 
-  \param u : A real number which is between the extrimities of the knot vector
+  \param u : A real number which is between the extremities of the knot vector
 
   \return An array containing the nonvanishing basis functions at \f$ u \f$.
   The size of the array is \f$ p +1 \f$.
@@ -213,7 +213,7 @@ vpBasisFunction *vpBSpline::computeBasisFuns(double u)
   where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies and \f$
   p \f$ is the degree of the B-Spline basis function.
 
-  \param l_u : A real number which is between the extrimities of the knot
+  \param l_u : A real number which is between the extremities of the knot
   vector \param l_i : the number of the knot interval in which \f$ l_u \f$
   lies \param l_p : Degree of the B-Spline basis functions. \param l_der : The
   last derivative to be computed. \param l_knots : The knot vector
@@ -346,7 +346,7 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
   where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies and \f$
   p \f$ is the degree of the B-Spline basis function.
 
-  \param u : A real number which is between the extrimities of the knot vector
+  \param u : A real number which is between the extremities of the knot vector
   \param der : The last derivative to be computed.
 
   \return the basis functions and their derivatives as an array of size der+1
@@ -365,7 +365,7 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double u, unsigned int der)
   Compute the coordinates of a point \f$ C(u) = \sum_{i=0}^n (N_{i,p}(u)P_i)
   \f$ corresponding to the knot \f$ u \f$.
 
-  \param l_u : A real number which is between the extrimities of the knot
+  \param l_u : A real number which is between the extremities of the knot
   vector \param l_i : the number of the knot interval in which \f$ l_u \f$
   lies \param l_p : Degree of the B-Spline basis functions. \param l_knots :
   The knot vector \param l_controlPoints : the list of control points.
@@ -397,7 +397,7 @@ vpImagePoint vpBSpline::computeCurvePoint(double l_u, unsigned int l_i, unsigned
   Compute the coordinates of a point \f$ C(u) = \sum_{i=0}^n (N_{i,p}(u)P_i)
   \f$ corresponding to the knot \f$ u \f$.
 
-  \param u : A real number which is between the extrimities of the knot vector
+  \param u : A real number which is between the extremities of the knot vector
 
   return the coordinates of a point corresponding to the knot \f$ u \f$.
 */
@@ -432,7 +432,7 @@ vpImagePoint vpBSpline::computeCurvePoint(double u)
   where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies and \f$
   p \f$ is the degree of the B-Spline basis function.
 
-  \param l_u : A real number which is between the extrimities of the knot
+  \param l_u : A real number which is between the extremities of the knot
   vector \param l_i : the number of the knot interval in which \f$ l_u \f$
   lies \param l_p : Degree of the B-Spline basis functions. \param l_der : The
   last derivative to be computed. \param l_knots : The knot vector \param
@@ -482,7 +482,7 @@ vpImagePoint *vpBSpline::computeCurveDers(double l_u, unsigned int l_i, unsigned
   where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies and \f$
   p \f$ is the degree of the B-Spline basis function.
 
-  \param u : A real number which is between the extrimities of the knot vector
+  \param u : A real number which is between the extremities of the knot vector
   \param der : The last derivative to be computed.
 
   \return an array of size der+1 containing the coordinates \f$ C^{(k)}(u) \f$
