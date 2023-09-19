@@ -1,4 +1,5 @@
 import_failed = False
+from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional
@@ -45,6 +46,21 @@ def to_cstring(s: str) -> str:
   return f'''R"doc(
 {s}
 )doc"'''
+@dataclass
+class MethodDocSignature:
+  name: str
+  ret: str
+  params: List[str]
+  is_const: bool
+
+@dataclass
+class MethodDocumentation(object):
+  documentation: str
+
+@dataclass
+class ClassDocumentation(object):
+  class_doc: str
+  method_docs: Dict[MethodDocSignature, MethodDocumentation]
 
 def process_mixed_container(container: MixedContainer, level: int) -> str:
   one_indent = ' ' * 2
@@ -72,8 +88,7 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     return ' ' + container.value.valueOf_ + ' '
 
   if container.name == 'verbatim':
-    print(container.value.valueOf_)
-    import sys; sys.exit()
+    raise NotImplementedError()
 
   if container.name == 'simplesect':
     process_fn = lambda item: process_paragraph(item, level + 1)
@@ -128,21 +143,22 @@ class DocumentationHolder(object):
       else:
         self.xml_doc = doxmlparser.compound.parse(str(path), True, False)
 
-  def get_documentation_for_class(self, name: str) -> Optional[str]:
+  def get_documentation_for_class(self, name: str, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[str]:
     for compounddef in self.xml_doc.get_compounddef():
       compounddef: compounddefType  = compounddef
       if compounddef.kind == DoxCompoundKind.CLASS and compounddef.get_compoundname() == name:
-        return self.generate_class_description_string(compounddef)
+        cls_str = self.generate_class_description_string(compounddef)
+        print(compounddef.get_listofallmembers())
+        method_docs = self.get_method_docs(compounddef)
+        return ClassDocumentation(cls_str, method_docs)
+
     return None
 
-  def get_documentation_for_method(self):
-    pass
 
   def generate_class_description_string(self, compounddef: compounddefType) -> str:
     brief = process_description(compounddef.get_briefdescription())
     detailed = process_description(compounddef.get_detaileddescription())
-    print(brief, detailed)
-    return to_cstring(brief + '\n' + detailed)
+    return to_cstring(brief + '\n\n' + detailed)
 
 
 if __name__ == '__main__':

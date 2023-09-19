@@ -59,8 +59,6 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
   add_level(result, headers, set())
   return result
 
-
-
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
     self.mapping = self.build_mapping(data.namespace)
@@ -123,6 +121,7 @@ class HeaderFile():
     for cls in self.header_repr.namespace.classes:
       name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
       self.contains.append(name_cpp_no_template)
+
       # Add parent classes as dependencies
       for base_class in cls.class_decl.bases:
         if base_class.access == 'public':
@@ -146,7 +145,7 @@ class HeaderFile():
       '-I', '/usr/local/include',
       #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
-      '--passthru-includes', "^((?!vpConfig.h|!json.hpp).)*$",
+      '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
       '--passthru-comments',
       '--line-directive', '',
@@ -181,13 +180,11 @@ class HeaderFile():
     return result
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
-    result = ''
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
-
-      spec_result = ''
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
-
+      if self.documentation_holder is not None:
+        class_doc = self.documentation_holder.get_documentation_for_class(name_cpp_no_template, {}, owner_specs)
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
@@ -201,11 +198,8 @@ class HeaderFile():
       base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases))
       class_template_str = ', '.join([name_cpp] + list(base_class_strs))
-      doc_param = []
-      if self.documentation_holder is not None:
-        doc_str = self.documentation_holder.get_documentation_for_class(name_cpp_no_template)
-        if doc_str is not None:
-          doc_param = [doc_str]
+      doc_param = [] if class_doc is None else [class_doc.class_doc]
+
       cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
 
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
@@ -342,22 +336,14 @@ class HeaderFile():
         raise RuntimeError
 
       #spec_result += cls_result
-      spec_result += '\n'.join(method_strs)
-      return spec_result
+      return '\n'.join(method_strs)
+
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
     print(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
       return ''
-
-    # Add base classes as requirements
-    self.contains.append(name_cpp_no_template)
-    for base_class in cls.class_decl.bases:
-      if base_class.access == 'public':
-        base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
-        if base_class_str_no_template.startswith('vp'):
-            self.depends.append(base_class_str_no_template)
 
     cls_config = self.submodule.get_class_config(name_cpp_no_template)
     if cls.class_decl.template is None:
