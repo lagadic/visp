@@ -28,15 +28,12 @@ def generate_module(generate_path: Path) -> None:
   from tqdm import tqdm
   with Pool() as pool:
     new_all_headers = []
-    for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stdout)):
+    for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr)):
       new_all_headers.append(result)
 
   new_all_headers = sort_headers(new_all_headers)
   for submodule in submodules:
     submodule.set_headers_from_common_list(new_all_headers)
-  # for header in all_headers:
-  #   header.preprocess()
-
 
   for submodule in submodules:
     submodule.generate()
@@ -67,5 +64,5 @@ PYBIND11_MODULE(visp, m)
     main_file.write(format_str)
 
 if __name__ == '__main__':
-  import  sys
+  import sys
   generate_module(Path('src'))

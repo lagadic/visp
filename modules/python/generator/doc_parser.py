@@ -2,7 +2,7 @@ import_failed = False
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 import re
 try:
   import doxmlparser
@@ -20,7 +20,7 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
@@ -52,6 +52,37 @@ class MethodDocSignature:
   ret: str
   params: List[str]
   is_const: bool
+  is_static: bool
+
+  def post_process_type(self, t: str) -> str:
+    res = ''
+    if '::' not in t:
+      res = t
+    else:
+      # TODO: this kind of workaround works when you have no template
+      is_const = 'const' in t
+      is_rvalue = '&&' in t
+      is_ref = not is_rvalue and '&' in t
+      is_ptr = '*' in t
+      last_name = t.split('::')[-1]
+      res = 'const' if is_const else ''
+      res += last_name
+      res += '&&' if is_rvalue else ''
+      res += '&' if is_ref else ''
+      res += '*' if is_ptr else ''
+    return res.replace(' ', '')
+
+
+  def __init__(self, name, ret, params, is_const, is_static):
+    self.name = name.replace(' ', '')
+    self.ret = self.post_process_type(ret)
+    self.params = [self.post_process_type(param) for param in params]
+    self.is_const = is_const
+    self.is_static = is_static
+
+  def __hash__(self) -> int:
+    s = f'{self.is_static} {self.ret} {self.name}({",".join(self.params)}) {self.is_const}'
+    return s.__hash__()
 
 @dataclass
 class MethodDocumentation(object):
@@ -59,8 +90,12 @@ class MethodDocumentation(object):
 
 @dataclass
 class ClassDocumentation(object):
-  class_doc: str
-  method_docs: Dict[MethodDocSignature, MethodDocumentation]
+  documentation: str
+@dataclass
+class DocElements(object):
+  compounddefs: Dict[str, compounddefType]
+  methods: Dict[Tuple[str, MethodDocSignature], List[doxmlparser.memberdefType]]
+
 
 def process_mixed_container(container: MixedContainer, level: int) -> str:
   one_indent = ' ' * 2
@@ -134,30 +169,72 @@ def process_description(brief: Optional[descriptionType]) -> str:
   return '\n\n'.join([process_paragraph(par, 0) for par in para])
 
 class DocumentationHolder(object):
-  def __init__(self, path: Optional[Path] = None):
+  def __init__(self, path: Optional[Path], env_mapping: Dict[str, str]):
     self.xml_path = path
-
+    self.elements = None
     if not import_failed and DocumentationData.documentation_xml_location is not None:
       if not self.xml_path.exists():
         print(f'Could not find documentation file for name {name} when looking in {str(path)}')
       else:
         self.xml_doc = doxmlparser.compound.parse(str(path), True, False)
+        compounddefs_res = {}
+        methods_res = {}
+        for compounddef in self.xml_doc.get_compounddef():
+          compounddef: compounddefType = compounddef
+          if compounddef.kind == DoxCompoundKind.CLASS:
+            compounddefs_res[compounddef.get_compoundname()] = compounddef
+            section_defs: List[doxmlparser.sectiondefType] = compounddef.sectiondef
+            for section_def in section_defs:
+              member_defs: List[doxmlparser.memberdefType] = section_def.memberdef
+              method_defs = [d for d in member_defs if d.kind == doxmlparser.compound.DoxMemberKind.FUNCTION and d.prot == 'public']
+              for method_def in method_defs:
+                is_const = False if method_def.const == 'no' else True
+                is_static = False if method_def.static == 'no' else True
+                ret_type = ''.join(process_mixed_container(c, 0) for c in method_def.type_.content_)
+                if ret_type in env_mapping:
+                  ret_type = env_mapping[ret_type]
+                param_types = []
+                for param in method_def.get_param():
+                  t = ''.join(process_mixed_container(c, 0) for c in param.type_.content_)
+                  if t in env_mapping:
+                    t = env_mapping[t]
+                  param_types.append(t)
+                signature = MethodDocSignature(method_def.name, ret_type, param_types, is_const, is_static)
+                methods_res[(compounddef.get_compoundname(), signature)] = method_def
+        self.elements = DocElements(compounddefs_res, methods_res)
 
-  def get_documentation_for_class(self, name: str, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[str]:
-    for compounddef in self.xml_doc.get_compounddef():
-      compounddef: compounddefType  = compounddef
-      if compounddef.kind == DoxCompoundKind.CLASS and compounddef.get_compoundname() == name:
-        cls_str = self.generate_class_description_string(compounddef)
-        print(compounddef.get_listofallmembers())
-        method_docs = self.get_method_docs(compounddef)
-        return ClassDocumentation(cls_str, method_docs)
 
-    return None
+
+
+
+  def get_documentation_for_class(self, name: str, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[ClassDocumentation]:
+    compounddef = self.elements.compounddefs.get(name)
+
+    if compounddef is None:
+      return None
+    cls_str = self.generate_class_description_string(compounddef)
+    return ClassDocumentation(cls_str)
+
+
+  def get_documentation_for_method(self, cls_name: str, signature: MethodDocSignature, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[MethodDocumentation]:
+    method_def = self.elements.methods.get((cls_name, signature))
+    if method_def is None:
+      print(f'method {signature} not found')
+      print([k[1] for k in self.elements.methods.keys() if k[1].name == signature.name])
+      return None
+    descr = self.generate_method_description_string(method_def)
+    return MethodDocumentation(descr)
+
 
 
   def generate_class_description_string(self, compounddef: compounddefType) -> str:
     brief = process_description(compounddef.get_briefdescription())
     detailed = process_description(compounddef.get_detaileddescription())
+    return to_cstring(brief + '\n\n' + detailed)
+
+  def generate_method_description_string(self, method_def: doxmlparser.memberdefType) -> str:
+    brief = process_description(method_def.get_briefdescription())
+    detailed = process_description(method_def.get_detaileddescription())
     return to_cstring(brief + '\n\n' + detailed)
 
 

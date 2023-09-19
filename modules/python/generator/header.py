@@ -141,9 +141,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -161,8 +161,7 @@ class HeaderFile():
 
   def generate_binding_code(self) -> None:
     assert self.header_repr is not None, 'The header was not preprocessed before calling the generation step!'
-    if self.documentation_holder_path is not None:
-      self.documentation_holder = DocumentationHolder(self.documentation_holder_path)
+
     self.binding_code = self.parse_data()
 
 
@@ -170,7 +169,8 @@ class HeaderFile():
     from enum_binding import enum_bindings
     result = ''
     header_env = HeaderEnvironment(self.header_repr)
-
+    if self.documentation_holder_path is not None:
+      self.documentation_holder = DocumentationHolder(self.documentation_holder_path, header_env.mapping)
     for cls in self.header_repr.namespace.classes:
       result += self.generate_class(cls, header_env) + '\n'
     enum_decls_and_bindings = enum_bindings(self.header_repr.namespace, header_env.mapping, self.submodule)
@@ -198,7 +198,7 @@ class HeaderFile():
       base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases))
       class_template_str = ', '.join([name_cpp] + list(base_class_strs))
-      doc_param = [] if class_doc is None else [class_doc.class_doc]
+      doc_param = [] if class_doc is None else [class_doc.documentation]
 
       cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
 
@@ -275,7 +275,7 @@ class HeaderFile():
             break
 
 
-      def define_classical_method(method, method_config, specs):
+      def define_classical_method(method: types.Method, method_config, specs):
         params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
         py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
 
@@ -283,6 +283,14 @@ class HeaderFile():
         py_method_name = method_config.get('custom_name') or method_name
 
         return_type = get_type(method.return_type, specs, header_env.mapping)
+        if self.documentation_holder is not None:
+          method_doc_signature = MethodDocSignature(method_name,
+                                                    get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
+                                                    [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                    method.const, method.static)
+          method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, specs)
+          py_arg_strs = py_arg_strs if method_doc is None else [method_doc.documentation] + py_arg_strs
+
         method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
         method_str = define_method(py_method_name, method_ref_str, py_arg_strs, method.static)
         method_str = f'{python_ident}.{method_str};'

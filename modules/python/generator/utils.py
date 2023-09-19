@@ -45,6 +45,9 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
     if split[0] in header_env_mapping:
       split[0] = header_env_mapping[split[0]]
     repr_str = '<'.join(split)
+    if repr_str == 'vpRobust::vpRobustEstimatorType':
+      print('aaaaaaaaaaaa')
+      print(param)
     if param.const:
       repr_str = 'const ' + repr_str
     return repr_str
