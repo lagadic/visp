@@ -51,7 +51,7 @@ void vpMomentAreaNormalized::compute()
 
   /* getMoments() returns a reference to a vpMomentDatabase. (a protected
    * member inherited from vpMoment)
-   *.get() 		is a member function of vpMomentDatabase that returns
+   *.get() is a member function of vpMomentDatabase that returns
    * a specific moment which is linked to it
    * */
   const vpMomentCentered &momentCentered =
