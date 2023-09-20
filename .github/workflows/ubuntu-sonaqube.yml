@@ -1,0 +1,71 @@
+name: Ubuntu-dep-apt
+
+# https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * SUN'
+
+jobs:
+  build-ubuntu-dep-apt:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04]
+        compiler: [ {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+
+    steps:
+    # https://github.com/marketplace/actions/cancel-workflow-action
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Print system information
+      run: lscpu
+
+    - name: Print OS information
+      run: lsb_release -a
+
+    - name: Print compiler information
+      run: dpkg --list | grep compiler
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
+
+    - name: Install sonar-scanner
+      run: |
+        mkdir sonarqube
+        cd sonarqube
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.7.0.2747-linux.zip
+        unzip sonar-scanner-cli-4.7.0.2747-linux.zip
+        echo "SONAR_SCANNER_PATH=$PWD/sonar-scanner-4.7.0.2747-linux/bin" >> $GITHUB_ENV
+        echo ${SONAR_SCANNER_PATH}
+
+    - name: Configure CMake
+      run: |
+        mkdir build
+        cd build
+        CC=${{ matrix.compiler.CC }}
+        CXX=${{ matrix.compiler.CXX }}
+        echo "CC: $CC"
+        echo "CXX: $CXX"
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release
+        cat ViSP-third-party.txt
+
+    - name: Compile
+      working-directory: build
+      run: |
+        make -j$(nproc) developer_scripts
+
+    - name: Run sonar-scanner
+      working-directory: build
+      run: |
+        export PATH=${SONAR_SCANNER_PATH}:$PATH
+        echo ${PATH}
+        sonar-scanner
