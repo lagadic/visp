@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Generation of random number with uniform and normal probability density.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpNoise_hh
 #define vpNoise_hh

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,21 +31,17 @@
  * Debug and trace macro.
  *
  *   - TRACING:    vpTRACE and vpERROR_TRACE work like printf with carreer
- *return at the end of the string. vpCERROR et vpCTRACE work like the C++
- *output streams std::cout and std::cerr.
+ *                 return at the end of the string. vpCERROR et vpCTRACE work like the C++
+ *                 output streams std::cout and std::cerr.
  *   - DEBUGING:   vpDEBUG_TRACE(niv) and vpDERROR_TRACE(niv), work like
- *printf, but print only if the tracing level niv is greater than the debug
- *level VP_DEBUG_MODE. vpCDEBUG(niv) work like the C++ output
- *stream std::cout. vpDEBUG_ENABLE(niv) is equal to 1 if the
- *debug level niv is greater than the debug mode
+ *                 printf, but print only if the tracing level niv is greater than the debug
+ *                 level VP_DEBUG_MODE. vpCDEBUG(niv) work like the C++ output
+ *                 stream std::cout. vpDEBUG_ENABLE(niv) is equal to 1 if the
+ *                 debug level niv is greater than the debug mode
  *                 VP_DEBUG_MODE, 0 else.
  *   - PROG DEFENSIVE: DEFENSIF(a) is equal to a if defensive mode is active,
- *0 else.
- *
- * Authors:
- * Nicolas Mansard, Bruno Renier
- *
-*****************************************************************************/
+ *                 0 else.
+ */
 
 #ifndef _vpDebug_h_
 #define _vpDebug_h_

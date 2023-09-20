@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Colormap class to recolor an image with different grayscale values into
  * some corresponding color values, for better visualization for example.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpColormap_h_
 #define _vpColormap_h_

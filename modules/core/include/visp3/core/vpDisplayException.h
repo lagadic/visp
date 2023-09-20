@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Exception that can be emitted by the vpDisplay class and its derivatives.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpDisplayException_h_
 #define _vpDisplayException_h_

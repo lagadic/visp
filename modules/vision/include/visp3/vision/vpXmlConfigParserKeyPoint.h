@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * XML parser to load configuration for vpKeyPoint class.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpXmlConfigParserKeyPoint.cpp

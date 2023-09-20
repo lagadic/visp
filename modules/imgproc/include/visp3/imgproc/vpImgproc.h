@@ -48,8 +48,20 @@
 
 namespace vp
 {
-enum RETINEX_LEVEL { RETINEX_UNIFORM = 0, RETINEX_LOW = 1, RETINEX_HIGH = 2 };
+/*!
+ * Retinex level that allows to specifies distribution
+ * of the Gaussian blurring kernel sizes for scale division values > 2.
+ */
+enum RETINEX_LEVEL
+{
+  RETINEX_UNIFORM = 0, //!< Tends to treat all image intensities similarly.
+  RETINEX_LOW = 1, //!< Enhances dark regions of the image.
+  RETINEX_HIGH = 2 //!< Enhances the bright regions of the image
+};
 
+/*!
+ * Automatic thresholding method.
+ */
 typedef enum
 {
   AUTO_THRESHOLD_HUANG,      /*!< Huang L.-K. and Wang M.-J.J. (1995) "Image

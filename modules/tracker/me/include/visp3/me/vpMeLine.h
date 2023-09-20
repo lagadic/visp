@@ -154,10 +154,10 @@ protected:
 
   double rho; //!< rho parameter of the line
   double theta; //!< theta parameter of the line
-  double delta; //<! Angle in rad between the extremities
-  double delta_1; //<! Angle in rad between the extremities
-  double angle; //<! Angle in deg between the extremities
-  double angle_1; //<! Angle in deg between the extremities
+  double delta; //!< Angle in rad between the extremities
+  double delta_1; //!< Angle in rad between the extremities
+  double angle; //!< Angle in deg between the extremities
+  double angle_1; //!< Angle in deg between the extremities
   int sign; //!< Sign
 
   //! Flag to specify wether the intensity of the image at the middle point is

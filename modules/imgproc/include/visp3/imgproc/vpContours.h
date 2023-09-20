@@ -74,28 +74,42 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPolygon.h>
 
+
 namespace
 {
+/*!
+ * Possible directions to find a contour.
+ */
 typedef enum
 {
-  NORTH,
-  NORTH_EAST,
-  EAST,
-  SOUTH_EAST,
-  SOUTH,
-  SOUTH_WEST,
-  WEST,
-  NORTH_WEST,
-  LAST_DIRECTION
+  NORTH, //!< North direction
+  NORTH_EAST, //!< North-East direction
+  EAST, //!< East direction
+  SOUTH_EAST, //!< South-East direction
+  SOUTH, //!< South direction
+  SOUTH_WEST, //!< South-West direction
+  WEST, //!< West direction
+  NORTH_WEST, //!< North-West direction
+  LAST_DIRECTION //!< Number of possible directions
 } vpDirectionType;
 
+/*!
+ * Direction object.
+ */
 struct vpDirection
 {
+  //!< Direction
   vpDirectionType m_direction;
 
+  //!< Pixel increment along x to reach a given direction
   int m_dirx[8];
+
+  //!< Pixel increment along y to reach a given direction
   int m_diry[8];
 
+  /*!
+   * Default constructor.
+   */
   vpDirection()
   {
     m_dirx[0] = 0;
@@ -117,6 +131,10 @@ struct vpDirection
     m_diry[7] = -1;
   }
 
+  /*!
+   * Turn clockwise to find the next pixel along the contour.
+   * @return Direction to take.
+   */
   vpDirection clockwise()
   {
     vpDirection direction;
@@ -126,6 +144,10 @@ struct vpDirection
     return direction;
   }
 
+  /*!
+   * Turn counter clockwise to find the next pixel along the contour.
+   * @return Direction to take.
+   */
   vpDirection counterClockwise()
   {
     vpDirection direction;
@@ -136,6 +158,12 @@ struct vpDirection
     return direction;
   }
 
+  /*!
+   * Get the next point coordinate along the contour.
+   * @param I Image to process.
+   * @param point Current point coordinate.
+   * @return Next point coordinate along the contour.
+   */
   vpImagePoint active(const vpImage<int> &I, const vpImagePoint &point)
   {
     int yy = (int)(point.get_i() + m_diry[(int)m_direction]);
@@ -153,12 +181,18 @@ struct vpDirection
 
 namespace vp
 {
+/*!
+ * Type of contour.
+ */
 typedef enum
 {
   CONTOUR_OUTER, /*!< Outer contour. */
   CONTOUR_HOLE   /*!< Hole contour. */
 } vpContourType;
 
+/*!
+ * Type of contour retrieval.
+ */
 typedef enum
 {
   CONTOUR_RETR_TREE,    /*!< Retrieve all the contours with the hierarchy stored
@@ -167,17 +201,33 @@ typedef enum
   CONTOUR_RETR_EXTERNAL /*!< Retrieve only external contours. */
 } vpContourRetrievalType;
 
+/*!
+ * Structure associated to a contour.
+ */
 struct vpContour
 {
+  //! Children contour
   std::vector<vpContour *> m_children;
+  //! Contour type
   vpContourType m_contourType;
+  //! Parent contour
   vpContour *m_parent;
+  //! Vector of points belonging to the contour
   std::vector<vpImagePoint> m_points;
 
+  /*!
+   * Default constructor.
+   */
   vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL), m_points() { }
 
+  /*!
+   * Constructor of a given contour type.
+   */
   vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(NULL), m_points() { }
 
+  /*!
+   * Copy constructor.
+   */
   vpContour(const vpContour &contour)
     : m_children(), m_contourType(contour.m_contourType), m_parent(NULL), m_points(contour.m_points)
   {
@@ -191,6 +241,9 @@ struct vpContour
     }
   }
 
+  /*!
+   * Destructor.
+   */
   virtual ~vpContour()
   {
     for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
@@ -202,6 +255,9 @@ struct vpContour
     }
   }
 
+  /*!
+   * Copy operator.
+   */
   vpContour &operator=(const vpContour &other)
   {
     m_contourType = other.m_contourType;
@@ -217,8 +273,8 @@ struct vpContour
       }
     }
     else {
-   // Make the current contour the root contour
-   // to avoid problem when deleting
+      // Make the current contour the root contour
+      // to avoid problem when deleting
       m_parent = NULL;
     }
 
@@ -232,6 +288,9 @@ struct vpContour
     return *this;
   }
 
+  /*!
+   * Set parent contour.
+   */
   void setParent(vpContour *parent)
   {
     m_parent = parent;

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Key point functionalities.
- *
-*****************************************************************************/
+ */
 #ifndef _vpKeyPoint_h_
 #define _vpKeyPoint_h_
 

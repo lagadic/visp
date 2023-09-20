@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test connected components.
- *
-*****************************************************************************/
+ */
 #include <map>
 #include <set>
 #include <visp3/core/vpImageTools.h>

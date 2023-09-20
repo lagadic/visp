@@ -51,7 +51,8 @@
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json; //! json namespace shortcut
+//! json namespace shortcut
+using json = nlohmann::json;
 #endif
 
 /**
@@ -344,13 +345,13 @@ public:
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
-    }
+  }
 #endif
-  };
+};
 
-  /**
-   * \brief Construct a new vpCircleHoughTransform object with default parameters.
-   */
+/**
+ * \brief Construct a new vpCircleHoughTransform object with default parameters.
+ */
   vpCircleHoughTransform();
 
   /**

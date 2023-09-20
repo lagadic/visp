@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Pose computation.
- *
- * Authors:
- * Francois Chaumette
- *
-*****************************************************************************/
+ */
 
 #include <float.h>
 #include <limits> // numeric_limits

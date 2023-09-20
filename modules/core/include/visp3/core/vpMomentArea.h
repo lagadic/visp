@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Just the area m00 = mu00
- *
- * Authors:
- * Manikandan Bakthavatchalam
- *
-*****************************************************************************/
+ */
 #ifndef _vpMomentArea_h_
 #define _vpMomentArea_h_
 

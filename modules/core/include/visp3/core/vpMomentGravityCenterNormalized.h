@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,8 @@
  *
  * Description:
  * 2D normalized gravity center moment descriptor (usually described by the
- *pair Xn,Yn)
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ * pair Xn,Yn)
+ */
 /*!
   \file vpMomentGravityCenterNormalized.h
   \brief 2D normalized gravity center moment descriptor (usually described by

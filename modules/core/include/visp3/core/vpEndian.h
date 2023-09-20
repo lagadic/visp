@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Determine machine endianness and define VISP_LITTLE_ENDIAN, VISP_BIG_ENDIAN and VISP_PDP_ENDIAN macros.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpEndian.h

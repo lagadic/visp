@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,17 +29,13 @@
  *
  * Description:
  * Homography transformation.
- *
- * Authors:
- * Muriel Pressigout
- *
-*****************************************************************************/
+ */
 
 /*!
-\file vpHomography.h
+  \file vpHomography.h
 
-This file defines an homography transformation. This class aims to provide
-some tools for homography computation.
+  This file defines an homography transformation. This class aims to provide
+  some tools for homography computation.
 */
 
 #ifndef vpHomography_hh
@@ -57,7 +52,6 @@ some tools for homography computation.
 #include <visp3/core/vpPoint.h>
 
 /*!
-
   \class vpHomography
   \ingroup group_vision_homography
 
@@ -185,83 +179,274 @@ private:
   //! build the homography from aMb and Rb
   void build();
 
-  //! insert a rotation matrix
+  /*!
+   * Insert the rotational part of an homogeneous transformation.
+   * To recompute the homography call build().
+   */
   void insert(const vpHomogeneousMatrix &aRb);
-  //! insert a rotation matrix
+
+  /*!
+   * Insert the rotational matrix.
+   * To recompute the homography call build().
+   */
   void insert(const vpRotationMatrix &aRb);
-  //! insert a theta u vector (transformation into a rotation matrix)
+
+  /*!
+   * Insert a theta u vector transformed internally into a rotation matrix.
+   * To recompute the homography call build().
+   */
   void insert(const vpThetaUVector &tu);
-  //! insert a translation vector
+
+  /*!
+   * Insert a translation vector.
+   * To recompute the homography call build().
+   */
   void insert(const vpTranslationVector &atb);
-  //! insert a translation vector
+
+  /*!
+   * Insert the reference plane.
+   * To recompute the homography call build().
+   */
   void insert(const vpPlane &bP);
 
   static void initRansac(unsigned int n, double *xb, double *yb, double *xa, double *ya, vpColVector &x);
 
 public:
+  /*!
+   * Initialize an homography as identity.
+   */
   vpHomography();
+  /*!
+   * Initialize an homography from another homography.
+   */
   vpHomography(const vpHomography &H);
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane.
   vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane.
   vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane.
   vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
-  virtual ~vpHomography(){};
+  //! Destructor.
+  virtual ~vpHomography() { };
 
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
-  //! Construction from Translation and rotation and a plane
+  //! Construction from translation and rotation and a plane
   void buildFrom(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
-  //! Construction from Translation and rotation  and a plane
+  //! Construction from translation and rotation  and a plane
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
 
+  /*!
+   * Transform an homography from pixel space to calibrated domain.
+   *
+   * Given homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space,
+   * compute the homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain using:
+   * \f[ {\bf H} = {\bf K}^{-1} {\bf G} {\bf K} \f]
+   * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
+   * \f[{\bf K} =
+   * \left[ \begin{array}{ccc}
+   * p_x & 0   & u_0  \\
+   * 0   & p_y & v_0 \\
+   * 0   & 0   & 1
+   * \end{array}\right]
+   * \f]
+   * \return The corresponding homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain.
+   *
+   * \sa homography2collineation()
+   */
   vpHomography collineation2homography(const vpCameraParameters &cam) const;
 
+  /*!
+   * Converts an homography to a matrix.
+   * \return The 3x3 matrix corresponding to the homography.
+   */
   vpMatrix convert() const;
 
+  /*!
+   * Compute the camera displacement between two images from the homography \f$
+   * {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
+   *
+   * \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+   * \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+   * \param n : Normal vector to the plane as an output.
+   */
   void computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
+  /*!
+   * Compute the camera displacement between two images from the homography \f$
+   * {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
+   *
+   * Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
+   * represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
+   * vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
+   * (vpHomogeneousMatrix).
+   *
+   * \param nd : Input normal vector to the plane used to compar with the normal
+   * vector \e n extracted from the homography.
+   * \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
+   * \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
+   * \param n : Normal vector to the plane as an output.
+   */
   void computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
+  /*!
+   * Return homography determinant.
+   */
   double det() const;
-  void eye();
-
-  vpHomography homography2collineation(const vpCameraParameters &cam) const;
-
-  //! invert the homography
-  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
-  //! invert the homography
-  void inverse(vpHomography &Hi) const;
-
-  //! Load an homography from a file
-  void load(std::ifstream &f);
-
-  // Multiplication by an homography
-  vpHomography operator*(const vpHomography &H) const;
-  // Multiplication by a scalar
-  vpHomography operator*(const double &v) const;
-  vpColVector operator*(const vpColVector &b) const;
-  // Multiplication by a point
-  vpPoint operator*(const vpPoint &H) const;
-
-  // Division by a scalar
-  vpHomography operator/(const double &v) const;
-  vpHomography &operator/=(double v);
-  vpHomography &operator=(const vpHomography &H);
-  vpHomography &operator=(const vpMatrix &H);
-
-  vpImagePoint projection(const vpImagePoint &p);
 
   /*!
-    This function is not applicable to an homography that is always a
-    3-by-3 matrix.
-    \exception vpException::fatalError When this function is called.
-    */
+   * Set the homography as identity transformation by setting the diagonal to 1
+   * and all other values to 0.
+   */
+  void eye();
+
+  /*!
+   * Transform an homography from calibrated domain to pixel space.
+   *
+   * Given homography \f$\bf H\f$ in the Euclidean space or in the calibrated domain,
+   * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
+   * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
+   * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
+   * \f[{\bf K} =
+   * \left[ \begin{array}{ccc}
+   * p_x & 0   & u_0  \\
+   * 0   & p_y & v_0 \\
+   * 0   & 0   & 1
+   * \end{array}\right]
+   * \f]
+   * \return The corresponding collineation matrix \f$\bf G\f$ in the pixel space.
+   *
+   * \sa collineation2homography()
+   */
+  vpHomography homography2collineation(const vpCameraParameters &cam) const;
+
+  /*!
+   * Return inverted homography.
+   *
+   * \param[in] sv_threshold : Threshold used to test the singular values. If
+   * a singular value is lower than this threshold we consider that the
+   * homography is not full rank.
+   *
+   * \param[out] rank : Rank of the homography that should be 3.
+   *
+   * \return  \f$\bf H^{-1}\f$
+   */
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
+
+  /*!
+   * Invert the homography.
+   *
+   * \param bHa : \f$\bf H^{-1}\f$ with H = *this.
+   */
+  void inverse(vpHomography &bHa) const;
+
+  /*!
+   * Read an homography in a file, verify if it is really an homogeneous
+   * matrix.
+   *
+   * \param f : the file. This file has to be written using save().
+   *
+   * \sa save()
+   */
+  void load(std::ifstream &f);
+
+  /*!
+   * Multiplication by an homography.
+   *
+   * \param H : Homography to multiply with.
+   *
+   * \code
+   * vpHomography aHb, bHc;
+   * // Initialize aHb and bHc homographies
+   * vpHomography aHc = aHb * bHc;
+   * \endcode
+   */
+  vpHomography operator*(const vpHomography &H) const;
+
+  /*!
+   * Multiply an homography by a scalar.
+   *
+   * \param v : Value of the scalar.
+   *
+   * \code
+   * double v = 1.1;
+   * vpHomography aHb;
+   * // Initialize aHb
+   * vpHomography H = aHb * v;
+   * \endcode
+   */
+  vpHomography operator*(const double &v) const;
+
+  /*!
+   * Operation a = aHb * b.
+   *
+   * \param b : 3 dimension vector.
+   */
+  vpColVector operator*(const vpColVector &b) const;
+
+  /*!
+   * From the coordinates of the point in image plane b and the homography
+   * between image a and b computes the coordinates of the point in image plane
+   * a.
+   *
+   * \param b_P : 2D coordinates of the point in the image plane b.
+   *
+   * \return A point with 2D coordinates in the image plane a.
+   */
+  vpPoint operator*(const vpPoint &b_P) const;
+
+  /*!
+   * Divide an homography by a scalar.
+   *
+   * \param v : Value of the scalar.
+   *
+   * \code
+   * vpHomography aHb;
+   * // Initialize aHb
+   * vpHomography H = aHb / aHb[2][2];
+   * \endcode
+   */
+  vpHomography operator/(const double &v) const;
+
+  /*!
+   * Divide all the element of the homography matrix by v : Hij = Hij / v
+   */
+  vpHomography &operator/=(double v);
+
+  /*!
+   * Copy operator.
+   * Allow operation such as aHb = H
+   *
+   * \param H : Homography matrix to be copied.
+   */
+  vpHomography &operator=(const vpHomography &H);
+
+  /*!
+   * Copy operator.
+   * Allow operation such as aHb = H
+   *
+   * \param H : Matrix to be copied.
+   */
+  vpHomography &operator=(const vpMatrix &H);
+
+  /*!
+   * Project the current image point (in frame b) into the frame a using the
+   * homography aHb.
+   *
+   * \param ipb : Homography defining the relation between frame a and frame b.
+   * \return The projected image point in the frame a.
+   */
+  vpImagePoint projection(const vpImagePoint &ipb);
+
+  /*!
+   * This function is not applicable to an homography that is always a
+   * 3-by-3 matrix.
+   * \exception vpException::fatalError When this function is called.
+   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
@@ -270,23 +455,206 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize an homography matrix"));
   };
 
+  /*!
+   * Save an homography in a file.
+   * The load() function allows then to read and set the homography from this
+   * file.
+   *
+   * \sa load()
+   */
   void save(std::ofstream &f) const;
 
+  /*!
+   * From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+   * and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
+   * computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
+   * ^b{\bf p}\f$ using the DLT (Direct Linear Transform) algorithm.
+   *
+   * At least 4 couples of points are needed.
+   *
+   * To do so, we use the DLT algorithm on the data,
+   * ie we resolve the linear system  by SDV : \f$\bf{Ah} =0\f$ where
+   * \f$\bf{h}\f$ is the vector with the terms of \f$^a{\bf H}_b\f$ and
+   * \f$\mathbf{A}\f$ depends on the  points coordinates.
+   *
+   * For each point, in homogeneous coordinates we have:
+   * \f[
+   * ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
+   * \f]
+   * which is equivalent to:
+   * \f[
+   * ^a{\bf p} \times {^a{\bf H}_b \; ^b{\bf p}}  =0
+   * \f]
+   * If we note \f$\mathbf{h}_j^T\f$ the  \f$j^{\textrm{th}}\f$ line of
+   * \f$^a{\bf H}_b\f$, we can write: \f[ ^a{\bf H}_b \; ^b{\bf p}  = \left(
+   * \begin{array}{c}\mathbf{h}_1^T \;^b{\bf p} \\\mathbf{h}_2^T \; ^b{\bf p}
+   * \\\mathbf{h}_3^T \;^b{\bf p} \end{array}\right) \f]
+   *
+   * Setting \f$^a{\bf p}=(x_{a},y_{a},w_{a})\f$, the cross product  can be
+   * rewritten by: \f[ ^a{\bf p} \times ^a{\bf H}_b \; ^b{\bf p}  =\left(
+   * \begin{array}{c}y_{a}\mathbf{h}_3^T \; ^b{\bf p}-w_{a}\mathbf{h}_2^T \;
+   * ^b{\bf p} \\w_{a}\mathbf{h}_1^T \; ^b{\bf p} -x_{a}\mathbf{h}_3^T \; ^b{\bf
+   * p} \\x_{a}\mathbf{h}_2^T \; ^b{\bf p}- y_{a}\mathbf{h}_1^T \; ^b{\bf
+   * p}\end{array}\right) \f]
+   *
+   * \f[
+   * \underbrace{\left( \begin{array}{ccc}\mathbf{0}^T & -w_{a} \; ^b{\bf p}^T
+   * & y_{a} \; ^b{\bf p}^T     \\     w_{a}
+   * \; ^b{\bf p}^T&\mathbf{0}^T & -x_{a} \; ^b{\bf p}^T      \\
+   * -y_{a} \; ^b{\bf p}^T & x_{a} \; ^b{\bf p}^T &
+   * \mathbf{0}^T\end{array}\right)}_{\mathbf{A}_i (3\times 9)}
+   * \underbrace{\left( \begin{array}{c}\mathbf{h}_{1}^{T}      \\
+   * \mathbf{h}_{2}^{T}\\\mathbf{h}_{3}^{T}\end{array}\right)}_{\mathbf{h}
+   * (9\times 1)}=0 \f]
+   *
+   * leading to an homogeneous system to be solved:
+   * \f$\mathbf{A}\mathbf{h}=0\f$ with \f$\mathbf{A}=\left(\mathbf{A}_1^T, ...,
+   * \mathbf{A}_i^T, ..., \mathbf{A}_n^T \right)^T\f$.
+   *
+   * It can be solved using an SVD decomposition:
+   * \f[\bf A = UDV^T \f]
+   * <b>h</b> is the column of <b>V</b> associated with the smallest singular
+   * value of <b>A
+   * </b>
+   *
+   * \param xb, yb : Coordinates vector of matched points in image b. These
+   * coordinates are expressed in meters.
+   * \param xa, ya : Coordinates vector of
+   * matched points in image a. These coordinates are expressed in meters.
+   * \param
+   * aHb : Estimated homography that relies the transformation from image a to
+   * image b.
+   * \param normalization : When set to true, the coordinates of the
+   * points are normalized. The normalization carried out is the one preconized
+   * by Hartley.
+   *
+   * \exception vpMatrixException::rankDeficient : When the rank of the matrix
+   * that should be 8 is deficient.
+   */
   static void DLT(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                   const std::vector<double> &ya, vpHomography &aHb, bool normalization = true);
 
+  /*!
+   * From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+   * and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
+   * computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
+   * ^b{\bf p}\f$ using Ezio Malis linear method (HLM) \cite Malis00b.
+   *
+   * This method can consider points that are planar or non planar. The algorithm
+   * for planar scene implemented in this file is described in Ezio Malis PhD
+   * thesis \cite TheseMalis.
+   *
+   * \param xb, yb : Coordinates vector of matched points in image b. These
+   * coordinates are expressed in meters.
+   * \param xa, ya : Coordinates vector of
+   * matched points in image a. These coordinates are expressed in meters.
+   * \param isplanar : If true the points are assumed to be in a plane, otherwise there
+   * are assumed to be non planar.
+   * \param aHb : Estimated homography that relies
+   * the transformation from image a to image b.
+   *
+   * If the boolean isplanar is true the points are assumed to be in a plane
+   * otherwise there are assumed to be non planar.
+   *
+   * \sa DLT() when the scene is planar.
+   */
   static void HLM(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                   const std::vector<double> &ya, bool isplanar, vpHomography &aHb);
 
+  /*!
+   * From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+   * and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
+   * computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
+   * ^b{\bf p}\f$ using Ransac algorithm.
+   *
+   * \param xb, yb : Coordinates vector of matched points in image b. These
+   * coordinates are expressed in meters.
+   * \param xa, ya : Coordinates vector of
+   * matched points in image a. These coordinates are expressed in meters.
+   * \param aHb : Estimated homography that relies the transformation from image a to
+   * image b.
+   * \param inliers : Vector that indicates if a matched point is an
+   * inlier (true) or an outlier (false).
+   * \param residual : Global residual
+   * computed as \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf
+   * H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the number of inliers.
+   * \param nbInliersConsensus : Minimal number of points requested to fit the
+   * estimated homography.
+   * \param threshold : Threshold for outlier removing. A point is considered as
+   * an outlier if the reprojection error \f$\| {^a{\bf p} - {\hat{^a{\bf H}_b}}
+   * {^b{\bf p}}} \|\f$ is greater than this threshold.
+   * \param normalization : When set to true, the coordinates of the points are
+   * normalized. The normalization carried out is the one preconized by Hartley.
+   *
+   * \return true if the homography could be computed, false otherwise.
+   */
   static bool ransac(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                      const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers, double &residual,
                      unsigned int nbInliersConsensus, double threshold, bool normalization = true);
 
+  /*!
+   * Given `iPa` a pixel with coordinates \f$(u_a,v_a)\f$ in
+   * image a, and the homography `bHa` in the Euclidean space or calibrated domain that links image a and b, computes the
+   * coordinates of the pixel \f$(u_b,v_b)\f$ in the image b using the camera
+   * parameters matrix \f$\bf K\f$.
+   *
+   * Compute \f$^b{\bf p} = {\bf K} \; {^b}{\bf H}_a \; {\bf K}^{-1} {^a}{\bf
+   * p}\f$ with \f$^a{\bf p}=(u_a,v_a,1)\f$ and \f$^b{\bf p}=(u_b,v_b,1)\f$
+   *
+   * \return The coordinates in pixel of the point with coordinates
+   * \f$(u_b,v_b)\f$.
+   */
   static vpImagePoint project(const vpCameraParameters &cam, const vpHomography &bHa, const vpImagePoint &iPa);
+
+  /*!
+   * Given `Pa` a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the
+   * image plane a, and the homography `bHa` in the Euclidean space that links image a and b, computes
+   * the normalized coordinates of the point \f$(x_b,y_b,1)\f$ in the image plane
+   * b.
+   *
+   * Compute \f$^b{\bf p} = {^b}{\bf H}_a \; {^a}{\bf p}\f$ with \f$^a{\bf
+   * p}=(x_a,y_a,1)\f$ and \f$^b{\bf p}=(x_b,y_b,1)\f$
+   *
+   * \return The coordinates in meter of the point with coordinates
+   * \f$(x_b,y_b)\f$.
+   */
   static vpPoint project(const vpHomography &bHa, const vpPoint &Pa);
 
+  /*!
+   * From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
+   * and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
+   * computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
+   * ^b{\bf p}\f$ using a robust estimation scheme.
+   *
+   * This method is to compare to DLT() except that here a robust estimator is
+   * used to reject couples of points that are considered as outliers.
+   *
+   * At least 4 couples of points are needed.
+   *
+   * \param xb, yb : Coordinates vector of matched points in image b. These
+   * coordinates are expressed in meters.
+   * \param xa, ya : Coordinates vector of
+   * matched points in image a. These coordinates are expressed in meters.
+   * \param aHb : Estimated homography that relies the transformation from image a to
+   * image b.
+   * \param inliers : Vector that indicates if a matched point is an
+   * inlier (true) or an outlier (false).
+   * \param residual : Global residual computed as
+   * \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$
+   * with \f$n\f$ the number of inliers.
+   * \param weights_threshold : Threshold applied on the weights updated during the
+   * robust estimation and used to consider if a point is an outlier or an
+   * inlier. Values should be in [0:1]. A couple of matched points that have a
+   * weight lower than this threshold is considered as an outlier. A value equal
+   * to zero indicates that all the points are inliers.
+   * \param niter : Number of iterations of the estimation process.
+   * \param normalization : When set to true, the coordinates of the points are normalized.
+   * The normalization carried out is the one preconized by Hartley.
+   *
+   * \sa DLT(), ransac()
+   */
   static void robust(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
-                     const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inlier, double &residual,
+                     const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers, double &residual,
                      double weights_threshold = 0.4, unsigned int niter = 4, bool normalization = true);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

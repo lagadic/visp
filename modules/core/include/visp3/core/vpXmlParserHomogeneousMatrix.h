@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * XML parser to load and save Homogeneous Matrix in a XML file.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpXmlParserHomogeneousMatrix.h

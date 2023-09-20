@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * CPU features (hardware capabilities).
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpCPUFeatures_h_
 #define _vpCPUFeatures_h_

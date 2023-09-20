@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Error that can be emitted by the vpPose class and its derivatives
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpPoseException_h_
 #define _vpPoseException_h_

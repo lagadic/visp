@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Homography estimation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHomographyMalis.cpp
@@ -594,28 +592,6 @@ void HLM(unsigned int q_cible, const std::vector<double> &xm, const std::vector<
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/*!
-  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
-  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
-  computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
-  ^b{\bf p}\f$ using Ezio Malis linear method (HLM) \cite Malis00b.
-
-  This method can consider points that are planar or non planar. The algorithm
-  for planar scene implemented in this file is described in Ezio Malis PhD
-  thesis \cite TheseMalis.
-
-  \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  isplanar : If true the points are assumed to be in a plane, otherwise there
-  are assumed to be non planar. \param aHb : Estimated homography that relies
-  the transformation from image a to image b.
-
-  If the boolean isplanar is true the points are assumed to be in a plane
-  otherwise there are assumed to be non planar.
-
-  \sa DLT() when the scene is planar.
-*/
 void vpHomography::HLM(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                        const std::vector<double> &ya, bool isplanar, vpHomography &aHb)
 {

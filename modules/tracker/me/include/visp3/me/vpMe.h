@@ -114,7 +114,8 @@
   The content of the `me.json` file is the following:
   \code{.unparsed}
   $ cat me.json
-  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,"range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
+  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
+   "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
   \endcode
  */
 class VISP_EXPORT vpMe
@@ -125,8 +126,10 @@ public:
    */
   typedef enum
   {
-    OLD_THRESHOLD = 0,        /*!< Old likelihood ratio threshold (to be avoided). */
-    NORMALIZED_THRESHOLD = 1, /*!< Easy-to-use normalized likelihood threshold corresponding to the minimal luminance contrast to consider with values in [0 ; 255]. */
+    //! Old likelihood ratio threshold (to be avoided).
+    OLD_THRESHOLD = 0,
+    //! Easy-to-use normalized likelihood threshold corresponding to the minimal luminance contrast to consider with values in [0 ; 255].
+    NORMALIZED_THRESHOLD = 1
   } vpLikelihoodThresholdType;
 
 private:

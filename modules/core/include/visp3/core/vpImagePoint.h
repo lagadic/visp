@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * 2D point useful for image processing
- *
- * Authors:
- * Julien Dufour
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpImagePoint_h_
 #define _vpImagePoint_h_

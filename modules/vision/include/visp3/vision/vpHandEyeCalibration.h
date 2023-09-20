@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Hand-eye calibration.
- *
- * Authors:
- * Francois Chaumette
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHandEyeCalibration.h
@@ -52,16 +47,29 @@
 #include <visp3/core/vpMatrix.h>
 
 /*!
-  \class vpHandEyeCalibration
-
-  \ingroup group_vision_calib
-
-  \brief Tool for hand-eye calibration.
-
-*/
+ * \class vpHandEyeCalibration
+ *
+ * \ingroup group_vision_calib
+ *
+ * \brief Tool for hand-eye calibration.
+ */
 class VISP_EXPORT vpHandEyeCalibration
 {
 public:
+  /*!
+   * Compute extrinsic camera parameters : the constant transformation from
+   * the effector to the camera frames (eMc).
+   *
+   * \param[in] cMo : vector of homogeneous matrices representing the transformation
+   * between the camera and the scene.
+   * \param[in] rMe : vector of homogeneous matrices representing the transformation
+   * between the effector (where the camera is fixed) and the reference
+   * coordinates (base of the manipulator). Must be the same size as cMo.
+   * \param[out] eMc : homogeneous matrix representing the transformation
+   * between the effector and the camera (output)
+   *
+   * \return 0 if calibration succeed, -1 if the system is not full rank, 1 if the algorithm doesn't converge.
+   */
   static int calibrate(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                        vpHomogeneousMatrix &eMc);
 

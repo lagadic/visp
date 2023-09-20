@@ -188,6 +188,9 @@ public:
    */
   inline int getNbPoints() const { return nGoodElement; }
 
+  /*!
+   * Initialize the tracker.
+   */
   void init();
 
   /*!

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Client
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpUDPClient_h_
 #define _vpUDPClient_h_

@@ -92,10 +92,14 @@ public:
   } vpMeSiteState;
 
 public:
-  //! Coordinates of a site
-  int i, j;
-  //! Floating coordinates of a site
-  double ifloat, jfloat;
+  //! Coordinate along i of a site
+  int i;
+  //! Coordinates along j of a site
+  int j;
+  //! Floating coordinates along i of a site
+  double ifloat;
+  //! Floating coordinates along j of a site
+  double jfloat;
   //! Mask sign
   int mask_sign;
   //! Angle of tangent at site

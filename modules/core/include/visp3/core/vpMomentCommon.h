@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Pre-filled moment database with all commonly used moments.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 /*!
   \file vpMomentCommon.h
   \brief Pre-filled moment database with all commonly used moments.

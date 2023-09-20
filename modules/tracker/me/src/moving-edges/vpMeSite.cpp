@@ -242,7 +242,6 @@ void vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
   unsigned int i2 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
   unsigned int j2 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
 
-  // TODO: Here check if i1,j1,i2,j2 > 0 else ??
   if (I[i1][j1] > I[i2][j2])
     mask_sign = 1;
   else
