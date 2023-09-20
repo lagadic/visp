@@ -7,15 +7,14 @@ sonar.projectKey=rainbow:visp:master
 # Project description
 sonar.projectName=rainbow:visp:master
 # Used to compare metrics with v1.10 for example
-sonar.projectVersion=3.2
+sonar.projectVersion=@VISP_VERSION@
 # Path is relative to the sonar-project.properties file. Replace "\" by "/" on Windows.
 sonar.sources=@VISP_SOURCE_DIR@
 sonar.projectBaseDir=@VISP_SOURCE_DIR@
-sonar.exclusions=3rdparty/**/*,cmake/**/*,platforms/**/*,doc/**/*,modules/**/*.txt,modules/**/*.py,modules/java/**/*,tutorial/java/**/*,**/arms/*,**/scene/*
+sonar.exclusions=codecov.yml,appveyor.yml,3rdparty/**/*,cmake/**/*,doc/**/*,modules/**/*.txt,modules/**/*.py,modules/core/src/image/private/stb_truetype.h,platforms/**/*,script/**/*,**/arms/*,**/scene/*,**/*.pb,**/*.pbtxt,**/*.skeleton,**/*.exr,**/*.FCStd,**/*.blend,**/*.mesh,**/*.pfm,**/*.sb2,**/*.java,ci/**/*
 # Source code language
 sonar.language=c++
 sonar.cxx.includeDirectories=@VISP_SONARQUBE_INCLUDE_DIRS@
-# Empty c lang patterns to avoid error:
-# "Language of file '*.h' can not be decided as the file matches patterns of both
-# sonar.lang.patterns.c++ and sonar.lang.patterns.c"
-sonar.lang.patterns.c=""
+sonar.cxx.file.suffixes=.cxx,.cpp,.cc,.c,.hxx,.hpp,.hh,.h
+sonar.cxx.defines=VISP_EXPORT \n\
+                  DOXYGEN_SHOULD_SKIP_THIS \n\
