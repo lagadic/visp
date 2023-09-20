@@ -42,8 +42,15 @@ extensions = [
 ]
 
 python_apigen_modules = {
-      "visp.core": "generated/core",
+  "visp.core": "generated/core.",
+  "visp.vs": "generated/vs.",
 }
+python_apigen_default_groups = [
+    (r".*:visp.core.*", "Core Public-members"),
+    (r"class:visp.core.*", "Core Classes"),
+    (r".*:visp.vs.*", "VS Public-members"),
+    (r"class:visp.vs.*", "VS Classes"),
+]
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.

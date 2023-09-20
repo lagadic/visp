@@ -12,38 +12,40 @@ Todos and known issues
     :glob:
 
     static/*
+    api.rst
 
-Core module
-==============
 
-.. automodule:: visp.core
-   :members:
-   :undoc-members:
+.. Core module
+.. ==============
 
-Visual servoing module
-=======================
+.. .. automodule:: visp.core
+..    :members:
+..    :undoc-members:
 
-.. automodule:: visp.vs
-   :members:
-   :undoc-members:
+.. Visual servoing module
+.. =======================
 
-Vision module
-=======================
+.. .. automodule:: visp.vs
+..    :members:
+..    :undoc-members:
 
-.. automodule:: visp.vision
-   :members:
-   :undoc-members:
+.. Vision module
+.. =======================
 
-Visual features
-=======================
+.. .. automodule:: visp.vision
+..    :members:
+..    :undoc-members:
 
-.. automodule:: visp.visual_features
-   :members:
-   :undoc-members:
+.. Visual features
+.. =======================
 
-Input/output module
-====================
+.. .. automodule:: visp.visual_features
+..    :members:
+..    :undoc-members:
 
-.. automodule:: visp.io
-   :members:
-   :undoc-members:
+.. Input/output module
+.. ====================
+
+.. .. automodule:: visp.io
+..    :members:
+..    :undoc-members:
