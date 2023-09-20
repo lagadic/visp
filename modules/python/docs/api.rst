@@ -6,4 +6,4 @@ API reference
    :glob:
    :maxdepth: 2
 
-   generated/core.rst
+   generated/core.*

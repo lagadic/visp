@@ -51,6 +51,13 @@ python_apigen_default_groups = [
     (r".*:visp.vs.*", "VS Public-members"),
     (r"class:visp.vs.*", "VS Classes"),
 ]
+
+python_apigen_default_order = [
+    (r".*:visp.core.*", -1),
+    (r"class:visp.core.*", -2),
+    (r".*:visp.vs.*", -1),
+    (r"class:visp.vs.*", -2),
+]
 autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
