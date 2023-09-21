@@ -35,45 +35,40 @@
 #ifndef _vpFrameGrabberException_h_
 #define _vpFrameGrabberException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+/*!
+ * \file vpFrameGrabberException.h
+ *  \brief error that can be emitted by the vpFrameGrabber class and its
+ *  derivates
  */
 
-/* \file vpFrameGrabberException.h
-   \brief error that can be emitted by the vpFrameGrabber class and its
-   derivates
- */
-/* Classes standards. */
-
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
 
 /*!
-  \brief Error that can be emitted by the vpFrameGrabber class and its
-  derivates
+ * \brief Error that can be emitted by the vpFrameGrabber class and its
+ * derivates.
  */
 class VISP_EXPORT vpFrameGrabberException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpFrameGrabber member
- */
-  enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };
+   * Lists the possible error than can be emitted while calling
+   * vpFrameGrabber member
+   */
+  enum errorFrameGrabberCodeEnum
+  {
+    settingError, //!< Grabber settings error
+    initializationError, //!< Grabber initialization error
+    otherError //!< Grabber returned an other error
+  };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpFrameGrabberException(int id, const char *format, ...)
   {
     this->code = id;
@@ -82,8 +77,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpFrameGrabberException(int id) : vpException(id) { }
 };
 
-#endif /* #ifndef _vpFrameGrabberException_h_ */
+#endif

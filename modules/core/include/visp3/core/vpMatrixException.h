@@ -34,60 +34,52 @@
 #ifndef _vpMatrixException_h_
 #define _vpMatrixException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* Classes standards. */
-//
-
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#include <iostream>
+#include <string>
 
 /*!
-  \class vpMatrixException
-  \ingroup group_core_debug
-  \brief error that can be emitted by the vpMatrix class and its derivatives
+ * \class vpMatrixException
+ * \ingroup group_core_debug
+ * \brief error that can be emitted by the vpMatrix class and its derivatives
  */
 class VISP_EXPORT vpMatrixException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpMatrix member
- */
-  enum errorCodeEnum {
-    //! error returns by a constructor
+   * \brief Lists the possible error than can be emitted while calling
+   * vpMatrix member
+   */
+  enum errorCodeEnum
+  {
+//! Error returns by a constructor
     constructionError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedError,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
-    //! iterative algorithm doesn't converge (ex SVD)
+    //! Iterative algorithm doesn't converge (ex SVD)
     convergencyError,
+    //! Incorrect matrix size
     incorrectMatrixSizeError,
+    //! Forbidden operation
     forbiddenOperatorError,
+    //! Sub operation matrix error
     subMatrixError,
+    //! Matrix operation error
     matrixError,
+    //! Rank deficient
     rankDeficient
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpMatrixException(int id, const char *format, ...)
   {
     this->code = id;
@@ -96,9 +88,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpMatrixException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpMatrixException(int id) : vpException(id) { }
-  // vpMatrixException() : vpException() { ;}
 };
 
 #endif

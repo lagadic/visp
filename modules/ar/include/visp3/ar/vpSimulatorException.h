@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,15 @@
  *
  * Description:
  * Exceptions that can be emitted by the simulator classes.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpSimulatorException_h_
 #define _vpSimulatorException_h_
 
-/* \file vpSimulatorException.h
-   \brief Error that can be emitted by the vpSimulator class and its derivatives
+/*!
+ * \file vpSimulatorException.h
+ *  \brief Error that can be emitted by the vpSimulator class and its derivatives
  */
-/* Classes standards. */
 
 #include <visp3/core/vpException.h>
 
@@ -48,18 +46,18 @@
 #include <string>   /* Classe string.     */
 
 /*!
-
-  \class vpSimulatorException
-  \brief Error that can be emitted by the vpSimulator class and its derivatives.
+ * \class vpSimulatorException
+ * \brief Error that can be emitted by the vpSimulator class and its derivatives.
  */
 class VISP_EXPORT vpSimulatorException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpSimulator member
- */
-  enum errorSimulatorCodeEnum {
+   * Lists the possible error than can be emitted while calling
+   * vpSimulator member
+   */
+  enum errorSimulatorCodeEnum
+  {
     ioError,                       //!< I/O error
     noFileNameError,               //!< Filename error
     notInitializedError,           //!< Initialization error
@@ -68,8 +66,19 @@ public:
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpSimulatorException(int id, const char *format, ...);
+
+  /*!
+   * Constructor.
+   */
   vpSimulatorException(int id, const std::string &msg);
+
+  /*!
+   * Constructor.
+   */
   explicit vpSimulatorException(int id);
 };
 

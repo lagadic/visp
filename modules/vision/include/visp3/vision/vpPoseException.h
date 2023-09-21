@@ -34,51 +34,41 @@
 #ifndef _vpPoseException_h_
 #define _vpPoseException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* Classes standards. */
-
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#include <iostream>
+#include <string>   
 
 /*!
-  \class vpPoseException
-  \ingroup group_vision_pose
-  \brief Error that can be emitted by the vpPose class and its derivatives.
+ * \class vpPoseException
+ * \ingroup group_vision_pose
+ * \brief Error that can be emitted by the vpPose class and its derivatives.
  */
 class VISP_EXPORT vpPoseException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpPose member
- */
-  enum errorCodeEnum {
+   * Lists the possible error than can be emitted while calling
+   * vpPose member
+   */
+  enum errorCodeEnum
+  {
+    //! Generic pose error
     poseError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedERR,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
+    //! Not enough points to compute the pose
     notEnoughPointError
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpPoseException(int id, const char *format, ...)
   {
     this->code = id;
@@ -87,9 +77,16 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpPoseException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpPoseException(int id) : vpException(id) { }
-  // vpPoseException() : vpException() { ;}
 };
 
 #endif

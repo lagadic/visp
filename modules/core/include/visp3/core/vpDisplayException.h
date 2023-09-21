@@ -34,52 +34,43 @@
 #ifndef _vpDisplayException_h_
 #define _vpDisplayException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+/*!
+ * \file vpDisplayException.h
+ *  \brief error that can be emitted by the vpDisplay class and its derivatives
  */
 
-/* \file vpDisplayException.h
-   \brief error that can be emitted by the vpDisplay class and its derivatives
- */
-/* Classes standards. */
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
 /*!
-  \class vpDisplayException
-  \ingroup group_core_debug
-  \brief Error that can be emitted by the vpDisplay class and its derivatives.
+ * \class vpDisplayException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpDisplay class and its derivatives.
  */
 class VISP_EXPORT vpDisplayException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpDisplay member
- */
-  enum errorDisplayCodeEnum {
-    notInitializedError,
-    cannotOpenWindowError,
-    connexionError,
-    XWindowsError,
-    GTKWindowsError,
-    colorAllocError,
-    depthNotSupportedError
+   * Lists the possible error than can be emitted while calling
+   * vpDisplay member
+   */
+  enum errorDisplayCodeEnum
+  {
+    notInitializedError, //!< Display not initialized
+    cannotOpenWindowError, //!< Unable to open display window
+    connexionError, //!< Connection error
+    XWindowsError, //!< XWindow error
+    GTKWindowsError, //!< GTK error
+    colorAllocError, //!< Color allocation error
+    depthNotSupportedError //!< Color depth not supported
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpDisplayException(int id, const char *format, ...)
   {
     this->code = id;
@@ -89,9 +80,15 @@ public:
     va_end(args);
   }
 
-  vpDisplayException(int id, const std::string &msg) : vpException(id, msg) {}
+  /*!
+   * Constructor.
+   */
+  vpDisplayException(int id, const std::string &msg) : vpException(id, msg) { }
 
-  explicit vpDisplayException(int id) : vpException(id) {}
+  /*!
+   * Constructor.
+   */
+  explicit vpDisplayException(int id) : vpException(id) { }
 };
 
 #endif

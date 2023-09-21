@@ -34,50 +34,40 @@
 #ifndef _vpTrackingException_H
 #define _vpTrackingException_H
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+/*!
+ * \file vpTrackingException.h
+ *  \brief error that can be emitted by the vpTracker class and its derivatives
  */
 
-/* \file vpTrackingException.h
-   \brief error that can be emitted by the vpTracker class and its derivatives
- */
-/* Classes standards. */
-
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 #include <visp3/core/vpException.h>
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
 
 /*!
-  \class vpTrackingException
-  \ingroup group_core_debug
-  \brief Error that can be emitted by the vpTracker class and its derivatives.
+ * \class vpTrackingException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpTracker class and its derivatives.
  */
 class VISP_EXPORT vpTrackingException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpTracking member
- */
-  enum errorTrackingCodeEnum {
-    featureLostError,
-
+   * \brief Lists the possible error than can be emitted while calling
+   * vpTracking member
+   */
+  enum errorTrackingCodeEnum
+  {
+    featureLostError, //!< Tracker lost feature
     // Moving edges
-    notEnoughPointError,
-    initializationError,
-    fatalError
+    notEnoughPointError, //!< Not enough point to track
+    initializationError, //!< Tracker initialization error
+    fatalError //!< Tracker fatal error
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpTrackingException(int id, const char *format, ...)
   {
     this->code = id;
@@ -86,7 +76,15 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpTrackingException(int id) : vpException(id) { }
 };
 
