@@ -58,7 +58,7 @@ jobs:
         CXX=${{ matrix.compiler.CXX }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DBUILD_DEPRECATED_FUNCTIONS=OFF
         cat ViSP-third-party.txt
 
     - name: Compile
