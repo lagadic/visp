@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Defines a rectangle in the plane.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRect_h
 #define vpRect_h

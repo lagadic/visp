@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Additional image morphology functions.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMorph.cpp
@@ -43,13 +41,7 @@
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_morph
 
-  Fill the holes in a binary image.
-
-  \param I : Input binary image (0 means background, 255 means foreground).
-*/
 void fillHoles(vpImage<unsigned char> &I
 #if USE_OLD_FILL_HOLE
   ,
@@ -124,26 +116,8 @@ void fillHoles(vpImage<unsigned char> &I
 #endif
 }
 
-/*!
-  \ingroup group_imgproc_morph
-
-  Perform morphological reconstruction of the image \a marker under the image
-  \a mask. Definition from Gleb V. Tcheslavsk: > The morphological
-  reconstruction by dilation of a grayscale image \f$ g \f$ by a grayscale
-  marker image \f$ f \f$ > is defined as the geodesic dilation of \f$ f \f$
-  with respect to \f$ g \f$ repeated (iterated) until stability is reached:
-  \f[
-    R_{g}^{D} \left ( f \right ) = D_{g}^{\left ( k \right )} \left ( f \right
-  ) \f] with \f$ k \f$ such that: \f$ D_{g}^{\left ( k \right )} \left ( f
-  \right ) = D_{g}^{\left ( k+1 \right )} \left ( f \right ) \f$
-
-  \param marker : Grayscale image marker.
-  \param mask : Grayscale image mask.
-  \param h_kp1 : Image morphologically reconstructed.
-  \param connexity : Type of connexity.
-*/
 void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned char> &mask,
-    vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
+                 vpImage<unsigned char> &h_kp1 /*alias I */, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (marker.getHeight() != mask.getHeight() || marker.getWidth() != mask.getWidth()) {
     std::cerr << "marker.getHeight() != mask.getHeight() || "

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,10 +29,7 @@
  *
  * Description:
  * Provide some simple operation on column vectors.
- *
- * Authors:
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpColVector_h_
 #define _vpColVector_h_

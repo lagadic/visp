@@ -48,19 +48,19 @@
 #include <string.h>
 #define STACKSIZE 32
 
-static int stack[STACKSIZE] = {vpDEFAULT_REMOVE}; /* pile		*/
-static int *sp = stack;                           /* sommet 	*/
+static int stack[STACKSIZE] = {vpDEFAULT_REMOVE}; /* pile    */
+static int *sp = stack;                           /* sommet   */
 
 /*
  * La procedure "fprintf_rfstack" affiche le sommet
  * de la pile des drapeaux d'elimination de faces.
  * Entree :
- * fp		Fichier en sortie.
+ * fp    Fichier en sortie.
  */
 void fprintf_rfstack(FILE *fp)
 {
   int flg;
-  flg = 0; /* nul si element unique	*/
+  flg = 0; /* nul si element unique  */
 
   if (*sp == IS_INSIDE) {
     fprintf(fp, "(null)\n");
@@ -108,7 +108,7 @@ void fprintf_rfstack(FILE *fp)
  * La procedure "get_rfstack" retourne les drapeaux au sommet
  * de la pile des drapeaux d'elimination de faces.
  * Sortie :
- * 		Pointeur sur les drapeaux d'elimination du sommet de la pile.
+ *     Pointeur sur les drapeaux d'elimination du sommet de la pile.
  */
 int *get_rfstack(void) { return (sp); }
 
@@ -116,7 +116,7 @@ int *get_rfstack(void) { return (sp); }
  * La procedure "load_rfstack" charge des drapeaux au sommet
  * de la pile des drapeaux d'elimination de faces.
  * Entree :
- * i		Niveau a charger.
+ * i    Niveau a charger.
  */
 void load_rfstack(int i) { *sp = i; }
 

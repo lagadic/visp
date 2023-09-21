@@ -48,7 +48,7 @@
 #include <visp3/core/vpIoTools.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 #define CATCH_CONFIG_RUNNER
 #include "catch.hpp"
@@ -79,7 +79,7 @@ public:
   }
 };
 
-class RandomArray2DGenerator : public Catch::Generators::IGenerator<vpArray2D<double> >
+class vpRandomArray2DGenerator : public Catch::Generators::IGenerator<vpArray2D<double> >
 {
 private:
   std::minstd_rand m_rand;
@@ -89,8 +89,8 @@ private:
   vpArray2D<double> current;
 
 public:
-  RandomArray2DGenerator(double valueRange, int minSize, int maxSize)
-    : m_rand(std::random_device{}()), m_val_dist(-valueRange, valueRange), m_dim_dist(minSize, maxSize)
+  vpRandomArray2DGenerator(double valueRange, int minSize, int maxSize)
+    : m_rand(std::random_device {}()), m_val_dist(-valueRange, valueRange), m_dim_dist(minSize, maxSize)
 
   {
     static_cast<void>(next());
@@ -110,7 +110,7 @@ public:
     return true;
   }
 };
-class RandomColVectorGenerator : public Catch::Generators::IGenerator<vpColVector>
+class vpRandomColVectorGenerator : public Catch::Generators::IGenerator<vpColVector>
 {
 private:
   std::minstd_rand m_rand;
@@ -120,8 +120,8 @@ private:
   vpColVector current;
 
 public:
-  RandomColVectorGenerator(double valueRange, int minSize, int maxSize)
-    : m_rand(std::random_device{}()), m_val_dist(-valueRange, valueRange), m_dim_dist(minSize, maxSize)
+  vpRandomColVectorGenerator(double valueRange, int minSize, int maxSize)
+    : m_rand(std::random_device {}()), m_val_dist(-valueRange, valueRange), m_dim_dist(minSize, maxSize)
 
   {
     static_cast<void>(next());
@@ -142,12 +142,12 @@ Catch::Generators::GeneratorWrapper<vpArray2D<double> > randomArray(double v, in
 {
   return Catch::Generators::GeneratorWrapper<vpArray2D<double> >(
     std::unique_ptr<Catch::Generators::IGenerator<vpArray2D<double> > >(
-      new RandomArray2DGenerator(v, minSize, maxSize)));
+      new vpRandomArray2DGenerator(v, minSize, maxSize)));
 }
 Catch::Generators::GeneratorWrapper<vpColVector> randomColVector(double v, int minSize, int maxSize)
 {
   return Catch::Generators::GeneratorWrapper<vpColVector>(
-    std::unique_ptr<Catch::Generators::IGenerator<vpColVector> >(new RandomColVectorGenerator(v, minSize, maxSize)));
+    std::unique_ptr<Catch::Generators::IGenerator<vpColVector> >(new vpRandomColVectorGenerator(v, minSize, maxSize)));
 }
 vpExceptionMatcher matchVpException(vpException::generalExceptionEnum type, const StringMatcherBase &matcher)
 {
@@ -326,7 +326,7 @@ SCENARIO("Serializing and deserializing a vpColVector", "[json]")
   }
 }
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

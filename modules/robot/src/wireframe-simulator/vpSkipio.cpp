@@ -51,7 +51,7 @@
  * La procedure "skip_cmd" saute les structures d'une commande
  * jusqu'a reconnaitre le debut d'une nouvelle commande.
  * Entree :
- * f		Fichier en sortie.
+ * f    Fichier en sortie.
  */
 void skip_cmd(void)
 {
@@ -68,19 +68,19 @@ void skip_cmd(void)
  * La procedure "skip_keyword" saute les structures des articles
  * jusqu'a reconnaitre le mot cle de jeton "token".
  * Entree :
- * token	Jeton du mot cle a reconnaitre.
- * err		Message d'erreur si le mot cle n'est pas reconnu.
+ * token  Jeton du mot cle a reconnaitre.
+ * err    Message d'erreur si le mot cle n'est pas reconnu.
  */
 void skip_keyword(int token, const char *err)
 {
   int t;
 
   switch (t = lex()) {
-  case T_IDENT: /* saute le mot cle inconnu	*/
+  case T_IDENT: /* saute le mot cle inconnu  */
     while ((t = lex()) != 0) {
       switch (t) {
-      case '$':   /* nouvelle commande		*/
-      case T_EOF: /* fin de fichier		*/
+      case '$':   /* nouvelle commande    */
+      case T_EOF: /* fin de fichier    */
         lexerr("start", err, NULL);
         break;
       default:

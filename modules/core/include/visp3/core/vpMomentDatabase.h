@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Pseudo-database used to handle dependencies between moments
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 /*!
   \file vpMomentDatabase.h
   \brief Pseudo-database used to handle dependencies between moments.
@@ -119,8 +114,8 @@ int main()
 Gravity center:
 Xg=1.5, Yg=1.5
 Centered moments:
-2	0
-0	x
+2  0
+0  x
   \endcode
 
   A moment is identified in the database by it's vpMoment::name method.
@@ -132,11 +127,11 @@ class VISP_EXPORT vpMomentDatabase
 {
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct cmp_str {
+  struct vpCmpStr_t {
     bool operator()(char const *a, char const *b) const { return std::strcmp(a, b) < 0; }
   };
 #endif
-  std::map<const char *, vpMoment *, cmp_str> moments;
+  std::map<const char *, vpMoment *, vpCmpStr_t> moments;
   void add(vpMoment &moment, const char *name);
 
 public:

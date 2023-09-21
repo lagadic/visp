@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,8 @@
  *
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
- *estimation.
- *
- * Authors:
- * Andrew Comport
- *
-*****************************************************************************/
+ * estimation.
+ */
 
 /*!
  \file vpScale.h
@@ -45,7 +40,7 @@
 /*!
  * \brief Contains various estimators for scale.
  * \n Methods : Median Absolute Deviation (MAD),
- * 							MPDE, Mean shift kernel
+ *              MPDE, Mean shift kernel
  * density estimation. \author Andrew Comport \date 24/10/03
  */
 // ==========================================================

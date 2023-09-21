@@ -60,7 +60,6 @@
 #include <visp3/sensor/vpDirectShowGrabber.h>
 
 // List of allowed command line options
-// #define GETOPTARGS	"dhn:o:"
 #define GETOPTARGS "c:df:hmn:io:st:?"
 
 #define GRAB_COLOR

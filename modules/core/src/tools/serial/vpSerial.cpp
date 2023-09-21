@@ -272,7 +272,7 @@ bool vpSerial::read(char *c, long timeout_s)
   if (ret < 0) {
     throw(vpException(vpException::fatalError, "Serial i/o exception"));
   } else if (ret == 0) {
-    // Timeout occured
+    // Timeout occurred
     return false;
   } else {
     ssize_t n = ::read(m_fd, c, 1); // read one character at a time
@@ -296,7 +296,7 @@ std::string vpSerial::readline(const std::string &eol)
   while (true) {
     size_t bytes_read = this->read(&c, 1);
     if (bytes_read == 0) {
-      break; // Timeout occured on reading 1 byte
+      break; // Timeout occurred on reading 1 byte
     }
     line.append(&c, 1);
     if (std::string(line, line.size() - eol_len, eol_len) == eol) {

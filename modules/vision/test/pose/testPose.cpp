@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Compute the pose of a 3D object using the Dementhon, Lagrange and
  * Non-Linear approach.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpMeterPixelConversion.h>

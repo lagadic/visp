@@ -228,9 +228,6 @@ int main()
 
       dot.track(I);
 
-      //    vpDisplay::displayCross(I,(int)dot.I(), (int)dot.J(),
-      //			   10,vpColor::green) ;
-
       vpFeatureBuilder::create(p, cam, dot);
 
       // get the jacobian

@@ -416,7 +416,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCame
       }
     }
   } else {
-    /////////// BLACK BACKGROUND	///////////
+    /////////// BLACK BACKGROUND ///////////
     for (unsigned int j = 0; j < image.getRows(); j++) {
       for (unsigned int i = 0; i < image.getCols(); i++) {
         x = 0;

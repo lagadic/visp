@@ -60,48 +60,48 @@ static void next_source(void);
 
 void lexerr(const char *path, ...);
 
-/* Codes des symboles terminaux	*/
+/* Codes des symboles terminaux  */
 
-#define NULT 0  /* caractere non valide	*/
-#define EOBT 1  /* fin de buffer	*/
-#define EOFT 2  /* fin de fichier	*/
-#define EOLT 3  /* fin de ligne		*/
-#define CMTT 4  /* commentaire		*/
-#define IDNT 5  /* identificateur	*/
-#define INTT 6  /* nombre entier	*/
-#define FPTT 7  /* nombre flottant	*/
-#define SGNT 8  /* signe +/-		*/
-#define SPCT 9  /* caractere blanc	*/
-#define STGT 10 /* caractere de chaine	*/
-#define NBRT 11 /* nombre de codes	*/
+#define NULT 0  /* caractere non valide  */
+#define EOBT 1  /* fin de buffer  */
+#define EOFT 2  /* fin de fichier  */
+#define EOLT 3  /* fin de ligne    */
+#define CMTT 4  /* commentaire    */
+#define IDNT 5  /* identificateur  */
+#define INTT 6  /* nombre entier  */
+#define FPTT 7  /* nombre flottant  */
+#define SGNT 8  /* signe +/-    */
+#define SPCT 9  /* caractere blanc  */
+#define STGT 10 /* caractere de chaine  */
+#define NBRT 11 /* nombre de codes  */
 
-/* Drapeaux des caracteres	*/
+/* Drapeaux des caracteres  */
 
-#define _NULT 0x00 /* caractere non valide	*/
-#define _CMTT 0x01 /* commentaire		*/
-#define _FPTT 0x02 /* nombre flottant	*/
-#define _IDNT 0x04 /* identificateur	*/
-#define _INTT 0x08 /* nombre entier	*/
-#define _SGNT 0x10 /* signe +/-		*/
-#define _STGT 0x20 /* caractere de chaine	*/
+#define _NULT 0x00 /* caractere non valide  */
+#define _CMTT 0x01 /* commentaire    */
+#define _FPTT 0x02 /* nombre flottant  */
+#define _IDNT 0x04 /* identificateur  */
+#define _INTT 0x08 /* nombre entier  */
+#define _SGNT 0x10 /* signe +/-    */
+#define _STGT 0x20 /* caractere de chaine  */
 
-/* Caracteres sentinelles	*/
+/* Caracteres sentinelles  */
 
 #define ASCII_NBR 128 /* nombre de codes ASCII*/
 
 #ifndef EOB
-#define EOB (-2) /* fin de buffer	*/
+#define EOB (-2) /* fin de buffer  */
 #endif
 #ifndef EOF
-#define EOF (-1) /* fin de fichier	*/
+#define EOF (-1) /* fin de fichier  */
 #endif
 #ifndef EOL
-#define EOL 10 /* fin de ligne		*/
+#define EOL 10 /* fin de ligne    */
 #endif
 
-#define CHAR_NBR 130 /* nombre de caracteres	*/
+#define CHAR_NBR 130 /* nombre de caracteres  */
 
-/* Tests des drapeaux		*/
+/* Tests des drapeaux    */
 
 #define isnult(c) (scantbl[c] == _NULT)
 #define iscmtt(c) (scantbl[c] & _CMTT)
@@ -125,7 +125,7 @@ void lexerr(const char *path, ...);
 #define E_STRING 8
 #define E_9 9
 
-const char *lex_errtbl[] = {/* table des messages d'erreur		*/
+const char *lex_errtbl[] = {/* table des messages d'erreur    */
                             "error unknown",
                             "symbol undefined",
                             "unexpected EOF in comment",
@@ -144,12 +144,12 @@ unsigned int mycolumno = 0;
 float myfloat = 0.0;
 int myint = 0;
 
-static char *mysptr;   /* tete de lecture de la ligne courante	*/
-static char *myline;   /* debut de la ligne courante		*/
-static char *lastline; /* derniere ligne du buffer d'entree	*/
+static char *mysptr;   /* tete de lecture de la ligne courante  */
+static char *myline;   /* debut de la ligne courante    */
+static char *lastline; /* derniere ligne du buffer d'entree  */
 
-static Byte *chtbl;   /* premiers caracteres des terminaux	*/
-static Byte *scantbl; /* caracteres suivants des terminaux	*/
+static Byte *chtbl;   /* premiers caracteres des terminaux  */
+static Byte *scantbl; /* caracteres suivants des terminaux  */
 
 /*
  * La procedure "open_lex" alloue et initialise les variables utilisees
@@ -163,10 +163,10 @@ void open_lex(void)
     perror(proc_name);
     throw vpException(vpException::fatalError, "Error in open_lex");
   }
-  chtbl += 2; /* 2 sentinelles non affichables	*/
+  chtbl += 2; /* 2 sentinelles non affichables  */
   scantbl += 2;
 
-  /* initialise les premiers caracteres des symboles terminaux	*/
+  /* initialise les premiers caracteres des symboles terminaux  */
 
   for (int i = 0; i < ASCII_NBR; i++) {
     if (isalpha(i))
@@ -199,13 +199,13 @@ void open_lex(void)
       }
   }
 
-  /* Initialise les sentinelles comme des terminaux.		*/
+  /* Initialise les sentinelles comme des terminaux.    */
 
   chtbl[EOB] = EOBT;
   chtbl[EOF] = EOFT;
   chtbl[EOL] = EOLT;
 
-  /* Initialise les caracteres suivants des symboles terminaux.	*/
+  /* Initialise les caracteres suivants des symboles terminaux.  */
 
   for (int i = 0; i < ASCII_NBR; i++) {
     if (isalpha(i))
@@ -236,7 +236,7 @@ void open_lex(void)
       }
   }
 
-  /* Initialise les sentinelles comme des terminaux.		*/
+  /* Initialise les sentinelles comme des terminaux.    */
 
   scantbl[EOB] = _NULT;
   scantbl[EOF] = _NULT;
@@ -249,14 +249,14 @@ void open_lex(void)
  */
 void close_lex(void)
 {
-  free((char *)(chtbl - 2)); /* voir "open_lex" pour "- 2"	*/
+  free((char *)(chtbl - 2)); /* voir "open_lex" pour "- 2"  */
   free((char *)(scantbl - 2));
 }
 
 #define ECHO printf("%c", *(mysptr))
-#define CURC (*((signed char *)mysptr))      /* caractere courant	*/
-#define NEXTC (*((signed char *)mysptr + 1)) /* caractere suivant	*/
-#define PREVC (*((signed char *)mysptr - 1)) /* caractere precedent	*/
+#define CURC (*((signed char *)mysptr))      /* caractere courant  */
+#define NEXTC (*((signed char *)mysptr + 1)) /* caractere suivant  */
+#define PREVC (*((signed char *)mysptr - 1)) /* caractere precedent  */
 
 /*
  * La procedure "lex" contient l'analyseur lexical.
@@ -264,19 +264,19 @@ void close_lex(void)
  * La tete de lecture (mysptr) n'est pas systematiquement avancee apres
  *lecture. Le caractere courant est celui sous la tete de lecture. Ainsi on
  *accede de maniere symetrique aux caracteres precedent et suivant. Sortie :
- *		Code du symbole terminale analyse.
+ *    Code du symbole terminale analyse.
  */
 int lex(void)
 {
 lex_loop:
 
   for (; chtbl[(int)CURC] == SPCT; mysptr++) {
-  }; /* saute les espaces	*/
+  }; /* saute les espaces  */
 
   switch (chtbl[(int)CURC]) {
 
   case NULT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     return (*mytext);
     break;
@@ -285,7 +285,7 @@ lex_loop:
     goto lex_loop;
     break;
   case EOFT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     return (T_EOF);
     break;
   case EOLT:
@@ -298,7 +298,7 @@ lex_loop:
     goto lex_loop;
     break;
   case CMTT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     if (CURC != '*')
       return (*mytext);
@@ -325,17 +325,17 @@ lex_loop:
       goto comment;
       break;
     case CMTT:
-      if (PREVC == '*') { /* veritable fin	*/
+      if (PREVC == '*') { /* veritable fin  */
         mysptr++;
         goto lex_loop;
       }
-      mysptr++; /* pseudo fin 		*/
+      mysptr++; /* pseudo fin     */
       goto comment;
       break;
     }
     break;
   case IDNT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     for (; isidnt((int)CURC); mysptr++) {
     };
@@ -343,14 +343,14 @@ lex_loop:
     return (get_symbol(mytext, mylength));
     break;
   case INTT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
   int_part:
     myint = (int)(CURC - '0');
     mysptr++;
     for (; isintt((int)CURC); mysptr++)
       myint = myint * 10 + (int)(CURC - '0');
     switch (CURC) {
-    case '.': /* lecture fraction	*/
+    case '.': /* lecture fraction  */
     float_part:
       mysptr++;
       for (; isintt((int)CURC); mysptr++) {
@@ -363,7 +363,7 @@ lex_loop:
         return (T_FLOAT);
       }
       break;
-    case 'E': /* lecture exposant	*/
+    case 'E': /* lecture exposant  */
     case 'e':
       mysptr++;
       if (isintt((int)CURC))
@@ -388,14 +388,14 @@ lex_loop:
     }
     break;
   case FPTT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
-    if (!isintt((int)CURC)) /* pas de fraction	*/
+    if (!isintt((int)CURC)) /* pas de fraction  */
       return (*mytext);
     goto float_part;
     break;
   case SGNT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     if (isintt((int)CURC))
       goto int_part;
@@ -404,7 +404,7 @@ lex_loop:
     return (*mytext);
     break;
   case STGT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
   string:
     for (; isstgt((int)CURC); mysptr++) {
@@ -423,13 +423,13 @@ lex_loop:
       return ('\n');
       break;
     case STGT:
-      if (PREVC != '\\') { /* veritable fin	*/
+      if (PREVC != '\\') { /* veritable fin  */
         mytext++;
         mylength = (int)(mysptr - mytext);
         mysptr++;
         return (T_STRING);
       }
-      mysptr++; /* pseudo fin 		*/
+      mysptr++; /* pseudo fin     */
       goto string;
       break;
     }
@@ -452,21 +452,21 @@ lex_loop:
  * La tete de lecture (mysptr) n'est pas systematiquement avancee apres
  *lecture. Le caractere courant est celui sous la tete de lecture. Ainsi on
  *accede de maniere symetrique aux caracteres precedent et suivant. Entree :
- * f		Fichier en sortie.
- * token	Jeton de fin de rechercher.
+ * f    Fichier en sortie.
+ * token  Jeton de fin de rechercher.
  * Sortie :
- *		Code du symbole terminale analyse.
+ *    Code du symbole terminale analyse.
  */
 int lexecho(FILE *f, int token)
 {
 lex_loop:
-  for (; chtbl[(int)CURC] == SPCT; mysptr++) /* saute les espaces	*/
+  for (; chtbl[(int)CURC] == SPCT; mysptr++) /* saute les espaces  */
     fwrite(mysptr, 1, 1, f);
 
   switch (chtbl[(int)CURC]) {
 
   case NULT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     if (token != *mytext)
       fwrite(mytext, 1, 1, f);
@@ -477,7 +477,7 @@ lex_loop:
     goto lex_loop;
     break;
   case EOFT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     return (T_EOF);
     break;
   case EOLT:
@@ -492,7 +492,7 @@ lex_loop:
     break;
   case CMTT:
     fwrite(mysptr, 1, 1, f);
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     if (CURC != '*')
       return (*mytext);
@@ -522,17 +522,17 @@ lex_loop:
       break;
     case CMTT:
       fwrite(mysptr, 1, 1, f);
-      if (PREVC == '*') { /* veritable fin	*/
+      if (PREVC == '*') { /* veritable fin  */
         mysptr++;
         goto lex_loop;
       }
-      mysptr++; /* pseudo fin 		*/
+      mysptr++; /* pseudo fin     */
       goto comment;
       break;
     }
     break;
   case IDNT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     for (; isidnt((int)CURC); mysptr++) {
     };
@@ -542,13 +542,13 @@ lex_loop:
     return (get_symbol(mytext, mylength));
     break;
   case INTT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
   int_part:
     mysptr++;
     for (; isintt((int)CURC); mysptr++) {
     };
     switch (CURC) {
-    case '.': /* lecture fraction	*/
+    case '.': /* lecture fraction  */
     float_part:
       mysptr++;
       for (; isintt((int)CURC); mysptr++) {
@@ -559,7 +559,7 @@ lex_loop:
         return (T_FLOAT);
       }
       break;
-    case 'E': /* lecture exposant	*/
+    case 'E': /* lecture exposant  */
     case 'e':
       mysptr++;
       if (isintt((int)CURC))
@@ -586,9 +586,9 @@ lex_loop:
     }
     break;
   case FPTT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
-    if (!isintt((int)CURC)) { /* pas de fraction	*/
+    if (!isintt((int)CURC)) { /* pas de fraction  */
       if (token != *mytext)
         fwrite(mytext, 1, 1, f);
       return (*mytext);
@@ -596,7 +596,7 @@ lex_loop:
     goto float_part;
     break;
   case SGNT:
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
     if (isintt((int)CURC))
       goto int_part;
@@ -608,7 +608,7 @@ lex_loop:
     break;
   case STGT:
     fwrite(mysptr, 1, 1, f);
-    mytext = mysptr; /* sauvegarde le jeton	*/
+    mytext = mysptr; /* sauvegarde le jeton  */
     mysptr++;
   string:
     for (; isstgt((int)CURC); mysptr++)
@@ -628,13 +628,13 @@ lex_loop:
       break;
     case STGT:
       fwrite(mysptr, 1, 1, f);
-      if (PREVC != '\\') { /* veritable fin	*/
+      if (PREVC != '\\') { /* veritable fin  */
         mytext++;
         mylength = (int)(mysptr - mytext);
         mysptr++;
         return (T_STRING);
       }
-      mysptr++; /* pseudo fin 		*/
+      mysptr++; /* pseudo fin     */
       goto string;
       break;
     }
@@ -656,11 +656,11 @@ lex_loop:
 #define LINESIZE (BUFSIZ - 1)
 #define TEXTSIZE (1 + LINESIZE + BUFSIZE + 1)
 
-static FILE *fds;    /* descripteur du fichier source	*/
-static char *source; /* nom du fichier du programme source	*/
-static char *botbuf; /* fond	  du buffer d'entree du fichier	*/
-static char *buf;    /* base   du buffer d'entree du fichier	*/
-static char *topbuf; /* sommet du buffer d'entree du fichier	*/
+static FILE *fds;    /* descripteur du fichier source  */
+static char *source; /* nom du fichier du programme source  */
+static char *botbuf; /* fond    du buffer d'entree du fichier  */
+static char *buf;    /* base   du buffer d'entree du fichier  */
+static char *topbuf; /* sommet du buffer d'entree du fichier  */
 
 /*
  * La procedure "unlex" recule la tete de lecture devant le dernier jeton.
@@ -671,8 +671,8 @@ void unlex(void) { mysptr = mytext; }
  * La procedure "open_source" alloue et initialise les variables utilisees
  * pour la gestion des entrees du programme source.
  * Entree :
- * fd		Fichier du programme source.
- * sptr		Nom du fichier du programme source.
+ * fd    Fichier du programme source.
+ * sptr    Nom du fichier du programme source.
  */
 void open_source(FILE *fd, const char *str)
 {
@@ -713,9 +713,9 @@ static void next_source(void)
   char *bot = buf;
   char *top = topbuf;
 
-  /* recopie la derniere ligne devant "buf"	*/
+  /* recopie la derniere ligne devant "buf"  */
 
-  *bot = EOL; /* evite le debordement de "buf"	*/
+  *bot = EOL; /* evite le debordement de "buf"  */
   while ((*--bot = *--top) != EOL) {
   };
   myline = mysptr = bot + 1;
@@ -724,13 +724,13 @@ static void next_source(void)
   if (size == 0) {
     topbuf = buf + 1;
     *buf = EOF;
-    *topbuf = EOB; /* sentinelle de fin de fichier	*/
+    *topbuf = EOB; /* sentinelle de fin de fichier  */
     mysptr = buf;
   } else {
     topbuf = buf + size;
-    *topbuf = EOB; /* sentinelle de fin de buffer	*/
+    *topbuf = EOB; /* sentinelle de fin de buffer  */
 
-    /* recherche de la derniere ligne	*/
+    /* recherche de la derniere ligne  */
     top = topbuf;
     while (*--top != EOL) {
     };
@@ -739,7 +739,7 @@ static void next_source(void)
 }
 
 /*
- * ERR_STACK	: Pile des messages d'erreur.
+ * ERR_STACK  : Pile des messages d'erreur.
  * La pile est geree par les procedures "poperr", "popuperr" et "pusherr".
  * Les messages sont affiches par les procedures "count" et "lexerr".
  */
@@ -769,7 +769,7 @@ static void count(void)
  * 3 elle affiche les messages d'erreur contenus dans la pile.
  * 4 elle affiche les messages d'erreur en parametre.
  * Entree :
- * va_list	Liste de messages d'erreur terminee par NULL.
+ * va_list  Liste de messages d'erreur terminee par NULL.
  */
 
 // lexerr (va_alist)
@@ -781,18 +781,18 @@ void lexerr(const char *path, ...)
   char *cp;
   int i;
 
-  /* Pointe sur le caractere fautif.	*/
+  /* Pointe sur le caractere fautif.  */
 
   count();
   // write (STDERR, myline, mysptr - myline);
   fprintf(stderr, "\n%*c\n\"%s\", line %d:\n", mycolumno, '^', source, mylineno);
 
-  /* Affiche les messages d'erreur de la pile.	*/
+  /* Affiche les messages d'erreur de la pile.  */
 
   for (i = 0; i < size_stack; i++)
     fprintf(stderr, "%s", err_stack[i]);
 
-  /* Affiche les messages d'erreur en parametres.	*/
+  /* Affiche les messages d'erreur en parametres.  */
 
   va_start(ap, path);
   while ((cp = (char *)va_arg(ap, char *)) != NULL)

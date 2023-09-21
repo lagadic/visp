@@ -50,7 +50,7 @@
 /*
  * La procedure "parser" fait l'analyse syntaxique du fichier source.
  * Entree/Sortie :
- * bsp		Scene surfacique polygonale a lire.
+ * bsp    Scene surfacique polygonale a lire.
  */
 void parser(Bound_scene *bsp)
 {
@@ -60,7 +60,7 @@ void parser(Bound_scene *bsp)
     switch (token) {
     case '$':
       switch (lex()) {
-      case T_IDENT: /* saute la commande inconnue	*/
+      case T_IDENT: /* saute la commande inconnue  */
         skip_cmd(/* stderr */);
         unlex();
         break;
@@ -82,7 +82,7 @@ void parser(Bound_scene *bsp)
         fscanf_View_parameters(get_view_parameters());
         set_projection(void);
         break;
-#endif /* used	*/
+#endif /* used  */
       default:
         lexerr("start", "keyword expected", NULL);
         break;

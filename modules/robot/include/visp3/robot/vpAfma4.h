@@ -116,8 +116,6 @@ public:
   void init(void);
 
   vpHomogeneousMatrix getForwardKinematics(const vpColVector &q) const;
-  /*   int getInverseKinematics(const vpHomogeneousMatrix & fMc, */
-  /* 			   vpColVector & q, const bool &nearest=true); */
   vpHomogeneousMatrix get_fMc(const vpColVector &q) const;
   void get_fMe(const vpColVector &q, vpHomogeneousMatrix &fMe) const;
   void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;

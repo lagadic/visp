@@ -234,8 +234,6 @@ bool vpSickLDMRS::measure(vpLaserScan laserscan[4])
   // get the start/stop angle
   short startAngle = (short)ushortptr[12];
   short stopAngle = (short)ushortptr[13];
-  //   std::cout << "angle in [" << startAngle << "; " << stopAngle
-  // 	    << "]" << std::endl;
 
   // get the number of points of this measurement
   unsigned short numPoints = ushortptr[14];

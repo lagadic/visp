@@ -63,7 +63,7 @@ void vpMomentDatabase::add(vpMoment &moment, const char *name)
 */
 const vpMoment &vpMomentDatabase::get(const char *type, bool &found) const
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator it = moments.find(type);
+  std::map<const char *, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator it = moments.find(type);
 
   found = (it != moments.end());
   return *(it->second);
@@ -81,7 +81,7 @@ const vpMoment &vpMomentDatabase::get(const char *type, bool &found) const
 */
 void vpMomentDatabase::updateAll(vpMomentObject &object)
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator itr;
   for (itr = moments.begin(); itr != moments.end(); ++itr) {
     (*itr).second->update(object);
   }
@@ -92,7 +92,7 @@ void vpMomentDatabase::updateAll(vpMomentObject &object)
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentDatabase &m)
 {
-  std::map<const char *, vpMoment *, vpMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpMoment *, vpMomentDatabase::vpCmpStr_t>::const_iterator itr;
   os << "{";
 
   for (itr = m.moments.begin(); itr != m.moments.end(); ++itr) {

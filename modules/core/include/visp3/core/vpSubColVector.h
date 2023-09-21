@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Mask on a vpColVector .
- *
- * Authors:
- * Laneurit Jean
- *
-*****************************************************************************/
+ * Mask on a vpColVector.
+ */
 
 #ifndef _vpSubColVector_h_
 #define _vpSubColVector_h_

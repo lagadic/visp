@@ -16,7 +16,7 @@
   "files.associations": {
     "bitset": "cpp",
     "optional": "cpp",
-    "*.in": "cpp",
+    "*.in": "cmake",
     "cctype": "cpp",
     "clocale": "cpp",
     "cmath": "cpp",
@@ -109,7 +109,12 @@
     "__string": "cpp",
     "compare": "cpp",
     "concepts": "cpp",
-    "*.ipp": "cpp"
+    "*.ipp": "cpp",
+    "any": "cpp",
+    "numbers": "cpp",
+    "semaphore": "cpp",
+    "stop_token": "cpp",
+    "view": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,

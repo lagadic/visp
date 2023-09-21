@@ -251,14 +251,6 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
   }
   default: {
     vpERROR_TRACE("This error should not occur!");
-    //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
-    // 		   "que les specs de la classe ont ete modifiee, "
-    // 		   "et que le code n'a pas ete mis a jour "
-    // 		   "correctement.");
-    //       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-    // 		   "vpViper650::vpViper650ToolType, et controlez que "
-    // 		   "tous les cas ont ete pris en compte dans la "
-    // 		   "fonction init(camera).");
     break;
   }
   }

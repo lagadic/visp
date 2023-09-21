@@ -45,7 +45,7 @@
 namespace
 {
 static bool g_runBenchmark = false;
-static const std::vector<unsigned int> g_sizes = {23, 127, 233, 419, 1153, 2749};
+static const std::vector<unsigned int> g_sizes = { 23, 127, 233, 419, 1153, 2749 };
 
 double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
 
@@ -66,7 +66,8 @@ double stddev(const std::vector<double> &vec)
   double mean = sum / vec.size();
 
   std::vector<double> diff(vec.size());
-  std::transform(vec.begin(), vec.end(), diff.begin(), [mean](double x) { return x - mean; });
+  std::transform(vec.begin(), vec.end(), diff.begin(), [mean](double x) {
+    return x - mean; });
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   return std::sqrt(sq_sum / vec.size());
 }
@@ -369,11 +370,11 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(g_runBenchmark) // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark?");   // description string for the help output
+    | Opt(g_runBenchmark) // bind variable to a new option, with a hint string
+    ["--benchmark"] // the option names it will respond to
+    ("run benchmark?");   // description string for the help output
 
-  // Now pass the new composite back to Catch so it uses that
+// Now pass the new composite back to Catch so it uses that
   session.cli(cli);
 
   // Let Catch (using Clara) parse the command line

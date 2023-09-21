@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Planar surface detection tool.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpPlanarObjectDetector_h_
 #define _vpPlanarObjectDetector_h_

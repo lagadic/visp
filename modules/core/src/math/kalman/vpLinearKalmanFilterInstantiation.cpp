@@ -814,7 +814,6 @@ void vpLinearKalmanFilterInstantiation::filter(vpColVector &z)
     if (model == stateConstVel_MeasurePos) {
       for (unsigned int i = 0; i < size_measure * nsignal; i++) {
         double z_prev = Xest[size_state * i]; // Previous mesured position
-        //	std::cout << "Mesure pre: " << z_prev << std::endl;
         Xest[size_state * i] = z[i];
         Xest[size_state * i + 1] = (z[i] - z_prev) / dt;
       }

@@ -85,7 +85,7 @@
   \begin{array}{cccccc}
   \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} &
   (1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
-  \;\\									\
+  \;\\                  \
    \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta
   /\rho &  \sin\theta/\rho & -1 \\ \end{array} \right] \f]
 

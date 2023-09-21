@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Homography transformation.
- *
- * Authors:
- * Muriel Pressigout
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHomography.cpp
@@ -53,23 +48,13 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
-/*!
-  \brief initialize an homography as Identity
-*/
 vpHomography::vpHomography() : vpArray2D<double>(3, 3), aMb(), bP() { eye(); }
-
-/*!
-  \brief initialize an homography from another homography
-*/
 
 vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), aMb(), bP() { *this = H; }
 
-/*!
-  \brief initialize an homography from another homography
-*/
-vpHomography::vpHomography(const vpHomogeneousMatrix &M, const vpPlane &p) : vpArray2D<double>(3, 3), aMb(), bP()
+vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : vpArray2D<double>(3, 3), aMb(), bP()
 {
-  buildFrom(M, p);
+  buildFrom(aMb, bP);
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
@@ -89,10 +74,10 @@ vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : vpArray2
   buildFrom(arb, p);
 }
 
-void vpHomography::buildFrom(const vpHomogeneousMatrix &M, const vpPlane &p)
+void vpHomography::buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP)
 {
-  insert(M);
-  insert(p);
+  insert(aMb);
+  insert(bP);
   build();
 }
 
@@ -121,52 +106,20 @@ void vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &p)
 
 /*********************************************************************/
 
-/*!
-  \brief insert the rotational component.
-  To recompute the homography call build().
-*/
 void vpHomography::insert(const vpRotationMatrix &aRb) { aMb.insert(aRb); }
 
-/*!
-  \brief insert the rotational component.
-  To recompute the homography call build().
-*/
 void vpHomography::insert(const vpHomogeneousMatrix &M) { this->aMb = M; }
 
-/*!  \brief insert the rotational component, insert a
-  theta u vector (transformation into a rotation matrix).
-  To recompute the homography call build().
-
-*/
 void vpHomography::insert(const vpThetaUVector &tu)
 {
   vpRotationMatrix aRb(tu);
   aMb.insert(aRb);
 }
 
-/*!
-  \brief  insert the translational component in a homography.
-  To recompute the homography call build().
-*/
 void vpHomography::insert(const vpTranslationVector &atb) { aMb.insert(atb); }
 
-/*!
-  \brief  insert the reference plane.
-  To recompute the homography call build().
-*/
 void vpHomography::insert(const vpPlane &p) { this->bP = p; }
 
-/*!
-  Return inverted homography.
-
-  \param[in] sv_threshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  homography is not full rank.
-
-  \param[out] rank : Rank of the homography that should be 3.
-
-  \return  \f$\bf H^{-1}\f$
-*/
 vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) const
 {
   vpMatrix M = (*this).convert();
@@ -185,20 +138,8 @@ vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) cons
   return H;
 }
 
-/*!
-  \brief Invert the homography.
-
-  \param bHa : \f$\bf H^{-1}\f$ with H = *this.
-*/
 void vpHomography::inverse(vpHomography &bHa) const { bHa = inverse(); }
 
-/*!
-   Save an homography in a file.
-   The laod() function allows then to read and set the homography from this
-   file.
-
-   \sa load()
- */
 void vpHomography::save(std::ofstream &f) const
 {
   if (!f.fail()) {
@@ -208,19 +149,6 @@ void vpHomography::save(std::ofstream &f) const
   }
 }
 
-/*!
-
-  Multiplication by an homography.
-
-  \param H : Homography to multiply with.
-
-  \code
-  vpHomography aHb, bHc;
-  // Initialize aHb and bHc homographies
-  vpHomography aHc = aHb * bHc;
-  \endcode
-
-*/
 vpHomography vpHomography::operator*(const vpHomography &H) const
 {
   vpHomography Hp;
@@ -236,11 +164,6 @@ vpHomography vpHomography::operator*(const vpHomography &H) const
   return Hp;
 }
 
-/*!
-  Operation a = aHb * b.
-
-  \param b : 3 dimension vector.
-*/
 vpColVector vpHomography::operator*(const vpColVector &b) const
 {
   if (b.size() != 3)
@@ -257,20 +180,6 @@ vpColVector vpHomography::operator*(const vpColVector &b) const
   return a;
 }
 
-/*!
-
-  Multiply an homography by a scalar.
-
-  \param v : Value of the scalar.
-
-  \code
-  double v = 1.1;
-  vpHomography aHb;
-  // Initialize aHb
-  vpHomography H = aHb * v;
-  \endcode
-
-*/
 vpHomography vpHomography::operator*(const double &v) const
 {
   vpHomography H;
@@ -282,15 +191,6 @@ vpHomography vpHomography::operator*(const double &v) const
   return H;
 }
 
-/*!
-  From the coordinates of the point in image plane b and the homography
-  between image a and b computes the coordinates of the point in image plane
-  a.
-
-  \param b_P : 2D coordinates of the point in the image plane b.
-
-  \return A point with 2D coordinates in the image plane a.
-*/
 vpPoint vpHomography::operator*(const vpPoint &b_P) const
 {
   vpPoint a_P;
@@ -311,19 +211,7 @@ vpPoint vpHomography::operator*(const vpPoint &b_P) const
 
   return a_P;
 }
-/*!
 
-  Divide an homography by a scalar.
-
-  \param v : Value of the scalar.
-
-  \code
-  vpHomography aHb;
-  // Initialize aHb
-  vpHomography H = aHb / aHb[2][2];
-  \endcode
-
-*/
 vpHomography vpHomography::operator/(const double &v) const
 {
   vpHomography H;
@@ -339,7 +227,6 @@ vpHomography vpHomography::operator/(const double &v) const
   return H;
 }
 
-//! Divide  all the element of the homography matrix by v : Hij = Hij / v
 vpHomography &vpHomography::operator/=(double v)
 {
   // if (x == 0)
@@ -354,12 +241,6 @@ vpHomography &vpHomography::operator/=(double v)
   return *this;
 }
 
-/*!
-  Copy operator.
-  Allow operation such as aHb = H
-
-  \param H : Homography matrix to be copied.
-*/
 vpHomography &vpHomography::operator=(const vpHomography &H)
 {
   for (unsigned int i = 0; i < 3; i++)
@@ -370,12 +251,7 @@ vpHomography &vpHomography::operator=(const vpHomography &H)
   bP = H.bP;
   return *this;
 }
-/*!
-  Copy operator.
-  Allow operation such as aHb = H
 
-  \param H : Matrix to be copied.
-*/
 vpHomography &vpHomography::operator=(const vpMatrix &H)
 {
   if (H.getRows() != 3 || H.getCols() != 3)
@@ -388,14 +264,6 @@ vpHomography &vpHomography::operator=(const vpMatrix &H)
   return *this;
 }
 
-/*!
-  Read an homography in a file, verify if it is really an homogeneous
-  matrix.
-
-  \param f : the file. This file has to be written using save().
-
-  \sa save()
-*/
 void vpHomography::load(std::ifstream &f)
 {
   if (!f.fail()) {
@@ -469,9 +337,6 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, cons
       aHb[i][j] = aHb_[i][j];
 }
 
-/*!
- * Return homography determinant.
- */
 double vpHomography::det() const
 {
   return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
@@ -479,10 +344,6 @@ double vpHomography::det() const
           (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
 }
 
-/*!
-  Set the homography as identity transformation by setting the diagonal to 1
-  and all other values to 0.
-*/
 void vpHomography::eye()
 {
   for (unsigned int i = 0; i < 3; i++)
@@ -503,18 +364,6 @@ void vpHomography::eye()
 void vpHomography::setIdentity() { eye(); }
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
-/*!
-  Given `iPa` a pixel with coordinates \f$(u_a,v_a)\f$ in
-  image a, and the homography `bHa` in the Euclidean space or calibrated domain that links image a and b, computes the
-  coordinates of the pixel \f$(u_b,v_b)\f$ in the image b using the camera
-  parameters matrix \f$\bf K\f$.
-
-  Compute \f$^b{\bf p} = {\bf K} \; {^b}{\bf H}_a \; {\bf K}^{-1} {^a}{\bf
-  p}\f$ with \f$^a{\bf p}=(u_a,v_a,1)\f$ and \f$^b{\bf p}=(u_b,v_b,1)\f$
-
-  \return The coordinates in pixel of the point with coordinates
-  \f$(u_b,v_b)\f$.
-  */
 vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomography &bHa, const vpImagePoint &iPa)
 {
   double xa = iPa.get_u();
@@ -529,18 +378,6 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
   return iPb;
 }
 
-/*!
-  Given `Pa` a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the
-  image plane a, and the homography `bHa` in the Euclidean space that links image a and b, computes
-  the normalized coordinates of the point \f$(x_b,y_b,1)\f$ in the image plane
-  b.
-
-  Compute \f$^b{\bf p} = {^b}{\bf H}_a \; {^a}{\bf p}\f$ with \f$^a{\bf
-  p}=(x_a,y_a,1)\f$ and \f$^b{\bf p}=(x_b,y_b,1)\f$
-
-  \return The coordinates in meter of the point with coordinates
-  \f$(x_b,y_b)\f$.
-  */
 vpPoint vpHomography::project(const vpHomography &bHa, const vpPoint &Pa)
 {
   double xa = Pa.get_x();
@@ -556,39 +393,7 @@ vpPoint vpHomography::project(const vpHomography &bHa, const vpPoint &Pa)
   return Pb;
 }
 
-/*!
-  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
-  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
-  computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
-  ^b{\bf p}\f$ using a robust estimation scheme.
 
-  This method is to compare to DLT() except that here a robust estimator is
-  used to reject couples of points that are considered as outliers.
-
-  At least 4 couples of points are needed.
-
-  \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters.
-  \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters.
-  \param aHb : Estimated homography that relies the transformation from image a to
-  image b.
-  \param inliers : Vector that indicates if a matched point is an
-  inlier (true) or an outlier (false).
-  \param residual : Global residual computed as
-  \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$
-  with \f$n\f$ the number of inliers.
-  \param weights_threshold : Threshold applied on the weights updated during the
-  robust estimation and used to consider if a point is an outlier or an
-  inlier. Values should be in [0:1]. A couple of matched points that have a
-  weight lower than this threshold is considered as an outlier. A value equal
-  to zero indicates that all the points are inliers.
-  \param niter : Number of iterations of the estimation process.
-  \param normalization : When set to true, the coordinates of the points are normalized.
-  The normalization carried out is the one preconized by Hartley.
-
-  \sa DLT(), ransac()
- */
 void vpHomography::robust(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                           const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers,
                           double &residual, double weights_threshold, unsigned int niter, bool normalization)
@@ -725,13 +530,6 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
   }
 }
 
-/*!
-  Project the current image point (in frame b) into the frame a using the
-  homography aHb.
-
-  \param ipb : Homography defining the relation between frame a and frame b.
-  \return The projected image point in the frame a.
-*/
 vpImagePoint vpHomography::projection(const vpImagePoint &ipb)
 {
   vpImagePoint ipa;
@@ -750,10 +548,6 @@ vpImagePoint vpHomography::projection(const vpImagePoint &ipb)
   return ipa;
 }
 
-/*!
-  Converts an homography to a matrix.
-  \return The 3x3 matrix corresponding to the homography.
- */
 vpMatrix vpHomography::convert() const
 {
   vpMatrix M(3, 3);
@@ -764,24 +558,6 @@ vpMatrix vpHomography::convert() const
   return M;
 }
 
-/*!
- * Transform an homography from pixel space to calibrated domain.
- *
- * Given homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space,
- * compute the homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain using:
- * \f[ {\bf H} = {\bf K}^{-1} {\bf G} {\bf K} \f]
- * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
- * \f[{\bf K} =
- * \left[ \begin{array}{ccc}
- * p_x & 0   & u_0  \\
- * 0   & p_y & v_0 \\
- * 0   & 0   & 1
- * \end{array}\right]
- * \f]
- * \return The corresponding homography matrix \f$\bf H\f$ in the Euclidean space or calibrated domain.
- *
- * \sa homography2collineation()
- */
 vpHomography vpHomography::collineation2homography(const vpCameraParameters &cam) const
 {
   vpHomography H;
@@ -820,24 +596,6 @@ vpHomography vpHomography::collineation2homography(const vpCameraParameters &cam
   return H;
 }
 
-/*!
- * Transform an homography from calibrated domain to pixel space.
- *
- * Given homography \f$\bf H\f$ in the Euclidean space or in the calibrated domain,
- * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
- * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
- * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
- * \f[{\bf K} =
- * \left[ \begin{array}{ccc}
- * p_x & 0   & u_0  \\
- * 0   & p_y & v_0 \\
- * 0   & 0   & 1
- * \end{array}\right]
- * \f]
- * \return The corresponding collineation matrix \f$\bf G\f$ in the pixel space.
- *
- * \sa collineation2homography()
- */
 vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam) const
 {
   vpHomography H;

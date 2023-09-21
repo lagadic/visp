@@ -176,7 +176,7 @@ int main()
     }
 
     // compute the initial pose using Dementhon method followed by a non
-    // linear minimisation method
+    // linear minimization method
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
     std::cout << cMo << std::endl;
@@ -286,7 +286,7 @@ int main()
         exit(1);
       }
 
-      // compute the initial pose using  a non linear minimisation method
+      // compute the initial pose using  a non linear minimization method
       pose.clearPoint();
 
       for (i = 0; i < nbPoint; i++) {

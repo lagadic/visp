@@ -37,37 +37,29 @@
 #define _vpServoException_h_
 
 /*!
-  \file vpServoException.h
-  \brief error that can be emitted by the vpServo class and its derivatives
-*/
+ * \file vpServoException.h
+ * \brief error that can be emitted by the vpServo class and its derivatives
+ */
 
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#include <iostream>
+#include <string>
 
 /*!
-  \class vpServoException
-  \brief Error that can be emitted by the vpServo class and its derivatives.
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
+ * \class vpServoException
+ * \brief Error that can be emitted by the vpServo class and its derivatives.
  */
 class VISP_EXPORT vpServoException : public vpException
 {
 public:
   /*!
-
-  \brief Lists the possible error than can be emitted while calling
-  vpServo member
- */
-  enum errorServoCodeEnum {
-    //! Current or desired feature list is empty
+   * \brief Lists the possible error than can be emitted while calling
+   * vpServo member
+   */
+  enum errorServoCodeEnum
+  {
+//! Current or desired feature list is empty
     noFeatureError,
     //! No degree of freedom is available to achieve the secondary task.
     noDofFree,
@@ -78,6 +70,9 @@ public:
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpServoException(int id, const char *format, ...)
   {
     this->code = id;
@@ -86,7 +81,15 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpServoException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpServoException(int id) : vpException(id) { }
 };
 

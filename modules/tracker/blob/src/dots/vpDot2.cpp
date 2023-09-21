@@ -528,24 +528,6 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
     bbox_v_min = movingDot.bbox_v_min;
     bbox_v_max = movingDot.bbox_v_max;
   }
-  //   else {
-  //     // test if the found dot is valid,
-  //     if( ! isValid( I, wantedDot ) ) {
-  //       *this = wantedDot;
-  //       vpERROR_TRACE("The found dot is invalid:",
-  // 		    "- could be a problem of size (width or height) or "
-  // 		    "  surface (number of pixels) which differ too much "
-  // 		    "  to the previous one "
-  // 		    "- or a problem of the shape which is not ellipsoid if "
-  // 		    "  use setEllipsoidShapePrecision(double
-  // ellipsoidShapePrecision) "
-  //         "  which is the default case. "
-  // 		    "  To track a non ellipsoid shape use
-  // setEllipsoidShapePrecision(0)") ;
-  //       throw(vpTrackingException(vpTrackingException::featureLostError,
-  // 				"The found dot is invalid")) ;
-  //     }
-  //   }
 
   // if this dot is partially out of the image, return an error tracking.
   if (!isInImage(I)) {
@@ -1358,8 +1340,6 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
       u = (unsigned int)(cog_u + innerCoef * (a1 * cos(alpha) * cos(theta) - a2 * sin(alpha) * sin(theta)));
       v = (unsigned int)(cog_v + innerCoef * (a1 * sin(alpha) * cos(theta) + a2 * cos(alpha) * sin(theta)));
       if (!this->hasGoodLevel(I, u, v)) {
-// 	vpTRACE("Inner circle pixel (%d, %d) has bad level for dot (%g, %g)",
-// 		u, v, cog_u, cog_v);
 #ifdef DEBUG
         printf("Inner circle pixel (%u, %u) has bad level for dot (%g, %g): "
                "%d not in [%u, %u]\n",
@@ -1407,8 +1387,6 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
         continue;
       }
       if (!this->hasReverseLevel(I, u, v)) {
-// 	vpTRACE("Outside circle pixel (%d, %d) has bad level for dot (%g,
-// %g)", 		u, v, cog_u, cog_v);
 #ifdef DEBUG
         printf("Outside circle pixel (%u, %u) has bad level for dot (%g, "
                "%g): %d not in [%u, %u]\n",
@@ -1629,10 +1607,6 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &_u
 
   int border_u = (int)this->firstBorder_u;
   int border_v = (int)this->firstBorder_v;
-
-  //   vpTRACE("-----------------------------------------");
-  //   vpTRACE("first border_u: %d border_v: %d dir: %d",
-  // 	this->firstBorder_u, this->firstBorder_v,firstDir);
   int du, dv;
   float dS, dMu, dMv, dMuv, dMu2, dMv2;
   m00 = 0.0;
@@ -1740,14 +1714,6 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &_u
       mu02 = m02 - tmpCenter_v * m01;
       mu20 = m20 - tmpCenter_u * m10;
     }
-
-    // check the center is in the image... never know...
-    //     if( !hasGoodLevel( I, (unsigned int)tmpCenter_u,
-    // 		       (unsigned int)tmpCenter_v ) )
-    //     {
-    //       vpDEBUG_TRACE(3, "The center of gravity of the dot (%g, %g) has
-    //       not a good in level", tmpCenter_u, tmpCenter_v); return false;
-    //     }
 
     cog.set_u(tmpCenter_u);
     cog.set_v(tmpCenter_v);

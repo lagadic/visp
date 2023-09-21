@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Test keypoints detection with OpenCV, specially the Pyramid implementation
  * feature misssing in OpenCV 3.0.
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 

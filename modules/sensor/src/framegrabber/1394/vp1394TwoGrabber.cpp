@@ -2006,45 +2006,37 @@ void vp1394TwoGrabber::setIsoTransmissionSpeed(vp1394TwoIsoSpeedType isospeed)
   // Check the speed to configure in B-mode or A-mode
   if (isospeed >= vpISO_SPEED_800) {
     if (camera->bmode_capable != DC1394_TRUE) {
-      //       vpERROR_TRACE("Camera is not 1394B mode capable. \n"
-      // 		    "Set the iso speed lower or equal to 400Mbps");
       close();
       throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Camera is not 1394B mode capable"));
     }
 
     if (dc1394_video_set_operation_mode(camera, DC1394_OPERATION_MODE_1394B) != DC1394_SUCCESS) {
-      //       vpERROR_TRACE("Cannot set camera to 1394B mode. \n");
       close();
       throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set camera to 1394B mode"));
     }
 
     if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
-      //       vpERROR_TRACE("Failed to set 1394B mode. \n");
       close();
       throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set 1394B mode"));
     }
   } else {
     if (dc1394_video_set_operation_mode(camera, DC1394_OPERATION_MODE_LEGACY) != DC1394_SUCCESS) {
-      //       vpERROR_TRACE("Cannot set camera to 1394A mode. \n");
       close();
       throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set camera to 1394A mode"));
     }
 
     if (dc1394_video_get_operation_mode(camera, &op_mode) != DC1394_SUCCESS) {
-      //       vpERROR_TRACE("Failed to set 1394A mode. \n");
       close();
       throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set 1394A mode"));
     }
   }
 
   if (dc1394_video_set_iso_speed(camera, (dc1394speed_t)isospeed) != DC1394_SUCCESS) {
-    //       vpERROR_TRACE("Cannot set requested iso speed. \n");
     close();
     throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Cannot set requested iso speed"));
   }
 
   if (dc1394_video_get_iso_speed(camera, &speed) != DC1394_SUCCESS) {
-    //       vpERROR_TRACE("Failed to set iso speed. \n");
     close();
     throw(vpFrameGrabberException(vpFrameGrabberException::settingError, "Failed to set iso speed"));
   }

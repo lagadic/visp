@@ -240,7 +240,7 @@ void vpServolens::init() const
   cmd = "VW0";
   this->write(cmd.c_str());
 
-  /* L'experience montre qu'une petite tempo est utile.		*/
+  /* L'experience montre qu'une petite tempo est utile. */
   vpTime::wait(500);
 }
 

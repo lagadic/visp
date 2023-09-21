@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Test automatic thresholding.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>

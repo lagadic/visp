@@ -57,7 +57,7 @@
  * La procedure "fscanf_Remove" lit en ascii les parametres d'elimination
  * des faces.
  * Entree :
- * bp		Parametres a lire.
+ * bp    Parametres a lire.
  */
 void fscanf_Remove(Byte *bp)
 {
@@ -94,11 +94,11 @@ void fscanf_Remove(Byte *bp)
  * La procedure "fscanf_View_parameters" lit en ascii les parametres
  * de visualisation.
  * Entree :
- * vp		Parametres de visualisation a lire.
+ * vp    Parametres de visualisation a lire.
  */
 void fscanf_View_parameters(View_parameters *vp)
 {
-  /* Lecture du type de projection lors de la prise de vue.	*/
+  /* Lecture du type de projection lors de la prise de vue.  */
 
   skip_keyword(T_TYPE, "view: keyword \"type\" expected");
   switch (lex()) {
@@ -113,35 +113,35 @@ void fscanf_View_parameters(View_parameters *vp)
     break;
   }
 
-  /* Lecture du centre de projection (oeil) de la prise de vue.	*/
+  /* Lecture du centre de projection (oeil) de la prise de vue.  */
 
   skip_keyword(T_COP, "view: keyword \"cop\" expected");
   pusherr("view_cop: ");
   fscanf_Point3f(&vp->cop);
   poperr();
 
-  /* Lecture du point de reference (cible) a la prise de vue.	*/
+  /* Lecture du point de reference (cible) a la prise de vue.  */
 
   skip_keyword(T_VRP, "view: keyword \"vrp\" expected");
   pusherr("view_vrp: ");
   fscanf_Point3f(&vp->vrp);
   poperr();
 
-  /* Lecture de la direction normale au plan de projection.	*/
+  /* Lecture de la direction normale au plan de projection.  */
 
   skip_keyword(T_VPN, "view: keyword \"vpn\" expected");
   pusherr("view_vpn: ");
   fscanf_Vector(&vp->vpn);
   poperr();
 
-  /* Lecture de la direction indiquant le haut de la projection.	*/
+  /* Lecture de la direction indiquant le haut de la projection.  */
 
   skip_keyword(T_VUP, "view: keyword \"vup\" expected");
   pusherr("view_vup: ");
   fscanf_Vector(&vp->vup);
   poperr();
 
-  /* Lecture de la fenetre de projection de la prise de vue.	*/
+  /* Lecture de la fenetre de projection de la prise de vue.  */
 
   skip_keyword(T_WINDOW, "view: keyword \"window\" expected");
   pusherr("view_window_umin: ");
@@ -154,7 +154,7 @@ void fscanf_View_parameters(View_parameters *vp)
   fscanf_float(&vp->vwd.vmax);
   poperr();
 
-  /* Lecture des profondeurs de decoupage avant et arriere.	*/
+  /* Lecture des profondeurs de decoupage avant et arriere.  */
 
   skip_keyword(T_DEPTH, "view: keyword \"depth\" expected");
   pusherr("view_depth_front: ");

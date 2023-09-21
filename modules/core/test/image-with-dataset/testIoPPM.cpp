@@ -71,7 +71,7 @@ Read and write PPM images on the disk. Also test exceptions.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
           name);
 

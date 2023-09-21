@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * UDP Server
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpUDPServer_h_
 #define _vpUDPServer_h_
@@ -144,12 +142,12 @@ receive):
 #include <vector>
 #include <visp3/core/vpUDPServer.h>
 
-struct DataType {
+struct vpDataType_t {
   double double_val;
   int int_val;
 
-  DataType() : double_val(0.0), int_val(0) {}
-  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
+  vpDataType_t() : double_val(0.0), int_val(0) {}
+  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 
 int main() {
@@ -160,7 +158,7 @@ int main() {
     std::string msg = "", hostInfo = "";
     int res = server.receive(msg, hostInfo);
     if (res) {
-      DataType data_type;
+      vpDataType_t data_type;
       memcpy(&data_type.double_val, msg.c_str(),
 sizeof(data_type.double_val)); memcpy(&data_type.int_val,
 msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));

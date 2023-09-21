@@ -739,14 +739,6 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
     break;
   }
 
-  // test if position reachable
-  //   if ( (fabs(q[0]) > vpBiclops::panJointLimit) ||
-  //        (fabs(q[1]) > vpBiclops::tiltJointLimit) ) {
-  //     vpERROR_TRACE ("Positioning error.");
-  //     throw vpRobotException (vpRobotException::wrongStateError,
-  // 			    "Positioning error.");
-  //   }
-
   vpDEBUG_TRACE(12, "Lock mutex vpEndThread_mutex");
   pthread_mutex_lock(&vpEndThread_mutex);
   controller.setPosition(q, positioningVelocity);

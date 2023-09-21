@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,11 +30,7 @@
  * Description:
  * Basic contours extraction based on the orignal work of
  * Sina Samangooei (ss@ecs.soton.ac.uk).
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /**
  * Copyright (c) 2011, The University of Southampton and the individual
  * contributors. All rights reserved.
@@ -79,26 +74,42 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpPolygon.h>
 
+
 namespace
 {
-typedef enum {
-  NORTH,
-  NORTH_EAST,
-  EAST,
-  SOUTH_EAST,
-  SOUTH,
-  SOUTH_WEST,
-  WEST,
-  NORTH_WEST,
-  LAST_DIRECTION
+/*!
+ * Possible directions to find a contour.
+ */
+typedef enum
+{
+  NORTH, //!< North direction
+  NORTH_EAST, //!< North-East direction
+  EAST, //!< East direction
+  SOUTH_EAST, //!< South-East direction
+  SOUTH, //!< South direction
+  SOUTH_WEST, //!< South-West direction
+  WEST, //!< West direction
+  NORTH_WEST, //!< North-West direction
+  LAST_DIRECTION //!< Number of possible directions
 } vpDirectionType;
 
-struct vpDirection {
+/*!
+ * Direction object.
+ */
+struct vpDirection
+{
+  //!< Direction
   vpDirectionType m_direction;
 
+  //!< Pixel increment along x to reach a given direction
   int m_dirx[8];
+
+  //!< Pixel increment along y to reach a given direction
   int m_diry[8];
 
+  /*!
+   * Default constructor.
+   */
   vpDirection()
   {
     m_dirx[0] = 0;
@@ -120,6 +131,10 @@ struct vpDirection {
     m_diry[7] = -1;
   }
 
+  /*!
+   * Turn clockwise to find the next pixel along the contour.
+   * @return Direction to take.
+   */
   vpDirection clockwise()
   {
     vpDirection direction;
@@ -129,6 +144,10 @@ struct vpDirection {
     return direction;
   }
 
+  /*!
+   * Turn counter clockwise to find the next pixel along the contour.
+   * @return Direction to take.
+   */
   vpDirection counterClockwise()
   {
     vpDirection direction;
@@ -139,6 +158,12 @@ struct vpDirection {
     return direction;
   }
 
+  /*!
+   * Get the next point coordinate along the contour.
+   * @param I Image to process.
+   * @param point Current point coordinate.
+   * @return Next point coordinate along the contour.
+   */
   vpImagePoint active(const vpImage<int> &I, const vpImagePoint &point)
   {
     int yy = (int)(point.get_i() + m_diry[(int)m_direction]);
@@ -156,28 +181,53 @@ struct vpDirection {
 
 namespace vp
 {
-typedef enum {
+/*!
+ * Type of contour.
+ */
+typedef enum
+{
   CONTOUR_OUTER, /*!< Outer contour. */
   CONTOUR_HOLE   /*!< Hole contour. */
 } vpContourType;
 
-typedef enum {
+/*!
+ * Type of contour retrieval.
+ */
+typedef enum
+{
   CONTOUR_RETR_TREE,    /*!< Retrieve all the contours with the hierarchy stored
                            in a tree. */
   CONTOUR_RETR_LIST,    /*!< Retrieve all the contours without any hierarchy. */
   CONTOUR_RETR_EXTERNAL /*!< Retrieve only external contours. */
 } vpContourRetrievalType;
 
-struct vpContour {
+/*!
+ * Structure associated to a contour.
+ */
+struct vpContour
+{
+  //! Children contour
   std::vector<vpContour *> m_children;
+  //! Contour type
   vpContourType m_contourType;
+  //! Parent contour
   vpContour *m_parent;
+  //! Vector of points belonging to the contour
   std::vector<vpImagePoint> m_points;
 
-  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL), m_points() {}
+  /*!
+   * Default constructor.
+   */
+  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL), m_points() { }
 
-  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(NULL), m_points() {}
+  /*!
+   * Constructor of a given contour type.
+   */
+  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(NULL), m_points() { }
 
+  /*!
+   * Copy constructor.
+   */
   vpContour(const vpContour &contour)
     : m_children(), m_contourType(contour.m_contourType), m_parent(NULL), m_points(contour.m_points)
   {
@@ -191,6 +241,9 @@ struct vpContour {
     }
   }
 
+  /*!
+   * Destructor.
+   */
   virtual ~vpContour()
   {
     for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
@@ -202,6 +255,9 @@ struct vpContour {
     }
   }
 
+  /*!
+   * Copy operator.
+   */
   vpContour &operator=(const vpContour &other)
   {
     m_contourType = other.m_contourType;
@@ -215,7 +271,8 @@ struct vpContour {
           *it = NULL;
         }
       }
-    } else {
+    }
+    else {
       // Make the current contour the root contour
       // to avoid problem when deleting
       m_parent = NULL;
@@ -231,6 +288,9 @@ struct vpContour {
     return *this;
   }
 
+  /*!
+   * Set parent contour.
+   */
   void setParent(vpContour *parent)
   {
     m_parent = parent;
@@ -241,11 +301,41 @@ struct vpContour {
   }
 };
 
+/*!
+ * \ingroup group_imgproc_contours
+ *
+ * Draw the input contours on the binary image.
+ *
+ * \param I : Grayscale image where we want to draw the input contours.
+ * \param contours : Detected contours.
+ * \param grayValue : Drawing grayscale color.
+ */
 VISP_EXPORT void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours,
                               unsigned char grayValue = 255);
+
+/*!
+ * \ingroup group_imgproc_contours
+ *
+ * Draw the input contours on the color image.
+ *
+ * \param I : Color image where we want to draw the input contours.
+ * \param contours : Detected contours.
+ * \param color : Drawing color.
+ */
 VISP_EXPORT void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours,
                               const vpColor &color);
 
+/*!
+ * \ingroup group_imgproc_contours
+ *
+ * Extract contours from a binary image.
+ *
+ * \param I_original : Input binary image (0 means background, 1 means
+ * foreground, other values are not allowed).
+ * \param contours : Detected contours.
+ * \param contourPts : List of contours, each contour contains a list of contour points.
+ * \param retrievalMode : Contour retrieval mode.
+ */
 VISP_EXPORT void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
                               std::vector<std::vector<vpImagePoint> > &contourPts,
                               const vpContourRetrievalType &retrievalMode = vp::CONTOUR_RETR_TREE);

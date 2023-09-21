@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,43 +29,31 @@
  *
  * Description:
  * Exception handling.
- *
- * Authors:
- * Nicolas Mansard
- *
-*****************************************************************************/
+ */
 
-/* \file vpException.h
-   \brief error that can be emitted by the vp class and its derivatives
+/*!
+ * \file vpException.h
+ * \brief error that can be emitted by the vp class and its derivatives
  */
 
 #ifndef _vpException_h_
 #define _vpException_h_
 
-/* --------------------------------------------------------------------- */
-/* --- INCLUDE --------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
-
 #include <visp3/core/vpConfig.h>
 
-/* Classes standards. */
-#include <iostream> /* Classe std::ostream.    */
+#include <iostream>
 #include <stdarg.h>
-#include <string> /* Classe string.     */
-
-/* --------------------------------------------------------------------- */
-/* --- CLASS ----------------------------------------------------------- */
-/* --------------------------------------------------------------------- */
+#include <string>
 
 /*!
-   \class vpException
-   \ingroup group_core_debug
-   \brief error that can be emitted by ViSP classes.
-
-   This class inherites from the standard std::exception contained in the C++
-   STL.
-   It is therefore possible to catch vpException with any other derivative of
-   std::exception in the same catch.
+ * \class vpException
+ * \ingroup group_core_debug
+ * \brief error that can be emitted by ViSP classes.
+ *
+ * This class inherits from the standard std::exception contained in the C++
+ * STL.
+ * It is therefore possible to catch vpException with any other derivative of
+ * std::exception in the same catch.
  */
 class VISP_EXPORT vpException : public std::exception
 {
@@ -81,10 +68,11 @@ protected:
   void setMessage(const char *format, va_list args);
 
   //!  forbid the empty constructor (protected)
-  vpException() : code(notInitialized), message(""){};
+  vpException() : code(notInitialized), message("") { };
 
 public:
-  enum generalExceptionEnum {
+  enum generalExceptionEnum
+  {
     memoryAllocationError,       //!< Memory allocation error
     memoryFreeError,             //!< Memory free error
     functionNotImplementedError, //!< Function not implemented
@@ -98,37 +86,66 @@ public:
     notInitialized               //!< Used to indicate that a parameter is not initialized.
   };
 
+  /*!
+   * Constructor.
+   */
   vpException(int code, const char *format, va_list args);
+  /*!
+   * Constructor.
+   */
   vpException(int code, const char *format, ...);
+
+  /*!
+   * Constructor.
+   */
   vpException(int code, const std::string &msg);
+
+  /*!
+   * Constructor.
+   */
   explicit vpException(int code);
 
   /*!
-    Basic destructor. Do nothing but implemented to fit the inheritance from
-    std::exception
-  */
+   * Destructor. Do nothing but implemented to fit the inheritance from
+   * std::exception
+   */
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  virtual ~vpException() {}
+  virtual ~vpException() { }
 #else
-  virtual ~vpException() throw() {}
+  virtual ~vpException() throw() { }
 #endif
 
   /** @name Inherited functionalities from vpException */
   //@{
-  //! Send the object code.
+  /*!
+   * Send the object code.
+   */
   int getCode() const;
 
-  //! Send a reference (constant) related the error message (can be empty).
+  /*!
+   * Send a reference (constant) related the error message (can be empty).
+   */
   const std::string &getStringMessage() const;
-  //! send a pointer on the array of  \e char related to the error string.
-  //! Cannot be  \e NULL.
+
+  /*!
+   * Send a pointer on the array of  \e char related to the error string.
+   * Cannot be  \e NULL.
+   */
   const char *getMessage() const;
+
+  /*!
+   * Overloading of the what() method of std::exception to return the vpException
+   * message.
+   *
+   * \return pointer on the array of  \e char related to the error string.
+   */
+  const char *what() const throw();
   //@}
 
-  //! Print the error structure.
+  /*!
+   * Print the error structure.
+   */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpException &art);
-
-  const char *what() const throw();
 };
 
-#endif /* #ifndef _vpException_h_ */
+#endif

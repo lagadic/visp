@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,58 +29,50 @@
  *
  * Description:
  * Exception that can be emitted by the vpFeature class and its derivatives.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpFeatureException_h_
 #define _vpFeatureException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
+/*!
+ * \file vpFeatureException.h
+ *  \brief error that can be emitted by the vpFeature class and its derivatives
  */
 
-/* \file vpFeatureException.h
-   \brief error that can be emitted by the vpFeature class and its derivatives
- */
-/* Classes standards. */
-
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
+#include <iostream>
+#include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
 /*!
-  \class vpFeatureException
-  \ingroup group_visual_features
-  \brief Error that can be emitted by the vpBasicFeature class and its
-  derivates.
+ * \class vpFeatureException
+ * \ingroup group_visual_features
+ * \brief Error that can be emitted by the vpBasicFeature class and its
+ * derivates.
  */
 class VISP_EXPORT vpFeatureException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpFeature member
- */
-  enum errorFeatureCodeEnum {
-    //! feature list or desired feature list is empty
+   * \brief Lists the possible error than can be emitted while calling
+   * vpFeature member
+   */
+  enum errorFeatureCodeEnum
+  {
+//! Feature list or desired feature list is empty
     badErrorVectorError,
+    //! Size mismatch error
     sizeMismatchError,
+    //! Feature not initialized
     notInitializedError,
+    //! Wrong feature initialization
     badInitializationError
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpFeatureException(int id, const char *format, ...)
   {
     this->code = id;
@@ -90,7 +81,15 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpFeatureException(int id) : vpException(id) { }
 };
 

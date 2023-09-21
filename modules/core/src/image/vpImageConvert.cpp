@@ -3946,16 +3946,16 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
                          src.getWidth());
 
     if (!pR) {
-      delete [] ptrR;
+      delete[] ptrR;
     }
     if (!pG) {
-      delete [] ptrG;
+      delete[] ptrG;
     }
     if (!pB) {
-      delete [] ptrB;
+      delete[] ptrB;
     }
     if (!pa) {
-      delete [] ptrA;
+      delete[] ptrA;
     }
   }
 }

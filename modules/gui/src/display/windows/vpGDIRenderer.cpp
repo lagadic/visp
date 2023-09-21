@@ -886,8 +886,7 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
     LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) + half_size);
 
     // display the result (flush)
-    //  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size,
-    //	   hDCMem, j-(size/2), i-(size/2), SRCCOPY);
+    //  BitBlt(hDCScreen, j-(size/2), i-(size/2), size, size, hDCMem, j-(size/2), i-(size/2), SRCCOPY);
 
     LeaveCriticalSection(&m_criticalSection);
 

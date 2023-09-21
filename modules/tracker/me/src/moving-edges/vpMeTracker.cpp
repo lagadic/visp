@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
  *
@@ -30,12 +29,11 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
-\file vpMeTracker.cpp
-\brief Contains abstract elements for a Distance to Feature type feature.
+  \file vpMeTracker.cpp
+  \brief Contains abstract elements for a Distance to Feature type feature.
 */
 
 #include <visp3/core/vpColor.h>
@@ -87,9 +85,6 @@ vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
 #endif
 }
 
-/*!
- Reset the tracker by removing all the moving edges.
- */
 void vpMeTracker::reset()
 {
   nGoodElement = 0;
@@ -125,15 +120,6 @@ unsigned int vpMeTracker::numberOfSignal()
 
 unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
 
-/*!
-  Test whether the pixel is inside the mask. Mask values that are set to true
-  are considered in the tracking.
-
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true
-  are considered in the tracking. To disable a pixel, set false.
-  \param i : Pixel coordinate along the rows.
-  \param j : Pixel coordinate along the columns.
-*/
 bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
 {
   try {
@@ -156,13 +142,6 @@ int vpMeTracker::outOfImage(const vpImagePoint &iP, int half, int rows, int cols
   return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));
 }
 
-/*!
-  Virtual function that is called by lower classes vpMeEllipse, vpMeLine
-  and vpMeNurbs.
-
-  \exception vpTrackingException::initializationError : Moving edges not
-  initialized.
-*/
 void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 {
   if (!me) {
@@ -200,14 +179,6 @@ void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
   me->setRange(range_tmp);
 }
 
-/*!
-  Track moving-edges.
-
-  \param I : Image.
-
-  \exception vpTrackingException::initializationError : Moving edges not initialized.
-
-*/
 void vpMeTracker::track(const vpImage<unsigned char> &I)
 {
   if (!me) {
@@ -255,18 +226,6 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
   }
 }
 
-/*!
-  Display the moving edge sites with a color corresponding to their state.
-
-  - If green : The vpMeSite is a good point.
-  - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
-  - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
-  - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
-  - If cyan : The point is removed because it's too close to another.
-  - Yellow otherwise
-
-  \param I : The image.
-*/
 void vpMeTracker::display(const vpImage<unsigned char> &I)
 {
   for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
@@ -283,12 +242,6 @@ void vpMeTracker::display(const vpImage<vpRGBa> &I)
   }
 }
 
-/*! Displays the status of moving edge sites
-
-  \param I : The image.
-  \param w : vector
-  \param index_w : index
-*/
 void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w)
 {
   for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Rxyz angle parameterization for the rotation.
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpRxyzVector_h_
 #define _vpRxyzVector_h_

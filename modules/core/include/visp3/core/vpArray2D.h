@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * This class implements an 2D array as a template class.
- *
-*****************************************************************************/
+ */
 #ifndef _vpArray2D_h_
 #define _vpArray2D_h_
 

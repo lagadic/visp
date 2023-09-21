@@ -337,7 +337,6 @@ int main()
         unsigned int k = 0;
 
         for (unsigned int j = 0; j < 6; j++) // j is the joint
-          // if (pb[j]==1)	{
           if (std::fabs(pb[j] - 1) <= std::numeric_limits<double>::epsilon()) {
             for (unsigned int i = 0; i < dimKernelL; i++)
               E[k][i] = kernelJ1[j][i];

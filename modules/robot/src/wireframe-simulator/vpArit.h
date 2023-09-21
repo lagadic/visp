@@ -175,20 +175,20 @@ typedef struct {
   }
 
 /*
- * 				POSITION
- *				________
+ *         POSITION
+ *        ________
  *
  * La structure "Position" definit le positionnement d'un objet.
  * Matrice de positionnement = R.S.T
- * avec R = Rx.Ry.Rz	Matrice de rotation autour des axes (Ox,Oy,Oz),
- *			Les angles sont donnes en degres;
- *	S = Sx.Sy.Sz	Matrice d'homothetie sur les axes;
- *	T = Tx.Ty.Tz	Matrice de translation sur les axes.
+ * avec R = Rx.Ry.Rz  Matrice de rotation autour des axes (Ox,Oy,Oz),
+ *      Les angles sont donnes en degres;
+ *  S = Sx.Sy.Sz  Matrice d'homothetie sur les axes;
+ *  T = Tx.Ty.Tz  Matrice de translation sur les axes.
  */
 typedef struct {
-  Vector rotate;    /* vecteur rotation	*/
-  Vector scale;     /* vecteur homothetie	*/
-  Vector translate; /* vecteur translation	*/
+  Vector rotate;    /* vecteur rotation  */
+  Vector scale;     /* vecteur homothetie  */
+  Vector translate; /* vecteur translation  */
 } AritPosition;
 
 #define IDENTITY_ROTATE                                                                                                \

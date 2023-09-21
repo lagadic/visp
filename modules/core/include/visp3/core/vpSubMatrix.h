@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Mask on a vpMatrix .
- *
- * Authors:
- * Laneurit Jean
- *
-*****************************************************************************/
+ * Mask on a vpMatrix.
+ */
 
 #ifndef _vpSubMatrix_h_
 #define _vpSubMatrix_h_

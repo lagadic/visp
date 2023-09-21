@@ -1,7 +1,7 @@
-/*! \example tutorial-matlab.cpp */
-/*
- *	Tutorial using ViSP and MATLAB
- *	Determine column-wise sum of ViSP matrix using MATLAB Engine
+/*! \example tutorial-matlab.cpp
+ *
+ * Tutorial using ViSP and MATLAB
+ * Determine column-wise sum of ViSP matrix using MATLAB Engine
  */
 #include <stdio.h>
 #include <stdlib.h>

@@ -76,7 +76,7 @@ and save the cropped image on the disk (Klimt_cropped.pgm).\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
           name);
 

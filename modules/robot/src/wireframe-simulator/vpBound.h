@@ -71,7 +71,7 @@
 #define BND_NBR 12
 
 #define BOUND_NBR 1024
-#define FACE_NBR 6144 /* Tailles de tableaux	*/
+#define FACE_NBR 6144 /* Tailles de tableaux  */
 #define VERTEX_NBR 16
 #define POINT_NBR 6144
 #ifdef face_normal
@@ -80,34 +80,34 @@
 
 #ifdef face_edge
 typedef struct {
-  Index v0, v1; /* extremites		*/
-  Index f0, f1; /* faces		*/
+  Index v0, v1; /* extremites    */
+  Index f0, f1; /* faces    */
 } Edge;
 #endif // face_edge
 
 #ifdef face_edge
 typedef struct {
-  Index nbr; /* nombre d'aretes	*/
-  Edge *ptr; /* liste  dynamique	*/
+  Index nbr; /* nombre d'aretes  */
+  Edge *ptr; /* liste  dynamique  */
 } Edge_list;
 #endif // face_edge
 
 #ifdef face_normal
 typedef struct {
-  Index nbr;   /* nombre de vecteurs	*/
-  Vector *ptr; /* liste  dynamique	*/
+  Index nbr;   /* nombre de vecteurs  */
+  Vector *ptr; /* liste  dynamique  */
 } Vector_list;
 #endif // face_normal
 
 typedef struct {
-  float xmin, xmax; /* bornes sur l'axe x	*/
-  float ymin, ymax; /* bornes sur l'axe y	*/
-  float zmin, zmax; /* bornes sur l'axe z	*/
+  float xmin, xmax; /* bornes sur l'axe x  */
+  float ymin, ymax; /* bornes sur l'axe y  */
+  float zmin, zmax; /* bornes sur l'axe z  */
 } Bounding_box;
 
 typedef struct {
-  Index nbr;        /* nombre de scenes	*/
-  Bound_scene *ptr; /* liste  dynamique	*/
+  Index nbr;        /* nombre de scenes  */
+  Bound_scene *ptr; /* liste  dynamique  */
 } Bound_scene_list;
 
 void free_Bound(Bound *bp);

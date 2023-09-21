@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Generic rotation vector (cannot be used as is !).
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpRotationVector_h_
 #define _vpRotationVector_h_

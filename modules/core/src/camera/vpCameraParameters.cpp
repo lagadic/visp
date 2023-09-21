@@ -187,8 +187,8 @@ int main()
    It produces the following output:
    \code
 Camera parameters for perspective projection without distortion:
-  px = 600	 py = 600
-  u0 = 320	 v0 = 240
+  px = 600   py = 600
+  u0 = 320   v0 = 240
 
 Field of view (horizontal: 56.145 and vertical: 43.6028 degrees)
    \endcode
@@ -251,8 +251,8 @@ int main()
    It produces the following output:
    \code
 Camera parameters for perspective projection with distortion:
-  px = 600	 py = 600
-  u0 = 320	 v0 = 240
+  px = 600   py = 600
+  u0 = 320   v0 = 240
   kud = -0.19
   kdu = 0.2
 
@@ -377,8 +377,8 @@ int main()
    It produces the following output:
    \code
 Camera parameters for perspective projection without distortion:
-  px = 601.832	 py = 609.275
-  u0 = 320	 v0 = 240
+  px = 601.832   py = 609.275
+  u0 = 320   v0 = 240
 
 Field of view (horizontal: 56 and vertical: 43 degrees)
    \endcode

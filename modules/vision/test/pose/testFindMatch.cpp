@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,11 +31,7 @@
  * Compute the pose of a 3D object using the Dementhon method. Assuming that
  * the correspondance between 2D points and 3D points is not done, we use
  * the RANSAC algorithm to achieve this task
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
