@@ -136,8 +136,8 @@ endif()
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
-set(VISP_VERSION_MINOR "5")
-set(VISP_VERSION_PATCH "1")
+set(VISP_VERSION_MINOR "6")
+set(VISP_VERSION_PATCH "0")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
