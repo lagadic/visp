@@ -262,28 +262,6 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
   set(VISP_SCRIPT_CONFIG_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
   if(UNIX)
-    #----------------------------------------------------------------------
-    # Generate SonarQube config file
-    # Should be done before calling
-    #   fix_include_prefix(_includes_modules)
-    #   fix_include_prefix(_includes_extra)
-    #----------------------------------------------------------------------
-    set(VISP_SONARQUBE_INCLUDE_DIRS
-      "${CMAKE_BINARY_DIR}/${VISP_INC_INSTALL_PATH}"
-      "${_system_include_dirs}"
-      "${_includes_modules}"
-      "${_includes_extra}")
-
-    if(WITH_CATCH2)
-      list(APPEND VISP_SONARQUBE_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/catch2")
-    endif()
-
-    vp_list_replace_separator(VISP_SONARQUBE_INCLUDE_DIRS ", ")
-
-    configure_file("${VISP_SOURCE_DIR}/cmake/templates/sonar-project.properties.in"
-      "${VISP_BINARY_DIR}/sonar-project.properties"
-      @ONLY)
-
     #######################################################################
     #
     # for Unix platforms: Linux, OSX
