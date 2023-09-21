@@ -4,12 +4,15 @@ from enum import Enum
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 import re
+from cxxheaderparser.simple import parse_string
 try:
   import doxmlparser
   from doxmlparser.compound import DoxCompoundKind, DoxygenType, compounddefType, descriptionType, docParaType, MixedContainer
 except ImportError:
   print('Cannot import xml parser')
   import_failed = True
+
+from utils import *
 
 class DocumentationObjectKind(Enum):
   '''
@@ -20,7 +23,7 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
@@ -75,13 +78,8 @@ class MethodDocSignature:
 
   def __init__(self, name, ret, params, is_const, is_static):
     self.name = name.replace(' ', '')
-    self.ret = self.post_process_type(ret)
-    clean_params = []
-    for param in params:
-      if param == 'void':
-        continue
-      clean_params.append(self.post_process_type(param))
-    self.params = clean_params
+    self.ret = ret.replace(' ', '')
+    self.params = [p.replace(' ', '') for p in params]
     self.is_const = is_const
     self.is_static = is_static
 
@@ -111,9 +109,11 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
   if container.name == 'text':
     return container.value.replace('\n', '\n' + indent_str).strip()
   if container.name == 'bold':
-    return '**' + container.value.valueOf_ + '**'
+    return ' **' + container.value.valueOf_ + '** '
   if container.name == 'emphasis':
-    return '*' + container.value.valueOf_ + '*'
+    return ' *' + container.value.valueOf_ + '* '
+  if container.name == 'sp':
+    return ' '
 
   if container.name == 'formula':
     v: str = container.value.valueOf_.strip()
@@ -145,6 +145,25 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     else:
       res += '\n' + f'<unparsed SimpleSect of kind {kind}>'
     return res + '\n'
+
+  if container.name == 'programlisting':
+    program: doxmlparser.listingType = container.value
+    codelines: List[doxmlparser.codelineType] = program.codeline
+    res = '\n\n' + indent_str + '.. code-block:: cpp' + '\n\n' + indent_str + one_indent
+    lines = []
+    for line in codelines:
+      cs = []
+      for h in line.highlight:
+        c = ''.join([process_mixed_container(h, level) for h in h.content_])
+        cs.append(c)
+      s = ''.join(cs)
+      lines.append(s)
+
+    code = ('\n' + indent_str + one_indent).join(lines)
+    res += code + '\n\n'
+    return res
+
+
 
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
@@ -187,7 +206,8 @@ class DocumentationHolder(object):
         for compounddef in self.xml_doc.get_compounddef():
           compounddef: compounddefType = compounddef
           if compounddef.kind == DoxCompoundKind.CLASS:
-            compounddefs_res[compounddef.get_compoundname()] = compounddef
+            cls_name = compounddef.get_compoundname()
+            compounddefs_res[cls_name] = compounddef
             section_defs: List[doxmlparser.sectiondefType] = compounddef.sectiondef
             for section_def in section_defs:
               member_defs: List[doxmlparser.memberdefType] = section_def.memberdef
@@ -195,17 +215,23 @@ class DocumentationHolder(object):
               for method_def in method_defs:
                 is_const = False if method_def.const == 'no' else True
                 is_static = False if method_def.static == 'no' else True
-                ret_type = ''.join(process_mixed_container(c, 0) for c in method_def.type_.content_)
-                if ret_type in env_mapping:
-                  ret_type = env_mapping[ret_type]
+                ret_type = ''.join(process_mixed_container(c, 0) for c in method_def.type_.content_).replace('vp_deprecated', '').replace('VISP_EXPORT', '')
                 param_types = []
                 for param in method_def.get_param():
                   t = ''.join(process_mixed_container(c, 0) for c in param.type_.content_)
-                  if t in env_mapping:
-                    t = env_mapping[t]
+
                   param_types.append(t)
-                signature = MethodDocSignature(method_def.name, ret_type, param_types, is_const, is_static)
-                methods_res[(compounddef.get_compoundname(), signature)] = method_def
+                if method_def.name == cls_name or ret_type != '':
+                  signature_str = f'{ret_type} {cls_name}::{method_def.name}({",".join(param_types)}) {{}}'
+                  method = parse_string(signature_str).namespace.method_impls[0]
+                  method.static = is_static
+                  method.const = is_const
+
+                  signature = MethodDocSignature(method_def.name,
+                                                      get_type(method.return_type, {}, env_mapping) or '', # Don't use specializations so that we can match with doc
+                                                      [get_type(param.type, {}, env_mapping) or '' for param in method.parameters],
+                                                      method.const, method.static)
+                  methods_res[(compounddef.get_compoundname(), signature)] = method_def
         self.elements = DocElements(compounddefs_res, methods_res)
 
 

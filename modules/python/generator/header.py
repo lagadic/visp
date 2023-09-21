@@ -141,9 +141,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -171,6 +171,8 @@ class HeaderFile():
     header_env = HeaderEnvironment(self.header_repr)
     if self.documentation_holder_path is not None:
       self.documentation_holder = DocumentationHolder(self.documentation_holder_path, header_env.mapping)
+    else:
+      print(f'No documentation found for header {self.path}')
     for cls in self.header_repr.namespace.classes:
       result += self.generate_class(cls, header_env) + '\n'
     enum_decls_and_bindings = enum_bindings(self.header_repr.namespace, header_env.mapping, self.submodule)
@@ -186,6 +188,8 @@ class HeaderFile():
       class_doc = None
       if self.documentation_holder is not None:
         class_doc = self.documentation_holder.get_documentation_for_class(name_cpp_no_template, {}, owner_specs)
+      else:
+        print(f'Documentation not found when looking up {name_cpp_no_template}')
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
@@ -290,6 +294,7 @@ class HeaderFile():
                                                     [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
                                                     method.const, method.static)
           method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, specs)
+          print(f'Fetching documentation for {method_name}: {"Found" if method_doc is not None else "Not found"}')
           py_arg_strs = py_arg_strs if method_doc is None else [method_doc.documentation] + py_arg_strs
 
         method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)

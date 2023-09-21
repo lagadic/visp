@@ -13,6 +13,8 @@ Todos and known issues
 
     static/*
     api.rst
+    api2.rst
+
 
 
 .. Core module

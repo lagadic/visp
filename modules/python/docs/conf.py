@@ -17,13 +17,8 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys
 import os
-import visp
+
 sys.path.insert(0, os.path.abspath('../build'))
-# import pkgutil
-# with open('res.txt', 'w') as f:
-#   f.write(str(visp.__path__))
-#   f.write(str(list(pkgutil.iter_modules(visp.__path__))))
-# -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 # needs_sphinx = '1.0'
@@ -38,27 +33,49 @@ extensions = [
     "sphinx.ext.mathjax",
     "sphinx.ext.autosummary",
     "sphinx_immaterial",
-    "sphinx_immaterial.apidoc.python.apigen"
+    # "sphinx_immaterial.apidoc.python.apigen"
 ]
 
-python_apigen_modules = {
-  "visp.core": "generated/core.",
-  "visp.vs": "generated/vs.",
-}
-python_apigen_default_groups = [
-    (r".*:visp.core.*", "Core Public-members"),
-    (r"class:visp.core.*", "Core Classes"),
-    (r".*:visp.vs.*", "VS Public-members"),
-    (r"class:visp.vs.*", "VS Classes"),
-]
+# python_apigen_modules = {
+#   "visp.core": "generated/core.",
+#   "visp.vs": "generated/vs.",
+# }
+# python_apigen_default_groups = [
+#     (r".*:visp.core.*", "Core Public-members"),
+#     (r"class:visp.core.*", "Core Classes"),
+#     (r".*:visp.vs.*", "VS Public-members"),
+#     (r"class:visp.vs.*", "VS Classes"),
+# ]
 
-python_apigen_default_order = [
-    (r".*:visp.core.*", -1),
-    (r"class:visp.core.*", -2),
-    (r".*:visp.vs.*", -1),
-    (r"class:visp.vs.*", -2),
-]
+# python_apigen_default_order = [
+#     (r".*:visp.core.*", -1),
+#     (r"class:visp.core.*", -2),
+#     (r".*:visp.vs.*", -1),
+#     (r"class:visp.vs.*", -2),
+# ]
 autosummary_generate = True
+
+autoclass_content = "both"  # Add __init__ doc (ie. params) to class summaries
+html_show_sourcelink = False  # Remove 'view source code' from top of page (for html, not python)
+autodoc_inherit_docstrings = True  # If no docstring, inherit from base class
+set_type_checking_flag = True  # Enable 'expensive' imports for sphinx_autodoc_typehints
+nbsphinx_allow_errors = True  # Continue through Jupyter errors
+#autodoc_typehints = "description" # Sphinx-native method. Not as good as sphinx_autodoc_typehints
+add_module_names = False # Remove namespaces from class/method signatures
+
+
+import visp
+from types import ModuleType
+module_names = []
+for k in visp.__dict__:
+  if isinstance(visp.__dict__[k], ModuleType):
+    module_names.append(k)
+
+all_modules = '\\   '.join(f'visp.{module_name}' for module_name in module_names)
+
+rst_prolog = f"""
+.. |all_modules| replace:: visp.core
+"""
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
