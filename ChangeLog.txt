@@ -5,7 +5,7 @@
      Copyright (C) 2005 - 2023 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.6.0 (released September 21, 2023)
+ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
     . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
       Francois Chaumette, Olivier Roussel, Julien Dufour, Joudy Nader
