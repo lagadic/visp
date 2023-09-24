@@ -714,7 +714,6 @@ public:
 
       double X_init = odom.position_body.x_m;
       double Y_init = odom.position_body.y_m;
-      double Z_init = odom.position_body.z_m;
       double yaw_init = vpMath::deg(rxyz[2]);
 
       std::cout << "Landing using position NED." << std::endl;
