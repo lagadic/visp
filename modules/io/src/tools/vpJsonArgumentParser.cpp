@@ -53,8 +53,8 @@ vpJsonArgumentParser::vpJsonArgumentParser(const std::string &description, const
   }
 
   helpers[jsonFileArgumentName] = []() -> std::string {
-    return "Path to the JSON configuration file. Values in this files are loaded, and can be overriden by command line arguments.\nOptional";
-  };
+    return "Path to the JSON configuration file. Values in this files are loaded, and can be overridden by command line arguments.\nOptional";
+    };
 }
 
 std::string vpJsonArgumentParser::help() const
@@ -95,7 +95,7 @@ std::string vpJsonArgumentParser::help() const
 }
 
 
-void vpJsonArgumentParser::parse(int argc, const char *argv [])
+void vpJsonArgumentParser::parse(int argc, const char *argv[])
 {
   json j;
   const std::vector<std::string> arguments(argv + 1, argv + argc);
