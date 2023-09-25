@@ -78,7 +78,8 @@ public:
   virtual ~vpImageCircle();
 
   /*!
-  * Compute the arc length that is contained in the Region of Interest (RoI).
+  * Compute the arc length, in terms of number of pixels, that is contained in the Region of Interest (RoI).
+  * \param[in] roi The rectangular RoI in which we want to know the number of pixels of the circle that are contained.
   * \return The number of pixels of the circle that are contained in the RoI.
   */
   float computeArcLengthInRoI(const vpRect &roi) const;

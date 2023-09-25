@@ -50,6 +50,7 @@ int main()
   const float HEIGHT = 480.f;
   const float RADIUS = std::min(WIDTH, HEIGHT) / 10.f;
   vpRect roi(0, 0, WIDTH, HEIGHT);
+  bool hasSucceeded = true;
 
   // Test with no intersections
   {
@@ -59,7 +60,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -67,12 +68,31 @@ int main()
     std::cout << "Test no intersection." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test circle touching borders of the RoI
+  {
+    vpRect roiSquare(0, 0, HEIGHT, HEIGHT);
+    vpImageCircle noIntersect(vpImagePoint(HEIGHT / 2.f, HEIGHT / 2.f), HEIGHT / 2.f);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = 2.f * M_PI * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
     }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test circle touching borders of the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the left border, more than half a circle visible
@@ -86,7 +106,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -94,12 +114,9 @@ int main()
     std::cout << "Test intersection left border, more than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the left border, less than half a circle visible
@@ -113,7 +130,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -121,12 +138,33 @@ int main()
     std::cout << "Test intersection left border, less than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with circle touching the left border, all the circle is visible
+  {
+    // Formula: uc = - RADIUS * cos(theta)
+    float uc = RADIUS;
+    float vc = 100.f;
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = 2.f * M_PI * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
     }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the left border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the right border, more than half a circle visible
@@ -140,7 +178,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -148,12 +186,9 @@ int main()
     std::cout << "Test intersection right border, more than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the right border, less than half a circle visible
@@ -167,7 +202,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -175,12 +210,33 @@ int main()
     std::cout << "Test intersection right border, less than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with circle touching the right border, all the circle is visible
+  {
+    // Formula: uc = WIDTH - RADIUS * cos(theta)
+    float uc = WIDTH - RADIUS;
+    float vc = 100.f;
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = 2.f * M_PI * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
     }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the right border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the top border, more than half a circle visible
@@ -194,7 +250,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -202,12 +258,9 @@ int main()
     std::cout << "Test intersection top border, more than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the top border, less than half a circle visible
@@ -221,7 +274,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -229,12 +282,33 @@ int main()
     std::cout << "Test intersection top border, less than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with circle touching the top border, all the circle is visible
+  {
+    // Formula: vc = - RADIUS * sin(theta)
+    float uc = 100.f;
+    float vc = RADIUS;
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = 2.f * M_PI * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
     }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the top border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the bottom border, more than half a circle visible
@@ -248,7 +322,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -256,12 +330,9 @@ int main()
     std::cout << "Test intersection bottom border, more than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    hasSucceeded &= isValueOK;
   }
 
   // Test with intersections with the bottom border, less than half a circle visible
@@ -275,7 +346,7 @@ int main()
     bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
     std::string statusTest;
     if (isValueOK) {
-      statusTest = "OK";
+      statusTest = "SUCCESS";
     }
     else {
       statusTest = "FAILED";
@@ -283,14 +354,39 @@ int main()
     std::cout << "Test intersection bottom border, less than half a circle visible." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
-    std::cout << "\ttest OK = " << statusTest << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
 
-    if (!isValueOK) {
-      std::cerr << "Problem with the computeArcLengthInRoI function!" << std::endl;
-      return EXIT_FAILURE;
-    }
+    hasSucceeded &= isValueOK;
   }
 
-  std::cout << "vpImageCircle is ok." << std::endl;
-  return EXIT_SUCCESS;
+  // Test with circle touching the top border, all the circle is visible
+  {
+    // Formula: vc = HEIGHT - RADIUS * sin(theta)
+    float uc = 100.f;
+    float vc = HEIGHT - RADIUS;
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = 2.f * M_PI * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the top border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  if (hasSucceeded) {
+    std::cout << "testImageCircle overall result: SUCCESS";
+    return EXIT_SUCCESS;
+  }
+  std::cout << "testImageCircle overall result: FAILED";
+  return EXIT_FAILURE;
 }
