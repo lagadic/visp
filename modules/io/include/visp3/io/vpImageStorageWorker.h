@@ -81,7 +81,8 @@ public:
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;
-        } else if (m_cpt == 1) {
+        }
+        else if (m_cpt == 1) {
           std::cout << "Started sequence saving: " << m_seqname << std::endl;
         }
         vpImageIo::write(I, filename);
@@ -105,13 +106,15 @@ public:
 
         m_cpt++;
       }
-    } catch (const vpImageQueue<vpRGBa>::cancelled &) {
+    }
+    catch (const vpImageQueue<vpRGBa>::vpCancelled_t &) {
       std::cout << "Receive cancel during color image saving." << std::endl;
       if (m_data_file_created) {
         std::cout << "Close data file: " << m_dataname << std::endl;
         m_ofs_data.close();
       }
-    } catch (const vpImageQueue<unsigned char>::cancelled &) {
+    }
+    catch (const vpImageQueue<unsigned char>::vpCancelled_t &) {
       std::cout << "Receive cancel during gray image saving." << std::endl;
       if (m_data_file_created) {
         std::cout << "Close data file: " << m_dataname << std::endl;

@@ -227,7 +227,7 @@ public:
         }
       }
     }
-    catch (vpFrameQueue::cancelled &) {
+    catch (vpFrameQueue::vpCancelled_t &) {
     }
   }
 
@@ -419,7 +419,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
       }
     }
   }
-  catch (vpShareImage::cancelled &) {
+  catch (vpShareImage::vpCancelled_t &) {
     std::cout << "Cancelled!" << std::endl;
   }
 

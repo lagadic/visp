@@ -437,7 +437,7 @@ public:
         }
       }
     }
-    catch (const vpFrameQueue::cancelled &) {
+    catch (const vpFrameQueue::vpCancelled_t &) {
       std::cout << "Receive cancel vpFrameQueue." << std::endl;
     }
   }
