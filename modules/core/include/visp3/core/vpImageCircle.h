@@ -78,9 +78,15 @@ public:
   virtual ~vpImageCircle();
 
   /*!
-  * Get the center of the image (2D) circle
-  * \return The center of the image (2D) circle.
+  * Compute the arc length that is contained in the Region of Interest (RoI).
+  * \return The number of pixels of the circle that are contained in the RoI.
   */
+  float computeArcLengthInRoI(const vpRect &roi) const;
+
+   /*!
+   * Get the center of the image (2D) circle
+   * \return The center of the image (2D) circle.
+   */
   vpImagePoint getCenter() const;
 
   /*!

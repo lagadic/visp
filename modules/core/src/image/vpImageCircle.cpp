@@ -63,6 +63,135 @@ vpImageCircle::~vpImageCircle()
 
 }
 
+void computeIntersectionsLeftBorderOnly(const float &u_c, const float &radius,
+                                        float &delta_theta)
+{
+  float theta1 = std::acos(-1.f * u_c / radius);
+  if (theta1 > M_PI) {
+    theta1 -= 2.0 * M_PI;
+  }
+  else if (theta1 > M_PI) {
+    theta1 += 2.0 * M_PI;
+  }
+  float theta2 = -1.f * theta1;
+  float theta_min = std::min(theta1, theta2);
+  float theta_max = std::max(theta1, theta2);
+  delta_theta = theta_max - theta_min;
+}
+
+void computeIntersectionsRightBorderOnly(const float &u_c, const float &width, const float &radius,
+                                         float &delta_theta)
+{
+  float theta1 = std::acos((width - u_c) / radius);
+  if (theta1 > M_PI) {
+    theta1 -= 2.0 * M_PI;
+  }
+  else if (theta1 > M_PI) {
+    theta1 += 2.0 * M_PI;
+  }
+  float theta2 = -1.f * theta1;
+  float theta_min = std::min(theta1, theta2);
+  float theta_max = std::max(theta1, theta2);
+  delta_theta = 2.f * M_PI - (theta_max - theta_min);
+}
+
+void computeIntersectionsTopBorderOnly(const float &v_c, const float &radius,
+                                       float &delta_theta)
+{
+  float theta1 = std::asin(-1.f * v_c / radius);
+  if (theta1 > M_PI) {
+    theta1 -= 2.0 * M_PI;
+  }
+  else if (theta1 > M_PI) {
+    theta1 += 2.0 * M_PI;
+  }
+
+  float theta2 = 0.f;
+  if (theta1 >= 0.f) {
+    theta2 = M_PI - theta1;
+  }
+  else {
+    theta2 = -theta1 - M_PI;
+  }
+  float theta_min = std::min(theta1, theta2);
+  float theta_max = std::max(theta1, theta2);
+  if (theta1 > 0.f) {
+    delta_theta = 2.f * M_PI - (theta_max - theta_min);
+  }
+  else {
+    delta_theta = theta_max - theta_min;
+  }
+}
+
+void computeIntersectionsBottomBorderOnly(const float &v_c, const float &height, const float &radius,
+                                          float &delta_theta)
+{
+  float theta1 = std::asin((height - v_c) / radius);
+  if (theta1 > M_PI) {
+    theta1 -= 2.0 * M_PI;
+  }
+  else if (theta1 > M_PI) {
+    theta1 += 2.0 * M_PI;
+  }
+
+  float theta2 = 0.f;
+  if (theta1 >= 0.f) {
+    theta2 = M_PI - theta1;
+  }
+  else {
+    theta2 = -theta1 - M_PI;
+  }
+  float theta_min = std::min(theta1, theta2);
+  float theta_max = std::max(theta1, theta2);
+  if (theta1 > 0.f) {
+    delta_theta = theta_max - theta_min;
+  }
+  else {
+    delta_theta = 2.f * M_PI - (theta_max - theta_min);
+  }
+}
+
+float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
+{
+  float deltaTheta = 0.f;
+  vpImagePoint center = m_center;
+  float center_u = center.get_u();
+  float center_v = center.get_v();
+  float radius = m_radius;
+  float img_w = roi.getWidth();
+  float img_h = roi.getHeight();
+  bool touchLeftBorder = (center_u - radius) < 0.;
+  bool touchRightBorder = (center_u + radius) >= img_w;
+  bool touchTopBorder = (center_v - radius) < 0.;
+  bool touchBottomBorder = (center_v + radius) >= img_h;
+  bool isHorizontallyOK = (!touchLeftBorder && !touchRightBorder);
+  bool isVerticallyOK = (!touchTopBorder && !touchBottomBorder);
+  if (isHorizontallyOK && isVerticallyOK) {
+    // Easy case
+    // The circle has its center in the image and its radius is not too great
+    // to make it partially occluded
+    deltaTheta = 2.f * M_PI;
+  }
+  else if (touchBottomBorder && !touchLeftBorder && !touchRightBorder && !touchTopBorder) {
+    // Touch only the bottom border of the RoI
+    computeIntersectionsBottomBorderOnly(center_v, img_h, radius, deltaTheta);
+  }
+  else if (!touchBottomBorder && touchLeftBorder && !touchRightBorder && !touchTopBorder) {
+    // Touch only the left border of the RoI
+    computeIntersectionsLeftBorderOnly(center_u, radius, deltaTheta);
+  }
+  else if (!touchBottomBorder && !touchLeftBorder && touchRightBorder && !touchTopBorder) {
+    // Touch only the right border of the RoI
+    computeIntersectionsRightBorderOnly(center_u, img_w, radius, deltaTheta);
+  }
+  else if (!touchBottomBorder && !touchLeftBorder && !touchRightBorder && touchTopBorder) {
+    // Touch only the top border of the RoI
+    computeIntersectionsTopBorderOnly(center_v, radius, deltaTheta);
+  }
+  float arcLength = deltaTheta * radius;
+  return arcLength;
+}
+
 vpImagePoint vpImageCircle::getCenter() const
 {
   return m_center;
