@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Save data during the task execution.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpServoData.cpp
@@ -94,9 +92,19 @@ void vpServoData::save(const vpServo &task)
 
 void vpServoData::close()
 {
-  velocityFile.close();
-  errorFile.close();
-  errorNormFile.close();
-  sFile.close();
-  sStarFile.close();
+  if (velocityFile.is_open()) {
+    velocityFile.close();
+  }
+  if (errorFile.is_open()) {
+    errorFile.close();
+  }
+  if (errorNormFile.is_open()) {
+    errorNormFile.close();
+  }
+  if (sFile.is_open()) {
+    sFile.close();
+  }
+  if (sStarFile.is_open()) {
+    sStarFile.close();
+  }
 }

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Exception that can be emitted by the vpServo class and its derivatives.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpServoException_h_
 #define _vpServoException_h_
@@ -59,7 +57,7 @@ public:
    */
   enum errorServoCodeEnum
   {
-//! Current or desired feature list is empty
+    //! Current or desired feature list is empty
     noFeatureError,
     //! No degree of freedom is available to achieve the secondary task.
     noDofFree,

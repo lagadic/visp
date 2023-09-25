@@ -291,7 +291,7 @@ public:
     cMo
   } vpFeatureTranslationRepresentationType;
 
-  // basic contructor
+  // basic constructor
   vpFeatureTranslation();
   // basic constructor specifying the type of translation feature
   explicit vpFeatureTranslation(vpFeatureTranslationRepresentationType r);

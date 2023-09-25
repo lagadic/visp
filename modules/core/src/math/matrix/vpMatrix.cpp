@@ -5593,7 +5593,7 @@ void vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix 
   \param s : Stream used for the printing.
 
   \param length : The suggested width of each matrix element.
-  If needed, the used `length` grows in order to accomodate the whole integral part,
+  If needed, the used `length` grows in order to accommodate the whole integral part,
   and shrinks the decimal part to print only `length` digits.
   \param intro : The introduction which is printed before the matrix.
   Can be set to zero (or omitted), in which case
