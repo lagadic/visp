@@ -133,5 +133,6 @@
   "C_Cpp.vcFormat.space.aroundBinaryOperator": "ignore",
   "editor.comments.insertSpace": true,
   "C_Cpp.vcFormat.indent.preserveComments": true,
-  "C_Cpp.doxygen.generatedStyle": "/*!"
+  "C_Cpp.doxygen.generatedStyle": "/*!",
+  "files.insertFinalNewline": true
 }
