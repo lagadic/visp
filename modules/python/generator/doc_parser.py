@@ -23,7 +23,7 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
@@ -56,25 +56,6 @@ class MethodDocSignature:
   params: List[str]
   is_const: bool
   is_static: bool
-
-  def post_process_type(self, t: str) -> str:
-    res = ''
-    if '::' not in t:
-      res = t
-    else:
-      # TODO: this kind of workaround works when you have no template
-      is_const = 'const' in t
-      is_rvalue = '&&' in t
-      is_ref = not is_rvalue and '&' in t
-      is_ptr = '*' in t
-      last_name = t.split('::')[-1]
-      res = 'const' if is_const else ''
-      res += last_name
-      res += '&&' if is_rvalue else ''
-      res += '&' if is_ref else ''
-      res += '*' if is_ptr else ''
-    return res.replace(' ', '')
-
 
   def __init__(self, name, ret, params, is_const, is_static):
     self.name = name.replace(' ', '')
@@ -138,7 +119,7 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     kind = container.value.kind
     if kind == 'note':
       res += '\n' + indent_str + '.. note:: ' + item_content + '\n' + indent_str
-    elif kind == 'warning':
+    elif kind == 'warning' or kind == 'attention':
       res += '\n' + indent_str + '.. warning:: ' + item_content + '\n' + indent_str
     elif kind == 'see':
       res += '\n' + indent_str + '.. note:: See' + item_content + '\n' + indent_str
@@ -163,7 +144,8 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     res += code + '\n\n'
     return res
 
-
+  # if container.name == 'parameterlist':
+  #   return ''
 
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
@@ -231,21 +213,26 @@ class DocumentationHolder(object):
                                                       get_type(method.return_type, {}, env_mapping) or '', # Don't use specializations so that we can match with doc
                                                       [get_type(param.type, {}, env_mapping) or '' for param in method.parameters],
                                                       method.const, method.static)
-                  methods_res[(compounddef.get_compoundname(), signature)] = method_def
+                  key = (compounddef.get_compoundname(), signature)
+                  if key in methods_res:
+                    num_paras = len(method_def.detaileddescription.para) + len(method_def.briefdescription.para)
+                    if num_paras > 0: # Doxygen adds some empty memberdefs in addition to the ones where the doc is defined...
+                      methods_res[key] = method_def
+                  else:
+                    methods_res[key] = method_def
         self.elements = DocElements(compounddefs_res, methods_res)
-
-
-
-
 
   def get_documentation_for_class(self, name: str, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[ClassDocumentation]:
     compounddef = self.elements.compounddefs.get(name)
-
     if compounddef is None:
       return None
-    cls_str = self.generate_class_description_string(compounddef)
+    cls_str = to_cstring(self.generate_class_description_string(compounddef))
     return ClassDocumentation(cls_str)
 
+  def generate_class_description_string(self, compounddef: compounddefType) -> str:
+    brief = process_description(compounddef.get_briefdescription())
+    detailed = process_description(compounddef.get_detaileddescription())
+    return brief + '\n\n' + detailed
 
   def get_documentation_for_method(self, cls_name: str, signature: MethodDocSignature, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[MethodDocumentation]:
     method_def = self.elements.methods.get((cls_name, signature))
@@ -254,19 +241,36 @@ class DocumentationHolder(object):
       print([k[1] for k in self.elements.methods.keys() if k[1].name == signature.name])
       return None
     descr = self.generate_method_description_string(method_def)
-    return MethodDocumentation(descr)
-
-
-
-  def generate_class_description_string(self, compounddef: compounddefType) -> str:
-    brief = process_description(compounddef.get_briefdescription())
-    detailed = process_description(compounddef.get_detaileddescription())
-    return to_cstring(brief + '\n\n' + detailed)
+    param_str = self.generate_method_params_string(method_def)
+    return_str = ''
+    res = to_cstring(descr + param_str + return_str)
+    return MethodDocumentation(res)
 
   def generate_method_description_string(self, method_def: doxmlparser.memberdefType) -> str:
     brief = process_description(method_def.get_briefdescription())
     detailed = process_description(method_def.get_detaileddescription())
-    return to_cstring(brief + '\n\n' + detailed)
+    return brief + '\n\n' + detailed
+
+  def generate_method_params_string(self, method_def: doxmlparser.memberdefType) -> str:
+    parameter_list_full: List[doxmlparser.docParamListItem] = []
+    paras: List[doxmlparser.docParaType] = method_def.detaileddescription.para + method_def.inbodydescription.para + method_def.briefdescription.para
+    print(method_def.get_name(), method_def.detaileddescription.content_)
+    for x in method_def.detaileddescription.content_:
+      print(x.value)
+    for paragraph in paras:
+      print(method_def.get_name(), 'content types')
+      print(method_def.get_name(), process_paragraph(paragraph, 0))
+      if paragraph.parameterlist is not None:
+        parameter_lists: List[doxmlparser.docParamListType] = paragraph.parameterlist
+        print(method_def.get_name(), 'found a parameterlist')
+        assert isinstance(parameter_lists, list)
+        for param_list in parameter_lists:
+          parameter_list_full.extend(param_list.parameteritem)
+
+    print(method_def.get_name(), parameter_list_full)
+    params_str = ''
+    return params_str
+
 
 
 if __name__ == '__main__':

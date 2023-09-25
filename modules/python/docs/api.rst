@@ -1,9 +1,14 @@
 API reference
 ==============
 
-.. toctree::
-   :hidden:
-   :glob:
-   :maxdepth: 2
 
-   generated/core.*
+.. autosummary::
+  :toctree: _autosummary
+  :recursive:
+  :template: custom-module-template.rst
+
+  visp.core
+  visp.io
+  visp.vision
+  visp.visual_features
+  visp.vs
