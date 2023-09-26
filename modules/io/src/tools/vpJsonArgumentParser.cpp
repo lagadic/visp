@@ -37,7 +37,6 @@
 
 using json = nlohmann::json; //! json namespace shortcut
 
-
 vpJsonArgumentParser::vpJsonArgumentParser(const std::string &description, const std::string &jsonFileArgumentName,
                                            const std::string &nestSeparator) :
   description(description),
@@ -93,7 +92,6 @@ std::string vpJsonArgumentParser::help() const
   ss << exampleJson.dump(2) << std::endl;
   return ss.str();
 }
-
 
 void vpJsonArgumentParser::parse(int argc, const char *argv[])
 {
