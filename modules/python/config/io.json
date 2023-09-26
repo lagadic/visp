@@ -1,3 +1,4 @@
 {
-  "ignored_headers": ["vpParallelPortException.h"]
+  "ignored_headers": ["vpParallelPortException.h"],
+  "ignored_classes": ["vpJsonArgumentParser", "vpParseArgv"]
 }

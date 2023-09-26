@@ -23,7 +23,7 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
@@ -144,8 +144,8 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     res += code + '\n\n'
     return res
 
-  # if container.name == 'parameterlist':
-  #   return ''
+  if container.name == 'parameterlist': # Parameter list is ignored since we have custom parsing for it
+    return ''
 
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
@@ -180,7 +180,7 @@ class DocumentationHolder(object):
     self.elements = None
     if not import_failed and DocumentationData.documentation_xml_location is not None:
       if not self.xml_path.exists():
-        print(f'Could not find documentation file for name {name} when looking in {str(path)}')
+        print(f'Could not find documentation when looking in {str(path)}')
       else:
         self.xml_doc = doxmlparser.compound.parse(str(path), True, False)
         compounddefs_res = {}
@@ -243,7 +243,7 @@ class DocumentationHolder(object):
     descr = self.generate_method_description_string(method_def)
     param_str = self.generate_method_params_string(method_def)
     return_str = ''
-    res = to_cstring(descr + param_str + return_str)
+    res = to_cstring('\n\n'.join([descr, param_str, return_str]))
     return MethodDocumentation(res)
 
   def generate_method_description_string(self, method_def: doxmlparser.memberdefType) -> str:
@@ -254,12 +254,7 @@ class DocumentationHolder(object):
   def generate_method_params_string(self, method_def: doxmlparser.memberdefType) -> str:
     parameter_list_full: List[doxmlparser.docParamListItem] = []
     paras: List[doxmlparser.docParaType] = method_def.detaileddescription.para + method_def.inbodydescription.para + method_def.briefdescription.para
-    print(method_def.get_name(), method_def.detaileddescription.content_)
-    for x in method_def.detaileddescription.content_:
-      print(x.value)
     for paragraph in paras:
-      print(method_def.get_name(), 'content types')
-      print(method_def.get_name(), process_paragraph(paragraph, 0))
       if paragraph.parameterlist is not None:
         parameter_lists: List[doxmlparser.docParamListType] = paragraph.parameterlist
         print(method_def.get_name(), 'found a parameterlist')
@@ -267,12 +262,16 @@ class DocumentationHolder(object):
         for param_list in parameter_lists:
           parameter_list_full.extend(param_list.parameteritem)
 
+    params_dict = {}
+    for param_info in parameter_list_full:
+      from functools import reduce
+      name_list: List[doxmlparser.compound.docParamName] = reduce(lambda all, pnl: all + pnl.parametername,  param_info.parameternamelist, [])
+      param_descr: doxmlparser.compound.descriptionType = param_info.parameterdescription
+      param_descr_str = ' '.join(map(lambda para: process_paragraph(para, 0), param_descr.para)).lstrip(': ')
+      for param_name in name_list:
+        params_dict[param_name.valueOf_] = param_descr_str
+
+    param_strs = [f':param {name}: {descr}' for name, descr in params_dict.items()]
     print(method_def.get_name(), parameter_list_full)
-    params_str = ''
-    return params_str
 
-
-
-if __name__ == '__main__':
-  name = 'vpBSpline'
-  print(DocumentationHolder(name, DocumentationObjectKind.Class, {}).documentation_dict[name])
+    return '\n'.join(param_strs)

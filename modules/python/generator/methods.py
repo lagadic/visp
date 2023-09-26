@@ -11,6 +11,10 @@ from utils import *
 from dataclasses import dataclass
 from enum import Enum
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+  from submodule import Submodule
+
 def cpp_operator_list():
   '''
   List of cpp methods that are considered operators.
@@ -101,7 +105,7 @@ def define_constructor(params: List[str], additional_args: List[str]) -> str:
   additional_args_str = ', '.join(additional_args)
   if len(additional_args) > 0:
     additional_args_str = ', ' + additional_args_str
-
+  print(params)
   return f'def(py::init<{", ".join(params)}>(){additional_args_str})'
 
 
@@ -113,12 +117,14 @@ class NotGeneratedReason(Enum):
   ArgumentType = 'argument_type'
   PureVirtual = 'pure_virtual'
   UnspecifiedTemplateSpecialization = 'missing_template'
+  NotHandled = 'not_handled'
 
   @staticmethod
   def is_non_trivial_reason(reason: 'NotGeneratedReason') -> bool:
     return reason in [NotGeneratedReason.ArgumentType,
                        NotGeneratedReason.ReturnType,
-                       NotGeneratedReason.UnspecifiedTemplateSpecialization]
+                       NotGeneratedReason.UnspecifiedTemplateSpecialization,
+                       NotGeneratedReason.NotHandled]
 
 @dataclass
 class RejectedMethod:
@@ -127,9 +133,6 @@ class RejectedMethod:
   method_config: Dict[str, Any]
   signature: str
   rejection_reason: NotGeneratedReason
-
-
-
 
 def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types.Method], cls_name: str, specializations, mapping) -> Tuple[List[Tuple[types.Method, Dict]], List[RejectedMethod]]:
   bindable_methods = []
@@ -141,8 +144,8 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
     (lambda m, _: m.access is None or m.access != 'public', NotGeneratedReason.Access),
     (lambda m, _: m.destructor, NotGeneratedReason.Destructor),
     (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
-    (lambda m, _: any(get_type(param.type, specializations, mapping) is None for param in m.parameters), NotGeneratedReason.ArgumentType),
-    (lambda m, _: not m.constructor and get_type(m.return_type, specializations, mapping) is None, NotGeneratedReason.ReturnType)
+    (lambda m, _: any(is_unsupported_argument_type(param.type) for param in m.parameters), NotGeneratedReason.ArgumentType),
+    (lambda m, _: not m.constructor and is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
   ]
   for method in methods:
     method_config = submodule.get_method_config(cls_name, method, specializations, mapping)

@@ -12,6 +12,10 @@ from utils import *
 from methods import *
 from doc_parser import *
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+  from submodule import Submodule
+
 
 
 def filter_includes(include_names: Set[str]) -> List[str]:
@@ -141,9 +145,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/software/visp_build/include',
+      '-I', '/home/sfelton/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -226,6 +230,7 @@ class HeaderFile():
       # Display rejected methods
       rejection_strs = []
       for rejected_method in rejected_methods:
+        self.submodule.report.add_non_generated_method(rejected_method)
         if NotGeneratedReason.is_non_trivial_reason(rejected_method.rejection_reason):
           rejection_strs.append(f'\t{rejected_method.signature} was rejected! Reason: {rejected_method.rejection_reason}')
       if len(rejection_strs) > 0:
@@ -244,6 +249,7 @@ class HeaderFile():
         for method, method_config in constructors:
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
           py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
+          print(name_cpp, py_arg_strs, params_strs)
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           method_strs.append(ctor_str)
 
@@ -255,8 +261,11 @@ class HeaderFile():
         method_name = get_name(method.name)
         method_is_const = method.const
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
+        return_type_str = get_type(method.return_type, owner_specs, header_env.mapping)
         if len(params_strs) > 1:
           print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
+          rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
+          self.submodule.report.add_non_generated_method(rejection)
           continue
         elif len(params_strs) < 1:
           print(f'Found unary operator {name_cpp}::{method_name}, skipping')
@@ -279,7 +288,6 @@ class HeaderFile():
             method_strs.append(operator_str)
             break
 
-
       def define_classical_method(method: types.Method, method_config, specs):
         params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
         py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
@@ -289,6 +297,7 @@ class HeaderFile():
 
         return_type = get_type(method.return_type, specs, header_env.mapping)
         if self.documentation_holder is not None:
+          print(method_name, params_strs)
           method_doc_signature = MethodDocSignature(method_name,
                                                     get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
                                                     [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
@@ -357,6 +366,7 @@ class HeaderFile():
     print(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
+      self.submodule.report.add_non_generated_class(name_cpp_no_template, {}, 'Skipped by user')
       return ''
 
     cls_config = self.submodule.get_class_config(name_cpp_no_template)
@@ -366,6 +376,7 @@ class HeaderFile():
     else:
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         print(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
+        self.submodule.report.add_non_generated_class(name_cpp_no_template, cls_config, 'Skipped because there was no declared specializations')
         return ''
       else:
         specialization_strs = []

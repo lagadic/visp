@@ -45,9 +45,6 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
     if split[0] in header_env_mapping:
       split[0] = header_env_mapping[split[0]]
     repr_str = '<'.join(split)
-    if repr_str == 'vpRobust::vpRobustEstimatorType':
-      print('aaaaaaaaaaaa')
-      print(param)
     if param.const:
       repr_str = 'const ' + repr_str
     return repr_str
@@ -57,13 +54,25 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
       return repr_str + '&'
     else:
       return None
+  elif isinstance(param, types.MoveReference):
+    repr_str = get_type(param.moveref_to, owner_specs, header_env_mapping)
+    if repr_str is not None:
+      return repr_str + '&&'
+    else:
+      return None
+  elif isinstance(param, types.Pointer):
+    repr_str = get_type(param.ptr_to, owner_specs, header_env_mapping)
+    if repr_str is not None:
+      return repr_str + '*'
+    else:
+      return None
   else:
     return None
 
 def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
   ptr_to = param.ptr_to
   if isinstance(ptr_to, types.Type):
-    if get_typename(ptr_to, {}, {}) == 'char' and ptr_to.const:
+    if get_typename(ptr_to.typename, {}, {}) == 'char' and ptr_to.const:
       return True
 
   return False
@@ -80,9 +89,12 @@ def is_unsupported_return_type(param: Union[types.FunctionType, types.DecoratedT
   if isinstance(param, types.Type):
     return False
   if isinstance(param, types.Reference):
+    return is_unsupported_return_type(param.ref_to)
+  if isinstance(param, types.MoveReference):
     return False
   if isinstance(param, types.Pointer):
     return not is_pointer_to_const_cstr(param)
+  return True
 
 def is_unsupported_argument_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
   '''
@@ -96,11 +108,12 @@ def is_unsupported_argument_type(param: Union[types.FunctionType, types.Decorate
   if isinstance(param, types.Type):
     return False
   if isinstance(param, types.Reference):
-    return False
+    return is_unsupported_argument_type(param.ref_to)
+  if isinstance(param, types.MoveReference):
+    return True
   if isinstance(param, types.Pointer):
     return not is_pointer_to_const_cstr(param)
-
-
+  return True
 
 def get_method_signature(name: str, return_type: str, params: List[str]) -> str:
   return f'{return_type} {name}({", ".join(params)})'

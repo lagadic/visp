@@ -10,6 +10,7 @@ import json
 
 from header import HeaderFile, sort_headers, filter_includes
 from utils import *
+from gen_report import Report
 
 class Submodule():
   def __init__(self, name: str, include_path: Path, submodule_file_path: Path):
@@ -19,6 +20,7 @@ class Submodule():
     self.config_path = Path('config') /  (name + '.json')
     with open(self.config_path, 'r') as config_file:
       self.config = json.load(config_file)
+    self.report = Report(self)
     self.headers = self._get_headers()
     assert self.include_path.exists(), f'Submodule path {self.include_path} not found'
 
@@ -28,15 +30,20 @@ class Submodule():
       if not include_file.name.endswith('.h') and not include_file.name.endswith('.hpp'):
         continue
       if self.header_should_be_ignored(include_file.name):
+        self.report.add_ignored_header(include_file)
         continue
       headers.append(HeaderFile(include_file, self))
     return headers
 
   def set_headers_from_common_list(self, all_headers: List[HeaderFile]) -> None:
+    '''
+    Set the submodule's headers from a list containing headers from multiple modules
+    '''
     new_headers = []
     for header in all_headers:
       if header.submodule.name == self.name:
         new_headers.append(header)
+        header.submodule = self
     self.headers = new_headers
 
   def generate(self) -> None:
@@ -91,6 +98,7 @@ Bindings for methods and enum values
 '''
     with open(self.submodule_file_path, 'w') as submodule_file:
       submodule_file.write(format_str)
+    self.report.write(Path(f'build/{self.name}_log.json'))
 
   def generation_function_name(self) -> str:
     return f'init_submodule_{self.name}'
@@ -152,5 +160,5 @@ def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   modules = ['core', 'vision', 'visual_features', 'vs', 'sensor', 'io']
   result = []
   for module in modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    result.append(Submodule(module, Path(f'/home/sfelton/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
   return result
