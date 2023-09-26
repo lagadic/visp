@@ -105,6 +105,11 @@ if(USE_BICLOPS)
   list(APPEND opt_libs ${BICLOPS_LIBRARIES})
 endif()
 
+if(USE_RAPA_POLOLU_MAESTRO)
+  list(APPEND opt_incs ${RapaPololuMaestro_INCLUDE_DIRS})
+  list(APPEND opt_libs ${RapaPololuMaestro_LIBRARIES})
+endif()
+
 if(USE_PTU46)
   list(APPEND opt_incs ${PTU46_INCLUDE_DIRS})
   list(APPEND opt_libs ${PTU46_LIBRARIES})

@@ -40,33 +40,33 @@
 #include <cstdlib>
 
 #if defined _MSC_VER && _MSC_VER >= 1200
-  #pragma warning( disable: 4100 4127 4251 4275 4351 4514 4668 4710 4820 )
-  #if _MSC_VER >= 1400 // 1400 = MSVC 8 2005
-    #pragma warning( disable: 4548 )
-  #endif
-  #if _MSC_VER > 1500 // 1500 = MSVC 9 2008
-    #pragma warning( disable: 4986 )
-  #endif
-  #ifdef WINRT
-    #pragma warning(disable:4447)
-  #endif
+#pragma warning( disable: 4100 4127 4251 4275 4351 4514 4668 4710 4820 )
+#if _MSC_VER >= 1400 // 1400 = MSVC 8 2005
+#pragma warning( disable: 4548 )
+#endif
+#if _MSC_VER > 1500 // 1500 = MSVC 9 2008
+#pragma warning( disable: 4986 )
+#endif
+#ifdef WINRT
+#pragma warning(disable:4447)
+#endif
 
-  // 4100 : undocumented ("unreferenced formal parameter")
-  // 4127 : conditional expression is constant
-  // 4251 : 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2', ie. disable warnings related to inline functions
-  // 4275 : non – DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier'
-  // 4351 : new behavior: elements of array will be default initialized
-  // 4447 : Disable warning 'main' signature found without threading model
-  // 4514 : 'function' : unreferenced inline function has been removed
-  // 4548 : expression before comma has no effect
-  // 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
-  // 4710 : 'function' : function not inlined
-  // 4820 : 'bytes' bytes padding added after construct 'member_name'
-  // 4986 : undocumented
+// 4100 : undocumented ("unreferenced formal parameter")
+// 4127 : conditional expression is constant
+// 4251 : 'identifier' : class 'type' needs to have dll-interface to be used by clients of class 'type2', ie. disable warnings related to inline functions
+// 4275 : non – DLL-interface classkey 'identifier' used as base for DLL-interface classkey 'identifier'
+// 4351 : new behavior: elements of array will be default initialized
+// 4447 : Disable warning 'main' signature found without threading model
+// 4514 : 'function' : unreferenced inline function has been removed
+// 4548 : expression before comma has no effect
+// 4668 : 'symbol' is not defined as a preprocessor macro, replacing with '0' for 'directives'
+// 4710 : 'function' : function not inlined
+// 4820 : 'bytes' bytes padding added after construct 'member_name'
+// 4986 : undocumented
 
-  #ifndef NOMINMAX
-    #define NOMINMAX
-  #endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #endif
 
 #if defined _MSC_VER && (_MSC_VER == 1500)
@@ -104,7 +104,7 @@
 #define VISP_VERSION_PATCH ${VISP_VERSION_PATCH}
 
 // ViSP version with dots "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}".
-#cmakedefine VISP_VERSION ${VISP_VERSION}
+#cmakedefine VISP_VERSION $ { VISP_VERSION }
 
 // ViSP version as an integer
 #define VP_VERSION_INT(a, b, c) (a<<16 | b<<8 | c)
@@ -115,7 +115,7 @@
 // Enable debug and trace printings
 #cmakedefine VP_TRACE
 #cmakedefine VP_DEBUG
-#cmakedefine VP_DEBUG_MODE ${VP_DEBUG_MODE}
+#cmakedefine VP_DEBUG_MODE $ { VP_DEBUG_MODE }
 
 // ViSP library is either compiled static or shared
 // Used to set declspec(import, export) in headers if required under Windows
@@ -394,6 +394,9 @@
 // Defined if Biclops pan-tilt head available.
 #cmakedefine VISP_HAVE_BICLOPS
 #cmakedefine VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION
+
+// Defined if Rapa Pololu Maestro 3rd party library available.
+#cmakedefine VISP_HAVE_RAPA_POLOLU_MAESTRO
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
