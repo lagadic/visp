@@ -16,7 +16,7 @@
 		3040DA5B221F991300C72347 /* VispDetector.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA58221F991300C72347 /* VispDetector.mm */; };
 		3040DA61221F99DC00C72347 /* ImageConversion.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA5E221F99DC00C72347 /* ImageConversion.mm */; };
 		3040DA62221F99DC00C72347 /* ImageDisplay.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3040DA60221F99DC00C72347 /* ImageDisplay.mm */; };
-		30E9DA38222E16B50044ACD3 /* ImageDisplay+withContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */; };
+		30E9DA38222E16B50044ACD3 /* ImageDisplayWithContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 30E9DA37222E16B50044ACD3 /* ImageDisplayWithContext.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,8 +36,8 @@
 		3040DA60221F99DC00C72347 /* ImageDisplay.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ImageDisplay.mm; sourceTree = "<group>"; };
 		3040DA64221F9A3000C72347 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = opencv2.framework; path = "../../../../Library/visp/visp-3.1.0.framework/opencv2.framework"; sourceTree = "<group>"; };
 		3040DA65221F9A3000C72347 /* visp3.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = visp3.framework; path = "../../../../Library/visp/visp-3.1.0.framework/visp3.framework"; sourceTree = "<group>"; };
-		30E9DA36222E16B50044ACD3 /* ImageDisplay+withContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageDisplay+withContext.h"; sourceTree = "<group>"; };
-		30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ImageDisplay+withContext.mm"; sourceTree = "<group>"; };
+		30E9DA36222E16B50044ACD3 /* ImageDisplayWithContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageDisplayWithContext.h"; sourceTree = "<group>"; };
+		30E9DA37222E16B50044ACD3 /* ImageDisplayWithContext.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = "ImageDisplayWithContext.mm"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,8 +100,8 @@
 				3040DA5E221F99DC00C72347 /* ImageConversion.mm */,
 				3040DA5F221F99DC00C72347 /* ImageDisplay.h */,
 				3040DA60221F99DC00C72347 /* ImageDisplay.mm */,
-				30E9DA36222E16B50044ACD3 /* ImageDisplay+withContext.h */,
-				30E9DA37222E16B50044ACD3 /* ImageDisplay+withContext.mm */,
+				30E9DA36222E16B50044ACD3 /* ImageDisplayWithContext.h */,
+				30E9DA37222E16B50044ACD3 /* ImageDisplayWithContext.mm */,
 			);
 			path = VispHelper;
 			sourceTree = "<group>";
@@ -193,7 +193,7 @@
 				3040DA61221F99DC00C72347 /* ImageConversion.mm in Sources */,
 				3040DA46221F988200C72347 /* ViewController.swift in Sources */,
 				3040DA44221F988200C72347 /* AppDelegate.swift in Sources */,
-				30E9DA38222E16B50044ACD3 /* ImageDisplay+withContext.mm in Sources */,
+				30E9DA38222E16B50044ACD3 /* ImageDisplayWithContext.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -30,7 +30,7 @@
  *
 *****************************************************************************/
 
-#import "ImageDisplay+withContext.h"
+#import "ImageDisplayWithContext.h"
 
 @implementation ImageDisplay (withContext)
 
@@ -125,4 +125,3 @@
 //! [display text]
 
 @end
-
