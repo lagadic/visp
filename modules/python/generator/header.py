@@ -145,9 +145,9 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
-      '-I', '/home/sfelton/visp_build/include',
+      '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -249,7 +249,6 @@ class HeaderFile():
         for method, method_config in constructors:
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
           py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
-          print(name_cpp, py_arg_strs, params_strs)
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           method_strs.append(ctor_str)
 
@@ -291,20 +290,23 @@ class HeaderFile():
       def define_classical_method(method: types.Method, method_config, specs):
         params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
         py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
-
         method_name = get_name(method.name)
         py_method_name = method_config.get('custom_name') or method_name
 
+        contains_ref_to_immut = any(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
+        if contains_ref_to_immut:
+          print(f'REF TO IMMUT in method {method_name} parameters')
         return_type = get_type(method.return_type, specs, header_env.mapping)
         if self.documentation_holder is not None:
-          print(method_name, params_strs)
           method_doc_signature = MethodDocSignature(method_name,
                                                     get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
                                                     [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
                                                     method.const, method.static)
           method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, specs)
-          print(f'Fetching documentation for {method_name}: {"Found" if method_doc is not None else "Not found"}')
-          py_arg_strs = py_arg_strs if method_doc is None else [method_doc.documentation] + py_arg_strs
+          if method_doc is None:
+            print(f'Could not find documentation for {name_cpp}::{method_name}!')
+          else:
+            py_arg_strs = [method_doc.documentation] + py_arg_strs
 
         method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
         method_str = define_method(py_method_name, method_ref_str, py_arg_strs, method.static)
@@ -345,7 +347,7 @@ class HeaderFile():
         method_strs.append(f'{cls_config["additional_bindings"]}({python_ident});')
 
 
-      # Check for potential error generating definitions
+      # Check for potential error-generating definitions
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       for error_overload in error_generating_overloads:
         print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
@@ -354,7 +356,6 @@ class HeaderFile():
             print(method_str)
         print()
       if len(error_generating_overloads) > 0:
-
         print(error_generating_overloads)
         raise RuntimeError
 

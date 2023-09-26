@@ -44,7 +44,7 @@
    .. autosummary::
       :nosignatures:
    {% for item in members %}
-      {%- if item.startswith('__') and item.endswith('__') and item not in ['__new__', '__repr__', '__hash__', '__init__', '__doc__', '__module__'] %}
+      {%- if item.startswith('__') and item.endswith('__') and item not in ['__new__', '__repr__', '__hash__', '__init__', '__doc__', '__module__', '__reduce__', '__reduce_ex__', '__subclasshook__'] %}
       ~{{ name }}.{{ item }}
       {%- endif -%}
    {%- endfor %}

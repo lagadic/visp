@@ -79,6 +79,7 @@ namespace py = pybind11;
 
 
 void {self.generation_function_name()}(py::module_ &m) {{
+
 /*
 Submodule declaration
 */
@@ -147,7 +148,6 @@ Bindings for methods and enum values
         return res
       tmp = tmp[k]
     functions_container = tmp
-    # print(functions_container)
     for function_config in functions_container:
       if method_matches_config(method, function_config, owner_specs, header_mapping):
         res.update(function_config)
@@ -160,5 +160,5 @@ def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   modules = ['core', 'vision', 'visual_features', 'vs', 'sensor', 'io']
   result = []
   for module in modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
   return result

@@ -105,7 +105,6 @@ def define_constructor(params: List[str], additional_args: List[str]) -> str:
   additional_args_str = ', '.join(additional_args)
   if len(additional_args) > 0:
     additional_args_str = ', ' + additional_args_str
-  print(params)
   return f'def(py::init<{", ".join(params)}>(){additional_args_str})'
 
 

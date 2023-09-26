@@ -38,6 +38,5 @@ class Report(object):
         report_dict['class'] = method.cls_name
       self.result['methods'][method.signature] = report_dict
   def write(self, path: Path) -> None:
-    import pprint; pprint.pprint(self.result)
     with open(path, 'w') as report_file:
       json.dump(self.result, report_file, indent=2)

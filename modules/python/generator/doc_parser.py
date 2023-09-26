@@ -23,7 +23,7 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/visp_build/doc/xml')
+  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
@@ -123,6 +123,8 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
       res += '\n' + indent_str + '.. warning:: ' + item_content + '\n' + indent_str
     elif kind == 'see':
       res += '\n' + indent_str + '.. note:: See' + item_content + '\n' + indent_str
+    elif kind == 'return': # Don't do anything, we will parse them separately when we get method documentation
+      return ''
     else:
       res += '\n' + f'<unparsed SimpleSect of kind {kind}>'
     return res + '\n'
@@ -237,12 +239,17 @@ class DocumentationHolder(object):
   def get_documentation_for_method(self, cls_name: str, signature: MethodDocSignature, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[MethodDocumentation]:
     method_def = self.elements.methods.get((cls_name, signature))
     if method_def is None:
-      print(f'method {signature} not found')
-      print([k[1] for k in self.elements.methods.keys() if k[1].name == signature.name])
       return None
+
     descr = self.generate_method_description_string(method_def)
-    param_str = self.generate_method_params_string(method_def)
-    return_str = ''
+
+    params_dict = self.get_method_params(method_def)
+    param_strs = [f':param {name}: {descr}' for name, descr in params_dict.items()]
+    param_str = '\n'.join(param_strs)
+
+    cpp_return_str = self.get_method_return_str(method_def)
+    return_str = f':return: {cpp_return_str}' if len(cpp_return_str) > 0 else ''
+
     res = to_cstring('\n\n'.join([descr, param_str, return_str]))
     return MethodDocumentation(res)
 
@@ -251,13 +258,12 @@ class DocumentationHolder(object):
     detailed = process_description(method_def.get_detaileddescription())
     return brief + '\n\n' + detailed
 
-  def generate_method_params_string(self, method_def: doxmlparser.memberdefType) -> str:
+  def get_method_params(self, method_def: doxmlparser.memberdefType) -> Dict[str, str]:
     parameter_list_full: List[doxmlparser.docParamListItem] = []
     paras: List[doxmlparser.docParaType] = method_def.detaileddescription.para + method_def.inbodydescription.para + method_def.briefdescription.para
     for paragraph in paras:
       if paragraph.parameterlist is not None:
         parameter_lists: List[doxmlparser.docParamListType] = paragraph.parameterlist
-        print(method_def.get_name(), 'found a parameterlist')
         assert isinstance(parameter_lists, list)
         for param_list in parameter_lists:
           parameter_list_full.extend(param_list.parameteritem)
@@ -270,8 +276,14 @@ class DocumentationHolder(object):
       param_descr_str = ' '.join(map(lambda para: process_paragraph(para, 0), param_descr.para)).lstrip(': ')
       for param_name in name_list:
         params_dict[param_name.valueOf_] = param_descr_str
+    return params_dict
 
-    param_strs = [f':param {name}: {descr}' for name, descr in params_dict.items()]
-    print(method_def.get_name(), parameter_list_full)
-
-    return '\n'.join(param_strs)
+  def get_method_return_str(self, method_def: doxmlparser.memberdefType) -> Dict[str, str]:
+    paras: List[doxmlparser.docParaType] = method_def.detaileddescription.para + method_def.inbodydescription.para + method_def.briefdescription.para
+    return_str = ''
+    for paragraph in paras:
+      sections: List[doxmlparser.docSimpleSectType] = paragraph.simplesect
+      for sect in sections:
+        if sect.kind == 'return':
+          return_str += ' '.join(map(lambda para: process_paragraph(para, 0), sect.para))
+    return return_str
