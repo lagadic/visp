@@ -147,7 +147,7 @@ class HeaderFile():
       '-D', 'VISP_EXPORT=',
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -292,11 +292,8 @@ class HeaderFile():
         py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
         method_name = get_name(method.name)
         py_method_name = method_config.get('custom_name') or method_name
-
-        contains_ref_to_immut = any(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
-        if contains_ref_to_immut:
-          print(f'REF TO IMMUT in method {method_name} parameters')
         return_type = get_type(method.return_type, specs, header_env.mapping)
+        # Fetch documentation if available
         if self.documentation_holder is not None:
           method_doc_signature = MethodDocSignature(method_name,
                                                     get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
@@ -308,9 +305,39 @@ class HeaderFile():
           else:
             py_arg_strs = [method_doc.documentation] + py_arg_strs
 
-        method_ref_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
-        method_str = define_method(py_method_name, method_ref_str, py_arg_strs, method.static)
+        # If a function has refs to immutable params, we need to return them.
+        param_is_ref_to_immut = list(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
+        contains_ref_to_immut = any(param_is_ref_to_immut)
+        if contains_ref_to_immut:
+          param_names = [param.name or 'arg' + i for i, param in enumerate(method.parameters)]
+          params_with_names = [t + ' ' + name for t, name in zip(params_strs, param_names)]
+          immutable_param_names = [param_names[i] for i in range(len(param_is_ref_to_immut)) if param_is_ref_to_immut[i]]
+          if not method.static:
+            self_param_with_name = name_cpp + '& self'
+            method_caller = 'self.'
+          else:
+            self_param_with_name = None
+            method_caller = name_cpp + '::'
+
+          if return_type is None or return_type == 'void':
+            lambda_body = f'''
+  {method_caller}{method_name}({", ".join(param_names)});
+  return py::make_tuple({", ".join(immutable_param_names)});
+'''
+          else:
+            lambda_body = f'''
+  auto res = {method_caller}{method_name}({", ".join(param_names)});
+  return py::make_tuple(res, {", ".join(immutable_param_names)});
+'''
+          final_lambda_params = [self_param_with_name] + params_with_names if self_param_with_name is not None else params_with_names
+          method_body_str = define_lambda('', final_lambda_params, 'py::tuple', lambda_body)
+
+          print(f'REF TO IMMUT in method {method_name} parameters')
+        else:
+          method_body_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
+        method_str = define_method(py_method_name, method_body_str, py_arg_strs, method.static)
         method_str = f'{python_ident}.{method_str};'
+
         method_strs.append(method_str)
         generated_methods.append((py_method_name, method))
 

@@ -119,7 +119,6 @@ def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
   return is_immut_container
 
 
-
 def is_unsupported_return_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
   '''
   Returns whether the passed param is supported as a return type for automatic code generation.

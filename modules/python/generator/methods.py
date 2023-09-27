@@ -107,6 +107,13 @@ def define_constructor(params: List[str], additional_args: List[str]) -> str:
     additional_args_str = ', ' + additional_args_str
   return f'def(py::init<{", ".join(params)}>(){additional_args_str})'
 
+def define_lambda(capture: str, params: List[str], return_type: str, body: str) -> str:
+  return f'''
+[{capture}]({", ".join(params)}) -> {return_type} {{
+  {body}
+}}
+
+'''
 
 class NotGeneratedReason(Enum):
   UserIgnored = 'user_ignored',

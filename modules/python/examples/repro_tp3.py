@@ -144,13 +144,14 @@ if __name__ == '__main__':
     indexInliers = np.zeros(nbPoints)
     inliers = [False for _ in range(len(u1s))]
     residual = 0.0 # TODO: this should be returned
-    assert Homography.ransac(u1s, v1s, u2s, v2s, c2Hc1, inliers, residual, 15, seuilOutlier, False)
+    succeeded, inliers, residual = Homography.ransac(u1s, v1s, u2s, v2s, c2Hc1, [], 0.0, 15, seuilOutlier, False)
     # Ideally we have:
     # succeeded, c2Hc1, inliers, residual = Homography.ransac(u1, v1, u2, v2, 12, seuilOutlier, False)
     # Could automatically generate
     # succeeded, c2Hc1, inliers, redisual = Homography.ransac(u1, v1, u2, v2, c2Hc1, inliers, residual, 12, seuilOutlier, False)
 
-    print(inliers) # TODO: inliers isn't modified by the call to ransac
+    print('Inliers = ', inliers)
+    print('Residual = ', residual)
     # Compute the homography with all inliers
     u1r = u1s[inliers]
     v1r = v1s[inliers]
