@@ -487,6 +487,56 @@ int main()
     hasSucceeded &= isValueOK;
   }
 
+  // Test with intersections with the top and the left border
+  // crossing twice each axis
+  {
+    // (1): u1   = uc + r cos(theta1) >= umin ; vmin = vc - r sin(theta1)
+    // (2): u2   = uc + r cos(theta2) >= umin ; vmin = vc - r sin(theta2)
+    // (3): umin = uc + r cos(theta3)        ; v3   = vc - r sin(theta3) >= vmin
+    // (4): umin = uc + r cos(theta4)        ; v4   = vc - r sin(theta4) >= vmin
+    // (1) & (2) => vmin = vc - r sin(theta1) = vc - r sin(theta2) <=> theta1 = PI - theta2
+    // (1) & (2) =>{ uc >= umin - r cos(theta1) & { uc >= umin - r cos(PI - theta1)
+    // (1) & (2)   { vc  = vmin + r sin(theta1) & { vc  = vmin + r sin(PI - theta1)
+    // (3) & (4) =>{ uc  = umin - r cos(theta3) & { uc  = umin - r cos(   - theta3)
+    // (3) & (4)   { vc >= vmin - r sin(theta3) & { vc >= vmin - r cos(   - theta3)
+
+    float theta1 = 5.f * M_PI / 8.f;
+    float theta2 = M_PI - theta1;
+    float uc = OFFSET - RADIUS * std::cos(theta1) + 1.f;
+    uc = std::max(uc, OFFSET - RADIUS * std::cos((float)M_PI - theta1) + 1.f);
+    float vc = OFFSET + RADIUS * std::sin(theta1);
+    float theta3 = std::acos((OFFSET - uc)/RADIUS);
+    if (theta3 > M_PI) {
+      theta3 -= 2.0 * M_PI;
+    }
+    else if (theta3 > M_PI) {
+      theta3 += 2.0 * M_PI;
+    }
+    float theta4 = -theta3;
+    if (theta4 < 0) {
+      float temp = theta4;
+      theta4 = theta3;
+      theta3 = temp;
+    }
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = ((theta4 - theta1) + (theta2 - theta3)) * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top and the left border crossing twice each axis ." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length = " << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
   if (hasSucceeded) {
     std::cout << "testImageCircle overall result: SUCCESS";
     return EXIT_SUCCESS;
