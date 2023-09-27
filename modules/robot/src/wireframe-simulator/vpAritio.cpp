@@ -30,10 +30,10 @@
  *
  * Description:
  * Le module "aritio.c" contient les procedures d'entree/sortie
- *		  des types definis dans le module "arit.h".
- *		  Les entrees non specifiees sont effectuees
- *		  sur le fichier "source" du module "lex.c".
- *		  Pour les mots cles des "fprintf_..." voir "token.c".
+ *      des types definis dans le module "arit.h".
+ *      Les entrees non specifiees sont effectuees
+ *      sur le fichier "source" du module "lex.c".
+ *      Pour les mots cles des "fprintf_..." voir "token.c".
  *
  * Authors:
  * Jean-Luc CORRE
@@ -52,8 +52,8 @@
 /*
  * La procedure "fprintf_Position" ecrit en ascii un positionnement.
  * Entree :
- * f		Fichier en sortie.
- * pp		Positionnement a ecrite.
+ * f    Fichier en sortie.
+ * pp    Positionnement a ecrite.
  */
 void fprintf_Position(FILE *f, AritPosition *pp)
 {
@@ -64,26 +64,26 @@ void fprintf_Position(FILE *f, AritPosition *pp)
 /*
  * La procedure "fscanf_Point3f" lit en ascii un point flottant 3D.
  * Entree :
- * pp		Point flottant 3D a lire.
+ * pp    Point flottant 3D a lire.
  */
 void fscanf_Point3f(Point3f *pp)
 {
   static const char *err_tbl[] = {"float expected (coordinate ", " of point)"};
   int t;
 
-  /* Lecture de la premiere coordonnee du point.	*/
+  /* Lecture de la premiere coordonnee du point.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "X", err_tbl[1], NULL);
   pp->x = (t == T_INT) ? (float)myint : myfloat;
 
-  /* Lecture de la seconde coordonnee du point.	*/
+  /* Lecture de la seconde coordonnee du point.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Y", err_tbl[1], NULL);
   pp->y = (t == T_INT) ? (float)myint : myfloat;
 
-  /* Lecture de la troisieme coordonnee du point.	*/
+  /* Lecture de la troisieme coordonnee du point.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Z", err_tbl[1], NULL);
@@ -93,7 +93,7 @@ void fscanf_Point3f(Point3f *pp)
 /*
  * La procedure "fscanf_Vector" lit en ascii un vecteur.
  * Entree :
- * vp		Vecteur a lire.
+ * vp    Vecteur a lire.
  */
 void fscanf_Vector(Vector *vp)
 {
@@ -101,19 +101,19 @@ void fscanf_Vector(Vector *vp)
 
   int t;
 
-  /* Lecture de la premiere coordonnee du vecteur.	*/
+  /* Lecture de la premiere coordonnee du vecteur.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "X", err_tbl[1], NULL);
   vp->x = (t == T_INT) ? (float)myint : myfloat;
 
-  /* Lecture de la seconde coordonnee du vecteur.		*/
+  /* Lecture de la seconde coordonnee du vecteur.    */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Y", err_tbl[1], NULL);
   vp->y = (t == T_INT) ? (float)myint : myfloat;
 
-  /* Lecture de la troisieme coordonnee du vecteur.	*/
+  /* Lecture de la troisieme coordonnee du vecteur.  */
 
   if ((t = lex()) != T_FLOAT && t != T_INT)
     lexerr("start", err_tbl[0], "Z", err_tbl[1], NULL);
@@ -123,7 +123,7 @@ void fscanf_Vector(Vector *vp)
 /*
  * La procedure "fscanf_Position" lit en ascii un positionnement.
  * Entree :
- * pp		Positionnement a lire.
+ * pp    Positionnement a lire.
  */
 void fscanf_Position(AritPosition *pp)
 {

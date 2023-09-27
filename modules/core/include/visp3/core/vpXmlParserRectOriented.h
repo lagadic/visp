@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * XML parser to load and save oriented rectangles in a XML file
- *
- * Authors:
- * Marc Pouliquen
- *
-*****************************************************************************/
+ * XML parser to load and save oriented rectangles in a XML file.
+ */
 
 /*!
   \file vpXmlParserRectOriented.h

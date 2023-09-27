@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Drawing functions.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpImageDraw_h_
 #define _vpImageDraw_h_
@@ -58,6 +56,7 @@
 */
 class VISP_EXPORT vpImageDraw
 {
+
 public:
   static void drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                         unsigned char color, unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);

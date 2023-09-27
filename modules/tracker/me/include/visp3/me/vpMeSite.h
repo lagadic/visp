@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeSite.h
@@ -66,9 +64,20 @@
 class VISP_EXPORT vpMeSite
 {
 public:
-  typedef enum { NONE, RANGE, RESULT, RANGE_RESULT } vpMeSiteDisplayType;
+  /*!
+   * Type moving-edges site of display.
+   */
+  typedef enum
+  {
+    NONE, //!< Not displayed
+    RANGE, //!<
+    RESULT, //!<
+    RANGE_RESULT //!<
+  } vpMeSiteDisplayType;
 
-  /// Moving-edge site state
+  /*!
+   * Moving-edge site state
+   */
   typedef enum
   {
     NO_SUPPRESSION = 0,   ///< Point used by the tracker.
@@ -83,17 +92,23 @@ public:
   } vpMeSiteState;
 
 public:
-  int i, j;
-  double ifloat, jfloat;
-  unsigned char v;
+  //! Coordinate along i of a site
+  int i;
+  //! Coordinates along j of a site
+  int j;
+  //! Floating coordinates along i of a site
+  double ifloat;
+  //! Floating coordinates along j of a site
+  double jfloat;
+  //! Mask sign
   int mask_sign;
-  // Angle of tangent at site
+  //! Angle of tangent at site
   double alpha;
-  // Convolution of Site in previous image
+  //! Convolution of Site in previous image
   double convlt;
-  // Convolution of Site in previous image
+  //! Convolution of Site in previous image
   double normGradient;
-  // Uncertainty of point given as a probability between 0 and 1
+  //! Uncertainty of point given as a probability between 0 and 1
   double weight;
 
 private:
@@ -101,76 +116,134 @@ private:
   vpMeSiteState state;
 
 public:
+  /*!
+   * Initialize moving-edge site with default parameters.
+   */
   void init();
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
   void init(double ip, double jp, double alphap);
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
   void init(double ip, double jp, double alphap, double convltp);
+
+ /*!
+  * Initialize moving-edge site parameters.
+  */
   void init(double ip, double jp, double alphap, double convltp, int sign);
 
+ /*!
+  * Default constructor.
+  */
   vpMeSite();
+
+  /*!
+   * Constructor from pixel coordinates.
+   */
   vpMeSite(double ip, double jp);
+
+  /*!
+   * Copy constructor.
+   */
   vpMeSite(const vpMeSite &mesite);
+
+  /*!
+   * Destructor.
+   */
   virtual ~vpMeSite() { };
 
+  /*!
+   * Display moving edges in image I.
+   * @param I : Input image.
+   */
   void display(const vpImage<unsigned char> &I);
+
+  /*!
+   * Display moving edges in image I.
+   * @param I : Input image.
+   */
   void display(const vpImage<vpRGBa> &I);
 
+  /*!
+   * Compute convolution.
+   */
   double convolution(const vpImage<unsigned char> &ima, const vpMe *me);
 
+  /*!
+   * Construct and return the list of vpMeSite along the normal to the contour,
+   * in the given range.
+   * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set.
+   * \param I : Image in which the display is performed.
+   * \param range :  +/- the range within which the pixel's correspondent will be sought.
+   * \return Pointer to the list of query sites
+   */
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
 
+  /*!
+   * Specific function for moving-edges.
+   *
+   * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
+   */
   void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_likelihood = true);
 
   /*!
-    Set the angle of tangent at site
-
-    \param a : new value of alpha
-  */
+   * Set the angle of tangent at site.
+   *
+   * \param a : new value of alpha
+   */
   void setAlpha(const double &a) { alpha = a; }
 
   /*!
-    Get the angle of tangent at site
-
-    \return value of alpha
-  */
+   * Get the angle of tangent at site.
+   *
+   * \return value of alpha
+   */
   inline double getAlpha() const { return alpha; }
 
+  /*!
+   * Display selector.
+   */
   void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select; }
 
   /*!
-    Get the i coordinate (integer)
-
-    \return value of i
-  */
+   * Get the i coordinate (integer).
+   *
+   * \return value of i
+   */
   inline int get_i() const { return i; }
 
   /*!
-    Get the j coordinate (f)
-
-    \return value of j
-  */
+   * Get the j coordinate (f).
+   *
+   * \return value of j
+   */
   inline int get_j() const { return j; }
 
   /*!
-    Get the i coordinate (double)
-
-    \return value of i
-  */
+   * Get the i coordinate (double).
+   *
+   * \return value of i
+   */
   inline double get_ifloat() const { return ifloat; }
 
   /*!
-    Get the j coordinate (double)
-
-    \return value of j
-  */
+   * Get the j coordinate (double).
+   *
+   * \return value of j
+   */
   inline double get_jfloat() const { return jfloat; }
 
   /*!
-    Set the state of the site
-
-    \param flag : flag corresponding to vpMeSiteState
-
-    \sa vpMeSiteState
-  */
+   * Set the state of the site.
+   *
+   * \param flag : flag corresponding to vpMeSiteState
+   *
+   * \sa vpMeSiteState
+   */
   void setState(const vpMeSiteState &flag)
   {
     state = flag;
@@ -181,30 +254,39 @@ public:
   }
 
   /*!
-    Get the state of the site
-
-    \return flag corresponding to vpMeSiteState
-  */
+   * Get the state of the site.
+   *
+   * \return flag corresponding to vpMeSiteState
+   */
   inline vpMeSiteState getState() const { return state; }
 
   /*!
-    Set the weight of the site
-
-    \param w : new value of weight
-  */
+   * Set the weight of the site.
+   *
+   * \param w : new value of weight
+   */
   void setWeight(const double &w) { weight = w; }
 
   /*!
-    Get the weight of the site
-
-    \return value of weight
-  */
+   * Get the weight of the site.
+   *
+   * \return value of weight
+   */
   inline double getWeight() const { return weight; }
 
-  // Operators
+  /*!
+   * Copy operator.
+   */
   vpMeSite &operator=(const vpMeSite &m);
+
+  /*!
+   * Comparison operator.
+   */
   int operator!=(const vpMeSite &m);
 
+  /*!
+   * ostream operator.
+   */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS);
 
   // Static functions
@@ -240,10 +322,41 @@ public:
     return (vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat));
   }
 
+  /*!
+   * Display the moving edge site with a color corresponding to their state.
+   *
+   * - If green : The vpMeSite is a good point.
+   * - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
+   * - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+   * - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
+   * - If cyan : The point is removed because it's too close to another.
+   * - Yellow otherwise.
+   *
+   * \param I : The image.
+   * \param i : Pixel i of the site.
+   * \param j : Pixel j of the site.
+   * \param state : State of the site.
+   */
   static void display(const vpImage<unsigned char> &I, const double &i, const double &j,
-    const vpMeSiteState &state = NO_SUPPRESSION);
+                      const vpMeSiteState &state = NO_SUPPRESSION);
+
+  /*!
+   * Display the moving edge site with a color corresponding to their state.
+   *
+   * - If green : The vpMeSite is a good point.
+   * - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
+   * - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+   * - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
+   * - If cyan : The point is removed because it's too close to another.
+   * - Yellow otherwise
+   *
+   * \param I : The image.
+   * \param i : Pixel i of the site.
+   * \param j : Pixel j of the site.
+   * \param state : State of the site.
+   */
   static void display(const vpImage<vpRGBa> &I, const double &i, const double &j,
-    const vpMeSiteState &state = NO_SUPPRESSION);
+                      const vpMeSiteState &state = NO_SUPPRESSION);
 
   // Deprecated
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

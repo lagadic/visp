@@ -186,7 +186,7 @@ bool vpForceTorqueIitSensor::connected(int timeout_ms) const
   \param[in] filtered : When true return filtered force-torque measurements,
   when false return raw data.
   If no filter is configured while getting filtered measurements, the SDK will
-  retun the raw data.
+  return the raw data.
   To configure the filter, you must access the sensor through the web interface.
   The default ip address is `192.168.1.1` if in default mode.
   Once in the web interface select NETWORK SETTINGS and you can configure the

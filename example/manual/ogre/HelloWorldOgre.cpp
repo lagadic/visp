@@ -109,7 +109,7 @@ int main()
 
     // Create a basic scene
     // -----------------------------------
-    //  	      Loading things
+    // Loading things
     // -----------------------------------
     //  As you will see in section 5, our
     //  application knows locations where

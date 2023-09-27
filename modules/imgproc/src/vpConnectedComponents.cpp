@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Connected components.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpConnectedComponents.cpp
@@ -109,16 +104,6 @@ void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &li
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_connected_components
-
-  Perform connected components detection.
-
-  \param I : Input image (0 means background).
-  \param labels : Label image that contain for each position the component
-  label. \param nbComponents : Number of connected components.
-  \param connexity : Type of connexity.
-*/
 void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents, const vpImageMorphology::vpConnexityType &connexity)
 {
   if (I.getSize() == 0) {

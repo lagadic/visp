@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * An argument parser that can both use JSON files and command line arguments as inputs.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpJsonArgumentParser_h_
 #define _vpJsonArgumentParser_h_

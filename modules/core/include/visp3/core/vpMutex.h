@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Mutex protection.
- *
- * Authors:
- * Celine Teuliere
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpMutex_h_
 #define _vpMutex_h_

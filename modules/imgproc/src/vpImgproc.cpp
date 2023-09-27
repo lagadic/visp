@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Convert image types.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /* Autostretch HSV 0.10 --- image filter plug-in for GIMP
  *
  * Copyright (C) 1997 Scott Goehring
@@ -70,16 +65,6 @@
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the brightness of a grayscale image such as the new intensity is
-  alpha x old_intensity + beta.
-
-  \param I : The grayscale image to adjust the brightness.
-  \param alpha : Multiplication coefficient.
-  \param beta : Constant value added to the old intensity.
-*/
 void adjust(vpImage<unsigned char> &I, double alpha, double beta)
 {
   // Construct the look-up table
@@ -92,17 +77,6 @@ void adjust(vpImage<unsigned char> &I, double alpha, double beta)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the brightness of a grayscale image such as the new intensity is
-  alpha x old_intensity + beta.
-
-  \param I1 : The original grayscale image.
-  \param I2 : The grayscale image after adjusting pixel intensities.
-  \param alpha : Multiplication coefficient.
-  \param beta : Constant value added to the old intensity.
-*/
 void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
@@ -111,16 +85,6 @@ void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double
   vp::adjust(I2, alpha, beta);
 }
 
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the brightness of a color image such as the new intensity is alpha x
-  old_intensity + beta.
-
-  \param I : The color image to adjust the brightness.
-  \param alpha : Multiplication coefficient.
-  \param beta : Constant value added to the old intensity.
-*/
 void adjust(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   // Construct the look-up table
@@ -136,17 +100,6 @@ void adjust(vpImage<vpRGBa> &I, double alpha, double beta)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_brightness
-
-  Adjust the brightness of a color image such as the new intensity is alpha x
-  old_intensity + beta.
-
-  \param I1 : The original color image.
-  \param I2 : The color image after adjusting pixel intensities.
-  \param alpha : Multiplication coefficient.
-  \param beta : Constant value added to the old intensity.
-*/
 void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
@@ -155,15 +108,6 @@ void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double
   vp::adjust(I2, alpha, beta);
 }
 
-/*!
-  \ingroup group_imgproc_histogram
-
-  Adjust the contrast of a grayscale image by performing an histogram
-  equalization. The intensity distribution is redistributed over the full [0 -
-  255] range such as the cumulative histogram distribution becomes linear.
-
-  \param I : The grayscale image to apply histogram equalization.
-*/
 void equalizeHistogram(vpImage<unsigned char> &I)
 {
   if (I.getWidth() * I.getHeight() == 0) {
@@ -216,35 +160,12 @@ void equalizeHistogram(vpImage<unsigned char> &I)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_histogram
-
-  Adjust the contrast of a grayscale image by performing an histogram
-  equalization. The intensity distribution is redistributed over the full [0 -
-  255] range such as the cumulative histogram distribution becomes linear.
-
-  \param I1 : The first grayscale image.
-  \param I2 : The second grayscale image after histogram equalization.
-*/
 void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
 {
   I2 = I1;
   vp::equalizeHistogram(I2);
 }
 
-/*!
-  \ingroup group_imgproc_histogram
-
-  Adjust the contrast of a color image by performing an histogram
-  equalization. The intensity distribution is redistributed over the full [0 -
-  255] range such as the cumulative histogram distribution becomes linear. The
-  alpha channel is ignored / copied from the source alpha channel.
-
-  \param I : The color image to apply histogram equalization.
-  \param useHSV : If true, the histogram equalization is performed on the
-  value channel (in HSV space), otherwise the histogram equalization is
-  performed independently on the RGB channels.
-*/
 void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 {
   if (I.getWidth() * I.getHeight() == 0) {
@@ -307,34 +228,12 @@ void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
   }
 }
 
-/*!
-  \ingroup group_imgproc_histogram
-
-  Adjust the contrast of a color image by performing an histogram
-  equalization. The intensity distribution is redistributed over the full [0 -
-  255] range such as the cumulative histogram distribution becomes linear. The
-  alpha channel is ignored / copied from the source alpha channel.
-
-  \param I1 : The first color image.
-  \param I2 : The second color image after histogram equalization.
-  \param useHSV : If true, the histogram equalization is performed on the
-  value channel (in HSV space), otherwise the histogram equalization is
-  performed independently on the RGB channels.
-*/
 void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV)
 {
   I2 = I1;
   vp::equalizeHistogram(I2, useHSV);
 }
 
-/*!
-  \ingroup group_imgproc_gamma
-
-  Perform a gamma correction on a grayscale image.
-
-  \param I : The grayscale image to apply gamma correction.
-  \param gamma : Gamma value.
-*/
 void gammaCorrection(vpImage<unsigned char> &I, double gamma)
 {
   double inverse_gamma = 1.0;
@@ -354,29 +253,12 @@ void gammaCorrection(vpImage<unsigned char> &I, double gamma)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_gamma
-
-  Perform a gamma correction on a grayscale image.
-
-  \param I1 : The first grayscale image.
-  \param I2 : The second grayscale image after gamma correction.
-  \param gamma : Gamma value.
-*/
 void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
 }
 
-/*!
-  \ingroup group_imgproc_gamma
-
-  Perform a gamma correction on a color image.
-
-  \param I : The color image to apply gamma correction.
-  \param gamma : Gamma value.
-*/
 void gammaCorrection(vpImage<vpRGBa> &I, double gamma)
 {
   double inverse_gamma = 1.0;
@@ -399,28 +281,12 @@ void gammaCorrection(vpImage<vpRGBa> &I, double gamma)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_gamma
-
-  Perform a gamma correction on a color image.
-
-  \param I1 : The first color image.
-  \param I2 : The second color image after gamma correction.
-  \param gamma : Gamma value.
-*/
 void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a grayscale image.
-
-  \param I : The grayscale image to stretch the contrast.
-*/
 void stretchContrast(vpImage<unsigned char> &I)
 {
   // Find min and max intensity values
@@ -443,14 +309,6 @@ void stretchContrast(vpImage<unsigned char> &I)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a grayscale image.
-
-  \param I1 : The first input grayscale image.
-  \param I2 : The second output grayscale image.
-*/
 void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
 {
   // Copy I1 to I2
@@ -458,13 +316,6 @@ void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
   vp::stretchContrast(I2);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a color image.
-
-  \param I : The color image to stretch the contrast.
-*/
 void stretchContrast(vpImage<vpRGBa> &I)
 {
   // Find min and max intensity values
@@ -540,14 +391,6 @@ void stretchContrast(vpImage<vpRGBa> &I)
   I.performLut(lut);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a color image.
-
-  \param I1 : The first input color image.
-  \param I2 : The second output color image.
-*/
 void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 {
   // Copy I1 to I2
@@ -555,14 +398,6 @@ void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   vp::stretchContrast(I2);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a color image in the HSV color space.
-  The saturation and value components are stretch so the hue is preserved.
-
-  \param I : The color image to stretch the contrast in the HSV color space.
-*/
 void stretchContrastHSV(vpImage<vpRGBa> &I)
 {
   unsigned int size = I.getWidth() * I.getHeight();
@@ -607,15 +442,6 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
                             size);
 }
 
-/*!
-  \ingroup group_imgproc_contrast
-
-  Stretch the contrast of a color image in the HSV color space.
-  The saturation and value components are stretch so the hue is preserved.
-
-  \param I1 : The first input color image.
-  \param I2 : The second output color image.
-*/
 void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 {
   // Copy I1 to I2
@@ -623,15 +449,6 @@ void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   vp::stretchContrastHSV(I2);
 }
 
-/*!
-  \ingroup group_imgproc_sharpening
-
-  Sharpen a grayscale image using the unsharp mask technique.
-
-  \param I : The grayscale image to sharpen.
-  \param sigma : Standard deviation for Gaussian kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
- */
 void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
@@ -648,32 +465,13 @@ void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
   }
 }
 
-/*!
-  \ingroup group_imgproc_sharpening
-
-  Sharpen a grayscale image using the unsharp mask technique.
-
-  \param I1 : The first input grayscale image.
-  \param I2 : The second output grayscale image.
-  \param sigma : Standard deviation for Gaussian kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
-*/
-void unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, float sigma, double weight)
+void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, float sigma, double weight)
 {
-  // Copy I1 to I2
-  I2 = I1;
-  vp::unsharpMask(I2, sigma, weight);
+  // Copy I to Ires
+  Ires = I;
+  vp::unsharpMask(Ires, sigma, weight);
 }
 
-/*!
-  \ingroup group_imgproc_sharpening
-
-  Sharpen a color image using the unsharp mask technique.
-
-  \param I : The color image to sharpen.
-  \param sigma : Standard deviation for Gaussian kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
- */
 void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
@@ -695,21 +493,11 @@ void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
   }
 }
 
-/*!
-  \ingroup group_imgproc_sharpening
-
-  Sharpen a color image using the unsharp mask technique.
-
-  \param I1 : The first input color image.
-  \param I2 : The second output color image.
-  \param sigma : Standard deviation for Gaussian kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
-*/
-void unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, float sigma, double weight)
+void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma, double weight)
 {
-  // Copy I1 to I2
-  I2 = I1;
-  vp::unsharpMask(I2, sigma, weight);
+  // Copy I to Ires
+  Ires = I;
+  vp::unsharpMask(Ires, sigma, weight);
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS

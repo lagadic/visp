@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Parallel port management.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpParallelPort_h
 #define vpParallelPort_h

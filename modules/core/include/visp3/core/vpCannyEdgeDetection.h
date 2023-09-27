@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpCannyEdgeDetection_h_
 #define _vpCannyEdgeDetection_h_
@@ -45,7 +43,7 @@
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 class VISP_EXPORT vpCannyEdgeDetection
@@ -261,6 +259,8 @@ public:
    * linked somehow to a strong edge point.
    *
    * \param[in] lowerThresh : The lower threshold: each point whose gradient is below this threshold is discarded.
+   * When lower threshold value is negative, Canny recommendation is applied to have the lower threshold 3 times lower
+   * than the upper threshold.
    * \param[in] upperThresh : The upper threshold: each point whose gradient is greater than this threshold is
    * said to be a strong edge point and is kept.
    */

@@ -79,18 +79,14 @@ void vpKinect::start(vpKinect::vpDMResolution res)
   //! Note that they can differ from one device to another.
   if (DMres == DMAP_LOW_RES) {
     std::cout << "vpKinect::start LOW depth map resolution 240x320" << std::endl;
-    //		IRcam.setparameters(IRcam.get_px()/2, IRcam.get_py()/2,
-    // IRcam.get_u0()/2, IRcam.get_v0()/2);
-    // IRcam.initPersProjWithoutDistortion(303.06,297.89,160.75,117.9);
     IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
     hd = 240;
     wd = 320;
   } else {
     std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
 
-    // IRcam.initPersProjWithoutDistortion(606.12,595.78,321.5,235.8);
     IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
-    //		Idmap.resize(height, width);
+
     hd = 480;
     wd = 640;
   }
@@ -124,7 +120,6 @@ void vpKinect::stop()
 */
 void vpKinect::VideoCallback(void *rgb, uint32_t /* timestamp */)
 {
-  //  	std::cout << "vpKinect Video callback" << std::endl;
   vpMutex::vpScopedLock lock(m_rgb_mutex);
   uint8_t *rgb_ = static_cast<uint8_t *>(rgb);
   for (unsigned i = 0; i < height; i++) {
@@ -150,7 +145,6 @@ void vpKinect::VideoCallback(void *rgb, uint32_t /* timestamp */)
 */
 void vpKinect::DepthCallback(void *depth, uint32_t /* timestamp */)
 {
-  //	std::cout << "vpKinect Depth callback" << std::endl;
   vpMutex::vpScopedLock lock(m_depth_mutex);
   uint16_t *depth_ = static_cast<uint16_t *>(depth);
   for (unsigned i = 0; i < height; i++) {
@@ -185,7 +179,6 @@ bool vpKinect::getDepthMap(vpImage<float> &map)
  */
 bool vpKinect::getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap)
 {
-  //	vpMutex::vpScopedLock lock(m_depth_mutex);
   vpImage<float> tempMap;
   m_depth_mutex.lock();
   if (!m_new_depth_map && !m_new_depth_image) {
@@ -254,8 +247,6 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
     vpImagePoint imgPoint(0, 0);
     double u = 0., v = 0.;
     vpColVector P1(4), P2(4);
-
-    //		std::cout <<"rgbMir : "<<rgbMir<<std::endl;
 
     for (unsigned int i = 0; i < hd; i++)
       for (unsigned int j = 0; j < wd; j++) {

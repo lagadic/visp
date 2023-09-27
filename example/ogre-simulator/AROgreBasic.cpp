@@ -376,13 +376,12 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   }
 
   // compute the initial pose using Dementhon method followed by a non linear
-  // minimisation method
+  // minimization method
 
   // Compute initial pose
   mPose->computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, *cMo);
 
-  // Display breifly just to have a glimpse a the ViSP pose
-  //	while(cpt<500){
+  // Display briefly just to have a glimpse a the ViSP pose
   if (opt_display) {
     // Display the computed pose
     mPose->display(I, *cMo, *mcam, 0.05, vpColor::red);
@@ -449,14 +448,7 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    // Declare an image, this is a gray level image (unsigned char)
-    // it size is not defined yet, it will be defined when the image will
-    // read on the disk
-    //	  vpImage<unsigned char> I ;
-
-    //	  unsigned iter = 0;
     std::ostringstream s;
-    //	  char cfilename[FILENAME_MAX];
 
     if (opt_ppath.empty()) {
       // Set the path location of the image sequence

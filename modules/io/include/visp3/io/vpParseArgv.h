@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * Declarations for Tk-related things that are visible
  * outside of the Tk module itself.
  *
@@ -15,13 +14,9 @@
  * This file has been modified to be used only for argv parsing without
  * reference to tk, tcl or X11. Base on tk.h from tk2.3
  *
- * Description:
- * Command line argument parsing.
- *
- * Authors:
- * Fabien Spindler (modification of the original version)
- *
-*****************************************************************************/
+ * Modifications by Peter Neelin (November 27, 1992)
+ * Modifications by Fabien Spindler (June 20, 2006)
+ */
 
 /*!
   \file vpParseArgv.h
@@ -100,7 +95,7 @@ int main(int argc, const char ** argv)
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
+#define GETOPTARGS "bi:l:f:d:h" // double point mean here that the preceding option request an argument
 
 // Usage : [-b] [-i <integer value>] [-l <long value>]
 //         [-f <float value>] [-d <double value>] [-s <string value>] [-h]
@@ -116,7 +111,7 @@ int main(int argc, const char ** argv)
 
   // Parse the command line to set the variables
   const char *optarg;
-  int	c;
+  int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg)) > 1) {
 
     switch (c) {

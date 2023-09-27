@@ -75,7 +75,7 @@ during %d s.\n\
 By default, that means without parameters, send a pulse which duration\n\
 is fixed by the harware. To control the duration of the pulse, use \n\
 \"-t <pulse width in ms>\" option. To turn on the light permanently, \n\
-use \"-o -n <on duration in second>]\"\n			       \
+use \"-o -n <on duration in second>]\"\n\
 \n\
 SYNOPSIS\n\
   %s [-o] [-n <on duration in second>] [-t <pulse width in ms>] [-h]\n\

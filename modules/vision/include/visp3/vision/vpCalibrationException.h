@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,64 +29,48 @@
  *
  * Description:
  * Exceptions that can be emitted by the vpCalibration class and its derivatives.
- *
- * Authors:
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpCalibrationException_h_
 #define _vpCalibrationException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/* Classes standards. */
-//
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#include <iostream>
+#include <string>   
 
 /*!
-
-  \class vpCalibrationException
-  \brief Error that can be emitted by the vpCalibration class.
+ * \class vpCalibrationException
+ * \brief Error that can be emitted by the vpCalibration class.
  */
 class VISP_EXPORT vpCalibrationException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpCalibration member
- */
-  enum errorCodeEnum {
-    //! error returns by a constructor
+   * \brief Lists the possible error than can be emitted while calling
+   * vpCalibration member
+   */
+  enum errorCodeEnum
+  {
+    //! Error returns by a constructor
     constructionError,
-    //! something is not initialized
+    //! Something is not initialized
     notInitializedError,
-    //! function not implemented
+    //! Function not implemented
     notImplementedError,
-    //! index out of range
+    //! Index out of range
     outOfRangeError,
-    //! iterative algorithm doesn't converge
+    //! Iterative algorithm doesn't converge
     convergencyError,
+    //! Forbidden operator
     forbiddenOperatorError,
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpCalibrationException(int id, const char *format, ...)
   {
     this->code = id;
@@ -96,7 +79,14 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+  /*!
+   * Constructor.
+   */
   vpCalibrationException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpCalibrationException(int id) : vpException(id) { }
 };
 

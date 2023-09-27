@@ -309,7 +309,7 @@ Franka network exception: libfranka: Connection to FCI refused. Please install F
 Check if you are connected to the Franka robot or if you specified the right IP using --ip command line option set by default to 192.168.1.1.
 \endverbatim
 
-This error occured with our robot after upgrading the Franka system from 4.0.2 to 4.2.2 version.
+This error occurred with our robot after upgrading the Franka system from 4.0.2 to 4.2.2 version.
 
 \image html img-franka-system-version.jpg The Dashboard shows that after a synchonization using Franka World, our System version is 4.2.2.
 

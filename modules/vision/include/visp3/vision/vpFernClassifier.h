@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Class that implements the Fern classifier and the YAPE detector thanks
  * to the OpenCV library.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpFernClassifier_H
 #define vpFernClassifier_H

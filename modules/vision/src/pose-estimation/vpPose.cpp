@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Pose computation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPose.cpp
@@ -326,7 +324,6 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
     if (fabs(dist) > distanceToPlaneForCoplanarityTest) {
       vpDEBUG_TRACE(10, " points are not coplanar ");
-      //	TRACE(" points are not coplanar ") ;
       return false;
     }
   }
@@ -580,7 +577,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
  *
  * @param cMo the pose of the object with regard to the camera.
  * @return true the pose computation was succesful.
- * @return false an error occured during the pose computation.
+ * @return false an error occurred during the pose computation.
  */
 bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo)
 {

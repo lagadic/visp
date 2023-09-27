@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,7 @@
  *
  * Description:
  * Camera calibration.
- *
- * Authors:
- * Francois Chaumette
- * Anthony Saunier
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpCalibration.h
@@ -60,20 +54,20 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/vision/vpCalibrationException.h>
 /*!
-  \class vpCalibration
-
-  \ingroup group_vision_calib
-
-  \brief Tools for perspective camera calibration.
-
-*/
+ *  \class vpCalibration
+ *
+ * \ingroup group_vision_calib
+ *
+ * \brief Tools for perspective camera calibration.
+ */
 class VISP_EXPORT vpCalibration
 {
 public:
   /*!
-    Minimization algorithm use to estimate the camera parameters.
-  */
-  typedef enum {
+   * Minimization algorithm use to estimate the camera parameters.
+   */
+  typedef enum
+  {
     CALIB_LAGRANGE,                 /*!< Lagrange approach without estimation of the
                                        distortion. */
     CALIB_VIRTUAL_VS,               /*!< Virtual visual servoing approach without estimation
@@ -89,36 +83,69 @@ public:
                                        estimation of the distortion. */
   } vpCalibrationMethodType;
 
-  vpHomogeneousMatrix cMo; //!< Pose computed using camera parameters without distortion
-  //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_dist; //!< Pose computed using camera parameters with distortion
-  //!< with distortion model
-  //!< (as a 3x4 matrix [R T])
-  vpCameraParameters cam; //!< Camera intrinsic parameters for perspective
-  //!< projection model without distortion
-  vpCameraParameters cam_dist; //!< Camera intrinsic parameters for perspective
-  //!< projection model with distortion
+  /*!
+   * Pose computed using camera parameters without distortion (as a 3x4 matrix [R T])
+   */
+  vpHomogeneousMatrix cMo;
+  /*!
+   * Pose computed using camera parameters with distortion with distortion model
+   * (as a 3x4 matrix [R T])
+   */
+  vpHomogeneousMatrix cMo_dist;
+  /*!
+   * Camera intrinsic parameters for perspective projection model without distortion
+   */
+  vpCameraParameters cam;
+  /*!
+   * Camera intrinsic parameters for perspective projection model with distortion
+   */
+  vpCameraParameters cam_dist;
 
-  vpHomogeneousMatrix rMe; //!< Position of the effector in relation to the
-  //!< reference coordinates (manipulator base coordinates)
-  vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distortion
-  vpHomogeneousMatrix
-      eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distortion
-
-  double m_aspect_ratio; //!< Fix aspect ratio (px/py)
+  /*!
+   * Position of the effector in relation to the reference coordinates (manipulator base coordinates)
+   */
+  vpHomogeneousMatrix rMe;
+  /*!
+   * Position of the camera in end-effector frame using camera parameters without distortion
+   */
+  vpHomogeneousMatrix eMc;
+  /*!
+   * Position of the camera in end-effector frame using camera parameters with distortion
+   */
+  vpHomogeneousMatrix eMc_dist;
+  /*!
+   * Fix aspect ratio (px/py)
+   */
+  double m_aspect_ratio;
 
 public:
-  // Constructor
+  /*!
+   * Default constructor.
+   */
   vpCalibration();
+
+  /*!
+   * Copy constructor.
+   */
   vpCalibration(const vpCalibration &c);
 
-  // Destructor
+  /*!
+   * Destructor : delete the array of point (freed the memory)
+   */
   virtual ~vpCalibration();
 
-  // Add a new point in this array
+  /*!
+   * Add a new point in the array of points.
+   * \param  X,Y,Z : 3D coordinates of a point in the object frame
+   * \param ip : 2D Coordinates of the point in the camera frame.
+   */
   int addPoint(double X, double Y, double Z, vpImagePoint &ip);
 
-  // = operator
+  /*!
+   * Copy operator.
+   *
+   * \param twinCalibration : object to be copied
+   */
   vpCalibration &operator=(const vpCalibration &twinCalibration);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -133,42 +160,169 @@ public:
 //@}
 #endif
 
-  //! Suppress all the point in the array of point
+  /*!
+   * Suppress all the point in the array of point.
+   */
   int clearPoint();
 
-  void computeStdDeviation(double &deviation, double &deviation_dist);
+  /*!
+   * Compute the calibration according to the desired method using one pose.
+   *
+   * \param method : Method that will be used to estimate the parameters.
+   * \param cMo_est : estimated homogeneous matrix that defines the pose.
+   * \param cam_est : estimated intrinsic camera parameters.
+   * \param verbose : set at true if information about the residual at each loop
+   * of the algorithm is hoped.
+   *
+   * \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
+   */
   int computeCalibration(vpCalibrationMethodType method, vpHomogeneousMatrix &cMo_est, vpCameraParameters &cam_est,
                          bool verbose = false);
-  static int computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
-                                     vpCameraParameters &cam, double &globalReprojectionError, bool verbose = false);
 
+  /*!
+   * Compute the multi-images calibration according to the desired method using
+   * many poses.
+   *
+   * \param method : Method used to estimate the camera parameters.
+   * \param table_cal : Vector of vpCalibration.
+   * \param cam_est : Estimated intrinsic camera parameters.
+   * \param globalReprojectionError : Global reprojection error or global
+   * residual.
+   * \param verbose : Set at true if information about the residual at
+   * each loop of the algorithm is hoped.
+   *
+   * \return EXIT_SUCCESS if the calibration succeed, EXIT_FAILURE otherwise.
+   */
+  static int computeCalibrationMulti(vpCalibrationMethodType method, std::vector<vpCalibration> &table_cal,
+                                     vpCameraParameters &cam_est, double &globalReprojectionError, bool verbose = false);
+
+  /*!
+   * Compute and return the standard deviation expressed in pixel
+   * for pose matrix and camera intrinsic parameters.
+   * \param deviation   : the standard deviation computed for the model without
+   * distortion.
+   * \param deviation_dist : the standard deviation computed for the
+   * model with distortion.
+   */
+  void computeStdDeviation(double &deviation, double &deviation_dist);
+
+  /*!
+   * Compute and return the standard deviation expressed in pixel
+   * for pose matrix and camera intrinsic parameters for model without
+   * distortion.
+   *
+   * \param cMo_est : the matrix that defines the pose to be tested.
+   * \param camera : camera intrinsic parameters to be tested.
+   * \return the standard deviation by point of the error in pixel .
+   */
   double computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera);
-  double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam);
+
+  /*!
+   * Compute and return the standard deviation expressed in pixel
+   * for pose matrix and camera intrinsic parameters with pixel to meter model.
+   *
+   * \param cMo_est : the matrix that defines the pose to be tested.
+   * \param camera : camera intrinsic parameters to be tested.
+   * \return the standard deviation by point of the error in pixel .
+   */
+  double computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera);
+
+  /*!
+   * Display the data of the calibration (center of the tracked dots).
+   *
+   * \param I : Image where to display data.
+   * \param color : Color of the data.
+   * \param thickness : Thickness of the displayed data.
+   * \param subsampling_factor : Subsampling factor. Default value is 1.
+   * Admissible values are multiple of 2. Divide by this parameter the
+   * coordinates of the data points resulting from image processing.
+   */
   int displayData(vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1,
                   int subsampling_factor = 1);
+
+  /*!
+   * Display estimated centers of dots using intrinsic camera parameters
+   * with model with distortion and the computed pose.
+   * \param I : Image where to display grid data.
+   * \param color : Color of the data.
+   * \param thickness : Thickness of the displayed data.
+   * \param subsampling_factor : Subsampling factor. Default value is 1.
+   * Admissible values are multiple of 2. Divide by this parameter the
+   * values of the camera parameters.
+   */
   int displayGrid(vpImage<unsigned char> &I, vpColor color = vpColor::yellow, unsigned int thickness = 1,
                   int subsampling_factor = 1);
 
   //! Set the gain for the virtual visual servoing algorithm.
   static double getLambda() { return gain; }
 
-  //! get the residual in pixels
+  /*!
+   * Get the residual in pixels.
+   */
   double getResidual(void) const { return residual; }
-  //! get the residual for perspective projection with distortion (in pixels)
+
+  /*!
+   * Get the residual for perspective projection with distortion (in pixels).
+   */
   double getResidual_dist(void) const { return residual_dist; }
-  //! get the number of points
+
+  /*!
+   * Get the number of points.
+   */
   unsigned int get_npt() const { return npt; }
 
+  /*!
+   * Basic initialisation (called by the constructors).
+   */
   int init();
 
-  int readData(const char *filename);
-  static int readGrid(const char *filename, unsigned int &n, std::list<double> &oX, std::list<double> &oY,
+  /*!
+   * Read data from disk :
+   * data are organized as follow oX oY oZ u v
+   *
+   * \param filename : Name of the file.
+   */
+  int readData(const std::string &filename);
+
+  /*!
+   * Read calibration grid coordinates from disk.
+   * Data are organized as follow oX oY oZ
+   *
+   * \param filename : Name of the file.
+   * \param n : Number of points in the calibration grid.
+   * \param oX : List of oX coordinates.
+   * \param oY : List of oY coordinates.
+   * \param oZ : List of oZ coordinates.
+   * \param verbose : Additional printings if true (number of points on
+   * the calibration grid and their respective coordinates in the object
+   * frame).
+   *
+   * \return 0 if success, -1 if an error occurs.
+  */
+  static int readGrid(const std::string &filename, unsigned int &n, std::list<double> &oX, std::list<double> &oY,
                       std::list<double> &oZ, bool verbose = false);
 
-  //! set the gain for the virtual visual servoing algorithm
+  /*!
+   * Set the gain for the virtual visual servoing algorithm.
+   */
   static void setLambda(const double &lambda) { gain = lambda; }
+
+  /*!
+   * Set pixel aspect ratio px/py.
+   *
+   * \param[in] aspect_ratio : px/py aspect ratio. Value need to be positive.
+   * To estimate a model where px=py set 1 as aspect ratio.
+   */
   void setAspectRatio(double aspect_ratio);
-  int writeData(const char *filename);
+
+  /*!
+   * Write data into a file.
+   *
+   * Data are organized as follow oX oY oZ u v
+   *
+   * \param filename : Name of the file.
+   */
+  int writeData(const std::string &filename);
 
 private:
   void computePose(const vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
@@ -191,7 +345,7 @@ private:
 private:
   unsigned int npt; //!< number of points used in calibration computation
   std::list<double> LoX, LoY,
-      LoZ;                     //!< list of points coordinates (3D in meters)
+    LoZ;                     //!< list of points coordinates (3D in meters)
   std::list<vpImagePoint> Lip; //!< list of points coordinates (2D in pixels)
 
   double residual;      //!< residual in pixel for camera model without distortion
@@ -204,9 +358,3 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

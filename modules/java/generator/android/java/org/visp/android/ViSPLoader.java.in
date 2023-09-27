@@ -7,7 +7,7 @@ import android.content.Context;
  */
 public class ViSPLoader
 {
-	// TODO: Add support for prev versions if visp
+  // TODO: Add support for prev versions if visp
     /**
      * ViSP Library version 2.10.0.
      */
@@ -18,7 +18,7 @@ public class ViSPLoader
      */
     public static final String VISP_VERSION_3_0_0 = "3.0.0";
 
-	/**
+  /**
      * ViSP Library version 3.0.1.
      */
     public static final String VISP_VERSION_3_0_1 = "3.0.1";

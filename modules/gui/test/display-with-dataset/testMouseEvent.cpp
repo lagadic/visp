@@ -115,7 +115,7 @@ to a PGM file.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
      [-f <first image>] [-l <last image>] [-s <step>] \n\
-     [-t <type of video device>] [-L] [-w] [-c] [-d] [-h]\n						      \
+     [-t <type of video device>] [-L] [-w] [-c] [-d] [-h]\n\
  ",
           name);
 

@@ -72,7 +72,7 @@ Test image conversions.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>] [-n <nb benchmark iterations>]\n\
-     [-h]\n						      \
+     [-h]\n\
 ",
           name);
 

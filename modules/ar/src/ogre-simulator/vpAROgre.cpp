@@ -382,11 +382,11 @@ void vpAROgre::init(bool
   //-----------------------------------------------------
   // 4 Create the SceneManager
   //
-  //		ST_GENERIC = octree
-  //		ST_EXTERIOR_CLOSE = simple terrain
-  //		ST_EXTERIOR_FAR = nature terrain (depreciated)
-  //		ST_EXTERIOR_REAL_FAR = paging landscape
-  //		ST_INTERIOR = Quake3 BSP
+  //    ST_GENERIC = octree
+  //    ST_EXTERIOR_CLOSE = simple terrain
+  //    ST_EXTERIOR_FAR = nature terrain (depreciated)
+  //    ST_EXTERIOR_REAL_FAR = paging landscape
+  //    ST_INTERIOR = Quake3 BSP
   //-----------------------------------------------------
 
   mSceneMgr = mRoot->createSceneManager(Ogre::ST_GENERIC);

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *****************************************************************************/
+ */
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
@@ -228,7 +226,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
   }
   else if (m_algoParams.m_lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.;
+    lowerCannyThresh = upperCannyThresh / 3.f;
   }
   vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
 #else

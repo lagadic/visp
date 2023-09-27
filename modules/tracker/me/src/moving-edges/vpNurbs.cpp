@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * This class implements the Non Uniform Rational B-Spline (NURBS)
- *
-*****************************************************************************/
+ */
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -48,37 +46,12 @@ inline double distance(const vpImagePoint &iP1, double w1, const vpImagePoint &i
   return sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
 }
 
-/*!
-  Basic constructor.
-
-  The degree \f$ p \f$ of the NURBS basis functions is set to 3 to
-  compute cubic NURBS.
-*/
 vpNurbs::vpNurbs() : weights() { p = 3; }
 
-/*!
-  Copy constructor.
-*/
-vpNurbs::vpNurbs(const vpNurbs &nurbs) : vpBSpline(nurbs), weights(nurbs.weights) {}
+vpNurbs::vpNurbs(const vpNurbs &nurbs) : vpBSpline(nurbs), weights(nurbs.weights) { }
 
-/*!
-  Basic destructor
-*/
-vpNurbs::~vpNurbs() {}
+vpNurbs::~vpNurbs() { }
 
-/*!
-  Compute the coordinates of a point \f$ C(u) = \frac{\sum_{i=0}^n
-  (N_{i,p}(u)w_iP_i)}{\sum_{i=0}^n (N_{i,p}(u)w_i)} \f$ corresponding to the
-  knot \f$ u \f$.
-
-  \param l_u : A real number which is between the extrimities of the knot
-  vector \param l_i : the number of the knot interval in which \f$ l_u \f$
-  lies \param l_p : Degree of the NURBS basis functions. \param l_knots : The
-  knot vector \param l_controlPoints : the list of control points. \param
-  l_weights : the list of weights.
-
-  return the coordinates of a point corresponding to the knot \f$ u \f$.
-*/
 vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
                                         std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
@@ -104,15 +77,6 @@ vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned i
   return pt;
 }
 
-/*!
-  Compute the coordinates of a point \f$ C(u) = \frac{\sum_{i=0}^n
-  (N_{i,p}(u)w_iP_i)}{\sum_{i=0}^n (N_{i,p}(u)w_i)} \f$ corresponding to the
-  knot \f$ u \f$.
-
-  \param u : A real number which is between the extrimities of the knot vector
-
-  return the coordinates of a point corresponding to the knot \f$ u \f$.
-*/
 vpImagePoint vpNurbs::computeCurvePoint(double u)
 {
   vpBasisFunction *N = NULL;
@@ -137,33 +101,6 @@ vpImagePoint vpNurbs::computeCurvePoint(double u)
   return pt;
 }
 
-/*!
-  This function is used in the computeCurveDersPoint method.
-
-  Compute the kth derivatives of \f$ C(u) \f$ for \f$ k = 0, ... , l_{der}
-  \f$.
-
-  The formula used is the following :
-
-  \f[ C^{(k)}(u) = \sum_{i=0}^n (N_{i,p}^{(k)}(u)Pw_i) \f]
-
-  where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies, \f$ p
-  \f$ is the degree of the NURBS basis function and \f$ Pw_i = (P_i w_i) \f$
-  contains the control points and the associatede weights.
-
-  \param l_u : A real number which is between the extrimities of the knot
-  vector \param l_i : the number of the knot interval in which \f$ l_u \f$
-  lies \param l_p : Degree of the NURBS basis functions. \param l_der : The
-  last derivative to be computed. \param l_knots : The knot vector \param
-  l_controlPoints : the list of control points. \param l_weights : the list of
-  weights.
-
-  \return a matrix of size (l_der+1)x3 containing the coordinates \f$
-  C^{(k)}(u) \f$ for \f$ k = 0, ... , l_{der} \f$. The kth derivative is in
-  the kth line of the matrix. For each lines the first and the second column
-  coresponds to the coordinates (i,j) of the point and the third column
-  corresponds to the associated weight.
-*/
 vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
                                    std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                    std::vector<double> &l_weights)
@@ -192,28 +129,6 @@ vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_
   return derivate;
 }
 
-/*!
-  This function is used in the computeCurveDersPoint method.
-
-  Compute the kth derivatives of \f$ C(u) \f$ for \f$ k = 0, ... , der \f$.
-
-  The formula used is the following :
-
-  \f[ C^{(k)}(u) = \sum_{i=0}^n (N_{i,p}^{(k)}(u)Pw_i) \f]
-
-  where \f$ i \f$ is the knot interval number in which \f$ u \f$ lies, \f$ p
-  \f$ is the degree of the NURBS basis function and \f$ Pw_i = (P_i w_i) \f$
-  contains the control points and the associatede weights.
-
-  \param u : A real number which is between the extrimities of the knot vector
-  \param der : The last derivative to be computed.
-
-  \return a matrix of size (l_der+1)x3 containing the coordinates \f$
-  C^{(k)}(u) \f$ for \f$ k = 0, ... , der \f$. The kth derivative is in the
-  kth line of the matrix. For each lines the first and the second column
-  coresponds to the coordinates (i,j) of the point and the third column
-  corresponds to the associated weight.
-*/
 vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
 {
   vpMatrix derivate(der + 1, 3);
@@ -237,23 +152,6 @@ vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
   return derivate;
 }
 
-/*!
-  Compute the kth derivatives of \f$ C(u) \f$ for \f$ k = 0, ... , l_{der}
-  \f$.
-
-  To see how the derivatives are computed refers to the Nurbs book.
-
-  \param l_u : A real number which is between the extrimities of the knot
-  vector \param l_i : the number of the knot interval in which \f$ l_u \f$
-  lies \param l_p : Degree of the NURBS basis functions. \param l_der : The
-  last derivative to be computed. \param l_knots : The knot vector \param
-  l_controlPoints : the list of control points. \param l_weights : the list of
-  weights.
-
-  \return an array of size l_der+1 containing the coordinates \f$ C^{(k)}(u)
-  \f$ for \f$ k = 0, ... , l_{der} \f$. The kth derivative is in the kth cell
-  of the array.
-*/
 vpImagePoint *vpNurbs::computeCurveDersPoint(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
                                              std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                              std::vector<double> &l_weights)
@@ -284,41 +182,14 @@ vpImagePoint *vpNurbs::computeCurveDersPoint(double l_u, unsigned int l_i, unsig
   return CK;
 }
 
-/*!
-  Compute the kth derivatives of \f$ C(u) \f$ for \f$ k = 0, ... , l_{der}
-  \f$.
 
-  To see how the derivatives are computed refers to the Nurbs book.
-
-  \param u : A real number which is between the extrimities of the knot vector
-  \param der : The last derivative to be computed.
-
-  \return an array of size l_der+1 containing the coordinates \f$ C^{(k)}(u)
-  \f$ for \f$ k = 0, ... , der \f$. The kth derivative is in the kth cell of
-  the array.
-*/
 vpImagePoint *vpNurbs::computeCurveDersPoint(double u, unsigned int der)
 {
   unsigned int i = findSpan(u);
   return computeCurveDersPoint(u, i, p, der, knots, controlPoints, weights);
 }
 
-/*!
-  Insert \f$ l_r \f$ times a knot in the \f$ l_k \f$ th interval of the knot
-  vector. The inserted knot \f$ l_u \f$ has multiplicity \f$ l_s \f$.
 
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param l_u : A real number which is between the extrimities of the knot
-  vector and which has to be inserted. \param l_k : The number of the knot
-  interval in which \f$ l_u \f$ lies. \param l_s : Multiplicity of \f$ l_u \f$
-  \param l_r : Number of times \f$ l_u \f$ has to be inserted.
-  \param l_p : Degree of the NURBS basis functions.
-  \param l_knots : The knot vector
-  \param l_controlPoints : the list of control points.
-  \param l_weights : the list of weights.
-*/
 void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsigned int l_r, unsigned int l_p,
                            std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                            std::vector<double> &l_weights)
@@ -371,36 +242,13 @@ void vpNurbs::curveKnotIns(double l_u, unsigned int l_k, unsigned int l_s, unsig
   l_knots.insert(it2 + (int)l_k, l_r, l_u);
 }
 
-/*!
-  Insert \f$ r \f$ times a knot in the \f$ k \f$ th interval of the knot
-  vector. The inserted knot \f$ u \f$ has multiplicity \f$ s \f$.
-
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param u : A real number which is between the extrimities of the knot vector
-  and which has to be inserted. \param s : Multiplicity of \f$ l_u \f$ \param
-  r : Number of times \f$ l_u \f$ has to be inserted.
-*/
 void vpNurbs::curveKnotIns(double u, unsigned int s, unsigned int r)
 {
   unsigned int i = findSpan(u);
   curveKnotIns(u, i, s, r, p, knots, controlPoints, weights);
 }
 
-/*!
-  Insert \f$ l_r \f$ knots in the knot vector.
 
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param l_x : Several real numbers which are between the extrimities of the
-  knot vector and which have to be inserted. \param l_r : Number of knot in
-  the array \f$ l_x \f$. \param l_p : Degree of the NURBS basis functions.
-  \param l_knots : The knot vector
-  \param l_controlPoints : the list of control points.
-  \param l_weights : the list of weights.
-*/
 void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_p, std::vector<double> &l_knots,
                                   std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
@@ -461,7 +309,8 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_
         if (std::fabs(alpha) <= std::numeric_limits<double>::epsilon()) {
           l_controlPoints[ind - 1] = l_controlPoints[ind];
           l_weights[ind - 1] = l_weights[ind];
-        } else {
+        }
+        else {
           alpha = alpha / (l_knots[k + l] - l_knots_tmp[i - l_p + l]);
           l_controlPoints[ind - 1].set_i(alpha * l_controlPoints[ind - 1].get_i() +
                                          (1.0 - alpha) * l_controlPoints[ind].get_i());
@@ -480,46 +329,11 @@ void vpNurbs::refineKnotVectCurve(double *l_x, unsigned int l_r, unsigned int l_
   }
 }
 
-/*!
-  Insert \f$ r \f$ knots in the knot vector.
-
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param x : Several real numbers which are between the extrimities of the
-  knot vector and which have to be inserted. \param r : Number of knot in the
-  array \f$ l_x \f$.
-*/
 void vpNurbs::refineKnotVectCurve(double *x, unsigned int r)
 {
   refineKnotVectCurve(x, r, p, knots, controlPoints, weights);
 }
 
-/*!
-  Remove \f$ l_num \f$ times the knot \f$ l_u \f$ from the knot vector. The
-  removed knot \f$ l_u \f$ is the \f$ l_r \f$ th vector in the knot vector.
-
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param l_u : A real number which is between the extrimities of the knot
-  vector and which has to be removed. \param l_r : Index of \f$ l_u \f$ in the
-  knot vector. \param l_num : Number of times \f$ l_u \f$ has to be removed.
-  \param l_TOL : A parameter which has to be computed.
-  \param l_s : Multiplicity of \f$ l_u \f$.
-  \param l_p : Degree of the NURBS basis functions.
-  \param l_knots : The knot vector
-  \param l_controlPoints : the list of control points.
-  \param l_weights : the list of weights.
-
-  \return The number of time that l_u was removed.
-
-  \f$ l_{TOL} = \frac{dw_{min}}{1+|P|_{max}} \f$
-
-  where \f$ w_{min} \f$ is the minimal weight on the original curve, \f$
-  |P|_{max} \f$ is the maximum distance of any point on the original curve
-  from the origin and \f$ d \f$ is the desired bound on deviation.
-*/
 unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, double l_TOL, unsigned int l_s,
                                       unsigned int l_p, std::vector<double> &l_knots,
                                       std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
@@ -578,12 +392,13 @@ unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int
       double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
       if (distance <= l_TOL)
         remflag = 1;
-    } else {
+    }
+    else {
       alfi = (l_u - l_knots[i]) / (l_knots[i + ord + t] - l_knots[i]);
       double distancei =
-          l_controlPoints[i].get_i() - (alfi * tempP[ii + t + 1].get_i() + (1.0 - alfi) * tempP[ii - 1].get_i());
+        l_controlPoints[i].get_i() - (alfi * tempP[ii + t + 1].get_i() + (1.0 - alfi) * tempP[ii - 1].get_i());
       double distancej =
-          l_controlPoints[i].get_j() - (alfi * tempP[ii + t + 1].get_j() + (1.0 - alfi) * tempP[ii - 1].get_j());
+        l_controlPoints[i].get_j() - (alfi * tempP[ii + t + 1].get_j() + (1.0 - alfi) * tempP[ii - 1].get_j());
       double distancew = l_weights[i] - (alfi * tempW[ii + t + 1] + (1.0 - alfi) * tempW[ii - 1]);
       double distance = sqrt(vpMath::sqr(distancei) + vpMath::sqr(distancej) + vpMath::sqr(distancew));
       if (distance <= l_TOL)
@@ -642,43 +457,11 @@ unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int
   return t;
 }
 
-/*!
-  Remove \f$ num \f$ times the knot \f$ u \f$ from the knot vector. The
-  removed knot \f$ u \f$ is the \f$ r \f$ th vector in the knot vector.
-
-  Of course the knot vector changes. But The list of control points and the
-  list of the associated weights change too.
-
-  \param u : A real number which is between the extrimities of the knot vector
-  and which has to be removed. \param r : Index of \f$ l_u \f$ in the knot
-  vector. \param num : Number of times \f$ l_u \f$ has to be removed. \param
-  TOL : A parameter which has to be computed.
-
-  \return The number of time that l_u was removed.
-
-  \f$ TOL = \frac{dw_{min}}{1+|P|_{max}} \f$
-
-  where \f$ w_{min} \f$ is the minimal weight on the original curve, \f$
-  |P|_{max} \f$ is the maximum distance of any point on the original curve
-  from the origin and \f$ d \f$ is the desired bound on deviation.
-*/
-unsigned int vpNurbs::removeCurveKnot(double u, unsigned int r, unsigned int num, double TOL)
+unsigned int vpNurbs::removeCurveKnot(double l_u, unsigned int l_r, unsigned int l_num, double l_TOL)
 {
-  return removeCurveKnot(u, r, num, TOL, 0, p, knots, controlPoints, weights);
+  return removeCurveKnot(l_u, l_r, l_num, l_TOL, 0, p, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data
-  points.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated. \param l_p : Degree of the NURBS basis functions. This value
-  need to be > 0. \param l_knots : The knot vector \param l_controlPoints :
-  the list of control points. \param l_weights : the list of weights.
-*/
 void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p,
                                 std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights)
@@ -756,16 +539,6 @@ void vpNurbs::globalCurveInterp(std::vector<vpImagePoint> &l_crossingPoints, uns
   }
 }
 
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data
-  points.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated.
-*/
 void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -787,16 +560,6 @@ void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
   globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data
-  points.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated.
-*/
 void vpNurbs::globalCurveInterp(const std::list<vpImagePoint> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -806,16 +569,7 @@ void vpNurbs::globalCurveInterp(const std::list<vpImagePoint> &l_crossingPoints)
   globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data
-  points.
 
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated.
-*/
 void vpNurbs::globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -835,31 +589,8 @@ void vpNurbs::globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints)
   globalCurveInterp(v_crossingPoints, p, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve passing through a set of data
-  points.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-*/
 void vpNurbs::globalCurveInterp() { globalCurveInterp(crossingPoints, p, knots, controlPoints, weights); }
 
-/*!
-  Method which enables to compute a NURBS curve approximating a set of data
-  points.
-
-  The data points are approximated thanks to a least square method.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated. \param l_p : Degree of the NURBS basis functions. \param l_n :
-  The desired number of control points. l_n must be under or equal to the
-  number of data points. \param l_knots : The knot vector. \param
-  l_controlPoints : the list of control points. \param l_weights : the list of
-  weights.
-*/
 void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, unsigned int l_p, unsigned int l_n,
                                 std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints,
                                 std::vector<double> &l_weights)
@@ -908,19 +639,22 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
                           N[l_p].value * l_crossingPoints[m].get_j());
       Rk.push_back(pt);
       delete[] N;
-    } else if (span == l_p) {
+    }
+    else if (span == l_p) {
       N = computeBasisFuns(ubar[k], span, l_p, l_knots);
       vpImagePoint pt(l_crossingPoints[k].get_i() - N[0].value * l_crossingPoints[0].get_i(),
                       l_crossingPoints[k].get_j() - N[0].value * l_crossingPoints[0].get_j());
       Rk.push_back(pt);
       delete[] N;
-    } else if (span == l_n) {
+    }
+    else if (span == l_n) {
       N = computeBasisFuns(ubar[k], span, l_p, l_knots);
       vpImagePoint pt(l_crossingPoints[k].get_i() - N[l_p].value * l_crossingPoints[m].get_i(),
                       l_crossingPoints[k].get_j() - N[l_p].value * l_crossingPoints[m].get_j());
       Rk.push_back(pt);
       delete[] N;
-    } else {
+    }
+    else {
       Rk.push_back(l_crossingPoints[k]);
     }
   }
@@ -975,22 +709,7 @@ void vpNurbs::globalCurveApprox(std::vector<vpImagePoint> &l_crossingPoints, uns
   l_weights.push_back(1.0);
 }
 
-/*!
 
-  Method which enables to compute a NURBS curve approximating a set of
-  data points.
-
-  The data points are approximated thanks to a least square method.
-
-  The result of the method is composed by a knot vector, a set of
-  control points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated.
-
-  \param n : The desired number of control points. This parameter \e n
-  must be under or equal to the number of data points.
-*/
 void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -1004,19 +723,7 @@ void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int
   globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve approximating a set of data
-  points.
 
-  The data points are approximated thanks to a least square method.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated. \param n : The desired number of control points. The parameter
-  \e n must be under or equal to the number of data points.
-*/
 void vpNurbs::globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -1026,22 +733,6 @@ void vpNurbs::globalCurveApprox(const std::list<vpImagePoint> &l_crossingPoints,
   globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
 }
 
-/*!
-
-  Method which enables to compute a NURBS curve approximating a set of
-  data points.
-
-  The data points are approximated thanks to a least square method.
-
-  The result of the method is composed by a knot vector, a set of
-  control points and a set of associated weights.
-
-  \param l_crossingPoints : The list of data points which have to be
-  interpolated.
-
-  \param n : The desired number of control points. This parameter \e n
-  must be under or equal to the number of data points.
-*/
 void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, unsigned int n)
 {
   std::vector<vpImagePoint> v_crossingPoints;
@@ -1052,15 +743,6 @@ void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, uns
   globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);
 }
 
-/*!
-  Method which enables to compute a NURBS curve approximating a set of data
-  points.
-
-  The data points are approximated thanks to a least square method.
-
-  The result of the method is composed by a knot vector, a set of control
-  points and a set of associated weights.
-*/
 void vpNurbs::globalCurveApprox(unsigned int n)
 {
   globalCurveApprox(crossingPoints, p, n, knots, controlPoints, weights);

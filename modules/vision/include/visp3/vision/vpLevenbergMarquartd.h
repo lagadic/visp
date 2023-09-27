@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Levenberg Marquartd.
- *
- * Authors:
- * Francois Chaumette
- *
-*****************************************************************************/
+ */
 
 #ifndef vpLevenbergMarquartd_h
 #define vpLevenbergMarquartd_h
@@ -75,9 +70,3 @@ int VISP_EXPORT lmder1(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, 
                        int *ipvt, int lwa, double *wa);
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

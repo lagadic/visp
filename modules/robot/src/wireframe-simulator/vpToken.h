@@ -46,8 +46,8 @@
 #include <visp3/robot/vpWireFrameSimulatorTypes.h>
 
 typedef struct {
-  const char *ident; /* identifateur 	*/
-  Index token;       /* code du jeton 	*/
+  const char *ident; /* identifateur */
+  Index token;       /* code du jeton */
 } Keyword;
 
 #define T_EOF 256

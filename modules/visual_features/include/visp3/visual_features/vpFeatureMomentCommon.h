@@ -217,7 +217,7 @@ Interaction Matrix Ls
 4.353086256e-17  -1.339411156e-16  -0  -0.03019436997  -0.0168230563  -1
 Error vector (s-s*)
 -0.1  0  0  1.831867991e-15  -1.072059108e-15  0
-Gain : Zero= 1	Inf= 1	Deriv= 0
+Gain : Zero= 1  Inf= 1  Deriv= 0
 
 \endcode
 */

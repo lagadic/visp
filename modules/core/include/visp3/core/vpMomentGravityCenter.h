@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * 2D Gravity Center moment descriptor (usually described by the pair Xg,Yg)
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 /*!
   \file vpMomentGravityCenter.h
   \brief 2D Gravity Center moment descriptor (usually described by the pair

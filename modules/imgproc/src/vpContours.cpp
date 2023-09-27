@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,11 +30,7 @@
  * Description:
  * Basic contours extraction based on the original work of
  * Sina Samangooei (ss@ecs.soton.ac.uk).
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /**
  * Copyright (c) 2011, The University of Southampton and the individual
  * contributors. All rights reserved.
@@ -248,15 +243,6 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_contours
-
-  Draw the input contours on the binary image.
-
-  \param I : Grayscale image where we want to draw the input contours.
-  \param contours : Detected contours.
-  \param grayValue : Drawing grayscale color.
-*/
 void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &contours, unsigned char grayValue)
 {
   if (I.getSize() == 0) {
@@ -272,15 +258,6 @@ void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpIma
   }
 }
 
-/*!
-  \ingroup group_imgproc_contours
-
-  Draw the input contours on the color image.
-
-  \param I : Color image where we want to draw the input contours.
-  \param contours : Detected contours.
-  \param color : Drawing color.
-*/
 void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &contours, const vpColor &color)
 {
   if (I.getSize() == 0) {
@@ -296,17 +273,6 @@ void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint
   }
 }
 
-/*!
-  \ingroup group_imgproc_contours
-
-  Extract contours from a binary image.
-
-  \param I_original : Input binary image (0 means background, 1 means
-  foreground, other values are not allowed).
-  \param contours : Detected contours.
-  \param contourPts : List of contours, each contour contains a list of contour points.
-  \param retrievalMode : Contour retrieval mode.
-*/
 void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
                   std::vector<std::vector<vpImagePoint> > &contourPts, const vpContourRetrievalType &retrievalMode)
 {

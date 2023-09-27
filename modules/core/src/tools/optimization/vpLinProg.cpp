@@ -105,7 +105,8 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       b.resize(n);
       A.eye(n);
       return true;
-    } else
+    }
+    else
       return false;
   }
 
@@ -127,7 +128,8 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         return true;
       }
       return false;
-    } else if (r == m) // most common use case - rank is number of rows
+    }
+    else if (r == m) // most common use case - rank is number of rows
     {
       b = Q * R.inverseTriangular().t() * b;
       // build projection to kernel of Q^T, pick n-m independent columns of I - Q.Q^T
@@ -254,14 +256,15 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
       b.resize(0);
       A.resize(0, n);
       return true;
-    } else
+    }
+    else
       return false;
   }
 
   vpMatrix Q, R, P;
   const unsigned int r = A.qrPivot(Q, R, P, false, false, tol);
   const vpColVector x = P.transpose() * vpMatrix::stack(R.extract(0, 0, r, r).inverseTriangular(), vpMatrix(n - r, r)) *
-                        Q.extract(0, 0, m, r).transpose() * b;
+    Q.extract(0, 0, m, r).transpose() * b;
 
   if (allClose(A, x, b, tol)) {
     if (r < m) // if r == m then (A,b) is not changed
@@ -345,12 +348,12 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
 
   // check if we should forward a feasible point to the next solver
   const bool feasible =
-      (x.getRows() == c.getRows()) && (A.getRows() == 0 || allClose(A, x, b, tol)) &&
-      (C.getRows() == 0 || allLesser(C, x, d, tol)) &&
-      (find_if(l.begin(), l.end(), [&](BoundedIndex &i) { return x[i.first] < i.second - tol; }) == l.end()) &&
-      (find_if(u.begin(), u.end(), [&](BoundedIndex &i) { return x[i.first] > i.second + tol; }) == u.end());
+    (x.getRows() == c.getRows()) && (A.getRows() == 0 || allClose(A, x, b, tol)) &&
+    (C.getRows() == 0 || allLesser(C, x, d, tol)) &&
+    (find_if(l.begin(), l.end(), [&](BoundedIndex &i) { return x[i.first] < i.second - tol; }) == l.end()) &&
+    (find_if(u.begin(), u.end(), [&](BoundedIndex &i) { return x[i.first] > i.second + tol; }) == u.end());
 
-  // shortcut for unbounded variables with equality
+// shortcut for unbounded variables with equality
   if (!feasible && m && l.size() == 0 && u.size() == 0) {
     // changes A.x = b to x = b + A.z
     if (colReduction(A, b, false, tol)) {
@@ -359,7 +362,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
           x = b + A * x;
           return true;
         }
-      } else if (C.getRows() && allLesser(C, b, d, tol)) { // A.x = b has only 1 solution (the new b) and C.b <= d
+      }
+      else if (C.getRows() && allLesser(C, b, d, tol)) { // A.x = b has only 1 solution (the new b) and C.b <= d
         x = b;
         return true;
       }
@@ -371,7 +375,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
   // count how many additional variables are needed to deal with bounds
   unsigned int s1 = 0, s2 = 0;
   for (unsigned int i = 0; i < n; ++i) {
-    const auto cmp = [&](const BoundedIndex &bi) { return bi.first == i; };
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+      };
     // look for lower bound
     const bool has_low = find_if(l.begin(), l.end(), cmp) != l.end();
     // look for upper bound
@@ -410,7 +416,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
   unsigned int k1 = 0, k2 = 0;
   for (unsigned int i = 0; i < n; ++i) {
     // lambda to find a bound for this index
-    const auto cmp = [&](const BoundedIndex &bi) { return bi.first == i; };
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+      };
 
     // look for lower bound
     const auto low = find_if(l.begin(), l.end(), cmp);
@@ -429,7 +437,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
           x[n + p + k1] = std::max(-x[i], 0.);
         }
         k1++;
-      } else // upper bound x <= u <=> z1 = -x + u >= 0
+      }
+      else // upper bound x <= u <=> z1 = -x + u >= 0
       {
         z0[i] = up->second;
         P[i][i] = -1;
@@ -439,7 +448,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
           x[i] = up->second - x[i];
         u.erase(up);
       }
-    } else // lower bound  x >= l <=> z1 = x - l >= 0
+    }
+    else // lower bound  x >= l <=> z1 = x - l >= 0
     {
       z0[i] = -low->second;
       if (up != u.end()) // both bounds  z1 + z2 = u - l
@@ -453,7 +463,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
         k1++;
         k2++;
         u.erase(up);
-      } else if (feasible) // only lower bound
+      }
+      else if (feasible) // only lower bound
         x[i] = x[i] - low->second;
       l.erase(low);
     }
@@ -536,11 +547,13 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
 
   // find a feasible point is passed x is not
   if ((x.getRows() != c.getRows()) || !allGreater(x, -tol) || (m != 0 && !allClose(A, x, b, tol)) || [&x, &n]() {
-        unsigned int non0 = 0; // count non-0 in x, feasible if <= m
-        for (unsigned int i = 0; i < n; ++i)
-          if (x[i] > 0)
-            non0++;
-        return non0;
+    unsigned int non0 = 0; // count non-0 in x, feasible if <= m
+    for (unsigned int i = 0; i < n; ++i) {
+      if (x[i] > 0) {
+        non0++;
+      }
+    }
+    return non0;
       }() > m) {
     // min sum(z)
     //  st A.x + D.z =  with diag(D) = sign(b)
@@ -554,7 +567,8 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
       if (b[i] > -tol) {
         AD[i][n + i] = 1;
         x[n + i] = b[i];
-      } else {
+      }
+      else {
         AD[i][n + i] = -1;
         x[n + i] = -b[i];
       }
@@ -690,7 +704,7 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     a.resize(0);
     for (unsigned int k = 0; k < m; ++k) {
       if (db[k] < -tol)
-        a.push_back({-x[B[k]] / db[k], k});
+        a.push_back({ -x[B[k]] / db[k], k });
     }
     // get smallest index for smallest alpha
     const auto amin = std::min_element(a.begin(), a.end());

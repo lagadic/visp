@@ -156,9 +156,6 @@ public:
   */
   friend inline bool operator==(const vpScanPoint &sp1, const vpScanPoint &sp2)
   {
-    // return ( ( sp1.getRadialDist() == sp2.getRadialDist() )
-    //	      && ( sp1.getHAngle() == sp2.getHAngle() )
-    //	      && ( sp1.getVAngle() == sp2.getVAngle() ) );
     double rd1 = sp1.getRadialDist();
     double ha1 = sp1.getHAngle();
     double va1 = sp1.getVAngle();

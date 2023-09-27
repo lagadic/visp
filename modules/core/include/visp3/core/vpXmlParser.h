@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,12 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tools to automatise the creation of xml parser based on the libXML2
- *
- * Authors:
- * Romain Tallonneau
- *
-*****************************************************************************/
+ * Tools to automatize the creation of xml parser based on the libXML2
+ */
 
 #ifndef vpXmlParser_HH
 #define vpXmlParser_HH

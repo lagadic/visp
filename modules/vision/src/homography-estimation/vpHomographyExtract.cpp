@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Homography transformation.
- *
-*****************************************************************************/
+ */
 
 #include <math.h>
 #include <visp3/core/vpMath.h>
@@ -44,17 +42,6 @@
 /* ------------------------------------------------------------------------ */
 const double vpHomography::sing_threshold = 0.0001;
 
-/*!
-  Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-*/
 void vpHomography::computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n)
 {
 
@@ -66,26 +53,6 @@ void vpHomography::computeDisplacement(vpRotationMatrix &aRb, vpTranslationVecto
   computeDisplacement(*this, aRb, atb, n);
 }
 
-/*!
-
-  Compute the camera displacement between two images from the homography \f$
-  {^a}{\bf H}_b \f$ which is here an implicit parameter (*this).
-
-  Camera displacement between \f$ {^a}{\bf p} \f$ and \f$ {^a}{\bf p} \f$ is
-  represented as a rotation matrix \f$ {^a}{\bf R}_b \f$ and a translation
-  vector \f$ ^a{\bf t}_b \f$ from which an homogeneous matrix can be build
-  (vpHomogeneousMatrix).
-
-  \param nd : Input normal vector to the plane used to compar with the normal
-  vector \e n extracted from the homography.
-
-  \param aRb : Rotation matrix as an output \f$ {^a}{\bf R}_b \f$.
-
-  \param atb : Translation vector as an output \f$ ^a{\bf t}_b \f$.
-
-  \param n : Normal vector to the plane as an output.
-
-*/
 void vpHomography::computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                        vpColVector &n)
 {

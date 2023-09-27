@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,7 @@
  *
  * Description:
  * M-Estimator and various influence function.
- *
- * Authors:
- * Andrew Comport
- * Jean Laneurit
- *
-*****************************************************************************/
+ */
 
 /*!
  \file vpRobust.h

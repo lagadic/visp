@@ -63,24 +63,24 @@ static char *get_keyword(void);
 #define NEXT(x) (x) = (x)->next
 
 typedef struct bucket {
-  struct bucket *next; /* element suivant	*/
-  char *ident;         /* identifateur 	*/
-  Byte length;         /* longueur de "ident"	*/
-  Index token;         /* code du jeton 	*/
+  struct bucket *next; /* element suivant  */
+  char *ident;         /* identifateur   */
+  Byte length;         /* longueur de "ident"  */
+  Index token;         /* code du jeton   */
 } Bucket;
 
-static Bucket **hash_tbl; /* table de "hash-coding"	*/
+static Bucket **hash_tbl; /* table de "hash-coding"  */
 
 /*
  * La procedure "open_keyword" alloue et initialise les variables utilisees
  * par les procedures de gestion des mots cles.
  * Entree :
- * kwp		Tableau des mots cles termine par NULL.
+ * kwp    Tableau des mots cles termine par NULL.
  */
 void open_keyword(Keyword *kwp)
 {
   open_hash();
-  for (; kwp->ident != NULL; kwp++) /* recopie les mots cles	*/
+  for (; kwp->ident != NULL; kwp++) /* recopie les mots cles  */
     insert_keyword(kwp->ident, kwp->token);
 }
 
@@ -115,33 +115,33 @@ static void close_hash(void)
 {
   Bucket **head = hash_tbl;
   Bucket **bend = head + PRIME;
-  Bucket *bp;   /* element courant	*/
-  Bucket *next; /* element suivant	*/
+  Bucket *bp;   /* element courant  */
+  Bucket *next; /* element suivant  */
 
-  for (; head < bend; head++) { /* libere les listes	*/
+  for (; head < bend; head++) { /* libere les listes  */
     for (bp = *head; bp != NULL; bp = next) {
       next = bp->next;
       free((char *)bp);
     }
   }
-  free((char *)hash_tbl); /* libere la table	*/
+  free((char *)hash_tbl); /* libere la table  */
 }
 
 /*
  * La procedure "hashpjw" calcule un indice code a partir de la chaine
  * de caracteres "str".
  * Pour plus de renseignements, voir :
- *	"Compilers. Principles, Techniques, and Tools",
- *	A.V. AHO, R. SETHI, J.D. ULLMAN,
- *	ADDISON-WESLEY PUBLISHING COMPANY, pp 436.
+ *  "Compilers. Principles, Techniques, and Tools",
+ *  A.V. AHO, R. SETHI, J.D. ULLMAN,
+ *  ADDISON-WESLEY PUBLISHING COMPANY, pp 436.
  * Entree :
- * str		Chaine de caracteres a coder.
+ * str    Chaine de caracteres a coder.
  * Sortie :
- *		Le code de la chaine.
+ *    Le code de la chaine.
  */
 static int hashpjw(const char *str)
 {
-  unsigned h = 0; /* "hash value"	*/
+  unsigned h = 0; /* "hash value"  */
 
   for (; *str != '\0'; str++) {
     unsigned g;
@@ -159,8 +159,8 @@ static int hashpjw(const char *str)
  * de la table de "hachage" le mot cle ayant pour identificateur
  * la chaine de caracteres "str" et pour valeur "token".
  * Entree :
- * str		Chaine de caracteres du mot cle.
- * token	Valeur du jeton associe au mot cle.
+ * str    Chaine de caracteres du mot cle.
+ * token  Valeur du jeton associe au mot cle.
  */
 static void insert_keyword(const char *str, Index token)
 {
@@ -179,7 +179,7 @@ static void insert_keyword(const char *str, Index token)
   bp->ident = (char *)(bp + 1);
   strcpy(bp->ident, str);
 
-  bp->next = *head; /* insere "b" en tete de "head"	*/
+  bp->next = *head; /* insere "b" en tete de "head"  */
   *head = bp;
 }
 
@@ -187,12 +187,12 @@ static void insert_keyword(const char *str, Index token)
  * La pocedure "get_symbol" verifie que la chaine pointee par "ident"
  * de longeur "length" est un mot cle.
  * Entree :
- * ident	Chaine de l'identificateur.
- * length	Nombre de caracteres de la chaine.
+ * ident  Chaine de l'identificateur.
+ * length  Nombre de caracteres de la chaine.
  * Note :
  * La chaine "ident" n'est pas terminee par '\0'.
  * Sortie :
- * 		Valeur du jeton associe si c'est un mot cle, 0 sinon.
+ *     Valeur du jeton associe si c'est un mot cle, 0 sinon.
  */
 Index get_symbol(char *ident, int length)
 {
@@ -201,8 +201,8 @@ Index get_symbol(char *ident, int length)
   char *idn = ident;
   int len = length;
 
-  {                 /* calcule le code de hachage (voir "hashpjw")	*/
-    unsigned h = 0; /* "hash value"	*/
+  {                 /* calcule le code de hachage (voir "hashpjw")  */
+    unsigned h = 0; /* "hash value"  */
 
     for (; len != 0; idn++, len--) {
       unsigned g;
@@ -215,7 +215,7 @@ Index get_symbol(char *ident, int length)
     bp = hash_tbl[h % PRIME];
   }
 
-  /* recherche le mot cle	*/
+  /* recherche le mot cle  */
 
   for (; bp != NULL; NEXT(bp)) {
     if (length == bp->length) {
@@ -229,7 +229,7 @@ Index get_symbol(char *ident, int length)
       }
     }
   }
-  return (0); /*  identificateur	*/
+  return (0); /*  identificateur  */
 }
 
 #endif

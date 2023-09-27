@@ -510,7 +510,7 @@ int main(int argc, const char **argv)
     }
 
     // compute the initial pose using Dementhon method followed by a non
-    // linear minimisation method
+    // linear minimization method
 
     // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);

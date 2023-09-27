@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Test keypoint matching and pose estimation with mostly OpenCV functions
  * calls to detect potential memory leaks in testKeyPoint-2.cpp.
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 

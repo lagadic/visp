@@ -953,7 +953,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
  as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		       #  /
+ 50 10             #  /
   \endcode
 
   \param I : Input grayscale image
@@ -982,7 +982,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
  as the number of 3D points)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
- 50 10  		       #  /
+ 50 10             #  /
   \endcode
 
   \param I_color : Input color image

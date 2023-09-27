@@ -53,7 +53,7 @@ if(BUILD_FAT_JAVA_LIB)
     foreach(_dep ${__deps})
       vp_target_link_libraries(${the_module} PRIVATE -Wl,-force_load "${_dep}")
     endforeach()
-	# TODO: Just check visp's file once, they had a condition I ignored
+  # TODO: Just check visp's file once, they had a condition I ignored
   elseif(((UNIX) OR (VISP_FORCE_FAT_JAVA_LIB_LD_RULES)) AND (NOT VISP_SKIP_FAT_JAVA_LIB_LD_RULES))
     vp_target_link_libraries(${the_module} PRIVATE -Wl,-whole-archive ${__deps} -Wl,-no-whole-archive)
   else()

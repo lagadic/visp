@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Homography estimation.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHomographyDLT.cpp
@@ -180,70 +178,6 @@ void vpHomography::HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb,
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-/*!
-  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
-  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
-  computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
-  ^b{\bf p}\f$ using the DLT (Direct Linear Transform) algorithm.
-
-  At least 4 couples of points are needed.
-
-  To do so, we use the DLT algorithm on the data,
-  ie we resolve the linear system  by SDV : \f$\bf{Ah} =0\f$ where
-  \f$\bf{h}\f$ is the vector with the terms of \f$^a{\bf H}_b\f$ and
-  \f$\mathbf{A}\f$ depends on the  points coordinates.
-
-  For each point, in homogeneous coordinates we have:
-  \f[
-  ^a{\bf p} = ^a{\bf H}_b\; ^b{\bf p}
-  \f]
-  which is equivalent to:
-  \f[
-  ^a{\bf p} \times {^a{\bf H}_b \; ^b{\bf p}}  =0
-  \f]
-  If we note \f$\mathbf{h}_j^T\f$ the  \f$j^{\textrm{th}}\f$ line of
-  \f$^a{\bf H}_b\f$, we can write: \f[ ^a{\bf H}_b \; ^b{\bf p}  = \left(
-  \begin{array}{c}\mathbf{h}_1^T \;^b{\bf p} \\\mathbf{h}_2^T \; ^b{\bf p}
-  \\\mathbf{h}_3^T \;^b{\bf p} \end{array}\right) \f]
-
-  Setting \f$^a{\bf p}=(x_{a},y_{a},w_{a})\f$, the cross product  can be
-  rewritten by: \f[ ^a{\bf p} \times ^a{\bf H}_b \; ^b{\bf p}  =\left(
-  \begin{array}{c}y_{a}\mathbf{h}_3^T \; ^b{\bf p}-w_{a}\mathbf{h}_2^T \;
-  ^b{\bf p} \\w_{a}\mathbf{h}_1^T \; ^b{\bf p} -x_{a}\mathbf{h}_3^T \; ^b{\bf
-  p} \\x_{a}\mathbf{h}_2^T \; ^b{\bf p}- y_{a}\mathbf{h}_1^T \; ^b{\bf
-  p}\end{array}\right) \f]
-
-  \f[
-  \underbrace{\left( \begin{array}{ccc}\mathbf{0}^T & -w_{a} \; ^b{\bf p}^T
-  & y_{a} \; ^b{\bf p}^T     \\     w_{a}
-  \; ^b{\bf p}^T&\mathbf{0}^T & -x_{a} \; ^b{\bf p}^T      \\
-  -y_{a} \; ^b{\bf p}^T & x_{a} \; ^b{\bf p}^T &
-  \mathbf{0}^T\end{array}\right)}_{\mathbf{A}_i (3\times 9)}
-  \underbrace{\left( \begin{array}{c}\mathbf{h}_{1}^{T}      \\
-  \mathbf{h}_{2}^{T}\\\mathbf{h}_{3}^{T}\end{array}\right)}_{\mathbf{h}
-  (9\times 1)}=0 \f]
-
-  leading to an homogeneous system to be solved:
-  \f$\mathbf{A}\mathbf{h}=0\f$ with \f$\mathbf{A}=\left(\mathbf{A}_1^T, ...,
-  \mathbf{A}_i^T, ..., \mathbf{A}_n^T \right)^T\f$.
-
-  It can be solved using an SVD decomposition:
-  \f[\bf A = UDV^T \f]
-  <b>h</b> is the column of <b>V</b> associated with the smalest singular
-  value of <b>A
-  </b>
-
-  \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  aHb : Estimated homography that relies the transformation from image a to
-  image b. \param normalization : When set to true, the coordinates of the
-  points are normalized. The normalization carried out is the one preconized
-  by Hartley.
-
-  \exception vpMatrixException::rankDeficient : When the rank of the matrix
-  that should be 8 is deficient.
-*/
 void vpHomography::DLT(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                        const std::vector<double> &ya, vpHomography &aHb, bool normalization)
 {

@@ -301,9 +301,6 @@ int main()
 
       // Flush the display
       vpDisplay::flush(I);
-
-      //	vpTRACE("\t\t || s - s* || = %f ", ( task.getError()
-      //).sumSquare()) ;
     }
 
     vpTRACE("Display task information ");

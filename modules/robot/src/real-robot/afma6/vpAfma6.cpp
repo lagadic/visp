@@ -353,14 +353,6 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
   }
   default: {
     vpERROR_TRACE("This error should not occur!");
-    //       vpERROR_TRACE ("Si elle survient malgre tout, c'est sans doute "
-    // 		   "que les specs de la classe ont ete modifiee, "
-    // 		   "et que le code n'a pas ete mis a jour "
-    // 		   "correctement.");
-    //       vpERROR_TRACE ("Verifiez les valeurs possibles du type "
-    // 		   "vpAfma6::vpAfma6ToolType, et controlez que "
-    // 		   "tous les cas ont ete pris en compte dans la "
-    // 		   "fonction init(camera).");
     break;
   }
   }
@@ -640,7 +632,7 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
     q_[1][5] = q_[0][5] = t - q_[0][3];
 
     while ((q_[1][5] + vpMath::rad(2)) >= this->_joint_max[5])
-    /*			-> a cause du couplage 4/5	*/
+    /*      -> a cause du couplage 4/5  */
     {
       q_[1][5] -= vpMath::rad(10);
       q_[1][3] += vpMath::rad(10);
@@ -656,7 +648,7 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
     q_[1][3] = q_[0][3] = q[3];
     q_[1][5] = q_[0][5] = q_[0][3] - t;
     while ((q_[1][5] + vpMath::rad(2)) >= this->_joint_max[5])
-    /*			-> a cause du couplage 4/5	*/
+    /*      -> a cause du couplage 4/5  */
     {
       q_[1][5] -= vpMath::rad(10);
       q_[1][3] -= vpMath::rad(10);
@@ -690,7 +682,7 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
   q_[1][1] = fMe[1][3] - this->_long_56 * sin(q_[1][3]);
   q_[0][2] = q_[1][2] = fMe[2][3];
 
-  /* prise en compte du couplage axes 5/6	*/
+  /* prise en compte du couplage axes 5/6  */
   q_[0][5] += this->_coupl_56 * q_[0][4];
   q_[1][5] += this->_coupl_56 * q_[1][4];
 

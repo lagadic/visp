@@ -86,7 +86,7 @@
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)

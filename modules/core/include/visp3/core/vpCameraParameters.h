@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Camera intrinsic parameters.
- *
-*****************************************************************************/
+ */
 
 /*!
    \file vpCameraParameters.h
@@ -292,8 +290,8 @@
   \code{.unparsed}
   Read camera parameters from cam.json:
   Camera parameters for perspective projection without distortion:
-    px = 801	 py = 802
-    u0 = 325	 v0 = 245
+    px = 801   py = 802
+    u0 = 325   v0 = 245
   \endcode
 
   The content of the `cam.json` file is the following:

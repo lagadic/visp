@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMe.cpp
@@ -42,15 +40,17 @@
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/me/vpMe.h>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-struct point
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+namespace
+{
+struct vpPoint2D_t
 {
   double x;
   double y;
 };
 
-struct droite
+struct vpDroite2D_t
 {
   double a;
   double b;
@@ -64,9 +64,9 @@ template <class Type> inline void permute(Type &a, Type &b)
   b = t;
 }
 
-static droite droite_cartesienne(point P, point Q)
+static vpDroite2D_t droite_cartesienne(vpPoint2D_t P, vpPoint2D_t Q)
 {
-  droite PQ;
+  vpDroite2D_t PQ;
 
   PQ.a = P.y - Q.y;
   PQ.b = Q.x - P.x;
@@ -75,9 +75,9 @@ static droite droite_cartesienne(point P, point Q)
   return (PQ);
 }
 
-static point point_intersection(droite D1, droite D2)
+static vpPoint2D_t point_intersection(vpDroite2D_t D1, vpDroite2D_t D2)
 {
-  point I;
+  vpPoint2D_t I;
   double det; // determinant des 2 vect.normaux
 
   det = (D1.a * D2.b - D2.a * D1.b); // interdit D1,D2 paralleles
@@ -87,7 +87,7 @@ static point point_intersection(droite D1, droite D2)
   return (I);
 }
 
-static void recale(point &P, double Xmin, double Ymin, double Xmax, double Ymax)
+static void recale(vpPoint2D_t &P, double Xmin, double Ymin, double Xmax, double Ymax)
 {
   if (vpMath::equal(P.x, Xmin))
     P.x = Xmin; // a peu pres => exactement !
@@ -100,9 +100,9 @@ static void recale(point &P, double Xmin, double Ymin, double Xmax, double Ymax)
     P.y = Ymax;
 }
 
-static void permute(point &A, point &B)
+static void permute(vpPoint2D_t &A, vpPoint2D_t &B)
 {
-  point C;
+  vpPoint2D_t C;
 
   if (A.x > B.x) // fonction sans doute a tester...
   {
@@ -113,10 +113,10 @@ static void permute(point &A, point &B)
 }
 
 // vrai si partie visible
-static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, double Ymax, point &Ac,
-  point &Bc) // resultat: A,B clippes
+static bool clipping(vpPoint2D_t A, vpPoint2D_t B, double Xmin, double Ymin, double Xmax, double Ymax, vpPoint2D_t &Ac,
+  vpPoint2D_t &Bc) // resultat: A,B clippes
 {
-  droite AB, D[4];
+  vpDroite2D_t AB, D[4];
   D[0].a = 1;
   D[0].b = 0;
   D[0].c = -Xmin;
@@ -130,7 +130,7 @@ static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, do
   D[3].b = 1;
   D[3].c = -Ymax;
 
-  point P[2];
+  vpPoint2D_t P[2];
   P[0] = A;
   P[1] = B;
   int code_P[2], // codes de P[n]
@@ -205,7 +205,7 @@ static bool clipping(point A, point B, double Xmin, double Ymin, double Xmax, do
 // calcule la surface relative des 2 portions definies
 // par le segment PQ sur le carre Xmin,Ymin,Xmax,Ymax
 // Rem : P,Q tries sur x, et donc seulement 6 cas
-static double S_relative(point P, point Q, double Xmin, double Ymin, double Xmax, double Ymax)
+static double S_relative(vpPoint2D_t P, vpPoint2D_t Q, double Xmin, double Ymin, double Xmax, double Ymax)
 {
 
   if (Q.x < P.x)   // tri le couple de points
@@ -267,7 +267,7 @@ static void calcul_masques(vpColVector &angle, // definitions des angles theta
 {
   unsigned int i, j;
   double X, Y, moitie = ((double)n) / 2.0; // moitie REELLE du masque
-  point P1, Q1, P, Q;             // clippe Droite(theta) P1,Q1 -> P,Q
+  vpPoint2D_t P1, Q1, P, Q;             // clippe Droite(theta) P1,Q1 -> P,Q
   double v;                       // ponderation de M(i,j)
 
   // For a mask of size nxn, normalization given by n*trunc(n/2.0)
@@ -323,14 +323,9 @@ static void calcul_masques(vpColVector &angle, // definitions des angles theta
     }
   }
 }
-
+}
 #endif
 
-/*!
-  Initialise the array of matrices with the defined size and the number of
-  matrices to create.
-
-*/
 void vpMe::initMask()
 {
   if (mask != NULL)
@@ -386,7 +381,6 @@ vpMe::vpMe(const vpMe &me)
   *this = me;
 }
 
-//! Copy operator.
 vpMe &vpMe::operator=(const vpMe &me)
 {
   if (mask != NULL) {
@@ -414,7 +408,6 @@ vpMe &vpMe::operator=(const vpMe &me)
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-//! Move operator.
 vpMe &vpMe::operator=(const vpMe &&me)
 {
   if (mask != NULL) {

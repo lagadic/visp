@@ -63,8 +63,8 @@ void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, char *name)
 */
 vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 {
-  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::cmp_str>::const_iterator it =
-      featureMomentsDataBase.find(type);
+  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator it =
+    featureMomentsDataBase.find(type);
 
   found = (it != featureMomentsDataBase.end());
   return *(it->second);
@@ -79,7 +79,7 @@ vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 */
 void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 {
-  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::cmp_str>::const_iterator itr;
+  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr;
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment *> values;
   values.reserve(featureMomentsDataBase.size());
@@ -101,7 +101,7 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 /*
 std::ostream & operator<<(std::ostream & os, const vpFeatureMomentDatabase&
 m){ std::map<const
-char*,vpMoment*,vpFeatureMomentDatabase::cmp_str>::const_iterator itr; os <<
+char*,vpMoment*,vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr; os <<
 "{";
 
     for(itr = m.featureMoments.begin(); itr != m.featureMoments.end(); itr++){

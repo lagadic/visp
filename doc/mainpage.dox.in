@@ -69,7 +69,7 @@ To learn ViSP, we propose a lot of tutorials that show the basic use of <a href=
 
 \section Citing_ViSP Citing ViSP
 
-Please cite ViSP in your publications if it helps your research:
+Please cite <a href="https://inria.hal.science/inria-00351899">ViSP</a> in your publications if it helps your research:
 ```
 @article{Marchand05b,
    Author = {Marchand, E. and Spindler, F. and Chaumette, F.},
@@ -83,7 +83,7 @@ Please cite ViSP in your publications if it helps your research:
    Year = {2005}
 }
 ```
-To cite the generic model-based tracker:
+To cite the <a href="https://inria.hal.science/hal-01853972v1">generic model-based tracker</a>:
 ```
 @InProceedings{Trinh18a,
    Author = {Trinh, S. and Spindler, F. and Marchand, E. and Chaumette, F.},
@@ -94,7 +94,7 @@ To cite the generic model-based tracker:
    Year = {2018}
 }
 ```
-To cite pose estimation algorithms and hands-on survey illustrated with ViSP examples:
+To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms and hands-on survey</a> illustrated with <a href="https://github.com/lagadic/camera_localization">ViSP examples</a>:
 ```
 @article{Marchand16a,
    Author = {Marchand, E. and Uchiyama, H. and Spindler, F.},

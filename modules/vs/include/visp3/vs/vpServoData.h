@@ -53,10 +53,7 @@
 */
 class VISP_EXPORT vpServoData
 {
-
 private:
-  char baseDirectory[FILENAME_MAX];
-
   std::ofstream velocityFile;
   std::ofstream errorFile;
   std::ofstream errorNormFile;

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Test vpCameraParameters JSON parse / save.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file testJsonMe.cpp
@@ -48,7 +46,7 @@
 #include <visp3/me/vpMe.h>
 
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>

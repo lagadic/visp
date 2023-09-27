@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,16 +28,12 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Descriptor for various invariants used to drive space roations around X and
- *Y axis.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ * Descriptor for various invariants used to drive space rotations around X and
+ * Y axis.
+ */
 /*!
   \file vpMomentCInvariant.h
-  \brief Descriptor for various invariants used to drive space roations around
+  \brief Descriptor for various invariants used to drive space rotations around
   X and Y axis.
 */
 #ifndef _vpMomentCInvariant_h_
@@ -145,7 +140,7 @@ private:
 
 public:
   explicit vpMomentCInvariant(bool flg_sxsynormalization = false);
-  virtual ~vpMomentCInvariant(){};
+  virtual ~vpMomentCInvariant() { };
 
   /*!
     Shorcut for getting the value of \f$C_1\f$.

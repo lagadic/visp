@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Homography estimation.
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpRansac.h>
@@ -283,35 +281,6 @@ void vpHomography::initRansac(unsigned int n, double *xb, double *yb, double *xa
   }
 }
 
-/*!
-
-  From couples of matched points \f$^a{\bf p}=(x_a,y_a,1)\f$ in image a
-  and \f$^b{\bf p}=(x_b,y_b,1)\f$ in image b with homogeneous coordinates,
-  computes the homography matrix by resolving \f$^a{\bf p} = ^a{\bf H}_b\;
-  ^b{\bf p}\f$ using Ransac algorithm.
-
-  \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  aHb : Estimated homography that relies the transformation from image a to
-  image b. \param inliers : Vector that indicates if a matched point is an
-  inlier (true) or an outlier (false). \param residual : Global residual
-  computed as \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf
-  H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the number of inliers.
-
-  \param nbInliersConsensus : Minimal number of points requested to fit the
-  estimated homography.
-
-  \param threshold : Threshold for outlier removing. A point is considered as
-  an outlier if the reprojection error \f$\| {^a{\bf p} - {\hat{^a{\bf H}_b}}
-  {^b{\bf p}}} \|\f$ is greater than this threshold.
-
-  \param normalization : When set to true, the coordinates of the points are
-  normalized. The normalization carried out is the one preconized by Hartley.
-
-  \return true if the homography could be computed, false otherwise.
-
-*/
 bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<double> &yb, const std::vector<double> &xa,
                           const std::vector<double> &ya, vpHomography &aHb, std::vector<bool> &inliers,
                           double &residual, unsigned int nbInliersConsensus, double threshold, bool normalization)

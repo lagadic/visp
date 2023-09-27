@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -27,8 +26,7 @@
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- *
- *****************************************************************************/
+ */
 
 #ifndef _vpCircleHoughTransform_h_
 #define _vpCircleHoughTransform_h_
@@ -53,6 +51,7 @@
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
+//! json namespace shortcut
 using json = nlohmann::json;
 #endif
 
@@ -105,6 +104,9 @@ public:
 
     friend class vpCircleHoughTransform;
   public:
+    /**
+     * \brief Construct a new vpCircleHoughTransformParameters object with default parameters.
+     */
     vpCircleHoughTransformParameters()
       : m_gaussianKernelSize(5)
       , m_gaussianStdev(1.f)
@@ -186,6 +188,9 @@ public:
 
     }
 
+    /**
+     * Create a string with all the Hough transform parameters.
+     */
     std::string toString() const
     {
       std::string txt("Hough Circle Transform Configuration:\n");
@@ -340,13 +345,13 @@ public:
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
-    }
+  }
 #endif
-  };
+};
 
-  /**
-   * \brief Construct a new vpCircleHoughTransform object with default parameters.
-   */
+/**
+ * \brief Construct a new vpCircleHoughTransform object with default parameters.
+ */
   vpCircleHoughTransform();
 
   /**
@@ -719,9 +724,14 @@ public:
     return m_algoParams.m_maxRadius;
   }
 
-  // // Debug methods
+  /*!
+   * Create a string with all Hough transform parameters.
+   */
   std::string toString() const;
 
+  /*!
+   * Create a ostream with all Hough transform parameters.
+   */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detector);
 
 private:

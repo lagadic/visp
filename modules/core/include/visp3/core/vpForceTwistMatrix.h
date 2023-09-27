@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -31,8 +30,7 @@
  * Description:
  * Twist transformation matrix that allows to transform forces from one
  * frame to an other.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpForceTwistMatrix_h
 #define vpForceTwistMatrix_h

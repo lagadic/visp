@@ -52,12 +52,12 @@
  * - Les 6 plans de clipping definissent le volume canonique
  *   de la pyramide de vision dans lequel la scene est visible.
  * - les 6 plans ont pour equations :
- * Plan dessus	:  W = Y
- * Plan dessous	: -W = Y
- * Plan droit	:  W = X
- * Plan gauche	: -W = X
- * Plan arriere	:  W = Z
- * Plan avant	:  W = 0
+ * Plan dessus  :  W = Y
+ * Plan dessous  : -W = Y
+ * Plan droit  :  W = X
+ * Plan gauche  : -W = X
+ * Plan arriere  :  W = Z
+ * Plan avant  :  W = 0
  */
 #define PLANE_ABOVE 0
 #define PLANE_BELOW 1
@@ -140,44 +140,44 @@
   }
 
 /*
- *			CAMERA PARAMETERS
- *			_________________
+ *      CAMERA PARAMETERS
+ *      _________________
  *
  * La structure "Camera_parameters" definit les parametres de la camera.
- * eye		Position de l'oeil ou de la camera.
- * target	Position de la cible ou du point visee dans la scene.
- * focal	Distance eye-target
- * angle	Angle d'ouverture en degres.
- * twist	Angle de rotation sur l'axe de visee (eye,target) en degres.
- * speed	Vitesse sur l'axe de visee (eye,target).
+ * eye    Position de l'oeil ou de la camera.
+ * target  Position de la cible ou du point visee dans la scene.
+ * focal  Distance eye-target
+ * angle  Angle d'ouverture en degres.
+ * twist  Angle de rotation sur l'axe de visee (eye,target) en degres.
+ * speed  Vitesse sur l'axe de visee (eye,target).
  */
 typedef struct {
-  Point3f eye;    /* position de l'observateur	*/
-  Point3f target; /* point vise			*/
-  float focal;    /* focale de la camera		*/
-  float angle;    /* angle d'ouverture		*/
-  float twist;    /* rotation sur l'axe de visee	*/
-  float speed;    /* vitesse  sur l'axe de visee	*/
+  Point3f eye;    /* position de l'observateur  */
+  Point3f target; /* point vise      */
+  float focal;    /* focale de la camera    */
+  float angle;    /* angle d'ouverture    */
+  float twist;    /* rotation sur l'axe de visee  */
+  float speed;    /* vitesse  sur l'axe de visee  */
 } Camera_parameters;
 
 typedef struct {
-  float umin, umax; /* bords gauche et droit	*/
+  float umin, umax; /* bords gauche et droit  */
   float vmin, vmax; /* bords inferieur et superieur */
 } View_window;
 
 typedef struct {
-  float front; /* plan avant ("hither")	*/
-  float back;  /* plan arriere ("yon")		*/
+  float front; /* plan avant ("hither")  */
+  float back;  /* plan arriere ("yon")    */
 } View_depth;
 
 typedef struct {
-  Type type;        /* type de la  projection	*/
-  Point3f cop;      /* centre de projection		*/
-  Point3f vrp;      /* point de reference de visee	*/
-  Vector vpn;       /* vecteur nomal au plan	*/
-  Vector vup;       /* vecteur indiquant le "haut"	*/
-  View_window vwd;  /* fenetre de projection	*/
-  View_depth depth; /* profondeurs de decoupages	*/
+  Type type;        /* type de la  projection  */
+  Point3f cop;      /* centre de projection    */
+  Point3f vrp;      /* point de reference de visee  */
+  Vector vpn;       /* vecteur nomal au plan  */
+  Vector vup;       /* vecteur indiquant le "haut"  */
+  View_window vwd;  /* fenetre de projection  */
+  View_depth depth; /* profondeurs de decoupages  */
 } View_parameters;
 
 #endif

@@ -48,8 +48,8 @@
  * La procedure "View_to_Matrix" constuit la matrice homogene de projection
  * a partir des parametres de la prise de vue.
  * Entree :
- * vp		Parametres de la prise de vue.
- * m		Matrice homogene a construire.
+ * vp    Parametres de la prise de vue.
+ * m    Matrice homogene a construire.
  */
 void View_to_Matrix(View_parameters *vp, Matrix m)
 {
@@ -71,12 +71,12 @@ void View_to_Matrix(View_parameters *vp, Matrix m)
 
 /*
  * La procedure "set_zy" initialise la matrice par une composition :
- * 	1 - aligne le premier vecteur sur l'axe Z dans le sens negatif.
- * 	2 - aligne la projection du second vecteur sur l'axe Y.
+ *   1 - aligne le premier vecteur sur l'axe Z dans le sens negatif.
+ *   2 - aligne la projection du second vecteur sur l'axe Y.
  * Entree :
- * m		Matrice a initialiser.
- * v0		Premier vecteur.
- * v1		Second  vecteur.
+ * m    Matrice a initialiser.
+ * v0    Premier vecteur.
+ * v1    Second  vecteur.
  */
 static void set_zy(Matrix m, Vector *v0, Vector *v1)
 {
@@ -86,7 +86,7 @@ static void set_zy(Matrix m, Vector *v0, Vector *v1)
   CROSS_PRODUCT(rx, *v0, *v1);
   norm_vector(&rx);
   norm_vector(&rz);
-  CROSS_PRODUCT(ry, rz, rx); /* ry est norme	*/
+  CROSS_PRODUCT(ry, rz, rx); /* ry est norme  */
 
   m[0][0] = rx.x;
   m[0][1] = ry.x;
@@ -110,11 +110,11 @@ static void set_zy(Matrix m, Vector *v0, Vector *v1)
  * La procedure "set_parallel" iniatilise la matrice de projection
  * parallel "wc" par les parametres de visualisation "vp".
  * Pour plus de renseignements :
- *	"Fundamentals of Interactive Computer Graphics"
- *	J.D. FOLEY, A. VAN DAM, Addison-Wesley. 1982, pp 285-290.
+ *  "Fundamentals of Interactive Computer Graphics"
+ *  J.D. FOLEY, A. VAN DAM, Addison-Wesley. 1982, pp 285-290.
  * Entree :
- * vp		Parametres de visualisation.
- * wc		Matrice a initialiser.
+ * vp    Parametres de visualisation.
+ * wc    Matrice a initialiser.
  */
 void set_parallel(View_parameters *vp, Matrix wc)
 {
@@ -157,9 +157,9 @@ void set_parallel(View_parameters *vp, Matrix wc)
   /*
    * 6 : Translation et Mise a l'echelle de la pyramide.
    * Remarque : contrairement a la reference qui donne
-   *	0 < x < 1, 0 < y < 1, 0 < z < 1
+   *  0 < x < 1, 0 < y < 1, 0 < z < 1
    * je prefere, afin de rester coherent avec la projection perspective,
-   *	-1 < x < 1, -1 < y < 1, 0 < z < 1 (w = 1)
+   *  -1 < x < 1, -1 < y < 1, 0 < z < 1 (w = 1)
    */
   SET_COORD3(v, (float)(-(vp->vwd.umax + vp->vwd.umin) / 2.0), (float)(-(vp->vwd.vmax + vp->vwd.vmin) / 2.0),
              (float)(-vp->depth.front));
@@ -173,11 +173,11 @@ void set_parallel(View_parameters *vp, Matrix wc)
  * La procedure "set_perspective" iniatilise la matrice de projection
  * perspective "wc" par les parametres de visualisation "vp".
  * Pour plus de renseignements :
- *	"Fundamentals of Interactive Computer Graphics"
- *	J.D. FOLEY, A. VAN DAM, Addison-Wesley. 1982, pp 290-302.
+ *  "Fundamentals of Interactive Computer Graphics"
+ *  J.D. FOLEY, A. VAN DAM, Addison-Wesley. 1982, pp 290-302.
  * Entree :
- * vp		Parametres de visualisation.
- * wc		Matrice a initialiser.
+ * vp    Parametres de visualisation.
+ * wc    Matrice a initialiser.
  */
 void set_perspective(View_parameters *vp, Matrix wc)
 {

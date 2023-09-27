@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,62 +29,46 @@
  *
  * Description:
  * Exceptions that can be emitted by the vpParallelPort class and its
- *derivates.
- *
-*****************************************************************************/
+ * derivates.
+ */
 
 #ifndef _vpParallelPortException_h_
 #define _vpParallelPortException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
 /*!
-
-  \file vpParallelPortException.h
-
-  \brief Error that can be emitted by the vpParallelPort class and its
-  derivates.
-
-*/
-
-/* Classes standards. */
+ * \file vpParallelPortException.h
+ * \brief Error that can be emitted by the vpParallelPort class and its
+ * derivates.
+ */
 
 #include <visp3/core/vpException.h>
 
-#include <iostream> /* Classe std::ostream.    */
-#include <string>   /* Classe string.     */
-
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+#include <iostream>
+#include <string>
 
 /*!
-  \class vpParallelPortException
-
-  \brief Error that can be emitted by the vpParallelPort class and its
-  derivates.
+ * \class vpParallelPortException
+ *
+ * \brief Error that can be emitted by the vpParallelPort class and its
+ * derivates.
  */
 class VISP_EXPORT vpParallelPortException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible errors than can be emitted while calling
-  vpParallelPort member
- */
-  enum error {
+   * \brief Lists the possible errors than can be emitted while calling
+   * vpParallelPort member
+   */
+  enum error
+  {
     opening, /*!< Cannot access to the parallel port device. */
     closing  /*!< Cannot close the parallel port device. */
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpParallelPortException(int id, const char *format, ...)
   {
     this->code = id;
@@ -94,7 +77,15 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpParallelPortException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpParallelPortException(int id) : vpException(id) { }
 };
 

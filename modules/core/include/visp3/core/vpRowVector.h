@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Operation on row vectors.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRowVector_H
 #define vpRowVector_H
@@ -168,7 +166,7 @@ public:
     (*this) *= d2r;
   }
 
-  vp_deprecated double euclideanNorm() const;
+
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
@@ -335,6 +333,7 @@ public:
      \deprecated You should rather use eye()
    */
   vp_deprecated void setIdentity(const double &val = 1.0);
+  vp_deprecated double euclideanNorm() const;
 //@}
 #endif
 };

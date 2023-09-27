@@ -1,4 +1,4 @@
-/****************************************************************************
+/*
  *
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
@@ -30,8 +30,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeNurbs.h
@@ -59,11 +58,11 @@
   \brief Class that tracks in an image a edge defined by a Nurbs.
 
   The advantage of this class is that it enables to track an edge whose
-equation is not known in advance. At each iteration, the Nurbs corresponding
-to the edge is computed.
+  equation is not known in advance. At each iteration, the Nurbs corresponding
+  to the edge is computed.
 
   It is possible to have a direct access to the nurbs. It is indeed a public
-parameter.
+  parameter.
 
   The code below shows how to use this class.
 \code
@@ -156,51 +155,150 @@ private:
   float cannyTh2;
 
 public:
+  /*!
+   * Basic constructor that calls the constructor of the class vpMeTracker.
+   */
   vpMeNurbs();
+
+  /*!
+   * Copy constructor.
+   */
   vpMeNurbs(const vpMeNurbs &menurbs);
+
+  /*!
+   * Destructor.
+   */
   virtual ~vpMeNurbs();
 
   /*!
-    Sets the number of control points used to compute the Nurbs.
-
-    \param nb_point : The number of control points used to compute the Nurbs.
-  */
+   * Sets the number of control points used to compute the Nurbs.
+   *
+   * \param nb_point : The number of control points used to compute the Nurbs.
+   */
   void setNbControlPoints(unsigned int nb_point) { this->nbControlPoints = nb_point; }
 
   /*!
-    Enables or disables the canny detection used during the extremities
-    search.
-
-    \param enable_canny : if true it enables the canny detection.
-  */
+   * Enables or disables the canny detection used during the extremities
+   * search.
+   *
+   * \param enable_canny : if true it enables the canny detection.
+   */
   void setEnableCannyDetection(const bool enable_canny) { this->enableCannyDetection = enable_canny; }
 
   /*!
-    Enables to set the two thresholds use by the canny detection.
-
-    \param th1 : The first threshold;
-    \param th2 : The second threshold;
-  */
+   * Enables to set the two thresholds use by the canny detection.
+   *
+   * \param th1 : The first threshold;
+   * \param th2 : The second threshold;
+   */
   void setCannyThreshold(float th1, float th2)
   {
     this->cannyTh1 = th1;
     this->cannyTh2 = th2;
   }
 
+  /*!
+   * Initialization of the tracking. Ask the user to click left on several points
+   * along the edge to track and click right at the end.
+   *
+   * \param I : Image in which the edge appears.
+   */
   void initTracking(const vpImage<unsigned char> &I);
+
+  /*!
+   * Initialization of the tracking. The Nurbs is initialized thanks to the
+   * list of vpImagePoint.
+   *
+   * \param I : Image in which the edge appears.
+   * \param ptList  : List of point to initialize the Nurbs.
+   */
   void initTracking(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ptList);
 
+  /*!
+   * Track the edge in the image I.
+   *
+   * \param I : Image in which the edge appears.
+   */
   void track(const vpImage<unsigned char> &I);
 
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
+  /*!
+   * Construct a list of vpMeSite moving edges at a particular sampling
+   * step between the two extremities of the nurbs.
+   *
+   * \param I : Image in which the edge appears.
+   * \param doNotTrack : Inherited parameter, not used.
+   */
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
+
+  /*!
+   * Resample the edge if the number of sample is less than 70% of the
+   * expected value.
+   *
+   * \note The expected value is computed thanks to the length of the
+   * nurbs and the parameter which indicates the number of pixel between
+   * two points (vpMe::sample_step).
+   *
+   * \param I : Image in which the edge appears.
+   */
   void reSample(const vpImage<unsigned char> &I);
+
+  /*!
+   * Set the alpha value (normal to the edge at this point)
+   * of the different vpMeSite to a value computed thanks to the nurbs.
+   */
   void updateDelta();
+
+  /*!
+   * Seek along the edge defined by the nurbs, the two extremities of
+   * the edge. This function is useful in case of translation of the
+   * edge.
+   */
   void setExtremities();
+
+  /*!
+   * Seek along the edge defined by the nurbs, the two extremities of
+   * the edge. This function is useful in case of translation of the
+   * edge.
+   *
+   * \param I : Image in which the edge appears.
+   */
   void seekExtremities(const vpImage<unsigned char> &I);
+
+  /*!
+   * Seek the extremities of the edge thanks to a canny edge detection.
+   * The edge detection enable to find the points belonging to the edge.
+   * The any vpMeSite  are initialized at this points.
+   *
+   * This method is useful when the edge is not smooth.
+   *
+   * \note To use the canny detection, OpenCV has to be installed.
+   *
+   * \param I : Image in which the edge appears.
+   */
   void seekExtremitiesCanny(const vpImage<unsigned char> &I);
+
+  /*!
+   * Suppression of the points which:
+   *
+   * - belong no more to the edge.
+   * - which are to closed to another point.
+   */
   void suppressPoints();
 
+  /*!
+   * Suppress vpMeSites if they are too close to each other.
+   *
+   * The goal is to keep the order of the vpMeSites in the list.
+   */
   void supressNearPoints();
+
+  /*!
+   * Resample a part of the edge if two vpMeSite are too far from each other.
+   * In this case the method try to initialize any vpMeSite between the two
+   * points.
+   *
+   * \param I : Image in which the edge appears.
+   */
   void localReSample(const vpImage<unsigned char> &I);
 
   /*!
@@ -208,6 +306,16 @@ public:
   */
   inline vpNurbs getNurbs() const { return nurbs; }
 
+  /*!
+   * Display edge.
+   *
+   * \warning To effectively display the edge a call to
+   * vpDisplay::flush() is needed.
+   *
+   * \param I : Image in which the edge appears.
+   * \param color : Color of the displayed line.
+   * \param thickness : Drawings thickness.
+   */
   void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
 private:
@@ -222,7 +330,24 @@ private:
   bool farFromImageEdge(const vpImage<unsigned char> &I, const vpImagePoint &iP);
 
 public:
+  /*!
+   * Display of a moving nurbs.
+   *
+   * \param I : The image used as background.
+   * \param n : Nurbs to display
+   * \param color : Color used to display the nurbs.
+   * \param thickness : Drawings thickness.
+   */
   static void display(const vpImage<unsigned char> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  /*!
+   * Display of a moving nurbs.
+   *
+   * \param I : The image used as background.
+   * \param n : Nurbs to display
+   * \param color : Color used to display the nurbs.
+   * \param thickness : Drawings thickness.
+   */
   static void display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 

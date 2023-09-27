@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Flood fill algorithm.
- *
- * Authors:
- * Souriya Trinh
- *
-*****************************************************************************/
+ */
 /*
  * Copyright (c) 2004-2007, Lode Vandevenne
  *
@@ -73,17 +68,6 @@
 
 namespace vp
 {
-/*!
-  \ingroup group_imgproc_connected_components
-
-  Perform the flood fill algorithm.
-
-  \param I : Input image to flood fill.
-  \param seedPoint : Seed position in the image.
-  \param oldValue : Old value to replace.
-  \param newValue : New value to flood fill.
-  \param connexity : Type of connexity.
-*/
 void floodFill(vpImage<unsigned char> &I, const vpImagePoint &seedPoint, const unsigned char oldValue,
                const unsigned char newValue, const vpImageMorphology::vpConnexityType &connexity)
 {

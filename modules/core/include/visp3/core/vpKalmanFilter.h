@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Kalman filtering.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpKalmanFilter_h
 #define vpKalmanFilter_h

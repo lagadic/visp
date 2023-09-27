@@ -1489,22 +1489,12 @@ double vpColVector::sum() const { return SimdVectorSum(data, rowNum); }
   */
 double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum); }
 
-/*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
-
-  \return The Euclidean norm if the vector is initialized, 0 otherwise.
-
-  \sa frobeniusNorm(), infinityNorm()
-
-*/
-double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
-  Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+  Compute and return the Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 
   \sa infinityNorm()
 
@@ -1732,6 +1722,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   \deprecated You should rather use insert(unsigned int, const vpColVector &).
 
@@ -1751,4 +1742,16 @@ void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
   (void)c;
   insert(r, v);
 }
+
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm also called Frobenius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.
+
+  \return The Euclidean norm if the vector is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm()
+
+*/
+double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 #endif // defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

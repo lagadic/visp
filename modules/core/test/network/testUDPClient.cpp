@@ -46,12 +46,12 @@
 
 namespace
 {
-struct DataType {
+struct vpDataType_t {
   double double_val;
   int int_val;
 
-  DataType() : double_val(0.0), int_val(0) {}
-  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
+  vpDataType_t() : double_val(0.0), int_val(0) {}
+  vpDataType_t(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 } // namespace
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     vpUDPClient client(servername, port);
 
     // Send custom data type
-    DataType data_type(1234.56789, 123450);
+    vpDataType_t data_type(1234.56789, 123450);
     char data[sizeof(data_type.double_val) + sizeof(data_type.int_val)];
     memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
     memcpy(data + sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));

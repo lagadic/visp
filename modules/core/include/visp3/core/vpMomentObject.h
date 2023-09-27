@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Object input structure used by moments.
- *
- * Authors:
- * Filip Novotny
- * Manikandan Bakthavatchalam
- *****************************************************************************/
+ */
 /*!
   \file vpMomentObject.h
   \brief Object input structure used by moments.
@@ -194,12 +189,12 @@ m04=0.00080625  m14=-7.125e-05
 m05=-6.59375e-05
 
 Basic moment available:
-4	0.1	0.21	0.019	0.0129	0.00211
--0.05	0.02	0.003	0.0023	0.00057	x
-0.0525	-0.0015	0.0026	9e-05	x	x
--0.002375	0.000575	-4.5e-05	x	x	x
-0.00080625	-7.125e-05	x	x	x	x
--6.59375e-05	x	x	x	x	x
+4   0.1 0.21    0.019   0.0129  0.00211
+-0.05   0.02    0.003   0.0023  0.00057 x
+0.0525  -0.0015 0.0026  9e-05   x   x
+-0.002375   0.000575    -4.5e-05    x   x   x
+0.00080625  -7.125e-05  x   x   x   x
+-6.59375e-05    x   x   x   x   x
 
 Direct access to some basic moments:
 m00: 4
@@ -225,7 +220,8 @@ public:
   /*!
     Type of object that will be considered.
   */
-  typedef enum {
+  typedef enum
+  {
     DENSE_FULL_OBJECT = 0, /*!< A set of points (typically from an image)
                               which are interpreted as being dense. */
     DENSE_POLYGON = 1,     /*!< A set of points (stored in clockwise order)
@@ -237,7 +233,8 @@ public:
   /*!
      Type of camera image background.
    */
-  typedef enum {
+  typedef enum
+  {
     BLACK = 0, //!< Black background
     WHITE = 1, //!< Not functional right now
   } vpCameraImgBckGrndType;

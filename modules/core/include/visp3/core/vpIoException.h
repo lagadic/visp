@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,22 +29,14 @@
  *
  * Description:
  * Exceptions that can be emitted by the vpIo class and its derivatives.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpIoException_h_
 #define _vpIoException_h_
 
-/* -------------------------------------------------------------------------
- */
-/* --- INCLUDE -------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
 /*!
-  \file vpIoException.h
-  \brief Error that can be emitted by the vpIoTools class and its derivatives.
+ * \file vpIoException.h
+ * \brief Error that can be emitted by the vpIoTools class and its derivatives.
 */
 
 #include <visp3/core/vpConfig.h>
@@ -54,33 +45,30 @@
 #include <iostream>
 #include <string>
 
-/* -------------------------------------------------------------------------
- */
-/* --- CLASS ---------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
 /*!
-  \class vpIoException
-  \ingroup group_core_debug
-  \brief Error that can be emitted by the vpIoTools class and its derivatives.
+ * \class vpIoException
+ * \ingroup group_core_debug
+ * \brief Error that can be emitted by the vpIoTools class and its derivatives.
  */
 class VISP_EXPORT vpIoException : public vpException
 {
 public:
   /*!
-  \brief Lists the possible error than can be emitted while calling
-  vpIo member.
- */
-  enum error {
-    invalidDirectoryName, /*! Directory name is invalid. */
-    cantCreateDirectory,  /*! Unable to create a directory. */
-    cantGetUserName,      /*! User name is not available. */
-    cantGetenv            /*! Cannot get environment variable value. */
+   * \brief Lists the possible error than can be emitted while calling
+   * vpIo member.
+   */
+  enum error
+  {
+    invalidDirectoryName, //!< Directory name is invalid.
+    cantCreateDirectory,  //!< Unable to create a directory.
+    cantGetUserName,      //!< User name is not available.
+    cantGetenv            //!< Cannot get environment variable value.
   };
 
 public:
+  /*!
+   * Constructor.
+   */
   vpIoException(int id, const char *format, ...)
   {
     this->code = id;
@@ -89,7 +77,15 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
+  /*!
+   * Constructor.
+   */
   vpIoException(int id, const std::string &msg) : vpException(id, msg) { }
+
+  /*!
+   * Constructor.
+   */
   explicit vpIoException(int id) : vpException(id) { }
 };
 

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * TCP Network
- *
- * Authors:
- * Aurelien Yol
- *
-*****************************************************************************/
+ */
 
 #ifndef vpNetwork_H
 #define vpNetwork_H
@@ -155,13 +150,13 @@ protected:
   bool verboseMode;
 
 private:
-  std::vector<int> _handleRequests();
-  int _handleFirstRequest();
+  std::vector<int> privHandleRequests();
+  int privHandleFirstRequest();
 
-  void _receiveRequest();
-  void _receiveRequestFrom(const unsigned int &receptorEmitting);
-  int _receiveRequestOnce();
-  int _receiveRequestOnceFrom(const unsigned int &receptorEmitting);
+  void privReceiveRequest();
+  void privReceiveRequestFrom(const unsigned int &receptorEmitting);
+  int privReceiveRequestOnce();
+  int privReceiveRequestOnceFrom(const unsigned int &receptorEmitting);
 
 public:
   vpNetwork();

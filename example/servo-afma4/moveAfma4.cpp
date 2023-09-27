@@ -75,10 +75,10 @@ void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Example of a positioning control followed by a velocity control \n\
-of the Afma4 robot.\n						   \
+of the Afma4 robot.\n\
 \n\
 SYNOPSIS\n\
-  %s [-m] [-h]\n						      \
+  %s [-m] [-h]\n\
 ",
           name);
 

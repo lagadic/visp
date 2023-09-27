@@ -44,7 +44,7 @@
 
 #if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
+using json = nlohmann::json; //! json namespace shortcut
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -53,7 +53,7 @@ using json = nlohmann::json;
 namespace
 {
 // This class shows how to implement a simple generator for Catch tests
-class RandomCamGenerator : public Catch::Generators::IGenerator<vpCameraParameters>
+class vpRandomCamGenerator : public Catch::Generators::IGenerator<vpCameraParameters>
 {
 private:
   std::minstd_rand m_rand;
@@ -64,7 +64,7 @@ private:
   vpCameraParameters current;
 
 public:
-  RandomCamGenerator(double low, double high)
+  vpRandomCamGenerator(double low, double high)
     : m_rand(std::random_device{}()), m_count_dist(1, 5), m_type_dist(0, 2), m_dist(low, high)
   {
     static_cast<void>(next());
@@ -108,7 +108,7 @@ public:
 Catch::Generators::GeneratorWrapper<vpCameraParameters> randomCam(double low, double high)
 {
   return Catch::Generators::GeneratorWrapper<vpCameraParameters>(
-    std::unique_ptr<Catch::Generators::IGenerator<vpCameraParameters> >(new RandomCamGenerator(low, high)));
+    std::unique_ptr<Catch::Generators::IGenerator<vpCameraParameters> >(new vpRandomCamGenerator(low, high)));
 }
 } // namespace
 

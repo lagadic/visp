@@ -93,7 +93,7 @@ vpTranslationVector::vpTranslationVector(const vpPoseVector &p) : vpArray2D<doub
   vpTranslationVector t2(t1);    // t2 is now a copy of t1
   \endcode
 */
-vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArray2D<double>(tv), m_index(0) {}
+vpTranslationVector::vpTranslationVector(const vpTranslationVector &tv) : vpArray2D<double>(tv), m_index(0) { }
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from a 3-dimension column
@@ -445,7 +445,8 @@ vpTranslationVector &vpTranslationVector::operator=(const vpColVector &tv)
   if (rowNum != k) {
     try {
       resize(k, 1);
-    } catch (...) {
+    }
+    catch (...) {
       throw;
     }
   }
@@ -473,7 +474,8 @@ vpTranslationVector &vpTranslationVector::operator=(const vpTranslationVector &t
   if (rowNum != k) {
     try {
       resize(k, 1);
-    } catch (...) {
+    }
+    catch (...) {
       throw;
     }
   }
@@ -526,9 +528,9 @@ vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<
 {
   if (list.size() > size()) {
     throw(vpException(
-        vpException::dimensionError,
-        "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
-        size(), list.size()));
+      vpException::dimensionError,
+      "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
+      size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
@@ -593,9 +595,9 @@ vpTranslationVector &vpTranslationVector::operator,(double val)
   m_index++;
   if (m_index >= size()) {
     throw(vpException(
-        vpException::dimensionError,
-        "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
-        size(), m_index + 1));
+      vpException::dimensionError,
+      "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
+      size(), m_index + 1));
   }
   data[m_index] = val;
   return *this;
@@ -707,10 +709,12 @@ vpRowVector vpTranslationVector::t() const
   return v;
 }
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
 
-  Compute and return the Euclidean norm also called Fronebius nom of the translation vector
+  Compute and return the Euclidean norm also called Frobenius nom of the translation vector
   \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
 
   \return The Euclidean norm if the vector is initialized, 0 otherwise.
@@ -719,10 +723,12 @@ vpRowVector vpTranslationVector::t() const
 */
 double vpTranslationVector::euclideanNorm() const { return frobeniusNorm(); }
 
-/*!
-  Compute and return the Fronebius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
+#endif
 
-  \return The Fronebius norm if the vector is initialized, 0 otherwise.
+/*!
+  Compute and return the Frobenius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
+
+  \return The Frobenius norm if the vector is initialized, 0 otherwise.
 */
 double vpTranslationVector::frobeniusNorm() const
 {

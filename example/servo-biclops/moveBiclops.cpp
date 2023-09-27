@@ -78,7 +78,7 @@ void usage(const char *name, const char *badparam, std::string conf)
 Move the biclops robot\n\
 \n\
 SYNOPSIS\n\
-  %s [-c <Biclops configuration file>] [-h]\n						      \
+  %s [-c <Biclops configuration file>] [-h]\n\
 ",
           name);
 

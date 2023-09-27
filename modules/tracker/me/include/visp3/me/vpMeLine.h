@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpMeLine.h
@@ -152,12 +150,15 @@ private:
   static void update_indices(double theta, int incr, int i, int j, int &i1, int &i2, int &j1, int &j2);
 
 protected:
-  vpMeSite PExt[2];
+  vpMeSite PExt[2]; //!< Line extremities
 
-  double rho, theta;
-  double delta, delta_1;
-  double angle, angle_1;
-  int sign;
+  double rho; //!< rho parameter of the line
+  double theta; //!< theta parameter of the line
+  double delta; //!< Angle in rad between the extremities
+  double delta_1; //!< Angle in rad between the extremities
+  double angle; //!< Angle in deg between the extremities
+  double angle_1; //!< Angle in deg between the extremities
+  int sign; //!< Sign
 
   //! Flag to specify wether the intensity of the image at the middle point is
   //! used to compute the sign of rho or not.
@@ -174,31 +175,149 @@ protected:
   double c; //!< Parameter c of the line equation a*i + b*j + c = 0
 
 public:
+  /*!
+   * Basic constructor that calls the constructor of the class vpMeTracker.
+   */
   vpMeLine();
+
+  /*!
+   * Copy constructor.
+   */
   vpMeLine(const vpMeLine &meline);
+
+  /*!
+   * Destructor.
+   */
   virtual ~vpMeLine();
 
+  /*!
+   * Display line.
+   *
+   * \warning To effectively display the line a call to
+   * vpDisplay::flush() is needed.
+   *
+   * \param I : Image in which the line appears.
+   * \param color : Color of the displayed line. Note that a moving edge
+   * that is considered as an outlier is displayed in green.
+   * \param thickness : Drawings thickness.
+   */
   void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
-  void track(const vpImage<unsigned char> &Im);
 
+  /*!
+   * Track the line in the image I.
+   *
+   * \param I : Image in which the line appears.
+   */
+  void track(const vpImage<unsigned char> &I);
+
+  /*!
+   * Construct a list of vpMeSite moving edges at a particular sampling
+   * step between the two extremities of the line.
+   *
+   * \param I : Image in which the line appears.
+   * \param doNotTrack : Inherited parameter, not used.
+   *
+   * \exception vpTrackingException::initializationError : Moving edges not
+   * initialized.
+   */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
 #else
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
 #endif
+
+  /*!
+   * Resample the line if the number of sample is less than 80% of the
+   * expected value.
+   *
+   * \note The expected value is computed thanks to the length of the
+   * line and the parameter which indicates the number of pixel between
+   * two points (vpMe::sample_step).
+   *
+   * \param I : Image in which the line appears.
+   */
   void reSample(const vpImage<unsigned char> &I);
+
+  /*!
+   * Least squares method used to make the tracking more robust. It
+   * ensures that the points taken into account to compute the right
+   * equation belong to the line.
+   */
   void leastSquare();
+
+  /*!
+   * Set the alpha value of the different vpMeSite to the value of delta.
+   */
   void updateDelta();
+
+  /*!
+   * Seek in the list of available points the two extremities of the line.
+   */
   void setExtremities();
+
+  /*!
+   * Seek along the line defined by its equation, the two extremities of
+   * the line. This function is useful in case of translation of the
+   * line.
+   *
+   * \param I : Image in which the line appears.
+   *
+   * \exception vpTrackingException::initializationError : Moving edges not
+   * initialized.
+   */
   void seekExtremities(const vpImage<unsigned char> &I);
+
+  /*!
+   * Suppression of the points which belong no more to the line.
+   */
   void suppressPoints();
 
+  /*!
+   * Initialization of the tracking. Ask the user to click on two points
+   * from the line to track.
+   *
+   * \param I : Image in which the line appears.
+   */
   void initTracking(const vpImage<unsigned char> &I);
+
+  /*!
+   * Initialization of the tracking. The line is defined thanks to the
+   * coordinates of two points.
+   *
+   * \param I : Image in which the line appears.
+   * \param ip1 : Coordinates of the first point.
+   * \param ip2 : Coordinates of the second point.
+   */
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2);
 
+  /*!
+   * Compute the two parameters \f$(\rho, \theta)\f$ of the line.
+   *
+   * \param I : Image in which the line appears.
+   */
   void computeRhoTheta(const vpImage<unsigned char> &I);
+
+  /*!
+   * Get the value of \f$\rho\f$, the distance between the origin and the
+   * point on the line with belong to the normal to the line crossing
+   * the origin.
+   *
+   * Depending on the convention described at the beginning of this
+   * class, \f$\rho\f$ is signed.
+   */
   double getRho() const;
+
+  /*!
+   * Get the value of the angle \f$\theta\f$.
+   */
   double getTheta() const;
+
+  /*!
+   * Get the extremities of the line.
+   *
+   * \param ip1 : Coordinates of the first extremity.
+   * \param ip2 : Coordinates of the second extremity.
+   */
   void getExtremities(vpImagePoint &ip1, vpImagePoint &ip2);
 
   /*!
@@ -226,6 +345,17 @@ public:
   */
   inline double getC() const { return c; }
 
+  /*!
+   * Computes the intersection point of two lines. The result is given in
+   * the (i,j) frame.
+   *
+   * \param line1 : The first line.
+   * \param line2 : The second line.
+   * \param ip : The coordinates of the intersection point.
+   *
+   * \return Returns a boolean value which depends on the computation
+   * success. True means that the computation ends successfully.
+   */
   static bool intersection(const vpMeLine &line1, const vpMeLine &line2, vpImagePoint &ip);
 
   /*!
@@ -241,34 +371,90 @@ public:
 
   // Static Functions
 public:
+  /*!
+   * Display of a moving line thanks to its equation parameters and its
+   * extremities.
+   *
+   * \param I : The image used as background.
+   * \param PExt1 : First extremity
+   * \param PExt2 : Second extremity
+   * \param A : Parameter a of the line equation a*i + b*j + c = 0
+   * \param B : Parameter b of the line equation a*i + b*j + c = 0
+   * \param C : Parameter c of the line equation a*i + b*j + c = 0
+   * \param color : Color used to display the line.
+   * \param thickness : Thickness of the line.
+   */
   static void displayLine(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-    const double &B, const double &C, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1);
-  static void displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-    const double &B, const double &C, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1);
+                          const double &B, const double &C, const vpColor &color = vpColor::green,
+                          unsigned int thickness = 1);
 
+  /*!
+   * Display of a moving line thanks to its equation parameters and its
+   * extremities.
+   *
+   * \param I : The image used as background.
+   * \param PExt1 : First extremity
+   * \param PExt2 : Second extremity
+   * \param A : Parameter a of the line equation a*i + b*j + c = 0
+   * \param B : Parameter b of the line equation a*i + b*j + c = 0
+   * \param C : Parameter c of the line equation a*i + b*j + c = 0
+   * \param color : Color used to display the line.
+   * \param thickness : Thickness of the line.
+   */
+  static void displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
+                          const double &B, const double &C, const vpColor &color = vpColor::green,
+                          unsigned int thickness = 1);
+
+  /*!
+   * Display of a moving line thanks to its equation parameters and its
+   * extremities with all the site list.
+   *
+   * \param I : The image used as background.
+   * \param PExt1 : First extremity
+   * \param PExt2 : Second extremity
+   * \param site_list : vpMeSite list
+   * \param A : Parameter a of the line equation a*i + b*j + c = 0
+   * \param B : Parameter b of the line equation a*i + b*j + c = 0
+   * \param C : Parameter c of the line equation a*i + b*j + c = 0
+   * \param color : Color used to display the line.
+   * \param thickness : Thickness of the line.
+   */
   static void displayLine(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                          const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                          const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  /*!
+   * Display of a moving line thanks to its equation parameters and its
+   * extremities with all the site list.
+   *
+   * \param I : The image used as background.
+   * \param PExt1 : First extremity
+   * \param PExt2 : Second extremity
+   * \param site_list : vpMeSite list
+   * \param A : Parameter a of the line equation a*i + b*j + c = 0
+   * \param B : Parameter b of the line equation a*i + b*j + c = 0
+   * \param C : Parameter c of the line equation a*i + b*j + c = 0
+   * \param color : Color used to display the line.
+   * \param thickness : Thickness of the line.
+   */
   static void displayLine(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                          const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                          const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-    const double &B, const double &C, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1);
+                                    const double &B, const double &C, const vpColor &color = vpColor::green,
+                                    unsigned int thickness = 1);
   vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
-    const double &B, const double &C, const vpColor &color = vpColor::green,
-    unsigned int thickness = 1);
+                                    const double &B, const double &C, const vpColor &color = vpColor::green,
+                                    unsigned int thickness = 1);
 
   vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                                    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
   vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
-    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
-    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+                                    const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
+                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
 };
 

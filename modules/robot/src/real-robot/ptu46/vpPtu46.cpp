@@ -41,7 +41,7 @@
 #include <visp3/robot/vpPtu46.h>
 #include <visp3/robot/vpRobotException.h>
 
-/* Inclusion des fichiers standards.		*/
+/* Inclusion des fichiers standards. */
 #include <math.h>
 #include <visp3/core/vpMath.h>
 

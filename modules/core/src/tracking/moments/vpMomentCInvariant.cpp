@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Descriptor for various invariants used to drive space roations around X and
+ * Descriptor for various invariants used to drive space rotations around X and
  *Y axis.
  *
  * Authors:

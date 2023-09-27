@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Matrix manipulation.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpMatrix_H
 #define vpMatrix_H
@@ -573,7 +571,7 @@ vpMatrix M(R);
   /** @name Eigen values  */
 
   //@{
-  // compute the eigen values using Lapack
+  // Compute the eigen values using Lapack.
   vpColVector eigenValues() const;
   void eigenValues(vpColVector &evalue, vpMatrix &evector) const;
   //@}
@@ -993,7 +991,8 @@ vpMatrix M(R);
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  double euclideanNorm() const;
+
+  vp_deprecated double euclideanNorm() const;
 
   /*!
     @name Deprecated functions

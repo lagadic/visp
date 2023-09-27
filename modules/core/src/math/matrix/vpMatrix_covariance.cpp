@@ -48,7 +48,7 @@
 
 /*!
   Compute the covariance matrix of the parameters x from a least squares
-  minimisation defined as: Ax = b
+  minimization defined as: Ax = b
 
   \param A : Matrix A from Ax = b.
 
@@ -77,7 +77,7 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 
 /*!
   Compute the covariance matrix of the parameters x from a least squares
-  minimisation defined as: WAx = Wb
+  minimization defined as: WAx = Wb
 
   \param A : Matrix A from WAx = Wb.
 

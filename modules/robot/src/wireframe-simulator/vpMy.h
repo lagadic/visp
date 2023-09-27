@@ -69,12 +69,7 @@
 
 #define M_EPSILON 1E-06
 
-//#define	ABS(X)		(((X) < 0)   ? -(X) : (X))
 #define FABS(X) (((X) < 0.0) ? -(X) : (X))
-//#define	MAX(A,B)	(((A) > (B)) ? (A) : (B))
-//#define	MAX3(A,B,C)	(MAX(MAX(A,B),C))
-//#define	MIN(A,B)	(((A) < (B)) ? (A) : (B))
-//#define	MIN3(A,B,C)	(MIN(MIN(A,B),C))
 
 #define MIN_MAX(M, MIN, MAX)                                                                                           \
   if ((M) < (MIN))                                                                                                     \

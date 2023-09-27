@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,15 +29,12 @@
  *
  * Description:
  * Gray level histogram manipulation.
- *
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpHistogramPeak.h
   \brief Declaration of the vpHistogramPeak class.
   Class vpHistogramPeak defines a gray level histogram peak.
-
 */
 
 #ifndef vpHistogramPeak_h

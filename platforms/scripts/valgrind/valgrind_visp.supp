@@ -1,6 +1,6 @@
 ###################################################################
 #
-# Error that occured on flylab-gs3 ci running ubuntu 18.04
+# Error that occurred on flylab-gs3 ci running ubuntu 18.04
 #
 ###################################################################
 
@@ -21,7 +21,7 @@
 
 ###################################################################
 #
-# Error that occured on ViSP-ubuntu-12.04-i386 ci running ubuntu 12.04
+# Error that occurred on ViSP-ubuntu-12.04-i386 ci running ubuntu 12.04
 #
 ###################################################################
 
@@ -221,7 +221,7 @@
 
 ###################################################################
 #
-# Error that occured on visp-centos-7-2-amd64 ci
+# Error that occurred on visp-centos-7-2-amd64 ci
 #
 ###################################################################
 
@@ -362,7 +362,7 @@
 
 ###################################################################
 #
-# Errors that occured on visp-osx-10-9-mavericks ci
+# Errors that occurred on visp-osx-10-9-mavericks ci
 #
 ###################################################################
 
@@ -686,4 +686,3 @@
    fun:currentlocale
    fun:_ZN21vpMbtXmlGenericParserC2Ei
 }
-

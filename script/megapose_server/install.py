@@ -13,10 +13,14 @@ if conda_exe is None:
   raise RuntimeError('Conda was not found with shutil.which')
 
 def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
+  '''
+  Retrieve the megapose environment path, by parsing the conda info --envs command
+  may return none if no environment with the given name is found
+  '''
   env_data = str(subprocess.check_output('conda info --envs', shell=True).decode())
   env_lines = env_data.split('\n')
   megapose_env_line = [line for line in env_lines if line.startswith(megapose_env)]
-  assert(len(megapose_env_line) <= 1, 'Found multiple environment names with same name, this should not happen')
+  assert len(megapose_env_line) <= 1, 'Found multiple environment names with same name, this should not happen'
   if len(megapose_env_line) == 0:
     return None
   megapose_env_line = megapose_env_line[0]
@@ -25,12 +29,18 @@ def get_megapose_env_path(megapose_env: str) -> Union[Path, None]:
   return megapose_env_path
 
 def get_megapose_bin_conda_env(megapose_env: str) -> Path:
+  '''
+  Retrieve the bin folder of a conda environment
+  '''
   megapose_env_path = get_megapose_env_path(megapose_env)
   assert megapose_env_path is not None
   megapose_env_bin = megapose_env_path / 'bin'
   return megapose_env_bin
 
 def get_pip_for_conda_env(megapose_env: str):
+  '''
+  Retrieve the pip script linked to a conda environment
+  '''
   conda_bin = get_megapose_bin_conda_env(megapose_env)
   # On windows, pip is not in the bin directory but rather in scripts
   if os.name == 'nt':
@@ -39,16 +49,28 @@ def get_pip_for_conda_env(megapose_env: str):
     return conda_bin / 'pip'
 
 
-def get_rclone_for_conda_env(megapose_env: str):
+def get_rclone_for_conda_env(megapose_env: str) -> Path:
+  '''
+  Retrieve rclone program installed in a conda environment
+  '''
   return get_megapose_bin_conda_env(megapose_env) / 'rclone'
 
 def megapose_already_cloned(megapose_path: Path) -> bool:
+  '''
+  Check whether the megapose GitHub repo has already been cloned at the given location
+  '''
   return megapose_path.exists() and (megapose_path / 'rclone.conf').exists() and ((megapose_path / 'src') / 'megapose').exists()
 
 def conda_env_already_exists(megapose_env: str) -> bool:
+  '''
+  Check whether the given conda environment already exists
+  '''
   return get_megapose_env_path(megapose_env) is not None
 
 def clone_megapose(megapose_path: Path):
+  '''
+  Clone the megapose repository, and initialize its submodules. If it already exists, nothing is performed.
+  '''
   print('Cloning megapose git repo...')
   if not megapose_already_cloned(megapose_path):
     try:
@@ -64,6 +86,9 @@ def clone_megapose(megapose_path: Path):
     print('Megapose git repo already exists, skipping...')
 
 def install_dependencies(megapose_path: Path, megapose_environment: str):
+  '''
+  Install or update the required conda dependencies for megapose
+  '''
   try:
     if not conda_env_already_exists(megapose_environment):
       subprocess.run([conda_exe, 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
@@ -78,6 +103,9 @@ def install_dependencies(megapose_path: Path, megapose_environment: str):
 
 
 def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: Path):
+  '''
+  Download the megapose deep learning models
+  '''
   models_path = megapose_data_path / 'megapose-models'
   conf_path = megapose_path / 'rclone.conf'
   rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
@@ -89,6 +117,9 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
 
 
 def install_server(megapose_env: str):
+  '''
+  Install the megapose_server package
+  '''
   megapose_env_pip = get_pip_for_conda_env(megapose_env)
   subprocess.run([megapose_env_pip, 'install', '.'], check=True)
 

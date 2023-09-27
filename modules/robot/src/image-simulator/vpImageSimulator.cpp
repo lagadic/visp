@@ -1241,8 +1241,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, unsigned char &Ipixelpla
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1294,8 +1294,8 @@ bool vpImageSimulator::getPixel(vpImage<unsigned char> &Isrc, const vpImagePoint
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1346,8 +1346,8 @@ bool vpImageSimulator::getPixel(const vpImagePoint &iP, vpRGBa &Ipixelplan)
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;
@@ -1398,8 +1398,8 @@ bool vpImageSimulator::getPixel(vpImage<vpRGBa> &Isrc, const vpImagePoint &iP, v
 
   // recuperation des coordonnes de l'intersection dans le plan objet
   // repere plan object :
-  //	centre = X0_2_optim[i] (premier point definissant le plan)
-  //	base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
+  //  centre = X0_2_optim[i] (premier point definissant le plan)
+  //  base =  u:(X[1]-X[0]) et v:(X[3]-X[0])
   // ici j'ai considere que le plan est un rectangle => coordonnees sont
   // simplement obtenu par un produit scalaire
   double u = 0, v = 0;

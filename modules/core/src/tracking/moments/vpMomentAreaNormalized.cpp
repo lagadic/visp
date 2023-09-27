@@ -50,11 +50,12 @@ void vpMomentAreaNormalized::compute()
   bool found_moment_centered;
 
   /* getMoments() returns a reference to a vpMomentDatabase. (a protected
-    member inherited from vpMoment)
-    .get() 		is a member function of vpMomentDatabase that returns
-    a specific moment which is linked to it*/
+   * member inherited from vpMoment)
+   *.get() is a member function of vpMomentDatabase that returns
+   * a specific moment which is linked to it
+   * */
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -107,7 +108,7 @@ void vpMomentAreaNormalized::printDependencies(std::ostream &os) const
 
   bool found_moment_centered;
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(getMoments().get("vpMomentCentered", found_moment_centered));
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
 
