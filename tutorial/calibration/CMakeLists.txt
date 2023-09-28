@@ -20,6 +20,18 @@ foreach(cpp ${tutorial_cpp})
   endif()
 endforeach()
 
+install(PROGRAMS
+  ${CMAKE_CURRENT_BINARY_DIR}/tutorial-chessboard-pose
+  DESTINATION bin
+  RENAME compute-chessboard-poses
+  )
+
+install(PROGRAMS
+  ${CMAKE_CURRENT_BINARY_DIR}/tutorial-hand-eye-calibration
+  DESTINATION bin
+  RENAME compute-hand-eye-calibration
+  )
+
 if(VISP_HAVE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from librealsense 3rd party and its dependencies
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
