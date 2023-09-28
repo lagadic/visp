@@ -45,7 +45,10 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
   '''
   if isinstance(param, types.Value):
     return ''.join([token.value for token in param.tokens])
-
+  if isinstance(param, types.FunctionType):
+    return_type = get_type(param.return_type, owner_specs, header_env_mapping)
+    param_types = [get_type(p.type, owner_specs, header_env_mapping) for p in param.parameters]
+    return f'{return_type}({", ".join(param_types)})'
   if isinstance(param, types.Type):
     repr_str = get_typename(param.typename, owner_specs, header_env_mapping)
     split = repr_str.split('<')
