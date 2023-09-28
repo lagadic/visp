@@ -309,7 +309,7 @@ void computeTopLeftIntersections(const float &u_c, const float &v_c, const vpIma
   std::cout << "v_vmin = " << v_vmin << " (" << theta_v_min << ")\tv_vmax = " << v_vmax  << " (" << theta_v_max << ")" << std::endl;
   if (u_umin < umin_roi && u_umax >= umin_roi && v_vmin < vmin_roi && v_vmax >= vmin_roi) {
     // The circle crosses only once each axis
-    std::cout << "\t|->Case crossing once, center below top border" << std::endl;
+    std::cout << "\t|->Case crossing once" << std::endl;
     delta_theta = theta_u_max - theta_v_max;
   }
   else if (u_umin >= umin_roi && u_umax >= umin_roi && v_vmin >= vmin_roi && v_vmax >= vmin_roi) {
@@ -357,8 +357,9 @@ void computeTopRightIntersections(const float &u_c, const float &v_c, const floa
   float u_umax = crossing_theta_u_max.second;
   float v_vmin = crossing_theta_v_min.second;
   float v_vmax = crossing_theta_v_max.second;
-  if (u_umin <= umax_roi && v_vmin < vmin_roi && u_umax > umax_roi && v_vmax >= vmin_roi) {
+  if (u_umin <= umax_roi && v_vmin < vmin_roi && u_umax >= umax_roi && v_vmax >= vmin_roi) {
     // The circle crosses only once each axis and the center is below the top border
+    std::cout << "\t|->Case crossing once" << std::endl;
     delta_theta = theta_v_max - theta_u_min;
     if (delta_theta < 0) {
       // The arc cannot be negative
@@ -367,16 +368,19 @@ void computeTopRightIntersections(const float &u_c, const float &v_c, const floa
   }
   else if (u_umin <= umax_roi && v_vmin >= vmin_roi && u_umax <= umax_roi && v_vmax >= vmin_roi) {
     // The circle crosses twice each axis
-    delta_theta = (2 * M_PI + theta_v_max - theta_u_min) + (theta_v_min - theta_u_max);
+    std::cout << "\t|->Case crossing twice" << std::endl;
+    delta_theta = 2 * M_PI - ((theta_u_min - theta_u_max)+(theta_v_min - theta_v_max));
   }
-  else if (true) {
+  else if (u_umin >= umax_roi && v_vmin >= vmin_roi && u_umax >= umax_roi && v_vmax >= vmin_roi) {
     // The circle crosses the u-axis outside the roi
     // so it is equivalent to the case of crossing only the right border
+    std::cout << "\t|->Case crossing right only" << std::endl;
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
-  else if (true) {
+  else if (u_umin <= umax_roi && v_vmin <= vmin_roi && u_umax <= umax_roi && v_vmax <= vmin_roi) {
     // The circle crosses the v-axis outside the roi
-    // so it is equivalent to the case of crossing only the left border
+    // so it is equivalent to the case of crossing only the top border
+    std::cout << "\t|->Case crossing top only" << std::endl;
     computeIntersectionsTopBorderOnly(v_c, vmin_roi, radius, delta_theta);
   }
 }

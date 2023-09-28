@@ -396,10 +396,10 @@ int main()
 
   // Test with intersections with the top and the left border, crossing each axis once in the RoI
   {
-    // Formula: u1   = uc + r cos (theta1) ; vmin = vc + r sin(theta1)
-    // Formula: umin = uc + r cos(theta 2) ; v    = vc + r sin(theta2)
+    // Formula: u1   = uc + r cos (theta1) ; vmin = vc - r sin(theta1)
+    // Formula: umin = uc + r cos(theta 2) ; v    = vc - r sin(theta2)
     // Choice: theta1 - theta2 = pi / 2 => for theta1 = 0 theta2 = -pi/2
-    //      => uc = umin - r cos(theta2) vc = vmin - r sin(theta1)
+    //      => uc = umin - r cos(theta2) vc = vmin + r sin(theta1)
     float uc = OFFSET;
     float vc = OFFSET;
     vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
@@ -532,6 +532,174 @@ int main()
     std::cout << "Test with intersections with the top and the left border crossing twice each axis ." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length = " << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top and the right border, crossing each axis once in the RoI
+  {
+    // (1): u1           = uc + r cos(theta1)                  ; vmin = vc - r sin(theta1)
+    // (2): umin + width = uc + r cos(theta2)                  ; v    = vc - r sin(theta2) <= vmin
+    // (3): u3           = uc + r cos(theta3) >=  umin + width ; vmin = vc - r sin(theta3)
+    // (4): umin + width = uc + r cos(theta4)                  ; v    = vc - r sin(theta4) >= vmin
+    // Choice: for theta1 = 2PI/3 theta4 = -pi/2
+    // (4) => uc = umin + width - r cos(theta4)
+    // (1) => vc = vmin + r sin(theta1)
+    // (1) & (3) theta1 = PI - theta3
+    // (2) & (4) theta2 = - theta4
+    float theta1 = 2.f * M_PI / 3.f;
+    float theta4 = -M_PI_2;
+    float uc = OFFSET + WIDTH - RADIUS * std::cos(theta4);
+    float vc = OFFSET + RADIUS * std::sin(theta1);;
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (M_PI_2 + M_PI / 3.f) * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top and the right border, crossing each axis once in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top and the right border,
+  // but crossing only the right border in the RoI
+  {
+    // (1): u1           = uc + r cos(theta1) >=  umin + width ; vmin = vc - r sin(theta1)
+    // (2): umin + width = uc + r cos(theta2)                  ; v    = vc - r sin(theta2) >= vmin
+    // (3): u3           = uc + r cos(theta3) >=  umin + width ; vmin = vc - r sin(theta3)
+    // (4): umin + width = uc + r cos(theta4)                  ; v    = vc - r sin(theta4) >= vmin
+    // (4) => uc = umin + width - r cos(theta4)
+    // (1) => theta1 = asin((vc - vmin)/r) & uc + r cos(theta1) >= umin + width <=> uc + r cos[asin((vc - vmin)/r)] >= umin + width
+    // (1) <=> asin((vc - vmin)/r) >= acos[(umin + width - uc)/r] <=> vc >= r sin(acos[(umin + width - uc)/r]) + vmin
+    // (1) & (3) theta1 = PI - theta3
+    // (2) & (4) theta2 = - theta4
+    float theta4 = -7.f * M_PI / 8.f; // -5.f * M_PI / 6.f;
+    float theta2 = -theta4;
+    float uc = OFFSET + WIDTH - RADIUS * std::cos(theta4);
+    float vc = RADIUS * std::sin(std::acos((OFFSET + WIDTH - uc)/RADIUS)) + OFFSET + 1.f;
+    float theta1 = std::asin((vc - OFFSET) / RADIUS);
+    float theta3 = M_PI - theta1;
+    if (theta3 > theta1) {
+      float temp = theta3;
+      theta3 = theta1;
+      theta1 = temp;
+    }
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (2.f * M_PI - (theta2 - theta4)) * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top and the right border, but crossing only the right border in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top and the right border,
+  // but crossing only the top border in the RoI
+  {
+    // (1): u1           = uc + r cos(theta1) <=  umin + width ; vmin = vc - r sin(theta1)
+    // (2): umin + width = uc + r cos(theta2)                  ; v    = vc - r sin(theta2) <= vmin
+    // (3): u3           = uc + r cos(theta3) <=  umin + width ; vmin = vc - r sin(theta3)
+    // (4): umin + width = uc + r cos(theta4)                  ; v    = vc - r sin(theta4) <= vmin
+    // (1) & (3) theta1 = PI - theta3
+    // (2) & (4) theta2 = - theta4
+    // Choice: theta1 = -0.9 * PI / 2
+    // (1) => vc = vmin + r sin(theta1)
+    // (2) vc - r sin(theta2) <= vmin => asin((vc - vmin)/r) <= theta2
+    float theta1 = -0.9f * M_PI_2;
+    float theta3 = M_PI - theta1;
+    if (theta3 > M_PI) {
+      theta3 -= 2.0 * M_PI;
+    }
+    else if (theta3 > M_PI) {
+      theta3 += 2.0 * M_PI;
+    }
+    float vc = OFFSET + RADIUS * std::sin(theta1);
+    float theta2 = std::asin((vc - OFFSET)/RADIUS) + 1.f;
+    float uc = OFFSET + WIDTH - RADIUS * std::cos(theta2);
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = std::abs(theta1 - theta3) * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top and the right border, but crossing only the top border in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top and the left border
+  // crossing twice each axis
+  {
+    // (1): u1           = uc + r cos(theta1) < umin + width ; vmin = vc - r sin(theta1)
+    // (2): umin + width = uc + r cos(theta2)                ; v2   = vc - r sin(theta2) >= vmin
+    // (3): u3           = uc + r cos(theta3) <= umin + width; vmin = vc - r sin(theta3)
+    // (4): umin + width = uc + r cos(theta4)                ; v4   = vc - r sin(theta4) >  vmin
+    // (1) & (3) => vmin = vc - r sin(theta1) = vc - r sin(theta3) <=> theta1 = PI - theta3
+    // (1) & (3) =>{ uc < umin + width - r cos(theta1) & { uc <= umin + width - r cos(PI - theta1)
+    // (1) & (3)   { vc  = vmin + r sin(theta1) & { vc  = vmin + r sin(PI - theta1)
+    // (2) & (4) =>{ uc  = umin - r cos(theta2) & { uc  = umin - r cos(   - theta2)
+    // (2) & (4)   { vc >= vmin - r sin(theta2) & { vc >= vmin - r cos(   - theta2)
+
+    float theta1 = 5.f * M_PI / 8.f;
+    float theta3 = M_PI - theta1;
+    float uc = OFFSET + WIDTH - RADIUS * std::cos(theta1) - 1.f;
+    uc = std::min(uc, OFFSET + WIDTH - RADIUS * std::cos((float)M_PI - theta1) - 1.f);
+    float vc = OFFSET + RADIUS * std::sin(theta1);
+    float theta2 = std::acos((OFFSET + WIDTH - uc)/RADIUS);
+    if (theta2 > M_PI) {
+      theta2 -= 2.0 * M_PI;
+    }
+    else if (theta2 > M_PI) {
+      theta2 += 2.0 * M_PI;
+    }
+    float theta4 = -theta2;
+    if (theta2 < 0) {
+      float temp = theta2;
+      theta2 = theta2;
+      theta4 = temp;
+    }
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (2.f * M_PI - ((theta1 - theta3) + (theta2 - theta4))) * RADIUS;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top and the left border crossing twice each axis ." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length (2 PI - (" << theta1 << " - " << theta3 << ") + (" << theta2 << " - " << theta4 << ")) R = " << theoreticalValue << std::endl;
     std::cout << "\ttest status = " << statusTest << std::endl;
 
     hasSucceeded &= isValueOK;
