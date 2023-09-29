@@ -1043,8 +1043,6 @@ int main()
     float theta_u_top_max = M_PI / 6.f;
     float theta_u_top_min = M_PI - theta_u_top_max;
     float theta_v_min = M_PI / 3.f;
-    float theta_v_max = -theta_v_min;
-    float theta_u_bottom_min = -theta_u_top_min;
     float theta_u_bottom_max = -theta_u_top_max;
     float radius = HEIGHT;
     float vc = OFFSET + radius * std::sin(theta_u_top_min);
@@ -1069,6 +1067,45 @@ int main()
   }
 
   // Test with intersections with the top, bottom and the left border
+  // crossing the top and bottom axes and touching the left axis in the RoI
+  {
+    // (1): u_cross_top_min = uc + r cos(theta_u_top_min) >=  umin_roi ; vmin_roi = vc - r sin(theta_u_top_min)
+    // (2): umin_roi = uc + r cos(theta_v_min); v_cross_min = vc - r sin(theta_v_min) >= vmin_roi && v_cross_min <= vmin_roi + height
+    // (3): u_cross_top_max = uc + r cos(theta_u_top_max) >= umin_roi ; vmin_roi = vc - r sin(theta_u_top_max)
+    // (4): umin_roi = uc + r cos(theta_v_max); v_cross_max = v_cross_min
+    // (5): u_cross_bot_min = uc + r cos(theta_u_bottom_min) >=  umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_min)
+    // (6): u_cross_bot_max = uc + r cos(theta_u_bottom_max) >=   umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_max)
+    // (1) & (3) theta_u_top_min = PI - theta_u_top_max
+    // (2) & (4) theta_v_min = - theta_v_max
+    // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
+    float theta_u_top_min = 4.f * M_PI / 6.f;
+    float theta_u_top_max = M_PI - theta_u_top_min;
+    float theta_v_min = M_PI;
+    float theta_u_bottom_min = -theta_u_top_min;
+    float theta_u_bottom_max = -theta_u_top_max;
+    float radius = HEIGHT / (2.f * std::sin(theta_u_top_min)); // vmin + h - vmin = (vc - r sin(-theta_u_top_min)) - (vc - r sin(theta_top_min))
+    float vc = OFFSET + radius * std::sin(theta_u_top_min);
+    float uc = OFFSET - radius * std::cos(theta_v_min);
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), radius);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (2.f * M_PI - ((theta_u_top_min -  theta_u_top_max) + (theta_u_bottom_max - theta_u_bottom_min))) * radius;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top, bottom and the left border, crossing the top and bottom axes and touching the left axis in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top, bottom and the left border
   // crossing only the left axis in the RoI
   {
     // (1): u_cross_top_min = uc + r cos(theta_u_top_min) <  umin_roi ; vmin_roi = vc - r sin(theta_u_top_min)
@@ -1081,11 +1118,8 @@ int main()
     // (2) & (4) theta_v_min = - theta_v_max
     // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
     float theta_u_top_min = M_PI_2;
-    float theta_u_top_max = M_PI - theta_u_top_min;
     float theta_v_min = M_PI_4;
     float theta_v_max = -theta_v_min;
-    float theta_u_bottom_min = -theta_u_top_min;
-    float theta_u_bottom_max = -theta_u_top_max;
     float radius = HEIGHT / 2.f;
     float vc = OFFSET + radius * std::sin(theta_u_top_min);
     float uc = OFFSET - radius * std::cos(theta_v_min);
@@ -1101,6 +1135,43 @@ int main()
       statusTest = "FAILED";
     }
     std::cout << "Test with intersections with the top, bottom and the left border, crossing only the left axis in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top, bottom and the left border
+  // crossing the left axis and touching the two others in the RoI
+  {
+    // (1): u_cross_top_min = uc + r cos(theta_u_top_min) >=  umin_roi ; vmin_roi = vc - r sin(theta_u_top_min)
+    // (2): umin_roi = uc + r cos(theta_v_min); v_cross_min = vc - r sin(theta_v_min) >= vmin_roi
+    // (3): u_cross_top_max = uc + r cos(theta_u_top_max) >= umin_roi ; vmin_roi = vc - r sin(theta_u_top_max)
+    // (4): umin_roi = uc + r cos(theta_v_max); v_cross_max = vc - r sin(theta_v_max) <= vmin_roi + height
+    // (5): u_cross_bot_min = uc + r cos(theta_u_bottom_min) >=  umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_min)
+    // (6): u_cross_bot_max = uc + r cos(theta_u_bottom_max) >=   umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_max)
+    // (1) & (3) theta_u_top_min = PI - theta_u_top_max
+    // (2) & (4) theta_v_min = - theta_v_max
+    // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
+    float theta_u_top_min = M_PI_2;
+    float theta_v_min = 3.f * M_PI_4;
+    float theta_v_max = -theta_v_min;
+    float radius = HEIGHT / 2.f;
+    float vc = OFFSET + radius * std::sin(theta_u_top_min);
+    float uc = OFFSET - radius * std::cos(theta_v_min);
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), radius);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (theta_v_min - theta_v_max) * radius;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top, bottom and the left border, crossing the left axis and touching the two others in the RoI." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
     std::cout << "\ttest status = " << statusTest << std::endl;
@@ -1161,11 +1232,8 @@ int main()
     // (2) & (4) theta_v_min = - theta_v_max
     // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
     float theta_u_top_min = 5.f * M_PI / 6.f;
-    float theta_u_top_max = M_PI - theta_u_top_min;
     float theta_v_min = 2.f * M_PI / 3.f;
-    float theta_v_max = -theta_v_min;
     float theta_u_bottom_min = -theta_u_top_min;
-    float theta_u_bottom_max = -theta_u_top_max;
     float radius = HEIGHT;
     float vc = OFFSET + radius * std::sin(theta_u_top_min);
     float uc = OFFSET + WIDTH - radius * std::cos(theta_v_min);
@@ -1189,6 +1257,45 @@ int main()
   }
 
   // Test with intersections with the top, bottom and the right border
+  // crossing the top and bottom axes and touching the right axis in the RoI
+  {
+    // (1): u_cross_top_min = uc + r cos(theta_u_top_min) <  umin_roi + width ; vmin_roi = vc - r sin(theta_u_top_min)
+    // (2): umin_roi + width = uc + r cos(theta_v_min); v_cross_min = vc - r sin(theta_v_min) >= vmin_roi && <= vmin_roi + height
+    // (3): u_cross_top_max = uc + r cos(theta_u_top_max) <= umin_roi + width ; vmin_roi = vc - r sin(theta_u_top_max)
+    // (4): umin_roi + width = uc + r cos(theta_v_max); v_cross_max = v_cross_min
+    // (5): u_cross_bot_min = uc + r cos(theta_u_bottom_min) <  umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_min)
+    // (6): u_cross_bot_max = uc + r cos(theta_u_bottom_max) <=   umin_roi ; vmin_roi + height = vc - r sin(theta_u_bottom_max)
+    // (1) & (3) theta_u_top_min = PI - theta_u_top_max
+    // (2) & (4) theta_v_min = - theta_v_max
+    // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
+    float theta_u_top_min = 4.f * M_PI / 6.f;
+    float theta_u_top_max = M_PI - theta_u_top_min;
+    float theta_v_min = 0;
+    float theta_u_bottom_min = -theta_u_top_min;
+    float theta_u_bottom_max = -theta_u_top_max;
+    float radius = HEIGHT / (2.f * std::sin(theta_u_top_min)); // vmin + h - vmin = (vc - r sin(-theta_u_top_min)) - (vc - r sin(theta_top_min))
+    float vc = OFFSET + radius * std::sin(theta_u_top_min);
+    float uc = OFFSET + WIDTH - radius * std::cos(theta_v_min);
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), radius);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (2.f * M_PI - ((theta_u_top_min -  theta_u_top_max) + (theta_u_bottom_max - theta_u_bottom_min))) * radius;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top, bottom and the right border, crossing the top and bottom axes and touching the right axis in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top, bottom and the right border
   // crossing only the right axis in the RoI
   {
     // (1): u_cross_top_min = uc + r cos(theta_u_top_min) >=  umin_roi + width ; vmin_roi = vc - r sin(theta_u_top_min)
@@ -1201,11 +1308,8 @@ int main()
     // (2) & (4) theta_v_min = - theta_v_max
     // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
     float theta_u_top_min = M_PI_2;
-    float theta_u_top_max = M_PI - theta_u_top_min;
     float theta_v_min = 3.f * M_PI_4;
     float theta_v_max = -theta_v_min;
-    float theta_u_bottom_min = -theta_u_top_min;
-    float theta_u_bottom_max = -theta_u_top_max;
     float radius = HEIGHT / 2.f;
     float vc = OFFSET + radius * std::sin(theta_u_top_min);
     float uc = OFFSET + WIDTH - radius * std::cos(theta_v_min);
@@ -1221,6 +1325,43 @@ int main()
       statusTest = "FAILED";
     }
     std::cout << "Test with intersections with the top, bottom and the right border, crossing only the right axis in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with intersections with the top, bottom and the right border
+  // crossing the right axis and touching the two others in the RoI
+  {
+    // (1): u_cross_top_min = uc + r cos(theta_u_top_min) <=  umin_roi + width ; vmin_roi = vc - r sin(theta_u_top_min)
+    // (2): umin_roi + width = uc + r cos(theta_v_min); v_cross_min = vc - r sin(theta_v_min) >= vmin_roi
+    // (3): u_cross_top_max = uc + r cos(theta_u_top_max) <= umin_roi + width ; vmin_roi = vc - r sin(theta_u_top_max)
+    // (4): umin_roi + width = uc + r cos(theta_v_max); v_cross_max = vc - r sin(theta_v_max) <= vmin_roi + height
+    // (5): u_cross_bot_min = uc + r cos(theta_u_bottom_min) <=  umin_roi + width ; vmin_roi + height = vc - r sin(theta_u_bottom_min)
+    // (6): u_cross_bot_max = uc + r cos(theta_u_bottom_max) <=   umin_roi + width ; vmin_roi + height = vc - r sin(theta_u_bottom_max)
+    // (1) & (3) theta_u_top_min = PI - theta_u_top_max
+    // (2) & (4) theta_v_min = - theta_v_max
+    // (5) & (6) theta_u_bottom_min = PI - theta_u_bottom_max
+    float theta_u_top_min = M_PI_2;
+    float theta_v_min = M_PI_4;
+    float theta_v_max = -theta_v_min;
+    float radius = HEIGHT / 2.f;
+    float vc = OFFSET + radius * std::sin(theta_u_top_min);
+    float uc = OFFSET + WIDTH - radius * std::cos(theta_v_min);
+    vpImageCircle noIntersect(vpImagePoint(vc, uc), radius);
+    float arcLengthNoIntersect = noIntersect.computeArcLengthInRoI(roi);
+    float theoreticalValue = (2.f * M_PI - (theta_v_min - theta_v_max)) * radius;
+    bool isValueOK = compareAngles(arcLengthNoIntersect, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the top, bottom and the right border, crossing the right axis and touching the two others in the RoI." << std::endl;
     std::cout << "\tarc length =" << arcLengthNoIntersect << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
     std::cout << "\ttest status = " << statusTest << std::endl;
