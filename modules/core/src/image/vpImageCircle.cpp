@@ -613,7 +613,7 @@ void computeIntersectionsTopRightBottom(const float &u_c, const float &v_c, cons
   std::cout << "u_umin_top = " << u_umin_top << " (" << theta_u_min_top << ")\tu_umax_top = " << u_umax_top  << " (" << theta_u_max_top << ")" << std::endl;
   std::cout << "u_umin_bottom = " << u_umin_bottom << " (" << theta_u_min_bottom << ")\tu_umax_bottom = " << u_umax_bottom  << " (" << theta_u_max_bottom << ")" << std::endl;
   std::cout << "v_vmin = " << v_vmin << " (" << theta_v_min << ")\tv_vmax = " << v_vmax  << " (" << theta_v_max << ")" << std::endl;
-  if (u_umax_top <= umax_roi && u_umax_bottom <= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+  if (u_umax_top <= umax_roi && u_umax_bottom <= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
     std::cout << "\t|-> case intersection top + right + bottom twice" << std::endl;
     delta_theta = 2.f * M_PI - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
   }
@@ -655,12 +655,13 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
   float theta_u_cross_top = std::asin((v_c - vmin_roi)/radius);
   theta_u_cross_top = getAngleBetweenMinPiAndPi(theta_u_cross_top);
   float theta_u_cross_top_2 = 0.f;
-  if (theta_u_cross_top_2 > 0) {
+  if (theta_u_cross_top > 0) {
     theta_u_cross_top_2 = M_PI - theta_u_cross_top;
   }
   else {
     theta_u_cross_top_2 = -M_PI - theta_u_cross_top;
   }
+
   // Computing the corresponding u-coordinates at which the u-axis is crossed
   float u_ucross_top = u_c + radius * std::cos(theta_u_cross_top);
   float u_ucross_top_2 = u_c + radius * std::cos(theta_u_cross_top_2);
@@ -681,15 +682,17 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
   float theta_u_cross_bottom = std::asin((v_c - vmax_roi)/radius);
   theta_u_cross_bottom = getAngleBetweenMinPiAndPi(theta_u_cross_bottom);
   float theta_u_cross_bottom_2 = 0.f;
-  if (theta_u_cross_bottom_2 > 0) {
+  if (theta_u_cross_bottom > 0) {
     theta_u_cross_bottom_2 = M_PI - theta_u_cross_bottom;
   }
   else {
     theta_u_cross_bottom_2 = -M_PI - theta_u_cross_bottom;
   }
+
   // Computing the corresponding u-coordinates at which the u-axis is crossed
   float u_ucross_bottom = u_c + radius * std::cos(theta_u_cross_bottom);
   float u_ucross_bottom_2 = u_c + radius * std::cos(theta_u_cross_bottom_2);
+
   // Sorting the outputs such as u(theta_u_cross_bottom_min) < u(theta_u_cross_bottom_max)
   float theta_u_cross_bottom_min = 0.f, theta_u_cross_bottom_max = 0.f;
   if (u_ucross_bottom < u_ucross_bottom_2) {
@@ -782,7 +785,7 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
     std::cout << "Case bottom / top / right" << std::endl;
     computeIntersectionsTopRightBottom(center_u, center_v, topLeft, roi_w, roi_h, radius, deltaTheta);
   }
-  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && touchRightBorder) {
+  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && !touchRightBorder) {
     // Touches/intersects the top and bottom borders of the RoI
     std::cout << "Case bottom / top only" << std::endl;
     computeIntersectionsTopBottomOnly(center_u, center_v, vmin_roi, vmax_roi, radius, deltaTheta);
