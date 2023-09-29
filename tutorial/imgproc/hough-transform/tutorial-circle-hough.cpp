@@ -163,6 +163,8 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
   double t0 = vpTime::measureTimeMicros();
   //! [Run detection]
   std::vector<vpImageCircle> detectedCircles = detector.detect(I_src, nbCirclesToDetect);
+  std::vector<float> probas = detector.getDetectionsProbabilities();
+  std::vector<unsigned int> votes = detector.getDetectionsVotes();
   //! [Run detection]
   double tF = vpTime::measureTimeMicros();
   std::cout << "Process time = " << (tF - t0) * 0.001 << "ms" << std::endl << std::flush;
@@ -178,6 +180,8 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
     std::cout << "Circle #" << id << ":" << std::endl;
     std::cout << "\tCenter: (" << circleCandidate.getCenter() << ")" << std::endl;
     std::cout << "\tRadius: (" << circleCandidate.getRadius() << ")" << std::endl;
+    std::cout << "\tProba: " << probas[id] << "\tVotes:" << votes[id] << std::endl;
+    std::cout << "\tTheoretical arc length: " << circleCandidate.computeArcLengthInRoI(vpRect(0, 0, I_src.getWidth(), I_src.getHeight())) << std::endl;
     id++;
     idColor = (idColor + 1) % v_colors.size();
   }
@@ -212,7 +216,7 @@ int main(int argc, char **argv)
   const unsigned int def_maxRadius = 1000;
   const int def_dilatationRepet = 1;
   const float def_centerThresh = -1.f;
-  const float def_radiusThreshRatio = -1.f;
+  const float def_circleProbaThresh = 0.9f;
   const float def_circlePerfectness = 0.85f;
   const float def_centerDistanceThresh = 15.f;
   const float def_radiusDifferenceThresh = 15.f;
@@ -232,7 +236,7 @@ int main(int argc, char **argv)
   unsigned int opt_maxRadius = def_maxRadius;
   int opt_dilatationRepet = def_dilatationRepet;
   float opt_centerThresh = def_centerThresh;
-  float opt_radiusThreshRatio = def_radiusThreshRatio;
+  float opt_circleProbaThresh = def_circleProbaThresh;
   float opt_circlePerfectness = def_circlePerfectness;
   float opt_centerDistanceThresh = def_centerDistanceThresh;
   float opt_radiusDifferenceThresh = def_radiusDifferenceThresh;
@@ -296,8 +300,8 @@ int main(int argc, char **argv)
       opt_centerYlimits = std::pair<int, int>(atoi(argv[i + 1]), atoi(argv[i + 2]));
       i += 2;
     }
-    else if (argName == "--radius-thresh" && i + 1 < argc) {
-      opt_radiusThreshRatio = static_cast<float>(atof(argv[i + 1]));
+    else if (argName == "--circle-probability-thresh" && i + 1 < argc) {
+      opt_circleProbaThresh = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--circle-perfectness" && i + 1 < argc) {
@@ -333,8 +337,8 @@ int main(int argc, char **argv)
         << "\t [--center-thresh <center-detection-threshold>] (default: " << (def_centerThresh < 0 ? "auto" : std::to_string(def_centerThresh)) << ")" << std::endl
         << "\t [--center-xlim <center-horizontal-min center-horizontal-max>] (default: " << def_centerXlimits.first << " , " << def_centerXlimits.second  << ")" << std::endl
         << "\t [--center-ylim <center-vertical-min center-vertical-max>] (default: " << def_centerYlimits.first << " , " << def_centerYlimits.second  << ")" << std::endl
-        << "\t [--radius-thresh <radius-detection-threshold>] (default: " << (def_radiusThreshRatio < 0 ? "auto" : std::to_string(def_radiusThreshRatio)) << ")" << std::endl
-        << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_radiusThreshRatio << ")" << std::endl
+        << "\t [--circle-probability-thresh <probability-threshold>] (default: " << def_circleProbaThresh  << ")" << std::endl
+        << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_circlePerfectness << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
         << "\t [--display-edge-map]" << std::endl
         << "\t [--help, -h]" << std::endl
@@ -369,7 +373,7 @@ int main(int argc, char **argv)
         << "\t--canny-thresh" << std::endl
         << "\t\tPermit to set the lower and upper thresholds of the Canny edge detector." << std::endl
         << "\t\tIf a value is negative, it will be automatically computed." << std::endl
-        << "\t\tDefault: " << def_upperCannyThresh << std::endl
+        << "\t\tDefault: " << def_lowerCannyThresh << " ; " << def_upperCannyThresh << std::endl
         << std::endl
         << "\t--edge-filter" << std::endl
         << "\t\tPermit to set the number of iteration of 8-neighbor filter iterations of the result of the Canny edge detector." << std::endl
@@ -401,9 +405,9 @@ int main(int argc, char **argv)
         << "\t\tThe search area is limited to [-maxRadius; +image.height + maxRadius]." << std::endl
         << "\t\tDefault: " << def_centerYlimits.first << " , " << def_centerYlimits.second << std::endl
         << std::endl
-        << "\t--radius-thresh" << std::endl
-        << "\t\tPermit to to set the minimum number of votes per radian a radius must reach to be considered as a circle candidate a given pair (center candidate, radius candidate)." << std::endl
-        << "\t\tDefault: " << (def_radiusThreshRatio < 0 ? "auto" : std::to_string(def_radiusThreshRatio)) << std::endl
+        << "\t--circle-probability-thresh" << std::endl
+        << "\t\tPermit to to set the minimum probability a circle must reach to be kept." << std::endl
+        << "\t\tDefault: " << def_circleProbaThresh << std::endl
         << std::endl
         << "\t--circle-perfectness" << std::endl
         << "\t\tPermit to set the set the circle perfectness threshold." << std::endl
@@ -455,28 +459,6 @@ int main(int argc, char **argv)
     }
   }
 
-  if (opt_radiusThreshRatio < 0 && opt_jsonFilePath.empty()) {
-    // The user asked to use the parameter value that has been fine-tuned
-    TypeInputImage inputType = typeInputImageFromString(opt_input);
-    switch (inputType) {
-    case TypeInputImage::FULL_DISKS:
-#ifdef HAVE_OPENCV_IMGPROC
-      opt_radiusThreshRatio = 5.;
-#else
-      opt_radiusThreshRatio = 1.;
-#endif
-      break;
-    case TypeInputImage::HALF_DISKS:
-      opt_radiusThreshRatio = 2.;
-      break;
-    case TypeInputImage::QUARTER_DISKS:
-      opt_radiusThreshRatio = 1.;
-      break;
-    default:
-      throw(vpException(vpException::badValue, "Missing radius threshold value to use with actual pictures as input. See the help for more information."));
-    }
-  }
-
   //! [Algo params]
   vpCircleHoughTransform::vpCircleHoughTransformParameters
     algoParams(opt_gaussianKernelSize
@@ -491,7 +473,7 @@ int main(int argc, char **argv)
       , opt_maxRadius
       , opt_dilatationRepet
       , opt_centerThresh
-      , opt_radiusThreshRatio
+      , opt_circleProbaThresh
       , opt_circlePerfectness
       , opt_centerDistanceThresh
       , opt_radiusDifferenceThresh

@@ -129,21 +129,23 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
 {
   std::vector<vpImageCircle> detections = detect(I);
   size_t nbDetections = detections.size();
-  std::vector<vpImageCircle> bestCircles;
-  std::vector<std::pair<vpImageCircle, unsigned int> > detectionsWithVotes;
+
+  // Prepare vector of tuple to sort by decreasing probabilities
+  std::vector<std::tuple<vpImageCircle, unsigned int, float> > detectionsWithVotes;
   for (size_t i = 0; i < nbDetections; i++) {
-    std::pair<vpImageCircle, unsigned int> detectionWithVote(detections[i], m_finalCircleVotes[i]);
+    std::tuple<vpImageCircle, unsigned int, float> detectionWithVote(detections[i], m_finalCircleVotes[i], m_finalCirclesProbabilities[i]);
     detectionsWithVotes.push_back(detectionWithVote);
   }
 
-  bool (*hasMoreVotes)(std::pair<vpImageCircle, unsigned int>, std::pair<vpImageCircle, unsigned int>)
-    = [](std::pair<vpImageCircle, unsigned int> a, std::pair<vpImageCircle, unsigned int> b) {
-    // We divide the number of votes by the radius to avoid to favour big circles
-    return (a.second / a.first.getRadius() > b.second / b.first.getRadius());
+  // Sorting by decreasing probabilities
+  bool (*hasBetterProba)(std::tuple<vpImageCircle, unsigned int, float>, std::tuple<vpImageCircle, unsigned int, float>)
+    = [](std::tuple<vpImageCircle, unsigned int, float> a, std::tuple<vpImageCircle, unsigned int, float> b) {
+    return (std::get<2>(a) > std::get<2>(b));
     };
+  std::sort(detectionsWithVotes.begin(), detectionsWithVotes.end(), hasBetterProba);
 
-  std::sort(detectionsWithVotes.begin(), detectionsWithVotes.end(), hasMoreVotes);
-
+  // Clearing the storages containing the detection results
+  // to have it sorted by decreasing probabilities
   size_t limitMin;
   if (nbCircles < 0) {
     limitMin = nbDetections;
@@ -151,11 +153,18 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   else {
     limitMin = std::min(nbDetections, (size_t)nbCircles);
   }
-  for (size_t i = 0; i < limitMin; i++) {
-    bestCircles.push_back(detectionsWithVotes[i].first);
+
+  std::vector<vpImageCircle> bestCircles;
+  for (size_t i = 0; i < nbDetections; i++) {
+    m_finalCircles[i] = std::get<0>(detectionsWithVotes[i]);
+    m_finalCircleVotes[i] = std::get<1>(detectionsWithVotes[i]);
+    m_finalCirclesProbabilities[i] = std::get<2>(detectionsWithVotes[i]);
+    if (i < limitMin) {
+      bestCircles.push_back(std::get<0>(detectionsWithVotes[i]));
+    }
   }
 
-  return bestCircles;
+  return m_finalCircles;
 }
 
 std::vector<vpImageCircle>
@@ -166,7 +175,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   m_centerVotes.clear();
   m_edgePointsList.clear();
   m_circleCandidates.clear();
-  m_circleCandidatesVotes.clear();
+  m_circleCandidatesProbabilities.clear();
   m_finalCircles.clear();
   m_finalCircleVotes.clear();
 
@@ -486,16 +495,33 @@ vpCircleHoughTransform::computeCircleCandidates()
     for (unsigned int idBin = 0; idBin < nbBins; idBin++) {
       // If the circle of center CeC_i  and radius RCB_k has enough votes, it is added to the list
       // of Circle Candidates
-      float r_effective = radiusActualValueList[idBin] / (float)radiusAccumList[idBin];
-      if ((float)radiusAccumList[idBin] / r_effective > m_algoParams.m_radiusRatioThresh) {
-        m_circleCandidates.push_back(vpImageCircle(vpImagePoint(centerCandidate.first, centerCandidate.second)
-                                                   , r_effective
-        )
-        );
-        m_circleCandidatesVotes.push_back(radiusAccumList[idBin]);
+      if (radiusAccumList[idBin] > m_algoParams.m_centerThresh) {
+        float r_effective = radiusActualValueList[idBin] / (float)radiusAccumList[idBin];
+        vpImageCircle candidateCircle(vpImagePoint(centerCandidate.first, centerCandidate.second), r_effective);
+        float proba = computeCircleProbability(candidateCircle, radiusAccumList[idBin]);
+        if (proba > m_algoParams.m_circleProbaThresh) {
+          m_circleCandidates.push_back(candidateCircle);
+          m_circleCandidatesProbabilities.push_back(proba);
+          m_circleCandidatesVotes.push_back(radiusAccumList[idBin]);
+        }
       }
     }
   }
+}
+
+float
+vpCircleHoughTransform::computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes)
+{
+  float proba(0.f);
+  float visibleArc((float)nbVotes);
+  float theoreticalLenght = circle.computeArcLengthInRoI(vpRect(vpImagePoint(0, 0), m_edgeMap.getWidth(), m_edgeMap.getHeight()));
+  if (theoreticalLenght < std::numeric_limits<float>::epsilon()) {
+    proba = 0.f;
+  }
+  else {
+    proba = std::min(visibleArc / theoreticalLenght, 1.f);
+  }
+  return proba;
 }
 
 void
@@ -504,6 +530,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
   // For each circle candidate CiC_i do:
   std::vector<vpImageCircle> circleCandidates = m_circleCandidates;
   std::vector<unsigned int> circleCandidatesVotes = m_circleCandidatesVotes;
+  std::vector<float> circleCandidatesProba = m_circleCandidatesProbabilities;
   size_t nbCandidates = m_circleCandidates.size();
   for (size_t i = 0; i < nbCandidates; i++) {
     vpImageCircle cic_i = circleCandidates[i];
@@ -520,14 +547,19 @@ vpCircleHoughTransform::mergeCircleCandidates()
       if (areCirclesSimilar) {
         // // // If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
         unsigned int totalVotes = circleCandidatesVotes[i] + circleCandidatesVotes[j];
-        float newRadius = (cic_i.getRadius() * circleCandidatesVotes[i] + cic_j.getRadius() * circleCandidatesVotes[j]) / totalVotes;
-        vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesVotes[i]+ cic_j.getCenter()  * circleCandidatesVotes[j]) / totalVotes;
+        float totalProba = circleCandidatesProba[i] + circleCandidatesProba[j];
+        float newProba = 0.5f * totalProba;
+        float newRadius = (cic_i.getRadius() * circleCandidatesProba[i] + cic_j.getRadius() * circleCandidatesProba[j]) / totalProba;
+        vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesProba[i]+ cic_j.getCenter()  * circleCandidatesProba[j]) / totalProba;
         cic_i = vpImageCircle(newCenter, newRadius);
         circleCandidates[j] = circleCandidates[nbCandidates - 1];
-        circleCandidatesVotes[i] = totalVotes;
+        circleCandidatesVotes[i] = totalVotes / 2;
         circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
+        circleCandidatesProba[i] = newProba;
+        circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];
         circleCandidates.pop_back();
         circleCandidatesVotes.pop_back();
+        circleCandidatesProba.pop_back();
         nbCandidates--;
         j--;
       }
@@ -552,14 +584,19 @@ vpCircleHoughTransform::mergeCircleCandidates()
       if (areCirclesSimilar) {
         // // // If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
         unsigned int totalVotes = circleCandidatesVotes[i] + circleCandidatesVotes[j];
-        vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesVotes[i]+ cic_j.getCenter()  * circleCandidatesVotes[j]) / totalVotes;
-        float newRadius = (cic_i.getRadius() * circleCandidatesVotes[i] + cic_j.getRadius() * circleCandidatesVotes[j]) / totalVotes;
+        float totalProba = circleCandidatesProba[i] + circleCandidatesProba[j];
+        float newProba = 0.5f * totalProba;
+        float newRadius = (cic_i.getRadius() * circleCandidatesProba[i] + cic_j.getRadius() * circleCandidatesProba[j]) / totalProba;
+        vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesProba[i]+ cic_j.getCenter()  * circleCandidatesProba[j]) / totalProba;
         cic_i = vpImageCircle(newCenter, newRadius);
         m_finalCircles[j] = m_finalCircles[nbCandidates - 1];
-        circleCandidatesVotes[i] = totalVotes;
+        circleCandidatesVotes[i] = totalVotes / 2;
         circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
+        circleCandidatesProba[i] = newProba;
+        circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];
         m_finalCircles.pop_back();
         circleCandidatesVotes.pop_back();
+        circleCandidatesProba.pop_back();
         nbCandidates--;
         j--;
       }
@@ -568,6 +605,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
     m_finalCircles[i] = cic_i;
   }
   m_finalCircleVotes = circleCandidatesVotes;
+  m_finalCirclesProbabilities = circleCandidatesProba;
 }
 
 std::string
