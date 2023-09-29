@@ -286,7 +286,7 @@ void computePerpendicularAxesIntersections(const float &u_c, const float &v_c, c
  * \param[in] radius The radius of the circle.
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
-void computeTopLeftIntersections(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &radius,
+void computeIntersectionsTopLeft(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &radius,
                                  float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
@@ -343,7 +343,7 @@ void computeTopLeftIntersections(const float &u_c, const float &v_c, const vpIma
  * \param[in] radius The radius of the circle.
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
-void computeTopRightIntersections(const float &u_c, const float &v_c, const float &vmin_roi, const float &umax_roi, const float &radius,
+void computeIntersectionsTopRight(const float &u_c, const float &v_c, const float &vmin_roi, const float &umax_roi, const float &radius,
                                  float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
@@ -396,7 +396,7 @@ void computeTopRightIntersections(const float &u_c, const float &v_c, const floa
  * \param[in] radius The radius of the circle.
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
-void computeBottomLeftIntersections(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &height, const float &radius,
+void computeIntersectionsBottomLeft(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &height, const float &radius,
                                  float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
@@ -452,7 +452,7 @@ void computeBottomLeftIntersections(const float &u_c, const float &v_c, const vp
  * \param[in] radius The radius of the circle.
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
-void computeBottomRightIntersections(const float &u_c, const float &v_c, const float &vmax_roi, const float &umax_roi, const float &radius,
+void computeIntersectionsBottomRight(const float &u_c, const float &v_c, const float &vmax_roi, const float &umax_roi, const float &radius,
                                  float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
@@ -497,6 +497,213 @@ void computeBottomRightIntersections(const float &u_c, const float &v_c, const f
     std::cout << "\t|->Case bottom only" << std::endl;
     computeIntersectionsBottomBorderOnly(v_c, vmax_roi, radius, delta_theta);
   }
+}
+
+/*!
+ * \brief Compute the length of the angular interval of the circle when it intersects
+ * only with the top, left and bottom borders of the Region of Interest (RoI).
+ *
+ * \param[in] u_c The horizontal u-axis coordinate of the center.
+ * \param[in] v_c The vertical v-axis coordinate of the center.
+ * \param[in] topLeft The top left corner of the RoI.
+ * \param[in] height The height of the RoI.
+ * \param[in] radius The radius of the circle.
+ * \param[out] delta_theta The length of the angular interval that is in the RoI.
+ */
+void computeIntersectionsTopLeftBottom(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &height, const float &radius,
+                                        float &delta_theta)
+{
+  // Computing the intersections with the top and left axes
+  std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
+  std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
+  float crossing_u_top = topLeft.get_v(); // We cross the u-axis of the RoI at the maximum v-coordinate of the RoI
+  float crossing_v = topLeft.get_u(); // We cross the v-axis of the RoI at the minimum u-coordinate of the RoI
+  float umin_roi = crossing_v;
+  float vmin_roi = crossing_u_top;
+  computePerpendicularAxesIntersections(u_c, v_c, radius, crossing_u_top, crossing_v,
+                                        crossing_theta_u_min, crossing_theta_u_max,
+                                        crossing_theta_v_min, crossing_theta_v_max);
+  float theta_u_min_top = crossing_theta_u_min.first, theta_v_min = crossing_theta_v_min.first;
+  float theta_u_max_top = crossing_theta_u_max.first, theta_v_max = crossing_theta_v_max.first;
+  float u_umin_top = crossing_theta_u_min.second;
+  float u_umax_top = crossing_theta_u_max.second;
+  float v_vmin = crossing_theta_v_min.second;
+  float v_vmax = crossing_theta_v_max.second;
+
+  // Computing the intersections with the bottom and left axes
+  float vmax_roi = vmin_roi + height;
+  float crossing_u_bottom = vmax_roi; // We cross the u-axis of the RoI at the maximum v-coordinate of the RoI
+  computePerpendicularAxesIntersections(u_c, v_c, radius, crossing_u_bottom, crossing_v,
+                                        crossing_theta_u_min, crossing_theta_u_max,
+                                        crossing_theta_v_min, crossing_theta_v_max);
+  float theta_u_min_bottom = crossing_theta_u_min.first;
+  float theta_u_max_bottom = crossing_theta_u_max.first;
+  float u_umin_bottom = crossing_theta_u_min.second;
+  float u_umax_bottom = crossing_theta_u_max.second;
+  std::cout << "umin_roi = " << topLeft.get_u() << "\tvmin_roi = " << topLeft.get_v() << "\tvmax_roi = " << vmax_roi << std::endl;
+  std::cout << "u_umin_top = " << u_umin_top << " (" << theta_u_min_top << ")\tu_umax_top = " << u_umax_top  << " (" << theta_u_max_top << ")" << std::endl;
+  std::cout << "u_umin_bottom = " << u_umin_bottom << " (" << theta_u_min_bottom << ")\tu_umax_bottom = " << u_umax_bottom  << " (" << theta_u_max_bottom << ")" << std::endl;
+  std::cout << "v_vmin = " << v_vmin << " (" << theta_v_min << ")\tv_vmax = " << v_vmax  << " (" << theta_v_max << ")" << std::endl;
+  if (u_umin_top >= umin_roi && u_umin_bottom >= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case intersection top + left + bottom twice" << std::endl;
+    delta_theta = (theta_v_min - theta_u_min_top) + (theta_u_max_top - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max);
+  }
+  else if (u_umin_top <= umin_roi && v_vmin <= vmin_roi && u_umin_bottom <= umin_roi && v_vmax >= vmax_roi) {
+    std::cout << "\t|-> case intersection top and bottom" << std::endl;
+    delta_theta = (theta_u_max_top - theta_u_max_bottom);
+  }
+  else if (u_umax_top <= umin_roi && u_umax_bottom <= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case left only" << std::endl;
+    computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
+  }
+  else if (u_umax_bottom > umin_roi && v_vmin >= vmin_roi) {
+    std::cout << "\t|-> case bottom/left corner" << std::endl;
+    computeIntersectionsBottomLeft(u_c, v_c, topLeft, height, radius, delta_theta);
+  }
+  else if (u_umax_top > umin_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case top/left corner" << std::endl;
+    computeIntersectionsTopLeft(u_c, v_c, topLeft, radius, delta_theta);
+  }
+}
+
+/*!
+ * \brief Compute the length of the angular interval of the circle when it intersects
+ * only with the top, right and bottom borders of the Region of Interest (RoI).
+ *
+ * \param[in] u_c The horizontal u-axis coordinate of the center.
+ * \param[in] v_c The vertical v-axis coordinate of the center.
+ * \param[in] topLeft The top left corner of the RoI.
+ * \param[in] width The width of the RoI.
+ * \param[in] height The height of the RoI.
+ * \param[in] radius The radius of the circle.
+ * \param[out] delta_theta The length of the angular interval that is in the RoI.
+ */
+void computeIntersectionsTopRightBottom(const float &u_c, const float &v_c, const vpImagePoint &topLeft, const float &width, const float &height, const float &radius,
+                                        float &delta_theta)
+{
+  // Computing the intersections with the top and left axes
+  std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
+  std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
+  float crossing_u_top = topLeft.get_v(); // We cross the u-axis of the RoI at the maximum v-coordinate of the RoI
+  float umin_roi = topLeft.get_u();
+  float umax_roi = umin_roi + width;
+  float crossing_v = umax_roi; // We cross the v-axis of the RoI at the maximum u-coordinate of the RoI
+  float vmin_roi = crossing_u_top;
+  computePerpendicularAxesIntersections(u_c, v_c, radius, crossing_u_top, crossing_v,
+                                        crossing_theta_u_min, crossing_theta_u_max,
+                                        crossing_theta_v_min, crossing_theta_v_max);
+  float theta_u_min_top = crossing_theta_u_min.first, theta_v_min = crossing_theta_v_min.first;
+  float theta_u_max_top = crossing_theta_u_max.first, theta_v_max = crossing_theta_v_max.first;
+  float u_umin_top = crossing_theta_u_min.second;
+  float u_umax_top = crossing_theta_u_max.second;
+  float v_vmin = crossing_theta_v_min.second;
+  float v_vmax = crossing_theta_v_max.second;
+
+  // Computing the intersections with the bottom and left axes
+  float vmax_roi = vmin_roi + height;
+  float crossing_u_bottom = vmax_roi; // We cross the u-axis of the RoI at the maximum v-coordinate of the RoI
+  computePerpendicularAxesIntersections(u_c, v_c, radius, crossing_u_bottom, crossing_v,
+                                        crossing_theta_u_min, crossing_theta_u_max,
+                                        crossing_theta_v_min, crossing_theta_v_max);
+  float theta_u_min_bottom = crossing_theta_u_min.first;
+  float theta_u_max_bottom = crossing_theta_u_max.first;
+  float u_umin_bottom = crossing_theta_u_min.second;
+  float u_umax_bottom = crossing_theta_u_max.second;
+  std::cout << "umin_roi = " << topLeft.get_u() << "\tvmin_roi = " << topLeft.get_v() << "\tvmax_roi = " << vmax_roi << std::endl;
+  std::cout << "u_umin_top = " << u_umin_top << " (" << theta_u_min_top << ")\tu_umax_top = " << u_umax_top  << " (" << theta_u_max_top << ")" << std::endl;
+  std::cout << "u_umin_bottom = " << u_umin_bottom << " (" << theta_u_min_bottom << ")\tu_umax_bottom = " << u_umax_bottom  << " (" << theta_u_max_bottom << ")" << std::endl;
+  std::cout << "v_vmin = " << v_vmin << " (" << theta_v_min << ")\tv_vmax = " << v_vmax  << " (" << theta_v_max << ")" << std::endl;
+  if (u_umax_top <= umax_roi && u_umax_bottom <= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case intersection top + right + bottom twice" << std::endl;
+    delta_theta = 2.f * M_PI - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
+  }
+  else if (u_umin_top <= umax_roi && u_umax_top > umax_roi && v_vmin <= vmin_roi && u_umin_bottom <= umax_roi && u_umax_bottom > umax_roi && v_vmax >= vmax_roi) {
+    std::cout << "\t|-> case intersection top and bottom" << std::endl;
+    delta_theta = (theta_u_max_top - theta_u_max_bottom);
+  }
+  else if (u_umin_top >= umax_roi && u_umin_bottom >= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case right only" << std::endl;
+    computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
+  }
+  else if (u_umin_bottom <= umax_roi && v_vmin >= vmin_roi) {
+    std::cout << "\t|-> case bottom/right corner" << std::endl;
+    computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
+  }
+  else if (u_umin_top <= umax_roi && v_vmax <= vmax_roi) {
+    std::cout << "\t|-> case top/right corner" << std::endl;
+    computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
+  }
+}
+
+/*!
+ * \brief Compute the length of the angular interval of the circle when it intersects
+ * only with the top and bottom borders of the Region of Interest (RoI).
+ *
+ * \param[in] u_c The horizontal u-axis coordinate of the center.
+ * \param[in] v_c The vertical v-axis coordinate of the center.
+ * \param[in] vmin_roi The minimum v-coordinate of the RoI.
+ * \param[in] vmax_roi The maximum v-coordinate of the RoI.
+ * \param[in] radius The radius of the circle.
+ * \param[out] delta_theta The length of the angular interval that is in the RoI.
+ */
+void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const float &vmin_roi, const float &vmax_roi, const float &radius,
+                                        float &delta_theta)
+{
+  // Computing the two angles for which the u-axis is crossed at the top of the RoI
+  // v = vc - r sin(theta) because the v-axis goes down
+  // theta = asin((vc - vmin_roi)/r)
+  float theta_u_cross_top = std::asin((v_c - vmin_roi)/radius);
+  theta_u_cross_top = getAngleBetweenMinPiAndPi(theta_u_cross_top);
+  float theta_u_cross_top_2 = 0.f;
+  if (theta_u_cross_top_2 > 0) {
+    theta_u_cross_top_2 = M_PI - theta_u_cross_top;
+  }
+  else {
+    theta_u_cross_top_2 = -M_PI - theta_u_cross_top;
+  }
+  // Computing the corresponding u-coordinates at which the u-axis is crossed
+  float u_ucross_top = u_c + radius * std::cos(theta_u_cross_top);
+  float u_ucross_top_2 = u_c + radius * std::cos(theta_u_cross_top_2);
+  // Sorting the outputs such as u(theta_u_cross_top_min) < u(theta_u_cross_top_max)
+  float theta_u_cross_top_min = 0.f, theta_u_cross_top_max = 0.f;
+  if (u_ucross_top < u_ucross_top_2) {
+    theta_u_cross_top_min = theta_u_cross_top;
+    theta_u_cross_top_max = theta_u_cross_top_2;
+  }
+  else {
+    theta_u_cross_top_min = theta_u_cross_top_2;
+    theta_u_cross_top_max = theta_u_cross_top;
+  }
+
+  // Computing the two angles for which the u-axis is crossed at the bottom of the RoI
+  // v = vc - r sin(theta) because the v-axis goes down
+  // theta = asin((vc - vmax_roi)/r)
+  float theta_u_cross_bottom = std::asin((v_c - vmax_roi)/radius);
+  theta_u_cross_bottom = getAngleBetweenMinPiAndPi(theta_u_cross_bottom);
+  float theta_u_cross_bottom_2 = 0.f;
+  if (theta_u_cross_bottom_2 > 0) {
+    theta_u_cross_bottom_2 = M_PI - theta_u_cross_bottom;
+  }
+  else {
+    theta_u_cross_bottom_2 = -M_PI - theta_u_cross_bottom;
+  }
+  // Computing the corresponding u-coordinates at which the u-axis is crossed
+  float u_ucross_bottom = u_c + radius * std::cos(theta_u_cross_bottom);
+  float u_ucross_bottom_2 = u_c + radius * std::cos(theta_u_cross_bottom_2);
+  // Sorting the outputs such as u(theta_u_cross_bottom_min) < u(theta_u_cross_bottom_max)
+  float theta_u_cross_bottom_min = 0.f, theta_u_cross_bottom_max = 0.f;
+  if (u_ucross_bottom < u_ucross_bottom_2) {
+    theta_u_cross_bottom_min = theta_u_cross_bottom;
+    theta_u_cross_bottom_max = theta_u_cross_bottom_2;
+  }
+  else {
+    theta_u_cross_bottom_min = theta_u_cross_bottom_2;
+    theta_u_cross_bottom_max = theta_u_cross_bottom;
+  }
+
+  // Computing the the length of the angular interval of the circle when it intersects
+  // only with the top and bottom borders of the Region of Interest (RoI)
+  delta_theta = 2.f * M_PI - ((theta_u_cross_top_min - theta_u_cross_top_max) + (theta_u_cross_bottom_max - theta_u_cross_bottom_min));
 }
 
 float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
@@ -548,31 +755,51 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
   else if (touchBottomBorder && touchLeftBorder && !touchRightBorder && !touchTopBorder) {
     // Touches/intersects the bottom and left borders of the RoI
     std::cout << "Case bottom / left" << std::endl;
-    computeBottomLeftIntersections(center_u, center_v, topLeft, roi_h, radius, deltaTheta);
+    computeIntersectionsBottomLeft(center_u, center_v, topLeft, roi_h, radius, deltaTheta);
   }
   else if (touchBottomBorder && !touchLeftBorder && touchRightBorder && !touchTopBorder) {
     // Touches/intersects the bottom and right borders of the RoI
     std::cout << "Case bottom / right" << std::endl;
-    computeBottomRightIntersections(center_u, center_v, vmax_roi, umax_roi, radius, deltaTheta);
+    computeIntersectionsBottomRight(center_u, center_v, vmax_roi, umax_roi, radius, deltaTheta);
   }
   else if (!touchBottomBorder && touchLeftBorder && !touchRightBorder && touchTopBorder) {
     // Touches/intersects the top and left borders of the RoI
     std::cout << "Case top / left" << std::endl;
-    computeTopLeftIntersections(center_u, center_v, topLeft, radius, deltaTheta);
+    computeIntersectionsTopLeft(center_u, center_v, topLeft, radius, deltaTheta);
   }
   else if (!touchBottomBorder && !touchLeftBorder && touchRightBorder && touchTopBorder) {
     // Touches/intersects the top and right borders of the RoI
     std::cout << "Case top / right" << std::endl;
-    computeTopRightIntersections(center_u, center_v, vmin_roi, umax_roi, radius, deltaTheta);
+    computeIntersectionsTopRight(center_u, center_v, vmin_roi, umax_roi, radius, deltaTheta);
   }
-  else if (touchBottomBorder  && touchTopBorder && (touchLeftBorder ^ touchRightBorder)) {
+  else if (touchBottomBorder  && touchTopBorder && touchLeftBorder && !touchRightBorder) {
+    // Touches/intersects the top, left and bottom borders of the RoI
+    std::cout << "Case bottom / top / left" << std::endl;
+    computeIntersectionsTopLeftBottom(center_u, center_v, topLeft, roi_h, radius, deltaTheta);
+  }
+  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && touchRightBorder) {
+    // Touches/intersects the top, right and bottom borders of the RoI
+    std::cout << "Case bottom / top / right" << std::endl;
+    computeIntersectionsTopRightBottom(center_u, center_v, topLeft, roi_w, roi_h, radius, deltaTheta);
+  }
+  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && touchRightBorder) {
     // Touches/intersects the top and bottom borders of the RoI
-    std::cout << "Case bottom / top" << std::endl;
+    std::cout << "Case bottom / top only" << std::endl;
+    computeIntersectionsTopBottomOnly(center_u, center_v, vmin_roi, vmax_roi, radius, deltaTheta);
+  }
+  else if (touchLeftBorder && touchRightBorder && touchTopBorder && !touchBottomBorder) {
+    // Touches/intersects the top, left and right borders of the RoI
+    std::cout << "Case top / right / left" << std::endl;
     // computeOppositeAxesIntersections ?
   }
-  else if (touchLeftBorder && touchRightBorder && (touchTopBorder ^ touchBottomBorder)) {
-    // Touches/intersects the left and right borders of the RoI
-    std::cout << "Case right / left" << std::endl;
+  else if (touchLeftBorder && touchRightBorder && !touchTopBorder && touchBottomBorder) {
+    // Touches/intersects the bottom, left and right borders of the RoI
+    std::cout << "Case bottom / right / left" << std::endl;
+    // computeOppositeAxesIntersections ?
+  }
+  else if (touchLeftBorder && touchRightBorder && !touchTopBorder && !touchBottomBorder) {
+    // Touches/intersects the bottom, left and right borders of the RoI
+    std::cout << "Case bottom / right / left" << std::endl;
     // computeOppositeAxesIntersections ?
   }
   else if (touchBottomBorder && touchLeftBorder && touchRightBorder && touchTopBorder) {
