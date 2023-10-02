@@ -147,7 +147,7 @@ class HeaderFile():
       '-D', 'VISP_EXPORT=',
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -221,6 +221,9 @@ class HeaderFile():
         if method.pure_virtual:
           contains_pure_virtual_methods = True
           break
+      # User marked this class as virtual.
+      # This is required if no virtual method is declared in this class, but it does not implement pure virtual methods of a base class
+      contains_pure_virtual_methods = contains_pure_virtual_methods or cls_config['is_virtual']
 
       # Find bindable methods
       generated_methods = []

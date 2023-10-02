@@ -216,7 +216,8 @@ Tag code 1:
 class VISP_EXPORT vpDetectorAprilTag : public vpDetectorBase
 {
 public:
-  enum vpAprilTagFamily {
+  enum vpAprilTagFamily
+  {
     TAG_36h11,         ///< AprilTag 36h11 pattern (recommended)
     TAG_36h10,         ///< DEPRECATED
     TAG_36ARTOOLKIT,   ///< DEPRECATED AND WILL NOT DETECT ARTOOLKIT TAGS
@@ -230,7 +231,8 @@ public:
     TAG_STANDARD52h13  ///< AprilTag Standard52h13 pattern
   };
 
-  enum vpPoseEstimationMethod {
+  enum vpPoseEstimationMethod
+  {
     HOMOGRAPHY,                     /*!< Pose from homography */
     HOMOGRAPHY_VIRTUAL_VS,          /*!< Non linear virtual visual servoing approach
                                       initialized by the homography approach */
@@ -284,9 +286,9 @@ public:
   void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
   void setAprilTagQuadDecimate(float quadDecimate);
   void setAprilTagQuadSigma(float quadSigma);
-  void setAprilTagRefineDecode(bool refineDecode);
   void setAprilTagRefineEdges(bool refineEdges);
-  void setAprilTagRefinePose(bool refinePose);
+
+
 
   /*! Allow to enable the display of overlay tag information in the windows
    * (vpDisplay) associated to the input image. */
@@ -300,6 +302,16 @@ public:
   friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void setAprilTagRefinePose(bool refinePose);
+  vp_deprecated void setAprilTagRefineDecode(bool refineDecode);
+  //@}
+#endif
 
 protected:
   bool m_displayTag;

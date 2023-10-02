@@ -1,5 +1,5 @@
 {
-  "ignored_headers": ["vpWireFrameSimulatorTypes.h"],
+  "ignored_headers": ["vpWireFrameSimulatorTypes.h", "vpRobotException.h"],
 
 
   "classes": {
@@ -18,6 +18,9 @@
           "custom_name": "getImageMultiplePlanes"
         }
       ]
+    },
+    "vpRobotSimulator": {
+      "is_virtual": true
     }
   }
 }

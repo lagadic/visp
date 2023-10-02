@@ -14,6 +14,5 @@ message(${VISP_VERSION})
 message(${pybind11_VERSION})
 file(GLOB generated_cpp src/generated/*.cpp)
 file(GLOB static_cpp src/static/*.cpp)
-
 pybind11_add_module(visp src/main.cpp ${generated_cpp} ${static_cpp} THIN_LTO)
 target_link_libraries(visp PRIVATE ${VISP_LIBRARIES})

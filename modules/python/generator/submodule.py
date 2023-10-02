@@ -62,17 +62,22 @@ class Submodule():
     submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
     bindings = '\n'.join(header_code)
     declarations = '\n'.join(declarations)
+    user_defined_headers = '\n'.join(self.get_user_defined_headers())
     includes_strs = [f'#include {include}' for include in includes_set]
     includes_str = '\n'.join(includes_strs)
-    user_defined_headers = '\n'.join(self.get_user_defined_headers())
+    additional_required_headers = '\n'.join(self.get_required_headers())
+
     format_str = f'''
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <vector>
 #include <map>
 
+/*User-defined headers (e.g. additional bindings)*/
 {user_defined_headers}
-
+/*Required headers that are not retrieved in submodule headers (e.g. there are forward definitions but no includes) */
+{additional_required_headers}
+/*Submodule headers*/
 {includes_str}
 
 namespace py = pybind11;
@@ -118,6 +123,11 @@ Bindings for methods and enum values
       header_names = self.config['user_defined_headers']
       return [f'#include "{header_name}"' for header_name in header_names]
     return []
+  def get_required_headers(self) -> List[str]:
+    if 'required_headers' in self.config:
+      header_names = self.config['required_headers']
+      return [f'#include <{header_name}>' for header_name in header_names]
+    return []
 
   def get_class_config(self, class_name: str) -> Optional[Dict]:
     default_config = {
@@ -125,7 +135,8 @@ Bindings for methods and enum values
       'operators': [],
       'use_buffer_protocol': False,
       'additional_bindings': None,
-      'ignore_repr': False
+      'ignore_repr': False,
+      'is_virtual': False
     }
     if 'classes' not in self.config:
       return default_config
