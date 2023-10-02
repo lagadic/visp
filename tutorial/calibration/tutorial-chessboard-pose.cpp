@@ -73,6 +73,8 @@ void usage(const char **argv, int error)
     << std::endl
     << "    Example: \"pose_cPo_%d.yaml\"." << std::endl
     << std::endl
+    << "  --no_interactive To compute the chessboard poses without interactive validation by the user."
+    << std::endl
     << "  --help, -h  Print this helper message." << std::endl
     << std::endl;
   if (error) {
@@ -91,6 +93,7 @@ int main(int argc, const char **argv)
   std::string opt_intrinsic_file = "camera.xml";
   std::string opt_camera_name = "Camera";
   std::string opt_output_pose_files = "pose_cPo_%d.yaml";
+  bool interactive = true;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "-w" && i + 1 < argc) {
@@ -120,6 +123,9 @@ int main(int argc, const char **argv)
     else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
       i++;
+    }
+    else if (std::string(argv[i]) == "--no_interactive") {
+      interactive = false;
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
@@ -159,12 +165,22 @@ int main(int argc, const char **argv)
     reader.open(I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
+    vpDisplayX* d;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
+    vpDisplayGDI* d;
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+    vpDisplayOpenCV* d=0x0;
 #endif
+
+    if (interactive) {
+#ifdef VISP_HAVE_X11
+      d = new vpDisplayX(I);
+#elif defined(VISP_HAVE_GDI)
+      d = new vpDisplayGDI(I);
+#elif defined(HAVE_OPENCV_HIGHGUI)
+      d = new vpDisplayOpenCV(I);
+#endif
+    }
 
     std::vector<vpPoint> corners_pts;
     calcChessboardCorners(opt_chessboard_width, opt_chessboard_height, opt_chessboard_square_size, corners_pts);
@@ -239,13 +255,15 @@ int main(int argc, const char **argv)
         vpImageConvert::convert(matImg, I);
       }
 
-      vpDisplay::display(I);
+  if (interactive) {
+    vpDisplay::display(I);
 
-      vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
-      if (found)
-        vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
+        vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
+        if (found)
+          vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
 
-      vpDisplay::flush(I);
+        vpDisplay::flush(I);
+      }
 
       if (found) {
         vpPoseVector pose_vec(cMo);
@@ -256,18 +274,25 @@ int main(int argc, const char **argv)
         pose_vec.saveYAML(s, pose_vec);
       }
 
-      vpMouseButton::vpMouseButtonType button;
-      if (vpDisplay::getClick(I, button, true)) {
-        switch (button) {
-        case vpMouseButton::button3:
-          quit = true;
-          break;
+      if (interactive) {
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I, button, true)) {
+          switch (button) {
+          case vpMouseButton::button3:
+            quit = true;
+            break;
 
-        default:
+          default:
+            break;
+          }
+        } else {
           break;
         }
       }
-    } while (!quit && !reader.end());
+  } while (!quit && !reader.end());
+    if (interactive){
+     if (d) delete d;
+    }
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
