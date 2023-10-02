@@ -1552,6 +1552,43 @@ int main()
     hasSucceeded &= isValueOK;
   }
 
+  // Test with intersections with the right and left only,
+  // crossing each axis twice in the RoI
+  {
+    // (2): u_min = uc + r cos(theta_v_left_min) ; v_cross_left_min = vc - r sin(theta_v_left_min) > vmin_roi
+    // (4): u_min = uc + r cos(theta_v_left_max) ; v_cross_left_max = vc - r sin(theta_v_left_max) < vmax_roi
+    // (5): u_min + width = uc + r cos(theta_v_right_min); v_cross_right_min = vc - r sin(theta_v_right_min)
+    // (6): u_min + width = uc + r cos(theta_v_right_max); v_cross_right_max = vc - r sin(theta_v_right_max)
+    // (2) & (4) theta_v_left_min = - theta_v_left_max
+    // (5) & (6) theta_v_right_min = - theta_v_right_max
+    vpRect invertedRoI(OFFSET, OFFSET, HEIGHT, WIDTH);
+    float theta_v_left_min = 5.f * M_PI / 6.f;
+    float theta_v_left_max = -theta_v_left_min;
+    float theta_v_right_min = M_PI / 6.f;
+    float theta_v_right_max = -theta_v_right_min;
+    float uc = OFFSET + HEIGHT / 2.f;
+    float vc = OFFSET + WIDTH / 2.f;
+    float radius = (OFFSET - uc)/ std::cos(theta_v_left_min);
+
+    vpImageCircle circle(vpImagePoint(vc, uc), radius);
+    float arcLengthCircle = circle.computeArcLengthInRoI(invertedRoI);
+    float theoreticalValue = ((theta_v_left_min - theta_v_right_min) + (theta_v_right_max - theta_v_left_max)) * radius;
+    bool isValueOK = compareAngles(arcLengthCircle, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with intersections with the right and left borders only, crossing each axis twice in the RoI." << std::endl;
+    std::cout << "\tarc length =" << arcLengthCircle << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
   // Test intersections with all the axis
   {
     // Choosing theta_v_left_min = 7 PI / 8 and circle at the center of the RoI
@@ -1561,8 +1598,6 @@ int main()
     float uc = OFFSET + HEIGHT  / 2.f;
     float vc = OFFSET + HEIGHT / 2.f;
     float radius = (OFFSET - uc) / std::cos(theta_v_left_min);
-    std::cout << "uc = " << uc << "\tvc = " << vc << "\tr = " << radius << std::endl;
-    std::cout << "roi = " << squareRoI << std::endl;
 
     vpImageCircle circle(vpImagePoint(vc, uc), radius);
     float arcLengthCircle = circle.computeArcLengthInRoI(squareRoI);

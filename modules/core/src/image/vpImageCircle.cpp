@@ -834,7 +834,7 @@ void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const
 
   // Computing the corresponding v-coordinates at which the v-axis is crossed
   float v_vcross_left = v_c - radius * std::sin(theta_v_cross_left);
-  float v_vcross_left_2 = v_c + radius * std::sin(theta_v_cross_left_2);
+  float v_vcross_left_2 = v_c - radius * std::sin(theta_v_cross_left_2);
   // Sorting the outputs such as v(theta_v_cross_left_min) < v(theta_v_cross_left_max)
   float theta_v_cross_left_min = 0.f, theta_v_cross_left_max = 0.f;
   if (v_vcross_left < v_vcross_left_2) {
@@ -856,7 +856,7 @@ void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const
 
   // Computing the corresponding v-coordinates at which the v-axis is crossed
   float v_vcross_right = v_c - radius * std::sin(theta_v_cross_right);
-  float v_vcross_right_2 = v_c + radius * std::sin(theta_v_cross_right_2);
+  float v_vcross_right_2 = v_c - radius * std::sin(theta_v_cross_right_2);
 
   // Sorting the outputs such as v(theta_v_cross_right_min) < v(theta_v_cross_right_max)
   float theta_v_cross_right_min = 0.f, theta_v_cross_right_max = 0.f;
@@ -901,12 +901,8 @@ void computeIntersectionsAllAxes(const float &u_c, const float &v_c, const float
                                         crossing_theta_v_min, crossing_theta_v_max);
   float theta_u_min_top = crossing_theta_u_min.first;
   float theta_u_max_top = crossing_theta_u_max.first;
-  // float u_umin_top = crossing_theta_u_min.second;
-  // float u_umax_top = crossing_theta_u_max.second;
   float theta_v_min_left = crossing_theta_v_min.first;
   float theta_v_max_left = crossing_theta_v_max.first;
-  // float v_vmin_left = crossing_theta_v_min.second;
-  // float v_vmax_left = crossing_theta_v_max.second;
 
   // Computing the intersections with the bottom and right axes
   float crossing_u_bottom = vmax_roi; // We cross the u-axis of the RoI at the maximum v-coordinate of the RoI
@@ -916,12 +912,8 @@ void computeIntersectionsAllAxes(const float &u_c, const float &v_c, const float
                                         crossing_theta_v_min, crossing_theta_v_max);
   float theta_u_min_bottom = crossing_theta_u_min.first;
   float theta_u_max_bottom = crossing_theta_u_max.first;
-  // float u_umin_bottom = crossing_theta_u_min.second;
-  // float u_umax_bottom = crossing_theta_u_max.second;
   float theta_v_min_right = crossing_theta_v_min.first;
   float theta_v_max_right = crossing_theta_v_max.first;
-  // float v_vmin_right = crossing_theta_v_min.second;
-  // float v_vmax_right = crossing_theta_v_max.second;
   delta_theta = (theta_v_min_left - theta_u_min_top) + (theta_u_max_top -theta_v_min_right);
   delta_theta += (theta_v_max_right - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max_left);
 }
@@ -950,6 +942,7 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
     // Easy case
     // The circle has its center in the image and its radius is not too great
     // to make it fully contained in the RoI
+    std::cout << "Case fully OK" << std::endl;
     delta_theta = 2.f * M_PI;
   }
   else if (touchBottomBorder && !touchLeftBorder && !touchRightBorder && !touchTopBorder) {
@@ -1020,12 +1013,15 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
   else if (touchLeftBorder && touchRightBorder && !touchTopBorder && !touchBottomBorder) {
     // Touches/intersects the bottom, left and right borders of the RoI
     std::cout << "Case right / left only" << std::endl;
-    computeIntersectionsLeftRightOnly(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
+    computeIntersectionsLeftRightOnly(u_c, v_c, umin_roi, umax_roi, radius, delta_theta);
   }
-  else {
+  else if (touchLeftBorder && touchRightBorder && touchTopBorder && touchBottomBorder) {
     // Touches/intersects each axis
     std::cout << "Case all" << std::endl;
     computeIntersectionsAllAxes(u_c, v_c, umin_roi, umax_roi, vmin_roi, vmax_roi, radius, delta_theta);
+  }
+  else {
+    throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
   float arcLength = delta_theta * radius;
   return arcLength;
