@@ -736,7 +736,7 @@ void computeIntersectionsLeftRightTop(const float &u_c, const float &v_c, const 
     std::cout << "\t|-> case top only" << std::endl;
     computeIntersectionsTopBorderOnly(v_c, vmin_roi, radius, delta_theta);
   }
-  else if (u_umax >= umin_roi && v_vmax_right >= vmin_roi) {
+  else if (u_umax >= umin_roi && v_vmax_left >= vmin_roi) {
     std::cout << "\t|-> case top/left corner" << std::endl;
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
   }
@@ -1000,12 +1000,12 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
     std::cout << "Case bottom / top only" << std::endl;
     computeIntersectionsTopBottomOnly(u_c, v_c, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchLeftBorder && touchRightBorder && touchTopBorder && !touchBottomBorder) {
+  else if (!touchBottomBorder && touchTopBorder && touchLeftBorder && touchRightBorder) {
     // Touches/intersects the top, left and right borders of the RoI
     std::cout << "Case top / right / left" << std::endl;
     computeIntersectionsLeftRightTop(u_c, v_c, umin_roi, umax_roi, vmin_roi, radius, delta_theta);
   }
-  else if (touchLeftBorder && touchRightBorder && !touchTopBorder && touchBottomBorder) {
+  else if (touchBottomBorder && !touchTopBorder && touchLeftBorder && touchRightBorder) {
     // Touches/intersects the bottom, left and right borders of the RoI
     std::cout << "Case bottom / right / left" << std::endl;
     computeIntersectionsLeftRightBottom(u_c, v_c, umin_roi, umax_roi, vmax_roi, radius, delta_theta);
@@ -1021,6 +1021,11 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
     computeIntersectionsAllAxes(u_c, v_c, umin_roi, umax_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }
   else {
+    std::cerr << "touchLeft = " << (touchLeftBorder ? "true" : "false") << "\ttouchRight = " << (touchRightBorder ? "true" : "false") << std::endl;
+    std::cerr << "touchTop = " << (touchTopBorder ? "true" : "false") << "\ttouchBottom = " << (touchBottomBorder ? "true" : "false") << std::endl;
+    std::cerr << "u_c = " << u_c << "\tv_c = " << v_c << "\tradius = " << radius << std::endl;
+    std::cerr << "umin_roi = " << umin_roi << "\tumax_roi = " << umax_roi << std::endl;
+    std::cerr << "vmin_roi = " << vmin_roi << "\tvmax_roi = " << vmax_roi << std::endl << std::flush;
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
   float arcLength = delta_theta * radius;
