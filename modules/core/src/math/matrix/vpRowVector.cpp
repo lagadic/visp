@@ -565,11 +565,11 @@ vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, (un
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-  row vector to contruct. \param ncols : Number of columns of the constructed
+  row vector to construct. \param ncols : Number of columns of the constructed
   row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
-  is used to initialize the contructed row vector.
+  is used to initialize the constructed row vector.
 
   \sa init()
 */
@@ -947,7 +947,7 @@ double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
   \param s Stream used for the printing.
 
   \param length The suggested width of each row vector element.
-  The actual width grows in order to accomodate the whole integral part,
+  The actual width grows in order to accommodate the whole integral part,
   and shrinks if the whole extent is not needed for all the numbers.
   \param intro The introduction which is printed before the vector.
   Can be set to zero (or omitted), in which case
@@ -1116,11 +1116,11 @@ double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
 
   \param v : Input row vector used for initialization.
   \param c : column index in \e v that corresponds to the first element of the
-  row vector to contruct. \param ncols : Number of columns of the constructed
+  row vector to construct. \param ncols : Number of columns of the constructed
   row vector.
 
   The sub-vector starting from v[c] element and ending on v[c+ncols-1] element
-  is used to initialize the contructed row vector.
+  is used to initialize the constructed row vector.
 
   The following code shows how to use this function:
 \code

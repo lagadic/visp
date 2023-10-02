@@ -478,7 +478,7 @@ bool vpRotationMatrix::isARotationMatrix(double threshold) const
 vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3), m_index(0) { eye(); }
 
 /*!
-  Copy contructor that construct a 3-by-3 rotation matrix from another
+  Copy constructor that construct a 3-by-3 rotation matrix from another
   rotation matrix.
 */
 vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { (*this) = M; }

@@ -935,7 +935,7 @@ void vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const { M = inverse();
   The code below shows how to save an homogeneous matrix in a file.
 
   \code
-  // Contruct an homogeneous matrix
+  // construct an homogeneous matrix
   vpTranslationVector t(1,2,3);
   vpRxyzVector r(M_PI, 0, -M_PI/4.);
   vpRotationMatrix R(r);

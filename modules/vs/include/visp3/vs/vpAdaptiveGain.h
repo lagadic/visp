@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,93 +29,89 @@
  *
  * Description:
  * Adaptive gain.
- *
- * Authors:
- * Nicolas Mansard
- *
-*****************************************************************************/
-/*!
-\file vpAdaptiveGain.h
-\brief Adaptive gain
-*/
+ */
 
 #ifndef _vpAdaptiveGain_h_
 #define _vpAdaptiveGain_h_
+
+/*!
+ * \file vpAdaptiveGain.h
+ * \brief Adaptive gain
+ */
 
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
 class vpColVector;
+
 /*!
-  \class vpAdaptiveGain
-
-  \ingroup group_task
-
-  \brief Adaptive gain computation.
-
-  As described in \cite Kermorgant14a, a varying gain \f$ \lambda \f$ could be
-used in the visual servoing control law \f[{\bf v}_c = -\lambda {\bf
-L}^{+}_{e} {\bf e}\f] with
-
-  \f[ \lambda (|| {\bf e}||) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
-\lambda'_0}{\lambda_0 - \lambda_\infty}||{\bf e}||} + \lambda_\infty \f]
-
-  where:
-
-  - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small
-values of \f$||{\bf e}||\f$
-  - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf
-e}||)\f$ is the gain to infinity, that is for very high values of \f$||{\bf
-e}||\f$
-  - \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
-
-  As described in \ref tutorial-boost-vs, the interest of \ref adaptive_gain
-is to reduce the time to convergence in order to speed up the servo.
-
-  The following example shows how to use this class in order to use an
-adaptive gain with the following parameters \f$\lambda_0 = 4\f$,
-\f$\lambda_\infty = 0.4 \f$ and \f$\lambda'_0 = 30\f$.
-
-\code
-#include <visp3/vs/vpAdaptiveGain.h>
-#include <visp3/vs/vpServo.h>
-
-int main()
-{
-  vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
-
-  vpServo servo;
-  servo.setLambda(lambda);
-
-  while(1) {
-
-    vpColVector v = servo.computeControlLaw();
-  }
-}
-  \endcode
-
-  This other example shows how to use this class in order to set a constant
-gain \f$\lambda = 0.5\f$ that will ensure an exponential decrease of the task
-error.
-
-\code
-#include <visp3/vs/vpAdaptiveGain.h>
-#include <visp3/vs/vpServo.h>
-
-int main()
-{
-  vpAdaptiveGain lambda(0.5);
-
-  vpServo servo;
-  servo.setLambda(lambda);
-
-  while(1) {
-
-    vpColVector v = servo.computeControlLaw();
-  }
-}
-  \endcode
-*/
+ * \class vpAdaptiveGain
+ *
+ * \ingroup group_task
+ *
+ * \brief Adaptive gain computation.
+ *
+ * As described in \cite Kermorgant14a, a varying gain \f$ \lambda \f$ could be
+ * used in the visual servoing control law \f[{\bf v}_c = -\lambda {\bf
+ * L}^{+}_{e} {\bf e}\f] with
+ *
+ * \f[ \lambda (|| {\bf e}||) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
+ * \lambda'_0}{\lambda_0 - \lambda_\infty}||{\bf e}||} + \lambda_\infty \f]
+ *
+ * where:
+ *
+ * - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small
+ *   values of \f$||{\bf e}||\f$
+ * - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf
+ *   e}||)\f$ is the gain to infinity, that is for very high values of \f$||{\bf
+ *   e}||\f$
+ * - \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
+ *
+ * As described in \ref tutorial-boost-vs, the interest of \ref adaptive_gain
+ * is to reduce the time to convergence in order to speed up the servo.
+ *
+ * The following example shows how to use this class in order to use an
+ * adaptive gain with the following parameters \f$\lambda_0 = 4\f$,
+ * \f$\lambda_\infty = 0.4 \f$ and \f$\lambda'_0 = 30\f$.
+ *
+ * \code
+ * #include <visp3/vs/vpAdaptiveGain.h>
+ * #include <visp3/vs/vpServo.h>
+ *
+ * int main()
+ * {
+ *   vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+ *
+ *   vpServo servo;
+ *   servo.setLambda(lambda);
+ *
+ *   while(1) {
+ *     vpColVector v = servo.computeControlLaw();
+ *   }
+ * }
+ * \endcode
+ *
+ * This other example shows how to use this class in order to set a constant
+ * gain \f$\lambda = 0.5\f$ that will ensure an exponential decrease of the task
+ * error.
+ *
+ * \code
+ * #include <visp3/vs/vpAdaptiveGain.h>
+ * #include <visp3/vs/vpServo.h>
+ *
+ * int main()
+ * {
+ *   vpAdaptiveGain lambda(0.5);
+ *
+ *   vpServo servo;
+ *   servo.setLambda(lambda);
+ *
+ *   while(1) {
+ *     vpColVector v = servo.computeControlLaw();
+ *   }
+ * }
+ * \endcode
+ */
 
 class VISP_EXPORT vpAdaptiveGain
 {
@@ -135,74 +130,176 @@ private:
   mutable double lambda;
 
 public:
-  /* --- CONSTRUCTOR --------------------------------------------------------
-   */
-
+  /*!
+   * Basic constructor which initializes all the parameters with their default
+   * value:
+   * - \f$ \lambda_0 = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_ZERO
+   * - \f$ \lambda_\infty = 0.1666 \f$ using
+   * vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY
+   * - \f$ \lambda'_0 = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE
+  */
   vpAdaptiveGain();
+
+  /*!
+   * Constructor that initializes the gain as constant. In that case
+   * \f$\lambda(||{\bf e}||) = c\f$.
+   *
+   * \param c : Value of the constant gain. A typical value is 0.5.
+   */
   explicit vpAdaptiveGain(double c);
+
+  /*!
+   * Constructor that initializes the gain as adaptive.
+   *
+   * \param gain_at_zero : the expected gain when \f$||{\bf e}||=0\f$:
+   * \f$\lambda_0\f$.
+   * \param gain_at_infinity : the expected gain when \f$||{\bf
+   * e}||\rightarrow\infty\f$: \f$\lambda_\infty\f$.
+   * \param slope_at_zero : the
+   * expected slope of \f$\lambda(||{\bf e}||)\f$ when \f$||{\bf e}||=0\f$:
+   * \f$\lambda'_0\f$.
+   */
   vpAdaptiveGain(double gain_at_zero, double gain_at_infinity, double slope_at_zero);
 
-  /* --- INIT ---------------------------------------------------------------
+  /*!
+   * Initializes the parameters to have a constant gain. In that case
+   * \f$\lambda(||{\bf e}||) = c\f$.
+   *
+   * \param c : Value of the constant gain. A typical value is 0.5.
    */
   void initFromConstant(double c);
+
+  /*!
+   * Initializes the parameters with the default value :
+   * - \f$ \lambda_0 = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_ZERO
+   * - \f$ \lambda_\infty = 0.1666 \f$ using
+   * vpAdaptiveGain::DEFAULT_LAMBDA_INFINITY
+   * - \f$ \lambda'_0 = 1.666 \f$ using vpAdaptiveGain::DEFAULT_LAMBDA_SLOPE
+   */
   void initFromVoid(void);
+
+  /*!
+   * Set the parameters \f$\lambda_0, \lambda_\infty, \lambda'_0\f$ used to
+   * compute \f$\lambda(||{\bf e}||)\f$.
+   *
+   * \param gain_at_zero : the expected gain when \f$||{\bf e}||=0\f$:
+   * \f$\lambda_0\f$.
+   * \param gain_at_infinity : the expected gain when \f$||{\bf
+   * e}||\rightarrow\infty\f$: \f$\lambda_\infty\f$.
+   * \param slope_at_zero : the
+   * expected slope of \f$\lambda(||{\bf e}||)\f$ when \f$||{\bf e}||=0\f$:
+   * \f$\lambda'_0\f$.
+   */
   void initStandard(double gain_at_zero, double gain_at_infinity, double slope_at_zero);
 
-  /* --- MODIFIORS ----------------------------------------------------------
+  /*!
+   * Sets the internal parameters in order to obtain a constant gain equal to
+   * the gain in 0 set through the parameter \f$\lambda_0\f$.
+   *
+   * \return It returns the value of the constant gain \f$\lambda_0\f$.
    */
   double setConstant(void);
 
-  /* --- COMPUTE ------------------------------------------------------------
-   */
-  /* \brief Calcule la valeur de lambda au point courrant.
+  /*!
+   * Computes the value of the adaptive gain \f$\lambda(x)\f$ using:
    *
-   * Determine la valeur du lambda adaptatif en fonction de la valeur
-   * de la norme de la fonction de tache e par extrapolation exponentielle.
-   * La fonction est : (en_infini - en_zero) * exp (-pente * ||e|| ) +
-   * en_infini. On a bien :
-   *    - lambda(10^5) = en_infini ;
-   *    - lambda(0) = en_zero ;
-   *    - lambda(x ~ 0) ~ - pente * x + en_zero.
-   * \param val_e: valeur de la norme de l'erreur.
-   * \return: valeur de gain au point courrant.
+   * \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
+   * \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
+   *
+   * \param x : Input value to consider. During a visual servo this value can be
+   * the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+   * e}||_{\infty}\f$ of the task function.
+   *
+   * \return It returns the value of the computed gain.
    */
   double value_const(double x) const;
 
-  /* \brief Calcule la valeur de lambda au point courrant et stockage du
-   * resultat.
+  /*!
+   * Computes the value of the adaptive gain \f$\lambda(x)\f$ using:
    *
-   * La fonction calcule la valeur de lambda d'apres la valeur de la norme
-   * de l'erreur, comme le fait la fonction valeur_const.
-   * La fonction non constante stocke de plus le resultat dans this ->lambda.
-   * \param val_e: valeur de la norme de l'erreur.
-   * \return: valeur de gain au point courrant.
+   * \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
+   * \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
+   *
+   * This value is stored as a parameter of the class.
+   *
+   * \param x : Input value to consider. During a visual servo this value can be
+   * the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+   * e}||_{\infty}\f$ of the task function.
+   *
+   * \return It returns the value of the computed gain.
    */
   double value(double x) const;
 
+  /*!
+   * Gets the value of the gain at infinity (ie the value of \f$ \lambda_\infty =
+   * c \f$). This function is similar to limitValue() except that here the value
+   * is not stored as a parameter of the class.
+   *
+   * \return It returns the value of the gain at infinity.
+   */
   double limitValue_const(void) const;
 
+  /*!
+   * Gets the value of the gain at infinity (ie the value of \f$\lambda_\infty =
+   * c \f$) and stores it as a parameter of the class.
+   *
+   * \return It returns the value of the gain at infinity.
+   */
   double limitValue(void) const;
 
-  /* --- ACCESSORS ----------------------------------------------------------
-   */
-
   /*!
-      Gets the last adaptive gain value which was stored in the class.
-
-      \return It returns the last adaptive gain value which was stored in the
-     class.
-    */
+   * Gets the last adaptive gain value which was stored in the class.
+   *
+   * \return It returns the last adaptive gain value which was stored in the
+   *  class.
+   */
   inline double getLastValue(void) const { return this->lambda; }
 
+  /*!
+   * Operator that computes \f$\lambda(x)\f$ where
+   *
+   * \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
+   * \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
+   *
+   * \param x : Input value to consider. During a visual servo this value can be
+   * the Euclidean norm \f$||{\bf e}||\f$ or the infinity norm \f$||{\bf
+   * e}||_{\infty}\f$ of the task function.
+   *
+   * \return It returns the value of the computed gain.
+   *
+   * \sa value()
+   */
   double operator()(double x) const;
 
-  /* \brief Lance la fonction valeur avec la norme INFINIE du vecteur. */
+  /*!
+   * Operator which computes \f$\lambda({||x||}_{\infty})\f$ where
+   *
+   * \f[ \lambda ({||x||}_{\infty}) = (\lambda_0 - \lambda_\infty) e^{ -\frac{
+   * \lambda'_0}{\lambda_0 - \lambda_\infty}{||x||}_{\infty}} + \lambda_\infty
+   * \f]
+   *
+   * \param x : Input vector \f$ \bf x\f$ to consider.
+   *
+   * \return It returns the value of the computed gain.
+   */
   double operator()(const vpColVector &x) const;
 
-  /* \brief Idem function limitValue. */
+  /*!
+   * Gets the value of the gain at infinity (ie the value of \f$\lambda_\infty =
+   * c \f$).
+   *
+   * \return It returns the value of the gain at infinity.
+   *
+   * \sa limitValue()
+   */
   double operator()(void) const;
 
-  /* --- IOSTREAM -----------------------------------------------------------
+  /*!
+   * Prints the adaptive gain parameters \f$\lambda_0, \lambda_\infty,
+   * \lambda'_0\f$.
+   *
+   * \param os : The stream where to print the adaptive gain parameters.
+   * \param lambda : The adaptive gain containing the parameters to print.
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAdaptiveGain &lambda);
 };

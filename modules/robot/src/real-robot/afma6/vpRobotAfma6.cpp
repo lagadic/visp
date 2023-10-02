@@ -121,7 +121,7 @@ void emergencyStopAfma6(int signo)
 
   The only available constructor.
 
-  This contructor calls init() to initialise
+  This constructor calls init() to initialise
   the connection with the MotionBox or low level controller, send the
   default eMc homogeneous matrix, power on the robot and wait 1 sec
   before returning to be sure the initialisation is done.
