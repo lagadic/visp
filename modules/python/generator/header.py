@@ -296,6 +296,7 @@ class HeaderFile():
         method_name = get_name(method.name)
         py_method_name = method_config.get('custom_name') or method_name
         return_type = get_type(method.return_type, specs, header_env.mapping)
+
         # Fetch documentation if available
         if self.documentation_holder is not None:
           method_doc_signature = MethodDocSignature(method_name,
@@ -315,6 +316,13 @@ class HeaderFile():
           param_names = [param.name or 'arg' + i for i, param in enumerate(method.parameters)]
           params_with_names = [t + ' ' + name for t, name in zip(params_strs, param_names)]
           immutable_param_names = [param_names[i] for i in range(len(param_is_ref_to_immut)) if param_is_ref_to_immut[i]]
+          if not method_config['use_default_param_policy']:
+            method_signature = get_method_signature(method_name,
+                                                    get_type(method.return_type, {}, header_env.mapping),
+                                                    [get_type(param.type, {}, header_env.mapping) for param in method.parameters])
+            inputs = [True for _ in range(len(param_names))]
+            outputs = [p in immutable_param_names for p in param_names]
+            self.submodule.report.add_default_policy_method(name_cpp_no_template, method, method_signature, inputs, outputs)
           if not method.static:
             self_param_with_name = name_cpp + '& self'
             method_caller = 'self.'
@@ -338,9 +346,9 @@ class HeaderFile():
           print(f'REF TO IMMUT in method {method_name} parameters')
         else:
           method_body_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
+
         method_str = define_method(py_method_name, method_body_str, py_arg_strs, method.static)
         method_str = f'{python_ident}.{method_str};'
-
         method_strs.append(method_str)
         generated_methods.append((py_method_name, method))
 

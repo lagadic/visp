@@ -12,7 +12,8 @@ class Report(object):
     self.result = {
       'ignored_headers': [],
       'classes': {},
-      'methods': {}
+      'methods': {},
+      'default_param_policy_methods': []
     }
 
   def add_ignored_header(self, path: Path) -> None:
@@ -28,7 +29,7 @@ class Report(object):
       proposed_help = {
         'static': method.method.static,
         'signature': method.signature,
-        'ignored': True
+        'ignore': True
       }
       report_dict = {
         'reason': method.rejection_reason.value,
@@ -37,6 +38,41 @@ class Report(object):
       if method.cls_name is not None:
         report_dict['class'] = method.cls_name
       self.result['methods'][method.signature] = report_dict
+
+  def add_default_policy_method(self, cls_name: str, method: types.Method, signature: str, input_params: List[bool], output_params: List[bool]) -> None:
+    proposed_help = [
+      {
+        'static': method.static,
+        'signature': signature,
+        'use_default_param_policy': True
+      },
+      {
+        'static': method.static,
+        'signature': signature,
+        'use_default_param_policy': False,
+        'param_is_input': input_params,
+        'param_is_output': output_params
+      }
+    ]
+    report_dict = {
+      'reason': 'Method uses default parameter policy, make sure that this is correct! If it is use "use_default_param_policy": true. Otherwise, set the custom inputness/outputness of params',
+      'signature': signature,
+      'static': method.static,
+      'class': cls_name,
+      'possible_fixes': proposed_help
+    }
+    self.result['default_param_policy_methods'].append(report_dict)
+
   def write(self, path: Path) -> None:
+    print(f'Statistics for module {self.submodule_name} report:')
+    stats = [
+      f'Ignored headers: {len(self.result["ignored_headers"])}',
+      f'Ignored classes: {len(self.result["classes"].keys())}',
+      f'Not generated methods: {len(self.result["methods"].keys())}',
+      f'Method with default parameter policy: {len(self.result["default_param_policy_methods"])}',
+
+
+    ]
+    print('\n\t'.join(stats))
     with open(path, 'w') as report_file:
       json.dump(self.result, report_file, indent=2)

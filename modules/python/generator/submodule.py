@@ -148,6 +148,7 @@ Bindings for methods and enum values
   def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
     res = {
       'ignore': False,
+      'use_default_param_policy': False,
       'custom_name': None,
       'custom_code': None
     }
