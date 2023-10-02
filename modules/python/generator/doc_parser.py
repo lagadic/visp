@@ -160,7 +160,7 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
       res += '\n' + indent_str + '* ' + item_content + '\n' + indent_str
     return res + '\n'
 
-  return f'<unparsed {container.value}>'
+  return f'<unparsed {container.name} {container.value}>'
 
 
 def process_paragraph(para: docParaType, level: int) -> str:

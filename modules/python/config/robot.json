@@ -1,0 +1,23 @@
+{
+  "ignored_headers": ["vpWireFrameSimulatorTypes.h"],
+
+
+  "classes": {
+    "vpImageSimulator": {
+
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void getImage(vpImage<vpRGBa>&, std::list<vpImageSimulator>&, const vpCameraParameters&)",
+          "custom_name": "getImageMultiplePlanes"
+        },
+        {
+          "static": true,
+          "signature": "void getImage(vpImage<unsigned char>&, std::list<vpImageSimulator>&, const vpCameraParameters&)",
+          "custom_name": "getImageMultiplePlanes"
+        }
+      ]
+    }
+  }
+}
