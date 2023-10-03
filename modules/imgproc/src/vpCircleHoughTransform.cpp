@@ -175,6 +175,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   m_centerVotes.clear();
   m_edgePointsList.clear();
   m_circleCandidates.clear();
+  m_circleCandidatesVotes.clear();
   m_circleCandidatesProbabilities.clear();
   m_finalCircles.clear();
   m_finalCircleVotes.clear();
