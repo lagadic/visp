@@ -11,7 +11,7 @@ An example of position-based visual servoing using a robot from Universal Robots
 
 - Attach your Realsense camera to the robot end-effector. To this end, we provide a CAD model of a support that could be 3D printed. The FreeCAD model is available [here](https://github.com/lagadic/visp/tree/master/example/servo-universal-robots).
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$, the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `tutorial/calibration/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$, the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
 
 Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
@@ -27,7 +27,7 @@ $ ./servoUniversalRobotsPBVS --help
 Run the binary activating the plot and using a constant gain:
 
 \verbatim
-$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+$ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/ur_eMc.yaml --plot
 \endverbatim
 
 Use the left mouse click to enable the robot controller, and the right click to quit the binary.
@@ -43,19 +43,19 @@ At this point the behaviour that you should observe is the following:
 You can also activate an adaptive gain that will make the convergence faster:
 
 \verbatim
-$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+$ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/ur_eMc.yaml --plot --adaptive_gain
 \endverbatim
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
 \verbatim
-$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+$ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/ur_eMc.yaml --plot --task_sequencing
 \endverbatim
 
 And finally you can activate the adaptive gain and task sequencing:
 
 \verbatim
-$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
+$ ./servoUniversalRobotsPBVS --eMc ../../apps/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
 \endverbatim
 
 \section ur_pbvs_next Next tutorial

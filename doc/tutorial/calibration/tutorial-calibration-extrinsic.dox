@@ -31,10 +31,10 @@ The calibration process described in this tutorial consists in 3 steps:
    to estimate the \f$^e{\bf M}_c\f$ transformation.
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
-(in `tutorial/calibration` folder) and could be downloaded using the following command:
+(in `apps/calibration` folder) and could be downloaded using the following command:
 
 \verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/calibration
+$ svn export https://github.com/lagadic/visp.git/trunk/apps/calibration
 \endverbatim
 
 \section calib_ext_recommendation Recommendations
@@ -102,7 +102,7 @@ If you want the parameters with distortion, you need to achieve a calibration as
 
 As an example, in ViSP source code you will find a dataset corresponding to data acquired with a real robot:
 \verbatim
-$ cd $VISP_WS/visp-build/tutorial/calibration
+$ cd $VISP_WS/visp-build/apps/calibration
 $ ls *.{xml,png,yaml}
 camera.xml   image-3.png  image-6.png  pose_fPe_1.yaml  pose_fPe_4.yaml  pose_fPe_7.yaml
 image-1.png  image-4.png  image-7.png  pose_fPe_2.yaml  pose_fPe_5.yaml  pose_fPe_8.yaml
@@ -286,10 +286,10 @@ vpRealSense2 class usage.
 <b>Step 1: Acquire robot poses and images</b>
 
 Connect the Realsense D435 camera to the computer, put the chessboard in the camera field of view, enter in
-`tutorial/calibration` folder and run `visp-acquire-franka-calib-data` binary to acquire the images and the
+`apps/calibration` folder and run `visp-acquire-franka-calib-data` binary to acquire the images and the
 corresponding robot end-effector positions:
 
-    $ cd tutorial/calibration
+    $ cd apps/calibration
     $ ./visp-acquire-franka-calib-data
 
 By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
@@ -392,11 +392,11 @@ vpRealSense2 class usage.
 <b>Step 1: Acquire robot poses and images</b>
 
 Connect the Realsense camera to the computer, put the chessboard in the camera field of view, enter in
-`tutorial/calibration` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
+`apps/calibration` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
 the corresponding robot end-effector positions:
 
 \verbatim
-$ cd tutorial/calibration
+$ cd apps/calibration
 $ ./visp-acquire-universal-robots-calib-data
 \endverbatim
 
