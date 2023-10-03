@@ -164,7 +164,6 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
   //! [Run detection]
   std::vector<vpImageCircle> detectedCircles = detector.detect(I_src, nbCirclesToDetect);
   std::vector<float> probas = detector.getDetectionsProbabilities();
-  std::vector<unsigned int> votes = detector.getDetectionsVotes();
   //! [Run detection]
   double tF = vpTime::measureTimeMicros();
   std::cout << "Process time = " << (tF - t0) * 0.001 << "ms" << std::endl << std::flush;
@@ -180,7 +179,7 @@ bool test_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform 
     std::cout << "Circle #" << id << ":" << std::endl;
     std::cout << "\tCenter: (" << circleCandidate.getCenter() << ")" << std::endl;
     std::cout << "\tRadius: (" << circleCandidate.getRadius() << ")" << std::endl;
-    std::cout << "\tProba: " << probas[id] << "\tVotes:" << votes[id] << std::endl;
+    std::cout << "\tProba: " << probas[id] << std::endl;
     std::cout << "\tTheoretical arc length: " << circleCandidate.computeArcLengthInRoI(vpRect(0, 0, I_src.getWidth(), I_src.getHeight())) << std::endl;
     id++;
     idColor = (idColor + 1) % v_colors.size();
