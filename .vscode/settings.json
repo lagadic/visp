@@ -14,6 +14,7 @@
   "C_Cpp.vcFormat.space.beforeEmptySquareBrackets": false,
   "C_Cpp.vcFormat.space.beforeOpenSquareBracket": false,
   "files.associations": {
+    "*.dox": "doxygen",
     "bitset": "cpp",
     "optional": "cpp",
     "*.in": "cmake",
@@ -115,7 +116,8 @@
     "semaphore": "cpp",
     "stop_token": "cpp",
     "view": "cpp",
-    "mixinvector": "cpp"
+    "mixinvector": "cpp",
+    "charconv": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,
@@ -134,5 +136,19 @@
   "editor.comments.insertSpace": true,
   "C_Cpp.vcFormat.indent.preserveComments": true,
   "C_Cpp.doxygen.generatedStyle": "/*!",
-  "files.insertFinalNewline": true
+  "files.insertFinalNewline": true,
+  "C_Cpp.doxygen.sectionTags": [
+    "attention",
+    "tparam",
+    "param",
+    "result",
+    "retval",
+    "exception",
+    "deprecated",
+    "warning",
+    "note"
+  ],
+  "editor.rulers": [
+    {"column": 120, "color": "#ffcc00"}
+  ],
 }
