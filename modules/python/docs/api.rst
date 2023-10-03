@@ -12,3 +12,5 @@ API reference
   visp.vision
   visp.visual_features
   visp.vs
+  visp.robot
+  visp.detection

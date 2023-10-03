@@ -361,10 +361,11 @@ public:
   }
 
   static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-
+#endif
   template<typename FilterType>
   static inline FilterType filterX(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -377,7 +378,7 @@ public:
     }
     return result + filter[0] * I[r][c];
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -543,6 +544,7 @@ public:
     }
     return result + filter[0] * I[r][c].B;
   }
+#endif
 
   template <typename FilterType>
   static inline FilterType filterX(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
@@ -557,7 +559,7 @@ public:
     }
     return result + filter[0] * I[r][c];
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   template <typename FilterType>
   static inline FilterType filterXLeftBorder(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
                                              const FilterType *filter, unsigned int size)
@@ -591,6 +593,7 @@ public:
     }
     return result + filter[0] * I[r][c];
   }
+#endif
 
   template <typename FilterType>
   static void filterY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
@@ -614,10 +617,11 @@ public:
   }
 
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-
+#endif
   template<typename FilterType>
   static void filterY(const vpImage<FilterType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
@@ -651,7 +655,7 @@ public:
     }
     return result + filter[0] * I[r][c];
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -847,7 +851,7 @@ public:
     }
     return result + filter[0] * I[r][c];
   }
-
+#endif
   template<typename FilterType>
   static inline FilterType filterY(const vpImage<double> &I, unsigned int r, unsigned int c,
                                    const FilterType *filter, unsigned int size)

@@ -66,13 +66,19 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
     self.mapping = self.build_mapping(data.namespace)
+
   def build_mapping(self, data: Union[NamespaceScope, ClassScope], mapping={}, scope: str = ''):
     if isinstance(data, NamespaceScope):
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
+      for typedef in data.typedefs:
+        mapping[typedef.name] = scope + typedef.name
+
       for enum in data.enums:
-        enum_name = '::'.join([seg.name for seg in enum.base.segments])
-        mapping[enum_name] = scope + enum_name
+        if not name_is_anonymous(enum.typename):
+          enum_name = '::'.join([seg.name for seg in enum.typename.segments])
+          print('MAPPING enum_name', enum_name)
+          mapping[enum_name] = scope + enum_name
       for cls in data.classes:
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
         mapping[cls_name] = scope + cls_name
@@ -86,8 +92,10 @@ class HeaderEnvironment():
       for typedef in data.typedefs:
         mapping[typedef.name] = scope + typedef.name
       for enum in data.enums:
-        enum_name = '::'.join([seg.name for seg in enum.typename.segments if not isinstance(seg, types.AnonymousName)])
-        mapping[enum_name] = scope + enum_name
+        print('MAPPING enum_name', enum.typename)
+        if not name_is_anonymous(enum.typename):
+          enum_name = '::'.join([seg.name for seg in enum.typename.segments])
+          mapping[enum_name] = scope + enum_name
       for cls in data.classes:
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments if not isinstance(seg, types.AnonymousName)])
         mapping[cls_name] = scope + cls_name
@@ -137,17 +145,16 @@ class HeaderFile():
       if self.documentation_holder_path is None:
         self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
-
-
   def run_preprocessor(self): # TODO: run without generating a new file
     tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
     argv = [
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
+      '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -160,7 +167,7 @@ class HeaderFile():
     preprocessed_header_content = None
     with open(tmp_file_path, 'r') as header_file:
       preprocessed_header_content = '\n'.join(header_file.readlines())
-      preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <')
+      preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
     return preprocessed_header_content
 
   def generate_binding_code(self) -> None:
@@ -172,6 +179,7 @@ class HeaderFile():
   def parse_data(self):
     from enum_binding import enum_bindings
     result = ''
+    print(f'Building environment for {self.path}')
     header_env = HeaderEnvironment(self.header_repr)
     if self.documentation_holder_path is not None:
       self.documentation_holder = DocumentationHolder(self.documentation_holder_path, header_env.mapping)
@@ -309,20 +317,35 @@ class HeaderFile():
           else:
             py_arg_strs = [method_doc.documentation] + py_arg_strs
 
-        # If a function has refs to immutable params, we need to return them.
-        param_is_ref_to_immut = list(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
-        contains_ref_to_immut = any(param_is_ref_to_immut)
-        if contains_ref_to_immut:
-          param_names = [param.name or 'arg' + i for i, param in enumerate(method.parameters)]
-          params_with_names = [t + ' ' + name for t, name in zip(params_strs, param_names)]
-          immutable_param_names = [param_names[i] for i in range(len(param_is_ref_to_immut)) if param_is_ref_to_immut[i]]
-          if not method_config['use_default_param_policy']:
+        # Detect input and output parameters for a method
+        use_default_param_policy = method_config['use_default_param_policy']
+        param_is_input, param_is_output = method_config['param_is_input'], method_config['param_is_output']
+        if use_default_param_policy or param_is_input is None and param_is_output is None:
+          param_is_input = [True for _ in range(len(method.parameters))]
+          param_is_output = list(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
+          if any(param_is_output):
             method_signature = get_method_signature(method_name,
                                                     get_type(method.return_type, {}, header_env.mapping),
                                                     [get_type(param.type, {}, header_env.mapping) for param in method.parameters])
-            inputs = [True for _ in range(len(param_names))]
-            outputs = [p in immutable_param_names for p in param_names]
-            self.submodule.report.add_default_policy_method(name_cpp_no_template, method, method_signature, inputs, outputs)
+            self.submodule.report.add_default_policy_method(name_cpp_no_template, method, method_signature, param_is_input, param_is_output)
+
+        # If a function has refs to immutable params, we need to return them.
+        should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
+        if should_wrap_for_tuple_return:
+          param_names = [param.name or 'arg' + i for i, param in enumerate(method.parameters)]
+
+          # Arguments that are inputs to the lambda function that wraps the ViSP function
+          input_param_names = [param_names[i] for i in range(len(param_is_input)) if param_is_input[i]]
+          input_param_types = [params_strs[i] for i in range(len(param_is_input)) if param_is_input[i]]
+          params_with_names = [t + ' ' + name for t, name in zip(input_param_types, input_param_names)]
+
+          # Params that are only outputs: they should be declared in function. Assume that they are default constructible
+          param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
+          param_declarations = [f'{params_strs[i]} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+          param_declarations = '\n'.join(param_declarations)
+          # Name of params that should be returned in tuple
+          output_param_names = [param_names[i] for i in range(len(param_is_output)) if param_is_output[i]]
+
           if not method.static:
             self_param_with_name = name_cpp + '& self'
             method_caller = 'self.'
@@ -331,19 +354,20 @@ class HeaderFile():
             method_caller = name_cpp + '::'
 
           if return_type is None or return_type == 'void':
-            lambda_body = f'''
-  {method_caller}{method_name}({", ".join(param_names)});
-  return py::make_tuple({", ".join(immutable_param_names)});
-'''
+            maybe_get_return = ''
+            maybe_return_in_tuple = ''
           else:
-            lambda_body = f'''
-  auto res = {method_caller}{method_name}({", ".join(param_names)});
-  return py::make_tuple(res, {", ".join(immutable_param_names)});
+            maybe_get_return = 'auto res = '
+            maybe_return_in_tuple = 'res, '
+
+          lambda_body = f'''
+  {param_declarations}
+  {maybe_get_return}{method_caller}{method_name}({", ".join(param_names)});
+  return py::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)});
 '''
           final_lambda_params = [self_param_with_name] + params_with_names if self_param_with_name is not None else params_with_names
           method_body_str = define_lambda('', final_lambda_params, 'py::tuple', lambda_body)
 
-          print(f'REF TO IMMUT in method {method_name} parameters')
         else:
           method_body_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
 

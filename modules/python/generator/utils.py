@@ -14,6 +14,9 @@ def get_name(name: types.PQName) -> str:
   '''
   return '::'.join([segment.name for segment in name.segments])
 
+def name_is_anonymous(name: types.PQName) -> bool:
+  return any(isinstance(s, types.AnonymousName) for s in name.segments)
+
 def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str:
   '''Resolve the string representation of a raw type, resolving template specializations and using complete typenames
   (aliases, shortened names when in same namescope).

@@ -149,6 +149,8 @@ Bindings for methods and enum values
     res = {
       'ignore': False,
       'use_default_param_policy': False,
+      'param_is_input': None,
+      'param_is_output': None,
       'custom_name': None,
       'custom_code': None
     }
@@ -169,7 +171,7 @@ Bindings for methods and enum values
     return res
 
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
-  modules = ['core', 'vision', 'visual_features', 'vs', 'sensor', 'io', 'detection', 'robot']
+  modules = ['core', 'imgproc', 'vision', 'visual_features', 'vs', 'sensor', 'io', 'detection', 'robot']
   result = []
   for module in modules:
     result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
