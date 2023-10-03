@@ -532,7 +532,7 @@ vpForceTwistMatrix vpForceTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, b
   \param s Stream used for the printing.
 
   \param length The suggested width of each matrix element.
-  The actual width grows in order to accomodate the whole integral part,
+  The actual width grows in order to accommodate the whole integral part,
   and shrinks if the whole extent is not needed for all the numbers.
   \param intro The introduction which is printed before the matrix.
   Can be set to zero (or omitted), in which case

@@ -120,7 +120,7 @@ void emergencyStopAfma4(int signo)
 
   The only available constructor.
 
-  This contructor calls init() to initialise the connection with the MotionBox
+  This constructor calls init() to initialise the connection with the MotionBox
   or low level controller, power on the robot and wait 1 sec before returning
   to be sure the initialisation is done.
 

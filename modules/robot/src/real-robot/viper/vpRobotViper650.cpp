@@ -121,7 +121,7 @@ void emergencyStopViper650(int signo)
 
   The only available constructor.
 
-  This contructor calls init() to initialise the connection with the
+  This constructor calls init() to initialise the connection with the
   MotionBox or low level controller, send the default \f$^e{\bf
   M}_c\f$ homogeneous matrix and power on the robot.
 

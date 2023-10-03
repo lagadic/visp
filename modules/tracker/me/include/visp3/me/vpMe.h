@@ -446,10 +446,10 @@ public:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /*!
-   * @brief Convert a vpMe object to a JSON representation
+   * @brief Convert a vpMe object to a JSON representation.
    *
-   * @param j resulting json object
-   * @param me the object to convert
+   * @param j : Resulting json object.
+   * @param me : The object to convert.
    */
   friend void to_json(nlohmann::json &j, const vpMe &me);
 
