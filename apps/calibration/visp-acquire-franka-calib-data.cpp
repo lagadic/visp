@@ -46,7 +46,7 @@
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
-void usage(const char *argv[], int error, const std::string &robot_ip)
+void usage(const char **argv, int error, const std::string &robot_ip)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0] << " [--ip <address>] [--help, -h]" << std::endl
@@ -64,7 +64,7 @@ void usage(const char *argv[], int error, const std::string &robot_ip)
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_robot_ip = "192.168.1.1";
@@ -83,77 +83,76 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
       }
     }
-  }
 
-  vpImage<unsigned char> I;
+    vpImage<unsigned char> I;
 
-  vpRobotFranka robot;
-  robot.connect(opt_robot_ip);
+    vpRobotFranka robot;
+    robot.connect(opt_robot_ip);
 
-  vpRealSense2 g;
-  rs2::config config;
-  config.disable_stream(RS2_STREAM_DEPTH);
-  config.disable_stream(RS2_STREAM_INFRARED);
-  config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-  g.open(config);
-  g.acquire(I);
-
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-
-  std::cout << "Image size: " << width << " x " << height << std::endl;
-  // Save intrinsics
-  vpCameraParameters cam;
-  vpXmlParserCamera xml_camera;
-  cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-  xml_camera.save(cam, "franka_camera.xml", "Camera", width, height);
-
-#if defined(VISP_HAVE_X11)
-  vpDisplayX dc(I, 10, 10, "Color image");
-#elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI dc(I, 10, 10, "Color image");
-#endif
-
-  bool end = false;
-  unsigned cpt = 0;
-  while (!end) {
+    vpRealSense2 g;
+    rs2::config config;
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED);
+    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+    g.open(config);
     g.acquire(I);
 
-    vpDisplay::display(I);
+    unsigned int width = I.getWidth();
+    unsigned int height = I.getHeight();
 
-    vpDisplay::displayText(I, 15, 15, "Left click to acquire data", vpColor::red);
-    vpDisplay::displayText(I, 30, 15, "Right click to quit", vpColor::red);
-    vpMouseButton::vpMouseButtonType button;
-    if (vpDisplay::getClick(I, button, false)) {
-      if (button == vpMouseButton::button1) {
-        cpt++;
+    std::cout << "Image size: " << width << " x " << height << std::endl;
+    // Save intrinsics
+    vpCameraParameters cam;
+    vpXmlParserCamera xml_camera;
+    cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+    xml_camera.save(cam, "franka_camera.xml", "Camera", width, height);
 
-        vpPoseVector fPe;
-        robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+#if defined(VISP_HAVE_X11)
+    vpDisplayX dc(I, 10, 10, "Color image");
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI dc(I, 10, 10, "Color image");
+#endif
 
-        std::stringstream ss_img, ss_pos;
+    bool end = false;
+    unsigned cpt = 0;
+    while (!end) {
+      g.acquire(I);
 
-        ss_img << "franka_image-" << cpt << ".png";
-        ss_pos << "franka_pose_fPe_" << cpt << ".yaml";
-        std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
-        vpImageIo::write(I, ss_img.str());
-        fPe.saveYAML(ss_pos.str(), fPe);
+      vpDisplay::display(I);
+
+      vpDisplay::displayText(I, 15, 15, "Left click to acquire data", vpColor::red);
+      vpDisplay::displayText(I, 30, 15, "Right click to quit", vpColor::red);
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        if (button == vpMouseButton::button1) {
+          cpt++;
+
+          vpPoseVector fPe;
+          robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+
+          std::stringstream ss_img, ss_pos;
+
+          ss_img << "franka_image-" << cpt << ".png";
+          ss_pos << "franka_pose_fPe_" << cpt << ".yaml";
+          std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
+          vpImageIo::write(I, ss_img.str());
+          fPe.saveYAML(ss_pos.str(), fPe);
+        }
+        else if (button == vpMouseButton::button3) {
+          end = true;
+        }
       }
-      else if (button == vpMouseButton::button3) {
-        end = true;
-      }
+      vpDisplay::flush(I);
     }
-    vpDisplay::flush(I);
   }
-}
-catch (const vpException &e) {
-  std::cerr << "ViSP exception " << e.what() << std::endl;
-}
-catch (const std::exception &e) {
-  std::cerr << e.what() << std::endl;
-}
+  catch (const vpException &e) {
+    std::cerr << "ViSP exception " << e.what() << std::endl;
+  }
+  catch (const std::exception &e) {
+    std::cerr << e.what() << std::endl;
+  }
 
-return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
 #else
 int main()

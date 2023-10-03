@@ -46,7 +46,7 @@
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
-void usage(const char *argv[], int error, const std::string &robot_ip)
+void usage(const char **argv, int error, const std::string &robot_ip)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0] << " [--ip <address>] [--help, -h]" << std::endl
@@ -64,7 +64,7 @@ void usage(const char *argv[], int error, const std::string &robot_ip)
   }
 }
 
-int main(int argc, char **argv)
+int main(int argc, const char **argv)
 {
   try {
     std::string opt_robot_ip = "192.168.0.100";
