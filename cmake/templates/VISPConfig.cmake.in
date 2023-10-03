@@ -98,7 +98,7 @@ foreach(__vpcomponent ${VISP_FIND_COMPONENTS})
   list(FIND VISP_LIB_COMPONENTS ${__vpcomponent} __vpcomponentIdx)
   if(__vpcomponentIdx LESS 0)
     #requested component is not found...
-    if(VISP_FIND_REQUIRED)
+    if(NOT DEFINED VISP_FIND_REQUIRED_${__vpcomponent} OR VISP_FIND_REQUIRED_${__vpcomponent})
       message(FATAL_ERROR "${__vpcomponent} is required but was not found")
     elseif(NOT VISP_FIND_QUIETLY)
       message(WARNING "Optional ${__vpcomponent} was not found")
