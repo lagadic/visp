@@ -172,7 +172,7 @@ include(cmake/PCLTools.cmake)
 #----------------------------------------------------------------------
 include(cmake/VISPDetectPlatform.cmake)
 
-# where to install the library and headers
+# Where to install the library and headers
 if(ANDROID)
   # Where to build modules
   set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
@@ -397,6 +397,8 @@ endif()
 
 # Choose static or shared libraries.
 VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" NOT (ANDROID OR APPLE_FRAMEWORK))
+# Build apps as an option.
+VP_OPTION(BUILD_APPS "" "" "Build utility applications (used for example for calibration)" "" (NOT ANDROID AND NOT WINRT AND NOT APPLE_FRAMEWORK) )
 # Build examples as an option.
 VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
@@ -1172,6 +1174,10 @@ set(VISP_DIR ${PROJECT_BINARY_DIR})
 mark_as_advanced(VISP_DIR)
 mark_as_advanced(VISP_INCLUDE_DIRS)
 
+if(BUILD_APPS)
+  add_subdirectory(apps)
+  vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
+endif()
 if(BUILD_DEMOS)
   add_subdirectory(demo)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH demo)
@@ -1183,9 +1189,6 @@ endif()
 if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH tutorial)
-endif()
-if(BUILD_APPS)
-  vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
 endif()
 
 # ----------------------------------------------------------------------------
@@ -1617,6 +1620,7 @@ status("")
 status("  Tests and samples:")
 status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
 status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
+status("    Apps:"                   BUILD_APPS         THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
 status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")

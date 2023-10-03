@@ -7,11 +7,14 @@
 
 ViSP 3.x.x (Version in development)
   - Contributors:
-    . Fabien Spindler,
+    . Fabien Spindler, Florent Lamiraux
   - New classes
     .
   - New features and improvements
-    .
+    . Introduce applications in apps folder, a collection of useful tools that
+      have a dependency to the install target
+  - Applications
+    . Migrate eye-to-hand tutorials in apps
   - Tutorials
     .
   - Bug fixed

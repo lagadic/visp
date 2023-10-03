@@ -101,7 +101,7 @@ foreach(__vpcomponent ${VISP_FIND_COMPONENTS})
     if(VISP_FIND_REQUIRED)
       message(FATAL_ERROR "${__vpcomponent} is required but was not found")
     elseif(NOT VISP_FIND_QUIETLY)
-      message(WARNING "${__vpcomponent} is required but was not found")
+      message(WARNING "Optional ${__vpcomponent} was not found")
     endif()
     #indicate that module is NOT found
     string(TOUPPER "${__vpcomponent}" __vpcomponentUP)
@@ -182,7 +182,12 @@ if(BUILD_TEST_COVERAGE)
 endif()
 
 #----------------------------------------------------------------------
-# Remember VISP' third party libs configuration:
+# Remember VISP install path for apps
+#----------------------------------------------------------------------
+set(VISP_BIN_INSTALL_PATH "@VISP_BIN_INSTALL_PATH@")
+
+#----------------------------------------------------------------------
+# Remember VISP third party libs configuration
 #----------------------------------------------------------------------
 set(VISP_HAVE_AFMA4          "@VISP_HAVE_AFMA4@")
 set(VISP_HAVE_AFMA6          "@VISP_HAVE_AFMA6@")
@@ -336,11 +341,22 @@ if(UNIX)
   endif()
 endif()
 
+# Create a dependency to the target extracted from the *.cpp file and put the target in the solution dependency folder.
+macro(visp_add_dependency file_cpp dependency)
+  get_filename_component(target ${file_cpp} NAME_WE)
+  if(TARGET visp_${dependency})
+    add_dependencies(visp_${dependency} ${target})
+    if(ENABLE_SOLUTION_FOLDERS)
+      set_target_properties(${target} PROPERTIES FOLDER "${dependency}")
+    endif()
+  endif()
+endmacro()
+
 #----------------------------------------------------------------------
-# Some useful macro to be able to build the tutorials along side ViSP
+# Some useful macro to be able to build the tutorials/demos/examples/apps along side ViSP
 #----------------------------------------------------------------------
 # Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
-# tu ensure that the library is build before this target.
+# to ensure that the library is build before this target.
 macro(visp_add_target file_cpp)
   if(POLICY CMP0020)
     cmake_policy(PUSH)
@@ -355,14 +371,24 @@ macro(visp_add_target file_cpp)
   endif()
 endmacro()
 
-# Create a dependency to the target extracted from the *.cpp file and put the target in the solution dependency folder.
-macro(visp_add_dependency file_cpp dependency)
+# Same as visp_add_target() except that it has also an install target.
+# Create a target from the *.cpp file, link against ViSP libraries and add a dependency to ViSP library
+# to ensure that the library is build before this target and finaly add an install target.
+macro(visp_add_app file_cpp)
+  if(POLICY CMP0020)
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
+  endif()
   get_filename_component(target ${file_cpp} NAME_WE)
-  if(TARGET visp_${dependency})
-    add_dependencies(visp_${dependency} ${target})
-    if(ENABLE_SOLUTION_FOLDERS)
-      set_target_properties(${target} PROPERTIES FOLDER "${dependency}")
-    endif()
+  include_directories(${VISP_INCLUDE_DIRS})
+  add_executable(${target} ${file_cpp} ${ARGN})
+  target_link_libraries(${target} ${VISP_LIBRARIES})
+  install(TARGETS ${target} DESTINATION ${VISP_BIN_INSTALL_PATH} CONFIGURATIONS Release COMPONENT dev)
+  if(COMMAND visp_add_dependency)
+    visp_add_dependency(${cpp} "apps")
+  endif()
+  if(POLICY CMP0020)
+    cmake_policy(POP) #cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
   endif()
 endmacro()
 
