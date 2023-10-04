@@ -181,7 +181,7 @@ int main(int argc, const char **argv)
   if (!vpIoTools::checkFilename(opt_intrinsic_file)) {
     std::cout << "Camera parameters file " << opt_intrinsic_file << " doesn't exist." << std::endl;
     std::cout << "Use --help option to see how to set its location..." << std::endl;
-    return EXIT_SUCCESS;
+    return EXIT_FAILURE;
   }
 
   if (opt_input_img_files.empty()) {
