@@ -236,7 +236,8 @@ class DocumentationHolder(object):
     detailed = process_description(compounddef.get_detaileddescription())
     return brief + '\n\n' + detailed
 
-  def get_documentation_for_method(self, cls_name: str, signature: MethodDocSignature, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[MethodDocumentation]:
+  def get_documentation_for_method(self, cls_name: str, signature: MethodDocSignature, cpp_ref_to_python: Dict[str, str],
+                                   specs: Dict[str, str], input_param_names: List[str], output_param_names: List[str]) -> Optional[MethodDocumentation]:
     method_def = self.elements.methods.get((cls_name, signature))
     if method_def is None:
       return None
@@ -244,11 +245,23 @@ class DocumentationHolder(object):
     descr = self.generate_method_description_string(method_def)
 
     params_dict = self.get_method_params(method_def)
-    param_strs = [f':param {name}: {descr}' for name, descr in params_dict.items()]
-    param_str = '\n'.join(param_strs)
-
     cpp_return_str = self.get_method_return_str(method_def)
-    return_str = f':return: {cpp_return_str}' if len(cpp_return_str) > 0 else ''
+    param_strs = []
+    for param_name in input_param_names:
+      if param_name in params_dict:
+        param_strs.append(f':param {param_name}: {params_dict[param_name]}')
+    param_str = '\n'.join(param_strs)
+    if len(output_param_names) > 0:
+      return_str = ':return: A tuple containing:\n'
+      if signature.ret != 'void' and signature.ret is not None:
+        return_str += f'\n\t * {cpp_return_str}'
+      for param_name in output_param_names:
+        if param_name in params_dict:
+          return_str += f'\n\t * {param_name}: {params_dict[param_name]}'
+        else:
+          return_str += f'\n\t * {param_name}'
+    else:
+      return_str = f':return: {cpp_return_str}' if len(cpp_return_str) > 0 else ''
 
     res = to_cstring('\n\n'.join([descr, param_str, return_str]))
     return MethodDocumentation(res)
@@ -273,7 +286,7 @@ class DocumentationHolder(object):
       from functools import reduce
       name_list: List[doxmlparser.compound.docParamName] = reduce(lambda all, pnl: all + pnl.parametername,  param_info.parameternamelist, [])
       param_descr: doxmlparser.compound.descriptionType = param_info.parameterdescription
-      param_descr_str = ' '.join(map(lambda para: process_paragraph(para, 0), param_descr.para)).lstrip(': ')
+      param_descr_str = ' '.join(map(lambda para: process_paragraph(para, 0), param_descr.para)).lstrip(': ').strip().replace('\n', '\n\t')
       for param_name in name_list:
         params_dict[param_name.valueOf_] = param_descr_str
     return params_dict

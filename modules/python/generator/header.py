@@ -154,7 +154,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -305,37 +305,42 @@ class HeaderFile():
         py_method_name = method_config.get('custom_name') or method_name
         return_type = get_type(method.return_type, specs, header_env.mapping)
 
-        # Fetch documentation if available
-        if self.documentation_holder is not None:
-          method_doc_signature = MethodDocSignature(method_name,
-                                                    get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
-                                                    [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
-                                                    method.const, method.static)
-          method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, specs)
-          if method_doc is None:
-            print(f'Could not find documentation for {name_cpp}::{method_name}!')
-          else:
-            py_arg_strs = [method_doc.documentation] + py_arg_strs
-
         # Detect input and output parameters for a method
         use_default_param_policy = method_config['use_default_param_policy']
         param_is_input, param_is_output = method_config['param_is_input'], method_config['param_is_output']
         if use_default_param_policy or param_is_input is None and param_is_output is None:
           param_is_input = [True for _ in range(len(method.parameters))]
           param_is_output = list(map(lambda param: is_non_const_ref_to_immutable_type(param.type), method.parameters))
-          if any(param_is_output):
+          if any(param_is_output): # Emit a warning when using default policy
             method_signature = get_method_signature(method_name,
                                                     get_type(method.return_type, {}, header_env.mapping),
                                                     [get_type(param.type, {}, header_env.mapping) for param in method.parameters])
             self.submodule.report.add_default_policy_method(name_cpp_no_template, method, method_signature, param_is_input, param_is_output)
 
+        # Get parameter names
+        param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
+        input_param_names = [param_names[i] for i in range(len(param_is_input)) if param_is_input[i]]
+        output_param_names = [param_names[i] for i in range(len(param_is_output)) if param_is_output[i]]
+
+        # Fetch documentation if available
+        if self.documentation_holder is not None:
+          method_doc_signature = MethodDocSignature(method_name,
+                                                    get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
+                                                    [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                    method.const, method.static)
+          method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, specs, input_param_names, output_param_names)
+          if method_doc is None:
+            print(f'Could not find documentation for {name_cpp}::{method_name}!')
+          else:
+            py_arg_strs = [method_doc.documentation] + py_arg_strs
+
+
+
         # If a function has refs to immutable params, we need to return them.
         should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
         if should_wrap_for_tuple_return:
-          param_names = [param.name or 'arg' + i for i, param in enumerate(method.parameters)]
 
           # Arguments that are inputs to the lambda function that wraps the ViSP function
-          input_param_names = [param_names[i] for i in range(len(param_is_input)) if param_is_input[i]]
           input_param_types = [params_strs[i] for i in range(len(param_is_input)) if param_is_input[i]]
           params_with_names = [t + ' ' + name for t, name in zip(input_param_types, input_param_names)]
 
@@ -343,9 +348,6 @@ class HeaderFile():
           param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
           param_declarations = [f'{params_strs[i]} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
           param_declarations = '\n'.join(param_declarations)
-          # Name of params that should be returned in tuple
-          output_param_names = [param_names[i] for i in range(len(param_is_output)) if param_is_output[i]]
-
           if not method.static:
             self_param_with_name = name_cpp + '& self'
             method_caller = 'self.'
@@ -360,13 +362,18 @@ class HeaderFile():
             maybe_get_return = 'auto res = '
             maybe_return_in_tuple = 'res, '
 
+          if len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
+            return_str = output_param_names[0]
+          else:
+            return_str = f'std::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)})'
+
           lambda_body = f'''
   {param_declarations}
   {maybe_get_return}{method_caller}{method_name}({", ".join(param_names)});
-  return py::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)});
+  return {return_str};
 '''
           final_lambda_params = [self_param_with_name] + params_with_names if self_param_with_name is not None else params_with_names
-          method_body_str = define_lambda('', final_lambda_params, 'py::tuple', lambda_body)
+          method_body_str = define_lambda('', final_lambda_params, None, lambda_body)
 
         else:
           method_body_str = ref_to_class_method(method, name_cpp, method_name, return_type, params_strs)
