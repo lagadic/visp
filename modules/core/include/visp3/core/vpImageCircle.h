@@ -78,9 +78,25 @@ public:
   virtual ~vpImageCircle();
 
   /*!
-  * Get the center of the image (2D) circle
-  * \return The center of the image (2D) circle.
+  * Compute the angular coverage, in terms of radians, that is contained in the Region of Interest (RoI).
+  * \sa \ref vpImageCircle::computeArcLengthInRoI() "vpImageCircle::computeArcLengthInRoI(const vpRect &roi)"
+  * \param[in] roi The rectangular RoI in which we want to know the number of pixels of the circle that are contained.
+  * \return Returns 2.f * M_PI for a circle that is fully visible in the RoI, or the sum of the angles of the arc(s) that is(are) visible in the RoI.
   */
+  float computeAngularCoverageInRoI(const vpRect &roi) const;
+
+  /*!
+  * Compute the arc length, in terms of number of pixels, that is contained in the Region of Interest (RoI).
+  * \sa \ref vpImageCircle::computeAngularCoverageInRoI() "vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi)"
+  * \param[in] roi The rectangular RoI in which we want to know the number of pixels of the circle that are contained.
+  * \return The number of pixels of the circle that are contained in the RoI.
+  */
+  float computeArcLengthInRoI(const vpRect &roi) const;
+
+   /*!
+   * Get the center of the image (2D) circle
+   * \return The center of the image (2D) circle.
+   */
   vpImagePoint getCenter() const;
 
   /*!

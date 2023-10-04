@@ -1,6 +1,6 @@
 {
-  "lowerCannyThresh": -1.0,
-  "upperCannyThresh": -1.0,
+  "lowerCannyThresh": 100.0,
+  "upperCannyThresh": 200.0,
   "centerMinDistance": 5.0,
   "centerThresh": 100.0,
   "centerXlimits": [
@@ -21,6 +21,6 @@
     34,
     75
   ],
-  "radiusThreshRatio": 4.0,
+  "circleProbabilityThreshold": 0.75,
   "sobelKernelSize": 7
 }
