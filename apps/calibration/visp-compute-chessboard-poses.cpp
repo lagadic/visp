@@ -1,4 +1,37 @@
-//! \example tutorial-chessboard-pose.cpp
+/*
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ * Description:
+ * Compute chessboard poses to prepare hand-eye calibration.
+ */
+
+//! \example visp-compute-chessboard-poses.cpp
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -14,10 +47,13 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpXmlParserCamera.h>
+#if defined(VISP_HAVE_MODULE_GUI)
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#endif
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpPose.h>
 
@@ -42,37 +78,42 @@ void usage(const char **argv, int error)
 {
   std::cout << "Synopsis" << std::endl
     << "  " << argv[0] << " [-w <chessboard width>] [-h <chessboard height>]"
-    << " [--square_size <square size in meter>]"
+    << " [--square-size <square size in meter>]"
     << " [--input <input images path>]"
     << " [--intrinsic <Camera intrinsic parameters xml file>]"
-    << " [--camera_name <Camera name in the xml intrinsic file>]"
+    << " [--camera-name <Camera name in the xml intrinsic file>]"
     << " [--output <camera pose files>]"
-    << " [--help] [-h]" << std::endl
+    << " [--help, -h]" << std::endl
     << std::endl;
   std::cout << "Description" << std::endl
     << "  -w <chessboard width>  Chessboard width." << std::endl
-    << "    Default: 9." << std::endl
+    << "    Default: 9" << std::endl
     << std::endl
     << "  -h <chessboard height>  Chessboard height." << std::endl
-    << "    Default: 6." << std::endl
+    << "    Default: 6" << std::endl
     << std::endl
-    << "  --square_size <square size in meter>  Chessboard square size in [m]." << std::endl
-    << "    Default: 0.03." << std::endl
+    << "  --square-size <square size in meter>  Chessboard square size in [m]." << std::endl
+    << "    Default: 0.03" << std::endl
     << std::endl
     << "  --input <input images path>  Generic name of the images to process." << std::endl
-    << "    Example: \"image-%02d.png\"." << std::endl
+    << "    Default: empty" << std::endl
+    << "    Example: \"image-%d.png\"" << std::endl
     << std::endl
     << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
     << "    camera parameters. " << std::endl
-    << "    Default: \"camera.xml\"." << std::endl
+    << "    Default: \"camera.xml\"" << std::endl
     << std::endl
-    << "  --camera_name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
-    << "    Default: \"Camera\"." << std::endl
+    << "  --camera-name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
+    << "    Default: \"Camera\"" << std::endl
     << std::endl
     << "  --output <camera pose files>  Generic name of the yaml files that contains the camera poses."
     << std::endl
-    << "    Example: \"pose_cPo_%d.yaml\"." << std::endl
+    << "    Default: \"pose_cPo_%d.yaml\"" << std::endl
     << std::endl
+#if defined(VISP_HAVE_MODULE_GUI)
+    << "  --no-interactive To compute the chessboard poses without interactive validation by the user." << std::endl
+    << std::endl
+#endif
     << "  --help, -h  Print this helper message." << std::endl
     << std::endl;
   if (error) {
@@ -91,6 +132,7 @@ int main(int argc, const char **argv)
   std::string opt_intrinsic_file = "camera.xml";
   std::string opt_camera_name = "Camera";
   std::string opt_output_pose_files = "pose_cPo_%d.yaml";
+  bool opt_interactive = true;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "-w" && i + 1 < argc) {
@@ -101,7 +143,7 @@ int main(int argc, const char **argv)
       opt_chessboard_height = atoi(argv[i + 1]);
       i++;
     }
-    else if (std::string(argv[i]) == "--square_size" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--square-size" && i + 1 < argc) {
       opt_chessboard_square_size = atof(argv[i + 1]);
       i++;
     }
@@ -117,10 +159,15 @@ int main(int argc, const char **argv)
       opt_output_pose_files = std::string(argv[i + 1]);
       i++;
     }
-    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
       i++;
     }
+#if defined(VISP_HAVE_MODULE_GUI)
+    else if (std::string(argv[i]) == "--no-interactive") {
+      opt_interactive = false;
+    }
+#endif
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
       return EXIT_SUCCESS;
@@ -136,14 +183,6 @@ int main(int argc, const char **argv)
     std::cout << "Use --help option to see how to set its location..." << std::endl;
     return EXIT_SUCCESS;
   }
-  std::cout << "Parameters:" << std::endl;
-  std::cout << "  chessboard width             : " << opt_chessboard_width << std::endl;
-  std::cout << "  chessboard height            : " << opt_chessboard_height << std::endl;
-  std::cout << "  chessboard square size [m]   : " << opt_chessboard_square_size << std::endl;
-  std::cout << "  input images location        : " << opt_input_img_files << std::endl;
-  std::cout << "  camera param file name [.xml]: " << opt_intrinsic_file << std::endl;
-  std::cout << "  camera name                  : " << opt_camera_name << std::endl;
-  std::cout << "  output camera poses          : " << opt_output_pose_files << std::endl << std::endl;
 
   if (opt_input_img_files.empty()) {
     std::cout << "Input images location empty." << std::endl;
@@ -158,12 +197,34 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I;
     reader.open(I);
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
+    std::cout << "Parameters:" << std::endl;
+    std::cout << "  Chessboard width             : " << opt_chessboard_width << std::endl;
+    std::cout << "  Chessboard height            : " << opt_chessboard_height << std::endl;
+    std::cout << "  Chessboard square size [m]   : " << opt_chessboard_square_size << std::endl;
+    std::cout << "  Input images location        : " << opt_input_img_files << std::endl;
+    std::cout << "    First frame                : " << reader.getFirstFrameIndex() << std::endl;
+    std::cout << "    Last  frame                : " << reader.getLastFrameIndex() << std::endl;
+    std::cout << "  Camera param file name [.xml]: " << opt_intrinsic_file << std::endl;
+    std::cout << "  Camera name                  : " << opt_camera_name << std::endl;
+    std::cout << "  Output camera poses          : " << opt_output_pose_files << std::endl;
+    std::cout << "  Interactive mode             : " << (opt_interactive ? "yes" : "no") << std::endl << std::endl;
+
+
+#if defined(VISP_HAVE_MODULE_GUI)
+    vpDisplay *display = NULL;
+    if (opt_interactive) {
+#if defined(VISP_HAVE_X11)
+      display = new vpDisplayX(I);
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
+      display = new vpDisplayGDI(I);
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    vpDisplayOpenCV d(I);
+      display = new vpDisplayOpenCV(I);
+#elif defined(VISP_HAVE_D3D9)
+      display = new vpDisplayD3D(I);
+#elif defined(VISP_HAVE_GTK)
+      display = new vpDisplayGTK(I);
+#endif
+    }
 #endif
 
     std::vector<vpPoint> corners_pts;
@@ -179,7 +240,7 @@ int main(int argc, const char **argv)
         std::cout << "Attempt to find parameters without distortion" << std::endl;
 
         if (parser.parse(cam, opt_intrinsic_file, opt_camera_name,
-          vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
+                         vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
           std::cout << "Unable to parse parameters without distortion for camera \"" << opt_camera_name << "\" from "
             << opt_intrinsic_file << " file" << std::endl;
           return EXIT_FAILURE;
@@ -191,12 +252,10 @@ int main(int argc, const char **argv)
     bool quit = false;
     do {
       reader.acquire(I);
-      vpDisplay::setTitle(I, reader.getFrameName());
+      std::cout << "Process image: " << reader.getFrameName() << std::endl;
 
       cv::Mat matImg;
       vpImageConvert::convert(I, matImg);
-
-      vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
 
       cv::Size chessboardSize(opt_chessboard_width, opt_chessboard_height);
       std::vector<cv::Point2f> corners2D;
@@ -239,14 +298,6 @@ int main(int argc, const char **argv)
         vpImageConvert::convert(matImg, I);
       }
 
-      vpDisplay::display(I);
-
-      vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
-      if (found)
-        vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
-
-      vpDisplay::flush(I);
-
       if (found) {
         vpPoseVector pose_vec(cMo);
         char name[FILENAME_MAX];
@@ -256,18 +307,34 @@ int main(int argc, const char **argv)
         pose_vec.saveYAML(s, pose_vec);
       }
 
-      vpMouseButton::vpMouseButtonType button;
-      if (vpDisplay::getClick(I, button, true)) {
-        switch (button) {
-        case vpMouseButton::button3:
-          quit = true;
-          break;
+#if defined(VISP_HAVE_MODULE_GUI)
+      if (opt_interactive) {
+        vpDisplay::setTitle(I, reader.getFrameName());
+        vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
+        vpDisplay::display(I);
+        vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
+        if (found) {
+          vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
+        }
+        vpDisplay::flush(I);
 
-        default:
-          break;
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I, button, true)) {
+          if (button == vpMouseButton::button3) {
+            quit = true;
+          }
         }
       }
+#endif
     } while (!quit && !reader.end());
+
+#if defined(VISP_HAVE_MODULE_GUI)
+    if (opt_interactive) {
+      if (display) {
+        delete display;
+      }
+    }
+#endif
   }
   catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;

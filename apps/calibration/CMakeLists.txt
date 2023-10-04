@@ -1,23 +1,26 @@
-project(tutorial-calibration)
+project(apps-calibration)
 
 cmake_minimum_required(VERSION 3.5)
 
-find_package(VISP REQUIRED visp_robot visp_vision visp_io visp_gui)
+find_package(VISP REQUIRED visp_vision visp_io OPTIONAL_COMPONENTS visp_gui visp_robot visp_sensor)
 
-set(tutorial_cpp
-  tutorial-chessboard-pose.cpp
-  tutorial-franka-acquire-calib-data.cpp
-  tutorial-hand-eye-calibration.cpp
-  tutorial-universal-robots-acquire-calib-data.cpp
+set(apps_cpp
+  visp-compute-chessboard-poses.cpp
+  visp-compute-hand-eye-calibration.cpp
 )
 
-file(GLOB tutorial_data "*.yaml" "*.py" "camera.xml" "*.png")
+if(VISP_HAVE_FRANKA)
+  list(APPEND apps_cpp visp-acquire-franka-calib-data.cpp)
+endif()
 
-foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp})
-  if(COMMAND visp_add_dependency)
-    visp_add_dependency(${cpp} "tutorials")
-  endif()
+if(VISP_HAVE_UR_RTDE)
+  list(APPEND apps_cpp visp-acquire-universal-robots-calib-data.cpp)
+endif()
+
+file(GLOB apps_data "*.yaml" "*.py" "camera.xml" "*.png")
+
+foreach(cpp ${apps_cpp})
+  visp_add_app(${cpp})
 endforeach()
 
 if(VISP_HAVE_REALSENSE2)
@@ -35,11 +38,11 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 
-  visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(tutorial-universal-robots-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(visp-acquire-franka-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(visp-acquire-universal-robots-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
 # Copy the data files to the same location than the target
-foreach(data ${tutorial_data})
-  visp_copy_data(tutorial-hand-eye-calibration.cpp ${data})
+foreach(data ${apps_data})
+  visp_copy_data(visp-compute-hand-eye-calibration.cpp ${data})
 endforeach()
