@@ -122,7 +122,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
                                               get_type(method.return_type, {}, header_env.mapping),
                                               [get_type(param.type, {}, header_env.mapping) for param in method.parameters])
       header.submodule.report.add_default_policy_method(bound_object.cpp_no_template_name, method, method_signature, param_is_input, param_is_output)
-
+  py_arg_strs = [py_arg_strs[i] for i in range(len(params_strs)) if param_is_input[i]]
   # Get parameter names
   param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
   input_param_names = [param_names[i] for i in range(len(param_is_input)) if param_is_input[i]]
@@ -139,8 +139,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
       print(f'Could not find documentation for {bound_object.cpp_name}::{method_name}!')
     else:
       py_arg_strs = [method_doc.documentation] + py_arg_strs
-
-
 
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
