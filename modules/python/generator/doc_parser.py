@@ -46,6 +46,7 @@ class DocumentationData(object):
 
 def to_cstring(s: str) -> str:
   s = s.replace('\t', '  ')
+  s = re.sub('\n\n\n+', '\n\n', s)
   return f'''R"doc(
 {s}
 )doc"'''
@@ -81,53 +82,97 @@ class DocElements(object):
   methods: Dict[Tuple[str, MethodDocSignature], List[doxmlparser.memberdefType]]
 
 
-def process_mixed_container(container: MixedContainer, level: int) -> str:
+IGNORED_MIXED_CONTAINERS = [
+
+  'parameterlist'
+]
+
+IGNORED_SIMPLE_SECTS = [
+  'author',
+  'date',
+]
+
+def process_mixed_container(container: MixedContainer, level: int, level_string='') -> str:
+  '''
+  :param level_string: the string being built for a single level (e.g. a line/paragraph of text)
+  '''
+  if container.name in IGNORED_MIXED_CONTAINERS:
+    return level_string
   one_indent = ' ' * 2
   indent_str = one_indent * level
+  requires_space = not level_string.endswith(('\n', '\t', ' ')) and len(level_string) > 0
+  # Inline blocks
   if isinstance(container.value, str):
-    return container.value.replace('\n', '\n' + indent_str).strip()
-  # text
+    return level_string + container.value.replace('\n', '\n' + indent_str).strip()
   if container.name == 'text':
     return container.value.replace('\n', '\n' + indent_str).strip()
   if container.name == 'bold':
-    return ' **' + container.value.valueOf_ + '** '
+    markup_start = '**' if not requires_space or len(level_string) == 0 else ' **'
+    return level_string + markup_start + container.value.valueOf_ + '** '
+  if container.name == 'computeroutput':
+    markup_start = '`' if not requires_space or len(level_string) == 0 else ' `'
+    return level_string + markup_start + container.value.valueOf_ + '` '
   if container.name == 'emphasis':
-    return ' *' + container.value.valueOf_ + '* '
+    markup_start = '*' if not requires_space else ' *'
+    return level_string + markup_start + container.value.valueOf_ + '* '
   if container.name == 'sp':
-    return ' '
+    return level_string + ' '
+  if container.name == 'linebreak':
+    return level_string + '\n'
+  if container.name == 'heading':
+    text = container.value.valueOf_
+    new_line_with_sep = '\n' + indent_str + '=' * len(text)
+    return level_string + new_line_with_sep + '\n' + indent_str + text + new_line_with_sep
+  if container.name == 'ulink':
+    url: doxmlparser.docURLLink = container.value
+    text = url.valueOf_
+    url_value = url.url
+    return level_string + (' ' if requires_space else '') + f'`{text} <{url_value}>`_ '
+
 
   if container.name == 'formula':
     v: str = container.value.valueOf_.strip()
     if v.startswith(('\\[', '$$')):
       pure_math = indent_str + one_indent + v[2:-2].replace('\n', '')
-      return ('\n' + indent_str) * 2 + '.. math::' + '\n' + pure_math + '\n' + '\n'
+      return level_string + ('\n' + indent_str) * 2 + '.. math::' + '\n' + pure_math + '\n' + '\n'
     else:
       pure_math = v[1:-1].replace('\n', indent_str + one_indent)
-      return ' :math:`' + pure_math.strip() + '` '
+      return level_string + (' ' if requires_space else '') + ':math:`' + pure_math.strip() + '` '
 
   if container.name == 'ref': # TODO: replace with Python refs if possible
-    return ' ' + container.value.valueOf_ + ' '
+    return level_string + (' ' if requires_space else '') + container.value.valueOf_ + ' '
 
   if container.name == 'verbatim':
     raise NotImplementedError()
 
+  # Block types
   if container.name == 'simplesect':
     process_fn = lambda item: process_paragraph(item, level + 1)
     res = '\n'
+    kind = container.value.kind
+    if kind in IGNORED_SIMPLE_SECTS:
+      return level_string
     item_content = '\n'.join(map(process_fn, container.value.para))
     item_content = re.sub('\n\n\n+', '\n\n', item_content)
-    kind = container.value.kind
     if kind == 'note':
       res += '\n' + indent_str + '.. note:: ' + item_content + '\n' + indent_str
     elif kind == 'warning' or kind == 'attention':
       res += '\n' + indent_str + '.. warning:: ' + item_content + '\n' + indent_str
     elif kind == 'see':
-      res += '\n' + indent_str + '.. note:: See' + item_content + '\n' + indent_str
+      res += '\n' + indent_str + '.. note:: See ' + item_content + '\n' + indent_str
     elif kind == 'return': # Don't do anything, we will parse them separately when we get method documentation
       return ''
     else:
       res += '\n' + f'<unparsed SimpleSect of kind {kind}>'
-    return res + '\n'
+    return level_string + res + '\n'
+
+  if container.name == 'blockquote':
+    blockquote: doxmlparser.docBlockQuoteType = container.value
+    process_fn = lambda item: process_paragraph(item, level + 1)
+    res = '\n'
+    item_content = '\n'.join(map(process_fn, blockquote.para))
+    return level_string + item_content + '\n'
+
 
   if container.name == 'programlisting':
     program: doxmlparser.listingType = container.value
@@ -137,17 +182,17 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
     for line in codelines:
       cs = []
       for h in line.highlight:
-        c = ''.join([process_mixed_container(h, level) for h in h.content_])
+        c = ''
+        for hh in h.content_:
+          c = process_mixed_container(hh, level, c)
         cs.append(c)
       s = ''.join(cs)
       lines.append(s)
 
     code = ('\n' + indent_str + one_indent).join(lines)
     res += code + '\n\n'
-    return res
+    return level_string + res
 
-  if container.name == 'parameterlist': # Parameter list is ignored since we have custom parsing for it
-    return ''
 
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
@@ -158,7 +203,7 @@ def process_mixed_container(container: MixedContainer, level: int) -> str:
       item_content = re.sub('\n\n\n+', '\n\n', item_content)
       #item_content = item_content.replace('\n' + indent_str, '\n' + indent_str + '  ')
       res += '\n' + indent_str + '* ' + item_content + '\n' + indent_str
-    return res + '\n'
+    return level_string  + res + '\n'
 
   return f'<unparsed {container.name} {container.value}>'
 
@@ -167,7 +212,7 @@ def process_paragraph(para: docParaType, level: int) -> str:
   res = ''
   contents: List[MixedContainer] = para.content_
   for content_item in contents:
-    res += process_mixed_container(content_item, level)
+    res = process_mixed_container(content_item, level, res)
   return res
 
 def process_description(brief: Optional[descriptionType]) -> str:
