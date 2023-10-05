@@ -1,6 +1,5 @@
 *.egg-info
-src/generated
-src/main.cpp
+bindings/src
 build
 stubs/visp
 stubs/build

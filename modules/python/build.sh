@@ -1,1 +1,1 @@
-python generator/generator.py && pip install . && rm -r stubs/build && pip install ./stubs && cd docs && rm -r _build && make html && cd ..
+python generator/generator.py && pip install ./bindings && rm -r stubs/build && pip install ./stubs && cd docs && rm -r _build && make html && cd ..

@@ -103,10 +103,43 @@ def method_def(py_name: str, method: str, additional_args: List[str], static: bo
     additional_args_str = ', ' + additional_args_str
   return f'{def_type}("{py_name}", {method}{additional_args_str})'
 
+def tokens_to_str(tokens: List[types.Token]) -> str:
+  return ''.join([token.value for token in tokens])
+
+def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[str]:
+  '''
+  Get the py::arg parameters of a function binding definition.
+  They are used to give the argument their names in the doc and the api.
+  They can also have default values (optional arguments).
+  '''
+  py_args = []
+  for parameter in parameters:
+    if parameter.default is None:
+      py_args.append(f'py::arg("{parameter.name}")')
+    else:
+      t = parameter.type
+      gt = lambda typename: get_typename(typename, specs, env_mapping)
+      if isinstance(t, types.Type):
+        type_name = gt(t.typename)
+      elif isinstance(t, types.Reference):
+        type_name = gt(t.ref_to.typename)
+      else:
+        type_name = ''
+
+      if type_name.startswith('std::vector'):
+        default_value = type_name + '()'
+        default_value_rep = '[]'
+      else:
+        default_value = tokens_to_str(parameter.default.tokens)
+        default_value_rep = default_value.strip('"') # To handle default char* and std::string args
+
+      py_args.append(f'py::arg_v("{parameter.name}", {default_value}, "{default_value_rep}")')
+
+  return py_args
 
 def define_method(method: types.Method, method_config: Dict, is_class_method, specs: Dict, header: 'HeaderFile', header_env: 'HeaderEnvironment', bound_object: 'BoundObjectNames'):
   params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
-  py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
+  py_arg_strs = get_py_args(method.parameters, specs, header_env.mapping)
   method_name = get_name(method.name)
   py_method_name = method_config.get('custom_name') or method_name
   return_type = get_type(method.return_type, specs, header_env.mapping)

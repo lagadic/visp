@@ -84,4 +84,4 @@ def generate_module(generate_path: Path) -> None:
     main_file.write(format_str)
 
 if __name__ == '__main__':
-  generate_module(Path('src'))
+  generate_module(Path('bindings/src'))

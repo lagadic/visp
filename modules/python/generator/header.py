@@ -159,7 +159,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -265,7 +265,7 @@ class HeaderFile():
       if not contains_pure_virtual_methods:
         for method, method_config in constructors:
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
-          py_arg_strs = [f'py::arg("{param.name}")' for param in method.parameters]
+          py_arg_strs = get_py_args(method.parameters, owner_specs, header_env.mapping)
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           method_strs.append(ctor_str)
 
@@ -278,6 +278,8 @@ class HeaderFile():
         method_is_const = method.const
         params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
         return_type_str = get_type(method.return_type, owner_specs, header_env.mapping)
+        py_args = get_py_args(method.parameters, owner_specs, header_env.mapping)
+        py_args = py_args + ['py::is_operator()']
         if len(params_strs) > 1:
           print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
           rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
@@ -291,7 +293,7 @@ class HeaderFile():
             operator_str = f'''
 {python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
   return (self {cpp_op} o);
-}}, py::is_operator());'''
+}}, {", ".join(py_args)});'''
             method_strs.append(operator_str)
             break
         for cpp_op, python_op_name in binary_in_place_ops.items():
@@ -300,7 +302,7 @@ class HeaderFile():
 {python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
   self {cpp_op} o;
   return self;
-}}, py::is_operator());'''
+}}, {", ".join(py_args)});'''
             method_strs.append(operator_str)
             break
 
@@ -384,7 +386,6 @@ class HeaderFile():
           name_python = spec['python_name']
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
-
           spec_dict = OrderedDict(k for k in zip(template_names, args))
           specialization_strs.append(generate_class_with_potiental_specialization(name_python, spec_dict, cls_config))
 

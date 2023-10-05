@@ -161,7 +161,6 @@ setup(
     cmdclass={"build_ext": CMakeBuild, 'build': build, 'install': CustomInstall},
     zip_safe=False,
     include_package_data=True,
-    # package_data={'visp': ["py.typed", *find_stubs(path=stubs_path)]},
     extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.7",
 )
