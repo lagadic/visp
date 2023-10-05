@@ -1376,7 +1376,7 @@ public:
    * Retrieve a vpColVector object from a JSON representation.
    *
    * @param j : JSON representation to convert.
-   * @param me : Converted object.
+   * @param v : Converted object.
    */
   friend void from_json(const nlohmann::json &j, vpColVector &v);
 #endif
