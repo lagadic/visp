@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpRobotBiclops_h_
 #define _vpRobotBiclops_h_
@@ -67,13 +65,17 @@
 
   \brief Interface for the biclops, pan, tilt head control.
 
+  Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
+  The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
+  The following image gives the location of the end-effector frame and a potential camera frame.
+
+  \image html img-biclops-frames.jpg Biclops PT models
+
   See http://www.traclabs.com/biclopspt.html for more details.
 
   This class provide a position and a speed control interface for the biclops
   head. To manage the biclops joint limits in speed control, a control loop is
   running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
-
-  The control of the head is done by vpRobotBiclopsController class.
 
   \warning Velocity control mode is not exported from the top-level Biclops
   API class provided by Traclabs. That means that there is no protection in
@@ -85,7 +87,6 @@
   \warning With the understanding that hitting the hard limits at full
   speed/power can damage the unit, damage due to velocity mode commanding is
   under user responsibility.
-
 
 */
 class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
