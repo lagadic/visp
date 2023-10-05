@@ -42,6 +42,8 @@
  * in articular. The visual feature is the center of gravity of a point.
  */
 
+#include <iostream>
+
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_BICLOPS) && defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_REALSENSE2)
