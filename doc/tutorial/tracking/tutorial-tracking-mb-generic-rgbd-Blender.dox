@@ -8,8 +8,8 @@
 This tutorial will show how to use <a href="https://www.blender.org/">Blender</a>, a free and open source 3D creation suite, to generate color and depth images from a virtual camera and get ground truth camera poses.
 
 The configuration used for this tutorial is:
-- Ubuntu 16.04
-- Blender 2.79b
+- Ubuntu 22.04
+- Blender 3.6.4
 
 \warning You are advised to know how to use the basic tools of Blender before reading this tutorial. Some non-exhaustive links:
 - <a href="https://docs.blender.org/manual/en/latest/index.html">Blender Reference Manual</a>
@@ -23,45 +23,53 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-b
 
 \section mb_Blender_camera_settings Camera settings
 
-In ViSP and in the computer vision community, camera intrinsic parameters are the following:
+In ViSP (see vpCameraParameters class) and in the computer vision community, camera intrinsic parameters are the following:
 
 \f[
-  \begin{bmatrix}
-    p_x & 0 & u_0 \\ 
-    0 & p_y & v_0 \\ 
+  {\bf K} =  \begin{bmatrix}
+    p_x & 0 & u_0 \\
+    0 & p_y & v_0 \\
     0 & 0 & 1
   \end{bmatrix}
 \f]
 
-- focal length \f$ \left( p_x, p_y \right) \f$
-- principal point \f$ \left( u_0, v_0 \right) \f$
-- (plus the distortion coefficients)
+where:
+- \f$ \left( p_x, p_y \right) \f$ corresponds to the pixel size
+- and \f$ \left( u_0, v_0 \right) \f$ to the principal point location
 
-In Blender, you will have to set the camera resolution, generally `640x480` to have a VGA camera resolution:
-
-\image html img-Blender-camera-settings1.png
-
-Focal length can be set with the camera panel by changing the focal length and/or the sensor size:
-
-\image html img-Blender-camera-settings2.png
-
-The relation is the following:
+The relations that links the pixel size with the focal lenght \f$ f \f$, the camera sensor size and the image size are the following:
 
 \f[
-  p_x = \frac{f_{x\text{ in mm}} \times \text{image width in px}}{\text{sensor width in mm}}
+  p_x = \frac{f_{\text{ in mm}} \times \text{image width in px}}{\text{sensor width in mm}}
+\f]
+\f[
+  p_y = \frac{f_{\text{ in mm}} \times \text{image height in px}}{\text{sensor height in mm}}
 \f]
 
-The Python script to get the camera intrinsic parameters is:
+In Blender, you will have to set the image resolution, generally `640x480` to have a VGA camera resolution.
+
+To this end,
+- launch `blender`
+- modify `"Scene > Format"` as in the next image:
+\image html img-Blender-camera-settings1.jpg
+
+- focal length can be set in the camera panel by changing the `"Focal Length"` and the sensor `"Width"` and `"Height"` like in the next image:
+\warning You may need to switch the `"Sensor Fit"` from `"Auto"` to `"Vertical"` to change the sensor `"Width"` and `"Height"` to be compatible with a 4/3 ratio and have \f$ p_x = p_y \f$.
+
+\image html img-Blender-camera-settings2.jpg
+
+Once image resolution, sensor size and focal lenght are set in Blender, you may use the Python script `get_camera_intrinsics.py` given below
+to get the camera intrinsic parameters \f$ \left( p_x, p_y, u_0, v_0 \right) \f$:
 
 \include get_camera_intrinsics.py
 
-On Ubuntu, to run the Python script:
+On Ubuntu, to run this Python script:
 - launch Blender from a terminal
-- split or switch from `3D View` to `Text Editor`
-- open the Python script file
-- click on `Run Script`
+- split or switch from `"3D Viewport"` to `"Text Editor"` (shortcut: Shift-F11)
+- open the Python script file `$VISP_WS/visp/tutorial/tracking/model-based/generic-rgbd-blender/get_camera_intrinsics.py`
+- click on `Run Script` (shortcut: Alt-P)
 
-You should get something similar to:
+In the terminal, you should get something similar to:
 
 ```
 <Matrix 3x3 (700.0000,   0.0000, 320.0000)
@@ -69,15 +77,18 @@ You should get something similar to:
             (  0.0000,   0.0000,   1.0000)>
 ```
 
-\warning In Blender 2.79b, you may need to switch the `Sensor Fit` from `Auto` to `Vertical` to change the `Sensor Height` to be compatible with a 4/3 ratio and have \f$ p_x == p_y \f$
-
 \note The principal point is always in the middle of the image here.
 
 \section mb_Blender_stereo_camera Stereo camera
 
-To generate the depth map, add a second camera and set the appropriate parameters to match the desired intrinsic parameters.
-Then select one camera (the child object) and the other one (the parent object) and hit `Ctrl + P` to <a href="https://docs.blender.org/manual/en/latest/editors/3dview/object/properties/relations/parents.html">parent</a> them.
-This way, the two cameras will be linked when you will move the cameras.
+To generate the depth map, add a second camera and set the appropriate parameters to match the desired intrinsic parameters following the same instructions as in previous section. To this end:
+- swith to `"3D Viewport"` (shortcut: Shift-F5)
+- enter menu `"Add > Camera"` (in the scene the new camera appears with name `"Camera.001"`)
+\image html img-Blender-add-camera.jpg
+- modify image resolution, sensor size and focal lenght of this new camera as described previously
+- then select one camera (the child object named `"Camera.001"`) and the other one (the parent object named `"Camera.001"`) and hit `Ctrl-P` to
+  <a href="https://docs.blender.org/manual/en/latest/scene_layout/object/editing/parent.html">parent</a> them.
+  This way, the two cameras will be linked when you will move the cameras.
 
 \image html img-Blender-stereocameras-settings1.png
 
@@ -85,15 +96,22 @@ This way, the two cameras will be linked when you will move the cameras.
 
 \image html img-Blender-stereocameras-settings2.png
 
-\image html img-Blender-stereocameras-settings3.png
+\image html img-Blender-stereocameras-settings3.jpg
+
+\note You can retrieve the camera intrinsics using again `get_camera_intrinsics.py` just by modifying the name of the camera like:
+```
+K = get_calibration_matrix_K_from_blender(bpy.data.objects['Camera.001'].data)
+```
 
 \section mb_Blender_create_teabox Create a teabox
 
-To create a teabox with texture, we download directly a 3D model <a href="https://archive3d.net/?a=download&id=9301dbeb">here</a>. Then, the rough instructions should be:
+To create a teabox with texture, download directly a 3D model in 3DS format <a href="https://archive3d.net/?a=download&id=9301dbeb">here</a>. Then, the rough instructions should be:
+- In Blender, install `Autodesk 3DS format` Add-on entering menu `Edit > Preferences > Add-ons`. This feature is only available since Blender 3.6.
+- unzip the archive and import `Box tea N180614.3DS` file
 - select the teabox object
 - switch to the `Texture` panel
-- add a new texture and open the image
-- switch to the edit mode
+- add a new texture and open the image corresponding to the texture you want to apply like for example `tea_box_1-1.jpg` that was part of the archive
+- select the teabox and switch to the edit mode
 - switch to the `UV/Image Editor` and select the image
 
 You should get something similar to this:
@@ -106,7 +124,7 @@ See <a href="https://docs.blender.org/manual/en/latest/editors/uv_image/uv/editi
 
 This can be done easily:
 - move the stereo cameras at a desired location / orientation
-- hit `I` then `LocRotScale` to insert a keyframe at the current frame
+- select insert a keyframe (shortcut: `I`) and choose `Location, Rotation & Scale` to insert a keyframe at the current frame
 - repeat to perform the desired camera or object movement
 
 Do not forget to add some lights to make the object visible.

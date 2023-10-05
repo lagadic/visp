@@ -91,43 +91,70 @@ int main(int argc, char *argv[])
   unsigned int first_frame_index = 1;
   bool disable_depth = false;
   bool display_ground_truth = false;
-  bool click = false;
+  bool step_by_step = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--input_directory" && i + 1 < argc) {
+    if (std::string(argv[i]) == "--input-directory" && i + 1 < argc) {
       input_directory = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--config_color" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--config-color" && i + 1 < argc) {
       config_color = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--config_depth" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--config-depth" && i + 1 < argc) {
       config_depth = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--model_color" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--model-color" && i + 1 < argc) {
       model_color = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--model_depth" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--model-depth" && i + 1 < argc) {
       model_depth = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--init-file" && i + 1 < argc) {
       init_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--extrinsics" && i + 1 < argc) {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--extrinsics" && i + 1 < argc) {
       extrinsic_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--disable_depth") {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--disable-depth") {
       disable_depth = true;
-    } else if (std::string(argv[i]) == "--display_ground_truth") {
+    }
+    else if (std::string(argv[i]) == "--display-round-truth") {
       display_ground_truth = true;
-    } else if (std::string(argv[i]) == "--click") {
-      click = true;
-    } else if (std::string(argv[i]) == "--first_frame_index" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--step-by-step") {
+      step_by_step = true;
+    }
+    else if (std::string(argv[i]) == "--first-frame-index" && i + 1 < argc) {
       first_frame_index = static_cast<unsigned int>(atoi(argv[i + 1]));
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      i++;
+    }
+    else if (std::string(argv[i]) == "--step-by-step") {
+      step_by_step = true;
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout
-          << "Usage: \n"
-          << argv[0]
-          << " [--input_directory <data directory> (default: .)]"
-             " [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: "
-             "teabox_depth.xml)]"
-             " [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)]"
-             " [--init_file <object.init> (default: teabox.init)]"
-             " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth]"
-             " [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]"
-          << std::endl;
+        << "Usage: \n"
+        << argv[0]
+        << " [--input-directory <data directory> (default: .)]"
+        << " [--config-color <object.xml> (default: teabox.xml)]"
+        << " [--config-depth <object.xml> (default: teabox_depth.xml)]"
+        << " [--model-color <object.cao> (default: teabox.cao)]"
+        << " [--model-depth <object.cao> (default: teabox.cao)]"
+        << " [--init-file <object.init> (default: teabox.init)]"
+        << " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)]"
+        << " [--disable-depth]"
+        << " [--display-ground-truth]"
+        << " [--step-by-step]"
+        << " [--first-frame-index <index> (default: 1)]"
+        << " [--help, -h]"
+        << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -142,7 +169,7 @@ int main(int argc, char *argv[])
   std::cout << "first_frame_index: " << first_frame_index << std::endl;
   std::cout << "disable_depth: " << disable_depth << std::endl;
   std::cout << "display_ground_truth: " << display_ground_truth << std::endl;
-  std::cout << "click: " << click << std::endl;
+  std::cout << "step by step: " << step_by_step << std::endl;
 
   std::vector<int> tracker_types;
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
@@ -166,7 +193,9 @@ int main(int argc, char *argv[])
     tracker.getCameraParameters(cam_color);
   tracker.setDisplayFeatures(true);
   std::cout << "cam_color:\n" << cam_color << std::endl;
-  std::cout << "cam_depth:\n" << cam_depth << std::endl;
+
+  if (!disable_depth)
+    std::cout << "cam_depth:\n" << cam_depth << std::endl;
 
   vpImage<uint16_t> I_depth_raw;
   vpImage<unsigned char> I, I_depth;
@@ -175,8 +204,7 @@ int main(int argc, char *argv[])
   vpHomogeneousMatrix cMo_ground_truth;
 
   unsigned int frame_cpt = first_frame_index;
-  read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth,
-            cMo_ground_truth);
+  read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth);
   vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
 #if defined(VISP_HAVE_X11)
@@ -202,7 +230,8 @@ int main(int argc, char *argv[])
 
   if (display_ground_truth) {
     tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
-  } else
+  }
+  else
     tracker.initClick(I, init_file, true); // I and I_depth must be the same size when using depth features!
 
   try {
@@ -215,7 +244,8 @@ int main(int argc, char *argv[])
 
       if (display_ground_truth) {
         tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
-      } else {
+      }
+      else {
         if (!disable_depth) {
           std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
           std::map<std::string, const std::vector<vpColVector> *> mapOfPointClouds;
@@ -227,7 +257,8 @@ int main(int argc, char *argv[])
           mapOfPointCloudWidths["Camera2"] = depth_width;
           mapOfPointCloudHeights["Camera2"] = depth_height;
           tracker.track(mapOfImages, mapOfPointClouds, mapOfPointCloudWidths, mapOfPointCloudHeights);
-        } else {
+        }
+        else {
           tracker.track(I);
         }
       }
@@ -240,8 +271,17 @@ int main(int argc, char *argv[])
       if (!disable_depth) {
         tracker.display(I, I_depth, cMo, depthMcolor * cMo, cam_color, cam_depth, vpColor::red, 2);
         vpDisplay::displayFrame(I_depth, depthMcolor * cMo, cam_depth, 0.05, vpColor::none, 2);
-      } else {
+      }
+      else {
         tracker.display(I, cMo, cam_color, vpColor::red, 2);
+
+        {
+          cam_depth.initPersProjWithoutDistortion(700, 700, 320, 240); // DEBUG FS
+          vpDisplay::displayFrame(I_depth, depthMcolor * cMo, cam_depth, 0.05, vpColor::none, 2); // DEBUG FS
+          std::cout << "depthMcolor:\n " << depthMcolor << std::endl;
+          std::cout << "cMo depth:\n " << depthMcolor * cMo << std::endl;
+          std::cout << "cam_depth:\n" << cam_depth << std::endl;
+        }
       }
 
       vpDisplay::displayFrame(I, cMo, cam_color, 0.05, vpColor::none, 2);
@@ -258,7 +298,7 @@ int main(int argc, char *argv[])
         {
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
-             << ", depth " << tracker.getNbFeaturesDepthDense();
+            << ", depth " << tracker.getNbFeaturesDepthDense();
           vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
       }
@@ -267,13 +307,13 @@ int main(int argc, char *argv[])
       vpDisplay::flush(I_depth);
 
       vpMouseButton::vpMouseButtonType button;
-      if (vpDisplay::getClick(I, button, click)) {
+      if (vpDisplay::getClick(I, button, step_by_step)) {
         switch (button) {
         case vpMouseButton::button1:
-          quit = !click;
+          quit = !step_by_step;
           break;
         case vpMouseButton::button3:
-          click = !click;
+          step_by_step = !step_by_step;
           break;
 
         default:
@@ -287,7 +327,8 @@ int main(int argc, char *argv[])
     vpDisplay::displayText(I, 40, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
-  } catch (std::exception &e) {
+  }
+  catch (std::exception &e) {
     std::cerr << "Catch exception: " << e.what() << std::endl;
   }
 
