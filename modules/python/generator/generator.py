@@ -39,7 +39,7 @@ PYBIND11_MODULE(visp, m)
 def generate_module(generate_path: Path) -> None:
 
   include_path = Path('/usr/local/include/visp3')
-  submodules: List[Submodule] = get_submodules(include_path, generate_path / 'generated')
+  submodules: List[Submodule] = get_submodules(include_path, generate_path)
 
   # Step 1: Preprocess all headers
   all_headers: List[HeaderFile] = []
@@ -84,4 +84,7 @@ def generate_module(generate_path: Path) -> None:
     main_file.write(format_str)
 
 if __name__ == '__main__':
-  generate_module(Path('bindings/src'))
+  generation_path = Path('bindings/src')
+  generation_path.mkdir(exist_ok=True)
+
+  generate_module(generation_path)

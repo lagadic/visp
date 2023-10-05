@@ -33,7 +33,7 @@ def is_anonymous_name(typename: types.PQName) -> Tuple[bool, int]:
   for segment in typename.segments:
     if isinstance(segment, types.AnonymousName):
       return True, segment.id
-  return False, 0
+  return False, None
 
 
 def get_owner_py_ident(owner_name: str, root_scope: NamespaceScope) -> Optional[str]:
@@ -64,13 +64,12 @@ def get_cpp_identifier_scope(fully_qualified_name: str, root_scope: Union[Namesp
         return get_cpp_identifier_scope('::'.join(remainder), root_scope.namespaces[ns])
   return root_scope
 
-
-def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[Tuple[str, str]]:
+def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tuple[List[EnumRepr], List[EnumRepr]]:
   final_data: List[EnumRepr] = []
   temp_data: List[EnumRepr] = [] # Data that is incomplete for preprocessing
-  match_id = lambda repr, enum_id: repr.id is not None and repr.id == enum_id
+  match_id = lambda repr, enum_id: repr.id is not None and enum_id is not None and repr.id == enum_id
   match_name = lambda repr, full_name: repr.name is not None and full_name is not None and repr.name == full_name
-  enum_repr_is_ready = lambda repr: repr.name is not None and repr.values is not None and repr.public_access
+  enum_repr_is_ready = lambda repr: repr.name is not None and repr.values is not None
 
   def accumulate_data(scope: Union[NamespaceScope, ClassScope]):
     if isinstance(scope, ClassScope):
@@ -88,11 +87,12 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
       anonymous_enum, enum_id = is_anonymous_name(enum.typename)
 
       full_name = get_typename(enum.typename, {}, mapping) if not anonymous_enum else None
-
+      print('SAW ENUM NAME :', full_name, 'with values', enum.values)
       matches = lambda repr: match_id(repr, enum_id) or match_name(repr, full_name)
       matching = list(filter(matches, temp_data))
       assert len(matching) <= 1, f"There cannot be more than one repr found. Matches = {matching}"
       if len(matching) == 0:
+        print('APPENDING ', EnumRepr(enum_id, full_name, enum.values, public_access))
         temp_data.append(EnumRepr(enum_id, full_name, enum.values, public_access))
       else:
         if full_name is not None:
@@ -122,17 +122,32 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
         matching[0].public_access = matching[0].public_access and public_access
 
     ready_enums = list(filter(enum_repr_is_ready, temp_data))
+    print('READY ENUMS', ready_enums)
     for repr in ready_enums:
       final_data.append(repr)
       temp_data.remove(repr)
 
   accumulate_data(root_scope)
+  print(final_data, temp_data)
+  return final_data, temp_data
+
+
+def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[Tuple[str, str]]:
+
+  final_data, temp_data = resolve_enums_and_typedefs(root_scope, mapping)
+
   result = []
+  final_reprs = []
+  for repr in final_data:
+    if repr.public_access:
+      final_reprs.append(repr)
+    else:
+      temp_data.append(repr)
 
   for repr in temp_data:
     print(f'Enum {repr} was ignored, because it is either marked as private or it is incomplete (missing values or name)')
 
-  for enum_repr in final_data:
+  for enum_repr in final_reprs:
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
     # If an owner class is ignored, don't export this enum

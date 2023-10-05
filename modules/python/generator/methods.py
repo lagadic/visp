@@ -129,9 +129,18 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
       if type_name.startswith('std::vector'):
         default_value = type_name + '()'
         default_value_rep = '[]'
+      elif type_name.startswith('std::optional'):
+        default_value = type_name + '{}'
+        default_value_rep = 'None'
       else:
         default_value = tokens_to_str(parameter.default.tokens)
-        default_value_rep = default_value.strip('"') # To handle default char* and std::string args
+        if default_value in ['nullptr', 'NULL']:
+          full_typename = get_type(t, specs, env_mapping)
+          default_value = f'static_cast<{full_typename}>(nullptr)'
+          default_value_rep = 'None'
+        else:
+          default_value_rep = default_value.strip('"') # To handle default char* and std::string args
+          default_value = env_mapping.get(default_value) or default_value
 
       py_args.append(f'py::arg_v("{parameter.name}", {default_value}, "{default_value_rep}")')
 

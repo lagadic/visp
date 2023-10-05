@@ -70,9 +70,14 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
-    self.mapping = self.build_mapping(data.namespace)
+    self.mapping = self.build_naive_mapping(data.namespace)
+    from enum_binding import resolve_enums_and_typedefs
+    enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
+    for enum_repr in enum_reprs:
+      for value in enum_repr.values:
+        self.mapping[value.name] = enum_repr.name + '::' + value.name
 
-  def build_mapping(self, data: Union[NamespaceScope, ClassScope], mapping={}, scope: str = ''):
+  def build_naive_mapping(self, data: Union[NamespaceScope, ClassScope], mapping={}, scope: str = ''):
     if isinstance(data, NamespaceScope):
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
@@ -82,14 +87,14 @@ class HeaderEnvironment():
       for enum in data.enums:
         if not name_is_anonymous(enum.typename):
           enum_name = '::'.join([seg.name for seg in enum.typename.segments])
-          print('MAPPING enum_name', enum_name)
           mapping[enum_name] = scope + enum_name
+
       for cls in data.classes:
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
         mapping[cls_name] = scope + cls_name
-        mapping.update(self.build_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
+        mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
       for namespace in data.namespaces:
-        mapping.update(self.build_mapping(data.namespaces[namespace], mapping=mapping, scope=f'{scope}{namespace}::'))
+        mapping.update(self.build_naive_mapping(data.namespaces[namespace], mapping=mapping, scope=f'{scope}{namespace}::'))
 
     elif isinstance(data, ClassScope):
       for alias in data.using_alias:
@@ -97,15 +102,14 @@ class HeaderEnvironment():
       for typedef in data.typedefs:
         mapping[typedef.name] = scope + typedef.name
       for enum in data.enums:
-        print('MAPPING enum_name', enum.typename)
         if not name_is_anonymous(enum.typename):
           enum_name = '::'.join([seg.name for seg in enum.typename.segments])
           mapping[enum_name] = scope + enum_name
+
       for cls in data.classes:
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments if not isinstance(seg, types.AnonymousName)])
         mapping[cls_name] = scope + cls_name
-        mapping.update(self.build_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
-
+        mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
     return mapping
 
 class HeaderFile():
@@ -151,7 +155,9 @@ class HeaderFile():
         self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
   def run_preprocessor(self): # TODO: run without generating a new file
-    tmp_file_path = self.submodule.submodule_file_path.parent / "tmp" / self.path.name
+    tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
+    tmp_dir.mkdir(exist_ok=True)
+    tmp_file_path = tmp_dir / self.path.name
     argv = [
       '',
       '-D', 'vp_deprecated=',
@@ -159,7 +165,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -186,6 +192,9 @@ class HeaderFile():
     result = ''
     print(f'Building environment for {self.path}')
     header_env = HeaderEnvironment(self.header_repr)
+    if 'AprilTag' in self.path.name:
+      import pprint
+      pprint.pprint(header_env.mapping)
     if self.documentation_holder_path is not None:
       self.documentation_holder = DocumentationHolder(self.documentation_holder_path, header_env.mapping)
     else:
