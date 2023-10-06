@@ -59,11 +59,13 @@ private:
   // // Gaussian smoothing attributes
   int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
   float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
 
   // // Gradient computation attributes
   bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
-  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
-  vpArray2D<float> m_fgDg; /*!< Array that contains the derivative of the Gaussian kernel.*/
+  unsigned int m_sobelAperture; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
+  vpArray2D<float> m_sobelX; /*!< Array that contains the Sobel kernel along the X-axis.*/
+  vpArray2D<float> m_sobelY; /*!< Array that contains the Sobel kernel along the Y-axis.*/
   vpImage<float> m_dIx; /*!< X-axis gradient.*/
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
@@ -82,10 +84,14 @@ private:
   /** @name Constructors and initialization */
   //@{
   /**
-   * \brief Initialize the Gaussian filters used to filter the input image and
-   * to compute its gradients.
+   * \brief Initialize the Gaussian filters used to filter the input image.
    */
   void initGaussianFilters();
+
+  /**
+   * \brief Initialize the Sobel filters used to compute the input image gradients.
+   */
+  void initSobelFilters();
   //@}
 
   /** @name Different steps methods */
@@ -151,10 +157,11 @@ public:
    *
    * \param[in] gaussianKernelSize : The size of the Gaussian filter kernel. Must be odd.
    * \param[in] gaussianStdev : The standard deviation of the Gaussian filter.
+   * \param[in] sobelAperture : The size of the Sobel filters kernel. Must be odd.
    * \param[in] lowerThreshold : The lower threshold of the hysteresis thresholding step. If negative, will be computed from the upper threshold.
    * \param[in] upperThreshold : The upper threshold of the hysteresis thresholding step. If negative, will be computed from the median of the gray values of the image.
    */
-  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
+  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1., const float &upperThreshold = -1.);
 
   // // Configuration from files
@@ -187,6 +194,7 @@ public:
     detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
     detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
     detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+    detector.m_sobelAperture = j.value("sobelAperture", detector.m_sobelAperture);
     detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
   }
 
@@ -202,6 +210,7 @@ public:
             {"gaussianSize", detector.m_gaussianKernelSize},
             {"gaussianStdev", detector.m_gaussianStdev},
             {"lowerThreshold", detector.m_lowerThreshold},
+            {"sobelAperture", detector.m_sobelAperture},
             {"upperThreshold", detector.m_upperThreshold} };
   }
 #endif
@@ -282,6 +291,20 @@ public:
   {
     m_gaussianKernelSize = kernelSize;
     m_gaussianStdev = stdev;
+    initGaussianFilters();
+  }
+
+  /**
+   * @brief Set the Gaussian Filters kernel size and standard deviation
+   * and initialize the aforementioned filters.
+   *
+   * \param[in] kernelSize : The size of the Gaussian filters kernel.
+   * \param[in] stdev : The standard deviation of the Gaussian filters used to blur and
+   * compute the gradient of the image.
+   */
+  inline void setSobelAperture(const unsigned int &sobelAperture)
+  {
+    m_sobelAperture = sobelAperture;
     initGaussianFilters();
   }
   //@}

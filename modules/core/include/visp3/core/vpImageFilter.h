@@ -80,7 +80,7 @@ public:
     \param r : coordinates (row) of the pixel
     \param c : coordinates (column) of the pixel
   */
-  template <class T> static double derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c)
+  template <class ImageType> static double derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
             112.0 * (I[r][c + 3] - I[r][c - 3])) / 8418.0;
@@ -93,7 +93,7 @@ public:
     \param r : coordinates (row) of the pixel
     \param c : coordinates (column) of the pixel
   */
-  template <class T> static double derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c)
+  template <class ImageType> static double derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
             112.0 * (I[r + 3][c] - I[r - 3][c])) / 8418.0;
@@ -112,8 +112,8 @@ public:
 
     \sa vpImageFilter::getGaussianDerivativeKernel()
     */
-  template <class T, typename FilterType>
-  static FilterType derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  template <class ImageType, typename FilterType>
+  static FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     unsigned int i;
     FilterType result;
@@ -139,8 +139,8 @@ public:
 
     \sa vpImageFilter::getGaussianDerivativeKernel()
   */
-  template <class T, typename FilterType>
-  static FilterType derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  template <class ImageType, typename FilterType>
+  static FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     unsigned int i;
     FilterType result;
@@ -181,8 +181,8 @@ public:
     \f]
     Only pixels in the input image fully covered by the kernel are considered.
   */
-  template <typename FilterType>
-  static void filter(const vpImage<unsigned char> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false)
+  template <typename ImageType, typename FilterType>
+  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false)
   {
     unsigned int size_y = M.getRows(), size_x = M.getCols();
     unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
@@ -221,6 +221,9 @@ public:
     }
   }
 
+  template <typename FilterType>
+  static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;
+
   /*!
     Apply a filter to an image:
     \f[
@@ -233,8 +236,8 @@ public:
     \param M : Filter kernel.
     \param convolve : If true, perform a convolution otherwise a correlation.
   */
-  template <typename FilterType>
-  static void filter(const vpImage<FilterType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M,
+  template <typename ImageType, typename FilterType>
+  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M,
     bool convolve = false)
   {
     unsigned int size = M.getRows();
@@ -281,24 +284,13 @@ public:
     }
   }
 
-  static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
+  template<typename FilterType>
+  static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M, bool convolve) = delete;
 
-  /*!
-    Apply a separable filter.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : The original image.
-    \param GI : The filtered image.
-    \param filter : The separable filter.
-    \param size : The size of the filter.
-  */
-  template <typename FilterType>
-  static void filter(const vpImage<unsigned char> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
-  {
-    vpImage<FilterType> GIx;
-    filterX<FilterType>(I, GIx, filter, size);
-    filterY<FilterType>(GIx, GI, filter, size);
-    GIx.destroy();
-  }
+  template<typename ImageType>
+  static void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageType> &Iv, const vpArray2D<vpRGBa> &M, bool convolve) = delete;
+  
+  static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
   /*!
     Apply a separable filter.
@@ -308,12 +300,12 @@ public:
     \param filter: The separable filter.
     \param size: The size of the filter.
   */
-  template <typename FilterType>
-  static void filter(const vpImage<FilterType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
+  template <typename ImageType, typename FilterType>
+  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
   {
     vpImage<FilterType> GIx;
-    filterX<FilterType>(I, GIx, filter, size);
-    filterY<FilterType>(GIx, GI, filter, size);
+    filterX<ImageType, FilterType>(I, GIx, filter, size);
+    filterY<FilterType, FilterType>(GIx, GI, filter, size);
     GIx.destroy();
   }
 
@@ -326,36 +318,19 @@ public:
     return (unsigned char)((1. * I[i - 2][j] + 4. * I[i - 1][j] + 6. * I[i][j] + 4. * I[i + 1][j] + 1. * I[i + 2][j]) / 16.);
   }
 
-  template <typename FilterType>
-  static void filterX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
+  template <typename ImageType, typename FilterType>
+  static void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
     dIx.resize(I.getHeight(), I.getWidth());
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < (size - 1) / 2; j++) {
-        dIx[i][j] = vpImageFilter::filterXLeftBorder<FilterType>(I, i, j, filter, size);
+        dIx[i][j] = vpImageFilter::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
       for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
-        dIx[i][j] = vpImageFilter::filterX<FilterType>(I, i, j, filter, size);
+        dIx[i][j] = vpImageFilter::filterX<ImageType, FilterType>(I, i, j, filter, size);
       }
       for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
-        dIx[i][j] = vpImageFilter::filterXRightBorder<FilterType>(I, i, j, filter, size);
-      }
-    }
-  }
-
-  template<typename FilterType>
-  static void filterX(const vpImage<FilterType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
-  {
-    dIx.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < (size - 1) / 2; j++) {
-        dIx[i][j] = vpImageFilter::filterXLeftBorder<FilterType>(I, i, j, filter, size);
-      }
-      for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
-        dIx[i][j] = vpImageFilter::filterX<FilterType>(I, i, j, filter, size);
-      }
-      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
-        dIx[i][j] = vpImageFilter::filterXRightBorder<FilterType>(I, i, j, filter, size);
+        dIx[i][j] = vpImageFilter::filterXRightBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
   }
@@ -365,8 +340,8 @@ public:
   static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 
-  template<typename FilterType>
-  static inline FilterType filterX(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  template<typename ImageType, typename FilterType>
+  static inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     FilterType result;
 
@@ -414,8 +389,8 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template <typename FilterType>
-  static inline FilterType filterXLeftBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
+  template <typename ImageType, typename FilterType>
+  static inline FilterType filterXLeftBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                              const FilterType *filter, unsigned int size)
   {
     FilterType result;
@@ -479,8 +454,8 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template <typename FilterType>
-  static inline FilterType filterXRightBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
+  template <typename ImageType, typename FilterType>
+  static inline FilterType filterXRightBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                               const FilterType *filter, unsigned int size)
   {
     FilterType result;
@@ -544,103 +519,34 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template <typename FilterType>
-  static inline FilterType filterX(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
-                                   const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i] + I[r][c - i]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
-  template <typename FilterType>
-  static inline FilterType filterXLeftBorder(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
-                                             const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c > i)
-        result += filter[i] * (I[r][c + i] + I[r][c - i]);
-      else
-        result += filter[i] * (I[r][c + i] + I[r][i - c]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
-  template <typename FilterType>
-  static inline FilterType filterXRightBorder(const vpImage<FilterType> &I, unsigned int r, unsigned int c,
-                                              const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c + i < I.getWidth())
-        result += filter[i] * (I[r][c + i] + I[r][c - i]);
-      else
-        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
-  template <typename FilterType>
-  static void filterY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
-  {
-    dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterYTopBorder<FilterType>(I, i, j, filter, size);
-      }
-    }
-    for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterY<FilterType>(I, i, j, filter, size);
-      }
-    }
-    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterYBottomBorder<FilterType>(I, i, j, filter, size);
-      }
-    }
-  }
-
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 
-  template<typename FilterType>
-  static void filterY(const vpImage<FilterType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
+  template<typename ImageType, typename FilterType>
+  static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
     dIy.resize(I.getHeight(), I.getWidth());
     for (unsigned int i = 0; i < (size - 1) / 2; i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterYTopBorder<FilterType>(I, i, j, filter, size);
+        dIy[i][j] = vpImageFilter::filterYTopBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
     for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterY<FilterType>(I, i, j, filter, size);
+        dIy[i][j] = vpImageFilter::filterY<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
     for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::filterYBottomBorder<FilterType>(I, i, j, filter, size);
+        dIy[i][j] = vpImageFilter::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
   }
 
-  template<typename FilterType>
-  static inline FilterType filterY(const vpImage<unsigned char> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
+  template<typename ImageType, typename FilterType>
+  static inline FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
     FilterType result;
 
@@ -687,8 +593,8 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template<typename FilterType>
-  static inline FilterType filterYTopBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
+  template<typename ImageType, typename FilterType>
+  static inline FilterType filterYTopBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                             const FilterType *filter, unsigned int size)
   {
     FilterType result;
@@ -749,8 +655,8 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template<typename FilterType>
-  static inline FilterType filterYBottomBorder(const vpImage<unsigned char> &I, unsigned int r, unsigned int c,
+  template<typename ImageType, typename FilterType>
+  static inline FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                                const FilterType *filter, unsigned int size)
   {
     FilterType result;
@@ -814,54 +720,6 @@ public:
     return result + filter[0] * I[r][c].B;
   }
 
-  template<typename FilterType>
-  static inline FilterType filterYTopBorder(const vpImage<double> &I, unsigned int r, unsigned int c,
-                                            const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r > i)
-        result += filter[i] * (I[r + i][c] + I[r - i][c]);
-      else
-        result += filter[i] * (I[r + i][c] + I[i - r][c]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
-  template<typename FilterType>
-  static inline FilterType filterYBottomBorder(const vpImage<double> &I, unsigned int r, unsigned int c,
-                                               const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r + i < I.getHeight())
-        result += filter[i] * (I[r + i][c] + I[r - i][c]);
-      else
-        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
-  template<typename FilterType>
-  static inline FilterType filterY(const vpImage<double> &I, unsigned int r, unsigned int c,
-                                   const FilterType *filter, unsigned int size)
-  {
-    FilterType result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c] + I[r - i][c]);
-    }
-    return result + filter[0] * I[r][c];
-  }
-
   /*!
     Apply a Gaussian blur to an image.
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
@@ -874,43 +732,19 @@ public:
 
     \sa getGaussianKernel() to know which kernel is used.
   */
-  template <typename FilterType>
-  static void gaussianBlur(const vpImage<unsigned char> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
+  template <typename ImageType, typename FilterType>
+  static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
   {
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
     vpImage<FilterType> GIx;
-    vpImageFilter::filterX<FilterType>(I, GIx, fg, size);
-    vpImageFilter::filterY<FilterType>(GIx, GI, fg, size);
+    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size);
+    vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size);
     GIx.destroy();
     delete[] fg;
   }
 
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true);
-
-  /*!
-    Apply a Gaussian blur to a double image.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Input double image.
-    \param GI : Filtered image.
-    \param size : Filter size. This value should be odd.
-    \param sigma : Gaussian standard deviation. If it is equal to zero or
-    negative, it is computed from filter size as sigma = (size-1)/6.
-    \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-
-    \sa getGaussianKernel() to know which kernel is used.
-  */
-  template <typename FilterType>
-  static void gaussianBlur(const vpImage<FilterType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
-  {
-    FilterType *fg = new FilterType[(size + 1) / 2];
-    vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
-    vpImage<FilterType> GIx;
-    vpImageFilter::filterX<FilterType>(I, GIx, fg, size);
-    vpImageFilter::filterY<FilterType>(GIx, GI, fg, size);
-    GIx.destroy();
-    delete[] fg;
-  }
 
   /*!
     Apply a 5x5 Gaussian filter to an image pixel.
@@ -1077,7 +911,7 @@ public:
                               const FilterType *gaussianDerivativeKernel, unsigned int size)
   {
     vpImage<FilterType> GIy;
-    vpImageFilter::filterY<FilterType>(I, GIy, gaussianKernel, size);
+    vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size);
     vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size);
   }
 
@@ -1139,7 +973,7 @@ public:
                               const FilterType *gaussianDerivativeKernel, unsigned int size)
   {
     vpImage<FilterType> GIx;
-    vpImageFilter::filterX<FilterType>(I, GIx, gaussianKernel, size);
+    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size);
     vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size);
   }
 
@@ -1222,9 +1056,10 @@ public:
     return 1 / 16.0;
   }
 
+static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh);
+
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh);
-  static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh);
   static float median(const cv::Mat &cv_I);
   static float median(const vpImage<unsigned char> &Isrc);
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);

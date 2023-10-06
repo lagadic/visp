@@ -40,21 +40,25 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
   : m_gaussianKernelSize(3)
   , m_gaussianStdev(1.)
   , m_areGradientAvailable(false)
+  , m_sobelAperture(3)
   , m_lowerThreshold(-1.)
   , m_upperThreshold(-1.)
 {
   initGaussianFilters();
+  initSobelFilters();
 }
 
-vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
+vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture
                         , const float &lowerThreshold, const float &upperThreshold)
   : m_gaussianKernelSize(gaussianKernelSize)
   , m_gaussianStdev(gaussianStdev)
   , m_areGradientAvailable(false)
+  , m_sobelAperture(sobelAperture)
   , m_lowerThreshold(lowerThreshold)
   , m_upperThreshold(upperThreshold)
 {
   initGaussianFilters();
+  initSobelFilters();
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -86,6 +90,7 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
   *this = j; // Call from_json(const json& j, vpDetectionCircle2D& *this) to read json
   file.close();
   initGaussianFilters();
+  initSobelFilters();
 }
 #endif
 
@@ -97,8 +102,18 @@ vpCannyEdgeDetection::initGaussianFilters()
   }
   m_fg.resize(1, (m_gaussianKernelSize + 1)/2);
   vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, false);
-  m_fgDg.resize(1, (m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_gaussianKernelSize, m_gaussianStdev, false);
+}
+
+void
+vpCannyEdgeDetection::initSobelFilters()
+{
+  if ((m_sobelAperture % 2) == 0) {
+    throw(vpException(vpException::badValue, "The Sobel kernel size should be odd"));
+  }
+  m_sobelX.resize(m_sobelAperture, m_sobelAperture);
+  vpImageFilter::getSobelKernelX(m_sobelX.data, (m_sobelAperture - 1)/2);
+  m_sobelY.resize(m_sobelAperture, m_sobelAperture);
+  vpImageFilter::getSobelKernelY(m_sobelY.data, (m_sobelAperture - 1)/2);
 }
 
 // // Detection methods
@@ -139,12 +154,15 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 
   // // Step 4: hysteresis thresholding
   float upperThreshold = m_upperThreshold;
-
   float lowerThreshold = m_lowerThreshold;
-  if (m_lowerThreshold < 0) {
+  if(upperThreshold < 0) {
+    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold);
+  }
+  else if (m_lowerThreshold < 0) {
     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
     lowerThreshold = m_upperThreshold / 3.f;
   }
+  std::cout << "lt = " << lowerThreshold << " ; ut = " << upperThreshold << std::endl; 
 
   performHysteresisThresholding(lowerThreshold, upperThreshold);
 
@@ -156,18 +174,15 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 void
 vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsigned char> &I)
 {
-  vpImageFilter::getGradXGauss2D(I,
-    m_dIx,
-    m_fg.data,
-    m_fgDg.data,
-    m_gaussianKernelSize
-  );
-  vpImageFilter::getGradYGauss2D(I,
-    m_dIy,
-    m_fg.data,
-    m_fgDg.data,
-    m_gaussianKernelSize
-  );
+  // Computing the Gaussian blurr 
+  vpImage<float> Iblur;
+  vpImage<float> GIx;
+  vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, m_gaussianKernelSize);
+  vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize);
+
+  // Computing the gradients
+  vpImageFilter::filter(Iblur,m_dIx,m_sobelX);
+  vpImageFilter::filter(Iblur,m_dIy,m_sobelY);
 }
 
 /**

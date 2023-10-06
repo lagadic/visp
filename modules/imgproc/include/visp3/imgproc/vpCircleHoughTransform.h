@@ -468,7 +468,7 @@ public:
   void init(const vpCircleHoughTransformParameters &algoParams);
 
   /**
-   * \brief Set the parameters of the Gaussian filter, that computes the
+   * \brief Set the parameters of the Gaussian filter, that permits to blur the
    * gradients of the image.
    *
    * \param[in] kernelSize The size of the Gaussian kernel. Must be an odd value.
@@ -488,6 +488,23 @@ public:
     }
 
     initGaussianFilters();
+  }
+
+  /**
+   * \brief Set the parameters of the Sobel filters, that computes the
+   * gradients of the image.
+   *
+   * \param[in] apertureSize The size of the Sobel filters kernel. Must be an odd value.
+   */
+  inline void setSobelAperture(const unsigned int &apertureSize)
+  {
+    m_algoParams.m_sobelKernelSize = apertureSize;
+
+    if ((m_algoParams.m_sobelKernelSize % 2) != 1) {
+      throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+    }
+
+    initSobelFilters();
   }
 
   /*!
@@ -750,10 +767,14 @@ public:
 
 private:
   /**
-   * \brief Initialize the Gaussian filters used to blur the image and
-   * compute the gradient images.
+   * \brief Initialize the Gaussian filters used to blur the image.
    */
   void initGaussianFilters();
+
+  /**
+   * \brief Initialize the Gaussian filters used to blur the image compute the gradient images.
+   */
+  void initSobelFilters();
 
   /**
    * \brief Perform Gaussian smoothing on the input image to reduce the noise
@@ -819,9 +840,10 @@ private:
   vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
   vpArray2D<float> m_fg;
-  vpArray2D<float> m_fgDg;
 
   // // Gradient computation attributes
+  vpArray2D<float> m_sobelX;
+  vpArray2D<float> m_sobelY;
   vpImage<float> m_dIx; /*!< Gradient along the x-axis of the input image.*/
   vpImage<float> m_dIy; /*!< Gradient along the y-axis of the input image.*/
 
