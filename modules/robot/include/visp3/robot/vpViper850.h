@@ -101,7 +101,7 @@ class VISP_EXPORT vpViper850 : public vpViper
 {
 public:
 #ifdef VISP_HAVE_VIPER850_DATA
-  //! Files where constant tranformation between end-effector and camera frame
+  //! Files where constant transformation between end-effector and camera frame
   //! are stored.
   static const std::string CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;

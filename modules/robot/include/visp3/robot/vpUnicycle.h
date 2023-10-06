@@ -65,7 +65,7 @@ public:
   /** @name Inherited functionalities from vpUnicycle */
   //@{
   /*!
-    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame
+    Return the transformation \f${^c}{\bf M}_e\f$ between the camera frame
     and the mobile robot end effector frame.
     */
   vpHomogeneousMatrix get_cMe() const { return cMe_; }

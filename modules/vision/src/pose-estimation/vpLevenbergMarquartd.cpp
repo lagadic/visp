@@ -557,7 +557,7 @@ int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int /* lipvt 
       ipvt[i] = i;
   }
   /*
-   *     reduction de "a" en "r" avec les tranformations de Householder.
+   *     reduction de "a" en "r" avec les transformations de Householder.
    */
   minmn = vpMath::minimum(m, n);
   for (i = 0; i < minmn; i++) {
@@ -599,7 +599,7 @@ int qrfac(int m, int n, double *a, int lda, int *pivot, int *ipvt, int /* lipvt 
       *MIJ(a, i, i, lda) += 1.0;
 
       /*
-       *  application de la tranformation aux lignes
+       *  application de la transformation aux lignes
        *  restantes et mise a jour des normes.
        */
       ip1 = i + 1;
@@ -770,7 +770,7 @@ int qrsolv(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doub
           wa[k] = temp;
 
           /*
-           *  accumulation des tranformations dans
+           *  accumulation des transformations dans
            *  les lignes de s.
            */
 

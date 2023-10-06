@@ -339,7 +339,7 @@ void cosin_to_lut(Index level, float *coslut, float *sinlut)
 
 /*
  * La procedure "norm_vector" normalise le vecteur.
- * Si la norme est nulle la normalisation n'est pas effectuee.
+ * Si la norme est nulle la normalization n'est pas effectuee.
  * Entree :
  * vp    Le vecteur a norme.
  * Sortie :

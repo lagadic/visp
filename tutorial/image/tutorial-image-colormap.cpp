@@ -117,7 +117,7 @@ int main()
       }
     }
 
-    // Apply a colormap on a 8-bit RGB image, with normalisation to the [0 - 255] range
+    // Apply a colormap on a 8-bit RGB image, with normalization to the [0 - 255] range
     {
       vpImage<vpRGBa> I;
       vpImageIo::read(I, "monkey.png");
