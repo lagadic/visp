@@ -306,8 +306,21 @@ class HeaderFile():
       # Constructors definitions
       if not contains_pure_virtual_methods:
         for method, method_config in constructors:
+          method_name = get_name(method.name)
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
           py_arg_strs = get_py_args(method.parameters, owner_specs, header_env.mapping)
+          param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
+          if self.documentation_holder is not None:
+            method_doc_signature = MethodDocSignature(method_name,
+                                                      get_type(method.return_type, {}, header_env.mapping) or '', # Don't use specializations so that we can match with doc
+                                                      [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                      method.const, method.static)
+            method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, owner_specs, param_names, [])
+            if method_doc is None:
+              print(f'Could not find documentation for {name_cpp}::{method_name}!')
+            else:
+              py_arg_strs = [method_doc.documentation] + py_arg_strs
+
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           method_strs.append(ctor_str)
 

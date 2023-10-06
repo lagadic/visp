@@ -141,13 +141,6 @@ public:
   std::string to_string() const;
 
   /**
-   * \brief Cast the object into an unsigned int that matches the value of its \b _colorID member.
-   *
-   * \return unsigned int that matches the value of its \b _colorID member.
-   */
-  unsigned int to_uint() const;
-
-  /**
    * \brief Get the list of available colors names.
    *
    * \param prefix Optional prefix that will be written before starting the list.
