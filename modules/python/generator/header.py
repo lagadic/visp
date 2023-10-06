@@ -15,7 +15,7 @@ from doc_parser import *
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from submodule import Submodule
-
+import sys
 @dataclass
 class BoundObjectNames:
   python_ident: str
@@ -41,6 +41,13 @@ def filter_includes(include_names: Set[str]) -> List[str]:
   return result
 
 def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
+  '''
+  Sort headers based on their dependencies on other classes.
+  If a class does not inherit from any other, then it will be placed at the start of the list.
+  If it has a dependency, then it will be placed after this dependency in the list.
+  This step is important to ensure that the code generation is performed in the correct order.
+  It is not possible to declare an inheriting class to pybind without first exposing the base class.
+  '''
   def add_level(result: List['HeaderFile'], remainder: List['HeaderFile'], dependencies: Set[str]):
     if len(remainder) == 0:
       return
@@ -49,18 +56,22 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
     if len(result) == 0: # First iteration, query all headers that have no dependencies
       include_in_result_fn = lambda h: len(h.depends) == 0
     else:
-      include_in_result_fn = lambda h: any(map(lambda x: x in dependencies, h.depends))
+      # Some header define multiple classes, where one may rely on another. So we filter h.depends
+      include_in_result_fn = lambda h: all(map(lambda x: x in dependencies, filter(lambda s: s not in h.contains, h.depends)))
     new_remainder = []
-    new_dependencies = []
+    new_dependencies = dependencies.copy()
     for header_file in remainder:
       has_dependency = include_in_result_fn(header_file)
+      if 'vpFeatureMoment.h' in header_file.path.name:
+        print(header_file.contains, header_file.depends, has_dependency)
       if has_dependency:
-        new_dependencies.extend(header_file.contains)
+        new_dependencies = new_dependencies | set(header_file.contains)
         result.append(header_file)
       else:
         new_remainder.append(header_file)
     if new_remainder == remainder:
-      print('Warning: Could not completely solve dependencies, generating but might have some errors')
+      print('REMAINING and deps', dependencies, new_dependencies)
+      print(f'Warning: Could not completely solve dependencies, generating but might have some errors\n Faulty headers: {[h.path.name for h in remainder]}', file=sys.stderr)
       result.extend(remainder)
     else:
       add_level(result, new_remainder, set(new_dependencies))
@@ -190,7 +201,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',

@@ -56,15 +56,12 @@ def generate_module(generate_path: Path) -> None:
         raise RuntimeError('There was an exception when processing headers: You should either ignore them, ignore the failing class, or fix the generator code!')
       new_all_headers.append(result)
 
-
   # Sort headers according to the dependencies. This is done across all modules.
   # TODO: sort module generation order. For now this works but it's fairly brittle
   new_all_headers = sort_headers(new_all_headers)
+  print('NSM', [h.path.name for h in new_all_headers])
   for header in new_all_headers:
     header.compute_environment()
-
-  all_environments = list(map(lambda header: header.environment, new_all_headers))
-  print('LS', [h.path.name for h in new_all_headers])
 
   headers_with_deps = list(map(lambda header: (header, header.get_header_dependencies(new_all_headers)), new_all_headers))
 
