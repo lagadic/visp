@@ -70,14 +70,17 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
-    self.mapping = self.build_naive_mapping(data.namespace)
+    self.mapping = self.build_naive_mapping(data.namespace, {})
+    print(self.mapping)
+
+    # Step 2: resolve enumeration names that are possibly hidden behind typedefs
     from enum_binding import resolve_enums_and_typedefs
     enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
     for enum_repr in enum_reprs:
       for value in enum_repr.values:
         self.mapping[value.name] = enum_repr.name + '::' + value.name
 
-  def build_naive_mapping(self, data: Union[NamespaceScope, ClassScope], mapping={}, scope: str = ''):
+  def build_naive_mapping(self, data: Union[NamespaceScope, ClassScope], mapping, scope: str = ''):
     if isinstance(data, NamespaceScope):
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
@@ -112,6 +115,28 @@ class HeaderEnvironment():
         mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
     return mapping
 
+  def update_with_dependencies(self, dependencies: List[str], all_envs: List['HeaderEnvironment'], header_name) -> None:
+    for env in all_envs:
+      if env == self:
+        continue
+      other_mapping = env.mapping
+      # Check if dependency is in this mapping
+      contains_dependency = False
+      for dep in dependencies:
+        if dep in other_mapping:
+          print(f'FOUND DEPENDENCY {dep} for {header_name} iN MAP')
+          contains_dependency = True
+          break
+      if not contains_dependency:
+        continue
+      # We have a dependency, pull all the items that are in this dependency
+      for partial_name, full_name in other_mapping.items():
+        full_name_has_dep = any(map(lambda s: s in full_name, dependencies)) # TODO: This is wrong => this does not pull dependencies that are from a two level inheritance (vpBasicFeature => vpFeatureMoment => vpFeatureMomentAlpha: the last class doesn't see vpBasicFeature)
+        if full_name_has_dep and partial_name not in self.mapping:
+          self.mapping[partial_name] = full_name
+          print(f'Updated mapping with {partial_name} -> {full_name}')
+
+
 class HeaderFile():
   def __init__(self, path: Path, submodule: 'Submodule'):
     self.path = path
@@ -124,6 +149,7 @@ class HeaderFile():
     self.depends = []
     self.documentation_holder_path: Path = None
     self.documentation_holder = None
+    self.environment: HeaderEnvironment = None
 
   def __getstate__(self):
     return self.__dict__
@@ -145,10 +171,9 @@ class HeaderFile():
 
       # Add parent classes as dependencies
       for base_class in cls.class_decl.bases:
-        if base_class.access == 'public':
-          base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
-          if base_class_str_no_template.startswith('vp'):
-              self.depends.append(base_class_str_no_template)
+        base_class_str_no_template = '::'.join([segment.name for segment in base_class.typename.segments])
+        if base_class_str_no_template.startswith('vp'):
+            self.depends.append(base_class_str_no_template)
 
       # Get documentation if available, only one document supported for now
       if self.documentation_holder_path is None:
@@ -165,7 +190,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -186,12 +211,20 @@ class HeaderFile():
 
     self.binding_code = self.parse_data()
 
+  def compute_environment(self):
+    '''
+    Compute the header environment
+    This environment contains:
+      - The mapping from partially qualified names to fully qualified names
+    If a class inherits from another, the environment should be updated with what is contained in the base class environment. This should be done in another step
+    '''
+    self.environment = HeaderEnvironment(self.header_repr)
 
   def parse_data(self):
     from enum_binding import enum_bindings
     result = ''
     print(f'Building environment for {self.path}')
-    header_env = HeaderEnvironment(self.header_repr)
+    header_env = self.environment
     if 'AprilTag' in self.path.name:
       import pprint
       pprint.pprint(header_env.mapping)

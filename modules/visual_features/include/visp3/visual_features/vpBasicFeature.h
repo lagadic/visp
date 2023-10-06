@@ -78,7 +78,7 @@ class VISP_EXPORT vpBasicFeature
 public: // Public constantes
   static const unsigned int FEATURE_LINE[32];
 
-  enum { FEATURE_ALL = 0xffff };
+  enum vpBasicFeatureSelect { FEATURE_ALL = 0xffff };
   /*!
     \enum vpBasicFeatureDeallocatorType
     Indicates who should deallocate the feature.

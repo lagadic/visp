@@ -59,6 +59,19 @@ def generate_module(generate_path: Path) -> None:
   # Sort headers according to the dependencies. This is done across all modules.
   # TODO: sort module generation order. For now this works but it's fairly brittle
   new_all_headers = sort_headers(new_all_headers)
+  for header in new_all_headers:
+    header.compute_environment()
+
+  all_environments = list(map(lambda header: header.environment, new_all_headers))
+  print('LS', [h.path.name for h in new_all_headers])
+  for header in new_all_headers:
+    print(f'BEFORE {header.path.name}')
+    import pprint
+    pprint.pprint(header.environment.mapping)
+    header.environment.update_with_dependencies(header.depends, all_environments, header.path.name)
+    print(f'AFTER {header.path.name}')
+    pprint.pprint(header.environment.mapping)
+
   for submodule in submodules:
     submodule.set_headers_from_common_list(new_all_headers)
 

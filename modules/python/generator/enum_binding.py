@@ -87,12 +87,10 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
       anonymous_enum, enum_id = is_anonymous_name(enum.typename)
 
       full_name = get_typename(enum.typename, {}, mapping) if not anonymous_enum else None
-      print('SAW ENUM NAME :', full_name, 'with values', enum.values)
       matches = lambda repr: match_id(repr, enum_id) or match_name(repr, full_name)
       matching = list(filter(matches, temp_data))
       assert len(matching) <= 1, f"There cannot be more than one repr found. Matches = {matching}"
       if len(matching) == 0:
-        print('APPENDING ', EnumRepr(enum_id, full_name, enum.values, public_access))
         temp_data.append(EnumRepr(enum_id, full_name, enum.values, public_access))
       else:
         if full_name is not None:
@@ -122,13 +120,11 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
         matching[0].public_access = matching[0].public_access and public_access
 
     ready_enums = list(filter(enum_repr_is_ready, temp_data))
-    print('READY ENUMS', ready_enums)
     for repr in ready_enums:
       final_data.append(repr)
       temp_data.remove(repr)
 
   accumulate_data(root_scope)
-  print(final_data, temp_data)
   return final_data, temp_data
 
 
