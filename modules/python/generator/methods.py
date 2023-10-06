@@ -106,16 +106,59 @@ def method_def(py_name: str, method: str, additional_args: List[str], static: bo
 def tokens_to_str(tokens: List[types.Token]) -> str:
   return ''.join([token.value for token in tokens])
 
+
+FORBIDDEN_DEFAULT_ARGUMENT_TYPES = [
+  'std::ostream',
+  'std::initializer_list',
+  'rs2::',
+  'cv::'
+]
+
+def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapping) -> bool:
+  '''
+  Return whether an argument can have a default value.
+  This is important! In python, default argument are instanciated only once (when the package is imported), while this is not the case in C++
+  We need to be careful in what we allow
+  '''
+  t = parameter.type
+  gt = lambda typename: get_typename(typename, specs, env_mapping)
+  is_const = False
+  if isinstance(t, types.Type):
+    type_name = gt(t.typename)
+    is_const =  t.const
+  elif isinstance(t, types.Reference):
+    type_name = gt(t.ref_to.typename)
+    is_const = t.ref_to.const
+  elif isinstance(t, types.Pointer):
+    type_name = gt(t.ptr_to.typename)
+    is_const = t.ptr_to.const
+  else:
+    type_name = ''
+  for forbidden in FORBIDDEN_DEFAULT_ARGUMENT_TYPES: # Eg, arguments that have no mapping to python
+    if type_name.startswith(forbidden):
+      return False
+
+  if is_const: # Parameter is const, so we can safely give a default value knowing it won't be modified
+    return True
+  if type_name in IMMUTABLE_TYPES: # Immutable type on python side
+    return True
+
+  return False
+
+
+
 def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[str]:
   '''
   Get the py::arg parameters of a function binding definition.
   They are used to give the argument their names in the doc and the api.
   They can also have default values (optional arguments).
   '''
+  def make_arg(name: str) -> str:
+    return f'py::arg("{name}")'
   py_args = []
   for parameter in parameters:
-    if parameter.default is None:
-      py_args.append(f'py::arg("{parameter.name}")')
+    if parameter.default is None or not parameter_can_have_default_value(parameter, specs, env_mapping):
+      py_args.append(make_arg(parameter.name))
     else:
       t = parameter.type
       gt = lambda typename: get_typename(typename, specs, env_mapping)

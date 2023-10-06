@@ -24,6 +24,7 @@ def main_str(submodule_fn_declarations, submodule_fn_calls):
 
   '''
   return f'''
+#define PYBIND11_DETAILED_ERROR_MESSAGES
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 {submodule_fn_declarations}
@@ -64,13 +65,13 @@ def generate_module(generate_path: Path) -> None:
 
   all_environments = list(map(lambda header: header.environment, new_all_headers))
   print('LS', [h.path.name for h in new_all_headers])
-  for header in new_all_headers:
-    print(f'BEFORE {header.path.name}')
-    import pprint
-    pprint.pprint(header.environment.mapping)
-    header.environment.update_with_dependencies(header.depends, all_environments, header.path.name)
-    print(f'AFTER {header.path.name}')
-    pprint.pprint(header.environment.mapping)
+
+  headers_with_deps = list(map(lambda header: (header, header.get_header_dependencies(new_all_headers)), new_all_headers))
+
+  for header, header_deps in headers_with_deps:
+    other_mappings = list(map(lambda h: h.environment.mapping, header_deps))
+    print(f'Dependencies of {header.path.name}: {list(map(lambda h: h.path.name, header_deps))}')
+    header.environment.update_with_dependencies(other_mappings)
 
   for submodule in submodules:
     submodule.set_headers_from_common_list(new_all_headers)

@@ -70,8 +70,7 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
-    self.mapping = self.build_naive_mapping(data.namespace, {})
-    print(self.mapping)
+    self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
 
     # Step 2: resolve enumeration names that are possibly hidden behind typedefs
     from enum_binding import resolve_enums_and_typedefs
@@ -115,27 +114,10 @@ class HeaderEnvironment():
         mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
     return mapping
 
-  def update_with_dependencies(self, dependencies: List[str], all_envs: List['HeaderEnvironment'], header_name) -> None:
-    for env in all_envs:
-      if env == self:
-        continue
-      other_mapping = env.mapping
-      # Check if dependency is in this mapping
-      contains_dependency = False
-      for dep in dependencies:
-        if dep in other_mapping:
-          print(f'FOUND DEPENDENCY {dep} for {header_name} iN MAP')
-          contains_dependency = True
-          break
-      if not contains_dependency:
-        continue
-      # We have a dependency, pull all the items that are in this dependency
-      for partial_name, full_name in other_mapping.items():
-        full_name_has_dep = any(map(lambda s: s in full_name, dependencies)) # TODO: This is wrong => this does not pull dependencies that are from a two level inheritance (vpBasicFeature => vpFeatureMoment => vpFeatureMomentAlpha: the last class doesn't see vpBasicFeature)
-        if full_name_has_dep and partial_name not in self.mapping:
-          self.mapping[partial_name] = full_name
-          print(f'Updated mapping with {partial_name} -> {full_name}')
 
+  def update_with_dependencies(self, other_envs: List['HeaderEnvironment']) -> None:
+    for env in other_envs:
+      self.mapping.update(env)
 
 class HeaderFile():
   def __init__(self, path: Path, submodule: 'Submodule'):
@@ -155,6 +137,24 @@ class HeaderFile():
     return self.__dict__
   def __setstate__(self, d):
     self.__dict__ = d
+
+  def get_header_dependencies(self, headers: List['HeaderFile']) -> List['HeaderFile']:
+    if len(self.depends) == 0:
+      return []
+    header_deps = []
+    for header in headers:
+      if header == self:
+        continue
+      is_dependency = False
+      for d in self.depends:
+        if d in header.contains:
+          is_dependency = True
+          break
+      if is_dependency:
+        header_deps.append(header)
+        upper_dependencies = header.get_header_dependencies(headers)
+        header_deps.extend(upper_dependencies)
+    return header_deps
 
   def preprocess(self) -> None:
     '''
@@ -190,7 +190,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
