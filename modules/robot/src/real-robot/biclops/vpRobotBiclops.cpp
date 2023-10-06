@@ -58,61 +58,20 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 
-bool vpRobotBiclops::robotAlreadyCreated = false;
+bool vpRobotBiclops::m_robotAlreadyCreated = false;
 const double vpRobotBiclops::defaultPositioningVelocity = 10.0;
 
 static pthread_mutex_t vpEndThread_mutex;
 static pthread_mutex_t vpShm_mutex;
 static pthread_mutex_t vpMeasure_mutex;
 
-/* ----------------------------------------------------------------------- */
-/* --- CONSTRUCTOR ------------------------------------------------------ */
-/* ---------------------------------------------------------------------- */
-
-/*!
-
-  Default constructor.
-
-  Does nothing more than setting the default configuration file
-  to `/usr/share/BiclopsDefault.cfg`.
-
-  As shown in the following example, the turret need to be initialized
-  using init() function.
-
-  \code
-#include <visp3/robot/vpRobotBiclops.h>
-
-int main()
-{
-#ifdef VISP_HAVE_BICLOPS
-  vpRobotBiclops robot; // Use the default config file in
-/usr/share/BiclopsDefault.cfg"
-
-  // Specify the config file location
-  robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since the file is the default one
-
-  // Initialize the head
-  robot.init();
-
-  // Move the robot to a specified pan and tilt
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-  vpColVector q(2);
-  q[0] = vpMath::rad(20); // pan
-  q[1] = vpMath::rad(40); // tilt
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-#endif
-  return 0;
-}
-  \endcode
-
-*/
 vpRobotBiclops::vpRobotBiclops()
-  : vpBiclops(), vpRobot(), control_thread(), controller(), positioningVelocity(defaultPositioningVelocity),
-    q_previous(), controlThreadCreated(false)
+  : vpBiclops(), vpRobot(), m_control_thread(), m_controller(), m_positioningVelocity(defaultPositioningVelocity),
+  m_q_previous(), m_controlThreadCreated(false)
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
-  vpRobotBiclops::robotAlreadyCreated = false;
+  vpRobotBiclops::m_robotAlreadyCreated = false;
   setConfigFile("/usr/share/BiclopsDefault.cfg");
 
   // Initialize the mutex dedicated to she shm protection
@@ -120,46 +79,16 @@ vpRobotBiclops::vpRobotBiclops()
   pthread_mutex_init(&vpEndThread_mutex, NULL);
   pthread_mutex_init(&vpMeasure_mutex, NULL);
 
-  control_thread = 0;
+  m_control_thread = 0;
 }
 
-/*!
-
-  Constructor that initialize the biclops pan, tilt head by reading the
-  configuration file provided by Traclabs
-  and do the homing sequence.
-
-  The following example shows how to use the constructor.
-
-  \code
-#include <visp3/robot/vpRobotBiclops.h>
-
-int main()
-{
-#ifdef VISP_HAVE_BICLOPS
-  // Specify the config file location and initialize the turret
-  vpRobotBiclops robot("/usr/share/BiclopsDefault.cfg");
-
-  // Move the robot to a specified pan and tilt
-  robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
-
-  vpColVector q(2);
-  q[0] = vpMath::rad(-20); // pan
-  q[1] = vpMath::rad(10); // tilt
-  robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
-#endif
-  return 0;
-}
-  \endcode
-
-*/
 vpRobotBiclops::vpRobotBiclops(const std::string &filename)
-  : vpBiclops(), vpRobot(), control_thread(), controller(), positioningVelocity(defaultPositioningVelocity),
-    q_previous(), controlThreadCreated(false)
+  : vpBiclops(), vpRobot(), m_control_thread(), m_controller(), m_positioningVelocity(defaultPositioningVelocity),
+  m_q_previous(), m_controlThreadCreated(false)
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
-  vpRobotBiclops::robotAlreadyCreated = false;
+  vpRobotBiclops::m_robotAlreadyCreated = false;
   setConfigFile(filename);
 
   // Initialize the mutex dedicated to she shm protection
@@ -171,13 +100,6 @@ vpRobotBiclops::vpRobotBiclops(const std::string &filename)
 
   return;
 }
-
-/*!
-
-  Destructor.
-  Wait the end of the control thread.
-
-*/
 
 vpRobotBiclops::~vpRobotBiclops()
 {
@@ -191,11 +113,11 @@ vpRobotBiclops::~vpRobotBiclops()
   /* wait the end of the control thread */
   vpDEBUG_TRACE(12, "Wait end of control thread");
 
-  if (controlThreadCreated == true) {
-    int code = pthread_join(control_thread, NULL);
+  if (m_controlThreadCreated == true) {
+    int code = pthread_join(m_control_thread, NULL);
     if (code != 0) {
       vpCERROR << "Cannot terminate the control thread: " << code << " strErr=" << strerror(errno)
-               << " strCode=" << strerror(code) << std::endl;
+        << " strCode=" << strerror(code) << std::endl;
     }
   }
 
@@ -203,91 +125,53 @@ vpRobotBiclops::~vpRobotBiclops()
   pthread_mutex_destroy(&vpEndThread_mutex);
   pthread_mutex_destroy(&vpMeasure_mutex);
 
-  vpRobotBiclops::robotAlreadyCreated = false;
+  vpRobotBiclops::m_robotAlreadyCreated = false;
 
   vpDEBUG_TRACE(12, "Stop vpRobotBiclops::~vpRobotBiclops()");
   return;
 }
 
-/* -------------------------------------------------------------------------
- */
-/* --- INITIALISATION ------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
+void vpRobotBiclops::setConfigFile(const std::string &filename) { m_configfile = filename; }
 
-/*!
-
-  Set the Biclops config filename.
-
-*/
-void vpRobotBiclops::setConfigFile(const std::string &filename) { this->configfile = filename; }
-
-/*!
-
-  Set the Biclops config filename.
-  Check if the config file exists and initialize the head.
-
-  \exception vpRobotException::constructionError If the config file cannot be
-  oppened.
-
-*/
 void vpRobotBiclops::init()
 {
   // test if the config file exists
-  FILE *fd = fopen(configfile.c_str(), "r");
+  FILE *fd = fopen(m_configfile.c_str(), "r");
   if (fd == NULL) {
-    vpCERROR << "Cannot open biclops config file: " << configfile << std::endl;
+    vpCERROR << "Cannot open biclops config file: " << m_configfile << std::endl;
     throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }
   fclose(fd);
 
   // Initialize the controller
-  controller.init(configfile);
+  m_controller.init(m_configfile);
 
   try {
     setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 
-  vpRobotBiclops::robotAlreadyCreated = true;
+  vpRobotBiclops::m_robotAlreadyCreated = true;
 
-  // Initialize previous articular position to manage getDisplacement()
-  q_previous.resize(vpBiclops::ndof);
-  q_previous = 0;
+  // Initialize previous joint position to manage getDisplacement()
+  m_q_previous.resize(vpBiclops::ndof);
+  m_q_previous = 0;
 
-  controlThreadCreated = false;
+  m_controlThreadCreated = false;
 
   return;
 }
 
-/*
-  Control loop to manage the biclops joint limits in speed control.
-
-  This control loop is running in a separate thread in order to detect each 5
-  ms joint limits during the speed control. If a joint limit is detected the
-  axis should be halted.
-
-  \warning Velocity control mode is not exported from the top-level Biclops
-  API class provided by Traclabs. That means that there is no protection in
-  this mode to prevent an axis from striking its hard limit. In position mode,
-  Traclabs put soft limits in that keep any command from driving to a position
-  too close to the hard limits. In velocity mode this protection does not
-  exist in the current API.
-
-  \warning With the understanding that hitting the hard limits at full
-  speed/power can damage the unit, damage due to velocity mode commanding is
-  under user responsibility.
-*/
 void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
 {
-  vpRobotBiclopsController *controller = static_cast<vpRobotBiclopsController *>(arg);
+  vpRobotBiclopsController *m_controller = static_cast<vpRobotBiclopsController *>(arg);
 
   int iter = 0;
-  //   PMDAxisControl *panAxis  = controller->getPanAxis();
-  //   PMDAxisControl *tiltAxis = controller->getTiltAxis();
+  //   PMDAxisControl *panAxis  = m_controller->getPanAxis();
+  //   PMDAxisControl *tiltAxis = m_controller->getTiltAxis();
   vpRobotBiclopsController::shmType shm;
 
   vpDEBUG_TRACE(10, "Start control loop");
@@ -311,7 +195,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
   pthread_mutex_lock(&vpShm_mutex);
 
-  shm = controller->readShm();
+  shm = m_controller->readShm();
 
   vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
   pthread_mutex_unlock(&vpShm_mutex);
@@ -325,20 +209,20 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   }
 
   // Initialize actual position and velocity
-  mes_q = controller->getActualPosition();
-  mes_q_dot = controller->getActualVelocity();
+  mes_q = m_controller->getActualPosition();
+  mes_q_dot = m_controller->getActualVelocity();
 
   vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
   pthread_mutex_lock(&vpShm_mutex);
 
-  shm = controller->readShm();
+  shm = m_controller->readShm();
   // Updates the shm
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     shm.actual_q[i] = mes_q[i];
     shm.actual_q_dot[i] = mes_q_dot[i];
   }
   // Update the actuals positions
-  controller->writeShm(shm);
+  m_controller->writeShm(shm);
 
   vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
   pthread_mutex_unlock(&vpShm_mutex);
@@ -346,16 +230,16 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   vpDEBUG_TRACE(11, "unlock mutex vpMeasure_mutex");
   pthread_mutex_unlock(&vpMeasure_mutex); // A position is available
 
-  while (!controller->isStopRequested()) {
+  while (!m_controller->isStopRequested()) {
 
     // Get actual position and velocity
-    mes_q = controller->getActualPosition();
-    mes_q_dot = controller->getActualVelocity();
+    mes_q = m_controller->getActualPosition();
+    mes_q_dot = m_controller->getActualVelocity();
 
     vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
     pthread_mutex_lock(&vpShm_mutex);
 
-    shm = controller->readShm();
+    shm = m_controller->readShm();
 
     // Updates the shm
     for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
@@ -374,11 +258,13 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
         vpDEBUG_TRACE(12, "Axe %d in low joint limit", i);
         shm.status[i] = vpRobotBiclopsController::STOP;
         shm.jointLimit[i] = true;
-      } else if (mes_q[i] > softLimit[i]) {
+      }
+      else if (mes_q[i] > softLimit[i]) {
         vpDEBUG_TRACE(12, "Axe %d in hight joint limit", i);
         shm.status[i] = vpRobotBiclopsController::STOP;
         shm.jointLimit[i] = true;
-      } else {
+      }
+      else {
         shm.status[i] = vpRobotBiclopsController::SPEED;
         shm.jointLimit[i] = false;
       }
@@ -422,16 +308,18 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
                 force_halt[i] = true;  // indicate that it will be stopped
                 updateVelocity = true; // We have to send this new speed
               }
-            } else {
-              // We have to apply the desired speed to go away the joint
-              // Update the desired speed
+            }
+            else {
+           // We have to apply the desired speed to go away the joint
+           // Update the desired speed
               q_dot[i] = shm.q_dot[i];
               shm.status[i] = vpRobotBiclopsController::SPEED;
               force_halt[i] = false;
               updateVelocity = true; // We have to send this new speed
             }
-          } else {
-            // New desired speed and change of direction.
+          }
+          else {
+         // New desired speed and change of direction.
             if (enable_limit[i] == true) { // limit detection active
               // Update the desired speed to go away the joint limit
               q_dot[i] = shm.q_dot[i];
@@ -439,9 +327,10 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               force_halt[i] = false;
               enable_limit[i] = false; // Disable joint limit detection
               updateVelocity = true;   // We have to send this new speed
-            } else {
-              // We have to stop this axis
-              // Test if this axis was stopped before
+            }
+            else {
+           // We have to stop this axis
+           // Test if this axis was stopped before
               if (force_halt[i] == false) {
                 q_dot[i] = 0.;
                 force_halt[i] = true;   // indicate that it will be stopped
@@ -450,18 +339,20 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               }
             }
           }
-        } else {
-          // Axis not in joint limit
+        }
+        else {
+       // Axis not in joint limit
 
-          // Update the desired speed
+       // Update the desired speed
           q_dot[i] = shm.q_dot[i];
           shm.status[i] = vpRobotBiclopsController::SPEED;
           enable_limit[i] = true; // Joint limit detection must be active
           updateVelocity = true;  // We have to send this new speed
         }
-      } else {
-        // No change of the desired speed. We have to stop the robot in case
-        // of joint limit
+      }
+      else {
+     // No change of the desired speed. We have to stop the robot in case
+     // of joint limit
         if (shm.status[i] == vpRobotBiclopsController::STOP) { // axis limit
           if (enable_limit[i] == true) {                       // limit detection active
 
@@ -473,14 +364,15 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               updateVelocity = true; // We have to send this new speed
             }
           }
-        } else {
-          // No need to stop the robot
+        }
+        else {
+       // No need to stop the robot
           enable_limit[i] = true; // Normal situation, activate limit detection
         }
       }
     }
     // Update the actuals positions
-    controller->writeShm(shm);
+    m_controller->writeShm(shm);
 
     vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
     pthread_mutex_unlock(&vpShm_mutex);
@@ -489,7 +381,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
       vpDEBUG_TRACE(12, "apply q_dot : %f %f", vpMath::deg(q_dot[0]), vpMath::deg(q_dot[1]));
 
       // Apply the velocity
-      controller->setVelocity(q_dot);
+      m_controller->setVelocity(q_dot);
     }
 
     // Update the previous speed for next iteration
@@ -513,11 +405,11 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
 
     iter++;
   }
-  controller->stopRequest(false);
+  m_controller->stopRequest(false);
   // Stop the robot
   vpDEBUG_TRACE(10, "End of the control thread: stop the robot");
   q_dot = 0;
-  controller->setVelocity(q_dot);
+  m_controller->setVelocity(q_dot);
 
   delete[] new_q_dot;
   delete[] change_dir;
@@ -532,12 +424,6 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   return NULL;
 }
 
-/*!
-
-  Change the state of the robot either to stop them, or to set position or
-  speed control.
-
-*/
 vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
 {
   switch (newState) {
@@ -563,13 +449,13 @@ vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateTyp
 
       vpDEBUG_TRACE(12, "Create speed control thread");
       int code;
-      code = pthread_create(&control_thread, NULL, &vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &controller);
+      code = pthread_create(&m_control_thread, NULL, &vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &m_controller);
       if (code != 0) {
         vpCERROR << "Cannot create speed biclops control thread: " << code << " strErr=" << strerror(errno)
-                 << " strCode=" << strerror(code) << std::endl;
+          << " strCode=" << strerror(code) << std::endl;
       }
 
-      controlThreadCreated = true;
+      m_controlThreadCreated = true;
 
       vpDEBUG_TRACE(12, "Speed control thread created");
     }
@@ -582,31 +468,16 @@ vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateTyp
   return vpRobot::setRobotState(newState);
 }
 
-/*!
-
-  Halt all the axis.
-
-*/
 void vpRobotBiclops::stopMotion(void)
 {
   vpColVector q_dot(vpBiclops::ndof);
   q_dot = 0;
-  controller.setVelocity(q_dot);
+  m_controller.setVelocity(q_dot);
   // std::cout << "Request to stop the velocity controller thread...."<<
   // std::endl;
-  controller.stopRequest(true);
+  m_controller.stopRequest(true);
 }
 
-/*!
-
-  Get the twist matrix corresponding to the transformation between the
-  camera frame and the end effector frame. The end effector frame is located
-  on the tilt axis.
-
-  \param cVe : Twist transformation between camera and end effector frame to
-  expess a velocity skew from end effector frame in camera frame.
-
-*/
 void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
 {
   vpHomogeneousMatrix cMe;
@@ -615,67 +486,36 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
   cVe.buildFrom(cMe);
 }
 
-/*!
-
-  Get the homogeneous matrix corresponding to the transformation between the
-  camera frame and the end effector frame. The end effector frame is located
-  on the tilt axis.
-
-  \param cMe :  Homogeneous matrix between camera and end effector frame.
-
-*/
 void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }
 
-/*!
-  Get the robot jacobian expressed in the end-effector frame.
-
-  \warning Re is not the embedded camera frame. It corresponds to the frame
-  associated to the tilt axis (see also get_cMe).
-
-  \param _eJe : Jacobian between end effector frame and end effector frame (on
-  tilt axis).
-
-*/
 void vpRobotBiclops::get_eJe(vpMatrix &_eJe)
 {
   vpColVector q(2);
-  getPosition(vpRobot::ARTICULAR_FRAME, q);
+  getPosition(vpRobot::JOINT_STATE, q);
 
   try {
     vpBiclops::get_eJe(q, _eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
 }
 
-/*!
-  Get the robot jacobian expressed in the robot reference frame
-
-  \param _fJe : Jacobian between reference frame (or fix frame) and end
-  effector frame (on tilt axis).
-
-*/
 void vpRobotBiclops::get_fJe(vpMatrix &_fJe)
 {
   vpColVector q(2);
-  getPosition(vpRobot::ARTICULAR_FRAME, q);
+  getPosition(vpRobot::JOINT_STATE, q);
 
   try {
     vpBiclops::get_fJe(q, _fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
 
-/*!
-
-  Set the velocity used for a position control.
-
-  \param velocity : Velocity in % of the maximum velocity between [0,100]. The
-  maximum velocity is given vpBiclops::speedLimit.
-*/
 void vpRobotBiclops::setPositioningVelocity(double velocity)
 {
   if (velocity < 0 || velocity > 100) {
@@ -683,32 +523,11 @@ void vpRobotBiclops::setPositioningVelocity(double velocity)
     throw vpRobotException(vpRobotException::constructionError, "Bad positioning velocity");
   }
 
-  positioningVelocity = velocity;
+  m_positioningVelocity = velocity;
 }
-/*!
-  Get the velocity in % used for a position control.
 
-  \return Positioning velocity in [0, 100.0]. The
-  maximum positioning velocity is given vpBiclops::speedLimit.
+double vpRobotBiclops::getPositioningVelocity(void) { return m_positioningVelocity; }
 
-*/
-double vpRobotBiclops::getPositioningVelocity(void) { return positioningVelocity; }
-
-/*!
-   Move the robot in position control.
-
-   \warning This method is blocking. That mean that it waits the end of the
-   positioning.
-
-   \param frame : Control frame. This biclops head can only be controlled in
-   articular.
-
-   \param q : The position to set for each axis in radians.
-
-   \exception vpRobotException::wrongStateError : If a not supported frame
-   type is given.
-
-*/
 void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q)
 {
 
@@ -735,34 +554,18 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
   vpDEBUG_TRACE(12, "Lock mutex vpEndThread_mutex");
   pthread_mutex_lock(&vpEndThread_mutex);
-  controller.setPosition(q, positioningVelocity);
+  m_controller.setPosition(q, m_positioningVelocity);
   vpDEBUG_TRACE(12, "Unlock mutex vpEndThread_mutex");
   pthread_mutex_unlock(&vpEndThread_mutex);
   return;
 }
 
-/*!
-   Move the robot in position control.
-
-   \warning This method is blocking. That mean that it wait the end of the
-   positioning.
-
-   \param frame : Control frame. This biclops head can only be controlled in
-   articular.
-
-   \param q1 : The pan position to set in radians.
-   \param q2 : The tilt position to set in radians.
-
-   \exception vpRobotException::wrongStateError : If a not supported frame
-   type is given.
-
-*/
 void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2)
 {
   try {
@@ -771,50 +574,23 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
     q[1] = q2;
 
     setPosition(frame, q);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 }
 
-/*!
-
-  Read the content of the position file and moves to head to articular
-  position.
-
-  \param filename : Position filename
-
-  \exception vpRobotException::readingParametersError : If the articular
-  position cannot be read from file.
-
-  \sa readPositionFile()
-
-*/
-void vpRobotBiclops::setPosition(const char *filename)
+void vpRobotBiclops::setPosition(const std::string &filename)
 {
   vpColVector q;
-  if (readPositionFile(filename, q) == false) {
+  if (readPositionFile(filename.c_str(), q) == false) {
     vpERROR_TRACE("Cannot get biclops position from file");
     throw vpRobotException(vpRobotException::readingParametersError, "Cannot get biclops position from file");
   }
-  setPosition(vpRobot::ARTICULAR_FRAME, q);
+  setPosition(vpRobot::JOINT_STATE, q);
 }
 
-/*!
-
-  Return the position of each axis.
-  - In positioning control mode, call vpRobotBiclopsController::getPosition()
-  - In speed control mode, call vpRobotBiclopsController::getActualPosition()
-
-  \param frame : Control frame. This biclops head can only be controlled in
-  articular.
-
-  \param q : The position of the axis in radians.
-
-  \exception vpRobotException::wrongStateError : If a not supported frame type
-  is given.
-
-*/
 void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
 {
   switch (frame) {
@@ -834,7 +610,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
@@ -844,7 +620,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
   switch (state) {
   case STATE_STOP:
   case STATE_POSITION_CONTROL:
-    q = controller.getPosition();
+    q = m_controller.getPosition();
 
     break;
   case STATE_VELOCITY_CONTROL:
@@ -860,7 +636,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
     pthread_mutex_lock(&vpShm_mutex);
 
-    shm = controller.readShm();
+    shm = m_controller.readShm();
 
     vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
     pthread_mutex_unlock(&vpShm_mutex);
@@ -878,32 +654,6 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
   }
 }
 
-/*!
-
-  Send a velocity on each axis.
-
-  \param frame : Control frame. This biclops head can only be controlled in
-  articular. Be aware, the camera frame (vpRobot::CAMERA_FRAME), the reference
-  frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
-  and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
-
-  \param q_dot : The desired articular velocity of the axis in rad/s. \f$ \dot
-  {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
-  camera and \f$ \dot{q}_2\f$ the tilt of the camera.
-
-  \exception vpRobotException::wrongStateError : If a the robot is not
-  configured to handle a velocity. The robot can handle a velocity only if the
-  velocity control mode is set. For that, call setRobotState(
-  vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
-
-  \exception vpRobotException::wrongStateError : If a not supported frame type
-  (vpRobot::CAMERA_FRAME, vpRobot::REFERENCE_FRAME, vpRobot::END_EFFECTOR_FRAME
-  or vpRobot::MIXT_FRAME) is given.
-
-  \warning Velocities could be saturated if one of them exceed the maximal
-  autorized speed (see vpRobot::maxRotationVelocity).
-
-*/
 void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot)
 {
   if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
@@ -916,18 +666,14 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
 
   switch (frame) {
   case vpRobot::CAMERA_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the camera frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the camera frame:"
                                                               "functionality not implemented");
   }
-  case vpRobot::ARTICULAR_FRAME: {
+  case vpRobot::JOINT_STATE: {
     if (q_dot.getRows() != 2) {
-      vpERROR_TRACE("Bad dimension fo speed vector in articular frame");
       throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension for speed vector "
-                                                                "in articular frame");
+                                                                "in joint state");
     }
     break;
   }
@@ -952,9 +698,9 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   }
 
   vpDEBUG_TRACE(12, "Velocity limitation.");
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
+  bool norm = false; // Flag to indicate when velocities need to be normalized
 
-  // Saturate articular speed
+  // Saturate joint speed
   double max = vpBiclops::speedLimit;
   vpColVector q_dot_sat(vpBiclops::ndof);
 
@@ -971,7 +717,7 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
                     i);
     }
   }
-  // Rotations velocities normalisation
+  // Rotations velocities normalization
   if (norm == true) {
     max = vpBiclops::speedLimit / max;
     q_dot_sat = q_dot * max;
@@ -984,12 +730,12 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
   pthread_mutex_lock(&vpShm_mutex);
 
-  shm = controller.readShm();
+  shm = m_controller.readShm();
 
   for (unsigned int i = 0; i < vpBiclops::ndof; i++)
     shm.q_dot[i] = q_dot[i];
 
-  controller.writeShm(shm);
+  m_controller.writeShm(shm);
 
   vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
   pthread_mutex_unlock(&vpShm_mutex);
@@ -997,24 +743,6 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   return;
 }
 
-/* -------------------------------------------------------------------------
- */
-/* --- GET -----------------------------------------------------------------
- */
-/* -------------------------------------------------------------------------
- */
-
-/*!
-
-  Get the articular velocity.
-
-  \param frame : Control frame. This head can only be controlled in articular.
-
-  \param q_dot : The measured articular velocity in rad/s.
-
-  \exception vpRobotException::wrongStateError : If a not supported frame type
-  is given.
-*/
 void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot)
 {
   switch (frame) {
@@ -1034,7 +762,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
@@ -1044,7 +772,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
   switch (state) {
   case STATE_STOP:
   case STATE_POSITION_CONTROL:
-    q_dot = controller.getVelocity();
+    q_dot = m_controller.getVelocity();
 
     break;
   case STATE_VELOCITY_CONTROL:
@@ -1060,7 +788,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
     pthread_mutex_lock(&vpShm_mutex);
 
-    shm = controller.readShm();
+    shm = m_controller.readShm();
 
     vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
     pthread_mutex_unlock(&vpShm_mutex);
@@ -1078,17 +806,6 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
   }
 }
 
-/*!
-
-  Return the articular velocity.
-
-  \param frame : Control frame. This head can only be controlled in articular.
-
-  \return The measured articular velocity in rad/s.
-
-  \exception vpRobotException::wrongStateError : If a not supported frame type
-  is given.
-*/
 vpColVector vpRobotBiclops::getVelocity(vpRobot::vpControlFrameType frame)
 {
   vpColVector q_dot;
@@ -1097,25 +814,6 @@ vpColVector vpRobotBiclops::getVelocity(vpRobot::vpControlFrameType frame)
   return q_dot;
 }
 
-/*!
-
-  Get an articular position from the position file.
-
-  \param filename : Position file.
-
-  \param q : The articular position read in the file.
-
-  \code
-  # Example of biclops position file
-  # The axis positions must be preceed by R:
-  # First value : pan  articular position in degrees
-  # Second value: tilt articular position in degrees
-  R: 15.0 5.0
-  \endcode
-
-  \return true if a position was found, false otherwise.
-
-*/
 bool vpRobotBiclops::readPositionFile(const std::string &filename, vpColVector &q)
 {
   std::ifstream fd(filename.c_str(), std::ios::in);
@@ -1174,38 +872,16 @@ bool vpRobotBiclops::readPositionFile(const std::string &filename, vpColVector &
   return true;
 }
 
-/*!
-
-  Get the robot displacement since the last call of this method.
-
-  \warning The first call of this method gives not a good value for the
-  displacement.
-
-  \param frame The frame in which the measured displacement is expressed.
-
-  \param d The displacement:
-
-  - In articular, the dimension of q is 2  (the number of axis of the robot)
-  with respectively d[0] (pan displacement), d[1] (tilt displacement).
-
-  - In camera frame, the dimension of d is 6 (tx, ty, ty, tux, tuy, tuz).
-  Translations are expressed in meters, rotations in radians with the theta U
-  representation.
-
-  \exception vpRobotException::wrongStateError If a not supported frame type
-  is given.
-
-*/
 void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &d)
 {
   vpColVector q_current; // current position
 
-  getPosition(vpRobot::ARTICULAR_FRAME, q_current);
+  getPosition(vpRobot::JOINT_STATE, q_current);
 
   switch (frame) {
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     d.resize(vpBiclops::ndof);
-    d = q_current - q_previous;
+    d = q_current - m_q_previous;
     break;
 
   case vpRobot::CAMERA_FRAME: {
@@ -1213,7 +889,7 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
     vpHomogeneousMatrix fMc_current;
     vpHomogeneousMatrix fMc_previous;
     fMc_current = vpBiclops::get_fMc(q_current);
-    fMc_previous = vpBiclops::get_fMc(q_previous);
+    fMc_previous = vpBiclops::get_fMc(m_q_previous);
     vpHomogeneousMatrix c_previousMc_current;
     // fMc_c = fMc_p * c_pMc_c
     // => c_pMc_c = (fMc_p)^-1 * fMc_c
@@ -1238,11 +914,11 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
     break;
   }
 
-  q_previous = q_current; // Update for next call of this method
+  m_q_previous = q_current; // Update for next call of this method
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no
 // symbols
-void dummy_vpRobotBiclops(){};
+void dummy_vpRobotBiclops() { };
 #endif

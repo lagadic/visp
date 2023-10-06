@@ -59,90 +59,378 @@
 /* ------------------------------------------------------------------------ */
 
 /*!
-  \class vpRobotBiclops
-
-  \ingroup group_robot_real_ptu
-
-  \brief Interface for the biclops, pan, tilt head control.
-
-  Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
-  The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
-  The following image gives the location of the end-effector frame and a potential camera frame.
-
-  \image html img-biclops-frames.jpg Biclops PT models
-
-  See http://www.traclabs.com/biclopspt.html for more details.
-
-  This class provide a position and a speed control interface for the biclops
-  head. To manage the biclops joint limits in speed control, a control loop is
-  running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
-
-  \warning Velocity control mode is not exported from the top-level Biclops
-  API class provided by Traclabs. That means that there is no protection in
-  this mode to prevent an axis from striking its hard limit. In position mode,
-  Traclabs put soft limits in that keep any command from driving to a position
-  too close to the hard limits. In velocity mode this protection does not
-  exist in the current API.
-
-  \warning With the understanding that hitting the hard limits at full
-  speed/power can damage the unit, damage due to velocity mode commanding is
-  under user responsibility.
-
-*/
+ * \class vpRobotBiclops
+ *
+ * \ingroup group_robot_real_ptu
+ *
+ * \brief Interface for the biclops, pan, tilt head control.
+ *
+ * Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
+ * The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
+ * The following image gives the location of the end-effector frame and a potential camera frame.
+ *
+ * \image html img-biclops-frames.jpg Biclops PT models
+ *
+ * See http://www.traclabs.com/biclopspt.html for more details.
+ *
+ * This class provide a position and a speed control interface for the biclops
+ * head. To manage the biclops joint limits in speed control, a control loop is
+ * running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
+ *
+ * \warning Velocity control mode is not exported from the top-level Biclops
+ * API class provided by Traclabs. That means that there is no protection in
+ * this mode to prevent an axis from striking its hard limit. In position mode,
+ * Traclabs put soft limits in that keep any command from driving to a position
+ * too close to the hard limits. In velocity mode this protection does not
+ * exist in the current API.
+ *
+ * \warning With the understanding that hitting the hard limits at full
+ * speed/power can damage the unit, damage due to velocity mode commanding is
+ * under user responsibility.
+ */
 class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
 {
 public:
   static const double defaultPositioningVelocity;
 
+  /*!
+   * Default constructor.
+   *
+   * Does nothing more than setting the default configuration file
+   * to `/usr/share/BiclopsDefault.cfg`.
+   *
+   * As shown in the following example, the turret need to be initialized
+   * using init() function.
+   *
+   * \code
+   * #include <visp3/robot/vpRobotBiclops.h>
+   *
+   * int main()
+   * {
+   * #ifdef VISP_HAVE_BICLOPS
+   *   vpRobotBiclops robot; // Use the default config file in /usr/share/BiclopsDefault.cfg"
+   *
+   *   // Specify the config file location
+   *   robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since the file is the default one
+   *
+   *   // Initialize the head
+   *   robot.init();
+   *
+   *   // Move the robot to a specified pan and tilt
+   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+   *   vpColVector q(2);
+   *   q[0] = vpMath::rad(20); // pan
+   *   q[1] = vpMath::rad(40); // tilt
+   *   robot.setPosition(vpRobot::JOINT_STATE, q);
+   * #endif
+   *   return 0;
+   * }
+   * \endcode
+   */
   vpRobotBiclops();
+
+  /*!
+   * Constructor that initialize the biclops pan, tilt head by reading the
+   * configuration file provided by Traclabs and do the homing sequence.
+   *
+   * The following example shows how to use the constructor.
+   *
+   * \code
+   * #include <visp3/robot/vpRobotBiclops.h>
+   *
+   * int main()
+   * {
+   * #ifdef VISP_HAVE_BICLOPS
+   *   // Specify the config file location and initialize the turret
+   *   vpRobotBiclops robot("/usr/share/BiclopsDefault.cfg");
+   *
+   *   // Move the robot to a specified pan and tilt
+   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+   *
+   *   vpColVector q(2);
+   *   q[0] = vpMath::rad(-20); // pan
+   *   q[1] = vpMath::rad(10); // tilt
+   *   robot.setPosition(vpRobot::JOINT_STATE, q);
+   * #endif
+   *   return 0;
+   * }
+   * \endcode
+   */
   explicit vpRobotBiclops(const std::string &filename);
+
+  /*!
+   * Destructor.
+   * Wait the end of the control thread.
+   */
   virtual ~vpRobotBiclops();
 
+  /*!
+   * Set the Biclops config filename.
+   * Check if the config file exists and initialize the head.
+   *
+   * \exception vpRobotException::constructionError If the config file cannot be
+   * opened.
+   */
   void init();
 
-  void get_cMe(vpHomogeneousMatrix &_cMe) const;
+  /*!
+   * Get the homogeneous matrix corresponding to the transformation between the
+   * camera frame and the end effector frame. The end effector frame is located
+   * on the tilt axis.
+   *
+   * \param cMe :  Homogeneous matrix between camera and end effector frame.
+   */
+  void get_cMe(vpHomogeneousMatrix &cMe) const;
+
+  /*!
+   * Get the twist matrix corresponding to the transformation between the
+   * camera frame and the end effector frame. The end effector frame is located
+   * on the tilt axis.
+   *
+   * \param _cVe : Twist transformation between camera and end effector frame to
+   * express a velocity skew from end effector frame in camera frame.
+   */
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+
+  /*!
+   * Get the robot jacobian expressed in the end-effector frame.
+   *
+   * \warning Re is not the embedded camera frame. It corresponds to the frame
+   * associated to the tilt axis (see also get_cMe).
+   *
+   * \param _eJe : Jacobian between end effector frame and end effector frame (on
+   * tilt axis).
+   */
   void get_eJe(vpMatrix &_eJe);
+
+  /*!
+   * Get the robot jacobian expressed in the robot reference frame
+   *
+   * \param _fJe : Jacobian between reference frame (or fix frame) and end
+   * effector frame (on tilt axis).
+   */
   void get_fJe(vpMatrix &_fJe);
 
+  /*!
+   * Get the robot displacement since the last call of this method.
+   *
+   * \warning The first call of this method gives not a good value for the
+   * displacement.
+   *
+   * \param frame The frame in which the measured displacement is expressed.
+   *
+   * \param d The displacement:
+   * - In joint state, the dimension of q is 2  (the number of axis of the robot)
+   *   with respectively d[0] (pan displacement), d[1] (tilt displacement).
+   * - In camera frame, the dimension of d is 6 (tx, ty, ty, tux, tuy, tuz).
+   *   Translations are expressed in meters, rotations in radians with the theta U
+   *   representation.
+   *
+   * \exception vpRobotException::wrongStateError If a not supported frame type
+   * is given.
+   */
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d);
+
+  /*!
+   * Return the joint position of each axis.
+   * - In positioning control mode, call vpRobotBiclopsController::getPosition()
+   * - In speed control mode, call vpRobotBiclopsController::getActualPosition()
+   *
+   * \param frame : Control frame. This biclops head can only be controlled in
+   * joint.
+   *
+   * \param q : The position of the axis in radians.
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame type
+   * is given.
+   */
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+
+  /*!
+   * Get the velocity in % used for a position control.
+   *
+   * \return Positioning velocity in [0, 100.0]. The
+   * maximum positioning velocity is given vpBiclops::speedLimit.
+   */
   double getPositioningVelocity(void);
+
+  /*!
+   * Get the joint velocity.
+   *
+   * \param frame : Control frame. This head can only be controlled in joint state.
+   *
+   * \param q_dot : The measured joint velocity in rad/s.
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame type
+   * is given.
+   */
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
+
+  /*!
+   * Return the joint velocity.
+   *
+   * \param frame : Control frame. This head can only be controlled in joint state.
+   *
+   * \return The measured joint velocity in rad/s.
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame type
+   * is given.
+   */
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
+  /*!
+   * Get a joint position from the position file.
+   *
+   * \param filename : Position file.
+   *
+   * \param q : The joint position read in the file.
+   *
+   * \code
+   * # Example of biclops position file
+   * # The axis positions must be preceded by R:
+   * # First value : pan  joint position in degrees
+   * # Second value: tilt joint position in degrees
+   * R: 15.0 5.0
+   * \endcode
+   *
+   * \return true if a position was found, false otherwise.
+   */
   bool readPositionFile(const std::string &filename, vpColVector &q);
 
+  /*!
+   * Set the Biclops config filename.
+   */
   void setConfigFile(const std::string &filename = "/usr/share/BiclopsDefault.cfg");
+
+  /*!
+   * Move the robot in position control.
+   *
+   * \warning This method is blocking. That mean that it waits the end of the
+   * positioning.
+   *
+   * \param frame : Control frame. This biclops head can only be controlled in
+   * joint state.
+   *
+   * \param q : The joint position to set for each axis in radians.
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame
+   * type is given.
+   */
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+
+  /*!
+   * Move the robot in position control.
+   *
+   * \warning This method is blocking. That mean that it wait the end of the
+   * positioning.
+   *
+   * \param frame : Control frame. This biclops head can only be controlled in
+   * joint state.
+   *
+   * \param q1 : The pan joint position to set in radians.
+   * \param q2 : The tilt joint position to set in radians.
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame
+   * type is given.
+   */
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
-  void setPosition(const char *filename);
+
+  /*!
+   * Read the content of the position file and moves to head to joint
+   * position.
+   *
+   * \param filename : Position filename
+   *
+   * \exception vpRobotException::readingParametersError : If the joint
+   * position cannot be read from file.
+   *
+   * \sa readPositionFile()
+   */
+  void setPosition(const std::string &filename);
+
+  /*!
+   * Set the velocity used for a position control.
+   *
+   * \param velocity : Velocity in % of the maximum velocity between [0,100]. The
+   * maximum velocity is given vpBiclops::speedLimit.
+   */
   void setPositioningVelocity(double velocity);
+
+  /*!
+   * Change the state of the robot either to stop them, or to set position or
+   * speed control.
+   */
   vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
+
+  /*!
+   * Send a velocity on each axis.
+   *
+   * \param frame : Control frame. This biclops head can only be controlled in
+   * joint state. Be aware, the camera frame (vpRobot::CAMERA_FRAME), the reference
+   * frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
+   * and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
+   *
+   * \param q_dot : The desired joint velocity of the axis in rad/s. \f$ \dot
+   * {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
+   * camera and \f$ \dot{q}_2\f$ the tilt of the camera.
+   *
+   * \exception vpRobotException::wrongStateError : If a the robot is not
+   * configured to handle a velocity. The robot can handle a velocity only if the
+   * velocity control mode is set. For that, call setRobotState(
+   * vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
+   *
+   * \exception vpRobotException::wrongStateError : If a not supported frame type
+   * (vpRobot::CAMERA_FRAME, vpRobot::REFERENCE_FRAME, vpRobot::END_EFFECTOR_FRAME
+   * or vpRobot::MIXT_FRAME) is given.
+   *
+   * \warning Velocities could be saturated if one of them exceed the maximal
+   * authorized speed (see vpRobot::maxRotationVelocity).
+   */
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot);
 
+  /*!
+   * Halt all the axis.
+   */
   void stopMotion();
 
+  /*
+   * Control loop to manage the biclops joint limits in speed control.
+   *
+   * This control loop is running in a separate thread in order to detect each 5
+   * ms joint limits during the speed control. If a joint limit is detected the
+   * axis should be halted.
+   *
+   * \warning Velocity control mode is not exported from the top-level Biclops
+   * API class provided by Traclabs. That means that there is no protection in
+   * this mode to prevent an axis from striking its hard limit. In position mode,
+   * Traclabs put soft limits in that keep any command from driving to a position
+   * too close to the hard limits. In velocity mode this protection does not
+   * exist in the current API.
+   *
+   * \warning With the understanding that hitting the hard limits at full
+   * speed/power can damage the unit, damage due to velocity mode commanding is
+   * under user responsibility.
+   */
   static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 
 private:
-  static bool robotAlreadyCreated;
-  pthread_t control_thread;
+  static bool m_robotAlreadyCreated;
+  pthread_t m_control_thread;
 
-  std::string configfile; // Biclops config file
+  std::string m_configfile; //!< Biclops config file
 
-  vpRobotBiclopsController controller;
+  vpRobotBiclopsController m_controller;
 
-  double positioningVelocity;
-  vpColVector q_previous;
-  bool controlThreadCreated;
+  double m_positioningVelocity;
+  vpColVector m_q_previous;
+  bool m_controlThreadCreated;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  /*! \brief No copy constructor allowed.   */
   //  vpRobotBiclops(const vpRobotBiclops &)
-  //    : vpBiclops(), vpRobot(), control_thread(), controller(),
-  //      positioningVelocity(0), q_previous(), controlThreadCreated(false)
+  //    : vpBiclops(), vpRobot(), m_control_thread(), m_controller(),
+  //      m_positioningVelocity(0), m_q_previous(), m_controlThreadCreated(false)
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");

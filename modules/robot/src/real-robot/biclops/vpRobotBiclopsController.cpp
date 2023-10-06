@@ -53,55 +53,29 @@
 
 #include <visp3/core/vpDebug.h>
 
-/* ----------------------------------------------------------------------- */
-/* --- CONSTRUCTOR ------------------------------------------------------ */
-/* ---------------------------------------------------------------------- */
-
-/*!
-   Default constructor.
-*/
 vpRobotBiclopsController::vpRobotBiclopsController()
-  : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL), vergeAxis(NULL), panProfile(), tiltProfile(), vergeProfile(),
-    shm(), stopControllerThread_(false)
+  : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL), m_vergeAxis(NULL), m_panProfile(), m_tiltProfile(),
+  m_vergeProfile(), m_shm(), m_stopControllerThread(false)
 {
-  axisMask = Biclops::PanMask + Biclops::TiltMask
-      /*+ Biclops::VergeMask*/; // add this if you want verge.
+  m_axisMask = Biclops::PanMask + Biclops::TiltMask; //+ Biclops::VergeMask*/; // add this if you want verge.
 
   // Set Debug level depending on how much info you want to see about
   // the inner workings of the API. Level 2 is highest with 0 being
   // the default (i.e., no messages).
-  biclops.SetDebugLevel(0);
+  m_biclops.SetDebugLevel(0);
 
   // initialize the shared data structure
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    shm.status[i] = STOP;
-    shm.q_dot[i] = 0.;
-    shm.actual_q[i] = 0.;
-    shm.jointLimit[i] = false;
-    shm.status[i] = STOP;
+    m_shm.status[i] = STOP;
+    m_shm.q_dot[i] = 0.;
+    m_shm.actual_q[i] = 0.;
+    m_shm.jointLimit[i] = false;
+    m_shm.status[i] = STOP;
   }
 }
 
-/*!
+vpRobotBiclopsController::~vpRobotBiclopsController() { }
 
-  Destructor.
-
-*/
-vpRobotBiclopsController::~vpRobotBiclopsController() {}
-
-/*!
-
-  Initialize the biclops by homing all axis.
-
-  \param configfile : Biclops configuration file.
-
-  \exception vpRobotException::notInitializedError If the biclops head connot
-  be initialized. The initialization can failed,
-  - if the head is not powered on,
-  - if the head is not connected to your computer throw a serial cable,
-  - if you try to open a bad serial port. Check you config file to verify
-    which is the used serial port.
-*/
 void vpRobotBiclopsController::init(const std::string &configfile)
 {
   vpDEBUG_TRACE(12, "Initialize biclops.");
@@ -109,16 +83,18 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   for (int i = 0; i < 1; i++) {
     try {
       std::cout << "Try to initialize biclops head " << std::endl;
-      binit = biclops.Initialize(configfile.c_str());
+      binit = m_biclops.Initialize(configfile.c_str());
       usleep(100000);
       if (binit) {
         // Initialization completed successfully. Close the config file.
         std::cout << "Initialization succeed...\n";
         break;
-      } else {
+      }
+      else {
         std::cout << "Initialization failed...\n";
       }
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Initialization failed..." << std::endl;
     }
   }
@@ -136,17 +112,17 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   vpDEBUG_TRACE(12, "Biclops initialized");
 
   // Get shortcut references to each axis.
-  panAxis = biclops.GetAxis(Biclops::Pan);
-  tiltAxis = biclops.GetAxis(Biclops::Tilt);
-  if ((axisMask & Biclops::VergeMask) != 0)
-    vergeAxis = biclops.GetAxis(Biclops::Verge);
+  m_panAxis = m_biclops.GetAxis(Biclops::Pan);
+  m_tiltAxis = m_biclops.GetAxis(Biclops::Tilt);
+  if ((m_axisMask & Biclops::VergeMask) != 0)
+    m_vergeAxis = m_biclops.GetAxis(Biclops::Verge);
 
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
-  if (!panAxis->GetHomedState() || !tiltAxis->GetHomedState()) {
+  if (!m_panAxis->GetHomedState() || !m_tiltAxis->GetHomedState()) {
     vpDEBUG_TRACE(12, "Biclops is not homed");
   }
 #else // old API
-  if (!panAxis->IsAlreadyHomed() || !tiltAxis->IsAlreadyHomed()) {
+  if (!m_panAxis->IsAlreadyHomed() || !m_tiltAxis->IsAlreadyHomed()) {
     vpDEBUG_TRACE(12, "Biclops is not homed");
   }
 #endif
@@ -154,7 +130,7 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   // Execute the homing sequence for all axes.
   vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
   vpDEBUG_TRACE(12, "Execute the homing sequence for all axes");
-  if (biclops.HomeAxes(axisMask))
+  if (m_biclops.HomeAxes(m_axisMask))
     vpDEBUG_TRACE(12, "Homing sequence succeed.");
   else {
     vpERROR_TRACE("Homing sequence failed. Program is stopped");
@@ -163,26 +139,11 @@ void vpRobotBiclopsController::init(const std::string &configfile)
 
   // Get the currently defined (default) motion profiles.
   //      PMDAxisControl::Profile panProfile,tiltProfile,vergeProfile;
-  panAxis->GetProfile(panProfile);
-  tiltAxis->GetProfile(tiltProfile);
-  if ((axisMask & Biclops::VergeMask) != 0)
-    vergeAxis->GetProfile(vergeProfile);
+  m_panAxis->GetProfile(m_panProfile);
+  m_tiltAxis->GetProfile(m_tiltProfile);
+  if ((m_axisMask & Biclops::VergeMask) != 0)
+    m_vergeAxis->GetProfile(m_vergeProfile);
 }
-
-/*!
-
-  Set the biclops axis position. The motion of the axis is synchronized to end
-  on the same time.
-
-  \warning Wait the end of the positioning.
-
-  \param q : The position to set for each axis.
-
-  \param percentVelocity : The velocity displacement to reach the new position
-  in the range [0: 100.0]. 100 % corresponds to the maximal admissible
-  speed. The maximal admissible speed is given by vpBiclops::speedLimit.
-
-*/
 
 void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentVelocity)
 {
@@ -191,32 +152,32 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentV
     throw vpRobotException(vpRobotException::lowLevelError, "Bad dimension for positioning vector.");
   }
 
-  panAxis->SetProfileMode(PMDTrapezoidalProfile);
-  tiltAxis->SetProfileMode(PMDTrapezoidalProfile);
+  m_panAxis->SetProfileMode(PMDTrapezoidalProfile);
+  m_tiltAxis->SetProfileMode(PMDTrapezoidalProfile);
 
   // Create the list of axes we want to coordinate
   PMDUtils::AxisList axisList;
-  axisList.push_back(panAxis);
-  axisList.push_back(tiltAxis);
+  axisList.push_back(m_panAxis);
+  axisList.push_back(m_tiltAxis);
 
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
   // PMDAxisControl::Profile panProfile,tiltProfile;
-  panAxis->GetProfile(panProfile);
-  tiltAxis->GetProfile(tiltProfile);
+  m_panAxis->GetProfile(m_panProfile);
+  m_tiltAxis->GetProfile(m_tiltProfile);
 
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  panProfile.pos = PMDUtils::RadsToRevs(q[0]);
-  panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  m_panProfile.pos = PMDUtils::RadsToRevs(q[0]);
+  m_panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
-  tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
-  tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  m_tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
+  m_tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
   // Inform the controller of the new desired position.
-  panAxis->SetProfile(panProfile);
-  tiltAxis->SetProfile(tiltProfile);
+  m_panAxis->SetProfile(m_panProfile);
+  m_tiltAxis->SetProfile(m_tiltProfile);
 
 #else // old API
 
@@ -225,44 +186,35 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentV
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  panProfile.pos = PMDUtils::RadsToRevs(q[0]);
-  panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  m_panProfile.pos = PMDUtils::RadsToRevs(q[0]);
+  m_panProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
   vpDEBUG_TRACE(12, "Speed percent: %lf", vpBiclops::speedLimit * percentVelocity / 100.);
 
-  panAxis->ProfileToCounts(panProfile, desired_profile);
+  m_panAxis->ProfileToCounts(m_panProfile, desired_profile);
   vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
   vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << std::endl;
 
-  panAxis->SetProfile(desired_profile);
+  m_panAxis->SetProfile(desired_profile);
 
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
-  tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
+  m_tiltProfile.pos = PMDUtils::RadsToRevs(q[1]);
+  m_tiltProfile.vel = PMDUtils::RadsToRevs(vpBiclops::speedLimit * percentVelocity / 100.);
 
-  tiltAxis->ProfileToCounts(tiltProfile, desired_profile);
+  m_tiltAxis->ProfileToCounts(m_tiltProfile, desired_profile);
   vpCDEBUG(12) << "desired_profile.pos: " << desired_profile.pos << std::endl;
   vpCDEBUG(12) << "desired_profile.vel: " << desired_profile.vel << std::endl;
 
-  tiltAxis->SetProfile(desired_profile);
+  m_tiltAxis->SetProfile(desired_profile);
 #endif
 
   // Coordinate motion
   PMDUtils::Coordinate(axisList);
-  biclops.Move(Biclops::PanMask + Biclops::TiltMask /*, 0*/); //
+  m_biclops.Move(Biclops::PanMask + Biclops::TiltMask /*, 0*/); //
 }
 
-/*!
-
-  Apply a velocity to each axis of the biclops robot.
-
-  \warning This method is non blocking.
-
-  \param q_dot : Velocity to apply.
-
-*/
 void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 {
   if (q_dot.getRows() != vpBiclops::ndof) {
@@ -273,65 +225,58 @@ void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
   // PMDAxisControl::Profile panProfile, tiltProfile;
-  panAxis->GetProfile(panProfile);
-  tiltAxis->GetProfile(tiltProfile);
+  m_panAxis->GetProfile(m_panProfile);
+  m_tiltAxis->GetProfile(m_tiltProfile);
 
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  panProfile.vel = PMDUtils::RadsToRevs(q_dot[0]);
-  tiltProfile.vel = PMDUtils::RadsToRevs(q_dot[1]);
+  m_panProfile.vel = PMDUtils::RadsToRevs(q_dot[0]);
+  m_tiltProfile.vel = PMDUtils::RadsToRevs(q_dot[1]);
 
   // Inform the controller of the new desired position.
-  panAxis->SetProfile(panProfile);
-  tiltAxis->SetProfile(tiltProfile);
+  m_panAxis->SetProfile(m_panProfile);
+  m_tiltAxis->SetProfile(m_tiltProfile);
 
-  panAxis->SetProfileMode(PMDVelocityContouringProfile);
-  tiltAxis->SetProfileMode(PMDVelocityContouringProfile);
+  m_panAxis->SetProfileMode(PMDVelocityContouringProfile);
+  m_tiltAxis->SetProfileMode(PMDVelocityContouringProfile);
 #else // old API
-  panAxis->SetProfileMode(PMDVelocityContouringProfile);
-  tiltAxis->SetProfileMode(PMDVelocityContouringProfile);
+  m_panAxis->SetProfileMode(PMDVelocityContouringProfile);
+  m_tiltAxis->SetProfileMode(PMDVelocityContouringProfile);
 
   PMDAxisControl::CountsProfile desired_profile;
 
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  panProfile.vel = PMDUtils::RadsToRevs(q_dot[0]);
+  m_panProfile.vel = PMDUtils::RadsToRevs(q_dot[0]);
 
-  panAxis->ProfileToCounts(panProfile, desired_profile);
-  panAxis->SetProfile(desired_profile);
+  m_panAxis->ProfileToCounts(m_panProfile, desired_profile);
+  m_panAxis->SetProfile(desired_profile);
 
   // Set a position to move to by modifying the respective profiles.
   // NOTE: profile values are in revolutions, so here we convert
   // from degrees (divide by 360) for readability.
-  tiltProfile.vel = PMDUtils::RadsToRevs(q_dot[1]);
+  m_tiltProfile.vel = PMDUtils::RadsToRevs(q_dot[1]);
 
-  tiltAxis->ProfileToCounts(tiltProfile, desired_profile);
-  tiltAxis->SetProfile(desired_profile);
+  m_tiltAxis->ProfileToCounts(m_tiltProfile, desired_profile);
+  m_tiltAxis->SetProfile(desired_profile);
 #endif
   // Coordinate motion
-  biclops.Move(Biclops::PanMask + Biclops::TiltMask, 0); //
+  m_biclops.Move(Biclops::PanMask + Biclops::TiltMask, 0); //
 }
 
-/*!
-
-  Get the biclops articular position.
-
-  \return The axis articular position in radians.
-
-*/
 vpColVector vpRobotBiclopsController::getPosition()
 {
   vpDEBUG_TRACE(12, "Start vpRobotBiclopsController::getPosition() ");
   vpColVector q(vpBiclops::ndof);
   PMDint32 panpos, tiltpos;
 
-  panAxis->GetPosition(panpos);
-  tiltAxis->GetPosition(tiltpos);
+  m_panAxis->GetPosition(panpos);
+  m_tiltAxis->GetPosition(tiltpos);
 
-  q[0] = PMDUtils::RevsToRads(panAxis->CountsToUnits(panpos));
-  q[1] = PMDUtils::RevsToRads(tiltAxis->CountsToUnits(tiltpos));
+  q[0] = PMDUtils::RevsToRads(m_panAxis->CountsToUnits(panpos));
+  q[1] = PMDUtils::RevsToRads(m_tiltAxis->CountsToUnits(tiltpos));
 
   vpCDEBUG(11) << "++++++++ Mesure : " << q.t();
   vpDEBUG_TRACE(12, "End vpRobotBiclopsController::getPosition()");
@@ -339,102 +284,67 @@ vpColVector vpRobotBiclopsController::getPosition()
   return q;
 }
 
-/*!
-
-  Get the biclops actual articular position.
-
-  \return The axis actual articular position in radians.
-
-*/
 vpColVector vpRobotBiclopsController::getActualPosition()
 {
   vpColVector q(vpBiclops::ndof);
   PMDint32 panpos, tiltpos;
 
-  panAxis->GetActualPosition(panpos);
-  tiltAxis->GetActualPosition(tiltpos);
+  m_panAxis->GetActualPosition(panpos);
+  m_tiltAxis->GetActualPosition(tiltpos);
 
-  q[0] = PMDUtils::RevsToRads(panAxis->CountsToUnits(panpos));
-  q[1] = PMDUtils::RevsToRads(tiltAxis->CountsToUnits(tiltpos));
+  q[0] = PMDUtils::RevsToRads(m_panAxis->CountsToUnits(panpos));
+  q[1] = PMDUtils::RevsToRads(m_tiltAxis->CountsToUnits(tiltpos));
 
   return q;
 }
 
-/*!
-
-  Get the biclops articular velocity.
-
-  \return The axis articular velocity in rad/s.
-
-*/
 vpColVector vpRobotBiclopsController::getVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
   PMDint32 pan_vel, tilt_vel;
 
-  panAxis->GetVelocity(pan_vel);
-  tiltAxis->GetVelocity(tilt_vel);
+  m_panAxis->GetVelocity(pan_vel);
+  m_tiltAxis->GetVelocity(tilt_vel);
 
-  q_dot[0] = PMDUtils::RevsToRads(panAxis->CountsToUnits(pan_vel));
-  q_dot[1] = PMDUtils::RevsToRads(tiltAxis->CountsToUnits(tilt_vel));
+  q_dot[0] = PMDUtils::RevsToRads(m_panAxis->CountsToUnits(pan_vel));
+  q_dot[1] = PMDUtils::RevsToRads(m_tiltAxis->CountsToUnits(tilt_vel));
 
   return q_dot;
 }
 
-/*!
-
-  Get the biclops actual articular velocity.
-
-  \return The axis actual articular velocity in rad/s.
-
-*/
 vpColVector vpRobotBiclopsController::getActualVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
   PMDint32 pan_vel, tilt_vel;
 
-  panAxis->GetActualVelocity(pan_vel);
-  tiltAxis->GetActualVelocity(tilt_vel);
+  m_panAxis->GetActualVelocity(pan_vel);
+  m_tiltAxis->GetActualVelocity(tilt_vel);
 
-  q_dot[0] = PMDUtils::RevsToRads(panAxis->CountsToUnits(pan_vel));
-  q_dot[1] = PMDUtils::RevsToRads(tiltAxis->CountsToUnits(tilt_vel));
+  q_dot[0] = PMDUtils::RevsToRads(m_panAxis->CountsToUnits(pan_vel));
+  q_dot[1] = PMDUtils::RevsToRads(m_tiltAxis->CountsToUnits(tilt_vel));
 
   return q_dot;
 }
 
-/*!
-
-  Update the shared memory.
-
-  \param shm_ : Content to write in the shared memory.
-*/
-void vpRobotBiclopsController::writeShm(shmType &shm_)
+void vpRobotBiclopsController::writeShm(shmType &shm)
 {
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm_.q_dot[i]);
+    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
-  memcpy(&this->shm, &shm_, sizeof(shmType));
-  // this->shm = shm_;
+  memcpy(&this->m_shm, &shm, sizeof(shmType));
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
 }
 
-/*!
-
-  Get a copy of the shared memory.
-
-  \return A copy of the shared memory.
-*/
 vpRobotBiclopsController::shmType vpRobotBiclopsController::readShm()
 {
   shmType tmp_shm;
 
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
-  memcpy(&tmp_shm, &this->shm, sizeof(shmType));
-  // tmp_shm = shm;
+  memcpy(&tmp_shm, &this->m_shm, sizeof(shmType));
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     vpDEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);
   }
@@ -445,7 +355,7 @@ vpRobotBiclopsController::shmType vpRobotBiclopsController::readShm()
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotBiclopsController.cpp.o) has no symbols
-void dummy_vpRobotBiclopsController(){};
+void dummy_vpRobotBiclopsController() { };
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
