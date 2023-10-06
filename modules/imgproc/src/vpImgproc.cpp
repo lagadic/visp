@@ -110,60 +110,19 @@ void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double
 
 void equalizeHistogram(vpImage<unsigned char> &I)
 {
-  if (I.getWidth() * I.getHeight() == 0) {
+  vpImage<unsigned char> Icpy = I;
+  vp::equalizeHistogram(Icpy, I);
+}
+
+void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+{
+  if (I1.getWidth() * I1.getHeight() == 0) {
     return;
   }
 
   // Calculate the histogram
   vpHistogram hist;
-  hist.calculate(I);
-
-  // Calculate the cumulative distribution function
-  unsigned int cdf[256];
-  unsigned int cdfMin = /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX, cdfMax = 0;
-  unsigned int minValue =
-    /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX,
-    maxValue = 0;
-  cdf[0] = hist[0];
-
-  if (cdf[0] < cdfMin && cdf[0] > 0) {
-    cdfMin = cdf[0];
-    minValue = 0;
-  }
-
-  for (unsigned int i = 1; i < 256; i++) {
-    cdf[i] = cdf[i - 1] + hist[i];
-
-    if (cdf[i] < cdfMin && cdf[i] > 0) {
-      cdfMin = cdf[i];
-      minValue = i;
-    }
-
-    if (cdf[i] > cdfMax) {
-      cdfMax = cdf[i];
-      maxValue = i;
-    }
-  }
-
-  unsigned int nbPixels = I.getWidth() * I.getHeight();
-  if (nbPixels == cdfMin) {
-    // Only one brightness value in the image
-    return;
-  }
-
-  // Construct the look-up table
-  unsigned char lut[256];
-  for (unsigned int x = minValue; x <= maxValue; x++) {
-    lut[x] = vpMath::round((cdf[x] - cdfMin) / (double)(nbPixels - cdfMin) * 255.0);
-  }
-
-  I.performLut(lut);
-}
-
-void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
-{
-  I2 = I1;
-  vp::equalizeHistogram(I2);
+  hist.equalize(I1, I2);
 }
 
 void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
