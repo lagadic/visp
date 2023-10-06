@@ -572,32 +572,6 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
 }
 #endif
 
-template <class T>
-void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &stdev)
-{
-  max = std::numeric_limits<float>::epsilon();
-  mean = 0.;
-  stdev = 0.;
-  unsigned int nbRows = I.getRows();
-  unsigned int nbCols = I.getCols();
-  float scale = 1. / ((float)nbRows * (float)nbCols);
-  for (unsigned int r = 0; r < nbRows; r++) {
-    for (unsigned int c = 0; c < nbCols; c++) {
-      mean += I[r][c];
-      max = std::max(max, static_cast<float>(I[r][c]));
-    }
-  }
-  mean *= scale;
-  for (unsigned int r = 0; r < nbRows; r++) {
-    for (unsigned int c = 0; c < nbCols; c++) {
-      stdev += (I[r][c] - mean) * (I[r][c] - mean);
-    }
-  }
-  stdev *= scale;
-  stdev = std::sqrt(stdev);
-}
-
-
 /**
  * \brief Compute the upper Canny edge filter threshold.
  *
@@ -610,7 +584,7 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
   const unsigned int gaussianKernelSize = 5;
   const float gaussianStdev = 2.;
   const unsigned int apertureSize = 3;
-  const float nonEdgeRate = 0.6;
+  const float nonEdgeRate = 0.8;
   const float thresholdRate = 0.6;
   
   double w = I.getWidth();
@@ -634,25 +608,16 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
     for (unsigned int c = 0; c < w; c++) {
       float dx = (float)dIx[r][c];
       float dy = (float)dIy[r][c];
-      float gradient = std::sqrt(dx * dx + dy *dy);
+      float gradient = std::abs(dx) + std::abs(dy);
       float gradientClamped = std::min(gradient, (float)std::numeric_limits<unsigned char>::max());
       dI[r][c] = gradientClamped;
     }
   }
-  float mean = 0.f, max = 0.f, stdev = 0.f;
-  computeMeanMaxStdev(dI, mean, max, stdev);
-  std::stringstream title;
-  title << "[computeCannyThreshold::ViSP] Gradient, mean = " << mean << " +/- " << stdev << "; max = " << max;
-  std::cout << title.str() << std::endl;
-
-  // Equalize the histogram
-  vpImage<unsigned char> dIabs_equalized;
-  vpHistogram hist;
-  hist.equalize(dI, dIabs_equalized);
 
   // Compute the histogram
+  vpHistogram hist;
   const unsigned int nbBins = 256;
-  hist.calculate(dIabs_equalized, nbBins);
+  hist.calculate(dI, nbBins);
   float accu = 0;
   float t = (float)(nonEdgeRate * w * h);
   float bon = 0;
@@ -666,7 +631,6 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
   }
   float upperThresh = std::max(bon, 1.f);
   lowerThresh = thresholdRate * bon;
-  std::cout << "[computeCannyThreshold::ViSP] ut = " << upperThresh << " ; lt = " << lowerThresh << std::endl;
   return upperThresh;
 }
 
