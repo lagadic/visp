@@ -112,11 +112,11 @@ void
 vpCircleHoughTransform::initSobelFilters()
 {
   if ((m_algoParams.m_sobelKernelSize % 2) != 1) {
-      throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+    throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
   }
-  m_sobelX.resize(m_algoParams.m_sobelKernelSize , m_algoParams.m_sobelKernelSize );
+  m_sobelX.resize(m_algoParams.m_sobelKernelSize, m_algoParams.m_sobelKernelSize);
   vpImageFilter::getSobelKernelX(m_sobelX.data, (m_algoParams.m_sobelKernelSize  - 1)/2);
-  m_sobelY.resize(m_algoParams.m_sobelKernelSize , m_algoParams.m_sobelKernelSize );
+  m_sobelY.resize(m_algoParams.m_sobelKernelSize, m_algoParams.m_sobelKernelSize);
   vpImageFilter::getSobelKernelY(m_sobelY.data, (m_algoParams.m_sobelKernelSize  - 1)/2);
   m_cannyVisp.setSobelAperture(m_algoParams.m_sobelKernelSize);
 }
@@ -225,36 +225,44 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
 void
 vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I)
 {
-  // Computing the Gaussian blurr 
-  vpImage<float> Iblur, GIx;
-  vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize);
-  vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize);
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+    // Computing the Gaussian blurr
+    vpImage<float> Iblur, GIx;
+    vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize);
+    vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize);
 
-  // Computing the gradients
-  vpImageFilter::filter(Iblur,m_dIx,m_sobelX);
-  vpImageFilter::filter(Iblur,m_dIy,m_sobelY);
+    // Computing the gradients
+    vpImageFilter::filter(Iblur, m_dIx, m_sobelX);
+    vpImageFilter::filter(Iblur, m_dIy, m_sobelY);
+  }
+  else {
+    std::string errMsg("[computeGradientsAfterGaussianSmoothing] The filtering + gradient operators \"");
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" is not implemented (yet).";
+    throw(vpException(vpException::notImplementedError, errMsg));
+  }
 }
 
 void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
-#if defined(HAVE_OPENCV_IMGPROC)
-  float upperCannyThresh = m_algoParams.m_upperCannyThresh;
-  float lowerCannyThresh = m_algoParams.m_lowerCannyThresh;
-  // Apply the Canny edge operator to compute the edge map
-  // The canny method performs Gaussian blur and gradient computation
-  if (m_algoParams.m_upperCannyThresh < 0.) {
-    upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
+  if (m_algoParams.m_cannyBackendType == vpImageFilter::CANNY_VISP_BACKEND) {
+    // This is done to increase the time performances, because it avoids to
+    // recompute the gradient in the vpImageFilter::canny method
+    m_cannyVisp.setFilteringAndGradientType(m_algoParams.m_filteringAndGradientType);
+    m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
+    m_cannyVisp.setCannyThresholdsRatio(m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio);
+    m_cannyVisp.setGradients(m_dIx, m_dIy);
+    m_edgeMap = m_cannyVisp.detect(I);
   }
-  else if (m_algoParams.m_lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.f;
+  else {
+    // We will have to recompute the gradient in the desired backend format anyway so we let
+    // the vpImageFilter::canny method take care of it
+    vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
+    m_algoParams.m_upperCannyThresh, m_algoParams.m_sobelKernelSize, m_algoParams.m_gaussianStdev,
+    m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio,
+    m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
   }
-  vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
-#else
-  m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
-  m_cannyVisp.setGradients(m_dIx, m_dIy);
-  m_edgeMap = m_cannyVisp.detect(I);
-#endif
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
     filterEdgeMap();

@@ -67,11 +67,41 @@
 class VISP_EXPORT vpImageFilter
 {
 public:
-  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
-                    float thresholdCanny, unsigned int apertureSobel);
+  //! Canny filter backends for the edge detection operations
+  typedef enum vpCannyBackendType
+  {
+    CANNY_OPENCV_BACKEND = 0,     //!< Use OpenCV
+    CANNY_VISP_BACKEND = 1,     //!< Use ViSP
+    CANNY_COUNT_BACKEND = 2 //! Number of supported backends
+  } vpCannyBackendType;
 
-  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
-                    float lowerThresholdCanny, float higherThresholdCanny, unsigned int apertureSobel);
+  static std::string vpCannyBackendTypeToString(const vpCannyBackendType &type);
+
+  static vpCannyBackendType vpCannyBackendTypeFromString(const std::string &name);
+
+  //! Canny filter and gradient operators to apply on the image before the edge detection stage
+  typedef enum vpCannyFilteringAndGradientType
+  {
+    CANNY_GBLUR_SOBEL_FILTERING = 0, //!< Apply Gaussian blur + Sobel operator on the input image
+    CANNY_COUNT_FILTERING = 1 //! Number of supported backends
+  } vpCannyFilteringAndGradientType;
+
+  static std::string vpCannyFilteringAndGradientTypeToString(const vpCannyFilteringAndGradientType &type);
+
+  static vpCannyFilteringAndGradientType vpCannyFilteringAndGradientTypeFromString(const std::string &name);
+
+  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, const unsigned int &gaussianFilterSize,
+                    const float &thresholdCanny, const unsigned int &apertureSobel);
+
+  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, const unsigned int &gaussianFilterSize,
+                    const float &lowerThresholdCanny, const float &higherThresholdCanny,
+                    const unsigned int &apertureSobel);
+
+  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, const unsigned int &gaussianFilterSize,
+                    const float &lowerThresholdCanny, const float &higherThresholdCanny,
+                    const unsigned int &apertureSobel, const float &gaussianStdev, const float &lowerThresholdRatio,
+                    const float &upperThresholdRatio, const vpCannyBackendType &cannyBackend,
+                    const vpCannyFilteringAndGradientType &cannyFilteringSteps);
 
   /*!
     Apply a 1x3 derivative filter to an image pixel.
@@ -289,7 +319,7 @@ public:
 
   template<typename ImageType>
   static void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageType> &Iv, const vpArray2D<vpRGBa> &M, bool convolve) = delete;
-  
+
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
   /*!
@@ -1056,10 +1086,17 @@ public:
     return 1 / 16.0;
   }
 
-static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh);
+  static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
+                                     const vpImage<float> *p_dIx = nullptr, const vpImage<float> *p_dIy = nullptr,
+                                     const unsigned int gaussianKernelSize = 5,
+                                     const float gaussianStdev = 2.f, const unsigned int apertureSobel = 3,
+                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8);
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh);
+  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
+                                     float &lowerThresh, const unsigned int gaussianKernelSize = 5,
+                                     const float gaussianStdev = 2.f, const unsigned int apertureSobel = 3,
+                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8);
   static float median(const cv::Mat &cv_I);
   static float median(const vpImage<unsigned char> &Isrc);
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);

@@ -38,7 +38,95 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpRGBa.h>
+
+/**
+ * \brief Cast a \b vpImageFilter::vpCannyBackendTypeToString into a string, to know its name.
+ *
+ * \param[in] type The type that must be casted into a string.
+ * \return std::string The corresponding name.
+ */
+std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCannyBackendType &type)
+{
+  std::string name;
+  switch (type) {
+  case vpCannyBackendType::CANNY_OPENCV_BACKEND:
+    name = "opencv-backend";
+    break;
+  case vpCannyBackendType::CANNY_VISP_BACKEND:
+    name = "visp-backend";
+    break;
+  case vpCannyBackendType::CANNY_COUNT_BACKEND:
+  default:
+    return "unknown-backend";
+  }
+  return name;
+}
+
+/**
+ * \brief Cast a string into a \b vpImageFilter::vpCannyBackendTypeToString.
+ *
+ * \param[in] name The name of the backend.
+ * \return vpImageFilter::vpCannyBackendTypeToString The corresponding enumeration value.
+ */
+vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(const std::string &name)
+{
+  vpCannyBackendType type(vpCannyBackendType::CANNY_COUNT_BACKEND);
+  std::string nameLowerCase = vpIoTools::toLowerCase(name);
+  unsigned int count = (unsigned int)vpCannyBackendType::CANNY_COUNT_BACKEND;
+  bool found = false;
+  for (unsigned int i = 0; i < count && !found; i++) {
+    vpCannyBackendType temp = (vpCannyBackendType)i;
+    if (nameLowerCase == vpCannyBackendTypeToString(temp)) {
+      type = temp;
+      found = true;
+    }
+  }
+  return type;
+}
+
+/**
+ * \brief Cast a \b vpImageFilter::vpCannyFilteringAndGradientType into a string, to know its name.
+ *
+ * \param[in] type The type that must be casted into a string.
+ * \return std::string The corresponding name.
+ */
+std::string vpImageFilter::vpCannyFilteringAndGradientTypeToString(const vpImageFilter::vpCannyFilteringAndGradientType &type)
+{
+  std::string name;
+  switch (type) {
+  case vpCannyFilteringAndGradientType::CANNY_GBLUR_SOBEL_FILTERING:
+    name = "gaussianblur+sobel-filtering";
+    break;
+  case vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING:
+  default:
+    return "unknown-filtering";
+  }
+  return name;
+}
+
+/**
+ * \brief Cast a string into a \b vpImageFilter::vpCannyFilteringAndGradientType.
+ *
+ * \param[in] name The name of the backend.
+ * \return vpImageFilter::vpCannyFilteringAndGradientType The corresponding enumeration value.
+ */
+vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFilteringAndGradientTypeFromString(const std::string &name)
+{
+  vpCannyFilteringAndGradientType type(vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING);
+  std::string nameLowerCase = vpIoTools::toLowerCase(name);
+  unsigned int count = (unsigned int)vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING;
+  bool found = false;
+  for (unsigned int i = 0; i < count && !found; i++) {
+    vpCannyFilteringAndGradientType temp = (vpCannyFilteringAndGradientType)i;
+    if (nameLowerCase == vpCannyFilteringAndGradientTypeToString(temp)) {
+      type = temp;
+      found = true;
+    }
+  }
+  return type;
+}
 
 /**
  * \cond DO_NOT_DOCUMENT
@@ -119,10 +207,10 @@ void vpImageFilter::filter<double, double>(const vpImage<double> &I, vpImage<dou
   Using two separable kernels reduce the number of operations and can be
   faster for large kernels.
 
-  \param I : Image to filter
-  \param If : Filtered image.
-  \param kernelH : Separable kernel (performed first).
-  \param kernelV : Separable kernel (performed last).
+  \param[in] I : Image to filter
+  \param[out] If : Filtered image.
+  \param[in] kernelH : Separable kernel (performed first).
+  \param[in] kernelV : Separable kernel (performed last).
   \note Only pixels in the input image fully covered by the kernel are considered.
 */
 void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
@@ -207,7 +295,7 @@ void vpImageFilter::filterY<unsigned char, float>(const vpImage<unsigned char> &
   unsigned int size);
 
 /*template<>*/template
-void vpImageFilter::filterY<unsigned char,double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter,
+void vpImageFilter::filterY<unsigned char, double>(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter,
   unsigned int size);
 
 /*template<>*/template
@@ -265,12 +353,12 @@ void vpImageFilter::gaussianBlur<double, double>(const vpImage<double> &I, vpIma
 
 /*!
   Apply a Gaussian blur to RGB color image.
-  \param I : Input image.
-  \param GI : Filtered image.
-  \param size : Filter size. This value should be odd.
-  \param sigma : Gaussian standard deviation. If it is equal to zero or
+  \param[in] I : Input image.
+  \param[out] GI : Filtered image.
+  \param[in] size : Filter size. This value should be odd.
+  \param[in] sigma : Gaussian standard deviation. If it is equal to zero or
   negative, it is computed from filter size as sigma = (size-1)/6.
-  \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not.
 
   \sa getGaussianKernel() to know which kernel is used.
  */
@@ -504,38 +592,48 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
 }
 
 /**
- * \brief Compute the upper Canny edge filter threshold.
+ * \brief Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel operators to compute
+ * the gradient of the image.
  *
  * \param[in] cv_I : The image, in cv format.
- * \param[in] p_cv_blur : If different from nullptr, must contain a blurred version of cv_I.
+ * \param[in] p_cv_dIx : If different from nullptr, the gradient of cv_I with regard to the horizontal axis.
+ * \param[in] p_cv_dIy : If different from nullptr, the gradient of cv_I with regard to the vertical axis.
  * \param[out] lowerThresh : The lower threshold for the Canny edge filter.
+ * \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to apply (an odd number).
+ * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+ * \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
+ * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+ * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to to define
+ * the upper threshold.
  * \return The upper Canny edge filter threshold.
  */
-float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_blur, float &lowerThresh)
+float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
+                                     float &lowerThresh, const unsigned int gaussianKernelSize,
+                                     const float gaussianStdev, const unsigned int apertureSobel,
+                                     const float lowerThresholdRatio, const float upperThresholdRatio)
 {
-  const unsigned int gaussianKernelSize = 5;
-  const float gaussianStdev = 2.f;
-  const unsigned int sobelAperture = 3;
-  const float nonEdgeRate = 0.6;
-  const float thresholdRate = 0.6;
   double w = cv_I.cols;
   double h = cv_I.rows;
   int bins = 256;
-  cv::Mat sobel, sobelx, sobely, sobelxabs, sobelyabs, img_blur;
+  cv::Mat sobel, sobelx, sobely, sobelxabs, sobelyabs;
 
-  if(p_cv_blur == nullptr) {   
+  if (p_cv_dIx == nullptr || p_cv_dIy == nullptr) {
+    cv::Mat img_blur;
     // Apply Gaussian blur to the image
     cv::Size gsz(gaussianKernelSize, gaussianKernelSize);
-    cv::GaussianBlur(cv_I, img_blur,gsz, gaussianStdev);
+    cv::GaussianBlur(cv_I, img_blur, gsz, gaussianStdev);
+
+    // Compute the gradient of the blurred image
+    cv::Sobel(img_blur, sobelx, CV_16S, 1, 0, apertureSobel, 1, 0);
+    cv::Sobel(img_blur, sobely, CV_16S, 0, 1, apertureSobel, 1, 0);
   }
   else {
-    img_blur = *p_cv_blur;
+    sobelx = *p_cv_dIx;
+    sobely = *p_cv_dIy;
   }
 
-  // Compute the gradient of the blurred image
-  cv::Sobel(img_blur, sobelx, CV_16S, 1, 0, sobelAperture, 1, 0);
+  // Compute the absolute gradient of the blurred image G = |dIx| + |dIy|
   cv::convertScaleAbs(sobelx, sobelxabs);
-  cv::Sobel(img_blur, sobely, CV_16S, 0, 1, sobelAperture, 1, 0);
   cv::convertScaleAbs(sobely, sobelyabs);
   cv::addWeighted(sobelxabs, 1, sobelyabs, 1, 0, sobel);
   sobel.convertTo(sobel, CV_8U);
@@ -546,16 +644,16 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
 
   // Compute the upper threshold from the equalized histogram
   cv::Mat hist;
-  const float range[] = {0.f, 256.f}; // The upper boundary is exclusive
-  const float* ranges[] = { range };
-  int channels[] = {0};
+  const float range[] = { 0.f, 256.f }; // The upper boundary is exclusive
+  const float *ranges[] = { range };
+  int channels[] = { 0 };
   bool dims = 1; // The number of dimensions of the histogram
-  int histSize[] = {bins};
+  int histSize[] = { bins };
   bool uniform = true;
   bool accumulate = false; // Clear the histogram at the beginning of calcHist if false, does not clear it otherwise
   cv::calcHist(&equalized, 1, channels, cv::Mat(), hist, dims, histSize, ranges, uniform, accumulate);
   float accu = 0;
-  float t = (float)(nonEdgeRate * w * h);
+  float t = (float)(upperThresholdRatio * w * h);
   float bon = 0;
   for (int i = 0; i < bins; i++) {
     float tf = hist.at<float>(i);
@@ -566,44 +664,57 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
     }
   }
   float upperThresh = std::max(bon, 1.f);
-  lowerThresh = thresholdRate * bon;
-  std::cout << "[computeCannyThreshold::cv] ut = " << upperThresh << " ; lt = " << lowerThresh << std::endl;
+  lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }
 #endif
 
 /**
- * \brief Compute the upper Canny edge filter threshold.
+ * \brief Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel operators to compute
+ * the gradient of the image.
  *
  * \param[in] I : The gray-scale image, in ViSP format.
+ * \param[in] p_dIx : If different from nullptr, must contain the gradient of the image with regard to the horizontal axis.
+ * \param[in] p_dIy : If different from nullptr, must contain the gradient of the image with regard to the vertical axis.
  * \param[in] lowerThresh : Canny lower threshold.
+ * \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to apply (an odd number).
+ * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+ * \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
+ * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+ * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+ * the upper threshold.
  * \return The upper Canny edge filter threshold.
  */
-float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh)
+float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
+                                     const vpImage<float> *p_dIx, const vpImage<float> *p_dIy,
+                                     const unsigned int gaussianKernelSize,
+                                     const float gaussianStdev, const unsigned int apertureSobel,
+                                     const float lowerThresholdRatio, const float upperThresholdRatio)
 {
-  const unsigned int gaussianKernelSize = 5;
-  const float gaussianStdev = 2.;
-  const unsigned int apertureSize = 3;
-  const float nonEdgeRate = 0.8;
-  const float thresholdRate = 0.6;
-  
   double w = I.getWidth();
   double h = I.getHeight();
 
-  // Computing the Gaussian blurr + gradients of the image
-  vpImage<float> Iblur;
-  vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev);
-
-  vpArray2D<float> sobelX(apertureSize, apertureSize); // Sobel kernel along x
-  vpImageFilter::getSobelKernelX(sobelX.data, (apertureSize - 1)/2);
-  vpArray2D<float> sobelY(apertureSize, apertureSize); // Sobel kernel along x
-  vpImageFilter::getSobelKernelY(sobelY.data, (apertureSize - 1)/2);
-  vpImage<float> dIx, dIy;
-  vpImageFilter::filter(Iblur,dIx,sobelX);
-  vpImageFilter::filter(Iblur,dIy,sobelY);
-
-  // Computing the gradient of the image
   vpImage<unsigned char> dI(h, w);
+  vpImage<float> dIx(h, w), dIy(h, w);
+  if (p_dIx != nullptr && p_dIy != nullptr) {
+    dIx = *p_dIx;
+    dIy = *p_dIy;
+  }
+  else {
+    // Computing the Gaussian blur + gradients of the image
+    vpImage<float> Iblur;
+    vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev);
+
+    vpArray2D<float> sobelX(apertureSobel, apertureSobel); // Sobel kernel along x
+    vpImageFilter::getSobelKernelX(sobelX.data, (apertureSobel - 1)/2);
+    vpArray2D<float> sobelY(apertureSobel, apertureSobel); // Sobel kernel along y
+    vpImageFilter::getSobelKernelY(sobelY.data, (apertureSobel - 1)/2);
+
+    vpImageFilter::filter(Iblur, dIx, sobelX);
+    vpImageFilter::filter(Iblur, dIy, sobelY);
+  }
+
+  // Computing the absolute gradient of the image G = |dIx| + |dIy|
   for (unsigned int r = 0; r < h; r++) {
     for (unsigned int c = 0; c < w; c++) {
       float dx = (float)dIx[r][c];
@@ -619,7 +730,7 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
   const unsigned int nbBins = 256;
   hist.calculate(dI, nbBins);
   float accu = 0;
-  float t = (float)(nonEdgeRate * w * h);
+  float t = (float)(upperThresholdRatio * w * h);
   float bon = 0;
   for (unsigned int i = 0; i < nbBins; i++) {
     float tf = hist[i];
@@ -630,7 +741,7 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
     }
   }
   float upperThresh = std::max(bon, 1.f);
-  lowerThresh = thresholdRate * bon;
+  lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }
 
@@ -663,18 +774,19 @@ int main()
 }
   \endcode
 
-  \param Isrc : Image to apply the Canny edge detector to.
-  \param Ires : Filtered image (255 means an edge, 0 otherwise).
-  \param gaussianFilterSize : The size of the mask of the Gaussian filter to
+  \param[in] Isrc : Image to apply the Canny edge detector to.
+  \param[out] Ires : Filtered image (255 means an edge, 0 otherwise).
+  \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to
   apply (an odd number).
-  \param thresholdCanny : The upper threshold for the Canny operator. Only value
+  \param[in] thresholdCanny : The upper threshold for the Canny operator. Only value
   greater than this value are marked as an edge. If negative, it will be automatically
   computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
   of the thresholdCanny .
-  \param apertureSobel : Size of the mask for the Sobel operator (odd number).
+  \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          unsigned int gaussianFilterSize, float thresholdCanny, unsigned int apertureSobel)
+                          const unsigned int &gaussianFilterSize, const float &thresholdCanny,
+                          const unsigned int &apertureSobel)
 {
   vpImageFilter::canny(Isrc, Ires, gaussianFilterSize, thresholdCanny / 3.f, thresholdCanny, apertureSobel);
 }
@@ -709,49 +821,166 @@ int main()
 }
   \endcode
 
-  \param Isrc : Image to apply the Canny edge detector to.
-  \param Ires : Filtered image (255 means an edge, 0 otherwise).
-  \param gaussianFilterSize : The size of the mask of the Gaussian filter to
+  \param[in] Isrc : Image to apply the Canny edge detector to.
+  \param[out] Ires : Filtered image (255 means an edge, 0 otherwise).
+  \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to
   apply (an odd number).
-  \param lowerThreshold : The lower threshold for the Canny operator. Values lower
+  \param[in] lowerThreshold : The lower threshold for the Canny operator. Values lower
   than this value are rejected. If negative, it will be set to one third
   of the thresholdCanny .
-  \param upperThreshold : The upper threshold for the Canny operator. Only value
+  \param[in] upperThreshold : The upper threshold for the Canny operator. Only value
   greater than this value are marked as an edge. If negative, it will be automatically
   computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
   of the thresholdCanny .
-  \param apertureSobel : Size of the mask for the Sobel operator (odd number).
+  \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          unsigned int gaussianFilterSize, float lowerThreshold, float upperThreshold, unsigned int apertureSobel)
+                          const unsigned int &gaussianFilterSize,
+                          const float &lowerThreshold, const float &upperThreshold,
+                          const unsigned int &apertureSobel)
 {
+  const float gaussianStdev = 2.f;
+  const float upperThresholdRatio = 0.8f;
+  const float lowerThresholdRatio = 0.6f;
 #if defined(HAVE_OPENCV_IMGPROC)
-  cv::Mat img_cvmat, cv_I_blur, cv_dx, cv_dy, edges_cvmat;
-  vpImageConvert::convert(Isrc, img_cvmat);
-  cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
-  cv::Sobel(cv_I_blur, cv_dx, CV_16S, 1, 0, apertureSobel);
-  cv::Sobel(cv_I_blur, cv_dy, CV_16S, 0, 1, apertureSobel);
-  float upperCannyThresh = upperThreshold;
-  float lowerCannyThresh = lowerThreshold;
-  if (upperCannyThresh < 0) {
-    upperCannyThresh = computeCannyThreshold(img_cvmat, &cv_I_blur, lowerCannyThresh);
-  }
-  else if (lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.f;
-  }
-  cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
-  vpImageConvert::convert(edges_cvmat, Ires);
+  const vpCannyBackendType cannyBackend = CANNY_OPENCV_BACKEND;
 #else
-  (void)apertureSobel;
-  float upperCannyThresh = upperThreshold;
-  float lowerCannyThresh = lowerThreshold;
-  if (upperCannyThresh < 0) {
-    upperCannyThresh = computeCannyThreshold(Isrc, lowerCannyThresh);
-  }
-  else if (lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.;
-  }
-  vpCannyEdgeDetection edgeDetector(gaussianFilterSize, 0.1, lowerCannyThresh, upperCannyThresh);
-  Ires = edgeDetector.detect(Isrc);
+  const vpCannyBackendType cannyBackend = CANNY_VISP_BACKEND;
 #endif
+  const vpCannyFilteringAndGradientType cannyFilteringSteps = CANNY_GBLUR_SOBEL_FILTERING;
+  canny(Isrc, Ires, gaussianFilterSize, lowerThreshold, upperThreshold, apertureSobel,
+        gaussianStdev, lowerThresholdRatio, upperThresholdRatio, cannyBackend, cannyFilteringSteps);
+}
+
+/*!
+  Apply the Canny edge operator on the image \e Isrc and return the resulting
+  image \e Ires.
+
+  The following example shows how to use the method:
+
+  \code
+#include <visp3/core/vpImage.h>
+#include <visp3/core/vpImageFilter.h>
+
+int main()
+{
+  // Constants for the Canny operator.
+  const unsigned int gaussianFilterSize = 5;
+  const float gaussianStdev = 2.0f;
+  const float upperThresholdCanny = 15.f;
+  const float lowerThresholdCanny = 5.f;
+  const float upperThresholdRatio = 0.8f;
+  const float lowerThresholdRatio = 0.6f;
+  const unsigned int apertureSobel = 3;
+  const vpCannyBackendType cannyBackend = CANNY_OPENCV_BACKEND; // or CANNY_VISP_BACKEND;
+  const vpCannyFilteringAndGradientType cannyFilteringSteps = CANNY_GBLUR_SOBEL_FILTERING;
+
+  // Image for the Canny edge operator
+  vpImage<unsigned char> Isrc;
+  vpImage<unsigned char> Icanny;
+
+  // First grab the source image Isrc.
+
+  // Apply the Canny edge operator and set the Icanny image.
+  vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel,
+                       gaussianStdev, lowerThresholdRatio, upperThresholdRatio, cannyBackend, cannyFilteringSteps);
+  return (0);
+}
+  \endcode
+
+  \param[in] Isrc : Image to apply the Canny edge detector to.
+  \param[out] Ires : Filtered image (255 means an edge, 0 otherwise).
+  \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to
+  apply (an odd number).
+  \param[in] lowerThreshold : The lower threshold for the Canny operator. Values lower
+  than this value are rejected. If negative, it will be set to one third
+  of the thresholdCanny .
+  \param[in] upperThreshold : The upper threshold for the Canny operator. Only value
+  greater than this value are marked as an edge. If negative, it will be automatically
+  computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
+  of the thresholdCanny .
+  \param[in] apertureSobel : Size of the mask for the Sobel operator (odd number).
+  \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+  \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+  It is used only if the user asks to compute the Canny thresholds.
+  \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+  the upper threshold. It is used only if the user asks to compute the Canny thresholds.
+  \param[in] cannyBackend : The backend to use to perform the Canny edge filtering.
+  \param[in] cannyFilteringSteps : The filtering + gradient operators to apply to compute the gradient in the early
+  stage of the Canny algoritgm.
+
+*/
+void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
+                    const unsigned int &gaussianFilterSize,
+                    const float &lowerThreshold, const float &upperThreshold, const unsigned int &apertureSobel,
+                    const float &gaussianStdev, const float &lowerThresholdRatio, const float &upperThresholdRatio,
+                    const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps)
+{
+  if (cannyBackend == CANNY_OPENCV_BACKEND) {
+#if defined(HAVE_OPENCV_IMGPROC)
+    cv::Mat img_cvmat, cv_dx, cv_dy, edges_cvmat;
+    vpImageConvert::convert(Isrc, img_cvmat);
+    if (cannyFilteringSteps == CANNY_GBLUR_SOBEL_FILTERING) {
+      cv::Mat cv_I_blur;
+      cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
+      cv::Sobel(cv_I_blur, cv_dx, CV_16S, 1, 0, apertureSobel);
+      cv::Sobel(cv_I_blur, cv_dy, CV_16S, 0, 1, apertureSobel);
+    }
+    else {
+      std::string errMsg("[vpImageFilter::canny]Other types of Canny filtering steps have not been implemented");
+      throw(vpException(vpException::functionNotImplementedError, errMsg));
+    }
+    float upperCannyThresh = upperThreshold;
+    float lowerCannyThresh = lowerThreshold;
+    if (upperCannyThresh < 0) {
+      upperCannyThresh = computeCannyThreshold(img_cvmat, &cv_dx, &cv_dy, lowerCannyThresh, gaussianFilterSize,
+                                              gaussianStdev, apertureSobel, lowerThresholdRatio, upperThresholdRatio);
+    }
+    else if (lowerCannyThresh < 0) {
+      lowerCannyThresh = upperCannyThresh / 3.f;
+    }
+    cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
+    vpImageConvert::convert(edges_cvmat, Ires);
+#else
+    std::string errMsg("[vpImageFilter::canny]You asked for CANNY_OPENCV_BACKEND but ViSP has not been compiled with OpenCV");
+    throw(vpException(vpException::badValue, errMsg));
+#endif
+  }
+  else if (cannyBackend == CANNY_VISP_BACKEND) {
+    float upperCannyThresh = upperThreshold;
+    float lowerCannyThresh = lowerThreshold;
+
+    vpImage<float> dIx, dIy;
+    if (cannyFilteringSteps == CANNY_GBLUR_SOBEL_FILTERING) {
+      // Computing the Gaussian blur + gradients of the image
+      vpImage<float> Iblur;
+      vpImageFilter::gaussianBlur(Isrc, Iblur, gaussianFilterSize, gaussianStdev);
+
+      // Compute the Sobel filters
+      vpArray2D<float> sobelX(apertureSobel, apertureSobel); // Sobel kernel along x
+      vpImageFilter::getSobelKernelX(sobelX.data, (apertureSobel - 1)/2);
+      vpArray2D<float> sobelY(apertureSobel, apertureSobel); // Sobel kernel along y
+      vpImageFilter::getSobelKernelY(sobelY.data, (apertureSobel - 1)/2);
+
+      // Apply the Sobel filters to get the gradients
+      vpImageFilter::filter(Iblur, dIx, sobelX);
+      vpImageFilter::filter(Iblur, dIy, sobelY);
+    }
+    else {
+      std::string errMsg("[vpImageFilter::canny]Other types of Canny filtering steps have not been implemented");
+      throw(vpException(vpException::functionNotImplementedError, errMsg));
+    }
+
+    if (upperCannyThresh < 0) {
+      upperCannyThresh = computeCannyThreshold(Isrc, lowerCannyThresh, &dIx, &dIy, gaussianFilterSize, gaussianStdev,
+                                              apertureSobel, lowerThresholdRatio, upperThresholdRatio);
+    }
+    else if (lowerCannyThresh < 0) {
+      lowerCannyThresh = upperCannyThresh / 3.;
+    }
+    vpCannyEdgeDetection edgeDetector(gaussianFilterSize, gaussianStdev, apertureSobel, lowerCannyThresh, upperCannyThresh,
+                                      lowerThresholdRatio, upperThresholdRatio);
+    edgeDetector.setGradients(dIx, dIy);
+    Ires = edgeDetector.detect(Isrc);
+  }
 }
