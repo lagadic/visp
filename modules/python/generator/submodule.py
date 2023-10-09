@@ -8,7 +8,7 @@ from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, Cla
 from pathlib import Path
 import json
 
-from header import HeaderFile, sort_headers, filter_includes
+from header import HeaderFile
 from utils import *
 from gen_report import Report
 
@@ -58,7 +58,7 @@ class Submodule():
       header_code.append(header.binding_code)
       declarations.extend(header.declarations)
       includes.extend(header.includes)
-    includes_set = filter_includes(set(includes))
+    includes_set = set(includes)
     submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
     bindings = '\n'.join(header_code)
     declarations = '\n'.join(declarations)

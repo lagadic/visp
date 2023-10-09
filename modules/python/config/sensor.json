@@ -1,3 +1,102 @@
 {
-  "ignored_headers": []
+  "ignored_headers": [],
+  "classes": {
+    "vp1394TwoGrabber": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void acquire(vpImage<unsigned char>&, uint64_t&, uint32_t&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void acquire(vpImage<vpRGBa>&, uint64_t&, uint32_t&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void getNumCameras(unsigned int&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void getWidth(unsigned int&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void getHeight(unsigned int&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void getCamera(uint64_t&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "uint32_t getVideoModeSupported(std::list<vp1394TwoGrabber::vp1394TwoVideoModeType>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "uint32_t getFramerateSupported(vp1394TwoGrabber::vp1394TwoVideoModeType, std::list<vp1394TwoGrabber::vp1394TwoFramerateType>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void getAutoGain(unsigned int&, unsigned int&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
+    }
+  }
 }

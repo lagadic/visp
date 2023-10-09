@@ -235,7 +235,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
 
     # Params that are only outputs: they should be declared in function. Assume that they are default constructible
     param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
-    param_declarations = [f'{params_strs[i]} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+    param_declarations = [f'{get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping)} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
     param_declarations = '\n'.join(param_declarations)
     if not method.static:
       self_param_with_name = bound_object.cpp_name + '& self'

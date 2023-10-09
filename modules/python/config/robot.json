@@ -38,11 +38,48 @@
             false,
             false
           ]
+        },
+        {
+          "static": false,
+          "signature": "void init(const vpImage<unsigned char>&, vpColVector*)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void init(const vpImage<vpRGBa>&, vpColVector*)",
+          "ignore": true
         }
       ]
     },
     "vpRobotSimulator": {
       "is_virtual": true
+    },
+
+    "vpWireFrameSimulator" : {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void get_fMo_History(std::list<vpHomogeneousMatrix>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+            "signature": "void get_cMo_History(std::list<vpHomogeneousMatrix>&)",
+            "use_default_param_policy": false,
+            "param_is_input": [
+              false
+            ],
+            "param_is_output": [
+              true
+            ]
+        }
+      ]
     }
   }
 }

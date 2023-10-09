@@ -82,6 +82,12 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
   else:
     return None
 
+def get_type_for_declaration(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
+  if isinstance(param, types.Reference):
+    return get_type(param.ref_to, owner_specs, header_env_mapping)
+  else:
+    return get_type(param, owner_specs, header_env_mapping)
+
 def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
   '''
   Whether the passed in pointer is of type const char*

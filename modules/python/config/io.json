@@ -1,4 +1,22 @@
 {
   "ignored_headers": ["vpParallelPortException.h"],
-  "ignored_classes": ["vpJsonArgumentParser", "vpParseArgv"]
+  "ignored_classes": ["vpJsonArgumentParser", "vpParseArgv"],
+
+  "classes": {
+    "vpParallelPort": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void sendData(unsigned char&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true
+          ],
+          "param_is_output": [
+            false
+          ]
+        }
+      ]
+    }
+  }
 }
