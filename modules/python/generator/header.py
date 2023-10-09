@@ -100,7 +100,7 @@ class HeaderFile():
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      '-I', '/usr/include',
+      #'-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
       '--passthru-includes', "^((?!vpConfig.h).)*$",
       '--passthru-unfound-includes',
@@ -132,22 +132,48 @@ class HeaderFile():
 
   def parse_data(self):
     from enum_binding import enum_bindings
-    result = ''
-    print(f'Building environment for {self.path}')
-    header_env = self.environment
-    if 'AprilTag' in self.path.name:
-      import pprint
-      pprint.pprint(header_env.mapping)
+    result = '' # String containing the definitions (actual bindings and not class/enum declarations)
+
+    # Fetch documentation if available
     if self.documentation_holder_path is not None:
-      self.documentation_holder = DocumentationHolder(self.documentation_holder_path, header_env.mapping)
+      self.documentation_holder = DocumentationHolder(self.documentation_holder_path, self.environment.mapping)
     else:
       print(f'No documentation found for header {self.path}')
+
     for cls in self.header_repr.namespace.classes:
-      result += self.generate_class(cls, header_env) + '\n'
-    enum_decls_and_bindings = enum_bindings(self.header_repr.namespace, header_env.mapping, self.submodule)
+      result += self.generate_class(cls, self.environment) + '\n'
+    enum_decls_and_bindings = enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule)
     for declaration, binding in enum_decls_and_bindings:
       self.declarations.append(declaration)
       result += binding
+    # Parse functions that are not linked to a class
+    result += self.parse_sub_namespace(self.header_repr.namespace)
+    return result
+
+  def parse_sub_namespace(self, ns: NamespaceScope, namespace_prefix = '', is_root=True) -> str:
+    if not is_root and ns.name == '': # Anonymous namespace, only visible in header, so we ignore it
+      return ''
+
+    result = ''
+    functions_with_configs, rejected_functions = get_bindable_functions_with_config(self.submodule, ns.functions, self.environment.mapping)
+
+    # Log rejected functions
+    rejection_strs = []
+    for rejected_function in rejected_functions:
+      self.submodule.report.add_non_generated_method(rejected_function)
+      if NotGeneratedReason.is_non_trivial_reason(rejected_function.rejection_reason):
+        rejection_strs.append(f'\t{rejected_function.signature} was rejected! Reason: {rejected_function.rejection_reason}')
+    if len(rejection_strs) > 0:
+      print(f'Rejected function in namespace: {ns.name}')
+      print('\n'.join(rejection_strs))
+
+    bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
+    for function, function_config in functions_with_configs:
+      result += define_method(function, function_config, False, {}, self, self.environment, bound_object)[0] + '\n'
+
+    for sub_ns in ns.namespaces:
+      result += self.parse_sub_namespace(ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
+
     return result
 
   def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
@@ -168,13 +194,13 @@ class HeaderFile():
         template_str = f'<{", ".join(template_strs)}>'
         name_cpp += template_str
 
-      # Reference base classes when creating pybind class binding
+      # Reference public base classes when creating pybind class binding
       base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
                             filter(lambda b: b.access == 'public', cls.class_decl.bases))
       class_template_str = ', '.join([name_cpp] + list(base_class_strs))
       doc_param = [] if class_doc is None else [class_doc.documentation]
-
-      cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + (['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else [])
+      buffer_protocol_arg = ['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else []
+      cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + buffer_protocol_arg
 
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
       self.declarations.append(class_decl)
@@ -186,6 +212,7 @@ class HeaderFile():
         if method.pure_virtual:
           contains_pure_virtual_methods = True
           break
+
       # User marked this class as virtual.
       # This is required if no virtual method is declared in this class,
       #  but it does not implement pure virtual methods of a base class
@@ -307,7 +334,6 @@ class HeaderFile():
         if len(owner_specs.keys()) > 0:
           template_types = owner_specs.values()
           template_str = f'<{", ".join([template_type for template_type in template_types])}>'
-
         method_strs.append(f'{cls_config["additional_bindings"]}({python_ident});')
 
 

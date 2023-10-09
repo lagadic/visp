@@ -96,6 +96,11 @@ def ref_to_class_method(method: types.Method, cls_name: str, method_name: str, r
   cast_str = f'{return_type} {pointer_to_type}({", ".join(params)}) {maybe_const}'
   return f'static_cast<{cast_str}>(&{cls_name}::{method_name})'
 
+def ref_to_function(method_name: str, return_type: str, params: List[str]) -> str:
+  pointer_to_type = '(*)'
+  cast_str = f'{return_type} {pointer_to_type}({", ".join(params)})'
+  return f'static_cast<{cast_str}>(&{method_name})'
+
 def method_def(py_name: str, method: str, additional_args: List[str], static: bool) -> str:
   def_type = 'def' if not static else 'def_static'
   additional_args_str = ', '.join(additional_args)
@@ -215,15 +220,25 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
 
   # Fetch documentation if available
   if header.documentation_holder is not None:
-    method_doc_signature = MethodDocSignature(method_name,
-                                              get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
-                                              [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
-                                              method.const, method.static)
+    if is_class_method:
+      method_doc_signature = MethodDocSignature(method_name,
+                                                get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
+                                                [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                method.const, method.static)
+    else:
+      method_doc_signature = MethodDocSignature(method_name,
+                                                get_type(method.return_type, {}, header_env.mapping), # Don't use specializations so that we can match with doc
+                                                [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                True, True)
     method_doc = header.documentation_holder.get_documentation_for_method(bound_object.cpp_no_template_name, method_doc_signature, {}, specs, input_param_names, output_param_names)
     if method_doc is None:
       print(f'Could not find documentation for {bound_object.cpp_name}::{method_name}!')
     else:
       py_arg_strs = [method_doc.documentation] + py_arg_strs
+
+  if 'vpAutoThresholdMethod' in header_env.mapping:
+    print('AAAAA', header_env.mapping)
+    print(params_strs)
 
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
@@ -237,12 +252,12 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
     param_declarations = [f'{get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping)} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
     param_declarations = '\n'.join(param_declarations)
-    if not method.static:
+    if is_class_method and not method.static:
       self_param_with_name = bound_object.cpp_name + '& self'
       method_caller = 'self.'
     else:
       self_param_with_name = None
-      method_caller = bound_object.cpp_name + '::'
+      method_caller = bound_object.cpp_name + '::' if is_class_method else bound_object.cpp_name
 
     if return_type is None or return_type == 'void':
       maybe_get_return = ''
@@ -265,9 +280,12 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     method_body_str = define_lambda('', final_lambda_params, None, lambda_body)
 
   else:
-    method_body_str = ref_to_class_method(method, bound_object.cpp_name, method_name, return_type, params_strs)
+    if is_class_method:
+      method_body_str = ref_to_class_method(method, bound_object.cpp_name, method_name, return_type, params_strs)
+    else:
+      method_body_str = ref_to_function(bound_object.cpp_name + method_name, return_type, params_strs)
 
-  method_str = method_def(py_method_name, method_body_str, py_arg_strs, method.static)
+  method_str = method_def(py_method_name, method_body_str, py_arg_strs, method.static if is_class_method else False)
   method_str = f'{bound_object.python_ident}.{method_str};'
   return method_str, (py_method_name, method)
 
@@ -340,7 +358,32 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
 
   return bindable_methods, rejected_methods
 
+def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[types.Function], mapping) -> Tuple[List[Tuple[types.Function, Dict]], List[RejectedMethod]]:
+  bindable_functions = []
+  rejected_functions = []
+  # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
+  filtering_predicates_and_motives = [
+    (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: get_name(m.name) in ['from_json', 'to_json', 'operator<<'], NotGeneratedReason.UserIgnored),
+    (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
+    (lambda m, _: any(is_unsupported_argument_type(param.type) for param in m.parameters), NotGeneratedReason.ArgumentType),
+    (lambda m, _: is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
+  ]
+  for function in functions:
+    function_config = submodule.get_method_config(None, function, {}, mapping)
+    method_can_be_bound = True
+    for predicate, motive in filtering_predicates_and_motives:
+      if predicate(function, function_config):
+        return_str = '' if function.return_type is None else (get_type(function.return_type, {}, mapping) or '<unparsed>')
+        method_name = '::'.join(seg.name for seg in function.name.segments)
+        param_strs = [get_type(param.type, {}, mapping) or '<unparsed>' for param in function.parameters]
+        rejected_functions.append(RejectedMethod('', function, function_config, get_method_signature(method_name, return_str, param_strs), motive))
+        method_can_be_bound = False
+        break
+    if method_can_be_bound:
+      bindable_functions.append((function, function_config))
 
+  return bindable_functions, rejected_functions
 
 def split_methods_with_config(methods: List[Tuple[types.Method, Dict]], predicate: Callable[[types.Method], bool]) -> Tuple[List[Tuple[types.Method, Dict]], List[Tuple[types.Method, Dict]]]:
   matching = []

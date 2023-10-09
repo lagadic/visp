@@ -66,6 +66,7 @@ class HeaderEnvironment():
     if isinstance(data, NamespaceScope):
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
+
       for typedef in data.typedefs:
         mapping[typedef.name] = scope + typedef.name
 
@@ -78,14 +79,17 @@ class HeaderEnvironment():
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
         mapping[cls_name] = scope + cls_name
         mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
+
       for namespace in data.namespaces:
         mapping.update(self.build_naive_mapping(data.namespaces[namespace], mapping=mapping, scope=f'{scope}{namespace}::'))
 
     elif isinstance(data, ClassScope):
       for alias in data.using_alias:
         mapping[alias.alias] = get_type(alias.type, {}, mapping)
+
       for typedef in data.typedefs:
         mapping[typedef.name] = scope + typedef.name
+
       for enum in data.enums:
         if not name_is_anonymous(enum.typename):
           enum_name = '::'.join([seg.name for seg in enum.typename.segments])

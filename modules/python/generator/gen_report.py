@@ -13,7 +13,7 @@ class Report(object):
       'ignored_headers': [],
       'classes': {},
       'methods': {},
-      'default_param_policy_methods': []
+      'default_param_policy_methods': [],
     }
 
   def add_ignored_header(self, path: Path) -> None:

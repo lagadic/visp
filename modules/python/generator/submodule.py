@@ -171,6 +171,7 @@ Bindings for methods and enum values
     #import sys; sys.exit()
     return res
 
+
 def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   modules = ['core', 'imgproc', 'vision', 'visual_features', 'vs', 'sensor', 'io', 'detection', 'robot', 'gui']
   result = []
