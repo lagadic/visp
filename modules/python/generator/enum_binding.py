@@ -82,13 +82,19 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
         accumulate_data(scope.namespaces[namespace])
     for enum in scope.enums:
       public_access = True
-      if enum.access is not None or enum.access != 'public':
-        public_access = False
       anonymous_enum, enum_id = is_anonymous_name(enum.typename)
 
       full_name = get_typename(enum.typename, {}, mapping) if not anonymous_enum else None
-      if not public_access:
-        print(f'Not public: {full_name}, {enum.access}')
+      # If in a namespace or parent class, this symbol can be referenced from outside and the visibility will be incorrect
+      if enum.access is not None and enum.access != 'public':
+        public_access = False
+
+      if full_name is not None and '::' in full_name:
+        base_ref = fetch_fully_qualified_id(root_scope, full_name.split('::'))
+        print(full_name, base_ref)
+        if base_ref is not None and isinstance(base_ref, types.EnumDecl) and base_ref.access is not None and base_ref.access != 'public':
+          public_access = False
+
       matches = lambda repr: match_id(repr, enum_id) or match_name(repr, full_name)
       matching = list(filter(matches, temp_data))
       assert len(matching) <= 1, f"There cannot be more than one repr found. Matches = {matching}"
@@ -105,7 +111,7 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
       if not is_typedef_to_enum(typedef):
         continue
       public_access = True
-      if typedef.access is None or typedef.access != 'public':
+      if typedef.access is not None and typedef.access != 'public':
         public_access = False
 
       anonymous_enum, enum_id = is_anonymous_name(typedef.type.typename)
@@ -132,21 +138,26 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
 
 def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[Tuple[str, str]]:
 
-  final_data, temp_data = resolve_enums_and_typedefs(root_scope, mapping)
+  final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
+
+  for repr in filtered_reprs:
+    print(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')
 
   result = []
   final_reprs = []
   for repr in final_data:
-    if repr.public_access:
+    enum_config = submodule.get_enum_config(repr.name)
+    if enum_config['ignore']:
+      filtered_reprs.append(repr)
+      print(f'Enum {repr.name} is ignored by user')
+    elif repr.public_access:
       final_reprs.append(repr)
     else:
-      print(f'Filtered {repr.name}')
-      temp_data.append(repr)
+      filtered_reprs.append(repr)
 
-  for repr in temp_data:
-    print(f'Enum {repr} was ignored, because it is either marked as private or it is incomplete (missing values or name)')
+
+
   for enum_repr in final_reprs:
-    print(f'seeing {enum_repr.name}')
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
     # If an owner class is ignored, don't export this enum

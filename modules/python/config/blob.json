@@ -1,0 +1,35 @@
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": [],
+  "classes": {
+    "vpDot": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        }
+      ]
+    },
+    "vpDot2": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char>&, const vpImagePoint&, const std::list<vpImagePoint>&, vpColor, unsigned int)",
+          "custom_name": "displayDot"
+        }
+      ]
+    }
+  },
+  "enums": {}}

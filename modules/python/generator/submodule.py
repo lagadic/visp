@@ -18,8 +18,7 @@ class Submodule():
     self.include_path = include_path
     self.submodule_file_path = submodule_file_path
     self.config_path = Path('config') /  (name + '.json')
-    with open(self.config_path, 'r') as config_file:
-      self.config = json.load(config_file)
+    self.config = self._get_config_file_or_create_default(self.config_path)
     self.report = Report(self)
     self.headers = self._get_headers()
     assert self.include_path.exists(), f'Submodule path {self.include_path} not found'
@@ -34,6 +33,22 @@ class Submodule():
         continue
       headers.append(HeaderFile(include_file, self))
     return headers
+  def _get_config_file_or_create_default(self, path: Path) -> Dict:
+    if not path.exists():
+      default_config = {
+        'ignored_headers': [],
+        'ignored_classes': [],
+        'user_defined_headers': [],
+        'classes': {},
+        'enums': {}
+      }
+      with open(path, 'w') as config_file:
+        json.dump(default_config, config_file)
+      return default_config
+    else:
+      with open(path, 'r') as config_file:
+        config = json.load(config_file)
+      return config
 
   def set_headers_from_common_list(self, all_headers: List[HeaderFile]) -> None:
     '''
@@ -145,6 +160,16 @@ Bindings for methods and enum values
       return default_config
     default_config.update(self.config['classes'][class_name])
     return default_config
+  def get_enum_config(self, enum_name: str) -> Optional[Dict]:
+    default_config = {
+      'ignore': False,
+    }
+    if 'enums' not in self.config:
+      return default_config
+    if enum_name not in self.config['enums']:
+      return default_config
+    default_config.update(self.config['enums'][enum_name])
+    return default_config
 
   def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
     res = {
@@ -177,4 +202,9 @@ def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   result = []
   for module in modules:
     result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+  tracking_modules = ['tt', 'tt_mi', 'klt', 'me', 'blob']
+  for module in tracking_modules:
+    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+
+
   return result

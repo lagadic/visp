@@ -104,6 +104,42 @@ def get_type_for_declaration(param: Union[types.FunctionType, types.DecoratedTyp
   else:
     return get_type(param, owner_specs, header_env_mapping)
 
+def fetch_fully_qualified_id(scope: Union[NamespaceScope, ClassScope], segments: List[str]) -> Union[None, types.EnumDecl, NamespaceScope, ClassScope]:
+  '''
+  Retrieve the declaration of an object from its fully qualified name.
+  This can be useful when a symbol is reference in two places:
+  such as in the following header:
+
+  class vpA {
+  private:
+    enum vpEnum: unsigned int;
+  };
+  enum vpA::vpEnum : unsigned int {...};
+
+  In this case, the vpA::vpEnum symbol's visibility (here it is actually private) is undefined in cxxheaderparser (None) when looking at enum declarations outside the class
+  Here, calling this method with the name vpA::vpEnum will retrieve the enum declaration in the class vpA, for which the visibility is correctly set to private.
+  '''
+
+  if len(segments) == 0:
+    return scope
+
+  seg = segments[0]
+  if isinstance(scope, NamespaceScope):
+    for ns in scope.namespaces:
+      if ns == seg:
+        return fetch_fully_qualified_id(scope.namespaces[ns], segments[1:])
+  for cls in scope.classes:
+    if get_name(cls.class_decl.typename) == seg:
+      return fetch_fully_qualified_id(cls, segments[1:])
+  if len(segments) == 1: # Test objects that cannot have children
+    for enum in scope.enums:
+      if not name_is_anonymous(enum.typename) and get_name(enum.typename) == seg:
+        return enum
+
+  return None
+
+
+
 def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
   '''
   Whether the passed in pointer is of type const char*

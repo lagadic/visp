@@ -14,3 +14,4 @@ API reference
   visp.vs
   visp.robot
   visp.detection
+  visp.imgproc

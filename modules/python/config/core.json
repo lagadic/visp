@@ -4,6 +4,14 @@
                       "vpFrameGrabberException", "vpIoException",
                       "vpDisplayException", "vpMatrixException"],
   "user_defined_headers": ["core.hpp"],
+  "enums": {
+    "vpMunkres::STEP_T": {
+      "ignore": true
+    },
+    "vpMunkres::ZERO_T": {
+      "ignore": true
+    }
+  },
   "classes": {
     "vpArray2D": {
       "additional_bindings": "bindings_vpArray2D",
