@@ -218,6 +218,10 @@ if(USE_UR_RTDE)
   vp_set_source_file_compile_flag(src/real-robot/universal-robots/vpRobotUniversalRobots.cpp -Wno-unused-parameter)
 endif()
 
+if(USE_MAVSDK)
+  vp_set_source_file_compile_flag(src/real-robot/mavsdk/vpRobotMavsdk.cp -Wno-unused-but-set-variable)
+endif()
+
 vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
