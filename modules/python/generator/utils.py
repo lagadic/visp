@@ -40,7 +40,23 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
       spec_str = f'<{",".join(template_strs)}>'
 
     return segment_name + spec_str
-  return '::'.join(list(map(segment_repr, typename.segments)))
+  segment_reprs = list(map(segment_repr, typename.segments))
+  # Through environment mapping, it is possible that a segment is resolved into two "segments"
+  # E.g. a class "vpA" in a namespace "vp" is resolve to "vp::vpA"
+  # If we resolve for the segments ["vp", "vpA"], we will obtain "vp::vp::vpA"
+  # We must thus check that this is not the case and filter out redundant segments (in this case, "vp")
+  final_segment_reprs = [segment_reprs[-1]] # this is always final
+
+  for i in range(len(segment_reprs) - 1):
+    all_segs_prefix = '::'.join(segment_reprs[i:-1])
+    # We only compare with the last one (which should be a class name) since this is what is resolved to a complete name
+    # TODO: When the problem arises with a templated type, this may fail.
+    if not final_segment_reprs[-1].startswith(all_segs_prefix + '::'):
+      final_segment_reprs.insert(len(final_segment_reprs) - 1, segment_reprs[i])
+    else:
+      break
+
+  return '::'.join(final_segment_reprs)
 
 def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
   '''

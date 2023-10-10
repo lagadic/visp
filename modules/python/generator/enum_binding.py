@@ -82,11 +82,13 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
         accumulate_data(scope.namespaces[namespace])
     for enum in scope.enums:
       public_access = True
-      if enum.access is None or enum.access != 'public':
+      if enum.access is not None or enum.access != 'public':
         public_access = False
       anonymous_enum, enum_id = is_anonymous_name(enum.typename)
 
       full_name = get_typename(enum.typename, {}, mapping) if not anonymous_enum else None
+      if not public_access:
+        print(f'Not public: {full_name}, {enum.access}')
       matches = lambda repr: match_id(repr, enum_id) or match_name(repr, full_name)
       matching = list(filter(matches, temp_data))
       assert len(matching) <= 1, f"There cannot be more than one repr found. Matches = {matching}"
@@ -138,23 +140,26 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
     if repr.public_access:
       final_reprs.append(repr)
     else:
+      print(f'Filtered {repr.name}')
       temp_data.append(repr)
 
   for repr in temp_data:
     print(f'Enum {repr} was ignored, because it is either marked as private or it is incomplete (missing values or name)')
-
   for enum_repr in final_reprs:
+    print(f'seeing {enum_repr.name}')
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
     # If an owner class is ignored, don't export this enum
     parent_ignored = False
     ignored_parent_name = None
+
     for segment in name_segments[:-1]:
       full_segment_name = mapping.get(segment)
       if full_segment_name is not None and submodule.class_should_be_ignored(full_segment_name):
         parent_ignored = True
         ignored_parent_name = full_segment_name
         break
+
     if parent_ignored:
       print(f'Ignoring enum {py_name} because {ignored_parent_name} is ignored')
       continue
@@ -171,6 +176,4 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
     values.append(f'{py_ident}.export_values();')
     definition = '\n'.join(values)
     result.append((declaration, definition))
-
-
   return result

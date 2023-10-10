@@ -364,7 +364,8 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
     (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
-    (lambda m, _: get_name(m.name) in ['from_json', 'to_json', 'operator<<'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: get_name(m.name) in ['from_json', 'to_json'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: get_name(m.name).startswith('operator'), NotGeneratedReason.UserIgnored),
     (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
     (lambda m, _: any(is_unsupported_argument_type(param.type) for param in m.parameters), NotGeneratedReason.ArgumentType),
     (lambda m, _: is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)

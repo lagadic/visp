@@ -76,6 +76,7 @@ class MethodDocumentation(object):
 @dataclass
 class ClassDocumentation(object):
   documentation: str
+
 @dataclass
 class DocElements(object):
   compounddefs: Dict[str, compounddefType]
@@ -297,7 +298,7 @@ class DocumentationHolder(object):
         param_strs.append(f':param {param_name}: {params_dict[param_name]}')
     param_str = '\n'.join(param_strs)
     if len(output_param_names) > 0:
-      return_str = ':return: A tuple containing:\n'
+      return_str = ':return: A tuple containing:\n' # TODO: if we only return a single element, we should modify this
       if signature.ret != 'void' and signature.ret is not None:
         return_str += f'\n\t * {cpp_return_str}'
       for param_name in output_param_names:
