@@ -364,7 +364,7 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
     (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
-    (lambda m, _: get_name(m.name) in ['from_json', 'to_json'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: get_name(m.name) in ['from_json', 'to_json', 'from_megapose_json', 'to_megapose_json'], NotGeneratedReason.UserIgnored), # TODO: Remove hardcoded names
     (lambda m, _: get_name(m.name).startswith('operator'), NotGeneratedReason.UserIgnored),
     (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
     (lambda m, _: any(is_unsupported_argument_type(param.type) for param in m.parameters), NotGeneratedReason.ArgumentType),
@@ -374,7 +374,7 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
     function_config = submodule.get_method_config(None, function, {}, mapping)
     method_can_be_bound = True
     for predicate, motive in filtering_predicates_and_motives:
-      if predicate(function, function_config):
+      if predicate(function, function_config): # Function should be rejected
         return_str = '' if function.return_type is None else (get_type(function.return_type, {}, mapping) or '<unparsed>')
         method_name = '::'.join(seg.name for seg in function.name.segments)
         param_strs = [get_type(param.type, {}, mapping) or '<unparsed>' for param in function.parameters]

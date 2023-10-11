@@ -97,12 +97,13 @@ class HeaderFile():
       '',
       '-D', 'vp_deprecated=',
       '-D', 'VISP_EXPORT=',
+      '-D', '__cplusplus', # Fix for warning when reading opencv modules
       '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
-      #'-I', '/usr/include',
+      '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
-      '--passthru-includes', "^((?!vpConfig.h).)*$",
+      '--passthru-includes', "^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules.h).)*$",
       '--passthru-unfound-includes',
       '--passthru-comments',
       '--line-directive', '',

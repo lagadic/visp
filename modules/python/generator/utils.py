@@ -3,6 +3,7 @@ from cxxheaderparser.parserstate import ClassBlockState, State
 import pcpp
 import cxxheaderparser
 from cxxheaderparser.visitor import CxxVisitor
+from cxxheaderparser.tokfmt import tokfmt
 from cxxheaderparser import types
 from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
 from pathlib import Path
@@ -23,7 +24,6 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
   This does not include constness, whether it is a pointer or a ref etc.
   '''
   def segment_repr(segment: types.PQNameSegment) -> str:
-    spec_str = ''
     if isinstance(segment, types.FundamentalSpecifier):
       return segment.name
     segment_name = segment.name
@@ -32,12 +32,13 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
     if segment.name in header_env_mapping:
       segment_name = header_env_mapping[segment.name]
 
+    spec_str = ''
     if segment.specialization is not None:
       template_strs = []
+
       for arg in segment.specialization.args:
         template_strs.append(get_type(arg.arg, owner_specs, header_env_mapping))
-
-      spec_str = f'<{",".join(template_strs)}>'
+      spec_str = f'<{", ".join(template_strs)}>'
 
     return segment_name + spec_str
   segment_reprs = list(map(segment_repr, typename.segments))
@@ -63,17 +64,18 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
   Get the type of a parameter. Compared to get_typename, this function resolves the parameter's constness, whether it is a ref, moveref or pointer.
   '''
   if isinstance(param, types.Value):
-    return ''.join([token.value for token in param.tokens])
+    return tokfmt(param.tokens) # This can appear when parsing templated types! Example: std::map<std::string, const vpImage<vpRGBa>*> as in MBT
   if isinstance(param, types.FunctionType):
     return_type = get_type(param.return_type, owner_specs, header_env_mapping)
     param_types = [get_type(p.type, owner_specs, header_env_mapping) for p in param.parameters]
     return f'{return_type}({", ".join(param_types)})'
   if isinstance(param, types.Type):
     repr_str = get_typename(param.typename, owner_specs, header_env_mapping)
-    split = repr_str.split('<')
-    if split[0] in header_env_mapping:
-      split[0] = header_env_mapping[split[0]]
-    repr_str = '<'.join(split)
+
+    # split = repr_str.split('<')
+    # if split[0] in header_env_mapping:
+    #   split[0] = header_env_mapping[split[0]]
+    # repr_str = '<'.join(split)
     if param.const:
       repr_str = 'const ' + repr_str
     return repr_str
@@ -99,6 +101,12 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
     return None
 
 def get_type_for_declaration(param: Union[types.FunctionType, types.DecoratedType, types.Value], owner_specs: Dict[str, str], header_env_mapping: Dict[str, str]) -> Optional[str]:
+  '''
+  Type string for when we want to declare a variable of a certain type.
+  We cannot declare an lref without initializing it (which we can't really do when generating code)
+  Example use case: declaring a variable inside a lambda.
+  '''
+
   if isinstance(param, types.Reference):
     return get_type(param.ref_to, owner_specs, header_env_mapping)
   else:

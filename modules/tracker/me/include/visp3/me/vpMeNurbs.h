@@ -252,13 +252,6 @@ public:
    * Seek along the edge defined by the nurbs, the two extremities of
    * the edge. This function is useful in case of translation of the
    * edge.
-   */
-  void setExtremities();
-
-  /*!
-   * Seek along the edge defined by the nurbs, the two extremities of
-   * the edge. This function is useful in case of translation of the
-   * edge.
    *
    * \param I : Image in which the edge appears.
    */

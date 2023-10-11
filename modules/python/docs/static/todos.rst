@@ -3,6 +3,12 @@ List of todos
 
 What remains to be done
 
+Changes to ViSP
+-------------
+
+* Write initTracking for vpKltOpencv taking a vpImage<unsigned char> as input. Ignore setInitialGuess.
+
+
 Code generation
 ---------------
 
@@ -12,6 +18,7 @@ Code generation
 * Parse subnamespaces
   * Classes in subnamespaces are ignored
 * Keep alive for numpy interfaces
+* Keep alive very probably for mbt
 * How should we handle parameters coming from external APIs ? e.g. realsense2, PCL. Can we interact with other bindings such as of opencv's
 * Reimplement a framegrabber tutorial in python, with matplotlib
 

@@ -52,8 +52,10 @@
 */
 class VISP_EXPORT vpTemplateTrackerMIESM : public vpTemplateTrackerMI
 {
+public:
   /*! Minimization method. */
-  typedef enum {
+  typedef enum
+  {
     USE_NEWTON, // not used
     USE_LMA,    // not used
     USE_GRADIENT,
@@ -96,9 +98,8 @@ public:
   //! Default constructor.
   vpTemplateTrackerMIESM()
     : vpTemplateTrackerMI(), minimizationMethod(USE_NEWTON), CompoInitialised(false), HDirect(), HInverse(),
-      HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
-  {
-  }
+    HdesireDirect(), HdesireInverse(), GDirect(), GInverse()
+  { }
   explicit vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp);
 
   void setMinimizationMethod(vpMinimizationTypeMIESM method) { minimizationMethod = method; }

@@ -1,1 +1,16 @@
-{"ignored_headers": [], "ignored_classes": [], "user_defined_headers": [], "classes": {}, "enums": {}}
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": [],
+  "classes": {
+    "vpKltOpencv": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void display(const vpImage<unsigned char>&, const vpColor&, unsigned int)",
+          "custom_name": "displaySelf"
+        }
+      ]
+    }
+  },
+  "enums": {}}

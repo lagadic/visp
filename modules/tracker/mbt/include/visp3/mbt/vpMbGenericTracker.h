@@ -40,6 +40,7 @@
 #ifndef _vpMbGenericTracker_h_
 #define _vpMbGenericTracker_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>

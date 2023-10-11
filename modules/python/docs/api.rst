@@ -15,3 +15,5 @@ API reference
   visp.robot
   visp.detection
   visp.imgproc
+  visp.dnn_tracker
+  visp.mbt

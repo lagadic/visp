@@ -202,9 +202,12 @@ def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
   result = []
   for module in modules:
     result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
-  tracking_modules = ['tt', 'tt_mi', 'klt', 'me', 'blob']
+  tracking_modules = ['tt', 'tt_mi', 'klt', 'me', 'blob', ('dnn', 'dnn_tracker'), 'mbt']
   for module in tracking_modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    if isinstance(module, str):
+      result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    else:
+      result.append(Submodule(module[1], Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module[0]}/include/visp3/{module[1]}'), generate_path / f'{module[1]}.cpp'))
 
 
   return result
