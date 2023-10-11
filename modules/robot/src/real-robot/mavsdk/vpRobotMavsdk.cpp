@@ -193,7 +193,7 @@ private:
                                       calibration_promise.set_value();
                                       break;
                                     }
-      };
+    };
   }
 
   void calibrate_gyro(mavsdk::Calibration &calibration)
@@ -1086,18 +1086,6 @@ public:
 
   void setVerbose(bool verbose) { m_verbose = verbose; }
 
-  // void waitSystemReady()
-  // {
-  //   if (! m_system_ready)
-  //   {
-  //     while (!m_telemetry.get()->health_all_ok()) {
-  //       std::cout << "Waiting for system to be ready\n";
-  //       sleep_for(seconds(1));
-  //     }
-  //     std::cout << "System is ready\n";
-  //   }
-  // }
-
 private:
   //*** Attributes ***//
   std::string m_address {}; ///< Ip address of the robot to discover on the network
@@ -1112,7 +1100,6 @@ private:
   MAV_TYPE m_mav_type {}; // Vehicle type
   bool m_has_flying_capability { false };
 
-  bool m_system_ready { false };
   float m_position_incertitude { 0.05 };
   float m_yaw_incertitude { 0.09 }; // 5 deg
   bool m_verbose { false };
