@@ -211,14 +211,16 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
       if (d <= std::numeric_limits<double>::epsilon()) { // circle
         e = 0.0;                                         // case n20 = n02 and n11 = 0 : circle, e undefined
         a = b = 2.0 * sqrt(n20_p);
-      } else {                             // real ellipse
+      }
+      else {                             // real ellipse
         e = atan2(2.0 * n11_p, num) / 2.0; // e in [-Pi/2 ; Pi/2]
         d = sqrt(d);                       // d in sqrt always >= 0
         num = n20_p + n02_p;
         a = sqrt(2.0 * (num + d)); // term in sqrt always > 0
         b = sqrt(2.0 * (num - d)); // term in sqrt always > 0
       }
-    } else {
+    }
+    else {
       a = coef1;
       b = coef2;
       e = coef3;
@@ -292,58 +294,52 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
 template <class Type>
 void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                               double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset,
-                              const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
+                              const std::string &frameName, const vpColor &textColor, const vpImagePoint &textOffset)
 {
   // Projecting the origin of the object frame in the camera plane
-  vpPoint o(0.0, 0.0, 0.0);
-  o.track(cMo);
+  vpPoint P_o(0.0, 0.0, 0.0);
+  P_o.track(cMo);
 
   vpColor xAxisColor(vpColor::none), yAxisColor(vpColor::none), zAxisColor(vpColor::none);
-  vpImagePoint ipo, ipx, ipy, ipz;
+  vpImagePoint ip_P_o, ip_P_X, ip_P_Y, ip_P_Z;
   vpRect bbox(0, 0, I.getWidth(), I.getHeight());
 
   // Selecting the color of the axes
-  if (color == vpColor::none)
-  {
+  if (color == vpColor::none) {
     xAxisColor = vpColor::red;
     yAxisColor = vpColor::green;
     zAxisColor = vpColor::blue;
   }
-  else
-  {
+  else {
     xAxisColor = color;
     yAxisColor = color;
     zAxisColor = color;
   }
 
-  vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
-  if (bbox.isInside(ipo)) {
-    double u_size = cam.get_px() * size / cMo[2][3]; // u_size = size/Z * cam.px
-    double v_size = cam.get_py() * size / cMo[2][3]; // v_size = size/Z * cam.py
-
+  vpMeterPixelConversion::convertPoint(cam, P_o.p[0], P_o.p[1], ip_P_o);
+  if (bbox.isInside(ip_P_o)) {
     // Computing the perspective projection of the X-axis and drawing it
-    vpImagePoint ipx(ipo);
-    ipx.set_u( ipx.get_u() + u_size * cMo[0][0]);
-    ipx.set_v( ipx.get_v() + v_size * cMo[1][0]);
-    vpDisplay::displayArrow(I, ipo + offset, ipx + offset, xAxisColor, 4 * thickness, 2 * thickness, thickness);
+    vpPoint P_X(size, 0.0, 0.0);
+    P_X.track(cMo);
+    vpMeterPixelConversion::convertPoint(cam, P_X.p[0], P_X.p[1], ip_P_X);
+    vpDisplay::displayArrow(I, ip_P_o + offset, ip_P_X + offset, xAxisColor, 4 * thickness, 2 * thickness, thickness);
 
     // Computing the perspective projection of the Y-axis and drawing it
-    vpImagePoint ipy(ipo);
-    ipy.set_u( ipy.get_u() + u_size * cMo[0][1]);
-    ipy.set_v( ipy.get_v() + v_size * cMo[1][1]);
-    vpDisplay::displayArrow(I, ipo + offset, ipy + offset, yAxisColor, 4 * thickness, 2 * thickness, thickness);
+    vpPoint P_Y(0.0, size, 0.0);
+    P_Y.track(cMo);
+    vpMeterPixelConversion::convertPoint(cam, P_Y.p[0], P_Y.p[1], ip_P_Y);
+    vpDisplay::displayArrow(I, ip_P_o + offset, ip_P_Y + offset, yAxisColor, 4 * thickness, 2 * thickness, thickness);
 
     // Computing the perspective projection of the Y-axis and drawing it
-    vpImagePoint ipz(ipo);
-    ipz.set_u( ipz.get_u() + u_size * cMo[0][2]);
-    ipz.set_v( ipz.get_v() + v_size * cMo[1][2]);
-    vpDisplay::displayArrow(I, ipo + offset, ipz + offset, zAxisColor, 4 * thickness, 2 * thickness, thickness);
+    vpPoint P_Z(0.0, 0.0, size);
+    P_Z.track(cMo);
+    vpMeterPixelConversion::convertPoint(cam, P_Z.p[0], P_Z.p[1], ip_P_Z);
+    vpDisplay::displayArrow(I, ip_P_o + offset, ip_P_Z + offset, zAxisColor, 4 * thickness, 2 * thickness, thickness);
   }
 
   // If frameName != empty, computing the image coordinates (u v) of the text
   // such as we avoid as much as we can to cross an axis
-  if(!frameName.empty())
-  {
+  if (!frameName.empty()) {
     // The actual offset that will be applied to the text with regard to the frame origin
     // The horizontal / vertical offset direction will go in the direction opposed to the
     // most horizontal and most vertical axis
@@ -356,20 +352,16 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     double abs_v_val = std::abs(cMo[1][0]); // Taking the X-axis of the object frame as first initial guess
     int v_direction = vpMath::sign(cMo[1][0]); // Taking the direction of the X-axis of the object frame in the camera frame
 
-    for(int i = 1; i <= 2; i++)
-    {
+    for (int i = 1; i <= 2; i++) {
       double abs_u_candidate = std::abs(cMo[0][i]);
       int u_direction_candidate = vpMath::sign(cMo[0][i]);
-      if(abs_u_candidate - abs_u_val > std::numeric_limits<double>::epsilon())
-      {
+      if (abs_u_candidate - abs_u_val > std::numeric_limits<double>::epsilon()) {
         // The norm of the candidate axis is greater => we take its direction
         abs_u_val = abs_u_candidate;
         u_direction = u_direction_candidate;
       }
-      else if(std::abs(abs_u_candidate - abs_u_val) < std::numeric_limits<double>::epsilon())
-      {
-        if(std::abs(u_direction - u_direction_candidate) > 0)
-        {
+      else if (std::abs(abs_u_candidate - abs_u_val) < std::numeric_limits<double>::epsilon()) {
+        if (std::abs(u_direction - u_direction_candidate) > 0) {
           // The norm are equal => we always take the positive direction
           u_direction = +1;
         }
@@ -377,16 +369,13 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
 
       double abs_v_candidate = std::abs(cMo[1][i]);
       int v_direction_candidate = vpMath::sign(cMo[1][i]);
-      if(abs_v_candidate - abs_v_val > std::numeric_limits<double>::epsilon())
-      {
+      if (abs_v_candidate - abs_v_val > std::numeric_limits<double>::epsilon()) {
         // The norm of the candidate axis is greater => we take its direction
         abs_v_val = abs_v_candidate;
         v_direction = v_direction_candidate;
       }
-      else if(std::abs(abs_v_candidate - abs_v_val) < std::numeric_limits<double>::epsilon())
-      {
-        if(std::abs(v_direction - v_direction_candidate) > 0)
-        {
+      else if (std::abs(abs_v_candidate - abs_v_val) < std::numeric_limits<double>::epsilon()) {
+        if (std::abs(v_direction - v_direction_candidate) > 0) {
           // The norm are equal => we always take the positive direction
           v_direction = +1;
         }
@@ -400,9 +389,8 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     actualTextOffset.set_v(-1. * v_direction * textOffset.get_v());
 
     // Check if the text position is located inside the image
-    if (bbox.isInside(ipo + actualTextOffset))
-    {
-      vpDisplay::displayText(I, ipo + actualTextOffset, frameName, textColor);
+    if (bbox.isInside(ip_P_o + actualTextOffset)) {
+      vpDisplay::displayText(I, ip_P_o + actualTextOffset, frameName, textColor);
     }
   }
 }
@@ -459,7 +447,8 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
       for (unsigned int i = 0; i < vip.size(); i++) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
       }
-    } else {
+    }
+    else {
       for (unsigned int i = 1; i < vip.size(); i++) {
         (I.display)->displayLine(vip[i - 1], vip[i], color, thickness);
       }
@@ -723,7 +712,8 @@ template <class Type> unsigned int vp_display_get_down_scaling_factor(const vpIm
 {
   if (I.display != NULL) {
     return (I.display)->getDownScalingFactor();
-  } else {
+  }
+  else {
     return 1;
   }
 }
