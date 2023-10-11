@@ -638,10 +638,6 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   cv::addWeighted(sobelxabs, 1, sobelyabs, 1, 0, sobel);
   sobel.convertTo(sobel, CV_8U);
 
-  // Equalize the histogram
-  cv::Mat equalized;
-  cv::equalizeHist(sobel, equalized);
-
   // Compute the upper threshold from the equalized histogram
   cv::Mat hist;
   const float range[] = { 0.f, 256.f }; // The upper boundary is exclusive
@@ -651,7 +647,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   int histSize[] = { bins };
   bool uniform = true;
   bool accumulate = false; // Clear the histogram at the beginning of calcHist if false, does not clear it otherwise
-  cv::calcHist(&equalized, 1, channels, cv::Mat(), hist, dims, histSize, ranges, uniform, accumulate);
+  cv::calcHist(&sobel, 1, channels, cv::Mat(), hist, dims, histSize, ranges, uniform, accumulate);
   float accu = 0;
   float t = (float)(upperThresholdRatio * w * h);
   float bon = 0;
@@ -922,7 +918,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     vpImageConvert::convert(Isrc, img_cvmat);
     if (cannyFilteringSteps == CANNY_GBLUR_SOBEL_FILTERING) {
       cv::Mat cv_I_blur;
-      cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
+      cv::GaussianBlur(img_cvmat, cv_I_blur, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), gaussianStdev, 0);
       cv::Sobel(cv_I_blur, cv_dx, CV_16S, 1, 0, apertureSobel);
       cv::Sobel(cv_I_blur, cv_dy, CV_16S, 0, 1, apertureSobel);
     }
