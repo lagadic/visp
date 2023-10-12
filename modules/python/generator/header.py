@@ -12,6 +12,7 @@ from utils import *
 from methods import *
 from doc_parser import *
 from header_utils import *
+from generator_config import GeneratorConfig
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -93,24 +94,14 @@ class HeaderFile():
     tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
     tmp_dir.mkdir(exist_ok=True)
     tmp_file_path = tmp_dir / self.path.name
-    argv = [
-      '',
-      '-D', 'vp_deprecated=',
-      '-D', 'VISP_EXPORT=',
-      '-D', '__cplusplus', # Fix for warning when reading opencv modules
-      '-D', 'DOXYGEN_SHOULD_SKIP_THIS', # Skip methods and classes that are not exposed in documentation: they are internals
+    argv = [''] + GeneratorConfig.pcpp_config.to_pcpp_args_list()
+    argv += ['-o', f'{tmp_file_path}', str(self.path.absolute())]
+    argv += [
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
       '-I', '/usr/include',
-      '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
-      '-D', 'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)=void ignored() {}',
-      '--passthru-includes', "^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules.h).)*$",
-      '--passthru-unfound-includes',
-      '--passthru-comments',
-      '--line-directive', '',
-      '-o', f'{tmp_file_path}',
-      str(self.path.absolute())
     ]
+
     pcpp.CmdPreprocessor(argv)
     preprocessed_header_content = None
     with open(tmp_file_path, 'r') as header_file:

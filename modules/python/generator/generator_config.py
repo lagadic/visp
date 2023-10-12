@@ -1,0 +1,106 @@
+
+from dataclasses import dataclass
+from typing import Dict, Final, List, Tuple, Optional
+import re
+
+
+@dataclass
+class PreprocessorConfig(object):
+  '''
+  Preprocessor config. Contains the arguments that are passed to pcpp to preprocess a header.
+  '''
+
+  defines: Dict[str, str] # Mapping from a #define to its value (#define A 1 is equal to a pair "A": "1")
+  never_defined: List[str] # List of macros that should never be defined, even if they are defined in other included headers
+  passthrough_includes_regex: str # Regex to see which header should be included (expanded and put in the resulting pcpp output) or ignored
+  line_directive: Optional[str] # prefix for Warning/logging emitted by pcpp. If none, no warning
+  other_args: List[str]
+
+  def to_pcpp_args_list(self) -> List[str]:
+    args = [
+      *[f'-D{k}={v}' for k,v in self.defines.items()],
+      *[f'-N{v}' for v in self.never_defined],
+      *self.other_args,
+    ]
+    args.extend(['--passthru-includes', '^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules\.h).)*$'])
+    if self.line_directive is not None:
+      args.extend(['--line-directive', self.line_directive])
+    else:
+      args.extend(['--line-directive', ''])
+    return args
+
+'''
+Regular expressions that should match with types that are considered as immutable on the Python side
+This only encompasses raw types
+'''
+IMMUTABLE_TYPES_REGEXS = [
+  '^(float|double|u?int\d+_t|unsigned|char|long|long\wlong)$',
+  '^std::string$'
+]
+
+'''
+Regular expressions that should match with types that are considered as immutable on the Python side
+This only encompasses raw types
+'''
+IMMUTABLE_CONTAINERS_REGEXS = [
+  '^std::vector', '^std::list'
+]
+
+
+'''
+Specific argument regexs for which having default arguments is specifically forbidden
+'''
+FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS = [
+  '^std::ostream',
+  '^std::initializer_list',
+  '^rs2::',
+  '^cv::'
+]
+
+'''
+Regexes for names of functions that should be ignored
+'''
+FORBIDDEN_FUNCTION_NAMES_REGEXS = [
+  '^(from|to)_.*json',
+  '^operator.*',
+  '^ignored$'
+]
+
+class GeneratorConfig(object):
+  pcpp_config: Final[PreprocessorConfig] = PreprocessorConfig(
+    defines={
+      'VISP_EXPORT': '', # remove symbol as it messes the cxxheaderparsing
+      'vp_deprecated': '', # remove symbol as it messes the cxxheaderparsing
+      'DOXYGEN_SHOULD_SKIP_THIS': '1', # Do not generate methods that do not appear in public api doc
+      'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
+      '__cplusplus' : '1' # To silence OpenCV warnings
+    },
+    never_defined=[
+      'VISP_BUILD_DEPRECATED_FUNCTIONS' # Do not bind deprecated functions
+    ],
+    passthrough_includes_regex='^((?!vpConfig\\.h|opencv_modules\\.hpp|visp_modules\\.h).)*$', # Only expand vpConfig, opencv_modules etc.
+    line_directive=None,
+    other_args=["--passthru-unfound-includes", "--passthru-comments"]
+  )
+
+  @staticmethod
+  def _matches_regex_in_list(s: str, regexes: List[str]) -> bool:
+    return any(map(lambda regex: re.match(regex, s) is not None, regexes))
+
+  @staticmethod
+  def is_immutable_type(type: str) -> bool:
+    return GeneratorConfig._matches_regex_in_list(type, IMMUTABLE_TYPES_REGEXS)
+
+
+  @staticmethod
+  def is_immutable_container(type: str) -> bool:
+    return GeneratorConfig._matches_regex_in_list(type, IMMUTABLE_CONTAINERS_REGEXS)
+
+
+  @staticmethod
+  def is_forbidden_default_argument_type(type: str) -> bool:
+    return GeneratorConfig._matches_regex_in_list(type, FORBIDDEN_DEFAULT_ARGUMENT_TYPES_REGEXS)
+
+  @staticmethod
+  def is_forbidden_function_name(name: str) -> bool:
+    return GeneratorConfig._matches_regex_in_list(name, FORBIDDEN_FUNCTION_NAMES_REGEXS)

@@ -8,6 +8,9 @@ from cxxheaderparser import types
 from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
 from pathlib import Path
 import json
+
+from generator_config import GeneratorConfig
+
 def get_name(name: types.PQName) -> str:
   '''
   Get the fully qualified name of a type.
@@ -147,7 +150,6 @@ def fetch_fully_qualified_id(scope: Union[NamespaceScope, ClassScope], segments:
   return None
 
 
-
 def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
   '''
   Whether the passed in pointer is of type const char*
@@ -159,17 +161,7 @@ def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
 
   return False
 
-IMMUTABLE_TYPES = [
-  'double', 'float',
-  'int', 'int32_t', 'int16_t', 'int8_t',
-  'unsigned int', 'uint8_t', 'uint16_t', 'uint32_t', 'uint64_t',
-  'long', 'long long', 'unsigned long',
-  'unsigned char', 'char', 'std::string'
-]
 
-IMMUTABLE_CONTAINERS = [
-  'std::vector', 'std::list'
-]
 
 def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
   '''
@@ -184,11 +176,11 @@ def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
     return False
   if param.ref_to.const:
     return False
-  param_name = get_typename(param.ref_to.typename, {}, {})
-  if param_name in IMMUTABLE_TYPES:
+  param_type = get_typename(param.ref_to.typename, {}, {})
+  if GeneratorConfig.is_immutable_type(param_type):
     return True
-  is_immut_container = any(map(lambda c: param_name.startswith(c), IMMUTABLE_CONTAINERS))
-  return is_immut_container
+  return GeneratorConfig.is_immutable_type(param_type) or GeneratorConfig.is_immutable_container(param_type)
+
 
 
 def is_unsupported_return_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
@@ -226,7 +218,7 @@ def is_unsupported_argument_type(param: Union[types.FunctionType, types.Decorate
   if isinstance(param, types.MoveReference):
     return True
   if isinstance(param, types.Pointer):
-    return not is_pointer_to_const_cstr(param)
+    return not is_pointer_to_const_cstr(param) # Pointers of type "const char*" are handled by pybind
   return True
 
 def get_method_signature(name: str, return_type: str, params: List[str]) -> str:

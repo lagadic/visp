@@ -1,12 +1,16 @@
 import sys
 from typing import List, Optional, Set, Tuple, Dict, Union
 from pathlib import Path
+from multiprocessing import Pool
 
 from header import *
 from submodule import *
 
-from multiprocessing import Pool
+
 def header_preprocess(header: HeaderFile):
+  '''
+  Preprocess a single header. Supposed to be called from a subprocess.
+  '''
   try:
     header.preprocess()
     return header
@@ -59,7 +63,6 @@ def generate_module(generate_path: Path) -> None:
   # Sort headers according to the dependencies. This is done across all modules.
   # TODO: sort module generation order. For now this works but it's fairly brittle
   new_all_headers = sort_headers(new_all_headers)
-  print('NSM', [h.path.name for h in new_all_headers])
   for header in new_all_headers:
     header.compute_environment()
 
@@ -67,7 +70,6 @@ def generate_module(generate_path: Path) -> None:
 
   for header, header_deps in headers_with_deps:
     other_mappings = list(map(lambda h: h.environment.mapping, header_deps))
-    print(f'Dependencies of {header.path.name}: {list(map(lambda h: h.path.name, header_deps))}')
     header.environment.update_with_dependencies(other_mappings)
 
   for submodule in submodules:

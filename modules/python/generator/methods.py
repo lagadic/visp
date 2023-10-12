@@ -7,12 +7,14 @@ from cxxheaderparser import types
 from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope, parse_file
 from pathlib import Path
 import json
-from utils import *
 from dataclasses import dataclass
 from enum import Enum
-
 from typing import TYPE_CHECKING
 from doc_parser import MethodDocSignature
+
+from utils import *
+from generator_config import GeneratorConfig
+
 if TYPE_CHECKING:
   from submodule import Submodule
   from header import HeaderFile, HeaderEnvironment, BoundObjectNames
@@ -112,12 +114,7 @@ def tokens_to_str(tokens: List[types.Token]) -> str:
   return ''.join([token.value for token in tokens])
 
 
-FORBIDDEN_DEFAULT_ARGUMENT_TYPES = [
-  'std::ostream',
-  'std::initializer_list',
-  'rs2::',
-  'cv::'
-]
+
 
 def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapping) -> bool:
   '''
@@ -139,13 +136,13 @@ def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapp
     is_const = t.ptr_to.const
   else:
     type_name = ''
-  for forbidden in FORBIDDEN_DEFAULT_ARGUMENT_TYPES: # Eg, arguments that have no mapping to python
-    if type_name.startswith(forbidden):
-      return False
+  if GeneratorConfig.is_forbidden_default_argument_type(type_name):
+    return False
+
 
   if is_const: # Parameter is const, so we can safely give a default value knowing it won't be modified
     return True
-  if type_name in IMMUTABLE_TYPES: # Immutable type on python side
+  if GeneratorConfig.is_immutable_type(type_name): # Immutable type on python side
     return True
 
   return False
@@ -361,8 +358,7 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
     (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
-    (lambda m, _: get_name(m.name) in ['from_json', 'to_json', 'from_megapose_json', 'to_megapose_json'], NotGeneratedReason.UserIgnored), # TODO: Remove hardcoded names
-    (lambda m, _: get_name(m.name).startswith('operator'), NotGeneratedReason.UserIgnored),
+    (lambda m, _: GeneratorConfig.is_forbidden_function_name(get_name(m.name)), NotGeneratedReason.UserIgnored),
     (lambda m, conf: m.template is not None and (conf.get('specializations') is None or len(conf['specializations']) == 0), NotGeneratedReason.UnspecifiedTemplateSpecialization),
     (lambda m, _: any(is_unsupported_argument_type(param.type) for param in m.parameters), NotGeneratedReason.ArgumentType),
     (lambda m, _: is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
@@ -373,7 +369,7 @@ def get_bindable_functions_with_config(submodule: 'Submodule', functions: List[t
     for predicate, motive in filtering_predicates_and_motives:
       if predicate(function, function_config): # Function should be rejected
         return_str = '' if function.return_type is None else (get_type(function.return_type, {}, mapping) or '<unparsed>')
-        method_name = '::'.join(seg.name for seg in function.name.segments)
+        method_name = get_name(function.name)
         param_strs = [get_type(param.type, {}, mapping) or '<unparsed>' for param in function.parameters]
         rejected_functions.append(RejectedMethod('', function, function_config, get_method_signature(method_name, return_str, param_strs), motive))
         method_can_be_bound = False

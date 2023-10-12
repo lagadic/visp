@@ -91,7 +91,6 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
 
       if full_name is not None and '::' in full_name:
         base_ref = fetch_fully_qualified_id(root_scope, full_name.split('::'))
-        print(full_name, base_ref)
         if base_ref is not None and isinstance(base_ref, types.EnumDecl) and base_ref.access is not None and base_ref.access != 'public':
           public_access = False
 
@@ -154,8 +153,6 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
       final_reprs.append(repr)
     else:
       filtered_reprs.append(repr)
-
-
 
   for enum_repr in final_reprs:
     name_segments = enum_repr.name.split('::')
