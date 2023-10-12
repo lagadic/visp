@@ -236,9 +236,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     else:
       py_arg_strs = [method_doc.documentation] + py_arg_strs
 
-  if 'vpAutoThresholdMethod' in header_env.mapping:
-    print('AAAAA', header_env.mapping)
-    print(params_strs)
 
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)

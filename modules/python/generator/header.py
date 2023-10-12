@@ -103,6 +103,7 @@ class HeaderFile():
       '-I', '/usr/local/include',
       '-I', '/usr/include',
       '-N', 'VISP_BUILD_DEPRECATED_FUNCTIONS',
+      '-D', 'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)=void ignored() {}',
       '--passthru-includes', "^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules.h).)*$",
       '--passthru-unfound-includes',
       '--passthru-comments',
