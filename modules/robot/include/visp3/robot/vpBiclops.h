@@ -59,7 +59,7 @@
  * head.
  *
  * Two different Denavit Hartenberg representations of the robot are
- * implemented. As mentionned in vpBiclops::DenavitHartenbergModel they differ
+ * implemented. As mentioned in vpBiclops::DenavitHartenbergModel they differ
  * in the orientation of the tilt axis. Use setDenavitHartenbergModel() to
  * select the representation.
  *
@@ -72,35 +72,25 @@ class VISP_EXPORT vpBiclops
 public:
   /*!
    * Two different Denavit Hartenberg representations of the robot are
-   * implemented. They differ in the orientation of the tilt axis.
+   * implemented. As you can see in the next image, they differ in the orientation of the tilt axis.
+   *
+   * \image html img-biclops-frames.jpg Biclops PT models
    *
    * The first representation, vpBiclops::DH1 is given by:
    *
-   * \f[
-   * \begin{tabular}{|c|c|c|c|c|}
-   * \hline
-   * Joint & $a_i$ & $d_i$ & $\alpha_i$ & $\theta_i$ \\
-   * \hline
-   * 1 & 0 & 0 & $-\pi/2$ & $q_1^*$ \\
-   * 2 & 0 & 0 & $ \pi/2$ & $q_2^* + \pi/2$ \\
-   * \hline
-   * \end{tabular}
-   * \f]
+   * | Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$    |
+   * | :---: | :-------: | :-------: | -------------: | ----------------: |
+   * |     1 |         0 |         0 |   \f$-\pi/2\f$ |         \f$q_1\f$ |
+   * |     2 |         0 |         0 |   \f$ \pi/2\f$ | \f$q_2 + \pi/2\f$ |
    *
    * The second one, vpBiclops::DH2 is given by:
    *
-   * \f[
-   * \begin{tabular}{|c|c|c|c|c|}
-   * \hline
-   * Joint & $a_i$ & $d_i$ & $\alpha_i$ & $\theta_i$ \\
-   * \hline
-   * 1 & 0 & 0 & $ \pi/2$ & $q_1^*$ \\
-   * 2 & 0 & 0 & $ -\pi/2$ & $q_2^* - \pi/2$ \\
-   * \hline
-   * \end{tabular}
-   * \f]
+   * | Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$    |
+   * | :---: | :-------: | :-------: | -------------: | ----------------: |
+   * |     1 |         0 |         0 |   \f$ \pi/2\f$ |         \f$q_1\f$ |
+   * |     2 |         0 |         0 |   \f$-\pi/2\f$ | \f$q_2 - \pi/2\f$ |
    *
-   * where \f$q_1^*, q_2^*\f$ are respectively the pan and tilt joint
+   * where \f$q_1, q_2\f$ are respectively the pan and tilt joint
    * positions.
    *
    * In those representations, the pan is oriented from left to right, while
@@ -118,7 +108,7 @@ public:                           /* Constants */
   static const unsigned int ndof; //!< Number of dof
 
   /* Geometric model */
-  static const float h;              //!< Vertical distance between camera and pan/tilt end-effector
+  static const float h;              //!< Vertical distance between camera and pan/tilt end-effector (see init())
 
   static const float panJointLimit;  //!< Pan +/- joint limit
   static const float tiltJointLimit; //!< Tilt +/- joint limit
@@ -143,8 +133,18 @@ public:
   //@{
 
   /*!
-   * Initialization.
-   * Set the default \f${^c}{\bf M}_e\f$ transformation set by set_cMe().
+   * Initialize the default \f${^c}{\bf M}_e\f$ transformation calling set_cMe().
+   *
+   * \f[
+   *   {^c}{\bf M}_e = \left(
+   *     \begin{matrix}
+   *        0 & 1 & 0 & 0 \\
+   *       -1 & 0 & 0 & h \\
+   *        0 & 0 & 1 & 0 \\
+   *        0 & 0 & 0 & 1
+   *     \end{matrix}
+   *   \right)
+   * \f]
    */
   void init(void);
 
@@ -291,10 +291,10 @@ public:
    * \f[
    *   {^c}{\bf M}_e = \left(
    *     \begin{matrix}
-   *       0 & 1 0 & 0 \\
+   *        0 & 1 & 0 & 0 \\
    *       -1 & 0 & 0 & h \\
-   *       0 & 0 & 1 & 0 \\
-   *       0 & 0 & 0 & 1
+   *        0 & 0 & 1 & 0 \\
+   *        0 & 0 & 0 & 1
    *     \end{matrix}
    *   \right)
    * \f]

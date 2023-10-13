@@ -371,7 +371,7 @@ public:
    * frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
    * and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
    *
-   * \param q_dot : The desired joint velocities for eaxh axis in rad/s. \f$ \dot
+   * \param q_dot : The desired joint velocities for each axis in rad/s. \f$ \dot
    * {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
    * camera and \f$ \dot{q}_2\f$ the tilt of the camera.
    *
