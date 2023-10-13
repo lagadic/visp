@@ -41,14 +41,14 @@
  * See http://www.traclabs.com/tracbiclops.htm for more details.
  */
 
-#include <stdlib.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/io/vpParseArgv.h>
+#include <iostream>
+
+#include <visp3/core/vpConfig.h>
+
 #ifdef VISP_HAVE_BICLOPS
 
 #include <visp3/robot/vpRobotBiclops.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS "c:h"

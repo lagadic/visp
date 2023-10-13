@@ -113,7 +113,7 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_PTHREAD)
+if(USE_THREADS)
   if(THREADS_HAVE_PTHREAD_ARG)
     add_extra_compiler_option("-pthread")
   endif()
