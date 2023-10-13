@@ -44,7 +44,7 @@
 
 /* --- GENERAL --- */
 #include <iostream>
-#include <pthread.h>
+#include <thread>
 #include <stdio.h>
 
 /* --- ViSP --- */
@@ -126,23 +126,21 @@ public:
   static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 
 private:
-  static bool robotAlreadyCreated;
-  pthread_t control_thread;
+  std::thread m_control_thread;
 
-  std::string configfile; // Biclops config file
+  std::string m_configfile; // Biclops config file
 
-  vpRobotBiclopsController controller;
+  vpRobotBiclopsController m_controller;
 
-  double positioningVelocity;
-  vpColVector q_previous;
-  bool controlThreadCreated;
+  double m_positioningVelocity;
+  vpColVector m_q_previous;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  /*! \brief No copy constructor allowed.   */
   //  vpRobotBiclops(const vpRobotBiclops &)
-  //    : vpBiclops(), vpRobot(), control_thread(), controller(),
-  //      positioningVelocity(0), q_previous(), controlThreadCreated(false)
+  //    : vpBiclops(), vpRobot(), m_control_thread(), m_controller(),
+  //      m_positioningVelocity(0), m_q_previous()
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,25 +29,23 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
+
+#ifndef _vpRobotBiclopsController_h_
+#define _vpRobotBiclopsController_h_
 
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
-#ifndef _vpRobotBiclopsController_h_
-#define _vpRobotBiclopsController_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-/* --- GENERAL --- */
-#include <iostream>  /* Classe std::ostream.              */
-#include <pthread.h> /* Classe std::ostream.              */
-#include <stdio.h>   /* Classe std::ostream.              */
+#include <iostream>
+#include <stdio.h>
 
 #include "Biclops.h"  // Contrib for Biclops robot
 #include "PMDUtils.h" // Contrib for Biclops robot
@@ -79,7 +76,8 @@ class VISP_EXPORT Biclops; // needed for dll creation
 class VISP_EXPORT vpRobotBiclopsController
 {
 public:
-  typedef enum {
+  typedef enum
+  {
     STOP, /*!< Have to stop the robot. */
     SPEED /*!< Can send the desired speed. */
   } vpControllerStatusType;
@@ -87,7 +85,8 @@ public:
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   // SHM
-  typedef struct /* ControllerShm_struct */ {
+  typedef struct /* ControllerShm_struct */
+  {
     vpControllerStatusType status[2];
     double q_dot[2];        /*!< Desired speed. */
     double actual_q[2];     /*!< Current measured position of each axes. */

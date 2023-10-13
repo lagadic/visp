@@ -145,49 +145,49 @@ int main(int argc, const char **argv)
     q = 0;
     q[0] = vpMath::rad(-10);
     q[1] = vpMath::rad(-20);
-    std::cout << "Set position in the articular frame: "
+    std::cout << "Set Joint position "
       << " pan: " << vpMath::deg(q[0]) << " deg"
       << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
     robot.setPositioningVelocity(30.);
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     q[0] = vpMath::rad(10);
     q[1] = vpMath::rad(20);
-    std::cout << "Set position in the articular frame: "
+    std::cout << "Set Joint position "
       << " pan: " << vpMath::deg(q[0]) << " deg"
       << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
     robot.setPositioningVelocity(10);
     robot.setPosition(vpRobot::JOINT_STATE, q);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position: "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity: "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     std::cout << "Set STATE_VELOCITY_CONTROL" << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position: "
       << " pan: " << vpMath::deg(qm[0]) << " deg"
       << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = vpMath::rad(25);
-    std::cout << "Set articular frame velocity for 5 sec"
+    std::cout << "Set joint velocity for 5 sec"
       << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
       << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, qdot);
@@ -196,17 +196,17 @@ int main(int argc, const char **argv)
     vpTime::wait(5000.0);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position "
       << " pan: " << vpMath::deg(qm[0]) << " deg"
       << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = -vpMath::rad(25);
-    std::cout << "Set articular frame velocity for 3 sec"
+    std::cout << "Set joint velocity for 3 sec"
       << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
       << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, qdot);
@@ -215,17 +215,17 @@ int main(int argc, const char **argv)
     vpTime::wait(3000.0);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position "
       << " pan: " << vpMath::deg(qm[0]) << " deg"
       << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = vpMath::rad(10);
-    std::cout << "Set articular frame velocity for 2 sec"
+    std::cout << "Set joint velocity for 2 sec"
       << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
       << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, qdot);
@@ -234,18 +234,18 @@ int main(int argc, const char **argv)
     vpTime::wait(2000.0);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position "
       << " pan: " << vpMath::deg(qm[0]) << " deg"
       << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     qdot[0] = vpMath::rad(-5);
     // qdot[1] = vpMath::rad(-5);
 
-    std::cout << "Set articular frame velocity for 2 sec"
+    std::cout << "Set joint velocity for 2 sec"
       << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
       << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, qdot);
@@ -254,11 +254,11 @@ int main(int argc, const char **argv)
     vpTime::wait(2000.0);
 
     robot.getPosition(vpRobot::JOINT_STATE, qm);
-    std::cout << "Position in the articular frame: "
+    std::cout << "  Joint position "
       << " pan: " << vpMath::deg(qm[0]) << " deg"
       << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
     robot.getVelocity(vpRobot::JOINT_STATE, qm);
-    std::cout << "Velocity in the articular frame: "
+    std::cout << "  Joint velocity "
       << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     return EXIT_SUCCESS;
   }

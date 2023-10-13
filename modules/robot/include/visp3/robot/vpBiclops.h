@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpBiclops_h_
 #define _vpBiclops_h_
@@ -53,7 +51,6 @@
 #include <iostream>
 
 /*!
-
   \class vpBiclops
 
   \ingroup group_robot_real_ptu
