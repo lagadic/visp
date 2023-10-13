@@ -98,10 +98,10 @@ public:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpRobotBiclopsController(const vpRobotBiclopsController &)
-  //    : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL),
-  //    vergeAxis(NULL),
-  //      panProfile(), tiltProfile(), vergeProfile(), shm(),
-  //      stopControllerThread_(false)
+  //    : biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL),
+  //    m_vergeAxis(NULL),
+  //      m_panProfile(), m_tiltProfile(), m_vergeProfile(), shm(),
+  //      m_stopControllerThread(false)
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");
@@ -122,30 +122,30 @@ public:
   vpColVector getActualPosition();
   vpColVector getVelocity();
   vpColVector getActualVelocity();
-  PMDAxisControl *getPanAxis() { return panAxis; };
-  PMDAxisControl *getTiltAxis() { return tiltAxis; };
-  PMDAxisControl *getVergeAxis() { return vergeAxis; };
+  PMDAxisControl *getPanAxis() { return m_panAxis; };
+  PMDAxisControl *getTiltAxis() { return m_tiltAxis; };
+  PMDAxisControl *getVergeAxis() { return m_vergeAxis; };
   void writeShm(shmType &shm);
   shmType readShm();
-  bool isStopRequested() { return stopControllerThread_; }
+  bool isStopRequested() { return m_stopControllerThread; }
 
-  void stopRequest(bool stop) { stopControllerThread_ = stop; }
+  void stopRequest(bool stop) { m_stopControllerThread = stop; }
 
 private:
-  Biclops biclops; // THE interface to Biclops.
-  int axisMask;
+  Biclops m_biclops; // THE interface to Biclops.
+  int m_axisMask;
 
   // Pointers to each axis (populated once controller is initialized).
-  PMDAxisControl *panAxis;
-  PMDAxisControl *tiltAxis;
-  PMDAxisControl *vergeAxis;
+  PMDAxisControl *m_panAxis;
+  PMDAxisControl *m_tiltAxis;
+  PMDAxisControl *m_vergeAxis;
 
-  PMDAxisControl::Profile panProfile;
-  PMDAxisControl::Profile tiltProfile;
-  PMDAxisControl::Profile vergeProfile;
+  PMDAxisControl::Profile m_panProfile;
+  PMDAxisControl::Profile m_tiltProfile;
+  PMDAxisControl::Profile m_vergeProfile;
 
   shmType shm;
-  bool stopControllerThread_;
+  bool m_stopControllerThread;
 };
 
 #endif /* #ifndef _vpRobotBiclopsController_h_ */

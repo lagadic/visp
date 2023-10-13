@@ -70,7 +70,7 @@ const float vpBiclops::speedLimit = (float)(M_PI / 3.0); /*!< Maximum speed (in 
 void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
-  fMc = fMe * cMe_.inverse();
+  fMc = fMe * m_cMe.inverse();
 
   vpCDEBUG(6) << "camera position: " << std::endl << fMc;
 
@@ -90,7 +90,7 @@ void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 void vpBiclops::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
-  fMc = fMe * cMe_.inverse();
+  fMc = fMe * m_cMe.inverse();
 
   vpCDEBUG(6) << "camera position: " << std::endl << fMc;
 
@@ -166,7 +166,7 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
   double c2 = cos(q2);
   double s2 = sin(q2);
 
-  if (dh_model_ == DH1) {
+  if (m_dh_model == DH1) {
     fMe[0][0] = -c1 * s2;
     fMe[0][1] = -s1;
     fMe[0][2] = c1 * c2;
@@ -186,7 +186,8 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
     fMe[3][1] = 0;
     fMe[3][2] = 0;
     fMe[3][3] = 1;
-  } else {
+  }
+  else {
     fMe[0][0] = c1 * s2;
     fMe[0][1] = -s1;
     fMe[0][2] = c1 * c2;
@@ -264,7 +265,7 @@ void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fvc) const
   Default construtor. Call init().
 
 */
-vpBiclops::vpBiclops(void) : dh_model_(DH1), cMe_() { init(); }
+vpBiclops::vpBiclops(void) : m_dh_model(DH1), m_cMe() { init(); }
 /* ---------------------------------------------------------------------- */
 /* --- PRIVATE ---------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
@@ -276,7 +277,7 @@ vpBiclops::vpBiclops(void) : dh_model_(DH1), cMe_() { init(); }
 */
 void vpBiclops::init()
 {
-  dh_model_ = DH1;
+  m_dh_model = DH1;
   set_cMe();
   return;
 }
@@ -288,8 +289,8 @@ void vpBiclops::init()
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*constant*/)
 {
   os << "Geometric parameters: " << std::endl
-     << "h: "
-     << "\t" << vpBiclops::h << std::endl;
+    << "h: "
+    << "\t" << vpBiclops::h << std::endl;
 
   return os;
 }
@@ -304,7 +305,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*const
   expess a velocity skew from end effector frame in camera frame.
 
 */
-void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(cMe_); }
+void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(m_cMe); }
 
 /*!
 
@@ -337,7 +338,7 @@ void vpBiclops::set_cMe()
   eMc[3][2] = 0;
   eMc[3][3] = 1;
 
-  cMe_ = eMc.inverse();
+  m_cMe = eMc.inverse();
 }
 
 /*!
@@ -366,11 +367,12 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   eJe = 0;
 
-  if (dh_model_ == DH1) {
+  if (m_dh_model == DH1) {
     eJe[3][0] = -c2;
     eJe[4][1] = 1;
     eJe[5][0] = -s2;
-  } else {
+  }
+  else {
     eJe[3][0] = -c2;
     eJe[4][1] = -1;
     eJe[5][0] = s2;
@@ -400,11 +402,12 @@ void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 
   fJe = 0;
 
-  if (dh_model_ == DH1) {
+  if (m_dh_model == DH1) {
     fJe[3][1] = -s1;
     fJe[4][1] = c1;
     fJe[5][0] = 1;
-  } else {
+  }
+  else {
     fJe[3][1] = s1;
     fJe[4][1] = -c1;
     fJe[5][0] = 1;

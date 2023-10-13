@@ -55,7 +55,7 @@
 
   \ingroup group_robot_real_ptu
 
-  \brief Jacobian, geometric model functionalities... for biclops, pan, tilt
+  \brief Jacobian, geometric model functionalities... for Biclops, pan, tilt
   head.
 
   Two different Denavit Hartenberg representations of the robot are
@@ -111,9 +111,10 @@ public:
 
 
     */
-  typedef enum {
-    DH1, /*!< First Denavit Hartenberg representation. */
-    DH2  /*!< Second Denavit Hartenberg representation. */
+  typedef enum
+  {
+    DH1, //!< First Denavit Hartenberg representation.
+    DH2  //!< Second Denavit Hartenberg representation.
   } DenavitHartenbergModel;
 
 public:                           /* Constants */
@@ -127,13 +128,13 @@ public:                           /* Constants */
   static const float speedLimit;
 
 protected:
-  DenavitHartenbergModel dh_model_;
-  vpHomogeneousMatrix cMe_; // Camera frame to mobile platform frame
+  DenavitHartenbergModel m_dh_model;
+  vpHomogeneousMatrix m_cMe; // Camera frame to mobile platform frame
 
 public:
   vpBiclops(void);
   /*! Destructor that does nothing. */
-  virtual ~vpBiclops(){};
+  virtual ~vpBiclops() { };
 
   /** @name Inherited functionalities from vpBiclops */
   //@{
@@ -145,10 +146,10 @@ public:
   void computeMGD(const vpColVector &q, vpPoseVector &fvc) const;
 
   /*!
-    Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and
-    the end effector frame.
-    */
-  vpHomogeneousMatrix get_cMe() const { return cMe_; }
+   * Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and
+   * the end effector frame.
+   */
+  vpHomogeneousMatrix get_cMe() const { return m_cMe; }
 
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
   void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
@@ -160,23 +161,24 @@ public:
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   /*!
-    Return the Denavit Hartenberg representation used to model the head.
-    \sa vpBiclops::DenavitHartenbergModel
-    */
-  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const { return dh_model_; }
+   * Return the Denavit Hartenberg representation used to model the head.
+   * \sa vpBiclops::DenavitHartenbergModel
+   */
+  inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const { return m_dh_model; }
 
   void set_cMe();
-  /*!
-    Set the transformation between the camera frame and the end effector
-    frame.
-    */
-  void set_cMe(const vpHomogeneousMatrix &cMe) { cMe_ = cMe; }
-  /*!
-    Set the Denavit Hartenberg representation used to model the head.
 
-    \sa vpBiclops::DenavitHartenbergModel
-    */
-  inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel m = vpBiclops::DH1) { dh_model_ = m; }
+  /*!
+   * Set the transformation between the camera frame and the end effector
+   * frame.
+   */
+  void set_cMe(const vpHomogeneousMatrix &cMe) { m_cMe = cMe; }
+  /*!
+   * Set the Denavit Hartenberg representation used to model the head.
+   *
+   * \sa vpBiclops::DenavitHartenbergModel
+   */
+  inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel m = vpBiclops::DH1) { m_dh_model = m; }
 
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops &constant);

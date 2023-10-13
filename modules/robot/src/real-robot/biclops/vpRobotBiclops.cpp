@@ -258,8 +258,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   vpRobotBiclopsController *m_controller = static_cast<vpRobotBiclopsController *>(arg);
 
   int iter = 0;
-  //   PMDAxisControl *panAxis  = m_controller->getPanAxis();
-  //   PMDAxisControl *tiltAxis = m_controller->getTiltAxis();
+  //   PMDAxisControl *m_panAxis  = m_controller->getPanAxis();
+  //   PMDAxisControl *m_tiltAxis = m_controller->getTiltAxis();
   vpRobotBiclopsController::shmType shm;
 
   vpDEBUG_TRACE(10, "Start control loop");
