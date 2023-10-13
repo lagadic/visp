@@ -76,6 +76,9 @@ class VISP_EXPORT Biclops; // needed for dll creation
 class VISP_EXPORT vpRobotBiclopsController
 {
 public:
+  /*!
+   * Biclops head controller status.
+   */
   typedef enum
   {
     STOP, /*!< Have to stop the robot. */
@@ -84,14 +87,16 @@ public:
 
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  // SHM
-  typedef struct /* ControllerShm_struct */
+  /*!
+   * Biclops head shared memory structure.
+   */
+  typedef struct
   {
     vpControllerStatusType status[2];
-    double q_dot[2];        /*!< Desired speed. */
-    double actual_q[2];     /*!< Current measured position of each axes. */
-    double actual_q_dot[2]; /*!< Current measured velocity of each axes. */
-    bool jointLimit[2];     /*!< Indicates if an axe is in joint limit. */
+    double q_dot[2];        //!< Desired speed.
+    double actual_q[2];     //!< Current measured position of each axes.
+    double actual_q_dot[2]; //!< Current measured velocity of each axes.
+    bool jointLimit[2];     //!< Indicates if an axe is in joint limit.
   } shmType;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
@@ -113,22 +118,118 @@ public:
   //#endif
 
 public:
+  /*!
+   * Default constructor.
+   */
   vpRobotBiclopsController();
+
+  /*!
+   * Destructor.
+   */
   virtual ~vpRobotBiclopsController();
+
+  /*!
+   * Initialize the Biclops by homing all axis.
+   *
+   * \param configfile : Biclops configuration file.
+   *
+   * \exception vpRobotException::notInitializedError If the Biclops head cannot
+   * be initialized. The initialization can failed,
+   * - if the head is not powered on,
+   * - if the head is not connected to your computer throw a serial cable,
+   * - if you try to open a bad serial port. Check you config file to verify
+   *   which is the used serial port.
+   */
   void init(const std::string &configfile);
+
+  /*!
+   * Set the Biclops axis position. The motion of the axis is synchronized to end
+   * on the same time.
+   *
+   * \warning Wait the end of the positioning.
+   *
+   * \param q : The position to set for each axis.
+   *
+   * \param percentVelocity : The velocity displacement to reach the new position
+   * in the range [0: 100.0]. 100 % corresponds to the maximal admissible
+   * speed. The maximal admissible speed is given by vpBiclops::speedLimit.
+   */
   void setPosition(const vpColVector &q, double percentVelocity);
+
+  /*!
+   * Apply a velocity to each axis of the Biclops robot.
+   *
+   * \warning This method is non blocking.
+   *
+   * \param q_dot : Velocity to apply.
+   */
   void setVelocity(const vpColVector &q_dot);
+
+  /*!
+   * Get the Biclops joint positions.
+   *
+   * \return The axis joint positions in radians.
+   */
   vpColVector getPosition();
+
+  /*!
+   * Get the Biclops actual joint positions.
+   *
+   * \return The axis actual joint positions in radians.
+   */
   vpColVector getActualPosition();
+
+  /*!
+   * Get the Biclops joint velocities.
+   *
+   * \return The axis joint velocities in rad/s.
+   */
   vpColVector getVelocity();
+
+  /*!
+   * Get the Biclops actual joint velocities.
+   *
+   * \return The axis actual joint velocities in rad/s.
+   */
   vpColVector getActualVelocity();
+
+  /*!
+   * Return a pointer to the PMD pan axis.
+   */
   PMDAxisControl *getPanAxis() { return m_panAxis; };
+
+  /*!
+   * Return a pointer to the PMD tilt axis.
+   */
   PMDAxisControl *getTiltAxis() { return m_tiltAxis; };
+
+  /*!
+   * Return a pointer to the PMD verge axis.
+   */
   PMDAxisControl *getVergeAxis() { return m_vergeAxis; };
+
+  /*!
+   * Update the shared memory.
+   *
+   * \param shm : Content to write in the shared memory.
+   */
   void writeShm(shmType &shm);
+
+  /*!
+   * Get a copy of the shared memory.
+   *
+   * \return A copy of the shared memory.
+   */
   shmType readShm();
+
+  /*!
+   * Return true when control thread is requested to stop.
+   */
   bool isStopRequested() { return m_stopControllerThread; }
 
+  /*!
+   * Send a control thread stop request.
+   */
   void stopRequest(bool stop) { m_stopControllerThread = stop; }
 
 private:
@@ -144,7 +245,7 @@ private:
   PMDAxisControl::Profile m_tiltProfile;
   PMDAxisControl::Profile m_vergeProfile;
 
-  shmType shm;
+  shmType m_shm;
   bool m_stopControllerThread;
 };
 

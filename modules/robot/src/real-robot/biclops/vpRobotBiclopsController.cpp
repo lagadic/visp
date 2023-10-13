@@ -55,51 +55,30 @@
 /* --- CONSTRUCTOR ------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-/*!
-   Default constructor.
-*/
 vpRobotBiclopsController::vpRobotBiclopsController()
-  : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL), m_vergeAxis(NULL), m_panProfile(), m_tiltProfile(), m_vergeProfile(),
-  shm(), m_stopControllerThread(false)
+  : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL), m_vergeAxis(NULL), m_panProfile(), m_tiltProfile(),
+  m_vergeProfile(), m_shm(), m_stopControllerThread(false)
 {
   m_axisMask = Biclops::PanMask + Biclops::TiltMask
     /*+ Biclops::VergeMask*/; // add this if you want verge.
 
-// Set Debug level depending on how much info you want to see about
-// the inner workings of the API. Level 2 is highest with 0 being
-// the default (i.e., no messages).
+  // Set Debug level depending on how much info you want to see about
+  // the inner workings of the API. Level 2 is highest with 0 being
+  // the default (i.e., no messages).
   m_biclops.SetDebugLevel(0);
 
   // initialize the shared data structure
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    shm.status[i] = STOP;
-    shm.q_dot[i] = 0.;
-    shm.actual_q[i] = 0.;
-    shm.jointLimit[i] = false;
-    shm.status[i] = STOP;
+    m_shm.status[i] = STOP;
+    m_shm.q_dot[i] = 0.;
+    m_shm.actual_q[i] = 0.;
+    m_shm.jointLimit[i] = false;
+    m_shm.status[i] = STOP;
   }
 }
 
-/*!
-
-  Destructor.
-
-*/
 vpRobotBiclopsController::~vpRobotBiclopsController() { }
 
-/*!
-
-  Initialize the Biclops by homing all axis.
-
-  \param configfile : Biclops configuration file.
-
-  \exception vpRobotException::notInitializedError If the Biclops head cannot
-  be initialized. The initialization can failed,
-  - if the head is not powered on,
-  - if the head is not connected to your computer throw a serial cable,
-  - if you try to open a bad serial port. Check you config file to verify
-    which is the used serial port.
-*/
 void vpRobotBiclopsController::init(const std::string &configfile)
 {
   vpDEBUG_TRACE(12, "Initialize Biclops.");
@@ -168,21 +147,6 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   if ((m_axisMask & Biclops::VergeMask) != 0)
     m_vergeAxis->GetProfile(m_vergeProfile);
 }
-
-/*!
-
-  Set the Biclops axis position. The motion of the axis is synchronized to end
-  on the same time.
-
-  \warning Wait the end of the positioning.
-
-  \param q : The position to set for each axis.
-
-  \param percentVelocity : The velocity displacement to reach the new position
-  in the range [0: 100.0]. 100 % corresponds to the maximal admissible
-  speed. The maximal admissible speed is given by vpBiclops::speedLimit.
-
-*/
 
 void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentVelocity)
 {
@@ -254,15 +218,6 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentV
   m_biclops.Move(Biclops::PanMask + Biclops::TiltMask /*, 0*/); //
 }
 
-/*!
-
-  Apply a velocity to each axis of the Biclops robot.
-
-  \warning This method is non blocking.
-
-  \param q_dot : Velocity to apply.
-
-*/
 void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 {
   if (q_dot.getRows() != vpBiclops::ndof) {
@@ -314,13 +269,6 @@ void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
   m_biclops.Move(Biclops::PanMask + Biclops::TiltMask, 0); //
 }
 
-/*!
-
-  Get the Biclops articular position.
-
-  \return The axis articular position in radians.
-
-*/
 vpColVector vpRobotBiclopsController::getPosition()
 {
   vpDEBUG_TRACE(12, "Start vpRobotBiclopsController::getPosition() ");
@@ -339,13 +287,6 @@ vpColVector vpRobotBiclopsController::getPosition()
   return q;
 }
 
-/*!
-
-  Get the Biclops actual articular position.
-
-  \return The axis actual articular position in radians.
-
-*/
 vpColVector vpRobotBiclopsController::getActualPosition()
 {
   vpColVector q(vpBiclops::ndof);
@@ -360,13 +301,6 @@ vpColVector vpRobotBiclopsController::getActualPosition()
   return q;
 }
 
-/*!
-
-  Get the Biclops articular velocity.
-
-  \return The axis articular velocity in rad/s.
-
-*/
 vpColVector vpRobotBiclopsController::getVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
@@ -381,13 +315,6 @@ vpColVector vpRobotBiclopsController::getVelocity()
   return q_dot;
 }
 
-/*!
-
-  Get the Biclops actual articular velocity.
-
-  \return The axis actual articular velocity in rad/s.
-
-*/
 vpColVector vpRobotBiclopsController::getActualVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
@@ -402,38 +329,26 @@ vpColVector vpRobotBiclopsController::getActualVelocity()
   return q_dot;
 }
 
-/*!
-
-  Update the shared memory.
-
-  \param shm_ : Content to write in the shared memory.
-*/
-void vpRobotBiclopsController::writeShm(shmType &shm_)
+void vpRobotBiclopsController::writeShm(shmType &shm)
 {
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm_.q_dot[i]);
+    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm.q_dot[i]);
   }
-  memcpy(&this->shm, &shm_, sizeof(shmType));
+  memcpy(&this->m_shm, &shm, sizeof(shmType));
   // this->shm = shm_;
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
 }
 
-/*!
-
-  Get a copy of the shared memory.
-
-  \return A copy of the shared memory.
-*/
 vpRobotBiclopsController::shmType vpRobotBiclopsController::readShm()
 {
   shmType tmp_shm;
 
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
-  memcpy(&tmp_shm, &this->shm, sizeof(shmType));
+  memcpy(&tmp_shm, &this->m_shm, sizeof(shmType));
   // tmp_shm = shm;
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     vpDEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);

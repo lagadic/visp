@@ -53,20 +53,6 @@ const float vpBiclops::tiltJointLimit = (float)(M_PI / 4.5); /*!< Tilt range (in
 
 const float vpBiclops::speedLimit = (float)(M_PI / 3.0); /*!< Maximum speed (in rad/s) to perform a displacement */
 
-/*!
-  Compute the direct geometric model of the camera: fMc
-
-  \warning Provided for compatibilty with previous versions. Use rather
-  get_fMc(const vpColVector &, vpHomogeneousMatrix &).
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param fMc : Homogeneous matrix corresponding to the direct geometric model
-  of the camera. Describes the transformation between the robot reference
-  frame (called fixed) and the camera frame.
-
-  \sa get_fMc(const vpColVector &, vpHomogeneousMatrix &)
-*/
 void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
@@ -77,16 +63,6 @@ void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
   return;
 }
 
-/*!
-  Compute the direct geometric model of the camera: fMc
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param fMc : Homogeneous matrix corresponding to the direct geometric model
-  of the camera. Describes the transformation between the robot reference
-  frame (called fixed) and the camera frame.
-
-*/
 void vpBiclops::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
   vpHomogeneousMatrix fMe = get_fMe(q);
@@ -97,20 +73,6 @@ void vpBiclops::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
   return;
 }
 
-/*!
-  Return the direct geometric model of the camera: fMc
-
-  \warning Provided for compatibilty with previous versions. Use rather
-  get_fMc(const vpColVector &).
-
-  \param q : Articular position for pan and tilt axis.
-
-  \return fMc, the homogeneous matrix corresponding to the direct geometric
-  model of the camera. Describes the transformation between the robot
-  reference frame (called fixed) and the camera frame.
-
-  \sa get_fMc(const vpColVector &)
-*/
 vpHomogeneousMatrix vpBiclops::computeMGD(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
@@ -120,16 +82,6 @@ vpHomogeneousMatrix vpBiclops::computeMGD(const vpColVector &q) const
   return fMc;
 }
 
-/*!
-  Return the direct geometric model of the camera: fMc
-
-  \param q : Articular position for pan and tilt axis.
-
-  \return fMc, the homogeneous matrix corresponding to the direct geometric
-  model of the camera. Discribes the transformation between the robot
-  reference frame (called fixed) and the camera frame.
-
-*/
 vpHomogeneousMatrix vpBiclops::get_fMc(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMc;
@@ -139,16 +91,6 @@ vpHomogeneousMatrix vpBiclops::get_fMc(const vpColVector &q) const
   return fMc;
 }
 
-/*!
-  Return the direct geometric model of the end effector: fMe
-
-  \param q : Articular position for pan and tilt axis.
-
-  \return fMe, the homogeneous matrix corresponding to the direct geometric
-  model of the end effector. Describes the transformation between the robot
-  reference frame (called fixed) and the end effector frame.
-
-*/
 vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
 {
   vpHomogeneousMatrix fMe;
@@ -212,46 +154,22 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
   return fMe;
 }
 
-/*!
-  Compute the direct geometric model of the camera in terms of pose vector.
-
-  \warning Provided for compatibilty with previous versions. Use rather
-  get_fMc(const vpColVector &, vpPoseVector &).
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param fvc : Pose vector corresponding to the transformation between the
-  robot reference frame (called fixed) and the camera frame.
-
-  \sa get_fMc(const vpColVector &, vpPoseVector &)
-*/
-
-void vpBiclops::computeMGD(const vpColVector &q, vpPoseVector &fvc) const
+void vpBiclops::computeMGD(const vpColVector &q, vpPoseVector &fPc) const
 {
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fvc.buildFrom(fMc.inverse());
+  fPc.buildFrom(fMc.inverse());
 
   return;
 }
 
-/*!
-  Compute the direct geometric model of the camera in terms of pose vector.
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param fvc : Pose vector corresponding to the transformation between the
-  robot reference frame (called fixed) and the camera frame.
-
-*/
-
-void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fvc) const
+void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fPc) const
 {
   vpHomogeneousMatrix fMc;
 
   get_fMc(q, fMc);
-  fvc.buildFrom(fMc.inverse());
+  fPc.buildFrom(fMc.inverse());
 
   return;
 }
@@ -260,21 +178,8 @@ void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fvc) const
 /* --- CONSTRUCTOR ------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-/*!
-
-  Default construtor. Call init().
-
-*/
 vpBiclops::vpBiclops(void) : m_dh_model(DH1), m_cMe() { init(); }
-/* ---------------------------------------------------------------------- */
-/* --- PRIVATE ---------------------------------------------------------- */
-/* ---------------------------------------------------------------------- */
 
-/*!
-  Initialization.
-  Set the default \f${^c}{\bf M}_e\f$ transformation.
-
-*/
 void vpBiclops::init()
 {
   m_dh_model = DH1;
@@ -295,64 +200,33 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*const
   return os;
 }
 
-/*!
-
-  Get the twist matrix corresponding to the transformation between the
-  camera frame and the end effector frame. The end effector frame is located
-  on the tilt axis.
-
-  \param cVe : Twist transformation between camera and end effector frame to
-  expess a velocity skew from end effector frame in camera frame.
-
-*/
 void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(m_cMe); }
 
-/*!
-
-  Set the default homogeneous matrix corresponding to the transformation
-  between the camera frame and the end effector frame. The end effector frame
-  is located on the tilt axis.
-
-*/
 void vpBiclops::set_cMe()
 {
-  vpHomogeneousMatrix eMc;
+  vpHomogeneousMatrix cMe;
 
-  eMc[0][0] = 0;
-  eMc[0][1] = -1;
-  eMc[0][2] = 0;
-  eMc[0][3] = h;
+  m_cMe[0][0] = 0;
+  m_cMe[0][1] = 1;
+  m_cMe[0][2] = 0;
+  m_cMe[0][3] = 0;
 
-  eMc[1][0] = 1;
-  eMc[1][1] = 0;
-  eMc[1][2] = 0;
-  eMc[1][3] = 0;
+  m_cMe[1][0] = -1;
+  m_cMe[1][1] = 0;
+  m_cMe[1][2] = 0;
+  m_cMe[1][3] = h;
 
-  eMc[2][0] = 0;
-  eMc[2][1] = 0;
-  eMc[2][2] = 1;
-  eMc[2][3] = 0;
+  m_cMe[2][0] = 0;
+  m_cMe[2][1] = 0;
+  m_cMe[2][2] = 1;
+  m_cMe[2][3] = 0;
 
-  eMc[3][0] = 0;
-  eMc[3][1] = 0;
-  eMc[3][2] = 0;
-  eMc[3][3] = 1;
-
-  m_cMe = eMc.inverse();
+  m_cMe[3][0] = 0;
+  m_cMe[3][1] = 0;
+  m_cMe[3][2] = 0;
+  m_cMe[3][3] = 1;
 }
 
-/*!
-  Get the robot jacobian expressed in the end-effector frame.
-
-  \warning Re is not the embedded camera frame. It corresponds to the frame
-  associated to the tilt axis (see also get_cMe).
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param eJe : Jacobian between end effector frame and end effector frame (on
-  tilt axis).
-
-*/
 void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 {
   eJe.resize(6, 2);
@@ -378,15 +252,6 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
     eJe[5][0] = s2;
   }
 }
-/*!
-  Get the robot jacobian expressed in the robot reference frame
-
-  \param q : Articular position for pan and tilt axis.
-
-  \param fJe : Jacobian between reference frame (or fix frame) and end
-  effector frame (on tilt axis).
-
-*/
 
 void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
