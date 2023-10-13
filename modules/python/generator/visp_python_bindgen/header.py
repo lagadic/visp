@@ -1,23 +1,21 @@
-from typing import List, Optional, Set, Tuple, Dict, Union
+from typing import List, Optional, Dict
 from pathlib import Path
 from dataclasses import dataclass
 from collections import OrderedDict
 
 import pcpp
-from cxxheaderparser.parserstate import ClassBlockState, State
 from cxxheaderparser import types
 from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
 
-from utils import *
-from methods import *
-from doc_parser import *
-from header_utils import *
-from generator_config import GeneratorConfig
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.methods import *
+from visp_python_bindgen.doc_parser import *
+from visp_python_bindgen.header_utils import *
+from visp_python_bindgen.generator_config import GeneratorConfig
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from submodule import Submodule
-import sys
 
 @dataclass
 class BoundObjectNames:

@@ -1,16 +1,10 @@
-from typing import List, Optional, Set, Tuple, Dict, Union
-from cxxheaderparser.parserstate import ClassBlockState, State
-import pcpp
-import cxxheaderparser
-from cxxheaderparser.visitor import CxxVisitor
-from cxxheaderparser import types
-from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
+from typing import List, Optional, Dict
 from pathlib import Path
 import json
 
-from header import HeaderFile
-from utils import *
-from gen_report import Report
+from visp_python_bindgen.header import HeaderFile
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.gen_report import Report
 
 class Submodule():
   def __init__(self, name: str, include_path: Path, submodule_file_path: Path):

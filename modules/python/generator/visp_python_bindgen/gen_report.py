@@ -1,11 +1,16 @@
-from typing import Callable, List, Optional, Set, Tuple, Dict, Union
-from cxxheaderparser.parserstate import ClassBlockState, State
-import pcpp
-import cxxheaderparser
+from typing import List, Dict
+from pathlib import Path
+import json
+
 from cxxheaderparser import types
-from cxxheaderparser.simple import NamespaceScope, ClassScope
-from utils import *
-from methods import NotGeneratedReason, RejectedMethod
+
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.methods import NotGeneratedReason, RejectedMethod
+
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+  from visp_python_bindgen.submodule import Submodule
+
 class Report(object):
   def __init__(self, submodule: 'Submodule'):
     self.submodule_name = submodule.name

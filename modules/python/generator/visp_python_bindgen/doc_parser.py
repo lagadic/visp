@@ -1,8 +1,8 @@
 import_failed = False
+from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 import re
 from cxxheaderparser.simple import parse_string
 try:
@@ -12,7 +12,7 @@ except ImportError:
   print('Cannot import xml parser')
   import_failed = True
 
-from utils import *
+from visp_python_bindgen.utils import *
 
 class DocumentationObjectKind(Enum):
   '''
@@ -50,6 +50,7 @@ def to_cstring(s: str) -> str:
   return f'''R"doc(
 {s}
 )doc"'''
+
 @dataclass
 class MethodDocSignature:
   name: str

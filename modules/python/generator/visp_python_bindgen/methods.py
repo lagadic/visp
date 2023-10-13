@@ -1,23 +1,18 @@
-from typing import Any, Callable, List, Optional, Set, Tuple, Dict, Union
-from cxxheaderparser.parserstate import ClassBlockState, State
-import pcpp
-import cxxheaderparser
-from cxxheaderparser.visitor import CxxVisitor
-from cxxheaderparser import types
-from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope, parse_file
-from pathlib import Path
-import json
-from dataclasses import dataclass
+from typing import Any, Callable, List, Optional, Tuple, Dict
 from enum import Enum
+from dataclasses import dataclass
+
+from cxxheaderparser import types
+from cxxheaderparser.simple import ClassScope
+
+from visp_python_bindgen.doc_parser import MethodDocSignature
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.generator_config import GeneratorConfig
+
 from typing import TYPE_CHECKING
-from doc_parser import MethodDocSignature
-
-from utils import *
-from generator_config import GeneratorConfig
-
 if TYPE_CHECKING:
-  from submodule import Submodule
-  from header import HeaderFile, HeaderEnvironment, BoundObjectNames
+  from visp_python_bindgen.submodule import Submodule
+  from visp_python_bindgen.header import HeaderFile, HeaderEnvironment, BoundObjectNames
 
 def cpp_operator_list():
   '''
@@ -146,7 +141,6 @@ def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapp
     return True
 
   return False
-
 
 
 def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[str]:

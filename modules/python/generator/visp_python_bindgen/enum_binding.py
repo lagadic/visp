@@ -1,18 +1,22 @@
-from typing import Callable, List, Optional, Set, Tuple, Dict, Union
-from cxxheaderparser.parserstate import ClassBlockState, State
-import pcpp
-import cxxheaderparser
+from typing import List, Optional, Tuple, Dict, Union
+from dataclasses import dataclass
+
 from cxxheaderparser import types
 from cxxheaderparser.simple import NamespaceScope, ClassScope
-from utils import *
-from dataclasses import dataclass
-from submodule import Submodule
+
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.submodule import Submodule
+
+
 @dataclass
 class EnumRepr:
-  id: Optional[int]
-  name: Optional[str]
-  values: Optional[List[types.Enumerator]]
-  public_access: bool = True
+  '''
+  Intermediate representation of an enumeration
+  '''
+  id: Optional[int] # Integer Id for an enumeration. Used when an enumeration is anonymous (hidden behind a typedef). Id is unique per header file
+  name: Optional[str] # Name of the enumeration
+  values: Optional[List[types.Enumerator]] # The values of the enumeration
+  public_access: bool = True # Whether this enum is visible from outside the header file
 
 
 def is_typedef_to_enum(typedef: types.Typedef):

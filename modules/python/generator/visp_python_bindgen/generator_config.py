@@ -1,8 +1,7 @@
 
-from dataclasses import dataclass
-from typing import Dict, Final, List, Tuple, Optional
+from typing import Dict, Final, List, Optional
 import re
-
+from dataclasses import dataclass
 
 @dataclass
 class PreprocessorConfig(object):
@@ -69,8 +68,8 @@ FORBIDDEN_FUNCTION_NAMES_REGEXS = [
 class GeneratorConfig(object):
   pcpp_config: Final[PreprocessorConfig] = PreprocessorConfig(
     defines={
-      'VISP_EXPORT': '', # remove symbol as it messes the cxxheaderparsing
-      'vp_deprecated': '', # remove symbol as it messes the cxxheaderparsing
+      'VISP_EXPORT': '', # remove symbol as it messes up the cxxheaderparsing
+      'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': '1', # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
       '__cplusplus' : '1' # To silence OpenCV warnings

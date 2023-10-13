@@ -1,15 +1,10 @@
 from typing import List, Optional, Set, Tuple, Dict, Union
-from cxxheaderparser.parserstate import ClassBlockState, State
-import pcpp
-import cxxheaderparser
-from cxxheaderparser.visitor import CxxVisitor
+
 from cxxheaderparser.tokfmt import tokfmt
 from cxxheaderparser import types
-from cxxheaderparser.simple import parse_string, ParsedData, NamespaceScope, ClassScope
-from pathlib import Path
-import json
+from cxxheaderparser.simple import NamespaceScope, ClassScope
 
-from generator_config import GeneratorConfig
+from visp_python_bindgen.generator_config import GeneratorConfig
 
 def get_name(name: types.PQName) -> str:
   '''

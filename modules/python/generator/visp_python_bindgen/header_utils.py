@@ -1,19 +1,16 @@
 from typing import List, Set, Dict, Union
-from pathlib import Path
-from dataclasses import dataclass
+import sys
 
 from cxxheaderparser import types
 from cxxheaderparser.simple import ParsedData, NamespaceScope, ClassScope
 
-from utils import *
-from methods import *
-from doc_parser import *
+from visp_python_bindgen.utils import *
+from visp_python_bindgen.methods import *
+from visp_python_bindgen.doc_parser import *
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-  from submodule import Submodule
-  from header import HeaderFile
-import sys
+  from visp_python_bindgen.header import HeaderFile
 
 def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
   '''

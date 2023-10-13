@@ -1,10 +1,10 @@
+from typing import List
 import sys
-from typing import List, Optional, Set, Tuple, Dict, Union
 from pathlib import Path
 from multiprocessing import Pool
 
-from header import *
-from submodule import *
+from visp_python_bindgen.header import *
+from visp_python_bindgen.submodule import *
 
 
 def header_preprocess(header: HeaderFile):
@@ -96,8 +96,11 @@ def generate_module(generate_path: Path) -> None:
     format_str = main_str(submodule_fn_declarations, submodule_fn_calls)
     main_file.write(format_str)
 
-if __name__ == '__main__':
+def main():
   generation_path = Path('bindings/src')
   generation_path.mkdir(exist_ok=True)
 
   generate_module(generation_path)
+
+if __name__ == '__main__':
+  main()
