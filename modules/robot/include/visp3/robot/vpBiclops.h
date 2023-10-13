@@ -146,7 +146,7 @@ public:
   void computeMGD(const vpColVector &q, vpPoseVector &fvc) const;
 
   /*!
-   * Return the tranformation \f${^c}{\bf M}_e\f$ between the camera frame and
+   * Return the transformation \f${^c}{\bf M}_e\f$ between the camera frame and
    * the end effector frame.
    */
   vpHomogeneousMatrix get_cMe() const { return m_cMe; }
