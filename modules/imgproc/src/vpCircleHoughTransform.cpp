@@ -164,7 +164,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
     }
   }
 
-  return m_finalCircles;
+  return bestCircles;
 }
 
 std::vector<vpImageCircle>
