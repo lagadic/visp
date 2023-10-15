@@ -3,6 +3,7 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -12,189 +13,232 @@
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
 namespace
 {
-bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
-               vpImage<uint16_t> &I_depth_raw, unsigned int &depth_width, unsigned int &depth_height,
-               std::vector<vpColVector> &pointcloud, const vpCameraParameters &cam,
+bool read_data(unsigned int cpt, const std::string &video_color_images, const std::string &video_depth_images,
+               bool disable_depth, const std::string &video_ground_truth,
+               vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
+               unsigned int &depth_width, unsigned int &depth_height,
+               std::vector<vpColVector> &pointcloud, const vpCameraParameters &cam_depth,
                vpHomogeneousMatrix &cMo_ground_truth)
 {
   char buffer[FILENAME_MAX];
   // Read color
-  std::stringstream ss;
-  ss << input_directory << "/images/%04d.jpg";
-  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
-  std::string filename_img = buffer;
+  snprintf(buffer, FILENAME_MAX, video_color_images.c_str(), cpt);
+  std::string filename_color = buffer;
 
-  if (!vpIoTools::checkFilename(filename_img)) {
-    std::cerr << "Cannot read: " << filename_img << std::endl;
+  if (!vpIoTools::checkFilename(filename_color)) {
+    std::cerr << "Cannot read: " << filename_color << std::endl;
     return false;
   }
-  vpImageIo::read(I, filename_img);
+  vpImageIo::read(I, filename_color);
 
-  // Read depth
-  ss.str("");
-  ss << input_directory << "/depth/Image%04d.exr";
-  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
-  std::string filename_depth = buffer;
+  if (!disable_depth) {
+    // Read depth
+    snprintf(buffer, FILENAME_MAX, video_depth_images.c_str(), cpt);
+    std::string filename_depth = buffer;
 
-  cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
-  if (depth_raw.empty()) {
-    std::cerr << "Cannot read: " << filename_depth << std::endl;
-    return false;
-  }
+    if (!vpIoTools::checkFilename(filename_depth)) {
+      std::cerr << "Cannot read: " << filename_depth << std::endl;
+      return false;
+    }
+    cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+    if (depth_raw.empty()) {
+      std::cerr << "Cannot read: " << filename_depth << std::endl;
+      return false;
+    }
 
-  depth_width = static_cast<unsigned int>(depth_raw.cols);
-  depth_height = static_cast<unsigned int>(depth_raw.rows);
-  I_depth_raw.resize(depth_height, depth_width);
-  pointcloud.resize(depth_width * depth_height);
+    depth_width = static_cast<unsigned int>(depth_raw.cols);
+    depth_height = static_cast<unsigned int>(depth_raw.rows);
+    I_depth_raw.resize(depth_height, depth_width);
+    pointcloud.resize(depth_width * depth_height);
 
-  for (int i = 0; i < depth_raw.rows; i++) {
-    for (int j = 0; j < depth_raw.cols; j++) {
-      I_depth_raw[i][j] = static_cast<uint16_t>(32767.5f * depth_raw.at<cv::Vec3f>(i, j)[0]);
-      double x = 0.0, y = 0.0;
-      // Manually limit the field of view of the depth camera
-      double Z = depth_raw.at<cv::Vec3f>(i, j)[0] > 2.0f ? 0.0 : static_cast<double>(depth_raw.at<cv::Vec3f>(i, j)[0]);
-      vpPixelMeterConversion::convertPoint(cam, j, i, x, y);
-      size_t idx = static_cast<size_t>(i * depth_raw.cols + j);
-      pointcloud[idx].resize(3);
-      pointcloud[idx][0] = x * Z;
-      pointcloud[idx][1] = y * Z;
-      pointcloud[idx][2] = Z;
+    for (int i = 0; i < depth_raw.rows; i++) {
+      for (int j = 0; j < depth_raw.cols; j++) {
+        I_depth_raw[i][j] = static_cast<uint16_t>(32767.5f * depth_raw.at<cv::Vec3f>(i, j)[0]);
+        double x = 0.0, y = 0.0;
+        // Manually limit the field of view of the depth camera
+        double Z = depth_raw.at<cv::Vec3f>(i, j)[0] > 2.0f ? 0.0 : static_cast<double>(depth_raw.at<cv::Vec3f>(i, j)[0]);
+        vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+        size_t idx = static_cast<size_t>(i * depth_raw.cols + j);
+        pointcloud[idx].resize(3);
+        pointcloud[idx][0] = x * Z;
+        pointcloud[idx][1] = y * Z;
+        pointcloud[idx][2] = Z;
+      }
     }
   }
 
   // Read ground truth
-  ss.str("");
-  ss << input_directory << "/camera_poses/Camera_%03d.txt";
-  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, video_ground_truth.c_str(), cpt);
   std::string filename_pose = buffer;
 
-  std::ifstream f_pose;
-  f_pose.open(filename_pose.c_str()); // .c_str() to keep compat when c++11 not available
-  if (!f_pose.is_open()) {
-    std::cerr << "Cannot read: " << filename_pose << std::endl;
-    return false;
-  }
-
-  cMo_ground_truth.load(f_pose);
+  cMo_ground_truth.load(filename_pose);
 
   return true;
 }
 } // namespace
 
-int main(int argc, char *argv[])
+void usage(const char **argv, int error, const std::string &data_path, const std::string &model_path, int first_frame)
 {
-  std::string input_directory = "."; // location of the data (images, depth maps, camera poses)
-  std::string config_color = "teabox.xml", config_depth = "teabox_depth.xml";
-  std::string model_color = "teabox.cao", model_depth = "teabox.cao";
-  std::string init_file = "teabox.init";
-  std::string extrinsic_file = "depth_M_color.txt";
-  unsigned int first_frame_index = 1;
-  bool disable_depth = false;
-  bool display_ground_truth = false;
-  bool step_by_step = false;
+  std::cout << "Synopsis" << std::endl
+    << "  " << argv[0]
+    << " [--data-path <path>] [--model-path <path>] [--first-frame <index>] [--disable-depth] "
+    << " [--disable-klt] [--step-by-step] [--display-ground-truth] [--help, -h]" << std::endl
+    << std::endl;
+  std::cout << "Description" << std::endl
+    << "  --data-path <path>   Path to the data generated by Blender get_camera_pose_teabox.py" << std::endl
+    << "    Python script."
+    << "    Default: " << data_path << std::endl
+    << std::endl
+    << "  --model-path <path>   Path to the cad model and tracker settings." << std::endl
+    << "    Default: " << model_path << std::endl
+    << std::endl
+    << "  --first-frame <index>   First frame number to process." << std::endl
+    << "    Default: " << first_frame << std::endl
+    << std::endl
+    << "  --disable-depth  Flag to turn off tracker depth features." << std::endl
+    << std::endl
+    << "  --disable-klt  Flag to turn off tracker keypoints features." << std::endl
+    << std::endl
+    << "  --step-by-step  Flag to enable step by step mode." << std::endl
+    << std::endl
+    << "  --display-ground-truth  Flag to enable displaying ground truth." << std::endl
+    << "    When this flag is enabled, there is no tracking. This flag is useful" << std::endl
+    << "    to validate the ground truth over the rendered images." << std::endl
+    << std::endl
+    << "  --help, -h  Print this helper message." << std::endl
+    << std::endl;
+  if (error) {
+    std::cout << "Error" << std::endl
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
+int main(int argc, const char **argv)
+{
+  std::string opt_data_path = "data/teabox";
+  std::string opt_model_path = "model/teabox";
+  unsigned int opt_first_frame = 1;
+  bool opt_disable_depth = false;
+  bool opt_disable_klt = false;
+  bool opt_display_ground_truth = false;
+  bool opt_step_by_step = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--input-directory" && i + 1 < argc) {
-      input_directory = std::string(argv[i + 1]);
+    if (std::string(argv[i]) == "--data-path" && i + 1 < argc) {
+      opt_data_path = std::string(argv[i + 1]);
       i++;
     }
-    else if (std::string(argv[i]) == "--config-color" && i + 1 < argc) {
-      config_color = std::string(argv[i + 1]);
-      i++;
-    }
-    else if (std::string(argv[i]) == "--config-depth" && i + 1 < argc) {
-      config_depth = std::string(argv[i + 1]);
-      i++;
-    }
-    else if (std::string(argv[i]) == "--model-color" && i + 1 < argc) {
-      model_color = std::string(argv[i + 1]);
-      i++;
-    }
-    else if (std::string(argv[i]) == "--model-depth" && i + 1 < argc) {
-      model_depth = std::string(argv[i + 1]);
-      i++;
-    }
-    else if (std::string(argv[i]) == "--init-file" && i + 1 < argc) {
-      init_file = std::string(argv[i + 1]);
-      i++;
-    }
-    else if (std::string(argv[i]) == "--extrinsics" && i + 1 < argc) {
-      extrinsic_file = std::string(argv[i + 1]);
+    else if (std::string(argv[i]) == "--model-path" && i + 1 < argc) {
+      opt_model_path = std::string(argv[i + 1]);
       i++;
     }
     else if (std::string(argv[i]) == "--disable-depth") {
-      disable_depth = true;
+      opt_disable_depth = true;
     }
-    else if (std::string(argv[i]) == "--display-round-truth") {
-      display_ground_truth = true;
+    else if (std::string(argv[i]) == "--disable-klt") {
+      opt_disable_klt = true;
+    }
+    else if (std::string(argv[i]) == "--display-ground-truth") {
+      opt_display_ground_truth = true;
     }
     else if (std::string(argv[i]) == "--step-by-step") {
-      step_by_step = true;
+      opt_step_by_step = true;
     }
-    else if (std::string(argv[i]) == "--first-frame-index" && i + 1 < argc) {
-      first_frame_index = static_cast<unsigned int>(atoi(argv[i + 1]));
+    else if (std::string(argv[i]) == "--first-frame" && i + 1 < argc) {
+      opt_first_frame = static_cast<unsigned int>(atoi(argv[i + 1]));
       i++;
     }
-    else if (std::string(argv[i]) == "--step-by-step") {
-      step_by_step = true;
-    }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout
-        << "Usage: \n"
-        << argv[0]
-        << " [--input-directory <data directory> (default: .)]"
-        << " [--config-color <object.xml> (default: teabox.xml)]"
-        << " [--config-depth <object.xml> (default: teabox_depth.xml)]"
-        << " [--model-color <object.cao> (default: teabox.cao)]"
-        << " [--model-depth <object.cao> (default: teabox.cao)]"
-        << " [--init-file <object.init> (default: teabox.init)]"
-        << " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)]"
-        << " [--disable-depth]"
-        << " [--display-ground-truth]"
-        << " [--step-by-step]"
-        << " [--first-frame-index <index> (default: 1)]"
-        << " [--help, -h]"
-        << std::endl;
+      usage(argv, 0, opt_data_path, opt_model_path, opt_first_frame);
       return EXIT_SUCCESS;
+    }
+    else {
+      usage(argv, i, opt_data_path, opt_model_path, opt_first_frame);
+      return EXIT_FAILURE;
     }
   }
 
-  std::cout << "input_directory: " << input_directory << std::endl;
-  std::cout << "config_color: " << config_color << std::endl;
-  std::cout << "config_depth: " << config_depth << std::endl;
-  std::cout << "model_color: " << model_color << std::endl;
-  std::cout << "model_depth: " << model_depth << std::endl;
-  std::cout << "init_file: " << model_depth << std::endl;
-  std::cout << "extrinsic_file: " << extrinsic_file << std::endl;
-  std::cout << "first_frame_index: " << first_frame_index << std::endl;
-  std::cout << "disable_depth: " << disable_depth << std::endl;
-  std::cout << "display_ground_truth: " << display_ground_truth << std::endl;
-  std::cout << "step by step: " << step_by_step << std::endl;
+  std::string video_color_images = vpIoTools::createFilePath(opt_data_path, "color/%04d_L.jpg");
+  std::string video_depth_images = vpIoTools::createFilePath(opt_data_path, "depth/Image%04d_R.exr");
+  std::string ground_truth = vpIoTools::createFilePath(opt_data_path, "ground-truth/Camera_L_%04d.txt");
+  std::string extrinsic_file = vpIoTools::createFilePath(opt_data_path, "depth_M_color.txt");
+  std::string color_camera_name = "Camera_L";
+  std::string depth_camera_name = "Camera_R";
+  std::string color_intrinsic_file = vpIoTools::createFilePath(opt_data_path, color_camera_name + ".xml");
+  std::string depth_intrinsic_file = vpIoTools::createFilePath(opt_data_path, depth_camera_name + ".xml");
+  std::string mbt_config_color = vpIoTools::createFilePath(opt_model_path, "teabox_color.xml");
+  std::string mbt_config_depth = vpIoTools::createFilePath(opt_model_path, "teabox_depth.xml");
+  std::string mbt_cad_model = vpIoTools::createFilePath(opt_model_path, "teabox.cao");
+  std::string mbt_init_file = vpIoTools::createFilePath(opt_model_path, "teabox.init");
+
+  std::cout << "Input data" << std::endl;
+  std::cout << "  Color images    : " << video_color_images << std::endl;
+  std::cout << "  Depth images    : " << (opt_disable_depth ? "Disabled" : video_depth_images) << std::endl;
+  std::cout << "  Extrinsics      : " << (opt_disable_depth ? "Disabled" : extrinsic_file) << std::endl;
+  std::cout << "  Color intrinsics: " << color_intrinsic_file << std::endl;
+  std::cout << "  Depth intrinsics: " << (opt_disable_depth ? "Disabled" : depth_intrinsic_file) << std::endl;
+  std::cout << "  Ground truth    : " << ground_truth << std::endl;
+  std::cout << "Tracker settings" << std::endl;
+  std::cout << "  Color config    : " << mbt_config_color << std::endl;
+  std::cout << "  Depth config    : " << mbt_config_depth << std::endl;
+  std::cout << "  CAD model       : " << mbt_cad_model << std::endl;
+  std::cout << "  First frame     : " << opt_first_frame << std::endl;
+  std::cout << "  Step by step    : " << opt_step_by_step << std::endl;
+  if (opt_display_ground_truth) {
+    std::cout << "  Ground truth is used to project the cad model (no tracking)" << std::endl;
+  }
+  else {
+    std::cout << "  Init file       : " << mbt_init_file << std::endl;
+    std::cout << "  Features        : moving-edges " << (opt_disable_klt ? "" : "+ keypoints") << (opt_disable_depth ? "" : " + depth") << std::endl;
+  }
 
   std::vector<int> tracker_types;
+  if (opt_disable_klt) {
+    tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER);
+  }
+  else {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-  tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+    tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
 #else
-  tracker_types.push_back(vpMbGenericTracker::EDGE_TRACKER);
+    std::cout << "Warning: keypoints cannot be used as features since ViSP is not build with OpenCV 3rd party" << std::endl;
 #endif
-  if (!disable_depth)
+  }
+  if (!opt_disable_depth)
     tracker_types.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 
   vpMbGenericTracker tracker(tracker_types);
-  if (!disable_depth)
-    tracker.loadConfigFile(config_color, config_depth);
+  if (!opt_disable_depth)
+    tracker.loadConfigFile(mbt_config_color, mbt_config_depth);
   else
-    tracker.loadConfigFile(config_color);
-  tracker.loadModel(model_color);
+    tracker.loadConfigFile(mbt_config_color);
+  tracker.loadModel(mbt_cad_model);
   vpCameraParameters cam_color, cam_depth;
-  if (!disable_depth)
+
+  // Update intrinsics camera parameters from Blender generated data
+  vpXmlParserCamera p;
+  if (p.parse(cam_color, color_intrinsic_file, color_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion)
+     != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot found intrinsics for camera " << color_camera_name << std::endl;
+  }
+  if (p.parse(cam_depth, depth_intrinsic_file, depth_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion)
+     != vpXmlParserCamera::SEQUENCE_OK) {
+    std::cout << "Cannot found intrinsics for camera " << depth_camera_name << std::endl;
+  }
+  if (!opt_disable_depth)
+    tracker.setCameraParameters(cam_color, cam_depth);
+  else
+    tracker.setCameraParameters(cam_color);
+
+  // Reload intrinsics from tracker (useless)
+  if (!opt_disable_depth)
     tracker.getCameraParameters(cam_color, cam_depth);
   else
     tracker.getCameraParameters(cam_color);
   tracker.setDisplayFeatures(true);
   std::cout << "cam_color:\n" << cam_color << std::endl;
 
-  if (!disable_depth)
+  if (!opt_disable_depth)
     std::cout << "cam_depth:\n" << cam_depth << std::endl;
 
   vpImage<uint16_t> I_depth_raw;
@@ -203,8 +247,9 @@ int main(int argc, char *argv[])
   std::vector<vpColVector> pointcloud;
   vpHomogeneousMatrix cMo_ground_truth;
 
-  unsigned int frame_cpt = first_frame_index;
-  read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth);
+  unsigned int frame_cpt = opt_first_frame;
+  read_data(frame_cpt, video_color_images, video_depth_images, opt_disable_depth, ground_truth,
+            I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth);
   vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
 #if defined(VISP_HAVE_X11)
@@ -216,37 +261,38 @@ int main(int argc, char *argv[])
 #endif
 
   d1.init(I, 0, 0, "Color image");
-  d2.init(I_depth, static_cast<int>(I.getWidth()), 0, "Depth image");
-
-  vpHomogeneousMatrix depthMcolor;
-  if (!disable_depth) {
-    std::ifstream f_extrinsics;
-    f_extrinsics.open(extrinsic_file.c_str()); // .c_str() to keep compat when c++11 not available
-
-    depthMcolor.load(f_extrinsics);
-    tracker.setCameraTransformationMatrix("Camera2", depthMcolor);
-    std::cout << "depthMcolor:\n" << depthMcolor << std::endl;
+  if (!opt_disable_depth) {
+    d2.init(I_depth, static_cast<int>(I.getWidth()), 0, "Depth image");
   }
 
-  if (display_ground_truth) {
+  vpHomogeneousMatrix depth_M_color;
+  if (!opt_disable_depth) {
+    depth_M_color.load(extrinsic_file);
+    tracker.setCameraTransformationMatrix("Camera2", depth_M_color);
+    std::cout << "depth_M_color:\n" << depth_M_color << std::endl;
+  }
+
+  if (opt_display_ground_truth) {
     tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
   }
-  else
-    tracker.initClick(I, init_file, true); // I and I_depth must be the same size when using depth features!
+  else {
+    tracker.initClick(I, mbt_init_file, true); // I and I_depth must be the same size when using depth features!
+  }
 
   try {
     bool quit = false;
-    while (!quit && read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud,
-                              cam_depth, cMo_ground_truth)) {
+    while (!quit && read_data(frame_cpt, video_color_images, video_depth_images, opt_disable_depth,
+                              ground_truth, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth,
+                              cMo_ground_truth)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
       vpDisplay::display(I);
       vpDisplay::display(I_depth);
 
-      if (display_ground_truth) {
+      if (opt_display_ground_truth) {
         tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
       }
       else {
-        if (!disable_depth) {
+        if (!opt_disable_depth) {
           std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
           std::map<std::string, const std::vector<vpColVector> *> mapOfPointClouds;
           std::map<std::string, unsigned int> mapOfPointCloudWidths;
@@ -265,31 +311,30 @@ int main(int argc, char *argv[])
 
       vpHomogeneousMatrix cMo = tracker.getPose();
       std::cout << "\nFrame: " << frame_cpt << std::endl;
-      if (!display_ground_truth)
+      if (!opt_display_ground_truth)
         std::cout << "cMo:\n" << cMo << std::endl;
       std::cout << "cMo ground truth:\n" << cMo_ground_truth << std::endl;
-      if (!disable_depth) {
-        tracker.display(I, I_depth, cMo, depthMcolor * cMo, cam_color, cam_depth, vpColor::red, 2);
-        vpDisplay::displayFrame(I_depth, depthMcolor * cMo, cam_depth, 0.05, vpColor::none, 2);
+      if (!opt_disable_depth) {
+        tracker.display(I, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 2);
+        vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 2);
       }
       else {
         tracker.display(I, cMo, cam_color, vpColor::red, 2);
-
-        {
-          cam_depth.initPersProjWithoutDistortion(700, 700, 320, 240); // DEBUG FS
-          vpDisplay::displayFrame(I_depth, depthMcolor * cMo, cam_depth, 0.05, vpColor::none, 2); // DEBUG FS
-          std::cout << "depthMcolor:\n " << depthMcolor << std::endl;
-          std::cout << "cMo depth:\n " << depthMcolor * cMo << std::endl;
-          std::cout << "cam_depth:\n" << cam_depth << std::endl;
-        }
       }
 
       vpDisplay::displayFrame(I, cMo, cam_color, 0.05, vpColor::none, 2);
       std::ostringstream oss;
       oss << "Frame: " << frame_cpt;
-      vpDisplay::displayText(I, 20, 20, oss.str(), vpColor::red);
-
-      if (!display_ground_truth) {
+      vpDisplay::setTitle(I, oss.str());
+      if (opt_step_by_step) {
+        vpDisplay::displayText(I, 20, 10, "Left click to trigger next step", vpColor::red);
+        vpDisplay::displayText(I, 40, 10, "Right click to quit step-by-step mode", vpColor::red);
+      }
+      else {
+        vpDisplay::displayText(I, 20, 10, "Left click to trigger step-by-step mode", vpColor::red);
+        vpDisplay::displayText(I, 40, 10, "Right click to exit...", vpColor::red);
+      }
+      if (!opt_display_ground_truth) {
         {
           std::stringstream ss;
           ss << "Nb features: " << tracker.getError().size();
@@ -306,25 +351,29 @@ int main(int argc, char *argv[])
       vpDisplay::flush(I);
       vpDisplay::flush(I_depth);
 
+      // Button 1: start step by step if not enabled from command line option
+      // Button 2: enables step by step mode
+      // Button 3: ends step by step mode if enabled
+      //           quit otherwise
       vpMouseButton::vpMouseButtonType button;
-      if (vpDisplay::getClick(I, button, step_by_step)) {
-        switch (button) {
-        case vpMouseButton::button1:
-          quit = !step_by_step;
-          break;
-        case vpMouseButton::button3:
-          step_by_step = !step_by_step;
-          break;
-
-        default:
-          break;
+      if (vpDisplay::getClick(I, button, opt_step_by_step)) {
+        if (button == vpMouseButton::button1 && opt_step_by_step == false) {
+          opt_step_by_step = true;
+        }
+        else if (button == vpMouseButton::button3 && opt_step_by_step == true) {
+          opt_step_by_step = false;
+        }
+        else if (button == vpMouseButton::button3 && opt_step_by_step == false) {
+          quit = true;
+        }
+        else if (button == vpMouseButton::button2) {
+          opt_step_by_step = true;
         }
       }
 
       frame_cpt++;
     }
 
-    vpDisplay::displayText(I, 40, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
   }
