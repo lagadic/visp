@@ -295,8 +295,6 @@ vpCircleHoughTransform::computeCenterCandidates()
   unsigned int nbRows = m_edgeMap.getRows();
   unsigned int nbCols = m_edgeMap.getCols();
 
-  m_algoParams.m_maxRadius = std::min(m_algoParams.m_maxRadius, std::min(nbCols, nbRows));
-
   // Computing the minimum and maximum horizontal position of the center candidates
   // The miminum horizontal position of the center is at worst -maxRadius outside the image
   // The maxinum horizontal position of the center is at worst +maxRadiusoutside the image
