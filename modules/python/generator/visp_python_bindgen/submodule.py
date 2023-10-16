@@ -77,7 +77,7 @@ class Submodule():
     additional_required_headers = '\n'.join(self.get_required_headers())
 
     format_str = f'''
-#define PYBIND11_DETAILED_ERROR_MESSAGES
+//#define PYBIND11_DETAILED_ERROR_MESSAGES
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <vector>

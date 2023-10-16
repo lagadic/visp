@@ -1,10 +1,12 @@
 
 
 if(BUILD_PYTHON)
-find_package(Python COMPONENTS Interpreter)
+
+find_package(Python COMPONENTS Interpreter Development) # TODO: use visp function to find python
 
 if(Python_FOUND) # We have Python, we can install module
-
+  include(ProcessorCount)
+  ProcessorCount(N_PROC)
   # Set pip args
   if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
     set(_pip_args)
@@ -29,21 +31,40 @@ if(Python_FOUND) # We have Python, we can install module
   # Step 1: Generate bindings
   set(bindgen_package_location "${CMAKE_CURRENT_SOURCE_DIR}/generator")
   set(bindings_package_location "${CMAKE_CURRENT_SOURCE_DIR}/bindings")
-
+  message("${Python_EXECUTABLE}")
   set(bindings_gen_location "${CMAKE_CURRENT_BINARY_DIR}/bindings")
   add_custom_target(visp_python_bindings_generator_run
-    COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -e ${bindgen_package_location}
-    COMMAND visp_pybindgen --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
-    DEPENDS visp_doc
+    COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
+    COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
+    BYPRODUCTS "${bindings_gen_location}/src/main.cpp"
+    DEPENDS ${python_bound_modules}
+    #DEPENDS visp_doc
   )
+  file(MAKE_DIRECTORY "${bindings_gen_location}/src")
+  file(TOUCH "${bindings_gen_location}/src/main.cpp")
+  set(python_bindings_cpp_src "")
+  foreach(module ${python_bound_modules})
+    string(REPLACE "visp_" "" clean_module_name ${module})
+    set(cpp_src "${bindings_gen_location}/src/${clean_module_name}.cpp")
+    list(APPEND python_bindings_cpp_src "${cpp_src}")
+    file(TOUCH "${cpp_src}")
+  endforeach()
 
-
+  add_subdirectory(bindings)
 
 
   # Step 3: Compile and install bindings as a python package
-  add_custom_target(visp_python_bindings_install
-    COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} ${bindings_package_location}
-  )
+  # Cmake needs to be run
+  # add_custom_target(visp_python_bindings_compile
+  #   COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" "${bindings_package_location}" -DVISP_DIR="${VISP_BINARY_DIR}"
+  #   COMMAND "${CMAKE_COMMAND}" --build . --parallel ${N_PROC}
+  #   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  #   DEPENDS visp_python_bindings_generator_run
+  # )
+
+  # add_custom_target(visp_python_bindings_install
+  #   COMMAND ${Python_EXECUTABLE} -m pip install ${_pip_args} ${bindings_package_location}
+  # )
 
   # Step 4: Copy stubs dir and install stubs for autocompletion
 

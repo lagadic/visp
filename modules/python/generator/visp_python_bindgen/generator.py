@@ -29,12 +29,12 @@ def main_str(submodule_fn_declarations, submodule_fn_calls):
 
   '''
   return f'''
-#define PYBIND11_DETAILED_ERROR_MESSAGES
+//#define PYBIND11_DETAILED_ERROR_MESSAGES
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 {submodule_fn_declarations}
 
-PYBIND11_MODULE(visp, m)
+PYBIND11_MODULE(_visp, m)
 {{
   m.doc() = "ViSP Python binding";
 
