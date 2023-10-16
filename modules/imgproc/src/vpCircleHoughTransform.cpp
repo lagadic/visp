@@ -322,10 +322,11 @@ vpCircleHoughTransform::computeCenterCandidates()
   int offsetY = minimumYposition;
   int accumulatorHeight = maximumYposition - minimumYposition + 1;
   if (accumulatorHeight <= 0) {
-    throw(vpException(vpException::dimensionError, "[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!"));
+    std::string errMsg("[vpCircleHoughTransform::computeCenterCandidates] Accumulator height <= 0!");
+    throw(vpException(vpException::dimensionError, errMsg));
   }
 
-  vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Matrix that contains the votes for the center candidates.*/
+  vpImage<float> centersAccum(accumulatorHeight, accumulatorWidth + 1, 0.); /*!< Votes for the center candidates.*/
 
   for (unsigned int r = 0; r < nbRows; r++) {
     for (unsigned int c = 0; c < nbCols; c++) {
@@ -337,8 +338,11 @@ vpCircleHoughTransform::computeCenterCandidates()
         // Step from min_radius to max_radius in both directions of the gradient
         float mag = std::sqrt(m_dIx[r][c] * m_dIx[r][c] + m_dIy[r][c] * m_dIy[r][c]);
 
-        float sx = m_dIx[r][c] / mag;
-        float sy = m_dIy[r][c] / mag;
+        float sx = 0.f, sy = 0.f;
+        if (std::abs(mag) >= std::numeric_limits<float>::epsilon()) {
+          sx = m_dIx[r][c] / mag;
+          sy = m_dIy[r][c] / mag;
+        }
 
         int int_minRad = (int)m_algoParams.m_minRadius;
         int int_maxRad = (int)m_algoParams.m_maxRadius;
@@ -376,11 +380,13 @@ vpCircleHoughTransform::computeCenterCandidates()
 
             auto updateAccumulator =
               [](const float &x_orig, const float &y_orig,
-                  const unsigned int &x, const unsigned int &y,
+                  const int &x, const int &y,
                   const int &offsetX, const int &offsetY,
-                  const unsigned int &nbCols, const unsigned int &nbRows,
+                  const int &nbCols, const int &nbRows,
                   vpImage<float> &accum, bool &hasToStop) {
-                    if (x - offsetX >= nbCols ||
+                    if (x - offsetX <  0      ||
+                        x - offsetX >= nbCols ||
+                        y - offsetY <  0      ||
                         y - offsetY >= nbRows
                       ) {
                       hasToStop = true;
@@ -441,6 +447,9 @@ vpCircleHoughTransform::computeCenterCandidates()
         int cx = (int)((left + x - 1) * 0.5f);
         m_centerCandidatesList.push_back(std::pair<int, int>(y + offsetY, cx + offsetX));
         m_centerVotes.push_back(nbVotes);
+        if (nbVotes < 0) {
+          throw(vpException(vpException::badValue, "nbVotes (" + std::to_string(nbVotes) + ") < 0, thresh = " + std::to_string(m_algoParams.m_centerThresh)));
+        }
         left = -1;
         nbVotes = -1;
       }
