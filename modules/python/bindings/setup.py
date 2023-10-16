@@ -148,15 +148,7 @@ setup(
     author_email="samuel.felton@irisa.fr",
     description="Python wrapper for the Visual Servoing Platform",
     long_description="",
-    setup_requires=[
-      "pcpp",
-      "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master",
-      "lxml",
-      "doxmlparser@git+https://github.com/doxygen/doxygen#subdirectory=addon/doxmlparser"
-      # "sphinx",
-      # "sphinx-rtd-theme",
-      # "sphinx-autopackagesummary"
-    ],
+    setup_requires=[],
     ext_modules=[CMakeExtension("visp")],
     cmdclass={"build_ext": CMakeBuild, 'build': build, 'install': CustomInstall},
     zip_safe=False,

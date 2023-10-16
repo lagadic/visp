@@ -411,6 +411,17 @@ VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk f
 VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
+# Build python bindings as an option
+VP_OPTION(BUILD_PYTHON  "" "" "Enable Python support" "" ON )
+VP_OPTION(BUILD_PYTHON_DOC  "" "" "Build the documentation for the Python bindings" "" ON )
+
+
+VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
+VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
+VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
+VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
+VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
+
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
 # Build tutorials as an option.
@@ -844,6 +855,8 @@ if(BUILD_JAVA)
   endif()
 endif()
 
+
+
 if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
   SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
 else()
@@ -1187,6 +1200,9 @@ endif()
 if(BUILD_APPS)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
 endif()
+
+
+
 
 # ----------------------------------------------------------------------------
 #  Make some cmake vars advanced

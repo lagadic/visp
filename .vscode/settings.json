@@ -114,7 +114,8 @@
     "numbers": "cpp",
     "semaphore": "cpp",
     "stop_token": "cpp",
-    "view": "cpp"
+    "view": "cpp",
+    "filesystem": "cpp"
   },
   "C_Cpp.vcFormat.indent.namespaceContents": false,
   "editor.formatOnSave": true,
