@@ -2,6 +2,7 @@ from typing import List
 import sys
 from pathlib import Path
 from multiprocessing import Pool
+import argparse
 
 from visp_python_bindgen.header import *
 from visp_python_bindgen.submodule import *
@@ -41,10 +42,9 @@ PYBIND11_MODULE(visp, m)
 }}
 '''
 
-def generate_module(generate_path: Path) -> None:
+def generate_module(generate_path: Path, config_path: Path) -> None:
 
-  include_path = Path('/usr/local/include/visp3')
-  submodules: List[Submodule] = get_submodules(include_path, generate_path)
+  submodules: List[Submodule] = get_submodules(config_path, generate_path)
 
   # Step 1: Preprocess all headers
   all_headers: List[HeaderFile] = []
@@ -97,10 +97,20 @@ def generate_module(generate_path: Path) -> None:
     main_file.write(format_str)
 
 def main():
-  generation_path = Path('bindings/src')
+  parser = argparse.ArgumentParser('Python Bindings generator for ViSP')
+  parser.add_argument('--config', type=str, required=True)
+  parser.add_argument('--build-folder', type=str, required=True)
+  args = parser.parse_args()
+
+  generation_path = Path(args.build_folder)
+  assert generation_path.exists(), f'Path to where to generate bindings does not exist!Path: {generation_path}'
+  generation_path = generation_path / 'src'
   generation_path.mkdir(exist_ok=True)
 
-  generate_module(generation_path)
+  config_path = Path(args.config)
+  assert config_path.exists(), f'Path to the folder containing the configuration files does not exist! Path: {config_path}'
+
+  generate_module(generation_path, config_path)
 
 if __name__ == '__main__':
   main()

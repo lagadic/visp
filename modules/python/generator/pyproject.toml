@@ -101,8 +101,11 @@ classifiers = [  # Optional
 # For an analysis of this field vs pip's requirements files see:
 # https://packaging.python.org/discussions/install-requires-vs-requirements/
 dependencies = [
+  "tqdm",
   "pcpp",
-  "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
+  "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master",
+  "lxml",
+  "doxmlparser@git+https://github.com/doxygen/doxygen#subdirectory=addon/doxmlparser"
 ]
 
 # List additional groups of dependencies here (e.g. development
@@ -113,11 +116,8 @@ dependencies = [
 #
 # Similar to `dependencies` above, these must be valid existing
 # projects.
-[project.optional-dependencies] # Optional
-doc = [
-  "lxml",
-  "doxmlparser@git+https://github.com/doxygen/doxygen#subdirectory=addon/doxmlparser"
-]
+# [project.optional-dependencies] # Optional
+
 
 # List URLs that are relevant to your project
 #
@@ -130,11 +130,8 @@ doc = [
 # maintainers, and where to support the project financially. The key is
 # what's used to render the link text on PyPI.
 [project.urls]  # Optional
-"Homepage" = "https://github.com/pypa/sampleproject"
-"Bug Reports" = "https://github.com/pypa/sampleproject/issues"
-"Funding" = "https://donate.pypi.org"
-"Say Thanks!" = "http://saythanks.io/to/example"
-"Source" = "https://github.com/pypa/sampleproject/"
+"Homepage" = "https://github.com/lagadic/visp"
+"Bug Reports" = "https://github.com/lagadic/visp/issues"
 
 # The following would provide a command line executable called `sample`
 # which executes the function `main` from this package when invoked.

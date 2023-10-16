@@ -93,17 +93,22 @@ class HeaderFile():
     tmp_dir.mkdir(exist_ok=True)
     tmp_file_path = tmp_dir / self.path.name
     argv = [''] + GeneratorConfig.pcpp_config.to_pcpp_args_list()
-    argv += ['-o', f'{tmp_file_path}', str(self.path.absolute())]
     argv += [
       '-I', '/home/sfelton/software/visp_build/include',
       '-I', '/usr/local/include',
       '-I', '/usr/include',
     ]
+    argv += ['-o', f'{tmp_file_path}', str(self.path.absolute())]
 
     pcpp.CmdPreprocessor(argv)
     preprocessed_header_content = None
     with open(tmp_file_path, 'r') as header_file:
-      preprocessed_header_content = '\n'.join(header_file.readlines())
+      preprocessed_header_lines = []
+      for line in header_file.readlines():
+        if not line.startswith('#define'):
+          preprocessed_header_lines.append(line)
+      preprocessed_header_content = '\n'.join(preprocessed_header_lines)
+
       preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
     return preprocessed_header_content
 
@@ -122,7 +127,7 @@ class HeaderFile():
     self.environment = HeaderEnvironment(self.header_repr)
 
   def parse_data(self):
-    from enum_binding import enum_bindings
+    from visp_python_bindgen.enum_binding import enum_bindings
     result = '' # String containing the definitions (actual bindings and not class/enum declarations)
 
     # Fetch documentation if available

@@ -1,8 +1,6 @@
 [build-system]
 requires = [
     "setuptools>=42",
-    "pcpp",
-    "cxxheaderparser@git+https://github.com/robotpy/cxxheaderparser#egg=master"
 ]
 build-backend = "setuptools.build_meta"
 

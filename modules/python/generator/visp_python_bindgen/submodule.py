@@ -7,11 +7,11 @@ from visp_python_bindgen.utils import *
 from visp_python_bindgen.gen_report import Report
 
 class Submodule():
-  def __init__(self, name: str, include_path: Path, submodule_file_path: Path):
+  def __init__(self, name: str, include_path: Path, config_file_path: Path, submodule_file_path: Path):
     self.name = name
     self.include_path = include_path
     self.submodule_file_path = submodule_file_path
-    self.config_path = Path('config') /  (name + '.json')
+    self.config_path = config_file_path /  (name + '.json')
     self.config = self._get_config_file_or_create_default(self.config_path)
     self.report = Report(self)
     self.headers = self._get_headers()
@@ -114,7 +114,10 @@ Bindings for methods and enum values
 '''
     with open(self.submodule_file_path, 'w') as submodule_file:
       submodule_file.write(format_str)
-    self.report.write(Path(f'build/{self.name}_log.json'))
+
+    logs_path = self.submodule_file_path.parent / 'logs'
+    logs_path.mkdir(exist_ok=True)
+    self.report.write(logs_path / f'{self.name}_log.json')
 
   def generation_function_name(self) -> str:
     return f'init_submodule_{self.name}'
@@ -191,17 +194,17 @@ Bindings for methods and enum values
     return res
 
 
-def get_submodules(include_path: Path, generate_path: Path) -> List[Submodule]:
+def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
   modules = ['core', 'imgproc', 'vision', 'visual_features', 'vs', 'sensor', 'io', 'detection', 'robot', 'gui']
   result = []
   for module in modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), config_path, generate_path / f'{module}.cpp'))
   tracking_modules = ['tt', 'tt_mi', 'klt', 'me', 'blob', ('dnn', 'dnn_tracker'), 'mbt']
   for module in tracking_modules:
     if isinstance(module, str):
-      result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), generate_path / f'{module}.cpp'))
+      result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), config_path, generate_path / f'{module}.cpp'))
     else:
-      result.append(Submodule(module[1], Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module[0]}/include/visp3/{module[1]}'), generate_path / f'{module[1]}.cpp'))
+      result.append(Submodule(module[1], Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module[0]}/include/visp3/{module[1]}'), config_path, generate_path / f'{module[1]}.cpp'))
 
 
   return result

@@ -7,6 +7,7 @@ from dataclasses import dataclass
 class PreprocessorConfig(object):
   '''
   Preprocessor config. Contains the arguments that are passed to pcpp to preprocess a header.
+  This does not include the header search path (-I) or the input and output paths
   '''
 
   defines: Dict[str, str] # Mapping from a #define to its value (#define A 1 is equal to a pair "A": "1")
@@ -16,12 +17,13 @@ class PreprocessorConfig(object):
   other_args: List[str]
 
   def to_pcpp_args_list(self) -> List[str]:
-    args = [
-      *[f'-D{k}={v}' for k,v in self.defines.items()],
-      *[f'-N{v}' for v in self.never_defined],
-      *self.other_args,
-    ]
-    args.extend(['--passthru-includes', '^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules\.h).)*$'])
+    args = []
+    for k,v in self.defines.items():
+      args += ['-D', f'{k}={v}'] if v is not None else ['-D', k]
+    for v in self.never_defined:
+      args += ['-N', v]
+    args += self.other_args
+    args.extend(['--passthru-includes', self.passthrough_includes_regex])
     if self.line_directive is not None:
       args.extend(['--line-directive', self.line_directive])
     else:
@@ -70,14 +72,14 @@ class GeneratorConfig(object):
     defines={
       'VISP_EXPORT': '', # remove symbol as it messes up the cxxheaderparsing
       'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
-      'DOXYGEN_SHOULD_SKIP_THIS': '1', # Do not generate methods that do not appear in public api doc
+      'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
-      '__cplusplus' : '1' # To silence OpenCV warnings
+      '__cplusplus' : None # To silence OpenCV warnings
     },
     never_defined=[
       'VISP_BUILD_DEPRECATED_FUNCTIONS' # Do not bind deprecated functions
     ],
-    passthrough_includes_regex='^((?!vpConfig\\.h|opencv_modules\\.hpp|visp_modules\\.h).)*$', # Only expand vpConfig, opencv_modules etc.
+    passthrough_includes_regex="^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules\.h).)*$", # Only expand vpConfig, opencv_modules etc.
     line_directive=None,
     other_args=["--passthru-unfound-includes", "--passthru-comments"]
   )

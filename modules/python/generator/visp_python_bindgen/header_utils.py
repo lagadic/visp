@@ -53,7 +53,7 @@ class HeaderEnvironment():
     self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
 
     # Step 2: resolve enumeration names that are possibly hidden behind typedefs
-    from enum_binding import resolve_enums_and_typedefs
+    from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs
     enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
     for enum_repr in enum_reprs:
       for value in enum_repr.values:
