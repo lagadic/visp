@@ -125,7 +125,7 @@ vpRobotPtu46::~vpRobotPtu46(void)
 
 
   \exception vpRobotException::constructionError : If the device cannot be
-  oppened.
+  opened.
 
 */
 void vpRobotPtu46::init()
@@ -195,7 +195,7 @@ void vpRobotPtu46::stopMotion(void)
   on the tilt axis.
 
   \param cVe : Twist transformation between camera and end effector frame to
-  expess a velocity skew from end effector frame in camera frame.
+  express a velocity skew from end effector frame in camera frame.
 
 */
 void vpRobotPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
@@ -466,7 +466,7 @@ void vpRobotPtu46::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
   (vpRobot::REFERENCE_FRAME, vpRobot::END_EFFECTOR_FRAME, vpRobot::MIXT_FRAME) is given.
 
   \warning Velocities could be saturated if one of them exceed the maximal
-  autorized speed (see vpRobot::maxRotationVelocity).
+  authorized speed (see vpRobot::maxRotationVelocity).
 */
 
 void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v)
@@ -639,7 +639,7 @@ vpColVector vpRobotPtu46::getVelocity(vpRobot::vpControlFrameType frame)
 
   \code
   # Example of ptu-46 position file
-  # The axis positions must be preceed by R:
+  # The axis positions must be preceeded by R:
   # First value : pan  articular position in degrees
   # Second value: tilt articular position in degrees
   R: 15.0 5.0

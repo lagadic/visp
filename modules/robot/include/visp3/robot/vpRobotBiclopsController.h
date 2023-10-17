@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,25 +29,23 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
+
+#ifndef _vpRobotBiclopsController_h_
+#define _vpRobotBiclopsController_h_
 
 #include <visp3/core/vpConfig.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
-#ifndef _vpRobotBiclopsController_h_
-#define _vpRobotBiclopsController_h_
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-/* --- GENERAL --- */
-#include <iostream>  /* Classe std::ostream.              */
-#include <pthread.h> /* Classe std::ostream.              */
-#include <stdio.h>   /* Classe std::ostream.              */
+#include <iostream>
+#include <stdio.h>
 
 #include "Biclops.h"  // Contrib for Biclops robot
 #include "PMDUtils.h" // Contrib for Biclops robot
@@ -79,30 +76,37 @@ class VISP_EXPORT Biclops; // needed for dll creation
 class VISP_EXPORT vpRobotBiclopsController
 {
 public:
-  typedef enum {
+  /*!
+   * Biclops head controller status.
+   */
+  typedef enum
+  {
     STOP, /*!< Have to stop the robot. */
     SPEED /*!< Can send the desired speed. */
   } vpControllerStatusType;
 
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  // SHM
-  typedef struct /* ControllerShm_struct */ {
+  /*!
+   * Biclops head shared memory structure.
+   */
+  typedef struct
+  {
     vpControllerStatusType status[2];
-    double q_dot[2];        /*!< Desired speed. */
-    double actual_q[2];     /*!< Current measured position of each axes. */
-    double actual_q_dot[2]; /*!< Current measured velocity of each axes. */
-    bool jointLimit[2];     /*!< Indicates if an axe is in joint limit. */
+    double q_dot[2];        //!< Desired speed.
+    double actual_q[2];     //!< Current measured position of each axes.
+    double actual_q_dot[2]; //!< Current measured velocity of each axes.
+    bool jointLimit[2];     //!< Indicates if an axe is in joint limit.
   } shmType;
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpRobotBiclopsController(const vpRobotBiclopsController &)
-  //    : biclops(), axisMask(0), panAxis(NULL), tiltAxis(NULL),
-  //    vergeAxis(NULL),
-  //      panProfile(), tiltProfile(), vergeProfile(), shm(),
-  //      stopControllerThread_(false)
+  //    : biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL),
+  //    m_vergeAxis(NULL),
+  //      m_panProfile(), m_tiltProfile(), m_vergeProfile(), shm(),
+  //      m_stopControllerThread(false)
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");
@@ -114,39 +118,135 @@ public:
   //#endif
 
 public:
+  /*!
+   * Default constructor.
+   */
   vpRobotBiclopsController();
-  virtual ~vpRobotBiclopsController();
-  void init(const std::string &configfile);
-  void setPosition(const vpColVector &q, double percentVelocity);
-  void setVelocity(const vpColVector &q_dot);
-  vpColVector getPosition();
-  vpColVector getActualPosition();
-  vpColVector getVelocity();
-  vpColVector getActualVelocity();
-  PMDAxisControl *getPanAxis() { return panAxis; };
-  PMDAxisControl *getTiltAxis() { return tiltAxis; };
-  PMDAxisControl *getVergeAxis() { return vergeAxis; };
-  void writeShm(shmType &shm);
-  shmType readShm();
-  bool isStopRequested() { return stopControllerThread_; }
 
-  void stopRequest(bool stop) { stopControllerThread_ = stop; }
+  /*!
+   * Destructor.
+   */
+  virtual ~vpRobotBiclopsController();
+
+  /*!
+   * Initialize the Biclops by homing all axis.
+   *
+   * \param configfile : Biclops configuration file.
+   *
+   * \exception vpRobotException::notInitializedError If the Biclops head cannot
+   * be initialized. The initialization can failed,
+   * - if the head is not powered on,
+   * - if the head is not connected to your computer throw a serial cable,
+   * - if you try to open a bad serial port. Check you config file to verify
+   *   which is the used serial port.
+   */
+  void init(const std::string &configfile);
+
+  /*!
+   * Set the Biclops axis position. The motion of the axis is synchronized to end
+   * on the same time.
+   *
+   * \warning Wait the end of the positioning.
+   *
+   * \param q : The position to set for each axis.
+   *
+   * \param percentVelocity : The velocity displacement to reach the new position
+   * in the range [0: 100.0]. 100 % corresponds to the maximal admissible
+   * speed. The maximal admissible speed is given by vpBiclops::speedLimit.
+   */
+  void setPosition(const vpColVector &q, double percentVelocity);
+
+  /*!
+   * Apply a velocity to each axis of the Biclops robot.
+   *
+   * \warning This method is non blocking.
+   *
+   * \param q_dot : Velocity to apply.
+   */
+  void setVelocity(const vpColVector &q_dot);
+
+  /*!
+   * Get the Biclops joint positions.
+   *
+   * \return The axis joint positions in radians.
+   */
+  vpColVector getPosition();
+
+  /*!
+   * Get the Biclops actual joint positions.
+   *
+   * \return The axis actual joint positions in radians.
+   */
+  vpColVector getActualPosition();
+
+  /*!
+   * Get the Biclops joint velocities.
+   *
+   * \return The axis joint velocities in rad/s.
+   */
+  vpColVector getVelocity();
+
+  /*!
+   * Get the Biclops actual joint velocities.
+   *
+   * \return The axis actual joint velocities in rad/s.
+   */
+  vpColVector getActualVelocity();
+
+  /*!
+   * Return a pointer to the PMD pan axis.
+   */
+  PMDAxisControl *getPanAxis() { return m_panAxis; };
+
+  /*!
+   * Return a pointer to the PMD tilt axis.
+   */
+  PMDAxisControl *getTiltAxis() { return m_tiltAxis; };
+
+  /*!
+   * Return a pointer to the PMD verge axis.
+   */
+  PMDAxisControl *getVergeAxis() { return m_vergeAxis; };
+
+  /*!
+   * Update the shared memory.
+   *
+   * \param shm : Content to write in the shared memory.
+   */
+  void writeShm(shmType &shm);
+
+  /*!
+   * Get a copy of the shared memory.
+   *
+   * \return A copy of the shared memory.
+   */
+  shmType readShm();
+
+  /*!
+   * Return true when control thread is requested to stop.
+   */
+  bool isStopRequested() { return m_stopControllerThread; }
+
+  /*!
+   * Send a control thread stop request.
+   */
+  void stopRequest(bool stop) { m_stopControllerThread = stop; }
 
 private:
-  Biclops biclops; // THE interface to Biclops.
-  int axisMask;
+  Biclops m_biclops; // THE interface to Biclops.
+  int m_axisMask;
 
   // Pointers to each axis (populated once controller is initialized).
-  PMDAxisControl *panAxis;
-  PMDAxisControl *tiltAxis;
-  PMDAxisControl *vergeAxis;
+  PMDAxisControl *m_panAxis;
+  PMDAxisControl *m_tiltAxis;
+  PMDAxisControl *m_vergeAxis;
 
-  PMDAxisControl::Profile panProfile;
-  PMDAxisControl::Profile tiltProfile;
-  PMDAxisControl::Profile vergeProfile;
+  PMDAxisControl::Profile m_panProfile;
+  PMDAxisControl::Profile m_tiltProfile;
+  PMDAxisControl::Profile m_vergeProfile;
 
-  shmType shm;
-  bool stopControllerThread_;
+  shmType m_shm;
+  bool m_stopControllerThread;
 };
 
 #endif /* #ifndef _vpRobotBiclopsController_h_ */
