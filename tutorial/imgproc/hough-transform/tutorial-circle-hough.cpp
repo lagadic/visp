@@ -1,3 +1,5 @@
+//! \example tutorial-circle-hough.cpp
+
 #include <iostream>
 
 // ViSP includes

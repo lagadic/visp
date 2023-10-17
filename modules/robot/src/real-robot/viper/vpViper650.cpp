@@ -93,13 +93,13 @@ const vpViper650::vpToolType vpViper650::defaultTool = vpViper650::TOOL_PTGREY_F
 /*!
 
   Default constructor.
-  Sets the specific parameters like the Denavit Hartenberg parameters.
+  Sets the specific parameters like the Denavit-Hartenberg parameters.
 
 */
 vpViper650::vpViper650()
   : tool_current(vpViper650::defaultTool), projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   a1 = 0.075;
   a2 = 0.270;
   a3 = 0.090;

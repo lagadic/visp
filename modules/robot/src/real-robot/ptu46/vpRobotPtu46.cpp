@@ -73,14 +73,16 @@ vpRobotPtu46::vpRobotPtu46(const std::string &device) : vpRobot()
   vpDEBUG_TRACE(12, "Open communication with Ptu-46.");
   try {
     init();
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
 
   try {
     setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -158,7 +160,8 @@ vpRobot::vpRobotStateType vpRobotPtu46::setRobotState(vpRobot::vpRobotStateType 
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       vpDEBUG_TRACE(12, "Passage vitesse -> position.");
       ptu.stop();
-    } else {
+    }
+    else {
       vpDEBUG_TRACE(1, "Passage arret -> position.");
     }
     break;
@@ -234,7 +237,8 @@ void vpRobotPtu46::get_eJe(vpMatrix &eJe)
 
   try {
     vpPtu46::get_eJe(q, eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -254,7 +258,8 @@ void vpRobotPtu46::get_fJe(vpMatrix &fJe)
 
   try {
     vpPtu46::get_fJe(q, fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -359,7 +364,8 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame, const do
     q[1] = q2;
 
     setPosition(frame, q);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -526,7 +532,7 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame, const vp
   case vpRobot::ARTICULAR_FRAME:
   case vpRobot::CAMERA_FRAME: {
     double max = this->maxRotationVelocity;
-    bool norm = false;                   // Flag to indicate when velocities need to be nomalized
+    bool norm = false;                   // Flag to indicate when velocities need to be normalized
     for (unsigned int i = 0; i < 2; ++i) // rx and ry of the camera
     {
       if (fabs(v[i]) > max) {
@@ -537,7 +543,7 @@ void vpRobotPtu46::setVelocity(const vpRobot::vpControlFrameType frame, const vp
                       i);
       }
     }
-    // Rotations velocities normalisation
+    // Rotations velocities normalization
     if (norm == true) {
       max = this->maxRotationVelocity / max;
       for (unsigned int i = 0; i < 2; ++i)
@@ -766,5 +772,5 @@ void vpRobotPtu46::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotPtu46.cpp.o) has no
 // symbols
-void dummy_vpRobotPtu46(){};
+void dummy_vpRobotPtu46() { };
 #endif

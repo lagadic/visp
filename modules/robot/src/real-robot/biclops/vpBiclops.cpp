@@ -31,27 +31,17 @@
  * Interface for the Biclops robot.
  */
 
-/* ----------------------------------------------------------------------- */
-/* --- INCLUDE ----------------------------------------------------------- */
-/* ----------------------------------------------------------------------- */
-
 #include <math.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobotException.h>
 
-/* ------------------------------------------------------------------------ */
-/* --- COMPUTE ------------------------------------------------------------ */
-/* ------------------------------------------------------------------------ */
-const unsigned int vpBiclops::ndof = 2;                      /*<! Only pan and tilt are considered. */
-const float vpBiclops::h = 0.048f;                           /*<! Vertical offset from last joint to camera frame. */
-const float vpBiclops::panJointLimit = (float)(M_PI);        /*!< Pan range (in rad): from -panJointLimit to +
-                                                                panJointLimit */
-const float vpBiclops::tiltJointLimit = (float)(M_PI / 4.5); /*!< Tilt range (in rad): from -tiltJointLimit to +
-                                                                tiltJointLimit */
-
-const float vpBiclops::speedLimit = (float)(M_PI / 3.0); /*!< Maximum speed (in rad/s) to perform a displacement */
+const unsigned int vpBiclops::ndof = 2;
+const float vpBiclops::h = 0.048f;
+const float vpBiclops::panJointLimit = (float)(M_PI);
+const float vpBiclops::tiltJointLimit = (float)(M_PI / 4.5);
+const float vpBiclops::speedLimit = (float)(M_PI / 3.0);
 
 void vpBiclops::computeMGD(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 {
@@ -96,8 +86,7 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
   vpHomogeneousMatrix fMe;
 
   if (q.getRows() != 2) {
-    vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   double q1 = q[0]; // pan
@@ -174,10 +163,6 @@ void vpBiclops::get_fMc(const vpColVector &q, vpPoseVector &fPc) const
   return;
 }
 
-/* ---------------------------------------------------------------------- */
-/* --- CONSTRUCTOR ------------------------------------------------------ */
-/* ---------------------------------------------------------------------- */
-
 vpBiclops::vpBiclops(void) : m_dh_model(DH1), m_cMe() { init(); }
 
 void vpBiclops::init()
@@ -186,10 +171,6 @@ void vpBiclops::init()
   set_cMe();
   return;
 }
-
-/* ----------------------------------------------------------------------- */
-/* --- DISPLAY ----------------------------------------------------------- */
-/* ----------------------------------------------------------------------- */
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops & /*constant*/)
 {
@@ -232,8 +213,7 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
   eJe.resize(6, 2);
 
   if (q.getRows() != 2) {
-    vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   double s2 = sin(q[1]);
@@ -256,8 +236,7 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
   if (q.getRows() != 2) {
-    vpERROR_TRACE("Bad dimension for biclops articular vector");
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops articular vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   fJe.resize(6, 2);

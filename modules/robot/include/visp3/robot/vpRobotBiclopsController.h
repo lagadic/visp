@@ -39,16 +39,11 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #ifdef VISP_HAVE_BICLOPS
 
-
-/* ------------------------------------------------------------------------ */
-/* --- INCLUDES ----------------------------------------------------------- */
-/* ------------------------------------------------------------------------ */
-
 #include <iostream>
 #include <stdio.h>
 
-#include "Biclops.h"  // Contrib for Biclops robot
-#include "PMDUtils.h" // Contrib for Biclops robot
+#include <Biclops.h>  // Contrib for Biclops sdk
+#include <PMDUtils.h> // Contrib for Biclops sdk
 
 #if defined(_WIN32)
 class VISP_EXPORT Biclops; // needed for dll creation
@@ -59,37 +54,35 @@ class VISP_EXPORT Biclops; // needed for dll creation
 /* ------------------------------------------------------------------------ */
 
 /*!
-
-  \class vpRobotBiclopsController
-
-  \ingroup group_robot_real_ptu
-
-  \brief Interface to Biclops, pan, tilt, verge head for computer vision
-  applications.
-
-  See http://www.traclabs.com/tracbiclops.htm for more details.
-
-  This class uses libraries libBiclops.so, libUtils.so and libPMD.so and
-  includes Biclops.h and PMDUtils.h provided by Traclabs.
-
-*/
+ * \class vpRobotBiclopsController
+ *
+ * \ingroup group_robot_real_ptu
+ *
+ * \brief Interface to Biclops, pan, tilt, verge head for computer vision
+ * applications.
+ *
+ * See http://www.traclabs.com/tracbiclops.htm for more details.
+ *
+ * This class uses libraries libBiclops.so, libUtils.so and libPMD.so and
+ * includes Biclops.h and PMDUtils.h provided by Traclabs.
+ */
 class VISP_EXPORT vpRobotBiclopsController
 {
 public:
   /*!
-   * Biclops head controller status.
+   * Biclops controller status
    */
   typedef enum
   {
-    STOP, /*!< Have to stop the robot. */
-    SPEED /*!< Can send the desired speed. */
+    STOP, //!< Have to stop the robot.
+    SPEED //!< Can send the desired speed.
   } vpControllerStatusType;
 
 public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /*!
-   * Biclops head shared memory structure.
-   */
+    * Biclops head shared memory structure.
+    */
   typedef struct
   {
     vpControllerStatusType status[2];
@@ -103,19 +96,19 @@ public:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpRobotBiclopsController(const vpRobotBiclopsController &)
-  //    : biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL),
-  //    m_vergeAxis(NULL),
-  //      m_panProfile(), m_tiltProfile(), m_vergeProfile(), shm(),
-  //      m_stopControllerThread(false)
-  //  {
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!");
-  //  }
-  //  vpRobotBiclopsController &operator=(const vpRobotBiclopsController &){
-  //    throw vpException(vpException::functionNotImplementedError, "Not
-  //    implemented!"); return *this;
-  //  }
-  //#endif
+      //    : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL),
+      //      m_vergeAxis(NULL),
+      //      m_panProfile(), m_tiltProfile(), m_vergeProfile(), m_shm(),
+      //      m_stopControllerThread(false)
+      //  {
+      //    throw vpException(vpException::functionNotImplementedError, "Not
+      //    implemented!");
+      //  }
+      //  vpRobotBiclopsController &operator=(const vpRobotBiclopsController &){
+      //    throw vpException(vpException::functionNotImplementedError, "Not
+      //    implemented!"); return *this;
+      //  }
+      //#endif
 
 public:
   /*!
@@ -228,7 +221,8 @@ public:
   bool isStopRequested() { return m_stopControllerThread; }
 
   /*!
-   * Send a control thread stop request.
+   * Request to stop the control thread.
+   * @param stop : When true, request to stop the control thread.
    */
   void stopRequest(bool stop) { m_stopControllerThread = stop; }
 

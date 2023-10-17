@@ -72,8 +72,3 @@
   \defgroup group_hough_transform Hough-transform-based image detection
   Detection of image features based on the Hough transform.
 */
-/*!
-  \ingroup module_imgproc
-  \defgroup group_image_median Image median
-  Image median computation and additional functionalities using image median for Canny edges detection threshold computation.
-*/

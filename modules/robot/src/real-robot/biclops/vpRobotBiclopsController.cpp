@@ -51,16 +51,11 @@
 
 #include <visp3/core/vpDebug.h>
 
-/* ----------------------------------------------------------------------- */
-/* --- CONSTRUCTOR ------------------------------------------------------ */
-/* ---------------------------------------------------------------------- */
-
 vpRobotBiclopsController::vpRobotBiclopsController()
   : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL), m_vergeAxis(NULL), m_panProfile(), m_tiltProfile(),
   m_vergeProfile(), m_shm(), m_stopControllerThread(false)
 {
-  m_axisMask = Biclops::PanMask + Biclops::TiltMask
-    /*+ Biclops::VergeMask*/; // add this if you want verge.
+  m_axisMask = Biclops::PanMask + Biclops::TiltMask; //+ Biclops::VergeMask*/; // add this if you want verge.
 
   // Set Debug level depending on how much info you want to see about
   // the inner workings of the API. Level 2 is highest with 0 being
@@ -332,10 +327,9 @@ vpColVector vpRobotBiclopsController::getActualVelocity()
 void vpRobotBiclopsController::writeShm(shmType &shm)
 {
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
-    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, shm.q_dot[i]);
+    vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
   memcpy(&this->m_shm, &shm, sizeof(shmType));
-  // this->shm = shm_;
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
@@ -349,7 +343,6 @@ vpRobotBiclopsController::shmType vpRobotBiclopsController::readShm()
     vpDEBUG_TRACE(13, "shm.q_dot[%d]=%f", i, m_shm.q_dot[i]);
   }
   memcpy(&tmp_shm, &this->m_shm, sizeof(shmType));
-  // tmp_shm = shm;
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     vpDEBUG_TRACE(13, "tmp_shm.q_dot[%d]=%f", i, tmp_shm.q_dot[i]);
   }

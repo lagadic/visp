@@ -59,7 +59,6 @@
 
 const double vpRobotBiclops::defaultPositioningVelocity = 10.0;
 
-
 static std::mutex m_mutex_end_thread;
 static std::mutex m_mutex_shm;
 static std::mutex m_mutex_measure;
@@ -110,18 +109,14 @@ vpRobotBiclops::~vpRobotBiclops()
   return;
 }
 
-/* -------------------------------------------------------------------------*/
-/* --- INITIALISATION ------------------------------------------------------*/
-/* -------------------------------------------------------------------------*/
-
-void vpRobotBiclops::setConfigFile(const std::string &filename) { this->m_configfile = filename; }
+void vpRobotBiclops::setConfigFile(const std::string &filename) { m_configfile = filename; }
 
 void vpRobotBiclops::init()
 {
   // test if the config file exists
   FILE *fd = fopen(m_configfile.c_str(), "r");
   if (fd == NULL) {
-    vpCERROR << "Cannot open biclops config file: " << m_configfile << std::endl;
+    vpCERROR << "Cannot open Biclops config file: " << m_configfile << std::endl;
     throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }
   fclose(fd);
@@ -322,7 +317,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
         else {
           // Axis not in joint limit
 
-          // Update the desired speed
+       // Update the desired speed
           q_dot[i] = shm.q_dot[i];
           shm.status[i] = vpRobotBiclopsController::SPEED;
           enable_limit[i] = true; // Joint limit detection must be active
@@ -451,7 +446,7 @@ void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::
 void vpRobotBiclops::get_eJe(vpMatrix &eJe)
 {
   vpColVector q(2);
-  getPosition(vpRobot::ARTICULAR_FRAME, q);
+  getPosition(vpRobot::JOINT_STATE, q);
 
   vpBiclops::get_eJe(q, eJe);
 }
@@ -459,7 +454,7 @@ void vpRobotBiclops::get_eJe(vpMatrix &eJe)
 void vpRobotBiclops::get_fJe(vpMatrix &fJe)
 {
   vpColVector q(2);
-  getPosition(vpRobot::ARTICULAR_FRAME, q);
+  getPosition(vpRobot::JOINT_STATE, q);
 
   vpBiclops::get_fJe(q, fJe);
 }
@@ -502,7 +497,7 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot move the robot in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
@@ -532,11 +527,11 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
 void vpRobotBiclops::setPosition(const std::string &filename)
 {
   vpColVector q;
-  if (readPositionFile(filename, q) == false) {
-    vpERROR_TRACE("Cannot get biclops position from file");
+  if (readPositionFile(filename.c_str(), q) == false) {
+    vpERROR_TRACE("Cannot get Biclops position from file");
     throw vpRobotException(vpRobotException::readingParametersError, "Cannot get Biclops position from file");
   }
-  setPosition(vpRobot::ARTICULAR_FRAME, q);
+  setPosition(vpRobot::JOINT_STATE, q);
 }
 
 void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
@@ -558,7 +553,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
@@ -614,18 +609,14 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
 
   switch (frame) {
   case vpRobot::CAMERA_FRAME: {
-    vpERROR_TRACE("Cannot send a velocity to the robot "
-                  "in the camera frame: "
-                  "functionality not implemented");
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot send a velocity to the robot "
                                                               "in the camera frame:"
                                                               "functionality not implemented");
   }
-  case vpRobot::ARTICULAR_FRAME: {
+  case vpRobot::JOINT_STATE: {
     if (q_dot.getRows() != 2) {
-      vpERROR_TRACE("Bad dimension fo speed vector in articular frame");
       throw vpRobotException(vpRobotException::wrongStateError, "Bad dimension for speed vector "
-                                                                "in articular frame");
+                                                                "in joint state");
     }
     break;
   }
@@ -650,9 +641,9 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   }
 
   vpDEBUG_TRACE(12, "Velocity limitation.");
-  bool norm = false; // Flag to indicate when velocities need to be nomalized
+  bool norm = false; // Flag to indicate when velocities need to be normalized
 
-  // Saturate articular speed
+  // Saturate joint speed
   double max = vpBiclops::speedLimit;
   vpColVector q_dot_sat(vpBiclops::ndof);
 
@@ -669,7 +660,7 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
                     i);
     }
   }
-  // Rotations velocities normalisation
+  // Rotations velocities normalization
   if (norm == true) {
     max = vpBiclops::speedLimit / max;
     q_dot_sat = q_dot * max;
@@ -695,10 +686,6 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   return;
 }
 
-/* ------------------------------------------------------------------------- */
-/* --- GET ----------------------------------------------------------------- */
-/* ------------------------------------------------------------------------- */
-
 void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot)
 {
   switch (frame) {
@@ -718,7 +705,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     throw vpRobotException(vpRobotException::wrongStateError, "Cannot get position in end-effector frame: "
                                                               "not implemented");
     break;
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     break;
   }
 
@@ -832,10 +819,10 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 {
   vpColVector q_current; // current position
 
-  getPosition(vpRobot::ARTICULAR_FRAME, q_current);
+  getPosition(vpRobot::JOINT_STATE, q_current);
 
   switch (frame) {
-  case vpRobot::ARTICULAR_FRAME:
+  case vpRobot::JOINT_STATE:
     d.resize(vpBiclops::ndof);
     d = q_current - m_q_previous;
     break;

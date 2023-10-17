@@ -59,36 +59,35 @@
 /* ------------------------------------------------------------------------ */
 
 /*!
-  \class vpRobotBiclops
-
-  \ingroup group_robot_real_ptu
-
-  \brief Interface for the biclops, pan, tilt head control.
-
-  Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
-  The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
-  The following image gives the location of the end-effector frame and a potential camera frame.
-
-  \image html img-biclops-frames.jpg Biclops PT models
-
-  See http://www.traclabs.com/biclopspt.html for more details.
-
-  This class provide a position and a speed control interface for the biclops
-  head. To manage the biclops joint limits in speed control, a control loop is
-  running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
-
-  \warning Velocity control mode is not exported from the top-level Biclops
-  API class provided by Traclabs. That means that there is no protection in
-  this mode to prevent an axis from striking its hard limit. In position mode,
-  Traclabs put soft limits in that keep any command from driving to a position
-  too close to the hard limits. In velocity mode this protection does not
-  exist in the current API.
-
-  \warning With the understanding that hitting the hard limits at full
-  speed/power can damage the unit, damage due to velocity mode commanding is
-  under user responsibility.
-
-*/
+ * \class vpRobotBiclops
+ *
+ * \ingroup group_robot_real_ptu
+ *
+ * \brief Interface for the Biclops, pan, tilt head control.
+ *
+ * Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
+ * The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
+ * The following image gives the location of the end-effector frame and a potential camera frame.
+ *
+ * \image html img-biclops-frames.jpg Biclops PT models
+ *
+ * See http://www.traclabs.com/biclopspt.html for more details.
+ *
+ * This class provide a position and a speed control interface for the Biclops
+ * head. To manage the Biclops joint limits in speed control, a control loop is
+ * running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
+ *
+ * \warning Velocity control mode is not exported from the top-level Biclops
+ * API class provided by Traclabs. That means that there is no protection in
+ * this mode to prevent an axis from striking its hard limit. In position mode,
+ * Traclabs put soft limits in that keep any command from driving to a position
+ * too close to the hard limits. In velocity mode this protection does not
+ * exist in the current API.
+ *
+ * \warning With the understanding that hitting the hard limits at full
+ * speed/power can damage the unit, damage due to velocity mode commanding is
+ * under user responsibility.
+ */
 class VISP_EXPORT vpRobotBiclops : public vpBiclops, public vpRobot
 {
 public:
@@ -115,11 +114,11 @@ public:
    *   robot.init();
    *
    *   // Move the robot to a specified pan and tilt
-   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
+   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
    *   vpColVector q(2);
    *   q[0] = vpMath::rad(20); // pan
    *   q[1] = vpMath::rad(40); // tilt
-   *   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+   *   robot.setPosition(vpRobot::JOINT_STATE, q);
    * #endif
    *   return 0;
    * }
@@ -149,7 +148,7 @@ public:
    *   vpColVector q(2);
    *   q[0] = vpMath::rad(-20); // pan
    *   q[1] = vpMath::rad(10); // tilt
-   *   robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+   *   robot.setPosition(vpRobot::JOINT_STATE, q);
    * #endif
    *   return 0;
    * }
@@ -312,7 +311,7 @@ public:
    * \param frame : Control frame. This Biclops head can only be controlled in
    * joint state.
    *
-   * \param q : The position to set for each axis in radians.
+   * \param q : The joint position to set for each axis in radians.
    *
    * \exception vpRobotException::wrongStateError : If a not supported frame
    * type is given.
@@ -328,8 +327,8 @@ public:
    * \param frame : Control frame. This Biclops head can only be controlled in
    * joint state.
    *
-   * \param q1 : The pan position to set in radians.
-   * \param q2 : The tilt position to set in radians.
+   * \param q1 : The pan joint position to set in radians.
+   * \param q2 : The tilt joint position to set in radians.
    *
    * \exception vpRobotException::wrongStateError : If a not supported frame
    * type is given.
@@ -337,7 +336,7 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
 
   /*!
-   * Read the content of the position file and moves to head to joint
+   * Read the content of the position file and moves the head to joint
    * positions.
    *
    * \param filename : Position filename

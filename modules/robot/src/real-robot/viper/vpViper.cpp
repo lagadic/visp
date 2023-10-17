@@ -64,7 +64,7 @@ vpViper::vpViper()
 {
   // Default values are initialized
 
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   a1 = 0.075;
   a2 = 0.365;
   a3 = 0.090;
