@@ -180,6 +180,32 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   m_finalCircles.clear();
   m_finalCircleVotes.clear();
 
+  // Ensuring that the difference between the max and min radii is big enough to take into account
+  // the pixelization of the image
+  const float minRadiusDiff = 3.f;
+  if (m_algoParams.m_maxRadius - m_algoParams.m_minRadius < minRadiusDiff) {
+    if (m_algoParams.m_minRadius > minRadiusDiff / 2.f) {
+      m_algoParams.m_maxRadius += minRadiusDiff / 2.f;
+      m_algoParams.m_minRadius -= minRadiusDiff / 2.f;
+    }
+    else {
+      m_algoParams.m_maxRadius += minRadiusDiff - m_algoParams.m_minRadius;
+      m_algoParams.m_minRadius = 0.f;
+    }
+  }
+
+  // Ensuring that the difference between the max and min center position is big enough to take into account
+  // the pixelization of the image
+  const float minCenterPositionDiff = 3.f;
+  if (m_algoParams.m_centerXlimits.second - m_algoParams.m_centerXlimits.first < minCenterPositionDiff) {
+    m_algoParams.m_centerXlimits.second += minCenterPositionDiff / 2.f;
+    m_algoParams.m_centerXlimits.first -= minCenterPositionDiff / 2.f;
+  }
+  if (m_algoParams.m_centerYlimits.second - m_algoParams.m_centerYlimits.first < minCenterPositionDiff) {
+    m_algoParams.m_centerYlimits.second += minCenterPositionDiff / 2.f;
+    m_algoParams.m_centerYlimits.first -= minCenterPositionDiff / 2.f;
+  }
+
   // First thing, we need to apply a Gaussian filter on the image to remove some spurious noise
   // Then, we need to compute the image gradients in order to be able to perform edge detection
   computeGradientsAfterGaussianSmoothing(I);
@@ -303,6 +329,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int maximumXposition = std::min(m_algoParams.m_centerXlimits.second, (int)(m_algoParams.m_maxRadius + nbCols));
   minimumXposition = std::min(minimumXposition, maximumXposition - 1);
   float minimumXpositionFloat = static_cast<float>(minimumXposition);
+  float maximumXpositionFloat = static_cast<float>(maximumXposition);
   int offsetX = minimumXposition;
   int accumulatorWidth = maximumXposition - minimumXposition + 1;
   if (accumulatorWidth <= 0) {
@@ -317,6 +344,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int maximumYposition = std::min(m_algoParams.m_centerYlimits.second, (int)(m_algoParams.m_maxRadius + nbRows));
   minimumYposition = std::min(minimumYposition, maximumYposition - 1);
   float minimumYpositionFloat = static_cast<float>(minimumYposition);
+  float maximumYpositionFloat = static_cast<float>(maximumYposition);
   int offsetY = minimumYposition;
   int accumulatorHeight = maximumYposition - minimumYposition + 1;
   if (accumulatorHeight <= 0) {
@@ -351,8 +379,9 @@ vpCircleHoughTransform::computeCenterCandidates()
             float x1 = (float)c + (float)rad * sx;
             float y1 = (float)r + (float)rad * sy;
 
-            if (x1 < minimumXpositionFloat || y1 < minimumYpositionFloat) {
-              continue; // If either value is lower than maxRadius, it means that the center is outside the search region.
+            if (x1 < minimumXpositionFloat || y1 < minimumYpositionFloat
+               || x1 > maximumXpositionFloat || y1 > maximumYpositionFloat) {
+              continue; // It means that the center is outside the search region.
             }
 
             int x_low, x_high;
@@ -421,7 +450,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   vpImage<float> centerCandidatesMaxima = centersAccum;
   int niters = std::max(m_algoParams.m_dilatationNbIter, 1); // Ensure at least one dilatation operation
   for (int i = 0; i < niters; i++) {
-    vpImageMorphology::dilatation(centerCandidatesMaxima, vpImageMorphology::CONNEXITY_4);
+    vpImageMorphology::dilatation(centerCandidatesMaxima, vpImageMorphology::CONNEXITY_8);
   }
 
   // Look for the image points that correspond to the accumulator maxima
@@ -464,8 +493,8 @@ vpCircleHoughTransform::computeCircleCandidates()
   std::vector<unsigned int> radiusAccumList; /*!< Radius accumulator for each center candidates.*/
   std::vector<float> radiusActualValueList; /*!< Vector that contains the actual distance between the edge points and the center candidates.*/
 
-  unsigned int rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
-  unsigned int rmax2 = static_cast<unsigned int>(m_algoParams.m_maxRadius * m_algoParams.m_maxRadius);
+  float rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
+  float rmax2 = static_cast<unsigned int>(m_algoParams.m_maxRadius * m_algoParams.m_maxRadius);
   int circlePerfectness2 = static_cast<int>(m_algoParams.m_circlePerfectness * m_algoParams.m_circlePerfectness);
 
   for (size_t i = 0; i < nbCenterCandidates; i++) {
@@ -481,7 +510,6 @@ vpCircleHoughTransform::computeCircleCandidates()
       unsigned int rx = edgePoint.first  - centerCandidate.first;
       unsigned int ry = edgePoint.second - centerCandidate.second;
       unsigned int r2 = rx * rx + ry * ry;
-
       if ((r2 > rmin2) && (r2 < rmax2)) {
         float gx = m_dIx[edgePoint.first][edgePoint.second];
         float gy = m_dIy[edgePoint.first][edgePoint.second];

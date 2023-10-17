@@ -89,8 +89,8 @@ public:
     // // Center candidates computation attributes
     std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
     std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
-    unsigned int m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
-    unsigned int m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
+    float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
+    float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
     int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
     float m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
 
@@ -116,8 +116,8 @@ public:
       , m_edgeMapFilteringNbIter(1)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
-      , m_minRadius(0)
-      , m_maxRadius(1000)
+      , m_minRadius(0.f)
+      , m_maxRadius(1000.f)
       , m_dilatationNbIter(1)
       , m_centerThresh(50.f)
       , m_circleProbaThresh(0.9f)
@@ -159,8 +159,8 @@ public:
       , const int &edgeMapFilterNbIter
       , const std::pair<int, int> &centerXlimits
       , const std::pair<int, int> &centerYlimits
-      , const unsigned int &minRadius
-      , const unsigned int &maxRadius
+      , const float &minRadius
+      , const float &maxRadius
       , const int &dilatationNbIter
       , const float &centerThresh
       , const float &circleProbabilityThresh
@@ -287,7 +287,7 @@ public:
 
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
-      std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
+      std::pair<float, float> radiusLimits = j.value("radiusLimits", std::pair<float, float>(params.m_minRadius, params.m_maxRadius));
       params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
       params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
 
@@ -325,7 +325,7 @@ public:
      */
     inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
-      std::pair<unsigned int, unsigned int> radiusLimits = { params.m_minRadius, params.m_maxRadius };
+      std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = json {
           {"gaussianKernelSize", params.m_gaussianKernelSize},
@@ -547,7 +547,7 @@ public:
    */
   inline void setCircleMinRadius(const float &circle_min_radius)
   {
-    m_algoParams.m_minRadius = static_cast<unsigned int>(circle_min_radius);
+    m_algoParams.m_minRadius = circle_min_radius;
   }
 
   /*!
@@ -556,7 +556,7 @@ public:
    */
   inline void setCircleMaxRadius(const float &circle_max_radius)
   {
-    m_algoParams.m_maxRadius = static_cast<unsigned int>(circle_max_radius);
+    m_algoParams.m_maxRadius = circle_max_radius;
   }
 
   /*!
@@ -709,7 +709,7 @@ public:
   /*!
    * Get circles min radius in pixels.
    */
-  inline unsigned int getCircleMinRadius() const
+  inline float getCircleMinRadius() const
   {
     return m_algoParams.m_minRadius;
   }
@@ -717,7 +717,7 @@ public:
   /*!
    * Get circles max radius in pixels.
    */
-  inline unsigned int getCircleMaxRadius() const
+  inline float getCircleMaxRadius() const
   {
     return m_algoParams.m_maxRadius;
   }
