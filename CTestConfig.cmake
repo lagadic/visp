@@ -281,8 +281,8 @@ if(VISP_HAVE_XML2)
   set(BUILDNAME "${BUILDNAME}-xml")
 endif()
 # PThread
-if(VISP_HAVE_PTHREAD)
-  set(BUILDNAME "${BUILDNAME}-pthread")
+if(VISP_HAVE_THREADS)
+  set(BUILDNAME "${BUILDNAME}-threads")
 endif()
 # OpenMP
 if(VISP_HAVE_OPENMP)

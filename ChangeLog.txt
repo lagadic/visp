@@ -18,7 +18,7 @@ ViSP 3.x.x (Version in development)
   - Tutorials
     .
   - Bug fixed
-    .
+    . [#1251] Bug in vpDisplay::displayFrame()
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

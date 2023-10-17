@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
 
 #include <math.h>
 #include <visp3/core/vpDebug.h>
@@ -187,29 +185,27 @@ void vpBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const { cVe.buildFrom(m_cMe)
 
 void vpBiclops::set_cMe()
 {
-  vpHomogeneousMatrix eMc;
+  vpHomogeneousMatrix cMe;
 
-  eMc[0][0] = 0;
-  eMc[0][1] = -1;
-  eMc[0][2] = 0;
-  eMc[0][3] = h;
+  m_cMe[0][0] = 0;
+  m_cMe[0][1] = 1;
+  m_cMe[0][2] = 0;
+  m_cMe[0][3] = 0;
 
-  eMc[1][0] = 1;
-  eMc[1][1] = 0;
-  eMc[1][2] = 0;
-  eMc[1][3] = 0;
+  m_cMe[1][0] = -1;
+  m_cMe[1][1] = 0;
+  m_cMe[1][2] = 0;
+  m_cMe[1][3] = h;
 
-  eMc[2][0] = 0;
-  eMc[2][1] = 0;
-  eMc[2][2] = 1;
-  eMc[2][3] = 0;
+  m_cMe[2][0] = 0;
+  m_cMe[2][1] = 0;
+  m_cMe[2][2] = 1;
+  m_cMe[2][3] = 0;
 
-  eMc[3][0] = 0;
-  eMc[3][1] = 0;
-  eMc[3][2] = 0;
-  eMc[3][3] = 1;
-
-  m_cMe = eMc.inverse();
+  m_cMe[3][0] = 0;
+  m_cMe[3][1] = 0;
+  m_cMe[3][2] = 0;
+  m_cMe[3][3] = 1;
 }
 
 void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const

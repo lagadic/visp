@@ -645,7 +645,7 @@ vpColVector vpRobotPtu46::getVelocity(vpRobot::vpControlFrameType frame)
 
   \code
   # Example of ptu-46 position file
-  # The axis positions must be preceded by R:
+  # The axis positions must be preceeded by R:
   # First value : pan  articular position in degrees
   # Second value: tilt articular position in degrees
   R: 15.0 5.0

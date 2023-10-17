@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpBiclops_h_
 #define _vpBiclops_h_
@@ -48,7 +46,7 @@
  *
  * \ingroup group_robot_real_ptu
  *
- * \brief Jacobian, geometric model functionalities for biclops, pan, tilt
+ * \brief Jacobian, geometric model functionalities... for Biclops, pan, tilt
  * head.
  *
  * Two different Denavit Hartenberg representations of the robot are
@@ -65,19 +63,23 @@ class VISP_EXPORT vpBiclops
 public:
   /*!
    * Two different Denavit Hartenberg representations of the robot are
-   * implemented. They differ in the orientation of the tilt axis.
+   * implemented. As you can see in the next image, they differ in the orientation of the tilt axis.
    *
-   * - The first representation, vpBiclops::DH1 is given by:
-   * Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$
-   * ------|-----------|-----------|----------------|---------------
-   *    1  |      0    |      0    | \f$-\pi/2\f$   | \f$q_1\f$
-   *    2  |      0    |      0    | \f$ \pi/2\f$   | \f$q_2 + \pi/2\f$
+   * \image html img-biclops-frames.jpg Biclops PT models
    *
-   * - The second one, vpBiclops::DH2 is given by:
-   * Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$
-   * ------|-----------|-----------|----------------|---------------
-   *    1  |      0    |      0    | \f$ \pi/2\f$   | \f$q_1\f$
-   *    2  |      0    |      0    | \f$-\pi/2\f$   | \f$q_2 - \pi/2\f$
+   * The first representation, vpBiclops::DH1 is given by:
+   *
+   * | Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$    |
+   * | :---: | :-------: | :-------: | -------------: | ----------------: |
+   * |     1 |         0 |         0 |   \f$-\pi/2\f$ |         \f$q_1\f$ |
+   * |     2 |         0 |         0 |   \f$ \pi/2\f$ | \f$q_2 + \pi/2\f$ |
+   *
+   * The second one, vpBiclops::DH2 is given by:
+   *
+   * | Joint | \f$a_i\f$ | \f$d_i\f$ | \f$\alpha_i\f$ | \f$\theta_i\f$    |
+   * | :---: | :-------: | :-------: | -------------: | ----------------: |
+   * |     1 |         0 |         0 |   \f$ \pi/2\f$ |         \f$q_1\f$ |
+   * |     2 |         0 |         0 |   \f$-\pi/2\f$ | \f$q_2 - \pi/2\f$ |
    *
    * where \f$q_1, q_2\f$ are respectively the pan and tilt joint
    * positions.
@@ -86,12 +88,6 @@ public:
    * the tilt is oriented
    * - in vpBiclops::DH1 from down to top,
    * - in vpBiclops::DH2 from top to down.
-   *
-   * \image html img-biclops-frames.jpg Biclops PT models
-   *
-   * By default, vpBiclops::DH1 Denavit Hartenberg model is set and the camera has
-   * a vertical offset from last joint to camera frame set by default in vpBiclops::h.
-   * To change the camera position wrt the end-effector, you may use set_cMe().
    */
   typedef enum
   {
@@ -127,8 +123,19 @@ public:
   //@{
 
   /*!
-   * Initialization. By default vpBiclops::DH1 Denavit Hartenberg model is selected.
-   * Set the default \f${^c}{\bf M}_e\f$ transformation.
+   * Initialization.
+   * - By default vpBiclops::DH1 Denavit Hartenberg model is selected.
+   * - Initialize also the default \f${^c}{\bf M}_e\f$ transformation calling set_cMe().
+   * \f[
+   *   {^c}{\bf M}_e = \left(
+   *     \begin{matrix}
+   *        0 & 1 & 0 & 0 \\
+   *       -1 & 0 & 0 & h \\
+   *        0 & 0 & 1 & 0 \\
+   *        0 & 0 & 0 & 1
+   *     \end{matrix}
+   *   \right)
+   * \f]
    */
   void init(void);
 
@@ -190,10 +197,10 @@ public:
    * camera frame and the end effector frame. The end effector frame is located
    * on the tilt axis.
    *
-   * \param _cVe : Twist transformation between camera and end effector frame to
+   * \param cVe : Twist transformation between camera and end effector frame to
    * express a velocity skew from end effector frame in camera frame.
    */
-  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
 
   /*!
    * Compute the direct geometric model of the camera: fMc
@@ -272,6 +279,17 @@ public:
    * Set the default homogeneous matrix corresponding to the transformation
    * between the camera frame and the end effector frame. The end effector frame
    * is located on the tilt axis.
+   *
+   * \f[
+   *   {^c}{\bf M}_e = \left(
+   *     \begin{matrix}
+   *        0 & 1 & 0 & 0 \\
+   *       -1 & 0 & 0 & h \\
+   *        0 & 0 & 1 & 0 \\
+   *        0 & 0 & 0 & 1
+   *     \end{matrix}
+   *   \right)
+   * \f]
    */
   void set_cMe();
 
@@ -284,7 +302,7 @@ public:
   /*!
    * Set the Denavit Hartenberg representation used to model the head.
    *
-   * \param[in] dh_model : Denavit Hartenbert model. \sa vpBiclops::DenavitHartenbergModel
+   * \param[in] dh_model : Denavit Hartenberg model. \sa vpBiclops::DenavitHartenbergModel
    */
   inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel dh_model = vpBiclops::DH1)
   {

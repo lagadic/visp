@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,18 +29,18 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
+
+#include <visp3/core/vpConfig.h>
+
+#ifdef VISP_HAVE_BICLOPS
 
 #include <cmath> // std::fabs
 #include <errno.h>
 #include <limits> // numeric_limits
 #include <signal.h>
 #include <string.h>
-
-#include <visp3/core/vpConfig.h>
-
-#ifdef VISP_HAVE_BICLOPS
+#include <mutex>
 
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
@@ -58,43 +57,32 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
 
-bool vpRobotBiclops::m_robotAlreadyCreated = false;
 const double vpRobotBiclops::defaultPositioningVelocity = 10.0;
 
-static pthread_mutex_t vpEndThread_mutex;
-static pthread_mutex_t vpShm_mutex;
-static pthread_mutex_t vpMeasure_mutex;
+static std::mutex m_mutex_end_thread;
+static std::mutex m_mutex_shm;
+static std::mutex m_mutex_measure;
+
+/* ----------------------------------------------------------------------- */
+/* --- CONSTRUCTOR ------------------------------------------------------ */
+/* ---------------------------------------------------------------------- */
 
 vpRobotBiclops::vpRobotBiclops()
   : vpBiclops(), vpRobot(), m_control_thread(), m_controller(), m_positioningVelocity(defaultPositioningVelocity),
-  m_q_previous(), m_controlThreadCreated(false)
+  m_q_previous()
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
-  vpRobotBiclops::m_robotAlreadyCreated = false;
   setConfigFile("/usr/share/BiclopsDefault.cfg");
-
-  // Initialize the mutex dedicated to she shm protection
-  pthread_mutex_init(&vpShm_mutex, NULL);
-  pthread_mutex_init(&vpEndThread_mutex, NULL);
-  pthread_mutex_init(&vpMeasure_mutex, NULL);
-
-  m_control_thread = 0;
 }
 
 vpRobotBiclops::vpRobotBiclops(const std::string &filename)
   : vpBiclops(), vpRobot(), m_control_thread(), m_controller(), m_positioningVelocity(defaultPositioningVelocity),
-  m_q_previous(), m_controlThreadCreated(false)
+  m_q_previous()
 {
   vpDEBUG_TRACE(12, "Begin default constructor.");
 
-  vpRobotBiclops::m_robotAlreadyCreated = false;
   setConfigFile(filename);
-
-  // Initialize the mutex dedicated to she shm protection
-  pthread_mutex_init(&vpShm_mutex, NULL);
-  pthread_mutex_init(&vpEndThread_mutex, NULL);
-  pthread_mutex_init(&vpMeasure_mutex, NULL);
 
   init();
 
@@ -108,24 +96,14 @@ vpRobotBiclops::~vpRobotBiclops()
   setRobotState(vpRobot::STATE_STOP);
 
   vpDEBUG_TRACE(12, "Unlock mutex vpEndThread_mutex");
-  pthread_mutex_unlock(&vpEndThread_mutex);
+  m_mutex_end_thread.unlock();
 
   /* wait the end of the control thread */
   vpDEBUG_TRACE(12, "Wait end of control thread");
 
-  if (m_controlThreadCreated == true) {
-    int code = pthread_join(m_control_thread, NULL);
-    if (code != 0) {
-      vpCERROR << "Cannot terminate the control thread: " << code << " strErr=" << strerror(errno)
-        << " strCode=" << strerror(code) << std::endl;
-    }
+  if (m_control_thread.joinable()) {
+    m_control_thread.join();
   }
-
-  pthread_mutex_destroy(&vpShm_mutex);
-  pthread_mutex_destroy(&vpEndThread_mutex);
-  pthread_mutex_destroy(&vpMeasure_mutex);
-
-  vpRobotBiclops::m_robotAlreadyCreated = false;
 
   vpDEBUG_TRACE(12, "Stop vpRobotBiclops::~vpRobotBiclops()");
   return;
@@ -154,13 +132,9 @@ void vpRobotBiclops::init()
     throw;
   }
 
-  vpRobotBiclops::m_robotAlreadyCreated = true;
-
-  // Initialize previous joint position to manage getDisplacement()
+  // Initialize previous articular position to manage getDisplacement()
   m_q_previous.resize(vpBiclops::ndof);
   m_q_previous = 0;
-
-  m_controlThreadCreated = false;
 
   return;
 }
@@ -170,8 +144,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   vpRobotBiclopsController *m_controller = static_cast<vpRobotBiclopsController *>(arg);
 
   int iter = 0;
-  //   PMDAxisControl *panAxis  = m_controller->getPanAxis();
-  //   PMDAxisControl *tiltAxis = m_controller->getTiltAxis();
+  //   PMDAxisControl *m_panAxis  = m_controller->getPanAxis();
+  //   PMDAxisControl *m_tiltAxis = m_controller->getTiltAxis();
   vpRobotBiclopsController::shmType shm;
 
   vpDEBUG_TRACE(10, "Start control loop");
@@ -191,14 +165,14 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   softLimit[1] = vpBiclops::tiltJointLimit - secure;
   vpDEBUG_TRACE(12, "soft limit pan: %f tilt: %f", vpMath::deg(softLimit[0]), vpMath::deg(softLimit[1]));
 
-  // Initilisation
+  // Initialization
   vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
-  pthread_mutex_lock(&vpShm_mutex);
+  m_mutex_shm.lock();
 
   shm = m_controller->readShm();
 
   vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
-  pthread_mutex_unlock(&vpShm_mutex);
+  m_mutex_shm.unlock();
 
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     prev_q_dot[i] = shm.q_dot[i];
@@ -213,7 +187,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   mes_q_dot = m_controller->getActualVelocity();
 
   vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
-  pthread_mutex_lock(&vpShm_mutex);
+  m_mutex_shm.lock();
 
   shm = m_controller->readShm();
   // Updates the shm
@@ -221,14 +195,14 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
     shm.actual_q[i] = mes_q[i];
     shm.actual_q_dot[i] = mes_q_dot[i];
   }
-  // Update the actuals positions
+  // Update current positions
   m_controller->writeShm(shm);
 
   vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
-  pthread_mutex_unlock(&vpShm_mutex);
+  m_mutex_shm.unlock();
 
   vpDEBUG_TRACE(11, "unlock mutex vpMeasure_mutex");
-  pthread_mutex_unlock(&vpMeasure_mutex); // A position is available
+  m_mutex_measure.unlock(); // A position is available
 
   while (!m_controller->isStopRequested()) {
 
@@ -237,7 +211,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
     mes_q_dot = m_controller->getActualVelocity();
 
     vpDEBUG_TRACE(11, "Lock mutex vpShm_mutex");
-    pthread_mutex_lock(&vpShm_mutex);
+    m_mutex_shm.lock();
 
     shm = m_controller->readShm();
 
@@ -310,8 +284,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               }
             }
             else {
-           // We have to apply the desired speed to go away the joint
-           // Update the desired speed
+              // We have to apply the desired speed to go away the joint
+              // Update the desired speed
               q_dot[i] = shm.q_dot[i];
               shm.status[i] = vpRobotBiclopsController::SPEED;
               force_halt[i] = false;
@@ -319,7 +293,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
             }
           }
           else {
-         // New desired speed and change of direction.
+            // New desired speed and change of direction.
             if (enable_limit[i] == true) { // limit detection active
               // Update the desired speed to go away the joint limit
               q_dot[i] = shm.q_dot[i];
@@ -329,8 +303,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
               updateVelocity = true;   // We have to send this new speed
             }
             else {
-           // We have to stop this axis
-           // Test if this axis was stopped before
+              // We have to stop this axis
+              // Test if this axis was stopped before
               if (force_halt[i] == false) {
                 q_dot[i] = 0.;
                 force_halt[i] = true;   // indicate that it will be stopped
@@ -341,7 +315,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
           }
         }
         else {
-       // Axis not in joint limit
+          // Axis not in joint limit
 
        // Update the desired speed
           q_dot[i] = shm.q_dot[i];
@@ -351,8 +325,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
         }
       }
       else {
-     // No change of the desired speed. We have to stop the robot in case
-     // of joint limit
+        // No change of the desired speed. We have to stop the robot in case
+        // of joint limit
         if (shm.status[i] == vpRobotBiclopsController::STOP) { // axis limit
           if (enable_limit[i] == true) {                       // limit detection active
 
@@ -366,16 +340,16 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
           }
         }
         else {
-       // No need to stop the robot
+          // No need to stop the robot
           enable_limit[i] = true; // Normal situation, activate limit detection
         }
       }
     }
-    // Update the actuals positions
+    // Update the actual positions
     m_controller->writeShm(shm);
 
     vpDEBUG_TRACE(11, "unlock mutex vpShm_mutex");
-    pthread_mutex_unlock(&vpShm_mutex);
+    m_mutex_shm.unlock();
 
     if (updateVelocity) {
       vpDEBUG_TRACE(12, "apply q_dot : %f %f", vpMath::deg(q_dot[0]), vpMath::deg(q_dot[1]));
@@ -393,16 +367,6 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
     // wait 5 ms
     vpTime::wait(5.0);
 
-    //    if (pthread_mutex_trylock(&vpEndThread_mutex) == 0) {
-    //      vpDEBUG_TRACE (12, "Calling thread will end");
-    //      vpDEBUG_TRACE (12, "Unlock mutex vpEndThread_mutex");
-    //      std::cout << "Calling thread will end" << std::endl;
-    //      std::cout << "Unlock mutex vpEndThread_mutex" << std::endl;
-    //
-    //      pthread_mutex_unlock(&vpEndThread_mutex);
-    //      break;
-    //    }
-
     iter++;
   }
   m_controller->stopRequest(false);
@@ -416,10 +380,7 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   delete[] force_halt;
   delete[] enable_limit;
   vpDEBUG_TRACE(11, "unlock vpEndThread_mutex");
-  pthread_mutex_unlock(&vpEndThread_mutex);
-
-  vpDEBUG_TRACE(10, "Exit control thread ");
-  //  pthread_exit(0);
+  m_mutex_end_thread.unlock();
 
   return NULL;
 }
@@ -445,17 +406,11 @@ vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateTyp
 
     if (vpRobot::STATE_VELOCITY_CONTROL != getRobotState()) {
       vpDEBUG_TRACE(12, "Lock mutex vpEndThread_mutex");
-      pthread_mutex_lock(&vpEndThread_mutex);
+      m_mutex_end_thread.lock();
 
       vpDEBUG_TRACE(12, "Create speed control thread");
-      int code;
-      code = pthread_create(&m_control_thread, NULL, &vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &m_controller);
-      if (code != 0) {
-        vpCERROR << "Cannot create speed biclops control thread: " << code << " strErr=" << strerror(errno)
-          << " strCode=" << strerror(code) << std::endl;
-      }
-
-      m_controlThreadCreated = true;
+      m_control_thread = std::thread(&vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &m_controller);
+      vpTime::wait(100.0);
 
       vpDEBUG_TRACE(12, "Speed control thread created");
     }
@@ -488,32 +443,20 @@ void vpRobotBiclops::get_cVe(vpVelocityTwistMatrix &cVe) const
 
 void vpRobotBiclops::get_cMe(vpHomogeneousMatrix &cMe) const { cMe = vpBiclops::get_cMe(); }
 
-void vpRobotBiclops::get_eJe(vpMatrix &_eJe)
+void vpRobotBiclops::get_eJe(vpMatrix &eJe)
 {
   vpColVector q(2);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  try {
-    vpBiclops::get_eJe(q, _eJe);
-  }
-  catch (...) {
-    vpERROR_TRACE("catch exception ");
-    throw;
-  }
+  vpBiclops::get_eJe(q, eJe);
 }
 
-void vpRobotBiclops::get_fJe(vpMatrix &_fJe)
+void vpRobotBiclops::get_fJe(vpMatrix &fJe)
 {
   vpColVector q(2);
   getPosition(vpRobot::JOINT_STATE, q);
 
-  try {
-    vpBiclops::get_fJe(q, _fJe);
-  }
-  catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  vpBiclops::get_fJe(q, fJe);
 }
 
 void vpRobotBiclops::setPositioningVelocity(double velocity)
@@ -559,10 +502,10 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
   }
 
   vpDEBUG_TRACE(12, "Lock mutex vpEndThread_mutex");
-  pthread_mutex_lock(&vpEndThread_mutex);
+  m_mutex_end_thread.lock();
   m_controller.setPosition(q, m_positioningVelocity);
   vpDEBUG_TRACE(12, "Unlock mutex vpEndThread_mutex");
-  pthread_mutex_unlock(&vpEndThread_mutex);
+  m_mutex_end_thread.unlock();
   return;
 }
 
@@ -586,7 +529,7 @@ void vpRobotBiclops::setPosition(const std::string &filename)
   vpColVector q;
   if (readPositionFile(filename.c_str(), q) == false) {
     vpERROR_TRACE("Cannot get biclops position from file");
-    throw vpRobotException(vpRobotException::readingParametersError, "Cannot get biclops position from file");
+    throw vpRobotException(vpRobotException::readingParametersError, "Cannot get Biclops position from file");
   }
   setPosition(vpRobot::JOINT_STATE, q);
 }
@@ -629,17 +572,17 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     q.resize(vpBiclops::ndof);
 
     vpDEBUG_TRACE(12, "Lock mutex vpMeasure_mutex");
-    pthread_mutex_lock(&vpMeasure_mutex); // Wait until a position is available
+    m_mutex_measure.lock(); // Wait until a position is available
 
     vpRobotBiclopsController::shmType shm;
 
     vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
-    pthread_mutex_lock(&vpShm_mutex);
+    m_mutex_shm.lock();
 
     shm = m_controller.readShm();
 
     vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
-    pthread_mutex_unlock(&vpShm_mutex);
+    m_mutex_shm.unlock();
 
     for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
       q[i] = shm.actual_q[i];
@@ -648,7 +591,7 @@ void vpRobotBiclops::getPosition(const vpRobot::vpControlFrameType frame, vpColV
     vpCDEBUG(11) << "++++++++ Measure actuals: " << q.t();
 
     vpDEBUG_TRACE(12, "unlock mutex vpMeasure_mutex");
-    pthread_mutex_unlock(&vpMeasure_mutex); // A position is available
+    m_mutex_measure.unlock(); // A position is available
 
     break;
   }
@@ -728,7 +671,7 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   vpRobotBiclopsController::shmType shm;
 
   vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
-  pthread_mutex_lock(&vpShm_mutex);
+  m_mutex_shm.lock();
 
   shm = m_controller.readShm();
 
@@ -738,7 +681,7 @@ void vpRobotBiclops::setVelocity(const vpRobot::vpControlFrameType frame, const 
   m_controller.writeShm(shm);
 
   vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
-  pthread_mutex_unlock(&vpShm_mutex);
+  m_mutex_shm.unlock();
 
   return;
 }
@@ -781,17 +724,17 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     q_dot.resize(vpBiclops::ndof);
 
     vpDEBUG_TRACE(12, "Lock mutex vpMeasure_mutex");
-    pthread_mutex_lock(&vpMeasure_mutex); // Wait until a position is available
+    m_mutex_measure.lock(); // Wait until a position is available
 
     vpRobotBiclopsController::shmType shm;
 
     vpDEBUG_TRACE(12, "Lock mutex vpShm_mutex");
-    pthread_mutex_lock(&vpShm_mutex);
+    m_mutex_shm.lock();
 
     shm = m_controller.readShm();
 
     vpDEBUG_TRACE(12, "unlock mutex vpShm_mutex");
-    pthread_mutex_unlock(&vpShm_mutex);
+    m_mutex_shm.unlock();
 
     for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
       q_dot[i] = shm.actual_q_dot[i];
@@ -800,7 +743,7 @@ void vpRobotBiclops::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     vpCDEBUG(11) << "++++++++ Velocity actuals: " << q_dot.t();
 
     vpDEBUG_TRACE(12, "unlock mutex vpMeasure_mutex");
-    pthread_mutex_unlock(&vpMeasure_mutex); // A position is available
+    m_mutex_measure.unlock(); // A position is available
 
     break;
   }

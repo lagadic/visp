@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for the Biclops robot.
- *
-*****************************************************************************/
+ */
 
 #include <signal.h>
 #include <string.h>
@@ -78,11 +76,11 @@ vpRobotBiclopsController::~vpRobotBiclopsController() { }
 
 void vpRobotBiclopsController::init(const std::string &configfile)
 {
-  vpDEBUG_TRACE(12, "Initialize biclops.");
+  vpDEBUG_TRACE(12, "Initialize Biclops.");
   bool binit = false;
   for (int i = 0; i < 1; i++) {
     try {
-      std::cout << "Try to initialize biclops head " << std::endl;
+      std::cout << "Try to initialize Biclops head " << std::endl;
       binit = m_biclops.Initialize(configfile.c_str());
       usleep(100000);
       if (binit) {
@@ -100,13 +98,13 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   }
 
   if (!binit) {
-    std::cout << "Cannot initialize biclops head. " << std::endl;
+    std::cout << "Cannot initialize Biclops head. " << std::endl;
     std::cout << "Check if the serial cable is connected." << std::endl;
     std::cout << "Check if the robot is powered on." << std::endl;
     std::cout << "Check if you try to open the good serial port." << std::endl;
     std::cout << "Try to power off/on and restart..." << std::endl;
 
-    throw vpRobotException(vpRobotException::notInitializedError, "Cannot initialize biclops head.");
+    throw vpRobotException(vpRobotException::notInitializedError, "Cannot initialize Biclops head.");
   }
 
   vpDEBUG_TRACE(12, "Biclops initialized");
@@ -134,11 +132,11 @@ void vpRobotBiclopsController::init(const std::string &configfile)
     vpDEBUG_TRACE(12, "Homing sequence succeed.");
   else {
     vpERROR_TRACE("Homing sequence failed. Program is stopped");
-    throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
+    throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with Biclops");
   }
 
   // Get the currently defined (default) motion profiles.
-  //      PMDAxisControl::Profile panProfile,tiltProfile,vergeProfile;
+  //      PMDAxisControl::Profile m_panProfile,m_tiltProfile,m_vergeProfile;
   m_panAxis->GetProfile(m_panProfile);
   m_tiltAxis->GetProfile(m_tiltProfile);
   if ((m_axisMask & Biclops::VergeMask) != 0)
@@ -162,7 +160,7 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentV
 
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
-  // PMDAxisControl::Profile panProfile,tiltProfile;
+  // PMDAxisControl::Profile m_panProfile,m_tiltProfile;
   m_panAxis->GetProfile(m_panProfile);
   m_tiltAxis->GetProfile(m_tiltProfile);
 
@@ -224,7 +222,7 @@ void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 
 #ifdef VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION // new API
   // Get the currently defined (default) motion profiles.
-  // PMDAxisControl::Profile panProfile, tiltProfile;
+  // PMDAxisControl::Profile m_panProfile, m_tiltProfile;
   m_panAxis->GetProfile(m_panProfile);
   m_tiltAxis->GetProfile(m_tiltProfile);
 

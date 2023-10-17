@@ -44,7 +44,7 @@
 
 /* --- GENERAL --- */
 #include <iostream>
-#include <pthread.h>
+#include <thread>
 #include <stdio.h>
 
 /* --- ViSP --- */
@@ -63,7 +63,7 @@
  *
  * \ingroup group_robot_real_ptu
  *
- * \brief Interface for the biclops, pan, tilt head control.
+ * \brief Interface for the Biclops, pan, tilt head control.
  *
  * Two different models are proposed and can be set using vpBiclops::DenavitHartenbergModel.
  * The vpBiclops::DH1 and vpBiclops::DH2 model differ in the orientation of the tilt axis.
@@ -73,7 +73,7 @@
  *
  * See http://www.traclabs.com/biclopspt.html for more details.
  *
- * This class provide a position and a speed control interface for the biclops
+ * This class provide a position and a speed control interface for the Biclops
  * head. To manage the biclops joint limits in speed control, a control loop is
  * running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
  *
@@ -108,10 +108,7 @@ public:
    * int main()
    * {
    * #ifdef VISP_HAVE_BICLOPS
-   *   vpRobotBiclops robot; // Use the default config file in /usr/share/BiclopsDefault.cfg"
-   *
-   *   // Specify the config file location
-   *   robot.setConfigFile("/usr/share/BiclopsDefault.cfg"); // Not mandatory since the file is the default one
+   *   vpRobotBiclops robot; // Use the default config file in /usr/share/BiclopsDefault.cfg
    *
    *   // Initialize the head
    *   robot.init();
@@ -130,8 +127,9 @@ public:
   vpRobotBiclops();
 
   /*!
-   * Constructor that initialize the biclops pan, tilt head by reading the
-   * configuration file provided by Traclabs and do the homing sequence.
+   * Constructor that initialize the Biclops pan, tilt head by reading the
+   * configuration file provided by Traclabs
+   * and do the homing sequence.
    *
    * The following example shows how to use the constructor.
    *
@@ -145,7 +143,7 @@ public:
    *   vpRobotBiclops robot("/usr/share/BiclopsDefault.cfg");
    *
    *   // Move the robot to a specified pan and tilt
-   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL) ;
+   *   robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
    *
    *   vpColVector q(2);
    *   q[0] = vpMath::rad(-20); // pan
@@ -178,7 +176,7 @@ public:
    * camera frame and the end effector frame. The end effector frame is located
    * on the tilt axis.
    *
-   * \param cMe :  Homogeneous matrix between camera and end effector frame.
+   * \param cMe : Homogeneous matrix between camera and end effector frame.
    */
   void get_cMe(vpHomogeneousMatrix &cMe) const;
 
@@ -187,10 +185,10 @@ public:
    * camera frame and the end effector frame. The end effector frame is located
    * on the tilt axis.
    *
-   * \param _cVe : Twist transformation between camera and end effector frame to
+   * \param cVe : Twist transformation between camera and end effector frame to
    * express a velocity skew from end effector frame in camera frame.
    */
-  void get_cVe(vpVelocityTwistMatrix &_cVe) const;
+  void get_cVe(vpVelocityTwistMatrix &cVe) const;
 
   /*!
    * Get the robot jacobian expressed in the end-effector frame.
@@ -198,18 +196,18 @@ public:
    * \warning Re is not the embedded camera frame. It corresponds to the frame
    * associated to the tilt axis (see also get_cMe).
    *
-   * \param _eJe : Jacobian between end effector frame and end effector frame (on
+   * \param eJe : Jacobian between end effector frame and end effector frame (on
    * tilt axis).
    */
-  void get_eJe(vpMatrix &_eJe);
+  void get_eJe(vpMatrix &eJe);
 
   /*!
    * Get the robot jacobian expressed in the robot reference frame
    *
-   * \param _fJe : Jacobian between reference frame (or fix frame) and end
+   * \param fJe : Jacobian between reference frame (or fix frame) and end
    * effector frame (on tilt axis).
    */
-  void get_fJe(vpMatrix &_fJe);
+  void get_fJe(vpMatrix &fJe);
 
   /*!
    * Get the robot displacement since the last call of this method.
@@ -220,8 +218,10 @@ public:
    * \param frame The frame in which the measured displacement is expressed.
    *
    * \param d The displacement:
+   *
    * - In joint state, the dimension of q is 2  (the number of axis of the robot)
    *   with respectively d[0] (pan displacement), d[1] (tilt displacement).
+   *
    * - In camera frame, the dimension of d is 6 (tx, ty, ty, tux, tuy, tuz).
    *   Translations are expressed in meters, rotations in radians with the theta U
    *   representation.
@@ -232,12 +232,12 @@ public:
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d);
 
   /*!
-   * Return the joint position of each axis.
+   * Return the position of each axis.
    * - In positioning control mode, call vpRobotBiclopsController::getPosition()
    * - In speed control mode, call vpRobotBiclopsController::getActualPosition()
    *
-   * \param frame : Control frame. This biclops head can only be controlled in
-   * joint.
+   * \param frame : Control frame. This Biclops head can only be controlled in
+   * joint state.
    *
    * \param q : The position of the axis in radians.
    *
@@ -279,15 +279,15 @@ public:
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
 
   /*!
-   * Get a joint position from the position file.
+   * Get joint positions from the position file.
    *
    * \param filename : Position file.
    *
-   * \param q : The joint position read in the file.
+   * \param q : The joint positions read in the file.
    *
    * \code
-   * # Example of biclops position file
-   * # The axis positions must be preceded by R:
+   * # Example of Biclops position file
+   * # The axis positions must be preceeded by R:
    * # First value : pan  joint position in degrees
    * # Second value: tilt joint position in degrees
    * R: 15.0 5.0
@@ -342,7 +342,7 @@ public:
    * \param filename : Position filename
    *
    * \exception vpRobotException::readingParametersError : If the joint
-   * position cannot be read from file.
+   * positions cannot be read from file.
    *
    * \sa readPositionFile()
    */
@@ -370,7 +370,7 @@ public:
    * frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
    * and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.
    *
-   * \param q_dot : The desired joint velocity of the axis in rad/s. \f$ \dot
+   * \param q_dot : The desired joint velocities for each axis in rad/s. \f$ \dot
    * {r} = [\dot{q}_1, \dot{q}_2]^t \f$ with \f$ \dot{q}_1 \f$ the pan of the
    * camera and \f$ \dot{q}_2\f$ the tilt of the camera.
    *
@@ -394,7 +394,7 @@ public:
   void stopMotion();
 
   /*
-   * Control loop to manage the biclops joint limits in speed control.
+   * Control loop to manage the Biclops joint limits in speed control.
    *
    * This control loop is running in a separate thread in order to detect each 5
    * ms joint limits during the speed control. If a joint limit is detected the
@@ -414,23 +414,21 @@ public:
   static void *vpRobotBiclopsSpeedControlLoop(void *arg);
 
 private:
-  static bool m_robotAlreadyCreated;
-  pthread_t m_control_thread;
+  std::thread m_control_thread;
 
-  std::string m_configfile; //!< Biclops config file
+  std::string m_configfile; // Biclops config file
 
   vpRobotBiclopsController m_controller;
 
   double m_positioningVelocity;
   vpColVector m_q_previous;
-  bool m_controlThreadCreated;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  /*! \brief No copy constructor allowed.   */
   //  vpRobotBiclops(const vpRobotBiclops &)
   //    : vpBiclops(), vpRobot(), m_control_thread(), m_controller(),
-  //      m_positioningVelocity(0), m_q_previous(), m_controlThreadCreated(false)
+  //      m_positioningVelocity(0), m_q_previous()
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
   //    implemented!");
