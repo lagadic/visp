@@ -49,7 +49,7 @@
  * \brief Jacobian, geometric model functionalities... for Biclops, pan, tilt
  * head.
  *
- * Two different Denavit Hartenberg representations of the robot are
+ * Two different Denavit-Hartenberg representations of the robot are
  * implemented. As mentioned in vpBiclops::DenavitHartenbergModel they differ
  * in the orientation of the tilt axis. Use setDenavitHartenbergModel() to
  * select the representation.
@@ -62,7 +62,7 @@ class VISP_EXPORT vpBiclops
 {
 public:
   /*!
-   * Two different Denavit Hartenberg representations of the robot are
+   * Two different Denavit-Hartenberg representations of the robot are
    * implemented. As you can see in the next image, they differ in the orientation of the tilt axis.
    *
    * \image html img-biclops-frames.jpg Biclops PT models
@@ -91,8 +91,8 @@ public:
    */
   typedef enum
   {
-    DH1, //!< First Denavit Hartenberg representation.
-    DH2  //!< Second Denavit Hartenberg representation.
+    DH1, //!< First Denavit-Hartenberg representation.
+    DH2  //!< Second Denavit-Hartenberg representation.
   } DenavitHartenbergModel;
 
 public:
@@ -105,12 +105,12 @@ public:
   static const float speedLimit;     //!< Pan and tilt axis max velocity in rad/s to perform a displacement
 
 protected:
-  DenavitHartenbergModel m_dh_model; //!< Denavit Hartenberg model
-  vpHomogeneousMatrix m_cMe; //!< Camera frame to end-effector transformation
+  DenavitHartenbergModel m_dh_model; //!< Denavit-Hartenberg model
+  vpHomogeneousMatrix m_cMe; //!< Camera frame to PT end-effector frame transformation
 
 public:
   /*!
-   * Default constructor. Call init() that sets vpBiclops::DH1 Denavit Hartenberg model.
+   * Default constructor. Call init() that sets vpBiclops::DH1 Denavit-Hartenberg model.
    */
   vpBiclops(void);
 
@@ -124,7 +124,7 @@ public:
 
   /*!
    * Initialization.
-   * - By default vpBiclops::DH1 Denavit Hartenberg model is selected.
+   * - By default vpBiclops::DH1 Denavit-Hartenberg model is selected.
    * - Initialize also the default \f${^c}{\bf M}_e\f$ transformation calling set_cMe().
    * \f[
    *   {^c}{\bf M}_e = \left(
@@ -197,7 +197,7 @@ public:
    * camera frame and the end effector frame. The end effector frame is located
    * on the tilt axis.
    *
-   * \param cVe : Twist transformation between camera and end effector frame to
+   * \param[out] cVe : Twist transformation between camera and end effector frame to
    * express a velocity skew from end effector frame in camera frame.
    */
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
@@ -205,20 +205,20 @@ public:
   /*!
    * Compute the direct geometric model of the camera: fMc
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
-   * \param fMc : Homogeneous matrix corresponding to the direct geometric model
+   * \param[out] fMc : Homogeneous matrix corresponding to the direct geometric model
    * of the camera. Describes the transformation between the robot reference
    * frame (called fixed) and the camera frame.
    */
   void get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const;
 
   /*!
-   * Compute the direct geometric model of the camera: fMc
+   * Compute the direct geometric model of the camera in terms of pose vector.
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
-   * \param fPc : Pose vector corresponding to the direct geometric model
+   * \param[out] fPc : Pose vector corresponding to the direct geometric model
    * of the camera. Describes the transformation between the robot reference
    * frame (called fixed) and the camera frame.
    */
@@ -227,7 +227,7 @@ public:
   /*!
    * Return the direct geometric model of the camera: fMc
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
    * \return fMc, the homogeneous matrix corresponding to the direct geometric
    * model of the camera. Describes the transformation between the robot
@@ -238,7 +238,7 @@ public:
   /*!
    * Return the direct geometric model of the end effector: fMe
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
    * \return fMe, the homogeneous matrix corresponding to the direct geometric
    * model of the end effector. Describes the transformation between the robot
@@ -252,9 +252,9 @@ public:
    * \warning Re is not the embedded camera frame. It corresponds to the frame
    * associated to the tilt axis (see also get_cMe).
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
-   * \param eJe : Jacobian between end effector frame and end effector frame (on
+   * \param[out] eJe : Jacobian between end effector frame and end effector frame (on
    * tilt axis).
    */
   void get_eJe(const vpColVector &q, vpMatrix &eJe) const;
@@ -262,15 +262,15 @@ public:
   /*!
    * Get the robot jacobian expressed in the robot reference frame
    *
-   * \param q : Joint position for pan and tilt axis.
+   * \param[in] q : Joint position for pan and tilt axis.
    *
-   * \param fJe : Jacobian between reference frame (or fix frame) and end
+   * \param[out] fJe : Jacobian between reference frame (or fix frame) and end
    * effector frame (on tilt axis).
    */
   void get_fJe(const vpColVector &q, vpMatrix &fJe) const;
 
   /*!
-   * Return the Denavit Hartenberg representation used to model the head.
+   * Return the Denavit-Hartenberg representation used to model the head.
    * \sa vpBiclops::DenavitHartenbergModel
    */
   inline vpBiclops::DenavitHartenbergModel getDenavitHartenbergModel() const { return m_dh_model; }
@@ -300,9 +300,9 @@ public:
   void set_cMe(const vpHomogeneousMatrix &cMe) { m_cMe = cMe; }
 
   /*!
-   * Set the Denavit Hartenberg representation used to model the head.
+   * Set the Denavit-Hartenberg representation used to model the head.
    *
-   * \param[in] dh_model : Denavit Hartenberg model. \sa vpBiclops::DenavitHartenbergModel
+   * \param[in] dh_model : Denavit-Hartenberg model. \sa vpBiclops::DenavitHartenbergModel
    */
   inline void setDenavitHartenbergModel(vpBiclops::DenavitHartenbergModel dh_model = vpBiclops::DH1)
   {
@@ -315,7 +315,7 @@ public:
  * Set output stream with Biclops parameters.
  * @param os : Output stream.
  * @param dummy : Not used.
- * @return Output stream with the biclops parameters.
+ * @return Output stream with the Biclops parameters.
  */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpBiclops &dummy);
 };

@@ -957,7 +957,7 @@ ViSP 2.6.2 (released July 15, 2012)
        To be able to consider other user defined features the compiler should
        be compatible with C++ 11 standard.
   - Improvements
-     - Introduce a new Denavit Hartenberg representation of the Biclops head
+     - Introduce a new Denavit-Hartenberg representation of the Biclops head
        in vpBiclops.
      - Compatibility with g++ 4.7 and OpenCV 2.3.1, 2.4.0, 2.4.1
      - Remove warning detected with Visual C++ /Wall flag

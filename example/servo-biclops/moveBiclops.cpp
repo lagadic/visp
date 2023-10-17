@@ -35,7 +35,7 @@
  * \file moveBiclops.cpp
  * \example moveBiclops.cpp
  *
- * Example of a real robot control, the biclops robot (pan-tilt turret) by
+ * Example of a real robot control, the Biclops robot (pan-tilt turret) by
  * Traclabs. The robot is controlled first in position, then in velocity.
  *
  * See http://www.traclabs.com/tracbiclops.htm for more details.
@@ -63,7 +63,7 @@
 void usage(const char *name, const char *badparam, std::string conf)
 {
   fprintf(stdout, "\n\
-Move the biclops robot\n\
+Move the Biclops robot\n\
 \n\
 SYNOPSIS\n\
   %s [-c <Biclops configuration file>] [-h]\n\
@@ -73,7 +73,7 @@ name);
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c <Biclops configuration file>                      %s\n\
-     Sets the biclops robot configuration file.\n\n",
+     Sets the Biclops robot configuration file.\n\n",
           conf.c_str());
 
   if (badparam) {
@@ -270,7 +270,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have an biclops PT robot connected to your computer..." << std::endl;
+  std::cout << "You do not have an Biclops PT robot connected to your computer..." << std::endl;
   return EXIT_SUCCESS;
 }
 

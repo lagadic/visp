@@ -116,7 +116,7 @@ void vpRobotBiclops::init()
   // test if the config file exists
   FILE *fd = fopen(m_configfile.c_str(), "r");
   if (fd == NULL) {
-    vpCERROR << "Cannot open biclops config file: " << m_configfile << std::endl;
+    vpCERROR << "Cannot open Biclops config file: " << m_configfile << std::endl;
     throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }
   fclose(fd);
@@ -528,7 +528,7 @@ void vpRobotBiclops::setPosition(const std::string &filename)
 {
   vpColVector q;
   if (readPositionFile(filename.c_str(), q) == false) {
-    vpERROR_TRACE("Cannot get biclops position from file");
+    vpERROR_TRACE("Cannot get Biclops position from file");
     throw vpRobotException(vpRobotException::readingParametersError, "Cannot get Biclops position from file");
   }
   setPosition(vpRobot::JOINT_STATE, q);

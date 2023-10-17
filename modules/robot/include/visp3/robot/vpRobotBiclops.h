@@ -74,7 +74,7 @@
  * See http://www.traclabs.com/biclopspt.html for more details.
  *
  * This class provide a position and a speed control interface for the Biclops
- * head. To manage the biclops joint limits in speed control, a control loop is
+ * head. To manage the Biclops joint limits in speed control, a control loop is
  * running in a separate thread implemented in vpRobotBiclopsSpeedControlLoop().
  *
  * \warning Velocity control mode is not exported from the top-level Biclops
@@ -308,7 +308,7 @@ public:
    * \warning This method is blocking. That mean that it waits the end of the
    * positioning.
    *
-   * \param frame : Control frame. This biclops head can only be controlled in
+   * \param frame : Control frame. This Biclops head can only be controlled in
    * joint state.
    *
    * \param q : The joint position to set for each axis in radians.
@@ -324,7 +324,7 @@ public:
    * \warning This method is blocking. That mean that it wait the end of the
    * positioning.
    *
-   * \param frame : Control frame. This biclops head can only be controlled in
+   * \param frame : Control frame. This Biclops head can only be controlled in
    * joint state.
    *
    * \param q1 : The pan joint position to set in radians.
@@ -336,8 +336,8 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
 
   /*!
-   * Read the content of the position file and moves to head to joint
-   * position.
+   * Read the content of the position file and moves the head to joint
+   * positions.
    *
    * \param filename : Position filename
    *
@@ -365,7 +365,7 @@ public:
   /*!
    * Send a velocity on each axis.
    *
-   * \param frame : Control frame. This biclops head can only be controlled in
+   * \param frame : Control frame. This Biclops head can only be controlled in
    * joint state. Be aware, the camera frame (vpRobot::CAMERA_FRAME), the reference
    * frame (vpRobot::REFERENCE_FRAME), end-effector frame (vpRobot::END_EFFECTOR_FRAME)
    * and the mixt frame (vpRobot::MIXT_FRAME) are not implemented.

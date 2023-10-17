@@ -86,7 +86,7 @@ vpHomogeneousMatrix vpBiclops::get_fMe(const vpColVector &q) const
   vpHomogeneousMatrix fMe;
 
   if (q.getRows() != 2) {
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops joint position vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   double q1 = q[0]; // pan
@@ -213,7 +213,7 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
   eJe.resize(6, 2);
 
   if (q.getRows() != 2) {
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops joint position vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   double s2 = sin(q[1]);
@@ -236,7 +236,7 @@ void vpBiclops::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 void vpBiclops::get_fJe(const vpColVector &q, vpMatrix &fJe) const
 {
   if (q.getRows() != 2) {
-    throw(vpException(vpException::dimensionError, "Bad dimension for biclops joint position vector"));
+    throw(vpException(vpException::dimensionError, "Bad dimension for Biclops joint position vector"));
   }
 
   fJe.resize(6, 2);

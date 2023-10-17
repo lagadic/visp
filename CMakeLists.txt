@@ -520,7 +520,7 @@ VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basle
 VP_OPTION(USE_UEYE        Ueye        ""    "Include uEye SDK support for IDS cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK support" "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include Biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
