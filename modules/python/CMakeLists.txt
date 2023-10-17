@@ -35,23 +35,24 @@ if(Python_FOUND) # We have Python, we can install module
   set(bindings_package_location "${CMAKE_CURRENT_SOURCE_DIR}/bindings")
   message("${Python_EXECUTABLE}")
   set(bindings_gen_location "${CMAKE_CURRENT_BINARY_DIR}/bindings")
-  if(VISP_INITIAL_PASS)
-    add_custom_command( OUTPUT "${bindings_gen_location}/src/*.cpp"
-      COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
-      COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
-      DEPENDS "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h"
-      #DEPENDS visp_doc
-    )
-  endif()
-  # file(MAKE_DIRECTORY "${bindings_gen_location}/src")
-  # file(TOUCH "${bindings_gen_location}/src/main.cpp")
-  # set(python_bindings_cpp_src "${bindings_gen_location}/src/main.cpp")
-  # foreach(module ${python_bound_modules})
-  #   string(REPLACE "visp_" "" clean_module_name ${module})
-  #   set(cpp_src "${bindings_gen_location}/src/${clean_module_name}.cpp")
-  #   list(APPEND python_bindings_cpp_src "${cpp_src}")
-  #   file(TOUCH "${cpp_src}")
-  # endforeach()
+  add_custom_target( visp_python_bindings_generator_run
+    COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
+    COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
+    #DEPENDS "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h"
+    DEPENDS ${python_bound_modules}
+    #DEPENDS visp_doc
+  )
+  file(MAKE_DIRECTORY "${bindings_gen_location}/src")
+  #file(TOUCH "${bindings_gen_location}/src/main.cpp")
+  set(python_bindings_cpp_src "${bindings_gen_location}/src/main.cpp")
+
+  foreach(module ${python_bound_modules})
+    string(REPLACE "visp_" "" clean_module_name ${module})
+    set(cpp_src "${bindings_gen_location}/src/${clean_module_name}.cpp")
+    list(APPEND python_bindings_cpp_src "${cpp_src}")
+    #file(TOUCH "${cpp_src}")
+  endforeach()
+
 
   add_subdirectory(bindings "${bindings_gen_location}")
 
