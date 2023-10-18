@@ -82,7 +82,7 @@ public:
     float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
 
     // // Gradient computation attributes
-    int m_sobelKernelSize; /*!< Size of the Sobel kernels used to compute the gradients. Must be an odd number.*/
+    int m_gradientFilterKernelSize; /*!< Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.*/
 
     // // Edge detection attributes
     float m_lowerCannyThresh; /*!< The lower threshold for the Canny operator. Values lower than this value are rejected.
@@ -121,7 +121,7 @@ public:
       : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
       , m_gaussianKernelSize(5)
       , m_gaussianStdev(1.f)
-      , m_sobelKernelSize(3)
+      , m_gradientFilterKernelSize(3)
       , m_lowerCannyThresh(-1.f)
       , m_upperCannyThresh(-1.f)
       , m_edgeMapFilteringNbIter(1)
@@ -147,7 +147,7 @@ public:
      *
      * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
      * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
-     * \param[in] sobelKernelSize Size of the Sobel kernels used to compute the gradients. Must be an odd number.
+     * \param[in] gradientFilterKernelSize Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.
      * \param[in] lowerCannyThresh The lower threshold for the Canny operator. Values lower than this value are rejected.
                           A negative value makes the algorithm compute this threshold and the lower one automatically.
      * \param[in] upperCannyThresh The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
@@ -175,7 +175,7 @@ public:
     vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
       , const float &gaussianStdev
-      , const int &sobelKernelSize
+      , const int &gradientFilterKernelSize
       , const float &lowerCannyThresh
       , const float &upperCannyThresh
       , const int &edgeMapFilterNbIter
@@ -197,7 +197,7 @@ public:
       : m_filteringAndGradientType(filteringAndGradientMethod)
       , m_gaussianKernelSize(gaussianKernelSize)
       , m_gaussianStdev(gaussianStdev)
-      , m_sobelKernelSize(sobelKernelSize)
+      , m_gradientFilterKernelSize(gradientFilterKernelSize)
       , m_lowerCannyThresh(lowerCannyThresh)
       , m_upperCannyThresh(upperCannyThresh)
       , m_edgeMapFilteringNbIter(edgeMapFilterNbIter)
@@ -225,7 +225,7 @@ public:
       txt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType) + "\n";
       txt += "\tGaussian filter kernel size = " + std::to_string(m_gaussianKernelSize) + "\n";
       txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
-      txt += "\tSobel filter kernel size = " + std::to_string(m_sobelKernelSize) + "\n";
+      txt += "\tGradient filter kernel size = " + std::to_string(m_gradientFilterKernelSize) + "\n";
       txt += "\tCanny backend = " + vpImageFilter::vpCannyBackendTypeToString(m_cannyBackendType) + "\n";
       txt += "\tCanny edge filter thresholds = [" + std::to_string(m_lowerCannyThresh) + " ; " + std::to_string(m_upperCannyThresh) + "]\n";
       txt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(m_lowerCannyThreshRatio) + " ; " + std::to_string(m_upperCannyThreshRatio) + "]\n";
@@ -313,9 +313,9 @@ public:
         throw vpException(vpException::badValue, "Standard deviation should be > 0");
       }
 
-      params.m_sobelKernelSize = j.value("sobelKernelSize", params.m_sobelKernelSize);
-      if ((params.m_sobelKernelSize % 2) != 1) {
-        throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+      params.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", params.m_gradientFilterKernelSize);
+      if ((params.m_gradientFilterKernelSize % 2) != 1) {
+        throw vpException(vpException::badValue, "Gradient filter kernel (Sobel or Scharr) size should be odd.");
       }
 
       std::string cannyBackendName = vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType);
@@ -373,7 +373,7 @@ public:
           {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
           {"gaussianKernelSize", params.m_gaussianKernelSize},
           {"gaussianStdev", params.m_gaussianStdev},
-          {"sobelKernelSize", params.m_sobelKernelSize},
+          {"gradientFilterKernelSize", params.m_gradientFilterKernelSize},
           {"cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType)},
           {"lowerCannyThresh", params.m_lowerCannyThresh},
           {"lowerThresholdRatio", params.m_lowerCannyThreshRatio},
@@ -526,6 +526,7 @@ public:
   {
     m_algoParams.m_filteringAndGradientType = type;
     m_cannyVisp.setFilteringAndGradientType(type);
+    initGradientFilters();
   }
 
   /**
@@ -552,20 +553,19 @@ public:
   }
 
   /**
-   * \brief Set the parameters of the Sobel filters, that computes the
-   * gradients of the image.
+   * \brief Set the parameters of the gradient filter (Sobel or Scharr) kernel size filters.
    *
-   * \param[in] apertureSize The size of the Sobel filters kernel. Must be an odd value.
+   * \param[in] apertureSize The size of the gradient filters kernel. Must be an odd value.
    */
-  inline void setSobelAperture(const unsigned int &apertureSize)
+  inline void setGradientFilterAperture(const unsigned int &apertureSize)
   {
-    m_algoParams.m_sobelKernelSize = apertureSize;
+    m_algoParams.m_gradientFilterKernelSize = apertureSize;
 
-    if ((m_algoParams.m_sobelKernelSize % 2) != 1) {
-      throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+    if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+      throw vpException(vpException::badValue, "Gradient filter (Sobel or Scharr) Kernel size should be odd.");
     }
 
-    initSobelFilters();
+    initGradientFilters();
   }
 
   /**
@@ -861,9 +861,9 @@ private:
   void initGaussianFilters();
 
   /**
-   * \brief Initialize the Gaussian filters used to blur the image compute the gradient images.
+   * \brief Initialize the gradient filters used to compute the gradient images.
    */
-  void initSobelFilters();
+  void initGradientFilters();
 
   /**
    * \brief Perform Gaussian smoothing on the input image to reduce the noise
@@ -931,8 +931,8 @@ private:
   vpArray2D<float> m_fg;
 
   // // Gradient computation attributes
-  vpArray2D<float> m_sobelX;
-  vpArray2D<float> m_sobelY;
+  vpArray2D<float> m_gradientFilterX; /*!< Contains the coefficients of the gradient kernel along the X-axis*/
+  vpArray2D<float> m_gradientFilterY; /*!< Contains the coefficients of the gradient kernel along the Y-axis*/
   vpImage<float> m_dIx; /*!< Gradient along the x-axis of the input image.*/
   vpImage<float> m_dIy; /*!< Gradient along the y-axis of the input image.*/
 

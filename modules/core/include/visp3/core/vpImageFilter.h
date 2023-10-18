@@ -83,7 +83,8 @@ public:
   typedef enum vpCannyFilteringAndGradientType
   {
     CANNY_GBLUR_SOBEL_FILTERING = 0, //!< Apply Gaussian blur + Sobel operator on the input image
-    CANNY_COUNT_FILTERING = 1 //! Number of supported backends
+    CANNY_GBLUR_SCHARR_FILTERING = 1, //!< Apply Gaussian blur + Scharr operator on the input image
+    CANNY_COUNT_FILTERING = 2 //! Number of supported backends
   } vpCannyFilteringAndGradientType;
 
   static std::string vpCannyFilteringAndGradientTypeToString(const vpCannyFilteringAndGradientType &type);
@@ -1008,6 +1009,56 @@ public:
   }
 
   /*!
+    Get Scharr kernel for X-direction.
+    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+    \param filter : Pointer to a double array already allocated.
+    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+    \return Scaling factor.
+  */
+  template <typename FilterType>
+  inline static FilterType getScharrKernelX(FilterType *filter, unsigned int size)
+  {
+    if (size != 1) {
+      // Size = 1 => kernel_size = 2*1 + 1 = 3
+      std::string errMsg = "Cannot get Scharr kernel of size " + std::to_string(size * 2 + 1) + " != 3";
+      throw vpException(vpException::dimensionError, errMsg);
+    }
+
+    vpArray2D<FilterType> ScharrY(size * 2 + 1, size * 2 + 1);
+    FilterType norm = getScharrKernelY<FilterType>(ScharrY.data, size);
+    memcpy(filter, ScharrY.t().data, ScharrY.getRows() * ScharrY.getCols() * sizeof(FilterType));
+    return norm;
+  }
+
+  /*!
+    Get Scharr kernel for Y-direction.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    \param filter : Pointer to a double array already allocated.
+    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+    \return Scaling factor.
+  */
+  template <typename FilterType>
+  inline static FilterType getScharrKernelY(FilterType *filter, unsigned int size)
+  {
+    // Scharr kernel pre-computed for the usual size
+    static const FilterType ScharrY3x3[9] = { -3.0, -10.0, -3.0, 0.0, 0.0, 0.0, 3.0, 10.0, 3.0 };
+
+    if (size != 1) {
+      // Size = 1 => kernel_size = 2*1 + 1 = 3
+      std::string errMsg = "Cannot get Scharr kernel of size " + std::to_string(size * 2 + 1) + " != 3";
+      throw vpException(vpException::dimensionError, errMsg);
+    }
+
+    const unsigned int kernel_size = size * 2 + 1;
+    if (kernel_size == 3) {
+      memcpy(filter, ScharrY3x3, kernel_size * kernel_size * sizeof(FilterType));
+      return 1 / 32.0;
+    }
+
+    return 0.;
+  }
+
+  /*!
     Get Sobel kernel for X-direction.
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
@@ -1090,13 +1141,15 @@ public:
                                      const vpImage<float> *p_dIx = nullptr, const vpImage<float> *p_dIy = nullptr,
                                      const unsigned int gaussianKernelSize = 5,
                                      const float gaussianStdev = 2.f, const unsigned int apertureSobel = 3,
-                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8);
+                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8,
+                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
                                      float &lowerThresh, const unsigned int gaussianKernelSize = 5,
                                      const float gaussianStdev = 2.f, const unsigned int apertureSobel = 3,
-                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8);
+                                     const float lowerThresholdRatio = 0.6, const float upperThresholdRatio = 0.8,
+                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
   static float median(const cv::Mat &cv_I);
   static float median(const vpImage<unsigned char> &Isrc);
   static std::vector<float> median(const vpImage<vpRGBa> &Isrc);

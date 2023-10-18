@@ -39,14 +39,14 @@ vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
   initGaussianFilters();
-  initSobelFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams)
   : m_algoParams(algoParams)
 {
   initGaussianFilters();
-  initSobelFilters();
+  initGradientFilters();
 }
 
 void
@@ -54,7 +54,7 @@ vpCircleHoughTransform::init(const vpCircleHoughTransformParameters &algoParams)
 {
   m_algoParams = algoParams;
   initGaussianFilters();
-  initSobelFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::~vpCircleHoughTransform()
@@ -87,10 +87,10 @@ vpCircleHoughTransform::initFromJSON(const std::string &jsonPath)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  m_algoParams = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+  m_algoParams = j; // Call from_json(const json& j, vpCircleHoughTransformParameters&) to read json
   file.close();
   initGaussianFilters();
-  initSobelFilters();
+  initGradientFilters();
 }
 
 void
@@ -109,16 +109,24 @@ vpCircleHoughTransform::initGaussianFilters()
 }
 
 void
-vpCircleHoughTransform::initSobelFilters()
+vpCircleHoughTransform::initGradientFilters()
 {
-  if ((m_algoParams.m_sobelKernelSize % 2) != 1) {
-    throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+  if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+    throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
   }
-  m_sobelX.resize(m_algoParams.m_sobelKernelSize, m_algoParams.m_sobelKernelSize);
-  vpImageFilter::getSobelKernelX(m_sobelX.data, (m_algoParams.m_sobelKernelSize  - 1)/2);
-  m_sobelY.resize(m_algoParams.m_sobelKernelSize, m_algoParams.m_sobelKernelSize);
-  vpImageFilter::getSobelKernelY(m_sobelY.data, (m_algoParams.m_sobelKernelSize  - 1)/2);
-  m_cannyVisp.setSobelAperture(m_algoParams.m_sobelKernelSize);
+  m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
+
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+    vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
+  else if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Compute the Scharr filters
+    vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
 }
 
 std::vector<vpImageCircle>
@@ -225,15 +233,16 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
 void
 vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I)
 {
-  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
+     || m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Computing the Gaussian blurr
     vpImage<float> Iblur, GIx;
     vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize);
     vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize);
 
     // Computing the gradients
-    vpImageFilter::filter(Iblur, m_dIx, m_sobelX);
-    vpImageFilter::filter(Iblur, m_dIy, m_sobelY);
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY);
   }
   else {
     std::string errMsg("[computeGradientsAfterGaussianSmoothing] The filtering + gradient operators \"");
@@ -259,7 +268,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     // We will have to recompute the gradient in the desired backend format anyway so we let
     // the vpImageFilter::canny method take care of it
     vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
-    m_algoParams.m_upperCannyThresh, m_algoParams.m_sobelKernelSize, m_algoParams.m_gaussianStdev,
+    m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
     m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio,
     m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
   }

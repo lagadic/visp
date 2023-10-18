@@ -67,9 +67,9 @@ private:
 
   // // Gradient computation attributes
   bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
-  unsigned int m_sobelAperture; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
-  vpArray2D<float> m_sobelX; /*!< Array that contains the Sobel kernel along the X-axis.*/
-  vpArray2D<float> m_sobelY; /*!< Array that contains the Sobel kernel along the Y-axis.*/
+  unsigned int m_gradientFilterKernelSize; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
+  vpArray2D<float> m_gradientFilterX; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the X-axis.*/
+  vpArray2D<float> m_gradientFilterY; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the Y-axis.*/
   vpImage<float> m_dIx; /*!< X-axis gradient.*/
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
@@ -98,9 +98,9 @@ private:
   void initGaussianFilters();
 
   /**
-   * \brief Initialize the Sobel filters used to compute the input image gradients.
+   * \brief Initialize the gradient filters (Sobel or Scharr) used to compute the input image gradients.
    */
-  void initSobelFilters();
+  void initGradientFilters();
   //@}
 
   /** @name Different steps methods */
@@ -216,7 +216,7 @@ public:
     detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
     detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
     detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
-    detector.m_sobelAperture = j.value("sobelAperture", detector.m_sobelAperture);
+    detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
     detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
     detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
   }
@@ -236,7 +236,7 @@ public:
             {"gaussianStdev", detector.m_gaussianStdev},
             {"lowerThreshold", detector.m_lowerThreshold},
             {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
-            {"sobelAperture", detector.m_sobelAperture},
+            {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
             {"upperThreshold", detector.m_upperThreshold},
             {"upperThresholdRatio", detector.m_upperThresholdRatio}
     };
@@ -285,6 +285,7 @@ public:
   inline void setFilteringAndGradientType(const vpImageFilter::vpCannyFilteringAndGradientType &type)
   {
     m_filteringAndGradientType = type;
+    initGradientFilters();
   }
 
   /**
@@ -351,17 +352,14 @@ public:
   }
 
   /**
-   * \brief Set the Gaussian Filters kernel size and standard deviation
-   * and initialize the aforementioned filters.
+   * \brief  Set the parameters of the gradient filter (Sobel or Scharr) kernel size filters.
    *
-   * \param[in] kernelSize : The size of the Gaussian filters kernel.
-   * \param[in] stdev : The standard deviation of the Gaussian filters used to blur and
-   * compute the gradient of the image.
+   * \param[in] apertureSize The size of the gradient filters kernel. Must be an odd value.
    */
-  inline void setSobelAperture(const unsigned int &sobelAperture)
+  inline void setGradientFilterAperture(const unsigned int &apertureSize)
   {
-    m_sobelAperture = sobelAperture;
-    initSobelFilters();
+    m_gradientFilterKernelSize = apertureSize;
+    initGradientFilters();
   }
   //@}
 };
