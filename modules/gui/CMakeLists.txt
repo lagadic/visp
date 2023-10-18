@@ -39,28 +39,27 @@ set(opt_libs "")
 
 # Display X11, GTK, GDI, D3D9. OpenCV already handled by core module
 if(USE_X11)
-  list(APPEND opt_incs ${X11_INCLUDE_DIR})
-  list(APPEND opt_libs ${X11_LIBRARIES})
+  # X11 is private
+  include_directories(${X11_INCLUDE_DIR})
   mark_as_advanced(X11_xcb_icccm_INCLUDE_PATH)
   mark_as_advanced(X11_xcb_icccm_LIB)
   mark_as_advanced(X11_xcb_xkb_INCLUDE_PATH)
 endif()
+
 if(USE_GTK2)
-  list(APPEND opt_incs ${GTK2_INCLUDE_DIRS})
-  list(APPEND opt_libs ${GTK2_LIBRARIES})
-  # FS next lines removed until they proved to be useful
-#  if(UNIX)
-#    ## ignore gtk pedantic warnings by gcc specific -isystem :
-#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem ${GTK2_gtk_INCLUDE_PATH}")
-#  endif()
+  # gtk2 is private
+  include_directories(${GTK2_INCLUDE_DIRS})
 endif()
+
 if(USE_GDI)
   list(APPEND opt_libs ${GDI_LIBRARIES})
 endif()
+
 if(USE_DIRECT3D)
   list(APPEND opt_incs ${DIRECT3D_INCLUDE_DIRS})
   list(APPEND opt_libs ${DIRECT3D_LIBRARIES})
 endif()
+
 if(USE_PCL)
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
@@ -83,7 +82,7 @@ if(USE_PCL)
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
-vp_add_module(gui visp_core)
+vp_add_module(gui visp_core PRIVATE_OPTIONAL ${X11_LIBRARIES} ${GTK2_LIBRARIES})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

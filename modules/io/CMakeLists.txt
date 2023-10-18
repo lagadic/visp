@@ -39,8 +39,8 @@ set(opt_libs "")
 
 # Image i/o: jpeg, png, OpenCV (already included by core)
 if(USE_JPEG)
-  list(APPEND opt_incs ${JPEG_INCLUDE_DIR})
-  list(APPEND opt_libs ${JPEG_LIBRARIES})
+  # libpng usage is private
+  include_directories(${JPEG_INCLUDE_DIR})
   # If Qt3 and libjpeg are used, we add here QT_CLEAN_NAMESPACE define to
   # handle a compilation error "conflicting declaration 'typedef long int INT32'
   if(VISP_HAVE_QT3_FOUND)
@@ -49,8 +49,8 @@ if(USE_JPEG)
 endif()
 
 if(USE_PNG)
-  list(APPEND opt_incs ${PNG_INCLUDE_DIR})
-  list(APPEND opt_libs ${PNG_LIBRARIES})
+  # libpng usage is private
+  include_directories(${PNG_INCLUDE_DIR})
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
@@ -66,7 +66,6 @@ if(USE_NLOHMANN_JSON)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
-
 
 # simdlib is always enabled since it contains fallback code to plain C++ code
 # Simd lib is private
@@ -183,9 +182,9 @@ if(USE_OPENCV)
 endif(USE_OPENCV)
 
 if(ANDROID)
-  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES})
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES} ${JPEG_LIBRARIES} ${PNG_LIBRARIES})
 else()
-  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES} WRAP java)
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES} ${JPEG_LIBRARIES} ${PNG_LIBRARIES} WRAP java)
 endif()
 
 vp_glob_module_sources()
