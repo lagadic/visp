@@ -2,6 +2,8 @@
 # project(_visp)
 
 find_package(VISP PATHS ${VISP_BINARY_DIR} NO_DEFAULT_PATH)
+find_package(pybind11 REQUIRED)
+
 set_source_files_properties(${python_bindings_cpp_src} PROPERTIES GENERATED TRUE)
 
 #find_package(VISP REQUIRED)
