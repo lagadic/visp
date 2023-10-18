@@ -43,15 +43,16 @@
 
 /* Headers */
 #include <visp3/robot/vpRobotBiclops.h>
-#include <visp3/robot/vpRobotBiclopsController.h>
 #include <visp3/robot/vpRobotException.h>
+
+#include "vpRobotBiclopsController_impl.h"
 
 //#define VP_DEBUG        // Activate the debug mode
 //#define VP_DEBUG_MODE 20 // Activate debug level 1 and 2
 
 #include <visp3/core/vpDebug.h>
 
-vpRobotBiclopsController::vpRobotBiclopsController()
+vpRobotBiclops::vpRobotBiclopsController::vpRobotBiclopsController()
   : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL), m_vergeAxis(NULL), m_panProfile(), m_tiltProfile(),
   m_vergeProfile(), m_shm(), m_stopControllerThread(false)
 {
@@ -72,9 +73,9 @@ vpRobotBiclopsController::vpRobotBiclopsController()
   }
 }
 
-vpRobotBiclopsController::~vpRobotBiclopsController() { }
+vpRobotBiclops::vpRobotBiclopsController::~vpRobotBiclopsController() { }
 
-void vpRobotBiclopsController::init(const std::string &configfile)
+void vpRobotBiclops::vpRobotBiclopsController::init(const std::string &configfile)
 {
   vpDEBUG_TRACE(12, "Initialize Biclops.");
   bool binit = false;
@@ -143,7 +144,7 @@ void vpRobotBiclopsController::init(const std::string &configfile)
     m_vergeAxis->GetProfile(m_vergeProfile);
 }
 
-void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentVelocity)
+void vpRobotBiclops::vpRobotBiclopsController::setPosition(const vpColVector &q, double percentVelocity)
 {
   if (q.getRows() != vpBiclops::ndof) {
     vpERROR_TRACE("Bad dimension for positioning vector.");
@@ -213,7 +214,7 @@ void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentV
   m_biclops.Move(Biclops::PanMask + Biclops::TiltMask /*, 0*/); //
 }
 
-void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
+void vpRobotBiclops::vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
 {
   if (q_dot.getRows() != vpBiclops::ndof) {
     vpERROR_TRACE("Bad dimension for velocity vector.");
@@ -264,7 +265,7 @@ void vpRobotBiclopsController::setVelocity(const vpColVector &q_dot)
   m_biclops.Move(Biclops::PanMask + Biclops::TiltMask, 0); //
 }
 
-vpColVector vpRobotBiclopsController::getPosition()
+vpColVector vpRobotBiclops::vpRobotBiclopsController::getPosition()
 {
   vpDEBUG_TRACE(12, "Start vpRobotBiclopsController::getPosition() ");
   vpColVector q(vpBiclops::ndof);
@@ -282,7 +283,7 @@ vpColVector vpRobotBiclopsController::getPosition()
   return q;
 }
 
-vpColVector vpRobotBiclopsController::getActualPosition()
+vpColVector vpRobotBiclops::vpRobotBiclopsController::getActualPosition()
 {
   vpColVector q(vpBiclops::ndof);
   PMDint32 panpos, tiltpos;
@@ -296,7 +297,7 @@ vpColVector vpRobotBiclopsController::getActualPosition()
   return q;
 }
 
-vpColVector vpRobotBiclopsController::getVelocity()
+vpColVector vpRobotBiclops::vpRobotBiclopsController::getVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
   PMDint32 pan_vel, tilt_vel;
@@ -310,7 +311,7 @@ vpColVector vpRobotBiclopsController::getVelocity()
   return q_dot;
 }
 
-vpColVector vpRobotBiclopsController::getActualVelocity()
+vpColVector vpRobotBiclops::vpRobotBiclopsController::getActualVelocity()
 {
   vpColVector q_dot(vpBiclops::ndof);
   PMDint32 pan_vel, tilt_vel;
@@ -324,7 +325,7 @@ vpColVector vpRobotBiclopsController::getActualVelocity()
   return q_dot;
 }
 
-void vpRobotBiclopsController::writeShm(shmType &shm)
+void vpRobotBiclops::vpRobotBiclopsController::writeShm(shmType &shm)
 {
   for (unsigned int i = 0; i < vpBiclops::ndof; i++) {
     vpDEBUG_TRACE(13, "q_dot[%d]=%f", i, m_shm.q_dot[i]);
@@ -335,7 +336,7 @@ void vpRobotBiclopsController::writeShm(shmType &shm)
   }
 }
 
-vpRobotBiclopsController::shmType vpRobotBiclopsController::readShm()
+vpRobotBiclops::vpRobotBiclopsController::shmType vpRobotBiclops::vpRobotBiclopsController::readShm()
 {
   shmType tmp_shm;
 

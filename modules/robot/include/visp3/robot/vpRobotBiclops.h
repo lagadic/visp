@@ -52,7 +52,6 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpRobotBiclopsController.h>
 
 /* ------------------------------------------------------------------------ */
 /* --- CLASS -------------------------------------------------------------- */
@@ -418,7 +417,8 @@ private:
 
   std::string m_configfile; // Biclops config file
 
-  vpRobotBiclopsController m_controller;
+  class vpRobotBiclopsController;
+  vpRobotBiclopsController *m_controller;
 
   double m_positioningVelocity;
   vpColVector m_q_previous;

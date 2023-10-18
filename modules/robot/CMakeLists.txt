@@ -101,8 +101,8 @@ if(USE_MAVSDK)
 endif()
 
 if(USE_BICLOPS)
-  list(APPEND opt_incs ${BICLOPS_INCLUDE_DIRS})
-  list(APPEND opt_libs ${BICLOPS_LIBRARIES})
+  # No need to export, there is an implementation that allows to use Biclops as private
+  include_directories(${BICLOPS_INCLUDE_DIRS})
 endif()
 
 if(USE_PTU46)
@@ -181,7 +181,7 @@ if(WITH_TAKKTILE2)
   include_directories(${TAKKTILE2_INCLUDE_DIRS})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${QBDEVICE_LIBRARIES} ${TAKKTILE2_LIBRARIES})
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${QBDEVICE_LIBRARIES} ${TAKKTILE2_LIBRARIES} ${BICLOPS_LIBRARIES})
 vp_glob_module_sources()
 
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
@@ -220,6 +220,11 @@ endif()
 
 if(USE_MAVSDK)
   vp_set_source_file_compile_flag(src/real-robot/mavsdk/vpRobotMavsdk.cp -Wno-unused-but-set-variable)
+endif()
+
+if(USE_BICLOPS)
+  vp_set_source_file_compile_flag(src/real-robot/biclops/vpRobotBiclops.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/real-robot/biclops/private/vpRobotBiclopsController_impl.cpp -Wno-unused-parameter)
 endif()
 
 vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
