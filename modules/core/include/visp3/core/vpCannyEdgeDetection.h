@@ -177,10 +177,13 @@ public:
    * \param[in] upperThresholdRatio : If the thresholds must be computed,the upper threshold will be equal to the value
    * such as the number of pixels of the image times \b upperThresholdRatio have an absolute gradient lower than the
    * upper threshold.
+   * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
+   * operation.
    */
   vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
                        const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
-                       const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f);
+                       const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
+                       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON

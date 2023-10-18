@@ -54,8 +54,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
 vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
                         , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
                         , const float &lowerThresholdRatio, const float &upperThresholdRatio
+                        , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
 )
-  : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+  : m_filteringAndGradientType(filteringType)
   , m_gaussianKernelSize(gaussianKernelSize)
   , m_gaussianStdev(gaussianStdev)
   , m_areGradientAvailable(false)
@@ -109,7 +110,7 @@ vpCannyEdgeDetection::initGaussianFilters()
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
   m_fg.resize(1, (m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, false);
+  vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, true);
 }
 
 void

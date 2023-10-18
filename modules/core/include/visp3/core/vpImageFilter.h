@@ -1013,7 +1013,7 @@ public:
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor.
+    \return Scaling factor to normalize the Scharr kernel.
   */
   template <typename FilterType>
   inline static FilterType getScharrKernelX(FilterType *filter, unsigned int size)
@@ -1035,7 +1035,7 @@ public:
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor.
+    \return Scaling factor to normalize the Scharr kernel.
   */
   template <typename FilterType>
   inline static FilterType getScharrKernelY(FilterType *filter, unsigned int size)
@@ -1063,7 +1063,7 @@ public:
     \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor.
+    \return Scaling factor to normalize the Sobel kernel.
   */
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
@@ -1084,7 +1084,7 @@ public:
     \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
     \param filter : Pointer to a double array already allocated.
     \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor.
+    \return Scaling factor to normalize the Sobel kernel.
   */
   template <typename FilterType>
   inline static FilterType getSobelKernelY(FilterType *filter, unsigned int size)
@@ -1113,28 +1113,33 @@ public:
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
 
     const unsigned int kernel_size = size * 2 + 1;
+    double scale = (1. / 8.); // Scale to normalize Sobel3x3
     if (kernel_size == 3) {
       memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
-      return 1 / 8.0;
+      return scale;
     }
+    scale *= 1./ 16.; // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
     if (kernel_size == 5) {
       memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
-      return 1 / 16.0;
+      return scale;
     }
+    scale *= 1./ 16.; // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
     if (kernel_size == 7) {
       memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
-      return 1 / 16.0;
+      return scale;
     }
 
     vpArray2D<FilterType> sobelY(7, 7);
     memcpy(sobelY.data, SobelY7x7, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
     for (unsigned int i = 4; i <= size; i++) {
       sobelY = vpArray2D<FilterType>::conv2(sobelY, smoothingKernel, "full");
+      // Sobel(N+1)x(N+1) is the convolution of smoothingKernel, which needs 1/16 scale factor, with SobelNxN
+      scale *= 1./ 16.;
     }
 
     memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
 
-    return 1 / 16.0;
+    return scale;
   }
 
   static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
