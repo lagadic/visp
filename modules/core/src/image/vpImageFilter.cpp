@@ -719,15 +719,33 @@ float vpImageFilter::computeCannyThreshold(const vpImage<unsigned char> &I, floa
     vpArray2D<float> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
     vpArray2D<float> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
 
-    if (filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-      vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Sobel kernel along x
-      vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Sobel kernel along y
+    // Helper to apply the scale to the raw values of the filters
+    auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+      for (unsigned int r = 0; r < filter.getRows(); r++) {
+        for (unsigned int c = 0; c < filter.getCols(); c++) {
+          filter[r][c] = filter[r][c] * scale;
+        }
+      }};
+
+    // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
+    // between 0 and 255 for an vpImage<uchar>
+    float scaleX = 1.f;
+    float scaleY = 1.f;
+
+    if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
+      scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Sobel kernel along X
+      scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Sobel kernel along Y
     }
-    else if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
-      vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Scharr kernel along x
-      vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Scharr kernel along y
+    else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
+      scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Scharr kernel along X
+      scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Scharr kernel along Y
     }
 
+    // Scale the gradient filters to have a normalized gradient filter
+    scaleFilter(gradientFilterX, scaleX);
+    scaleFilter(gradientFilterY, scaleY);
+
+    // Apply the gradient filters to get the gradients
     vpImageFilter::filter(Iblur, dIx, gradientFilterX);
     vpImageFilter::filter(Iblur, dIy, gradientFilterY);
   }
@@ -985,14 +1003,31 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
       vpArray2D<float> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
       vpArray2D<float> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
 
+      // Helper to apply the scale to the raw values of the filters
+      auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+        for (unsigned int r = 0; r < filter.getRows(); r++) {
+          for (unsigned int c = 0; c < filter.getCols(); c++) {
+            filter[r][c] = filter[r][c] * scale;
+          }
+        }};
+
+      // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
+      // between 0 and 255 for an vpImage<uchar>
+      float scaleX = 1.f;
+      float scaleY = 1.f;
+
       if (cannyFilteringSteps == CANNY_GBLUR_SOBEL_FILTERING) {
-        vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Sobel kernel along X
-        vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Sobel kernel along Y
+        scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2); // Sobel kernel along X
+        scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2); // Sobel kernel along Y
       }
       else if (cannyFilteringSteps == CANNY_GBLUR_SCHARR_FILTERING) {
-        vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
-        vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
+        scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
+        scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
       }
+
+      // Scale the gradient filters to have a normalized gradient filter
+      scaleFilter(gradientFilterX, scaleX);
+      scaleFilter(gradientFilterY, scaleY);
 
       // Apply the gradient filters to get the gradients
       vpImageFilter::filter(Iblur, dIx, gradientFilterX);

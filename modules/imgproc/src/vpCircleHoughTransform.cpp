@@ -118,15 +118,34 @@ vpCircleHoughTransform::initGradientFilters()
   m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
   m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
 
+  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+    for (unsigned int r = 0; r < filter.getRows(); r++) {
+      for (unsigned int c = 0; c < filter.getCols(); c++) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }};
+
+  float scaleX = 1.f;
+  float scaleY = 1.f;
+
   if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
-    vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    // Compute the Sobel filters
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
   }
   else if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
-    vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
   }
+  else {
+    std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" has not been implemented yet\n";
+    throw vpException(vpException::notImplementedError, errMsg);
+  }
+  scaleFilter(m_gradientFilterX, scaleX);
+  scaleFilter(m_gradientFilterY, scaleY);
 }
 
 std::vector<vpImageCircle>
