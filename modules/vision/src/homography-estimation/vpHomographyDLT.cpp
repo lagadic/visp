@@ -144,7 +144,7 @@ void vpHomography::HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb,
 {
 
   // calcul des transformations a appliquer sur M_norm pour obtenir M
-  // en fonction des deux normalisations effectuees au debut sur
+  // en fonction des deux normalizations effectuees au debut sur
   // les points: aHb = T2^ aHbn T1
   vpMatrix T1(3, 3);
   vpMatrix T2(3, 3);

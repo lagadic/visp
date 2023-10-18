@@ -255,10 +255,87 @@ public:
   void extract(vpTranslationVector &t) const;
   void extract(vpQuaternionVector &q) const;
 
-  // Load an homogeneous matrix from a file
+  /*!
+   * Read an homogeneous matrix from an input file stream. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param f : Input file stream.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * std::ifstream f("homogeneous.dat");
+   * M.load(f);
+   * \endcode
+   *
+   * \sa load(const std::string &), save(std::ifstream &)
+   */
   void load(std::ifstream &f);
-  // Save an homogeneous matrix in a file
+
+  /*!
+   * Read an homogeneous matrix from an input file. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param filename : Input file name.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * M.load("homogeneous.dat");
+   * \endcode
+   *
+   * \sa load(std::ifstream &), save(const std::string &)
+   */
+  void load(const std::string &filename);
+
+  /*!
+   * Save an homogeneous matrix in an output file stream.
+   *
+   * \param f : Output file stream. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * std::ofstream f("homogeneous.dat");
+   * M.save(f);
+   * \endcode
+   *
+   * \sa save(const std::string &), load(std::ifstream &)
+   */
   void save(std::ofstream &f) const;
+
+  /*!
+   * Save an homogeneous matrix in a file.
+   *
+   * \param filename : Output file name. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * M.save("homogeneous.dat");
+   * \endcode
+   *
+   * \sa save(std::ofstream &), load(const std::string &)
+   */
+  void save(const std::string &filename) const;
 
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;

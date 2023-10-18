@@ -148,7 +148,7 @@ void vpPtu46::computeMGD(const vpColVector &q, vpPoseVector &r) const
 
 /*!
 
-  Default construtor. Call init().
+  Default constructor. Call init().
 
 */
 vpPtu46::vpPtu46(void) { init(); }
@@ -184,7 +184,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPtu46 & /* consta
   on the tilt axis.
 
   \param cVe : Twist transformation between camera and end effector frame to
-  expess a velocity skew from end effector frame in camera frame.
+  express a velocity skew from end effector frame in camera frame.
 
 */
 void vpPtu46::get_cVe(vpVelocityTwistMatrix &cVe) const
