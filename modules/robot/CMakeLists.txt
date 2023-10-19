@@ -36,6 +36,7 @@
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 # Warning: when composing the link line, CMake sometimes end up placing multiple
 # copies of a given library. This can produce the following link error
@@ -103,6 +104,7 @@ endif()
 if(USE_BICLOPS)
   # No need to export, there is an implementation that allows to use Biclops as private
   include_directories(${BICLOPS_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${BICLOPS_LIBRARIES})
 endif()
 
 if(USE_PTU46)
@@ -174,14 +176,16 @@ endif()
 if(WITH_QBDEVICE)
   # qbdevice is private
   include_directories(${QBDEVICE_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${QBDEVICE_LIBRARIES})
 endif()
 
 if(WITH_TAKKTILE2)
   # reflex-takktile2 is private
   include_directories(${TAKKTILE2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${TAKKTILE2_LIBRARIES})
 endif()
 
-vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${QBDEVICE_LIBRARIES} ${TAKKTILE2_LIBRARIES} ${BICLOPS_LIBRARIES})
+vp_add_module(robot visp_core OPTIONAL visp_io visp_gui visp_sensor PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpKeyword.cpp -Wno-sign-conversion)
