@@ -498,6 +498,27 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
 }
 
 /*!
+ * Converts cv::Mat CV_32FC1 format to ViSP vpImage<double>.
+ *
+ * \param[in] src : OpenCV image in CV_32FC1 format.
+ * \param[out] dest : ViSP image in double format.
+ * \param[in] flip : When true during conversion flip image vertically.
+ */
+void vpImageConvert::convert(const cv::Mat &src, vpImage<double> &dest, bool flip)
+{
+  vpImage<float> I_float;
+  convert(src, I_float, flip);
+  unsigned int nbRows = (unsigned int)src.rows;
+  unsigned int nbCols = (unsigned int)src.cols;
+  dest.resize(nbRows, nbCols);
+  for (unsigned int i = 0; i < nbRows; ++i) {
+    for (unsigned int j = 0; j < nbCols; ++j) {
+      dest[i][j] = I_float[i][j];
+    }
+  }
+}
+
+/*!
  * Converts cv::Mat CV_16UC1 format to ViSP vpImage<uint16_t>.
  *
  * \param[in] src : OpenCV image in CV_16UC1 format.
@@ -660,6 +681,19 @@ void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copy
   else {
     dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
   }
+}
+
+void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool copyData)
+{
+  unsigned int nbRows = src.getRows();
+  unsigned int nbCols = src.getCols();
+  vpImage<float> I_float(nbRows, nbCols);
+  for (unsigned int i = 0; i < nbRows; ++i) {
+    for (unsigned int j = 0; j < nbCols; ++j) {
+      I_float[i][j] = src[i][j];
+    }
+  }
+  convert(I_float, dest, copyData);
 }
 
 void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)

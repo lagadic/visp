@@ -69,59 +69,10 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
 void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev, vpCannyEdgeDetection &cannyDetector,
                              const unsigned int apertureSize, const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
-  // Get the Gaussian blur kernel
-  if ((gaussianKernelSize % 2) == 0) {
-    throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
-  }
-  vpArray2D<float> fg(1, (gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(fg.data, gaussianKernelSize, gaussianStdev, true);
-
-  // Get the gradient filters kernel
-  if ((apertureSize % 2) != 1) {
-    throw vpException(vpException::badValue, "Gradient filters kernel size should be odd.");
-  }
-  vpArray2D<float> gradientFilterX(apertureSize, apertureSize);
-  vpArray2D<float> gradientFilterY(apertureSize, apertureSize);
-
-  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
-    for (unsigned int r = 0; r < filter.getRows(); r++) {
-      for (unsigned int c = 0; c < filter.getCols(); c++) {
-        filter[r][c] = filter[r][c] * scale;
-      }
-    }};
-
-  float scaleX = 1.f;
-  float scaleY = 1.f;
-
-  if (filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureSize  - 1)/2);
-    scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureSize  - 1)/2);
-  }
-  else if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
-    // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureSize  - 1)/2);
-    scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureSize  - 1)/2);
-  }
-  else {
-    std::string errMsg = "Error: gradient filtering method \"";
-    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(filteringType);
-    errMsg += "\" has not been implemented yet\n";
-    throw vpException(vpException::notImplementedError, errMsg);
-  }
-
-  scaleFilter(gradientFilterX, scaleX);
-  scaleFilter(gradientFilterY, scaleY);
-
-  // Perform Gaussian blur
-  vpImage<float> Iblur;
-  vpImage<float> GIx;
-  vpImageFilter::filterX<unsigned char, float>(I, GIx, fg.data, gaussianKernelSize);
-  vpImageFilter::filterY<float, float>(GIx, Iblur, fg.data, gaussianKernelSize);
-
   // Computing the gradients
   vpImage<float> dIx, dIy;
-  vpImageFilter::filter(Iblur, dIx, gradientFilterX);
-  vpImageFilter::filter(Iblur, dIy, gradientFilterY);
+  vpImageFilter::computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
+      apertureSize, filteringType);
 
   // Set the gradients of the vpCannyEdgeDetection
   cannyDetector.setGradients(dIx, dIy);
@@ -287,7 +238,7 @@ int main(int argc, const char *argv[])
     float cannyThresh = opt_upperThresh;
     float lowerThresh(opt_lowerThresh);
     vpImageFilter::canny(I_canny_input, I_canny, opt_gaussianKernelSize, lowerThresh, cannyThresh,
-                         opt_apertureSize, opt_gaussianStdev, opt_lowerThreshRatio, opt_upperThreshRatio,
+                         opt_apertureSize, opt_gaussianStdev, opt_lowerThreshRatio, opt_upperThreshRatio, true,
                          opt_backend, opt_filteringType);
     drawingHelpers::display(I_canny, "Canny results with \"" + vpImageFilter::vpCannyBackendTypeToString(opt_backend) + "\" backend", true);
   }

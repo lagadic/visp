@@ -288,7 +288,7 @@ vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
     // the vpImageFilter::canny method take care of it
     vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
     m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
-    m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio,
+    m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio, true,
     m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
   }
 
