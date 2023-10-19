@@ -4327,7 +4327,7 @@ void vpMbGenericTracker::setGoodMovingEdgesRatioThreshold(double threshold)
 
   \sa setNbRayCastingAttemptsForVisibility(const unsigned int &)
 
-  \param ratio : Ratio of succesful attempts that has to be considered. Value
+  \param ratio : Ratio of successful attempts that has to be considered. Value
   has to be between 0.0 (0%) and 1.0 (100%).
 
   \note This function will set the new parameter for all the cameras.

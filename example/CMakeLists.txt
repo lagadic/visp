@@ -70,7 +70,6 @@ visp_add_subdirectory(device/light             REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(direct-visual-servoing   REQUIRED_DEPS visp_core visp_robot visp_visual_features visp_io visp_gui)
 visp_add_subdirectory(homography               REQUIRED_DEPS visp_core visp_vision visp_io)
 visp_add_subdirectory(image                    REQUIRED_DEPS visp_core visp_io)
-visp_add_subdirectory(key-point                REQUIRED_DEPS visp_core visp_vision visp_sensor visp_io visp_gui)
 visp_add_subdirectory(manual                   REQUIRED_DEPS visp_core visp_sensor visp_vs visp_robot visp_ar visp_vision visp_io visp_gui)
 visp_add_subdirectory(math                     REQUIRED_DEPS visp_core visp_vision visp_io)
 visp_add_subdirectory(moments/image            REQUIRED_DEPS visp_core visp_vs visp_robot visp_gui)

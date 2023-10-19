@@ -29,9 +29,9 @@
  */
 
 /*!
-  \file vpMeEllipse.h
-  \brief Moving edges on an ellipse
-*/
+ * \file vpMeEllipse.h
+ * \brief Moving edges on an ellipse
+ */
 
 #ifndef _vpMeEllipse_h_
 #define _vpMeEllipse_h_
@@ -50,42 +50,42 @@
 #include <math.h>
 
 /*!
-  \class vpMeEllipse
-  \ingroup module_me
-
-  \brief Class that tracks an ellipse using moving edges.
-
-  In this class, an ellipse is defined as the set of image points \f$ (u,v) \f$
-  (for more information about the image frame see the vpImagePoint
-  documentation) that satisfy the homogeneous equation:
-
-  \f[ K_0 u^2 + K_1 v^2 + 2K_2  u v + 2K_3 u + 2K_4 v + K5 = 0 \f]
-  with \f$K_0 = n_{02}\f$, \f$K_1 = n_{20}\f$, \f$K_2 = -n_{11}\f$, etc.
-  (see Eq. (25) of Chaumette TRO 2004 paper \cite Chaumette04a)
-
-  If \f$ K_0 = K1 \f$ and \f$ K_2 = 0 \f$, the ellipse is a circle.
-
-  The six parameters are stored in the private attribute K.
-
-  An ellipse is also represented thanks to five parameters that are
-  the center \f$ (uc,vc) \f$ of the ellipse and either:
-  - three normalized moments \f$ n_{ij} \f$ of order 2,
-  - or the semi major axis \f$ A \f$, the semi minor
-    axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
-    defined by the angle between the major axis and the u axis of the image frame.
-
-  For more details, see \cite Chaumette04a.
-  The following figure illustrates these parameters.
-
-  \image html vpMeEllipse.gif
-
-  The example below available in tutorial-me-ellipse-tracker.cpp and described
-  in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to
-  use this class.
-
-  \include tutorial-me-ellipse-tracker.cpp
-
-*/
+ * \class vpMeEllipse
+ * \ingroup module_me
+ *
+ * \brief Class that tracks an ellipse using moving edges.
+ *
+ * In this class, an ellipse is defined as the set of image points \f$ (u,v) \f$
+ * (for more information about the image frame see the vpImagePoint
+ * documentation) that satisfy the homogeneous equation:
+ *
+ * \f[ K_0 u^2 + K_1 v^2 + 2K_2 u v + 2K_3 u + 2K_4 v + K5 = 0 \f]
+ * with \f$K_0 = n_{02}\f$, \f$K_1 = n_{20}\f$, \f$K_2 = -n_{11}\f$, etc.
+ * (see Eq. (25) of Chaumette TRO 2004 paper \cite Chaumette04a)
+ *
+ * If \f$ K_0 = K1 \f$ and \f$ K_2 = 0 \f$, the ellipse is a circle.
+ *
+ * The six parameters are stored in the private attribute K.
+ *
+ * An ellipse is also represented thanks to five parameters that are
+ * the center \f$ (uc,vc) \f$ of the ellipse and either:
+ * - three normalized moments \f$ n_{ij} \f$ of order 2,
+ * - or the semi major axis \f$ A \f$, the semi minor
+ *   axis \f$ B \f$ and the ellipse orientation \f$ E \in [-\pi/2;\pi/2] \f$
+ *   defined by the angle between the major axis and the u axis of the image frame.
+ *
+ * For more details, see \cite Chaumette04a.
+ * The following figure illustrates these parameters.
+ *
+ * \image html vpMeEllipse.gif
+ *
+ * The example below available in tutorial-me-ellipse-tracker.cpp and described
+ * in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to
+ * use this class.
+ *
+ * \include tutorial-me-ellipse-tracker.cpp
+ *
+ */
 class VISP_EXPORT vpMeEllipse : public vpMeTracker
 {
 public:
@@ -93,6 +93,7 @@ public:
    * Basic constructor that calls the constructor of the class vpMeTracker.
    */
   vpMeEllipse();
+
   /*!
    * Copy constructor.
    */
@@ -305,133 +306,67 @@ public:
    */
   void track(const vpImage<unsigned char> &I);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
-    @name Deprecated functions
-  */
-  //@{
-  /*!
-    \deprecated You should rather use get_ABE().
-    Gets the semi major axis of the ellipse.
-
-    \sa get_ABE()
-  */
-  vp_deprecated inline double getA() const { return a; }
-
-  /*!
-    \deprecated You should rather use get_ABE().
-    Gets the semi minor axis of the ellipse.
-
-    \sa get_ABE()
-  */
-  vp_deprecated inline double getB() const { return b; }
-
-  /*!
-    \deprecated You should rather use get_ABE().
-    Gets the angle made by the major axis and the u axis of the image frame
-    \f$ (u,v) \f$,  \f$ e \in [-\pi/2;pi/2] \f$.
-
-    \sa get_ABE()
-  */
-  vp_deprecated inline double getE() const { return e; }
+   * Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
+   *
+   * \param I : The image used as background.
+   * \param center : Center of the ellipse.
+   * \param A : Semi major axis of the ellipse.
+   * \param B : Semi minor axis of the ellipse.
+   * \param E : Angle made by the major axis and the u axis of the image frame
+   * \f$ (u,v) \f$ (in rad).
+   * \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
+   * \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
+   * \param color : Color used to display the ellipse.
+   * \param thickness : Thickness of the drawings.
+   *
+   * \sa vpDisplay::displayEllipse()
+   */
+  static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+                             const double &E, const double &smallalpha, const double &highalpha,
+                             const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   /*!
-    \deprecated Call rather getArea().
-
-    Gets the zero order moment \f$ m_{00} \f$ which represents the area of the
-    ellipse.
-
-    \return The value of \f$ m_{00} \f$.
-
-    \sa getArea()
-  */
-  vp_deprecated inline double get_m00() const { return m00; }
-
-  /*!
-    \deprecated Gets the first order raw moment \f$ m_{10} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
-    j^m \f$.
-
-    \return the value of \f$ m_{10} \f$.
-  */
-  vp_deprecated inline double get_m10() const { return m10; }
-
-  /*!
-    \deprecated Gets the first order raw moment \f$ m_{01} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
-    j^m \f$.
-
-    \return the value of \f$ m_{01} \f$.
-  */
-  vp_deprecated inline double get_m01() const { return m01; }
-
-  /*!
-    \deprecated Gets the second order raw moment \f$ m_{11} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
-    j^m \f$.
-
-    \return the value of \f$ m_{11} \f$.
-  */
-  vp_deprecated inline double get_m11() const { return m11; }
-
-  /*!
-    \deprecated Gets the second order raw moment \f$ m_{20} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
-    j^m \f$.
-
-    \return the value of \f$ m_{11} \f$.
-  */
-  vp_deprecated inline double get_m20() const { return m20; }
-
-  /*!
-    \deprecated Gets the second order raw moment \f$ m_{02} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
-    j^m \f$.
-
-    \return the value of \f$ m_{11} \f$.
-  */
-  vp_deprecated inline double get_m02() const { return m02; }
-
-  /*!
-    \deprecated Gets the second order centered moment \f$ \mu_{11} \f$.
-
-    \return the value of \f$ \mu_{11} \f$.
-  */
-  vp_deprecated inline double get_mu11() const { return mu11; }
-
-  /*!
-    \deprecated Gets the second order centered moment \f$ \mu_{02} \f$.
-
-    \return the value of \f$ \mu_{02} \f$.
-  */
-  vp_deprecated inline double get_mu02() const { return mu02; }
-
-  /*!
-    \deprecated Gets the second order centered moment \f$ \mu_{20} \f$.
-
-    \return the value of \f$ \mu_{20} \f$.
-  */
-  vp_deprecated inline double get_mu20() const { return mu20; }
-  /*!
-    \deprecated You should rather use get_ABE().
-    Gets the equation parameters of the ellipse.
-  */
-  vp_deprecated void getEquationParam(double &A, double &B, double &E)
-  {
-    A = a;
-    B = b;
-    E = e;
-  }
-  vp_deprecated void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p,
-                                  double e_p, double low_alpha, double high_alpha);
-  vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP);
-  vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j);
-  //@}
-#endif // VISP_BUILD_DEPRECATED_FUNCTIONS
+   * Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
+   *
+   * \param I : The image used as background.
+   * \param center : Center of the ellipse
+   * \param A : Semi-major axis of the ellipse.
+   * \param B : Semi-minor axis of the ellipse.
+   * \param E : Angle made by the major axis and the u axis of the image frame
+   * \f$ (u,v) \f$ (in rad)
+   * \param smallalpha : Smallest \f$ alpha \f$ angle in rad  (0 for a complete ellipse)
+   * \param highalpha : Highest \f$ alpha \f$ angle in rad  (\f$ 2 \Pi \f$ for a complete ellipse)
+   * \param color : Color used to display th lines.
+   * \param thickness : Thickness of the drawings.
+   *
+   * \sa vpDisplay::displayEllipse()
+   */
+  static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+                             const double &E, const double &smallalpha, const double &highalpha,
+                             const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-#else
-protected:
+  // Marked deprecated since they override vpMeTracker::display(). Warning detected by mingw64
+  /*!
+   * \deprecated Use rather displayEllipse().
+   */
+  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+                                    const double &E, const double &smallalpha, const double &highalpha,
+                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  /*!
+   * \deprecated Use rather displayEllipse().
+   */
+  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+                                    const double &E, const double &smallalpha, const double &highalpha,
+                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
 #endif
+
+protected:
   /*! Parameters of the ellipse satisfying the homogeneous equation :
-  \f[ K_0 u^2 + K_1 v^2 + 2K_2 uv + 2K_3u + 2K_4v + K5 = 0 \f]
-  */
+   * \f[ K_0 u^2 + K_1 v^2 + 2K_2 uv + 2K_3u + 2K_4v + K5 = 0 \f]
+   */
   vpColVector K;
   //! The coordinates of the ellipse center.
   vpImagePoint iPc;
@@ -440,26 +375,25 @@ protected:
   //! \f$ b \f$ is the semi minor axis of the ellipse.
   double b;
   /*! \f$ e \in [-\pi/2;\pi/2] \f$ is the angle made by the major axis
-    and the u axis of the image frame \f$ (u,v) \f$.
-  */
+   * and the u axis of the image frame \f$ (u,v) \f$.
+   */
   double e;
 
-protected:
   /*! The coordinates of the first endpoint of the ellipse arc
-      corresponding to angle \f$ \alpha_1 \f$
-  */
+   *  corresponding to angle \f$ \alpha_1 \f$
+   */
   vpImagePoint iP1;
   /*! The coordinates of the second endpoint of the ellipse arc
-      corresponding to angle \f$ \alpha_2 \f$
-  */
+   *  corresponding to angle \f$ \alpha_2 \f$
+   */
   vpImagePoint iP2;
   /*! The angle \f$ \alpha_1 \in [-\pi;\pi] \f$ on the ellipse corresponding
-      to the first endpoint. Its value is 0 for tracking a complete ellipse
-  */
+   *  to the first endpoint. Its value is 0 for tracking a complete ellipse
+   */
   double alpha1;
   /*! The angle \f$ \alpha_2 \in [\alpha_1;\alpha_1+2\pi]\f$ on the ellipse
-      corresponding to the second endpoint. Its value is \f$ 2 \pi \f$ for
-      tracking a complete ellipse
+   *  corresponding to the second endpoint. Its value is \f$ 2 \pi \f$ for
+   *  tracking a complete ellipse
    */
   double alpha2;
   //! Value of cos(e).
@@ -470,24 +404,16 @@ protected:
   std::list<double> angle;
   //! Ellipse area
   double m00;
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  //! Second order centered moments
-  double mu11, mu20, mu02;
-  //! First order raw moments
-  double m10, m01;
-  //! Second order raw moments
-  double m11, m02, m20;
-#endif
 
   //! Threshold on the weights for the robust least square.
   double thresholdWeight;
 
   /*! The smallest angle \f$ \alpha_{min} \in [\alpha_1;\alpha_2]\f$
-      of the current moving edge list
+   *  of the current moving edge list
    */
   double m_alphamin;
   /*! The highest angle \f$ \alpha_{max} \in [\alpha_{min};\alpha_2]\f$
-      of the current moving edge list
+   *  of the current moving edge list
    */
   double m_alphamax;
   //! Value of u coordinate of iPc
@@ -511,7 +437,6 @@ protected:
   //! Epsilon value used to check if arc angles are the same
   double m_arcEpsilon;
 
-protected:
   /*!
    * Computes the length of the semi major axis \f$ a \f$, the length of the
    * semi minor axis \f$ b \f$, and \f$ e \f$ that is the angle
@@ -584,7 +509,7 @@ protected:
    * Least squares method to compute the circle/ ellipse to which the points belong.
    *
    * \param I : Image in which the circle/ellipse appears (useful just to get
-   *           its number of rows and columns...
+   * its number of rows and columns...
    * \param iP : A vector of points belonging to the circle/ellipse.
    */
   void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
@@ -595,7 +520,7 @@ protected:
    * and update the expected density of points.
    *
    * \param I : Image where tracking is done (useful just to get its number
-   *           of rows and columns...
+   * of rows and columns...
    */
   unsigned int leastSquareRobust(const vpImage<unsigned char> &I);
 
@@ -635,63 +560,6 @@ protected:
    * \note The \f$ theta \f$ angle is useful during the tracking part.
    */
   void updateTheta();
-
-private:
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  void computeMoments();
-#endif
-
-  // Static Function
-public:
-  /*!
-   * Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
-   *
-   * \param I : The image used as background.
-   * \param center : Center of the ellipse.
-   * \param A : Semi major axis of the ellipse.
-   * \param B : Semi minor axis of the ellipse.
-   * \param E : Angle made by the major axis and the u axis of the image frame
-   * \f$ (u,v) \f$ (in rad).
-   * \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
-   * \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
-   * \param color : Color used to display the ellipse.
-   * \param thickness : Thickness of the drawings.
-   *
-   * \sa vpDisplay::displayEllipse()
-   */
-  static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
-                             const double &E, const double &smallalpha, const double &highalpha,
-                             const vpColor &color = vpColor::green, unsigned int thickness = 1);
-
-  /*!
-   * Display the ellipse or the arc of ellipse thanks to the ellipse parameters.
-   *
-   * \param I : The image used as background.
-   * \param center : Center of the ellipse
-   * \param A : Semimajor axis of the ellipse.
-   * \param B : Semiminor axis of the ellipse.
-   * \param E : Angle made by the major axis and the u axis of the image frame
-   * \f$ (u,v) \f$ (in rad)
-   * \param smallalpha : Smallest \f$ alpha \f$ angle in rad  (0 for a complete ellipse)
-   * \param highalpha : Highest \f$ alpha \f$ angle in rad  (\f$ 2 \Pi \f$ for a complete ellipse)
-   * \param color : Color used to display th lines.
-   * \param thickness : Thickness of the drawings.
-   *
-   * \sa vpDisplay::displayEllipse()
-   */
-  static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-                             const double &E, const double &smallalpha, const double &highalpha,
-                             const vpColor &color = vpColor::green, unsigned int thickness = 1);
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  // Marked deprecated since they override vpMeTracker::display(). Warning detected by mingw64
-  vp_deprecated static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
-                                    const double &E, const double &smallalpha, const double &highalpha,
-                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
-                                    const double &E, const double &smallalpha, const double &highalpha,
-                                    const vpColor &color = vpColor::green, unsigned int thickness = 1);
-#endif
 };
 
 #endif

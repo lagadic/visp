@@ -10,13 +10,17 @@ ViSP 3.x.x (Version in development)
     . Fabien Spindler, Florent Lamiraux
   - New classes
     .
+  - Deprecated removed
+    . vpPlanarObjectDetector, vpFernClassifier classes are removed
   - New features and improvements
     . Introduce applications in apps folder, a collection of useful tools that
       have a dependency to the install target
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
-    .
+    . Update tutorial: How to use Blender to generate simulated data for model-based tracking
+      experiments with step by step detailed explanations
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
 ----------------------------------------------

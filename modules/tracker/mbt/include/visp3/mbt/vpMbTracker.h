@@ -615,7 +615,7 @@ public:
 
     \sa setNbRayCastingAttemptsForVisibility(const unsigned int &)
 
-    \param ratio : Ratio of succesful attempts that has to be considered.
+    \param ratio : Ratio of successful attempts that has to be considered.
     Value has to be between 0.0 (0%) and 1.0 (100%).
   */
   virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio) { faces.setGoodNbRayCastingAttemptsRatio(ratio); }

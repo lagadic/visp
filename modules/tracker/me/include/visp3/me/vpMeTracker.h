@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpMeTracker.h
-  \brief Contains abstract elements for a Distance to Feature type feature.
-*/
+ * \file vpMeTracker.h
+ * \brief Contains abstract elements for a Distance to Feature type feature.
+ */
 
 #ifndef _vpMeTracker_h_
 #define _vpMeTracker_h_
@@ -49,13 +49,13 @@
 #include <math.h>
 
 /*!
-  \class vpMeTracker
-
-  \ingroup module_me
-  \brief Contains abstract elements for a Distance to Feature type feature.
-
-  2D state = list of points, 3D state = feature
-*/
+ * \class vpMeTracker
+ *
+ * \ingroup module_me
+ * \brief Contains abstract elements for a Distance to Feature type feature.
+ *
+ * 2D state = list of points, 3D state = feature
+ */
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -285,7 +285,7 @@ public:
   /** @name Public Attributes Inherited from vpMeTracker */
   //@{
   int query_range;
-  bool display_point; // if 1 (TRUE) displays the line that is being tracked
+  bool display_point; //! If true displays the line that is being tracked
   //@}
 #endif
 };
