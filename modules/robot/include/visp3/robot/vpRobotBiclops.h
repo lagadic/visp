@@ -410,7 +410,7 @@ public:
    * speed/power can damage the unit, damage due to velocity mode commanding is
    * under user responsibility.
    */
-  static void *vpRobotBiclopsSpeedControlLoop(void *arg);
+  static void vpRobotBiclopsSpeedControlLoop(void *arg);
 
 private:
   std::thread m_control_thread;

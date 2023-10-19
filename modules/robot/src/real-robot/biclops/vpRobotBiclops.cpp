@@ -51,8 +51,8 @@
 
 #include "private/vpRobotBiclopsController_impl.h"
 
-//#define VP_DEBUG        // Activate the debug mode
-//#define VP_DEBUG_MODE 10 // Activate debug level 1 and 2
+//#define VP_DEBUG         // Activate the debug mode
+//#define VP_DEBUG_MODE 12 // Activate debug level up to 12
 #include <visp3/core/vpDebug.h>
 
 /* ---------------------------------------------------------------------- */
@@ -140,11 +140,10 @@ void vpRobotBiclops::init()
   return;
 }
 
-void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
+void vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
 {
   vpRobotBiclopsController *controller = static_cast<vpRobotBiclopsController *>(arg);
 
-  int iter = 0;
   //   PMDAxisControl *m_panAxis  = controller->getPanAxis();
   //   PMDAxisControl *m_tiltAxis = controller->getTiltAxis();
   vpRobotBiclopsController::shmType shm;
@@ -363,12 +362,8 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
     for (unsigned int i = 0; i < vpBiclops::ndof; i++)
       prev_q_dot[i] = shm.q_dot[i];
 
-    vpDEBUG_TRACE(12, "iter: %d", iter);
-
     // wait 5 ms
     vpTime::wait(5.0);
-
-    iter++;
   }
   controller->stopRequest(false);
   // Stop the robot
@@ -382,8 +377,6 @@ void *vpRobotBiclops::vpRobotBiclopsSpeedControlLoop(void *arg)
   delete[] enable_limit;
   vpDEBUG_TRACE(11, "unlock vpEndThread_mutex");
   m_mutex_end_thread.unlock();
-
-  return NULL;
 }
 
 vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateType newState)
@@ -410,7 +403,7 @@ vpRobot::vpRobotStateType vpRobotBiclops::setRobotState(vpRobot::vpRobotStateTyp
       m_mutex_end_thread.lock();
 
       vpDEBUG_TRACE(12, "Create speed control thread");
-      m_control_thread = std::thread(&vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, &m_controller);
+      m_control_thread = std::thread(&vpRobotBiclops::vpRobotBiclopsSpeedControlLoop, m_controller);
       vpTime::wait(100.0);
 
       vpDEBUG_TRACE(12, "Speed control thread created");
