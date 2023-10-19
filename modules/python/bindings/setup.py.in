@@ -11,7 +11,7 @@ from distutils.command import build as build_module
 from pathlib import Path
 
 package_name = 'visp'
-version = '0.0.4'
+version = '@VISP_PYTHON_VERSION@'
 
 package_data = {}
 
@@ -33,11 +33,14 @@ setup(
     name=package_name,
     version=version,
     author="Samuel Felton",
+    pacakges=setuptools.find_packages(),
     author_email="samuel.felton@irisa.fr",
     description="Python wrapper for the Visual Servoing Platform",
     long_description="",
-    setup_requires=[],
-    ext_modules=EmptyListWithLength,
+    setup_requires=[
+      "setuptools"
+    ],
+    ext_modules=EmptyListWithLength(),
     zip_safe=False,
     include_package_data=True,
     package_data=package_data,

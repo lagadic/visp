@@ -1200,7 +1200,9 @@ endif()
 if(BUILD_APPS)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
 endif()
-
+if(BUILD_PYTHON)
+  add_subdirectory(modules/python)
+endif()
 
 
 
