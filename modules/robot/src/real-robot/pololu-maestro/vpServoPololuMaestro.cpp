@@ -47,7 +47,6 @@
 
 std::chrono::milliseconds millis(1);
 
-
 vpServoPololuMaestro::vpServoPololuMaestro(const std::string &device, int baudrate)
   : m_interface(NULL), m_channel(0), m_FlagVelCmdRunning(false), m_position(0), m_speed(0), m_velocityDirection(0), m_verbose(false)
 {
@@ -67,7 +66,6 @@ vpServoPololuMaestro::vpServoPololuMaestro(const std::string &device, int baudra
   }
 }
 
-
 vpServoPololuMaestro::vpServoPololuMaestro(RPM::SerialInterface *interface, int channel, bool verbose)
   : m_interface(interface), m_channel(channel), m_FlagVelCmdRunning(false), m_position(0), m_speed(0), m_velocityDirection(0), m_verbose(verbose)
 {
@@ -79,9 +77,7 @@ vpServoPololuMaestro::vpServoPololuMaestro(RPM::SerialInterface *interface, int 
   }
 }
 
-
 vpServoPololuMaestro::~vpServoPololuMaestro() { }
-
 
 int vpServoPololuMaestro::angle2PWM(float angle)
 {
@@ -94,9 +90,9 @@ bool vpServoPololuMaestro::checkConnection()
     if (m_verbose) {
       std::cout << "Serial Communication Failed!\n";
     }
-    return 1;
+    return true;
   }
-  return 0;
+  return false;
 }
 
 short vpServoPololuMaestro::degSToSpeed(float speedDegS)
@@ -133,7 +129,6 @@ void vpServoPololuMaestro::getRangePWM(int &minPWM, int &maxPWM, int &rangePWM)
 
 unsigned short vpServoPololuMaestro::getSpeed() { return this->m_speed; }
 
-
 float vpServoPololuMaestro::PWM2Angle(int PWM) { return (PWM * (m_rangeAngle / m_rangePWM) + m_minAngle); }
 
 void vpServoPololuMaestro::setPositionAngle(float targetAngle, unsigned short speed)
@@ -144,8 +139,7 @@ void vpServoPololuMaestro::setPositionAngle(float targetAngle, unsigned short sp
   }
   else {
     throw(vpRobotException(vpRobotException::positionOutOfRangeError,
-                           "given position: %d is outside of the servo range. You can check the range using the method getRangeAngle()", targetAngle));
-
+                           "Given position: %d is outside of the servo range. You can check the range using the method getRangeAngle()", targetAngle));
   }
 }
 
@@ -159,7 +153,7 @@ void vpServoPololuMaestro::setPositionPWM(int targetPWM, unsigned short speed)
   }
   else {
     throw(vpRobotException(vpRobotException::positionOutOfRangeError,
-                           "given position: %d is outside of the servo range. You can check the range using the method getRangePWM()", targetPWM));
+                           "Given position: %d is outside of the servo range. You can check the range using the method getRangePWM()", targetPWM));
   }
 }
 
@@ -171,10 +165,9 @@ void vpServoPololuMaestro::setSpeed(unsigned short speed)
   }
   else {
     throw(vpRobotException(vpRobotException::positionOutOfRangeError,
-                           "given speed : %d is outside of the servo speed range. range is from 0 to 1000", speed));
+                           "Given speed : %d is outside of the servo speed range. range is from 0 to 1000", speed));
   }
 }
-
 
 void vpServoPololuMaestro::setSpeedDegS(float speedDegS)
 {
@@ -204,18 +197,16 @@ void vpServoPololuMaestro::setVelocityCmd(short velocityCmdSpeed)
 
 float vpServoPololuMaestro::speedToDeGS(short speed) { return (speed * 100) * (this->m_rangeAngle / this->m_rangePWM); }
 
-
 void vpServoPololuMaestro::stopVelCmd()
 {
   if (m_verbose) {
-    std::cout << "stoping vel cmd \n";
+    std::cout << "Stoping vel cmd \n";
   }
   this->m_FlagVelCmdRunning = false;
 
   std::this_thread::sleep_for(10 * millis);
   this->setPositionPWM(this->getPosition());
 }
-
 
 void vpServoPololuMaestro::VelocityCmdThread()
 {
@@ -228,14 +219,13 @@ void vpServoPololuMaestro::VelocityCmdThread()
       }
       else {
         if (m_verbose) {
-          std::cout << "edge of range reach" << std::endl;
+          std::cout << "Edge of range reach" << std::endl;
         }
       }
     }
     else {
       if (antispamCounter == 100) {
-        std::cout << "waiting"
-          << "flag is : " << this->m_FlagVelCmdRunning << std::endl;
+        std::cout << "waiting flag is: " << this->m_FlagVelCmdRunning << std::endl;
         antispamCounter = 0;
       }
       else {
@@ -246,8 +236,6 @@ void vpServoPololuMaestro::VelocityCmdThread()
   }
 
   throw(vpRobotException(vpRobotException::lowLevelError, "Vel cmd stopped unexpectedly "));
-
-
 }
 
 

@@ -60,7 +60,7 @@ int main()
   // Checking that the serial connection is open.
   if (!serialInterface->isOpen()) {
     std::cout << "Serial Communication Failed!\n";
-    return -1;
+    return EXIT_FAILURE;
   }
 
   // Creating the servo object.
@@ -90,6 +90,8 @@ int main()
   servo1.setPositionPWM(max, 0);
   servo2.setPositionPWM(max, 0);
   std::this_thread::sleep_for(3 * sec);
+
+  return EXIT_SUCCESS;
 }
 
 #else

@@ -60,23 +60,22 @@ int main()
   // Checking that the serial connection is open.
   if (!serialInterface->isOpen()) {
     std::cout << "Serial Communication Failed!\n";
-    return -1;
+    return EXIT_FAILURE;
   }
 
   // Creating the servo object.
   vpServoPololuMaestro servo1(serialInterface, 0);
 
-  // Servo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3sec.
+  // Servo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3 sec.
   servo1.setVelocityCmd(10);
   std::this_thread::sleep_for(3 * sec);
   servo1.setVelocityCmd(-10);
   std::this_thread::sleep_for(3 * sec);
 
-
   // Adding a second servo to the test.
   vpServoPololuMaestro servo2(serialInterface, 1);
 
-  // Both servo ervo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3sec.
+  // Both servo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3 sec.
   servo1.setVelocityCmd(10);
   servo2.setVelocityCmd(10);
   std::this_thread::sleep_for(3 * sec);
@@ -87,6 +86,8 @@ int main()
   // Stopping the velocity command.
   servo1.stopVelCmd();
   servo2.stopVelCmd();
+
+  return EXIT_SUCCESS;
 }
 
 #else

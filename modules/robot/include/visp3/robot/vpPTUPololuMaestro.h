@@ -71,7 +71,6 @@ public:
   */
   vpPTUPololuMaestro();
 
-
   /*!
   * Value constructor.
   *
