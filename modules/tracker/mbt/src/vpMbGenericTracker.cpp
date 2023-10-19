@@ -5438,17 +5438,17 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      KLT_TRACKER |
+                                   KLT_TRACKER |
 #endif
-      DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
       throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                  | KLT_TRACKER
 #endif
-      ) &&
+                                  ) &&
       mapOfImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
@@ -5515,25 +5515,25 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      KLT_TRACKER |
+                                   KLT_TRACKER |
 #endif
-      DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
       throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                  | KLT_TRACKER
 #endif
-      ) &&
+                                  ) &&
       mapOfImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                       | KLT_TRACKER
 #endif
-      ) &&
+                                       ) &&
       mapOfImages[it->first] != NULL) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
       mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
@@ -5605,17 +5605,17 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      KLT_TRACKER |
+                                   KLT_TRACKER |
 #endif
-      DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
       throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                  | KLT_TRACKER
 #endif
-      ) &&
+                                  ) &&
       mapOfImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
@@ -5686,25 +5686,25 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
 
     if ((tracker->m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      KLT_TRACKER |
+                                   KLT_TRACKER |
 #endif
-      DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
       throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
     }
 
     if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                  | KLT_TRACKER
 #endif
-      ) &&
+                                  ) &&
       mapOfColorImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-      | KLT_TRACKER
+                                       | KLT_TRACKER
 #endif
-      ) &&
+                                       ) &&
       mapOfColorImages[it->first] != NULL) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
       mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
@@ -5773,9 +5773,9 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(int trackerType)
 {
   if ((m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    KLT_TRACKER |
+                        KLT_TRACKER |
 #endif
-    DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                        DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
     throw vpException(vpTrackingException::badValue, "Bad value for tracker type: %d!", m_trackerType);
   }
 
@@ -7090,9 +7090,9 @@ void vpMbGenericTracker::TrackerWrapper::setTrackerType(int type)
 {
   if ((type & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    KLT_TRACKER |
+               KLT_TRACKER |
 #endif
-    DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+               DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
     throw vpException(vpTrackingException::badValue, "bad value for tracker type: !", type);
   }
 
@@ -7114,9 +7114,9 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
 {
   if ((m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    | KLT_TRACKER
+                        | KLT_TRACKER
 #endif
-    )) == 0) {
+                        )) == 0) {
     std::cerr << "Bad tracker type: " << m_trackerType << std::endl;
     return;
   }
@@ -7137,18 +7137,18 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
 {
   if ((m_trackerType & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    KLT_TRACKER |
+                        KLT_TRACKER |
 #endif
-    DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+                        DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
     std::cerr << "Bad tracker type: " << m_trackerType << std::endl;
     return;
   }
 
   if (m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
-    | KLT_TRACKER
+                       | KLT_TRACKER
 #endif
-    ) &&
+                       ) &&
     ptr_I == NULL) {
     throw vpException(vpException::fatalError, "Image pointer is NULL!");
   }

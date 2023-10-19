@@ -78,7 +78,7 @@ public:
 #ifdef VISP_HAVE_AFMA6_DATA
   //! File where constant parameters in relation with the robot are stored:
   //! joint max, min, coupling factor between 4 ant 5 joint, distance between
-  //! 5 and 6 joint, tranformation eMc between end-effector and camera frame.
+  //! 5 and 6 joint, transformation eMc between end-effector and camera frame.
   static const std::string CONST_AFMA6_FILENAME;
   static const std::string CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME;

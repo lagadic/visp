@@ -150,7 +150,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         Hp2 = c2Rc1.t() * p2; // p2 = Hp1
         Hp1 = c2Rc1 * p1;     // p1 = Hp2
 
-        Hp2 /= Hp2[2]; // normalisation
+        Hp2 /= Hp2[2]; // normalization
         Hp1 /= Hp1[2];
 
         // set up the interaction matrix
@@ -345,7 +345,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
       Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix
@@ -554,7 +554,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
       Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix

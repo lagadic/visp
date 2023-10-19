@@ -718,10 +718,6 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
 }
-void vpColVector::insert(const vpColVector &v, unsigned int i)
-{
-  insert(i, v);
-}
 
 int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) const
 {
@@ -904,6 +900,11 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+void vpColVector::insert(const vpColVector &v, unsigned int i)
+{
+  insert(i, v);
+}
 
 void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 {
