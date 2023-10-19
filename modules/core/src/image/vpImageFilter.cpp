@@ -39,6 +39,29 @@
 #include <visp3/core/vpRGBa.h>
 
 /**
+ * \brief Get the list of available vpCannyBackendType.
+ *
+ * \param[in] pref The prefix of the list.
+ * \param[in] sep The separator between two elements of the list.
+ * \param[in] suf The suffix of the list.
+ * \return std::string The list of available items.
+ */
+std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const std::string &sep,
+                                                  const std::string &suf)
+{
+  std::string list(pref);
+  for (unsigned int i = 0; i < vpCannyBackendType::CANNY_COUNT_BACKEND - 1; i++) {
+    vpCannyBackendType type = (vpCannyBackendType)i;
+    list += vpCannyBackendTypeToString(type);
+    list += sep;
+  }
+  vpCannyBackendType type = (vpCannyBackendType)(vpCannyBackendType::CANNY_COUNT_BACKEND - 1);
+  list += vpCannyBackendTypeToString(type);
+  list += suf;
+  return list;
+}
+
+/**
  * \brief Cast a \b vpImageFilter::vpCannyBackendTypeToString into a string, to know its name.
  *
  * \param[in] type The type that must be casted into a string.
@@ -81,6 +104,29 @@ vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(co
     }
   }
   return type;
+}
+
+/**
+ * \brief Get the list of available vpCannyFilteringAndGradientType.
+ *
+ * \param[in] pref The prefix of the list.
+ * \param[in] sep The separator between two elements of the list.
+ * \param[in] suf The suffix of the list.
+ * \return std::string The list of available items.
+ */
+std::string vpImageFilter::vpCannyFilteringAndGradientTypeList(const std::string &pref, const std::string &sep,
+                                                  const std::string &suf)
+{
+  std::string list(pref);
+  for (unsigned int i = 0; i < vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING - 1; i++) {
+    vpCannyFilteringAndGradientType type = (vpCannyFilteringAndGradientType)i;
+    list += vpCannyFilteringAndGradientTypeToString(type);
+    list += sep;
+  }
+  vpCannyFilteringAndGradientType type = (vpCannyFilteringAndGradientType)(CANNY_COUNT_FILTERING - 1);
+  list += vpCannyFilteringAndGradientTypeToString(type);
+  list += suf;
+  return list;
 }
 
 /**

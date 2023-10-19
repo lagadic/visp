@@ -124,6 +124,7 @@ void usage(const std::string &softName)
     << std::endl;
   std::cout << "\t-f, --filter" << std::endl
     << "\t\tPermits to choose the type of filter to apply to compute the gradient."
+    << "\t\tAvailable values = " << vpImageFilter::vpCannyFilteringAndGradientTypeList() << std::endl
     << std::endl;
   std::cout << "\t-r, --ratio" << std::endl
     << "\t\tPermits to set the lower and upper thresholds ratio of the vpCanny class."
@@ -132,6 +133,7 @@ void usage(const std::string &softName)
     << std::endl;
   std::cout << "\t-b, --backend" << std::endl
     << "\t\tPermits to use the vpImageFilter::canny method for comparison."
+    << "\t\tAvailable values = " << vpImageFilter::vpCannyBackendTypeList() << std::endl
     << std::endl;
   std::cout << "\t-h, --help" << std::endl
     << "\t\tPermits to display the different arguments this software handles."

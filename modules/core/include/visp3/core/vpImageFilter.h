@@ -78,6 +78,9 @@ public:
     CANNY_COUNT_BACKEND = 2 //! Number of supported backends
   } vpCannyBackendType;
 
+  static std::string vpCannyBackendTypeList(const std::string &pref = "<", const std::string &sep = " , ",
+                                                         const std::string &suf = ">");
+
   static std::string vpCannyBackendTypeToString(const vpCannyBackendType &type);
 
   static vpCannyBackendType vpCannyBackendTypeFromString(const std::string &name);
@@ -89,6 +92,9 @@ public:
     CANNY_GBLUR_SCHARR_FILTERING = 1, //!< Apply Gaussian blur + Scharr operator on the input image
     CANNY_COUNT_FILTERING = 2 //! Number of supported backends
   } vpCannyFilteringAndGradientType;
+
+  static std::string vpCannyFilteringAndGradientTypeList(const std::string &pref = "<", const std::string &sep = " , ",
+                                                         const std::string &suf = ">");
 
   static std::string vpCannyFilteringAndGradientTypeToString(const vpCannyFilteringAndGradientType &type);
 
