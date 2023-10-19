@@ -36,11 +36,13 @@
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 # Display X11, GTK, GDI, D3D9. OpenCV already handled by core module
 if(USE_X11)
   # X11 is private
   include_directories(${X11_INCLUDE_DIR})
+  list(APPEND opt_libs_private ${X11_LIBRARIES})
   mark_as_advanced(X11_xcb_icccm_INCLUDE_PATH)
   mark_as_advanced(X11_xcb_icccm_LIB)
   mark_as_advanced(X11_xcb_xkb_INCLUDE_PATH)
@@ -49,6 +51,7 @@ endif()
 if(USE_GTK2)
   # gtk2 is private
   include_directories(${GTK2_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${GTK2_LIBRARIES})
 endif()
 
 if(USE_GDI)
@@ -82,7 +85,7 @@ if(USE_PCL)
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
-vp_add_module(gui visp_core PRIVATE_OPTIONAL ${X11_LIBRARIES} ${GTK2_LIBRARIES})
+vp_add_module(gui visp_core PRIVATE_OPTIONAL ${opt_libs_private})
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
