@@ -49,7 +49,7 @@ std::string shape_to_string(const std::vector<ssize_t> &shape)
 {
   std::stringstream ss;
   ss << "(";
-  for (int i = 0; i < shape.size() - 1; ++i) {
+  for (int i = 0; i < int(shape.size()) - 1; ++i) {
     ss << shape[i] << ",";
   }
   if (shape.size() > 0) {
