@@ -31,7 +31,8 @@ $ mkdir -p $VISP_WS
 
 \section install_ubuntu_quick Quick ViSP installation
 
-In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_ubuntu_advanced.
+In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in
+\ref install_ubuntu_advanced.
 
 - Install a small number of recommended 3rd parties
 
@@ -447,6 +448,15 @@ $ sudo apt-get install libgsl-dev
 - JSON for modern C++
 \verbatim
 $ sudo apt-get install nlohmann-json3-dev
+\endverbatim
+- Gtk-2 for gui capabilities instead of X11
+\verbatim
+$ sudo apt-get install libgtk2.0-dev libglib2.0-dev libpango1.0-dev libatk1.0-dev libcairo2-dev
+\endverbatim
+After installing the gtk packages, you need to explicitly enable gtk usage during ViSP cmake configuration step by:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DUSE_GTK=ON
 \endverbatim
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code
