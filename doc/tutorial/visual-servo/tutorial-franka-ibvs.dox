@@ -16,7 +16,7 @@ An example of image-based visual servoing using Panda robot equipped with a Real
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `tutorial/calibration/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
 
 Now enter in `example/servo-franka folder` and run `servoFrankaIBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
@@ -26,7 +26,7 @@ Now enter in `example/servo-franka folder` and run `servoFrankaIBVS` binary usin
 
 Run the binary activating the plot and using a constant gain:
 
-    $ ./servoFrankaIBVS --eMc ../../tutorial/calibration/eMc.yaml --plot
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot
 
 Use the left mouse click to enable the robot controller, and the right click to quit the binary.
 
@@ -40,15 +40,15 @@ At this point the behaviour that you should observe is the following:
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-    $ ./servoFrankaIBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --adaptive_gain
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-    $ ./servoFrankaIBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --task_sequencing
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --task_sequencing
 
 And finally you can activate the adaptive gain and task sequencing:
 
-    $ ./servoFrankaIBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --adaptive_gain --task_sequencing
+    $ ./servoFrankaIBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain --task_sequencing
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
@@ -61,6 +61,6 @@ from a real Franka robot, like in the next video, we recommend to make a tour on
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/02Bx093Fuak" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 \endhtmlonly
 
-You can also follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera. 
+You can also follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera.
 
 */

@@ -258,7 +258,7 @@ An example of position-based visual servoing using Panda robot equipped with a R
 
 - Attach your Realsense camera to the robot end-effector
 - Put an Apriltag in the camera field of view
-- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `tutorial/calibration/eMc.yaml`.
+- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$ the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `apps/calibration/eMc.yaml`.
 
 Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
@@ -268,7 +268,7 @@ Now enter in `example/servo-franka folder` and run `servoFrankaPBVS` binary usin
 
 Run the binary activating the plot and using a constant gain:
 
-    $ ./servoFrankaPBVS --eMc ../../tutorial/calibration/eMc.yaml --plot
+    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot
 
 \note If you encounter the following error message:
 \verbatim
@@ -287,15 +287,15 @@ Now you should see new window that shows the image from the camera like in the n
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-    $ ./servoFrankaPBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --adaptive_gain
+    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-    $ ./servoFrankaPBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --task_sequencing
+    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --task_sequencing
 
 And finally you can activate the adaptive gain and task sequencing:
 
-    $ ./servoFrankaPBVS --eMc ../../tutorial/calibration/eMc.yaml --plot --adaptive_gain --task_sequencing
+    $ ./servoFrankaPBVS --eMc ../../apps/calibration/eMc.yaml --plot --adaptive_gain --task_sequencing
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 

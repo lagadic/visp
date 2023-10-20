@@ -149,6 +149,9 @@
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
 
+// Defined if std::thread available.
+#cmakedefine VISP_HAVE_THREADS
+
 // Defined if YARP available.
 #cmakedefine VISP_HAVE_YARP
 

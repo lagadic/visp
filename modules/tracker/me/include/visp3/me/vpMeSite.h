@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpMeSite.h
-  \brief Moving edges
-*/
+ * \file vpMeSite.h
+ * \brief Moving edges
+ */
 
 #ifndef _vpMeSite_h_
 #define _vpMeSite_h_
@@ -45,21 +45,21 @@
 #include <visp3/me/vpMe.h>
 
 /*!
-  \class vpMeSite
-  \ingroup module_me
-
-  \brief Performs search in a given direction(normal) for a given
-   distance(pixels) for a given 'site'. Gives the most likely site
-   given the probability from an ME mask
-
-  - Bug fix: rewrote application of masks to use the temporal
-    information instead of applying both temporal masks to the same
-    image. ie: spatial -> spatio/temporal
-
-  - Added new tracking function to choose the most similar edge
-    amongst all edges found.
-
-  - sample step.
+ * \class vpMeSite
+ * \ingroup module_me
+ *
+ * \brief Performs search in a given direction(normal) for a given
+ *  distance(pixels) for a given 'site'. Gives the most likely site
+ *  given the probability from an ME mask
+ *
+ * - Bug fix: rewrote application of masks to use the temporal
+ *   information instead of applying both temporal masks to the same
+ *   image. ie: spatial -> spatio/temporal
+ *
+ * - Added new tracking function to choose the most similar edge
+ *   amongst all edges found.
+ *
+ * - sample step.
  */
 class VISP_EXPORT vpMeSite
 {
@@ -91,7 +91,6 @@ public:
     UNKNOW = 5            ///< Reserved.
   } vpMeSiteState;
 
-public:
   //! Coordinate along i of a site
   int i;
   //! Coordinates along j of a site
@@ -111,11 +110,6 @@ public:
   //! Uncertainty of point given as a probability between 0 and 1
   double weight;
 
-private:
-  vpMeSiteDisplayType selectDisplay;
-  vpMeSiteState state;
-
-public:
   /*!
    * Initialize moving-edge site with default parameters.
    */
@@ -207,7 +201,7 @@ public:
   /*!
    * Display selector.
    */
-  void setDisplay(vpMeSiteDisplayType select) { selectDisplay = select; }
+  void setDisplay(vpMeSiteDisplayType select) { m_selectDisplay = select; }
 
   /*!
    * Get the i coordinate (integer).
@@ -246,11 +240,7 @@ public:
    */
   void setState(const vpMeSiteState &flag)
   {
-    state = flag;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    suppress = (int)flag;
-#endif
+    m_state = flag;
   }
 
   /*!
@@ -258,7 +248,7 @@ public:
    *
    * \return flag corresponding to vpMeSiteState
    */
-  inline vpMeSiteState getState() const { return state; }
+  inline vpMeSiteState getState() const { return m_state; }
 
   /*!
    * Set the weight of the site.
@@ -358,15 +348,9 @@ public:
   static void display(const vpImage<vpRGBa> &I, const double &i, const double &j,
                       const vpMeSiteState &state = NO_SUPPRESSION);
 
-  // Deprecated
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  //! Flag to indicate whether point is rejected or not
-  //! 1 = contrast, 2 = threshold, 3 = M-estimator, 0 = nosupp
-  int suppress;
-
-  vp_deprecated void getSign(const vpImage<unsigned char> &I, const int range);
-#endif
+private:
+  vpMeSiteDisplayType m_selectDisplay; //!< Display selector
+  vpMeSiteState m_state; //!< Site state
 };
 
 #endif

@@ -98,13 +98,13 @@ typedef enum
  */
 struct vpDirection
 {
-  //!< Direction
+  //! Direction
   vpDirectionType m_direction;
 
-  //!< Pixel increment along x to reach a given direction
+  //! Pixel increment along x to reach a given direction
   int m_dirx[8];
 
-  //!< Pixel increment along y to reach a given direction
+  //! Pixel increment along y to reach a given direction
   int m_diry[8];
 
   /*!

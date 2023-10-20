@@ -998,7 +998,7 @@ vpMatrix M(R);
   */
   //@{
   /*!
-     \deprecated Only provided for compatibilty with ViSP previous releases.
+     \deprecated Only provided for compatibility with ViSP previous releases.
      This function does nothing.
    */
   vp_deprecated void init() { }

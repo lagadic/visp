@@ -95,7 +95,7 @@ public:
     float m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
 
     // // Circle candidates computation attributes
-    float m_radiusRatioThresh;  /*!< Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.*/
+    float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
     float m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
 
     // // Circle candidates merging attributes
@@ -120,7 +120,7 @@ public:
       , m_maxRadius(1000)
       , m_dilatationNbIter(1)
       , m_centerThresh(50.f)
-      , m_radiusRatioThresh(2.f)
+      , m_circleProbaThresh(0.9f)
       , m_circlePerfectness(0.9f)
       , m_centerMinDist(15.f)
       , m_mergingRadiusDiffThresh(1.5f * m_centerMinDist)
@@ -145,7 +145,7 @@ public:
      * \param[in] maxRadius Maximum radius of the circles we want to detect.
      * \param[in] dilatationNbIter Number of times dilatation is performed to detect the maximum number of votes for the center candidates
      * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
-     * \param[in] radiusThreshRatio Minimum number of votes per radian a radius candidate RC_ij of a center candidate CeC_i must have in order that the circle of center CeC_i and radius RC_ij must be considered as circle candidate.
+     * \param[in] circleProbabilityThresh Probability threshold in order to keep a circle candidate.
      * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
@@ -163,7 +163,7 @@ public:
       , const unsigned int &maxRadius
       , const int &dilatationNbIter
       , const float &centerThresh
-      , const float &radiusThreshRatio
+      , const float &circleProbabilityThresh
       , const float &circlePerfectness
       , const float &centerMinDistThresh
       , const float &mergingRadiusDiffThresh
@@ -180,13 +180,11 @@ public:
       , m_maxRadius(std::max(minRadius, maxRadius))
       , m_dilatationNbIter(dilatationNbIter)
       , m_centerThresh(centerThresh)
-      , m_radiusRatioThresh(radiusThreshRatio)
+      , m_circleProbaThresh(circleProbabilityThresh)
       , m_circlePerfectness(circlePerfectness)
       , m_centerMinDist(centerMinDistThresh)
       , m_mergingRadiusDiffThresh(mergingRadiusDiffThresh)
-    {
-
-    }
+    { }
 
     /**
      * Create a string with all the Hough transform parameters.
@@ -204,7 +202,7 @@ public:
       txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
       txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
       txt += "\tCenters votes threshold = " + std::to_string(m_centerThresh) + "\n";
-      txt += "\tRadius votes per radian threshold = " + std::to_string(m_radiusRatioThresh) + "\n";
+      txt += "\tCircle probability threshold = " + std::to_string(m_circleProbaThresh) + "\n";
       txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
       txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
       txt += "\tRadius difference merging threshold = " + std::to_string(m_mergingRadiusDiffThresh) + "\n";
@@ -300,7 +298,7 @@ public:
         throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
       }
 
-      params.m_radiusRatioThresh = j.value("radiusThreshRatio", params.m_radiusRatioThresh);
+      params.m_circleProbaThresh = j.value("circleProbabilityThreshold", params.m_circleProbaThresh);
 
       params.m_circlePerfectness = j.value("circlePerfectnessThreshold", params.m_circlePerfectness);
 
@@ -341,17 +339,17 @@ public:
           {"radiusLimits", radiusLimits},
           {"dilatationNbIter", params.m_dilatationNbIter},
           {"centerThresh", params.m_centerThresh},
-          {"radiusThreshRatio", params.m_radiusRatioThresh},
+          {"circleProbabilityThreshold", params.m_circleProbaThresh},
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
           {"mergingRadiusDiffThresh", params.m_mergingRadiusDiffThresh} };
-  }
+    }
 #endif
-};
+  };
 
-/**
- * \brief Construct a new vpCircleHoughTransform object with default parameters.
- */
+  /**
+   * \brief Construct a new vpCircleHoughTransform object with default parameters.
+   */
   vpCircleHoughTransform();
 
   /**
@@ -596,9 +594,9 @@ public:
    */
   inline void setRadiusRatioThreshold(const float &radiusRatioThresh)
   {
-    m_algoParams.m_radiusRatioThresh = radiusRatioThresh;
+    m_algoParams.m_circleProbaThresh = radiusRatioThresh;
 
-    if (m_algoParams.m_radiusRatioThresh <= 0) {
+    if (m_algoParams.m_circleProbaThresh <= 0) {
       throw vpException(vpException::badValue, "Radius ratio threshold must be > 0.");
     }
   }
@@ -652,13 +650,13 @@ public:
   }
 
   /**
-   * \brief Get the votes accumulator of the Circle Candidates.
+   * \brief Get the probabilities of the Circle Candidates.
    *
-   * \return std::vector<unsigned int> The votes accumulator.
+   * \return std::vector<float> The votes accumulator.
    */
-  inline std::vector<unsigned int> getCircleCandidatesVotes()
+  inline std::vector<float> getCircleCandidatesProbabilities()
   {
-    return m_circleCandidatesVotes;
+    return m_circleCandidatesProbabilities;
   }
 
   /**
@@ -725,6 +723,22 @@ public:
   }
 
   /*!
+   * Get the probabilities of the detections that are outputed by vpCircleHoughTransform::detect()
+   */
+  inline std::vector<float> getDetectionsProbabilities() const
+  {
+    return m_finalCirclesProbabilities;
+  }
+
+  /*!
+   * Get the number of votes for the detections that are outputed by vpCircleHoughTransform::detect()
+   */
+  inline std::vector<unsigned int> getDetectionsVotes() const
+  {
+    return m_finalCircleVotes;
+  }
+
+  /*!
    * Create a string with all Hough transform parameters.
    */
   std::string toString() const;
@@ -771,6 +785,18 @@ private:
   void computeCenterCandidates();
 
   /**
+   * \brief Compute the probability of \b circle given the number of pixels voting for
+   * it \b nbVotes.
+   * The probability is defined as the ratio of \b nbVotes by the theoretical number of
+   * pixel that should be visible in the image.
+   *
+   * @param circle The circle for which we want to evaluate the probability.
+   * @param nbVotes The number of visible pixels of the given circle.
+   * @return float The probability of the circle.
+   */
+  float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
+
+  /**
    * \brief For each center candidate CeC_i, do:
    * - For each edge point EP_j, compute the distance d_ij = distance(CeC_i; EP_j)
    * - Determine to which radius candidate bin RCB_k the distance d_ij belongs to
@@ -794,7 +820,6 @@ private:
   // // Gaussian smoothing attributes
   vpArray2D<float> m_fg;
   vpArray2D<float> m_fgDg;
-  vpImage<float> m_Ifilt; /*!< Filtered version of the input image, after having used a Gaussian filter.*/
 
   // // Gradient computation attributes
   vpImage<float> m_dIx; /*!< Gradient along the x-axis of the input image.*/
@@ -811,11 +836,13 @@ private:
 
   // // Circle candidates computation attributes
   std::vector<vpImageCircle> m_circleCandidates;        /*!< List of the candidate circles.*/
-  std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of votes for the candidate circles.*/
+  std::vector<float> m_circleCandidatesProbabilities; /*!< Probabilities of each candidate circle that is kept.*/
+  std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of pixels voting for each candidate circle that is kept.*/
 
   // // Circle candidates merging attributes
   std::vector<vpImageCircle> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
-  std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the candidate circles.*/
+  std::vector<float> m_finalCirclesProbabilities; /*!< Probabilities of each final circle, i.e. resulting from the merge of the circle candidates.*/
+  std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the final circles.*/
 };
 #endif
 #endif

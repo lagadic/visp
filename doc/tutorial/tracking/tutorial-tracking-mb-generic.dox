@@ -249,14 +249,19 @@ tracker.loadModel("teabox.wrl");
 
 \subsection mb_generic_teabox_cao teabox.cao example
 
-The content of the file `teabox.cao` used in the getting started \ref mb_generic_started_src but also in tutorial-mb-edge-tracker.cpp and
-in tutorial-mb-hybrid-tracker.cpp examples is given here:
+The content of the file `teabox.cao` used in the getting started \ref mb_generic_started_src but also in
+tutorial-mb-edge-tracker.cpp and in tutorial-mb-hybrid-tracker.cpp examples is given here:
 
 \includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.cao
 
 This file describes the model of the tea box corresponding to the next image:
 
 \image html img-teabox-cao.jpg Index of the vertices used to model the tea box in cao format.
+
+The tea box dimensions are the following:
+- height (from point 0 to point 1): 0.08 meters
+- length (from point 0 to point 3): 0.165 meters
+- width (from point 0 to point 7): 0.068 meters
 
 We make the choice to describe the faces of the box from the 3D points that correspond to the vertices. We provide now a line by line
 description of the file. Notice that the characters after the '#' are considered as comments.

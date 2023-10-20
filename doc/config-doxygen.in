@@ -444,7 +444,7 @@ TYPEDEF_HIDES_STRUCT   = NO
 # the optimal cache size from a speed point of view.
 # Minimum value: 0, maximum value: 9, default value: 0.
 
-LOOKUP_CACHE_SIZE      = 0
+LOOKUP_CACHE_SIZE      = 1
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -2221,6 +2221,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_SOXT \
                          VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_TENSORRT \
+                         VISP_HAVE_THREADS \
                          VISP_HAVE_UEYE \
                          VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \

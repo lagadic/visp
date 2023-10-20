@@ -27,11 +27,6 @@ parameter.
 
 \image html img-tutorial-cht-radius-votes.png
 
-\section imgproc_cht_requirements Requirements
-
-With the current implementation, the `vpCircleHoughTransform` requires ViSP to be compiled with OpenCV.
-If you do not know how to do it, please refer to the installation guidelines of \ref soft_vision_opencv.
-
 \section imgproc_cht_howto How to use the tutorial
 
 It is possible to configure the `vpCircleHoughTransform` class using a JSON file.
@@ -74,7 +69,7 @@ If the detections seem a bit off, you might need to change the parameters in `co
 
 To run the software on an actual image using command line arguments instead, please run:
 ```
-$ ./tutorial-circle-hough --input /path/to/my/image --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh -1. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --radius-thresh 2 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
+$ ./tutorial-circle-hough --input /path/to/my/image --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh 100. 200. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --circle-probability-thresh 0.75 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
 ```
 
 If the detections seem a bit off, you might need to change the parameters
@@ -139,6 +134,8 @@ to the command line arguments:
 
 To run the circle detection, you must call the following method:
 \snippet tutorial-circle-hough.cpp Run detection
+The call to vpCircleHoughTransform::getDetectionsProbabilities permits to know the confidence in each detection.
+It is sorted in the same way that are sorted the detections.
 
 You could have also used the following method to get only the `num_best` best
 detections:

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -32,8 +31,7 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in articular
- *
-*****************************************************************************/
+ */
 
 /*!
   \file servoPtu46Point2DArtVelocity.cpp
@@ -61,11 +59,9 @@
 #endif
 #include <signal.h>
 
-#if (defined(VISP_HAVE_PTU46) & defined(VISP_HAVE_DC1394))
+#if (defined(VISP_HAVE_PTU46) & defined(VISP_HAVE_DC1394) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11))
 
-#ifdef VISP_HAVE_PTHREAD
-#include <pthread.h>
-#endif
+#include <mutex>
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -87,16 +83,12 @@
 
 #include <visp3/blob/vpDot2.h>
 
-#ifdef VISP_HAVE_PTHREAD
-pthread_mutex_t mutexEndLoop = PTHREAD_MUTEX_INITIALIZER;
-#endif
+std::mutex mutexEndLoop;
 
 void signalCtrC(int signumber)
 {
   (void)(signumber);
-#ifdef VISP_HAVE_PTHREAD
-  pthread_mutex_unlock(&mutexEndLoop);
-#endif
+  mutexEndLoop.unlock();
   usleep(1000 * 10);
   vpTRACE("Ctrl-C pressed...");
 }
@@ -113,10 +105,7 @@ int main()
   std::cout << std::endl;
 
   try {
-
-#ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_lock(&mutexEndLoop);
-#endif
+    mutexEndLoop.lock();
     signal(SIGINT, &signalCtrC);
 
     vpRobotPtu46 robot;
@@ -135,7 +124,8 @@ int main()
 
     try {
       g.acquire(I);
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE(" Error caught");
       return EXIT_FAILURE;
     }
@@ -146,7 +136,8 @@ int main()
     try {
       vpDisplay::display(I);
       vpDisplay::flush(I);
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE(" Error caught");
       return EXIT_FAILURE;
     }
@@ -164,7 +155,8 @@ int main()
       // dot.initTracking(I) ;
       dot.track(I);
       vpERROR_TRACE("after dot.initTracking(I) ");
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE(" Error caught ");
       return EXIT_FAILURE;
     }
@@ -215,12 +207,7 @@ int main()
 
     unsigned int iter = 0;
     vpTRACE("\t loop");
-#ifdef VISP_HAVE_PTHREAD
-    while (0 != pthread_mutex_trylock(&mutexEndLoop))
-#else
-    for (;;)
-#endif
-    {
+    while (0 != mutexEndLoop.trylock()) {
       std::cout << "---------------------------------------------" << iter << std::endl;
 
       g.acquire(I);
@@ -249,7 +236,8 @@ int main()
 
     vpTRACE("Display task information ");
     task.print();
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
     return EXIT_FAILURE
   }

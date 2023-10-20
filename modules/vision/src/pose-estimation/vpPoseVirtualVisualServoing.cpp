@@ -42,12 +42,6 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
-/*!
-  \brief Compute the pose using virtual visual servoing approach
-
-  This approach is described in \cite Marchand02c.
-
-*/
 void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 {
   try {
@@ -123,7 +117,7 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
       L.pseudoInverse(Lp, 1e-16);
 
       // compute the VVS control law
-      v = -lambda * Lp * err;
+      v = -m_lambda * Lp * err;
 
       // std::cout << "r=" << r <<std::endl ;
       // update the pose
@@ -146,13 +140,6 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
   }
 }
 
-/*!
-  \brief Compute the pose using virtual visual servoing approach and
-  a robust control law
-
-  This approach is described in \cite Comport06b.
-
-*/
 void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 {
   try {
@@ -242,7 +229,7 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
       (W * L).pseudoInverse(Lp, 1e-6);
 
       // compute the VVS control law
-      v = -lambda * Lp * W * error;
+      v = -m_lambda * Lp * W * error;
 
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
       if (iter++ > vvsIterMax)
@@ -251,10 +238,11 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 
     if (computeCovariance)
       covarianceMatrix =
-          vpMatrix::computeCovarianceMatrix(L, v, -lambda * error, W * W); // Remark: W*W = W*W.t() since the
-                                                                           // matrix is diagonale, but using W*W
-                                                                           // is more efficient.
-  } catch (...) {
+      vpMatrix::computeCovarianceMatrix(L, v, -m_lambda * error, W * W); // Remark: W*W = W*W.t() since the
+                                                                       // matrix is diagonale, but using W*W
+                                                                       // is more efficient.
+  }
+  catch (...) {
     vpERROR_TRACE(" ");
     throw;
   }
@@ -262,20 +250,11 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
     (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
-/*!
- * Compute the pose by virtual visual servoing using x,y and Z point coordinates as visual features.
- * We recall that x,y are the coordinates of a point in the image plane which are obtained by perspective
- * projection, while Z is the 3D coordinate of the point along the camera frame Z-axis.
- *
- * \param[in] cMo : Pose initial value used to initialize the non linear pose estimation algorithm.
- * \param[in] points : A vector of points with [x,y,Z] values used as visual features.
- * \return Estimated pose when the minimization converged, of std::nullopt when it failed.
- */
 std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vector<vpPoint> &points, const vpHomogeneousMatrix &cMo)
 {
-  auto residu_1{1e8}, r{1e8 - 1};
-  const auto lambda{0.9}, vvsEpsilon{1e-8};
-  const unsigned int vvsIterMax{200};
+  auto residu_1 { 1e8 }, r { 1e8 - 1 };
+  const auto lambda { 0.9 }, vvsEpsilon { 1e-8 };
+  const unsigned int vvsIterMax { 200 };
 
   const unsigned int nb = static_cast<unsigned int>(points.size());
   vpMatrix L(3 * nb, 6);

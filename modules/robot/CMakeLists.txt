@@ -49,7 +49,7 @@ if(USE_VIRTUOSE)
   list(APPEND opt_incs ${VIRTUOSE_INCLUDE_DIRS})
   list(APPEND opt_libs ${VIRTUOSE_LIBRARIES})
 
-  if(USE_PTHREAD AND RT_FOUND AND DL_FOUND)
+  if(USE_THREADS AND RT_FOUND AND DL_FOUND)
     if(CMAKE_THREAD_LIBS_INIT)
       list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
     endif()
@@ -221,6 +221,10 @@ endif()
 
 if(USE_UR_RTDE)
   vp_set_source_file_compile_flag(src/real-robot/universal-robots/vpRobotUniversalRobots.cpp -Wno-unused-parameter)
+endif()
+
+if(USE_MAVSDK)
+  vp_set_source_file_compile_flag(src/real-robot/mavsdk/vpRobotMavsdk.cp -Wno-unused-but-set-variable)
 endif()
 
 vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)

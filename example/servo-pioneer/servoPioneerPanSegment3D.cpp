@@ -103,7 +103,7 @@ int main(int argc, char **argv)
     double qm_pan = 0; // Measured pan position (tilt is not handled in that example)
 
 #ifdef USE_REAL_ROBOT
-    // Initialize the biclops head
+    // Initialize the Biclops head
 
     vpRobotBiclops biclops("/usr/share/BiclopsDefault.cfg");
     biclops.setDenavitHartenbergModel(vpBiclops::DH1);
@@ -158,7 +158,7 @@ int main(int argc, char **argv)
 #endif
 
     vpPioneerPan robot_pan; // Generic robot that computes the velocities for
-                            // the pioneer and the biclops head
+                            // the pioneer and the Biclops head
 
     // Camera parameters. In this experiment we don't need a precise
     // calibration of the camera
@@ -379,7 +379,7 @@ int main(int argc, char **argv)
 
         std::cout << "Send velocity to the pionner: " << v_pioneer[0] << " m/s " << vpMath::deg(v_pioneer[1])
                   << " deg/s" << std::endl;
-        std::cout << "Send velocity to the biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
+        std::cout << "Send velocity to the Biclops head: " << vpMath::deg(v_biclops[0]) << " deg/s" << std::endl;
 
         pioneer.setVelocity(vpRobot::REFERENCE_FRAME, v_pioneer);
         biclops.setVelocity(vpRobot::ARTICULAR_FRAME, v_biclops);
