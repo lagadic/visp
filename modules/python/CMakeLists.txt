@@ -88,31 +88,25 @@ file(WRITE ${json_config_file_path} "${json_config_file}")
 # First, we install the bindings generator as an editable pip package
 # Then, we call it with the configuration files as argument. The .cpp files are generated in the cmake build directory
 
-add_custom_target( visp_python_bindings_generator_run
+# Get dependencies of the bindings generator
+# We should only run the generator when the config files, the sources or the C++ modules have changed
+file(GLOB config_files "${CMAKE_CURRENT_SOURCE_DIR}/config/*.json")
+file(GLOB_RECURSE python_sources "${CMAKE_CURRENT_SOURCE_DIR}/generator/visp_python_bindgen/*.py")
+set(pip_files "${CMAKE_CURRENT_SOURCE_DIR}/generator/pyproject.toml")
+
+
+add_custom_command(
+  OUTPUT ${python_bindings_cpp_src}
   COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
   COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
-  BYPRODUCTS ${python_bindings_cpp_src}
-  DEPENDS ${python_bound_modules}
+  DEPENDS ${python_bound_modules} ${json_config_file_path} ${config_files} ${python_sources} ${pip_files}
 )
+add_custom_target(visp_python_bindings_generator_run DEPENDS ${python_bindings_cpp_src})
 
 set(VISP_PYTHON_VERSION "${VISP_VERSION}")
 # Step 3: Compile and install bindings as a python package
 # First, we compile
 add_subdirectory(bindings "${bindings_gen_location}")
-
-
-
-# Cmake needs to be run
-# add_custom_target(visp_python_bindings_compile
-#   COMMAND "${CMAKE_COMMAND}" -G "${CMAKE_GENERATOR}" "${bindings_package_location}" -DVISP_DIR="${VISP_BINARY_DIR}"
-#   COMMAND "${CMAKE_COMMAND}" --build . --parallel ${N_PROC}
-#   WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-#   DEPENDS visp_python_bindings_generator_run
-# )
-
-# add_custom_target(visp_python_bindings_install
-#   COMMAND ${Python_EXECUTABLE} -m pip install ${_pip_args} ${bindings_package_location}
-# )
 
 # Step 4: Copy stubs dir and install stubs for autocompletion
 

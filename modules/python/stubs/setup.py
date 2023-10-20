@@ -5,11 +5,6 @@ from setuptools.command.install import install
 import subprocess
 import sys
 
-
-def find_stubs(path: Path):
-  print([str(p.relative_to('.')) for p in path.rglob('*.pyi')])
-  return [str(p.relative_to('.')) for p in path.rglob('*.pyi')]
-
 class CustomInstall(install):
   def run(self):
     subprocess.run(['pybind11-stubgen', '-o', '.', '--ignore-all-errors', 'visp'], check=True)
