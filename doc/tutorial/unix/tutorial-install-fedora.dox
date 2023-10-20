@@ -110,6 +110,15 @@ $ sudo dnf install libdmtx-devel
 \verbatim
 $ sudo dnf install gsl-devel
 \endverbatim
+- Gtk-2 for gui capabilities instead of X11
+\verbatim
+$ sudo dnf install gtk2-devel glib2-devel pango-devel atk-devel cairo-devel
+\endverbatim
+After installing the gtk packages, you need to explicitly enable gtk usage during ViSP cmake configuration step by:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DUSE_GTK=ON
+\endverbatim
 
 \subsection install_fedora_get_source Get ViSP source code
 

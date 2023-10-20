@@ -232,6 +232,11 @@ if(USE_MAVSDK)
   vp_set_source_file_compile_flag(src/real-robot/mavsdk/vpRobotMavsdk.cp -Wno-unused-but-set-variable)
 endif()
 
+if(USE_BICLOPS)
+  vp_set_source_file_compile_flag(src/real-robot/biclops/vpRobotBiclops.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/real-robot/biclops/private/vpRobotBiclopsController_impl.cpp -Wno-unused-parameter)
+endif()
+
 vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
