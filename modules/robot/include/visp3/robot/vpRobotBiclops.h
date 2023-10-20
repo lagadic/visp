@@ -52,7 +52,6 @@
 #include <visp3/core/vpVelocityTwistMatrix.h>
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobot.h>
-#include <visp3/robot/vpRobotBiclopsController.h>
 
 /* ------------------------------------------------------------------------ */
 /* --- CLASS -------------------------------------------------------------- */
@@ -411,14 +410,15 @@ public:
    * speed/power can damage the unit, damage due to velocity mode commanding is
    * under user responsibility.
    */
-  static void *vpRobotBiclopsSpeedControlLoop(void *arg);
+  static void vpRobotBiclopsSpeedControlLoop(void *arg);
 
 private:
   std::thread m_control_thread;
 
   std::string m_configfile; // Biclops config file
 
-  vpRobotBiclopsController m_controller;
+  class vpRobotBiclopsController;
+  vpRobotBiclopsController *m_controller;
 
   double m_positioningVelocity;
   vpColVector m_q_previous;

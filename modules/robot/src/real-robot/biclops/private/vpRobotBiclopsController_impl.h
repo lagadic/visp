@@ -66,7 +66,7 @@ class VISP_EXPORT Biclops; // needed for dll creation
  * This class uses libraries libBiclops.so, libUtils.so and libPMD.so and
  * includes Biclops.h and PMDUtils.h provided by Traclabs.
  */
-class VISP_EXPORT vpRobotBiclopsController
+class VISP_EXPORT vpRobotBiclops::vpRobotBiclopsController
 {
 public:
   /*!
