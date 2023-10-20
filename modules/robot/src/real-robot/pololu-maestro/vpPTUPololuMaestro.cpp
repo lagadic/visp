@@ -34,56 +34,25 @@
 #include <visp3/core/vpConfig.h>
 
 
-#ifdef VISP_HAVE_RAPA_POLOLU_MAESTRO
+#ifdef VISP_HAVE_POLOLU
 
 
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpPTUPololuMaestro.h>
 
-vpPTUPololuMaestro::vpPTUPololuMaestro()
-  : m_baudrate(9600), m_device("/dev/ttyACM0"), m_serialInterface(NULL), m_verbose(false)
+vpPTUPololuMaestro::vpPTUPololuMaestro(const std::string &device, int baudrate, bool verbose)
+  : m_baudrate(baudrate), m_device(device), m_verbose(verbose)
 {
-  setConnection(this->m_device, this->m_baudrate);
-
-  m_pan = vpServoPololuMaestro(this->m_serialInterface, 0);
-  m_tilt = vpServoPololuMaestro(this->m_serialInterface, 1);
-}
-
-vpPTUPololuMaestro::vpPTUPololuMaestro(const std::string &device, int baudrate)
-  : m_baudrate(baudrate), m_device(device), m_serialInterface(NULL), m_verbose(false)
-{
-  setConnection(this->m_device, this->m_baudrate);
-
-  m_pan = vpServoPololuMaestro(this->m_serialInterface, 0);
-  m_tilt = vpServoPololuMaestro(this->m_serialInterface, 1);
+  m_pan = vpServoPololuMaestro(device, baudrate, 0, verbose);
+  m_tilt = vpServoPololuMaestro(device, baudrate, 1, verbose);
 }
 
 vpPTUPololuMaestro::~vpPTUPololuMaestro() { }
 
-void vpPTUPololuMaestro::setConnection(std::string device, int baudrate)
+void vpPTUPololuMaestro::setPositionAngle(float angle, unsigned short speed, Axis axis)
 {
-  if (m_serialInterface != NULL) {
-    throw(vpRobotException(vpRobotException::constructionError, "Pololu board already connected"));
-  }
-  std::string error_msg;
-  this->m_serialInterface = RPM::SerialInterface::createSerialInterface(device, baudrate, &error_msg);
-
-  if (!m_serialInterface->isOpen()) {
-    if (m_verbose) {
-      //std::cout << error_msg << std::endl;
-      //std::cout << m_serialInterface->isOpen() << "\n";
-    }
-    throw(vpRobotException(vpRobotException::constructionError, "Cannot connect to pololu board with device: %s and baudrate: %d", device.c_str(), baudrate));
-  }
-  else if (m_serialInterface->isOpen() && m_verbose) {
-    std::cout << "Serial " << device << " is started!\n";
-  }
-}
-
-void vpPTUPololuMaestro::setPositionAngle(float angle, unsigned short speed, Axe axe)
-{
-  switch (axe) {
+  switch (axis) {
   case pan:
     m_pan.setPositionAngle(angle, speed);
     break;
@@ -96,9 +65,9 @@ void vpPTUPololuMaestro::setPositionAngle(float angle, unsigned short speed, Axe
   }
 }
 
-void vpPTUPololuMaestro::getRange(float &minAngle, float &maxAngle, float &rangeAngle, Axe axe)
+void vpPTUPololuMaestro::getRange(float &minAngle, float &maxAngle, float &rangeAngle, Axis axis)
 {
-  switch (axe) {
+  switch (axis) {
   case pan:
     m_pan.getRangeAngle(minAngle, maxAngle, rangeAngle);
     break;
@@ -114,12 +83,12 @@ void vpPTUPololuMaestro::getRange(float &minAngle, float &maxAngle, float &range
   }
 }
 
-void vpPTUPololuMaestro::setVelocityCmd(short speed, Axe axe)
+void vpPTUPololuMaestro::setVelocityCmd(short speed, Axis axis)
 {
   if (m_verbose) {
     std::cout << "Start vel cmd" << std::endl;
   }
-  switch (axe) {
+  switch (axis) {
   case pan:
     m_pan.setVelocityCmd(speed);
     break;
@@ -132,9 +101,9 @@ void vpPTUPololuMaestro::setVelocityCmd(short speed, Axe axe)
   }
 }
 
-void vpPTUPololuMaestro::stopVelocityCmd(Axe axe)
+void vpPTUPololuMaestro::stopVelocityCmd(Axis axis)
 {
-  switch (axe) {
+  switch (axis) {
   case pan:
     m_pan.stopVelCmd();
     break;
@@ -147,9 +116,9 @@ void vpPTUPololuMaestro::stopVelocityCmd(Axe axe)
   }
 }
 
-void vpPTUPololuMaestro::getPositionAngle(float &angle, Axe axe)
+void vpPTUPololuMaestro::getPositionAngle(float &angle, Axis axis)
 {
-  switch (axe) {
+  switch (axis) {
   case pan:
     angle = m_pan.getPositionAngle();
     break;

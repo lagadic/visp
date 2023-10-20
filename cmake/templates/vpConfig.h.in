@@ -399,7 +399,7 @@
 #cmakedefine VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION
 
 // Defined if Rapa Pololu Maestro 3rd party library available.
-#cmakedefine VISP_HAVE_RAPA_POLOLU_MAESTRO
+#cmakedefine VISP_HAVE_POLOLU
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46

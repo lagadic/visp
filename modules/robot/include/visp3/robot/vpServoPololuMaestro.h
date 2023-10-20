@@ -36,13 +36,12 @@
 
 #include <visp3/core/vpConfig.h>
 
-
-#ifdef VISP_HAVE_RAPA_POLOLU_MAESTRO
+#ifdef VISP_HAVE_POLOLU
 
 #include <iostream>
 #include <string>
 
-#include <RPMSerialInterface.h>
+class RPMSerialInterface;
 
 /*!
  * \class vpServoPololuMaestro
@@ -59,186 +58,177 @@ class VISP_EXPORT vpServoPololuMaestro
 {
 public:
   /*!
-  * Default constructor.
-  * The VelocityCmdThread is created in the constructor and will run independently of the rest of the class.
-  * You can set velocity commands using setVelCmd() method.
-  *
-  * \param device : Serial device name to dial with pololu board.
-  *
-  * \param baudrate : Baudrate used to dial with pololu board.
-  *
-  */
-  vpServoPololuMaestro(const std::string &device = "/dev/ttyACM0", int baudrate = 9600);
-
-
-  /*!
-  * Value constructor.
-  *
-  * \param interface : Serial interface for communication.
-  *
-  * \param channel : Channel number in which the servo is connected on the pololu board.
-  *
-  * \param verbose : Enabling verbose, default is false.
-  */
-  vpServoPololuMaestro(RPM::SerialInterface *interface, int channel, bool verbose = false);
+   * Default constructor.
+   * The VelocityCmdThread is created in the constructor and will run independently of the rest of the class.
+   * You can set velocity commands using setVelCmd() method.
+   *
+   * \param[in] device : Serial device name to dial with Pololu board.
+   * \param[in] baudrate : Baudrate used to dial with Pololu board.
+   * \param[in] channel : Channel to which the servo is connected to the Pololu board.
+   * \param[in] verbose : When true enable verbose mode.
+   *
+   */
+  vpServoPololuMaestro(const std::string &device = "/dev/ttyACM0", int baudrate = 9600, int channel = 0, bool verbose = false);
 
   /*!
-  * Destructor.
-  */
+   * Destructor.
+   */
   virtual ~vpServoPololuMaestro();
 
   /*!
-  * Convert angles to PWM for servo commands.
-  *
-  * \param angle : Angle, in degree to be converted.
-  *
-  * \return Corresponding PWM value for the angle.
-  */
+   * Convert angles to PWM for servo commands.
+   *
+   * \param angle : Angle, in degree to be converted.
+   *
+   * \return Corresponding PWM value for the angle.
+   */
   int angle2PWM(float angle);
 
   /*!
-  * Check if the serial connection is still up.
-  *
-  * \return TRUE is the connection has an error.
-  */
+   * Check if the serial connection is still up.
+   *
+   * \return TRUE is the connection has an error.
+   */
   bool checkConnection();
 
   /*!
-  *  Convert deg/s speed into Pololu's speed.
-  *
-  * \param speedDegS : Speed converted to deg/s.
-  *
-  * \return speed : Speed in units of (0.25 μs)/(10 ms).
-  *
-  */
+   *  Convert deg/s speed into Pololu's speed.
+   *
+   * \param speedDegS : Speed converted to deg/s.
+   *
+   * \return speed : Speed in units of (0.25 μs)/(10 ms).
+   *
+   */
   short degSToSpeed(float speedDegS);
 
   /*!
-  * Return position in PWM.
-  *
-  * \return position: Return current position in PWM.
-  */
+   * Return position in PWM.
+   *
+   * \return position: Return current position in PWM.
+   */
   unsigned short getPosition();
 
   /*!
-  * Return position in PWM.
-  *
-  * \return positionAngle : Return current position in deg;
-  */
+   * Return position in PWM.
+   *
+   * \return positionAngle : Return current position in deg;
+   */
   float getPositionAngle();
 
   /*!
-  * Get min, max and range for angle cmd.
-  *
-  * \param minAngle : Min range value for angle control.
-  *
-  * \param maxAngle : Max range value for angle control.
-  *
-  * \param rangeAngle : Range value for angle control.
-  *
-  */
+   * Get min, max and range for angle cmd.
+   *
+   * \param minAngle : Min range value for angle control.
+   *
+   * \param maxAngle : Max range value for angle control.
+   *
+   * \param rangeAngle : Range value for angle control.
+   *
+   */
   void getRangeAngle(float &minAngle, float &maxAngle, float &rangeAngle);
 
   /*!
-  * Get min, max and range for PWM cmd.
-  *
-  * \param minPWM : Min range value for PWM control.
-  *
-  * \param maxPWM : Max range value for PWM control.
-  *
-  * \param rangePWM : Range value for PWM control.
-  *
-  */
+   * Get min, max and range for PWM cmd.
+   *
+   * \param minPWM : Min range value for PWM control.
+   *
+   * \param maxPWM : Max range value for PWM control.
+   *
+   * \param rangePWM : Range value for PWM control.
+   *
+   */
   void getRangePWM(int &minPWM, int &maxPWM, int &rangePWM);
 
   /*!
-  *  Return the current speed parameter.
-  *
-  * \return speed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
-  *
-  */
+   *  Return the current speed parameter.
+   *
+   * \return speed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
+   *
+   */
   unsigned short getSpeed();
 
   /*!
-  * Convert PWM to angles  for servo commands.
-  *
-  * \param PWM : PWM value.
-  *
-  * \return Corresponding angle value for the PWM.
-  */
+   * Convert PWM to angles  for servo commands.
+   *
+   * \param PWM : PWM value.
+   *
+   * \return Corresponding angle value for the PWM.
+   */
   float PWM2Angle(int PWM);
 
   /*!
-  * Set the position to reach in angle.
-  *
-  * \param targetAngle : Position in angle to reach.
-  *
-  * \param speed : OPTIONAL : Speed to use for movement in units of (0.25 μs)/(10 ms). Default is '0' and will use
-  * maximum speed.
-  *
-  * \return error : Return 1 if an error is encountered.
-  *
-  */
+   * Set the position to reach in angle.
+   *
+   * \param targetAngle : Position in angle to reach.
+   *
+   * \param speed : OPTIONAL : Speed to use for movement in units of (0.25 μs)/(10 ms). Default is '0' and will use
+   * maximum speed.
+   *
+   * \return error : Return 1 if an error is encountered.
+   *
+   */
   void setPositionAngle(float targetAngle, unsigned short speed = 0);
 
   /*!
-  * Set the position to reach in PWM.
-  *
-  * \param targetPWM : Position in PWM to reach.
-  *
-  * \param speed : OPTIONAL : Speed to use for movement in units of (0.25 μs)/(10 ms). Default is 0, maximum speed.
-  *
-  * \exception When PWM out of range.
-  */
+   * Set the position to reach in PWM.
+   *
+   * \param targetPWM : Position in PWM to reach.
+   *
+   * \param speed : OPTIONAL : Speed to use for movement in units of (0.25 μs)/(10 ms). Default is 0, maximum speed.
+   *
+   * \exception When PWM out of range.
+   */
   void setPositionPWM(int targetPWM, unsigned short speed = 0);
 
   /*!
-  *  Set the speed of the motor movements.
-  *
-  * \param speed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
-  *
-  * \return error : Return 1 if an error is encountered.
-  */
+   *  Set the speed of the motor movements.
+   *
+   * \param speed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
+   *
+   * \return error : Return 1 if an error is encountered.
+   */
   void setSpeed(unsigned short speed);
 
   /*!
-  *  Set the speed of the motor movements in deg/s.
-  *
-  * \param speedRadS : Speed to use for movement in deg/s. No speed (0) will use maximum speed
-  *
-  * \return error : return 1 if an error is encountered
-  *
-  */
+   *  Set the speed of the motor movements in deg/s.
+   *
+   * \param speedRadS : Speed to use for movement in deg/s. No speed (0) will use maximum speed
+   *
+   * \return error : return 1 if an error is encountered
+   *
+   */
   void  setSpeedDegS(float speedRadS);
 
   /*!
-  *  Set the speed of the motor movements and start the velocity command thread. The motor will move to the edge of the
-  * range at the given speed.
-  *
-  * \param velocityCmdSpeed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
-  *
-  * \return error : Return 1 if an error is encountered.
-  */
+   *  Set the speed of the motor movements and start the velocity command thread. The motor will move to the edge of the
+   * range at the given speed.
+   *
+   * \param velocityCmdSpeed : Speed to use for movement in units of (0.25 μs)/(10 ms). No speed (0) will use maximum speed.
+   *
+   * \return error : Return 1 if an error is encountered.
+   */
   void setVelocityCmd(short velocityCmdSpeed);
 
   /*!
-  *  Convert Pololu's speed to deg/s speed.
-  *
-  * \param speed : Speed in units of (0.25 μs)/(10 ms).
-  *
-  * \return speedDegS : Speed converted to deg/s
-  *
-  */
+   *  Convert Pololu's speed to deg/s speed.
+   *
+   * \param speed : Speed in units of (0.25 μs)/(10 ms).
+   *
+   * \return speedDegS : Speed converted to deg/s
+   *
+   */
   float speedToDeGS(short speed);
 
   /*!
-  *  Stop the velocity command thread.
-  *
-  */
+   *  Stop the velocity command thread.
+   *
+   */
   void stopVelCmd();
 
 private:
-  RPM::SerialInterface *m_interface;
+  static RPMSerialInterface *m_interface; // Only one interface should be used even when controlling multiple servos
+  static int m_nb_servo; // Object counter to handel serial interface destruction
+
   int m_channel;
   bool m_FlagVelCmdRunning;
 
@@ -257,11 +247,11 @@ private:
   bool m_verbose;
 
   /*!
-  * Thread use for Velocity control. This thread is launch in the constructor of the object and, unless crashes, will
-  * run until the process is ended. If the m_FlagVelCmdRunning is set to TRUE, by invoking the setVelocityCmd method, the
-  * motor will go to the edge of the motor range using the speed set in setVelocityCmd. The velocity command can be
-  * stopped invoking the stopVelCmd() method.
-  */
+   * Thread use for Velocity control. This thread is launch in the constructor of the object and, unless crashes, will
+   * run until the process is ended. If the m_FlagVelCmdRunning is set to TRUE, by invoking the setVelocityCmd method, the
+   * motor will go to the edge of the motor range using the speed set in setVelocityCmd. The velocity command can be
+   * stopped invoking the stopVelCmd() method.
+   */
   void VelocityCmdThread();
 };
 

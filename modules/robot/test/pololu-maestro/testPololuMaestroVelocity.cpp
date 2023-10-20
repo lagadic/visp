@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_RAPA_POLOLU_MAESTRO
+#ifdef VISP_HAVE_POLOLU
 
 #include "RPMSerialInterface.h"
 #include <chrono>
@@ -48,23 +48,11 @@ int main()
 {
   std::chrono::seconds sec(1);
 
-  // Create the interface.
-  std::string error_msg;
-  const std::string &dev = "/dev/ttyACM0";
-  RPM::SerialInterface *serialInterface = RPM::SerialInterface::createSerialInterface(dev, 9600, &error_msg);
+  const std::string &device = "/dev/ttyACM0";
+  int baudrate = 9600;
 
-  std::cout << error_msg;
-  std::cout << "Serial is: " << dev << " Started!\n";
-  std::cout << serialInterface->isOpen() << "\n";
-
-  // Checking that the serial connection is open.
-  if (!serialInterface->isOpen()) {
-    std::cout << "Serial Communication Failed!\n";
-    return EXIT_FAILURE;
-  }
-
-  // Creating the servo object.
-  vpServoPololuMaestro servo1(serialInterface, 0);
+  // Creating the servo object on channel 0.
+  vpServoPololuMaestro servo1(device, baudrate, 0);
 
   // Servo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3 sec.
   servo1.setVelocityCmd(10);
@@ -72,8 +60,8 @@ int main()
   servo1.setVelocityCmd(-10);
   std::this_thread::sleep_for(3 * sec);
 
-  // Adding a second servo to the test.
-  vpServoPololuMaestro servo2(serialInterface, 1);
+  // Adding a second servo to the test on channel 1.
+  vpServoPololuMaestro servo2(device, baudrate, 1);
 
   // Both servo objet will first move in one direction at a velocity of 10 for 3 sec and move back in the other direction for 3 sec.
   servo1.setVelocityCmd(10);
@@ -91,5 +79,8 @@ int main()
 }
 
 #else
-int main() { std::cout << "ViSP doesn't support Rapa Pololu Servo 3rd party library" << std::endl; }
+int main()
+{
+  std::cout << "ViSP doesn't support Rapa Pololu Servo 3rd party library" << std::endl;
+}
 #endif

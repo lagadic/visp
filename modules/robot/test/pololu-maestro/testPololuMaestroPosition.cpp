@@ -35,9 +35,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_RAPA_POLOLU_MAESTRO
+#ifdef VISP_HAVE_POLOLU
 
-#include "RPMSerialInterface.h"
 #include <chrono>
 #include <iostream>
 #include <string>
@@ -48,23 +47,11 @@ int main()
 {
   std::chrono::seconds sec(1);
 
-  // Create the interface.
-  std::string error_msg;
-  const std::string &dev = "/dev/ttyACM0";
-  RPM::SerialInterface *serialInterface = RPM::SerialInterface::createSerialInterface(dev, 9600, &error_msg);
+  const std::string &device = "/dev/ttyACM0";
+  int baudrate = 9600;
 
-  std::cout << error_msg;
-  std::cout << "Serial is: " << dev << " Started!\n";
-  std::cout << serialInterface->isOpen() << "\n";
-
-  // Checking that the serial connection is open.
-  if (!serialInterface->isOpen()) {
-    std::cout << "Serial Communication Failed!\n";
-    return EXIT_FAILURE;
-  }
-
-  // Creating the servo object.
-  vpServoPololuMaestro servo1(serialInterface, 0);
+  // Creating the servo object on channel 0.
+  vpServoPololuMaestro servo1(device, baudrate, 0);
 
   // Getting the ranges of the servo.
   int min;
@@ -80,8 +67,8 @@ int main()
   servo1.setPositionPWM(max, 0);
   std::this_thread::sleep_for(3 * sec);
 
-  // Adding a second servo to the test.
-  vpServoPololuMaestro servo2(serialInterface, 1);
+  // Adding a second servo to the test on channel 1.
+  vpServoPololuMaestro servo2(device, baudrate, 1);
 
   // Both servos will first go to min range wait 3 seconds and go to max range.
   servo1.setPositionPWM(min);
@@ -95,5 +82,8 @@ int main()
 }
 
 #else
-int main() { std::cout << "ViSP doesn't support Rapa Pololu Servo 3rd party library" << std::endl; }
+int main()
+{
+  std::cout << "ViSP doesn't support Rapa Pololu Servo 3rd party library" << std::endl;
+}
 #endif

@@ -36,14 +36,12 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_RAPA_POLOLU_MAESTRO
+#ifdef VISP_HAVE_POLOLU
 
 #include <iostream>
 #include <string>
 #include <thread>
 #include <chrono>
-
-#include <RPMSerialInterface.h>
 
 #include <visp3/robot/vpServoPololuMaestro.h>
 
@@ -64,100 +62,89 @@ using namespace std;
 class VISP_EXPORT vpPTUPololuMaestro
 {
 public:
-  typedef enum { pan, tilt, yaw } Axe;
+  /*!
+   * Axis enumeration.
+   */
+  typedef enum
+  {
+    pan, //!< Pan axis
+    tilt //!< Tilt axis
+  } Axis;
 
   /*!
-  * Default constructor.
-  */
-  vpPTUPololuMaestro();
+   * Default constructor.
+   *
+   * \param baudrate : Baudrate used for the serial communication.
+   *
+   * \param device : Name of the serial interface used for communication.
+   */
+  vpPTUPololuMaestro(const std::string &device = "/dev/ttyACM0", int baudrate = 9600, bool verbose = false);
 
   /*!
-  * Value constructor.
-  *
-  * \param baudrate : Baudrate used for the serial communication.
-  *
-  * \param device : Name of the serial interface used for communication.
-  */
-  vpPTUPololuMaestro(const std::string &device, int baudrate);
-
-  /*!
-  * Destructor.
-  */
+   * Destructor.
+   */
   virtual ~vpPTUPololuMaestro();
 
   /*!
-  * Get ranges for a given axe.
-  *
-  * \param minAngle : Pointer to minimum range of the servo.
-  *
-  * \param maxAngle : Pointer to maximum range of the servo.
-  *
-  * \param rangeAngle : Pointer to the range of the servo.
-  *
-  * \param axe : One of the axe define in vpPTUPololuMaestro.h Axe enum.
-  *
-  */
-  void getRange(float &minAngle, float &maxAngle, float &rangeAngle, Axe axe = pan);
+   * Get ranges for a given axe.
+   *
+   * \param minAngle : Pointer to minimum range of the servo.
+   *
+   * \param maxAngle : Pointer to maximum range of the servo.
+   *
+   * \param rangeAngle : Pointer to the range of the servo.
+   *
+   * \param axe : One of the axe define in vpPTUPololuMaestro.h Axis enum.
+   *
+   */
+  void getRange(float &minAngle, float &maxAngle, float &rangeAngle, Axis axis = pan);
 
   /*!
-  *   Get the current position of a servo motor in degree.
-  *
-  * \param angle : Angle, in degree.
-  *
-  * \param axe : One of the axe define in vpPTUPololuMaestro.h Axe enum.
-  *
-  */
-  void getPositionAngle(float &angle, Axe axe);
-
-
-  /*!
-  * Initiate the serial connection with the Pololu board.
-  *
-  * \param device : Name of the serial interface used for communication.
-  *
-  * \param baudrate : Baudrate used for the serial communication.
-  *
-  */
-  void setConnection(std::string device, int baudrate);
+   *   Get the current position of a servo motor in degree.
+   *
+   * \param angle : Angle, in degree.
+   *
+   * \param axe : One of the axe define in vpPTUPololuMaestro.h Axis enum.
+   *
+   */
+  void getPositionAngle(float &angle, Axis axis);
 
   /*!
-  * Set position in degree and the maximum speed of displacement for a given axe.
-  *
-  * \param angle : Angle to reach, in degree.
-  *
-  * \param speed : Maximum speed for movement in units of (0.25 μs)/(10 ms).
-  *                You can use the vpServoPololuMaestro::degSToSpeed method for conversion.
-  *
-  * \param axe : One of the axe define in vpPTUPololuMaestro.h Axe enum.
-  *
-  */
-  void setPositionAngle(float angle, unsigned short speed = 0, Axe axe = pan);
+   * Set position in degree and the maximum speed of displacement for a given axe.
+   *
+   * \param angle : Angle to reach, in degree.
+   *
+   * \param speed : Maximum speed for movement in units of (0.25 μs)/(10 ms).
+   *                You can use the vpServoPololuMaestro::degSToSpeed() method for conversion.
+   *
+   * \param axe : One of the axe define in vpPTUPololuMaestro.h Axis enum.
+   *
+   */
+  void setPositionAngle(float angle, unsigned short speed = 0, Axis axis = pan);
 
   /*!
-  *  Set and start the velocity command for a given axe.
-  *
-  * \param speed : Speed for movement in units of (0.25 μs)/(10 ms).
-  *                You can use the vpServoPololuMaestro::degSToSpeed method for conversion.
-  *
-  * \param axe : One of the axe define in vpPTUPololuMaestro.h Axe enum.
-  *
-  */
-  void setVelocityCmd(short speed, Axe axe = pan);
-
+   *  Set and start the velocity command for a given axe.
+   *
+   * \param speed : Speed for movement in units of (0.25 μs)/(10 ms).
+   *                You can use the vpServoPololuMaestro::degSToSpeed() method for conversion.
+   *
+   * \param axe : One of the axe define in vpPTUPololuMaestro.h Axis enum.
+   *
+   */
+  void setVelocityCmd(short speed, Axis axis = pan);
 
   /*!
-  *  Stop the velocity command for a given axe.
-  *
-  * \param axe : One of the axe define in vpPTUPololuMaestro.h Axe enum.
-  *
-  */
-  void stopVelocityCmd(Axe axe);
+   *  Stop the velocity command for a given axe.
+   *
+   * \param axe : One of the axe define in vpPTUPololuMaestro.h Axis enum.
+   *
+   */
+  void stopVelocityCmd(Axis axis);
 
 private:
   // Serial connection parameters.
   int m_baudrate;
   std::string m_device;
-  RPM::SerialInterface *m_serialInterface;
 
   vpServoPololuMaestro m_pan;
   vpServoPololuMaestro m_tilt;
