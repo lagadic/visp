@@ -56,7 +56,7 @@ vpServoPololuMaestro::vpServoPololuMaestro(const std::string &device, int baudra
   std::string error_msg;
   m_nb_servo++;
 
-  if (not m_interface) {
+  if (!m_interface) {
     m_interface = RPMSerialInterface::createSerialInterface(device, baudrate, &error_msg);
 
     if (!m_interface->isOpen()) {
