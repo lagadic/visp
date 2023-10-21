@@ -195,15 +195,11 @@ function(vp_target_include_directories target)
     endif()
   endforeach()
   if(__params)
-    if(CMAKE_VERSION VERSION_LESS 2.8.11)
-      include_directories(${__params})
+    if(TARGET ${target})
+      target_include_directories(${target} PRIVATE ${__params})
     else()
-      if(TARGET ${target})
-        target_include_directories(${target} PRIVATE ${__params})
-      else()
-        set(__new_inc "${VP_TARGET_INCLUDE_DIRS_${target}};${__params}")
-        set(VP_TARGET_INCLUDE_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
-      endif()
+      set(__new_inc "${VP_TARGET_INCLUDE_DIRS_${target}};${__params}")
+      set(VP_TARGET_INCLUDE_DIRS_${target} "${__new_inc}" CACHE INTERNAL "")
     endif()
   endif()
 endfunction()
@@ -1968,4 +1964,27 @@ macro(vp_list_replace_string list_in list_out regular_expression replacement_exp
     list(APPEND __list_out ${var_out})
   endforeach()
   set(${list_out} ${__list_out})
+endmacro()
+
+macro(vp_git_describe var_name path)
+  if(GIT_FOUND)
+    execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --exact-match --dirty
+      WORKING_DIRECTORY "${path}"
+      OUTPUT_VARIABLE ${var_name}
+      RESULT_VARIABLE GIT_RESULT
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT GIT_RESULT EQUAL 0)
+      execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
+        WORKING_DIRECTORY "${path}"
+        OUTPUT_VARIABLE ${var_name}
+        RESULT_VARIABLE GIT_RESULT
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+      )
+    endif()
+  else()
+    set(${var_name} "unknown")
+  endif()
 endmacro()
