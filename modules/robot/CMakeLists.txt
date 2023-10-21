@@ -253,8 +253,11 @@ vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-si
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
-  DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH bebop2 qbdevice servo-afma4 servo-afma6 servo-franka servo-universal-robots servo-viper virtuose servo-pixhawk)
+  DEPENDS_ON
+    visp_sensor visp_vision visp_blob visp_gui
+  CTEST_EXCLUDE_PATH
+    bebop2 qbdevice servo-afma4 servo-afma6 servo-franka servo-pixhawk servo-pololu servo-universal-robots
+    servo-viper virtuose)
 
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
