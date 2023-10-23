@@ -2,7 +2,7 @@
 # Declare the cpp source files as explicitely generated so that pybind11_add_module does not look for them when they are not yet created
 set_source_files_properties(${python_bindings_cpp_src} PROPERTIES GENERATED TRUE)
 
-pybind11_add_module(_visp THIN_LTO ${python_bindings_cpp_src})
+pybind11_add_module(_visp ${python_bindings_cpp_src})
 
 # Place library in binary/visp dir so that it doesn't pollute lib dir
 # This .so file is not treated the same as the others and we shouldn't link against it when compiling in C++

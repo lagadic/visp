@@ -4,6 +4,8 @@ from pathlib import Path
 from multiprocessing import Pool
 import argparse
 
+from cxxheaderparser.errors import CxxParseError
+
 from visp_python_bindgen.header import *
 from visp_python_bindgen.submodule import *
 from visp_python_bindgen.generator_config import GeneratorConfig
@@ -19,6 +21,11 @@ def header_preprocess(header: HeaderFile):
     print('There was an error when processing header', header.path)
     import traceback
     traceback.print_exc()
+    print(type(e))
+    if isinstance(e, CxxParseError):
+
+      print(header.preprocessed_header_str)
+
     return None
 
 def main_str(submodule_fn_declarations, submodule_fn_calls):
@@ -57,7 +64,7 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
     new_all_headers = []
     for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr)):
       if result is None:
-        raise RuntimeError('There was an exception when processing headers: You should either ignore them, ignore the failing class, or fix the generator code!')
+        raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
       new_all_headers.append(result)
 
   # Sort headers according to the dependencies. This is done across all modules.

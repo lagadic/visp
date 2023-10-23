@@ -5,6 +5,8 @@ from pathlib import Path
 from dataclasses import dataclass
 import json
 
+
+
 @dataclass
 class PreprocessorConfig(object):
   '''
@@ -79,7 +81,8 @@ class GeneratorConfig(object):
       'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
-      '__cplusplus' : '201103L' # To silence OpenCV warnings
+      '__cplusplus' : '201103L', # To silence OpenCV warnings,
+      #'OPENCV_ALL_HPP': None, # Don't preprocess the full opencv headers
     },
     never_defined=[
       'VISP_BUILD_DEPRECATED_FUNCTIONS', # Do not bind deprecated functions
@@ -88,7 +91,7 @@ class GeneratorConfig(object):
     include_directories=[], # Populate through the main configuration file
     passthrough_includes_regex="^.*$", # Never output the result of other includes.
     line_directive=None,
-    other_args=["--passthru-unfound-includes", "--passthru-comments"]
+    other_args=["--passthru-unfound-includes"] #"--passthru-comments"
   )
 
   @staticmethod

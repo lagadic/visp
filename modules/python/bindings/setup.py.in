@@ -16,6 +16,8 @@ version = '@VISP_PYTHON_VERSION@'
 
 package_data = {}
 
+# Inspired by the pyrealsense2 binding
+# Include a .so lib that is already compiled into the package
 if os.name == 'posix':
   package_data[''] = ['*.so']
 else:
@@ -32,7 +34,7 @@ setup(
   name=package_name,
   version=version,
   author="Samuel Felton",
-  packages=['visp'],
+  packages=['', 'visp'],
   author_email="samuel.felton@irisa.fr",
   description="Python wrapper for the Visual Servoing Platform",
   long_description="",
