@@ -37,7 +37,7 @@ setup(
   include_package_data=True,
   setup_requires=[
       "pybind11-stubgen>=2.1",
-      "visp"
+      #"visp"
   ],
   cmdclass={'install': CustomInstall},
   python_requires=">=3.7",

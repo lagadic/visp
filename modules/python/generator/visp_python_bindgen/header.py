@@ -91,19 +91,42 @@ class HeaderFile():
   def run_preprocessor(self): # TODO: run without generating a new file
     tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
     tmp_dir.mkdir(exist_ok=True)
-    tmp_file_path = tmp_dir / self.path.name
+    tmp_file_path = tmp_dir / (self.path.name + '.in')
+    preprocessor_output_path = tmp_dir / (self.path.name)
+    tmp_file_content = []
+    forced_includes = [
+      'visp3/core/vpConfig.h',
+      'opencv2/opencv_modules.hpp'
+    ]
+    for include in forced_includes:
+      tmp_file_content.append(f'#include <{include}>')
+
+    # Remove all includes: we only include configuration headers, defined above
+    with open(self.path.absolute(), 'r') as input_header_file:
+      include_regex = '#include\s*<(.*)>'
+      for line in input_header_file.readlines():
+        matches = re.search(include_regex, line)
+        if matches is None: # Include line if its not an include
+          tmp_file_content.append(line)
+
+    with open(tmp_file_path.absolute(), 'w') as tmp_file:
+      tmp_file.write('\n'.join(tmp_file_content))
+      tmp_file.flush()
+
+
     argv = [''] + GeneratorConfig.pcpp_config.to_pcpp_args_list()
-    argv += ['-o', f'{tmp_file_path}', str(self.path.absolute())]
+    argv += ['-o', f'{preprocessor_output_path}', str(tmp_file_path.absolute())]
 
     pcpp.CmdPreprocessor(argv)
     preprocessed_header_content = None
-    with open(tmp_file_path, 'r') as header_file:
+
+    # Remove all #defines that could have been left by the preprocessor
+    with open(preprocessor_output_path, 'r') as header_file:
       preprocessed_header_lines = []
       for line in header_file.readlines():
         if not line.startswith('#define'):
           preprocessed_header_lines.append(line)
       preprocessed_header_content = '\n'.join(preprocessed_header_lines)
-
       preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
     return preprocessed_header_content
 

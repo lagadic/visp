@@ -79,13 +79,14 @@ class GeneratorConfig(object):
       'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
-      '__cplusplus' : None # To silence OpenCV warnings
+      '__cplusplus' : '201103L' # To silence OpenCV warnings
     },
     never_defined=[
-      'VISP_BUILD_DEPRECATED_FUNCTIONS' # Do not bind deprecated functions
+      'VISP_BUILD_DEPRECATED_FUNCTIONS', # Do not bind deprecated functions
+      'VISP_RUBIK_REGULAR_FONT_RESOURCES'
     ],
     include_directories=[], # Populate through the main configuration file
-    passthrough_includes_regex="^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules\.h).)*$", # Only expand vpConfig, opencv_modules etc.
+    passthrough_includes_regex="^.*$", # Never output the result of other includes.
     line_directive=None,
     other_args=["--passthru-unfound-includes", "--passthru-comments"]
   )
