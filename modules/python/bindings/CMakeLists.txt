@@ -10,7 +10,7 @@ pybind11_add_module(_visp THIN_LTO ${python_bindings_cpp_src})
 
 file(MAKE_DIRECTORY "${bindings_gen_location}/src")
 set_target_properties(_visp PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/visp"
+  LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
 
 target_include_directories(_visp PRIVATE include) # Include directory containing custom bindings
@@ -21,7 +21,6 @@ add_dependencies(_visp visp_python_bindings_generator_run)
 # Setup pip install
 if(Python_FOUND)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in" "${CMAKE_CURRENT_BINARY_DIR}/setup.py" @ONLY)
-
   add_custom_target( visp_python_bindings_install
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/visp" "${CMAKE_CURRENT_BINARY_DIR}/visp"
     COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v "${CMAKE_CURRENT_BINARY_DIR}"

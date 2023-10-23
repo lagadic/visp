@@ -6,7 +6,7 @@ import argparse
 
 from visp_python_bindgen.header import *
 from visp_python_bindgen.submodule import *
-
+from visp_python_bindgen.generator_config import GeneratorConfig
 
 def header_preprocess(header: HeaderFile):
   '''
@@ -97,19 +97,24 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
     main_file.write(format_str)
 
 def main():
-  parser = argparse.ArgumentParser('Python Bindings generator for ViSP')
-  parser.add_argument('--config', type=str, required=True)
-  parser.add_argument('--build-folder', type=str, required=True)
+  parser = argparse.ArgumentParser(description='Python Bindings generator for ViSP')
+  parser.add_argument('--config', type=str, required=True, help='Path to the folder containing the module configurations (one .json file per module)')
+  parser.add_argument('--build-folder', type=str, required=True, help='Where to save the generated binding code')
+  parser.add_argument('--main-config', type=str, required=True, help='Path to the .json file detailing which modules to build, include directories etc.')
+
   args = parser.parse_args()
 
   generation_path = Path(args.build_folder)
-  assert generation_path.exists(), f'Path to where to generate bindings does not exist!Path: {generation_path}'
+  assert generation_path.exists(), f'Path to where to generate bindings does not exist! Path: {generation_path}'
   generation_path = generation_path / 'src'
   generation_path.mkdir(exist_ok=True)
 
   config_path = Path(args.config)
   assert config_path.exists(), f'Path to the folder containing the configuration files does not exist! Path: {config_path}'
 
+  main_config_path = Path(args.main_config)
+  assert main_config_path.exists(), f'Path to the main JSON configuration is invalid! Path: {main_config_path}'
+  GeneratorConfig.update_from_main_config_file(main_config_path)
   generate_module(generation_path, config_path)
 
 if __name__ == '__main__':

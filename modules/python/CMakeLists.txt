@@ -98,17 +98,18 @@ set(pip_files "${CMAKE_CURRENT_SOURCE_DIR}/generator/pyproject.toml")
 add_custom_command(
   OUTPUT ${python_bindings_cpp_src}
   COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
-  COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location}
+  COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
   DEPENDS ${python_bound_modules} ${json_config_file_path} ${config_files} ${python_sources} ${pip_files}
 )
 add_custom_target(visp_python_bindings_generator_run DEPENDS ${python_bindings_cpp_src})
 
 set(VISP_PYTHON_VERSION "${VISP_VERSION}")
 # Step 3: Compile and install bindings as a python package
-# First, we compile
-add_subdirectory(bindings "${bindings_gen_location}")
+add_subdirectory(bindings)
+
 
 # Step 4: Copy stubs dir and install stubs for autocompletion
+add_subdirectory(stubs)
 
 # Step 5: Build documentation
 

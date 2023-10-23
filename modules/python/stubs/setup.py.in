@@ -1,0 +1,44 @@
+from pathlib import Path
+from shutil import copy
+from setuptools import setup
+from setuptools.command.install import install
+
+import subprocess
+import sys
+
+class CustomInstall(install):
+  def run(self):
+    # Find the pybind11-stubgen like this: If the base env has pybind11-stubgen it may take precedence in the path
+    # It would thus not be able to see the _visp is package
+    bin_folder = Path(sys.executable).parent
+    stubgen_entry_point = bin_folder / 'pybind11-stubgen'
+    assert stubgen_entry_point.exists()
+
+    subprocess.run([str(stubgen_entry_point), '-o', '.', '--ignore-all-errors', '_visp'], check=True)
+
+    # Generate stubs for the bindings (C++ side) and mock it so that they appear in the true 'visp' package
+    p = Path('./_visp')
+    target_path = Path('./visp')
+    target_path.mkdir(exist_ok=True)
+    for pyi_file in p.iterdir():
+      if pyi_file.name.endswith('.pyi'):
+        copy(pyi_file, target_path / pyi_file.name) # Copy replace old files
+
+    install.run(self)
+
+setup(
+  name='visp-stubs',
+  version='@VISP_PYTHON_VERSION@',
+  packages=['visp'],
+  author="Samuel Felton",
+  author_email="samuel.felton@irisa.fr",
+  description="Python stubs for the ViSP wrapper",
+  zip_safe=False,
+  include_package_data=True,
+  setup_requires=[
+      "pybind11-stubgen>=2.1",
+      "visp"
+  ],
+  cmdclass={'install': CustomInstall},
+  python_requires=">=3.7",
+)

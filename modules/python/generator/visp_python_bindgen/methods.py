@@ -178,7 +178,8 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
           default_value = f'static_cast<{full_typename}>(nullptr)'
           default_value_rep = 'None'
         else:
-          default_value_rep = default_value.strip('"') # To handle default char* and std::string args
+          default_value_rep = default_value.strip('"') # To handle default char* and raw std::string args
+          default_value_rep = default_value_rep.replace('"', '\"') # Escape inner quotes in std::string args like std::string("hello"). This would break parsing at compile time
           default_value = env_mapping.get(default_value) or default_value
 
       py_args.append(f'py::arg_v("{parameter.name}", {default_value}, "{default_value_rep}")')

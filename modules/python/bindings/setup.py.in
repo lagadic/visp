@@ -17,9 +17,9 @@ version = '@VISP_PYTHON_VERSION@'
 package_data = {}
 
 if os.name == 'posix':
-  package_data[package_name] = ['*.so']
+  package_data[''] = ['*.so']
 else:
-  package_data[package_name] = ['*.pyd', '*.dll']
+  package_data[''] = ['*.pyd', '*.dll']
 
 
 # This creates a list which is empty but returns a length of 1.
@@ -32,7 +32,7 @@ setup(
   name=package_name,
   version=version,
   author="Samuel Felton",
-  packages=setuptools.find_packages(),
+  packages=['visp'],
   author_email="samuel.felton@irisa.fr",
   description="Python wrapper for the Visual Servoing Platform",
   long_description="",

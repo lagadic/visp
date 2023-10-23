@@ -1,7 +1,9 @@
 
 from typing import Dict, Final, List, Optional
 import re
+from pathlib import Path
 from dataclasses import dataclass
+import json
 
 @dataclass
 class PreprocessorConfig(object):
@@ -12,6 +14,7 @@ class PreprocessorConfig(object):
 
   defines: Dict[str, str] # Mapping from a #define to its value (#define A 1 is equal to a pair "A": "1")
   never_defined: List[str] # List of macros that should never be defined, even if they are defined in other included headers
+  include_directories: List[str]
   passthrough_includes_regex: str # Regex to see which header should be included (expanded and put in the resulting pcpp output) or ignored
   line_directive: Optional[str] # prefix for Warning/logging emitted by pcpp. If none, no warning
   other_args: List[str]
@@ -22,6 +25,8 @@ class PreprocessorConfig(object):
       args += ['-D', f'{k}={v}'] if v is not None else ['-D', k]
     for v in self.never_defined:
       args += ['-N', v]
+    for v in self.include_directories:
+      args += ['-I', v]
     args += self.other_args
     args.extend(['--passthru-includes', self.passthrough_includes_regex])
     if self.line_directive is not None:
@@ -79,6 +84,7 @@ class GeneratorConfig(object):
     never_defined=[
       'VISP_BUILD_DEPRECATED_FUNCTIONS' # Do not bind deprecated functions
     ],
+    include_directories=[], # Populate through the main configuration file
     passthrough_includes_regex="^((?!vpConfig\.h|opencv_modules\.hpp|visp_modules\.h).)*$", # Only expand vpConfig, opencv_modules etc.
     line_directive=None,
     other_args=["--passthru-unfound-includes", "--passthru-comments"]
@@ -105,3 +111,10 @@ class GeneratorConfig(object):
   @staticmethod
   def is_forbidden_function_name(name: str) -> bool:
     return GeneratorConfig._matches_regex_in_list(name, FORBIDDEN_FUNCTION_NAMES_REGEXS)
+
+  @staticmethod
+  def update_from_main_config_file(path: Path) -> None:
+    assert path.exists()
+    with open(path, 'r') as main_config_file:
+      main_config = json.load(main_config_file)
+      GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']

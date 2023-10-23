@@ -93,11 +93,6 @@ class HeaderFile():
     tmp_dir.mkdir(exist_ok=True)
     tmp_file_path = tmp_dir / self.path.name
     argv = [''] + GeneratorConfig.pcpp_config.to_pcpp_args_list()
-    argv += [
-      '-I', '/home/sfelton/software/visp_build/include',
-      '-I', '/usr/local/include',
-      '-I', '/usr/include',
-    ]
     argv += ['-o', f'{tmp_file_path}', str(self.path.absolute())]
 
     pcpp.CmdPreprocessor(argv)
