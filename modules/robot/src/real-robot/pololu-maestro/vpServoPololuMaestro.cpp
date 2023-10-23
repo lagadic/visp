@@ -83,7 +83,7 @@ vpServoPololuMaestro::~vpServoPololuMaestro()
 
 int vpServoPololuMaestro::angle2PWM(float angle)
 {
-  return ((angle + abs(m_minAngle)) / m_rangeAngle) * m_rangePWM + m_minPWM;
+  return static_cast<int>(((angle + abs(m_minAngle)) / m_rangeAngle) * m_rangePWM + m_minPWM);
 }
 
 bool vpServoPololuMaestro::checkConnection()
@@ -99,7 +99,7 @@ bool vpServoPololuMaestro::checkConnection()
 
 short vpServoPololuMaestro::degSToSpeed(float speedDegS)
 {
-  return (speedDegS / 100) * (m_rangePWM / m_rangeAngle);
+  return static_cast<short>((speedDegS / 100) * (m_rangePWM / m_rangeAngle));
 }
 
 unsigned short vpServoPololuMaestro::getPosition()
