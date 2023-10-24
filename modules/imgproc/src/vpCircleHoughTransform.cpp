@@ -375,6 +375,8 @@ vpCircleHoughTransform::computeCenterCandidates()
 
         for (int k1 = 0; k1 < 2; k1++) {
           bool hasToStopLoop = false;
+          int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
+          int x_high_prev = y_low_prev = y_high_prev = x_low_prev;
           for (int rad = int_minRad; rad <= int_maxRad && !hasToStopLoop; rad++) {
             float x1 = (float)c + (float)rad * sx;
             float y1 = (float)r + (float)rad * sy;
@@ -403,6 +405,17 @@ vpCircleHoughTransform::computeCenterCandidates()
             else {
               y_low = -(static_cast<int>(std::ceil(-1. * y1)));
               y_high = -(static_cast<int>(std::floor(-1. * y1)));
+            }
+
+            if (x_low_prev == x_low && x_high_prev == x_high && y_low_prev == y_low && y_high_prev == y_high) {
+              // Avoid duplicated votes to the same center candidate
+              continue;
+            }
+            else {
+              x_low_prev = x_low;
+              x_high_prev = x_high;
+              y_low_prev = y_low;
+              y_high_prev = y_high;
             }
 
             auto updateAccumulator =
@@ -488,7 +501,7 @@ void
 vpCircleHoughTransform::computeCircleCandidates()
 {
   size_t nbCenterCandidates = m_centerCandidatesList.size();
-  unsigned int nbBins = static_cast<unsigned int>((m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_centerMinDist);
+  unsigned int nbBins = static_cast<unsigned int>((m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_mergingRadiusDiffThresh);
   nbBins = std::max((unsigned int)1, nbBins); // Avoid having 0 bins, which causes segfault
   std::vector<unsigned int> radiusAccumList; /*!< Radius accumulator for each center candidates.*/
   std::vector<float> radiusActualValueList; /*!< Vector that contains the actual distance between the edge points and the center candidates.*/
@@ -520,7 +533,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
           // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
           float r = static_cast<float>(std::sqrt(r2));
-          unsigned int r_bin = static_cast<unsigned int>(std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist));
+          unsigned int r_bin = static_cast<unsigned int>(std::floor((r - m_algoParams.m_minRadius)/ m_algoParams.m_mergingRadiusDiffThresh));
           r_bin = std::min(r_bin, nbBins - 1);
           radiusAccumList[r_bin]++;
           radiusActualValueList[r_bin] += r;
