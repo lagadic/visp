@@ -589,11 +589,26 @@ vpCircleHoughTransform::computeCircleProbability(const vpImageCircle &circle, co
 void
 vpCircleHoughTransform::mergeCircleCandidates()
 {
-  // For each circle candidate CiC_i do:
   std::vector<vpImageCircle> circleCandidates = m_circleCandidates;
   std::vector<unsigned int> circleCandidatesVotes = m_circleCandidatesVotes;
   std::vector<float> circleCandidatesProba = m_circleCandidatesProbabilities;
-  size_t nbCandidates = m_circleCandidates.size();
+  // First iteration of merge
+  mergeCandidates(circleCandidates, circleCandidatesVotes, circleCandidatesProba);
+
+  // Second iteration of merge
+  mergeCandidates(circleCandidates, circleCandidatesVotes, circleCandidatesProba);
+
+  // Saving the results
+  m_finalCircles = circleCandidates;
+  m_finalCircleVotes = circleCandidatesVotes;
+  m_finalCirclesProbabilities = circleCandidatesProba;
+}
+
+void
+vpCircleHoughTransform::mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
+                       std::vector<float> &circleCandidatesProba)
+{
+  size_t nbCandidates = circleCandidates.size();
   for (size_t i = 0; i < nbCandidates; i++) {
     vpImageCircle cic_i = circleCandidates[i];
     // // For each other circle candidate CiC_j do:
@@ -627,47 +642,8 @@ vpCircleHoughTransform::mergeCircleCandidates()
       }
     }
     // // Add the circle candidate CiC_i, potentially merged with other circle candidates, to the final list of detected circles
-    m_finalCircles.push_back(cic_i);
+    circleCandidates[i] = cic_i;
   }
-
-  nbCandidates = m_finalCircles.size();
-  for (size_t i = 0; i < nbCandidates; i++) {
-    vpImageCircle cic_i = m_finalCircles[i];
-    // // For each other circle candidate CiC_j do:
-    for (size_t j = i + 1; j < nbCandidates; j++) {
-      vpImageCircle cic_j = m_finalCircles[j];
-      // // // Compute the similarity between CiC_i and CiC_j
-      double distanceBetweenCenters = vpImagePoint::distance(cic_i.getCenter(), cic_j.getCenter());
-      double radiusDifference = std::abs(cic_i.getRadius() - cic_j.getRadius());
-      bool areCirclesSimilar = (distanceBetweenCenters < m_algoParams.m_centerMinDist
-                               && radiusDifference  < m_algoParams.m_mergingRadiusDiffThresh
-                               );
-
-      if (areCirclesSimilar) {
-        // // // If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
-        unsigned int totalVotes = circleCandidatesVotes[i] + circleCandidatesVotes[j];
-        float totalProba = circleCandidatesProba[i] + circleCandidatesProba[j];
-        float newProba = 0.5f * totalProba;
-        float newRadius = (cic_i.getRadius() * circleCandidatesProba[i] + cic_j.getRadius() * circleCandidatesProba[j]) / totalProba;
-        vpImagePoint newCenter = (cic_i.getCenter() * circleCandidatesProba[i]+ cic_j.getCenter()  * circleCandidatesProba[j]) / totalProba;
-        cic_i = vpImageCircle(newCenter, newRadius);
-        m_finalCircles[j] = m_finalCircles[nbCandidates - 1];
-        circleCandidatesVotes[i] = totalVotes / 2;
-        circleCandidatesVotes[j] = circleCandidatesVotes[nbCandidates - 1];
-        circleCandidatesProba[i] = newProba;
-        circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];
-        m_finalCircles.pop_back();
-        circleCandidatesVotes.pop_back();
-        circleCandidatesProba.pop_back();
-        nbCandidates--;
-        j--;
-      }
-    }
-    // // Add the circle candidate CiC_i, potentially merged with other circle candidates, to the final list of detected circles
-    m_finalCircles[i] = cic_i;
-  }
-  m_finalCircleVotes = circleCandidatesVotes;
-  m_finalCirclesProbabilities = circleCandidatesProba;
 }
 
 std::string

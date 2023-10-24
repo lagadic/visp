@@ -833,13 +833,22 @@ private:
   void computeCircleCandidates();
 
   /**
+   * \brief For each circle candidate CiC_i, check if similar circles have also been detected and if so merges them.
+   */
+  void mergeCircleCandidates();
+
+  /**
    * \brief For each circle candidate CiC_i do:
    * - For each other circle candidate CiC_j do:
    * +- Compute the similarity between CiC_i and CiC_j
    * +- If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
    * - Add the circle candidate CiC_i to the final list of detected circles
+   * \param[out] circleCandidates List of circle candidates in which we want to merge the similar circles.
+   * \param[out] circleCandidatesVotes List of votes of the circle candidates.
+   * \param[out] circleCandidatesProba List of probabilities of the circle candidates.
    */
-  void mergeCircleCandidates();
+  void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
+                       std::vector<float> &circleCandidatesProba);
 
 
   vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
