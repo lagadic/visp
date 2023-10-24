@@ -40,7 +40,7 @@
 
   \file vpViper.h
 
-  Modelisation of the ADEPT Viper 650 or 850 robot.
+  Modelization of the ADEPT Viper 650 or 850 robot.
 
 */
 
@@ -57,7 +57,7 @@
 
   \ingroup group_robot_real_arm group_robot_simu_arm
 
-  \brief Modelisation of the ADEPT Viper robot
+  \brief Modelization of the ADEPT Viper robot
 
   This robot has six degrees of freedom. The model of the robot is the
   following: \image html model-viper.png Model of the Viper 850 robot.

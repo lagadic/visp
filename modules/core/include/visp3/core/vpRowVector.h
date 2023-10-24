@@ -111,15 +111,15 @@ class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
 public:
   //! Basic constructor that creates an empty 0-size row vector.
-  vpRowVector() : vpArray2D<double>() {}
+  vpRowVector() : vpArray2D<double>() { }
   //! Construct a row vector of size n. All the elements are initialized to
   //! zero.
-  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n) {}
+  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n) { }
   //! Construct a row vector of size n. Each element is set to \e val.
-  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) {}
+  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) { }
   //! Copy constructor that allows to construct a row vector from an other
   //! one.
-  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {}
+  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) { }
   vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
   vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
@@ -127,12 +127,8 @@ public:
   vpRowVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
+  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 #endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpRowVector() {}
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -170,7 +166,8 @@ public:
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
-     vector to extract. \param rowsize : Size of the vector to extract.
+     vector to extract.
+     \param rowsize : Size of the vector to extract.
      \exception vpException::fatalError If the vector to extract is not
      contained in the original one.
 
@@ -310,7 +307,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Implementation for all supported moment features.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
@@ -50,14 +45,14 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
 /*!
-  Computes interaction matrix for the normalized surface moment. Called
-  internally. The moment primitives must be computed before calling this. This
-  feature depends on:
-  - vpMomentCentered
-  - vpFeatureMomentCentered
-  - vpMomentAreaNormalized
-  - vpFeatureMomentBasic
-*/
+ * Computes interaction matrix for the normalized surface moment. Called
+ * internally. The moment primitives must be computed before calling this. This
+ * feature depends on:
+ * - vpMomentCentered
+ * - vpFeatureMomentCentered
+ * - vpMomentAreaNormalized
+ * - vpFeatureMomentBasic
+ */
 void vpFeatureMomentAreaNormalized::compute_interaction()
 {
   bool found_moment_centered;
@@ -66,15 +61,15 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
 
   bool found_featuremoment_basic;
   vpFeatureMomentBasic &featureMomentBasic = (static_cast<vpFeatureMomentBasic &>(
-      featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
+    featureMomentsDataBase->get("vpFeatureMomentBasic", found_featuremoment_basic)));
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentObject &momentObject = moment->getObject();
   const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
       moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
   vpFeatureMomentCentered &featureMomentCentered = (static_cast<vpFeatureMomentCentered &>(
-      featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
+    featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
 
   if (!found_FeatureMoment_centered)
     throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
@@ -92,13 +87,14 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   if (momentObject.getType() == vpMomentObject::DISCRETE) {
     a = momentCentered.get(2, 0) + momentCentered.get(0, 2);
     La = featureMomentCentered.interaction(2, 0) + featureMomentCentered.interaction(0, 2);
-  } else {
+  }
+  else {
     a = momentObject.get(0, 0);
     La = featureMomentBasic.interaction(0, 0);
   }
 
   normalized_multiplier =
-      (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredArea() / a);
+    (-momentSurfaceNormalized.getDesiredDepth() / (2 * a)) * sqrt(momentSurfaceNormalized.getDesiredArea() / a);
   interaction_matrices[0] = normalized_multiplier * La;
 }
 
@@ -115,13 +111,13 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
 /*!
-  Computes interaction matrix for the normalized surface moment. Called
-  internally. The moment primitives must be computed before calling this. This
-  feature depends on:
-  - vpMomentCentered
-  - vpMomentAreaNormalized
-  - vpMomentGravityCenter
-*/
+ * Computes interaction matrix for the normalized surface moment. Called
+ * internally. The moment primitives must be computed before calling this. This
+ * feature depends on:
+ * - vpMomentCentered
+ * - vpMomentAreaNormalized
+ * - vpMomentGravityCenter
+ */
 void vpFeatureMomentAreaNormalized::compute_interaction()
 {
   bool found_moment_centered;
@@ -129,9 +125,9 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
   const vpMomentObject &momentObject = moment->getObject();
   const vpMomentAreaNormalized &momentSurfaceNormalized = static_cast<const vpMomentAreaNormalized &>(
       moments.get("vpMomentAreaNormalized", found_moment_surface_normalized));
@@ -178,7 +174,8 @@ void vpFeatureMomentAreaNormalized::compute_interaction()
 
     Anvz = -An * C + B * Anwx - A * Anwy;
 
-  } else {
+  }
+  else {
     Anvx = A * An / 2.;
     Anvy = B * An / 2.;
     Anvz = -An * C - (3. / 2.) * A * Xn - (3. / 2.) * B * Yn;

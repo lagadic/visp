@@ -483,7 +483,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         float scalProd = rx * gx + ry * gy;
         float scalProd2 = scalProd * scalProd;
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
-          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
+          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additional vote
           float r = static_cast<float>(std::sqrt(r2));
           unsigned int r_bin = static_cast<unsigned int>(std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist));
           r_bin = std::min(r_bin, nbBins - 1);

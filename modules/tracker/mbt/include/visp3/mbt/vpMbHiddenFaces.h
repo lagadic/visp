@@ -251,7 +251,7 @@ public:
     Ogre rendering options) when Ogre visibility is enabled. By default, this
     functionality is turned off.
   */
-  inline void setOgreShowConfigDialog(bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
+  inline void setOgreShowConfigDialog(bool showConfigDialog) override { ogreShowConfigDialog = showConfigDialog; }
 #endif
 
   unsigned int setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
@@ -331,9 +331,9 @@ template <class PolygonType>
 vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(const vpMbHiddenFaces<PolygonType> &copy)
   : Lpol(), nbVisiblePolygon(copy.nbVisiblePolygon), scanlineRender(copy.scanlineRender)
 #ifdef VISP_HAVE_OGRE
-    ,
-    ogreBackground(copy.ogreBackground), ogreInitialised(copy.ogreInitialised), nbRayAttempts(copy.nbRayAttempts),
-    ratioVisibleRay(copy.ratioVisibleRay), ogre(NULL), lOgrePolygons(), ogreShowConfigDialog(copy.ogreShowConfigDialog)
+  ,
+  ogreBackground(copy.ogreBackground), ogreInitialised(copy.ogreInitialised), nbRayAttempts(copy.nbRayAttempts),
+  ratioVisibleRay(copy.ratioVisibleRay), ogre(NULL), lOgrePolygons(), ogreShowConfigDialog(copy.ogreShowConfigDialog)
 #endif
 {
   // Copy the list of polygons
@@ -594,7 +594,7 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
           testDisappear =
-              ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, width, height)) || !isVisibleOgre(cameraPos, i));
+          ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, width, height)) || !isVisibleOgre(cameraPos, i));
 #else
         {
           (void)cameraPos; // Avoid warning
@@ -611,21 +611,23 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         //               std::endl;
         changed = true;
         Lpol[i]->isvisible = false;
-      } else {
-        // nbVisiblePolygon++;
+      }
+      else {
+     // nbVisiblePolygon++;
         Lpol[i]->isvisible = true;
 
         // if(nbCornerInsidePrev > Lpol[i]->getNbCornerInsidePrevImage())
         //  changed = true;
       }
-    } else {
+    }
+    else {
       bool testAppear = true;
 
       if (testAppear) {
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
           testAppear =
-              ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, width, height)) && isVisibleOgre(cameraPos, i));
+          ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, width, height)) && isVisibleOgre(cameraPos, i));
 #else
           testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, width, height));
 #endif
@@ -638,8 +640,9 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
         Lpol[i]->isvisible = true;
         changed = true;
         // nbVisiblePolygon++;
-      } else {
-        //      std::cout << "Problem" << std::endl;
+      }
+      else {
+     //      std::cout << "Problem" << std::endl;
         Lpol[i]->isvisible = false;
       }
     }
@@ -755,7 +758,8 @@ template <class PolygonType> void vpMbHiddenFaces<PolygonType>::displayOgre(cons
     for (unsigned int i = 0; i < Lpol.size(); i++) {
       if (Lpol[i]->isVisible()) {
         lOgrePolygons[i]->setVisible(true);
-      } else
+      }
+      else
         lOgrePolygons[i]->setVisible(false);
     }
     ogre->display(ogreBackground, cMo);
@@ -883,7 +887,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
       if (it != result.end()) {
         if (it->movable->getName() == Ogre::StringConverter::toString(index)) {
           nbVisible++;
-        } else {
+        }
+        else {
           distance = it->distance;
           // Cannot use epsilon for comparison as ray length is slightly
           // different from the collision distance returned by
@@ -892,9 +897,11 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
                                                   1e-6 /*std::fabs(distance) * std::numeric_limits<double>::epsilon()*/)
             nbVisible++;
         }
-      } else
+      }
+      else
         nbVisible++; // Collision not detected but present.
-    } else {
+    }
+    else {
       if (it != result.end()) {
         distance = it->distance;
         double distancePrev = distance;
@@ -904,7 +911,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
 
         if (it->movable->getName() == Ogre::StringConverter::toString(index)) {
           nbVisible++;
-        } else {
+        }
+        else {
           ++it;
           while (it != result.end()) {
             distance = it->distance;
@@ -918,7 +926,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
               }
               ++it;
               distancePrev = distance;
-            } else
+            }
+            else
               break;
           }
         }
@@ -938,7 +947,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
   if (visible) {
     lOgrePolygons[index]->setVisible(true);
     Lpol[index]->isvisible = true;
-  } else {
+  }
+  else {
     lOgrePolygons[index]->setVisible(false);
     Lpol[index]->isvisible = false;
   }

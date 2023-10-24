@@ -82,23 +82,21 @@ public:
   vpPoint(double oX, double oY, double oZ);
   explicit vpPoint(const vpColVector &oP);
   explicit vpPoint(const std::vector<double> &oP);
-  //! Destructor.
-  virtual ~vpPoint() {}
 
 public:
   // Compute the 3D coordinates _cP  (camera frame)
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) override;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1);
+               unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  vpPoint *duplicate() const;
+  vpPoint *duplicate() const override;
 
   // Get coordinates
   double get_X() const;
@@ -119,17 +117,12 @@ public:
   void getWorldCoordinates(std::vector<double> &oP);
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint &vpp);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpPoint &operator=(const vpPoint &vpp) = default;
-#else
-  vpPoint &operator=(const vpPoint &vpp);
-#endif
 
   //! Projection onto the image plane of a point. Input: the 3D coordinates in
   //! the camera frame _cP, output : the 2D coordinates _p.
-  void projection(const vpColVector &_cP, vpColVector &_p) const;
+  void projection(const vpColVector &_cP, vpColVector &_p) const override;
 
-  void projection();
+  void projection() override;
 
   // Set coordinates
   void set_X(double cX);
@@ -145,12 +138,12 @@ public:
   void set_w(double w);
 
   void setWorldCoordinates(double oX, double oY, double oZ);
-  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(const vpColVector &oP) override;
   void setWorldCoordinates(const std::vector<double> &oP);
 
 protected:
   //! Basic construction.
-  void init();
+  void init() override;
 };
 
 #endif

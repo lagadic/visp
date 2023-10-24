@@ -236,8 +236,6 @@ void vpDiskGrabber::acquire(vpImage<float> &I, long image_number)
   height = I.getHeight();
 }
 
-vpDiskGrabber::~vpDiskGrabber() { }
-
 void vpDiskGrabber::setImageNumber(long number)
 {
   m_image_number = number;

@@ -46,63 +46,62 @@
 #include <visp3/core/vpMath.h>
 
 /*!
-  \class vpCircle
-  \ingroup group_core_geometry
-  \brief Class that defines a 3D circle in the object frame and allows forward projection of a 3D circle in the
-  camera frame and in the 2D image plane by perspective projection.
-  All the parameters must be set in meter.
-
-  Note that a 3D circle is defined from the intersection between a 3D plane and a 3D sphere.
-
-  A 3D circle has the followings parameters:
-  - **in the object frame**: the parameters oA, oB, oC corresponding to the 3D plane with equation
-  oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0 where (X,Y,Z) are the coordinates of a 3D point belonging to the plane passing through
-  the 3D sphere center (oX,oY,oZ) and the 3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
-  parameters registered in vpForwardProjection::oP internal 7-dim vector are set using the constructors
-  vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R),
-  vpCircle(const vpColVector &oP) or the functions
-  setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
-  and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
-
-  - **in the camera frame**: the parameters cA, cB, cC corresponding to the 3D plane cAx+cBy+cCz+D=0
-  and the coordinates cX, cY, cZ of the center and radius R of the 3D sphere. These
-  parameters registered in vpTracker::cP internal 7-dim vector are computed using
-  changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
-  These parameters could be retrieved using getA(), getB(), getC(), getX(), getY(), getZ() and getR().
-  To get theses parameters use get_cP().
-
-  - **in the image plane**: here we consider the parameters of the ellipse corresponding
-  to the perspective projection of the 3D circle. The parameters are the ellipse centroid (x, y)
-  and n20, n11, n02 which are the second order centered moments of
-  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
-  \f$\mu_{ij}\f$ are the centered moments and a the area).
-  These parameters are registered in vpTracker::p internal 5-dim vector
-  and computed using projection() and
-  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
-  get_n11() and get_n02(). They correspond to 2D normalized circle parameters with values expressed in meters.
-  To get theses parameters use get_p().
-
-*/
+ * \class vpCircle
+ * \ingroup group_core_geometry
+ * \brief Class that defines a 3D circle in the object frame and allows forward projection of a 3D circle in the
+ * camera frame and in the 2D image plane by perspective projection.
+ * All the parameters must be set in meter.
+ *
+ * Note that a 3D circle is defined from the intersection between a 3D plane and a 3D sphere.
+ *
+ * A 3D circle has the followings parameters:
+ * - **in the object frame**: the parameters oA, oB, oC corresponding to the 3D plane with equation
+ *   oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0 where (X,Y,Z) are the coordinates of a 3D point belonging to the plane passing through
+ *   the 3D sphere center (oX,oY,oZ) and the 3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
+ *   parameters registered in vpForwardProjection::oP internal 7-dim vector are set using the constructors
+ *   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R),
+ *   vpCircle(const vpColVector &oP) or the functions
+ *   setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
+ *   and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
+ *
+ * - **in the camera frame**: the parameters cA, cB, cC corresponding to the 3D plane cAx+cBy+cCz+D=0
+ *   and the coordinates cX, cY, cZ of the center and radius R of the 3D sphere. These
+ *   parameters registered in vpTracker::cP internal 7-dim vector are computed using
+ *   changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
+ *   These parameters could be retrieved using getA(), getB(), getC(), getX(), getY(), getZ() and getR().
+ *   To get theses parameters use get_cP().
+ *
+ * - **in the image plane**: here we consider the parameters of the ellipse corresponding
+ *   to the perspective projection of the 3D circle. The parameters are the ellipse centroid (x, y)
+ *   and n20, n11, n02 which are the second order centered moments of
+ *   the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+ *   \f$\mu_{ij}\f$ are the centered moments and a the area).
+ *   These parameters are registered in vpTracker::p internal 5-dim vector
+ *   and computed using projection() and
+ *   projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
+ *   get_n11() and get_n02(). They correspond to 2D normalized circle parameters with values expressed in meters.
+ *   To get theses parameters use get_p().
+ */
 class VISP_EXPORT vpCircle : public vpForwardProjection
 {
 public:
   vpCircle();
   explicit vpCircle(const vpColVector &oP);
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
-  virtual ~vpCircle();
+  virtual ~vpCircle() override;
 
-  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const;
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) override;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1);
+               unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  vpCircle *duplicate() const;
+  vpCircle *duplicate() const override;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -121,10 +120,10 @@ public:
 
   double getR() const { return cP[6]; }
 
-  void projection();
-  void projection(const vpColVector &cP, vpColVector &p) const;
+  void projection() override;
+  void projection(const vpColVector &cP, vpColVector &p) const override;
 
-  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(const vpColVector &oP) override;
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 
   //###################
@@ -134,7 +133,7 @@ public:
                                        const double &theta, double &i, double &j);
 
 protected:
-  void init();
+  void init() override;
 
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

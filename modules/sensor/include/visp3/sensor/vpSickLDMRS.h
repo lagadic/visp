@@ -51,77 +51,79 @@
 #include <visp3/sensor/vpScanPoint.h>
 
 /*!
-
-  \file vpSickLDMRS.h
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-*/
+ * \file vpSickLDMRS.h
+ *
+ * \brief Driver for the Sick LD-MRS laser scanner.
+ */
 
 /*!
-
-  \class vpSickLDMRS
-
-  \ingroup group_sensor_laserscanner
-
-  \brief Driver for the Sick LD-MRS laser scanner.
-
-  \warning For the moment, this driver works only on UNIX platform.
-
-  The code below shows how the four laser scan provided by the Sick
-  LD-MRS could be acquired.
-
-  \code
-#include "visp3/sensor/vpSickLDMRS.h"
-
-int main()
-{
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
-(defined(__APPLE__) && defined(__MACH__))) // UNIX std::string ip =
-"131.254.12.119";
-
-  vpSickLDMRS laser;
-  laser.setIpAddress(ip);
-  laser.setup();
-
-  vpLaserScan laserscan[4];
-  for ( ; ; ) {
-    // Get the measured points in the four layers
-    laser.measure(laserscan);
-
-    // Prints all the measured points
-    for (int layer=0; layer<4; layer++) {
-      std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints(); vpScanPoint p;
-
-      for (unsigned int i=0; i < pointsInLayer.size(); i++) {
-        std::cout << pointsInLayer[i] << std::endl;
-      }
-    }
-  }
-#endif
-}
-  \endcode
-*/
+ * \class vpSickLDMRS
+ *
+ * \ingroup group_sensor_laserscanner
+ *
+ * \brief Driver for the Sick LD-MRS laser scanner.
+ *
+ * \warning For the moment, this driver works only on UNIX platform.
+ *
+ * The code below shows how the four laser scan provided by the Sick
+ * LD-MRS could be acquired.
+ *
+ * \code
+ * #include "visp3/sensor/vpSickLDMRS.h"
+ *
+ * int main()
+ * {
+ * #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) ||
+ * (defined(__APPLE__) && defined(__MACH__))) // UNIX std::string ip =
+ * "131.254.12.119";
+ *
+ *   vpSickLDMRS laser;
+ *   laser.setIpAddress(ip);
+ *   laser.setup();
+ *
+ *   vpLaserScan laserscan[4];
+ *   for ( ; ; ) {
+ *     // Get the measured points in the four layers
+ *     laser.measure(laserscan);
+ *
+ *     // Prints all the measured points
+ *     for (int layer=0; layer<4; layer++) {
+ *       std::vector<vpScanPoint> pointsInLayer = laserscan[layer].getScanPoints(); vpScanPoint p;
+ *
+ *       for (unsigned int i=0; i < pointsInLayer.size(); i++) {
+ *         std::cout << pointsInLayer[i] << std::endl;
+ *       }
+ *     }
+ *   }
+ * #endif
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpSickLDMRS : public vpLaserScanner
 {
 public:
-  enum MagicWord {
+  enum MagicWord
+  {
     MagicWordC2 = 0xAFFEC0C2 ///< The magic word that allows to identify the
                              ///< messages that are sent by the Sick LD-MRS.
   };
-  enum DataType {
+  enum DataType
+  {
     MeasuredData = 0x2202 ///< Flag to indicate that the body of a message
                           ///< contains measured data.
   };
   vpSickLDMRS();
+
   /*! Copy constructor. */
   vpSickLDMRS(const vpSickLDMRS &sick)
     : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true),
-      maxlen_body(104000)
+    maxlen_body(104000)
   {
     *this = sick;
   };
-  virtual ~vpSickLDMRS();
-  /*! Copy constructor. */
+  virtual ~vpSickLDMRS() override;
+
+  /*! Copy operator. */
   vpSickLDMRS &operator=(const vpSickLDMRS &sick)
   {
     if (this != &sick) {

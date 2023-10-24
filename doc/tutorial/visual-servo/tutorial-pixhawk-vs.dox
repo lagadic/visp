@@ -272,7 +272,7 @@ In order to do this part, make sure you add a camera to your drone. We added a i
 Jetson through USB.
 
 The code servoPixhawkDroneIBVS.cpp is an example that needs to be run on the Jetson and that allows to do visual servoing with the drone.
-This program establishes a rigid link between the drone (equiped with a camera) and an Apriltag.
+This program establishes a rigid link between the drone (equipped with a camera) and an Apriltag.
 Depending on where the camera is placed, the matrices expressing the transformation between the FLU body frame of the drone and the
 camera frame need to be modified. Here is a picture of the drone showing where the D405 camera was attached.
 

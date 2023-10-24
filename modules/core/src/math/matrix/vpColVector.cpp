@@ -658,7 +658,7 @@ vpMatrix vpColVector::skew(const vpColVector &v)
 {
   vpMatrix M;
   if (v.getRows() != 3) {
-    throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimention vector (%d)",
+    throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimension vector (%d)",
                       v.getRows()));
   }
 

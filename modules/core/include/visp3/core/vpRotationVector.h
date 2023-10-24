@@ -96,21 +96,16 @@ class VISP_EXPORT vpRotationVector : public vpArray2D<double>
 {
 public:
   //! Constructor that constructs a 0-size rotation vector.
-  vpRotationVector() : vpArray2D<double>(), m_index(0) {}
+  vpRotationVector() : vpArray2D<double>(), m_index(0) { }
 
   //! Constructor that constructs a vector of size n and initialize all values
   //! to zero.
-  explicit vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) {}
+  explicit vpRotationVector(unsigned int n) : vpArray2D<double>(n, 1), m_index(0) { }
 
   /*!
     Copy operator.
   */
-  vpRotationVector(const vpRotationVector &v) : vpArray2D<double>(v), m_index(0) {}
-
-  /*!
-    Destructor.
-  */
-  virtual ~vpRotationVector(){}
+  vpRotationVector(const vpRotationVector &v) : vpArray2D<double>(v), m_index(0) { }
 
   /** @name Inherited functionalities from vpRotationVector */
   //@{

@@ -58,15 +58,15 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
 {
   double co = cos(theta_m);
   double si = sin(theta_m);
-  double d = sqrt(vpMath::sqr(cam.py * co) + vpMath::sqr(cam.px * si));
+  double d = sqrt(vpMath::sqr(cam.m_py * co) + vpMath::sqr(cam.m_px * si));
 
   if (fabs(d) < 1e-6) {
     vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
 
-  theta_p = atan2(cam.px * si, cam.py * co);
-  rho_p = (cam.px * cam.py * rho_m + cam.u0 * cam.py * co + cam.v0 * cam.px * si);
+  theta_p = atan2(cam.m_px * si, cam.m_py * co);
+  rho_p = (cam.m_px * cam.m_py * rho_m + cam.m_u0 * cam.m_py * co + cam.m_v0 * cam.m_px * si);
   rho_p /= d;
 }
 
@@ -82,7 +82,7 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -125,7 +125,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 

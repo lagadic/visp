@@ -55,7 +55,7 @@ class vpMomentObject;
 
   These coordinates are defined as follows: \f$x_g = \frac{m_{01}}{m_{00}}
   \f$,\f$y_g = \frac{m_{10}}{m_{00}} \f$
-\code
+  \code
 #include <iostream>
 #include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
@@ -95,21 +95,20 @@ int main()
 
   return 0;
 }
-\endcode
+  \endcode
 
-This example produces the following results:
-\code
+  This example produces the following results:
+  \code
 Xg=0.0166667
 Yg=-0.00833333
 Xg=0.0166667, Yg=-0.00833333
-\endcode
+  \endcode
 */
 
 class VISP_EXPORT vpMomentGravityCenter : public vpMoment
 {
 public:
   vpMomentGravityCenter();
-  virtual ~vpMomentGravityCenter(){};
 
   /** @name Inherited functionalities from vpMomentGravityCenter */
   //@{

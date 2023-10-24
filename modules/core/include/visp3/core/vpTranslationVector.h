@@ -117,7 +117,7 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { };
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { }
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
@@ -173,7 +173,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
-  };
+  }
 
   void set(double tx, double ty, double tz);
 

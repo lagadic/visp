@@ -190,8 +190,6 @@ public:
   explicit vpThetaUVector(const std::vector<double> &tu);
 
   vpThetaUVector(double tux, double tuy, double tuz);
-  //! Destructor.
-  virtual ~vpThetaUVector(){}
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);

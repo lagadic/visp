@@ -111,27 +111,26 @@ protected:
 
 public:
   vpRobotCamera();
-  virtual ~vpRobotCamera();
 
   /** @name Inherited functionalities from vpRobotCamera */
   //@{
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe);
+  void get_eJe(vpMatrix &eJe) override;
 
   void getPosition(vpHomogeneousMatrix &cMw) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
 
   void setPosition(const vpHomogeneousMatrix &cMw);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v) override;
   //@}
 
 private:
-  void init();
+  void init() override;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
+  void get_fJe(vpMatrix & /*_fJe */) override { };
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) override { };
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) override { };
 };
 
 #endif

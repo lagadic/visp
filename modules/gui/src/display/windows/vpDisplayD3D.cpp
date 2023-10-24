@@ -50,7 +50,7 @@
 /*!
   \brief Basic constructor.
 */
-vpDisplayD3D::vpDisplayD3D() : vpDisplayWin32(new vpD3DRenderer()) {}
+vpDisplayD3D::vpDisplayD3D() : vpDisplayWin32(new vpD3DRenderer()) { }
 
 /*!
 
@@ -188,13 +188,8 @@ vpDisplayD3D::vpDisplayD3D(vpImage<unsigned char> &I, int winx, int winy, const 
   init(I, winx, winy, title);
 }
 
-/*!
-  \brief Basic destructor.
-*/
-vpDisplayD3D::~vpDisplayD3D() {}
-
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDisplayD3D.cpp.o) has no
 // symbols
-void dummy_vpDisplayD3D(){};
+void dummy_vpDisplayD3D() { };
 #endif

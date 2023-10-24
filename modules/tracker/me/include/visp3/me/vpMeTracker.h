@@ -100,7 +100,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker();
+  virtual ~vpMeTracker() override;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{

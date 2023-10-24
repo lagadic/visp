@@ -91,7 +91,7 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
   relation with respectively R, G, B and A.
 
   \exception vpException::dimensionError : If v is not a 4 four
-  dimention vector.
+  dimension vector.
 */
 vpRGBa &vpRGBa::operator=(const vpColVector &v)
 {

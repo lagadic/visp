@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exemple of a B-Spline curve.
+ * Example of a B-Spline curve.
  *
 *****************************************************************************/
  /*!

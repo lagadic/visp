@@ -98,10 +98,11 @@ public:
    * Copy constructor.
    */
   vpMeEllipse(const vpMeEllipse &me_ellipse);
+
   /*!
    * Destructor.
    */
-  virtual ~vpMeEllipse();
+  virtual ~vpMeEllipse() override;
   /*!
    * Display the ellipse or arc of ellipse
    *

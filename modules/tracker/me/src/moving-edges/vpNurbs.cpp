@@ -50,8 +50,6 @@ vpNurbs::vpNurbs() : weights() { p = 3; }
 
 vpNurbs::vpNurbs(const vpNurbs &nurbs) : vpBSpline(nurbs), weights(nurbs.weights) { }
 
-vpNurbs::~vpNurbs() { }
-
 vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
                                         std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {

@@ -58,14 +58,11 @@
 class VISP_EXPORT vpHistogramValey : vpHistogramPeak
 {
 public:
-  vpHistogramValey() : vpHistogramPeak(){};
+  vpHistogramValey() : vpHistogramPeak() { };
 
-  vpHistogramValey(unsigned char lvl, unsigned val) : vpHistogramPeak(lvl, val){};
+  vpHistogramValey(unsigned char lvl, unsigned val) : vpHistogramPeak(lvl, val) { };
 
-  vpHistogramValey(const vpHistogramValey &v) : vpHistogramPeak(v){};
-
-  /*! Destructor that does nothing. */
-  virtual ~vpHistogramValey() {}
+  vpHistogramValey(const vpHistogramValey &v) : vpHistogramPeak(v) { };
 
   vpHistogramValey &operator=(const vpHistogramValey &v);
   bool operator==(const vpHistogramValey &v) const;

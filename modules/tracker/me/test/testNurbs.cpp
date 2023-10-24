@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exemple of a Nurbs curve.
+ * Example of a Nurbs curve.
  */
 /*!
   \example testNurbs.cpp

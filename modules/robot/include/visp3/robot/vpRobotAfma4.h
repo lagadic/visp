@@ -219,7 +219,7 @@ public: /* Methode publiques */
   virtual ~vpRobotAfma4(void);
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) override;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
 
   double getPositioningVelocity(void);
@@ -236,8 +236,8 @@ public: /* Methode publiques */
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
   void get_cVf(vpVelocityTwistMatrix &cVf) const;
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe) override;
+  void get_fJe(vpMatrix &fJe) override;
 
   void init(void);
 
@@ -250,7 +250,7 @@ public: /* Methode publiques */
   static bool savePosFile(const std::string &filename, const vpColVector &q);
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) override;
   void setPosition(const vpRobot::vpControlFrameType frame, const double q1, const double q2, const double q4,
                    const double q5);
   void setPosition(const char *filename);
@@ -262,7 +262,7 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;
 
   void stopMotion();
 };

@@ -35,46 +35,45 @@
 #define vpTracker_H
 
 /*!
-  \file vpTracker.h
-  \brief Class that defines what is a generic tracker.
-*/
+ * \file vpTracker.h
+ * \brief Class that defines what is a generic tracker.
+ */
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
 /*!
-  \class vpTracker
-  \ingroup group_core_trackers
-  \brief Class that defines what is a feature generic tracker.
-
-  A tracker is able to track features with parameters expressed in:
-  - in the camera frame \e cP. These parameters are located in the public
-    attribute vpTracker::cP.
-  - in the image plane \e p. These parameters are located in the public
-    attribute vpTracker::p. They correspond to normalized coordinates
-    of the feature expressed in meters.
-
-*/
+ * \class vpTracker
+ * \ingroup group_core_trackers
+ * \brief Class that defines what is a feature generic tracker.
+ *
+ * A tracker is able to track features with parameters expressed in:
+ * - in the camera frame \e cP. These parameters are located in the public
+ *   attribute vpTracker::cP.
+ * - in the image plane \e p. These parameters are located in the public
+ *   attribute vpTracker::p. They correspond to normalized coordinates
+ *   of the feature expressed in meters.
+ */
 class VISP_EXPORT vpTracker
 {
 public:
   /** @name Public Attributes Inherited from vpTracker */
   //@{
   /*!
-    Feature coordinates expressed in the image plane \e p. They correspond
-    to 2D normalized coordinates expressed in meters.
-  */
+   * Feature coordinates expressed in the image plane \e p. They correspond
+   * to 2D normalized coordinates expressed in meters.
+   */
   vpColVector p;
   /*!
-    Feature coordinates expressed in the camera frame \e cP.
-  */
+   * Feature coordinates expressed in the camera frame \e cP.
+   */
   vpColVector cP;
 
   /*!
-    Flag used to indicate if the feature parameters \e cP expressed
-    in the camera frame are available.
-  */
+   * Flag used to indicate if the feature parameters \e cP expressed
+   * in the camera frame are available.
+   */
   bool cPAvailable;
   //@}
 

@@ -52,7 +52,7 @@
 
   \author Jean Laneurit (IRISA - INRIA Rennes)
 
-  \sa vpMatrix vpColvector vpRowVector
+  \sa vpMatrix vpColVector vpRowVector
 */
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
@@ -77,7 +77,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  virtual ~vpSubMatrix();
+  virtual ~vpSubMatrix() override;
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,

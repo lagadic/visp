@@ -104,7 +104,7 @@ public:
   */
   inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, double &u, double &v)
   {
-    switch (cam.projModel) {
+    switch (cam.m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       convertPointWithoutDistortion(cam, x, y, u, v);
       break;
@@ -146,7 +146,7 @@ public:
 
   inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, vpImagePoint &iP)
   {
-    switch (cam.projModel) {
+    switch (cam.m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       convertPointWithoutDistortion(cam, x, y, iP);
       break;
@@ -172,8 +172,8 @@ public:
   inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &x, const double &y,
                                                    double &u, double &v)
   {
-    u = x * cam.px + cam.u0;
-    v = y * cam.py + cam.v0;
+    u = x * cam.m_px + cam.m_u0;
+    v = y * cam.m_py + cam.m_v0;
   }
 
   /*!
@@ -189,8 +189,8 @@ public:
   inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &x, const double &y,
                                                    vpImagePoint &iP)
   {
-    iP.set_u(x * cam.px + cam.u0);
-    iP.set_v(y * cam.py + cam.v0);
+    iP.set_u(x * cam.m_px + cam.m_u0);
+    iP.set_v(y * cam.m_py + cam.m_v0);
   }
 
   /*!
@@ -212,9 +212,9 @@ public:
   inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &x, const double &y,
                                                 double &u, double &v)
   {
-    double r2 = 1. + cam.kud * (x * x + y * y);
-    u = cam.u0 + cam.px * x * r2;
-    v = cam.v0 + cam.py * y * r2;
+    double r2 = 1. + cam.m_kud * (x * x + y * y);
+    u = cam.m_u0 + cam.m_px * x * r2;
+    v = cam.m_v0 + cam.m_py * y * r2;
   }
 
   /*!
@@ -236,9 +236,9 @@ public:
   inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &x, const double &y,
                                                 vpImagePoint &iP)
   {
-    double r2 = 1. + cam.kud * (x * x + y * y);
-    iP.set_u(cam.u0 + cam.px * x * r2);
-    iP.set_v(cam.v0 + cam.py * y * r2);
+    double r2 = 1. + cam.m_kud * (x * x + y * y);
+    iP.set_u(cam.m_u0 + cam.m_px * x * r2);
+    iP.set_v(cam.m_v0 + cam.m_py * y * r2);
   }
 
   /*!
@@ -272,7 +272,7 @@ public:
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
     double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
-           theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
+      theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
     double r_d = theta + k[0] * theta3 + k[1] * theta5 + k[2] * theta7 + k[3] * theta9;
 
@@ -281,8 +281,8 @@ public:
     double x_d = x * scale;
     double y_d = y * scale;
 
-    u = cam.px * x_d + cam.u0;
-    v = cam.py * y_d + cam.v0;
+    u = cam.m_px * x_d + cam.m_u0;
+    v = cam.m_py * y_d + cam.m_v0;
   }
 
   /*!
@@ -315,7 +315,7 @@ public:
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
     double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
-           theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
+      theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
     double r_d = theta + k[0] * theta3 + k[1] * theta5 + k[2] * theta7 + k[3] * theta9;
 
@@ -324,8 +324,8 @@ public:
     double x_d = x * scale;
     double y_d = y * scale;
 
-    iP.set_u(cam.px * x_d + cam.u0);
-    iP.set_v(cam.py * y_d + cam.v0);
+    iP.set_u(cam.m_px * x_d + cam.m_u0);
+    iP.set_v(cam.m_py * y_d + cam.m_v0);
   }
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

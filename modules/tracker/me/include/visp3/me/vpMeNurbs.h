@@ -165,11 +165,6 @@ public:
   vpMeNurbs(const vpMeNurbs &menurbs);
 
   /*!
-   * Destructor.
-   */
-  virtual ~vpMeNurbs();
-
-  /*!
    * Sets the number of control points used to compute the Nurbs.
    *
    * \param nb_point : The number of control points used to compute the Nurbs.

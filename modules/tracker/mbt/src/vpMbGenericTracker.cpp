@@ -5789,8 +5789,6 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(int trackerType)
 #endif
 }
 
-vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() { }
-
 // Implemented only for debugging purposes: use TrackerWrapper as a standalone tracker
 void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char> *const ptr_I)
 {

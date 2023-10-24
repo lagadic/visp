@@ -53,14 +53,13 @@
 */
 vpMbtPolygon::vpMbtPolygon()
   : index(-1), isvisible(false), isappearing(false), useLod(false), minLineLengthThresh(50.0),
-    minPolygonAreaThresh(2500.0), name(""), hasOrientation(true)
-{
-}
+  minPolygonAreaThresh(2500.0), name(""), hasOrientation(true)
+{ }
 
 vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon &mbtp)
   : vpPolygon3D(mbtp), index(mbtp.index), isvisible(mbtp.isvisible), isappearing(mbtp.isappearing), useLod(mbtp.useLod),
-    minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
-    hasOrientation(mbtp.hasOrientation)
+  minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
+  hasOrientation(mbtp.hasOrientation)
 {
   //*this = mbtp; // Should not be called by copy constructor to avoid multiple
   // assignements.
@@ -80,11 +79,6 @@ vpMbtPolygon &vpMbtPolygon::operator=(const vpMbtPolygon &mbtp)
 
   return (*this);
 }
-
-/*!
-  Basic destructor.
-*/
-vpMbtPolygon::~vpMbtPolygon() {}
 
 /*!
   Check if the polygon is visible in the image and if the angle between the
@@ -215,9 +209,11 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const
 
   if (angle < alpha + vpMath::rad(1)) {
     isappearing = true;
-  } else if (modulo && (M_PI - angle) < alpha + vpMath::rad(1)) {
+  }
+  else if (modulo && (M_PI - angle) < alpha + vpMath::rad(1)) {
     isappearing = true;
-  } else {
+  }
+  else {
     isappearing = false;
   }
 

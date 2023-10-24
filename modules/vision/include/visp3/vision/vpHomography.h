@@ -183,8 +183,6 @@ public:
   vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
-  //! Destructor.
-  virtual ~vpHomography() { };
 
   //! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);

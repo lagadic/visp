@@ -88,7 +88,7 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
   \param v : Input vector. v[0], v[1], v[2] are to make into
   relation with respectively R, G and B.
 
-  \exception vpException::dimensionError : If v is not a 3-dimentional vector.
+  \exception vpException::dimensionError : If v is not a 3-dimensional vector.
 */
 vpRGBf &vpRGBf::operator=(const vpColVector &v)
 {

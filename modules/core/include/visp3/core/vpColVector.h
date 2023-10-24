@@ -254,10 +254,6 @@ public:
     std::copy(list.begin(), list.end(), data);
   }
 #endif
-  /*!
-   * Destructor.
-   */
-  virtual ~vpColVector() { }
 
   /*!
    * Removes all elements from the vector (which are destroyed),

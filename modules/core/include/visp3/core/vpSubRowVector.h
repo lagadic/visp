@@ -37,41 +37,37 @@
 #include <visp3/core/vpRowVector.h>
 
 /*!
-  \file vpSubRowVector.h
-
-  \brief Definition of the vpSubRowVector class
-*/
+ * \file vpSubRowVector.h
+ *
+ * \brief Definition of the vpSubRowVector class
+ */
 
 /*!
-  \class vpSubRowVector
-  \ingroup group_core_matrices
-  This class provides a mask on a vpRowVector. It has internally a
-  pointer to the parent vpRowVector.
-  All properties of vpRowVector are available with
-  a vpSubRowVector.
-
-  \author Jean Laneurit (IRISA - INRIA Rennes)
-
-  \sa vpMatrix vpColvector vpRowVector
-*/
-
+ * \class vpSubRowVector
+ * \ingroup group_core_matrices
+ * This class provides a mask on a vpRowVector. It has internally a
+ * pointer to the parent vpRowVector.
+ * All properties of vpRowVector are available with
+ * a vpSubRowVector.
+ *
+ * \sa vpMatrix vpColVector vpRowVector
+ */
 class VISP_EXPORT vpSubRowVector : public vpRowVector
 {
-
 private:
-  //! Copy constructor unavaible
+  //! Copy constructor unavailable
   vpSubRowVector(const vpSubRowVector & /* m */);
 
 protected:
-  //! Number of row of parent vpColvector at initialization
-  unsigned int pColNum;
-  //! Parent vpColvector
-  vpRowVector *parent;
+  //! Number of row of parent vpColVector at initialization
+  unsigned int m_pColNum;
+  //! Parent vpColVector
+  vpRowVector *m_parent;
 
 public:
   vpSubRowVector();
   vpSubRowVector(vpRowVector &v, const unsigned int &offset, const unsigned int &ncols);
-  virtual ~vpSubRowVector();
+  virtual ~vpSubRowVector() override;
 
   void checkParentStatus() const;
 
