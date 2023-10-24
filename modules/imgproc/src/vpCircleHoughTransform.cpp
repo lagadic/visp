@@ -475,7 +475,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   for (int y = 0; y < nbRowsAccum; y++) {
     int left = -1;
     for (int x = 0; x < nbColsAccum; x++) {
-      if (centersAccum[y][x] >= m_algoParams.m_centerThresh
+      if (centersAccum[y][x] >= m_algoParams.m_centerMinThresh
          && centersAccum[y][x] == centerCandidatesMaxima[y][x]
          && centersAccum[y][x] >  centersAccum[y][x + 1]
          ) {
@@ -485,10 +485,23 @@ vpCircleHoughTransform::computeCenterCandidates()
       }
       else if (left >= 0) {
         int cx = (int)((left + x - 1) * 0.5f);
-        m_centerCandidatesList.push_back(std::pair<int, int>(y + offsetY, cx + offsetX));
-        m_centerVotes.push_back(nbVotes);
+        float sumVotes = 0.;
+        float x_avg = 0., y_avg = 0.;
+        int averagingWindowHalfSize = m_algoParams.m_averagingWindowSize / 2;
+        for (int r = -averagingWindowHalfSize; r < averagingWindowHalfSize + 1; r++) {
+          for (int c = -averagingWindowHalfSize; c < averagingWindowHalfSize + 1; c++) {
+            sumVotes += centersAccum[y + r][cx + c];
+            x_avg += centersAccum[y + r][cx + c] * (cx + c);
+            y_avg += centersAccum[y + r][cx + c] * (y + r);
+          }
+        }
+        float avgVotes = sumVotes / (float)(m_algoParams.m_averagingWindowSize * m_algoParams.m_averagingWindowSize);
+        x_avg /= (float)(sumVotes);
+        y_avg /= (float)(sumVotes);
+        m_centerCandidatesList.push_back(std::pair<float, float>(y_avg + (float)offsetY, x_avg + (float)offsetX));
+        m_centerVotes.push_back(avgVotes);
         if (nbVotes < 0) {
-          throw(vpException(vpException::badValue, "nbVotes (" + std::to_string(nbVotes) + ") < 0, thresh = " + std::to_string(m_algoParams.m_centerThresh)));
+          throw(vpException(vpException::badValue, "nbVotes (" + std::to_string(nbVotes) + ") < 0, thresh = " + std::to_string(m_algoParams.m_centerMinThresh)));
         }
         left = -1;
         nbVotes = -1;
@@ -507,11 +520,11 @@ vpCircleHoughTransform::computeCircleCandidates()
   std::vector<float> radiusActualValueList; /*!< Vector that contains the actual distance between the edge points and the center candidates.*/
 
   float rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
-  float rmax2 = static_cast<unsigned int>(m_algoParams.m_maxRadius * m_algoParams.m_maxRadius);
-  int circlePerfectness2 = static_cast<int>(m_algoParams.m_circlePerfectness * m_algoParams.m_circlePerfectness);
+  float rmax2 = m_algoParams.m_maxRadius * m_algoParams.m_maxRadius;
+  float circlePerfectness2 = m_algoParams.m_circlePerfectness * m_algoParams.m_circlePerfectness;
 
   for (size_t i = 0; i < nbCenterCandidates; i++) {
-    std::pair<int, int> centerCandidate = m_centerCandidatesList[i];
+    std::pair<float, float> centerCandidate = m_centerCandidatesList[i];
     // Initialize the radius accumulator of the candidate with 0s
     radiusAccumList.clear();
     radiusAccumList.resize(nbBins, 0);
@@ -520,9 +533,9 @@ vpCircleHoughTransform::computeCircleCandidates()
 
     for (auto edgePoint : m_edgePointsList) {
       // For each center candidate CeC_i, compute the distance with each edge point EP_j d_ij = dist(CeC_i; EP_j)
-      unsigned int rx = edgePoint.first  - centerCandidate.first;
-      unsigned int ry = edgePoint.second - centerCandidate.second;
-      unsigned int r2 = rx * rx + ry * ry;
+      float rx = edgePoint.first  - centerCandidate.first;
+      float ry = edgePoint.second - centerCandidate.second;
+      float r2 = rx * rx + ry * ry;
       if ((r2 > rmin2) && (r2 < rmax2)) {
         float gx = m_dIx[edgePoint.first][edgePoint.second];
         float gy = m_dIy[edgePoint.first][edgePoint.second];
@@ -532,7 +545,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         float scalProd2 = scalProd * scalProd;
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
           // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
-          float r = static_cast<float>(std::sqrt(r2));
+          float r = std::sqrt(r2);
           unsigned int r_bin = static_cast<unsigned int>(std::floor((r - m_algoParams.m_minRadius)/ m_algoParams.m_mergingRadiusDiffThresh));
           r_bin = std::min(r_bin, nbBins - 1);
           radiusAccumList[r_bin]++;
@@ -544,7 +557,7 @@ vpCircleHoughTransform::computeCircleCandidates()
     for (unsigned int idBin = 0; idBin < nbBins; idBin++) {
       // If the circle of center CeC_i  and radius RCB_k has enough votes, it is added to the list
       // of Circle Candidates
-      if (radiusAccumList[idBin] > m_algoParams.m_centerThresh) {
+      if (radiusAccumList[idBin] > m_algoParams.m_centerMinThresh) {
         float r_effective = radiusActualValueList[idBin] / (float)radiusAccumList[idBin];
         vpImageCircle candidateCircle(vpImagePoint(centerCandidate.first, centerCandidate.second), r_effective);
         float proba = computeCircleProbability(candidateCircle, radiusAccumList[idBin]);

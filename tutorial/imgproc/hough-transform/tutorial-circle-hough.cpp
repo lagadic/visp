@@ -109,13 +109,13 @@ generateImage(const TypeInputImage &inputType)
   const double rightFull = 3 * width / 4;
 
   // // Disks position when Half of circles
-  const double topHalf = 1; // m_centerThresh(25) , m_radiusBinSize(10) , m_radiusRatioThresh(50)  , m_mergingDistanceThresh(15) , m_mergingRadiusDiffThresh(1.5 * (double) m_radiusBinSize)
+  const double topHalf = 1; // m_centerMinThresh(25) , m_radiusBinSize(10) , m_radiusRatioThresh(50)  , m_mergingDistanceThresh(15) , m_mergingRadiusDiffThresh(1.5 * (double) m_radiusBinSize)
   const double bottomHalf = height - 1;
   const double leftHalf = width / 4;
   const double rightHalf = 3 * width / 4;
 
   // // Disks position when Quarter of circles
-  const double topQuarter = 1; // m_centerThresh(15) , m_radiusBinSize(10) , m_radiusRatioThresh(50)  , m_mergingDistanceThresh(15) , m_mergingRadiusDiffThresh(1.5 * (double) m_radiusBinSize)
+  const double topQuarter = 1; // m_centerMinThresh(15) , m_radiusBinSize(10) , m_radiusRatioThresh(50)  , m_mergingDistanceThresh(15) , m_mergingRadiusDiffThresh(1.5 * (double) m_radiusBinSize)
   const double bottomQuarter = height - 1;
   const double leftQuarter = 1;
   const double rightQuarter = width - 1;

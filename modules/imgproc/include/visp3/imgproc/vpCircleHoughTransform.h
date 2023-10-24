@@ -92,7 +92,9 @@ public:
     float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
     float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
     int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
-    float m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+    int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
+                                    center candidate such as it is the barycenter of the window. Must be odd.*/
+    float m_centerMinThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
 
     // // Circle candidates computation attributes
     float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
@@ -119,7 +121,8 @@ public:
       , m_minRadius(0.f)
       , m_maxRadius(1000.f)
       , m_dilatationNbIter(1)
-      , m_centerThresh(50.f)
+      , m_averagingWindowSize(5)
+      , m_centerMinThresh(50.f)
       , m_circleProbaThresh(0.9f)
       , m_circlePerfectness(0.9f)
       , m_centerMinDist(15.f)
@@ -149,6 +152,8 @@ public:
      * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
+     * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
+                                      center candidate such as it is the barycenter of the window. Must be odd.
      */
     vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
@@ -167,6 +172,7 @@ public:
       , const float &circlePerfectness
       , const float &centerMinDistThresh
       , const float &mergingRadiusDiffThresh
+      , const int &averagingWindowSize = 5
     )
       : m_gaussianKernelSize(gaussianKernelSize)
       , m_gaussianStdev(gaussianStdev)
@@ -179,7 +185,8 @@ public:
       , m_minRadius(std::min(minRadius, maxRadius))
       , m_maxRadius(std::max(minRadius, maxRadius))
       , m_dilatationNbIter(dilatationNbIter)
-      , m_centerThresh(centerThresh)
+      , m_averagingWindowSize(averagingWindowSize)
+      , m_centerMinThresh(centerThresh)
       , m_circleProbaThresh(circleProbabilityThresh)
       , m_circlePerfectness(circlePerfectness)
       , m_centerMinDist(centerMinDistThresh)
@@ -201,7 +208,8 @@ public:
       txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
       txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
       txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
-      txt += "\tCenters votes threshold = " + std::to_string(m_centerThresh) + "\n";
+      txt += "\tAveraging window size for center detection = " + std::to_string(m_averagingWindowSize) + "\n";
+      txt += "\tCenters votes threshold = " + std::to_string(m_centerMinThresh) + "\n";
       txt += "\tCircle probability threshold = " + std::to_string(m_circleProbaThresh) + "\n";
       txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
       txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
@@ -293,8 +301,13 @@ public:
 
       params.m_dilatationNbIter = j.value("dilatationNbIter", params.m_dilatationNbIter);
 
-      params.m_centerThresh = j.value("centerThresh", params.m_centerThresh);
-      if (params.m_centerThresh <= 0) {
+      params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
+      if (params.m_averagingWindowSize <= 0 || params.m_averagingWindowSize % 2 == 0) {
+        throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
+      }
+
+      params.m_centerMinThresh = j.value("centerThresh", params.m_centerMinThresh);
+      if (params.m_centerMinThresh <= 0.f) {
         throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
       }
 
@@ -338,7 +351,8 @@ public:
           {"centerYlimits", params.m_centerYlimits},
           {"radiusLimits", radiusLimits},
           {"dilatationNbIter", params.m_dilatationNbIter},
-          {"centerThresh", params.m_centerThresh},
+          {"averagingWindowSize", params.m_averagingWindowSize},
+          {"centerThresh", params.m_centerMinThresh},
           {"circleProbabilityThreshold", params.m_circleProbaThresh},
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
@@ -576,14 +590,26 @@ public:
    *
    * \param[in] dilatationRepet Number of repetition of the dilatation operation to detect the maxima in the center accumulator.
    * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
+   * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
+                                      center candidate such as it is the barycenter of the window. Must be odd.
    */
-  inline void setCenterComputationParameters(const int &dilatationRepet, const float &centerThresh)
+  inline void setCenterComputationParameters(const int &dilatationRepet, const float &centerThresh,
+                                             const int &averagingWindowSize = 5)
   {
     m_algoParams.m_dilatationNbIter = dilatationRepet;
-    m_algoParams.m_centerThresh = centerThresh;
+    m_algoParams.m_centerMinThresh = centerThresh;
+    m_algoParams.m_averagingWindowSize = averagingWindowSize;
 
-    if (m_algoParams.m_centerThresh <= 0) {
+    if (m_algoParams.m_dilatationNbIter < 0) {
+      throw vpException(vpException::badValue, "Dilatations for center detection must be positive.");
+    }
+
+    if (m_algoParams.m_centerMinThresh <= 0.f) {
       throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
+    }
+
+    if (m_algoParams.m_averagingWindowSize <= 0 || m_algoParams.m_averagingWindowSize % 2 == 0) {
+      throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
     }
   }
 
@@ -621,9 +647,9 @@ public:
   /**
    * \brief Get the list of Center Candidates, stored as pair <idRow, idCol>
    *
-   * \return std::vector<std::pair<unsigned int, unsigned int> > The list of Center Candidates, stored as pair <idRow, idCol>
+   * \return std::vector<std::pair<float, float> > The list of Center Candidates, stored as pair <idRow, idCol>
    */
-  inline std::vector<std::pair<int, int> > getCenterCandidatesList()
+  inline std::vector<std::pair<float, float> > getCenterCandidatesList()
   {
     return m_centerCandidatesList;
   }
@@ -831,7 +857,7 @@ private:
 
   // // Center candidates computation attributes
   std::vector<std::pair<unsigned int, unsigned int> > m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
-  std::vector<std::pair<int, int> > m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<float, float> > m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
   std::vector<int> m_centerVotes; /*!< Number of votes for the center candidates that are kept.*/
 
   // // Circle candidates computation attributes

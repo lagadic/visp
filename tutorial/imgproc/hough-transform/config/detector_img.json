@@ -1,8 +1,9 @@
 {
+  "averagingWindowSize": 5,
   "lowerCannyThresh": 100.0,
   "upperCannyThresh": 200.0,
   "centerMinDistance": 5.0,
-  "centerThresh": 100.0,
+  "centerThresh": 50.0,
   "centerXlimits": [
     0,
     1920
@@ -11,16 +12,16 @@
     0,
     1080
   ],
-  "circlePerfectnessThreshold": 0.95,
+  "circlePerfectnessThreshold": 0.7,
   "dilatationNbIter": 1,
   "edgeMapFilteringNbIter" : 5,
-  "gaussianKernelSize": 25,
-  "gaussianStdev": 2.5,
+  "gaussianKernelSize": 5,
+  "gaussianStdev": 1.0,
   "mergingRadiusDiffThresh": 5.0,
   "radiusLimits": [
     34,
     75
   ],
-  "circleProbabilityThreshold": 0.75,
-  "sobelKernelSize": 7
+  "circleProbabilityThreshold": 0.725,
+  "sobelKernelSize": 3
 }
