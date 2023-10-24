@@ -387,7 +387,7 @@ public:
    * \param[in] I The input gray scale image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const cv::Mat &cv_I);
+  virtual std::vector<vpImageCircle> detect(const cv::Mat &cv_I);
 #endif
 
   /**
@@ -397,7 +397,7 @@ public:
    * \param[in] I The input color image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<vpRGBa> &I);
+  virtual std::vector<vpImageCircle> detect(const vpImage<vpRGBa> &I);
 
   /**
    * \brief Perform Circle Hough Transform to detect the circles in a gray-scale image
@@ -405,7 +405,7 @@ public:
    * \param[in] I The input gray scale image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
+  virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /**
@@ -418,7 +418,7 @@ public:
    * \return std::vector<vpImageCircle> The list of 2D circles with the most number
    * of votes detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
+  virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
 #endif
 
   // // Configuration from files
@@ -438,7 +438,7 @@ public:
    *
    * \param[in] jsonPath The path towards the JSON configuration file.
    */
-  void initFromJSON(const std::string &jsonPath);
+  virtual void initFromJSON(const std::string &jsonPath);
 
   /**
    * \brief Save the configuration of the detector in a JSON file
@@ -447,7 +447,7 @@ public:
    *
    * \param[in] jsonPath The path towards the JSON output file.
    */
-  void saveConfigurationInJSON(const std::string &jsonPath) const;
+  virtual void saveConfigurationInJSON(const std::string &jsonPath) const;
 
   /**
    * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
@@ -774,12 +774,12 @@ public:
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detector);
 
-private:
+protected:
   /**
    * \brief Initialize the Gaussian filters used to blur the image and
    * compute the gradient images.
    */
-  void initGaussianFilters();
+  virtual void initGaussianFilters();
 
   /**
    * \brief Perform Gaussian smoothing on the input image to reduce the noise
@@ -788,7 +788,7 @@ private:
    *
    * \param[in] I The input gray scale image.
    */
-  void computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I);
+  virtual void computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I);
 
   /**
    * \brief Perform edge detection based on the computed gradients.
@@ -796,19 +796,19 @@ private:
    *
    * \param[in] I The input gray scale image.
    */
-  void edgeDetection(const vpImage<unsigned char> &I);
+  virtual void edgeDetection(const vpImage<unsigned char> &I);
 
   /**
    * \brief Filter the edge map in order to remove isolated edge points.
    */
-  void filterEdgeMap();
+  virtual void filterEdgeMap();
 
   /**
    * \brief Determine the image points that are circle center candidates.
    * Increment the center accumulator based on the edge points and gradient information.
    * Perform thresholding to keep only the center candidates that exceed the threshold.
    */
-  void computeCenterCandidates();
+  virtual void computeCenterCandidates();
 
   /**
    * \brief Compute the probability of \b circle given the number of pixels voting for
@@ -820,7 +820,7 @@ private:
    * @param nbVotes The number of visible pixels of the given circle.
    * @return float The probability of the circle.
    */
-  float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
+  virtual float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
 
   /**
    * \brief For each center candidate CeC_i, do:
@@ -830,12 +830,12 @@ private:
    * - If accum_rc[CeC_i][RCB_k] > radius_count_thresh, add the circle candidate (CeC_i, RCB_k)
    *   to the list of circle candidates
    */
-  void computeCircleCandidates();
+  virtual void computeCircleCandidates();
 
   /**
    * \brief For each circle candidate CiC_i, check if similar circles have also been detected and if so merges them.
    */
-  void mergeCircleCandidates();
+  virtual void mergeCircleCandidates();
 
   /**
    * \brief For each circle candidate CiC_i do:
@@ -847,7 +847,7 @@ private:
    * \param[out] circleCandidatesVotes List of votes of the circle candidates.
    * \param[out] circleCandidatesProba List of probabilities of the circle candidates.
    */
-  void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
+  virtual void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
                        std::vector<float> &circleCandidatesProba);
 
 
