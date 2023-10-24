@@ -19,9 +19,9 @@ package_data = {}
 # Inspired by the pyrealsense2 binding
 # Include a .so lib that is already compiled into the package
 if os.name == 'posix':
-  package_data[''] = ['*.so']
+  package_data[''] = ['*.so', 'py.typed']
 else:
-  package_data[''] = ['*.pyd', '*.dll']
+  package_data[''] = ['*.pyd', '*.dll', 'py.typed']
 
 
 # This creates a list which is empty but returns a length of 1.

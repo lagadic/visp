@@ -3,6 +3,7 @@ from visp.core import TranslationVector, ThetaUVector, Matrix
 from visp.core import HomogeneousMatrix, ExponentialMap, UniRand, CameraParameters
 from visp.core import ColVector
 
+
 if __name__ == '__main__':
   T = HomogeneousMatrix(TranslationVector(1, 0, 1), ThetaUVector(0.0, 0.0, 0.0))
   print(T)
