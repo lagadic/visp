@@ -45,7 +45,7 @@
 #include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
 /*!
- * Default constructor
+ * Default constructor.
  * \param moments_ : Database of moment primitives.
  * \param A_ : First plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
  * \param B_ : Second plane coefficient for a plane equation of the following type Ax+By+C=1/Z.
@@ -58,7 +58,7 @@ vpFeatureMomentCentered::vpFeatureMomentCentered(vpMomentDatabase &moments_, dou
 { }
 
 /*!
- * Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment
+ * Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment.
  * \param select_one : first index (i).
  * \param select_two : second index (j).
  * \return Interaction matrix corresponding to the moment.

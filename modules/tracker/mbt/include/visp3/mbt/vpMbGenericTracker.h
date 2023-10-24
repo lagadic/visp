@@ -783,7 +783,7 @@ private:
     using vpMbDepthDenseTracker::setPose;
 #endif
     virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
-      const vpHomogeneousMatrix &cdMo);
+      const vpHomogeneousMatrix &cdMo) override;
   };
 #ifdef VISP_HAVE_NLOHMANN_JSON
   friend void to_json(nlohmann::json &j, const TrackerWrapper &t);

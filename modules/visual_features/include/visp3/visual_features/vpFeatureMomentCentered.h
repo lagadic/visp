@@ -58,8 +58,9 @@ class vpMomentDatabase;
  * (i,j).
  *
  * vpFeatureMomentCentered computes interaction matrices all interaction
- * matrices up to vpMomentObject::getOrder()-1. \attention The maximum order
- * reached by vpFeatureMomentBasic is NOT the maximum order of the
+ * matrices up to vpMomentObject::getOrder()-1.
+ *
+ * \attention The maximum order reached by vpFeatureMomentBasic is NOT the maximum order of the
  * vpMomentObject, it is one unit smaller. For example if you define your
  * vpMomentObject up to order n then vpFeatureMomentBasic will be able to
  * compute interaction matrices up to order n-1 that is \f$ L_{m_{ij}} \f$ with
@@ -72,7 +73,6 @@ class vpMomentDatabase;
  */
 class VISP_EXPORT vpFeatureMomentCentered : public vpFeatureMoment
 {
-
 protected:
   unsigned int order;
   /*!
@@ -94,12 +94,7 @@ public:
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
 #endif
-  /*!
-   * Interaction matrix corresponding to \f$ \mu_{ij} \f$ moment
-   * \param select_one : first index (i)
-   * \param select_two : second index (j)
-   * \return Interaction matrix corresponding to the moment
-   */
+
   vpMatrix interaction(unsigned int select_one, unsigned int select_two) const;
 
   /*!

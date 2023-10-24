@@ -3266,7 +3266,7 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox,
                                      vpImagePoint &centerOfGravity, const bool isPlanarObject,
                                      std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
-                                     double *meanDescriptorDistance, double *detection_score, const vpRect &rectangle)
+                                     double *meanDescriptorDistance, double *detectionScore, const vpRect &rectangle)
 {
   if (imPts1 != NULL && imPts2 != NULL) {
     imPts1->clear();
@@ -3286,8 +3286,8 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
   if (meanDescriptorDistance != NULL) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
   }
-  if (detection_score != NULL) {
-    *detection_score = score;
+  if (detectionScore != NULL) {
+    *detectionScore = score;
   }
 
   if (m_filteredMatches.size() >= 4) {
