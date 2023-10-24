@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,12 @@
  *
  * Description:
  * Generic model-based tracker.
- *
-*****************************************************************************/
+ */
+
 /*!
- \file vpMbGenericTracker.h
- \brief Generic model-based tracker
-*/
+ * \file vpMbGenericTracker.h
+ *\brief Generic model-based tracker
+ */
 
 #ifndef _vpMbGenericTracker_h_
 #define _vpMbGenericTracker_h_
@@ -51,151 +50,150 @@
 #endif
 
 /*!
-  \class vpMbGenericTracker
-  \ingroup group_mbt_trackers
-  \brief Real-time 6D object pose tracking using its CAD model.
-
-  The tracker requires the knowledge of the 3D model that could be provided in
-  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
-  also use an xml file used to tune the behavior of the tracker and an init file
-  used to compute the pose at the very first image.
-
-  This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
-  A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
-
-  \htmlonly
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  \endhtmlonly
-
-  The \ref tutorial-tracking-mb-generic is a good starting point to use this
-  class. If you want to track an object with a stereo camera refer to
-  \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
-  the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
-  There is also \ref tutorial-detection-object that shows how to initialize the tracker from
-  an initial pose provided by a detection algorithm.
-
-  <b>JSON serialization</b>
-
-  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMbGenericTracker.
-  The following sample code shows how to save a model-based tracker settings in a file named `mbt.json`
-  and reload the values from this JSON file.
-  \code
-  #include <visp3/mbt/vpMbGenericTracker.h>
-
-  int main()
-  {
-  #if defined(VISP_HAVE_NLOHMANN_JSON)
-    std::string filename = "mbt-generic.json";
-    {
-      vpMbGenericTracker mbt;
-      mbt.saveConfigFile(filename);
-    }
-    {
-      vpMbGenericTracker mbt;
-      bool verbose = false;
-      std::cout << "Read model-based tracker settings from " << filename << std::endl;
-      mbt.loadConfigFile(filename, verbose);
-    }
-  #endif
-  }
-  \endcode
-  If you build and execute the sample code, it will produce the following output:
-  \code{.unparsed}
-  Read model-based tracker settings from mbt-generic.json
-  \endcode
-
-  The content of the `mbt.json` file is the following:
-  \code{.unparsed}
-  $ cat mbt-generic.json
-  {
-    "referenceCameraName": "Camera",
-    "trackers": {
-        "Camera": {
-            "angleAppear": 89.0,
-            "angleDisappear": 89.0,
-            "camTref": {
-                "cols": 4,
-                "data": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "rows": 4,
-                "type": "vpHomogeneousMatrix"
-            },
-            "camera": {
-                "model": "perspectiveWithoutDistortion",
-                "px": 600.0,
-                "py": 600.0,
-                "u0": 192.0,
-                "v0": 144.0
-            },
-            "clipping": {
-                "far": 100.0,
-                "flags": [
-                    "none"
-                ],
-                "near": 0.001
-            },
-            "display": {
-                "features": false,
-                "projectionError": false
-            },
-            "edge": {
-                "maskSign": 0,
-                "maskSize": 5,
-                "minSampleStep": 4.0,
-                "mu": [
-                    0.5,
-                    0.5
-                ],
-                "nMask": 180,
-                "ntotalSample": 0,
-                "pointsToTrack": 500,
-                "range": 4,
-                "sampleStep": 10.0,
-                "strip": 2,
-                "threshold": 1500.0
-            },
-            "lod": {
-                "minLineLengthThresholdGeneral": 50.0,
-                "minPolygonAreaThresholdGeneral": 2500.0,
-                "useLod": false
-            },
-            "type": [
-                "edge"
-            ],
-            "visibilityTest": {
-                "ogre": false,
-                "scanline": false
-            }
-        }
-    },
-    "version": "1.0"
-  }
-  \endcode
-
-*/
+ * \class vpMbGenericTracker
+ * \ingroup group_mbt_trackers
+ * \brief Real-time 6D object pose tracking using its CAD model.
+ *
+ * The tracker requires the knowledge of the 3D model that could be provided in
+ * a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+ * also use an xml file used to tune the behavior of the tracker and an init file
+ * used to compute the pose at the very first image.
+ *
+ * This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
+ * A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+ *
+ * \htmlonly
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * \endhtmlonly
+ *
+ * The \ref tutorial-tracking-mb-generic is a good starting point to use this
+ * class. If you want to track an object with a stereo camera refer to
+ * \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
+ * the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
+ * There is also \ref tutorial-detection-object that shows how to initialize the tracker from
+ * an initial pose provided by a detection algorithm.
+ *
+ * <b>JSON serialization</b>
+ *
+ * Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMbGenericTracker.
+ * The following sample code shows how to save a model-based tracker settings in a file named `mbt.json`
+ * and reload the values from this JSON file.
+ * \code
+ * #include <visp3/mbt/vpMbGenericTracker.h>
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_NLOHMANN_JSON)
+ *   std::string filename = "mbt-generic.json";
+ *   {
+ *     vpMbGenericTracker mbt;
+ *     mbt.saveConfigFile(filename);
+ *   }
+ *   {
+ *     vpMbGenericTracker mbt;
+ *     bool verbose = false;
+ *     std::cout << "Read model-based tracker settings from " << filename << std::endl;
+ *     mbt.loadConfigFile(filename, verbose);
+ *   }
+ * #endif
+ * }
+ * \endcode
+ * If you build and execute the sample code, it will produce the following output:
+ * \code{.unparsed}
+ * Read model-based tracker settings from mbt-generic.json
+ * \endcode
+ *
+ * The content of the `mbt.json` file is the following:
+ * \code{.unparsed}
+ * $ cat mbt-generic.json
+ * {
+ *   "referenceCameraName": "Camera",
+ *   "trackers": {
+ *       "Camera": {
+ *           "angleAppear": 89.0,
+ *           "angleDisappear": 89.0,
+ *           "camTref": {
+ *               "cols": 4,
+ *               "data": [
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0
+ *               ],
+ *               "rows": 4,
+ *               "type": "vpHomogeneousMatrix"
+ *           },
+ *           "camera": {
+ *               "model": "perspectiveWithoutDistortion",
+ *               "px": 600.0,
+ *               "py": 600.0,
+ *               "u0": 192.0,
+ *               "v0": 144.0
+ *           },
+ *           "clipping": {
+ *               "far": 100.0,
+ *               "flags": [
+ *                   "none"
+ *               ],
+ *               "near": 0.001
+ *           },
+ *           "display": {
+ *               "features": false,
+ *               "projectionError": false
+ *           },
+ *           "edge": {
+ *               "maskSign": 0,
+ *               "maskSize": 5,
+ *               "minSampleStep": 4.0,
+ *               "mu": [
+ *                   0.5,
+ *                   0.5
+ *               ],
+ *               "nMask": 180,
+ *               "ntotalSample": 0,
+ *               "pointsToTrack": 500,
+ *               "range": 4,
+ *               "sampleStep": 10.0,
+ *               "strip": 2,
+ *               "threshold": 1500.0
+ *           },
+ *           "lod": {
+ *               "minLineLengthThresholdGeneral": 50.0,
+ *               "minPolygonAreaThresholdGeneral": 2500.0,
+ *               "useLod": false
+ *           },
+ *           "type": [
+ *               "edge"
+ *           ],
+ *           "visibilityTest": {
+ *               "ogre": false,
+ *               "scanline": false
+ *           }
+ *       }
+ *   },
+ *   "version": "1.0"
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:
@@ -319,16 +317,19 @@ public:
    * Return the number of depth dense features taken into account in the virtual visual-servoing scheme.
    */
   virtual inline unsigned int getNbFeaturesDepthDense() const { return m_nb_feat_depthDense; }
+
   /*!
    * Return the number of depth normal features features taken into account in the virtual visual-servoing scheme.
    */
   virtual inline unsigned int getNbFeaturesDepthNormal() const { return m_nb_feat_depthNormal; }
+
   /*!
    * Return the number of moving-edges features taken into account in the virtual visual-servoing scheme.
    *
    * This function is similar to getNbPoints().
    */
   virtual inline unsigned int getNbFeaturesEdge() const { return m_nb_feat_edge; }
+
   /*!
    * Return the number of klt keypoints features taken into account in the virtual visual-servoing scheme.
    */
@@ -849,7 +850,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
 * @brief Serialize a tracker wrapper's settings into a JSON representation.
 * \sa from_json for more details on what is serialized
 * @param j The modified json object.
-* @param t  The tracker to serialize.
+* @param t The tracker to serialize.
 */
 inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper &t)
 {
@@ -1046,6 +1047,5 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
 }
 
 #endif
-
 
 #endif

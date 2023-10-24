@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Model-based tracker using depth dense features.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpMbDepthDenseTracker_h_
 #define _vpMbDepthDenseTracker_h_
