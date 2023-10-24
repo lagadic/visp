@@ -7,6 +7,7 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in" "${CMAKE_CURRENT_BINARY
 add_custom_target( visp_python_stubs
   COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/visp-stubs"
   COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} pybind11-stubgen
+  COMMAND ${Python_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/run_stub_generator.py --output-root ${CMAKE_CURRENT_BINARY_DIR}
   COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v "${CMAKE_CURRENT_BINARY_DIR}"
 
   DEPENDS visp_python_bindings_install
