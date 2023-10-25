@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Windows 32 display base class
- *
- * Authors:
- * Bruno Renier
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -165,10 +160,10 @@ protected:
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
                      unsigned int thickness = 1) override;
 
-  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1); override
+  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) override;
 
-    void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                        unsigned int thickness = 1) override;
+  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
+                      unsigned int thickness = 1) override;
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1) override;
 
