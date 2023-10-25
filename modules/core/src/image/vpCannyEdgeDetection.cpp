@@ -464,8 +464,10 @@ vpCannyEdgeDetection::performEdgeTracking()
     if (it->second == STRONG_EDGE) {
       m_edgeMap[it->first.first][it->first.second] = 255;
     }
-    else if (recursiveSearchForStrongEdge(it->first)) {
-      m_edgeMap[it->first.first][it->first.second] = 255;
+    else if (it->second == WEAK_EDGE) {
+      if (recursiveSearchForStrongEdge(it->first)) {
+        m_edgeMap[it->first.first][it->first.second] = 255;
+      }
     }
   }
 }
