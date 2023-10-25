@@ -41,35 +41,35 @@
 #include <visp3/vision/vpCalibration.h>
 #include <visp3/vision/vpPose.h>
 
-double vpCalibration::threshold = 1e-10f;
-unsigned int vpCalibration::nbIterMax = 4000;
-double vpCalibration::gain = 0.25;
+double vpCalibration::m_threshold = 1e-10f;
+unsigned int vpCalibration::m_nbIterMax = 4000;
+double vpCalibration::m_gain = 0.25;
 
 int vpCalibration::init()
 {
-  npt = 0;
+  m_npt = 0;
 
-  residual = residual_dist = 1000.;
+  m_residual = m_residual_dist = 1000.;
 
-  LoX.clear();
-  LoY.clear();
-  LoZ.clear();
-  Lip.clear();
+  m_LoX.clear();
+  m_LoY.clear();
+  m_LoZ.clear();
+  m_Lip.clear();
 
   return 0;
 }
 
 vpCalibration::vpCalibration()
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
-  Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), m_npt(0),
+  m_LoX(), m_LoY(), m_LoZ(), m_Lip(), m_residual(1000.), m_residual_dist(1000.)
 
 {
   init();
 }
 
 vpCalibration::vpCalibration(const vpCalibration &c)
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
-  Lip(), residual(1000.), residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), m_npt(0),
+  m_LoX(), m_LoY(), m_LoZ(), m_Lip(), m_residual(1000.), m_residual_dist(1000.)
 {
   (*this) = c;
 }
@@ -78,15 +78,15 @@ vpCalibration::~vpCalibration() { clearPoint(); }
 
 vpCalibration &vpCalibration::operator=(const vpCalibration &twinCalibration)
 {
-  npt = twinCalibration.npt;
-  LoX = twinCalibration.LoX;
-  LoY = twinCalibration.LoY;
-  LoZ = twinCalibration.LoZ;
-  Lip = twinCalibration.Lip;
+  m_npt = twinCalibration.m_npt;
+  m_LoX = twinCalibration.m_LoX;
+  m_LoY = twinCalibration.m_LoY;
+  m_LoZ = twinCalibration.m_LoZ;
+  m_Lip = twinCalibration.m_Lip;
 
-  residual = twinCalibration.residual;
+  m_residual = twinCalibration.m_residual;
   cMo = twinCalibration.cMo;
-  residual_dist = twinCalibration.residual_dist;
+  m_residual_dist = twinCalibration.m_residual_dist;
   cMo_dist = twinCalibration.cMo_dist;
 
   cam = twinCalibration.cam;
@@ -104,24 +104,24 @@ vpCalibration &vpCalibration::operator=(const vpCalibration &twinCalibration)
 
 int vpCalibration::clearPoint()
 {
-  LoX.clear();
-  LoY.clear();
-  LoZ.clear();
-  Lip.clear();
-  npt = 0;
+  m_LoX.clear();
+  m_LoY.clear();
+  m_LoZ.clear();
+  m_Lip.clear();
+  m_npt = 0;
 
   return 0;
 }
 
 int vpCalibration::addPoint(double X, double Y, double Z, vpImagePoint &ip)
 {
-  LoX.push_back(X);
-  LoY.push_back(Y);
-  LoZ.push_back(Z);
+  m_LoX.push_back(X);
+  m_LoY.push_back(Y);
+  m_LoZ.push_back(Z);
 
-  Lip.push_back(ip);
+  m_Lip.push_back(ip);
 
-  npt++;
+  m_npt++;
 
   return 0;
 }
@@ -139,12 +139,12 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   //  the list of point is cleared (if that's not done before)
   pose.clearPoint();
   // we set the 3D points coordinates (in meter !) in the object/world frame
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     vpPoint P(*it_LoX, *it_LoY, *it_LoZ);
     double x = 0, y = 0;
     vpPixelMeterConversion::convertPoint(camera, *it_Lip, x, y);
@@ -165,12 +165,12 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
 
 double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
-  double residual_ = 0;
+  m_residual = 0;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   double u0 = camera.get_u0();
   double v0 = camera.get_v0();
@@ -178,7 +178,7 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, co
   double py = camera.get_py();
   vpImagePoint ip;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;
@@ -197,25 +197,24 @@ double vpCalibration::computeStdDeviation(const vpHomogeneousMatrix &cMo_est, co
     double xp = u0 + x * px;
     double yp = v0 + y * py;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
 
     ++it_LoX;
     ++it_LoY;
     ++it_LoZ;
     ++it_Lip;
   }
-  this->residual = residual_;
-  return sqrt(residual_ / npt);
+  return sqrt(m_residual / m_npt);
 }
 
 double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &camera)
 {
-  double residual_ = 0;
+  m_residual_dist = 0;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   double u0 = camera.get_u0();
   double v0 = camera.get_v0();
@@ -228,7 +227,7 @@ double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_es
   double inv_py = 1 / px;
   vpImagePoint ip;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;
@@ -249,23 +248,22 @@ double vpCalibration::computeStdDeviation_dist(const vpHomogeneousMatrix &cMo_es
     double xp = u0 + x * px * r2ud;
     double yp = v0 + y * py * r2ud;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual_dist += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
 
     double r2du = (vpMath::sqr((u - u0) * inv_px) + vpMath::sqr((v - v0) * inv_py));
 
     xp = u0 + x * px - kdu * (u - u0) * r2du;
     yp = v0 + y * py - kdu * (v - v0) * r2du;
 
-    residual_ += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
+    m_residual_dist += (vpMath::sqr(xp - u) + vpMath::sqr(yp - v));
     ++it_LoX;
     ++it_LoY;
     ++it_LoZ;
     ++it_Lip;
   }
-  residual_ /= 2;
+  m_residual_dist /= 2;
 
-  this->residual_dist = residual_;
-  return sqrt(residual_ / npt);
+  return sqrt(m_residual_dist / m_npt);
 }
 
 void vpCalibration::computeStdDeviation(double &deviation, double &deviation_dist)
@@ -456,16 +454,16 @@ int vpCalibration::writeData(const std::string &filename)
   std::ofstream f(filename.c_str());
   vpImagePoint ip;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
-  std::list<vpImagePoint>::const_iterator it_Lip = Lip.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
+  std::list<vpImagePoint>::const_iterator it_Lip = m_Lip.begin();
 
   f.precision(10);
   f.setf(std::ios::fixed, std::ios::floatfield);
-  f << LoX.size() << std::endl;
+  f << m_LoX.size() << std::endl;
 
-  for (unsigned int i = 0; i < LoX.size(); i++) {
+  for (unsigned int i = 0; i < m_LoX.size(); ++i) {
 
     double oX = *it_LoX;
     double oY = *it_LoY;
@@ -567,7 +565,7 @@ int vpCalibration::readGrid(const std::string &filename, unsigned int &n, std::l
 int vpCalibration::displayData(vpImage<unsigned char> &I, vpColor color, unsigned int thickness, int subsampling_factor)
 {
 
-  for (std::list<vpImagePoint>::const_iterator it = Lip.begin(); it != Lip.end(); ++it) {
+  for (std::list<vpImagePoint>::const_iterator it = m_Lip.begin(); it != m_Lip.end(); ++it) {
     vpImagePoint ip = *it;
     if (subsampling_factor > 1.) {
       ip.set_u(ip.get_u() / subsampling_factor);
@@ -592,11 +590,11 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigne
   //   double px = cam.get_px() ;
   //   double py = cam.get_py() ;
 
-  std::list<double>::const_iterator it_LoX = LoX.begin();
-  std::list<double>::const_iterator it_LoY = LoY.begin();
-  std::list<double>::const_iterator it_LoZ = LoZ.begin();
+  std::list<double>::const_iterator it_LoX = m_LoX.begin();
+  std::list<double>::const_iterator it_LoY = m_LoY.begin();
+  std::list<double>::const_iterator it_LoZ = m_LoZ.begin();
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < m_npt; i++) {
     double oX = *it_LoX;
     double oY = *it_LoY;
     double oZ = *it_LoZ;

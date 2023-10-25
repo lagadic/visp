@@ -77,7 +77,7 @@ public:
     memoryFreeError,             //!< Memory free error
     functionNotImplementedError, //!< Function not implemented
     ioError,                     //!< I/O error
-    cannotUseConstructorError,   //!< Contructor error
+    cannotUseConstructorError,   //!< constructor error
     notImplementedError,         //!< Not implemented
     divideByZeroError,           //!< Division by zero
     dimensionError,              //!< Bad dimension

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface with the image for feature display.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpServoDisplay.cpp
@@ -47,33 +45,10 @@
 // Color / image / display
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
-
 #include <visp3/core/vpDisplay.h>
-
 #include <visp3/vs/vpServoDisplay.h>
-
 #include <visp3/visual_features/vpBasicFeature.h>
 
-/*!
-
-  Display the current and the desired features in the image I.
-
-  \warning To effectively display the dot graphics a call to
-  vpDisplay::flush() is needed.
-
-  \param s : Visual servoing control law.
-  \param cam : Camera parameters.
-  \param I : Image on which features have to be displayed.
-
-  \param currentColor : Color for the current features. If vpColor::none,
-  current features display is turned off.
-
-  \param desiredColor : Color for the desired features. If vpColor::none,
-  desired features display is turned off.
-
-  \param thickness : Thickness of the feature representation.
-
-*/
 void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                              vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {
@@ -91,29 +66,8 @@ void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, co
       (*it_s)->display(cam, I, currentColor, thickness);
     }
   }
-  //  vpDisplay::flush(I) ;
 }
 
-/*!
-
-  Display the current and the desired features in the image I.
-
-  \warning To effectively display the dot graphics a call to
-  vpDisplay::flush() is needed.
-
-  \param s : Visual servoing control law.
-  \param cam : Camera parameters.
-  \param I : Color image on which features have to be displayed.
-
-  \param currentColor : Color for the current features. If vpColor::none,
-  current features display is turned off.
-
-  \param desiredColor : Color for the desired features. If vpColor::none,
-  desired features display is turned off.
-
-  \param thickness : Thickness of the feature representation.
-
- */
 void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                              vpColor currentColor, vpColor desiredColor, unsigned int thickness)
 {
@@ -131,5 +85,4 @@ void vpServoDisplay::display(const vpServo &s, const vpCameraParameters &cam, co
       (*it_s)->display(cam, I, currentColor, thickness);
     }
   }
-  //  vpDisplay::flush(I) ;
 }

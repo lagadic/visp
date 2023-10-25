@@ -222,7 +222,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
   return true;
 }
 
-struct rs_intrinsics {
+struct vpRealsenseIntrinsics_t {
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
                       as a pixel offset from the left edge */
   float ppy;       /**< Vertical coordinate of the principal point of the image, as
@@ -234,7 +234,7 @@ struct rs_intrinsics {
   float coeffs[5]; /**< Distortion coefficients */
 };
 
-void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, const float pixel[2], float depth)
+void rs_deproject_pixel_to_point(float point[3], const vpRealsenseIntrinsics_t &intrin, const float pixel[2], float depth)
 {
   float x = (pixel[0] - intrin.ppx) / intrin.fx;
   float y = (pixel[1] - intrin.ppy) / intrin.fy;
@@ -310,7 +310,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
   // Only for Creative SR300
   const float depth_scale = 0.000124986647f;
-  rs_intrinsics depth_intrinsic;
+  vpRealsenseIntrinsics_t depth_intrinsic;
   depth_intrinsic.ppx = 311.484558f;
   depth_intrinsic.ppy = 246.283234f;
   depth_intrinsic.fx = 476.053619f;

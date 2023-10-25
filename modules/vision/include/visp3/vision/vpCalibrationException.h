@@ -38,7 +38,7 @@
 #include <visp3/core/vpException.h>
 
 #include <iostream>
-#include <string>   
+#include <string>
 
 /*!
  * \class vpCalibrationException
@@ -79,6 +79,7 @@ public:
     setMessage(format, args);
     va_end(args);
   }
+
   /*!
    * Constructor.
    */

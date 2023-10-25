@@ -120,7 +120,7 @@ void emergencyStopAfma4(int signo)
 
   The only available constructor.
 
-  This contructor calls init() to initialise the connection with the MotionBox
+  This constructor calls init() to initialise the connection with the MotionBox
   or low level controller, power on the robot and wait 1 sec before returning
   to be sure the initialisation is done.
 
@@ -1101,7 +1101,7 @@ void vpRobotAfma4::getPosition(const vpRobot::vpControlFrameType frame, vpColVec
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \warning Velocities could be saturated if one of them exceed the
-  maximal autorized speed (see vpRobot::maxTranslationVelocity and
+  maximal authorized speed (see vpRobot::maxTranslationVelocity and
   vpRobot::maxRotationVelocity). To change these values use
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 

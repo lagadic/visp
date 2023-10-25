@@ -20,6 +20,6 @@
     0,
     1000
   ],
-  "radiusThreshRatio": 2,
+  "circleProbabilityThreshold": 0.9,
   "sobelKernelSize": 3
 }

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,10 @@
  *
  * Description:
  * Save data during the task execution.
- *
-*****************************************************************************/
+ */
 
-#ifndef vpServoData_H
-#define vpServoData_H
+#ifndef _vpServoData_h_
+#define _vpServoData_h_
 
 /*!
   \file vpServoData.h
@@ -47,10 +45,10 @@
 #include <iostream>
 
 /*!
-  \class vpServoData
-  \ingroup group_task
-  \brief Save data during the task execution.
-*/
+ * \class vpServoData
+ * \ingroup group_task
+ * \brief Save data during the task execution when using vpServo.
+ */
 class VISP_EXPORT vpServoData
 {
 private:
@@ -78,18 +76,44 @@ public:
   }
 #endif
 
+  /*!
+   * Default constructor.
+   */
   vpServoData() : velocityFile(), errorFile(), errorNormFile(), sFile(), sStarFile(), vNormFile(), cmDeg(false) { ; }
-  virtual ~vpServoData() { ; }
 
-  //! velocity output in cm and deg
+  /*!
+   * Destructor that closes all data files if needed.
+   */
+  virtual ~vpServoData() { close(); }
+
+  //! Velocity output are set in cm and deg.
   void setCmDeg();
-  //! velocity output in meter and deg (default)
+  //! Velocity output are set in meter and deg (default).
   void setMeterRad();
-
+  //! Save visual-servoing control law data.
   void save(const vpServo &task);
-  void open(const std::string &directory);
-  void close();
 
+  /*!
+   * Set the directory in which data are saved.
+   * In this directory, creates the following files:
+   * - `vel.dat` that contains velocities computed
+   * - `error.dat` that contains visual-servo error \f$ {\bf e} = ({\bf s} - {\bf s}^*)\f$
+   * - `errornorm.dat` that contains the sum square of the visual-servo error \f$ {\bf e} \f$
+   * - `s.dat` that contains the current feature vector \f$ \bf s \f$
+   * - `sStar.dat` that contains the desired feature vector \f$ {\bf s}^* \f$
+   *
+   * @param directory : Path to the folder that contains data files to save.
+   *
+   * \sa close()
+   */
+  void open(const std::string &directory);
+
+  /*!
+   * Close all data files open with open() function.
+   *
+   * \sa open()
+   */
+  void close();
 };
 
 #endif

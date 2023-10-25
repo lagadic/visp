@@ -278,7 +278,7 @@ int main(int argc, const char **argv)
         mg.compute();         // Compute gravity center moment
         mc.compute();         // Compute centered moments AFTER gravity center
         man.setDesiredArea(
-            area);     // Since desired area was init at 0, because unknow at contruction, need to be updated here
+            area);     // Since desired area was init at 0, because unknow at construction, need to be updated here
         man.compute(); // Compute area normalized moment AFTER centered moment
         mgn.compute(); // Compute gravity center normalized moment AFTER area normalized moment
 

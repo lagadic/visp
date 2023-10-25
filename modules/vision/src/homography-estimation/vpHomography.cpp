@@ -48,28 +48,28 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMatrixException.h>
 
-vpHomography::vpHomography() : vpArray2D<double>(3, 3), aMb(), bP() { eye(); }
+vpHomography::vpHomography() : vpArray2D<double>(3, 3), m_aMb(), m_bP() { eye(); }
 
-vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), aMb(), bP() { *this = H; }
+vpHomography::vpHomography(const vpHomography &H) : vpArray2D<double>(3, 3), m_aMb(), m_bP() { *this = H; }
 
-vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : vpArray2D<double>(3, 3), aMb(), bP()
+vpHomography::vpHomography(const vpHomogeneousMatrix &aMb, const vpPlane &bP) : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
   buildFrom(aMb, bP);
 }
 
 vpHomography::vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &p)
-  : vpArray2D<double>(3, 3), aMb(), bP()
+  : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
   buildFrom(tu, atb, p);
 }
 
 vpHomography::vpHomography(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &p)
-  : vpArray2D<double>(3, 3), aMb(), bP()
+  : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
   buildFrom(aRb, atb, p);
 }
 
-vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : vpArray2D<double>(3, 3), aMb(), bP()
+vpHomography::vpHomography(const vpPoseVector &arb, const vpPlane &p) : vpArray2D<double>(3, 3), m_aMb(), m_bP()
 {
   buildFrom(arb, p);
 }
@@ -99,26 +99,26 @@ void vpHomography::buildFrom(const vpRotationMatrix &aRb, const vpTranslationVec
 
 void vpHomography::buildFrom(const vpPoseVector &arb, const vpPlane &p)
 {
-  aMb.buildFrom(arb[0], arb[1], arb[2], arb[3], arb[4], arb[5]);
+  m_aMb.buildFrom(arb[0], arb[1], arb[2], arb[3], arb[4], arb[5]);
   insert(p);
   build();
 }
 
 /*********************************************************************/
 
-void vpHomography::insert(const vpRotationMatrix &aRb) { aMb.insert(aRb); }
+void vpHomography::insert(const vpRotationMatrix &aRb) { m_aMb.insert(aRb); }
 
-void vpHomography::insert(const vpHomogeneousMatrix &M) { this->aMb = M; }
+void vpHomography::insert(const vpHomogeneousMatrix &M) { m_aMb = M; }
 
 void vpHomography::insert(const vpThetaUVector &tu)
 {
   vpRotationMatrix aRb(tu);
-  aMb.insert(aRb);
+  m_aMb.insert(aRb);
 }
 
-void vpHomography::insert(const vpTranslationVector &atb) { aMb.insert(atb); }
+void vpHomography::insert(const vpTranslationVector &atb) { m_aMb.insert(atb); }
 
-void vpHomography::insert(const vpPlane &p) { this->bP = p; }
+void vpHomography::insert(const vpPlane &bP) { m_bP = bP; }
 
 vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) const
 {
@@ -144,7 +144,8 @@ void vpHomography::save(std::ofstream &f) const
 {
   if (!f.fail()) {
     f << *this;
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot write the homography to the output stream"));
   }
 }
@@ -247,8 +248,8 @@ vpHomography &vpHomography::operator=(const vpHomography &H)
     for (unsigned int j = 0; j < 3; j++)
       (*this)[i][j] = H[i][j];
 
-  aMb = H.aMb;
-  bP = H.bP;
+  m_aMb = H.m_aMb;
+  m_bP = H.m_bP;
   return *this;
 }
 
@@ -271,7 +272,8 @@ void vpHomography::load(std::ifstream &f)
       for (unsigned int j = 0; j < 3; j++) {
         f >> (*this)[i][j];
       }
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot read the homography from the input stream"));
   }
 }
@@ -289,14 +291,14 @@ void vpHomography::build()
   vpColVector atb(3);
   vpMatrix aRb(3, 3);
   for (unsigned int i = 0; i < 3; i++) {
-    atb[i] = aMb[i][3];
+    atb[i] = m_aMb[i][3];
     for (unsigned int j = 0; j < 3; j++)
-      aRb[i][j] = aMb[i][j];
+      aRb[i][j] = m_aMb[i][j];
   }
 
-  bP.getNormal(n);
+  m_bP.getNormal(n);
 
-  double d = bP.getD();
+  double d = m_bP.getD();
   vpMatrix aHb = aRb - atb * n.t() / d; // the d used in the equation is such as nX=d is the
                                         // plane equation. So if the plane is described by
                                         // Ax+By+Cz+D=0, d=-D
@@ -354,16 +356,6 @@ void vpHomography::eye()
         (*this)[i][j] = 0.0;
 }
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-/*!
-  \deprecated You should rather use eye().
-
-  Set the homography as identity transformation.
-  \sa eye()
-*/
-void vpHomography::setIdentity() { eye(); }
-#endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-
 vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomography &bHa, const vpImagePoint &iPa)
 {
   double xa = iPa.get_u();
@@ -416,7 +408,8 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     if (normalization) {
       vpHomography::HartleyNormalization(xb, yb, xbn, ybn, xg1, yg1, coef1);
       vpHomography::HartleyNormalization(xa, ya, xan, yan, xg2, yg2, coef2);
-    } else {
+    }
+    else {
       xbn = xb;
       ybn = yb;
       xan = xa;
@@ -503,7 +496,8 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     if (normalization) {
       // H after denormalization
       vpHomography::HartleyDenormalization(aHbn, aHb, xg1, yg1, coef1, xg2, yg2, coef2);
-    } else {
+    }
+    else {
       aHb = aHbn;
     }
 
@@ -525,7 +519,8 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     }
 
     residual = sqrt(residual / nbinliers);
-  } catch (...) {
+  }
+  catch (...) {
     throw(vpException(vpException::fatalError, "Cannot estimate an homography"));
   }
 }

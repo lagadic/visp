@@ -5,6 +5,25 @@
      Copyright (C) 2005 - 2023 by Inria. All rights reserved.
                       https://visp.inria.fr
 
+ViSP 3.x.x (Version in development)
+  - Contributors:
+    . Fabien Spindler, Florent Lamiraux
+  - New classes
+    .
+  - Deprecated removed
+    . vpPlanarObjectDetector, vpFernClassifier classes are removed
+  - New features and improvements
+    . Introduce applications in apps folder, a collection of useful tools that
+      have a dependency to the install target
+  - Applications
+    . Migrate eye-to-hand tutorials in apps
+  - Tutorials
+    . Update tutorial: How to use Blender to generate simulated data for model-based tracking
+      experiments with step by step detailed explanations
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
+  - Bug fixed
+    . [#1251] Bug in vpDisplay::displayFrame()
+----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
     . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton,
@@ -942,7 +961,7 @@ ViSP 2.6.2 (released July 15, 2012)
        To be able to consider other user defined features the compiler should
        be compatible with C++ 11 standard.
   - Improvements
-     - Introduce a new Denavit Hartenberg representation of the Biclops head
+     - Introduce a new Denavit-Hartenberg representation of the Biclops head
        in vpBiclops.
      - Compatibility with g++ 4.7 and OpenCV 2.3.1, 2.4.0, 2.4.1
      - Remove warning detected with Visual C++ /Wall flag
@@ -1022,7 +1041,7 @@ ViSP 2.6.1 (released October 20th, 2011)
        vpRobotSimulator, vpFFMPEG, vpBSpline
      - It is now possible to grab images from an usb webcam with the
        vpV4l2Grabber class that is based on the video 4 linux 2 driver.
-     - When it was possible without braking the backward compatibilty
+     - When it was possible without braking the backward compatibility
        std::list was introduced instead of vpList. Some of the functions that
        use vpList are now deprecated.
      - Better detection of image or video file types when used in vpImageIo,

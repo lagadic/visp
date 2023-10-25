@@ -182,13 +182,13 @@ bool getOptions(int argc, char **argv, bool &save, std::string &output_directory
   return true;
 }
 
-class FrameQueue
+class vpFrameQueue
 {
 public:
-  struct cancelled
+  struct vpCancelled_t
   { };
 
-  FrameQueue()
+  vpFrameQueue()
     : m_cancelled(false), m_cond(), m_queueColor(), m_queueDepth(), m_queuePointCloud(), m_queueInfrared(),
     m_maxQueueSize(1024 * 8), m_mutex()
   { }
@@ -252,13 +252,13 @@ public:
 
     while (m_queueColor.empty() || m_queueDepth.empty() || m_queuePointCloud.empty() || m_queueInfrared.empty()) {
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
 
       m_cond.wait(lock);
 
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
     }
 
@@ -290,10 +290,10 @@ private:
   std::mutex m_mutex;
 };
 
-class StorageWorker
+class vpStorageWorker
 {
 public:
-  StorageWorker(FrameQueue &queue, const std::string &directory, bool save_color, bool save_depth, bool save_pointcloud,
+  vpStorageWorker(vpFrameQueue &queue, const std::string &directory, bool save_color, bool save_depth, bool save_pointcloud,
                 bool save_infrared, bool save_pointcloud_binary_format,
                 int
 #ifndef VISP_HAVE_PCL
@@ -437,13 +437,13 @@ public:
         }
       }
     }
-    catch (const FrameQueue::cancelled &) {
-      std::cout << "Receive cancel FrameQueue." << std::endl;
+    catch (const vpFrameQueue::vpCancelled_t &) {
+      std::cout << "Receive cancel vpFrameQueue." << std::endl;
     }
   }
 
 private:
-  FrameQueue &m_queue;
+  vpFrameQueue &m_queue;
   std::string m_directory;
   unsigned int m_cpt;
   bool m_save_color;
@@ -607,10 +607,10 @@ int main(int argc, char *argv[])
     file.close();
   }
 
-  FrameQueue save_queue;
-  StorageWorker storage(std::ref(save_queue), std::cref(output_directory), save_color, save_depth, save_pointcloud,
+  vpFrameQueue save_queue;
+  vpStorageWorker storage(std::ref(save_queue), std::cref(output_directory), save_color, save_depth, save_pointcloud,
                         save_infrared, save_pointcloud_binary_format, width, height);
-  std::thread storage_thread(&StorageWorker::run, &storage);
+  std::thread storage_thread(&vpStorageWorker::run, &storage);
 
 #ifdef USE_REALSENSE2
   rs2::align align_to(RS2_STREAM_COLOR);

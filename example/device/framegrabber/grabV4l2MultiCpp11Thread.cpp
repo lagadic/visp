@@ -133,14 +133,14 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
 
 // Code adapted from the original author Dan Mašek to be compatible with ViSP
 // image
-class FrameQueue
+class vpFrameQueue
 {
 
 public:
-  struct cancelled
+  struct vpCancelled_t
   { };
 
-  FrameQueue()
+  vpFrameQueue()
     : m_cancelled(false), m_cond(), m_queueColor(), m_maxQueueSize(std::numeric_limits<size_t>::max()), m_mutex()
   { }
 
@@ -173,13 +173,13 @@ public:
 
     while (m_queueColor.empty()) {
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
 
       m_cond.wait(lock);
 
       if (m_cancelled) {
-        throw cancelled();
+        throw vpCancelled_t();
       }
     }
 
@@ -199,11 +199,11 @@ private:
   std::mutex m_mutex;
 };
 
-class StorageWorker
+class vpStorageWorker
 {
 
 public:
-  StorageWorker(FrameQueue &queue, const std::string &filename, unsigned int width, unsigned int height)
+  vpStorageWorker(vpFrameQueue &queue, const std::string &filename, unsigned int width, unsigned int height)
     : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
   { }
 
@@ -227,18 +227,18 @@ public:
         }
       }
     }
-    catch (FrameQueue::cancelled &) {
+    catch (vpFrameQueue::vpCancelled_t &) {
     }
   }
 
 private:
-  FrameQueue &m_queue;
+  vpFrameQueue &m_queue;
   std::string m_filename;
   unsigned int m_width;
   unsigned int m_height;
 };
 
-class ShareImage
+class vpShareImage
 {
 
 private:
@@ -249,15 +249,15 @@ private:
   unsigned int m_totalSize;
 
 public:
-  struct cancelled
+  struct vpCancelled_t
   { };
 
-  ShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) { }
+  vpShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) { }
 
-  virtual ~ShareImage()
+  virtual ~vpShareImage()
   {
     if (m_pImgData != NULL) {
-      delete [] m_pImgData;
+      delete[] m_pImgData;
     }
   }
 
@@ -274,13 +274,13 @@ public:
     std::unique_lock<std::mutex> lock(m_mutex);
 
     if (m_cancelled) {
-      throw cancelled();
+      throw vpCancelled_t();
     }
 
     m_cond.wait(lock);
 
     if (m_cancelled) {
-      throw cancelled();
+      throw vpCancelled_t();
     }
 
     // Copy to imageData
@@ -307,7 +307,7 @@ public:
       m_totalSize = totalSize;
 
       if (m_pImgData != NULL) {
-        delete [] m_pImgData;
+        delete[] m_pImgData;
       }
 
       m_pImgData = new unsigned char[m_totalSize];
@@ -320,7 +320,7 @@ public:
   }
 };
 
-void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
+void capture(vpV4l2Grabber *const pGrabber, vpShareImage &share_image)
 {
   vpImage<vpRGBa> local_img;
 
@@ -340,7 +340,7 @@ void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
 }
 
 void display(unsigned int width, unsigned int height, int win_x, int win_y, unsigned int deviceId,
-             ShareImage &share_image, FrameQueue &queue, bool save)
+             vpShareImage &share_image, vpFrameQueue &queue, bool save)
 {
   vpImage<vpRGBa> local_img(height, width);
 
@@ -419,7 +419,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
       }
     }
   }
-  catch (ShareImage::cancelled &) {
+  catch (vpShareImage::vpCancelled_t &) {
     std::cout << "Cancelled!" << std::endl;
   }
 
@@ -428,7 +428,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
 
 } // Namespace
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   unsigned int deviceCount = 1;
   unsigned int cameraScale = 1; // 640x480
@@ -459,13 +459,13 @@ int main(int argc, char *argv [])
 
   std::cout << "Grabbers: " << grabbers.size() << std::endl;
 
-  std::vector<ShareImage> share_images(grabbers.size());
+  std::vector<vpShareImage> share_images(grabbers.size());
   std::vector<std::thread> capture_threads;
   std::vector<std::thread> display_threads;
 
   // Synchronized queues for each camera stream
-  std::vector<FrameQueue> save_queues(grabbers.size());
-  std::vector<StorageWorker> storages;
+  std::vector<vpFrameQueue> save_queues(grabbers.size());
+  std::vector<vpStorageWorker> storages;
   std::vector<std::thread> storage_threads;
 
   std::string parent_directory = vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
@@ -495,7 +495,7 @@ int main(int argc, char *argv [])
   if (saveVideo) {
     for (auto &s : storages) {
       // Start the storage thread for the current camera stream
-      storage_threads.emplace_back(&StorageWorker::run, &s);
+      storage_threads.emplace_back(&vpStorageWorker::run, &s);
     }
   }
 

@@ -137,7 +137,7 @@ endif()
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
 set(VISP_VERSION_MINOR "6")
-set(VISP_VERSION_PATCH "0")
+set(VISP_VERSION_PATCH "1")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
@@ -172,7 +172,7 @@ include(cmake/PCLTools.cmake)
 #----------------------------------------------------------------------
 include(cmake/VISPDetectPlatform.cmake)
 
-# where to install the library and headers
+# Where to install the library and headers
 if(ANDROID)
   # Where to build modules
   set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
@@ -410,6 +410,8 @@ endif()
 
 # Choose static or shared libraries.
 VP_OPTION(BUILD_SHARED_LIBS  "" "" "Build ViSP shared libraries (.dll/.so) instead of static ones (.lib/.a)" "" NOT (ANDROID OR APPLE_FRAMEWORK))
+# Build apps as an option.
+VP_OPTION(BUILD_APPS "" "" "Build utility applications (used for example for calibration)" "" (NOT ANDROID AND NOT WINRT AND NOT APPLE_FRAMEWORK) )
 # Build examples as an option.
 VP_OPTION(BUILD_EXAMPLES  "" "" "Build ViSP examples" "" ON)
 # Build examples as an option.
@@ -536,7 +538,7 @@ VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basle
 VP_OPTION(USE_UEYE        Ueye        ""    "Include uEye SDK support for IDS cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK support" "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include Biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
@@ -565,14 +567,14 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-VP_OPTION(USE_PTHREAD     Threads     ""    "Include pthread support"      "" ON IF NOT (WIN32 OR MINGW))
+VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"      "" ON IF NOT (WIN32 OR MINGW))
 
 # We need threads with c++11
-if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_PTHREAD)
+if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_THREADS)
   if(Threads_FOUND)
-    message(WARNING "We need threads. Turn USE_PTHREAD=ON.")
-    unset(USE_PTHREAD)
-    set(USE_PTHREAD ON CACHE BOOL "Include pthread support" FORCE)
+    message(WARNING "We need std::thread. We turn USE_THREADS=ON.")
+    unset(USE_THREADS)
+    set(USE_THREADS ON CACHE BOOL "Include std::thread support" FORCE)
   endif()
 endif()
 
@@ -674,9 +676,9 @@ endif()
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_THREADS) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
@@ -908,7 +910,8 @@ VP_SET(VISP_HAVE_LAPACK_GSL      TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK_MKL      TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
 VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_NETLIB))
 VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
-VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
+VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS)) # Keep for the momment for compat
+VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
 VP_SET(VISP_HAVE_TENSORRT    TRUE IF (BUILD_MODULE_visp_core AND USE_TENSORRT))
@@ -933,14 +936,14 @@ VP_SET(VISP_HAVE_UR_RTDE     TRUE IF (BUILD_MODULE_visp_robot AND USE_UR_RTDE))
 VP_SET(VISP_HAVE_FRANKA      TRUE IF (BUILD_MODULE_visp_robot AND USE_FRANKA))
 VP_SET(VISP_HAVE_JACOSDK     TRUE IF (BUILD_MODULE_visp_robot AND USE_JACOSDK))
 VP_SET(VISP_HAVE_MAVSDK      TRUE IF (BUILD_MODULE_visp_robot AND USE_MAVSDK))
-VP_SET(VISP_HAVE_BICLOPS     TRUE IF (BUILD_MODULE_visp_robot AND USE_BICLOPS))
+VP_SET(VISP_HAVE_BICLOPS     TRUE IF (BUILD_MODULE_visp_robot AND USE_BICLOPS AND USE_THREADS))
 VP_SET(VISP_HAVE_PTU46       TRUE IF (BUILD_MODULE_visp_robot AND USE_PTU46))
 VP_SET(VISP_HAVE_FLIR_PTU_SDK TRUE IF (BUILD_MODULE_visp_robot AND USE_FLIRPTUSDK))
 VP_SET(VISP_HAVE_ARSDK       TRUE IF (BUILD_MODULE_visp_robot AND USE_ARSDK))
 VP_SET(VISP_HAVE_FFMPEG      TRUE IF (BUILD_MODULE_visp_robot AND USE_FFMPEG))
 #VP_SET(VISP_HAVE_PIONEER     TRUE IF (BUILD_MODULE_visp_robot AND USE_ARIA))
 if(BUILD_MODULE_visp_robot AND USE_ARIA)
-  if(UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
+  if(UNIX AND USE_THREADS AND RT_FOUND AND DL_FOUND)
     set(VISP_HAVE_PIONEER TRUE)
   elseif(NOT UNIX)
     set(VISP_HAVE_PIONEER TRUE)
@@ -948,7 +951,7 @@ if(BUILD_MODULE_visp_robot AND USE_ARIA)
 endif()
 #VP_SET(VISP_HAVE_VIRTUOSE    TRUE IF (BUILD_MODULE_visp_robot AND USE_VIRTUOSE))
 if(BUILD_MODULE_visp_robot AND USE_VIRTUOSE)
-  if(UNIX AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
+  if(UNIX AND USE_THREADS AND RT_FOUND AND DL_FOUND)
     set(VISP_HAVE_VIRTUOSE TRUE)
   elseif(NOT UNIX)
     set(VISP_HAVE_VIRTUOSE TRUE)
@@ -988,9 +991,9 @@ VP_SET(VISP_HAVE_D3D9        TRUE IF USE_DIRECT3D) # for header vpConfig.h
 VP_SET(VISP_HAVE_GTK         TRUE IF USE_GTK2) # for header vpConfig.h
 VP_SET(VISP_HAVE_XRANDR      TRUE IF XRANDR) # for header vpConfig.h
 
-# Check if libfreenect dependencies (ie libusb-1.0 and libpthread) are available
-if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)
-  if(LIBFREENECT_FOUND AND LIBUSB_1_FOUND AND PTHREAD_FOUND)
+# Check if libfreenect dependencies (ie libusb-1.0 and threads) are available
+if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_THREADS)
+  if(LIBFREENECT_FOUND AND LIBUSB_1_FOUND)
     set(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES TRUE)
 
     # The material is found. Check if libfreenect is an old version
@@ -1110,7 +1113,7 @@ endif()
 
 # libraries for Pioneer mobile robots
 if(USE_ARIA AND UNIX)
-  if(ARIA_FOUND AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
+  if(ARIA_FOUND AND USE_THREADS AND RT_FOUND AND DL_FOUND)
     set(VISP_HAVE_PIONEER TRUE) # for header vpConfig.h
   endif()
 elseif(USE_ARIA AND NOT UNIX)
@@ -1192,6 +1195,10 @@ set(VISP_DIR ${PROJECT_BINARY_DIR})
 mark_as_advanced(VISP_DIR)
 mark_as_advanced(VISP_INCLUDE_DIRS)
 
+if(BUILD_APPS)
+  add_subdirectory(apps)
+  vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
+endif()
 if(BUILD_DEMOS)
   add_subdirectory(demo)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH demo)
@@ -1283,16 +1290,7 @@ vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHY
 find_host_package(Git QUIET)
 
 if(NOT DEFINED VISP_VCSVERSION AND GIT_FOUND)
-  execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "v[0-9].[0-9].[0-9]*"
-    WORKING_DIRECTORY "${VISP_SOURCE_DIR}"
-    OUTPUT_VARIABLE VISP_VCSVERSION
-    RESULT_VARIABLE GIT_RESULT
-    ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(NOT GIT_RESULT EQUAL 0)
-    set(VISP_VCSVERSION "unknown")
-  endif()
+  vp_git_describe(VISP_VCSVERSION "${VISP_SOURCE_DIR}")
 elseif(NOT DEFINED VISP_VCSVERSION)
   # We don't have git:
   set(VISP_VCSVERSION "unknown")
@@ -1343,11 +1341,12 @@ endif()
 # ========================== build platform ==========================
 status("")
 status("  Platform:")
-if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-  string(TIMESTAMP TIMESTAMP "" UTC)
-  if(TIMESTAMP)
-    status("    Timestamp:"    ${TIMESTAMP})
-  endif()
+if(NOT DEFINED VISP_TIMESTAMP AND NOT BUILD_INFO_SKIP_TIMESTAMP)
+  string(TIMESTAMP VISP_TIMESTAMP "" UTC)
+  set(VISP_TIMESTAMP "${VISP_TIMESTAMP}" CACHE STRING "Timestamp of ViSP build configuration" FORCE)
+endif()
+if(VISP_TIMESTAMP)
+  status("    Timestamp:"      ${VISP_TIMESTAMP})
 endif()
 status("    Host:"             ${CMAKE_HOST_SYSTEM_NAME} ${CMAKE_HOST_SYSTEM_VERSION} ${CMAKE_HOST_SYSTEM_PROCESSOR})
 if(CMAKE_CROSSCOMPILING)
@@ -1605,10 +1604,10 @@ status("  RGB-D sensors: ")
 status("    Use Realsense:"          USE_REALSENSE    THEN "yes (ver ${REALSENSE_VERSION})" ELSE "no")
 status("    Use Realsense2:"         USE_REALSENSE2   THEN "yes (ver ${REALSENSE2_VERSION})" ELSE "no")
 status("    Use Occipital Structure:"          USE_OCCIPITAL_STRUCTURE    THEN "yes" ELSE "no")
-status("    Use Kinect:"             USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD THEN "yes" ELSE "no")
+status("    Use Kinect:"             USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_THREADS THEN "yes" ELSE "no")
 status("    \\- Use libfreenect:"    USE_LIBFREENECT  THEN "yes (ver ${LIBFREENECT_VERSION})" ELSE "no")
 status("    \\- Use libusb-1:"       USE_LIBUSB_1     THEN "yes (ver ${LIBUSB_1_VERSION})" ELSE "no")
-status("    \\- Use pthread:"        USE_PTHREAD      THEN "yes" ELSE "no")
+status("    \\- Use std::thread:"    USE_THREADS      THEN "yes" ELSE "no")
 status("    Use PCL:"                USE_PCL          THEN "yes (ver ${PCL_VERSION})" ELSE "no")
 status("    \\- Use VTK:"            VTK_FOUND        THEN "yes (ver ${VTK_VERSION})" ELSE "no")
 status("")
@@ -1635,7 +1634,7 @@ status("    Use json (nlohmann):"     USE_NLOHMANN_JSON THEN "yes (ver ${nlohman
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
-status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
+status("    Use st::thread:"         USE_THREADS        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use Simd (built-in):"                            "yes (ver ${SIMD_VERSION})")
 status("")
@@ -1654,6 +1653,7 @@ status("")
 status("  Tests and samples:")
 status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
 status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
+status("    Apps:"                   BUILD_APPS         THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
 status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")

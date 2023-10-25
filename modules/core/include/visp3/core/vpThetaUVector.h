@@ -126,7 +126,7 @@ class vpQuaternionVector;
   \endcode
 
   The code below shows first how to initialize a \f$\theta {\bf u}\f$
-  vector, than how to contruct a rotation matrix from a vpThetaUVector
+  vector, than how to construct a rotation matrix from a vpThetaUVector
   and finally how to extract the theta U angles from the build rotation
   matrix.
 

@@ -8,7 +8,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 /*!
-  Grab color and depth images from Intel RealSense D435 and Occipital Structure Core sensors.
+ * Grab color and depth images from Intel RealSense D435 and Occipital Structure Core sensors.
  */
 int main(int argc, char **argv)
 {
@@ -28,9 +28,9 @@ int main(int argc, char **argv)
   vpImage<vpRGBa> I_color_sc(height, width), I_color_rs(height, width);
 
   vpDisplayX d_rs_depth(I_depth_rs, 10, height + 10, "RealSense Depth"),
-      d_sc_depth(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
+    d_sc_depth(I_depth_sc, width + 10, height + 10, "Structure Core Depth");
   vpDisplayX d_color_rs(I_color_rs, 10, 10, "RealSense Color"),
-      d_color_sc(I_color_sc, width + 10, 10, "Structure Core Color");
+    d_color_sc(I_color_sc, width + 10, 10, "Structure Core Color");
 
   // Configuring and opening RealSense grabber.
   rs2::config cfg;

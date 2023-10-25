@@ -1,29 +1,40 @@
 /**
 
-\page tutorial-calibration-extrinsic Tutorial: Camera extrinsic calibration
+\page tutorial-calibration-extrinsic Tutorial: Camera eye-to-hand extrinsic calibration
 \tableofcontents
 
 \section calib_ext_intro Introduction
 
-This tutorial focuses estimation of the homogeneous transformation between the robot end-effector and the camera frame. As a use case, we will consider in this tutorial the case of either:
-- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from <a href="https://www.franka.de/">Franka Emika</a> equipped with an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector
-- or a robot from Universal Robots also equipped with an Intel Realsense <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector.
-The principle of the extrinsic calibration is easy to apply to any other robot equipped with any other camera attached to the robot end-effector.
+This tutorial focuses estimation of the homogeneous transformation between the robot end-effector and the camera frame.
+As a use case, we will consider in this tutorial the case of either:
+- a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from,
+  <a href="https://www.franka.de/">Franka Emika</a> equipped with an Intel Realsense
+  <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector
+- or a robot from Universal Robots also equipped with an Intel Realsense
+  <a href="https://www.intelrealsense.com/depth-camera-d435/">D435</a> camera mounted on its end-effector.
+
+The principle of the extrinsic calibration is easy to apply to any other robot equipped with any other camera attached
+to the robot end-effector.
 
 Let us consider:
-- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the robot end-effector
-- \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and a calibration grid frame (also called object frame), typically the OpenCV chessboard
-- \f$^e{\bf M}_c\f$ the homogeneous transformation between the end-effector and the camera frame. This is the transformation corresponding to the extrinsic eye-in-hand transformation that we have to estimate.
+- \f$^f{\bf M}_e\f$ the homogeneous transformation between the robot base frame (also called fixed frame) and the
+  robot end-effector
+- \f$^c{\bf M}_o\f$ the homogeneous transformation between the camera frame and a calibration grid frame (also called
+  object frame), typically the OpenCV chessboard
+- \f$^e{\bf M}_c\f$ the homogeneous transformation between the end-effector and the camera frame. This is the
+  transformation corresponding to the extrinsic eye-in-hand transformation that we have to estimate.
 
 The calibration process described in this tutorial consists in 3 steps:
 1. acquiring couples of \f$^f{\bf M}_e\f$ poses, images of the chessboard and camera intrinsic parameters
 2. computing the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard from the images
-3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is to estimate the \f$^e{\bf M}_c\f$ transformation.
+3. from the basket of \f$\{^f{\bf M}_e, ^c{\bf M}_o\}_i\f$ corresponding to couple of poses \f$ i \f$ the last step is
+   to estimate the \f$^e{\bf M}_c\f$ transformation.
 
-Note that all the material (source code) described in this tutorial is part of ViSP source code (in `tutorial/calibration` folder) and could be downloaded using the following command:
+Note that all the material (source code) described in this tutorial is part of ViSP source code
+(in `apps/calibration` folder) and could be downloaded using the following command:
 
 \verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/calibration
+$ svn export https://github.com/lagadic/visp.git/trunk/apps/calibration
 \endverbatim
 
 \section calib_ext_recommendation Recommendations
@@ -34,13 +45,18 @@ To get good calibration results follow these \ref calibration_recommendation.
 
 \subsection calib_ext_intrinsic Get camera intrinsic parameters
 
-In order to compute the pose \f$^c{\bf M}_o\f$ from the chessboard image, there is the need to get the camera intrinsic parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic parameters could be retrieved using vpRealSense2::getCameraParameters().
+In order to compute the pose \f$^c{\bf M}_o\f$ from the chessboard image, there is the need to get the camera intrinsic
+parameters. Depending on the device, these parameters are part of the device SDK or firmware. This is for example the
+case for our Intel Realsense D435 camera considered in this tutorial. These intrinsic parameters could be retrieved
+using vpRealSense2::getCameraParameters().
 
-If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow \ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
+If you have an other camera, or if you want to have a better estimation than the factory parameters you may follow
+\ref tutorial-calibration-intrinsic. Otherwise you can skip this section.
 
 \subsection calib_ext_chessboard Print a chessboard
 
-Download and print a black and white chessboard [<a href="http://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf" target="_blank">OpenCV_Chessboard.pdf</a>].
+Download and print a black and white chessboard
+[OpenCV_Chessboard.pdf](https://visp-doc.inria.fr/download/calib-grid/OpenCV_Chessboard.pdf).
 
 Glue the chessboard on a flat surface and put it under the camera.
 
@@ -48,52 +64,71 @@ Glue the chessboard on a flat surface and put it under the camera.
 
 \subsection calib_ext_acq_data Step 1: Acquire robot poses, images and intrinsics
 
-The objective here is to complete step 1 by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images of the chessboard. To this end move the camera attached to the robot to different positions. At least 8 to 10 positions are requested. To define a good position you have to imagine a half sphere over the chessboard and select positions that discretise as much as possible all the half sphere surface. For each position you should see all the chessboard as large as possible in the image.
+The objective here is to complete step 1 by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images
+of the chessboard. To this end move the camera attached to the robot to different positions. At least 8 to 10 positions
+are requested. To define a good position you have to imagine a half sphere over the chessboard and select positions
+that discretise as much as possible all the half sphere surface. For each position you should see all the chessboard
+as large as possible in the image.
 
-The following image shows a set of 10 camera positions covering the half sphere over the chessboard. Each blue arrow represents camera z-axis pointing to a region close to the chessboard center. The orientation of the frame attached to the chessboard doesn't matter. The chessboard z-axis could be going upward or not.
+The following image shows a set of 10 camera positions covering the half sphere over the chessboard. Each blue arrow
+represents camera z-axis pointing to a region close to the chessboard center. The orientation of the frame attached to
+the chessboard doesn't matter. The chessboard z-axis could be going upward or not.
 
 \image html img-eye2hand-camera-poses.jpg
 
-To acquire images of the chessboard, depending of your device you can follow \ref tutorial-grabber. Images could be saved in jpeg or png format, or any format supported by ViSP.
+To acquire images of the chessboard, depending of your device you can follow \ref tutorial-grabber. Images could be
+saved in jpeg or png format, or any format supported by ViSP.
 
-To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our robot interface like vpRobotFranka::get_fMe(), vpRobotUniversalRobots::get_fMe()... It returns the homogeneous transformation between the robot base frame and the robot end-effector. The following code snippet shows how to save the pose in yaml format:
+To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our robot interface like
+vpRobotFranka::get_fMe(), vpRobotUniversalRobots::get_fMe()... It returns the homogeneous transformation between the
+robot base frame and the robot end-effector. The following code snippet shows how to save the pose in yaml format:
 \code
-  int cpt = 1;
-  vpPoseVector fPe;
-  robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
-  std::stringstream ss;
-  ss << "pose_fPe_" << cpt << ".yaml";
-  fPe.saveYAML(ss_pos.str(), fPe);
+int cpt = 1;
+vpPoseVector fPe;
+robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+std::stringstream ss;
+ss << "pose_fPe_" << cpt << ".yaml";
+fPe.saveYAML(ss_pos.str(), fPe);
 \endcode
 
-To complete this step, you need also to get or calibrate your camera in order to obtain its intrinsic parameters. Camera intrinsic parameters need to be saved in an xml file. If you have an Intel RealSense device you can directly get the parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml file using vpXmlParserCamera::save(). An example is given in tutorial-franka-acquire-calib-data.cpp or in tutorial-universal-robots-acquire-calib-data.cpp
-\note With vpRealSense2::getCameraParameters() you can only get the parameters without distortion coefficients. If you want the parameters with distortion, you need to achieve a calibration as described in \ref tutorial-calibration-intrinsic.
+To complete this step, you need also to get or calibrate your camera in order to obtain its intrinsic parameters.
+Camera intrinsic parameters need to be saved in an xml file. If you have an Intel RealSense device you can directly
+get the parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml file using
+vpXmlParserCamera::save(). An example is given in visp-acquire-franka-calib-data.cpp or in
+visp-acquire-universal-robots-calib-data.cpp
+\note With vpRealSense2::getCameraParameters() you can only get the parameters without distortion coefficients.
+If you want the parameters with distortion, you need to achieve a calibration as described in
+\ref tutorial-calibration-intrinsic.
 
 As an example, in ViSP source code you will find a dataset corresponding to data acquired with a real robot:
 \verbatim
-$ cd $VISP_WS/visp-build/tutorial/calibration
+$ cd $VISP_WS/visp-build/apps/calibration
 $ ls *.{xml,png,yaml}
 camera.xml   image-3.png  image-6.png  pose_fPe_1.yaml  pose_fPe_4.yaml  pose_fPe_7.yaml
 image-1.png  image-4.png  image-7.png  pose_fPe_2.yaml  pose_fPe_5.yaml  pose_fPe_8.yaml
 image-2.png  image-5.png  image-8.png  pose_fPe_3.yaml  pose_fPe_6.yaml
 \endverbatim
 
-In this dataset, you will find 8 pairs of images and their corresponding robot end-effector poses, and also the camera parameters in `camera.xml` file. Each squareor the calibration grid is 0.0262 m large.
+In this dataset, you will find 8 pairs of images and their corresponding robot end-effector poses, and also the
+camera parameters in `camera.xml` file. Each squareor the calibration grid is 0.0262 m large.
 
 \subsection calib_ext_camera_pose Step 2: Compute camera poses from corresponding images
 
-Here we will complete step 2 by computing for each image the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard using the camera intrinsic parameters recorded in the xml file.
+Here we will complete step 2 by computing for each image the corresponding \f$^c{\bf M}_o\f$ pose of the chessboard
+using the camera intrinsic parameters recorded in the xml file.
 
-To this end you can use `tutorial-chessboard-pose` binary to compute the different poses of the chessboard with respect to the camera frame.
+To this end you can use `visp-compute-chessboard-poses` binary to compute the different poses of the chessboard with
+respect to the camera frame.
 
-Considering the dataset presented in step 1, and knowing that the size of the each chessboard square is 0.0262 by 0.0262 meter (modify option `--square_size` according to your chessboard), to proceed with the dataset you may run:
+Considering the dataset presented in step 1, and knowing that the size of the each chessboard square is 0.0262
+by 0.0262 meter (modify option `--square-size` according to your chessboard), to proceed with the dataset you may run:
 
-    $ ./tutorial-chessboard-pose --square_size 0.0262 --input image-%d.png --intrinsic camera.xml --output pose_cPo_%d.yaml
+    $ ./visp-compute-chessboard-poses --square-size 0.0262 --input image-%d.png --intrinsic camera.xml --output pose_cPo_%d.yaml
 
 It produces as output the corresponding poses `pose-cMo-<number>.yaml`.
 
 \verbatim
-$ ./tutorial-chessboard-pose --square_size 0.0262 --input image-%d.png --intrinsic camera.xml --output pose_cPo_%d.yaml
+$ ./visp-compute-chessboard-poses --square-size 0.0262 --input image-%d.png --intrinsic camera.xml --output pose_cPo_%d.yaml
 Parameters:
   chessboard width             : 9
   chessboard height            : 6
@@ -121,20 +156,22 @@ Save pose_cPo_7.yaml
 Save pose_cPo_8.yaml
 \endverbatim
 
-The source code corresponding to the binary is available in tutorial-chessboard-pose.cpp.
+The source code corresponding to the binary is available in visp-compute-chessboard-poses.cpp.
 
 \subsection calib_ext_tsai Step 3: Estimate end-effector to camera transformation
 
-The final step 3 consists now to estimate the \f$^c{\bf M}_o\f$ transformation from the couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
+The final step 3 consists now to estimate the \f$^c{\bf M}_o\f$ transformation from the couples of \f$^f{\bf M}_e\f$
+and \f$^c{\bf M}_o\f$ poses.
 
-Complete the calibration running `tutorial-hand-eye-calibration` binary. It will get the data from the pair of files, `pose_fPe_%%d.yaml` and `pose_cPo_%%d.yaml` located in `./` folder.
+Complete the calibration running `visp-compute-hand-eye-calibration` binary. It will get the data from the pair of
+files, `pose_fPe_%%d.yaml` and `pose_cPo_%%d.yaml` located in `./` folder.
 
-    $ ./tutorial-hand-eye-calibration --data-path . --fPe pose_fPe_%d.yaml --cPo pose_cPo_%d.yaml --output eMc.yaml
+    $ ./visp-compute-hand-eye-calibration --data-path . --fPe pose_fPe_%d.yaml --cPo pose_cPo_%d.yaml --output eMc.yaml
 
 It produces as output the end-effector to camera frame transformation in `eMc.yaml` and `eMc.txt` files.
 
 \verbatim
-$ ./tutorial-hand-eye-calibration --data-path . --fPe pose_fPe_%d.yaml --cPo pose_cPo_%d.yaml --output eMc.yaml
+$ ./visp-compute-hand-eye-calibration --data-path . --fPe pose_fPe_%d.yaml --cPo pose_cPo_%d.yaml --output eMc.yaml
 Use data from ./pose_fPe_1.yaml and from ./pose_cPo_1.yaml
 Use data from ./pose_fPe_2.yaml and from ./pose_cPo_2.yaml
 Use data from ./pose_fPe_3.yaml and from ./pose_cPo_3.yaml
@@ -182,7 +219,8 @@ Mean residual rMo(8) - global = 0.00740886
 Save transformation matrix eMc as a vpPoseVector in eMc.yaml
 \endverbatim
 
-The result of the calibration is available in `eMc.yaml` file that contains the \f$^e{\bf M}_c\f$ as a vpPoseVector pose vector, with translation in meter and rotation as a \f$\theta_{\bf u} \f$ vector with values in radians.
+The result of the calibration is available in `eMc.yaml` file that contains the \f$^e{\bf M}_c\f$ as a vpPoseVector
+pose vector, with translation in meter and rotation as a \f$\theta_{\bf u} \f$ vector with values in radians.
 \verbatim
 $ more eMc.yaml
 rows: 6
@@ -206,13 +244,14 @@ $ more eMc.txt
 0  0  0  1
 \endverbatim
 
-The source code corresponding to the binary is available in tutorial-hand-eye-calibration.cpp.
+The source code corresponding to the binary is available in visp-compute-hand-eye-calibration.cpp.
 
 \section calib_ext_tool Analysis tool
 
 \subsection calib_ext_tool_poses Camera poses
 
-Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python script that allows to display camera poses used to acquire data.
+Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python script that allows to display camera
+poses used to acquire data.
 Prior to use that script, you need to install `scipy` and `pyyaml`:
 \verbatim
 $ sudo apt install python-pip
@@ -226,45 +265,55 @@ $ python hand_eye_calibration_show_extrinsics.py --ndata 8 --eMc_yaml eMc.yaml
 
 \image html img-calib-script-hand2eye.jpg
 
-We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half sphere over the grid.
+We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half
+sphere over the grid.
 
 \section calib_ext_usecase Use cases
 
 \subsection calib_ext_usecase_franka Panda robot + Realsense
 
-In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its end-effector.
+In this section we suppose that you have a Panda robot from Franka Emika with a Realsense camera attached to its
+end-effector.
 
 \image html img-franka-calib-setup.jpg Panda robot with a RealSense D435 camera attached to its end-effector.
 
-If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
+If not already done, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the
+Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
 
-If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable vpRealSense2 class usage.
+If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable
+vpRealSense2 class usage.
 
 <b>Step 1: Acquire robot poses and images</b>
 
-Connect the Realsense D435 camera to the computer, put the chessboard in the camera field of view, enter in `tutorial/calibration` folder and run `tutorial-franka-acquire-calib-data` binary to acquire the images and the corresponding robot end-effector positions:
+Connect the Realsense D435 camera to the computer, put the chessboard in the camera field of view, enter in
+`apps/calibration` folder and run `visp-acquire-franka-calib-data` binary to acquire the images and the
+corresponding robot end-effector positions:
 
-    $ cd tutorial/calibration
-    $ ./tutorial-franka-acquire-calib-data
+    $ cd apps/calibration
+    $ ./visp-acquire-franka-calib-data
 
-By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use `--ip` option like:
+By default the robot controller IP is `192.168.1.1`. If your Franka has an other IP (let say 10.0.0.2) use
+`--ip` option like:
 
-    $ ./tutorial-franka-acquire-calib-data --ip 10.0.0.2
+    $ ./visp-acquire-franka-calib-data --ip 10.0.0.2
 
 Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `franka_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `franka_image-<number>.png` + `franka_pose_fMe-<number>.txt` with number starting from 1. `franka_pose_fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$, while `franka_image-<number>.png` is the image captured at the corresponding robot position.
+- couples of `franka_image-<number>.png` + `franka_pose_fMe-<number>.txt` with number starting from 1.
+  `franka_pose_fMe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+   while `franka_image-<number>.png` is the image captured at the corresponding robot position.
 
-Move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left mouse click. We recommend to acquire data at 8 to 10 different robot positions.
+Move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left
+mouse click. We recommend to acquire data at 8 to 10 different robot positions.
 
 A right mouse click ends this step exiting the binary.
 
 This is the output when 8 different positions are considered:
 
 \verbatim
-$ ./tutorial-franka-acquire-calib-data
+$ ./visp-acquire-franka-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
 Save: franka_image-1.png and franka_pose_fPe_1.yaml
@@ -277,13 +326,14 @@ Save: franka_image-7.png and franka_pose_fPe_7.yaml
 Save: franka_image-8.png and franka_pose_fPe_8.yaml
 \endverbatim
 
-The source code corresponding to the binary is available in tutorial-franka-acquire-calib-data.cpp. If your setup is different, it could be easily adapted to your robot or camera.
+The source code corresponding to the binary is available in visp-acquire-franka-calib-data.cpp. If your setup is
+different, it could be easily adapted to your robot or camera.
 
 <b>Step 2: Compute camera poses from corresponding images</b>
 
 Given the camera intrinsic parameters and the set of images, you can compute the camera pose running:
 \verbatim
-$ ./tutorial-chessboard-pose --square_size 0.0262 --input franka_image-%d.png --intrinsic franka_camera.xml --output franka_pose_cPo_%d.yaml
+$ ./visp-compute-chessboard-poses --square-size 0.0262 --input franka_image-%d.png --intrinsic franka_camera.xml --output franka_pose_cPo_%d.yaml
 \endverbatim
 
 <b>Step 3: Estimate end-effector to camera transformation</b>
@@ -291,10 +341,11 @@ $ ./tutorial-chessboard-pose --square_size 0.0262 --input franka_image-%d.png --
 Finally you can estimate the extrinsic transformation between end-effector and you camera, running:
 
 \verbatim
-$ ./tutorial-hand-eye-calibration --data-path . --fPe franka_pose_fPe_%d.yaml --cPo franka_pose_cPo_%d.yaml --output franka_eMc.yaml
+$ ./visp-compute-hand-eye-calibration --data-path . --fPe franka_pose_fPe_%d.yaml --cPo franka_pose_cPo_%d.yaml --output franka_eMc.yaml
 \endverbatim
 
-It will produce the `franka_eMc.yaml` that contains the pose as a vpPoseVector and `franka_eMc.txt` that contains the corresponding homogeneous matrix transformation:
+It will produce the `franka_eMc.yaml` that contains the pose as a vpPoseVector and `franka_eMc.txt` that contains the
+corresponding homogeneous matrix transformation:
 \verbatim
 $ more franka_eMc.yaml
 rows: 6
@@ -329,41 +380,50 @@ In this section we suppose that you have an Universal Robots robot with a Realse
 
 \image html img-ur-calib-setup.jpg UR5 robot with a RealSense D435 camera attached to its end-effector.
 
-\note In \ref tutorial-universal-robot-ibvs we provide the link to the FreeCAD camera support model that could be 3D printed.
+\note In \ref tutorial-universal-robot-ibvs we provide the link to the FreeCAD camera support model that could be 3D
+printed.
 
-If not already done, follow Universal Robots visual-sevoing \ref ur_prereq instructions to install `ur_rtde` 3rdparty and build ViSP to support UR that enables vpRobotUniversalRobots class usage.
+If not already done, follow Universal Robots visual-sevoing \ref ur_prereq instructions to install `ur_rtde` 3rdparty
+and build ViSP to support UR that enables vpRobotUniversalRobots class usage.
 
-If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable vpRealSense2 class usage.
+If not already done, you need also to install \ref install_ubuntu_3rdparty_realsense and build ViSP to enable
+vpRealSense2 class usage.
 
 <b>Step 1: Acquire robot poses and images</b>
 
-Connect the Realsense camera to the computer, put the chessboard in the camera field of view, enter in `tutorial/calibration` folder and run `tutorial-universal-robots-acquire-calib-data` binary to acquire the images and the corresponding robot end-effector positions:
+Connect the Realsense camera to the computer, put the chessboard in the camera field of view, enter in
+`apps/calibration` folder and run `visp-acquire-universal-robots-calib-data` binary to acquire the images and
+the corresponding robot end-effector positions:
 
 \verbatim
-$ cd tutorial/calibration
-$ ./tutorial-universal-robots-acquire-calib-data
+$ cd apps/calibration
+$ ./visp-acquire-universal-robots-calib-data
 \endverbatim
 
-By default the robot controller IP is `192.168.0.100`. If your robot from Universal Robots has an other IP (let say 10.0.0.2) use `--ip` option like:
+By default the robot controller IP is `192.168.0.100`. If your robot from Universal Robots has an other IP
+(let say 10.0.0.2) use `--ip` option like:
 
 \verbatim
-$ ./tutorial-universal-robots-acquire-calib-data --ip 10.0.0.2
+$ ./visp-acquire-universal-robots-calib-data --ip 10.0.0.2
 \endverbatim
 
 Click with the left mouse button to acquire data.
 It records the following outputs:
 
 - `ur_camera.xml` : XML file that contains the intrinsic camera parameters extracted from camera firmware
-- couples of `ur_image-<number>.png` + `ur_pose_fPe-<number>.txt` with number starting from 1. `ur_pose_fPe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$, while `ur_image-<number>.png` is the image captured at the corresponding robot position.
+- couples of `ur_image-<number>.png` + `ur_pose_fPe-<number>.txt` with number starting from 1.
+  `ur_pose_fPe-<number>.yaml` is the pose of the end-effector expressed in the robot base frame \f$^f{\bf M}_e\f$,
+   while `ur_image-<number>.png` is the image captured at the corresponding robot position.
 
-With the PolyScope, move the robot to an other position such as the chessboard remains in the image and repeat data acquisition by a left mouse click. We recommend to acquire data at 8 to 10 different robot positions.
+With the PolyScope, move the robot to an other position such as the chessboard remains in the image and repeat data
+acquisition by a left mouse click. We recommend to acquire data at 8 to 10 different robot positions.
 
 A right mouse click ends this step exiting the binary.
 
 This is the output when 8 different positions are considered:
 
 \verbatim
-$ ./tutorial-universal-robots-acquire-calib-data
+$ ./visp-acquire-universal-robots-calib-data
 Image size: 640 x 480
 Found camera with name: "Camera"
 Save: ur_image-1.png and ur_pose_fPe_1.yaml
@@ -376,13 +436,14 @@ Save: ur_image-7.png and ur_pose_fPe_7.yaml
 Save: ur_image-8.png and ur_pose_fPe_8.yaml
 \endverbatim
 
-The source code corresponding to the binary is available in tutorial-universal-robots-acquire-calib-data.cpp. If your setup is different, it could be easily adapted to your robot or camera.
+The source code corresponding to the binary is available in visp-acquire-universal-robots-calib-data.cpp. If your
+setup is different, it could be easily adapted to your robot or camera.
 
 <b>Step 2: Compute camera poses from corresponding images</b>
 
 Given the camera intrinsic parameters and the set of images, you can compute the camera pose running:
 \verbatim
-$ ./tutorial-chessboard-pose --square_size 0.0262 --input ur_image-%d.png --intrinsic ur_camera.xml --output ur_pose_cPo_%d.yaml
+$ ./visp-compute-chessboard-poses --square-size 0.0262 --input ur_image-%d.png --intrinsic ur_camera.xml --output ur_pose_cPo_%d.yaml
 \endverbatim
 
 <b>Step 3: Estimate end-effector to camera transformation</b>
@@ -390,10 +451,11 @@ $ ./tutorial-chessboard-pose --square_size 0.0262 --input ur_image-%d.png --intr
 Finally you can estimage the extrinsic transformation between end-effector and you camera, running:
 
 \verbatim
-$ ./tutorial-hand-eye-calibration --data-path . --fPe ur_pose_fPe_%d.yaml --cPo ur_pose_cPo_%d.yaml --output ur_eMc.yaml
+$ ./visp-compute-hand-eye-calibration --data-path . --fPe ur_pose_fPe_%d.yaml --cPo ur_pose_cPo_%d.yaml --output ur_eMc.yaml
 \endverbatim
 
-It will produce the `ur_eMc.yaml` that contains the pose as a vpPoseVector and `ur_eMc.txt` that contains the corresponding homogeneous matrix transformation:
+It will produce the `ur_eMc.yaml` that contains the pose as a vpPoseVector and `ur_eMc.txt` that contains the
+corresponding homogeneous matrix transformation:
 \verbatim
 $ more ur_eMc.yaml
 rows: 6

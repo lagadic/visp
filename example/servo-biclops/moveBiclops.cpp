@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,62 +29,51 @@
  *
  * Description:
  *  Tests the control law
- * Authors:
+ */
+
+/*!
+ * \file moveBiclops.cpp
+ * \example moveBiclops.cpp
  *
-*****************************************************************************/
-/*!
-  \file moveBiclops.cpp
+ * Example of a real robot control, the Biclops robot (pan-tilt turret) by
+ * Traclabs. The robot is controlled first in position, then in velocity.
+ *
+ * See http://www.traclabs.com/tracbiclops.htm for more details.
+ */
 
-  \brief Example of a real robot control, the biclops robot (pan-tilt turret)
-  by Traclabs. The robot is controlled first in position, then in velocity.
+#include <iostream>
 
-  See http://www.traclabs.com/tracbiclops.htm for more details.
-*/
+#include <visp3/core/vpConfig.h>
 
-/*!
-  \example moveBiclops.cpp
-
-  Example of a real robot control, the biclops robot (pan-tilt turret) by
-  Traclabs. The robot is controlled first in position, then in velocity.
-
-  See http://www.traclabs.com/tracbiclops.htm for more details.
-*/
-
-#include <stdlib.h>
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpTime.h>
-#include <visp3/io/vpParseArgv.h>
 #ifdef VISP_HAVE_BICLOPS
 
 #include <visp3/robot/vpRobotBiclops.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS "c:h"
 
 /*
-
-Print the program options.
-
-  \param name : Program name.
-  \param badparam : Bad parameter name.
-  \param conf : Biclops configuration file.
-
-*/
+ * Print the program options.
+ *
+ * \param name : Program name.
+ * \param badparam : Bad parameter name.
+ * \param conf : Biclops configuration file.
+ */
 void usage(const char *name, const char *badparam, std::string conf)
 {
   fprintf(stdout, "\n\
-Move the biclops robot\n\
+Move the Biclops robot\n\
 \n\
 SYNOPSIS\n\
   %s [-c <Biclops configuration file>] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c <Biclops configuration file>                      %s\n\
-     Sets the biclops robot configuration file.\n\n",
+     Sets the Biclops robot configuration file.\n\n",
           conf.c_str());
 
   if (badparam) {
@@ -95,16 +83,14 @@ OPTIONS:                                               Default\n\
 }
 
 /*!
-
-Set the program options.
-
-  \param argc : Command line number of parameters.
-  \param argv : Array of command line parameters.
-  \param conf : Biclops configuration file.
-
-  \return false if the program has to be stopped, true otherwise.
-
-*/
+ * Set the program options.
+ *
+ * \param argc : Command line number of parameters.
+ * \param argv : Array of command line parameters.
+ * \param conf : Biclops configuration file.
+ *
+ * \return false if the program has to be stopped, true otherwise.
+ */
 bool getOptions(int argc, const char **argv, std::string &conf)
 {
   const char *optarg_;
@@ -147,7 +133,7 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
   try {
-    vpRobotBiclops robot(opt_conf.c_str());
+    vpRobotBiclops robot(opt_conf);
 
     vpColVector q(vpBiclops::ndof);      // desired position
     vpColVector qdot(vpBiclops::ndof);   // desired velocity
@@ -159,123 +145,124 @@ int main(int argc, const char **argv)
     q = 0;
     q[0] = vpMath::rad(-10);
     q[1] = vpMath::rad(-20);
-    std::cout << "Set position in the articular frame: "
-              << " pan: " << vpMath::deg(q[0]) << " deg"
-              << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
+    std::cout << "Set Joint position "
+      << " pan: " << vpMath::deg(q[0]) << " deg"
+      << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
     robot.setPositioningVelocity(30.);
-    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+    robot.setPosition(vpRobot::JOINT_STATE, q);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     q[0] = vpMath::rad(10);
     q[1] = vpMath::rad(20);
-    std::cout << "Set position in the articular frame: "
-              << " pan: " << vpMath::deg(q[0]) << " deg"
-              << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
+    std::cout << "Set Joint position "
+      << " pan: " << vpMath::deg(q[0]) << " deg"
+      << " tilt: " << vpMath::deg(q[1]) << " deg" << std::endl;
     robot.setPositioningVelocity(10);
-    robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
+    robot.setPosition(vpRobot::JOINT_STATE, q);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position: "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity: "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     std::cout << "Set STATE_VELOCITY_CONTROL" << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " deg"
-              << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position: "
+      << " pan: " << vpMath::deg(qm[0]) << " deg"
+      << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = vpMath::rad(25);
-    std::cout << "Set articular frame velocity "
-              << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-              << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    std::cout << "Set joint velocity for 5 sec"
+      << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+      << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
+    robot.setVelocity(vpRobot::JOINT_STATE, qdot);
 
     // waits 5000ms
     vpTime::wait(5000.0);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " deg"
-              << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position "
+      << " pan: " << vpMath::deg(qm[0]) << " deg"
+      << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = -vpMath::rad(25);
-    std::cout << "Set articular frame velocity "
-              << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-              << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    std::cout << "Set joint velocity for 3 sec"
+      << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+      << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
+    robot.setVelocity(vpRobot::JOINT_STATE, qdot);
 
     // waits 3000 ms
     vpTime::wait(3000.0);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " deg"
-              << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position "
+      << " pan: " << vpMath::deg(qm[0]) << " deg"
+      << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     //  qdot[0] = vpMath::rad(0.1) ;
     qdot[1] = vpMath::rad(10);
-    std::cout << "Set articular frame velocity "
-              << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-              << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    std::cout << "Set joint velocity for 2 sec"
+      << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+      << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
+    robot.setVelocity(vpRobot::JOINT_STATE, qdot);
 
     // waits 2000 ms
     vpTime::wait(2000.0);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " deg"
-              << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position "
+      << " pan: " << vpMath::deg(qm[0]) << " deg"
+      << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
 
     qdot = 0;
     qdot[0] = vpMath::rad(-5);
     // qdot[1] = vpMath::rad(-5);
 
-    std::cout << "Set articular frame velocity "
-              << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
-              << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
-    robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
+    std::cout << "Set joint velocity for 2 sec"
+      << " pan: " << vpMath::deg(qdot[0]) << " deg/s"
+      << " tilt: " << vpMath::deg(qdot[1]) << " deg/s" << std::endl;
+    robot.setVelocity(vpRobot::JOINT_STATE, qdot);
 
     // waits 2000 ms
     vpTime::wait(2000.0);
 
-    robot.getPosition(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Position in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " deg"
-              << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
-    robot.getVelocity(vpRobot::ARTICULAR_FRAME, qm);
-    std::cout << "Velocity in the articular frame: "
-              << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
+    robot.getPosition(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint position "
+      << " pan: " << vpMath::deg(qm[0]) << " deg"
+      << " tilt: " << vpMath::deg(qm[1]) << " deg" << std::endl;
+    robot.getVelocity(vpRobot::JOINT_STATE, qm);
+    std::cout << "  Joint velocity "
+      << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }
@@ -283,7 +270,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have an biclops PT robot connected to your computer..." << std::endl;
+  std::cout << "You do not have an Biclops PT robot connected to your computer..." << std::endl;
   return EXIT_SUCCESS;
 }
 

@@ -159,7 +159,8 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
       u1 = u[0] / tt;
       u2 = u[1] / tt; /* axe de rotation unitaire  */
       u3 = u[2] / tt;
-    } else
+    }
+    else
       u1 = u2 = u3 = 0.0;
     double co = cos(tt);
     double mco = 1.0 - co;
@@ -221,7 +222,8 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
         *MIJ(jac, 4, i, ldfjac) = u2 * dxit - u1 * u2 * dxiu1 / tt + (1 - u2 * u2) * dxiu2 / tt - u2 * u3 * dxiu3 / tt;
 
         *MIJ(jac, 5, i, ldfjac) = u3 * dxit - u1 * u3 * dxiu1 / tt - u2 * u3 * dxiu2 / tt + (1 - u3 * u3) * dxiu3 / tt;
-      } else {
+      }
+      else {
         *MIJ(jac, 3, i, ldfjac) = 0.0;
         *MIJ(jac, 4, i, ldfjac) = 0.0;
         *MIJ(jac, 5, i, ldfjac) = 0.0;
@@ -231,12 +233,13 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
       *MIJ(jac, 2, npt + i, ldfjac) = -ry / (rz * rz);
       if (tt >= MINIMUM) {
         *MIJ(jac, 3, npt + i, ldfjac) =
-            u1 * dyit + (1 - u1 * u1) * dyiu1 / tt - u1 * u2 * dyiu2 / tt - u1 * u3 * dyiu3 / tt;
+          u1 * dyit + (1 - u1 * u1) * dyiu1 / tt - u1 * u2 * dyiu2 / tt - u1 * u3 * dyiu3 / tt;
         *MIJ(jac, 4, npt + i, ldfjac) =
-            u2 * dyit - u1 * u2 * dyiu1 / tt + (1 - u2 * u2) * dyiu2 / tt - u2 * u3 * dyiu3 / tt;
+          u2 * dyit - u1 * u2 * dyiu1 / tt + (1 - u2 * u2) * dyiu2 / tt - u2 * u3 * dyiu3 / tt;
         *MIJ(jac, 5, npt + i, ldfjac) =
-            u3 * dyit - u1 * u3 * dyiu1 / tt - u2 * u3 * dyiu2 / tt + (1 - u3 * u3) * dyiu3 / tt;
-      } else {
+          u3 * dyit - u1 * u3 * dyiu1 / tt - u2 * u3 * dyiu2 / tt + (1 - u3 * u3) * dyiu3 / tt;
+      }
+      else {
         *MIJ(jac, 3, npt + i, ldfjac) = 0.0;
         *MIJ(jac, 4, npt + i, ldfjac) = 0.0;
         *MIJ(jac, 5, npt + i, ldfjac) = 0.0;
@@ -245,14 +248,6 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
   } /* fin else if iflag ==2  */
 }
 
-/*!
-\brief  Compute the pose using the Lowe non linear approach
-it consider the minimization of a residual using
-the levenberg marquartd approach.
-
-The approach has been proposed by D.G Lowe in 1992 paper \cite Lowe92a.
-
-*/
 void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 {
 #if (DEBUG_LEVEL1)
@@ -327,9 +322,3 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 #undef MINIMUM
 
 #undef DEBUG_LEVEL1
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

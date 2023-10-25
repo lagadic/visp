@@ -43,8 +43,8 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpHomography.h>
 
-const double vpHomography::threshold_rotation = 1e-7;
-const double vpHomography::threshold_displacement = 1e-18;
+const double vpHomography::m_threshold_rotation = 1e-7;
+const double vpHomography::m_threshold_displacement = 1e-18;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -124,7 +124,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   W = 0;
   vpMatrix c2Rc1(3, 3);
   double r = 0;
-  while (vpMath::equal(r_1, r, threshold_rotation) == false) {
+  while (vpMath::equal(r_1, r, m_threshold_rotation) == false) {
 
     r_1 = r;
     // compute current position
@@ -150,7 +150,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         Hp2 = c2Rc1.t() * p2; // p2 = Hp1
         Hp1 = c2Rc1 * p1;     // p1 = Hp2
 
-        Hp2 /= Hp2[2]; // normalisation
+        Hp2 /= Hp2[2]; // normalization
         Hp1 /= Hp1[2];
 
         // set up the interaction matrix
@@ -311,7 +311,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (vpMath::equal(r_1, r, threshold_displacement) == false) {
+  while (vpMath::equal(r_1, r, m_threshold_displacement) == false) {
     r_1 = r;
     // compute current position
 
@@ -345,7 +345,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
       Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix
@@ -521,7 +521,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (vpMath::equal(r_1, r, threshold_displacement) == false) {
+  while (vpMath::equal(r_1, r, m_threshold_displacement) == false) {
     r_1 = r;
     // compute current position
 
@@ -554,7 +554,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       Hp2 = ((vpMatrix)c1Rc2 + (c1Tc2 * N2.t()) / d2) * p2; // p2 = Hp1
       Hp1 = ((vpMatrix)c2Rc1 + (c2Tc1 * N1.t()) / d1) * p1; // p1 = Hp2
 
-      Hp2 /= Hp2[2]; // normalisation
+      Hp2 /= Hp2[2]; // normalization
       Hp1 /= Hp1[2];
 
       // set up the interaction matrix

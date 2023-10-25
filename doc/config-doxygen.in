@@ -444,7 +444,7 @@ TYPEDEF_HIDES_STRUCT   = NO
 # the optimal cache size from a speed point of view.
 # Minimum value: 0, maximum value: 9, default value: 0.
 
-LOOKUP_CACHE_SIZE      = 0
+LOOKUP_CACHE_SIZE      = 1
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -878,7 +878,7 @@ EXCLUDE                = "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/Starte
                          "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/ViewController.h" \
                          "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.h" \
                          "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.mm" \
-                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/VispHelper/ImageDisplay+withContext.h"
+                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/VispHelper/ImageDisplayWithContext.h"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -2220,6 +2220,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_SOXT \
                          VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_TENSORRT \
+                         VISP_HAVE_THREADS \
                          VISP_HAVE_UEYE \
                          VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \

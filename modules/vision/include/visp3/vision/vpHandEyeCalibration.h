@@ -32,11 +32,11 @@
  */
 
 /*!
-  \file vpHandEyeCalibration.h
-  \brief Tools for hand-eye calibration.
-
-  \sa The example in calibrate-hand-eye.cpp
-*/
+ * \file vpHandEyeCalibration.h
+ * \brief Tools for hand-eye calibration.
+ *
+ * \sa The example in calibrate-hand-eye.cpp
+ */
 #ifndef _vpHandEyeCalibration_h_
 #define _vpHandEyeCalibration_h_
 

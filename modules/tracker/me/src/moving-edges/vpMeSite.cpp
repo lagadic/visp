@@ -63,7 +63,7 @@ void vpMeSite::init()
   convlt = 0.0;
   weight = -1;
 
-  selectDisplay = NONE;
+  m_selectDisplay = NONE;
 
   // Pixel components
   i = 0;
@@ -75,29 +75,17 @@ void vpMeSite::init()
 
   normGradient = 0;
 
-  state = NO_SUPPRESSION;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  suppress = 0;
-#endif
+  m_state = NO_SUPPRESSION;
 }
 
 vpMeSite::vpMeSite()
   : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+  weight(1), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 { }
 
 vpMeSite::vpMeSite(double ip, double jp)
   : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+  weight(1), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 {
   i = vpMath::round(ip);
   j = vpMath::round(jp);
@@ -107,11 +95,7 @@ vpMeSite::vpMeSite(double ip, double jp)
 
 vpMeSite::vpMeSite(const vpMeSite &mesite)
   : i(0), j(0), ifloat(0), jfloat(0), mask_sign(1), alpha(0.), convlt(0.), normGradient(0),
-  weight(1), selectDisplay(NONE), state(NO_SUPPRESSION)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  suppress(0)
-#endif
+  weight(1), m_selectDisplay(NONE), m_state(NO_SUPPRESSION)
 {
   *this = mesite;
 }
@@ -120,8 +104,8 @@ vpMeSite::vpMeSite(const vpMeSite &mesite)
 // For points in meter form (to avoid approximations)
 void vpMeSite::init(double ip, double jp, double alphap)
 {
-  // Note: keep old value of convlt, suppress and contrast
-  selectDisplay = NONE;
+  // Note: keep old value of convlt and contrast
+  m_selectDisplay = NONE;
 
   ifloat = ip;
   i = vpMath::round(ip);
@@ -134,7 +118,7 @@ void vpMeSite::init(double ip, double jp, double alphap)
 // initialise with convolution()
 void vpMeSite::init(double ip, double jp, double alphap, double convltp)
 {
-  selectDisplay = NONE;
+  m_selectDisplay = NONE;
   ifloat = ip;
   i = (int)ip;
   jfloat = jp;
@@ -147,7 +131,7 @@ void vpMeSite::init(double ip, double jp, double alphap, double convltp)
 // initialise with convolution and sign
 void vpMeSite::init(double ip, double jp, double alphap, double convltp, int sign)
 {
-  selectDisplay = NONE;
+  m_selectDisplay = NONE;
   ifloat = ip;
   i = (int)ip;
   jfloat = jp;
@@ -168,12 +152,8 @@ vpMeSite &vpMeSite::operator=(const vpMeSite &m)
   convlt = m.convlt;
   normGradient = m.normGradient;
   weight = m.weight;
-  selectDisplay = m.selectDisplay;
-  state = m.state;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  suppress = m.suppress;
-#endif
+  m_selectDisplay = m.m_selectDisplay;
+  m_state = m.m_state;
 
   return *this;
 }
@@ -197,7 +177,7 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int rang
     double jj = (jfloat + k * calpha);
 
     // Display
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RANGE)) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RANGE)) {
       ip.set_i(ii);
       ip.set_j(jj);
       vpDisplay::displayCross(I, ip, 1, vpColor::yellow);
@@ -206,7 +186,7 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int rang
     // Copy parent's convolution
     vpMeSite pel;
     pel.init(ii, jj, alpha, convlt, mask_sign);
-    pel.setDisplay(selectDisplay); // Display
+    pel.setDisplay(m_selectDisplay); // Display
 
     // Add site to the query list
     list_query_pixels[n] = pel;
@@ -215,39 +195,6 @@ vpMeSite *vpMeSite::getQueryList(const vpImage<unsigned char> &I, const int rang
 
   return (list_query_pixels);
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
- * Get the sign (according to the difference of values of the intensities of
- * the extremities).
- * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set.
- * \param I : Image in which the sign is computed.
- * \param range :  +/- the range within which the pixel's correspondent is sought.
- * \post : mask_sign is computed
- */
-void vpMeSite::getSign(const vpImage<unsigned char> &I, const int range)
-{
-  int k;
-
-  double salpha = sin(alpha);
-  double calpha = cos(alpha);
-
-  // First extremity
-  k = -range;
-  unsigned int i1 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j1 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
-
-  // Second extremity
-  k = range;
-  unsigned int i2 = static_cast<unsigned int>(vpMath::round(ifloat + k * salpha));
-  unsigned int j2 = static_cast<unsigned int>(vpMath::round(jfloat + k * calpha));
-
-  if (I[i1][j1] > I[i2][j2])
-    mask_sign = 1;
-  else
-    mask_sign = -1;
-}
-#endif
 
 // Specific function for ME
 double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
@@ -367,7 +314,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
   vpImagePoint ip;
 
   if (max_rank >= 0) {
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RESULT)) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
       ip.set_i(list_query_pixels[max_rank].i);
       ip.set_j(list_query_pixels[max_rank].j);
       vpDisplay::displayPoint(I, ip, vpColor::red);
@@ -384,16 +331,16 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
   }
   else // none of the query sites is better than the threshold
   {
-    if ((selectDisplay == RANGE_RESULT) || (selectDisplay == RESULT)) {
+    if ((m_selectDisplay == RANGE_RESULT) || (m_selectDisplay == RESULT)) {
       ip.set_i(list_query_pixels[0].i);
       ip.set_j(list_query_pixels[0].j);
       vpDisplay::displayPoint(I, ip, vpColor::green);
     }
     normGradient = 0;
     if (std::fabs(contrast) > std::numeric_limits<double>::epsilon())
-      state = CONTRAST; // contrast suppression
+      m_state = CONTRAST; // contrast suppression
     else
-      state = THRESHOLD; // threshold suppression
+      m_state = THRESHOLD; // threshold suppression
 
     delete[] list_query_pixels;
     delete[] likelihood; // modif portage
@@ -404,17 +351,12 @@ int vpMeSite::operator!=(const vpMeSite &m) { return ((m.i != i) || (m.j != j));
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpMeSite &vpMeS)
 {
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Flag: " << vpMeS.suppress
-    << "  Weight: " << vpMeS.weight);
-#else
   return (os << "Alpha: " << vpMeS.alpha << "  Convolution: " << vpMeS.convlt << "  Weight: " << vpMeS.weight);
-#endif
 }
 
-void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+void vpMeSite::display(const vpImage<unsigned char> &I) { vpMeSite::display(I, ifloat, jfloat, m_state); }
 
-void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, jfloat, state); }
+void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, jfloat, m_state); }
 
 // Static functions
 

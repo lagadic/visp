@@ -926,28 +926,6 @@ void vpHomogeneousMatrix::eye()
 */
 void vpHomogeneousMatrix::inverse(vpHomogeneousMatrix &M) const { M = inverse(); }
 
-/*!
-  Write an homogeneous matrix in an output file stream.
-
-  \param f : Output file stream. The homogeneous matrix is saved as a
-  4 by 4 matrix.
-
-  The code below shows how to save an homogeneous matrix in a file.
-
-  \code
-  // Contruct an homogeneous matrix
-  vpTranslationVector t(1,2,3);
-  vpRxyzVector r(M_PI, 0, -M_PI/4.);
-  vpRotationMatrix R(r);
-  vpHomogeneousMatrix M(t, R);
-
-  // Save the content of the matrix in "homogeneous.dat"
-  std::ofstream f("homogeneous.dat");
-  M.save(f);
-  \endcode
-
-  \sa load()
-*/
 void vpHomogeneousMatrix::save(std::ofstream &f) const
 {
   if (!f.fail()) {
@@ -958,24 +936,14 @@ void vpHomogeneousMatrix::save(std::ofstream &f) const
   }
 }
 
-/*!
+void vpHomogeneousMatrix::save(const std::string &filename) const
+{
+  std::ofstream f;
+  f.open(filename.c_str());
+  save(f);
+  f.close();
+}
 
-  Read an homogeneous matrix from an input file stream. The
-  homogeneous matrix is considered as a 4 by 4 matrix.
-
-  \param f : Input file stream.
-
-  The code below shows how to get an homogeneous matrix from a file.
-
-  \code
-  vpHomogeneousMatrix M;
-
-  std::ifstream f("homogeneous.dat");
-  M.load(f);
-  \endcode
-
-  \sa save()
-*/
 void vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (!f.fail()) {
@@ -988,6 +956,14 @@ void vpHomogeneousMatrix::load(std::ifstream &f)
   else {
     throw(vpException(vpException::ioError, "Cannot load homogeneous matrix: ifstream not open"));
   }
+}
+
+void vpHomogeneousMatrix::load(const std::string &filename)
+{
+  std::ifstream f;
+  f.open(filename.c_str());
+  load(f);
+  f.close();
 }
 
 /*!

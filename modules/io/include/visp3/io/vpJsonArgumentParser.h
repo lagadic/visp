@@ -177,7 +177,7 @@ public:
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
-    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json * {
+    const auto getter = [name, this](nlohmann::json &j, bool create) -> nlohmann::json *{
       size_t pos = 0;
       nlohmann::json *f = &j;
       std::string token;
@@ -203,7 +203,7 @@ public:
       }
       f = &(f->at(name_copy));
       return f;
-    };
+      };
 
     parsers[name] = [&parameter, required, getter, name](nlohmann::json &j) {
       const nlohmann::json *field = getter(j, false);
@@ -216,12 +216,12 @@ public:
       else if (!fieldHasNoValue) {
         field->get_to(parameter);
       }
-    };
+      };
 
     updaters[name] = [getter](nlohmann::json &j, const std::string &s) {
       nlohmann::json *field = getter(j, true);
       *field = convertCommandLineArgument<T>(s);
-    };
+      };
 
     helpers[name] = [help, parameter, required]() -> std::string {
       std::stringstream ss;
@@ -234,7 +234,7 @@ public:
         ss << std::endl << "Optional";
       }
       return ss.str();
-    };
+      };
 
     nlohmann::json *exampleField = getter(exampleJson, true);
     *exampleField = parameter;
@@ -248,7 +248,7 @@ public:
    * @param argc Number of arguments (including program name)
    * @param argv Arguments
    */
-  void parse(int argc, const char *argv []);
+  void parse(int argc, const char *argv[]);
 
 
 private:

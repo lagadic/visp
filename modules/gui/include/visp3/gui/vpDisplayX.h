@@ -43,91 +43,89 @@
 #include <visp3/core/vpRect.h>
 
 /*!
-  \file vpDisplayX.h
-  \brief Define the X11 console to display images.
-*/
+ * \file vpDisplayX.h
+ * \brief Define the X11 console to display images.
+ */
 
 /*!
-  \class vpDisplayX
-
-  \ingroup group_gui_display
-
-  \brief Use the X11 console to display images on unix-like OS.
-  Thus to enable this class X11 should be installed. Installation
-  instructions are provided here https://visp.inria.fr/3rd_x11.
-
-  This class define the X11 console to display  images
-  It also define method to display some geometric feature (point, line,
-circle) in the image.
-
-  The example below shows how to display an image with this video device.
-  \code
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-  vpImage<unsigned char> I; // Grey level image
-
-  // Read an image in PGM P5 format
-  vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-
-#if defined(VISP_HAVE_X11)
-  vpDisplayX d;
-
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-  d.init(I);
-#endif
-
-  // Specify the window location
-  vpDisplay::setWindowPosition(I, 400, 100);
-
-  // Set the display window title
-  vpDisplay::setTitle(I, "My X11 display");
-
-  // Set the display background with image I content
-  vpDisplay::display(I);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpImagePoint topLeftCorner;
-  topLeftCorner.set_i(50);
-  topLeftCorner.set_j(10);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
-
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
-
-  // Get non blocking keyboard events
-  std::cout << "Check keyboard events..." << std::endl;
-  char key[10];
-  bool ret;
-  for (int i=0; i< 200; i++) {
-    bool ret = vpDisplay::getKeyboardEvent(I, key, false);
-    if (ret)
-      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
-    vpTime::wait(40);
-  }
-
-  // Get a blocking keyboard event
-  std::cout << "Wait for a keyboard event..." << std::endl;
-  ret = vpDisplay::getKeyboardEvent(I, key, true);
-  std::cout << "keyboard event: " << ret << std::endl;
-  if (ret)
-    std::cout << "key: " << "\"" << key << "\"" << std::endl;
-
-  // Wait for a click in the display window
-  std::cout << "Wait for a button click..." << std::endl;
-  vpDisplay::getClick(I);
-}
-  \endcode
-
-*/
-
+ * \class vpDisplayX
+ *
+ * \ingroup group_gui_display
+ *
+ * \brief Use the X11 console to display images on unix-like OS.
+ * Thus to enable this class X11 should be installed. Installation
+ * instructions are provided here https://visp.inria.fr/3rd_x11.
+ *
+ * This class define the X11 console to display images
+ * It also define method to display some geometric feature (point, line,
+ * circle) in the image.
+ *
+ * The example below shows how to display an image with this video device.
+ * \code
+ * #include <visp3/core/vpImagePoint.h>
+ * #include <visp3/gui/vpDisplayX.h>
+ * #include <visp3/io/vpImageIo.h>
+ *
+ * int main()
+ * {
+ *   vpImage<unsigned char> I; // Grey level image
+ *
+ *   // Read an image in PGM P5 format
+ *   vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+ *
+ * #if defined(VISP_HAVE_X11)
+ *   vpDisplayX d;
+ *
+ *   // Initialize the display with the image I. Display and image are
+ *   // now link together.
+ *   d.init(I);
+ * #endif
+ *
+ *   // Specify the window location
+ *   vpDisplay::setWindowPosition(I, 400, 100);
+ *
+ *   // Set the display window title
+ *   vpDisplay::setTitle(I, "My X11 display");
+ *
+ *   // Set the display background with image I content
+ *   vpDisplay::display(I);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpImagePoint topLeftCorner;
+ *   topLeftCorner.set_i(50);
+ *   topLeftCorner.set_j(10);
+ *   vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
+ *
+ *   // Flush the foreground and background display
+ *   vpDisplay::flush(I);
+ *
+ *   // Get non blocking keyboard events
+ *   std::cout << "Check keyboard events..." << std::endl;
+ *   char key[10];
+ *   bool ret;
+ *   for (int i=0; i< 200; i++) {
+ *     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
+ *     if (ret)
+ *       std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+ *     vpTime::wait(40);
+ *   }
+ *
+ *   // Get a blocking keyboard event
+ *   std::cout << "Wait for a keyboard event..." << std::endl;
+ *   ret = vpDisplay::getKeyboardEvent(I, key, true);
+ *   std::cout << "keyboard event: " << ret << std::endl;
+ *   if (ret)
+ *     std::cout << "key: " << "\"" << key << "\"" << std::endl;
+ *
+ *   // Wait for a click in the display window
+ *   std::cout << "Wait for a button click..." << std::endl;
+ *   vpDisplay::getClick(I);
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpDisplayX : public vpDisplay
 {
   // private:

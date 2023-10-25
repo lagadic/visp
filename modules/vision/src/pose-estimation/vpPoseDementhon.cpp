@@ -94,11 +94,6 @@ static void calculSolutionDementhon(vpColVector &I4, vpColVector &J4, vpHomogene
 #endif
 }
 
-/*!
-  Compute the pose using Dementhon approach for non planar objects.
-  This is a direct implementation of the algorithm proposed by
-  Dementhon and Davis in their 1995 paper \cite Dementhon95.
-*/
 void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 {
   vpPoint P;
@@ -133,7 +128,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     A[i][2] = c3d[i].get_oZ();
     A[i][3] = 1.0;
   }
-  Ap = A.pseudoInverse(dementhonSvThresh);
+  Ap = A.pseudoInverse(m_dementhonSvThresh);
 
 #if (DEBUG_LEVEL2)
   {
@@ -181,7 +176,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
     for (unsigned int i = 0; i < npt; i++) {
       double eps =
-          (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
+        (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
       xprim[i] = (1.0 + eps) * c3d[i].get_x();
       yprim[i] = (1.0 + eps) * c3d[i].get_y();
@@ -208,7 +203,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     vpThetaUVector erc;
     cMo.extract(erc);
     std::cout << "it = " << cpt << " residu = " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " "
-              << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+      << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
 #endif
     if (res > res_old) {
 #if (DEBUG_LEVEL3)
@@ -229,14 +224,16 @@ static void calculRTheta(double s, double c, double &r, double &theta)
   if ((fabs(c) > EPS_DEM) || (fabs(s) > EPS_DEM)) {
     r = sqrt(sqrt(s * s + c * c));
     theta = atan2(s, c) / 2.0;
-  } else {
+  }
+  else {
     if (fabs(c) > fabs(s)) {
       r = fabs(c);
       if (c >= 0.0)
         theta = M_PI / 2;
       else
         theta = -M_PI / 2;
-    } else {
+    }
+    else {
       r = fabs(s);
       if (s >= 0.0)
         theta = M_PI / 4.0;
@@ -289,9 +286,6 @@ static void calculTwoSolutionsDementhonPlan(vpColVector &I04, vpColVector &J04, 
   calculSolutionDementhon(I, J, cMo2);
 }
 
-/*!
-  Return 0 if success, -1 if failure.
- */
 int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatrix &cMo)
 {
 #if (DEBUG_LEVEL1)
@@ -324,7 +318,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     vpColVector xprim(npt), yprim(npt);
     for (unsigned int i = 0; i < npt; i++) {
       double eps =
-          (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
+        (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
       xprim[i] = (1.0 + eps) * c3d[i].get_x();
       yprim[i] = (1.0 + eps) * c3d[i].get_y();
@@ -370,7 +364,8 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
       if (res1 <= res2) {
         res_min = res1;
         cMo = cMo1;
-      } else {
+      }
+      else {
         res_min = res2;
         cMo = cMo2;
       }
@@ -382,8 +377,9 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
       vpThetaUVector erc;
       cMo1.extract(erc);
       std::cout << "it = " << cpt << " cMo1 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " "
-                << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
-    } else
+        << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    }
+    else
       std::cout << "Pb z < 0 with cMo1" << std::endl;
 
     if (erreur2 == 0) {
@@ -391,8 +387,9 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
       vpThetaUVector erc;
       cMo2.extract(erc);
       std::cout << "it = " << cpt << " cMo2 : residu: " << s << " Theta U rotation: " << vpMath::deg(erc[0]) << " "
-                << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
-    } else
+        << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    }
+    else
       std::cout << "Pb z < 0 with cMo2" << std::endl;
 #endif
 
@@ -412,20 +409,12 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
   return erreur;
 }
 
-/*!
-\brief  Compute the pose using Dementhon approach for planar objects
-this is a direct implementation of the algorithm proposed by
-Dementhon in his PhD.
-
-\author Francois Chaumette (simplified by Eric Marchand)
-*/
-
 void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl;
 #endif
-  const double svdFactorUsedWhenFailure = 10.; // Factor by which is multipled dementhonSvThresh each time the svdDecomposition fails
+  const double svdFactorUsedWhenFailure = 10.; // Factor by which is multipled m_dementhonSvThresh each time the svdDecomposition fails
   const double svdThresholdLimit = 1e-2; // The svd decomposition will be tested with a threshold up to this value. If with this threshold, the rank of A is still !=3, an exception is thrown
   const double lnOfSvdFactorUsed = std::log(svdFactorUsedWhenFailure);
   const double logNOfSvdThresholdLimit = std::log(svdThresholdLimit)/lnOfSvdFactorUsed;
@@ -464,19 +453,16 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   vpColVector sv;
   vpMatrix Ap, imA, imAt, kAt;
   bool isRankEqualTo3 = false; // Indicates if the rank of A is the expected one
-  double logNofSvdThresh = std::log(dementhonSvThresh)/lnOfSvdFactorUsed; // Get the log_n(dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
+  double logNofSvdThresh = std::log(m_dementhonSvThresh)/lnOfSvdFactorUsed; // Get the log_n(m_dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
   int nbMaxIter = static_cast<int>(std::max(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.)); // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
-  double svdThreshold = dementhonSvThresh;
+  double svdThreshold = m_dementhonSvThresh;
   int irank = 0;
-  for(int i = 0; i < nbMaxIter && !isRankEqualTo3; i++)
-  {
+  for (int i = 0; i < nbMaxIter && !isRankEqualTo3; i++) {
     irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
-    if(irank == 3)
-    {
+    if (irank == 3) {
       isRankEqualTo3 = true;
     }
-    else
-    {
+    else {
       isRankEqualTo3 = false;
       svdThreshold *= svdFactorUsedWhenFailure;
     }
@@ -526,11 +512,11 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   vpThetaUVector erc;
   cMo1.extract(erc);
   std::cout << "cMo Start Tree 1 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " "
-            << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
   res = sqrt(computeResidualDementhon(cMo2) / npt);
   cMo2.extract(erc);
   std::cout << "cMo Start Tree 2 : res " << res << " Theta U rotation: " << vpMath::deg(erc[0]) << " "
-            << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
 #endif
 
   int erreur1 = calculArbreDementhon(Ap, U, cMo1);
@@ -574,14 +560,6 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 #endif
 }
 
-/*!
-  \brief Compute and return the residual corresponding to the sum of squared residuals
-  in meter^2 for the pose matrix \e cMo.
-
-  \param cMo : the matrix that defines the pose to be tested.
-
-  \return the value of the sum of squared residuals in meter^2.
-*/
 double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
 {
   double squared_error = 0;

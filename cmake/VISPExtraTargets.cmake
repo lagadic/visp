@@ -73,6 +73,17 @@ if(DOXYGEN_FOUND)
 endif()
 
 # ----------------------------------------------------------------------------
+# Tests target, for make visp_apps
+# ----------------------------------------------------------------------------
+if(BUILD_APPS)
+  add_custom_target(visp_apps)
+
+  if(ENABLE_SOLUTION_FOLDERS)
+    set_target_properties(visp_apps PROPERTIES FOLDER "extra")
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
 # Tests target, for make visp_tests
 # ----------------------------------------------------------------------------
 if(BUILD_TESTS)

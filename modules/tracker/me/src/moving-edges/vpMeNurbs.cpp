@@ -60,9 +60,6 @@ double computeDelta(double deltai, double deltaj);
 void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt);
 vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP);
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list);
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list);
-#endif
 
 // Compute the angle delta = arctan(deltai/deltaj)
 // and normalize it between 0 and pi
@@ -166,24 +163,6 @@ vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePo
   }
   return index;
 }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-// Check if the list of vpImagePoint contains a distant point of less tha 4
-// pixels  from the center of the sub image (ie the point (15,15).
-vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
-{
-  ip_edges_list->front();
-  while (!ip_edges_list->outside()) {
-    vpImagePoint iP = ip_edges_list->value();
-    double dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15, 15));
-    if (dist <= 16) {
-      return true;
-    }
-    ip_edges_list->next();
-  }
-  return false;
-}
-#endif
 
 // Check if the list of vpImagePoint contains a distant point of less tha 4
 // pixels  from the center of the sub image (ie the point (15,15).

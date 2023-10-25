@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,40 +29,19 @@
  *
  * Description:
  * Visual servoing control law.
- *
-*****************************************************************************/
-
-#include <visp3/vs/vpServo.h>
+ */
 
 #include <sstream>
 
-// Exception
 #include <visp3/core/vpException.h>
-
-// Debug trace
 #include <visp3/core/vpDebug.h>
+#include <visp3/vs/vpServo.h>
 
 /*!
   \file vpServo.cpp
   \brief  Class required to compute the visual servoing control law
 */
 
-/*!
-  Default constructor that initializes the following settings:
-  - No control law is specified. The user has to call setServo() to specify
-  the control law.
-  - In the control law, the interaction matrix \f${\widehat {\bf L}}_e \f$ is
-  computed with the desired features \f${\bf s}^*\f$. Using
-  setInteractionMatrixType() you can also compute the interaction matrix with
-  the current visual features, or from the mean \f$\left({\widehat {\bf L}}_s
-  + {\widehat {\bf L}}_{s^*}\right)/2\f$.
-  - In the control law the pseudo inverse will be used. The method
-  setInteractionMatrixType() allows to use the transpose instead.
-
-  \warning By default the threshold used to compute the pseudo-inverse is set to 1e-6.
-  Advanced user can modify this value using setPseudoInverseThreshold().
-
-*/
 vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
   featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
@@ -76,20 +54,6 @@ vpServo::vpServo()
   cJc.eye();
 }
 
-/*!
-  Constructor that allows to choose the visual servoing control law.
-  \param servo_type : Visual servoing control law.
-
-  The other settings are the following:
-  - In the control law, the interaction matrix \f${\widehat {\bf L}}_e \f$ is
-  computed with the desired features \f${\bf s}^*\f$. Using
-  setInteractionMatrixType() you can also compute the interaction matrix with
-  the current visual features, or from the mean \f$\left({\widehat {\bf L}}_s
-  + {\widehat {\bf L}}_{s^*}\right)/2\f$.
-  - In the control law the pseudo inverse will be used. The method
-  setInteractionMatrixType() allows to use the transpose instead.
-
- */
 vpServo::vpServo(vpServoType servo_type)
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(servo_type), rankJ1(0), featureList(),
   desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
@@ -101,29 +65,8 @@ vpServo::vpServo(vpServoType servo_type)
   cJc.eye();
 }
 
-/*!
-  Destructor.
-
-  Since ViSP > 3.3.0 calls kill() to destroy the current and desired feature lists.
-
-  \sa kill()
-*/
 vpServo::~vpServo() { kill(); }
 
-/*!
-  Initialize the servo with the following settings:
-
-  - No control law is specified. The user has to call setServo() to specify
-    the control law.
-  - In the control law, the interaction matrix \f${\widehat {\bf L}}_e \f$ is
-    computed with the desired features \f${\bf s}^*\f$. Using
-    setInteractionMatrixType() you can also compute the interaction matrix with
-    the current visual features, or from the mean \f$\left({\widehat {\bf L}}_s
-    + {\widehat {\bf L}}_{s^*}\right)/2\f$.
-  - In the control law the pseudo inverse will be used. The method
-    setInteractionMatrixType() allows to use the transpose instead.
-
-*/
 void vpServo::init()
 {
   // type of visual servoing
@@ -160,22 +103,6 @@ void vpServo::init()
   m_first_iteration = true;
 }
 
-/*!
-  Task destruction. Kill the current and desired visual feature lists.
-
-  This function is called in the destructor. Since ViSP > 3.3.0 it is no more
-  mandatory to call explicitly kill().
-
-  \code
-  vpServo task ;
-  vpFeatureThetaU s;
-  ...
-  task.addFeature(s); // Add current ThetaU feature
-
-  task.kill(); // This call is no more mandatory since achieved in the destructor
-  \endcode
-
-*/
 void vpServo::kill()
 {
   if (taskWasKilled == false) {
@@ -202,11 +129,6 @@ void vpServo::kill()
   }
 }
 
-/*!
-  Set the visual servoing control law.
-  \param servo_type : Control law that will be considered.
-  See vpServo::vpServoType to see the possible values.
- */
 void vpServo::setServo(const vpServoType &servo_type)
 {
   this->servoType = servo_type;
@@ -228,49 +150,6 @@ void vpServo::setServo(const vpServoType &servo_type)
   };
 }
 
-/*!
-  Set a 6-dim column vector representing the degrees of freedom that are
-  controlled in the camera frame. When set to 1, all the 6 dof are controlled.
-
-  \param dof : Degrees of freedom to control in the camera frame.
-  Below we give the correspondance between the index of the vector and the
-  considered dof:
-  - dof[0] = 1 if translation along X is controled, 0 otherwise;
-  - dof[1] = 1 if translation along Y is controled, 0 otherwise;
-  - dof[2] = 1 if translation along Z is controled, 0 otherwise;
-  - dof[3] = 1 if rotation along X is controled, 0 otherwise;
-  - dof[4] = 1 if rotation along Y is controled, 0 otherwise;
-  - dof[5] = 1 if rotation along Z is controled, 0 otherwise;
-
-  The following example shows how to use this function to control only wx, wy
-  like a pan/tilt:
-  \code
-#include <visp3/visual_features/vpFeaturePoint.h>
-#include <visp3/vs/vpServo.h>
-
-int main()
-{
-  vpServo servo;
-  servo.setServo(vpServo::EYEINHAND_CAMERA);
-  vpFeaturePoint s, sd;
-  servo.addFeature(s, sd);
-
-  vpColVector dof(6, 1);
-  dof[0] = 0; // turn off vx
-  dof[1] = 0; // turn off vy
-  dof[2] = 0; // turn off vz
-  dof[5] = 0; // turn off wz
-  servo.setCameraDoF(dof);
-
-  while(1) {
-    // vpFeatureBuilder::create(s, ...);       // update current feature
-
-    vpColVector v = servo.computeControlLaw(); // compute control law
-    // only v[3] and v[4] corresponding to wx and wy are different from 0
-  }
-}
-  \endcode
-*/
 void vpServo::setCameraDoF(const vpColVector &dof)
 {
   if (dof.size() == 6) {
@@ -287,15 +166,6 @@ void vpServo::setCameraDoF(const vpColVector &dof)
   }
 }
 
-/*!
-
-  Prints on \e os stream information about the task:
-
-  \param displayLevel : Indicates which are the task information to print. See
-  vpServo::vpServoPrintType for more details.
-
-  \param os : Output stream.
-*/
 void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &os)
 {
   switch (displayLevel) {
@@ -456,34 +326,6 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
   }
 }
 
-/*!
-  Add a new set of 2 features \f$\bf s\f$ and \f${\bf s}^*\f$ in the task.
-
-  \param s_cur : Current visual feature denoted \f$\bf s\f$.
-  \param s_star : Desired visual feature denoted \f${\bf s}^*\f$.
-  \param select : Feature selector. By default all the features in \e s and \e
-  s_star are used, but is is possible to specify which one is used in case of
-  multiple features.
-
-  The following sample code explain how to use this method to add a visual
-  feature point \f$(x,y)\f$:
-  \code
-  vpFeaturePoint s, s_star;
-  ...
-  vpServo task;
-  task.addFeature(s, s_star);
-  \endcode
-
-  For example to use only the \f$x\f$ visual feature, the previous code
-  becomes:
-  \code
-  vpFeaturePoint s, s_star;
-  ...
-  vpServo task;
-  task.addFeature(s, s_star, vpFeaturePoint::selectX());
-  \endcode
-
-  */
 void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star, unsigned int select)
 {
   featureList.push_back(&s_cur);
@@ -491,33 +333,6 @@ void vpServo::addFeature(vpBasicFeature &s_cur, vpBasicFeature &s_star, unsigned
   featureSelectionList.push_back(select);
 }
 
-/*!
-  Add a new features \f$\bf s\f$ in the task. The desired visual feature
-  denoted \f${\bf s}^*\f$ is equal to zero.
-
-  \param s_cur : Current visual feature denoted \f$\bf s\f$.
-  \param select : Feature selector. By default all the features in \e s are
-  used, but is is possible to specify which one is used in case of multiple
-  features.
-
-  The following sample code explain how to use this method to add a \f$\theta
-  {\bf u} =(\theta u_x, \theta u_y, \theta u_z)\f$ feature:
-  \code
-  vpFeatureThetaU s(vpFeatureThetaU::cRcd);
-  ...
-  vpServo task;
-  task.addFeature(s);
-  \endcode
-
-  For example to use only the \f$\theta u_x\f$ feature, the previous code
-  becomes:
-  \code
-  vpFeatureThetaU s(vpFeatureThetaU::cRcd);
-  ...
-  vpServo task;
-  task.addFeature(s, vpFeatureThetaU::selectTUx);
-  \endcode
-  */
 void vpServo::addFeature(vpBasicFeature &s_cur, unsigned int select)
 {
   featureList.push_back(&s_cur);
@@ -546,7 +361,6 @@ void vpServo::addFeature(vpBasicFeature &s_cur, unsigned int select)
   featureSelectionList.push_back(select);
 }
 
-//! Return the task dimension.
 unsigned int vpServo::getDimension() const
 {
   unsigned int dim = 0;
@@ -633,14 +447,6 @@ static void computeInteractionMatrixFromList(const std::list<vpBasicFeature *> &
   return;
 }
 
-/*!
-
-  Compute and return the interaction matrix related to the set of visual
-  features.
-
-  \return The interaction matrix \f${\widehat {\bf L}}_e\f$ used in the
-  control law specified using setServo().
-*/
 vpMatrix vpServo::computeInteractionMatrix()
 {
   try {
@@ -698,14 +504,6 @@ vpMatrix vpServo::computeInteractionMatrix()
   return L;
 }
 
-/*!
-
-  Compute the error \f$\bf e =(s - s^*)\f$ between the current set of visual
-  features \f$\bf s\f$ and the desired set of visual features \f$\bf s^*\f$.
-
-  \return The error vector \f$\bf e\f$.
-
-*/
 vpColVector vpServo::computeError()
 {
   if (featureList.empty()) {
@@ -901,32 +699,7 @@ bool vpServo::testUpdated()
 
   return false;
 }
-/*!
 
-  Compute the control law specified using setServo(). See vpServo::vpServoType
-  for more details concerning the control laws that are available. The \ref
-  tutorial-ibvs and \ref tutorial-boost-vs are also useful to illustrate the
-  usage of this function.
-
-  The general form of the control law is the following:
-
-  \f[
-  {\bf \dot q}  = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e}
-  \f]
-
-  where :
-  - \f${\bf \dot q}\f$ is the resulting velocity command to apply to the
-  robot.
-  - the sign of the control law depends on the eye in hand or eye to hand
-  configuration.
-  - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
-  matrix and of the robot Jacobian.
-  - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-
-  To ensure continuous sequencing the computeControlLaw(double) function can
-  be used. It will ensure that the velocities that are computed are
-  continuous.
-*/
 vpColVector vpServo::computeControlLaw()
 {
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
@@ -936,8 +709,8 @@ vpColVector vpServo::computeControlLaw()
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law. "
-        "All the matrices are not correctly"
-        "initialized."));
+                             "All the matrices are not correctly"
+                             "initialized."));
     }
   }
   if (testUpdated() == false) {
@@ -1039,40 +812,6 @@ vpColVector vpServo::computeControlLaw()
   return e;
 }
 
-/*!
-  Compute the control law specified using setServo(). See vpServo::vpServoType
-  for more details concerning the control laws that are available. The \ref
-  tutorial-boost-vs is also useful to illustrate the usage of this function.
-
-  To the general form of the control law given in computeControlLaw(), we add
-  here an additional term that comes from the task sequencing approach
-  described in \cite Mansard07e equation (17). This additional term allows to
-  compute continuous velocities by avoiding abrupt changes in the command.
-
-  The form of the control law considered here is the following:
-
-  \f[
-  {\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} \mp \lambda {{\bf
-  \widehat J}_{e(0)}}^+ {{\bf e}(0)} \exp(-\mu t) \f]
-
-  where :
-  - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
-  to the robot.
-  - the sign of the control law depends on the eye in hand or eye to hand
-  configuration.
-  - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
-  matrix and of the robot Jacobian.
-  - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-  - \f$t\f$ is the time given as parameter of this method.
-  - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified
-  using setMu().
-  - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf
-  \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$. This value is internally stored
-  either at the first call of this method, or when \e t parameter is set to 0.
-
-  \param t : Time in second. When set to zero, \f${{\bf \widehat J}_{e(0)}}^+
-  {{\bf e}(0)}\f$ is refreshed internally.
-*/
 vpColVector vpServo::computeControlLaw(double t)
 {
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
@@ -1082,8 +821,8 @@ vpColVector vpServo::computeControlLaw(double t)
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-        "All the matrices are not correctly"
-        "initialized"));
+                             "All the matrices are not correctly"
+                             "initialized"));
     }
   }
   if (testUpdated() == false) {
@@ -1193,41 +932,6 @@ vpColVector vpServo::computeControlLaw(double t)
   return e;
 }
 
-/*!
-  Compute the control law specified using setServo(). See vpServo::vpServoType
-  for more details concerning the control laws that are available.
-
-  To the general form of the control law given in computeControlLaw(), we add
-  here an additional term that comes from the task sequencing approach
-  described in \cite Mansard07e equation (17). This additional term allows to
-  compute continuous velocities by avoiding abrupt changes in the command.
-
-  The form of the control law considered here is the following:
-
-  \f[
-  {\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} + \left({\bf \dot
-  e}(0) \mp \lambda {{\bf \widehat J}_{e(0)}}^+ {{\bf e}(0)}\right) \exp(-\mu
-  t) \f]
-
-  where :
-  - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply
-  to the robot.
-  - the sign of the control law depends on the eye in hand or eye to hand
-  configuration.
-  - \f$\bf J\f$ is the Jacobian of the task. It is function of the interaction
-  matrix and of the robot Jacobian.
-  - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-  - \f$t\f$ is the time given as parameter of this method.
-  - \f$\mu\f$ is a gain that is set by default to 4 and that could be modified
-  using setMu().
-  - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf
-  \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$. This value is internally stored
-  either at the first call of this method, or when \e t parameter is set to 0.
-
-  \param t : Time in second. When set to zero, \f${{\bf \widehat J}_{e(0)}}^+
-  {{\bf e}(0)}\f$ is refreshed internally. \param e_dot_init : Initial value
-  of \f${\bf \dot e}(0)\f$.
-*/
 vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
@@ -1237,8 +941,8 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-        "All the matrices are not correctly"
-        "initialized"));
+                             "All the matrices are not correctly"
+                             "initialized"));
     }
   }
   if (testUpdated() == false) {
@@ -1349,7 +1053,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 }
 
 void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
-  const vpColVector &error_, vpMatrix &P_) const
+                                         const vpColVector &error_, vpMatrix &P_) const
 {
   // Initialization
   unsigned int n = J1_.getCols();
@@ -1380,77 +1084,6 @@ void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_
   return;
 }
 
-/*!
-  Compute and return the secondary task vector according to the classic
-  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper
-  \cite Marchand05b) or the new large projection operator (see equation(24)
-  in the paper \cite Marey:2010).
-
-  \param de2dt : Value of \f$\frac{\partial {\bf e_2}}{\partial t}\f$ the
-  derivative of the secondary task \f${\bf e}_2\f$. \param
-  useLargeProjectionOperator : if true will be use the large projection
-  operator, if false the classic one (default).
-
-  \return The secondary task vector.
-
-  If the classic projection operator is used ( useLargeProjectionOperator =
-  false (default value)) this function return:
-
-  \f[
-  ({\bf I-W^+W})\frac{\partial {\bf e_2}}{\partial t}
-  \f]
-
-  Note that the secondary task vector need than to be added to the primary
-  task which can be in the general case written as: \f[
-  -\lambda {\bf W^+W {\widehat {\bf J}}_e^+({\bf s-s^*})}
-  \f]
-
-  Otherwise if the new large projection operator is used (
-  useLargeProjectionOperator = true ) this function return:
-
-  \f[
-  {\bf P}\frac{\partial {\bf e_2}}{\partial t}
-  \f]
-
-  where
-
-  \f[
-   {\bf P} =\bar{\lambda }\left ( \left \| {\bf e} \right \| \right ){\bf P}_{
-  \left \| {\bf e } \right \| } \left ( 1 - \bar{\lambda }\left ( \left \|
-  {\bf e } \right \| \right ) \right ) \left (  {\bf I-W^+W}\right ) \f]
-
-  with
-
-  \f[
-  {\bf P}_{\left \| {\bf e } \right \| } = I_{n} - \frac{1}{{\bf e }^\top {\bf
-  J_{{\bf e }} } {\bf J_{{\bf e }}^\top }{\bf e }}{\bf J_{{\bf e }}^\top }{\bf
-  e }{\bf e }^\top{\bf J_{{\bf e }} } \f]
-
-  \warning computeControlLaw() must be call prior to this function since it
-  updates the projection operators.
-
-  The following sample code shows how to use this method to compute a
-  secondary task using the classic projection operator:
-  \code
-  vpColVector v;
-  // Velocity applied to the robot vpColVector de2dt; vpServo task;
-  ...
-  v  = task.computeControlLaw(); // Compute the primary task
-  v += task.secondaryTask(de2dt) // Compute and add the secondary task using the classical projection operator
-  \endcode
-
-  The following sample code shows how to use this method to compute a
-  secondary task using the large projection operator:
-  \code
-  vpColVector v;
-  // Velocity applied to the robot vpColVector de2dt; vpServo task;
-  ...
-  v  = task.computeControlLaw(); // Compute the primary task
-  v += task.secondaryTask(de2dt, true) // Compute and add the secondary task using the large projection operator
-  \endcode
-
-  \sa computeControlLaw()
-*/
 vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLargeProjectionOperator)
 {
   vpColVector sec;
@@ -1483,83 +1116,8 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
   return sec;
 }
 
-/*!
-  Compute and return the secondary task vector according to the classic
-  projection operator \f${\bf I-W^+W}\f$ (see equation(7) in the paper
-  \cite Marchand05b) or the new large projection operator (see equation(24)
-  in the paper \cite Marey:2010).
-
-  \param e2 : Value of the secondary task \f${\bf e}_2\f$.
-  \param de2dt : Value of \f$\frac{\partial {\bf e_2}}{\partial t}\f$ the
-  derivative of the secondary task \f${\bf e}_2\f$. \param
-  useLargeProjectionOperator: if true will be use the large projection
-  operator, if false the classic one (default).
-
-  \return The secondary task vector.
-
-  If the classic projection operator is used ( useLargeProjectionOperator =
-  false (default value)) this function return:
-
-  \f[
-  -\lambda ({\bf I-W^+W}) {\bf e_2} +  ({\bf I-W^+W})\frac{\partial {\bf
-  e_2}}{\partial t} \f]
-
-  Note that the secondary task vector need than to be added to the primary
-  task which can be in the general case written as: \f[
-  -\lambda {\bf W^+W {\widehat {\bf J}}_e^+({\bf s-s^*})}
-  \f]
-
-
-  Otherwise if the new large projection operator is used (
-  useLargeProjectionOperator = true ) this function return:
-
-  \f[
-  -\lambda {\bf P} {\bf e_2} + {\bf P}\frac{\partial {\bf e_2}}{\partial t}
-  \f]
-
-  where
-
-  \f[
-   {\bf P} =\bar{\lambda }\left ( \left \| {\bf e} \right \| \right ){\bf P}_{
-  \left \| {\bf e } \right \| } \left ( 1 - \bar{\lambda }\left ( \left \|
-  {\bf e } \right \| \right ) \right ) \left (  {\bf I-W^+W}\right ) \f]
-
-  with
-
-  \f[
-  {\bf P}_{\left \| {\bf e } \right \| } = I_{n} - \frac{1}{{\bf e }^\top {\bf
-  J_{{\bf e }} } {\bf J_{{\bf e }}^\top }{\bf e }}{\bf J_{{\bf e }}^\top }{\bf
-  e }{\bf e }^\top{\bf J_{{\bf e }} } \f]
-
-  \warning computeControlLaw() must be call prior to this function since it
-  updates the projection operators.
-
-  The following sample code shows how to use this method to compute a
-  secondary task using the classical projection operator:
-  \code
-  vpColVector v;
-  // Velocity applied to the robot vpColVector e2; vpColVector de2dt; vpServo
-  task;
-  ...
-  v  = task.computeControlLaw();     // Compute the primary task
-  v += task.secondaryTask(e2, de2dt) // Compute and add the secondary task using the classical projection operator
-  \endcode
-
-  The following sample code shows how to use this method to compute a
-  secondary task  using the large projection operator:
-  \code
-  vpColVector v;
-  // Velocity applied to the robot vpColVector e2; vpColVector de2dt; vpServo
-  task;
-  ...
-  v  = task.computeControlLaw();     // Compute the primary task
-  v += task.secondaryTask(e2, de2dt, true) // Compute and add the secondary task using the large projection operator
-  \endcode
-
-  \sa computeControlLaw()
-*/
 vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
-  const bool &useLargeProjectionOperator)
+                                   const bool &useLargeProjectionOperator)
 {
   vpColVector sec;
 
@@ -1594,53 +1152,9 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
   return sec;
 }
 
-/*!
-  Compute and return the secondary task vector for joint limit avoidance
-  \cite Marey:2010b using the new large projection operator (see equation(24)
-  in the paper \cite Marey:2010). The robot avoids the joint limits very
-  smoothly even when the main task constrains all the robot degrees of freedom.
-
-  \param q : Actual joint positions vector
-
-  \param dq : Actual joint velocities vector
-
-  \param qmin : Vector containing the low limit value of each joint in the chain.
-  \param qmax : Vector containing the high limit value of each joint in the chain.
-
-  \param rho : tuning paramenter  \f${\left [ 0,\frac{1}{2} \right]}\f$
-  used to define the safe configuration for the joint. When the joint
-  angle value cross the max or min boundaries (\f${ q_{l_{0}}^{max} }\f$ and
-  \f${q_{l_{0}}^{min}}\f$) the secondary task is actived gradually.
-
-  \param rho1 : tuning paramenter \f${\left ] 0,1 \right ]}\f$ to compute the external
-  boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
-  limits. Here the secondary task it completely activated with the highest gain.
-
-  \param lambda_tune : value \f${\left [ 0,1 \right ]}\f$ used to tune the
-  difference in magnitude between the absolute value of the elements of the
-  primary task and the elements of the secondary task. (See equation (17)
-  \cite Marey:2010b )
-
-  \code
-  vpServo task;
-  vpColVector qmin;
-  vpColVector qmax;
-  vpColVector q;
-  vpColVector dq;
-  // Fill vector qmin and qmax with min and max limits of the joints (same joint order than vector q).
-  // Update vector of joint position q and velocities dq;
-  ...
-  // Compute the velocity corresponding to the visual servoing
-  vpColVector  v = task.computeControlLaw();
-  // Compute and add the secondary task for the joint limit avoidance
-  // using the large projection operator
-  v += task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax)
-  \endcode
-
- */
 vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
-  const vpColVector &qmin, const vpColVector &qmax,
-  const double &rho, const double &rho1, const double &lambda_tune)
+                                                      const vpColVector &qmin, const vpColVector &qmax,
+                                                      const double &rho, const double &rho1, const double &lambda_tune)
 {
   unsigned int const n = J1.getCols();
 
@@ -1656,7 +1170,7 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
     vpERROR_TRACE("Dimension vector q or dq does not correspont to the "
       "number of jacobian columns");
     throw(vpServoException(vpServoException::dimensionError, "Dimension vector q or dq does not correspont to "
-      "the number of jacobian columns"));
+                           "the number of jacobian columns"));
   }
 
   double lambda_l = 0.0;
@@ -1718,117 +1232,4 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
     q2 = q2 + q2_i;
   }
   return q2;
-}
-
-/*!
-  Return the projection operator \f${\bf I}-{\bf W}^+{\bf W}\f$. This
-  operator is updated after a call of computeControlLaw().
-
-  \code
-  vpServo task;
-  ...
-  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix I_WpW = task.getI_WpW(); // Get the projection operator
-  \endcode
-  \sa getWpW()
- */
-vpMatrix vpServo::getI_WpW() const { return I_WpW; }
-
-/*!
-  Return the large projection operator. This operator is updated
-  after a call of computeControlLaw().
-
-  \code
-  vpServo task;
-  ...
-  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix P = task.getP();          // Get the large projection operator
-  \endcode
-  \sa getP()
- */
-vpMatrix vpServo::getLargeP() const { return P; }
-
-/*!
-  Return the task jacobian \f$J\f$. The task jacobian is updated after a call
-  of computeControlLaw().
-
-  In the general case, the task jacobian is given by \f${\bf J} = {\widehat
-  {\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
-  \code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing vpMatrix
-  J = task.getTaskJacobian(); // Get the task jacobian used to compute v
-  \endcode
-  \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
- */
-vpMatrix vpServo::getTaskJacobian() const { return J1; }
-
-/*!
-  Return the pseudo inverse of the task jacobian \f$J\f$.
-
-  In the general case, the task jacobian is given by \f${\bf J} = {\widehat
-  {\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
-
-  The task jacobian and its pseudo inverse are updated after a call of computeControlLaw().
-
-  \return Pseudo inverse \f${J}^{+}\f$ of the task jacobian.
-  \code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw();          // Compute the velocity corresponding to the visual servoing
-  vpMatrix Jp = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v
-  \endcode
-
-  \sa getTaskJacobian()
- */
-vpMatrix vpServo::getTaskJacobianPseudoInverse() const { return J1p; }
-/*!
-  Return the rank of the task jacobian. The rank is updated after a call of computeControlLaw().
-
-  \code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  unsigned int rank = task.getTaskRank();   // Get the rank of the task jacobian
-  \endcode
- */
-unsigned int vpServo::getTaskRank() const { return rankJ1; }
-
-/*!
-  Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is
-  updated after a call of computeControlLaw().
-
-  When the dimension of the task is equal to the number of degrees of freedom
-  available \f${\bf W^+W = I}\f$.
-
-  \code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpMatrix  WpW = task.getWpW(); // Get the projection operator
-  \endcode
-  \sa getI_WpW()
- */
-vpMatrix vpServo::getWpW() const { return WpW; }
-
-/*!
- * Return pseudo-inverse threshold used to test the singular values. If
- * a singular value is lower than this threshold we consider that the
- * matrix is not full rank.
- *
- * \sa setPseudoInverseThreshold()
- */
-double vpServo::getPseudoInverseThreshold() const { return m_pseudo_inverse_threshold; }
-
-/*!
- * Set the pseudo-inverse threshold used to test the singular values. If
- * a singular value is lower than this threshold we consider that the
- * matrix is not full rank.
- * \param pseudo_inverse_threshold : Value to use. Default value is set to 1e-6.
- * \sa getPseudoInverseThreshold()
- */
-void vpServo::setPseudoInverseThreshold(double pseudo_inverse_threshold)
-{
-  m_pseudo_inverse_threshold = pseudo_inverse_threshold;
 }

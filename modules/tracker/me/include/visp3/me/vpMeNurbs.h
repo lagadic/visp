@@ -33,10 +33,10 @@
  */
 
 /*!
-  \file vpMeNurbs.h
-  \brief Moving edges on a form reprsented by a NURBS (Non Uniform Rational
-  B-Spline)
-*/
+ * \file vpMeNurbs.h
+ * \brief Moving edges on a form represented by a NURBS (Non Uniform Rational
+ * B-Spline)
+ */
 
 #ifndef vpMeNurbs_HH
 #define vpMeNurbs_HH
@@ -51,80 +51,79 @@
 #include <math.h>
 
 /*!
-  \class vpMeNurbs
-
-  \ingroup module_me
-
-  \brief Class that tracks in an image a edge defined by a Nurbs.
-
-  The advantage of this class is that it enables to track an edge whose
-  equation is not known in advance. At each iteration, the Nurbs corresponding
-  to the edge is computed.
-
-  It is possible to have a direct access to the nurbs. It is indeed a public
-  parameter.
-
-  The code below shows how to use this class.
-\code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/me/vpMeNurbs.h>
-
-int main()
-{
-  vpImage<unsigned char> I(240, 320);
-
-  // Fill the image with a black rectangle
-  I = 0;
-  for (int i = 100; i < 180; i ++) {
-    for (int j = 0; j < 320; j ++) {
-      I[i][j] = 255;
-    }
-  }
-
-  // Set the moving-edges tracker parameters
-  vpMe me;
-  me.setRange(25);
-  me.setPointsToTrack(20);
-  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
-  me.setThreshold(20);
-  me.setSampleStep(10);
-
-  // Initialize the moving-edges tracker parameters
-  vpMeNurbs meNurbs;
-  meNurbs.setNbControlPoints(4);
-  meNurbs.setMe(&me);
-
-  // Initialize the location of the edge to track (here a horizontal line
-  std::list<vpImagePoint> ipList; //List of points belonginig to the edge
-  ipList.push_back(vpImagePoint(110,119));
-  ipList.push_back(vpImagePoint(140,119));
-  ipList.push_back(vpImagePoint(160,119));
-  ipList.push_back(vpImagePoint(170,119));
-
-  meNurbs.initTracking(I, ipList);
-
-  while ( 1 )
-  {
-    // ... Here the code to read or grab the next image.
-
-    // Track the line.
-    meNurbs.track(I);
-  }
-  return 0;
-}
-\endcode
-
-  \note It is possible to display the nurbs as an overlay. For that you
-  must use the display function of the class vpMeNurbs.
-
-  \note In case of an edge which is not smooth, it can be interesting to use
-  the canny detection to find the extremities. In this case, use the method
-  setEnableCannyDetection to enable it.
-
-  \warning : This function requires OpenCV.
-*/
-
+ * \class vpMeNurbs
+ *
+ * \ingroup module_me
+ *
+ * \brief Class that tracks in an image a edge defined by a Nurbs.
+ *
+ * The advantage of this class is that it enables to track an edge whose
+ * equation is not known in advance. At each iteration, the Nurbs corresponding
+ * to the edge is computed.
+ *
+ * It is possible to have a direct access to the nurbs. It is indeed a public
+ * parameter.
+ *
+ * The code below shows how to use this class.
+ * \code
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/core/vpImagePoint.h>
+ * #include <visp3/me/vpMeNurbs.h>
+ *
+ * int main()
+ * {
+ *   vpImage<unsigned char> I(240, 320);
+ *
+ *   // Fill the image with a black rectangle
+ *   I = 0;
+ *   for (int i = 100; i < 180; i ++) {
+ *     for (int j = 0; j < 320; j ++) {
+ *       I[i][j] = 255;
+ *     }
+ *   }
+ *
+ *   // Set the moving-edges tracker parameters
+ *   vpMe me;
+ *   me.setRange(25);
+ *   me.setPointsToTrack(20);
+ *   me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+ *   me.setThreshold(20);
+ *   me.setSampleStep(10);
+ *
+ *   // Initialize the moving-edges tracker parameters
+ *   vpMeNurbs meNurbs;
+ *   meNurbs.setNbControlPoints(4);
+ *   meNurbs.setMe(&me);
+ *
+ *   // Initialize the location of the edge to track (here a horizontal line
+ *   std::list<vpImagePoint> ipList; //List of points belonging to the edge
+ *   ipList.push_back(vpImagePoint(110,119));
+ *   ipList.push_back(vpImagePoint(140,119));
+ *   ipList.push_back(vpImagePoint(160,119));
+ *   ipList.push_back(vpImagePoint(170,119));
+ *
+ *   meNurbs.initTracking(I, ipList);
+ *
+ *   while ( 1 )
+ *   {
+ *     // ... Here the code to read or grab the next image.
+ *
+ *     // Track the line.
+ *     meNurbs.track(I);
+ *   }
+ *   return 0;
+ * }
+ * \endcode
+ *
+ * \note It is possible to display the nurbs as an overlay. For that you
+ * must use the display function of the class vpMeNurbs.
+ *
+ * \note In case of an edge which is not smooth, it can be interesting to use
+ * the canny detection to find the extremities. In this case, use the method
+ * setEnableCannyDetection to enable it.
+ *
+ * \warning : This function requires OpenCV.
+ */
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -260,7 +259,7 @@ public:
   /*!
    * Seek the extremities of the edge thanks to a canny edge detection.
    * The edge detection enable to find the points belonging to the edge.
-   * The any vpMeSite  are initialized at this points.
+   * The any vpMeSite are initialized at this points.
    *
    * This method is useful when the edge is not smooth.
    *
