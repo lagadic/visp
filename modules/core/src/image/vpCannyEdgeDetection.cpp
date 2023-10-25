@@ -332,6 +332,64 @@ getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int
   }
   return absoluteTheta;
 }
+
+/**
+ * \brief Search in the direction of the gradient for the highest value of the gradient.
+ *
+ * \param[in] dIx The gradient image along the x-axis.
+ * \param[in] dIy The gradient image along the y-axis.
+ * \param[in] row The row of the initial point that is considered.
+ * \param[in] col The column of the initial point that is considered.
+ * \param[in] thetaQuadrant The gradient orientation quadrant of the initial point.
+ * \param[in] dRowGrad The direction of the gradient for the vertical direction.
+ * \param[in] dColGrad The direction of the gradient for the horizontal direction.
+ * \param[out] pixelsSeen The list of pixels that are of same gradient orientation quadrant.
+ * \param[out] bestPixel The pixel having the highest absolute value of gradient.
+ * \param[out] bestGrad The highest absolute value of gradient.
+ */
+void
+searchForBestGradientInGradientDirection(const vpImage<float> &dIx, const vpImage<float> &dIy,
+const int &row, const int &col, const int &thetaQuadrant, const int &dRowGrad, const int &dColGrad,
+std::vector<std::pair<int, int> > &pixelsSeen, std::pair<int, int> &bestPixel, float &bestGrad)
+{
+  bool isGradientInTheSameDirection = true;
+  int rowCandidate = row + dRowGrad;
+  int colCandidate = col + dColGrad;
+
+  while (isGradientInTheSameDirection) {
+    // Getting the gradients around the edge point
+    float gradPlus = getManhattanGradient(dIx, dIy, rowCandidate, colCandidate);
+    if (std::abs(gradPlus) < std::numeric_limits<float>::epsilon()) {
+      // The gradient is almost null => ignoring the point
+      isGradientInTheSameDirection = false;
+      break;
+    }
+    int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
+    int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
+    float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
+    int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
+    if (thetaQuadrantCandidate != thetaQuadrant) {
+      isGradientInTheSameDirection = false;
+      break;
+    }
+
+    std::pair<int, int> pixelCandidate(rowCandidate, colCandidate);
+    if (gradPlus > bestGrad) {
+      // The gradient is higher with the next pixel candidate
+      // Saving it
+      bestGrad = gradPlus;
+      pixelsSeen.push_back(bestPixel);
+      bestPixel = pixelCandidate;
+    }
+    else {
+      // Best pixel is still the best
+      pixelsSeen.push_back(pixelCandidate);
+    }
+    rowCandidate += dRowGrad;
+    colCandidate += dColGrad;
+  }
+}
+
 void
 vpCannyEdgeDetection::performEdgeThining()
 {
@@ -358,45 +416,16 @@ vpCannyEdgeDetection::performEdgeThining()
       int dColGradPlus = 0, dColGradMinus = 0;
       int thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
 
-      bool isGradientInTheSameDirection = true;
       std::vector<std::pair<int, int> > pixelsSeen;
       std::pair<int, int> bestPixel(row, col);
       float bestGrad = grad;
-      int rowCandidate = row + dRowGradPlus;
-      int colCandidate = col + dColGradPlus;
 
-      while (isGradientInTheSameDirection) {
-        // Getting the gradients around the edge point
-        float gradPlus = getManhattanGradient(dIx, dIy, rowCandidate, colCandidate);
-        if (std::abs(gradPlus) < std::numeric_limits<float>::epsilon()) {
-          // The gradient is almost null => ignoring the point
-          isGradientInTheSameDirection = false;
-          break;
-        }
-        int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
-        int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
-        float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
-        int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
-        if (thetaQuadrantCandidate != thetaQuadrant) {
-          isGradientInTheSameDirection = false;
-          break;
-        }
+      // iterate over all the pixels having the same gradient orientation quadrant
+      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradPlus, dColGradPlus,
+        pixelsSeen, bestPixel, bestGrad);
 
-        std::pair<int, int> pixelCandidate(rowCandidate, colCandidate);
-        if (gradPlus > bestGrad) {
-          // The gradient is higher with the nex pixel candidate
-          // Saving it
-          bestGrad = gradPlus;
-          pixelsSeen.push_back(bestPixel);
-          bestPixel = pixelCandidate;
-        }
-        else {
-          // Best pixel is still the best
-          pixelsSeen.push_back(pixelCandidate);
-        }
-        rowCandidate += dRowGradPlus;
-        colCandidate += dColGradPlus;
-      }
+      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradMinus, dColGradMinus,
+        pixelsSeen, bestPixel, bestGrad);
 
       // Keeping the edge point that has the highest gradient
       m_edgeCandidateAndGradient[bestPixel] = bestGrad;
