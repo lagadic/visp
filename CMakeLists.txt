@@ -272,6 +272,19 @@ if(NOT IOS)
   include(cmake/VISPDetectPython.cmake)
 endif()
 
+# --- Python Bindings requirements ---
+find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
+if(Python_FOUND)
+  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
+endif()
+find_package(pybind11)
+if(pybind11_FOUND)
+  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
+endif()
+message("${pybind11_FOUND}")
+# ---
+
+
 include_directories(${VISP_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
@@ -412,15 +425,9 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON  "" "" "Enable Python support" "" ON )
-VP_OPTION(BUILD_PYTHON_DOC  "" "" "Build the documentation for the Python bindings" "" ON )
+VP_OPTION(BUILD_PYTHON  "" "" "Enable Python support" "" ON IF (VISP_PYTHON_BINDINGS_EXECUTABLE AND VISP_PYBIND11_DIR) )
+VP_OPTION(BUILD_PYTHON_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON )
 
-
-VP_OPTION(BUILD_FAT_JAVA_LIB  "" "" "Create Java wrapper exporting all functions of ViSP library (requires static build of ViSP modules)" "" ANDROID IF NOT BUILD_SHARED_LIBS)
-VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"          "" OFF IF ANDROID )
-VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
-VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
-VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -1483,7 +1490,7 @@ endif()
 
 # ========================== java ==========================
 status("")
-status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE "no")
+status("  Python (for java build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE "no")
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
@@ -1492,6 +1499,18 @@ if(BUILD_JAVA OR BUILD_visp_java)
   if(NOT ANDROID)
     status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE "no")
   endif()
+endif()
+
+# ========================== Python ==========================
+status("")
+status("  Building Python wrapper :"   BUILD_PYTHON    THEN "yes" ELSE "no")
+if(BUILD_PYTHON)
+  status("    Python interpreter:"     Python_FOUND   THEN "${Python_EXECUTABLE}" ELSE "no")
+  status("    Pybind11:"               pybind11_FOUND THEN "${pybind11_DIR}" ELSE "no")
+  status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
+  status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
+  status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
+
 endif()
 
 # ============================ Options ===========================

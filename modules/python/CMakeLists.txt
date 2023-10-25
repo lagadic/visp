@@ -1,9 +1,12 @@
 
+
+# Prevent CMAKE from interpreting this directory as a standard module.
 if(NOT VISP_DIR)
   return()
 endif()
 
-
+# As we need all the others modules to already be configured,
+# we should configure the python directory by add_subdirectory("modules/python") in the main cmake.
 find_package(VISP REQUIRED)
 
 # this avoids non-active conda from getting picked anyway on Windows
@@ -11,11 +14,7 @@ set(Python_FIND_REGISTRY LAST)
 # Use environment variable PATH to decide preference for Python
 set(Python_FIND_VIRTUALENV FIRST)
 set(Python_FIND_STRATEGY LOCATION)
-find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
-find_package(pybind11 REQUIRED)
 
-
-message("${VISP_INCLUDE_DIRS}")
 # TODO: check for pip
 if(Python_FOUND AND pybind11_FOUND) # We have Python and pybind11, we can install module
 
@@ -66,7 +65,6 @@ string(JSON json_config_file SET ${json_config_file} "include_dirs" "${json_incl
 
 # For each bound module, add its headers to config file
 foreach(module ${python_bound_modules})
-  message("${python_bound_modules}")
   string(REPLACE "visp_" "" clean_module_name ${module})
 
   string(JSON json_config_file SET ${json_config_file} ${clean_module_name} "{}")
@@ -78,7 +76,6 @@ foreach(module ${python_bound_modules})
     MATH(EXPR header_count "${header_count}+1")
   endforeach()
   string(JSON json_config_file SET ${json_config_file} ${clean_module_name} "headers" "${json_header_list}")
-  #file(TOUCH "${cpp_src}")
 endforeach()
 
 file(WRITE ${json_config_file_path} "${json_config_file}")
@@ -113,6 +110,19 @@ add_subdirectory(stubs)
 
 # Step 5: Build documentation
 
+
+
+
+# Export Variables to parent cmake
+set(VISP_PYTHON_BOUND_MODULES "")
+foreach(module ${python_bound_modules})
+  string(REPLACE "visp_" "" clean_module_name ${module})
+  list(APPEND VISP_PYTHON_BOUND_MODULES "${clean_module_name}")
+endforeach()
+set(VISP_PYTHON_BOUND_MODULES "${VISP_PYTHON_BOUND_MODULES}" PARENT_SCOPE)
+set(VISP_PYTHON_GENERATED_CONFIG_FILE "${json_config_file_path}" PARENT_SCOPE)
+
+set(VISP_PYTHON_PACKAGE_VERSION "${VISP_PYTHON_VERSION}" PARENT_SCOPE)
 
 
 

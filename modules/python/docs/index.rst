@@ -11,7 +11,7 @@ Todos and known issues
 .. toctree::
     :glob:
 
-    static/*
+    todos.rst
     api.rst
 
 
