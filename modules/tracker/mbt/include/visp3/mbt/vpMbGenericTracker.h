@@ -782,8 +782,13 @@ private:
 #endif
     using vpMbDepthDenseTracker::setPose;
 #endif
-    virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+    virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
       const vpHomogeneousMatrix &cdMo) override;
+#else
+    virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
+      const vpHomogeneousMatrix &cdMo);
+#endif
   };
 #ifdef VISP_HAVE_NLOHMANN_JSON
   friend void to_json(nlohmann::json &j, const TrackerWrapper &t);

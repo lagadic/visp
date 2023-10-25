@@ -468,7 +468,7 @@ protected:
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);
   virtual void reinit(const vpImage<unsigned char> &I);
-  virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
+  virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
                        const vpHomogeneousMatrix &cdMo);
   //@}
 };
