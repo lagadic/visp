@@ -6,6 +6,10 @@ from visp_python_bindgen.header import HeaderFile
 from visp_python_bindgen.utils import *
 from visp_python_bindgen.gen_report import Report
 
+
+
+
+
 class Submodule():
   def __init__(self, name: str, include_path: Path, config_file_path: Path, submodule_file_path: Path):
     self.name = name
@@ -17,6 +21,12 @@ class Submodule():
     self.headers = self._get_headers()
     assert self.include_path.exists(), f'Submodule path {self.include_path} not found'
 
+  def set_dependencies_from_dict(self, dict_modules: Dict[str, 'Submodule'], dep_names: List[str]):
+    deps = []
+    for dep_name in dep_names:
+      if dep_name in dict_modules:
+        deps.append(dict_modules[dep_name])
+    self.dependencies = deps
   def _get_headers(self) -> List[HeaderFile]:
     headers = []
     for include_file in self.include_path.iterdir():
@@ -196,7 +206,7 @@ Bindings for methods and enum values
 
 def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
   modules_input_data = GeneratorConfig.module_data
-  result = []
+  result: Dict[str, Submodule] = {}
   for module_data in modules_input_data:
     headers = module_data.headers
     if len(headers) == 0:
@@ -207,7 +217,23 @@ def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
     hh = "\n".join(map(lambda s: str(s), headers))
     assert all(map(lambda header_path: header_path.parent == include_dir, headers)), f'Found headers in different directory, this case is not yet handled. Headers = {hh}'
     submodule = Submodule(module_data.name, include_dir, config_path, generate_path / f'{module_data.name}.cpp')
-    print(submodule)
-    result.append(submodule)
+    result[module_data.name] = submodule
 
-  return result
+  # Second pass to link dependencies
+  for module_data in modules_input_data:
+    if module_data.name in result:
+      result[module_data.name].set_dependencies_from_dict(result, module_data.dependencies)
+  return sort_submodules(list(result.values()))
+
+
+def sort_submodules(submodules: List[Submodule]) -> List[Submodule]:
+  res = []
+  submodules_tmp = submodules.copy()
+  while len(res) < len(submodules):
+    can_add = lambda submodule: all(map(lambda dep: dep in res, submodule.dependencies))
+    res_round = list(filter(can_add, submodules_tmp))
+    submodules_tmp = [submodule for submodule in submodules_tmp if submodule not in res_round]
+    res += res_round
+
+  print(list(map(lambda sub: sub.name, res)))
+  return res

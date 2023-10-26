@@ -10,6 +10,7 @@ import json
 class ModuleInputData(object):
   name: str
   headers: List[Path]
+  dependencies: List[str]
 
 
 @dataclass
@@ -86,8 +87,6 @@ class GeneratorConfig(object):
       'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
-      '__cplusplus' : '201103L', # To silence OpenCV warnings,
-      #'OPENCV_ALL_HPP': None, # Don't preprocess the full opencv headers
     },
     never_defined=[
       'VISP_BUILD_DEPRECATED_FUNCTIONS', # Do not bind deprecated functions
@@ -131,6 +130,12 @@ class GeneratorConfig(object):
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
+
+      defines = main_config.get('defines')
+      if defines is not None:
+        for define_key in defines:
+          GeneratorConfig.pcpp_config.defines[define_key] = defines[define_key]
+
       xml_doc_path = main_config.get('xml_doc_path')
       if xml_doc_path is not None:
         GeneratorConfig.xml_doc_path = Path(xml_doc_path)
@@ -139,7 +144,8 @@ class GeneratorConfig(object):
       source_dir = Path(main_config.get('source_dir'))
       for module_name in modules_dict:
         headers = map(lambda s: Path(s), modules_dict[module_name].get('headers'))
+        deps = modules_dict[module_name].get('dependencies')
 
         # Include only headers that are in the VISP source directory
         headers = list(filter(lambda h: source_dir in h.parents, headers))
-        GeneratorConfig.module_data.append(ModuleInputData(module_name, headers))
+        GeneratorConfig.module_data.append(ModuleInputData(module_name, headers, deps))
