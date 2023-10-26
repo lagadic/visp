@@ -195,16 +195,19 @@ Bindings for methods and enum values
 
 
 def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
-  modules = ['core', 'imgproc', 'vision', 'visual_features', 'vs', 'sensor', 'io', 'detection', 'robot', 'gui', 'ar']
+  modules_input_data = GeneratorConfig.module_data
   result = []
-  for module in modules:
-    result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/{module}/include/visp3/{module}'), config_path, generate_path / f'{module}.cpp'))
-  tracking_modules = ['tt', 'tt_mi', 'klt', 'me', 'blob', ('dnn', 'dnn_tracker'), 'mbt']
-  for module in tracking_modules:
-    if isinstance(module, str):
-      result.append(Submodule(module, Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module}/include/visp3/{module}'), config_path, generate_path / f'{module}.cpp'))
-    else:
-      result.append(Submodule(module[1], Path(f'/home/sfelton/software/visp-sfelton/modules/tracker/{module[0]}/include/visp3/{module[1]}'), config_path, generate_path / f'{module[1]}.cpp'))
+  for module_data in modules_input_data:
+    headers = module_data.headers
+    if len(headers) == 0:
+      print(f'Module {module_data.name} has no input headers, skipping!')
 
+      continue
+    include_dir = headers[0].parent
+    hh = "\n".join(map(lambda s: str(s), headers))
+    assert all(map(lambda header_path: header_path.parent == include_dir, headers)), f'Found headers in different directory, this case is not yet handled. Headers = {hh}'
+    submodule = Submodule(module_data.name, include_dir, config_path, generate_path / f'{module_data.name}.cpp')
+    print(submodule)
+    result.append(submodule)
 
   return result

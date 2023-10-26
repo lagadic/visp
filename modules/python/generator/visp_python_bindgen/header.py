@@ -88,14 +88,16 @@ class HeaderFile():
       if self.documentation_holder_path is None:
         self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
-  def run_preprocessor(self): # TODO: run without generating a new file
+  def run_preprocessor(self):
     tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
     tmp_dir.mkdir(exist_ok=True)
     tmp_file_path = tmp_dir / (self.path.name + '.in')
     preprocessor_output_path = tmp_dir / (self.path.name)
     tmp_file_content = []
+
+    # Includes that should be appended at the start of every file
     forced_includes = [
-      'visp3/core/vpConfig.h',
+      'visp3/core/vpConfig.h', # Always include vpConfig: ensure that VISP macros are correctly defined
       'opencv2/opencv_modules.hpp'
     ]
     for include in forced_includes:

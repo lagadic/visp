@@ -6,6 +6,11 @@ from dataclasses import dataclass
 import json
 
 
+@dataclass
+class ModuleInputData(object):
+  name: str
+  headers: List[Path]
+
 
 @dataclass
 class PreprocessorConfig(object):
@@ -94,6 +99,10 @@ class GeneratorConfig(object):
     other_args=["--passthru-unfound-includes"] #"--passthru-comments"
   )
 
+  xml_doc_path: Optional[Path] = None
+
+  module_data: List[ModuleInputData] = []
+
   @staticmethod
   def _matches_regex_in_list(s: str, regexes: List[str]) -> bool:
     return any(map(lambda regex: re.match(regex, s) is not None, regexes))
@@ -122,3 +131,15 @@ class GeneratorConfig(object):
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
+      xml_doc_path = main_config.get('xml_doc_path')
+      if xml_doc_path is not None:
+        GeneratorConfig.xml_doc_path = Path(xml_doc_path)
+
+      modules_dict = main_config.get('modules')
+      source_dir = Path(main_config.get('source_dir'))
+      for module_name in modules_dict:
+        headers = map(lambda s: Path(s), modules_dict[module_name].get('headers'))
+
+        # Include only headers that are in the VISP source directory
+        headers = list(filter(lambda h: source_dir in h.parents, headers))
+        GeneratorConfig.module_data.append(ModuleInputData(module_name, headers))

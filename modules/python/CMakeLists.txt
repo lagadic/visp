@@ -57,11 +57,17 @@ foreach(include_dir ${VISP_INCLUDE_DIRS})
 endforeach()
 string(JSON json_config_file SET ${json_config_file} "include_dirs" "${json_include_dirs}")
 
+string(JSON json_config_file SET ${json_config_file} "xml_doc_path" "\"${VISP_DOC_DIR}/xml\"")
+string(JSON json_config_file SET ${json_config_file} "build_dir" "\"${CMAKE_BINARY_DIR}\"")
+string(JSON json_config_file SET ${json_config_file} "source_dir" "\"${CMAKE_SOURCE_DIR}\"")
+
+
 # For each bound module, add its headers to config file
+set(json_modules "{}")
 foreach(module ${python_bound_modules})
   string(REPLACE "visp_" "" clean_module_name ${module})
 
-  string(JSON json_config_file SET ${json_config_file} ${clean_module_name} "{}")
+  string(JSON json_modules SET ${json_modules} ${clean_module_name} "{}")
 
   set(json_header_list "[]")
   set(header_count 0)
@@ -69,8 +75,10 @@ foreach(module ${python_bound_modules})
     string(JSON json_header_list SET ${json_header_list} "${header_count}" "\"${module_header}\"")
     MATH(EXPR header_count "${header_count}+1")
   endforeach()
-  string(JSON json_config_file SET ${json_config_file} ${clean_module_name} "headers" "${json_header_list}")
+  string(JSON json_modules SET ${json_modules} ${clean_module_name} "headers" "${json_header_list}")
 endforeach()
+string(JSON json_config_file SET ${json_config_file} "modules" ${json_modules})
+
 
 file(WRITE ${json_config_file_path} "${json_config_file}")
 
@@ -85,14 +93,17 @@ file(GLOB config_files "${CMAKE_CURRENT_SOURCE_DIR}/config/*.json")
 file(GLOB_RECURSE python_sources "${CMAKE_CURRENT_SOURCE_DIR}/generator/visp_python_bindgen/*.py")
 set(pip_files "${CMAKE_CURRENT_SOURCE_DIR}/generator/pyproject.toml")
 
-
 add_custom_command(
   OUTPUT ${python_bindings_cpp_src}
   COMMAND ${Python_EXECUTABLE} -m pip install  ${_pip_args} -v ${bindgen_package_location}
   COMMAND ${Python_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
   DEPENDS ${python_bound_modules} ${json_config_file_path} ${config_files} ${python_sources} ${pip_files}
 )
-add_custom_target(visp_python_bindings_generator_run DEPENDS ${python_bindings_cpp_src})
+add_custom_target(
+  visp_python_bindings_generator_run
+  DEPENDS ${python_bindings_cpp_src}
+
+)
 
 set(VISP_PYTHON_VERSION "${VISP_VERSION}")
 # Step 3: Compile and install bindings as a python package

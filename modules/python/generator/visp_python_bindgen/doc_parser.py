@@ -13,6 +13,7 @@ except ImportError:
   import_failed = True
 
 from visp_python_bindgen.utils import *
+from visp_python_bindgen.generator_config import GeneratorConfig
 
 class DocumentationObjectKind(Enum):
   '''
@@ -23,14 +24,13 @@ class DocumentationObjectKind(Enum):
   Method = 'method'
 
 class DocumentationData(object):
-  documentation_xml_location: Optional[Path] = Path('/home/sfelton/software/visp_build/doc/xml')
 
   @staticmethod
   def get_xml_path_if_exists(name: str, kind: DocumentationObjectKind) -> Optional[Path]:
     if import_failed:
       return None
 
-    xml_root = DocumentationData.documentation_xml_location
+    xml_root = GeneratorConfig.xml_doc_path
     if xml_root is None or not xml_root.exists():
       return None
     p = None
@@ -227,7 +227,7 @@ class DocumentationHolder(object):
   def __init__(self, path: Optional[Path], env_mapping: Dict[str, str]):
     self.xml_path = path
     self.elements = None
-    if not import_failed and DocumentationData.documentation_xml_location is not None:
+    if not import_failed and GeneratorConfig.xml_doc_path is not None:
       if not self.xml_path.exists():
         print(f'Could not find documentation when looking in {str(path)}')
       else:
