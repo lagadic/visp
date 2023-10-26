@@ -9,14 +9,8 @@ endif()
 # we should configure the python directory by add_subdirectory("modules/python") in the main cmake.
 find_package(VISP REQUIRED)
 
-# this avoids non-active conda from getting picked anyway on Windows
-set(Python_FIND_REGISTRY LAST)
-# Use environment variable PATH to decide preference for Python
-set(Python_FIND_VIRTUALENV FIRST)
-set(Python_FIND_STRATEGY LOCATION)
 
 # TODO: check for pip
-if(Python_FOUND AND pybind11_FOUND) # We have Python and pybind11, we can install module
 
 # Set pip args
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
@@ -109,6 +103,9 @@ add_subdirectory(bindings)
 add_subdirectory(stubs)
 
 # Step 5: Build documentation
+if(BUILD_PYTHON_DOC)
+  add_subdirectory(docs)
+endif()
 
 
 
@@ -123,9 +120,3 @@ set(VISP_PYTHON_BOUND_MODULES "${VISP_PYTHON_BOUND_MODULES}" PARENT_SCOPE)
 set(VISP_PYTHON_GENERATED_CONFIG_FILE "${json_config_file_path}" PARENT_SCOPE)
 
 set(VISP_PYTHON_PACKAGE_VERSION "${VISP_PYTHON_VERSION}" PARENT_SCOPE)
-
-
-
-endif()
-
-#todo : Run generator in an initial pass, depends on ConfigFile and vpConfig.h

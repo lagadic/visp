@@ -273,6 +273,13 @@ if(NOT IOS)
 endif()
 
 # --- Python Bindings requirements ---
+
+# this avoids non-active conda from getting picked anyway on Windows
+set(Python_FIND_REGISTRY LAST)
+# Use environment variable PATH to decide preference for Python
+set(Python_FIND_VIRTUALENV FIRST)
+set(Python_FIND_STRATEGY LOCATION)
+
 find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
 if(Python_FOUND)
   set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")

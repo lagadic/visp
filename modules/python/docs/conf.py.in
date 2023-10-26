@@ -66,17 +66,7 @@ add_module_names = False # Remove namespaces from class/method signatures
 
 
 import visp
-from types import ModuleType
-module_names = []
-for k in visp.__dict__:
-  if isinstance(visp.__dict__[k], ModuleType):
-    module_names.append(k)
 
-all_modules = '\\   '.join(f'visp.{module_name}' for module_name in module_names)
-
-rst_prolog = f"""
-.. |all_modules| replace:: visp.core
-"""
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

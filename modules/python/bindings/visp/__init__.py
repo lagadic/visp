@@ -12,4 +12,4 @@ import _visp
 for k in _visp.__dict__:
   from types import ModuleType
   if isinstance(_visp.__dict__[k], ModuleType):
-    sys.modules[f'{__name__}.{k}'] = f'{__name__}._visp.{k}'
+    sys.modules[f'{__name__}.{k}'] = _visp.__dict__[k]
