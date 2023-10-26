@@ -1020,3 +1020,7 @@ void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &fil
   \param[in] filename : Image location.
  */
 void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename) { vp_writePPM(I, filename); }
+
+void vpImageIo::readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I) { vp_readPNGfromMem(buffer, last_pos, I); }
+
+void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer) { vp_writePNGtoMem(I, last_pos, buffer); }

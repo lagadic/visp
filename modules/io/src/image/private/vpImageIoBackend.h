@@ -111,6 +111,9 @@ void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename, int qua
 void writePNGStb(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename);
 
+void vp_readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I);
+void vp_writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer);
+
 // TinyEXR lib
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 void writeEXRTiny(const vpImage<float> &I, const std::string &filename);

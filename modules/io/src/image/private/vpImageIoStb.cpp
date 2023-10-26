@@ -111,3 +111,57 @@ void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
   }
 }
+
+namespace
+{
+typedef struct
+{
+  int last_pos;
+  void *context;
+} custom_stbi_mem_context;
+
+// custom write function
+static void custom_stbi_write_mem(void *context, void *data, int size)
+{
+  custom_stbi_mem_context *c = (custom_stbi_mem_context *)context;
+  char *dst = (char *)c->context;
+  char *src = (char *)data;
+  int cur_pos = c->last_pos;
+  for (int i = 0; i < size; i++) {
+    dst[cur_pos++] = src[i];
+  }
+  c->last_pos = cur_pos;
+}
+}
+
+void vp_readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I)
+{
+  int x = 0, y = 0, comp = 0;
+  const int req_channels = 1;
+  unsigned char *buffer_read = stbi_load_from_memory(buffer, last_pos, &x, &y, &comp, req_channels);
+
+  I = vpImage(buffer_read, y, x, true);
+  delete[] buffer_read;
+}
+
+void vp_writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer)
+{
+  const int height = I.getRows();
+  const int width = I.getCols();
+  const int channels = 1;
+
+  custom_stbi_mem_context context;
+  context.last_pos = 0;
+  context.context = (void *)buffer;
+
+  const int stride_bytes = 0;
+  int result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, I.bitmap, stride_bytes);
+
+  if (result) {
+    last_pos = context.last_pos;
+  }
+  else {
+    std::string message = "Cannot write png to memory, result: " + std::to_string(result);
+    throw(vpImageException(vpImageException::ioError, message));
+  }
+}

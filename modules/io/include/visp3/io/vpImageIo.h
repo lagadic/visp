@@ -172,5 +172,12 @@ public:
 
   static void writeEXR(const vpImage<float> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
+  
+  // not working with Java bindings generator
+  // static void writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, char *buffer);
+  // error: cannot bind non-const lvalue reference of type ‘int&’ to an rvalue of type ‘jint’ {aka ‘int’}
+  // need to disable Java when building the library
+  static void readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I);
+  static void writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer);
 };
 #endif
