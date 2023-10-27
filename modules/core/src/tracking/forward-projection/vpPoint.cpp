@@ -406,6 +406,8 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
   vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
 }
 
+VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
+
 /*!
  * Display the projection of a 3D point in image \e I.
  *
