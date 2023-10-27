@@ -224,6 +224,180 @@ public:
     { }
 
     /**
+     * \brief Get the size of the Gaussian filter kernel used to smooth the input image.
+     *
+     * \return int The size of the kernel.
+     */
+    inline int getGaussianKernelSize() const
+    {
+      return m_gaussianKernelSize;
+    }
+
+    /**
+     * \brief Get the standard deviation of the Gaussian filter.
+     *
+     * \return float The standard deviation.
+     */
+    inline float getGaussianStdev() const
+    {
+      return m_gaussianStdev;
+    }
+
+    /**
+     * \brief Get the size of the gradient kernel filters used to compute the gradients.
+     *
+     * \return int The size of the kernel.
+     */
+    inline int getGradientKernelSize() const
+    {
+      return m_sobelKernelSize;
+    }
+
+    /**
+     * \brief Get the lower threshold for the Canny operator. Values lower than this value are rejected.
+     * A negative value means that the algorithm computes the lower threshold automatically.
+     *
+     * \return float The lower Canny threshold.
+     */
+    inline float getLowerCannyThreshold() const
+    {
+      return m_lowerCannyThresh;
+    }
+
+    /**
+     * \brief Get the upper threshold for the Canny operator. Values lower than this value are rejected.
+     * A negative value means that the algorithm computes the lower and upper thresholds automatically.
+     *
+     * \return float The upper Canny threshold.
+     */
+    inline float getUpperCannyThreshold() const
+    {
+      return m_upperCannyThresh;
+    }
+
+    /**
+     * \brief Get the number of iterations of 8-neighbor connectivity filtering to apply to the edge map.
+     *
+     * \return int The number of iterations.
+     */
+    inline int getEdgeMapFilteringNbIter() const
+    {
+      return m_edgeMapFilteringNbIter;
+    }
+
+    /**
+     * \brief Get the minimum and maximum position on the horizontal axis of the center of the circle we want to detect.
+     *
+     * \return std::pair<int, int> The min and max x positions.
+     */
+    inline std::pair<int, int> getCenterXLimits() const
+    {
+      return m_centerXlimits;
+    }
+
+    /**
+     * \brief Get the minimum and maximum position on the vertical axis of the center of the circle we want to detect.
+     *
+     * \return std::pair<int, int> The min and max y positions.
+     */
+    inline std::pair<int, int> getCenterYLimits() const
+    {
+      return m_centerYlimits;
+    }
+
+    /**
+     * \brief Get the minimum radius of the circles we want to detect.
+     *
+     * \return float The radius min.
+     */
+    inline float getMinRadius() const
+    {
+      return m_minRadius;
+    }
+
+    /**
+     * \brief Get the maximum radius of the circles we want to detect.
+     *
+     * \return float The radius max.
+     */
+    inline float getMaxRadius() const
+    {
+      return m_maxRadius;
+    }
+
+    /**
+     * \brief Get the number of times dilatation is performed to detect the maximum number of votes
+     * for the center candidates.
+     *
+     * \return int The number of iterations.
+     */
+    inline int getDilatationNbIter() const
+    {
+      return m_dilatationNbIter;
+    }
+
+    /**
+     * \brief Get the size of the averaging window around the maximum number of votes to compute the
+     * center candidate such as it is the barycenter of the window.
+     *
+     * \return int The size of the averaging window.
+     */
+    inline int getAveragingWindowSize() const
+    {
+      return m_averagingWindowSize;
+    }
+
+    /**
+     * \brief Get the minimum number of votes a point must exceed to be considered as center candidate.
+     *
+     * \return float The threshold.
+     */
+    inline float getCenterMinThreshold() const
+    {
+      return m_centerMinThresh;
+    }
+
+    /**
+     * \brief Get the probability threshold in order to keep a circle candidate.
+     *
+     * \return float The threshold.
+     */
+    inline float getProbabilityThreshold() const
+    {
+      return m_circleProbaThresh;
+    }
+
+    /**
+     * \brief Get the threshold for the scalar product between the radius and the gradient to count a vote.
+     *
+     * \return float The threshold.
+     */
+    inline float getCirclePerfectness() const
+    {
+      return m_circlePerfectness;
+    }
+
+    /**
+     * \brief Get the Maximum distance between two circle candidates centers to consider merging them.
+     *
+     * \return float The maximum distance between two centers.
+     */
+    inline float getCenterMinDist() const
+    {
+      return m_centerMinDist;
+    }
+
+    /**
+     * \brief Get the Maximum radius difference between two circle candidates to consider merging them.
+     *
+     * @return float The merging radius difference.
+     */
+    inline float getMergingRadiusDiff() const
+    {
+      return m_mergingRadiusDiffThresh;
+    }
+
+    /**
      * Create a string with all the Hough transform parameters.
      */
     std::string toString() const
