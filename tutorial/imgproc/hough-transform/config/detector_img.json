@@ -1,6 +1,10 @@
 {
+  "cannyBackendType": "opencv-backend",
+  "filteringAndGradientType": "gaussianblur+sobel-filtering",
   "lowerCannyThresh": 100.0,
+  "lowerThresholdRatio": 0.6,
   "upperCannyThresh": 200.0,
+  "upperThresholdRatio": 0.8,
   "centerMinDistance": 5.0,
   "centerThresh": 100.0,
   "centerXlimits": [

@@ -330,6 +330,52 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
   }
 }
 
+void vpHistogram::equalize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Iout)
+{
+  // Compute the histogram
+  calculate(I);
+
+  // Calculate the cumulative distribution function
+  unsigned int cdf[256];
+  unsigned int cdfMin = std::numeric_limits<unsigned int>::max(), cdfMax = 0;
+  unsigned int minValue = std::numeric_limits<unsigned int>::max(), maxValue = 0;
+  cdf[0] = histogram[0];
+
+  if (cdf[0] < cdfMin && cdf[0] > 0) {
+    cdfMin = cdf[0];
+    minValue = 0;
+  }
+
+  for (unsigned int i = 1; i < 256; i++) {
+    cdf[i] = cdf[i - 1] + histogram[i];
+
+    if (cdf[i] < cdfMin && cdf[i] > 0) {
+      cdfMin = cdf[i];
+      minValue = i;
+    }
+
+    if (cdf[i] > cdfMax) {
+      cdfMax = cdf[i];
+      maxValue = i;
+    }
+  }
+
+  unsigned int nbPixels = I.getWidth() * I.getHeight();
+  if (nbPixels == cdfMin) {
+    // Only one brightness value in the image
+    return;
+  }
+
+  // Construct the look-up table
+  unsigned char lut[256];
+  for (unsigned int x = minValue; x <= maxValue; x++) {
+    lut[x] = vpMath::round((cdf[x] - cdfMin) / (double)(nbPixels - cdfMin) * 255.0);
+  }
+  
+  Iout = I;
+  Iout.performLut(lut);
+}
+
 /*!
   Display the histogram distribution in an image, the minimal image size is
   36x36 px.
