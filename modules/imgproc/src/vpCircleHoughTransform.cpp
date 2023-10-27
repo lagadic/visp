@@ -39,12 +39,14 @@ vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams)
   : m_algoParams(algoParams)
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 void
@@ -52,6 +54,7 @@ vpCircleHoughTransform::init(const vpCircleHoughTransformParameters &algoParams)
 {
   m_algoParams = algoParams;
   initGaussianFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::~vpCircleHoughTransform()
@@ -84,9 +87,10 @@ vpCircleHoughTransform::initFromJSON(const std::string &jsonPath)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  m_algoParams = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+  m_algoParams = j; // Call from_json(const json& j, vpCircleHoughTransformParameters&) to read json
   file.close();
   initGaussianFilters();
+  initGradientFilters();
 }
 
 void
@@ -100,10 +104,48 @@ void
 vpCircleHoughTransform::initGaussianFilters()
 {
   m_fg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
-  m_fgDg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
+  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
   m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
+}
+
+void
+vpCircleHoughTransform::initGradientFilters()
+{
+  if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+    throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
+  }
+  m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
+
+  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+    for (unsigned int r = 0; r < filter.getRows(); r++) {
+      for (unsigned int c = 0; c < filter.getCols(); c++) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }};
+
+  float scaleX = 1.f;
+  float scaleY = 1.f;
+
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+    // Compute the Sobel filters
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
+  else if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Compute the Scharr filters
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
+  else {
+    std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" has not been implemented yet\n";
+    throw vpException(vpException::notImplementedError, errMsg);
+  }
+  scaleFilter(m_gradientFilterX, scaleX);
+  scaleFilter(m_gradientFilterY, scaleY);
 }
 
 std::vector<vpImageCircle>
@@ -236,40 +278,45 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
 void
 vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I)
 {
-  vpImageFilter::getGradXGauss2D(I,
-    m_dIx,
-    m_fg.data,
-    m_fgDg.data,
-    m_algoParams.m_gaussianKernelSize
-  );
-  vpImageFilter::getGradYGauss2D(I,
-    m_dIy,
-    m_fg.data,
-    m_fgDg.data,
-    m_algoParams.m_gaussianKernelSize
-  );
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
+     || m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Computing the Gaussian blurr
+    vpImage<float> Iblur, GIx;
+    vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize);
+    vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize);
+
+    // Computing the gradients
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY);
+  }
+  else {
+    std::string errMsg("[computeGradientsAfterGaussianSmoothing] The filtering + gradient operators \"");
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" is not implemented (yet).";
+    throw(vpException(vpException::notImplementedError, errMsg));
+  }
 }
 
 void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
-#if defined(HAVE_OPENCV_IMGPROC)
-  float upperCannyThresh = m_algoParams.m_upperCannyThresh;
-  float lowerCannyThresh = m_algoParams.m_lowerCannyThresh;
-  // Apply the Canny edge operator to compute the edge map
-  // The canny method performs Gaussian blur and gradient computation
-  if (m_algoParams.m_upperCannyThresh < 0.) {
-    upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
+  if (m_algoParams.m_cannyBackendType == vpImageFilter::CANNY_VISP_BACKEND) {
+    // This is done to increase the time performances, because it avoids to
+    // recompute the gradient in the vpImageFilter::canny method
+    m_cannyVisp.setFilteringAndGradientType(m_algoParams.m_filteringAndGradientType);
+    m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
+    m_cannyVisp.setCannyThresholdsRatio(m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio);
+    m_cannyVisp.setGradients(m_dIx, m_dIy);
+    m_edgeMap = m_cannyVisp.detect(I);
   }
-  else if (m_algoParams.m_lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.f;
+  else {
+    // We will have to recompute the gradient in the desired backend format anyway so we let
+    // the vpImageFilter::canny method take care of it
+    vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
+    m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
+    m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio, true,
+    m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
   }
-  vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
-#else
-  m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
-  m_cannyVisp.setGradients(m_dIx, m_dIy);
-  m_edgeMap = m_cannyVisp.detect(I);
-#endif
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
     filterEdgeMap();
@@ -488,11 +535,15 @@ vpCircleHoughTransform::computeCenterCandidates()
         float sumVotes = 0.;
         float x_avg = 0., y_avg = 0.;
         int averagingWindowHalfSize = m_algoParams.m_averagingWindowSize / 2;
-        for (int r = -averagingWindowHalfSize; r < averagingWindowHalfSize + 1; r++) {
-          for (int c = -averagingWindowHalfSize; c < averagingWindowHalfSize + 1; c++) {
-            sumVotes += centersAccum[y + r][cx + c];
-            x_avg += centersAccum[y + r][cx + c] * (cx + c);
-            y_avg += centersAccum[y + r][cx + c] * (y + r);
+        int startingRow = std::max(0, y - averagingWindowHalfSize);
+        int startingCol = std::max(0, cx - averagingWindowHalfSize);
+        int endRow = std::min(accumulatorHeight, y + averagingWindowHalfSize + 1);
+        int endCol = std::min(accumulatorWidth, cx + averagingWindowHalfSize + 1);
+        for (int r = startingRow; r < endRow; r++) {
+          for (int c = startingCol; c < endCol; c++) {
+            sumVotes += centersAccum[r][c];
+            x_avg += centersAccum[r][c] * (c);
+            y_avg += centersAccum[r][c] * (r);
           }
         }
         float avgVotes = sumVotes / (float)(m_algoParams.m_averagingWindowSize * m_algoParams.m_averagingWindowSize);
@@ -514,9 +565,9 @@ void
 vpCircleHoughTransform::computeCircleCandidates()
 {
   size_t nbCenterCandidates = m_centerCandidatesList.size();
-  unsigned int nbBins = static_cast<unsigned int>((m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_mergingRadiusDiffThresh);
-  nbBins = std::max((unsigned int)1, nbBins); // Avoid having 0 bins, which causes segfault
-  std::vector<unsigned int> radiusAccumList; /*!< Radius accumulator for each center candidates.*/
+  int nbBins = static_cast<int>((m_algoParams.m_maxRadius - m_algoParams.m_minRadius + 1)/ m_algoParams.m_mergingRadiusDiffThresh);
+  nbBins = std::max((int)1, nbBins); // Avoid having 0 bins, which causes segfault
+  std::vector<float> radiusAccumList; /*!< Radius accumulator for each center candidates.*/
   std::vector<float> radiusActualValueList; /*!< Vector that contains the actual distance between the edge points and the center candidates.*/
 
   float rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
@@ -546,26 +597,90 @@ vpCircleHoughTransform::computeCircleCandidates()
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
           // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
           float r = std::sqrt(r2);
-          unsigned int r_bin = static_cast<unsigned int>(std::floor((r - m_algoParams.m_minRadius)/ m_algoParams.m_mergingRadiusDiffThresh));
+          int r_bin = static_cast<int>(std::floor((r - m_algoParams.m_minRadius)/ m_algoParams.m_mergingRadiusDiffThresh));
           r_bin = std::min(r_bin, nbBins - 1);
-          radiusAccumList[r_bin]++;
-          radiusActualValueList[r_bin] += r;
+          if ((r < m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * 0.5f)
+            || (r > m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * (nbBins - 1 + 0.5f))) {
+            // If the radius is at the very beginning of the allowed radii or at the very end, we do not span the vote
+            radiusAccumList[r_bin] += 1.f;
+            radiusActualValueList[r_bin] += r;
+          }
+          else {
+            float midRadiusPrevBin = m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * (r_bin - 1.f + 0.5f);
+            float midRadiusCurBin = m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * (r_bin + 0.5f);
+            float midRadiusNextBin = m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * (r_bin + 1.f + 0.5f);
+
+            if (r >= midRadiusCurBin && r <= midRadiusNextBin) {
+              // The radius is at  the end of the current bin or beginning of the next, we span the vote with the next bin
+              float voteCurBin = (midRadiusNextBin - r) / m_algoParams.m_mergingRadiusDiffThresh; // If the difference is big, it means that we are closer to the current bin
+              float voteNextBin = 1.f - voteCurBin;
+              radiusAccumList[r_bin] += voteCurBin;
+              radiusActualValueList[r_bin] += r * voteCurBin;
+              radiusAccumList[r_bin + 1] += voteNextBin;
+              radiusActualValueList[r_bin + 1] += r * voteNextBin;
+            }
+            else {
+              // The radius is at the end of the previous bin or beginning of the current, we span the vote with the previous bin
+              float votePrevBin = (r - midRadiusPrevBin) / m_algoParams.m_mergingRadiusDiffThresh; // If the difference is big, it means that we are closer to the previous bin
+              float voteCurBin = 1.f - votePrevBin;
+              radiusAccumList[r_bin] += voteCurBin;
+              radiusActualValueList[r_bin] += r * voteCurBin;
+              radiusAccumList[r_bin - 1] += votePrevBin;
+              radiusActualValueList[r_bin - 1] += r * votePrevBin;
+            }
+          }
         }
       }
     }
 
-    for (unsigned int idBin = 0; idBin < nbBins; idBin++) {
+    auto computeEffectiveRadius = [](const float &votes, const float &weigthedSumRadius) {
+      float r_effective = -1.f;
+      if (votes > std::numeric_limits<float>::epsilon()) {
+        r_effective = weigthedSumRadius / votes;
+      }
+      return r_effective;
+      };
+
+    std::vector<float> v_r_effective;
+    std::vector<float> v_votes_effective;
+    for (int idBin = 0; idBin < nbBins; idBin++) {
+      float r_effective = computeEffectiveRadius(radiusAccumList[idBin], radiusActualValueList[idBin]);
+      float effective_votes = radiusAccumList[idBin];
+      bool is_r_effective_similar = (r_effective > 0.f);
+      // Looking for potential similar radii in the following bins
+      // If so, compute the barycenter radius between them
+      for (int idCandidate = idBin + 1; idCandidate < nbBins && is_r_effective_similar; idCandidate++) {
+        float r_effective_candidate = computeEffectiveRadius(radiusAccumList[idCandidate], radiusActualValueList[idCandidate]);
+        if (std::abs(r_effective_candidate - r_effective) < m_algoParams.m_mergingRadiusDiffThresh) {
+          r_effective = (r_effective * effective_votes + r_effective_candidate * radiusAccumList[idCandidate]) / (effective_votes + radiusAccumList[idCandidate]);
+          effective_votes += radiusAccumList[idCandidate];
+          radiusAccumList[idCandidate] = -.1f;
+          radiusActualValueList[idCandidate] = -1.f;
+          is_r_effective_similar = true;
+        }
+        else {
+          is_r_effective_similar = false;
+        }
+      }
+
+      if (effective_votes > m_algoParams.m_centerMinThresh) {
+        // Only the circles having enough votes are considered
+        v_r_effective.push_back(r_effective);
+        v_votes_effective.push_back(effective_votes);
+      }
+    }
+
+    unsigned int nbCandidates = v_r_effective.size();
+    for (unsigned int idBin = 0; idBin < nbCandidates; idBin++) {
       // If the circle of center CeC_i  and radius RCB_k has enough votes, it is added to the list
       // of Circle Candidates
-      if (radiusAccumList[idBin] > m_algoParams.m_centerMinThresh) {
-        float r_effective = radiusActualValueList[idBin] / (float)radiusAccumList[idBin];
-        vpImageCircle candidateCircle(vpImagePoint(centerCandidate.first, centerCandidate.second), r_effective);
-        float proba = computeCircleProbability(candidateCircle, radiusAccumList[idBin]);
-        if (proba > m_algoParams.m_circleProbaThresh) {
-          m_circleCandidates.push_back(candidateCircle);
-          m_circleCandidatesProbabilities.push_back(proba);
-          m_circleCandidatesVotes.push_back(radiusAccumList[idBin]);
-        }
+      float r_effective = v_r_effective[idBin];
+      vpImageCircle candidateCircle(vpImagePoint(centerCandidate.first, centerCandidate.second), r_effective);
+      float proba = computeCircleProbability(candidateCircle, v_votes_effective[idBin]);
+      if (proba > m_algoParams.m_circleProbaThresh) {
+        m_circleCandidates.push_back(candidateCircle);
+        m_circleCandidatesProbabilities.push_back(proba);
+        m_circleCandidatesVotes.push_back(v_votes_effective[idBin]);
       }
     }
   }

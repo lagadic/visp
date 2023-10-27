@@ -32,13 +32,9 @@
  */
 
 /*!
-  \file vpCalibration.h
-  \brief Tools for camera calibration.
-
-  \author Eric Marchand (INRIA) using code from Francois Chaumette (INRIA)
-
-  \sa the example in calibrate.cpp
-*/
+ * \file vpCalibration.h
+ * \brief Tools for camera calibration.
+ */
 #ifndef vpCalibration_h
 #define vpCalibration_h
 
@@ -53,6 +49,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/vision/vpCalibrationException.h>
+
 /*!
  *  \class vpCalibration
  *
@@ -113,12 +110,12 @@ public:
    * Position of the camera in end-effector frame using camera parameters with distortion
    */
   vpHomogeneousMatrix eMc_dist;
+
   /*!
    * Fix aspect ratio (px/py)
    */
   double m_aspect_ratio;
 
-public:
   /*!
    * Default constructor.
    */
@@ -147,18 +144,6 @@ public:
    * \param twinCalibration : object to be copied
    */
   vpCalibration &operator=(const vpCalibration &twinCalibration);
-
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  /*!
-    @name Deprecated functions
-  */
-  //@{
-  vp_deprecated static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
-                                            const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc);
-  vp_deprecated static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
-                                                  vpHomogeneousMatrix &eMc_dist);
-//@}
-#endif
 
   /*!
    * Suppress all the point in the array of point.
@@ -253,23 +238,23 @@ public:
   int displayGrid(vpImage<unsigned char> &I, vpColor color = vpColor::yellow, unsigned int thickness = 1,
                   int subsampling_factor = 1);
 
-  //! Set the gain for the virtual visual servoing algorithm.
-  static double getLambda() { return gain; }
+  //! Get the gain of the virtual visual servoing algorithm.
+  static double getLambda() { return m_gain; }
 
   /*!
    * Get the residual in pixels.
    */
-  double getResidual(void) const { return residual; }
+  double getResidual(void) const { return m_residual; }
 
   /*!
    * Get the residual for perspective projection with distortion (in pixels).
    */
-  double getResidual_dist(void) const { return residual_dist; }
+  double getResidual_dist(void) const { return m_residual_dist; }
 
   /*!
    * Get the number of points.
    */
-  unsigned int get_npt() const { return npt; }
+  unsigned int get_npt() const { return m_npt; }
 
   /*!
    * Basic initialisation (called by the constructors).
@@ -305,7 +290,7 @@ public:
   /*!
    * Set the gain for the virtual visual servoing algorithm.
    */
-  static void setLambda(const double &lambda) { gain = lambda; }
+  static void setLambda(const double &lambda) { m_gain = lambda; }
 
   /*!
    * Set pixel aspect ratio px/py.
@@ -342,19 +327,17 @@ private:
                                           double &globalReprojectionError, bool verbose = false,
                                           double aspect_ratio = -1);
 
-private:
-  unsigned int npt; //!< number of points used in calibration computation
-  std::list<double> LoX, LoY,
-    LoZ;                     //!< list of points coordinates (3D in meters)
-  std::list<vpImagePoint> Lip; //!< list of points coordinates (2D in pixels)
+  unsigned int m_npt; //!< number of points used in calibration computation
+  std::list<double> m_LoX, m_LoY, m_LoZ; //!< list of points coordinates (3D in meters)
+  std::list<vpImagePoint> m_Lip; //!< list of points coordinates (2D in pixels)
 
-  double residual;      //!< residual in pixel for camera model without distortion
-  double residual_dist; //!< residual in pixel for perspective projection with
+  double m_residual;      //!< residual in pixel for camera model without distortion
+  double m_residual_dist; //!< residual in pixel for perspective projection with
                         //!< distortion model
 
-  static double threshold;
-  static unsigned int nbIterMax;
-  static double gain;
+  static double m_threshold;
+  static unsigned int m_nbIterMax;
+  static double m_gain;
 };
 
 #endif

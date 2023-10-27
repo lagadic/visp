@@ -110,60 +110,19 @@ void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double
 
 void equalizeHistogram(vpImage<unsigned char> &I)
 {
-  if (I.getWidth() * I.getHeight() == 0) {
+  vpImage<unsigned char> Icpy = I;
+  vp::equalizeHistogram(Icpy, I);
+}
+
+void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+{
+  if (I1.getWidth() * I1.getHeight() == 0) {
     return;
   }
 
   // Calculate the histogram
   vpHistogram hist;
-  hist.calculate(I);
-
-  // Calculate the cumulative distribution function
-  unsigned int cdf[256];
-  unsigned int cdfMin = /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX, cdfMax = 0;
-  unsigned int minValue =
-    /*std::numeric_limits<unsigned int>::max()*/ UINT_MAX,
-    maxValue = 0;
-  cdf[0] = hist[0];
-
-  if (cdf[0] < cdfMin && cdf[0] > 0) {
-    cdfMin = cdf[0];
-    minValue = 0;
-  }
-
-  for (unsigned int i = 1; i < 256; i++) {
-    cdf[i] = cdf[i - 1] + hist[i];
-
-    if (cdf[i] < cdfMin && cdf[i] > 0) {
-      cdfMin = cdf[i];
-      minValue = i;
-    }
-
-    if (cdf[i] > cdfMax) {
-      cdfMax = cdf[i];
-      maxValue = i;
-    }
-  }
-
-  unsigned int nbPixels = I.getWidth() * I.getHeight();
-  if (nbPixels == cdfMin) {
-    // Only one brightness value in the image
-    return;
-  }
-
-  // Construct the look-up table
-  unsigned char lut[256];
-  for (unsigned int x = minValue; x <= maxValue; x++) {
-    lut[x] = vpMath::round((cdf[x] - cdfMin) / (double)(nbPixels - cdfMin) * 255.0);
-  }
-
-  I.performLut(lut);
-}
-
-void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
-{
-  I2 = I1;
-  vp::equalizeHistogram(I2);
+  hist.equalize(I1, I2);
 }
 
 void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
@@ -500,152 +459,4 @@ void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma, d
   vp::unsharpMask(Ires, sigma, weight);
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \ingroup group_imgproc_sharpening
-
-  \deprecated This function is deprecated. You should rather use unsharpMask() with sigma Gaussian parameter.
-  You can use sigma = 1.0f to have similar results.
-
-  Sharpen a grayscale image using the unsharp mask technique.
-
-  \param I : The grayscale image to sharpen.
-  \param size : Size (must be odd) of the Gaussian blur kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
- */
-void unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight)
-{
-  if (weight < 1.0 && weight >= 0.0) {
-    // Gaussian blurred image
-    vpImage<double> I_blurred;
-    vpImageFilter::gaussianBlur(I, I_blurred, size);
-
-    // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
-      double val = (I.bitmap[cpt] - weight * I_blurred.bitmap[cpt]) / (1 - weight);
-      I.bitmap[cpt] = vpMath::saturate<unsigned char>(val); // val > 255 ? 255 : (val < 0 ? 0 : val);
-    }
-  }
-}
-
-/*!
-  \ingroup group_imgproc_sharpening
-
-  \deprecated This function is deprecated. You should rather use unsharpMask() with sigma Gaussian parameter.
-  You can use sigma = 1.0f to have similar results.
-
-  Sharpen a grayscale image using the unsharp mask technique.
-
-  \param I1 : The first input grayscale image.
-  \param I2 : The second output grayscale image.
-  \param size : Size (must be odd) of the Gaussian blur kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
-*/
-void unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size, double weight)
-{
-  // Copy I1 to I2
-  I2 = I1;
-#if 0
-  vp::unsharpMask(I2, size, weight);
-#else
-  // To avoid:
-  // warning: ‘void vp::unsharpMask(vpImage<unsigned char>&, unsigned int, double)’ is deprecated
-  // [-Wdeprecated-declarations]
-  if (weight < 1.0 && weight >= 0.0) {
-    // Gaussian blurred image
-    vpImage<double> I_blurred;
-    vpImageFilter::gaussianBlur(I2, I_blurred, size);
-
-    // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I2.getSize(); cpt++) {
-      double val = (I2.bitmap[cpt] - weight * I_blurred.bitmap[cpt]) / (1 - weight);
-      I2.bitmap[cpt] = vpMath::saturate<unsigned char>(val); // val > 255 ? 255 : (val < 0 ? 0 : val);
-    }
-  }
-#endif
-}
-
-/*!
-  \ingroup group_imgproc_sharpening
-
-  \deprecated This function is deprecated. You should rather use unsharpMask() with sigma Gaussian parameter.
-  You can use sigma = 1.0f to have similar results.
-
-  Sharpen a color image using the unsharp mask technique.
-
-  \param I : The color image to sharpen.
-  \param size : Size (must be odd) of the Gaussian blur kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
- */
-void unsharpMask(vpImage<vpRGBa> &I, unsigned int size, double weight)
-{
-  if (weight < 1.0 && weight >= 0.0) {
-    // Gaussian blurred image
-    vpImage<double> I_blurred_R, I_blurred_G, I_blurred_B;
-    vpImage<unsigned char> I_R, I_G, I_B;
-
-    vpImageConvert::split(I, &I_R, &I_G, &I_B);
-    vpImageFilter::gaussianBlur(I_R, I_blurred_R, size);
-    vpImageFilter::gaussianBlur(I_G, I_blurred_G, size);
-    vpImageFilter::gaussianBlur(I_B, I_blurred_B, size);
-
-    // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
-      double val_R = (I.bitmap[cpt].R - weight * I_blurred_R.bitmap[cpt]) / (1 - weight);
-      double val_G = (I.bitmap[cpt].G - weight * I_blurred_G.bitmap[cpt]) / (1 - weight);
-      double val_B = (I.bitmap[cpt].B - weight * I_blurred_B.bitmap[cpt]) / (1 - weight);
-
-      I.bitmap[cpt].R = vpMath::saturate<unsigned char>(val_R);
-      I.bitmap[cpt].G = vpMath::saturate<unsigned char>(val_G);
-      I.bitmap[cpt].B = vpMath::saturate<unsigned char>(val_B);
-    }
-  }
-}
-
-/*!
-  \ingroup group_imgproc_sharpening
-
-  \deprecated This function is deprecated. You should rather use unsharpMask() with sigma Gaussian parameter.
-  You can use sigma = 1.0f to have similar results.
-
-  Sharpen a color image using the unsharp mask technique.
-
-  \param I1 : The first input color image.
-  \param I2 : The second output color image.
-  \param size : Size (must be odd) of the Gaussian blur kernel.
-  \param weight : Weight (between [0 - 1[) for the sharpening process.
-*/
-void unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned int size, double weight)
-{
-  // Copy I1 to I2
-  I2 = I1;
-#if 0
-  vp::unsharpMask(I2, size, weight);
-#else
-  // To avoid:
-  // warning: ‘void vp::unsharpMask(vpImage<vpRGBa>&, unsigned int, double)’ is deprecated [-Wdeprecated-declarations]
-  if (weight < 1.0 && weight >= 0.0) {
-    // Gaussian blurred image
-    vpImage<double> I_blurred_R, I_blurred_G, I_blurred_B;
-    vpImage<unsigned char> I_R, I_G, I_B;
-
-    vpImageConvert::split(I2, &I_R, &I_G, &I_B);
-    vpImageFilter::gaussianBlur(I_R, I_blurred_R, size);
-    vpImageFilter::gaussianBlur(I_G, I_blurred_G, size);
-    vpImageFilter::gaussianBlur(I_B, I_blurred_B, size);
-
-    // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I2.getSize(); cpt++) {
-      double val_R = (I2.bitmap[cpt].R - weight * I_blurred_R.bitmap[cpt]) / (1 - weight);
-      double val_G = (I2.bitmap[cpt].G - weight * I_blurred_G.bitmap[cpt]) / (1 - weight);
-      double val_B = (I2.bitmap[cpt].B - weight * I_blurred_B.bitmap[cpt]) / (1 - weight);
-
-      I2.bitmap[cpt].R = vpMath::saturate<unsigned char>(val_R);
-      I2.bitmap[cpt].G = vpMath::saturate<unsigned char>(val_G);
-      I2.bitmap[cpt].B = vpMath::saturate<unsigned char>(val_B);
-    }
-  }
-#endif
-}
-#endif // Deprecated
 };

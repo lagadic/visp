@@ -72,12 +72,17 @@ public:
   class vpCircleHoughTransformParameters
   {
   private:
+    // // Filtering + gradient operators to use
+    vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Permits to choose the filtering +
+                                                                                    gradient operators to use.*/
+
     // // Gaussian smoothing attributes
-    int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
+    int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image.
+                                   Must be an odd number.*/
     float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
 
     // // Gradient computation attributes
-    int m_sobelKernelSize; /*!< Size of the Sobel kernels used to compute the gradients. Must be an odd number.*/
+    int m_gradientFilterKernelSize; /*!< Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.*/
 
     // // Edge detection attributes
     float m_lowerCannyThresh; /*!< The lower threshold for the Canny operator. Values lower than this value are rejected.
@@ -85,6 +90,11 @@ public:
     float m_upperCannyThresh; /*!< The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
                                A negative value makes the algorithm compute the upper and lower thresholds automatically.*/
     int m_edgeMapFilteringNbIter; /*!< Number of iterations of 8-neighbor connectivity filtering to apply to the edge map*/
+    vpImageFilter::vpCannyBackendType m_cannyBackendType; /*!< Permits to choose the backend used to compute the edge map.*/
+    float m_lowerCannyThreshRatio; /*!< The ratio of the upper threshold the lower threshold must be equal to.
+                                        It is used only if the user asks to compute the Canny thresholds.*/
+    float m_upperCannyThreshRatio; /*!< The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+                                        the upper threshold. It is used only if the user asks to compute the Canny thresholds.*/
 
     // // Center candidates computation attributes
     std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
@@ -110,12 +120,16 @@ public:
      * \brief Construct a new vpCircleHoughTransformParameters object with default parameters.
      */
     vpCircleHoughTransformParameters()
-      : m_gaussianKernelSize(5)
+      : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+      , m_gaussianKernelSize(5)
       , m_gaussianStdev(1.f)
-      , m_sobelKernelSize(3)
+      , m_gradientFilterKernelSize(3)
       , m_lowerCannyThresh(-1.f)
       , m_upperCannyThresh(-1.f)
       , m_edgeMapFilteringNbIter(1)
+      , m_cannyBackendType(vpImageFilter::CANNY_OPENCV_BACKEND)
+      , m_lowerCannyThreshRatio(0.6f)
+      , m_upperCannyThreshRatio(0.8f)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_minRadius(0.f)
@@ -136,7 +150,7 @@ public:
      *
      * \param[in] gaussianKernelSize Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.
      * \param[in] gaussianStdev Standard deviation of the Gaussian filter.
-     * \param[in] sobelKernelSize Size of the Sobel kernels used to compute the gradients. Must be an odd number.
+     * \param[in] gradientFilterKernelSize Size of the Sobel or Scharr kernels used to compute the gradients. Must be an odd number.
      * \param[in] lowerCannyThresh The lower threshold for the Canny operator. Values lower than this value are rejected.
                           A negative value makes the algorithm compute this threshold and the lower one automatically.
      * \param[in] upperCannyThresh The upper threshold for the Canny operator. Only values greater than this value are marked as an edge.
@@ -154,11 +168,19 @@ public:
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
      * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
                                       center candidate such as it is the barycenter of the window. Must be odd.
+     * \param[in] filteringAndGradientMethod The choice of the filter and gradient operator to apply before the edge
+     * detection step.
+     * \param[in] backendType Permits to choose the backend used to compute the edge map.
+     * \param[in] lowerCannyThreshRatio If the thresholds must be computed,the lower threshold will be equal to the upper
+     * threshold times \b lowerThresholdRatio .
+     * \param[in] upperCannyThreshRatio If the thresholds must be computed,the upper threshold will be equal to the value
+     * such as the number of pixels of the image times \b upperThresholdRatio have an absolute gradient lower than the
+     * upper threshold.
      */
     vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
       , const float &gaussianStdev
-      , const int &sobelKernelSize
+      , const int &gradientFilterKernelSize
       , const float &lowerCannyThresh
       , const float &upperCannyThresh
       , const int &edgeMapFilterNbIter
@@ -173,13 +195,21 @@ public:
       , const float &centerMinDistThresh
       , const float &mergingRadiusDiffThresh
       , const int &averagingWindowSize = 5
+      , const vpImageFilter::vpCannyFilteringAndGradientType &filteringAndGradientMethod = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
+      , const vpImageFilter::vpCannyBackendType &backendType = vpImageFilter::CANNY_OPENCV_BACKEND
+      , const float &lowerCannyThreshRatio = 0.6f
+      , const float &upperCannyThreshRatio = 0.8f
     )
-      : m_gaussianKernelSize(gaussianKernelSize)
+      : m_filteringAndGradientType(filteringAndGradientMethod)
+      , m_gaussianKernelSize(gaussianKernelSize)
       , m_gaussianStdev(gaussianStdev)
-      , m_sobelKernelSize(sobelKernelSize)
+      , m_gradientFilterKernelSize(gradientFilterKernelSize)
       , m_lowerCannyThresh(lowerCannyThresh)
       , m_upperCannyThresh(upperCannyThresh)
       , m_edgeMapFilteringNbIter(edgeMapFilterNbIter)
+      , m_cannyBackendType(backendType)
+      , m_lowerCannyThreshRatio(lowerCannyThreshRatio)
+      , m_upperCannyThreshRatio(upperCannyThreshRatio)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
       , m_minRadius(std::min(minRadius, maxRadius))
@@ -199,10 +229,13 @@ public:
     std::string toString() const
     {
       std::string txt("Hough Circle Transform Configuration:\n");
+      txt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType) + "\n";
       txt += "\tGaussian filter kernel size = " + std::to_string(m_gaussianKernelSize) + "\n";
       txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
-      txt += "\tSobel filter kernel size = " + std::to_string(m_sobelKernelSize) + "\n";
+      txt += "\tGradient filter kernel size = " + std::to_string(m_gradientFilterKernelSize) + "\n";
+      txt += "\tCanny backend = " + vpImageFilter::vpCannyBackendTypeToString(m_cannyBackendType) + "\n";
       txt += "\tCanny edge filter thresholds = [" + std::to_string(m_lowerCannyThresh) + " ; " + std::to_string(m_upperCannyThresh) + "]\n";
+      txt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(m_lowerCannyThreshRatio) + " ; " + std::to_string(m_upperCannyThreshRatio) + "]\n";
       txt += "\tEdge map 8-neighbor connectivity filtering number of iterations = " + std::to_string(m_edgeMapFilteringNbIter) + "\n";
       txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) +"\n";
       txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
@@ -274,6 +307,10 @@ public:
      */
     inline friend void from_json(const json &j, vpCircleHoughTransformParameters &params)
     {
+      std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType);
+      filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+      params.m_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(filteringAndGradientName);
+
       params.m_gaussianKernelSize = j.value("gaussianKernelSize", params.m_gaussianKernelSize);
       if ((params.m_gaussianKernelSize % 2) != 1) {
         throw vpException(vpException::badValue, "Gaussian Kernel size should be odd.");
@@ -284,13 +321,18 @@ public:
         throw vpException(vpException::badValue, "Standard deviation should be > 0");
       }
 
-      params.m_sobelKernelSize = j.value("sobelKernelSize", params.m_sobelKernelSize);
-      if ((params.m_sobelKernelSize % 2) != 1) {
-        throw vpException(vpException::badValue, "Sobel Kernel size should be odd.");
+      params.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", params.m_gradientFilterKernelSize);
+      if ((params.m_gradientFilterKernelSize % 2) != 1) {
+        throw vpException(vpException::badValue, "Gradient filter kernel (Sobel or Scharr) size should be odd.");
       }
 
+      std::string cannyBackendName = vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType);
+      cannyBackendName = j.value("cannyBackendType", cannyBackendName);
+      params.m_cannyBackendType = vpImageFilter::vpCannyBackendTypeFromString(cannyBackendName);
       params.m_lowerCannyThresh = j.value("lowerCannyThresh", params.m_lowerCannyThresh);
+      params.m_lowerCannyThreshRatio = j.value("lowerThresholdRatio", params.m_lowerCannyThreshRatio);
       params.m_upperCannyThresh = j.value("upperCannyThresh", params.m_upperCannyThresh);
+      params.m_upperCannyThreshRatio = j.value("upperThresholdRatio", params.m_upperCannyThreshRatio);
       params.m_edgeMapFilteringNbIter = j.value("edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter);
 
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
@@ -341,11 +383,15 @@ public:
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = json {
+          {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
           {"gaussianKernelSize", params.m_gaussianKernelSize},
           {"gaussianStdev", params.m_gaussianStdev},
-          {"sobelKernelSize", params.m_sobelKernelSize},
+          {"gradientFilterKernelSize", params.m_gradientFilterKernelSize},
+          {"cannyBackendType", vpImageFilter::vpCannyBackendTypeToString(params.m_cannyBackendType)},
           {"lowerCannyThresh", params.m_lowerCannyThresh},
+          {"lowerThresholdRatio", params.m_lowerCannyThreshRatio},
           {"upperCannyThresh", params.m_upperCannyThresh},
+          {"upperThresholdRatio", params.m_upperCannyThreshRatio},
           {"edgeMapFilteringNbIter", params.m_edgeMapFilteringNbIter},
           {"centerXlimits", params.m_centerXlimits},
           {"centerYlimits", params.m_centerYlimits},
@@ -378,8 +424,8 @@ public:
    */
   virtual ~vpCircleHoughTransform();
 
-  // // Detection methods
-
+  /** @name  Detection methods */
+  //@{
 #ifdef HAVE_OPENCV_CORE
   /**
    * \brief Perform Circle Hough Transform to detect the circles in an OpenCV image.
@@ -420,8 +466,10 @@ public:
    */
   virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
 #endif
+  //@}
 
-  // // Configuration from files
+  /** @name  Configuration from files */
+  //@{
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
    * \brief Construct a new vpCircleHoughTransform object configured according to
@@ -472,8 +520,10 @@ public:
     j = detector.m_algoParams;
   }
 #endif
+  //@}
 
-  // // Setters
+  /** @name  Setters */
+  //@{
   /**
    * \brief Initialize all the algorithm parameters.
    *
@@ -482,7 +532,19 @@ public:
   void init(const vpCircleHoughTransformParameters &algoParams);
 
   /**
-   * \brief Set the parameters of the Gaussian filter, that computes the
+   * \brief Permits to choose the filtering + gradient operators to use.
+   *
+   * \param[in] type The type of filtering + gradient operators to use.
+   */
+  inline void setFilteringAndGradientType(const vpImageFilter::vpCannyFilteringAndGradientType &type)
+  {
+    m_algoParams.m_filteringAndGradientType = type;
+    m_cannyVisp.setFilteringAndGradientType(type);
+    initGradientFilters();
+  }
+
+  /**
+   * \brief Set the parameters of the Gaussian filter, that permits to blur the
    * gradients of the image.
    *
    * \param[in] kernelSize The size of the Gaussian kernel. Must be an odd value.
@@ -504,6 +566,32 @@ public:
     initGaussianFilters();
   }
 
+  /**
+   * \brief Set the parameters of the gradient filter (Sobel or Scharr) kernel size filters.
+   *
+   * \param[in] apertureSize The size of the gradient filters kernel. Must be an odd value.
+   */
+  inline void setGradientFilterAperture(const unsigned int &apertureSize)
+  {
+    m_algoParams.m_gradientFilterKernelSize = apertureSize;
+
+    if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+      throw vpException(vpException::badValue, "Gradient filter (Sobel or Scharr) Kernel size should be odd.");
+    }
+
+    initGradientFilters();
+  }
+
+  /**
+   * \brief Set the backend to use to perform the Canny edge detection.
+   *
+   * \param[in] type The backend that must be used.
+   */
+  inline void setCannyBackend(const vpImageFilter::vpCannyBackendType &type)
+  {
+    m_algoParams.m_cannyBackendType = type;
+  }
+
   /*!
    * Set the threshold for the Canny operator.
    * Only value greater than this value are marked as an edge.
@@ -517,6 +605,22 @@ public:
   {
     m_algoParams.m_lowerCannyThresh = lowerCannyThreshold;
     m_algoParams.m_upperCannyThresh = upperCannyThreshold;
+  }
+
+  /**
+   * \brief Set the Canny thresholds ratio that are used to automatically compute the Canny thresholds
+   * in case the user asks to.
+   *
+   * \sa \ref vpCircleHoughTransform::setCannyThreshold "vpCircleHoughTransform::setCannyThreshold(const float&, const float&)"
+   *
+   * \param[in] lowerThreshRatio The ratio of the upper threshold the lower threshold will be equal to.
+   * \param[in] upperThreshRatio The ratio of pixels that must have a gradient lower than the upper threshold.
+   */
+  inline void setCannyThresholdRatio(const float &lowerThreshRatio, const float &upperThreshRatio)
+  {
+    m_algoParams.m_lowerCannyThreshRatio = lowerThreshRatio;
+    m_algoParams.m_upperCannyThreshRatio = upperThreshRatio;
+    m_cannyVisp.setCannyThresholdsRatio(lowerThreshRatio, upperThreshRatio);
   }
 
   /*!
@@ -641,9 +745,10 @@ public:
       throw vpException(vpException::badValue, "Radius difference merging threshold must be positive.");
     }
   }
+  //@}
 
-  // // Getters
-
+  /** @name  Getters */
+  //@{
   /**
    * \brief Get the list of Center Candidates, stored as pair <idRow, idCol>
    *
@@ -763,6 +868,7 @@ public:
   {
     return m_finalCircleVotes;
   }
+  //@}
 
   /*!
    * Create a string with all Hough transform parameters.
@@ -776,10 +882,14 @@ public:
 
 protected:
   /**
-   * \brief Initialize the Gaussian filters used to blur the image and
-   * compute the gradient images.
+   * \brief Initialize the Gaussian filters used to blur the image.
    */
   virtual void initGaussianFilters();
+
+  /**
+   * \brief Initialize the gradient filters used to compute the gradient images.
+   */
+  void initGradientFilters();
 
   /**
    * \brief Perform Gaussian smoothing on the input image to reduce the noise
@@ -816,9 +926,9 @@ protected:
    * The probability is defined as the ratio of \b nbVotes by the theoretical number of
    * pixel that should be visible in the image.
    *
-   * @param circle The circle for which we want to evaluate the probability.
-   * @param nbVotes The number of visible pixels of the given circle.
-   * @return float The probability of the circle.
+   * \param[in] circle The circle for which we want to evaluate the probability.
+   * \param[in] nbVotes The number of visible pixels of the given circle.
+   * \return float The probability of the circle.
    */
   virtual float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
 
@@ -854,9 +964,10 @@ protected:
   vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
   vpArray2D<float> m_fg;
-  vpArray2D<float> m_fgDg;
 
   // // Gradient computation attributes
+  vpArray2D<float> m_gradientFilterX; /*!< Contains the coefficients of the gradient kernel along the X-axis*/
+  vpArray2D<float> m_gradientFilterY; /*!< Contains the coefficients of the gradient kernel along the Y-axis*/
   vpImage<float> m_dIx; /*!< Gradient along the x-axis of the input image.*/
   vpImage<float> m_dIy; /*!< Gradient along the y-axis of the input image.*/
 

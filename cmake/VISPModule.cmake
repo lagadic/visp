@@ -590,11 +590,6 @@ macro(vp_target_include_modules target)
     if(d MATCHES "^visp_" AND HAVE_${d})
       if (EXISTS "${VISP_MODULE_${d}_LOCATION}/include")
         vp_target_include_directories(${target} "${VISP_MODULE_${d}_LOCATION}/include")
-        # Work around to be able to build the modules without INTERFACE_INCLUDE_DIRECTORIES
-        # that was only introduces since CMake 2.8.12
-        if (CMAKE_VERSION VERSION_LESS 2.8.12)
-          vp_target_include_directories(${target} "${VISP_MODULE_${d}_INC_DEPS}")
-        endif()
       endif()
     elseif(EXISTS "${d}")
       # FS keep external deps inc
@@ -992,11 +987,6 @@ macro(vp_add_tests)
     foreach(d ${VISP_TEST_${the_module}_DEPS})
       list(APPEND test_deps ${d})
       list(APPEND test_deps ${VISP_MODULE_${d}_DEPS})
-      # Work around to be able to build the modules without INTERFACE_INCLUDE_DIRECTORIES
-      # that was only introduces since CMake 2.8.12
-      if(CMAKE_VERSION VERSION_LESS 2.8.12)
-        list(APPEND test_deps "${VISP_MODULE_${__m}_INC_DEPS}")
-      endif()
     endforeach()
 
     vp_check_dependencies(${test_deps})

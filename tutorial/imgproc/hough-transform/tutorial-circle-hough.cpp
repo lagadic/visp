@@ -221,6 +221,11 @@ int main(int argc, char **argv)
   const float def_circlePerfectness = 0.85f;
   const float def_centerDistanceThresh = 15.f;
   const float def_radiusDifferenceThresh = 15.f;
+  const int def_averagingWindowSize = 5;
+  const vpImageFilter::vpCannyFilteringAndGradientType def_filteringAndGradientType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING;
+  const vpImageFilter::vpCannyBackendType def_cannyBackendType = vpImageFilter::CANNY_OPENCV_BACKEND;
+  const float def_lowerCannyThreshRatio = 0.6f;
+  const float def_upperCannyThreshRatio = 0.9f;
 
   std::string opt_input(def_input);
   std::string opt_jsonFilePath = def_jsonFilePath;
@@ -241,6 +246,11 @@ int main(int argc, char **argv)
   float opt_circlePerfectness = def_circlePerfectness;
   float opt_centerDistanceThresh = def_centerDistanceThresh;
   float opt_radiusDifferenceThresh = def_radiusDifferenceThresh;
+  int opt_averagingWindowSize = def_averagingWindowSize;
+  vpImageFilter::vpCannyFilteringAndGradientType opt_filteringAndGradientType = def_filteringAndGradientType;
+  vpImageFilter::vpCannyBackendType opt_cannyBackendType = def_cannyBackendType;
+  float opt_lowerCannyThreshRatio = def_lowerCannyThreshRatio;
+  float opt_upperCannyThreshRatio = def_upperCannyThreshRatio;
   bool opt_displayCanny = false;
 
   for (int i = 1; i < argc; i++) {
@@ -284,6 +294,10 @@ int main(int argc, char **argv)
       opt_dilatationRepet = atoi(argv[i + 1]);
       i++;
     }
+    else if (argName == "--averaging-window-size" && i + 1 < argc) {
+      opt_averagingWindowSize = atoi(argv[i + 1]);
+      i++;
+    }
     else if (argName == "--radius-limits" && i + 2 < argc) {
       opt_minRadius = atoi(argv[i + 1]);
       opt_maxRadius = atoi(argv[i + 2]);
@@ -314,6 +328,22 @@ int main(int argc, char **argv)
       opt_radiusDifferenceThresh = static_cast<float>(atof(argv[i + 2]));
       i += 2;
     }
+    else if (argName == "--filtering-type" && i + 1 < argc) {
+      opt_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(std::string(argv[i+1]));
+      i++;
+    }
+    else if (argName == "--canny-backend" && i + 1 < argc) {
+      opt_cannyBackendType = vpImageFilter::vpCannyBackendTypeFromString(std::string(argv[i+1]));
+      i++;
+    }
+    else if (argName == "--lower-canny-ratio" && i + 1 < argc) {
+      opt_lowerCannyThreshRatio = atof(argv[i + 1]);
+      i++;
+    }
+    else if (argName == "--upper-canny-ratio" && i + 1 < argc) {
+      opt_upperCannyThreshRatio = atof(argv[i + 1]);
+      i++;
+    }
     else if (argName == "--display-edge-map") {
       opt_displayCanny = true;
     }
@@ -335,12 +365,21 @@ int main(int argc, char **argv)
         << "\t [--edge-filter <nb-iter>] (default: " << def_nbEdgeFilteringIter << ")" << std::endl
         << "\t [--radius-limits <radius-min> <radius-max>] (default: min = " << def_minRadius << ", max = " << def_maxRadius << ")" << std::endl
         << "\t [--dilatation-repet <nb-repetitions>] (default: " << def_dilatationRepet << ")" << std::endl
+        << "\t [--averaging-window-size <size>] (default: " << def_averagingWindowSize << ")" << std::endl
         << "\t [--center-thresh <center-detection-threshold>] (default: " << (def_centerThresh < 0 ? "auto" : std::to_string(def_centerThresh)) << ")" << std::endl
         << "\t [--center-xlim <center-horizontal-min center-horizontal-max>] (default: " << def_centerXlimits.first << " , " << def_centerXlimits.second  << ")" << std::endl
         << "\t [--center-ylim <center-vertical-min center-vertical-max>] (default: " << def_centerYlimits.first << " , " << def_centerYlimits.second  << ")" << std::endl
         << "\t [--circle-probability-thresh <probability-threshold>] (default: " << def_circleProbaThresh  << ")" << std::endl
         << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_circlePerfectness << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
+        << "\t [--filtering-type]"
+        << " (default: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(def_filteringAndGradientType) << ")" << std::endl
+        << "\t [--canny-backend]"
+        << " (default: " << vpImageFilter::vpCannyBackendTypeToString(def_cannyBackendType) << ")" << std::endl
+        << "\t [--lower-canny-ratio]"
+        << " (default: " << def_lowerCannyThreshRatio<< ")" << std::endl
+        << "\t [--upper-canny-ratio]"
+        << " (default: " << def_upperCannyThreshRatio << ")" << std::endl
         << "\t [--display-edge-map]" << std::endl
         << "\t [--help, -h]" << std::endl
         << std::endl;
@@ -390,6 +429,11 @@ int main(int argc, char **argv)
         << "\t\tMinimum tolerated value is 1." << std::endl
         << "\t\tDefault: " << def_dilatationRepet << std::endl
         << std::endl
+        << "\t--averaging-window-size" << std::endl
+        << "\t\tPermit to set the number size of the averaging window used to detect the maxima of the centers votes." << std::endl
+        << "\t\tMust be odd." << std::endl
+        << "\t\tDefault: " << def_averagingWindowSize << std::endl
+        << std::endl
         << "\t--center-thresh" << std::endl
         << "\t\tPermit to set the minimum number of votes a point must reach to be considered as a center candidate." << std::endl
         << "\t\tIf the input is a real image, must be a positive value." << std::endl
@@ -422,6 +466,23 @@ int main(int argc, char **argv)
         << "\t\tThe radius difference threshold indicates the maximum absolute difference between the two circle candidates in order to be merged." << std::endl
         << "\t\tTwo circle candidates must met these two conditions in order to be merged together." << std::endl
         << "\t\tDefault: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << std::endl
+        << std::endl
+        << "\t--filtering-type" << std::endl
+        << "\t\tPermit to choose the gradient filters." << std::endl
+        << "\t\tDefault: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(def_filteringAndGradientType) << ", available: " << vpImageFilter::vpCannyFilteringAndGradientTypeList() << std::endl
+        << std::endl
+        << "\t--canny-backend" << std::endl
+        << "\t\tPermit to choose the backend used to compute the edge map." << std::endl
+        << "\t\tDefault: " << vpImageFilter::vpCannyBackendTypeToString(def_cannyBackendType) << ", available: " << vpImageFilter::vpCannyBackendTypeList() << std::endl
+        << std::endl
+        << "\t--lower-canny-ratio" << std::endl
+        << "\t\tPermit to choose the ratio for the lower threshold if automatic thresholding is chosen." << std::endl
+        << "\t\tDefault: " << def_lowerCannyThreshRatio << std::endl
+        << std::endl
+        << "\t--upper-canny-ratio" << std::endl
+        << "\t\tPermit to choose the ratio for the upper threshold if automatic thresholding is chosen." << std::endl
+        << "\t\tDefault: " << def_upperCannyThreshRatio << std::endl
+        << std::endl
         << "\t--display-edge-map" << std::endl
         << "\t\tPermit to display the edge map used to detect the circles" << std::endl
         << "\t\tDefault: off" << std::endl
@@ -478,6 +539,11 @@ int main(int argc, char **argv)
       , opt_circlePerfectness
       , opt_centerDistanceThresh
       , opt_radiusDifferenceThresh
+      , opt_averagingWindowSize
+      , opt_filteringAndGradientType
+      , opt_cannyBackendType
+      , opt_lowerCannyThreshRatio
+      , opt_upperCannyThreshRatio
     );
   //! [Algo params]
 

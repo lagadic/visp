@@ -1,6 +1,11 @@
 {
-  "lowerCannyThresh": 50.0,
-  "upperCannyThresh": 150.0,
+  "averagingWindowSize": 5,
+  "cannyBackendType": "opencv-backend",
+  "filteringAndGradientType": "gaussianblur+scharr-filtering",
+  "lowerThresholdRatio": 0.6,
+  "lowerCannyThresh": -1.0,
+  "upperThresholdRatio": 0.9,
+  "upperCannyThresh": -1.0,
   "centerMinDistance": 15.0,
   "centerThresh": 50.0,
   "centerXlimits": [
@@ -12,7 +17,8 @@
     480
   ],
   "circlePerfectnessThreshold": 0.9,
-  "dilatationNbIter": 1,
+  "dilatationNbIter": 5,
+  "edgeMapFilteringNbIter" : 0,
   "gaussianKernelSize": 5,
   "gaussianStdev": 1.0,
   "mergingRadiusDiffThresh": 10.0,
@@ -21,5 +27,5 @@
     1000
   ],
   "circleProbabilityThreshold": 0.9,
-  "sobelKernelSize": 3
+  "gradientFilterKernelSize": 3
 }

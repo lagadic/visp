@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Image display.
- *
- * Authors:
- * Christophe Collewet
- *
-*****************************************************************************/
+ */
 
 #ifndef vpDisplayGTK_h
 #define vpDisplayGTK_h
@@ -46,90 +41,89 @@
 #include <visp3/core/vpImage.h>
 
 /*!
-  \file vpDisplayGTK.h
-  \brief Define the GTK console to display images.
-*/
+ * \file vpDisplayGTK.h
+ * \brief Define the GTK console to display images.
+ */
 
 /*!
-
-  \class vpDisplayGTK
-
-  \ingroup group_gui_display
-
-  \brief The vpDisplayGTK allows to display image using the GTK 3rd party
-  library. Thus to enable this class GTK should be installed. Installation
-  instructions are provided here https://visp.inria.fr/3rd_gtk.
-
-  The example below shows how to display an image with this video device.
-  \code
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_GTK)
-  vpImage<unsigned char> I; // Grey level image
-
-  // Read an image in PGM P5 format
-#ifdef _WIN32
-  vpImageIo::read(I, "C:/Temp/visp-images/Klimt/Klimt.pgm");
-#else
-  vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-#endif
-
-  vpDisplayGTK d;
-
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-  d.init(I);
-
-  // Specify the window location
-  vpDisplay::setWindowPosition(I, 400, 100);
-
-  // Set the display window title
-  vpDisplay::setTitle(I, "My GTK display");
-
-  // Set the display background with image I content
-  vpDisplay::display(I);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpImagePoint topLeftCorner;
-  topLeftCorner.set_i(50);
-  topLeftCorner.set_j(10);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
-
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
-
-  // Get non blocking keyboard events
-  std::cout << "Check keyboard events..." << std::endl;
-  char key[10];
-  bool ret;
-  for (int i=0; i< 200; i++) {
-    bool ret = vpDisplay::getKeyboardEvent(I, key, false);
-    if (ret)
-      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
-    vpTime::wait(40);
-  }
-
-  // Get a blocking keyboard event
-  std::cout << "Wait for a keyboard event..." << std::endl;
-  ret = vpDisplay::getKeyboardEvent(I, key, true);
-  std::cout << "keyboard event: " << ret << std::endl;
-  if (ret)
-    std::cout << "key: " << "\"" << key << "\"" << std::endl;
-
-  // Wait for a click in the display window
-  std::cout << "Wait for a button click..." << std::endl;
-  vpDisplay::getClick(I);
-#endif
-}
-  \endcode
-*/
+ * \class vpDisplayGTK
+ *
+ * \ingroup group_gui_display
+ *
+ * \brief The vpDisplayGTK allows to display image using the GTK 3rd party
+ * library. Thus to enable this class GTK should be installed. Installation
+ * instructions are provided here https://visp.inria.fr/3rd_gtk.
+ *
+ * The example below shows how to display an image with this video device.
+ * \code
+ * #include <visp3/core/vpImagePoint.h>
+ * #include <visp3/gui/vpDisplayGTK.h>
+ * #include <visp3/io/vpImageIo.h>
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_GTK)
+ *   vpImage<unsigned char> I; // Grey level image
+ *
+ *   // Read an image in PGM P5 format
+ * #ifdef _WIN32
+ *   vpImageIo::read(I, "C:/Temp/visp-images/Klimt/Klimt.pgm");
+ * #else
+ *   vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+ * #endif
+ *
+ *   vpDisplayGTK d;
+ *
+ *   // Initialize the display with the image I. Display and image are
+ *   // now link together.
+ *   d.init(I);
+ *
+ *   // Specify the window location
+ *   vpDisplay::setWindowPosition(I, 400, 100);
+ *
+ *   // Set the display window title
+ *   vpDisplay::setTitle(I, "My GTK display");
+ *
+ *   // Set the display background with image I content
+ *   vpDisplay::display(I);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpImagePoint topLeftCorner;
+ *   topLeftCorner.set_i(50);
+ *   topLeftCorner.set_j(10);
+ *   vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
+ *
+ *   // Flush the foreground and background display
+ *   vpDisplay::flush(I);
+ *
+ *   // Get non blocking keyboard events
+ *   std::cout << "Check keyboard events..." << std::endl;
+ *   char key[10];
+ *   bool ret;
+ *   for (int i=0; i< 200; i++) {
+ *     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
+ *     if (ret)
+ *       std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+ *     vpTime::wait(40);
+ *   }
+ *
+ *   // Get a blocking keyboard event
+ *   std::cout << "Wait for a keyboard event..." << std::endl;
+ *   ret = vpDisplay::getKeyboardEvent(I, key, true);
+ *   std::cout << "keyboard event: " << ret << std::endl;
+ *   if (ret)
+ *     std::cout << "key: " << "\"" << key << "\"" << std::endl;
+ *
+ *   // Wait for a click in the display window
+ *   std::cout << "Wait for a button click..." << std::endl;
+ *   vpDisplay::getClick(I);
+ * #endif
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpDisplayGTK : public vpDisplay
 {
 private:

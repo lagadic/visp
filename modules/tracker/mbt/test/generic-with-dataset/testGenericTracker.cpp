@@ -497,9 +497,9 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
       std::map<std::string, std::vector<std::vector<double> > > mapOfModels;
       std::map<std::string, unsigned int> mapOfW;
       mapOfW["Camera1"] = I.getWidth();
-      mapOfW["Camera2"] = I.getHeight();
+      mapOfW["Camera2"] = I_depth.getWidth();
       std::map<std::string, unsigned int> mapOfH;
-      mapOfH["Camera1"] = I_depth.getWidth();
+      mapOfH["Camera1"] = I.getHeight();
       mapOfH["Camera2"] = I_depth.getHeight();
       std::map<std::string, vpHomogeneousMatrix> mapOfcMos;
       mapOfcMos["Camera1"] = cMo;

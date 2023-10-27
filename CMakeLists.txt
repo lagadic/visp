@@ -1262,16 +1262,7 @@ vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHY
 find_host_package(Git QUIET)
 
 if(NOT DEFINED VISP_VCSVERSION AND GIT_FOUND)
-  execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "v[0-9].[0-9].[0-9]*"
-    WORKING_DIRECTORY "${VISP_SOURCE_DIR}"
-    OUTPUT_VARIABLE VISP_VCSVERSION
-    RESULT_VARIABLE GIT_RESULT
-    ERROR_QUIET
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-  )
-  if(NOT GIT_RESULT EQUAL 0)
-    set(VISP_VCSVERSION "unknown")
-  endif()
+  vp_git_describe(VISP_VCSVERSION "${VISP_SOURCE_DIR}")
 elseif(NOT DEFINED VISP_VCSVERSION)
   # We don't have git:
   set(VISP_VCSVERSION "unknown")
@@ -1322,11 +1313,12 @@ endif()
 # ========================== build platform ==========================
 status("")
 status("  Platform:")
-if(NOT CMAKE_VERSION VERSION_LESS 2.8.11)
-  string(TIMESTAMP TIMESTAMP "" UTC)
-  if(TIMESTAMP)
-    status("    Timestamp:"    ${TIMESTAMP})
-  endif()
+if(NOT DEFINED VISP_TIMESTAMP AND NOT BUILD_INFO_SKIP_TIMESTAMP)
+  string(TIMESTAMP VISP_TIMESTAMP "" UTC)
+  set(VISP_TIMESTAMP "${VISP_TIMESTAMP}" CACHE STRING "Timestamp of ViSP build configuration" FORCE)
+endif()
+if(VISP_TIMESTAMP)
+  status("    Timestamp:"      ${VISP_TIMESTAMP})
 endif()
 status("    Host:"             ${CMAKE_HOST_SYSTEM_NAME} ${CMAKE_HOST_SYSTEM_VERSION} ${CMAKE_HOST_SYSTEM_PROCESSOR})
 if(CMAKE_CROSSCOMPILING)

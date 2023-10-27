@@ -40,7 +40,7 @@
 /* ---------------------------------------------------------------------- */
 /* --- STATIC ------------------------------------------------------------ */
 /* ------------------------------------------------------------------------ */
-const double vpHomography::sing_threshold = 0.0001;
+const double vpHomography::m_sing_threshold = 0.0001;
 
 void vpHomography::computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n)
 {
@@ -206,7 +206,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, const vpColVecto
 #endif
   n.resize(3);
 
-  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold) {
+  if (((sv[0] - sv[1]) < m_sing_threshold) && (sv[0] - sv[2]) < m_sing_threshold) {
     //#ifdef DEBUG_Homographie
     //   printf ("\nPure  rotation\n");
     //#endif
@@ -499,7 +499,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 #endif
   n.resize(3);
 
-  if (((sv[0] - sv[1]) < sing_threshold) && (sv[0] - sv[2]) < sing_threshold) {
+  if (((sv[0] - sv[1]) < m_sing_threshold) && (sv[0] - sv[2]) < m_sing_threshold) {
     //#ifdef DEBUG_Homographie
     //   printf ("\nPure  rotation\n");
     //#endif
@@ -792,13 +792,13 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
   // 3eme cas : d1 <>d2 =d3
   // 4eme cas : d1 =d2=d3
 
-  if ((sv[0] - sv[1]) < sing_threshold) {
-    if ((sv[1] - sv[2]) < sing_threshold)
+  if ((sv[0] - sv[1]) < m_sing_threshold) {
+    if ((sv[1] - sv[2]) < m_sing_threshold)
       cas = cas4;
     else
       cas = cas2;
   } else {
-    if ((sv[1] - sv[2]) < sing_threshold)
+    if ((sv[1] - sv[2]) < m_sing_threshold)
       cas = cas3;
     else
       cas = cas1;
