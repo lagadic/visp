@@ -89,7 +89,9 @@ void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussia
   drawingHelpers::display(dIy, title, true);
 }
 
-void usage(const std::string &softName)
+void usage(const std::string &softName, int gaussianKernelSize, float gaussianStdev, float lowerThresh, float upperThresh,
+           int apertureSize, vpImageFilter::vpCannyFilteringAndGradientType filteringType,
+           float lowerThreshRatio, float upperThreshRatio, vpImageFilter::vpCannyBackendType backend)
 {
   std::cout << "NAME" << std::endl;
   std::cout << softName << ": software to test the vpCannyEdgeComputation class and vpImageFilter::canny method" << std::endl;
@@ -100,43 +102,51 @@ void usage(const std::string &softName)
     << " [-t, --thresh <lowerThresh upperThresh>]"
     << " [-a, --aperture <apertureSize>]"
     << " [-f, --filter <filterName>]"
-    << " [-r, --ratio <autoThreshRatio>]"
+    << " [-r, --ratio <lowerThreshRatio upperThreshRatio>]"
     << " [-b, --backend <backendName>]"
-    << " [-h, --help]"
+    << " [-h, --help]" << std::endl
     << std::endl;
   std::cout << "DESCRIPTION" << std::endl;
-  std::cout << "\t-i, --image" << std::endl
-    << "\t\tPermits to load an image on which will be tested the vpCanny class."
+  std::cout << "\t-i, --image <pathToImg>" << std::endl
+    << "\t\tPermits to load an image on which will be tested the vpCanny class." << std::endl
+    << "\t\tWhen empty uses a simulated image." << std::endl
     << std::endl;
-  std::cout << "\t-g, --gradient" << std::endl
-    << "\t\tPermits to compute the gradients of the image outside the vpCanny class."
-    << "\t\tFirst parameter is the size of the Gaussian kernel used to compute the gradients."
-    << "\t\tSecond parameter is the standard deviation of the Gaussian kernel used to compute the gradients."
+  std::cout << "\t-g, --gradient <kernelSize stdev>" << std::endl
+    << "\t\tPermits to compute the gradients of the image outside the vpCanny class." << std::endl
+    << "\t\tFirst parameter is the size of the Gaussian kernel used to compute the gradients." << std::endl
+    << "\t\tSecond parameter is the standard deviation of the Gaussian kernel used to compute the gradients." << std::endl
+    << "\t\tDefault: " << gaussianKernelSize << " " << gaussianStdev << std::endl
     << std::endl;
-  std::cout << "\t-t, --thresh" << std::endl
-    << "\t\tPermits to set the lower and upper thresholds of the vpCanny class."
-    << "\t\tFirst parameter is the lower threshold."
-    << "\t\tSecond parameter is the upper threshold."
+  std::cout << "\t-t, --thresh <lowerThresh upperThresh>" << std::endl
+    << "\t\tPermits to set the lower and upper thresholds of the vpCanny class." << std::endl
+    << "\t\tFirst parameter is the lower threshold." << std::endl
+    << "\t\tSecond parameter is the upper threshold." << std::endl
+    << "\t\tWhen set to -1 thresholds are computed automatically." << std::endl
+    << "\t\tDefault: " << lowerThresh << " " << upperThresh << std::endl
     << std::endl;
-  std::cout << "\t-a, --aperture" << std::endl
-    << "\t\tPermits to set the size of the gradient filter kernel."
-    << "\t\tParameter must be odd and positive."
+  std::cout << "\t-a, --aperture <apertureSize>" << std::endl
+    << "\t\tPermits to set the size of the gradient filter kernel." << std::endl
+    << "\t\tParameter must be odd and positive." << std::endl
+    << "\t\tDefault: " << apertureSize << std::endl
     << std::endl;
-  std::cout << "\t-f, --filter" << std::endl
-    << "\t\tPermits to choose the type of filter to apply to compute the gradient."
-    << "\t\tAvailable values = " << vpImageFilter::vpCannyFilteringAndGradientTypeList() << std::endl
+  std::cout << "\t-f, --filter <filterName>" << std::endl
+    << "\t\tPermits to choose the type of filter to apply to compute the gradient." << std::endl
+    << "\t\tAvailable values: " << vpImageFilter::vpCannyFilteringAndGradientTypeList("<", " | ", ">") << std::endl
+    << "\t\tDefault: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(filteringType) << std::endl
     << std::endl;
-  std::cout << "\t-r, --ratio" << std::endl
-    << "\t\tPermits to set the lower and upper thresholds ratio of the vpCanny class."
-    << "\t\tFirst parameter is the lower threshold ratio."
-    << "\t\tSecond parameter is the upper threshold ratio."
+  std::cout << "\t-r, --ratio <lowerThreshRatio upperThreshRatio>" << std::endl
+    << "\t\tPermits to set the lower and upper thresholds ratio of the vpCanny class." << std::endl
+    << "\t\tFirst parameter is the lower threshold ratio." << std::endl
+    << "\t\tSecond parameter is the upper threshold ratio." << std::endl
+    << "\t\tDefault: " << lowerThreshRatio << " " << upperThreshRatio << std::endl
     << std::endl;
-  std::cout << "\t-b, --backend" << std::endl
-    << "\t\tPermits to use the vpImageFilter::canny method for comparison."
-    << "\t\tAvailable values = " << vpImageFilter::vpCannyBackendTypeList() << std::endl
+  std::cout << "\t-b, --backend <backendName>" << std::endl
+    << "\t\tPermits to use the vpImageFilter::canny method for comparison." << std::endl
+    << "\t\tAvailable values: " << vpImageFilter::vpCannyBackendTypeList("<", " | ", ">") << std::endl
+    << "\t\tDefault: " << vpImageFilter::vpCannyBackendTypeToString(backend) << std::endl
     << std::endl;
   std::cout << "\t-h, --help" << std::endl
-    << "\t\tPermits to display the different arguments this software handles."
+    << "\t\tPermits to display the different arguments this software handles." << std::endl
     << std::endl;
 }
 
@@ -190,7 +200,8 @@ int main(int argc, const char *argv[])
       i++;
     }
     else if (argv_str == "-h" || argv_str == "--help") {
-      usage(std::string(argv[0]));
+      usage(std::string(argv[0]), opt_gaussianKernelSize, opt_gaussianStdev, opt_lowerThresh, opt_upperThresh,
+           opt_apertureSize, opt_filteringType, opt_lowerThreshRatio, opt_upperThreshRatio, opt_backend);
       return EXIT_SUCCESS;
     }
     else {
