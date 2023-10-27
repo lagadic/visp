@@ -77,8 +77,6 @@
 
 #endif
 
-#endif
-
 #ifndef M_PIf
 #define M_PIf 3.14159265358979323846f
 #endif
@@ -89,6 +87,7 @@
 
 #ifndef M_PI_4f
 #define M_PI_4f (M_PIf / 4.0f)
+#endif
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
@@ -194,9 +193,9 @@ public:
     }
     return (v < lower) ? lower : (upper < v) ? upper : v;
 #endif
-  }
+    }
 
-  //   round x to the nearest integer
+    //   round x to the nearest integer
   static inline int round(double x);
 
   //   return the sign of x (+-1)
@@ -331,14 +330,14 @@ public:
 private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
-};
+  };
 
-// Begining of the inline functions definition
+  // Begining of the inline functions definition
 
-/*!
-  Computes and returns x!
-  \param x : parameter of factorial function.
-*/
+  /*!
+    Computes and returns x!
+    \param x : parameter of factorial function.
+  */
 double vpMath::fact(unsigned int x)
 {
   if ((x == 1) || (x == 0))
