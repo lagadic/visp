@@ -77,6 +77,19 @@
 
 #endif
 
+#endif
+
+#ifndef M_PIf
+#define M_PIf 3.14159265358979323846f
+#endif
+
+#ifndef M_PI_2f
+#define M_PI_2f (M_PIf / 2.0f)
+#endif
+
+#ifndef M_PI_4f
+#define M_PI_4f (M_PIf / 4.0f)
+
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -88,12 +101,11 @@ class vpRxyzVector;
 class vpTranslationVector;
 
 /*!
-  \class vpMath
-  \ingroup group_core_math_tools
-  \brief Provides simple mathematics computation tools that are not
-  available in the C mathematics library (math.h)
-
-*/
+ * \class vpMath
+ * \ingroup group_core_math_tools
+ * \brief Provides simple mathematics computation tools that are not
+ * available in the C mathematics library (math.h)
+ */
 class VISP_EXPORT vpMath
 {
 public:
@@ -116,6 +128,42 @@ public:
   static inline double rad(double deg) { return (deg * M_PI) / 180.0; }
 
   static vpColVector rad(const vpColVector &r);
+
+  /*!
+   * Convert angle between \f$-\pi\f$ and \f$\pi\f$.
+   *
+   * \param[in] theta The input angle we want to ensure it is in the interval \f$[-\pi ; \pi]\f$.
+   * \return The corresponding angle in the interval \f$[-\pi ; \pi]\f$.
+   */
+  static float getAngleBetweenMinPiAndPi(const float &theta)
+  {
+    float theta1 = theta;
+    if (theta1 > M_PIf) {
+      theta1 -= 2.0f * M_PIf;
+    }
+    else if (theta1 < -M_PIf) {
+      theta1 += 2.0f * M_PIf;
+    }
+    return theta1;
+  }
+
+  /*!
+   * Convert angle between \f$-\pi\f$ and \f$\pi\f$.
+   *
+   * \param[in] theta The input angle we want to ensure it is in the interval \f$[-\pi ; \pi]\f$.
+   * \return The corresponding angle in the interval \f$[-\pi ; \pi]\f$.
+   */
+  static double getAngleBetweenMinPiAndPi(const double &theta)
+  {
+    double theta1 = theta;
+    if (theta1 > M_PI) {
+      theta1 -= 2.0 * M_PI;
+    }
+    else if (theta1 < -M_PI) {
+      theta1 += 2.0 * M_PI;
+    }
+    return theta1;
+  }
 
   /*!
     Compute x square value.
