@@ -46,6 +46,7 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpRotationMatrix.h>
+#include <visp3/core/vpMath.h>
 
 const double vpCameraParameters::DEFAULT_PX_PARAMETER = 600.0;
 const double vpCameraParameters::DEFAULT_PY_PARAMETER = 600.0;
