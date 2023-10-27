@@ -205,7 +205,7 @@
 class VISP_EXPORT vpMbKltTracker : public virtual vpMbTracker
 {
 protected:
-//! Temporary OpenCV image for fast conversion.
+  //! Temporary OpenCV image for fast conversion.
   cv::Mat cur;
   //! Initial pose.
   vpHomogeneousMatrix c0Mo;
