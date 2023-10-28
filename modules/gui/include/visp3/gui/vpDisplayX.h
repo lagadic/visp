@@ -129,9 +129,9 @@ class VISP_EXPORT vpDisplayX : public vpDisplay
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpDisplayX(const vpDisplayX &)
-  //    : vpDisplay(), display(NULL), window(), Ximage(NULL), lut(),
+  //    : vpDisplay(), display(nullptr), window(), Ximage(nullptr), lut(),
   //    context(), screen(), event(), pixmap(),
-  //      x_color(NULL), screen_depth(8), xcolor(), values(),
+  //      x_color(nullptr), screen_depth(8), xcolor(), values(),
   //      ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0),
   //      GShift(0), BShift(0)
   //  {

@@ -130,25 +130,18 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 
 std::string &ltrim(std::string &s)
 {
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {
     return !std::isspace(c);
                                   }));
-#else
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
-#endif
+
   return s;
 }
 
 std::string &rtrim(std::string &s)
 {
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {
     return !std::isspace(c);
                        }).base(), s.end());
-#else
-  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
-#endif
   return s;
 }
 } // namespace
@@ -1694,15 +1687,9 @@ std::string vpIoTools::getParent(const std::string &pathname)
 std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  for (size_t i = 0; i < input.size(); i++) {
-    out += std::tolower(input[i]);
-  }
-#else
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
     out += std::tolower(*it);
   }
-#endif
   return out;
 }
 
@@ -1717,15 +1704,9 @@ std::string vpIoTools::toLowerCase(const std::string &input)
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  for (size_t i = 0; i < input.size(); i++) {
-    out += std::toupper(input[i]);
-  }
-#else
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
     out += std::toupper(*it);
   }
-#endif
   return out;
 }
 
@@ -1742,7 +1723,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::string real_path_str = pathname;
-  char *real_path = realpath(pathname.c_str(), NULL);
+  char *real_path = realpath(pathname.c_str(), nullptr);
 
   if (real_path) {
     real_path_str = real_path;
@@ -2049,8 +2030,8 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
   std::vector<std::string> files;
-  struct dirent **list = NULL;
-  int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
+  struct dirent **list = nullptr;
+  int filesCount = scandir(dirName.c_str(), &list, nullptr, nullptr);
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }

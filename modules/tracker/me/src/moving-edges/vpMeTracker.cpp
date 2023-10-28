@@ -55,7 +55,7 @@ void vpMeTracker::init()
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
+  : list(), me(nullptr), init_range(1), nGoodElement(0), m_mask(nullptr), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   ,
   query_range(0), display_point(false)
@@ -65,7 +65,7 @@ vpMeTracker::vpMeTracker()
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(NULL), init_range(1), nGoodElement(0), m_mask(NULL), selectDisplay(vpMeSite::NONE)
+  : vpTracker(meTracker), list(), me(nullptr), init_range(1), nGoodElement(0), m_mask(nullptr), selectDisplay(vpMeSite::NONE)
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   ,
   query_range(0), display_point(false)
@@ -123,7 +123,7 @@ unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size
 bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
 {
   try {
-    return (mask == NULL || mask->getValue(i, j));
+    return (mask == nullptr || mask->getValue(i, j));
   }
   catch (vpException &) {
     return false;

@@ -47,7 +47,7 @@
   Basic constructor
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
   artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)
@@ -76,7 +76,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   \param do_display : When true, enables the display of the external view.
   */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
-  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
+  : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
   artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)

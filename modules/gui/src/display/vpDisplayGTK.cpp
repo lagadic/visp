@@ -72,10 +72,10 @@ class vpDisplayGTK::Impl
 {
 public:
   Impl()
-    : m_widget(NULL), m_background(NULL), m_gc(NULL), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
+    : m_widget(nullptr), m_background(nullptr), m_gc(nullptr), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
     m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
-    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL),
-    m_col(NULL)
+    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(nullptr), m_font(nullptr), m_vectgtk(nullptr),
+    m_col(nullptr)
   { }
 
   ~Impl() { }
@@ -86,7 +86,7 @@ public:
     gint height = static_cast<gint>(win_height);
 
     /* Initialisation of the gdk et gdk_rgb library */
-    int *argc = NULL;
+    int *argc = nullptr;
     char **argv;
 
     gtk_init(argc, &argv);
@@ -190,9 +190,9 @@ public:
 
     // Try to load a default font
     m_font = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
-    if (m_font == NULL)
+    if (m_font == nullptr)
       m_font = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
-    if (m_font == NULL)
+    if (m_font == nullptr)
       m_font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
 
     if (!title.empty())
@@ -257,16 +257,16 @@ public:
 
   void closeDisplay()
   {
-    if (m_col != NULL) {
+    if (m_col != nullptr) {
       delete[] m_col;
-      m_col = NULL;
+      m_col = nullptr;
     }
 
-    if (m_widget != NULL) {
+    if (m_widget != nullptr) {
       gdk_window_hide(m_widget->window);
       gdk_window_destroy(m_widget->window);
       gtk_widget_destroy(m_widget);
-      m_widget = NULL;
+      m_widget = nullptr;
     }
   }
 
@@ -287,7 +287,7 @@ public:
       gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
       gdk_gc_set_foreground(m_gc, &m_gdkcolor);
     }
-    if (m_font != NULL)
+    if (m_font != nullptr)
       gdk_draw_string(m_background, m_font, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
                       (const gchar *)text);
     else
@@ -409,7 +409,7 @@ public:
   {
     bool ret = false;
     do {
-      GdkEvent *ev = NULL;
+      GdkEvent *ev = nullptr;
       while ((ev = gdk_event_get())) {
         if (ev->any.window == m_widget->window && ev->type == event_type) {
           double u = ((GdkEventButton *)ev)->x;
@@ -473,8 +473,8 @@ public:
     bool ret = false;
     int cpt = 0;
     do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
+      GdkEvent *ev = nullptr;
+      while ((ev = gdk_event_get()) != nullptr) {
         cpt++;
 
         if (ev->any.window == m_widget->window && ev->type == GDK_KEY_PRESS) {
@@ -494,7 +494,7 @@ public:
   bool getPointerMotionEvent(vpImagePoint &ip, unsigned int scale)
   {
     bool ret = false;
-    GdkEvent *ev = NULL;
+    GdkEvent *ev = nullptr;
     if ((ev = gdk_event_get())) {
       if (ev->any.window == m_widget->window && ev->type == GDK_MOTION_NOTIFY) {
         double u = ((GdkEventMotion *)ev)->x;
@@ -512,7 +512,7 @@ public:
   void getPointerPosition(vpImagePoint &ip, unsigned int scale)
   {
     gint u, v;
-    gdk_window_get_pointer(m_widget->window, &u, &v, NULL);
+    gdk_window_get_pointer(m_widget->window, &u, &v, nullptr);
     ip.set_u(static_cast<double>(u) * scale);
     ip.set_v(static_cast<double>(v) * scale);
   }
@@ -520,7 +520,7 @@ public:
   void getScreenSize(bool is_init, unsigned int &w, unsigned int &h)
   {
     if (!is_init) {
-      int *argc = NULL;
+      int *argc = nullptr;
       char **argv;
 
       gtk_init(argc, &argv);

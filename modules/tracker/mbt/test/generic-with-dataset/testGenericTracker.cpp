@@ -46,9 +46,7 @@
 #if defined(VISP_HAVE_MODULE_MBT) &&                                                                                   \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
-#endif
 
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpImageDraw.h>
@@ -161,7 +159,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       use_color_image = true;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -174,7 +172,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -187,10 +185,8 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
   vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
-#endif
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
@@ -258,10 +254,8 @@ template <typename Type>
 bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_display, bool useScanline,
   int trackerType_image, int opt_lastFrame, bool use_depth, bool use_mask, bool save)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
-#endif
   // Initialise a  display
 #if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
@@ -655,7 +649,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 }
 } // namespace
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   try {
     std::string env_ipath;
@@ -681,7 +675,7 @@ int main(int argc, const char *argv [])
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_save, useScanline, trackerType_image,
-      opt_lastFrame, use_depth, use_mask, use_color_image)) {
+                    opt_lastFrame, use_depth, use_mask, use_color_image)) {
       return EXIT_FAILURE;
     }
 
@@ -712,7 +706,7 @@ int main(int argc, const char *argv [])
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl

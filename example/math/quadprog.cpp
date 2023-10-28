@@ -47,7 +47,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_LAPACK)
 
 #include <visp3/core/vpQuadProg.h>
 #include <visp3/core/vpTime.h>
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
-  QPlot *plot = NULL;
+  QPlot *plot = nullptr;
   if (opt_display)
     plot = new QPlot(1, total, { "time to solveQP", "warm start" });
 #endif
@@ -175,14 +175,6 @@ int main(int argc, char **argv)
     delete plot;
   }
 #endif
-  return EXIT_SUCCESS;
-}
-#elif !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-int main()
-{
-  std::cout << "You did not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
   return EXIT_SUCCESS;
 }
 #else

@@ -84,7 +84,7 @@ protected:
 
 public:
   vpFeatureMomentCentered(vpMomentDatabase &moments, double A, double B, double C,
-                          vpFeatureMomentDatabase *featureMoments = NULL);
+                          vpFeatureMomentDatabase *featureMoments = nullptr);
   void compute_interaction() override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

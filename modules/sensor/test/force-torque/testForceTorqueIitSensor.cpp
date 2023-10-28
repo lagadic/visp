@@ -66,7 +66,7 @@ int main(int argc, char **argv)
   vpForceTorqueIitSensor iit_ft;
 
 #if defined(VISP_HAVE_DISPLAY)
-  vpPlot *plotter = NULL;
+  vpPlot *plotter = nullptr;
   if (!opt_no_display) {
     plotter = new vpPlot(2, 700, 700, 100, 200, "Curves...");
     plotter->initGraph(0, 3);

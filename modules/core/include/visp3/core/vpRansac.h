@@ -69,7 +69,7 @@ template <class vpTransformation> class vpRansac
 public:
   static bool ransac(unsigned int npts, const vpColVector &x, unsigned int s, double t, vpColVector &model,
                      vpColVector &inliers, int consensus = 1000, double not_used = 0.0, int maxNbumbersOfTrials = 10000,
-                     double *residual = NULL);
+                     double *residual = nullptr);
 };
 
 /*!
@@ -131,7 +131,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   int bestscore = -1;
   double N = 1; // Dummy initialisation for number of trials.
 
-  vpUniRand random((const long)time(NULL));
+  vpUniRand random((const long)time(nullptr));
   vpColVector bestinliers;
   unsigned int *ind = new unsigned int[s];
   int ninliers = 0;
@@ -171,7 +171,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
     vpTransformation::computeResidual(x, M, d);
 
     // Find the indices of points that are inliers to this model.
-    if (residual != NULL)
+    if (residual != nullptr)
       *residual = 0.0;
     ninliers = 0;
     for (unsigned int i = 0; i < npts; i++) {
@@ -179,7 +179,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       if (resid < t) {
         inliers[i] = 1;
         ninliers++;
-        if (residual != NULL) {
+        if (residual != nullptr) {
           *residual += fabs(d[i]);
         }
       } else
@@ -222,7 +222,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
     M = 0;
   }
 
-  if (residual != NULL) {
+  if (residual != nullptr) {
     if (ninliers > 0) {
       *residual /= ninliers;
     }

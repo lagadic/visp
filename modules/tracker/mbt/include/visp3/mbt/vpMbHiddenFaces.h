@@ -293,25 +293,25 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces() : Lpol(), nbVisiblePolygon(0), s
 template <class PolygonType> vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
 {
   for (unsigned int i = 0; i < Lpol.size(); i++) {
-    if (Lpol[i] != NULL) {
+    if (Lpol[i] != nullptr) {
       delete Lpol[i];
     }
-    Lpol[i] = NULL;
+    Lpol[i] = nullptr;
   }
   Lpol.resize(0);
 
 #ifdef VISP_HAVE_OGRE
-  if (ogre != NULL) {
+  if (ogre != nullptr) {
     delete ogre;
-    ogre = NULL;
+    ogre = nullptr;
   }
 
   // This is already done by calling "delete ogre"
   //  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
-  //    if (lOgrePolygons[i]!=NULL){
+  //    if (lOgrePolygons[i]!=nullptr){
   //      delete lOgrePolygons[i];
   //    }
-  //    lOgrePolygons[i] = NULL;
+  //    lOgrePolygons[i] = nullptr;
   //  }
 
   lOgrePolygons.resize(0);
@@ -327,7 +327,7 @@ vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(const vpMbHiddenFaces<PolygonType>
 #ifdef VISP_HAVE_OGRE
   ,
   ogreBackground(copy.ogreBackground), ogreInitialised(copy.ogreInitialised), nbRayAttempts(copy.nbRayAttempts),
-  ratioVisibleRay(copy.ratioVisibleRay), ogre(NULL), lOgrePolygons(), ogreShowConfigDialog(copy.ogreShowConfigDialog)
+  ratioVisibleRay(copy.ratioVisibleRay), ogre(nullptr), lOgrePolygons(), ogreShowConfigDialog(copy.ogreShowConfigDialog)
 #endif
 {
   // Copy the list of polygons
@@ -393,25 +393,25 @@ template <class PolygonType> void vpMbHiddenFaces<PolygonType>::reset()
 {
   nbVisiblePolygon = 0;
   for (unsigned int i = 0; i < Lpol.size(); i++) {
-    if (Lpol[i] != NULL) {
+    if (Lpol[i] != nullptr) {
       delete Lpol[i];
     }
-    Lpol[i] = NULL;
+    Lpol[i] = nullptr;
   }
   Lpol.resize(0);
 
 #ifdef VISP_HAVE_OGRE
-  if (ogre != NULL) {
+  if (ogre != nullptr) {
     delete ogre;
-    ogre = NULL;
+    ogre = nullptr;
   }
 
   // This is already done by calling "delete ogre"
   //  for(unsigned int i = 0 ; i < lOgrePolygons.size() ; i++){
-  //    if (lOgrePolygons[i]!=NULL){
+  //    if (lOgrePolygons[i]!=nullptr){
   //      delete lOgrePolygons[i];
   //    }
-  //    lOgrePolygons[i] = NULL;
+  //    lOgrePolygons[i] = nullptr;
   //  }
 
   lOgrePolygons.resize(0);

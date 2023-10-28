@@ -56,7 +56,7 @@ void vpFeatureMoment::init()
    * vpMoment associated to it. This partly explains why vpFeatureMomentBasic
    * cannot be used directly as a visual feature.
    */
-  if (this->moment != NULL)
+  if (this->moment != nullptr)
     dim_s = (unsigned int)this->moment->get().size();
   else
     dim_s = 0;
@@ -68,7 +68,7 @@ void vpFeatureMoment::init()
   for (unsigned int i = 0; i < dim_s; i++)
     s[i] = 0;
 
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -150,14 +150,14 @@ void vpFeatureMoment::update(double A_, double B_, double C_)
   this->B = B_;
   this->C = C_;
 
-  if (moment == NULL) {
+  if (moment == nullptr) {
     bool found;
     this->moment = &(moments.get(momentName(), found));
     if (!found)
       throw vpException(vpException::notInitialized, "Moment not found for feature");
   }
   nbParameters = 1;
-  if (this->moment != NULL) {
+  if (this->moment != nullptr) {
     dim_s = (unsigned int)this->moment->get().size();
 
     s.resize(dim_s);
@@ -165,7 +165,7 @@ void vpFeatureMoment::update(double A_, double B_, double C_)
     for (unsigned int i = 0; i < dim_s; i++)
       s[i] = this->moment->get()[i];
 
-    if (flags == NULL)
+    if (flags == nullptr)
       flags = new bool[nbParameters];
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;

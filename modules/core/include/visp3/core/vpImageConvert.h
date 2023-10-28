@@ -135,7 +135,7 @@ public:
 #endif
 
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
-                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = NULL);
+                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
 
   static void merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G, const vpImage<unsigned char> *B,
                     const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa);

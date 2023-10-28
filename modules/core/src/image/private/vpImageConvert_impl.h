@@ -41,7 +41,7 @@
 #ifndef vpIMAGECONVERT_impl_H
 #define vpIMAGECONVERT_impl_H
 
-#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OPENMP)
 #include <omp.h>
 #include <array>
 #endif
@@ -60,7 +60,7 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
 
-#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OPENMP)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
   for (int i = 0; i < nThreads; i++) {
@@ -100,9 +100,10 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
     uint16_t d = static_cast<uint16_t>(src_depth.bitmap[i]);
     if (d) {
       unsigned char f =
-          static_cast<unsigned char>(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
+        static_cast<unsigned char>(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
       dest_depth.bitmap[i] = f;
-    } else {
+    }
+    else {
       dest_depth.bitmap[i] = 0;
     }
   }
@@ -119,7 +120,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
 
-#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OPENMP)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
   for (int i = 0; i < nThreads; i++) {
@@ -155,9 +156,10 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
     uint16_t d = src_depth.bitmap[i];
     if (d) {
       unsigned char f =
-          static_cast<unsigned char>(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
+        static_cast<unsigned char>(histogram[d] * 255 / histogram[0xFFFF]); // 0-255 based on histogram location
       dest_depth.bitmap[i] = f;
-    } else {
+    }
+    else {
       dest_depth.bitmap[i] = 0;
     }
   }
@@ -198,7 +200,8 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<vpRGBa> &d
       dest_depth.bitmap[i].G = 0;
       dest_depth.bitmap[i].B = f;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
-    } else {
+    }
+    else {
       dest_depth.bitmap[i].R = 20;
       dest_depth.bitmap[i].G = 5;
       dest_depth.bitmap[i].B = 0;
@@ -240,7 +243,8 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa>
       dest_depth.bitmap[i].G = 0;
       dest_depth.bitmap[i].B = f;
       dest_depth.bitmap[i].A = vpRGBa::alpha_default;
-    } else {
+    }
+    else {
       dest_depth.bitmap[i].R = 20;
       dest_depth.bitmap[i].G = 5;
       dest_depth.bitmap[i].B = 0;

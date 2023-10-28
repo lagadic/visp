@@ -29,7 +29,7 @@
  *
  * Description:
  * Compute the pose of a 3D object using the Dementhon method. Assuming that
- * the correspondance between 2D points and 3D points is not done, we use
+ * the correspondence between 2D points and 3D points is not done, we use
  * the RANSAC algorithm to achieve this task
  */
 

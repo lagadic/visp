@@ -142,8 +142,8 @@ void vpUDPClient::init(const std::string &hostname, int port)
   std::stringstream ss;
   ss << port;
   struct addrinfo hints;
-  struct addrinfo *result = NULL;
-  struct addrinfo *ptr = NULL;
+  struct addrinfo *result = nullptr;
+  struct addrinfo *ptr = nullptr;
 
   memset(&hints, 0, sizeof(hints));
   hints.ai_family = AF_INET;
@@ -157,7 +157,7 @@ void vpUDPClient::init(const std::string &hostname, int port)
     throw vpException(vpException::fatalError, ss.str());
   }
 
-  for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
+  for (ptr = result; ptr != nullptr; ptr = ptr->ai_next) {
     if (ptr->ai_family == AF_INET && ptr->ai_socktype == SOCK_DGRAM) {
       m_serverAddress = *(struct sockaddr_in *)ptr->ai_addr;
       break;
@@ -205,7 +205,7 @@ int vpUDPClient::receive(std::string &msg, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, NULL, NULL, timeoutMs > 0 ? &timeout : NULL);
+  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;
@@ -251,7 +251,7 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
     timeout.tv_sec = timeoutMs / 1000;
     timeout.tv_usec = (timeoutMs % 1000) * 1000;
   }
-  int retval = select((int)m_socketFileDescriptor + 1, &s, NULL, NULL, timeoutMs > 0 ? &timeout : NULL);
+  int retval = select((int)m_socketFileDescriptor + 1, &s, nullptr, nullptr, timeoutMs > 0 ? &timeout : nullptr);
 
   if (retval == -1) {
     std::cerr << "Error select!" << std::endl;

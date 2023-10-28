@@ -99,7 +99,7 @@ int main(int argc, const char **argv)
 
     rs2::align align_to_color = RS2_STREAM_COLOR;
     g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
-              NULL, NULL, &align_to_color);
+              nullptr, nullptr, &align_to_color);
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     vpCameraParameters cam;
@@ -116,9 +116,9 @@ int main(int argc, const char **argv)
     vpImage<float> depthMap;
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    vpDisplay *d1 = NULL;
-    vpDisplay *d2 = NULL;
-    vpDisplay *d3 = NULL;
+    vpDisplay *d1 = nullptr;
+    vpDisplay *d2 = nullptr;
+    vpDisplay *d3 = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       d1 = new vpDisplayX(I_color, 100, 30, "Pose from Homography");
@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
 
       //! [Acquisition]
       g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), NULL, NULL, &align_to_color);
+                reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), nullptr, nullptr, &align_to_color);
       //! [Acquisition]
 
       I_color2 = I_color;

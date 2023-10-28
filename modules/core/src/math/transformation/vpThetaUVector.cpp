@@ -47,9 +47,9 @@ rotation
 const double vpThetaUVector::minimum = 0.0001;
 
 /*! Default constructor that initialize all the 3 angles to zero. */
-vpThetaUVector::vpThetaUVector() : vpRotationVector(3) {}
+vpThetaUVector::vpThetaUVector() : vpRotationVector(3) { }
 /*! Copy constructor. */
-vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) {}
+vpThetaUVector::vpThetaUVector(const vpThetaUVector &tu) : vpRotationVector(tu) { }
 /*! Copy constructor from a 3-dimension vector. */
 vpThetaUVector::vpThetaUVector(const vpColVector &tu) : vpRotationVector(3) { buildFrom(tu); }
 /*!
@@ -137,7 +137,7 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
   double s, c, theta;
 
   s = (R[1][0] - R[0][1]) * (R[1][0] - R[0][1]) + (R[2][0] - R[0][2]) * (R[2][0] - R[0][2]) +
-      (R[2][1] - R[1][2]) * (R[2][1] - R[1][2]);
+    (R[2][1] - R[1][2]) * (R[2][1] - R[1][2]);
   s = sqrt(s) / 2.0;
   c = (R[0][0] + R[1][1] + R[2][2] - 1.0) / 2.0;
   theta = atan2(s, c); /* theta in [0, PI] since s > 0 */
@@ -150,7 +150,8 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
     data[0] = (R[2][1] - R[1][2]) / (2 * sinc);
     data[1] = (R[0][2] - R[2][0]) / (2 * sinc);
     data[2] = (R[1][0] - R[0][1]) / (2 * sinc);
-  } else /* theta near PI */
+  }
+  else /* theta near PI */
   {
     double x = 0;
     if ((R[0][0] - c) > std::numeric_limits<double>::epsilon())
@@ -171,14 +172,16 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
         y = -y;
       if (vpMath::sign(x) * vpMath::sign(z) != vpMath::sign(R[0][2] + R[2][0]))
         z = -z;
-    } else if (y > z) {
+    }
+    else if (y > z) {
       if ((R[0][2] - R[2][0]) < 0)
         y = -y;
       if (vpMath::sign(y) * vpMath::sign(x) != vpMath::sign(R[1][0] + R[0][1]))
         x = -x;
       if (vpMath::sign(y) * vpMath::sign(z) != vpMath::sign(R[1][2] + R[2][1]))
         z = -z;
-    } else {
+    }
+    else {
       if ((R[1][0] - R[0][1]) < 0)
         z = -z;
       if (vpMath::sign(z) * vpMath::sign(x) != vpMath::sign(R[2][0] + R[0][2]))
@@ -458,13 +461,12 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
   vpColVector b_hat_sin_2 = b_hat * std::sin(b_2);
   double c = 2 * std::acos(std::cos(a_2) * std::cos(b_2) - vpColVector::dotProd(a_hat_sin_2, b_hat_sin_2));
   vpColVector d = std::sin(a_2) * std::cos(b_2) * a_hat + std::cos(a_2) * std::sin(b_2) * b_hat +
-                  std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat);
+    std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat);
   d = c * d / std::sin(c / 2);
 
   return vpThetaUVector(d);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
@@ -486,11 +488,10 @@ vpThetaUVector &vpThetaUVector::operator=(const std::initializer_list<double> &l
 {
   if (list.size() > size()) {
     throw(vpException(
-        vpException::dimensionError,
-        "Cannot set theta u vector out of bounds. It has only %d values while you try to initialize with %d values",
-        size(), list.size()));
+      vpException::dimensionError,
+      "Cannot set theta u vector out of bounds. It has only %d values while you try to initialize with %d values",
+      size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif

@@ -47,10 +47,10 @@
 /*!
   Constructor.
 */
-vpGDIRenderer::vpGDIRenderer() : m_bmp(NULL), m_bmp_width(0), m_bmp_height(0), timelost(0)
+vpGDIRenderer::vpGDIRenderer() : m_bmp(nullptr), m_bmp_width(0), m_bmp_height(0), timelost(0)
 {
   // if the screen depth is not 32bpp, throw an exception
-  int bpp = GetDeviceCaps(GetDC(NULL), BITSPIXEL);
+  int bpp = GetDeviceCaps(GetDC(nullptr), BITSPIXEL);
   if (bpp != 32)
     throw vpDisplayException(vpDisplayException::depthNotSupportedError,
                              "vpGDIRenderer supports only 32bits depth: screen is %dbits depth!", bpp);
@@ -130,7 +130,7 @@ bool vpGDIRenderer::init(HWND hWindow, unsigned int width, unsigned int height)
 
   // creates the font
   m_hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                       CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
+                       CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, nullptr);
   return true;
 }
 
@@ -421,12 +421,12 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigne
     // just replace the content
     SetBitmapBits(hBmp, w * h * 4, imBuffer);
   } else {
-    if (hBmp != NULL) {
+    if (hBmp != nullptr) {
       // delete the old BITMAP
       DeleteObject(hBmp);
     }
     // create a new BITMAP from this buffer
-    if ((hBmp = CreateBitmap(static_cast<int>(w), static_cast<int>(h), 1, 32, (void *)imBuffer)) == NULL)
+    if ((hBmp = CreateBitmap(static_cast<int>(w), static_cast<int>(h), 1, 32, (void *)imBuffer)) == nullptr)
       return false;
 
     m_bmp_width = w;
@@ -512,8 +512,8 @@ void vpGDIRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
 void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness, int style)
 {
-  HDC hDCScreen = NULL, hDCMem = NULL;
-  HPEN hPen = NULL;
+  HDC hDCScreen = nullptr, hDCMem = nullptr;
+  HPEN hPen = nullptr;
 #ifdef GDI_ROBUST
   double start = vpTime::measureTimeMs();
   while (vpTime::measureTimeMs() - start < 1000) {
@@ -616,7 +616,7 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         double j = ip1_.get_j();
 
         // Move to the starting point
-        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
         // Draw the line
         LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
       }
@@ -624,14 +624,14 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
       for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
         double i = slope * j + orig;
         // Move to the starting point
-        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
         // Draw the line
         LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
       }
     }
   } else {
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
     // Draw the line
     LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
   }
@@ -876,12 +876,12 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
     SelectObject(hDCMem, hPen);
 
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale) - half_size, vpMath::round(ip.get_v() / m_rscale), NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale) - half_size, vpMath::round(ip.get_v() / m_rscale), nullptr);
     // Draw the first line (horizontal)
     LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale) + half_size, vpMath::round(ip.get_v() / m_rscale));
 
     // move to the starting point
-    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) - half_size, NULL);
+    MoveToEx(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) - half_size, nullptr);
     // Draw the second line (vertical)
     LineTo(hDCMem, vpMath::round(ip.get_u() / m_rscale), vpMath::round(ip.get_v() / m_rscale) + half_size);
 
@@ -957,7 +957,7 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
       ip4.set_j(ip3.get_j() + a * h);
 
       if (lg > 2 * vpImagePoint::distance(ip2 / m_rscale, ip4)) {
-        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), NULL);
+        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), nullptr);
         LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
       }
       // t+=0.1 ;
@@ -970,13 +970,13 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
       ip4.set_j(ip3.get_j() - a * h);
 
       if (lg > 2 * vpImagePoint::distance(ip2 / m_rscale, ip4)) {
-        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), NULL);
+        MoveToEx(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale), nullptr);
         LineTo(hDCMem, vpMath::round(ip4.get_u()), vpMath::round(ip4.get_v()));
       }
 
       // t-=0.1 ;
     }
-    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+    MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
     LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
   }
 

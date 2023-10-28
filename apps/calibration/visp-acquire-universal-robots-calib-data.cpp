@@ -42,7 +42,7 @@
 #include <visp3/robot/vpRobotUniversalRobots.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
+#if defined(VISP_HAVE_REALSENSE2) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
@@ -170,9 +170,6 @@ int main()
 #endif
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
 #endif
 #if !defined(VISP_HAVE_UR_RTDE)
   std::cout << "ViSP is not build with libur_rtde 3rd party used to control a robot from Universal Robots..."

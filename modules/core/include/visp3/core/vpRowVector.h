@@ -90,20 +90,16 @@ v:
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector v{-1, -2.1, -3};
   std::cout << "v:\n" << v << std::endl;
-#endif
 }
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector v;
   v = {-1, -2.1, -3};
-#endif
 }
   \endcode
 */
@@ -125,10 +121,8 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
   vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
-#endif
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -136,14 +130,14 @@ public:
   */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -213,10 +207,8 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(double x);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
-#endif
   //! Comparison operator.
   bool operator==(const vpRowVector &v) const;
   bool operator!=(const vpRowVector &v) const;

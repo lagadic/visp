@@ -525,7 +525,7 @@ public:
   unsigned int threadid;
 
 public:
-  vpUndistortInternalType() : src(NULL), dst(NULL), width(0), height(0), cam(), nthreads(0), threadid(0) {}
+  vpUndistortInternalType() : src(nullptr), dst(nullptr), width(0), height(0), cam(), nthreads(0), threadid(0) {}
 
   vpUndistortInternalType(const vpUndistortInternalType<Type> &u) { *this = u; }
   vpUndistortInternalType &operator=(const vpUndistortInternalType<Type> &u)
@@ -609,7 +609,7 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   }
 
   pthread_exit((void *)0);
-  return NULL;
+  return nullptr;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // VISP_HAVE_PTHREAD
@@ -685,7 +685,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
 
   for (unsigned int i = 0; i < nthreads; i++) {
     //  vpTRACE("join thread %d", i);
-    pthread_join(callThd[i], NULL);
+    pthread_join(callThd[i], nullptr);
   }
 
   delete[] callThd;

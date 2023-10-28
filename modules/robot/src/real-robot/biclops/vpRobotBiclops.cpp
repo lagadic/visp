@@ -116,7 +116,7 @@ void vpRobotBiclops::init()
 {
   // test if the config file exists
   FILE *fd = fopen(m_configfile.c_str(), "r");
-  if (fd == NULL) {
+  if (fd == nullptr) {
     vpCERROR << "Cannot open Biclops config file: " << m_configfile << std::endl;
     throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with biclops");
   }

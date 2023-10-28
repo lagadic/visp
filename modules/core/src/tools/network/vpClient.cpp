@@ -64,7 +64,7 @@ bool vpClient::connectToHostname(const std::string &hostname, const unsigned int
   // get server host information from hostname
   struct hostent *server = gethostbyname(hostname.c_str());
 
-  if (server == NULL) {
+  if (server == nullptr) {
     std::string noSuchHostMessage("ERROR, ");
     noSuchHostMessage.append(hostname);
     noSuchHostMessage.append(": no such host\n");

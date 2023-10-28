@@ -54,7 +54,7 @@ int main()
   double stdev = 0.5, mean = 0.0, noise_threshold = 1e-3;
 
   vpGaussRand noise(stdev, mean);
-  noise.seed((unsigned int)time(NULL));
+  noise.seed((unsigned int)time(nullptr));
 
   vpColVector residues_col((unsigned int)nb_elements);
   vpColVector weights_col, weights_col_save;

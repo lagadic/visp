@@ -56,7 +56,7 @@ void readStb(vpImage<unsigned char> &I, const std::string &filename)
 {
   int width = 0, height = 0, channels = 0;
   unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_grey);
-  if (image == NULL) {
+  if (image == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
   }
   I.init(image, static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
@@ -67,7 +67,7 @@ void readStb(vpImage<vpRGBa> &I, const std::string &filename)
 {
   int width = 0, height = 0, channels = 0;
   unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-  if (image == NULL) {
+  if (image == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
   }
   I.init(reinterpret_cast<vpRGBa *>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);

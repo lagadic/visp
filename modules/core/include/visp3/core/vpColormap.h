@@ -36,25 +36,24 @@
 #define _vpColormap_h_
 
 /*!
-  \file vpColormap.h
-
-  \brief Colormap tool to have a mapping between 256 values and RGB values.
-*/
+ * \file vpColormap.h
+ *
+ * \brief Colormap tool to have a mapping between 256 values and RGB values.
+ */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
-  \class vpColormap
-
-  \ingroup group_core_image
-
-  \brief Creates a colormap class to be able to recolor an image with different grayscale
-  values into some corresponding color values, for better visualization for example.
-*/
+ * \class vpColormap
+ *
+ * \ingroup group_core_image
+ *
+ * \brief Creates a colormap class to be able to recolor an image with different grayscale
+ * values into some corresponding color values, for better visualization for example.
+ */
 class VISP_EXPORT vpColormap
 {
 public:
@@ -97,5 +96,4 @@ private:
   unsigned char m_colormapSrgbBytes[256][3] = {};
 };
 
-#endif
 #endif

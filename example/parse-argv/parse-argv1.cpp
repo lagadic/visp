@@ -129,7 +129,7 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
       i_val = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, i_val, f_val, d_val);
+      usage(argv[0], nullptr, i_val, f_val, d_val);
       return false;
       break;
 
@@ -142,7 +142,7 @@ bool getOptions(int argc, const char **argv, int &i_val, float &f_val, double &d
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, i_val, f_val, d_val);
+    usage(argv[0], nullptr, i_val, f_val, d_val);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;

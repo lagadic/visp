@@ -100,7 +100,7 @@ public:
    * \param featureMoments : Feature database.
    */
   vpFeatureMomentCInvariant(vpMomentDatabase &moments, double A, double B, double C,
-                            vpFeatureMomentDatabase *featureMoments = NULL)
+                            vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(moments, A, B, C, featureMoments, 16)
   { }
   void compute_interaction() override;
@@ -238,7 +238,7 @@ public:
    * \param featureMoments : Feature database.
    */
   vpFeatureMomentCInvariant(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                            vpFeatureMomentDatabase *featureMoments = NULL)
+                            vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 16), LI(16)
   { }
 

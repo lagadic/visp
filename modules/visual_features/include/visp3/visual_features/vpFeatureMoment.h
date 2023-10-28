@@ -140,7 +140,7 @@ class vpMoment;
  *   //more than a shortcut to the vpMomentObject)
  *   bm.linkTo(mdb); //add basic moment to moment database
  *
- *   vpFeatureMomentBasic fmb(mdb,0,0,1,NULL);
+ *   vpFeatureMomentBasic fmb(mdb,0,0,1,nullptr);
  *
  *   //update and compute the vpMoment BEFORE doing any operations with vpFeatureMoment
  *   bm.update(obj);
@@ -169,8 +169,8 @@ protected:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpFeatureMoment(const vpFeatureMoment &fm)
-  //    : vpBasicFeature(), moment(NULL), moments(fm.moments),
-  //    featureMomentsDataBase(NULL),
+  //    : vpBasicFeature(), moment(nullptr), moments(fm.moments),
+  //    featureMomentsDataBase(nullptr),
   //      interaction_matrices(), A(0), B(0), C(0)
   //  {
   //    throw vpException(vpException::functionNotImplementedError, "Not
@@ -198,8 +198,8 @@ public:
    * number of lines by this parameter.
    */
   vpFeatureMoment(vpMomentDatabase &data_base, double A_ = 0.0, double B_ = 0.0, double C_ = 0.0,
-                  vpFeatureMomentDatabase *featureMoments = NULL, unsigned int nbmatrices = 1)
-    : vpBasicFeature(), moment(NULL), moments(data_base), featureMomentsDataBase(featureMoments),
+                  vpFeatureMomentDatabase *featureMoments = nullptr, unsigned int nbmatrices = 1)
+    : vpBasicFeature(), moment(nullptr), moments(data_base), featureMomentsDataBase(featureMoments),
     interaction_matrices(nbmatrices), A(A_), B(B_), C(C_), _name()
   { }
 
@@ -265,12 +265,12 @@ public:
   /*!
    * No specific moment name.
    */
-  const char *momentName() const { return NULL; }
+  const char *momentName() const { return nullptr; }
 
   /*!
    * No specific feature name.
    */
-  virtual const char *name() const { return NULL; }
+  virtual const char *name() const { return nullptr; }
 };
 
 #endif

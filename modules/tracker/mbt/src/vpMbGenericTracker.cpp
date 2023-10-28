@@ -183,7 +183,7 @@ vpMbGenericTracker::~vpMbGenericTracker()
   for (std::map<std::string, TrackerWrapper *>::iterator it = m_mapOfTrackers.begin(); it != m_mapOfTrackers.end();
     ++it) {
     delete it->second;
-    it->second = NULL;
+    it->second = nullptr;
   }
 }
 
@@ -1655,7 +1655,7 @@ void vpMbGenericTracker::getNbPolygon(std::map<std::string, unsigned int> &mapOf
   polygon.
 
   \param index : Index of the polygon to return.
-  \return Pointer to the polygon index for the reference camera or NULL in
+  \return Pointer to the polygon index for the reference camera or nullptr in
   case of problem.
 */
 vpMbtPolygon *vpMbGenericTracker::getPolygon(unsigned int index)
@@ -1666,7 +1666,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(unsigned int index)
   }
 
   std::cerr << "The reference camera: " << m_referenceCameraName << " does not exist!" << std::endl;
-  return NULL;
+  return nullptr;
 }
 
 /*!
@@ -1677,7 +1677,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(unsigned int index)
 
   \param cameraName : Name of the camera to return the polygon.
   \param index : Index of the polygon to return.
-  \return Pointer to the polygon index for the specified camera or NULL in
+  \return Pointer to the polygon index for the specified camera or nullptr in
   case of problem.
 */
 vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, unsigned int index)
@@ -1688,7 +1688,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, unsi
   }
 
   std::cerr << "The camera: " << cameraName << " does not exist!" << std::endl;
-  return NULL;
+  return nullptr;
 }
 
 /*!
@@ -5449,13 +5449,13 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
                                   | KLT_TRACKER
 #endif
                                   ) &&
-      mapOfImages[it->first] == NULL) {
-      throw vpException(vpException::fatalError, "Image pointer is NULL!");
+      mapOfImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
       !mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
-      throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
+      throw vpException(vpException::fatalError, "Pointcloud smart pointer is nullptr!");
     }
   }
 
@@ -5526,22 +5526,22 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
                                   | KLT_TRACKER
 #endif
                                   ) &&
-      mapOfImages[it->first] == NULL) {
-      throw vpException(vpException::fatalError, "Image pointer is NULL!");
+      mapOfImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
                                        | KLT_TRACKER
 #endif
                                        ) &&
-      mapOfImages[it->first] != NULL) {
+      mapOfImages[it->first] != nullptr) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
       mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
       !mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
-      throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
+      throw vpException(vpException::fatalError, "Pointcloud smart pointer is nullptr!");
     }
   }
 
@@ -5616,13 +5616,13 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
                                   | KLT_TRACKER
 #endif
                                   ) &&
-      mapOfImages[it->first] == NULL) {
-      throw vpException(vpException::fatalError, "Image pointer is NULL!");
+      mapOfImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-      (mapOfPointClouds[it->first] == NULL)) {
-      throw vpException(vpException::fatalError, "Pointcloud is NULL!");
+      (mapOfPointClouds[it->first] == nullptr)) {
+      throw vpException(vpException::fatalError, "Pointcloud is nullptr!");
     }
   }
 
@@ -5697,22 +5697,22 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
                                   | KLT_TRACKER
 #endif
                                   ) &&
-      mapOfColorImages[it->first] == NULL) {
-      throw vpException(vpException::fatalError, "Image pointer is NULL!");
+      mapOfColorImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
     }
     else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
                                        | KLT_TRACKER
 #endif
                                        ) &&
-      mapOfColorImages[it->first] != NULL) {
+      mapOfColorImages[it->first] != nullptr) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
       mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-      (mapOfPointClouds[it->first] == NULL)) {
-      throw vpException(vpException::fatalError, "Pointcloud is NULL!");
+      (mapOfPointClouds[it->first] == nullptr)) {
+      throw vpException(vpException::fatalError, "Pointcloud is nullptr!");
     }
   }
 
@@ -6847,24 +6847,24 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
     if (scales[i]) {
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
         l = *it;
-        if (l != NULL)
+        if (l != nullptr)
           delete l;
-        l = NULL;
+        l = nullptr;
       }
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
         ++it) {
         cy = *it;
-        if (cy != NULL)
+        if (cy != nullptr)
           delete cy;
-        cy = NULL;
+        cy = nullptr;
       }
 
       for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
         ci = *it;
-        if (ci != NULL)
+        if (ci != nullptr)
           delete ci;
-        ci = NULL;
+        ci = nullptr;
       }
 
       lines[i].clear();
@@ -6883,30 +6883,30 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
-    if (kltpoly != NULL) {
+    if (kltpoly != nullptr) {
       delete kltpoly;
     }
-    kltpoly = NULL;
+    kltpoly = nullptr;
   }
   kltPolygons.clear();
 
   for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
     ++it) {
     vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (kltPolyCylinder != NULL) {
+    if (kltPolyCylinder != nullptr) {
       delete kltPolyCylinder;
     }
-    kltPolyCylinder = NULL;
+    kltPolyCylinder = nullptr;
   }
   kltCylinders.clear();
 
   // delete the structures used to display circles
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
     ci = *it;
-    if (ci != NULL) {
+    if (ci != nullptr) {
       delete ci;
     }
-    ci = NULL;
+    ci = nullptr;
   }
   circles_disp.clear();
 
@@ -6917,14 +6917,14 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   // Depth normal
   for (size_t i = 0; i < m_depthNormalFaces.size(); i++) {
     delete m_depthNormalFaces[i];
-    m_depthNormalFaces[i] = NULL;
+    m_depthNormalFaces[i] = nullptr;
   }
   m_depthNormalFaces.clear();
 
   // Depth dense
   for (size_t i = 0; i < m_depthDenseFaces.size(); i++) {
     delete m_depthDenseFaces[i];
-    m_depthDenseFaces[i] = NULL;
+    m_depthDenseFaces[i] = nullptr;
   }
   m_depthDenseFaces.clear();
 
@@ -6943,14 +6943,14 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
   const vpHomogeneousMatrix &cMo, bool verbose,
   const vpHomogeneousMatrix &T)
 {
-  reInitModel(&I, NULL, cad_name, cMo, verbose, T);
+  reInitModel(&I, nullptr, cad_name, cMo, verbose, T);
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
   const vpHomogeneousMatrix &cMo, bool verbose,
   const vpHomogeneousMatrix &T)
 {
-  reInitModel(NULL, &I_color, cad_name, cMo, verbose, T);
+  reInitModel(nullptr, &I_color, cad_name, cMo, verbose, T);
 }
 
 void vpMbGenericTracker::TrackerWrapper::resetTracker()
@@ -7061,12 +7061,12 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *c
 
 void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
 {
-  setPose(&I, NULL, cdMo);
+  setPose(&I, nullptr, cdMo);
 }
 
 void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
 {
-  setPose(NULL, &I_color, cdMo);
+  setPose(nullptr, &I_color, cdMo);
 }
 
 void vpMbGenericTracker::TrackerWrapper::setProjectionErrorComputation(const bool &flag)
@@ -7105,7 +7105,7 @@ void vpMbGenericTracker::TrackerWrapper::testTracking()
 }
 
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL)
   I
 #endif
 )
@@ -7119,7 +7119,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
     return;
   }
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL)
   track(&I, nullptr);
 #endif
 }
@@ -7147,12 +7147,12 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
                        | KLT_TRACKER
 #endif
                        ) &&
-    ptr_I == NULL) {
-    throw vpException(vpException::fatalError, "Image pointer is NULL!");
+    ptr_I == nullptr) {
+    throw vpException(vpException::fatalError, "Image pointer is nullptr!");
   }
 
   if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && !point_cloud) { // point_cloud == nullptr
-    throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
+    throw vpException(vpException::fatalError, "Pointcloud smart pointer is nullptr!");
   }
 
   // Back-up cMo in case of exception

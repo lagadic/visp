@@ -141,7 +141,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &s
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, icamera, opath);
+      usage(argv[0], nullptr, icamera, opath);
       return false;
       break;
 
@@ -154,7 +154,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &click, bool &s
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, icamera, opath);
+    usage(argv[0], nullptr, icamera, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -189,7 +189,7 @@ int main(int argc, const char **argv)
     std::cout << "Camera serial: " << g.getCameraSerial(g.getCameraIndex()) << std::endl;
     std::cout << "Image size   : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
     if (opt_display) {
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX(I);

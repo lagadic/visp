@@ -40,7 +40,7 @@ class vpGaussianFilter::Impl
 {
 public:
   Impl(unsigned int width, unsigned int height, float sigma, bool deinterleave)
-    : m_funcPtrGray(NULL), m_funcPtrRGBa(NULL), m_deinterleave(deinterleave)
+    : m_funcPtrGray(nullptr), m_funcPtrRGBa(nullptr), m_deinterleave(deinterleave)
   {
     const float epsilon = 0.001f;
     {
@@ -95,7 +95,7 @@ public:
       SimdGaussianBlurRun(m_funcPtrGray, m_blue.bitmap, m_blue.getWidth(), m_blueBlurred.bitmap,
                           m_blueBlurred.getWidth());
 
-      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, NULL, I_blur);
+      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, nullptr, I_blur);
     }
   }
 

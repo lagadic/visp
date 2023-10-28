@@ -187,11 +187,9 @@ int main(int argc, const char *argv[])
     // save eMc
     std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_eMc_file), vpIoTools::getNameWE(opt_eMc_file)) + ".txt";
     std::cout << std::endl << "Save transformation matrix eMc as an homogeneous matrix in: " << name_we << std::endl;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
     std::ofstream file_eMc(name_we);
-#else
-    std::ofstream file_eMc(name_we.c_str());
-#endif
+
     eMc.save(file_eMc);
 
     vpPoseVector pose_vec(eMc);

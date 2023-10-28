@@ -79,7 +79,7 @@ private:
 #include <visp3/core/vpCPUFeatures.h>
 
 #define USE_TRANSFORM 1
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && USE_TRANSFORM
+#if USE_TRANSFORM
 #define HAVE_TRANSFORM 1
 #include <functional>
 #endif
@@ -116,7 +116,8 @@ namespace
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
 auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); };
 #else
-template <typename T> struct AbsDiff : public std::binary_function<T, T, T> {
+template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
+{
   T operator()(const T a, const T b) const { return std::fabs(a - b); }
 };
 #endif
@@ -351,7 +352,8 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
 
     if (xi > 1.) {
       weights[i] = 0;
-    } else {
+    }
+    else {
       xi = 1 - xi;
       xi *= xi;
       weights[i] = xi;
@@ -450,7 +452,8 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
 
     if (xi > 1.) {
       weights[i] = 0;
-    } else {
+    }
+    else {
       xi = 1 - xi;
       xi *= xi;
       weights[i] = xi;

@@ -272,53 +272,53 @@ void vpSimulator::init()
   external_height = 200;
 
   mainWindowInitialized = false;
-  internalView = NULL;
-  externalView = NULL;
-  image_background = NULL;
+  internalView = nullptr;
+  externalView = nullptr;
+  image_background = nullptr;
 
   zoomFactor = 1;
   cameraPositionInitialized = false;
 
   // write image process
-  realtime = NULL;
-  offScreenRenderer = NULL;
-  bufferView = NULL;
+  realtime = nullptr;
+  offScreenRenderer = nullptr;
+  bufferView = nullptr;
   get = 1;
   typeImage = grayImage;
-  mainThread = NULL;
-  scene = NULL;
-  internalRoot = NULL;
-  externalRoot = NULL;
-  internalCamera = NULL;
-  externalCamera = NULL;
-  internalCameraPosition = NULL;
-  extrenalCameraPosition = NULL;
-  internalCameraObject = NULL;
+  mainThread = nullptr;
+  scene = nullptr;
+  internalRoot = nullptr;
+  externalRoot = nullptr;
+  internalCamera = nullptr;
+  externalCamera = nullptr;
+  internalCameraPosition = nullptr;
+  extrenalCameraPosition = nullptr;
+  internalCameraObject = nullptr;
 #if defined(VISP_HAVE_SOWIN)
 // mainWindow = ?;
 #elif defined(VISP_HAVE_SOQT)
-  mainWindow = NULL;
+  mainWindow = nullptr;
 #elif defined(VISP_HAVE_SOXT)
 // mainWindow = ?;
 #endif
 }
 void vpSimulator::kill()
 {
-  if (internalView != NULL) {
+  if (internalView != nullptr) {
     delete internalView;
-    internalView = NULL;
+    internalView = nullptr;
   }
-  if (externalView != NULL) {
+  if (externalView != nullptr) {
     delete externalView;
-    externalView = NULL;
+    externalView = nullptr;
   }
-  if (bufferView != NULL) {
+  if (bufferView != nullptr) {
     delete[] bufferView;
-    bufferView = NULL;
+    bufferView = nullptr;
   }
-  if (image_background != NULL) {
+  if (image_background != nullptr) {
     free(image_background);
-    image_background = NULL;
+    image_background = nullptr;
   }
 }
 
@@ -327,16 +327,16 @@ vpSimulator::vpSimulator()
 #if defined(VISP_HAVE_SOWIN)
     mainWindow(),
 #elif defined(VISP_HAVE_SOQT)
-    mainWindow(NULL),
+    mainWindow(nullptr),
 #elif defined(VISP_HAVE_SOXT)
     mainWindow(),
 #endif
-    mainWindowInitialized(false), typeImage(vpSimulator::grayImage), image_background(NULL), internalView(NULL),
-    externalView(NULL), mainThread(NULL), internal_width(0), internal_height(0), external_width(0), external_height(0),
-    scene(NULL), internalRoot(NULL), externalRoot(NULL), internalCamera(NULL), externalCamera(NULL),
-    internalCameraPosition(NULL), extrenalCameraPosition(NULL), internalCameraObject(NULL), zoomFactor(0.),
-    cameraPositionInitialized(false), cMf(), internalCameraParameters(), externalCameraParameters(), realtime(NULL),
-    offScreenRenderer(NULL), bufferView(NULL), get(0)
+    mainWindowInitialized(false), typeImage(vpSimulator::grayImage), image_background(nullptr), internalView(nullptr),
+    externalView(nullptr), mainThread(nullptr), internal_width(0), internal_height(0), external_width(0), external_height(0),
+    scene(nullptr), internalRoot(nullptr), externalRoot(nullptr), internalCamera(nullptr), externalCamera(nullptr),
+    internalCameraPosition(nullptr), extrenalCameraPosition(nullptr), internalCameraObject(nullptr), zoomFactor(0.),
+    cameraPositionInitialized(false), cMf(), internalCameraParameters(), externalCameraParameters(), realtime(nullptr),
+    offScreenRenderer(nullptr), bufferView(nullptr), get(0)
 {
   vpSimulator::init();
 }
@@ -391,7 +391,7 @@ void vpSimulator::initSceneGraph()
 
   this->externalRoot->addChild(cube);
 
-  if (realtime == NULL) {
+  if (realtime == nullptr) {
 
     SoDB::enableRealTimeSensor(FALSE);
     SoSceneManager::enableRealTimeUpdate(FALSE);
@@ -618,12 +618,12 @@ void vpSimulator::redraw()
 
   //  if (this->cameraPositionInitialized==true)
   {
-    if (this->externalView != NULL) {
+    if (this->externalView != nullptr) {
       this->externalView->render(); // call actualRedraw()
       //      vpHomogeneousMatrix c ;
       //      getExternalCameraPosition(c) ;
     }
-    if (this->internalView != NULL) {
+    if (this->internalView != nullptr) {
       this->moveInternalCamera(this->cMf);
       this->internalView->render(); // call actualRedraw()
     }
@@ -668,7 +668,7 @@ void vpSimulator::load(const char *file_name)
 
   SoSeparator *newscene = SoDB::readAll(&input);
   newscene->ref();
-  if (newscene == NULL) {
+  if (newscene == nullptr) {
     vpERROR_TRACE("Error while reading %s", file_name);
   }
 
@@ -744,7 +744,7 @@ void vpSimulator::load(const char *iv_filename, const vpHomogeneousMatrix &fMo)
   }
 
   newObject = SoDB::readAll(&in);
-  if (NULL == newObject) {
+  if (nullptr == newObject) {
     vpERROR_TRACE("Problem reading data for file <%s>.", iv_filename);
   }
 
@@ -821,7 +821,7 @@ void vpSimulator::addObject(SoSeparator *object, const vpHomogeneousMatrix &fMo,
 //! init the main program thread
 void vpSimulator::initApplication(void *(*start_routine)(void *))
 {
-  // pthread_create (&mainThread, NULL, start_routine, (void *)this);
+  // pthread_create (&mainThread, nullptr, start_routine, (void *)this);
   mainThread = SbThread::create(start_routine, (void *)this);
 }
 
@@ -843,8 +843,8 @@ void vpSimulator::initApplication(void *(*start_routine)(void *), void *data)
 //! should be locate at the beginning of the main program
 void vpSimulator::initMainApplication()
 {
-  // pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL );
-  // pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
+  // pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, nullptr );
+  // pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, nullptr);
   vpTime::wait(1000);
 }
 //! performed some thread destruction in the main program thread
@@ -852,7 +852,7 @@ void vpSimulator::initMainApplication()
 void vpSimulator::closeMainApplication()
 {
   vpViewer::exitMainLoop();
-  // pthread_exit (NULL);
+  // pthread_exit (nullptr);
 }
 
 /* Initialise le SoOffScreenRenderer si necessaire, puis realise le rendu.
@@ -883,7 +883,7 @@ void vpSimulator::offScreenRendering(vpSimulatorViewType view, int *width, int *
   SbViewportRegion myViewPort(size);
 
   // Creation du rendu si necessaire.
-  if (NULL == this->offScreenRenderer) {
+  if (nullptr == this->offScreenRenderer) {
     // Init du SoOffscreenRenderer
     this->offScreenRenderer = new SoOffscreenRenderer(myViewPort);
   } else {
@@ -895,7 +895,7 @@ void vpSimulator::offScreenRendering(vpSimulatorViewType view, int *width, int *
   if (!this->offScreenRenderer->render(thisroot)) {
     vpERROR_TRACE("La scene n'a pas pu etre rendue offscreen.");
     delete this->offScreenRenderer;
-    this->offScreenRenderer = NULL;
+    this->offScreenRenderer = nullptr;
   } else {
 
     /*
@@ -913,10 +913,10 @@ void vpSimulator::offScreenRendering(vpSimulatorViewType view, int *width, int *
   }
 
   //  exit(1) ;
-  if (NULL != width) {
+  if (nullptr != width) {
     *width = size[0];
   }
-  if (NULL != height) {
+  if (nullptr != height) {
     *height = size[1];
   }
 }

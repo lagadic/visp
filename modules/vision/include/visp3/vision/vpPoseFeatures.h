@@ -63,8 +63,6 @@
 
 #include <iostream>
 #include <vector>
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <tuple>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -367,7 +365,6 @@ public:
   }
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
  * \class vpPoseFeatures
@@ -477,7 +474,6 @@ public:
    */
   void addFeatureSegment(vpPoint &, vpPoint &);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Add a specific feature for the pose computation.
    */
@@ -489,7 +485,6 @@ public:
    */
   template <typename ObjType, typename RetType, typename... ArgsFunc, typename... Args>
   void addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr)(ArgsFunc...), Args &&...args);
-#endif
 
   /*!
    * Clear all the features
@@ -578,7 +573,7 @@ private:
   {
     FeatureType *desiredFeature;
     FirstParamType firstParam;
-    vpDuo() : desiredFeature(NULL), firstParam() { }
+    vpDuo() : desiredFeature(nullptr), firstParam() { }
   };
 
   template <typename FeatureType, typename FirstParamType, typename SecondParamType> struct vpTrio
@@ -587,7 +582,7 @@ private:
     FirstParamType firstParam;
     SecondParamType secondParam;
 
-    vpTrio() : desiredFeature(NULL), firstParam(), secondParam() { }
+    vpTrio() : desiredFeature(nullptr), firstParam(), secondParam() { }
   };
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -616,11 +611,8 @@ private:
   std::vector<vpTrio<vpFeatureLine, vpCylinder, int> > m_featureLine_DuoLineInt_List;
   // vpFeatureSegment
   std::vector<vpTrio<vpFeatureSegment, vpPoint, vpPoint> > m_featureSegment_DuoPoints_list;
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   // Specific features
   std::vector<vpPoseSpecificFeature *> m_featureSpecific_list;
-#endif
 
   /*!
    * Get the error vector and L matrix from all the features.
@@ -649,7 +641,6 @@ private:
   void computePoseRobustVVS(vpHomogeneousMatrix &cMo);
 };
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
  * Add a specific feature for the pose computation.
  *
@@ -691,12 +682,10 @@ private:
  *   vpFeatureLine fl;
  *   void (*ptr)(vpFeaturePoint&, const vpPoint&) = &vpFeatureBuilder::create;
  *
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   pose.addSpecificFeature(ptr, fp, pts[0]);
  *   pose.addSpecificFeature(&vp_createPoint, fp, pts[1]);
  *   pose.addSpecificFeature(&vp_createTwoPoint, fp, pts[2], pts[3]);
  *   pose.addSpecificFeature(&vp_createLine, fl, line);
- * #endif
  *
  *   //... Pose Computation
  *
@@ -773,11 +762,9 @@ void vpPoseFeatures::addSpecificFeature(RetType(*fct_ptr)(ArgsFunc...), Args &&.
  *   void (vp_createClass::*ptrClassLine)(vpFeatureLine &, const vpLine &)
  *     = &vp_createClass::vp_createLine;
  *
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   pose.addSpecificFeature(&cpClass, ptrClassPoint, fp, pts[0]);
  *   pose.addSpecificFeature(&cpClass, ptrClassTwoPoint, fp, pts[1], pts[2]);
  *   pose.addSpecificFeature(&cpClass, ptrClassLine, fl, line);
- * #endif
  *
  *   //... Pose Computation
  *
@@ -799,7 +786,6 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr
   if (m_featureSpecific_list.size() > m_maxSize)
     m_maxSize = static_cast<unsigned int>(m_featureSpecific_list.size());
 }
-#endif
 
 #endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
 

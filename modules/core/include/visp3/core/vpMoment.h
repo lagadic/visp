@@ -120,7 +120,7 @@ protected:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpMoment(const vpMoment &)
-  //    : object(NULL), moments(NULL), values()
+  //    : object(nullptr), moments(nullptr), values()
   //  {
   //    throw vpException(vpException::functionNotImplementedError,"Not
   //    implemented!");

@@ -69,7 +69,6 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &v)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
 */
@@ -80,7 +79,6 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
   this->B = std::move(v.B);
   return *this;
 }
-#endif
 
 /*!
   Cast a vpColVector in a vpRGBf
@@ -96,9 +94,9 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
     vpERROR_TRACE("Bad vector dimension");
     throw(vpException(vpException::dimensionError, "Bad vector dimension"));
   }
-  R = (float) v[0];
-  G = (float) v[1];
-  B = (float) v[2];
+  R = (float)v[0];
+  G = (float)v[1];
+  B = (float)v[2];
   return *this;
 }
 

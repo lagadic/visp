@@ -271,7 +271,7 @@ public:
 protected:
   SbTime *realtime;
   SoOffscreenRenderer *offScreenRenderer;
-  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL, int *width = NULL, int *height = NULL);
+  void offScreenRendering(vpSimulatorViewType view = vpSimulator::EXTERNAL, int *width = nullptr, int *height = nullptr);
 
 public:
   //! image of the internal view

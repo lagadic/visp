@@ -66,7 +66,7 @@ public:
                               unsigned int thickness);
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p, double n02_p,
-                    bool doNotTrack, vpImagePoint *pt1 = NULL, const vpImagePoint *pt2 = NULL);
+                    bool doNotTrack, vpImagePoint *pt1 = nullptr, const vpImagePoint *pt2 = nullptr);
 
   void track(const vpImage<unsigned char> &I);
   void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double n20_p, double n11_p,

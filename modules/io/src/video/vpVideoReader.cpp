@@ -49,7 +49,7 @@
   Basic constructor.
 */
 vpVideoReader::vpVideoReader()
-  : vpFrameGrabber(), m_imSequence(NULL),
+  : vpFrameGrabber(), m_imSequence(nullptr),
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
   m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
@@ -63,7 +63,7 @@ Basic destructor.
 */
 vpVideoReader::~vpVideoReader()
 {
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     delete m_imSequence;
   }
 }
@@ -247,7 +247,7 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
   if (!m_isOpen) {
     open(I);
   }
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     m_imSequence->setStep(m_frameStep);
     bool skip_frame = false;
     do {
@@ -342,7 +342,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
     open(I);
   }
 
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     m_imSequence->setStep(m_frameStep);
     bool skip_frame = false;
     do {
@@ -434,7 +434,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 */
 bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 {
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     try {
       m_imSequence->acquire(I, frame_index);
       width = I.getWidth();
@@ -511,7 +511,7 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 */
 bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 {
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     try {
       m_imSequence->acquire(I, frame_index);
       width = I.getWidth();
@@ -702,7 +702,7 @@ void vpVideoReader::findLastFrameIndex()
     throw(vpException(vpException::notInitialized, "file not yet opened"));
   }
 
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     if (!m_lastFrameIndexIsSet) {
       std::string imageNameFormat = vpIoTools::getName(m_videoName);
       std::string dirName = vpIoTools::getParent(m_videoName);
@@ -754,7 +754,7 @@ void vpVideoReader::findLastFrameIndex()
 */
 void vpVideoReader::findFirstFrameIndex()
 {
-  if (m_imSequence != NULL) {
+  if (m_imSequence != nullptr) {
     if (!m_firstFrameIndexIsSet) {
       std::string imageNameFormat = vpIoTools::getName(m_videoName);
       std::string dirName = vpIoTools::getParent(m_videoName);

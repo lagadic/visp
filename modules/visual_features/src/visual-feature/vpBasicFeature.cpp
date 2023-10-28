@@ -55,16 +55,16 @@ const unsigned int vpBasicFeature::FEATURE_LINE[32] = {
 /*!
   Default constructor.
 */
-vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user) {}
+vpBasicFeature::vpBasicFeature() : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user) {}
 
 /*!
   Destructor that free allocated memory.
 */
 vpBasicFeature::~vpBasicFeature()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     delete[] flags;
-    flags = NULL;
+    flags = nullptr;
   }
 }
 
@@ -72,7 +72,7 @@ vpBasicFeature::~vpBasicFeature()
   Copy constructor.
 */
 vpBasicFeature::vpBasicFeature(const vpBasicFeature &f)
-  : s(), dim_s(0), flags(NULL), nbParameters(0), deallocate(vpBasicFeature::user)
+  : s(), dim_s(0), flags(nullptr), nbParameters(0), deallocate(vpBasicFeature::user)
 {
   *this = f;
 }
@@ -128,7 +128,7 @@ vpColVector vpBasicFeature::get_s(unsigned int select) const
 
 void vpBasicFeature::resetFlags()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;
   }
@@ -138,7 +138,7 @@ void vpBasicFeature::resetFlags()
 //! interaction matrix without having updated the feature.
 void vpBasicFeature::setFlags()
 {
-  if (flags != NULL) {
+  if (flags != nullptr) {
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = true;
   }

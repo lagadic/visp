@@ -126,8 +126,8 @@ protected:
   //  vpTemplateTrackerMI(const vpTemplateTrackerMI &)
   //    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL),
   //    ApproxHessian(HESSIAN_0), lambda(0),
-  //      temp(NULL), Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL),
-  //      PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
+  //      temp(nullptr), Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr),
+  //      PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
   //      influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(),
   //      MI_preEstimation(0), MI_postEstimation(0), NMI_preEstimation(0),
   //      NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
@@ -144,8 +144,8 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTrackerMI()
-    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(NULL),
-    Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
+    : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(nullptr),
+    Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr), PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
     influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
     NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false), m_du(), m_dv(), m_A(),
     m_dB(), m_d2u(), m_d2v(), m_dA()

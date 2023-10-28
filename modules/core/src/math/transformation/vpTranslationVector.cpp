@@ -506,7 +506,6 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double values in meters.
   \code
@@ -535,7 +534,6 @@ vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 /*!
   Set vector first element value.

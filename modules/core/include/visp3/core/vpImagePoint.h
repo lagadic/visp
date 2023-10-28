@@ -85,12 +85,12 @@ public:
     Default constructor that initialize the coordinates of the image
     point to zero.
   */
-  inline vpImagePoint() : i(0), j(0) {}
+  inline vpImagePoint() : i(0), j(0) { }
   /*!
     Default constructor that initialize the coordinates of the image
     thanks to the parameters \f$ ii \f$ and \f$ jj \f$.
   */
-  inline vpImagePoint(double ii, double jj) : i(ii), j(jj) {}
+  inline vpImagePoint(double ii, double jj) : i(ii), j(jj) { }
   /*!
     Copy constructor.
 
@@ -98,9 +98,9 @@ public:
 
     \param ip : An image point.
   */
-  inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) {}
+  inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) { }
   //! Destructor.
-  inline virtual ~vpImagePoint() {}
+  inline virtual ~vpImagePoint() { }
 
   /*!
 
@@ -163,8 +163,8 @@ public:
   {
     return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
             (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
-           ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
-            (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
+      ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
+       (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
   }
 
   /*!
@@ -217,18 +217,11 @@ public:
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
       double j_ = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {end.get_i() - line_slope * (end.get_j() - j_), j_};
-#else
-      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j_), j_);
-#endif
-    } else {
+      return { end.get_i() - line_slope * (end.get_j() - j_), j_ };
+    }
+    else {
       double i_ = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {i_, end.get_j() - ((end.get_i() - i_) / line_slope)};
-#else
-      return vpImagePoint(i_, end.get_j() - ((end.get_i() - i_) / line_slope));
-#endif
+      return { i_, end.get_j() - ((end.get_i() - i_) / line_slope) };
     }
   }
 
@@ -241,7 +234,7 @@ public:
     this->j = ip.j;
     return *this;
   }
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
   /*!
     Move operator.
   */
@@ -251,7 +244,6 @@ public:
     this->j = ip.j;
     return *this;
   }
-#endif
 
   vpImagePoint &operator+=(const vpImagePoint &ip);
 

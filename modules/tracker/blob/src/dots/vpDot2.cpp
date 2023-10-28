@@ -1000,7 +1000,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
   std::list<vpDot2>::iterator itnice;
   std::list<vpDot2>::iterator itbad;
 
-  vpDot2 *dotToTest = NULL;
+  vpDot2 *dotToTest = nullptr;
   vpDot2 tmpDot;
 
   unsigned int area_u_min = (unsigned int)area.getLeft();
@@ -1100,7 +1100,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
 
       // otherwise estimate the width, height and surface of the dot we
       // created, and test it.
-      if (dotToTest != NULL)
+      if (dotToTest != nullptr)
         delete dotToTest;
       dotToTest = getInstance();
       dotToTest->setCog(germ);
@@ -1195,7 +1195,7 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
       }
     }
   }
-  if (dotToTest != NULL)
+  if (dotToTest != nullptr)
     delete dotToTest;
 }
 
@@ -2395,7 +2395,7 @@ vpMatrix vpDot2::defineDots(vpDot2 dot[], const unsigned int &n, const std::stri
   dots, will be displayed in green
 
   \param cogStar (optional) : array of
-  vpImagePoint indicating the desired position (default NULL), will be
+  vpImagePoint indicating the desired position (default nullptr), will be
   displayed in red
 */
 void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
@@ -2414,7 +2414,7 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsign
   for (i = 0; i < n; ++i)
     vpDisplay::displayCircle(I, cogs[i], 4, vpColor::blue, true);
   // if exists, desired position
-  if (cogStar != NULL)
+  if (cogStar != nullptr)
     for (i = 0; i < n; ++i) {
       vpDisplay::displayDotLine(I, cogStar[i], dot[i].getCog(), vpColor::red);
       vpDisplay::displayCircle(I, cogStar[i], 4, vpColor::red, true);

@@ -38,9 +38,7 @@
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <functional>
-#endif
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -172,9 +170,9 @@ private:
   //  vpDisplayOpenCV(const vpDisplayOpenCV &)
   //    : vpDisplay(),
   //    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  //      background(NULL), col(NULL), cvcolor(), font(NULL),
+  //      background(nullptr), col(nullptr), cvcolor(), font(nullptr),
   //    #else
-  //      background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
+  //      background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
   //      fontScale(0.8f),
   //    #endif
   //      fontHeight(10), x_move(0), y_move(0) , move(false),
@@ -267,9 +265,7 @@ protected:
 
   static void on_mouse(int event, int x, int y, int flags, void *param);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
-#endif
 };
 
 #endif

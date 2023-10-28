@@ -59,11 +59,10 @@
 vpRobust::vpRobust()
   : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-    m_iter(0),
+  m_iter(0),
 #endif
-    m_size(0), m_mad(0)
-{
-}
+  m_size(0), m_mad(0)
+{ }
 
 /*!
   Copy constructor.
@@ -88,7 +87,6 @@ vpRobust &vpRobust::operator=(const vpRobust &other)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
  */
@@ -105,7 +103,6 @@ vpRobust &vpRobust::operator=(const vpRobust &&other)
   m_size = std::move(other.m_size);
   return *this;
 }
-#endif
 
 /*!
   Resize containers.
@@ -205,7 +202,8 @@ void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
 
     if (xi > 1.) {
       weights[i] = 0;
-    } else {
+    }
+    else {
       xi = 1 - xi;
       xi *= xi;
       weights[i] = xi;
@@ -312,9 +310,9 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
 vpRobust::vpRobust(unsigned int n_data)
   : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-    m_iter(0),
+  m_iter(0),
 #endif
-    m_size(n_data), m_mad(0)
+  m_size(n_data), m_mad(0)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
@@ -441,8 +439,9 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
     double normmedian = select(norm_res, 0, n_data - 1, ind_med); // Normalized Median
     // 1.48 keeps scale estimate consistent for a normal probability dist.
     m_mad = 1.4826 * normmedian; // Median Absolute Deviation
-  } else {
-    // compute simultaneous scale estimate
+  }
+  else {
+ // compute simultaneous scale estimate
     m_mad = simultscale(residues);
   }
 
@@ -546,9 +545,10 @@ double vpRobust::constrainedChiTukey(double x)
     // sct =
     // (vpMath::sqr(s*a-x)*vpMath::sqr(s*a+x)*vpMath::sqr(x))/(s*vpMath::sqr(vpMath::sqr(a*vpMath::sqr(s))));
     sct = (vpMath::sqr(s * a) * x - s * vpMath::sqr(s * a) - x * vpMath::sqr(x)) *
-          (vpMath::sqr(s * a) * x + s * vpMath::sqr(s * a) - x * vpMath::sqr(x)) / s *
-          vpMath::sqr(vpMath::sqr(vpMath::sqr(s))) / vpMath::sqr(vpMath::sqr(a));
-  } else
+      (vpMath::sqr(s * a) * x + s * vpMath::sqr(s * a) - x * vpMath::sqr(x)) / s *
+      vpMath::sqr(vpMath::sqr(vpMath::sqr(s))) / vpMath::sqr(vpMath::sqr(a));
+  }
+  else
     sct = -1 / s;
 
   return sct;
@@ -589,8 +589,9 @@ double vpRobust::simult_chi_huber(double x)
   if (fabs(u) <= c) {
     // sct = 0.5*vpMath::sqr(u);
     sct = vpMath::sqr(u);
-  } else {
-    // sct = 0.5*vpMath::sqr(c);
+  }
+  else {
+ // sct = 0.5*vpMath::sqr(c);
     sct = vpMath::sqr(c);
   }
 
@@ -609,7 +610,8 @@ double vpRobust::gammp(double a, double x)
   if (x < (a + 1.0)) {
     gser(&gamser, a, x, &gln);
     return gamser;
-  } else {
+  }
+  else {
     gcf(&gammcf, a, x, &gln);
     return 1.0 - gammcf;
   }
@@ -623,7 +625,8 @@ void vpRobust::gser(double *gamser, double a, double x, double *gln)
       std::cout << "x less than 0 in routine GSER";
     *gamser = 0.0;
     return;
-  } else {
+  }
+  else {
     double ap = a;
     double sum = 1.0 / a;
     double del = sum;
@@ -673,7 +676,7 @@ void vpRobust::gcf(double *gammcf, double a, double x, double *gln)
 double vpRobust::gammln(double xx)
 {
   double x, tmp, ser;
-  static double cof[6] = {76.18009173, -86.50532033, 24.01409822, -1.231739516, 0.120858003e-2, -0.536382e-5};
+  static double cof[6] = { 76.18009173, -86.50532033, 24.01409822, -1.231739516, 0.120858003e-2, -0.536382e-5 };
 
   x = xx - 1.0;
   tmp = x + 5.5;

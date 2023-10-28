@@ -104,20 +104,16 @@ class vpPoseVector;
  *
  * int main()
  * {
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   vpColVector v({-1, -2.1, -3});
  *   std::cout << "v:\n" << v << std::endl;
- * #endif
  * }
  * \endcode
  * The vector could also be initialized using operator=(const std::initializer_list< double > &)
  * \code
  * int main()
  * {
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   vpColVector v;
  *   v = {-1, -2.1, -3};
- * #endif
  * }
  * \endcode
  *
@@ -244,7 +240,7 @@ public:
    * Constructor that creates a column vector from a std vector of float.
    */
   vpColVector(const std::vector<float> &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
   /*!
    * Move constructor that take rvalue.
    */
@@ -253,7 +249,6 @@ public:
   {
     std::copy(list.begin(), list.end(), data);
   }
-#endif
 
   /*!
    * Removes all elements from the vector (which are destroyed),
@@ -261,14 +256,14 @@ public:
    */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -632,7 +627,6 @@ public:
    */
   vpColVector &operator=(double x);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Overloaded move assignment operator taking rvalue.
    */
@@ -662,7 +656,6 @@ public:
    * \sa operator<<()
    */
   vpColVector &operator=(const std::initializer_list<double> &list);
-#endif
 
   /*!
    * Compare two column vectors.

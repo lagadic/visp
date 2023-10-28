@@ -964,7 +964,7 @@ class JavaWrapperGenerator(object):
                 else:
                     cvname = ("me->" if not self.isSmartClass(ci) else "(*me)->") + name
                     c_prologue.append( \
-                        "%(cls)s* me = (%(cls)s*) self; //TODO: check for NULL" \
+                        "%(cls)s* me = (%(cls)s*) self; //TODO: check for nullptr" \
                         % {"cls": reverseCamelCase(self.smartWrap(ci, fi.fullClass(isCPP=True)))} \
                         )
             cvargs = []
@@ -1133,7 +1133,7 @@ JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString(JNIEnv*, j
 JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
   (JNIEnv* env, jclass, jlong self)
 {
-  %(cls)s* me = (%(cls)s*) self; //TODO: check for NULL
+  %(cls)s* me = (%(cls)s*) self; //TODO: check for nullptr
   std::stringstream ss;
   ss << *me;
   return env->NewStringUTF(ss.str().c_str());

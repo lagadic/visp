@@ -349,7 +349,7 @@ protected:
   {
     (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))->updateArticularPosition();
     // pthread_exit((void*) 0);
-    return NULL;
+    return nullptr;
   }
 #endif
 

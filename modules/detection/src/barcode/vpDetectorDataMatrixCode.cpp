@@ -67,7 +67,7 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   DmtxImage *img;
   DmtxMessage *msg;
 
-  DmtxTime *dmtx_timeout = NULL;
+  DmtxTime *dmtx_timeout = nullptr;
   if (m_timeout_ms) {
     dmtx_timeout = new DmtxTime;
     *dmtx_timeout = dmtxTimeNow();
@@ -75,18 +75,18 @@ bool vpDetectorDataMatrixCode::detect(const vpImage<unsigned char> &I)
   }
 
   img = dmtxImageCreate(I.bitmap, (int)I.getWidth(), (int)I.getHeight(), DmtxPack8bppK);
-  assert(img != NULL);
+  assert(img != nullptr);
 
   dec = dmtxDecodeCreate(img, 1);
-  assert(dec != NULL);
+  assert(dec != nullptr);
 
   bool end = false;
   do {
     reg = dmtxRegionFindNext(dec, dmtx_timeout);
 
-    if (reg != NULL) {
+    if (reg != nullptr) {
       msg = dmtxDecodeMatrixRegion(dec, reg, DmtxUndefined);
-      if (msg != NULL) {
+      if (msg != nullptr) {
 
         std::vector<vpImagePoint> polygon;
 

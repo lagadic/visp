@@ -38,7 +38,7 @@ int main()
   mxArray *T = mxCreateDoubleMatrix(xRows, xCols, mxREAL);
 
   // MATLAB array to store output data from MATLAB
-  mxArray *D = NULL;
+  mxArray *D = nullptr;
   //! [MATLABVariables]
 
   // Temporary variable to hold Output data

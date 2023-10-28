@@ -122,7 +122,7 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
       list = true;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
     case 'c':
@@ -141,7 +141,7 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;

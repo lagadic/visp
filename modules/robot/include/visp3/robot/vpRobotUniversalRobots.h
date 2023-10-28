@@ -38,7 +38,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_UR_RTDE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_UR_RTDE)
 
 #include <memory>
 

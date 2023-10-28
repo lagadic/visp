@@ -764,10 +764,10 @@ private:
     virtual void preTracking(const vpImage<unsigned char> *const ptr_I,
       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-    virtual void postTracking(const vpImage<unsigned char> *const ptr_I = NULL, const unsigned int pointcloud_width = 0,
+    virtual void postTracking(const vpImage<unsigned char> *const ptr_I = nullptr, const unsigned int pointcloud_width = 0,
       const unsigned int pointcloud_height = 0);
-    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = NULL,
-      const std::vector<vpColVector> *const point_cloud = NULL,
+    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = nullptr,
+      const std::vector<vpColVector> *const point_cloud = nullptr,
       const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
 
     virtual void reInitModel(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,

@@ -328,7 +328,7 @@ public:
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                          unsigned int lvl = 0, double *edge_residual = NULL, double *klt_residual = NULL);
+                          unsigned int lvl = 0, double *edge_residual = nullptr, double *klt_residual = nullptr);
   virtual void computeVVSInit() override;
   virtual void computeVVSInteractionMatrixAndResidu() override;
   using vpMbTracker::computeCovarianceMatrixVVS;
