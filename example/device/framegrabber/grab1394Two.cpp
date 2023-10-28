@@ -423,7 +423,7 @@ int main(int argc, const char **argv)
       ncameras = 1; // acquisition from only one camera
     }
     // Offset is used to set the correspondancy between and image and the
-    // camera. For example, images comming from camera (i+offset) are
+    // camera. For example, images coming from camera (i+offset) are
     // available in I[i]
     offset = camera;
 

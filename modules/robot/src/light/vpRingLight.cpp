@@ -134,7 +134,7 @@ void vpRingLight::pulse(double time)
   // Data set by the parallel port:
   // - D1: a pulse with duration fixed by time
   // - D2: 0 }
-  // - D3: 1 } To control the light directly throw the pulse comming from D1
+  // - D3: 1 } To control the light directly throw the pulse coming from D1
   // D2 and D3 are used to select the multiplexer output.
   // Light must be connected to output 1+,1-
 

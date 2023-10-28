@@ -201,7 +201,7 @@ $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 --out=udpo
 
 \subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
 
-The code sendMocapToPixhawk.cpp allows you to send the MoCap stream comming from a Qualisys or Vicon motion capture system
+The code sendMocapToPixhawk.cpp allows you to send the MoCap stream coming from a Qualisys or Vicon motion capture system
 to the Pixhawk using MavLink. This code is based on vpMocapQualisys and vpMocapVicon classes that allows to get the vehicle FLU body
 frame in the MoCAP ENU reference frame. Then we use vpRobotMavsdk class and more precisely vpRobotMavsdk::sendMocapData() that internally send the
 FRD body frame pose with respect to the NED reference frame as a MavLink message to the Pixhawk.

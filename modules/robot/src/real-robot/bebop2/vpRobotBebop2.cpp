@@ -1468,7 +1468,7 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
     av_frame_unref(m_picture);
   }
 
-  // Decoding frame comming from the drone
+  // Decoding frame coming from the drone
   m_packet.data = frame->data;
   m_packet.size = static_cast<int>(frame->used);
 
