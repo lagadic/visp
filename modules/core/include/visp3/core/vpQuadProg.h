@@ -31,8 +31,8 @@
  * Quadratic Programming
  */
 
-#ifndef vpQuadProgh
-#define vpQuadProgh
+#ifndef _vpQuadProg_h_
+#define _vpQuadProg_h_
 
 #include <stdlib.h>
 #include <vector>
@@ -42,34 +42,33 @@
 #include <visp3/core/vpMatrixException.h>
 
 /*!
-  \file vpQuadProg.h
-  \brief Implementation of Quadratic Program with Active Sets.
-*/
+ * \file vpQuadProg.h
+ * \brief Implementation of Quadratic Program with Active Sets.
+ */
 
 /*!
-  \class vpQuadProg
-  \ingroup group_core_optim
-  \brief This class provides a solver for Quadratic Programs.
-
-  The cost function is written under the form \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
-
-  If a cost function is written under the canonical form \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} +
-  \mathbf{c}^T\mathbf{x}\f$ then fromCanonicalCost() can be used to retrieve Q and r from H and c.
-
-  Equality constraints are solved through projection into the kernel.
-
-  Inequality constraints are solved with active sets.
-
-  In order to be used sequentially, the decomposition of the equality constraint may be stored.
-  The last active set is always stored and used to warm start the next call.
-
-  \warning The solvers are only available if c++11 or higher is activated during build.
-  Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
-*/
+ * \class vpQuadProg
+ * \ingroup group_core_optim
+ * \brief This class provides a solver for Quadratic Programs.
+ *
+ * The cost function is written under the form \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
+ *
+ * If a cost function is written under the canonical form \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} +
+ * \mathbf{c}^T\mathbf{x}\f$ then fromCanonicalCost() can be used to retrieve Q and r from H and c.
+ *
+ * Equality constraints are solved through projection into the kernel.
+ *
+ * Inequality constraints are solved with active sets.
+ *
+ * In order to be used sequentially, the decomposition of the equality constraint may be stored.
+ * The last active set is always stored and used to warm start the next call.
+ *
+ * \warning The solvers are only available if c++11 or higher is activated during build.
+ * Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
+ */
 class VISP_EXPORT vpQuadProg
 {
 public:
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /** @name Instantiated solvers  */
   //@{
   bool solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol = 1e-6) const;
@@ -84,9 +83,10 @@ public:
   /** @name Managing sequential calls to solvers  */
   //@{
   bool setEqualityConstraint(const vpMatrix &A, const vpColVector &b, const double &tol = 1e-6);
+
   /*!
-    Resets the active set that was found by a previous call to solveQP() or solveQPi(), if any.
-  */
+   * Resets the active set that was found by a previous call to solveQP() or solveQPi(), if any.
+   */
   void resetActiveSet() { active.clear(); }
   //@}
 
@@ -97,20 +97,23 @@ public:
 
 protected:
   /*!
-    Active set from the last call to solveQP() or solveQPi(). Used for warm starting the next call.
-  */
+   * Active set from the last call to solveQP() or solveQPi(). Used for warm starting the next call.
+   */
   std::vector<unsigned int> active;
+
   /*!
-    Inactive set from the last call to solveQP() or solveQPi(). Used for warm starting the next call.
-  */
+   * Inactive set from the last call to solveQP() or solveQPi(). Used for warm starting the next call.
+   */
   std::vector<unsigned int> inactive;
+
   /*!
-    Stored particular solution from the last call to setEqualityConstraint().
-  */
+   * Stored particular solution from the last call to setEqualityConstraint().
+   */
   vpColVector x1;
+
   /*!
-    Stored projection to the kernel from the last call to setEqualityConstraint().
-  */
+   * Stored projection to the kernel from the last call to setEqualityConstraint().
+   */
   vpMatrix Z;
 
   static vpColVector solveSVDorQR(const vpMatrix &A, const vpColVector &b);
@@ -119,20 +122,20 @@ protected:
                                 const double &tol = 1e-6);
 
   /*!
-    Performs a dimension check of passed QP matrices and vectors.
-
-    If any inconsistency is detected, displays a summary and throws an exception.
-
-  \param Q : cost matrix (dimension c x n)
-  \param r : cost vector (dimension c)
-  \param A : pointer to the equality matrix (if any, dimension m x n)
-  \param b : pointer to the equality vector (if any, dimension m)
-  \param C : pointer to the inequality matrix (if any, dimension p x n)
-  \param d : pointer to the inequality vector (if any, dimension p)
-  \param fct : name of the solver that called this function
-
-  \return the dimension of the search space.
-  */
+   * Performs a dimension check of passed QP matrices and vectors.
+   *
+   * If any inconsistency is detected, displays a summary and throws an exception.
+   *
+   * \param Q : cost matrix (dimension c x n)
+   * \param r : cost vector (dimension c)
+   * \param A : pointer to the equality matrix (if any, dimension m x n)
+   * \param b : pointer to the equality vector (if any, dimension m)
+   * \param C : pointer to the inequality matrix (if any, dimension p x n)
+   * \param d : pointer to the inequality vector (if any, dimension p)
+   * \param fct : name of the solver that called this function
+   *
+   * \return the dimension of the search space.
+   */
   static unsigned int checkDimensions(const vpMatrix &Q, const vpColVector &r, const vpMatrix *A, const vpColVector *b,
                                       const vpMatrix *C, const vpColVector *d, const std::string fct)
   {
@@ -144,7 +147,7 @@ protected:
     if ((Ab && n != A->getCols()) || (Cd && n != C->getCols()) || (Ab && A->getRows() != b->getRows()) ||
         (Cd && C->getRows() != d->getRows()) || Q.getRows() != r.getRows()) {
       std::cout << "vpQuadProg::" << fct << ": wrong dimension\n"
-                << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
+        << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
       if (Ab)
         std::cout << "A: " << A->getRows() << "x" << A->getCols() << " - b: " << b->getRows() << std::endl;
       if (Cd)
@@ -153,6 +156,5 @@ protected:
     }
     return n;
   }
-#endif
 };
 #endif

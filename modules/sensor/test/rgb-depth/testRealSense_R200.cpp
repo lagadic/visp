@@ -46,8 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                     \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <mutex>
 #include <thread>
 
@@ -68,7 +67,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
 
   void run()
   {
@@ -98,7 +97,8 @@ public:
           if (local_update) {
             if (m_colorMode) {
               local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
+            }
+            else {
               local_pointcloud = pointcloud->makeShared();
             }
           }
@@ -113,15 +113,18 @@ public:
             viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
                                                      "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
-        } else {
+        }
+        else {
           if (m_colorMode) {
             viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
@@ -234,7 +237,8 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
       case rs::stream::depth:
         if (depth_color_visualization) {
           dd.init(I_depth_color, (int)I_color.getWidth() + 80, 0, "Depth frame");
-        } else {
+        }
+        else {
           dd.init(I_depth, (int)I_color.getWidth() + 80, 0, "Depth frame");
         }
         break;
@@ -289,17 +293,20 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
           rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
                      (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
-        } else {
+        }
+        else {
           rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
                      (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
         }
-      } else {
+      }
+      else {
         if (pcl_color) {
           rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
                      (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                      rs::stream::infrared, infrared2_stream);
-        } else {
+        }
+        else {
           rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
                      (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                      rs::stream::infrared, infrared2_stream);
@@ -311,12 +318,14 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
 
       update_pointcloud = true;
 #endif
-    } else {
+    }
+    else {
       if (direct_infrared_conversion) {
         rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
                    (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream, depth_stream,
                    rs::stream::infrared, infrared2_stream);
-      } else {
+      }
+      else {
         rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
                    (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                    rs::stream::infrared, infrared2_stream);
@@ -327,14 +336,16 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
 
     if (depth_color_visualization) {
       vpImageConvert::createDepthHistogram(depth, I_depth_color);
-    } else {
+    }
+    else {
       vpImageConvert::createDepthHistogram(depth, I_depth);
     }
 
     vpDisplay::display(I_color);
     if (depth_color_visualization) {
       vpDisplay::display(I_depth_color);
-    } else {
+    }
+    else {
       vpDisplay::display(I_depth);
     }
     vpDisplay::display(I_infrared);
@@ -343,7 +354,8 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
     vpDisplay::flush(I_color);
     if (depth_color_visualization) {
       vpDisplay::flush(I_depth_color);
-    } else {
+    }
+    else {
       vpDisplay::flush(I_depth);
     }
     vpDisplay::flush(I_infrared);
@@ -373,7 +385,7 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
   }
 
   std::cout << title << " - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   rs.close();
 }
@@ -394,7 +406,7 @@ int main(int argc, char *argv[])
 
     std::cout << "API version: " << rs_get_api_version(nullptr) << std::endl;
     std::cout << "Firmware: " << rs_get_device_firmware_version((const rs_device *)rs.getHandler(), nullptr)
-              << std::endl;
+      << std::endl;
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
     rs.close();
@@ -549,12 +561,15 @@ int main(int argc, char *argv[])
               false, rs::stream::color, rs::stream::depth, rs::stream::infrared2, true,
               (argc > 1 ? (bool)(atoi(argv[1]) > 0) : false));
 #endif
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const rs::error &e) {
+  }
+  catch (const rs::error &e) {
     std::cerr << "RealSense error calling " << e.get_failed_function() << "(" << e.get_failed_args()
-              << "): " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+      << "): " << e.what() << std::endl;
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -566,10 +581,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE)
   std::cout << "This deprecated example is only working with librealsense 1.x " << std::endl;
-#elif !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test working"
-            << std::endl;
 #elif !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
   std::cout << "X11 or GDI are needed!" << std::endl;
 #endif

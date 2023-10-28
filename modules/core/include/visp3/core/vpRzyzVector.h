@@ -123,9 +123,7 @@ class vpThetaUVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   rzyz = {M_PI_4, M_PI_2, M_PI};
-#endif
   \endcode
 
   To get the values [rad] use:
@@ -201,9 +199,7 @@ public:
 
   vpRzyzVector &operator=(const vpColVector &rzyz);
   vpRzyzVector &operator=(double x);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRzyzVector &operator=(const vpRzyzVector &rzyz) = default;
   vpRzyzVector &operator=(const std::initializer_list<double> &list);
-#endif
 };
 #endif

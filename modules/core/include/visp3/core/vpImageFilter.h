@@ -35,10 +35,9 @@
 #define _vpImageFilter_h_
 
 /*!
-  \file vpImageFilter.h
-  \brief  Various image filter, convolution, etc...
-
-*/
+ * \file vpImageFilter.h
+ * \brief  Various image filter, convolution, etc...
+ */
 
 #include <fstream>
 #include <iostream>
@@ -60,13 +59,12 @@
 #endif
 
 /*!
-  \class vpImageFilter
-
-  \ingroup group_core_image
-
-  \brief  Various image filter, convolution, etc...
-
-*/
+ * \class vpImageFilter
+ *
+ * \ingroup group_core_image
+ *
+ * \brief  Various image filter, convolution, etc...
+ */
 class VISP_EXPORT vpImageFilter
 {
 public:
@@ -113,13 +111,241 @@ public:
                     const float &upperThresholdRatio, const bool &normalizeGradients,
                     const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps);
 
-  /*!
-    Apply a 1x3 derivative filter to an image pixel.
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
+                                     float &lowerThresh, const unsigned int &gaussianKernelSize = 5,
+                                     const float &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
+                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
 
-    \param I : Image to filter
-    \param r : coordinates (row) of the pixel
-    \param c : coordinates (column) of the pixel
-  */
+  static void computePartialDerivatives(const cv::Mat &cv_I,
+                                        cv::Mat &cv_dIx, cv::Mat &cv_dIy,
+                                        const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                        const unsigned int &gaussianKernelSize = 5, const float &gaussianStdev = 2.f,
+                                        const unsigned int &apertureGradient = 3,
+                                        const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
+#endif
+
+  /**
+   * \brief Compute the partial derivatives (i.e. horizontal and vertical gradients) of the input image.
+   *
+   * \tparam ImageType Either unsigned char, float or double
+   * \tparam FilterType Either float or double.
+   * \param[in] I The input image we want the partial derivatives.
+   * \param[out] dIx The horizontal partial derivative, i.e. horizontal gradient.
+   * \param[out] dIy The vertical partial derivative, i.e. vertical gradient.
+   * \param[in] computeDx Indicate if we must compute the horizontal gradient.
+   * \param[in] computeDy Indicate if we must compute  the vertical gradient.
+   * \param[in] normalize Indicate if we must normalize the gradient filters.
+   * \param[in] gaussianKernelSize The size of the kernel of the Gaussian filter used to blur the image.
+   * If it is non-positive, it is computed from kernel size (`gaussianKernelSize` parameter) as
+   * \f$\sigma = 0.3*((gaussianKernelSize-1)*0.5 - 1) + 0.8\f$.
+   * \param[in] gaussianStdev The standard deviation of the Gaussian filter used to blur the image.
+   * \param[in] apertureGradient The size of the kernel of the gradient filter.
+   * \param[in] filteringType The type of filters to apply to compute the gradients.
+   * \param[in] backend The type of backend to use to compute the gradients.
+   */
+  template <typename ImageType, typename FilterType>
+  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
+                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
+                      const unsigned int &apertureGradient = 3,
+                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND)
+  {
+    if (backend == CANNY_OPENCV_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+      cv::Mat cv_I, cv_dIx, cv_dIy;
+      vpImageConvert::convert(I, cv_I);
+      computePartialDerivatives(cv_I, cv_dIx, cv_dIy, computeDx, computeDy, normalize, gaussianKernelSize,
+          gaussianStdev, apertureGradient, filteringType);
+      if (computeDx) {
+        vpImageConvert::convert(cv_dIx, dIx);
+      }
+      if (computeDy) {
+        vpImageConvert::convert(cv_dIy, dIy);
+      }
+#else
+      throw(vpException(vpException::badValue, "You need to compile ViSP with OpenCV to use CANNY_OPENCV_BACKEND"));
+#endif
+    }
+    else {
+      if (filteringType == CANNY_GBLUR_SCHARR_FILTERING || filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
+        dIx.resize(I.getHeight(), I.getWidth());
+        dIy.resize(I.getHeight(), I.getWidth());
+
+        // Computing the Gaussian blur + gradients of the image
+        vpImage<FilterType> Iblur;
+        vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev);
+
+        vpArray2D<FilterType> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
+        vpArray2D<FilterType> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
+
+        // Helper to apply the scale to the raw values of the filters
+        auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
+          for (unsigned int r = 0; r < filter.getRows(); r++) {
+            for (unsigned int c = 0; c < filter.getCols(); c++) {
+              filter[r][c] = filter[r][c] * scale;
+            }
+          }};
+
+        // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
+        // between 0 and 255 for an vpImage<uchar>
+        float scaleX = 1.f;
+        float scaleY = 1.f;
+
+        if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
+          if (computeDx) {
+            scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
+          }
+          if (computeDy) {
+            scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
+          }
+        }
+        else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
+          if (computeDx) {
+            scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
+          }
+          if (computeDy) {
+            scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
+          }
+        }
+
+        // Scale the gradient filters to have a normalized gradient filter
+        if (normalize) {
+          if (computeDx) {
+            scaleFilter(gradientFilterX, scaleX);
+          }
+          if (computeDy) {
+            scaleFilter(gradientFilterY, scaleY);
+          }
+        }
+
+        // Apply the gradient filters to get the gradients
+        if (computeDx) {
+          vpImageFilter::filter(Iblur, dIx, gradientFilterX);
+        }
+
+        if (computeDy) {
+          vpImageFilter::filter(Iblur, dIy, gradientFilterY);
+        }
+      }
+      else {
+        std::string errMsg = "[vpImageFilter::computePartialDerivatives] Filtering + gradient method \"";
+        errMsg += vpCannyFilteringAndGradientTypeToString(filteringType);
+        errMsg += "\" is not implemented yet\n";
+        throw(vpException(vpException::notImplementedError, errMsg));
+      }
+    }
+  }
+
+  template <typename FilterType>
+  inline static void computePartialDerivatives(const vpImage<vpRGBa> &I,
+                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
+                      const unsigned int &apertureGradient = 3,
+                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+
+  template <typename ImageType>
+  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
+                      vpImage<unsigned char> &dIx, vpImage<unsigned char> &dIy,
+                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                      const unsigned int &gaussianKernelSize = 5, const unsigned char &gaussianStdev = 2.f,
+                      const unsigned int &apertureGradient = 3,
+                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+
+  template <typename ImageType>
+  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
+                      vpImage<vpRGBa> &dIx, vpImage<vpRGBa> &dIy,
+                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                      const unsigned int gaussianKernelSize = 5, const vpRGBa gaussianStdev = vpRGBa(),
+                      const unsigned int apertureGradient = 3,
+                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+
+  /**
+   * \brief Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute
+   * the gradient of the image.
+   *
+   * \tparam OutType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param[in] I : The gray-scale image, in ViSP format.
+   * \param[in] p_dIx : If different from nullptr, must contain the gradient of the image with regard to the horizontal axis.
+   * \param[in] p_dIy : If different from nullptr, must contain the gradient of the image with regard to the vertical axis.
+   * \param[in] lowerThresh : Canny lower threshold.
+   * \param[in] gaussianKernelSize : The size of the mask of the Gaussian filter to apply (an odd number).
+   * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+   * \param[in] apertureGradient : Size of the mask for the Sobel operator (odd number).
+   * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+   * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
+   * the upper threshold.
+   * \param[in] filteringType : The gradient filter to apply to compute the gradient, if \b p_dIx and \b p_dIy are
+   * nullptr.
+   * \return The upper Canny edge filter threshold.
+   */
+  template<typename OutType>
+  inline static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
+                                     const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
+                                     const unsigned int &gaussianKernelSize = 5,
+                                     const OutType &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
+                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING)
+  {
+    double w = I.getWidth();
+    double h = I.getHeight();
+
+    vpImage<unsigned char> dI(h, w);
+    vpImage<OutType> dIx(h, w), dIy(h, w);
+    if (p_dIx != nullptr && p_dIy != nullptr) {
+      dIx = *p_dIx;
+      dIy = *p_dIy;
+    }
+    else {
+      computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
+                                apertureGradient, filteringType);
+    }
+
+    // Computing the absolute gradient of the image G = |dIx| + |dIy|
+    for (unsigned int r = 0; r < h; r++) {
+      for (unsigned int c = 0; c < w; c++) {
+        float dx = (float)dIx[r][c];
+        float dy = (float)dIy[r][c];
+        float gradient = std::abs(dx) + std::abs(dy);
+        float gradientClamped = std::min(gradient, (float)std::numeric_limits<unsigned char>::max());
+        dI[r][c] = gradientClamped;
+      }
+    }
+
+    // Compute the histogram
+    vpHistogram hist;
+    const unsigned int nbBins = 256;
+    hist.calculate(dI, nbBins);
+    float accu = 0;
+    float t = (float)(upperThresholdRatio * w * h);
+    float bon = 0;
+    for (unsigned int i = 0; i < nbBins; i++) {
+      float tf = hist[i];
+      accu = accu + tf;
+      if (accu > t) {
+        bon = (float)i;
+        break;
+      }
+    }
+    float upperThresh = std::max(bon, 1.f);
+    lowerThresh = lowerThresholdRatio * bon;
+    return upperThresh;
+  }
+
+  /*!
+   * Apply a 1x3 derivative filter to an image pixel.
+   *
+   * \param I : Image to filter
+   * \param r : coordinates (row) of the pixel
+   * \param c : coordinates (column) of the pixel
+   */
   template <class ImageType> static double derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
@@ -127,12 +353,12 @@ public:
   }
 
   /*!
-    Apply a 3x1 derivative filter to an image pixel.
-
-    \param I : Image to filter
-    \param r : coordinates (row) of the pixel
-    \param c : coordinates (column) of the pixel
-  */
+   * Apply a 3x1 derivative filter to an image pixel.
+   *
+   * \param I : Image to filter
+   * \param r : coordinates (row) of the pixel
+   * \param c : coordinates (column) of the pixel
+   */
   template <class ImageType> static double derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
@@ -140,18 +366,18 @@ public:
   }
 
   /*!
-    Apply a 1 x size Derivative Filter in X to an image pixel.
-
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Image to filter
-    \param r : Coordinates(row) of the pixel
-    \param c : Coordinates(column) of the pixel
-    \param filter : Coefficients of the filter to be initialized using
-    vpImageFilter::getGaussianDerivativeKernel().
-    \param size : Size of the filter.
-
-    \sa vpImageFilter::getGaussianDerivativeKernel()
-    */
+   * Apply a 1 x size Derivative Filter in X to an image pixel.
+   *
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Image to filter
+   * \param r : Coordinates(row) of the pixel
+   * \param c : Coordinates(column) of the pixel
+   * \param filter : Coefficients of the filter to be initialized using
+   * vpImageFilter::getGaussianDerivativeKernel().
+   * \param size : Size of the filter.
+   *
+   * \sa vpImageFilter::getGaussianDerivativeKernel()
+   */
   template <class ImageType, typename FilterType>
   static FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -167,18 +393,18 @@ public:
   }
 
   /*!
-    Apply a size x 1 Derivative Filter in Y to an image pixel.
-
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Image to filter.
-    \param r : Coordinates (row) of the pixel.
-    \param c : Coordinates (column) of the pixel.
-    \param filter : Coefficients of the filter to be initialized using
-    vpImageFilter::getGaussianDerivativeKernel().
-    \param size : Size of the filter.
-
-    \sa vpImageFilter::getGaussianDerivativeKernel()
-  */
+   * Apply a size x 1 Derivative Filter in Y to an image pixel.
+   *
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Image to filter.
+   * \param r : Coordinates (row) of the pixel.
+   * \param c : Coordinates (column) of the pixel.
+   * \param filter : Coefficients of the filter to be initialized using
+   * vpImageFilter::getGaussianDerivativeKernel().
+   * \param size : Size of the filter.
+   *
+   * \sa vpImageFilter::getGaussianDerivativeKernel()
+   */
   template <class ImageType, typename FilterType>
   static FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
@@ -194,33 +420,33 @@ public:
   }
 
   /*!
-    Apply a filter to an image.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Image to filter
-    \param If : Filtered image.
-    \param M : Filter kernel.
-    \param convolve : If true, perform a convolution otherwise a correlation.
-
-    \note By default it performs a correlation:
-    \f[
-      \textbf{I\_filtered} \left( u,v \right) =
-      \sum_{y=0}^{\textbf{kernel\_h}}
-      \sum_{x=0}^{\textbf{kernel\_w}}
-      \textbf{M} \left( x,y \right ) \times
-      \textbf{I} \left(
-    u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
-    \f]
-    The convolution is almost the same operation:
-    \f[
-      \textbf{I\_filtered} \left( u,v \right) =
-      \sum_{y=0}^{\textbf{kernel\_h}}
-      \sum_{x=0}^{\textbf{kernel\_w}}
-      \textbf{M} \left( x,y \right ) \times
-      \textbf{I} \left(
-    u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
-    \f]
-    Only pixels in the input image fully covered by the kernel are considered.
-  */
+   * Apply a filter to an image.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Image to filter
+   * \param If : Filtered image.
+   * \param M : Filter kernel.
+   * \param convolve : If true, perform a convolution otherwise a correlation.
+   *
+   * \note By default it performs a correlation:
+   * \f[
+   *   \textbf{I\_filtered} \left( u,v \right) =
+   *   \sum_{y=0}^{\textbf{kernel\_h}}
+   *   \sum_{x=0}^{\textbf{kernel\_w}}
+   *   \textbf{M} \left( x,y \right ) \times
+   *   \textbf{I} \left(
+   * u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
+   * \f]
+   * The convolution is almost the same operation:
+   * \f[
+   *   \textbf{I\_filtered} \left( u,v \right) =
+   *   \sum_{y=0}^{\textbf{kernel\_h}}
+   *   \sum_{x=0}^{\textbf{kernel\_w}}
+   *   \textbf{M} \left( x,y \right ) \times
+   *   \textbf{I} \left(
+   * u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
+   * \f]
+   * Only pixels in the input image fully covered by the kernel are considered.
+   */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false)
   {
@@ -265,17 +491,17 @@ public:
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;
 
   /*!
-    Apply a filter to an image:
-    \f[
-      \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v =
-    \textbf{M}^t \ast \textbf{I} \f]
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Image to filter
-    \param Iu : Filtered image along the horizontal axis (u = columns).
-    \param Iv : Filtered image along the vertical axis (v = rows).
-    \param M : Filter kernel.
-    \param convolve : If true, perform a convolution otherwise a correlation.
-  */
+   * Apply a filter to an image:
+   * \f[
+   *   \textbf{I}_u = \textbf{M} \ast \textbf{I} \textbf{ and } \textbf{I}_v =
+   * \textbf{M}^t \ast \textbf{I} \f]
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Image to filter
+   * \param Iu : Filtered image along the horizontal axis (u = columns).
+   * \param Iv : Filtered image along the vertical axis (v = rows).
+   * \param M : Filter kernel.
+   * \param convolve : If true, perform a convolution otherwise a correlation.
+   */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M,
     bool convolve = false)
@@ -333,13 +559,13 @@ public:
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
   /*!
-    Apply a separable filter.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I: The original image.
-    \param GI: The filtered image.
-    \param filter: The separable filter.
-    \param size: The size of the filter.
-  */
+   * Apply a separable filter.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I: The original image.
+   * \param GI: The filtered image.
+   * \param filter: The separable filter.
+   * \param size: The size of the filter.
+   */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
   {
@@ -761,17 +987,17 @@ public:
   }
 
   /*!
-    Apply a Gaussian blur to an image.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Input image.
-    \param GI : Filtered image.
-    \param size : Filter size. This value should be odd.
-    \param sigma : Gaussian standard deviation. If it is equal to zero or
-    negative, it is computed from filter size as sigma = (size-1)/6.
-    \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-
-    \sa getGaussianKernel() to know which kernel is used.
-  */
+   * Apply a Gaussian blur to an image.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Input image.
+   * \param GI : Filtered image.
+   * \param size : Filter size. This value should be odd.
+   * \param sigma : Gaussian standard deviation. If it is equal to zero or
+   * negative, it is computed from filter size as sigma = (size-1)/6.
+   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+   *
+   * \sa getGaussianKernel() to know which kernel is used.
+   */
   template <typename ImageType, typename FilterType>
   static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
   {
@@ -787,12 +1013,12 @@ public:
   static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true);
 
   /*!
-    Apply a 5x5 Gaussian filter to an image pixel.
-
-    \param fr : Image to filter
-    \param r : coordinates (row) of the pixel
-    \param c : coordinates (column) of the pixel
-  */
+   * Apply a 5x5 Gaussian filter to an image pixel.
+   *
+   * \param fr : Image to filter
+   * \param r : coordinates (row) of the pixel
+   * \param c : coordinates (column) of the pixel
+   */
   template <class T> static double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
   {
     return (15.0 * fr[r][c] + 12.0 * (fr[r - 1][c] + fr[r][c - 1] + fr[r + 1][c] + fr[r][c + 1]) +
@@ -808,21 +1034,21 @@ public:
   static void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
 
   /*!
-    Return the coefficients \f$G_i\f$ of a Gaussian filter.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param[out] filter : Pointer to the half size filter kernel that should refer to a
-    (size+1)/2 array. The first value refers to the central coefficient, the
-    next one to the right coefficients. Left coefficients could be deduced by
-    symmetry.
-    \param[in] size : Filter size. This value should be odd and positive.
-    \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
-    computed from filter size as sigma = (size-1)/6.
-    \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case \f$\Sigma G_i
-    = 1 \f$.
-
-    The function computes the \e (size+1)/2 values of the Gaussian filter coefficients \f$ G_i \f$ as:
-    \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
-  */
+   * Return the coefficients \f$G_i\f$ of a Gaussian filter.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param[out] filter : Pointer to the half size filter kernel that should refer to a
+   * (size+1)/2 array. The first value refers to the central coefficient, the
+   * next one to the right coefficients. Left coefficients could be deduced by
+   * symmetry.
+   * \param[in] size : Filter size. This value should be odd and positive.
+   * \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
+   * computed from filter size as sigma = (size-1)/6.
+   * \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case
+   * \f$\Sigma G_i = 1 \f$.
+   *
+   * The function computes the \e (size+1)/2 values of the Gaussian filter coefficients \f$ G_i \f$ as:
+   * \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
+   */
   template<typename FilterType>
   static void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
@@ -854,19 +1080,19 @@ public:
   }
 
   /*!
-    Return the coefficients of a Gaussian derivative filter that may be used to
-    compute spatial image derivatives after applying a Gaussian blur.
-
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param filter : Pointer to the filter kernel that should refer to a
-    (size+1)/2 array. The first value refers to the central coefficient, the
-    next one to the right coefficients. Left coefficients could be deduced by
-    symmetry.
-    \param size : Filter size. This value should be odd.
-    \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
-    computed from filter size as sigma = (size-1)/6.
-    \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-  */
+   * Return the coefficients of a Gaussian derivative filter that may be used to
+   * compute spatial image derivatives after applying a Gaussian blur.
+   *
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param filter : Pointer to the filter kernel that should refer to a
+   * (size+1)/2 array. The first value refers to the central coefficient, the
+   * next one to the right coefficients. Left coefficients could be deduced by
+   * symmetry.
+   * \param size : Filter size. This value should be odd.
+   * \param sigma : Gaussian standard deviation. If it is equal to zero or negative, it is
+   * computed from filter size as sigma = (size-1)/6.
+   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+   */
   template <typename FilterType>
   static void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
@@ -937,15 +1163,15 @@ public:
   }
 
   /*!
-    Compute the gradient along X after applying a gaussian filter along Y.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Input image
-    \param dIx : Gradient along X.
-    \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
-    \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
-    vpImageFilter::getGaussianDerivativeKernel().
-    \param size : Size of the Gaussian and Gaussian derivative kernels.
-  */
+   * Compute the gradient along X after applying a gaussian filter along Y.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Input image
+   * \param dIx : Gradient along X.
+   * \param gaussianKernel : Gaussian kernel which values should be computed using vpImageFilter::getGaussianKernel().
+   * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   * vpImageFilter::getGaussianDerivativeKernel().
+   * \param size : Size of the Gaussian and Gaussian derivative kernels.
+   */
   template <typename ImageType, typename FilterType>
   static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
                               const FilterType *gaussianDerivativeKernel, unsigned int size)
@@ -999,15 +1225,15 @@ public:
   }
 
   /*!
-    Compute the gradient along Y after applying a gaussian filter along X.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param I : Input image
-    \param dIy : Gradient along Y.
-    \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
-    \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
-    vpImageFilter::getGaussianDerivativeKernel().
-    \param size : Size of the Gaussian and Gaussian derivative kernels.
-  */
+   * Compute the gradient along Y after applying a gaussian filter along X.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Input image
+   * \param dIy : Gradient along Y.
+   * \param gaussianKernel : Gaussian kernel which values should be computed  using vpImageFilter::getGaussianKernel().
+   * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
+   * vpImageFilter::getGaussianDerivativeKernel().
+   * \param size : Size of the Gaussian and Gaussian derivative kernels.
+   */
   template <typename ImageType, typename FilterType>
   static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
                               const FilterType *gaussianDerivativeKernel, unsigned int size)
@@ -1068,12 +1294,12 @@ public:
   }
 
   /*!
-    Get Sobel kernel for X-direction.
-    \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
-    \param filter : Pointer to a double array already allocated.
-    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor to normalize the Sobel kernel.
-  */
+   * Get Sobel kernel for X-direction.
+   * \tparam FilterType: Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param filter : Pointer to a double array already allocated.
+   * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+   * \return Scaling factor to normalize the Sobel kernel.
+   */
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   {
@@ -1089,12 +1315,12 @@ public:
   }
 
   /*!
-    Get Sobel kernel for Y-direction.
-    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    \param filter : Pointer to a double array already allocated.
-    \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
-    \return Scaling factor to normalize the Sobel kernel.
-  */
+   * Get Sobel kernel for Y-direction.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param filter : Pointer to a double array already allocated.
+   * \param size : Kernel size computed as: kernel_size = size*2 + 1 (max size is 20).
+   * \return Scaling factor to normalize the Sobel kernel.
+   */
   template <typename FilterType>
   inline static FilterType getSobelKernelY(FilterType *filter, unsigned int size)
   {
@@ -1149,232 +1375,6 @@ public:
     memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
 
     return scale;
-  }
-
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-  static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
-                                     float &lowerThresh, const unsigned int &gaussianKernelSize = 5,
-                                     const float &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
-                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
-
-  static void computePartialDerivatives(const cv::Mat &cv_I,
-                      cv::Mat &cv_dIx, cv::Mat &cv_dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const float &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING);
-#endif
-
-  /**
-   * \brief Compute the partial derivatives (i.e. horizontal and vertical gradients) of the input image.
-   *
-   * \tparam ImageType Either unsigned char, float or double
-   * \tparam FilterType Either float or double.
-   * \param[in] I The input image we want the partial derivatives.
-   * \param[out] dIx The horizontal partial derivative, i.e. horizontal gradient.
-   * \param[out] dIy The vertical partial derivative, i.e. vertical gradient.
-   * \param[in] computeDx Idicate if we must compute the horizontal gradient.
-   * \param[in] computeDy Idicate if we must compute  the vertical gradient.
-   * \param[in] normalize Idicate if we must normalize the gradient filters.
-   * \param[in] gaussianKernelSize The size of the kernel of the Gaussian filter used to blur the image.
-   * \param[in] gaussianStdev The standard deviation of the Gaussian filter used to blur the image.
-   * \param[in] apertureGradient The size of the kernel of the gradient filter.
-   * \param[in] filteringType The type of filters to apply to compute the gradients.
-   * \param[in] backend The type of backend to use to compute the gradients.
-   */
-  template <typename ImageType, typename FilterType>
-  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND)
-  {
-    if (backend == CANNY_OPENCV_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-      cv::Mat cv_I, cv_dIx, cv_dIy;
-      vpImageConvert::convert(I, cv_I);
-      computePartialDerivatives(cv_I, cv_dIx, cv_dIy, computeDx, computeDy, normalize, gaussianKernelSize,
-          gaussianStdev, apertureGradient, filteringType);
-      if (computeDx) {
-        vpImageConvert::convert(cv_dIx, dIx);
-      }
-      if (computeDy) {
-        vpImageConvert::convert(cv_dIy, dIy);
-      }
-#else
-      throw(vpException(vpException::badValue, "You need to compile ViSP with OpenCV to use CANNY_OPENCV_BACKEND"));
-#endif
-    }
-    else {
-      if (filteringType == CANNY_GBLUR_SCHARR_FILTERING || filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
-        dIx.resize(I.getHeight(), I.getWidth());
-        dIy.resize(I.getHeight(), I.getWidth());
-
-        // Computing the Gaussian blur + gradients of the image
-        vpImage<FilterType> Iblur;
-        vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev);
-
-        vpArray2D<FilterType> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
-        vpArray2D<FilterType> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
-
-        // Helper to apply the scale to the raw values of the filters
-        auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
-          for (unsigned int r = 0; r < filter.getRows(); r++) {
-            for (unsigned int c = 0; c < filter.getCols(); c++) {
-              filter[r][c] = filter[r][c] * scale;
-            }
-          }};
-
-        // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
-        // between 0 and 255 for an vpImage<uchar>
-        float scaleX = 1.f;
-        float scaleY = 1.f;
-
-        if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
-          if (computeDx) {
-            scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
-          }
-          if (computeDy) {
-            scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
-          }
-        }
-        else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
-          if (computeDx) {
-            scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
-          }
-          if (computeDy) {
-            scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
-          }
-        }
-
-        // Scale the gradient filters to have a normalized gradient filter
-        if (normalize) {
-          if (computeDx) {
-            scaleFilter(gradientFilterX, scaleX);
-          }
-          if (computeDy) {
-            scaleFilter(gradientFilterY, scaleY);
-          }
-        }
-
-        // Apply the gradient filters to get the gradients
-        if (computeDx) {
-          vpImageFilter::filter(Iblur, dIx, gradientFilterX);
-        }
-
-        if (computeDy) {
-          vpImageFilter::filter(Iblur, dIy, gradientFilterY);
-        }
-      }
-      else {
-        std::string errMsg = "[vpImageFilter::computePartialDerivatives] Filtering + gradient method \"";
-        errMsg += vpCannyFilteringAndGradientTypeToString(filteringType);
-        errMsg += "\" is not implemented yet\n";
-        throw(vpException(vpException::notImplementedError, errMsg));
-      }
-    }
-  }
-
-  template <typename FilterType>
-  inline static void computePartialDerivatives(const vpImage<vpRGBa> &I,
-                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
-
-  template <typename ImageType>
-  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<unsigned char> &dIx, vpImage<unsigned char> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const unsigned char &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
-
-  template <typename ImageType>
-  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<vpRGBa> &dIx, vpImage<vpRGBa> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int gaussianKernelSize = 5, const vpRGBa gaussianStdev = vpRGBa(),
-                      const unsigned int apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
-
-  /**
- * \brief Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute
- * the gradient of the image.
- *
- * \tparam OutType : Either float, to accelerate the computation time, or double, to have greater precision.
- * \param[in] I : The gray-scale image, in ViSP format.
- * \param[in] p_dIx : If different from nullptr, must contain the gradient of the image with regard to the horizontal axis.
- * \param[in] p_dIy : If different from nullptr, must contain the gradient of the image with regard to the vertical axis.
- * \param[in] lowerThresh : Canny lower threshold.
- * \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to apply (an odd number).
- * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
- * \param[in] apertureGradient : Size of the mask for the Sobel operator (odd number).
- * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
- * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
- * the upper threshold.
- * \param[in] filteringType : The gradient filter to apply to compute the gradient, if \b p_dIx and \b p_dIy are
- * nullptr.
- * \return The upper Canny edge filter threshold.
- */
-  template<typename OutType>
-  inline static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
-                                     const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
-                                     const unsigned int &gaussianKernelSize = 5,
-                                     const OutType &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
-                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING)
-  {
-    double w = I.getWidth();
-    double h = I.getHeight();
-
-    vpImage<unsigned char> dI(h, w);
-    vpImage<OutType> dIx(h, w), dIy(h, w);
-    if (p_dIx != nullptr && p_dIy != nullptr) {
-      dIx = *p_dIx;
-      dIy = *p_dIy;
-    }
-    else {
-      computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
-        apertureGradient, filteringType);
-    }
-
-    // Computing the absolute gradient of the image G = |dIx| + |dIy|
-    for (unsigned int r = 0; r < h; r++) {
-      for (unsigned int c = 0; c < w; c++) {
-        float dx = (float)dIx[r][c];
-        float dy = (float)dIy[r][c];
-        float gradient = std::abs(dx) + std::abs(dy);
-        float gradientClamped = std::min(gradient, (float)std::numeric_limits<unsigned char>::max());
-        dI[r][c] = gradientClamped;
-      }
-    }
-
-    // Compute the histogram
-    vpHistogram hist;
-    const unsigned int nbBins = 256;
-    hist.calculate(dI, nbBins);
-    float accu = 0;
-    float t = (float)(upperThresholdRatio * w * h);
-    float bon = 0;
-    for (unsigned int i = 0; i < nbBins; i++) {
-      float tf = hist[i];
-      accu = accu + tf;
-      if (accu > t) {
-        bon = (float)i;
-        break;
-      }
-    }
-    float upperThresh = std::max(bon, 1.f);
-    lowerThresh = lowerThresholdRatio * bon;
-    return upperThresh;
   }
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)

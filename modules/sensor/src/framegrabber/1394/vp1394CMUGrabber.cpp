@@ -517,7 +517,7 @@ void vp1394CMUGrabber::displayCameraModel()
   \param format : Camera video format.
   \param mode : Camera video mode.
 
-  See the following table for the correspondances between the input
+  See the following table for the correspondences between the input
   format and mode and the resulting video color coding.
 
   <TABLE BORDER="1">
@@ -617,7 +617,7 @@ void vp1394CMUGrabber::setVideoMode(unsigned long format, unsigned long mode)
   Set camera framerate rate. This method has to be called before open().
 
   \param fps : Value between 0 to 7 used to select a specific camera
-  framerate. See the following table for the correspondances between the input
+  framerate. See the following table for the correspondences between the input
   value and the framerate.
 
   <TABLE BORDER="1">
@@ -682,7 +682,7 @@ void vp1394CMUGrabber::setFramerate(unsigned long fps)
   Get the video framerate.
 
   \return Value between 0 to 7 corresponding to a specific camera framerate.
-  See the following table for the correspondances between the returned
+  See the following table for the correspondences between the returned
   value and the framerate.
 
   <TABLE BORDER="1">

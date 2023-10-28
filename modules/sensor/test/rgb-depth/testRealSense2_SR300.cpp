@@ -42,8 +42,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
 #include <mutex>
@@ -74,7 +73,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
 
   void run()
   {
@@ -104,7 +103,8 @@ public:
           if (local_update) {
             if (m_colorMode) {
               local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
+            }
+            else {
               local_pointcloud = pointcloud->makeShared();
             }
           }
@@ -119,15 +119,18 @@ public:
             viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
                                                      "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
-        } else {
+        }
+        else {
           if (m_colorMode) {
             viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
@@ -161,7 +164,8 @@ void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<vpColVector>
       v[1] = vertices[i].y;
       v[2] = vertices[i].z;
       v[3] = 1.0;
-    } else {
+    }
+    else {
       v[0] = 0.0;
       v[1] = 0.0;
       v[2] = 0.0;
@@ -213,10 +217,12 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
     memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
-  } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, (void *)f.get_data(), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
-  } else if (f.get_profile().format() == RS2_FORMAT_Y8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_Y8) {
     memcpy(img.ptr<uchar>(), f.get_data(), size);
   }
 }
@@ -242,10 +248,10 @@ int main(int argc, char *argv[])
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--show_info]"
 #ifdef VISP_HAVE_PCL
-                << " [--pcl_color]"
+        << " [--pcl_color]"
 #endif
-                << " [--help] [-h]"
-                << "\n";
+        << " [--help] [-h]"
+        << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -295,23 +301,23 @@ int main(int argc, char *argv[])
   rs2::pipeline &pipe = rs.getPipeline();
 
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
+    << std::endl;
 
   std::cout << "depth_M_color:\n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
   std::cout << "color_M_infrared:\n" << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR) << std::endl;
@@ -382,7 +388,7 @@ int main(int argc, char *argv[])
   viewer_colvector_thread.join();
 #endif
   std::cout << "Acquisition1 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   config.disable_all_streams();
   config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 60);
@@ -412,23 +418,23 @@ int main(int argc, char *argv[])
 
   std::cout << "\n" << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Color intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Depth intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithDistortion) << std::endl;
 
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithoutDistortion)
+    << std::endl;
   std::cout << "Infrared intrinsics:\n"
-            << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
-            << std::endl;
+    << rs.getCameraParameters(RS2_STREAM_INFRARED, vpCameraParameters::perspectiveProjWithDistortion)
+    << std::endl;
 
   std::cout << "depth_M_color:\n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
   std::cout << "color_M_infrared:\n" << rs.getTransformation(RS2_STREAM_INFRARED, RS2_STREAM_COLOR) << std::endl;
@@ -445,7 +451,8 @@ int main(int argc, char *argv[])
       if (pcl_color) {
         rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud_color,
                    (unsigned char *)infrared.bitmap);
-      } else {
+      }
+      else {
         rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud,
                    (unsigned char *)infrared.bitmap);
       }
@@ -487,7 +494,7 @@ int main(int argc, char *argv[])
   d2.close(depth_color);
   d3.close(infrared);
   std::cout << "Acquisition2 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   rs.close();
@@ -531,7 +538,7 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Acquisition3 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 #endif
 
 #ifdef VISP_HAVE_PCL
@@ -580,7 +587,7 @@ int main(int argc, char *argv[])
   viewer_colvector_thread2.join();
 
   std::cout << "Acquisition4 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 #endif
 
   return EXIT_SUCCESS;
@@ -591,11 +598,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test work"
-            << std::endl;
 #endif
 #if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
   std::cout << "X11 or GDI are needed." << std::endl;

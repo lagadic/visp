@@ -52,9 +52,7 @@
 #include <list>
 #include <math.h>
 #include <vector>
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <atomic>
-#endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
     (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
@@ -617,7 +615,7 @@ public:
    * Match a vector p2D of  2D point (x,y)  and  a vector p3D of 3D points
    * (X,Y,Z) using the Ransac algorithm.
    *
-   * At least numberOfInlierToReachAConsensus of true correspondance are required
+   * At least numberOfInlierToReachAConsensus of true correspondence are required
    * to validate the pose
    *
    * The inliers are given in a vector of vpPoint listInliers.

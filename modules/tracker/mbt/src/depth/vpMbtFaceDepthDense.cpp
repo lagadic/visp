@@ -47,7 +47,7 @@
 
 // https://stackoverflow.com/a/40765925
 #if !defined(__FMA__) && defined(__AVX2__)
-  #define __FMA__ 1
+#define __FMA__ 1
 #endif
 
 #if defined _WIN32 && defined(_M_ARM64)
@@ -81,18 +81,16 @@
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <cstdint>
-#endif
 
 namespace
 {
 #if USE_SSE
-inline void v_load_deinterleave(const uint64_t *ptr, __m128i& a, __m128i& b, __m128i& c)
+inline void v_load_deinterleave(const uint64_t *ptr, __m128i &a, __m128i &b, __m128i &c)
 {
-  __m128i t0 = _mm_loadu_si128((const __m128i*)ptr);       // a0, b0
-  __m128i t1 = _mm_loadu_si128((const __m128i*)(ptr + 2)); // c0, a1
-  __m128i t2 = _mm_loadu_si128((const __m128i*)(ptr + 4)); // b1, c1
+  __m128i t0 = _mm_loadu_si128((const __m128i *)ptr);       // a0, b0
+  __m128i t1 = _mm_loadu_si128((const __m128i *)(ptr + 2)); // c0, a1
+  __m128i t2 = _mm_loadu_si128((const __m128i *)(ptr + 4)); // b1, c1
 
   t1 = _mm_shuffle_epi32(t1, 0x4e); // a1, c0
 
@@ -101,37 +99,37 @@ inline void v_load_deinterleave(const uint64_t *ptr, __m128i& a, __m128i& b, __m
   c = _mm_unpackhi_epi64(t1, t2);
 }
 
-inline void v_load_deinterleave(const double* ptr, __m128d& a0, __m128d& b0, __m128d& c0)
+inline void v_load_deinterleave(const double *ptr, __m128d &a0, __m128d &b0, __m128d &c0)
 {
   __m128i a1, b1, c1;
-  v_load_deinterleave((const uint64_t*)ptr, a1, b1, c1);
+  v_load_deinterleave((const uint64_t *)ptr, a1, b1, c1);
   a0 = _mm_castsi128_pd(a1);
   b0 = _mm_castsi128_pd(b1);
   c0 = _mm_castsi128_pd(c1);
 }
 
-inline __m128d v_combine_low(const __m128d& a, const __m128d& b)
+inline __m128d v_combine_low(const __m128d &a, const __m128d &b)
 {
   __m128i a1 = _mm_castpd_si128(a), b1 = _mm_castpd_si128(b);
   return _mm_castsi128_pd(_mm_unpacklo_epi64(a1, b1));
 }
 
-inline __m128d v_combine_high(const __m128d& a, const __m128d& b)
+inline __m128d v_combine_high(const __m128d &a, const __m128d &b)
 {
   __m128i a1 = _mm_castpd_si128(a), b1 = _mm_castpd_si128(b);
   return _mm_castsi128_pd(_mm_unpackhi_epi64(a1, b1));
 }
 
-inline __m128d v_fma(const __m128d& a, const __m128d& b, const __m128d& c)
+inline __m128d v_fma(const __m128d &a, const __m128d &b, const __m128d &c)
 {
 #if __FMA__
-    return _mm_fmadd_pd(a, b, c);
+  return _mm_fmadd_pd(a, b, c);
 #else
-    return _mm_add_pd(_mm_mul_pd(a, b), c);
+  return _mm_add_pd(_mm_mul_pd(a, b), c);
 #endif
 }
 #else
-inline void v_load_deinterleave(const double* ptr, float64x2_t& a0, float64x2_t& b0, float64x2_t& c0)
+inline void v_load_deinterleave(const double *ptr, float64x2_t &a0, float64x2_t &b0, float64x2_t &c0)
 {
   float64x2x3_t v = vld3q_f64(ptr);
   a0 = v.val[0];
@@ -139,17 +137,17 @@ inline void v_load_deinterleave(const double* ptr, float64x2_t& a0, float64x2_t&
   c0 = v.val[2];
 }
 
-inline float64x2_t v_combine_low(const float64x2_t& a, const float64x2_t& b)
+inline float64x2_t v_combine_low(const float64x2_t &a, const float64x2_t &b)
 {
   return vcombine_f64(vget_low_f64(a), vget_low_f64(b));
 }
 
-inline float64x2_t v_combine_high(const float64x2_t& a, const float64x2_t& b)
+inline float64x2_t v_combine_high(const float64x2_t &a, const float64x2_t &b)
 {
   return vcombine_f64(vget_high_f64(a), vget_high_f64(b));
 }
 
-inline float64x2_t v_fma(const float64x2_t& a, const float64x2_t& b, const float64x2_t& c)
+inline float64x2_t v_fma(const float64x2_t &a, const float64x2_t &b, const float64x2_t &c)
 {
   return vfmaq_f64(c, a, b);
 }
@@ -159,12 +157,11 @@ inline float64x2_t v_fma(const float64x2_t& a, const float64x2_t& b, const float
 
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
-    m_planeObject(), m_polygon(NULL), m_useScanLine(false),
-    m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0),
-    m_depthDenseFilteringMinDist(0.8), m_depthDenseFilteringOccupancyRatio(0.3), m_isTrackedDepthDenseFace(true),
-    m_isVisible(false), m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
-{
-}
+  m_planeObject(), m_polygon(NULL), m_useScanLine(false),
+  m_depthDenseFilteringMethod(DEPTH_OCCUPANCY_RATIO_FILTERING), m_depthDenseFilteringMaxDist(3.0),
+  m_depthDenseFilteringMinDist(0.8), m_depthDenseFilteringOccupancyRatio(0.3), m_isTrackedDepthDenseFace(true),
+  m_isVisible(false), m_listOfFaceLines(), m_planeCamera(), m_pointCloudFace(), m_polygonLines()
+{ }
 
 vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
 {
@@ -312,7 +309,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
       if ((m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
         if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
@@ -398,7 +395,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
       if ((m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
-                         : polygon_2d.isInside(vpImagePoint(i, j)))) {
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
         if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
@@ -440,7 +437,8 @@ void vpMbtFaceDepthDense::computeVisibilityDisplay()
       int index = *itindex;
       if (index == -1) {
         isvisible = true;
-      } else {
+      }
+      else {
         if (line->hiddenface->isVisible((unsigned int)index)) {
           isvisible = true;
         }
@@ -453,7 +451,8 @@ void vpMbtFaceDepthDense::computeVisibilityDisplay()
 
     if (isvisible) {
       line->setVisible(true);
-    } else {
+    }
+    else {
       line->setVisible(false);
     }
   }
@@ -642,7 +641,8 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
       error[(unsigned int)(cpt / 3)] = D + (normal.t() * pt);
     }
 #endif
-  } else {
+  }
+  else {
     vpColVector normal(3);
     normal[0] = nx;
     normal[1] = ny;
@@ -739,19 +739,21 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned in
 
         if (linesLst.empty()) {
           distanceToFace = std::numeric_limits<double>::max();
-        } else {
+        }
+        else {
           faceCentroid.set_X(faceCentroid.get_X() / (2 * linesLst.size()));
           faceCentroid.set_Y(faceCentroid.get_Y() / (2 * linesLst.size()));
           faceCentroid.set_Z(faceCentroid.get_Z() / (2 * linesLst.size()));
 
           distanceToFace =
-              sqrt(faceCentroid.get_X() * faceCentroid.get_X() + faceCentroid.get_Y() * faceCentroid.get_Y() +
-                   faceCentroid.get_Z() * faceCentroid.get_Z());
+            sqrt(faceCentroid.get_X() * faceCentroid.get_X() + faceCentroid.get_Y() * faceCentroid.get_Y() +
+                 faceCentroid.get_Z() * faceCentroid.get_Z());
         }
       }
     }
-  } else {
-    // Get polygon clipped
+  }
+  else {
+ // Get polygon clipped
     m_polygon->getRoiClipped(m_cam, roiPts, cMo);
 
     // Get 3D polygon clipped
@@ -760,7 +762,8 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned in
 
     if (polygonsClipped.empty()) {
       distanceToFace = std::numeric_limits<double>::max();
-    } else {
+    }
+    else {
       vpPoint faceCentroid;
 
       for (size_t i = 0; i < polygonsClipped.size(); i++) {
@@ -788,7 +791,7 @@ void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomog
                                   bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -802,7 +805,7 @@ void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
                                   bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -814,14 +817,12 @@ void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
 void vpMbtFaceDepthDense::displayFeature(const vpImage<unsigned char> & /*I*/, const vpHomogeneousMatrix & /*cMo*/,
                                          const vpCameraParameters & /*cam*/, const double /*scale*/,
                                          const unsigned int /*thickness*/)
-{
-}
+{ }
 
 void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/, const vpHomogeneousMatrix & /*cMo*/,
                                          const vpCameraParameters & /*cam*/, const double /*scale*/,
                                          const unsigned int /*thickness*/)
-{
-}
+{ }
 
 /*!
   Return a list of line parameters to display the primitive at a given pose and camera parameters.
@@ -848,7 +849,7 @@ std::vector<std::vector<double> > vpMbtFaceDepthDense::getModelForDisplay(unsign
          ++it) {
       vpMbtDistanceLine *line = *it;
       std::vector<std::vector<double> > lineModels =
-          line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+        line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
       models.insert(models.end(), lineModels.begin(), lineModels.end());
     }
   }

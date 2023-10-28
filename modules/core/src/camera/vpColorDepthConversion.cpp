@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,12 @@
  *
  * Description:
  * Color to depth conversion.
- *
- * Authors:
- * Julien Dufour
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file vpColorDepthConversion.cpp
-  \brief color to depth conversion
-*/
+ * \file vpColorDepthConversion.cpp
+ * \brief color to depth conversion
+ */
 
 #include <visp3/core/vpColorDepthConversion.h>
 
@@ -64,11 +59,7 @@ namespace
  */
 vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, double height)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  return {vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width)};
-#else
-  return vpImagePoint(vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width));
-#endif
+  return { vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width) };
 }
 
 /*!
@@ -80,15 +71,9 @@ vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, doubl
  */
 vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector from_point)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  from_point = {from_point, 0, 3};
+  from_point = { from_point, 0, 3 };
   from_point.stack(1.);
-  return {extrinsics_params * from_point, 0, 3};
-#else
-  from_point = vpColVector(from_point, 0, 3);
-  from_point.stack(1.);
-  return vpColVector(extrinsics_params * from_point, 0, 3);
-#endif
+  return { extrinsics_params * from_point, 0, 3 };
 }
 
 /*!
@@ -100,11 +85,7 @@ vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector 
  */
 vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpColVector &point)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  vpImagePoint iP{};
-#else
-  vpImagePoint iP;
-#endif
+  vpImagePoint iP {};
   vpMeterPixelConversion::convertPoint(intrinsic_cam_params, point[0] / point[2], point[1] / point[2], iP);
 
   return iP;
@@ -120,20 +101,9 @@ vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpCol
  */
 vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpImagePoint &pixel, double depth)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  double x{0.}, y{0.};
+  double x { 0. }, y { 0. };
   vpPixelMeterConversion::convertPoint(intrinsic_cam_params, pixel, x, y);
-  return {x * depth, y * depth, depth};
-#else
-  double x = 0., y = 0.;
-  vpPixelMeterConversion::convertPoint(intrinsic_cam_params, pixel, x, y);
-
-  vpColVector p(3);
-  p[0] = x * depth;
-  p[1] = y * depth;
-  p[2] = depth;
-  return p;
-#endif
+  return { x * depth, y * depth, depth };
 }
 
 } // namespace
@@ -143,12 +113,15 @@ vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpIm
  *
  * \param[in] I_depth : Depth raw image.
  * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `I_depth` are in
- * [mm], depth scale should be 0.001. \param[in] depth_min : Minimal depth value for correspondance [m]. \param[in]
- * depth_max : Maximal depth value for correspondance [m]. \param[in] depth_intrinsics : Intrinsic depth camera
- * parameters. \param[in] color_intrinsics : Intrinsic color camera parameters. \param[in] color_M_depth : Relationship
- * between color and depth cameras (ie, extrinsic rgbd camera parameters). \param[in] depth_M_color : Relationship
- * between depth and color cameras (ie, extrinsic rgbd camera parameters). \param[in] from_pixel : Image point expressed
- * into the color camera frame. \return Image point expressed into the depth camera frame.
+ * [mm], depth scale should be 0.001.
+ * \param[in] depth_min : Minimal depth value for correspondence [m].
+ * \param[in] depth_max : Maximal depth value for correspondence [m].
+ * \param[in] depth_intrinsics : Intrinsic depth camera parameters.
+ * \param[in] color_intrinsics : Intrinsic color camera parameters.
+ * \param[in] color_M_depth : Relationship between color and depth cameras (ie, extrinsic rgb-d camera parameters).
+ * \param[in] depth_M_color : Relationship between depth and color cameras (ie, extrinsic rgb-d camera parameters).
+ * \param[in] from_pixel : Image point expressed into the color camera frame.
+ * \return Image point expressed into the depth camera frame.
  */
 vpImagePoint vpColorDepthConversion::projectColorToDepth(
     const vpImage<uint16_t> &I_depth, double depth_scale, double depth_min, double depth_max,
@@ -164,12 +137,15 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
  *
  * \param[in] data : Depth raw values.
  * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `data` are in [mm],
- * depth scale should be 0.001. \param[in] depth_min : Minimal depth value for correspondance [m]. \param[in] depth_max
- * : Maximal depth value for correspondance [m]. \param[in] depth_width : Depth image width [pixel]. \param[in]
- * depth_height : Depth image height [pixel]. \param[in] depth_intrinsics : Intrinsic depth camera parameters.
+ * depth scale should be 0.001.
+ * \param[in] depth_min : Minimal depth value for correspondence [m].
+ * \param[in] depth_max : Maximal depth value for correspondence [m].
+ * \param[in] depth_width : Depth image width [pixel].
+ * \param[in] depth_height : Depth image height [pixel].
+ * \param[in] depth_intrinsics : Intrinsic depth camera parameters.
  * \param[in] color_intrinsics : Intrinsic color camera parameters.
- * \param[in] color_M_depth : Relationship between color and depth cameras (ie, extrinsic rgbd camera parameters).
- * \param[in] depth_M_color : Relationship between depth and color cameras (ie, extrinsic rgbd camera parameters).
+ * \param[in] color_M_depth : Relationship between color and depth cameras (ie, extrinsic rgb-d camera parameters).
+ * \param[in] depth_M_color : Relationship between depth and color cameras (ie, extrinsic rgb-d camera parameters).
  * \param[in] from_pixel : Image point expressed into the color camera frame.
  * \return Image point expressed into the depth camera frame.
  */
@@ -178,8 +154,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
     double depth_height, const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
     const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  vpImagePoint depth_pixel{};
+  vpImagePoint depth_pixel {};
 
   // Find line start pixel
   const auto min_point = deproject(color_intrinsics, from_pixel, depth_min);
@@ -206,48 +181,12 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
     const auto projected_pixel = project(color_intrinsics, transformed_point);
 
     const auto new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
-                          vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
+      vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
     if (new_dist < min_dist || min_dist < 0) {
       min_dist = new_dist;
       depth_pixel = curr_pixel;
     }
   }
-
-#else
-  vpImagePoint depth_pixel;
-
-  // Find line start pixel
-  const vpColVector min_point = deproject(color_intrinsics, from_pixel, depth_min);
-  const vpColVector min_transformed_point = transform(depth_M_color, min_point);
-  vpImagePoint start_pixel = project(depth_intrinsics, min_transformed_point);
-  start_pixel = adjust2DPointToBoundary(start_pixel, depth_width, depth_height);
-
-  // Find line end depth pixel
-  const vpColVector max_point = deproject(color_intrinsics, from_pixel, depth_max);
-  const vpColVector max_transformed_point = transform(depth_M_color, max_point);
-  vpImagePoint end_pixel = project(depth_intrinsics, max_transformed_point);
-  end_pixel = adjust2DPointToBoundary(end_pixel, depth_width, depth_height);
-
-  // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
-  double min_dist = -1.;
-  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
-       curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
-    const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
-    if (std::fabs(depth) <= std::numeric_limits<double>::epsilon())
-      continue;
-
-    const vpColVector point = deproject(depth_intrinsics, curr_pixel, depth);
-    const vpColVector transformed_point = transform(color_M_depth, point);
-    const vpImagePoint projected_pixel = project(color_intrinsics, transformed_point);
-
-    const double new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
-                            vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
-    if (new_dist < min_dist || min_dist < 0) {
-      min_dist = new_dist;
-      depth_pixel = curr_pixel;
-    }
-  }
-#endif
 
   return depth_pixel;
 }

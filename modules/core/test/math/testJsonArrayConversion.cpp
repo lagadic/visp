@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 
 #include <random>
 #include <visp3/core/vpArray2D.h>

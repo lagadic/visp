@@ -405,7 +405,6 @@ vpMe &vpMe::operator=(const vpMe &me)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMe &vpMe::operator=(const vpMe &&me)
 {
   if (m_mask != NULL) {
@@ -430,7 +429,6 @@ vpMe &vpMe::operator=(const vpMe &&me)
   initMask();
   return *this;
 }
-#endif
 
 vpMe::~vpMe()
 {

@@ -38,8 +38,6 @@
 
 #include "vpImageIoBackend.h"
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 #define TINYEXR_USE_MINIZ 0
 #define TINYEXR_USE_STB_ZLIB 1
 #include <stb_image.h>
@@ -65,7 +63,7 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   EXRHeader exr_header;
   InitEXRHeader(&exr_header);
 
-  const char* err = NULL; // or `nullptr` in C++11 or later.
+  const char *err = NULL; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
     std::string err_msg(err);
@@ -97,7 +95,8 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   if (exr_image.images) {
     I.resize(exr_image.height, exr_image.width);
     memcpy(I.bitmap, exr_image.images[0], exr_image.height*exr_image.width*sizeof(float));
-  } else if (exr_image.tiles) {
+  }
+  else if (exr_image.tiles) {
     I.resize(exr_image.height, exr_image.width);
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
@@ -137,7 +136,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   EXRHeader exr_header;
   InitEXRHeader(&exr_header);
 
-  const char* err = NULL; // or `nullptr` in C++11 or later.
+  const char *err = NULL; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
     std::string err_msg(err);
@@ -175,7 +174,8 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
         I[i][j].B = reinterpret_cast<float **>(exr_image.images)[0][i * exr_image.width + j];
       }
     }
-  } else if (exr_image.tiles) {
+  }
+  else if (exr_image.tiles) {
     I.resize(exr_image.height, exr_image.width);
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
@@ -219,7 +219,7 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
 
   image.num_channels = 1;
 
-  image.images = (unsigned char**)&I.bitmap;
+  image.images = (unsigned char **)&I.bitmap;
   image.width = I.getWidth();
   image.height = I.getHeight();
 
@@ -236,7 +236,7 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT; // pixel type of output image to be stored in .EXR
   }
 
-  const char* err = NULL; // or nullptr in C++11 or later.
+  const char *err = NULL; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);
@@ -274,12 +274,12 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
     images[2][i] = I.bitmap[i].B;
   }
 
-  float* image_ptr[3];
+  float *image_ptr[3];
   image_ptr[0] = &(images[2].at(0)); // B
   image_ptr[1] = &(images[1].at(0)); // G
   image_ptr[2] = &(images[0].at(0)); // R
 
-  image.images = (unsigned char**)image_ptr;
+  image.images = (unsigned char **)image_ptr;
   image.width = I.getWidth();
   image.height = I.getHeight();
 
@@ -298,7 +298,7 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;  // pixel type of output image to be stored in .EXR
   }
 
-  const char* err = NULL; // or nullptr in C++11 or later.
+  const char *err = NULL; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);
@@ -313,5 +313,3 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   free(header.requested_pixel_types);
   free(header.pixel_types);
 }
-
-#endif

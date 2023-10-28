@@ -97,20 +97,16 @@ a:
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
   std::cout << "a:\n" << a << std::endl;
-#endif
 }
   \endcode
   The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
   \code
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a;
   a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-#endif
 }
   \endcode
 
@@ -120,10 +116,8 @@ int main()
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
   a.reshape(2, 3);
-#endif
 }
   \endcode
 */
@@ -154,12 +148,7 @@ public:
   Copy constructor of a 2D array.
   */
   vpArray2D<Type>(const vpArray2D<Type> &A)
-    :
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    vpArray2D<Type>()
-#else
-    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-#endif
+    : vpArray2D<Type>()
   {
     resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
@@ -172,12 +161,7 @@ public:
   \param c : Array number of columns.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c)
-    :
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    vpArray2D<Type>()
-#else
-    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-#endif
+    : vpArray2D<Type>()
   {
     resize(r, c);
   }
@@ -190,18 +174,12 @@ public:
   \param val : Each element of the array is set to \e val.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
-    :
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    vpArray2D<Type>()
-#else
-    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-#endif
+    : vpArray2D<Type>()
   {
     resize(r, c, false, false);
     *this = val;
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<Type>(vpArray2D<Type> &&A) noexcept
   {
     rowNum = A.rowNum;
@@ -251,7 +229,6 @@ public:
       std::copy(it->begin(), it->end(), rowPtrs[i]);
     }
   }
-#endif
 
   /*!
   Destructor that deallocate memory.
@@ -460,7 +437,6 @@ public:
     return *this;
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
     if (this != &other) {
@@ -513,7 +489,6 @@ public:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
   vpArray2D<Type> &operator=(const nlohmann::json &j) = delete;
-#endif
 #endif
 
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x

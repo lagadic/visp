@@ -197,7 +197,6 @@ vpMatrix::vpMatrix(const vpMatrix &M, unsigned int r, unsigned int c, unsigned i
   init(M, r, c, nrows, ncols);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
 {
   rowNum = A.rowNum;
@@ -224,11 +223,9 @@ vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix M( {-1, -2, -3, 4, 5.5, 6.0f} );
 M.reshape(2, 3);
 std::cout << "M:\n" << M << std::endl;
-#endif
 }
    \endcode
    It produces the following output:
@@ -251,10 +248,8 @@ vpMatrix::vpMatrix(const std::initializer_list<double> &list) : vpArray2D<double
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6});
 std::cout << "M:\n" << M << std::endl;
-#endif
 }
    \endcode
    It produces the following output:
@@ -277,10 +272,8 @@ vpMatrix::vpMatrix(unsigned int nrows, unsigned int ncols, const std::initialize
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix M( { {-1, -2, -3}, {4, 5.5, 6} } );
 std::cout << "M:\n" << M << std::endl;
-#endif
 }
    \endcode
    It produces the following output:
@@ -291,8 +284,6 @@ M:
    \endcode
  */
 vpMatrix::vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists) : vpArray2D<double>(lists) { }
-
-#endif
 
 /*!
   Initialize the matrix from a part of an input matrix \e M.
@@ -658,7 +649,6 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
@@ -765,7 +755,6 @@ vpMatrix &vpMatrix::operator=(const std::initializer_list<std::initializer_list<
 
   return *this;
 }
-#endif
 
 //! Set all the element of the matrix A to \e x.
 vpMatrix &vpMatrix::operator=(double x)
@@ -5011,7 +5000,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
   Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
-  \code
+\code
 #include <visp3/core/vpMatrix.h>
 
 int main()
@@ -5029,7 +5018,7 @@ int main()
   int rank_out = A.pseudoInverse(A_p, sv, rank_in, imA, imAt, kerAt);
   if (rank_out != rank_in) {
     std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
-std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
   }
 
   A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");

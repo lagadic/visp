@@ -57,10 +57,9 @@
 */
 vpMbtDistanceCircle::vpMbtDistanceCircle()
   : name(), index(0), cam(), me(NULL), wmean(1), featureEllipse(), isTrackedCircle(true), meEllipse(NULL), circle(NULL),
-    radius(0.), p1(NULL), p2(NULL), p3(NULL), L(), error(), nbFeature(0), Reinit(false), hiddenface(NULL),
-    index_polygon(-1), isvisible(false)
-{
-}
+  radius(0.), p1(NULL), p2(NULL), p3(NULL), L(), error(), nbFeature(0), Reinit(false), hiddenface(NULL),
+  index_polygon(-1), isvisible(false)
+{ }
 
 /*!
   Basic destructor useful to deallocate the memory.
@@ -151,7 +150,8 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem when projecting circle\n";
       return false;
     }
@@ -169,8 +169,9 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
       meEllipse->initTracking(I, ic, n20_p, n11_p, n02_p, doNotTrack);
-    } catch (...) {
-      // vpTRACE("the circle can't be initialized");
+    }
+    catch (...) {
+   // vpTRACE("the circle can't be initialized");
       return false;
     }
   }
@@ -188,8 +189,9 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
   if (isvisible) {
     try {
       meEllipse->track(I);
-    } catch (...) {
-      // std::cout << "Track meEllipse failed" << std::endl;
+    }
+    catch (...) {
+   // std::cout << "Track meEllipse failed" << std::endl;
       meEllipse->reset();
       Reinit = true;
     }
@@ -215,7 +217,8 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem when projecting circle\n";
     }
 
@@ -225,7 +228,8 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
       meEllipse->updateParameters(I, ic, n20_p, n11_p, n02_p);
-    } catch (...) {
+    }
+    catch (...) {
       Reinit = true;
     }
     nbFeature = (unsigned int)meEllipse->getMeList().size();
@@ -317,16 +321,9 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
-#else
-      std::vector<double> params;
-      params.push_back(0); // ME
-      params.push_back(p_me.get_ifloat());
-      params.push_back(p_me.get_jfloat());
-      params.push_back(static_cast<double>(p_me.getState()));
-#endif
+      std::vector<double> params = { 0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+
       features.push_back(params);
     }
   }
@@ -356,7 +353,8 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot project the circle";
     }
 
@@ -412,7 +410,8 @@ void vpMbtDistanceCircle::initInteractionMatrixError()
     nbFeature = (unsigned int)meEllipse->getMeList().size();
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
-  } else
+  }
+  else
     nbFeature = 0;
 }
 
@@ -427,7 +426,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     circle->changeFrame(cMo);
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle\n";
     }
 
@@ -461,8 +461,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
         L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
       error[j] = n02 * vpMath::sqr(x) + n20 * vpMath::sqr(y) - 2 * n11 * x * y + 2 * (n11 * yg - n02 * xg) * x +
-                 2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
-                 4.0 * vpMath::sqr(n11) - 4.0 * n20 * n02;
+        2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
+        4.0 * vpMath::sqr(n11) - 4.0 * n20 * n02;
       j++;
     }
   }

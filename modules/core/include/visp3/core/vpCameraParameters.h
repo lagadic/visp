@@ -159,7 +159,7 @@
   to estimate the parameters corresponding to the model implemented in this
   class.
 
-  \note Note also that \ref tutorial-bridge-opencv gives the correspondance
+  \note Note also that \ref tutorial-bridge-opencv gives the correspondence
   between ViSP and OpenCV camera modelization.
 
   \note The conversion from pixel coordinates \f$(u,v)\f$ in the normalized

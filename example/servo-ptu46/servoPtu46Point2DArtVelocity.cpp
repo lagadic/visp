@@ -59,7 +59,7 @@
 #endif
 #include <signal.h>
 
-#if (defined(VISP_HAVE_PTU46) & defined(VISP_HAVE_DC1394) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11))
+#if defined(VISP_HAVE_PTU46) && defined(VISP_HAVE_DC1394)
 
 #include <mutex>
 

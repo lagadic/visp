@@ -143,10 +143,8 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type> &);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   //! move constructor
   vpImage(vpImage<Type> &&);
-#endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
@@ -861,7 +859,6 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   \relates vpImage
 */
@@ -878,7 +875,6 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   I.row = NULL;
   I.hasOwnership = false;
 }
-#endif
 
 /*!
  * \brief Return the maximum value within the bitmap

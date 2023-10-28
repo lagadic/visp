@@ -65,13 +65,12 @@ public:
    */
   vpLaserScan()
     : listScanPoints(), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0), startAngle(0), stopAngle(0),
-      numPoints(0)
-  {
-  }
+    numPoints(0)
+  { }
   /*! Copy constructor. */
   vpLaserScan(const vpLaserScan &scan)
     : listScanPoints(scan.listScanPoints), startTimestamp(0), endTimestamp(0), measurementId(0), numSteps(0),
-      startAngle(0), stopAngle(0), numPoints(0)
+    startAngle(0), stopAngle(0), numPoints(0)
   {
     startTimestamp = scan.startTimestamp;
     endTimestamp = scan.endTimestamp;
@@ -82,7 +81,7 @@ public:
     numPoints = scan.numPoints;
   }
   /*! Default destructor that does nothing. */
-  virtual ~vpLaserScan(){};
+  virtual ~vpLaserScan() { };
   /*! Add the scan point at the end of the list. */
   inline void addPoint(const vpScanPoint &p) { listScanPoints.push_back(p); }
   /*! Drop the list of points. */
@@ -90,9 +89,7 @@ public:
   /*! Get the list of points. */
   inline std::vector<vpScanPoint> getScanPoints() { return listScanPoints; }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpLaserScan &operator=(const vpLaserScan &scan) = default;
-#endif
 
   /*! Specifies the id of former measurements and increases with
       every measurement. */

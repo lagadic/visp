@@ -277,7 +277,6 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Solves a Linear Program under various constraints
 
@@ -302,9 +301,6 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   \return True if the solution was found.
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
-
-  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using
-cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -727,4 +723,3 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     std::swap(B[k], N[j]);
   }
 }
-#endif

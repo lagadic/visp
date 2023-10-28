@@ -38,9 +38,7 @@
 
 #if defined(HAVE_OPENCV_HIGHGUI)
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <functional>
-#endif
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -267,9 +265,7 @@ protected:
 
   static void on_mouse(int event, int x, int y, int flags, void *param);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
-#endif
 };
 
 #endif

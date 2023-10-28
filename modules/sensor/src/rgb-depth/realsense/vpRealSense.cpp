@@ -39,7 +39,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE)
 
 #include "vpRealSense_impl.h"
 
@@ -48,7 +48,7 @@
  */
 vpRealSense::vpRealSense()
   : m_context(), m_device(NULL), m_num_devices(0), m_serial_no(), m_intrinsics(), m_max_Z(8), m_enableStreams(),
-    m_useStreamPresets(), m_streamPresets(), m_streamParams(), m_invalidDepthValue(0.0f)
+  m_useStreamPresets(), m_streamPresets(), m_streamParams(), m_invalidDepthValue(0.0f)
 {
   initStream();
 }
@@ -137,8 +137,8 @@ void vpRealSense::open()
 
   // Enable only infrared2 stream if supported
   m_enableStreams[rs::stream::infrared2] = m_enableStreams[rs::stream::infrared2]
-                                               ? m_device->supports(rs::capabilities::infrared2)
-                                               : m_enableStreams[rs::stream::infrared2];
+    ? m_device->supports(rs::capabilities::infrared2)
+    : m_enableStreams[rs::stream::infrared2];
 
   if (m_device->is_streaming()) {
     m_device->stop();
@@ -155,7 +155,8 @@ void vpRealSense::open()
   if (m_enableStreams[rs::stream::color]) {
     if (m_useStreamPresets[rs::stream::color]) {
       m_device->enable_stream(rs::stream::color, m_streamPresets[rs::stream::color]);
-    } else {
+    }
+    else {
       m_device->enable_stream(rs::stream::color, m_streamParams[rs::stream::color].m_streamWidth,
                               m_streamParams[rs::stream::color].m_streamHeight,
                               m_streamParams[rs::stream::color].m_streamFormat,
@@ -166,7 +167,8 @@ void vpRealSense::open()
   if (m_enableStreams[rs::stream::depth]) {
     if (m_useStreamPresets[rs::stream::depth]) {
       m_device->enable_stream(rs::stream::depth, m_streamPresets[rs::stream::depth]);
-    } else {
+    }
+    else {
       m_device->enable_stream(rs::stream::depth, m_streamParams[rs::stream::depth].m_streamWidth,
                               m_streamParams[rs::stream::depth].m_streamHeight,
                               m_streamParams[rs::stream::depth].m_streamFormat,
@@ -177,7 +179,8 @@ void vpRealSense::open()
   if (m_enableStreams[rs::stream::infrared]) {
     if (m_useStreamPresets[rs::stream::infrared]) {
       m_device->enable_stream(rs::stream::infrared, m_streamPresets[rs::stream::infrared]);
-    } else {
+    }
+    else {
       m_device->enable_stream(rs::stream::infrared, m_streamParams[rs::stream::infrared].m_streamWidth,
                               m_streamParams[rs::stream::infrared].m_streamHeight,
                               m_streamParams[rs::stream::infrared].m_streamFormat,
@@ -188,7 +191,8 @@ void vpRealSense::open()
   if (m_enableStreams[rs::stream::infrared2]) {
     if (m_useStreamPresets[rs::stream::infrared2]) {
       m_device->enable_stream(rs::stream::infrared2, m_streamPresets[rs::stream::infrared2]);
-    } else {
+    }
+    else {
       m_device->enable_stream(rs::stream::infrared2, m_streamParams[rs::stream::infrared2].m_streamWidth,
                               m_streamParams[rs::stream::infrared2].m_streamHeight,
                               m_streamParams[rs::stream::infrared2].m_streamFormat,
@@ -213,19 +217,19 @@ void vpRealSense::open()
 
     if (m_enableStreams[rs::stream::depth]) {
       m_intrinsics[rs::stream::color_aligned_to_depth] =
-          m_device->get_stream_intrinsics(rs::stream::color_aligned_to_depth);
+        m_device->get_stream_intrinsics(rs::stream::color_aligned_to_depth);
       m_intrinsics[rs::stream::depth_aligned_to_color] =
-          m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
+        m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_color);
       m_intrinsics[rs::stream::depth_aligned_to_rectified_color] =
-          m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_rectified_color);
+        m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_rectified_color);
     }
   }
 
   if (m_enableStreams[rs::stream::depth] && m_enableStreams[rs::stream::infrared2]) {
     m_intrinsics[rs::stream::depth_aligned_to_infrared2] =
-        m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_infrared2);
+      m_device->get_stream_intrinsics(rs::stream::depth_aligned_to_infrared2);
     m_intrinsics[rs::stream::infrared2_aligned_to_depth] =
-        m_device->get_stream_intrinsics(rs::stream::infrared2_aligned_to_depth);
+      m_device->get_stream_intrinsics(rs::stream::infrared2_aligned_to_depth);
   }
 
   // Start device
@@ -294,7 +298,8 @@ vpCameraParameters vpRealSense::getCameraParameters(const rs::stream &stream,
   if (type == vpCameraParameters::perspectiveProjWithDistortion) {
     double kdu = intrinsics.coeffs[0];
     cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
-  } else {
+  }
+  else {
     cam.initPersProjWithoutDistortion(px, py, u0, v0);
   }
   return cam;
@@ -1032,7 +1037,7 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
     auto intrin = rs.getHandler()->get_stream_intrinsics(stream);
     std::cout << "Capturing " << stream << " at " << intrin.width << " x " << intrin.height;
     std::cout << std::setprecision(1) << std::fixed << ", fov = " << intrin.hfov() << " x " << intrin.vfov()
-              << ", distortion = " << intrin.model() << std::endl;
+      << ", distortion = " << intrin.model() << std::endl;
   }
   std::cout.precision(ss);
 
@@ -1042,5 +1047,5 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpRealSense.cpp.o) has no
 // symbols
-void dummy_vpRealSense(){};
+void dummy_vpRealSense() { };
 #endif

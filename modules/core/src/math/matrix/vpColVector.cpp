@@ -214,7 +214,6 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -229,7 +228,6 @@ vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
   v.dsize = 0;
   v.data = NULL;
 }
-#endif
 
 vpColVector vpColVector::operator-() const
 {
@@ -404,8 +402,6 @@ std::vector<double> vpColVector::toStdVector() const
   return v;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -434,7 +430,6 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 bool vpColVector::operator==(const vpColVector &v) const
 {

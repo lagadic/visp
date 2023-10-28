@@ -61,11 +61,10 @@
 */
 vpMbtDistanceCylinder::vpMbtDistanceCylinder()
   : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1), featureline1(), featureline2(), isTrackedCylinder(true),
-    meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(), error(),
-    nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL), hiddenface(NULL), index_polygon(-1),
-    isvisible(false)
-{
-}
+  meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(), error(),
+  nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL), hiddenface(NULL), index_polygon(-1),
+  isvisible(false)
+{ }
 
 /*!
   Basic destructor useful to deallocate the memory.
@@ -192,14 +191,16 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     p2->projection();
     try {
       cercle1->projection();
-    } catch (...) {
-      // std::cout<<"Problem when projecting circle 1\n";
+    }
+    catch (...) {
+   // std::cout<<"Problem when projecting circle 1\n";
       return false;
     }
     try {
       cercle2->projection();
-    } catch (...) {
-      // std::cout<<"Problem when projecting circle 2\n";
+    }
+    catch (...) {
+   // std::cout<<"Problem when projecting circle 2\n";
       return false;
     }
     c->projection();
@@ -242,14 +243,16 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     if (ip11.get_j() < ip12.get_j()) {
       meline1->jmin = (int)ip11.get_j() - marge;
       meline1->jmax = (int)ip12.get_j() + marge;
-    } else {
+    }
+    else {
       meline1->jmin = (int)ip12.get_j() - marge;
       meline1->jmax = (int)ip11.get_j() + marge;
     }
     if (ip11.get_i() < ip12.get_i()) {
       meline1->imin = (int)ip11.get_i() - marge;
       meline1->imax = (int)ip12.get_i() + marge;
-    } else {
+    }
+    else {
       meline1->imin = (int)ip12.get_i() - marge;
       meline1->imax = (int)ip11.get_i() + marge;
     }
@@ -257,14 +260,16 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
     if (ip21.get_j() < ip22.get_j()) {
       meline2->jmin = (int)ip21.get_j() - marge;
       meline2->jmax = (int)ip22.get_j() + marge;
-    } else {
+    }
+    else {
       meline2->jmin = (int)ip22.get_j() - marge;
       meline2->jmax = (int)ip21.get_j() + marge;
     }
     if (ip21.get_i() < ip22.get_i()) {
       meline2->imin = (int)ip21.get_i() - marge;
       meline2->imax = (int)ip22.get_i() + marge;
-    } else {
+    }
+    else {
       meline2->imin = (int)ip22.get_i() - marge;
       meline2->imax = (int)ip21.get_i() + marge;
     }
@@ -296,14 +301,16 @@ bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, cons
 
     try {
       meline1->initTracking(I, ip11, ip12, rho1, theta1, doNotTrack);
-    } catch (...) {
-      // vpTRACE("the line can't be initialized");
+    }
+    catch (...) {
+   // vpTRACE("the line can't be initialized");
       return false;
     }
     try {
       meline2->initTracking(I, ip21, ip22, rho2, theta2, doNotTrack);
-    } catch (...) {
-      // vpTRACE("the line can't be initialized");
+    }
+    catch (...) {
+   // vpTRACE("the line can't be initialized");
       return false;
     }
   }
@@ -321,15 +328,17 @@ void vpMbtDistanceCylinder::trackMovingEdge(const vpImage<unsigned char> &I, con
   if (isvisible) {
     try {
       meline1->track(I);
-    } catch (...) {
-      // std::cout << "Track meline1 failed" << std::endl;
+    }
+    catch (...) {
+   // std::cout << "Track meline1 failed" << std::endl;
       meline1->reset();
       Reinit = true;
     }
     try {
       meline2->track(I);
-    } catch (...) {
-      // std::cout << "Track meline2 failed" << std::endl;
+    }
+    catch (...) {
+   // std::cout << "Track meline2 failed" << std::endl;
       meline2->reset();
       Reinit = true;
     }
@@ -361,12 +370,14 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     p2->projection();
     try {
       cercle1->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Probleme projection cercle 1\n";
     }
     try {
       cercle2->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Probleme projection cercle 2\n";
     }
     c->projection();
@@ -400,14 +411,16 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     if (ip11.get_j() < ip12.get_j()) {
       meline1->jmin = (int)ip11.get_j() - marge;
       meline1->jmax = (int)ip12.get_j() + marge;
-    } else {
+    }
+    else {
       meline1->jmin = (int)ip12.get_j() - marge;
       meline1->jmax = (int)ip11.get_j() + marge;
     }
     if (ip11.get_i() < ip12.get_i()) {
       meline1->imin = (int)ip11.get_i() - marge;
       meline1->imax = (int)ip12.get_i() + marge;
-    } else {
+    }
+    else {
       meline1->imin = (int)ip12.get_i() - marge;
       meline1->imax = (int)ip11.get_i() + marge;
     }
@@ -415,14 +428,16 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     if (ip21.get_j() < ip22.get_j()) {
       meline2->jmin = (int)ip21.get_j() - marge;
       meline2->jmax = (int)ip22.get_j() + marge;
-    } else {
+    }
+    else {
       meline2->jmin = (int)ip22.get_j() - marge;
       meline2->jmax = (int)ip21.get_j() + marge;
     }
     if (ip21.get_i() < ip22.get_i()) {
       meline2->imin = (int)ip21.get_i() - marge;
       meline2->imax = (int)ip22.get_i() + marge;
-    } else {
+    }
+    else {
       meline2->imin = (int)ip22.get_i() - marge;
       meline2->imax = (int)ip21.get_i() + marge;
     }
@@ -455,13 +470,15 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
     try {
       // meline1->updateParameters(I,rho1,theta1);
       meline1->updateParameters(I, ip11, ip12, rho1, theta1);
-    } catch (...) {
+    }
+    catch (...) {
       Reinit = true;
     }
     try {
       // meline2->updateParameters(I,rho2,theta2);
       meline2->updateParameters(I, ip21, ip22, rho2, theta2);
-    } catch (...) {
+    }
+    catch (...) {
       Reinit = true;
     }
 
@@ -515,7 +532,7 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -540,7 +557,7 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneou
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
+    getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -562,16 +579,9 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
-#else
-      std::vector<double> params;
-      params.push_back(0); // ME
-      params.push_back(p_me.get_ifloat());
-      params.push_back(p_me.get_jfloat());
-      params.push_back(static_cast<double>(p_me.getState()));
-#endif
+      std::vector<double> params = { 0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+
       features.push_back(params);
     }
   }
@@ -580,16 +590,9 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
-#else
-      std::vector<double> params;
-      params.push_back(0); // ME
-      params.push_back(p_me.get_ifloat());
-      params.push_back(p_me.get_jfloat());
-      params.push_back(static_cast<double>(p_me.getState()));
-#endif
+      std::vector<double> params = { 0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+
       features.push_back(params);
     }
   }
@@ -626,12 +629,14 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     p2->projection();
     try {
       cercle1->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle 1";
     }
     try {
       cercle2->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle 2";
     }
     c->projection();
@@ -659,24 +664,9 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<double> params1 = {0, ip11.get_i(), ip11.get_j(), ip12.get_i(), ip12.get_j()};
+    std::vector<double> params1 = { 0, ip11.get_i(), ip11.get_j(), ip12.get_i(), ip12.get_j() };
 
-    std::vector<double> params2 = {0, ip21.get_i(), ip21.get_j(), ip22.get_i(), ip22.get_j()};
-#else
-    std::vector<double> params1, params2;
-    params1.push_back(0);
-    params1.push_back(ip11.get_i());
-    params1.push_back(ip11.get_j());
-    params1.push_back(ip12.get_i());
-    params1.push_back(ip12.get_j());
-
-    params2.push_back(0);
-    params2.push_back(ip11.get_i());
-    params2.push_back(ip11.get_j());
-    params2.push_back(ip12.get_i());
-    params2.push_back(ip12.get_j());
-#endif
+    std::vector<double> params2 = { 0, ip21.get_i(), ip21.get_j(), ip22.get_i(), ip22.get_j() };
 
     models.push_back(params1);
     models.push_back(params2);
@@ -730,7 +720,8 @@ void vpMbtDistanceCylinder::initInteractionMatrixError()
     nbFeature = nbFeaturel1 + nbFeaturel2;
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
-  } else {
+  }
+  else {
     nbFeature = 0;
     nbFeaturel1 = 0;
     nbFeaturel2 = 0;
@@ -752,12 +743,14 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
     cercle1->changeFrame(cMo);
     try {
       cercle1->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle 1\n";
     }
     try {
       cercle2->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle 2\n";
     }
 

@@ -44,8 +44,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
 #include <mutex>
@@ -64,7 +63,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
 
   void run()
   {
@@ -94,7 +93,8 @@ public:
           if (local_update) {
             if (m_colorMode) {
               local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
+            }
+            else {
               local_pointcloud = pointcloud->makeShared();
             }
           }
@@ -109,15 +109,18 @@ public:
             viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
                                                      "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
-        } else {
+        }
+        else {
           if (m_colorMode) {
             viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
@@ -160,9 +163,9 @@ int main()
     rs.open(config);
 
     std::cout << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion)
-              << std::endl;
+      << std::endl;
     std::cout << rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion)
-              << std::endl;
+      << std::endl;
     std::cout << "Extrinsics cMd: \n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH) << std::endl;
     std::cout << "Extrinsics dMc: \n" << rs.getTransformation(RS2_STREAM_DEPTH, RS2_STREAM_COLOR) << std::endl;
     std::cout << "Extrinsics cMi: \n" << rs.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_INFRARED) << std::endl;
@@ -235,9 +238,11 @@ int main()
     viewer_thread.join();
 #endif
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -251,11 +256,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

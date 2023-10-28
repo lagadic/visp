@@ -46,7 +46,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE)
 
 #include <librealsense/rs.hpp>
 
@@ -413,7 +413,8 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRealSense &rs);
 
-  struct vpRsStreamParams {
+  struct vpRsStreamParams
+  {
     int m_streamWidth;
     int m_streamHeight;
     rs::format m_streamFormat;
@@ -421,15 +422,13 @@ public:
 
     vpRsStreamParams()
       : m_streamWidth(640), m_streamHeight(480), m_streamFormat(rs::format::rgba8), m_streamFramerate(30)
-    {
-    }
+    { }
 
     vpRsStreamParams(const int streamWidth, const int streamHeight, const rs::format &streamFormat,
                      const int streamFramerate)
       : m_streamWidth(streamWidth), m_streamHeight(streamHeight), m_streamFormat(streamFormat),
-        m_streamFramerate(streamFramerate)
-    {
-    }
+      m_streamFramerate(streamFramerate)
+    { }
   };
 
   void setEnableStream(const rs::stream &stream, bool status);

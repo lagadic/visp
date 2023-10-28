@@ -351,11 +351,7 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
   double mean = getMean(v);
 
   std::vector<double> diff(v.size());
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   std::transform(v.begin(), v.end(), diff.begin(), std::bind(std::minus<double>(), std::placeholders::_1, mean));
-#else
-  std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
-#endif
 
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double divisor = (double)v.size();
@@ -580,11 +576,8 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   double d_phi = a / d_theta;
 
   std::vector<std::pair<double, double> > lonlat_vec;
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(maxPoints)));
-#else
-  lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(static_cast<double>(maxPoints))));
-#endif
+
   for (int m = 0; m < m_theta; m++) {
     double theta = M_PI * (m + 0.5) / m_theta;
     int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));

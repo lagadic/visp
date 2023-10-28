@@ -116,10 +116,8 @@ M:
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
   std::cout << "M:\n" << M << std::endl;
-#endif
 }
   \endcode
   You can also create and initialize a matrix this way:
@@ -128,9 +126,7 @@ int main()
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
-#endif
 }
   \endcode
 
@@ -138,10 +134,8 @@ int main()
   \code
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M;
   M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-#endif
 }
   \endcode
 
@@ -201,12 +195,10 @@ vpMatrix M(R);
 
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
   explicit vpMatrix(const std::initializer_list<double> &list);
   explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
   explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
-#endif
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -279,13 +271,11 @@ vpMatrix M(R);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
 
   vpMatrix &operator=(const std::initializer_list<double> &list);
   vpMatrix &operator=(const std::initializer_list<std::initializer_list<double> > &lists);
-#endif
   vpMatrix &operator=(double x);
   //@}
 

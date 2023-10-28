@@ -34,7 +34,6 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
@@ -98,7 +97,6 @@ vpCircleHoughTransform::saveConfigurationInJSON(const std::string &jsonPath) con
 {
   m_algoParams.saveConfigurationInJSON(jsonPath);
 }
-#endif
 
 void
 vpCircleHoughTransform::initGaussianFilters()

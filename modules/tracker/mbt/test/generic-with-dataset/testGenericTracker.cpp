@@ -46,9 +46,7 @@
 #if defined(VISP_HAVE_MODULE_MBT) &&                                                                                   \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
-#endif
 
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpImageDraw.h>
@@ -187,10 +185,8 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
   vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
-#endif
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
@@ -258,10 +254,8 @@ template <typename Type>
 bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_display, bool useScanline,
   int trackerType_image, int opt_lastFrame, bool use_depth, bool use_mask, bool save)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
-#endif
   // Initialise a  display
 #if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
@@ -655,7 +649,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 }
 } // namespace
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   try {
     std::string env_ipath;
@@ -681,7 +675,7 @@ int main(int argc, const char *argv [])
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_save, useScanline, trackerType_image,
-      opt_lastFrame, use_depth, use_mask, use_color_image)) {
+                    opt_lastFrame, use_depth, use_mask, use_color_image)) {
       return EXIT_FAILURE;
     }
 

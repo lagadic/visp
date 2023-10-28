@@ -122,7 +122,6 @@ vpRowVector &vpRowVector::operator=(double x)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
   if (this != &other) {
@@ -169,7 +168,6 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 bool vpRowVector::operator==(const vpRowVector &v) const
 {
@@ -578,7 +576,6 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
   init(v, c, ncols);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -593,10 +590,9 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
   v.dsize = 0;
   v.data = NULL;
 }
-#endif
 
 /*!
-  Normalise the vector given as input parameter and return the normalized
+  Normalize the vector given as input parameter and return the normalized
   vector:
 
   \f[

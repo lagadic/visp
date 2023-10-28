@@ -48,7 +48,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE)
 
 // Using a thread to display the pointcloud with PCL produces a segfault on
 // OSX
@@ -113,7 +113,7 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
 
 int main()
 {
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE)
   try {
     vpRealSense rs;
     rs.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(640, 480, rs::format::rgba8, 30));
@@ -254,11 +254,6 @@ int main()
 
 #elif !defined(VISP_HAVE_REALSENSE)
   std::cout << "This deprecated example is only working with librealsense 1.x" << std::endl;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
-  << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

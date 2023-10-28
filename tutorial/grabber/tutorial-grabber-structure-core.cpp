@@ -9,61 +9,61 @@
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
-            << "  " << argv[0] << " [--depth-fps <6|15|30|60>]"
-            << " [--depth-fps <6|15|30|60>]"
-            << " [--sxga]"
-            << " [--no-frame-sync]"
-            << " [--record <mode>]"
-            << " [--no-display]"
-            << " [--help] [-h]" << std::endl
-            << std::endl;
+    << "  " << argv[0] << " [--depth-fps <6|15|30|60>]"
+    << " [--depth-fps <6|15|30|60>]"
+    << " [--sxga]"
+    << " [--no-frame-sync]"
+    << " [--record <mode>]"
+    << " [--no-display]"
+    << " [--help] [-h]" << std::endl
+    << std::endl;
   std::cout << "DESCRIPTION" << std::endl
-            << "  --visible-fps <6|15|30|60>" << std::endl
-            << "    Visible camera (gray or color) frames per second." << std::endl
-            << "    Default: 30." << std::endl
-            << std::endl
-            << "  --depth-fps <6|15|30|60>" << std::endl
-            << "    Depth camera frames per second." << std::endl
-            << "    Default: 30." << std::endl
-            << std::endl
-            << "  --sxga" << std::endl
-            << "    If available, output 1280x960 high resolution depth array." << std::endl
-            << std::endl
-            << "  --no-frame-sync" << std::endl
-            << "    If available, disable frame synchronization." << std::endl
-            << std::endl
-            << "  --record <mode>" << std::endl
-            << "    Allowed values for mode are:" << std::endl
-            << "      0: record all the captures images (continuous mode)," << std::endl
-            << "      1: record only images selected by a user click (single shot mode)." << std::endl
-            << "    Default mode: 0" << std::endl
-            << std::endl
-            << "  --no-display" << std::endl
-            << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
-            << std::endl
-            << std::endl
-            << "  --help, -h" << std::endl
-            << "    Print this helper message." << std::endl
-            << std::endl;
+    << "  --visible-fps <6|15|30|60>" << std::endl
+    << "    Visible camera (gray or color) frames per second." << std::endl
+    << "    Default: 30." << std::endl
+    << std::endl
+    << "  --depth-fps <6|15|30|60>" << std::endl
+    << "    Depth camera frames per second." << std::endl
+    << "    Default: 30." << std::endl
+    << std::endl
+    << "  --sxga" << std::endl
+    << "    If available, output 1280x960 high resolution depth array." << std::endl
+    << std::endl
+    << "  --no-frame-sync" << std::endl
+    << "    If available, disable frame synchronization." << std::endl
+    << std::endl
+    << "  --record <mode>" << std::endl
+    << "    Allowed values for mode are:" << std::endl
+    << "      0: record all the captures images (continuous mode)," << std::endl
+    << "      1: record only images selected by a user click (single shot mode)." << std::endl
+    << "    Default mode: 0" << std::endl
+    << std::endl
+    << "  --no-display" << std::endl
+    << "    Disable displaying captured images." << std::endl
+    << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
+    << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
   std::cout << "USAGE" << std::endl
-            << "  Example to visualize images:" << std::endl
-            << "    " << argv[0] << std::endl
-            << std::endl
-            << "  Example to record a sequence of images:" << std::endl
-            << "    " << argv[0] << " --record 0" << std::endl
-            << std::endl
-            << "  Example to record a sequence of images at different frame rates:" << std::endl
-            << "    " << argv[0] << " --record 0 --depth-fps 15 --visible-fps 10 --no-frame-sync" << std::endl
-            << std::endl
-            << "  Example to record single shot images:\n"
-            << "    " << argv[0] << " --record 1" << std::endl
-            << std::endl;
+    << "  Example to visualize images:" << std::endl
+    << "    " << argv[0] << std::endl
+    << std::endl
+    << "  Example to record a sequence of images:" << std::endl
+    << "    " << argv[0] << " --record 0" << std::endl
+    << std::endl
+    << "  Example to record a sequence of images at different frame rates:" << std::endl
+    << "    " << argv[0] << " --record 0 --depth-fps 15 --visible-fps 10 --no-frame-sync" << std::endl
+    << std::endl
+    << "  Example to record single shot images:\n"
+    << "    " << argv[0] << " --record 1" << std::endl
+    << std::endl;
 
   if (error) {
     std::cout << "Error" << std::endl
-              << "  "
-              << "Unsupported parameter " << argv[error] << std::endl;
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -72,7 +72,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
   try {
     std::string opt_seqname_visible = "visible-%04d.png", opt_seqname_depth = "depth-%04d.png";
     int opt_record_mode = 0;
@@ -85,22 +85,29 @@ int main(int argc, const char *argv[])
       if (std::string(argv[i]) == "--depth-fps") {
         opt_depth_fps = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--visible-fps") {
+      }
+      else if (std::string(argv[i]) == "--visible-fps") {
         opt_visible_fps = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--sxga") {
+      }
+      else if (std::string(argv[i]) == "--sxga") {
         opt_sxga = true;
-      } else if (std::string(argv[i]) == "--no-frame-sync") {
+      }
+      else if (std::string(argv[i]) == "--no-frame-sync") {
         opt_frame_sync = false;
-      } else if (std::string(argv[i]) == "--record") {
+      }
+      else if (std::string(argv[i]) == "--record") {
         opt_record_mode = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--no-display") {
+      }
+      else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
         return EXIT_SUCCESS;
-      } else {
+      }
+      else {
         usage(argv, i);
         return EXIT_FAILURE;
       }
@@ -115,7 +122,7 @@ int main(int argc, const char *argv[])
     std::cout << "Display          : " << (opt_display ? "enabled" : "disabled") << std::endl;
 
     std::string text_record_mode =
-        std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
+      std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
     std::cout << text_record_mode << std::endl;
     std::cout << "Visible record name: " << opt_seqname_visible << std::endl;
@@ -213,7 +220,8 @@ int main(int argc, const char *argv[])
         delete display_depth;
       }
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
@@ -221,9 +229,6 @@ int main(int argc, const char *argv[])
   (void)argv;
 #if !(defined(VISP_HAVE_OCCIPITAL_STRUCTURE))
   std::cout << "Install libStructure, configure and build ViSP again to use this example" << std::endl;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

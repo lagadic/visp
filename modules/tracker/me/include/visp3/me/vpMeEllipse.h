@@ -549,11 +549,7 @@ protected:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
-#else
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
-#endif
 
   /*!
    * Compute the \f$ theta \f$ angle for each vpMeSite.

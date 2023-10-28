@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <condition_variable>
 #include <fstream>
 #include <mutex>
@@ -51,9 +51,7 @@
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
 #include <pcl/visualization/cloud_viewer.h>
-#endif
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #define USE_PCL_VIEWER
 #endif
 
