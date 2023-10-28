@@ -98,6 +98,8 @@ vpCircleHoughTransform::saveConfigurationInJSON(const std::string &jsonPath) con
   m_algoParams.saveConfigurationInJSON(jsonPath);
 }
 
+#endif
+
 void
 vpCircleHoughTransform::initGaussianFilters()
 {
@@ -665,5 +667,3 @@ std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detecto
   os << detector.toString();
   return os;
 }
-
-#endif
