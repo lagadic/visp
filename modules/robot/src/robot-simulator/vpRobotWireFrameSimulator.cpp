@@ -48,19 +48,19 @@
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
-    artCoord(), artVel(), velocity(),
+  artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)
-    thread(), attr(),
+  thread(), attr(),
 #endif
-    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
-    displayBusy(false),
-    robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
+  m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
+  displayBusy(false),
+  robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
-    display(),
+  display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
-    verbose_(false)
+  displayType(MODEL_3D), displayAllowed(true), constantSamplingTimeMode(false), setVelocityCalled(false),
+  verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -77,19 +77,19 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
-    artCoord(), artVel(), velocity(),
+  artCoord(), artVel(), velocity(),
 #if defined(_WIN32)
 #elif defined(VISP_HAVE_PTHREAD)
-    thread(), attr(),
+  thread(), attr(),
 #endif
-    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
-    displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
-    cameraParam(),
+  m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
+  displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
+  cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
-    display(),
+  display(),
 #endif
-    displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
-    verbose_(false)
+  displayType(MODEL_3D), displayAllowed(do_display), constantSamplingTimeMode(false), setVelocityCalled(false),
+  verbose_(false)
 {
   setSamplingTime(0.010);
   velocity.resize(6);
@@ -100,13 +100,6 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   if (do_display)
     this->display.init(I, 0, 0, "The External view");
 #endif
-}
-
-/*!
-  Basic destructor
-*/
-vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator()
-{
 }
 
 /*!
@@ -231,7 +224,8 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<vpRGBa> &I_)
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_int);
     v = (double)I_.getHeight() / (2 * py_int);
-  } else {
+  }
+  else {
     u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
     v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
@@ -304,7 +298,8 @@ void vpRobotWireFrameSimulator::getInternalView(vpImage<unsigned char> &I_)
       (std::fabs(py_int - 1) > vpMath::maximum(py_int, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I.getWidth() / (2 * px_int);
     v = (double)I.getHeight() / (2 * py_int);
-  } else {
+  }
+  else {
     u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
     v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
@@ -371,5 +366,5 @@ vpHomogeneousMatrix vpRobotWireFrameSimulator::get_cMo()
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning:
 // libvisp_robot.a(vpRobotWireFrameSimulator.cpp.o) has no symbols
-void dummy_vpRobotWireFrameSimulator(){};
+void dummy_vpRobotWireFrameSimulator() { };
 #endif

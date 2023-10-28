@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Common features for Pioneer unicycle mobile robots.
- *
-*****************************************************************************/
+ */
 #ifndef VPPIONEER_H
 #define VPPIONEER_H
 
@@ -40,73 +38,66 @@
 #include <visp3/robot/vpUnicycle.h>
 
 /*!
-
-  \class vpPioneer
-
-  \ingroup group_robot_real_unicycle group_robot_simu_unicycle
-
-  \brief Generic functions for Pioneer mobile robots.
-
-  This class provides common features for Pioneer mobile robots.
-  This robot has two control velocities \f$(v_x, w_z)\f$, the translational
-  and rotational velocities of the mobile platform respectively.
-
-  The figure below shows the position of the frames that are used to model the
-  robot. The end effector frame is here located at the middle point between
-  the two wheels.
-
-  \image html pioneer.png
-
-  The robot jacobian at the end effector frame, the point located at the
-  middle between the two wheels is given by:
-
-  \f[
-  {^e}{\bf J}_e = \left(\begin{array}{cc}
-  1  &   0   \\
-  0  &   0   \\
-  0  &   0   \\
-  0  &   0   \\
-  0  &   0   \\
-  0  &   1   \\
-  \end{array}
-  \right)
-  \f]
-
-  Considering \f$(v_x, w_z)\f$, it is possible to compute \f$\bf v\f$ the six
-  dimention velocity skew expressed at the end effector frame by:
-
-  \f[
-  {\bf v} = {^e}{\bf J}_e \;
-  \left(\begin{array}{c}
-  v_x \\
-  w_z \\
-  \end{array}
-  \right)
-  \f].
-
-*/
+ * \class vpPioneer
+ *
+ * \ingroup group_robot_real_unicycle group_robot_simu_unicycle
+ *
+ * \brief Generic functions for Pioneer mobile robots.
+ *
+ * This class provides common features for Pioneer mobile robots.
+ * This robot has two control velocities \f$(v_x, w_z)\f$, the translational
+ * and rotational velocities of the mobile platform respectively.
+ *
+ * The figure below shows the position of the frames that are used to model the
+ * robot. The end effector frame is here located at the middle point between
+ * the two wheels.
+ *
+ * \image html pioneer.png
+ *
+ * The robot jacobian at the end effector frame, the point located at the
+ * middle between the two wheels is given by:
+ *
+ * \f[
+ * {^e}{\bf J}_e = \left(\begin{array}{cc}
+ * 1  &   0   \\
+ * 0  &   0   \\
+ * 0  &   0   \\
+ * 0  &   0   \\
+ * 0  &   0   \\
+ * 0  &   1   \\
+ * \end{array}
+ * \right)
+ * \f]
+ *
+ * Considering \f$(v_x, w_z)\f$, it is possible to compute \f$\bf v\f$ the six
+ * dimension velocity skew expressed at the end effector frame by:
+ *
+ * \f[
+ * {\bf v} = {^e}{\bf J}_e \;
+ * \left(\begin{array}{c}
+ * v_x \\
+ * w_z \\
+ * \end{array}
+ * \right)
+ * \f].
+ */
 class VISP_EXPORT vpPioneer : public vpUnicycle
 {
 public:
   /*!
-    Create a default Pioneer robot.
-    */
+   * Create a default Pioneer robot.
+   */
   vpPioneer() : vpUnicycle()
   {
     set_cMe();
     set_eJe();
   }
 
-  /*!
-    Destructor that does nothing.
-    */
-  virtual ~vpPioneer(){};
-
 private:
   /*!
-    Set the transformation between the camera frame and the mobile platform
-    end effector frame.
-    */
+   * Set the transformation between the camera frame and the mobile platform
+   * end effector frame.
+   */
   void set_cMe()
   {
     // Position of mobile platform end effector frame in the camera frame
@@ -119,27 +110,26 @@ private:
   }
 
   /*!
-    Set the robot jacobian at the end effector frame, the point located at the
-    middle between the two wheels.
-
-    Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z]\f$ with
-    \f$(v_x, w_z)\f$ respectively the translational and rotational control
-    velocities of the mobile robot and \f$\bf v\f$ the six dimention velocity
-    skew expressed at the end effector frame, the robot jacobian is given by:
-
-    \f[
-    {^e}{\bf J}_e = \left(\begin{array}{cc}
-    1  &   0   \\
-    0  &   0   \\
-    0  &   0   \\
-    0  &   0   \\
-    0  &   0   \\
-    0  &   1   \\
-    \end{array}
-    \right)
-    \f]
-
-  */
+   * Set the robot jacobian at the end effector frame, the point located at the
+   * middle between the two wheels.
+   *
+   * Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z]\f$ with
+   * \f$(v_x, w_z)\f$ respectively the translational and rotational control
+   * velocities of the mobile robot and \f$\bf v\f$ the six dimension velocity
+   * skew expressed at the end effector frame, the robot jacobian is given by:
+   *
+   * \f[
+   * {^e}{\bf J}_e = \left(\begin{array}{cc}
+   * 1  &   0   \\
+   * 0  &   0   \\
+   * 0  &   0   \\
+   * 0  &   0   \\
+   * 0  &   0   \\
+   * 0  &   1   \\
+   * \end{array}
+   * \right)
+   * \f]
+   */
   void set_eJe()
   {
     eJe_.resize(6, 2); // pioneer jacobian expressed at point M

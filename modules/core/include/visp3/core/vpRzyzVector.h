@@ -189,9 +189,6 @@ public:
   explicit vpRzyzVector(const vpColVector &rzyz);
   explicit vpRzyzVector(const std::vector<double> &rzyz);
 
-  //! Destructor.
-  virtual ~vpRzyzVector(){}
-
   // convert a rotation matrix into Rzyz vector
   vpRzyzVector buildFrom(const vpRotationMatrix &R);
 

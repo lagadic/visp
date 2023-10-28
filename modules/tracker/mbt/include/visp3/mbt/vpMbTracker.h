@@ -268,8 +268,8 @@ public:
       //      vpTRACE("Warning : The covariance matrix has not been computed.
       //      See setCovarianceComputation() to do it.");
       std::cerr << "Warning : The covariance matrix has not been computed. "
-                   "See setCovarianceComputation() to do it."
-                << std::endl;
+        "See setCovarianceComputation() to do it."
+        << std::endl;
     }
 
     return covarianceMatrix;
@@ -402,15 +402,15 @@ public:
   }
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-  getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
+    getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
 
-  /*!
-    Get the current pose between the object and the camera.
-    cMo is the matrix which can be used to express
-    coordinates from the object frame to camera frame.
+    /*!
+      Get the current pose between the object and the camera.
+      cMo is the matrix which can be used to express
+      coordinates from the object frame to camera frame.
 
-    \param cMo : the pose
-  */
+      \param cMo : the pose
+    */
   virtual inline void getPose(vpHomogeneousMatrix &cMo) const { cMo = m_cMo; }
 
   /*!
@@ -551,10 +551,10 @@ public:
   virtual void setNearClippingDistance(const double &dist);
 
   /*!
-    Set the optimization method used during the tracking.
-
-    \param opt : Optimization method to use.
-  */
+   * Set the optimization method used during the tracking.
+   *
+   * \param opt : Optimization method to use.
+   */
   virtual inline void setOptimizationMethod(const vpMbtOptimizationMethod &opt) { m_optimizationMethod = opt; }
 
   void setProjectionErrorMovingEdge(const vpMe &me);
@@ -585,18 +585,21 @@ public:
   virtual void setProjectionErrorComputation(const bool &flag) { computeProjError = flag; }
 
   /*!
-    Display or not gradient and model orientation when computing the projection error.
-  */
+   * Display or not gradient and model orientation when computing the projection error.
+   */
   virtual void setProjectionErrorDisplay(bool display) { m_projectionErrorDisplay = display; }
 
   /*!
-    Arrow length used to display gradient and model orientation for projection error computation.
-  */
-  virtual void setProjectionErrorDisplayArrowLength(unsigned int length) { m_projectionErrorDisplayLength = length; }
+   * Arrow length used to display gradient and model orientation for projection error computation.
+   */
+  virtual void setProjectionErrorDisplayArrowLength(unsigned int length)
+  {
+    m_projectionErrorDisplayLength = length;
+  }
 
   /*!
-    Arrow thickness used to display gradient and model orientation for projection error computation.
-  */
+   * Arrow thickness used to display gradient and model orientation for projection error computation.
+   */
   virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness)
   {
     m_projectionErrorDisplayThickness = thickness;

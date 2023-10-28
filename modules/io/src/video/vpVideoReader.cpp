@@ -32,9 +32,9 @@
  */
 
 /*!
-\file vpVideoReader.cpp
-\brief Read videos and image sequences
-*/
+ * \file vpVideoReader.cpp
+ * \brief Read videos and image sequences
+ */
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpIoTools.h>
@@ -51,13 +51,12 @@
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(NULL),
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
-    m_capture(), m_frame(), m_lastframe_unknown(false),
+  m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
-    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
-    m_firstFrame(0), m_lastFrame(0), m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1),
-    m_frameRate(0.)
-{
-}
+  m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
+  m_firstFrame(0), m_lastFrame(0), m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1),
+  m_frameRate(0.)
+{ }
 
 /*!
 Basic destructor.
@@ -131,7 +130,8 @@ void vpVideoReader::getProperties()
       m_imSequence->setImageNumber(m_firstFrame);
     }
     m_frameRate = -1.;
-  } else if (isVideoExtensionSupported()) {
+  }
+  else if (isVideoExtensionSupported()) {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
     m_capture.open(m_videoName.c_str());
 
@@ -150,14 +150,15 @@ void vpVideoReader::getProperties()
 
 #else
     throw(vpException(vpException::fatalError, "To read video files ViSP should be build with opencv "
-                                               "3rd >= 2.1.0 party libraries."));
+                      "3rd >= 2.1.0 party libraries."));
 #endif
-  } else if (m_formatType == FORMAT_UNKNOWN) {
-    // vpERROR_TRACE("The format of the file does not correspond to a readable
-    // format.");
+  }
+  else if (m_formatType == FORMAT_UNKNOWN) {
+ // vpERROR_TRACE("The format of the file does not correspond to a readable
+ // format.");
     throw(vpException(vpException::fatalError, "The format of the file does "
-                                               "not correspond to a readable "
-                                               "format supported by ViSP."));
+                      "not correspond to a readable "
+                      "format supported by ViSP."));
   }
 
   findFirstFrameIndex();
@@ -253,7 +254,8 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
       try {
         m_imSequence->acquire(I);
         skip_frame = false;
-      } catch (...) {
+      }
+      catch (...) {
         skip_frame = true;
       }
     } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
@@ -261,7 +263,8 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
     m_frameName = m_imSequence->getImageName();
     if (m_frameCount + m_frameStep > m_lastFrame) {
       m_imSequence->setImageNumber(m_frameCount);
-    } else if (m_frameCount + m_frameStep < m_firstFrame) {
+    }
+    else if (m_frameCount + m_frameStep < m_firstFrame) {
       m_imSequence->setImageNumber(m_frameCount);
     }
   }
@@ -270,19 +273,23 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
     m_capture >> m_frame;
     if (m_frameStep == 1) {
       m_frameCount++;
-    } else {
+    }
+    else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
       m_frameCount = (long)m_capture.get(cv::CAP_PROP_POS_FRAMES);
       if (m_frameStep > 0) {
         if (m_frameCount + m_frameStep <= m_lastFrame) {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount - 1);
         }
-      } else if (m_frameStep < 0) {
+      }
+      else if (m_frameStep < 0) {
         if (m_frameCount + m_frameStep >= m_firstFrame) {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_firstFrame - 1);
         }
       }
@@ -291,13 +298,16 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
       if (m_frameStep > 0) {
         if (m_frameCount + m_frameStep <= m_lastFrame) {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount - 1);
         }
-      } else if (m_frameStep < 0) {
+      }
+      else if (m_frameStep < 0) {
         if (m_frameCount + m_frameStep >= m_firstFrame) {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_firstFrame - 1);
         }
       }
@@ -310,7 +320,8 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
         // Set last frame to this image index
         setLastFrameIndex(m_frameCount - m_frameStep);
       }
-    } else {
+    }
+    else {
       vpImageConvert::convert(m_frame, I);
     }
   }
@@ -338,7 +349,8 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
       try {
         m_imSequence->acquire(I);
         skip_frame = false;
-      } catch (...) {
+      }
+      catch (...) {
         skip_frame = true;
       }
     } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
@@ -346,7 +358,8 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
     m_frameName = m_imSequence->getImageName();
     if (m_frameCount + m_frameStep > m_lastFrame) {
       m_imSequence->setImageNumber(m_frameCount);
-    } else if (m_frameCount + m_frameStep < m_firstFrame) {
+    }
+    else if (m_frameCount + m_frameStep < m_firstFrame) {
       m_imSequence->setImageNumber(m_frameCount);
     }
   }
@@ -355,19 +368,23 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
     m_capture >> m_frame;
     if (m_frameStep == 1) {
       m_frameCount++;
-    } else {
+    }
+    else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
       m_frameCount = (long)m_capture.get(cv::CAP_PROP_POS_FRAMES);
       if (m_frameStep > 0) {
         if (m_frameCount + m_frameStep <= m_lastFrame) {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount - 1);
         }
-      } else if (m_frameStep < 0) {
+      }
+      else if (m_frameStep < 0) {
         if (m_frameCount + m_frameStep >= m_firstFrame) {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(cv::CAP_PROP_POS_FRAMES, m_firstFrame - 1);
         }
       }
@@ -376,13 +393,16 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
       if (m_frameStep > 0) {
         if (m_frameCount + m_frameStep <= m_lastFrame) {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount - 1);
         }
-      } else if (m_frameStep < 0) {
+      }
+      else if (m_frameStep < 0) {
         if (m_frameCount + m_frameStep >= m_firstFrame) {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount + m_frameStep - 1);
-        } else {
+        }
+        else {
           m_capture.set(CV_CAP_PROP_POS_FRAMES, m_firstFrame - 1);
         }
       }
@@ -391,7 +411,8 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 
     if (m_frame.empty()) {
       std::cout << "Warning: Unable to decode image " << m_frameCount - m_frameStep << std::endl;
-    } else {
+    }
+    else {
       vpImageConvert::convert(m_frame, I);
     }
   }
@@ -422,14 +443,17 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       m_imSequence->setImageNumber(m_frameCount); // to not increment vpDiskGrabber next image
       if (m_frameCount + m_frameStep > m_lastFrame) {
         m_imSequence->setImageNumber(m_frameCount);
-      } else if (m_frameCount + m_frameStep < m_firstFrame) {
+      }
+      else if (m_frameCount + m_frameStep < m_firstFrame) {
         m_imSequence->setImageNumber(m_frameCount);
       }
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
       return false;
     }
-  } else {
+  }
+  else {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
@@ -446,10 +470,12 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
       if (m_frame.empty()) {
         setLastFrameIndex(m_frameCount - m_frameStep);
         return false;
-      } else {
+      }
+      else {
         vpImageConvert::convert(m_frame, I);
       }
-    } else
+    }
+    else
       vpImageConvert::convert(m_frame, I);
 #else
     if (!m_capture.set(CV_CAP_PROP_POS_FRAMES, frame_index)) {
@@ -494,14 +520,17 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       m_imSequence->setImageNumber(m_frameCount); // to not increment vpDiskGrabber next image
       if (m_frameCount + m_frameStep > m_lastFrame) {
         m_imSequence->setImageNumber(m_frameCount);
-      } else if (m_frameCount + m_frameStep < m_firstFrame) {
+      }
+      else if (m_frameCount + m_frameStep < m_firstFrame) {
         m_imSequence->setImageNumber(m_frameCount);
       }
-    } catch (...) {
+    }
+    catch (...) {
       vpERROR_TRACE("Couldn't find the %u th frame", frame_index);
       return false;
     }
-  } else {
+  }
+  else {
 #if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_VIDEOIO)
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     if (!m_capture.set(cv::CAP_PROP_POS_FRAMES, frame_index)) {
@@ -515,10 +544,12 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
       if (m_frame.empty()) {
         setLastFrameIndex(m_frameCount - m_frameStep);
         return false;
-      } else {
+      }
+      else {
         vpImageConvert::convert(m_frame, I);
       }
-    } else {
+    }
+    else {
       vpImageConvert::convert(m_frame, I);
     }
 #else
@@ -532,7 +563,8 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
     if (m_frameStep > 1) {
       m_frameCount += m_frameStep - 1; // next index
       m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount);
-    } else if (m_frameStep < -1) {
+    }
+    else if (m_frameStep < -1) {
       m_frameCount += m_frameStep - 1; // next index
       m_capture.set(CV_CAP_PROP_POS_FRAMES, m_frameCount);
     }

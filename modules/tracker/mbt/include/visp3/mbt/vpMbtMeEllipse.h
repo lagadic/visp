@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,13 +29,12 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file vpMbtMeEllipse.h
-  \brief Moving edges on an ellipse
-*/
+ * \file vpMbtMeEllipse.h
+ * \brief Moving edges on an ellipse
+ */
 
 #ifndef vpMbtMeEllipse_HH
 #define vpMbtMeEllipse_HH
@@ -49,12 +47,12 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
-  \class vpMbtMeEllipse
-  \ingroup group_mbt_features
-
-  \brief Class that tracks an ellipse moving edges with specific capabilities for
-  model-based tracking.
-*/
+ * \class vpMbtMeEllipse
+ * \ingroup group_mbt_features
+ *
+ * \brief Class that tracks an ellipse moving edges with specific capabilities for
+ * model-based tracking.
+ */
 class VISP_EXPORT vpMbtMeEllipse : public vpMeEllipse
 {
 public:
@@ -62,7 +60,6 @@ public:
 
   vpMbtMeEllipse();
   vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse);
-  virtual ~vpMbtMeEllipse();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
@@ -77,7 +74,7 @@ public:
 
 private:
   void reSample(const vpImage<unsigned char> &I);
-  void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
+  void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
   void suppressPoints();
 };
 

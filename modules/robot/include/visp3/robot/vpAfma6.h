@@ -40,7 +40,7 @@
 
   \file vpAfma6.h
 
-  Modelisation of Irisa's gantry robot named Afma6.
+  Modelization of Irisa's gantry robot named Afma6.
 
 */
 
@@ -50,7 +50,7 @@
 
   \ingroup group_robot_real_gantry group_robot_simu_gantry
 
-  \brief Modelisation of Irisa's gantry robot named Afma6.
+  \brief Modelization of Irisa's gantry robot named Afma6.
 
   In this modelization, different frames have to be considered.
 

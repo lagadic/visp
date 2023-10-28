@@ -56,10 +56,6 @@ vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() { }
   Copy constructor.
 */
 vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) { }
-/*!
-  Destructor.
-*/
-vpMbtMeEllipse::~vpMbtMeEllipse() { }
 
 /*!
   Compute the projection error of the ellipse.

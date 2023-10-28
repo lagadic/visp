@@ -175,7 +175,6 @@ int main()
   \endcode
 
 */
-
 class VISP_EXPORT vpRzyxVector : public vpRotationVector
 {
 public:
@@ -190,9 +189,6 @@ public:
   explicit vpRzyxVector(const vpThetaUVector &tu);
   explicit vpRzyxVector(const vpColVector &rzyx);
   explicit vpRzyxVector(const std::vector<double> &rzyx);
-
-  //! Destructor.
-  virtual ~vpRzyxVector(){}
 
   // convert a rotation matrix into Rzyx vector
   vpRzyxVector buildFrom(const vpRotationMatrix &R);

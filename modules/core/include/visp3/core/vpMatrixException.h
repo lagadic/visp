@@ -54,7 +54,7 @@ public:
    */
   enum errorCodeEnum
   {
-//! Error returns by a constructor
+    //! Error returns by a constructor
     constructionError,
     //! Something is not initialized
     notInitializedError,

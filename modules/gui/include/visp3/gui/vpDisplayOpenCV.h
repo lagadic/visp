@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Image display.
- *
-*****************************************************************************/
+ */
 
 #ifndef _vpDisplayOpenCV_h_
 #define _vpDisplayOpenCV_h_
@@ -52,92 +50,90 @@
 #include <opencv2/highgui/highgui.hpp>
 
 /*!
-  \file vpDisplayOpenCV.h
-  \brief Define the OpenCV console to display images.
-*/
+ * \file vpDisplayOpenCV.h
+ * \brief Define the OpenCV console to display images.
+ */
 
 /*!
-
-  \class vpDisplayOpenCV
-
-  \ingroup group_gui_display
-
-  \brief The vpDisplayOpenCV allows to display image using the OpenCV library.
-  Thus to enable this class OpenCV should be installed. Installation
-  instructions are provided here https://visp.inria.fr/3rd_opencv.
-
-  \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
-  transparency. This new feature is only supported yet using vpDisplayOpenCV. See vpColor
-  header documentation and displayOpenCV.cpp example for usage displaying filled
-  transparent circles and rectangles.
-
-  The example below shows how to display an image with this video device.
-  \code
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/io/vpImageIo.h>
-
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<unsigned char> I; // Grey level image
-
-  // Read an image in PGM P5 format
-  vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
-
-  vpDisplayOpenCV d;
-
-  // Initialize the display with the image I. Display and image are
-  // now link together.
-  d.init(I);
-
-  // Specify the window location
-  vpDisplay::setWindowPosition(I, 400, 100);
-
-  // Set the display window title
-  vpDisplay::setTitle(I, "My OpenCV display");
-
-  // Set the display background with image I content
-  vpDisplay::display(I);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
-
-  // Draw a red rectangle in the display overlay (foreground)
-  vpImagePoint topLeftCorner;
-  topLeftCorner.set_i(10);
-  topLeftCorner.set_j(50);
-  vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
-
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
-
-  // Get non blocking keyboard events
-  std::cout << "Check keyboard events..." << std::endl;
-  char key[10];
-  bool ret;
-  for (int i=0; i< 200; i++) {
-    bool ret = vpDisplay::getKeyboardEvent(I, key, false);
-    if (ret)
-      std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
-   vpTime::wait(40);
-  }
-
-  // Get a blocking keyboard event
-  std::cout << "Wait for a keyboard event..." << std::endl;
-  ret = vpDisplay::getKeyboardEvent(I, key, true);
-  std::cout << "keyboard event: " << ret << std::endl;
-  if (ret)
-    std::cout << "key: " << "\"" << key << "\"" << std::endl;
-
-  // Wait for a click in the display window
-  std::cout << "Wait for a button click..." << std::endl;
-  vpDisplay::getClick(I);
-#endif
-}
-  \endcode
-*/
-
+ * \class vpDisplayOpenCV
+ *
+ * \ingroup group_gui_display
+ *
+ * \brief The vpDisplayOpenCV allows to display image using the OpenCV library.
+ * Thus to enable this class OpenCV should be installed. Installation
+ * instructions are provided here https://visp.inria.fr/3rd_opencv.
+ *
+ * \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
+ * transparency. This new feature is only supported yet using vpDisplayOpenCV. See vpColor
+ * header documentation and displayOpenCV.cpp example for usage displaying filled
+ * transparent circles and rectangles.
+ *
+ * The example below shows how to display an image with this video device.
+ * \code
+ * #include <visp3/core/vpImagePoint.h>
+ * #include <visp3/gui/vpDisplayOpenCV.h>
+ * #include <visp3/io/vpImageIo.h>
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_OPENCV)
+ *   vpImage<unsigned char> I; // Grey level image
+ *
+ *   // Read an image in PGM P5 format
+ *   vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
+ *
+ *   vpDisplayOpenCV d;
+ *
+ *   // Initialize the display with the image I. Display and image are
+ *   // now link together.
+ *   d.init(I);
+ *
+ *   // Specify the window location
+ *   vpDisplay::setWindowPosition(I, 400, 100);
+ *
+ *   // Set the display window title
+ *   vpDisplay::setTitle(I, "My OpenCV display");
+ *
+ *   // Set the display background with image I content
+ *   vpDisplay::display(I);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpDisplay::displayRectangle(I, 10, 10, 100, 20, vpColor::red, true);
+ *
+ *   // Draw a red rectangle in the display overlay (foreground)
+ *   vpImagePoint topLeftCorner;
+ *   topLeftCorner.set_i(10);
+ *   topLeftCorner.set_j(50);
+ *   vpDisplay::displayRectangle(I, topLeftCorner, 100, 20, vpColor::green, true);
+ *
+ *   // Flush the foreground and background display
+ *   vpDisplay::flush(I);
+ *
+ *   // Get non blocking keyboard events
+ *   std::cout << "Check keyboard events..." << std::endl;
+ *   char key[10];
+ *   bool ret;
+ *   for (int i=0; i< 200; i++) {
+ *     bool ret = vpDisplay::getKeyboardEvent(I, key, false);
+ *     if (ret)
+ *       std::cout << "keyboard event: key: " << "\"" << key << "\"" << std::endl;
+ *   vpTime::wait(40);
+ *   }
+ *
+ *   // Get a blocking keyboard event
+ *   std::cout << "Wait for a keyboard event..." << std::endl;
+ *   ret = vpDisplay::getKeyboardEvent(I, key, true);
+ *   std::cout << "keyboard event: " << ret << std::endl;
+ *   if (ret)
+ *     std::cout << "key: " << "\"" << key << "\"" << std::endl;
+ *
+ *   // Wait for a click in the display window
+ *   std::cout << "Wait for a button click..." << std::endl;
+ *   vpDisplay::getClick(I);
+ * #endif
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
 private:
@@ -208,66 +204,66 @@ public:
   vpDisplayOpenCV(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
                   vpScaleType type = SCALE_DEFAULT);
 
-  virtual ~vpDisplayOpenCV();
+  virtual ~vpDisplayOpenCV() override;
 
-  void getImage(vpImage<vpRGBa> &I);
-  unsigned int getScreenHeight();
-  void getScreenSize(unsigned int &width, unsigned int &height);
-  unsigned int getScreenWidth();
+  void getImage(vpImage<vpRGBa> &I) override;
+  unsigned int getScreenHeight() override;
+  void getScreenSize(unsigned int &width, unsigned int &height) override;
+  unsigned int getScreenWidth() override;
 
-  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "");
+  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "") override;
+  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "") override;
+  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "") override;
 
 protected:
-  void setFont(const std::string &font);
-  void setTitle(const std::string &title);
-  void setWindowPosition(int winx, int winy);
+  void setFont(const std::string &font) override;
+  void setTitle(const std::string &title) override;
+  void setWindowPosition(int winx, int winy) override;
 
-  void clearDisplay(const vpColor &color = vpColor::white);
+  void clearDisplay(const vpColor &color = vpColor::white) override;
 
-  void closeDisplay();
+  void closeDisplay() override;
 
   void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color = vpColor::white,
-                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
+                    unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) override;
 
-  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green);
+  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green) override;
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                     unsigned int thickness = 1);
-  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
+                     unsigned int thickness = 1) override;
+  void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1) override;
   void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                      unsigned int thickness = 1);
+                      unsigned int thickness = 1) override;
 
-  void displayImage(const vpImage<unsigned char> &I);
-  void displayImage(const vpImage<vpRGBa> &I);
+  void displayImage(const vpImage<unsigned char> &I) override;
+  void displayImage(const vpImage<vpRGBa> &I) override;
   void displayImage(const unsigned char *I);
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+                       unsigned int height) override;
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height) override;
 
-  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1);
-  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1) override;
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1) override;
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1) override;
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
-  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1) override;
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1) override;
 
-  void flushDisplay();
-  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void flushDisplay() override;
+  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height) override;
 
-  bool getClick(bool blocking = true);
-  bool getClick(vpImagePoint &ip, bool blocking = true);
-  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true);
-  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true);
+  bool getClick(bool blocking = true) override;
+  bool getClick(vpImagePoint &ip, bool blocking = true) override;
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) override;
+  bool getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking = true) override;
 
-  bool getKeyboardEvent(bool blocking = true);
-  bool getKeyboardEvent(std::string &key, bool blocking = true);
-  bool getPointerMotionEvent(vpImagePoint &ip);
-  bool getPointerPosition(vpImagePoint &ip);
+  bool getKeyboardEvent(bool blocking = true) override;
+  bool getKeyboardEvent(std::string &key, bool blocking = true) override;
+  bool getPointerMotionEvent(vpImagePoint &ip) override;
+  bool getPointerPosition(vpImagePoint &ip) override;
 
   static void on_mouse(int event, int x, int y, int flags, void *param);
 

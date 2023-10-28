@@ -73,12 +73,6 @@ void vpSimulatorCamera::init()
 }
 
 /*!
-  Destructor.
-
-*/
-vpSimulatorCamera::~vpSimulatorCamera() {}
-
-/*!
 
   Get the twist transformation from camera frame to end-effector
   frame.  This transformation allows to compute a velocity expressed

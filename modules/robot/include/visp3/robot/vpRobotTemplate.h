@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,15 @@
  *
  * Description:
  * Defines a robot just to show which function you must implement.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRobotTemplate_h
 #define vpRobotTemplate_h
 
 /*!
-  \file vpRobotTemplate.h
-  Defines a robot just to show which function you must implement.
-*/
+ * \file vpRobotTemplate.h
+ * Defines a robot just to show which function you must implement.
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -47,40 +45,38 @@
 #include <visp3/robot/vpRobot.h>
 
 /*!
-
-  \class vpRobotTemplate
-  \ingroup group_robot_real_template
-  \brief Class that defines a robot just to show which function you must implement.
-
-*/
+ * \class vpRobotTemplate
+ * \ingroup group_robot_real_template
+ * \brief Class that defines a robot just to show which function you must implement.
+ */
 class VISP_EXPORT vpRobotTemplate : public vpRobot
 {
 public:
   vpRobotTemplate();
-  virtual ~vpRobotTemplate();
+  virtual ~vpRobotTemplate() override;
 
-  void get_eJe(vpMatrix &eJe_);
-  void get_fJe(vpMatrix &fJe_);
+  void get_eJe(vpMatrix &eJe_) override;
+  void get_fJe(vpMatrix &fJe_) override;
 
   /*!
-    Return constant transformation between end-effector and tool frame.
-    If your tool is a camera, this transformation is obtained by hand-eye calibration.
+   * Return constant transformation between end-effector and tool frame.
+   * If your tool is a camera, this transformation is obtained by hand-eye calibration.
    */
   vpHomogeneousMatrix get_eMc() const { return m_eMc; }
 
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
 
   /*!
-    Set constant transformation between end-effector and tool frame.
-    If your tool is a camera, this transformation is obtained by hand-eye calibration.
+   * Set constant transformation between end-effector and tool frame.
+   * If your tool is a camera, this transformation is obtained by hand-eye calibration.
    */
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
 
 protected:
-  void init();
+  void init() override;
   void getJointPosition(vpColVector &q);
   void setCartVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &v);
   void setJointVelocity(const vpColVector &qdot);

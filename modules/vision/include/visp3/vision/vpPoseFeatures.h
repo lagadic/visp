@@ -305,20 +305,20 @@ public:
     m_tuple = new std::tuple<Args...>(args...);
   }
 
-  virtual ~vpPoseSpecificFeatureTemplate() { delete m_tuple; }
+  virtual ~vpPoseSpecificFeatureTemplate() override { delete m_tuple; }
 
-  virtual void createDesired() { buildDesiredFeatureWithTuple(m_desiredFeature, func_ptr, *m_tuple); }
+  virtual void createDesired() override { buildDesiredFeatureWithTuple(m_desiredFeature, func_ptr, *m_tuple); }
 
-  virtual vpColVector error()
+  virtual vpColVector error() override
   {
     // std::cout << "Getting S... : " << std::get<0>(*tuple).get_s() <<
     // std::endl;
     return m_currentFeature.error(m_desiredFeature);
   }
 
-  virtual vpMatrix currentInteraction() { return m_currentFeature.interaction(); }
+  virtual vpMatrix currentInteraction() override { return m_currentFeature.interaction(); }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo)
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) override
   {
     buildCurrentFeatureWithTuple(m_currentFeature, cMo, func_ptr, *m_tuple);
   }
@@ -353,15 +353,15 @@ public:
     m_obj = o;
   }
 
-  virtual ~vpPoseSpecificFeatureTemplateObject() { delete m_tuple; }
+  virtual ~vpPoseSpecificFeatureTemplateObject() override { delete m_tuple; }
 
-  virtual void createDesired() { buildDesiredFeatureObjectWithTuple(m_obj, m_desiredFeature, func_ptr, *m_tuple); }
+  virtual void createDesired() override { buildDesiredFeatureObjectWithTuple(m_obj, m_desiredFeature, func_ptr, *m_tuple); }
 
-  virtual vpColVector error() { return m_currentFeature.error(m_desiredFeature); }
+  virtual vpColVector error() override { return m_currentFeature.error(m_desiredFeature); }
 
-  virtual vpMatrix currentInteraction() { return m_currentFeature.interaction(); }
+  virtual vpMatrix currentInteraction() override { return m_currentFeature.interaction(); }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo)
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) override
   {
     buildCurrentFeatureObjectWithTuple(m_obj, m_currentFeature, cMo, func_ptr, *m_tuple);
   }

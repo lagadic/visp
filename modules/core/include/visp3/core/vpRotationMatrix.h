@@ -133,11 +133,6 @@ public:
   explicit vpRotationMatrix(const std::initializer_list<double> &list);
 #endif
 
-  /*!
-    Destructor.
-  */
-  virtual ~vpRotationMatrix() { }
-
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
   vpRotationMatrix buildFrom(const vpThetaUVector &v);
   vpRotationMatrix buildFrom(const vpPoseVector &p);

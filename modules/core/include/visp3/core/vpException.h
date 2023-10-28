@@ -68,7 +68,7 @@ protected:
   void setMessage(const char *format, va_list args);
 
   //!  forbid the empty constructor (protected)
-  vpException() : code(notInitialized), message("") { };
+  vpException() : code(notInitialized), message("") { }
 
 public:
   enum generalExceptionEnum
@@ -104,16 +104,6 @@ public:
    * Constructor.
    */
   explicit vpException(int code);
-
-  /*!
-   * Destructor. Do nothing but implemented to fit the inheritance from
-   * std::exception
-   */
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  virtual ~vpException() { }
-#else
-  virtual ~vpException() throw() { }
-#endif
 
   /** @name Inherited functionalities from vpException */
   //@{

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Interface for Pioneer mobile robots based on Aria 3rd party library.
- *
-*****************************************************************************/
+ */
 #ifndef VPROBOTPIONEER_H
 #define VPROBOTPIONEER_H
 
@@ -51,56 +49,54 @@
 #include <visp3/robot/vpRobot.h>
 
 /*!
-
-  \class vpRobotPioneer
-
-  \ingroup group_robot_real_unicycle
-
-  \brief Interface for Pioneer mobile robots based on Aria 3rd party library.
-
-  This class provides a position and speed control interface for Pioneer
-  mobile robots. It inherits from the Aria ArRobot class. For more information
-  about the model of the robot, see vpPioneer documentation.
-
-*/
+ * \class vpRobotPioneer
+ *
+ * \ingroup group_robot_real_unicycle
+ *
+ * \brief Interface for Pioneer mobile robots based on Aria 3rd party library.
+ *
+ * This class provides a position and speed control interface for Pioneer
+ * mobile robots. It inherits from the Aria ArRobot class. For more information
+ * about the model of the robot, see vpPioneer documentation.
+ */
 class VISP_EXPORT vpRobotPioneer : public vpRobot, public vpPioneer, public ArRobot
 {
 private: /* Not allowed functions. */
   /*!
-    Copy constructor not allowed.
+   * Copy constructor not allowed.
    */
   vpRobotPioneer(const vpRobotPioneer &robot);
 
 public:
   vpRobotPioneer();
-  virtual ~vpRobotPioneer();
+  virtual ~vpRobotPioneer() override;
 
   /*!
-    Get the robot Jacobian expressed at point E, the point located at the
-    middle between the two wheels.
-
-    \param eJe : Robot jacobian such as \f$(v_x, w_z) = {^e}{\bf J}e \; {\bf
-    v}\f$ with \f$(v_x, w_z)\f$ respectively the translational and rotational
-    control velocities of the mobile robot, \f$\bf v\f$ the six dimention
-    velocity skew, and where
-
-    \sa get_eJe()
-
-  */
-  void get_eJe(vpMatrix &eJe) { eJe = vpUnicycle::get_eJe(); }
+   * Get the robot Jacobian expressed at point E, the point located at the
+   * middle between the two wheels.
+   *
+   * \param eJe : Robot jacobian such as \f$(v_x, w_z) = {^e}{\bf J}e \; {\bf
+   * v}\f$ with \f$(v_x, w_z)\f$ respectively the translational and rotational
+   * control velocities of the mobile robot, \f$\bf v\f$ the six dimension
+   * velocity skew, and where
+   *
+   * \sa get_eJe()
+   */
+  void get_eJe(vpMatrix &eJe) override { eJe = vpUnicycle::get_eJe(); }
 
 private: // Set as private since not implemented
   /*!
-    Get the robot Jacobian expressed in the robot reference (or world) frame.
-    \warning Not implemented.
-  */
-  void get_fJe(vpMatrix & /*fJe*/){};
+   * Get the robot Jacobian expressed in the robot reference (or world) frame.
+   * \warning Not implemented.
+   */
+  void get_fJe(vpMatrix & /*fJe*/) override { };
 
   /*!
-    Get a displacement (frame as to ve specified) between two successive
-    position control. \warning Not implemented.
-  */
-  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/){};
+   * Get a displacement (frame as to ve specified) between two successive
+   * position control.
+   * \warning Not implemented.
+   */
+  void getDisplacement(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { };
 
 public:
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &velocity);
@@ -108,27 +104,27 @@ public:
 
 private: // Set as private since not implemented
   /*!
-    Get the robot position (frame has to be specified).
-    \warning Not implemented.
-  */
-  void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/){};
+   * Get the robot position (frame has to be specified).
+   * \warning Not implemented.
+   */
+  void getPosition(const vpRobot::vpControlFrameType /*frame*/, vpColVector & /*q*/) { };
 
 public:
   void init();
 
 private: // Set as private since not implemented
   /*!
-    Set a displacement (frame has to be specified) in position control.
-    \warning Not implemented.
-  */
-  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/){};
+   * Set a displacement (frame has to be specified) in position control.
+   * \warning Not implemented.
+   */
+  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) override { };
 
 public:
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
 
   /*!
-    Enable or disable sonar device usage.
-    */
+   * Enable or disable sonar device usage.
+   */
   void useSonar(bool usage) { this->comInt(ArCommands::SONAR, usage); }
 
 protected:

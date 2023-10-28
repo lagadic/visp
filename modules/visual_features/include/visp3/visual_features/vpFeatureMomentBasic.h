@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,13 @@
  *
  * Description:
  * Implementation for all supported moment features.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
+
 /*!
-  \file vpFeatureMomentBasic.h
-  \brief Implementation of the interaction matrix computation for
-  vpMomentBasic.
-*/
+ * \file vpFeatureMomentBasic.h
+ * \brief Implementation of the interaction matrix computation for
+ * vpMomentBasic.
+ */
 
 #ifndef _vpFeatureMomentBasic_h_
 #define _vpFeatureMomentBasic_h_
@@ -50,33 +46,33 @@
 
 class vpMomentDatabase;
 /*!
-  \class vpFeatureMomentBasic
-
-  \ingroup group_visual_features
-
-  \brief Functionality computation for basic moment feature. Computes the
-  interaction matrix associated with vpMomentBasic.
-
-  The interaction matrix for the basic moment feature is defined in
-  \cite Tahri05z, equation (13). This vpFeatureMoment, as well as it's
-  corresponding moment primitive is double-indexed. The interaction matrix \f$
-  L_{m_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction
-  (i,j) and is associated to \f$ m_{ij} \f$ obtained by vpMomentBasic::get
-  (i,j). vpFeatureMomentBasic computes interaction matrices all interaction
-  matrices up to vpMomentObject::getOrder()-1. \attention The maximum order
-  reached by vpFeatureMomentBasic is NOT the maximum order of the
-  vpMomentObject, it is one unit smaller. For example if you define your
-  vpMomentObject up to order n then vpFeatureMomentBasic will be able to
-  compute interaction matrices up to order n-1 that is \f$ L_{m_{ij}} \f$ with
-  \f$ i+j<=n-1 \f$.
-
-    You can see an example of vpFeatureMomentBasic by looking at the
-  documentation of the vpFeatureMoment class.
-
-    This feature depends on:
-        - vpMomentBasic
-
-*/
+ * \class vpFeatureMomentBasic
+ *
+ * \ingroup group_visual_features
+ *
+ * \brief Functionality computation for basic moment feature. Computes the
+ * interaction matrix associated with vpMomentBasic.
+ *
+ * The interaction matrix for the basic moment feature is defined in
+ * \cite Tahri05z, equation (13). This vpFeatureMoment, as well as it's
+ * corresponding moment primitive is double-indexed. The interaction matrix \f$
+ * L_{m_{ij}} \f$ is obtained by calling vpFeatureMomentBasic::interaction
+ * (i,j) and is associated to \f$ m_{ij} \f$ obtained by vpMomentBasic::get
+ * (i,j). vpFeatureMomentBasic computes interaction matrices all interaction
+ * matrices up to vpMomentObject::getOrder()-1.
+ *
+ * \attention The maximum order reached by vpFeatureMomentBasic is NOT the maximum order of the
+ * vpMomentObject, it is one unit smaller. For example if you define your
+ * vpMomentObject up to order n then vpFeatureMomentBasic will be able to
+ * compute interaction matrices up to order n-1 that is \f$ L_{m_{ij}} \f$ with
+ * \f$ i+j<=n-1 \f$.
+ *
+ * You can see an example of vpFeatureMomentBasic by looking at the
+ * documentation of the vpFeatureMoment class.
+ *
+ * This feature depends on:
+ * - vpMomentBasic
+ */
 class VISP_EXPORT vpFeatureMomentBasic : public vpFeatureMoment
 {
 protected:
@@ -85,24 +81,26 @@ protected:
 public:
   vpFeatureMomentBasic(vpMomentDatabase &moments, double A, double B, double C,
                        vpFeatureMomentDatabase *featureMoments = NULL);
-  void compute_interaction();
+  void compute_interaction() override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /* Add function due to pure virtual definition in vpBasicFeature.h */
-  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */)
+  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */) override
   {
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
 #endif
 
   vpMatrix interaction(unsigned int select_one, unsigned int select_two) const;
+
   /*!
-    Associated moment name.
-    */
-  const char *momentName() const { return "vpMomentBasic"; }
+   * Associated moment name.
+   */
+  const char *momentName() const override { return "vpMomentBasic"; }
+
   /*!
-    Feature name.
-    */
-  const char *name() const { return "vpFeatureMomentBasic"; }
+   * Feature name.
+   */
+  const char *name() const override { return "vpFeatureMomentBasic"; }
 };
 #endif

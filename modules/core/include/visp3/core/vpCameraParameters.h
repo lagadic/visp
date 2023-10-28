@@ -341,7 +341,7 @@ public:
 
     \return True if the fov has been computed, False otherwise.
   */
-  inline bool isFovComputed() const { return isFov; }
+  inline bool isFovComputed() const { return m_isFov; }
 
   void computeFov(const unsigned int &w, const unsigned int &h);
 
@@ -354,7 +354,7 @@ public:
   */
   inline double getHorizontalFovAngle() const
   {
-    if (!isFov) {
+    if (!m_isFov) {
       vpTRACE("Warning: The FOV is not computed, getHorizontalFovAngle() "
         "won't be significant.");
     }
@@ -370,7 +370,7 @@ public:
   */
   inline double getVerticalFovAngle() const
   {
-    if (!isFov) {
+    if (!m_isFov) {
       vpTRACE("Warning: The FOV is not computed, getVerticalFovAngle() won't "
         "be significant.");
     }
@@ -391,24 +391,24 @@ public:
   */
   inline std::vector<vpColVector> getFovNormals() const
   {
-    if (!isFov) {
+    if (!m_isFov) {
       vpTRACE("Warning: The FOV is not computed, getFovNormals() won't be "
         "significant.");
     }
-    return fovNormals;
+    return m_fovNormals;
   }
 
-  inline double get_px() const { return px; }
-  inline double get_px_inverse() const { return inv_px; }
-  inline double get_py_inverse() const { return inv_py; }
-  inline double get_py() const { return py; }
-  inline double get_u0() const { return u0; }
-  inline double get_v0() const { return v0; }
-  inline double get_kud() const { return kud; }
-  inline double get_kdu() const { return kdu; }
+  inline double get_px() const { return m_px; }
+  inline double get_px_inverse() const { return m_inv_px; }
+  inline double get_py_inverse() const { return m_inv_py; }
+  inline double get_py() const { return m_py; }
+  inline double get_u0() const { return m_u0; }
+  inline double get_v0() const { return m_v0; }
+  inline double get_kud() const { return m_kud; }
+  inline double get_kdu() const { return m_kdu; }
   inline std::vector<double> getKannalaBrandtDistortionCoefficients() const { return m_dist_coefs; }
 
-  inline vpCameraParametersProjType get_projModel() const { return projModel; }
+  inline vpCameraParametersProjType get_projModel() const { return m_projModel; }
 
   vpMatrix get_K() const;
   vpMatrix get_K_inverse() const;
@@ -425,22 +425,22 @@ private:
   static const double DEFAULT_KDU_PARAMETER;
   static const vpCameraParametersProjType DEFAULT_PROJ_TYPE;
 
-  double px, py;                    //!< Pixel size
-  double u0, v0;                    //!< Principal point
-  double kud;                       //!< Radial distortion (from undistorted to distorted)
-  double kdu;                       //!< Radial distortion (from distorted to undistorted)
-  std::vector<double> m_dist_coefs; //!< Coefficients for Kannala-Brandt distortion model
+  double m_px, m_py;                     //!< Pixel size
+  double m_u0, m_v0;                     //!< Principal point
+  double m_kud;                          //!< Radial distortion (from undistorted to distorted)
+  double m_kdu;                          //!< Radial distortion (from distorted to undistorted)
+  std::vector<double> m_dist_coefs;      //!< Coefficients for Kannala-Brandt distortion model
 
-  unsigned int width;                  //!< Width of the image used for the fov computation
-  unsigned int height;                 //!< Height of the image used for the fov computation
-  bool isFov;                          //!< Boolean to specify if the fov has been computed
-  double m_hFovAngle;                  //!< Field of view horizontal angle
-  double m_vFovAngle;                  //!< Field of view vertical angle
-  std::vector<vpColVector> fovNormals; //!< Normals of the planes describing the fov
+  unsigned int m_width;                  //!< Width of the image used for the fov computation
+  unsigned int m_height;                 //!< Height of the image used for the fov computation
+  bool m_isFov;                          //!< Boolean to specify if the fov has been computed
+  double m_hFovAngle;                    //!< Field of view horizontal angle
+  double m_vFovAngle;                    //!< Field of view vertical angle
+  std::vector<vpColVector> m_fovNormals; //!< Normals of the planes describing the fov
 
-  double inv_px, inv_py;
+  double m_inv_px, m_inv_py;
 
-  vpCameraParametersProjType projModel; //!< used projection model
+  vpCameraParametersProjType m_projModel; //!< used projection model
 #ifdef VISP_HAVE_NLOHMANN_JSON
   friend void to_json(nlohmann::json &j, const vpCameraParameters &cam);
   friend void from_json(const nlohmann::json &j, vpCameraParameters &cam);
@@ -454,26 +454,26 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
   });
+
 /**
  * \brief Converts camera parameters into a JSON representation.
- * \sa from_json for more information on the content
- * \param j the resulting JSON object
- * \param cam  the camera to serialize
- *
+ * \sa from_json() for more information on the content.
+ * \param j The resulting JSON object.
+ * \param cam The camera to serialize.
  */
 inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
 {
-  j["px"] = cam.px;
-  j["py"] = cam.py;
-  j["u0"] = cam.u0;
-  j["v0"] = cam.v0;
-  j["model"] = cam.projModel;
+  j["px"] = cam.m_px;
+  j["py"] = cam.m_py;
+  j["u0"] = cam.m_u0;
+  j["v0"] = cam.m_v0;
+  j["model"] = cam.m_projModel;
 
-  switch (cam.projModel) {
+  switch (cam.m_projModel) {
   case vpCameraParameters::perspectiveProjWithDistortion:
   {
-    j["kud"] = cam.kud;
-    j["kdu"] = cam.kdu;
+    j["kud"] = cam.m_kud;
+    j["kdu"] = cam.m_kdu;
     break;
   }
   case vpCameraParameters::ProjWithKannalaBrandtDistortion:
@@ -487,33 +487,33 @@ inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
     break;
   }
 }
+
 /*!
-    \brief Deserialize a JSON object into camera parameters.
-    The minimal required properties are:
-      - Pixel size: px, py
-      - Principal point: u0, v0
-
-    If a projection model (\ref vpCameraParameters::vpCameraParametersProjType) is supplied, then other parameters may be expected:
-    - In the case of perspective projection with distortion, ku, and kud must be supplied.
-    - In the case of Kannala-Brandt distortion, the list of coefficients must be supplied.
-
-    An example of a JSON object representing a camera is:
-    \code{.json}
-        {
-          "px": 300.0,
-          "py": 300.0,
-          "u0": 120.5,
-          "v0": 115.0,
-          "model": "perspectiveWithDistortion", // one of ["perspectiveWithoutDistortion", "perspectiveWithDistortion", "kannalaBrandtDistortion"]. If ommitted, camera is assumed to have no distortion
-          "kud": 0.5, // required since "model" == perspectiveWithDistortion
-          "kdu": 0.5
-        }
-    \endcode
-
-    \param j The json object to deserialize.
-    \param cam The modified camera.
-
-*/
+ * \brief Deserialize a JSON object into camera parameters.
+ * The minimal required properties are:
+ * - Pixel size: px, py
+ * - Principal point: u0, v0
+ *
+ * If a projection model (\ref vpCameraParameters::vpCameraParametersProjType) is supplied, then other parameters may be expected:
+ * - In the case of perspective projection with distortion, ku, and kud must be supplied.
+ * - In the case of Kannala-Brandt distortion, the list of coefficients must be supplied.
+ *
+ * An example of a JSON object representing a camera is:
+ * \code{.json}
+ *     {
+ *       "px": 300.0,
+ *       "py": 300.0,
+ *       "u0": 120.5,
+ *       "v0": 115.0,
+ *       "model": "perspectiveWithDistortion", // one of ["perspectiveWithoutDistortion", "perspectiveWithDistortion", "kannalaBrandtDistortion"]. If omitted, camera is assumed to have no distortion
+ *       "kud": 0.5, // required since "model" == perspectiveWithDistortion
+ *       "kdu": 0.5
+ *     }
+ * \endcode
+ *
+ * \param j The json object to deserialize.
+ * \param cam The modified camera.
+ */
 inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
 {
   const double px = j.at("px").get<double>();

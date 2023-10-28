@@ -44,13 +44,7 @@
  * Default constructor that does nothing.
  * To connect to a device call init().
  */
-vpQbSoftHand::vpQbSoftHand() : vpQbDevice() {}
-
-/**
- * Close all the still open serial ports.
- * \sa close()
- */
-vpQbSoftHand::~vpQbSoftHand() {}
+vpQbSoftHand::vpQbSoftHand() : vpQbDevice() { }
 
 /**
  * Retrieve the motor currents of the given device.
@@ -129,7 +123,8 @@ void vpQbSoftHand::setPosition(const vpColVector &position, const int &id)
 
   if (commands[0] < position_limits[0]) {
     commands[0] = position_limits[0];
-  } else if (commands[0] > position_limits[1]) {
+  }
+  else if (commands[0] > position_limits[1]) {
     commands[0] = position_limits[1];
   }
 
@@ -171,13 +166,15 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
   double vel = speed_factor;
   if (vel < 0.01) {
     vel = 0.01;
-  } else if (vel > 1.) {
+  }
+  else if (vel > 1.) {
     vel = 1.0;
   }
   double current_factor = stiffness;
   if (current_factor < 0.0) {
     current_factor = 0.0;
-  } else if (current_factor > 1.) {
+  }
+  else if (current_factor > 1.) {
     current_factor = 1.0;
   }
   double slope = sign * max_slope * vel;
@@ -189,7 +186,8 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
     q[0] = q_mes[0] + slope * delta_t / 1000.0 * i;
     if (q[0] < getPositionLimits()[0]) {
       q[0] = getPositionLimits()[0];
-    } else if (q[0] > getPositionLimits()[1]) {
+    }
+    else if (q[0] > getPositionLimits()[1]) {
       q[0] = getPositionLimits()[1];
     }
     setPosition(q, id);
@@ -198,7 +196,8 @@ void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor,
 
     if (std::fabs(current[0]) > current_factor * current_max) {
       current_failures++;
-    } else {
+    }
+    else {
       current_failures = 0;
     }
 

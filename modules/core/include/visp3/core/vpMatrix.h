@@ -208,9 +208,6 @@ vpMatrix M(R);
   explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
 
-  //! Destructor (Memory de-allocation)
-  virtual ~vpMatrix() { }
-
   /*!
     Removes all elements from the matrix (which are destroyed),
     leaving the container with a size of 0.

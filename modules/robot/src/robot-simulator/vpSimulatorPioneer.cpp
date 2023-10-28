@@ -76,12 +76,6 @@ void vpSimulatorPioneer::init()
 }
 
 /*!
-  Destructor.
-
-*/
-vpSimulatorPioneer::~vpSimulatorPioneer() {}
-
-/*!
   Get the robot jacobian expressed in the end-effector frame.
   The jacobian expression is given in vpPioneer class.
 
@@ -196,8 +190,8 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vp
 
   case vpRobot::ARTICULAR_FRAME:
     std::cout << "ARTICULAR_FRAME is not implemented in "
-                 "vpSimulatorPioneer::getPosition()"
-              << std::endl;
+      "vpSimulatorPioneer::getPosition()"
+      << std::endl;
     break;
   case vpRobot::REFERENCE_FRAME: {
     // Convert wMc_ to a position

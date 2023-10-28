@@ -101,7 +101,7 @@ public:
   */
   inline static void convertPoint(const vpCameraParameters &cam, const double &u, const double &v, double &x, double &y)
   {
-    switch (cam.projModel) {
+    switch (cam.m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       convertPointWithoutDistortion(cam, u, v, x, y);
       break;
@@ -143,7 +143,7 @@ public:
   */
   inline static void convertPoint(const vpCameraParameters &cam, const vpImagePoint &iP, double &x, double &y)
   {
-    switch (cam.projModel) {
+    switch (cam.m_projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
       convertPointWithoutDistortion(cam, iP, x, y);
       break;
@@ -172,8 +172,8 @@ public:
   inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &u, const double &v,
                                                    double &x, double &y)
   {
-    x = (u - cam.u0) * cam.inv_px;
-    y = (v - cam.v0) * cam.inv_py;
+    x = (u - cam.m_u0) * cam.m_inv_px;
+    y = (v - cam.m_v0) * cam.m_inv_py;
   }
 
   /*!
@@ -194,8 +194,8 @@ public:
   inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const vpImagePoint &iP, double &x,
                                                    double &y)
   {
-    x = (iP.get_u() - cam.u0) * cam.inv_px;
-    y = (iP.get_v() - cam.v0) * cam.inv_py;
+    x = (iP.get_u() - cam.m_u0) * cam.m_inv_px;
+    y = (iP.get_v() - cam.m_v0) * cam.m_inv_py;
   }
 
   /*!
@@ -215,9 +215,9 @@ public:
   inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &u, const double &v,
                                                 double &x, double &y)
   {
-    double r2 = 1. + cam.kdu * (vpMath::sqr((u - cam.u0) * cam.inv_px) + vpMath::sqr((v - cam.v0) * cam.inv_py));
-    x = (u - cam.u0) * r2 * cam.inv_px;
-    y = (v - cam.v0) * r2 * cam.inv_py;
+    double r2 = 1. + cam.m_kdu * (vpMath::sqr((u - cam.m_u0) * cam.m_inv_px) + vpMath::sqr((v - cam.m_v0) * cam.m_inv_py));
+    x = (u - cam.m_u0) * r2 * cam.m_inv_px;
+    y = (v - cam.m_v0) * r2 * cam.m_inv_py;
   }
 
   /*!
@@ -239,10 +239,10 @@ public:
   inline static void convertPointWithDistortion(const vpCameraParameters &cam, const vpImagePoint &iP, double &x,
                                                 double &y)
   {
-    double r2 = 1. + cam.kdu * (vpMath::sqr((iP.get_u() - cam.u0) * cam.inv_px) +
-                                vpMath::sqr((iP.get_v() - cam.v0) * cam.inv_py));
-    x = (iP.get_u() - cam.u0) * r2 * cam.inv_px;
-    y = (iP.get_v() - cam.v0) * r2 * cam.inv_py;
+    double r2 = 1. + cam.m_kdu * (vpMath::sqr((iP.get_u() - cam.m_u0) * cam.m_inv_px) +
+                                vpMath::sqr((iP.get_v() - cam.m_v0) * cam.m_inv_py));
+    x = (iP.get_u() - cam.m_u0) * r2 * cam.m_inv_px;
+    y = (iP.get_v() - cam.m_v0) * r2 * cam.m_inv_py;
   }
 
   /*!
@@ -268,7 +268,7 @@ public:
   inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &u,
                                                              const double &v, double &x, double &y)
   {
-    double x_d = (u - cam.u0) / cam.px, y_d = (v - cam.v0) / cam.py;
+    double x_d = (u - cam.m_u0) / cam.m_px, y_d = (v - cam.m_v0) / cam.m_py;
     double scale = 1.0;
     double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
 
@@ -285,10 +285,10 @@ public:
       for (int j = 0; j < 10; j++) {
         double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
         double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
-               k3_theta8 = k[3] * theta8;
-        /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
+          k3_theta8 = k[3] * theta8;
+   /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
         double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
-                           (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
+          (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
         theta = theta - theta_fix;
         if (fabs(theta_fix) < EPS)
           break;
@@ -323,7 +323,7 @@ public:
   inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const vpImagePoint &iP,
                                                              double &x, double &y)
   {
-    double x_d = (iP.get_u() - cam.u0) / cam.px, y_d = (iP.get_v() - cam.v0) / cam.py;
+    double x_d = (iP.get_u() - cam.m_u0) / cam.m_px, y_d = (iP.get_v() - cam.m_v0) / cam.m_py;
     double scale = 1.0;
     double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
 
@@ -340,10 +340,10 @@ public:
       for (int j = 0; j < 10; j++) {
         double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
         double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
-               k3_theta8 = k[3] * theta8;
-        /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
+          k3_theta8 = k[3] * theta8;
+   /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
         double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
-                           (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
+          (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
         theta = theta - theta_fix;
         if (fabs(theta_fix) < EPS)
           break;

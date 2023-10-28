@@ -181,7 +181,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeLine();
+  virtual ~vpMeLine() override;
 
   /*!
    * Display line.

@@ -212,10 +212,6 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix(const std::initializer_list<double> &list);
 #endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpHomogeneousMatrix() { }
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);

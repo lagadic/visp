@@ -90,12 +90,6 @@ void vpRobotCamera::init()
 }
 
 /*!
-  Destructor.
-
-*/
-vpRobotCamera::~vpRobotCamera() {}
-
-/*!
 
   Get the twist transformation from camera frame to end-effector
   frame.  This transformation allows to compute a velocity expressed
@@ -256,5 +250,5 @@ void vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMw)
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no
 // symbols
-void dummy_vpRobotCamera(){};
+void dummy_vpRobotCamera() { };
 #endif

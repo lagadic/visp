@@ -77,6 +77,18 @@
 
 #endif
 
+#ifndef M_PIf
+#define M_PIf 3.14159265358979323846f
+#endif
+
+#ifndef M_PI_2f
+#define M_PI_2f (M_PIf / 2.0f)
+#endif
+
+#ifndef M_PI_4f
+#define M_PI_4f (M_PIf / 4.0f)
+#endif
+
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -88,12 +100,11 @@ class vpRxyzVector;
 class vpTranslationVector;
 
 /*!
-  \class vpMath
-  \ingroup group_core_math_tools
-  \brief Provides simple mathematics computation tools that are not
-  available in the C mathematics library (math.h)
-
-*/
+ * \class vpMath
+ * \ingroup group_core_math_tools
+ * \brief Provides simple mathematics computation tools that are not
+ * available in the C mathematics library (math.h)
+ */
 class VISP_EXPORT vpMath
 {
 public:
@@ -116,6 +127,42 @@ public:
   static inline double rad(double deg) { return (deg * M_PI) / 180.0; }
 
   static vpColVector rad(const vpColVector &r);
+
+  /*!
+   * Convert angle between \f$-\pi\f$ and \f$\pi\f$.
+   *
+   * \param[in] theta The input angle we want to ensure it is in the interval \f$[-\pi ; \pi]\f$.
+   * \return The corresponding angle in the interval \f$[-\pi ; \pi]\f$.
+   */
+  static float getAngleBetweenMinPiAndPi(const float &theta)
+  {
+    float theta1 = theta;
+    if (theta1 > M_PIf) {
+      theta1 -= 2.0f * M_PIf;
+    }
+    else if (theta1 < -M_PIf) {
+      theta1 += 2.0f * M_PIf;
+    }
+    return theta1;
+  }
+
+  /*!
+   * Convert angle between \f$-\pi\f$ and \f$\pi\f$.
+   *
+   * \param[in] theta The input angle we want to ensure it is in the interval \f$[-\pi ; \pi]\f$.
+   * \return The corresponding angle in the interval \f$[-\pi ; \pi]\f$.
+   */
+  static double getAngleBetweenMinPiAndPi(const double &theta)
+  {
+    double theta1 = theta;
+    if (theta1 > M_PI) {
+      theta1 -= 2.0 * M_PI;
+    }
+    else if (theta1 < -M_PI) {
+      theta1 += 2.0 * M_PI;
+    }
+    return theta1;
+  }
 
   /*!
     Compute x square value.
@@ -146,9 +193,9 @@ public:
     }
     return (v < lower) ? lower : (upper < v) ? upper : v;
 #endif
-  }
+    }
 
-  //   round x to the nearest integer
+    //   round x to the nearest integer
   static inline int round(double x);
 
   //   return the sign of x (+-1)
@@ -218,14 +265,14 @@ public:
 
   static double lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c);
 
-  template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(unsigned short v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(short v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(unsigned v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(int v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(float v) { return _Tp(v); }
-  template <typename _Tp> static inline _Tp saturate(double v) { return _Tp(v); }
+  template <typename Tp> static inline Tp saturate(unsigned char v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(char v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(unsigned short v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(short v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(unsigned v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(int v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(float v) { return Tp(v); }
+  template <typename Tp> static inline Tp saturate(double v) { return Tp(v); }
 
   static double getMean(const std::vector<double> &v);
   static double getMedian(const std::vector<double> &v);
@@ -283,14 +330,14 @@ public:
 private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
-};
+  };
 
-// Begining of the inline functions definition
+  // Begining of the inline functions definition
 
-/*!
-  Computes and returns x!
-  \param x : parameter of factorial function.
-*/
+  /*!
+    Computes and returns x!
+    \param x : parameter of factorial function.
+  */
 double vpMath::fact(unsigned int x)
 {
   if ((x == 1) || (x == 0))
@@ -323,13 +370,13 @@ long double vpMath::comb(unsigned int n, unsigned int p)
 int vpMath::round(double x)
 {
 #if defined(VISP_HAVE_FUNC_STD_ROUND)
-  return (int)std::round(x);
+  return static_cast<int>(std::round(x));
 #elif defined(VISP_HAVE_FUNC_ROUND)
   //:: to design the global namespace and avoid to call recursively
   // vpMath::round
-  return (int)::round(x);
+  return static_cast<int>(::round(x));
 #else
-  return (x > 0.0) ? ((int)floor(x + 0.5)) : ((int)ceil(x - 0.5));
+  return (x > 0.0) ? (static_cast<int>(floor(x + 0.5))) : (static_cast<int>(ceil(x - 0.5)));
 #endif
 }
 
@@ -408,26 +455,29 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(char v)
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
   // (int)(char -127) = -127.
   if (std::numeric_limits<char>::is_signed)
-    return (unsigned char)(((std::max))((int)v, 0));
+    return static_cast<unsigned char>(std::max(static_cast<int>(v), 0));
   else
-    return (unsigned char)((unsigned int)v > SCHAR_MAX ? 0 : v);
+    return static_cast<unsigned char>(static_cast<unsigned int>(v) > SCHAR_MAX ? 0 : v);
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(unsigned short v)
 {
-  return (unsigned char)((std::min))((unsigned int)v, (unsigned int)UCHAR_MAX);
+  return static_cast<unsigned char>(std::min(static_cast<unsigned int>(v), static_cast<unsigned int>(UCHAR_MAX)));
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(int v)
 {
-  return (unsigned char)((unsigned int)v <= UCHAR_MAX ? v : v > 0 ? UCHAR_MAX : 0);
+  return static_cast<unsigned char>(static_cast<unsigned int>(v) <= UCHAR_MAX ? v : v > 0 ? UCHAR_MAX : 0);
 }
 
-template <> inline unsigned char vpMath::saturate<unsigned char>(short v) { return saturate<unsigned char>((int)v); }
+template <> inline unsigned char vpMath::saturate<unsigned char>(short v)
+{
+  return saturate<unsigned char>(static_cast<int>(v));
+}
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(unsigned int v)
 {
-  return (unsigned char)((std::min))(v, (unsigned int)UCHAR_MAX);
+  return static_cast<unsigned char>(std::min(v, static_cast<unsigned int>(UCHAR_MAX)));
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(float v)
@@ -443,23 +493,29 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(double v)
 }
 
 // char
-template <> inline char vpMath::saturate<char>(unsigned char v) { return (char)((std::min))((int)v, SCHAR_MAX); }
+template <> inline char vpMath::saturate<char>(unsigned char v)
+{
+  return static_cast<char>(std::min(static_cast<int>(v), SCHAR_MAX));
+}
 
 template <> inline char vpMath::saturate<char>(unsigned short v)
 {
-  return (char)((std::min))((unsigned int)v, (unsigned int)SCHAR_MAX);
+  return static_cast<char>(std::min(static_cast<unsigned int>(v), static_cast<unsigned int>(SCHAR_MAX)));
 }
 
 template <> inline char vpMath::saturate<char>(int v)
 {
-  return (char)((unsigned int)(v - SCHAR_MIN) <= (unsigned int)UCHAR_MAX ? v : v > 0 ? SCHAR_MAX : SCHAR_MIN);
+  return static_cast<char>(static_cast<unsigned int>(v - SCHAR_MIN) <= static_cast<unsigned int>(UCHAR_MAX) ? v : v > 0 ? SCHAR_MAX : SCHAR_MIN);
 }
 
-template <> inline char vpMath::saturate<char>(short v) { return saturate<char>((int)v); }
+template <> inline char vpMath::saturate<char>(short v)
+{
+  return saturate<char>((int)v);
+}
 
 template <> inline char vpMath::saturate<char>(unsigned int v)
 {
-  return (char)((std::min))(v, (unsigned int)SCHAR_MAX);
+  return static_cast<char>(std::min(v, static_cast<unsigned int>(SCHAR_MAX)));
 }
 
 template <> inline char vpMath::saturate<char>(float v)
@@ -483,24 +539,24 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(char v)
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
   // (int)(char -127) = -127.
   if (std::numeric_limits<char>::is_signed)
-    return (unsigned char)(((std::max))((int)v, 0));
+    return static_cast<unsigned short>(std::max(static_cast<int>(v), 0));
   else
-    return (unsigned char)((unsigned int)v > SCHAR_MAX ? 0 : v);
+    return static_cast<unsigned short>(static_cast<unsigned int>(v) > SCHAR_MAX ? 0 : v);
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(short v)
 {
-  return (unsigned short)((std::max))((int)v, 0);
+  return static_cast<unsigned short>(std::max(static_cast<int>(v), 0));
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(int v)
 {
-  return (unsigned short)((unsigned int)v <= (unsigned int)USHRT_MAX ? v : v > 0 ? USHRT_MAX : 0);
+  return static_cast<unsigned short>(static_cast<unsigned int>(v) <= static_cast<unsigned int>(USHRT_MAX) ? v : v > 0 ? USHRT_MAX : 0);
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(unsigned int v)
 {
-  return (unsigned short)((std::min))(v, (unsigned int)USHRT_MAX);
+  return static_cast<unsigned short>(std::min(v, static_cast<unsigned int>(USHRT_MAX)));
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(float v)
@@ -516,14 +572,17 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(double v)
 }
 
 // short
-template <> inline short vpMath::saturate<short>(unsigned short v) { return (short)((std::min))((int)v, SHRT_MAX); }
+template <> inline short vpMath::saturate<short>(unsigned short v)
+{
+  return static_cast<short>(std::min(static_cast<int>(v), SHRT_MAX));
+}
 template <> inline short vpMath::saturate<short>(int v)
 {
-  return (short)((unsigned int)(v - SHRT_MIN) <= (unsigned int)USHRT_MAX ? v : v > 0 ? SHRT_MAX : SHRT_MIN);
+  return static_cast<short>(static_cast<unsigned int>(v - SHRT_MIN) <= static_cast<unsigned int>(USHRT_MAX) ? v : v > 0 ? SHRT_MAX : SHRT_MIN);
 }
 template <> inline short vpMath::saturate<short>(unsigned int v)
 {
-  return (short)((std::min))(v, (unsigned int)SHRT_MAX);
+  return static_cast<short>(std::min(v, static_cast<unsigned int>(SHRT_MAX)));
 }
 template <> inline short vpMath::saturate<short>(float v)
 {
@@ -537,15 +596,27 @@ template <> inline short vpMath::saturate<short>(double v)
 }
 
 // int
-template <> inline int vpMath::saturate<int>(float v) { return vpMath::round(v); }
+template <> inline int vpMath::saturate<int>(float v)
+{
+  return vpMath::round(v);
+}
 
-template <> inline int vpMath::saturate<int>(double v) { return vpMath::round(v); }
+template <> inline int vpMath::saturate<int>(double v)
+{
+  return vpMath::round(v);
+}
 
 // unsigned int
 // (Comment from OpenCV) we intentionally do not clip negative numbers, to
 // make -1 become 0xffffffff etc.
-template <> inline unsigned int vpMath::saturate<unsigned int>(float v) { return (unsigned int)vpMath::round(v); }
+template <> inline unsigned int vpMath::saturate<unsigned int>(float v)
+{
+  return static_cast<unsigned int>(vpMath::round(v));
+}
 
-template <> inline unsigned int vpMath::saturate<unsigned int>(double v) { return (unsigned int)vpMath::round(v); }
+template <> inline unsigned int vpMath::saturate<unsigned int>(double v)
+{
+  return static_cast<unsigned int>(vpMath::round(v));
+}
 
 #endif

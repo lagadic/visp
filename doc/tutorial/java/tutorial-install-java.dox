@@ -40,7 +40,10 @@ java 17.0.2 2022-01-18 LTS
 
 \subsection java_install_jdk_osx On Mac OSX platform
 
-\warning On macOS Catalina 10.15.7 with Xcode 12.4, the installation of JDK 11 or 15 from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website by downloading and installing `jdk-11.0.10_osx-x64_bin.dmg` or `jdk-15.0.2_osx-x64_bin.dmg` doesn't allow the detection of JNI necessary to build `visp_java.jar`. That's why we recommend to install JDK using brew.
+\warning On macOS Catalina 10.15.7 with Xcode 12.4, the installation of JDK 11 or 15 from the
+[Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website by downloading and installing
+`jdk-11.0.10_osx-x64_bin.dmg` or `jdk-15.0.2_osx-x64_bin.dmg` doesn't allow the detection of JNI necessary to build
+`visp_java.jar`. That's why we recommend to install JDK using brew.
 \verbatim
 $ more ViSP-third-party.txt
   ...
@@ -71,13 +74,20 @@ openjdk: stable 17.0.1 (bottled) [keg-only]
 
 - Now for the system Java wrappers to find this JDK, symlink it with:
 \verbatim
-$ sudo ln -sfn /usr/local/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+$ sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+\endverbatim
+\note Depending on the OpenJDK version, the symlink instruction can differ. To know which one is to use, follow
+instructions provided by `brew info openjdk`. At the time this tutorial was updated, we got:
+\verbatim
+$ brew info openjdk
+For the system Java wrappers to find this JDK, symlink it with
+  sudo ln -sfn /opt/homebrew/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
 \endverbatim
 
 - Set `JAVA_HOME` env var to help JNI headers and libraries detection
 \verbatim
-$ echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.bashrc
-$ source ~/.bashrc
+$ echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.zshrc
+$ source ~/.zshrc
 \endverbatim
 
 - After installation check JDK version:

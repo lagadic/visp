@@ -37,7 +37,7 @@
 
   \file vpViper.cpp
 
-  Modelisation of the ADEPT Viper 650 or 850 robot.
+  Modelization of the ADEPT Viper 650 or 850 robot.
 
 */
 

@@ -1096,7 +1096,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpIm
   // The six value of the pose vector
   0.0000    //  \
   0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  1.0000    //  | Example of value for the pose vector where Z = 1 meter
   0.0000    //  |
   0.0000    //  |
   0.0000    //  /
@@ -1119,7 +1119,7 @@ void vpMbTracker::initFromPose(const vpImage<unsigned char> &I, const std::strin
   // The six value of the pose vector
   0.0000    //  \
   0.0000    //  |
-  1.0000    //  | Exemple of value for the pose vector where Z = 1 meter
+  1.0000    //  | Example of value for the pose vector where Z = 1 meter
   0.0000    //  |
   0.0000    //  |
   0.0000    //  /

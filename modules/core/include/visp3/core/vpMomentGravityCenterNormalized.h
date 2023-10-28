@@ -61,7 +61,6 @@ class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:
   vpMomentGravityCenterNormalized();
-  virtual ~vpMomentGravityCenterNormalized(){};
   void compute();
   //! Moment name.
   const char *name() const { return "vpMomentGravityCenterNormalized"; }

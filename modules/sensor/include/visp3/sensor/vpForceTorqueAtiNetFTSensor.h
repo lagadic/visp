@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * ATI Force torque interface.
- *
-*****************************************************************************/
+ */
 #ifndef _vpForceTorqueAtiNetFTSensor_h_
 #define _vpForceTorqueAtiNetFTSensor_h_
 
@@ -48,64 +46,63 @@
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 /*!
-  \class vpForceTorqueAtiNetFTSensor
-
-  \ingroup group_sensor_ft
-
-  Interface for ATI force/torque sensor using [Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) over UDP.
-
-  The Network Force/Torque (Net F/T) sensor system measures six components of force and torque (Fx, Fy, Fz, Tx, Ty, Tz).
-  The Net F/T provides an EtherNet/IP communication interface and is compatible with standard Ethernet. The Net
-  F/T system is available with any of ATI transducer models. The Net F/T's web browser interface allows for easy
-  configuration and set up via the Ethernet connection present on all NetBox models.
-
-  This class was tested with ATI Nano 43 F/T sensor connected to a NetBox. To use this class, you don't need to install
-  any specific third-party.
-
-  To use this class, connect an Ethernet cable to the NetBox. The default IP address of the Net F/T is: 192.168.1.1.
-  The default Ethernet port is 49152.
-  You can use your favorite web browser on http://192.168.1.1 to modify Net F/T sensor settings and select sensor
-  calibration configuration.
-
-  The following example shows how to use this class to get F/T measurements.
-  \code
-#include <iostream>
-
-#include <visp3/sensor/vpForceTorqueAtiNetFTSensor.h>
-
-int main(int argc, char **argv)
-{
-  vpForceTorqueAtiNetFTSensor ati_net_ft("192.168.1.1", 49152);
-
-  ati_net_ft.startStreaming();
-  ati_net_ft.bias();
-
-  while (1) {
-    double t = vpTime::measureTimeMs();
-    if (ati_net_ft.waitForNewData()) {
-      vpColVector ft = ati_net_ft.getForceTorque();
-      std::cout << "F/T: " << ft.t() << std::endl;
-    }
-    std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
-  }
-}
-  \endcode
-
-  It produces the following output:
-  \code
-F/T: -0.00150018  0.0030764  -0.00791356  -8.22294e-06  4.18799e-05  1.078288e-05
-Loop time: 0.03393554688 ms
-...
-  \endcode
-  where 3 first values are forces Fx, Fy, Fz in N and the 3 last are torques Tx, Ty, Tz in Nm.
-
-*/
+ * \class vpForceTorqueAtiNetFTSensor
+ *
+ * \ingroup group_sensor_ft
+ *
+ * Interface for ATI force/torque sensor using [Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) over UDP.
+ *
+ * The Network Force/Torque (Net F/T) sensor system measures six components of force and torque (Fx, Fy, Fz, Tx, Ty, Tz).
+ * The Net F/T provides an EtherNet/IP communication interface and is compatible with standard Ethernet. The Net
+ * F/T system is available with any of ATI transducer models. The Net F/T's web browser interface allows for easy
+ * configuration and set up via the Ethernet connection present on all NetBox models.
+ *
+ * This class was tested with ATI Nano 43 F/T sensor connected to a NetBox. To use this class, you don't need to install
+ * any specific third-party.
+ *
+ * To use this class, connect an Ethernet cable to the NetBox. The default IP address of the Net F/T is: 192.168.1.1.
+ * The default Ethernet port is 49152.
+ * You can use your favorite web browser on http://192.168.1.1 to modify Net F/T sensor settings and select sensor
+ * calibration configuration.
+ *
+ * The following example shows how to use this class to get F/T measurements.
+ * \code
+ * #include <iostream>
+ *
+ * #include <visp3/sensor/vpForceTorqueAtiNetFTSensor.h>
+ *
+ * int main(int argc, char **argv)
+ * {
+ *   vpForceTorqueAtiNetFTSensor ati_net_ft("192.168.1.1", 49152);
+ *
+ *   ati_net_ft.startStreaming();
+ *   ati_net_ft.bias();
+ *
+ *   while (1) {
+ *     double t = vpTime::measureTimeMs();
+ *     if (ati_net_ft.waitForNewData()) {
+ *       vpColVector ft = ati_net_ft.getForceTorque();
+ *       std::cout << "F/T: " << ft.t() << std::endl;
+ *     }
+ *     std::cout << "Loop time: " << vpTime::measureTimeMs() - t << " ms" << std::endl;
+ *   }
+ * }
+ * \endcode
+ *
+ * It produces the following output:
+ * \code
+ * F/T: -0.00150018  0.0030764  -0.00791356  -8.22294e-06  4.18799e-05  1.078288e-05
+ * Loop time: 0.03393554688 ms
+ * ...
+ * \endcode
+ * where 3 first values are forces Fx, Fy, Fz in N and the 3 last are torques Tx, Ty, Tz in Nm.
+ */
 class VISP_EXPORT vpForceTorqueAtiNetFTSensor : public vpUDPClient
 {
 public:
   vpForceTorqueAtiNetFTSensor();
   vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port);
-  virtual ~vpForceTorqueAtiNetFTSensor();
+  virtual ~vpForceTorqueAtiNetFTSensor() override;
 
   void bias(unsigned int n_counts = 50);
   /*!

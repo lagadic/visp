@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Plot curves.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpPlot.h
@@ -45,70 +43,68 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/gui/vpPlotGraph.h>
 
+#if defined(VISP_HAVE_DISPLAY)
 /*!
-  \class vpPlot
-  \ingroup group_gui_plotter
-
-  \brief This class enables real time drawing of 2D or 3D graphics. An
-  instance of the class open a window which contains between 1 and 4
-  graphics. Each one contains a desired number of curves.
-
-  \warning This class is only available if one of the display functionalities
-  (X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
-  header file, you should have VISP_HAVE_DISPLAY define.
-
-  The example below shows how to use the vpPlot class. An other example
-  provided in tutorial-ibvs-plotter.cpp and described in \ref tutorial-plotter
-  shows how to use this class to plot in real-time some curves during an
-  image-based visual servo.
-
-  \code
-#include <visp3/gui/vpPlot.h>
-
-int main ()
-{
-#if defined(VISP_HAVE_DISPLAY)
-  // Create a window (700 by 700) at position (100, 200) with two graphics
-  vpPlot A(2, 700, 700, 100, 200, "Curves...");
-
-  // The first graphic contains 1 curve and the second graphic contains 2 curves
-  A.initGraph(0,1); A.initGraph(1,2);
-
-  // The color of the curve in the first graphic is red
-  A.setColor(0,0,vpColor::red);
-  // The first curve in the second graphic is green
-  A.setColor(1,0,vpColor::green);
-  // The second curve in the second graphic is blue
-  A.setColor(1,1,vpColor::blue);
-
-  // Add the point (0,0) in the first graphic
-  A.plot(0,0,0,0);
-
-  // Add the point (0,1) to the first curve of the second graphic
-  A.plot(1,0,0,1);
-
-  // Add the point (0,2) to the second curve of the second graphic
-  A.plot(1,1,0,2);
-
-  for (int i = 0; i < 50; i++) {
-    // Add the point (i,sin(i*pi/10) in the first graphic
-    A.plot(0,0,i,sin(i*M_PI/10));
-
-    // Add the point (i,1) to the first curve of the second graphic
-    A.plot(1,0,i,1);
-
-    // Add the point (i,2) to the second curve of the second graphic
-    A.plot(1,1,i,2);
-  }
-
-  return 0;
-#endif
-}
-  \endcode
-*/
-
-#if defined(VISP_HAVE_DISPLAY)
-
+ * \class vpPlot
+ * \ingroup group_gui_plotter
+ *
+ * \brief This class enables real time drawing of 2D or 3D graphics. An
+ * instance of the class open a window which contains between 1 and 4
+ * graphics. Each one contains a desired number of curves.
+ *
+ * \warning This class is only available if one of the display functionalities
+ * (X11, GDI, GTK, OpenCV or Direct3D) is available. In visp3/core/vpConfig.h
+ * header file, you should have VISP_HAVE_DISPLAY define.
+ *
+ * The example below shows how to use the vpPlot class. An other example
+ * provided in tutorial-ibvs-plotter.cpp and described in \ref tutorial-plotter
+ * shows how to use this class to plot in real-time some curves during an
+ * image-based visual servo.
+ *
+ * \code
+ * #include <visp3/gui/vpPlot.h>
+ *
+ * int main ()
+ * {
+ * #if defined(VISP_HAVE_DISPLAY)
+ *   // Create a window (700 by 700) at position (100, 200) with two graphics
+ *   vpPlot A(2, 700, 700, 100, 200, "Curves...");
+ *
+ *   // The first graphic contains 1 curve and the second graphic contains 2 curves
+ *   A.initGraph(0,1); A.initGraph(1,2);
+ *
+ *   // The color of the curve in the first graphic is red
+ *   A.setColor(0,0,vpColor::red);
+ *   // The first curve in the second graphic is green
+ *   A.setColor(1,0,vpColor::green);
+ *   // The second curve in the second graphic is blue
+ *   A.setColor(1,1,vpColor::blue);
+ *
+ *   // Add the point (0,0) in the first graphic
+ *   A.plot(0,0,0,0);
+ *
+ *   // Add the point (0,1) to the first curve of the second graphic
+ *   A.plot(1,0,0,1);
+ *
+ *   // Add the point (0,2) to the second curve of the second graphic
+ *   A.plot(1,1,0,2);
+ *
+ *   for (int i = 0; i < 50; i++) {
+ *     // Add the point (i,sin(i*pi/10) in the first graphic
+ *     A.plot(0,0,i,sin(i*M_PI/10));
+ *
+ *     // Add the point (i,1) to the first curve of the second graphic
+ *     A.plot(1,0,i,1);
+ *
+ *     // Add the point (i,2) to the second curve of the second graphic
+ *     A.plot(1,1,i,2);
+ *   }
+ *
+ *   return 0;
+ $ #endif
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpPlot
 {
 public:
@@ -173,12 +169,13 @@ public:
   void setColor(unsigned int graphNum, unsigned int curveNum, vpColor color);
   void setGraphThickness(unsigned int graphNum, unsigned int thickness);
   void setGridThickness(unsigned int graphNum, unsigned int thickness);
-  /*!
-    Set the font of the characters. The display should be initialized before.
 
-    To know which font are available, on Unix you can use xfontsel or xlsfonts
-    utilities.
-    */
+  /*!
+   * Set the font of the characters. The display should be initialized before.
+   *
+   * To know which font are available, on Unix you can use xfontsel or xlsfonts
+   * utilities.
+   */
   void setFont(const std::string &font)
   {
     if (display->isInitialised())

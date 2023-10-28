@@ -1145,13 +1145,15 @@ JNIEXPORT jstring JNICALL Java_org_visp_%(module)s_%(j_cls)s_toString
 
         if ci.name != 'VpImgproc' and ci.name != self.Module or ci.base:
             # finalize()
-            ci.j_code.write(
-                """
-    @Override
-    protected void finalize() throws Throwable {
-        delete(nativeObj);
-    }
-                """)
+            # Note 2023.10.27 warning: [removal] finalize() in Object has been deprecated and marked for removal
+            # Comment for now
+#            ci.j_code.write(
+#                """
+#    @Override
+#    protected void finalize() throws Throwable {
+#        delete(nativeObj);
+#    }
+#                """)
 
             ci.jn_code.write(
                 """

@@ -198,8 +198,6 @@ vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   cannyTh2 = menurbs.cannyTh2;
 }
 
-vpMeNurbs::~vpMeNurbs() { }
-
 void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
 {
   std::list<vpImagePoint> ptList;

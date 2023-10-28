@@ -73,13 +73,12 @@ class vpDisplayGTK::Impl
 public:
   Impl()
     : m_widget(NULL), m_background(NULL), m_gc(NULL), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
-      m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
-      m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL),
-      m_col(NULL)
-  {
-  }
+    m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
+    m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL),
+    m_col(NULL)
+  { }
 
-  ~Impl() {}
+  ~Impl() { }
 
   void init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &title)
   {
@@ -211,7 +210,8 @@ public:
     if (scale == 1) {
       /* Copie de l'image dans le pixmap fond */
       gdk_draw_gray_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, I.bitmap, width);
-    } else {
+    }
+    else {
       vpImage<unsigned char> sampled;
       I.subsample(scale, scale, sampled);
       gdk_draw_gray_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, sampled.bitmap, width);
@@ -227,7 +227,8 @@ public:
       /* Copie de l'image dans le pixmap fond */
       gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)I.bitmap,
                             4 * width);
-    } else {
+    }
+    else {
       vpImage<vpRGBa> sampled;
       I.subsample(scale, scale, sampled);
       gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE,
@@ -369,7 +370,8 @@ public:
 
     if (thickness == 1) {
       gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale));
-    } else {
+    }
+    else {
       gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
                          static_cast<gint>(thickness), static_cast<gint>(thickness));
     }
@@ -531,7 +533,8 @@ public:
       w = static_cast<unsigned int>(gdk_screen_get_width(screen_));
       h = static_cast<unsigned int>(gdk_screen_get_height(screen_));
       gtk_widget_destroy(widget_);
-    } else {
+    }
+    else {
       GdkScreen *screen_ = gdk_window_get_screen(m_widget->window);
       w = static_cast<unsigned int>(gdk_screen_get_width(screen_));
       h = static_cast<unsigned int>(gdk_screen_get_height(screen_));
@@ -714,7 +717,7 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK() : vpDisplay(), m_impl(new Impl()) {}
+vpDisplayGTK::vpDisplayGTK() : vpDisplay(), m_impl(new Impl()) { }
 
 /*!
   Destructor.
@@ -837,7 +840,8 @@ void vpDisplayGTK::setTitle(const std::string &title)
     if (!title.empty()) {
       m_impl->setTitle(title);
     }
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -855,7 +859,8 @@ void vpDisplayGTK::setWindowPosition(int win_x, int win_y)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->setWindowPosition(win_x, win_y);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -875,7 +880,8 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImage(I, m_scale, static_cast<gint>(m_width), static_cast<gint>(m_height));
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -910,7 +916,8 @@ void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImag
 
     m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
                             static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -930,7 +937,8 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImage(I, m_scale, static_cast<gint>(m_width), static_cast<gint>(m_height));
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -964,7 +972,8 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint 
 
     m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
                             static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -998,7 +1007,8 @@ void vpDisplayGTK::flushDisplay()
 {
   if (m_displayHasBeenInitialized) {
     m_impl->flushDisplay();
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1012,7 +1022,8 @@ void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigned i
 {
   if (m_displayHasBeenInitialized) {
     m_impl->flushDisplay();
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1061,7 +1072,8 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2
 
       displayLine(ip1, ip2, color, thickness);
     }
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1081,7 +1093,8 @@ void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text, c
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayCharString(ip, text, color, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1102,7 +1115,8 @@ void vpDisplayGTK::displayCircle(const vpImagePoint &center, unsigned int radius
       thickness = 0;
 
     m_impl->displayCircle(center, radius, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1153,7 +1167,8 @@ void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &i
       thickness = 0;
 
     m_impl->displayDotLine(ip1, ip2, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1172,7 +1187,8 @@ void vpDisplayGTK::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
       thickness = 0;
 
     m_impl->displayLine(ip1, ip2, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1187,7 +1203,8 @@ void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color, un
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayPoint(ip, color, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1213,7 +1230,8 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, unsigned int w,
       thickness = 0;
 
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1241,7 +1259,8 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, const vpImagePo
     unsigned int h = static_cast<unsigned int>(vpMath::round(bottomRight.get_v() - topLeft.get_v()));
 
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1268,7 +1287,8 @@ void vpDisplayGTK::displayRectangle(const vpRect &rectangle, const vpColor &colo
     unsigned int w = static_cast<unsigned int>(vpMath::round(rectangle.getWidth()));
     unsigned int h = static_cast<unsigned int>(vpMath::round(rectangle.getRight()));
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1296,7 +1316,8 @@ bool vpDisplayGTK::getClick(bool blocking)
     vpImagePoint ip;
     vpMouseButton::vpMouseButtonType button;
     ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1325,7 +1346,8 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
   if (m_displayHasBeenInitialized) {
     vpMouseButton::vpMouseButtonType button;
     ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1356,7 +1378,8 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1391,7 +1414,8 @@ bool vpDisplayGTK::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_RELEASE);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1406,7 +1430,8 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
   // should certainly be optimized.
   if (m_displayHasBeenInitialized) {
     m_impl->getImage(I, static_cast<gint>(m_width), static_cast<gint>(m_height));
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
@@ -1445,7 +1470,8 @@ bool vpDisplayGTK::getKeyboardEvent(bool blocking)
   if (m_displayHasBeenInitialized) {
     std::string key;
     ret = m_impl->getKeyboardEvent(key, blocking);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1476,7 +1502,8 @@ bool vpDisplayGTK::getKeyboardEvent(std::string &key, bool blocking)
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getKeyboardEvent(key, blocking);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1500,7 +1527,8 @@ bool vpDisplayGTK::getPointerMotionEvent(vpImagePoint &ip)
 
   if (m_displayHasBeenInitialized) {
     ret = m_impl->getPointerMotionEvent(ip, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
   return ret;
@@ -1520,7 +1548,8 @@ bool vpDisplayGTK::getPointerPosition(vpImagePoint &ip)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->getPointerPosition(ip, m_scale);
-  } else {
+  }
+  else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 
@@ -1561,5 +1590,5 @@ unsigned int vpDisplayGTK::getScreenHeight()
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDisplayGTK.cpp.o) has no
 // symbols
-void dummy_vpDisplayGTK(){};
+void dummy_vpDisplayGTK() { };
 #endif
