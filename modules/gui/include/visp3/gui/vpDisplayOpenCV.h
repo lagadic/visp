@@ -170,9 +170,9 @@ private:
   //  vpDisplayOpenCV(const vpDisplayOpenCV &)
   //    : vpDisplay(),
   //    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  //      background(NULL), col(NULL), cvcolor(), font(NULL),
+  //      background(nullptr), col(nullptr), cvcolor(), font(nullptr),
   //    #else
-  //      background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
+  //      background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
   //      fontScale(0.8f),
   //    #endif
   //      fontHeight(10), x_move(0), y_move(0) , move(false),

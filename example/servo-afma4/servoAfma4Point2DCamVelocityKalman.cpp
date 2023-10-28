@@ -154,7 +154,7 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptat
       lambda.initFromConstant(atof(optarg));
       break;
     case 'h':
-      usage(argv[0], NULL, kalman);
+      usage(argv[0], nullptr, kalman);
       return false;
       break;
 
@@ -167,7 +167,7 @@ bool getOptions(int argc, const char **argv, KalmanType &kalman, bool &doAdaptat
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, kalman);
+    usage(argv[0], nullptr, kalman);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;

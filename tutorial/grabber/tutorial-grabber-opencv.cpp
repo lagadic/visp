@@ -139,7 +139,7 @@ int main(int argc, const char *argv[])
 #endif
     vpImageConvert::convert(frame, I);
 
-    vpDisplayOpenCV *d = NULL;
+    vpDisplayOpenCV *d = nullptr;
     if (opt_display) {
       d = new vpDisplayOpenCV(I);
     }

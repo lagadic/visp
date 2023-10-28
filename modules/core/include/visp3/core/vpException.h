@@ -119,7 +119,7 @@ public:
 
   /*!
    * Send a pointer on the array of  \e char related to the error string.
-   * Cannot be  \e NULL.
+   * Cannot be  \e nullptr.
    */
   const char *getMessage() const;
 

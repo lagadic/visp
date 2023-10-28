@@ -120,7 +120,7 @@ int main(int argc, char **argv)
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
-  QPlot *plot = NULL;
+  QPlot *plot = nullptr;
   if (opt_display)
     plot = new QPlot(1, total, { "time to solveQP", "warm start" });
 #endif

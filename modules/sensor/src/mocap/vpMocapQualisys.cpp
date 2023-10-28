@@ -117,7 +117,7 @@ public:
     } else {
       for (auto i = 0; i < 6; i++) {
         if (!m_streamFrames) {
-          if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, NULL, CRTProtocol::cComponent6d)) {
+          if (!m_rtProtocol.StreamFrames(CRTProtocol::RateAllFrames, 0, m_udpPort, nullptr, CRTProtocol::cComponent6d)) {
             if (m_verbose) {
               std::cout << "Streaming frames error: " << m_rtProtocol.GetErrorString() << std::endl;
             }

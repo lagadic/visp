@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
     rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
                &pointcloud_colvector, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-               reinterpret_cast<unsigned char *>(infrared2.bitmap), NULL);
+               reinterpret_cast<unsigned char *>(infrared2.bitmap), nullptr);
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
     double t = vpTime::measureTimeMs();
 
     rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-               NULL, reinterpret_cast<unsigned char *>(infrared1.bitmap));
+               nullptr, reinterpret_cast<unsigned char *>(infrared1.bitmap));
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 

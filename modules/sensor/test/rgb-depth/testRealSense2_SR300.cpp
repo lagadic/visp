@@ -449,18 +449,18 @@ int main(int argc, char *argv[])
       std::lock_guard<std::mutex> lock(mutex);
 
       if (pcl_color) {
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud_color,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, nullptr, pointcloud_color,
                    (unsigned char *)infrared.bitmap);
       }
       else {
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL, pointcloud,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, nullptr, pointcloud,
                    (unsigned char *)infrared.bitmap);
       }
 
       update_pointcloud = true;
     }
 #else
-    rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, NULL,
+    rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth_raw.bitmap, nullptr,
                (unsigned char *)infrared.bitmap);
 #endif
 
@@ -559,7 +559,7 @@ int main(int argc, char *argv[])
   t_begin = vpTime::measureTimeMs();
   while (vpTime::measureTimeMs() - t_begin < 10000) {
     double t = vpTime::measureTimeMs();
-    rs.acquire(NULL, NULL, &pointcloud_colvector, NULL, NULL);
+    rs.acquire(nullptr, nullptr, &pointcloud_colvector, nullptr, nullptr);
 
     {
       std::lock_guard<std::mutex> lock(mutex);

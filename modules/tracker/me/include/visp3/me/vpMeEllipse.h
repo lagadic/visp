@@ -257,12 +257,12 @@ public:
    * \param I : Image in which the ellipse appears.
    * \param param : Vector with the five parameters \f$(u_c, v_c, n_{20}, n_{11}, n_{02})\f$ defining the ellipse
    * (expressed in pixels).
-   * \param pt1 : Image point defining the first extremity of the arc or NULL to track a complete ellipse.
-   * \param pt2 : Image point defining the second extremity of the arc or NULL to track a complete ellipse.
+   * \param pt1 : Image point defining the first extremity of the arc or nullptr to track a complete ellipse.
+   * \param pt2 : Image point defining the second extremity of the arc or nullptr to track a complete ellipse.
    * \param trackCircle : When true enable tracking of a circle, when false the tracking of an ellipse.
    */
-  void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL,
-                    const vpImagePoint *pt2 = NULL, bool trackCircle = false);
+  void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = nullptr,
+                    const vpImagePoint *pt2 = nullptr, bool trackCircle = false);
 
   /*!
    * Print the parameters \f$ K = {K_0, ..., K_5} \f$, the coordinates of the

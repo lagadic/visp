@@ -808,14 +808,14 @@ protected:
 
   virtual void computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error, const vpColVector &m_error_prev,
                                                  const vpHomogeneousMatrix &cMoPrev, double &mu,
-                                                 bool &reStartFromLastIncrement, vpColVector *const w = NULL,
-                                                 const vpColVector *const m_w_prev = NULL);
+                                                 bool &reStartFromLastIncrement, vpColVector *const w = nullptr,
+                                                 const vpColVector *const m_w_prev = nullptr);
   virtual void computeVVSInit() = 0;
   virtual void computeVVSInteractionMatrixAndResidu() = 0;
   virtual void computeVVSPoseEstimation(const bool isoJoIdentity, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
                                         vpColVector &R, const vpColVector &error, vpColVector &error_prev,
-                                        vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w = NULL,
-                                        vpColVector *const m_w_prev = NULL);
+                                        vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w = nullptr,
+                                        vpColVector *const m_w_prev = nullptr);
   virtual void computeVVSWeights(vpRobust &robust, const vpColVector &error, vpColVector &w);
 
 #ifdef VISP_HAVE_COIN3D

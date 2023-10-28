@@ -297,7 +297,7 @@ int main(int argc, const char *argv[])
     std::cout << "Config file       : " << (opt_config_file.empty() ? "empty" : opt_config_file) << std::endl;
     std::cout << "Image size        : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpDisplay *d = NULL;
+    vpDisplay *d = nullptr;
     if (opt_display) {
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << "No image viewer is available..." << std::endl;

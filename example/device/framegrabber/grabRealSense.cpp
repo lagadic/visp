@@ -180,10 +180,10 @@ int main()
       }
       else {
 #ifdef VISP_HAVE_PCL
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud,
                    (unsigned char *)infrared_display.bitmap);
 #else
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr,
                    (unsigned char *)infrared_display.bitmap);
 #endif
       }

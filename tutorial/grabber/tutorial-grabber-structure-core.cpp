@@ -158,7 +158,7 @@ int main(int argc, const char *argv[])
       I_depth = vpImage<vpRGBa>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
       I_depth_raw = vpImage<float>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
 
-      vpDisplay *display_visible = NULL, *display_depth = NULL;
+      vpDisplay *display_visible = nullptr, *display_depth = nullptr;
       if (opt_display) {
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
         std::cout << "No image viewer is available..." << std::endl;
@@ -200,7 +200,7 @@ int main(int argc, const char *argv[])
         vpDisplay::display(I_depth);
 
         quit = image_queue_visible.record(I_color);
-        quit |= image_queue_depth.record(I_depth, NULL, image_queue_visible.getRecordingTrigger(), true);
+        quit |= image_queue_depth.record(I_depth, nullptr, image_queue_visible.getRecordingTrigger(), true);
 
         std::stringstream ss;
         ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";

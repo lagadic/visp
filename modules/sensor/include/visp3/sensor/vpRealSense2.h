@@ -146,7 +146,7 @@
 
    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-   rs.acquire(NULL, NULL, NULL, pointcloud);
+   rs.acquire(nullptr, nullptr, nullptr, pointcloud);
 
    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
@@ -155,7 +155,7 @@
    viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
    while (true) {
-     rs.acquire(NULL, NULL, NULL, pointcloud);
+     rs.acquire(nullptr, nullptr, nullptr, pointcloud);
 
      static bool update = false;
      if (!update) {
@@ -202,7 +202,7 @@
  #endif
 
    while (true) {
-     rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
+     rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
      vpDisplay::display(Ic);
      vpDisplay::display(Ii);
      vpDisplay::flush(Ic);
@@ -243,7 +243,7 @@
 
    rs2::align align_to(RS2_STREAM_COLOR);
    while (true) {
-     rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, &align_to);
+     rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, &align_to);
      vpImageConvert::createDepthHistogram(Id_raw, Id);
      vpDisplay::display(Ic);
      vpDisplay::display(Id);
@@ -290,39 +290,39 @@ public:
   vpRealSense2();
   virtual ~vpRealSense2();
 
-  void acquire(vpImage<unsigned char> &grey, double *ts = NULL);
-  void acquire(vpImage<vpRGBa> &color, double *ts = NULL);
+  void acquire(vpImage<unsigned char> &grey, double *ts = nullptr);
+  void acquire(vpImage<vpRGBa> &color, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
-               rs2::align *const align_to = NULL, double *ts = NULL);
+               rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
-               unsigned char *const data_infrared2, rs2::align *const align_to, double *ts = NULL);
+               unsigned char *const data_infrared2, rs2::align *const align_to, double *ts = nullptr);
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = nullptr);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
-               vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence = NULL, double *ts = NULL);
+               vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence = nullptr, double *ts = nullptr);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
                vpColVector *odo_vel, vpColVector *odo_acc, vpColVector *imu_vel, vpColVector *imu_acc,
-               unsigned int *tracker_confidence = NULL, double *ts = NULL);
+               unsigned int *tracker_confidence = nullptr, double *ts = nullptr);
 #endif
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
                unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to,
-               double *ts = NULL);
+               double *ts = nullptr);
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, rs2::align *const align_to = nullptr, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
                unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to,
-               double *ts = NULL);
+               double *ts = nullptr);
 #endif
 
   void close();
@@ -352,7 +352,7 @@ public:
   inline float getMaxZ() const { return m_max_Z; }
 
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = NULL);
+  unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = nullptr);
 #endif
 
   //! Get a reference to `rs2::pipeline`.

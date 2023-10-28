@@ -201,12 +201,12 @@ int main()
 #ifdef VISP_HAVE_PCL
       {
         std::lock_guard<std::mutex> lock(mutex);
-        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+        rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud_color,
                    (unsigned char *)infrared.bitmap);
         update_pointcloud = true;
       }
 #else
-      rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, NULL, (unsigned char *)infrared.bitmap);
+      rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, (unsigned char *)infrared.bitmap);
 #endif
 
       vpImageConvert::createDepthHistogram(depth, depth_display);

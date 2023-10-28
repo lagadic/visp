@@ -107,7 +107,7 @@ void vpRobotFlirPtu::init()
   Default constructor.
  */
 vpRobotFlirPtu::vpRobotFlirPtu()
-  : m_eMc(), m_cer(NULL), m_status(0), m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
+  : m_eMc(), m_cer(nullptr), m_status(0), m_pos_max_tics(2), m_pos_min_tics(2), m_vel_max_tics(2), m_res(2),
     m_connected(false), m_njoints(2), m_positioning_velocity(20.)
 {
   signal(SIGINT, vpRobotFlirPtu::emergencyStop);
@@ -499,8 +499,8 @@ void vpRobotFlirPtu::setPosition(const vpRobot::vpControlFrameType frame, const 
                       vpMath::deg(q[1])));
   }
 
-  if (cpi_block_until(m_cer, NULL, NULL, OP_PAN_CURRENT_POS_GET, pos_tics[0]) ||
-      cpi_block_until(m_cer, NULL, NULL, OP_TILT_CURRENT_POS_GET, pos_tics[1])) {
+  if (cpi_block_until(m_cer, nullptr, nullptr, OP_PAN_CURRENT_POS_GET, pos_tics[0]) ||
+      cpi_block_until(m_cer, nullptr, nullptr, OP_TILT_CURRENT_POS_GET, pos_tics[1])) {
     disconnect();
     throw(vpException(vpException::fatalError, "FLIR PTU failed to wait until position %d, %d reached (deg)",
                       vpMath::deg(q[0]), vpMath::deg(q[1])));
@@ -538,7 +538,7 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
     throw(vpException(vpException::fatalError, "Port name is required to connect to FLIR PTU."));
   }
 
-  if ((m_cer = (struct cerial *)malloc(sizeof(struct cerial))) == NULL) {
+  if ((m_cer = (struct cerial *)malloc(sizeof(struct cerial))) == nullptr) {
     disconnect();
     throw(vpException(vpException::fatalError, "Out of memory during FLIR PTU connection."));
   }
@@ -559,7 +559,7 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
   cerioctl(m_cer, CERIAL_IOCTL_BAUDRATE_SET, &baudrate);
 
   // Flush any characters already buffered
-  cerioctl(m_cer, CERIAL_IOCTL_FLUSH_INPUT, NULL);
+  cerioctl(m_cer, CERIAL_IOCTL_FLUSH_INPUT, nullptr);
 
   // Set two second timeout */
   int timeout = 2000;
@@ -596,10 +596,10 @@ void vpRobotFlirPtu::connect(const std::string &portname, int baudrate)
  */
 void vpRobotFlirPtu::disconnect()
 {
-  if (m_cer != NULL) {
+  if (m_cer != nullptr) {
     cerclose(m_cer);
     free(m_cer);
-    m_cer = NULL;
+    m_cer = nullptr;
     m_connected = false;
   }
 }
@@ -832,7 +832,7 @@ void vpRobotFlirPtu::reset()
     return;
   }
 
-  if (cpi_ptcmd(m_cer, &m_status, OP_RESET, NULL)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_RESET, nullptr)) {
     throw(vpException(vpException::fatalError, "Unable to reset PTU."));
   }
 }
@@ -850,7 +850,7 @@ void vpRobotFlirPtu::stopMotion()
     return;
   }
 
-  if (cpi_ptcmd(m_cer, &m_status, OP_HALT, NULL)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_HALT, nullptr)) {
     throw(vpException(vpException::fatalError, "Unable to stop PTU."));
   }
 }
@@ -868,7 +868,7 @@ std::string vpRobotFlirPtu::getNetworkIP()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_IP_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network IP."));
   }
 
@@ -888,7 +888,7 @@ std::string vpRobotFlirPtu::getNetworkGateway()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_GATEWAY_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network Gateway."));
   }
 
@@ -908,7 +908,7 @@ std::string vpRobotFlirPtu::getNetworkHostName()
   }
 
   char str[64];
-  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, (int)sizeof(str), NULL, &str)) {
+  if (cpi_ptcmd(m_cer, &m_status, OP_NET_HOSTNAME_GET, (int)sizeof(str), nullptr, &str)) {
     throw(vpException(vpException::fatalError, "Unable to get Network hostname."));
   }
 

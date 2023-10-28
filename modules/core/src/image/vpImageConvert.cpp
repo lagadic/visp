@@ -3918,10 +3918,10 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
 /*!
   Split an image from vpRGBa format to monochrome channels.
   \param[in] src : source image.
-  \param[out] pR : red channel. Set as NULL if not needed.
-  \param[out] pG : green channel. Set as NULL if not needed.
-  \param[out] pB : blue channel. Set as NULL if not needed.
-  \param[out] pa : alpha channel. Set as NULL if not needed.
+  \param[out] pR : red channel. Set as nullptr if not needed.
+  \param[out] pG : green channel. Set as nullptr if not needed.
+  \param[out] pB : blue channel. Set as nullptr if not needed.
+  \param[out] pa : alpha channel. Set as nullptr if not needed.
 
   Output channels are resized if needed.
 
@@ -3946,7 +3946,7 @@ int main()
 
   // Split Ic color image
   // R and B will be resized in split function if needed
-  vpImageConvert::split(Ic, &R, NULL, &B, NULL);
+  vpImageConvert::split(Ic, &R, nullptr, &B, nullptr);
 
   // Save the the R Channel.
   vpImageIo::write(R, "RChannel.pgm");
@@ -4009,22 +4009,22 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
 {
   // Check if the input channels have all the same dimensions
   std::map<unsigned int, unsigned int> mapOfWidths, mapOfHeights;
-  if (R != NULL) {
+  if (R != nullptr) {
     mapOfWidths[R->getWidth()]++;
     mapOfHeights[R->getHeight()]++;
   }
 
-  if (G != NULL) {
+  if (G != nullptr) {
     mapOfWidths[G->getWidth()]++;
     mapOfHeights[G->getHeight()]++;
   }
 
-  if (B != NULL) {
+  if (B != nullptr) {
     mapOfWidths[B->getWidth()]++;
     mapOfHeights[B->getHeight()]++;
   }
 
-  if (a != NULL) {
+  if (a != nullptr) {
     mapOfWidths[a->getWidth()]++;
     mapOfHeights[a->getHeight()]++;
   }
@@ -4035,26 +4035,26 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
 
     RGBa.resize(height, width);
 
-    if (R != NULL && G != NULL && B != NULL && a != NULL) {
+    if (R != nullptr && G != nullptr && B != nullptr && a != nullptr) {
       SimdInterleaveBgra(R->bitmap, width, G->bitmap, width, B->bitmap, width, a->bitmap, width, width, height,
                          reinterpret_cast<uint8_t *>(RGBa.bitmap), width * sizeof(vpRGBa));
     }
     else {
       unsigned int size = width * height;
       for (unsigned int i = 0; i < size; i++) {
-        if (R != NULL) {
+        if (R != nullptr) {
           RGBa.bitmap[i].R = R->bitmap[i];
         }
 
-        if (G != NULL) {
+        if (G != nullptr) {
           RGBa.bitmap[i].G = G->bitmap[i];
         }
 
-        if (B != NULL) {
+        if (B != nullptr) {
           RGBa.bitmap[i].B = B->bitmap[i];
         }
 
-        if (a != NULL) {
+        if (a != nullptr) {
           RGBa.bitmap[i].A = a->bitmap[i];
         }
       }

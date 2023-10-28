@@ -813,7 +813,7 @@ bool vpRobotUniversalRobots::savePosFile(const std::string &filename, const vpCo
 
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
 
   fprintf(fd, "#UR - Joint position file\n"

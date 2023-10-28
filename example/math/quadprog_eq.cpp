@@ -123,7 +123,7 @@ int main(int argc, char **argv)
   const double eps = 1e-2;
 
 #ifdef VISP_HAVE_DISPLAY
-  QPlot *plot = NULL;
+  QPlot *plot = nullptr;
   if (opt_display)
     plot = new QPlot(2, total,
                      { "only equalities", "pre-solving", "equalities + inequalities", "pre-solving / warm start" });

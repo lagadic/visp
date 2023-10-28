@@ -288,7 +288,7 @@ public:
    *
    * \return  \f$\bf H^{-1}\f$
    */
-  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = nullptr) const;
 
   /*!
    * Invert the homography.

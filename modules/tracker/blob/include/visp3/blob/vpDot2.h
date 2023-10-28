@@ -361,7 +361,7 @@ public:
   void track(const vpImage<unsigned char> &I, vpImagePoint &cog, bool canMakeTheWindowGrow = true);
 
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
-                              std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar = NULL);
+                              std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar = nullptr);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:

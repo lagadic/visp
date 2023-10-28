@@ -116,7 +116,7 @@ public:
 
   /*! Copy constructor. */
   vpSickLDMRS(const vpSickLDMRS &sick)
-    : vpLaserScanner(sick), socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true),
+    : vpLaserScanner(sick), socket_fd(-1), body(nullptr), vAngle(), time_offset(0), isFirstMeasure(true),
     maxlen_body(104000)
   {
     *this = sick;

@@ -485,7 +485,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         vpKeyPoint::compute3D(it2->first, roisPt[cpt1], cam, cMo, pt);
         points.push_back(pt);
 
-        if (descriptors != NULL) {
+        if (descriptors != nullptr) {
           desc.push_back(descriptors->row((int)it2->second));
         }
 
@@ -498,7 +498,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
     }
   }
 
-  if (descriptors != NULL) {
+  if (descriptors != nullptr) {
     desc.copyTo(*descriptors);
   }
 }
@@ -531,7 +531,7 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
         vpKeyPoint::compute3D(it2->first, roisPt[cpt1], cam, cMo, pt);
         points.push_back(pt);
 
-        if (descriptors != NULL) {
+        if (descriptors != nullptr) {
           desc.push_back(descriptors->row((int)it2->second));
         }
 
@@ -590,7 +590,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
             pt.setWorldCoordinates(point_obj);
             points.push_back(cv::Point3f((float)pt.get_oX(), (float)pt.get_oY(), (float)pt.get_oZ()));
 
-            if (descriptors != NULL) {
+            if (descriptors != nullptr) {
               desc.push_back(descriptors->row((int)cpt_keypoint));
             }
 
@@ -601,7 +601,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
     }
   }
 
-  if (descriptors != NULL) {
+  if (descriptors != nullptr) {
     desc.copyTo(*descriptors);
   }
 }
@@ -650,7 +650,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
             pt.setWorldCoordinates(point_obj);
             points.push_back(pt);
 
-            if (descriptors != NULL) {
+            if (descriptors != nullptr) {
               desc.push_back(descriptors->row((int)cpt_keypoint));
             }
 
@@ -661,7 +661,7 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
     }
   }
 
-  if (descriptors != NULL) {
+  if (descriptors != nullptr) {
     desc.copyTo(*descriptors);
   }
 }
@@ -738,7 +738,7 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
   vpThetaUVector thetaUVector(rvec.at<double>(0), rvec.at<double>(1), rvec.at<double>(2));
   cMo = vpHomogeneousMatrix(translationVec, thetaUVector);
 
-  if (func != NULL) {
+  if (func != nullptr) {
     // Check the final pose returned by solvePnPRansac to discard
     // solutions which do not respect the pose criterion.
     if (!func(cMo)) {
@@ -809,7 +809,7 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
     return false;
   }
 
-  //  if(func != NULL && isRansacPoseEstimationOk) {
+  //  if(func != nullptr && isRansacPoseEstimationOk) {
   //    //Check the final pose returned by the Ransac VVS pose estimation as
   //    in rare some cases
   //    //we can converge toward a final cMo that does not respect the pose
@@ -1088,7 +1088,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
                                  unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(nullptr));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1115,7 +1115,7 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpR
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(nullptr));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1142,7 +1142,7 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &I
                                  unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(nullptr));
   vpColor currentColor = color;
 
   std::vector<vpImagePoint> queryImageKeyPoints;
@@ -1440,7 +1440,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
     if (first) {
       first = false;
       // Check if we have 3D object points information
-      if (trainPoints != NULL && !trainPoints->empty()) {
+      if (trainPoints != nullptr && !trainPoints->empty()) {
         // Copy the input list of keypoints, keypoints that cannot be computed
         // are removed in the function compute
         std::vector<cv::KeyPoint> keyPoints_tmp = keyPoints;
@@ -1499,7 +1499,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
         cv::Mat descriptors_tmp;
         for (std::vector<cv::KeyPoint>::const_iterator it = keyPoints.begin(); it != keyPoints.end(); ++it) {
           if (mapOfKeypointHashes.find(myKeypointHash(*it)) != mapOfKeypointHashes.end()) {
-            if (trainPoints != NULL && !trainPoints->empty()) {
+            if (trainPoints != nullptr && !trainPoints->empty()) {
               trainPoints_tmp.push_back((*trainPoints)[mapOfKeypointHashes[myKeypointHash(*it)]]);
             }
 
@@ -1509,7 +1509,7 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
           }
         }
 
-        if (trainPoints != NULL) {
+        if (trainPoints != nullptr) {
           // Copy trainPoints_tmp to m_trainPoints
           *trainPoints = trainPoints_tmp;
         }
@@ -1733,7 +1733,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000)
   m_detectors[detectorName] = cv::FeatureDetector::create(detectorName);
 
-  if (m_detectors[detectorName] == NULL) {
+  if (m_detectors[detectorName] == nullptr) {
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the detector: " << detectorName
       << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -2249,7 +2249,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
   }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
-  if (m_matcher != NULL && !m_useKnn && matcherName == "BruteForce") {
+  if (m_matcher != nullptr && !m_useKnn && matcherName == "BruteForce") {
     m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
   }
 #endif
@@ -3268,7 +3268,7 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
                                      std::vector<vpImagePoint> *imPts1, std::vector<vpImagePoint> *imPts2,
                                      double *meanDescriptorDistance, double *detectionScore, const vpRect &rectangle)
 {
-  if (imPts1 != NULL && imPts2 != NULL) {
+  if (imPts1 != nullptr && imPts2 != nullptr) {
     imPts1->clear();
     imPts2->clear();
   }
@@ -3283,10 +3283,10 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
   meanDescriptorDistanceTmp /= (double)m_filteredMatches.size();
   double score = (double)m_filteredMatches.size() / meanDescriptorDistanceTmp;
 
-  if (meanDescriptorDistance != NULL) {
+  if (meanDescriptorDistance != nullptr) {
     *meanDescriptorDistance = meanDescriptorDistanceTmp;
   }
-  if (detectionScore != NULL) {
+  if (detectionScore != nullptr) {
     *detectionScore = score;
   }
 
@@ -3323,11 +3323,11 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
 
         if (reprojectionError < 6.0) {
           inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
-          if (imPts1 != NULL) {
+          if (imPts1 != nullptr) {
             imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
           }
 
-          if (imPts2 != NULL) {
+          if (imPts2 != nullptr) {
             imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
           }
         }
@@ -3341,11 +3341,11 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
         if (fundamentalInliers.at<uchar>((int)i, 0)) {
           inliers.push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
 
-          if (imPts1 != NULL) {
+          if (imPts1 != nullptr) {
             imPts1->push_back(vpImagePoint((double)points1[i].y, (double)points1[i].x));
           }
 
-          if (imPts2 != NULL) {
+          if (imPts2 != nullptr) {
             imPts2->push_back(vpImagePoint((double)points2[i].y, (double)points2[i].x));
           }
         }
@@ -3449,7 +3449,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
       affineSkew(t, phi, timg, mask, Ai);
 
 
-      if (listOfAffineI != NULL) {
+      if (listOfAffineI != nullptr) {
         cv::Mat img_disp;
         bitwise_and(mask, timg, img_disp);
         vpImage<unsigned char> tI;
@@ -3502,7 +3502,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
   listOfKeypoints.resize(listOfAffineParams.size());
   listOfDescriptors.resize(listOfAffineParams.size());
 
-  if (listOfAffineI != NULL) {
+  if (listOfAffineI != nullptr) {
     listOfAffineI->resize(listOfAffineParams.size());
   }
 
@@ -3518,7 +3518,7 @@ void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
 
     affineSkew(listOfAffineParams[(size_t)cpt].first, listOfAffineParams[(size_t)cpt].second, timg, mask, Ai);
 
-    if (listOfAffineI != NULL) {
+    if (listOfAffineI != nullptr) {
       cv::Mat img_disp;
       bitwise_and(mask, timg, img_disp);
       vpImage<unsigned char> tI;

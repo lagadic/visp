@@ -357,7 +357,7 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, double 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] u : output coordinate in pixels along image horizontal axis.
@@ -384,7 +384,7 @@ void vpMeterPixelConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] iP : output coordinates in pixels.

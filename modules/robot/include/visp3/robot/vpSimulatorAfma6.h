@@ -226,7 +226,7 @@ public:
                    double pos5, double pos6);
   void setPosition(const char *filename);
   void setPositioningVelocity(double vel) { positioningVelocity = vel; }
-  bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint = NULL, const double &errMax = 0.001);
+  bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint = nullptr, const double &errMax = 0.001);
   vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) override;
 
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;

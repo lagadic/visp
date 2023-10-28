@@ -85,7 +85,7 @@ int main()
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-    sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
+    sc.acquire((unsigned char *)I_visible.bitmap, nullptr, nullptr, pointcloud);
 
     pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
@@ -98,7 +98,7 @@ int main()
       double t = vpTime::measureTimeMs();
 
       // Acquire depth as point cloud.
-      sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
+      sc.acquire((unsigned char *)I_visible.bitmap, nullptr, nullptr, pointcloud);
       vpDisplay::display(I_visible);
       vpDisplay::displayText(I_visible, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
       vpDisplay::flush(I_visible);

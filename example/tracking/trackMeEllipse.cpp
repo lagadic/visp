@@ -263,7 +263,7 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
       verbose = true;
       break;
     case 'h':
-      usage(argv[0], NULL, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
+      usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
       return false;
       break;
 
@@ -276,7 +276,7 @@ bool getOptions(int argc, const char **argv, std::string &video_in_ipath, std::s
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
+    usage(argv[0], nullptr, video_in_ipath, video_in_ppath, video_in_first, video_in_last, video_in_step, me_range, me_sample_step, me_threshold);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -313,7 +313,7 @@ int main(int argc, const char **argv)
   // read on the disk
   vpImage<unsigned char> I;
 
-  vpDisplay *display = NULL;
+  vpDisplay *display = nullptr;
 
   try {
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -348,7 +348,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_me_range, opt_me_sample_step, opt_me_threshold);
+      usage(argv[0], nullptr, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_me_range, opt_me_sample_step, opt_me_threshold);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl
@@ -418,7 +418,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    vpVideoWriter *writer = NULL;
+    vpVideoWriter *writer = nullptr;
     vpImage<vpRGBa> O;
     if (!opt_save.empty()) {
       writer = new vpVideoWriter();

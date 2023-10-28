@@ -45,9 +45,9 @@ int main(int argc, char **argv)
 
     g.open(config);
     if (opt_camera_index == 1) // Left camera
-      g.acquire(&I, NULL, NULL);
+      g.acquire(&I, nullptr, nullptr);
     else
-      g.acquire(NULL, &I, NULL);
+      g.acquire(nullptr, &I, nullptr);
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     // Parameters of our camera
@@ -86,9 +86,9 @@ int main(int argc, char **argv)
       double t_begin = vpTime::measureTimeMs();
 
       if (opt_camera_index == 1)
-        g.acquire(&I, NULL, NULL);
+        g.acquire(&I, nullptr, nullptr);
       else
-        g.acquire(NULL, &I, NULL);
+        g.acquire(nullptr, &I, nullptr);
 
       vpDisplay::display(I);
       if (apply_cv) {

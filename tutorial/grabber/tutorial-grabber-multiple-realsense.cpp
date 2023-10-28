@@ -83,7 +83,7 @@ int main(int argc, char **argv)
     for (size_t i = 0; i < type_serial_nb.size(); i++) {
       if (cam_found[i]) {
         if (type_serial_nb[i].first == "T265") { // T265.
-          g[i].acquire(&I[i], NULL, NULL);
+          g[i].acquire(&I[i], nullptr, nullptr);
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
           if (!d[i].isInitialised()) {

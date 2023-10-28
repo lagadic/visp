@@ -212,7 +212,7 @@ rs.getIntrinsics(rs::stream::infrared).width);
 #endif
 
   while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
+    rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
     vpDisplay::display(Ic);
     vpDisplay::display(Ii);
     vpDisplay::flush(Ic);
@@ -254,7 +254,7 @@ int main() {
 #endif
 
   while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, NULL,
+    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, nullptr,
                rs::stream::color, rs::stream::depth_aligned_to_color);
     vpImageConvert::createDepthHistogram(Id_raw, Id);
     vpDisplay::display(Ic);
@@ -358,7 +358,7 @@ public:
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
-               unsigned char *const data_infrared2 = NULL, const rs::stream &stream_color = rs::stream::color,
+               unsigned char *const data_infrared2 = nullptr, const rs::stream &stream_color = rs::stream::color,
                const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
@@ -372,13 +372,13 @@ public:
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared, unsigned char *const data_infrared2 = NULL,
+               unsigned char *const data_infrared, unsigned char *const data_infrared2 = nullptr,
                const rs::stream &stream_color = rs::stream::color, const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared, unsigned char *const data_infrared2 = NULL,
+               unsigned char *const data_infrared, unsigned char *const data_infrared2 = nullptr,
                const rs::stream &stream_color = rs::stream::color, const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);

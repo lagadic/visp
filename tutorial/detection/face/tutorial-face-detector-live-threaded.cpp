@@ -77,9 +77,9 @@ vpThread::Return displayFunction(vpThread::Args args)
   bool face_available_ = false;
   vpRect face_bbox_;
 #if defined(VISP_HAVE_X11)
-  vpDisplayX *d_ = NULL;
+  vpDisplayX *d_ = nullptr;
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI *d_ = NULL;
+  vpDisplayGDI *d_ = nullptr;
 #endif
 
   do {

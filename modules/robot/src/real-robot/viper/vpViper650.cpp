@@ -46,7 +46,7 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/robot/vpViper650.h>
 
-static const char *opt_viper650[] = {"CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", NULL};
+static const char *opt_viper650[] = {"CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr};
 
 #ifdef VISP_HAVE_VIPER650_DATA
 const std::string vpViper650::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
@@ -438,7 +438,7 @@ void vpViper650::parseConfigFile(const std::string &filename)
     std::string key;
     ss >> key;
 
-    for (code = 0; NULL != opt_viper650[code]; ++code) {
+    for (code = 0; nullptr != opt_viper650[code]; ++code) {
       if (key.compare(opt_viper650[code]) == 0) {
         break;
       }

@@ -55,9 +55,9 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L);
   Basic constructor
 */
 vpMbtDistanceLine::vpMbtDistanceLine()
-  : name(), index(0), cam(), me(NULL), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
-  poly(), useScanLine(false), meline(), line(NULL), p1(NULL), p2(NULL), L(), error(), nbFeature(), nbFeatureTotal(0),
-  Reinit(false), hiddenface(NULL), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
+  : name(), index(0), cam(), me(nullptr), isTrackedLine(true), isTrackedLineWithVisibility(true), wmean(1), featureline(),
+  poly(), useScanLine(false), meline(), line(nullptr), p1(nullptr), p2(nullptr), L(), error(), nbFeature(), nbFeatureTotal(0),
+  Reinit(false), hiddenface(nullptr), Lindex_polygon(), Lindex_polygon_tracked(), isvisible(false)
 { }
 
 /*!
@@ -65,11 +65,11 @@ vpMbtDistanceLine::vpMbtDistanceLine()
 */
 vpMbtDistanceLine::~vpMbtDistanceLine()
 {
-  if (line != NULL)
+  if (line != nullptr)
     delete line;
 
   for (unsigned int i = 0; i < meline.size(); i++)
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
 
   meline.clear();
@@ -162,7 +162,7 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
 */
 void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand &rand_gen)
 {
-  if (line == NULL) {
+  if (line == nullptr) {
     line = new vpLine;
   }
 
@@ -281,7 +281,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   me = _me;
 
   for (unsigned int i = 0; i < meline.size(); i++)
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       //      nbFeature[i] = 0;
       meline[i]->reset();
       meline[i]->setMe(me);
@@ -298,14 +298,14 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false. \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
   }
 
@@ -434,7 +434,7 @@ void vpMbtDistanceLine::trackMovingEdge(const vpImage<unsigned char> &I)
     }
     catch (...) {
       for (size_t i = 0; i < meline.size(); i++) {
-        if (meline[i] != NULL)
+        if (meline[i] != nullptr)
           delete meline[i];
       }
 
@@ -477,7 +477,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
       if (linesLst.size() != meline.size() || linesLst.size() == 0) {
         for (size_t i = 0; i < meline.size(); i++) {
-          if (meline[i] != NULL)
+          if (meline[i] != nullptr)
             delete meline[i];
         }
 
@@ -494,7 +494,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         }
         catch (...) {
           for (size_t j = 0; j < meline.size(); j++) {
-            if (meline[j] != NULL)
+            if (meline[j] != nullptr)
               delete meline[j];
           }
 
@@ -556,7 +556,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         }
         catch (...) {
           for (size_t j = 0; j < meline.size(); j++) {
-            if (meline[j] != NULL)
+            if (meline[j] != nullptr)
               delete meline[j];
           }
 
@@ -570,7 +570,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
     }
     else {
       for (size_t i = 0; i < meline.size(); i++) {
-        if (meline[i] != NULL)
+        if (meline[i] != nullptr)
           delete meline[i];
       }
       nbFeature.clear();
@@ -589,14 +589,14 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                          const vpImage<bool> *mask)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL)
+    if (meline[i] != nullptr)
       delete meline[i];
   }
 
@@ -677,7 +677,7 @@ void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMat
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       meline[i]->display(I);
     }
   }
@@ -686,7 +686,7 @@ void vpMbtDistanceLine::displayMovingEdges(const vpImage<unsigned char> &I)
 void vpMbtDistanceLine::displayMovingEdges(const vpImage<vpRGBa> &I)
 {
   for (size_t i = 0; i < meline.size(); i++) {
-    if (meline[i] != NULL) {
+    if (meline[i] != nullptr) {
       meline[i]->display(I);
     }
   }
@@ -702,7 +702,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 
   for (size_t i = 0; i < meline.size(); i++) {
     vpMbtMeLine *me_l = meline[i];
-    if (me_l != NULL) {
+    if (me_l != nullptr) {
       for (std::list<vpMeSite>::const_iterator it = me_l->getMeList().begin(); it != me_l->getMeList().end(); ++it) {
         vpMeSite p_me_l = *it;
         std::vector<double> params = { 0, // ME

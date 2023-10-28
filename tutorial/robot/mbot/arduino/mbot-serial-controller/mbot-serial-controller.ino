@@ -13,7 +13,7 @@ MeEncoderOnBoard Encoder_1(SLOT1);
 MeEncoderOnBoard Encoder_2(SLOT2);
 
 // Me Auriga hardware serial port to dial with Raspberry
-MeSerial mySerial(PORT_5); 
+MeSerial mySerial(PORT_5);
 
 // LED ring
 MeRGBLed rgbled(0, 12);
@@ -85,7 +85,7 @@ String getValue(String string, String key, String separator)
     char * tmp;
     char * str;
     str = strtok_r((char*)string.c_str(), separator.c_str(), &tmp);
-    if(str!=NULL && strcmp(str,key.c_str())==0) {
+    if(str!=nullptr && strcmp(str,key.c_str())==0) {
       val = String(tmp);
     }
   }
@@ -95,15 +95,15 @@ String getValue(String string, String key, String separator)
 void setup() {
   // Serial connexion with Raspberry
   mySerial.begin(115200);   // Opens serial port at 115200 bps
-  
+
   // Serial connexion with console used for debug info
   Serial.begin(115200);     // Opens serial port at 9600 bps
-  
+
   // Led ring
   rgbled.setpin(44);
   rgbled.setColor(0, 0, 0, 0); // Turn all LED off
   rgbled.show();
-  
+
   // Motors - Set Pwm 8KHz
   TCCR1A = _BV(WGM10);
   TCCR1B = _BV(CS11) | _BV(WGM12);
@@ -183,7 +183,7 @@ void loop() {
         }
       }
       rgb[3] = atoi(string_rgb.c_str());
-      
+
       rgbled.setColor(rgb[0], rgb[1], rgb[2], rgb[3]);
       rgbled.show();
     }
@@ -201,6 +201,6 @@ void loop() {
   else {
     rgbled.setColor(6, 0, 1, 0);   // Left LED turn GREEN
     rgbled.setColor(12, 0, 1, 0);  // Right LED turn GREEN
-    rgbled.show();    
+    rgbled.show();
   }
 }

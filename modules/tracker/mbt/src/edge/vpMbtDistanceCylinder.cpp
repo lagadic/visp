@@ -60,9 +60,9 @@
   Basic constructor
 */
 vpMbtDistanceCylinder::vpMbtDistanceCylinder()
-  : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1), featureline1(), featureline2(), isTrackedCylinder(true),
-  meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL), radius(0), p1(NULL), p2(NULL), L(), error(),
-  nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL), hiddenface(NULL), index_polygon(-1),
+  : name(), index(0), cam(), me(nullptr), wmean1(1), wmean2(1), featureline1(), featureline2(), isTrackedCylinder(true),
+  meline1(nullptr), meline2(nullptr), cercle1(nullptr), cercle2(nullptr), radius(0), p1(nullptr), p2(nullptr), L(), error(),
+  nbFeature(0), nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(nullptr), hiddenface(nullptr), index_polygon(-1),
   isvisible(false)
 { }
 
@@ -71,19 +71,19 @@ vpMbtDistanceCylinder::vpMbtDistanceCylinder()
 */
 vpMbtDistanceCylinder::~vpMbtDistanceCylinder()
 {
-  if (p1 != NULL)
+  if (p1 != nullptr)
     delete p1;
-  if (p2 != NULL)
+  if (p2 != nullptr)
     delete p2;
-  if (c != NULL)
+  if (c != nullptr)
     delete c;
-  if (meline1 != NULL)
+  if (meline1 != nullptr)
     delete meline1;
-  if (meline2 != NULL)
+  if (meline2 != nullptr)
     delete meline2;
-  if (cercle1 != NULL)
+  if (cercle1 != nullptr)
     delete cercle1;
-  if (cercle2 != NULL)
+  if (cercle2 != nullptr)
     delete cercle2;
 }
 
@@ -157,10 +157,10 @@ void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, do
 void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
 {
   me = _me;
-  if (meline1 != NULL) {
+  if (meline1 != nullptr) {
     meline1->setMe(me);
   }
-  if (meline2 != NULL) {
+  if (meline2 != nullptr) {
     meline2->setMe(me);
   }
 }
@@ -173,7 +173,7 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false. \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
@@ -497,19 +497,19 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                              const vpImage<bool> *mask)
 {
-  if (meline1 != NULL)
+  if (meline1 != nullptr)
     delete meline1;
-  if (meline2 != NULL)
+  if (meline2 != nullptr)
     delete meline2;
 
-  meline1 = NULL;
-  meline2 = NULL;
+  meline1 = nullptr;
+  meline2 = nullptr;
 
   if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
@@ -575,7 +575,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
 {
   std::vector<std::vector<double> > features;
 
-  if (meline1 != NULL) {
+  if (meline1 != nullptr) {
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
@@ -586,7 +586,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     }
   }
 
-  if (meline2 != NULL) {
+  if (meline2 != nullptr) {
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
@@ -691,20 +691,20 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
 */
 void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  if (meline1 != NULL) {
+  if (meline1 != nullptr) {
     meline1->display(I);
   }
-  if (meline2 != NULL) {
+  if (meline2 != nullptr) {
     meline2->display(I);
   }
 }
 
 void vpMbtDistanceCylinder::displayMovingEdges(const vpImage<vpRGBa> &I)
 {
-  if (meline1 != NULL) {
+  if (meline1 != nullptr) {
     meline1->display(I);
   }
-  if (meline2 != NULL) {
+  if (meline2 != nullptr) {
     meline2->display(I);
   }
 }

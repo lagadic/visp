@@ -573,7 +573,7 @@ private:
   {
     FeatureType *desiredFeature;
     FirstParamType firstParam;
-    vpDuo() : desiredFeature(NULL), firstParam() { }
+    vpDuo() : desiredFeature(nullptr), firstParam() { }
   };
 
   template <typename FeatureType, typename FirstParamType, typename SecondParamType> struct vpTrio
@@ -582,7 +582,7 @@ private:
     FirstParamType firstParam;
     SecondParamType secondParam;
 
-    vpTrio() : desiredFeature(NULL), firstParam(), secondParam() { }
+    vpTrio() : desiredFeature(nullptr), firstParam(), secondParam() { }
   };
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 

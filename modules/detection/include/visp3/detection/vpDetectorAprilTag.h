@@ -254,8 +254,8 @@ public:
 
   bool detect(const vpImage<unsigned char> &I) override;
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
-              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = NULL,
-              std::vector<double> *projErrors = NULL, std::vector<double> *projErrors2 = NULL);
+              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = nullptr,
+              std::vector<double> *projErrors = nullptr, std::vector<double> *projErrors2 = nullptr);
 
   void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
                      const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness = 1) const;
@@ -268,7 +268,7 @@ public:
                    const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-               vpHomogeneousMatrix *cMo2 = NULL, double *projError = NULL, double *projError2 = NULL);
+               vpHomogeneousMatrix *cMo2 = nullptr, double *projError = nullptr, double *projError2 = nullptr);
 
   /*!
    * Return the pose estimation method.

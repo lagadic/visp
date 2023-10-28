@@ -61,15 +61,15 @@ struct vpHistogram_Param_t
   unsigned int *m_histogram;
   const vpImage<unsigned char> *m_I;
 
-  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) { }
+  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(nullptr), m_I(nullptr) { }
 
   vpHistogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
-    : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I)
+    : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(nullptr), m_I(I)
   { }
 
   ~vpHistogram_Param_t()
   {
-    if (m_histogram != NULL) {
+    if (m_histogram != nullptr) {
       delete[] m_histogram;
     }
   }
@@ -139,12 +139,12 @@ bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second)
 /*!
   Defaut constructor for a gray level histogram.
 */
-vpHistogram::vpHistogram() : histogram(NULL), size(256) { init(); }
+vpHistogram::vpHistogram() : histogram(nullptr), size(256) { init(); }
 
 /*!
   Copy constructor of a gray level histogram.
 */
-vpHistogram::vpHistogram(const vpHistogram &h) : histogram(NULL), size(256)
+vpHistogram::vpHistogram(const vpHistogram &h) : histogram(nullptr), size(256)
 {
   init(h.size);
   memcpy(histogram, h.histogram, size * sizeof(unsigned));
@@ -157,7 +157,7 @@ vpHistogram::vpHistogram(const vpHistogram &h) : histogram(NULL), size(256)
 
   \sa calculate()
 */
-vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(NULL), size(256)
+vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(nullptr), size(256)
 {
   init();
 
@@ -169,10 +169,10 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(NULL), siz
 */
 vpHistogram::~vpHistogram()
 {
-  if (histogram != NULL) {
+  if (histogram != nullptr) {
     //    vpTRACE("free: %p", &histogram);
     delete[] histogram;
-    histogram = NULL;
+    histogram = nullptr;
     size = 0;
   }
 }
@@ -205,9 +205,9 @@ vpHistogram &vpHistogram::operator=(const vpHistogram &h)
 */
 void vpHistogram::init(unsigned size_)
 {
-  if (histogram != NULL) {
+  if (histogram != nullptr) {
     delete[] histogram;
-    histogram = NULL;
+    histogram = nullptr;
   }
 
   this->size = size_;
@@ -229,9 +229,9 @@ void vpHistogram::init(unsigned size_)
 void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins, unsigned int nbThreads)
 {
   if (size != nbins) {
-    if (histogram != NULL) {
+    if (histogram != nullptr) {
       delete[] histogram;
-      histogram = NULL;
+      histogram = nullptr;
     }
 
     size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
@@ -371,7 +371,7 @@ void vpHistogram::equalize(const vpImage<unsigned char> &I, vpImage<unsigned cha
   for (unsigned int x = minValue; x <= maxValue; x++) {
     lut[x] = vpMath::round((cdf[x] - cdfMin) / (double)(nbPixels - cdfMin) * 255.0);
   }
-  
+
   Iout = I;
   Iout.performLut(lut);
 }
@@ -444,7 +444,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
 */
 void vpHistogram::smooth(unsigned int fsize)
 {
-  if (histogram == NULL) {
+  if (histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -484,7 +484,7 @@ void vpHistogram::smooth(unsigned int fsize)
 */
 unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 {
-  if (histogram == NULL) {
+  if (histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -757,7 +757,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
 */
 unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 {
-  if (histogram == NULL) {
+  if (histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -1085,7 +1085,7 @@ bool vpHistogram::write(const std::string &filename) { return (this->write(filen
 bool vpHistogram::write(const char *filename)
 {
   FILE *fd = fopen(filename, "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
   for (unsigned i = 0; i < size; i++)
     fprintf(fd, "%u %u\n", i, histogram[i]);

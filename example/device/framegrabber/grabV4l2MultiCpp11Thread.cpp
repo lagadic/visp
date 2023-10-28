@@ -108,7 +108,7 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
       saveVideo = true;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -121,7 +121,7 @@ bool getOptions(int argc, char **argv, unsigned int &deviceCount, bool &saveVide
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;
@@ -251,11 +251,11 @@ public:
   struct vpCancelled_t
   { };
 
-  vpShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(NULL), m_totalSize(0) { }
+  vpShareImage() : m_cancelled(false), m_cond(), m_mutex(), m_pImgData(nullptr), m_totalSize(0) { }
 
   virtual ~vpShareImage()
   {
-    if (m_pImgData != NULL) {
+    if (m_pImgData != nullptr) {
       delete[] m_pImgData;
     }
   }
@@ -302,10 +302,10 @@ public:
   {
     std::lock_guard<std::mutex> lock(m_mutex);
 
-    if (m_pImgData == NULL || m_totalSize != totalSize) {
+    if (m_pImgData == nullptr || m_totalSize != totalSize) {
       m_totalSize = totalSize;
 
-      if (m_pImgData != NULL) {
+      if (m_pImgData != nullptr) {
         delete[] m_pImgData;
       }
 
@@ -387,7 +387,7 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y, unsi
         vpImageConvert::convert(I_green_gaussian_double, I_green_gaussian);
         vpImageConvert::convert(I_blue_gaussian_double, I_blue_gaussian);
 
-        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian, &I_blue_gaussian, NULL, local_img);
+        vpImageConvert::merge(&I_red_gaussian, &I_green_gaussian, &I_blue_gaussian, nullptr, local_img);
       }
 
       t = vpTime::measureTimeMs() - t;

@@ -136,9 +136,9 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 
     other.rowNum = 0;
     other.colNum = 0;
-    other.rowPtrs = NULL;
+    other.rowPtrs = nullptr;
     other.dsize = 0;
-    other.data = NULL;
+    other.data = nullptr;
   }
 
   return *this;
@@ -586,9 +586,9 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 
   v.rowNum = 0;
   v.colNum = 0;
-  v.rowPtrs = NULL;
+  v.rowPtrs = nullptr;
   v.dsize = 0;
-  v.data = NULL;
+  v.data = nullptr;
 }
 
 /*!
@@ -885,7 +885,7 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
 */
 double vpRowVector::mean(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -902,7 +902,7 @@ double vpRowVector::mean(const vpRowVector &v)
 */
 double vpRowVector::median(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -916,7 +916,7 @@ double vpRowVector::median(const vpRowVector &v)
 */
 double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -1150,7 +1150,7 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
                       cncols, v.getCols()));
   resize(ncols);
-  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
   for (unsigned int i = 0; i < ncols; i++)
     (*this)[i] = v[i + c];

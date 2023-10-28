@@ -105,7 +105,7 @@ int main()
     while (true) {
       double t = vpTime::measureTimeMs();
 
-      rs.acquire(&I, NULL, NULL); // Acquire only left image
+      rs.acquire(&I, nullptr, nullptr); // Acquire only left image
 
       vpDisplay::display(I);
 

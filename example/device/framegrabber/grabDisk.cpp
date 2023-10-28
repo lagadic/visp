@@ -183,7 +183,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       nzero = (unsigned)atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
+      usage(argv[0], nullptr, ipath, basename, ext, first, last, step, nzero);
       return false;
       break;
 
@@ -196,7 +196,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
+    usage(argv[0], nullptr, ipath, basename, ext, first, last, step, nzero);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -265,7 +265,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero);
+      usage(argv[0], nullptr, ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl

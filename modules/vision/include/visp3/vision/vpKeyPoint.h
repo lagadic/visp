@@ -523,7 +523,7 @@ public:
                                            std::vector<cv::KeyPoint> &candidates,
                                            const std::vector<vpPolygon> &polygons,
                                            const std::vector<std::vector<vpPoint> > &roisPt,
-                                           std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
+                                           std::vector<cv::Point3f> &points, cv::Mat *descriptors = nullptr);
 
   /*!
    * Keep only keypoints located on faces and compute for those keypoints the 3D
@@ -545,7 +545,7 @@ public:
                                            std::vector<vpImagePoint> &candidates,
                                            const std::vector<vpPolygon> &polygons,
                                            const std::vector<std::vector<vpPoint> > &roisPt,
-                                           std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
+                                           std::vector<vpPoint> &points, cv::Mat *descriptors = nullptr);
 
   /*!
    * Keep only keypoints located on cylinders and compute the 3D coordinates in
@@ -566,7 +566,7 @@ public:
     compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                   std::vector<cv::KeyPoint> &candidates, const std::vector<vpCylinder> &cylinders,
                                   const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
-                                  std::vector<cv::Point3f> &points, cv::Mat *descriptors = NULL);
+                                  std::vector<cv::Point3f> &points, cv::Mat *descriptors = nullptr);
 
   /*!
    * Keep only vpImagePoint located on cylinders and compute the 3D coordinates
@@ -587,7 +587,7 @@ public:
     compute3DForPointsOnCylinders(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                   std::vector<vpImagePoint> &candidates, const std::vector<vpCylinder> &cylinders,
                                   const std::vector<std::vector<std::vector<vpImagePoint> > > &vectorOfCylinderRois,
-                                  std::vector<vpPoint> &points, cv::Mat *descriptors = NULL);
+                                  std::vector<vpPoint> &points, cv::Mat *descriptors = nullptr);
 
   /*!
    * Compute the pose using the correspondence between 2D points and 3D points
@@ -604,7 +604,7 @@ public:
    */
   bool computePose(const std::vector<cv::Point2f> &imagePoints, const std::vector<cv::Point3f> &objectPoints,
                    const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, std::vector<int> &inlierIndex,
-                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * Compute the pose using the correspondence between 2D points and 3D points
@@ -619,7 +619,7 @@ public:
    * \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
    */
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
-                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+                   double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * Compute the pose using the correspondence between 2D points and 3D points
@@ -636,7 +636,7 @@ public:
    */
   bool computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo, std::vector<vpPoint> &inliers,
                    std::vector<unsigned int> &inlierIndex, double &elapsedTime,
-                   bool (*func)(const vpHomogeneousMatrix &) = NULL);
+                   bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * Initialize the size of the matching image (case with a matching side by
@@ -758,7 +758,7 @@ public:
    */
   void detectExtractAffine(const vpImage<unsigned char> &I, std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
                            std::vector<cv::Mat> &listOfDescriptors,
-                           std::vector<vpImage<unsigned char> > *listOfAffineI = NULL);
+                           std::vector<vpImage<unsigned char> > *listOfAffineI = nullptr);
 
   /*!
    * Display the reference and the detected keypoints in the images.
@@ -879,7 +879,7 @@ public:
    * cannot be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               std::vector<cv::Point3f> *trainPoints = NULL);
+               std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Extract the descriptors for each keypoints of the list.
@@ -892,7 +892,7 @@ public:
    * cannot be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               std::vector<cv::Point3f> *trainPoints = NULL);
+               std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Extract the descriptors for each keypoints of the list.
@@ -905,7 +905,7 @@ public:
    * be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               std::vector<cv::Point3f> *trainPoints = NULL);
+               std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Extract the descriptors for each keypoints of the list.
@@ -919,7 +919,7 @@ public:
    * cannot be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = NULL);
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Extract the descriptors for each keypoints of the list.
@@ -933,7 +933,7 @@ public:
    * cannot be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
-               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = NULL);
+               double &elapsedTime, std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Extract the descriptors for each keypoints of the list.
@@ -947,7 +947,7 @@ public:
    * cannot be extracted, we need to remove the corresponding 3D point.
    */
   void extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors, double &elapsedTime,
-               std::vector<cv::Point3f> *trainPoints = NULL);
+               std::vector<cv::Point3f> *trainPoints = nullptr);
 
   /*!
    * Get the covariance matrix when estimating the pose using the Virtual
@@ -992,7 +992,7 @@ public:
    * Get the detector pointer.
    * \param type : Type of the detector.
    *
-   * \return The detector or NULL if the type passed in parameter does not
+   * \return The detector or nullptr if the type passed in parameter does not
    * exist.
    */
   inline cv::Ptr<cv::FeatureDetector> getDetector(const vpFeatureDetectorType &type) const
@@ -1018,7 +1018,7 @@ public:
    * Get the detector pointer.
    * \param name : Name of the detector.
    *
-   * \return The detector or NULL if the name passed in parameter does not
+   * \return The detector or nullptr if the name passed in parameter does not
    * exist.
    */
   inline cv::Ptr<cv::FeatureDetector> getDetector(const std::string &name) const
@@ -1048,7 +1048,7 @@ public:
    * Get the extractor pointer.
    * \param type : Type of the descriptor extractor.
    *
-   * \return The descriptor extractor or NULL if the name passed in parameter
+   * \return The descriptor extractor or nullptr if the name passed in parameter
    * does not exist.
    */
   inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const vpFeatureDescriptorType &type) const
@@ -1074,7 +1074,7 @@ public:
    * Get the extractor pointer.
    * \param name : Name of the descriptor extractor.
    *
-   * \return The descriptor extractor or NULL if the name passed in parameter
+   * \return The descriptor extractor or nullptr if the name passed in parameter
    * does not exist.
    */
   inline cv::Ptr<cv::DescriptorExtractor> getExtractor(const std::string &name) const
@@ -1381,7 +1381,7 @@ public:
    * \return True if the matching and the pose estimation are OK, false otherwise.
    */
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
+                  bool (*func)(const vpHomogeneousMatrix &) = nullptr, const vpRect &rectangle = vpRect());
 
   /*!
    * Match keypoints detected in the image with those built in the reference
@@ -1399,7 +1399,7 @@ public:
    * \return True if the matching and the pose estimation are OK, false otherwise.
    */
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL,
+                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = nullptr,
                   const vpRect &rectangle = vpRect());
 
   /*!
@@ -1423,9 +1423,9 @@ public:
    * \return True if the object is present, false otherwise.
    */
   bool matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                           const bool isPlanarObject = true, std::vector<vpImagePoint> *imPts1 = NULL,
-                           std::vector<vpImagePoint> *imPts2 = NULL, double *meanDescriptorDistance = NULL,
-                           double *detectionScore = NULL, const vpRect &rectangle = vpRect());
+                           const bool isPlanarObject = true, std::vector<vpImagePoint> *imPts1 = nullptr,
+                           std::vector<vpImagePoint> *imPts2 = nullptr, double *meanDescriptorDistance = nullptr,
+                           double *detectionScore = nullptr, const vpRect &rectangle = vpRect());
 
   /*!
    * Match keypoints detected in the image with those built in the reference
@@ -1448,7 +1448,7 @@ public:
    */
   bool matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                            double &error, double &elapsedTime, vpRect &boundingBox, vpImagePoint &centerOfGravity,
-                           bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
+                           bool (*func)(const vpHomogeneousMatrix &) = nullptr, const vpRect &rectangle = vpRect());
 
   /*!
    * Match keypoints detected in the image with those built in the reference
@@ -1495,7 +1495,7 @@ public:
    * \return True if the matching and the pose estimation are OK, false otherwise.
    */
   bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
+                  bool (*func)(const vpHomogeneousMatrix &) = nullptr, const vpRect &rectangle = vpRect());
 
   /*!
    * Match keypoints detected in the image with those built in the reference
@@ -1513,7 +1513,7 @@ public:
    * \return True if the matching and the pose estimation are OK, false otherwise.
    */
   bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
-                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = NULL,
+                  double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &) = nullptr,
                   const vpRect &rectangle = vpRect());
 
   /*!
@@ -1735,7 +1735,7 @@ public:
       m_useKnn = true;
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
-      if (m_matcher != NULL && m_matcherName == "BruteForce") {
+      if (m_matcher != nullptr && m_matcherName == "BruteForce") {
         // if a matcher is already initialized, disable the crossCheck
         // because it will not work with knnMatch
         m_matcher->set("crossCheck", false);
@@ -1746,7 +1746,7 @@ public:
       m_useKnn = false;
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
-      if (m_matcher != NULL && m_matcherName == "BruteForce") {
+      if (m_matcher != nullptr && m_matcherName == "BruteForce") {
         // if a matcher is already initialized, set the crossCheck mode if
         // necessary
         m_matcher->set("crossCheck", m_useBruteForceCrossCheck);
@@ -1909,10 +1909,10 @@ public:
   {
     // Only available with BruteForce and with k=1 (i.e not used with a
     // ratioDistanceThreshold method)
-    if (m_matcher != NULL && !m_useKnn && m_matcherName == "BruteForce") {
+    if (m_matcher != nullptr && !m_useKnn && m_matcherName == "BruteForce") {
       m_matcher->set("crossCheck", useCrossCheck);
     }
-    else if (m_matcher != NULL && m_useKnn && m_matcherName == "BruteForce") {
+    else if (m_matcher != nullptr && m_useKnn && m_matcherName == "BruteForce") {
       std::cout << "Warning, you try to set the crossCheck parameter with a "
         "BruteForce matcher but knn is enabled";
       std::cout << " (the filtering method uses a ratio constraint)" << std::endl;

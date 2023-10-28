@@ -26,9 +26,9 @@ int main(int argc, char **argv)
   unsigned int thickness = 2;
 
   vpImage<unsigned char> I;
-  vpDisplay *display = NULL;
-  vpPlot *plot = NULL;
-  vpVideoWriter *writer = NULL;
+  vpDisplay *display = nullptr;
+  vpPlot *plot = nullptr;
+  vpVideoWriter *writer = nullptr;
 
   try {
     for (int i = 0; i < argc; i++) {

@@ -69,7 +69,7 @@ int main()
 
     while (true) {
 
-      rs.getIMUData(&imu_acc, &imu_vel, NULL);
+      rs.getIMUData(&imu_acc, &imu_vel, nullptr);
 
       std::cout << "Gyro vel: x = " << std::setw(12) << imu_vel[0] << " y = " << std::setw(12) << imu_vel[1]
         << " z = " << std::setw(12) << imu_vel[2];

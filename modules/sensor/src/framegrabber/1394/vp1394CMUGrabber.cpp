@@ -69,7 +69,7 @@ vp1394CMUGrabber::~vp1394CMUGrabber()
   // delete camera instance
   if (camera) {
     delete camera;
-    camera = NULL;
+    camera = nullptr;
   }
 }
 
@@ -206,7 +206,7 @@ void vp1394CMUGrabber::acquire(vpImage<unsigned char> &I)
 {
   // get image data
   unsigned long length;
-  unsigned char *rawdata = NULL;
+  unsigned char *rawdata = nullptr;
   int dropped;
   unsigned int size;
 
@@ -268,7 +268,7 @@ void vp1394CMUGrabber::acquire(vpImage<vpRGBa> &I)
 {
   // get image data
   unsigned long length;
-  unsigned char *rawdata = NULL;
+  unsigned char *rawdata = nullptr;
   int dropped;
   unsigned int size;
 

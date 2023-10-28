@@ -142,7 +142,7 @@ public:
   Basic constructor of a 2D array.
   Number of columns and rows are set to zero.
   */
-  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL) { }
+  vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr) { }
 
   /*!
   Copy constructor of a 2D array.
@@ -190,9 +190,9 @@ public:
 
     A.rowNum = 0;
     A.colNum = 0;
-    A.rowPtrs = NULL;
+    A.rowPtrs = nullptr;
     A.dsize = 0;
-    A.data = NULL;
+    A.data = nullptr;
   }
 
   explicit vpArray2D<Type>(const std::initializer_list<Type> &list) : vpArray2D<Type>()
@@ -202,7 +202,7 @@ public:
   }
 
   explicit vpArray2D<Type>(unsigned int nrows, unsigned int ncols, const std::initializer_list<Type> &list)
-    : rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+    : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
   {
     if (nrows * ncols != static_cast<unsigned int>(list.size())) {
       std::ostringstream oss;
@@ -235,14 +235,14 @@ public:
   */
   virtual ~vpArray2D<Type>()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -282,19 +282,19 @@ public:
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
-      if (flagNullify && this->data != NULL) {
+      if (flagNullify && this->data != nullptr) {
         memset(this->data, 0, this->dsize * sizeof(Type));
       }
     }
     else {
       bool recopy = !flagNullify && recopy_; // priority to flagNullify
       const bool recopyNeeded = (ncols != this->colNum && this->colNum > 0 && ncols > 0 && (!flagNullify || recopy));
-      Type *copyTmp = NULL;
+      Type *copyTmp = nullptr;
       unsigned int rowTmp = 0, colTmp = 0;
 
       // Recopy case per case is required if number of cols has changed;
       // structure of Type array is not the same in this case.
-      if (recopyNeeded && this->data != NULL) {
+      if (recopyNeeded && this->data != nullptr) {
         copyTmp = new Type[this->dsize];
         memcpy(copyTmp, this->data, sizeof(Type) * this->dsize);
         rowTmp = this->rowNum;
@@ -304,16 +304,16 @@ public:
       // Reallocation of this->data array
       this->dsize = nrows * ncols;
       this->data = (Type *)realloc(this->data, this->dsize * sizeof(Type));
-      if ((NULL == this->data) && (0 != this->dsize)) {
-        if (copyTmp != NULL) {
+      if ((nullptr == this->data) && (0 != this->dsize)) {
+        if (copyTmp != nullptr) {
           delete[] copyTmp;
         }
         throw(vpException(vpException::memoryAllocationError, "Memory allocation error when allocating 2D array data"));
       }
 
       this->rowPtrs = (Type **)realloc(this->rowPtrs, nrows * sizeof(Type *));
-      if ((NULL == this->rowPtrs) && (0 != this->dsize)) {
-        if (copyTmp != NULL) {
+      if ((nullptr == this->rowPtrs) && (0 != this->dsize)) {
+        if (copyTmp != nullptr) {
           delete[] copyTmp;
         }
         throw(vpException(vpException::memoryAllocationError,
@@ -335,7 +335,7 @@ public:
       if (flagNullify) {
         memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
       }
-      else if (recopyNeeded && this->rowPtrs != NULL) {
+      else if (recopyNeeded && this->rowPtrs != nullptr) {
         // Recopy...
         unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
         unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
@@ -351,7 +351,7 @@ public:
         }
       }
 
-      if (copyTmp != NULL) {
+      if (copyTmp != nullptr) {
         delete[] copyTmp;
       }
     }
@@ -394,10 +394,10 @@ public:
   void insert(const vpArray2D<Type> &A, unsigned int r, unsigned int c)
   {
     if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
-      if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
+      if (A.colNum == colNum && data != nullptr && A.data != nullptr && A.data != data) {
         memcpy(data + r * colNum, A.data, sizeof(Type) * A.size());
       }
-      else if (data != NULL && A.data != NULL && A.data != data) {
+      else if (data != nullptr && A.data != nullptr && A.data != data) {
         for (unsigned int i = r; i < (r + A.getRows()); i++) {
           memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(Type) * A.colNum);
         }
@@ -431,7 +431,7 @@ public:
   vpArray2D<Type> &operator=(const vpArray2D<Type> &A)
   {
     resize(A.rowNum, A.colNum, false, false);
-    if (data != NULL && A.data != NULL && data != A.data) {
+    if (data != nullptr && A.data != nullptr && data != A.data) {
       memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
     }
     return *this;
@@ -451,9 +451,9 @@ public:
 
       other.rowNum = 0;
       other.colNum = 0;
-      other.rowPtrs = NULL;
+      other.rowPtrs = nullptr;
       other.dsize = 0;
-      other.data = NULL;
+      other.data = nullptr;
     }
 
     return *this;
@@ -503,7 +503,7 @@ public:
     */
   friend std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
   {
-    if (A.data == NULL || A.size() == 0) {
+    if (A.data == nullptr || A.size() == 0) {
       return s;
     }
     std::ios_base::fmtflags original_flags = s.flags();
@@ -554,7 +554,7 @@ public:
 
     \sa save()
   */
-  static bool load(const std::string &filename, vpArray2D<Type> &A, bool binary = false, char *header = NULL)
+  static bool load(const std::string &filename, vpArray2D<Type> &A, bool binary = false, char *header = nullptr)
   {
     std::fstream file;
 
@@ -595,7 +595,7 @@ public:
         }
       } while (!headerIsDecoded);
 
-      if (header != NULL) {
+      if (header != nullptr) {
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         snprintf(header, h.size() + 1, "%s", h.c_str());
@@ -630,7 +630,7 @@ public:
         file.read(&c, 1);
         h += c;
       }
-      if (header != NULL) {
+      if (header != nullptr) {
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         snprintf(header, h.size() + 1, "%s", h.c_str());
@@ -668,7 +668,7 @@ public:
     \sa saveYAML()
 
   */
-  static bool loadYAML(const std::string &filename, vpArray2D<Type> &A, char *header = NULL)
+  static bool loadYAML(const std::string &filename, vpArray2D<Type> &A, char *header = nullptr)
   {
     std::fstream file;
 
@@ -726,7 +726,7 @@ public:
       }
     }
 
-    if (header != NULL) {
+    if (header != nullptr) {
       std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX

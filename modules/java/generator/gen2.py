@@ -12,17 +12,17 @@ else:
 
 ignored_arg_types = ["RNG*"]
 
-gen_template_check_self = Template("""    $cname* _self_ = NULL;
+gen_template_check_self = Template("""    $cname* _self_ = nullptr;
     if(PyObject_TypeCheck(self, &pyopencv_${name}_Type))
         _self_ = ${amp}((pyopencv_${name}_t*)self)->v${get};
-    if (_self_ == NULL)
+    if (_self_ == nullptr)
         return failmsgp("Incorrect type of self (must be '${name}' or its derivative)");
 """)
 
-gen_template_check_self_algo = Template("""    $cname* _self_ = NULL;
+gen_template_check_self_algo = Template("""    $cname* _self_ = nullptr;
     if(PyObject_TypeCheck(self, &pyopencv_${name}_Type))
         _self_ = dynamic_cast<$cname*>(${amp}((pyopencv_${name}_t*)self)->v.get());
-    if (_self_ == NULL)
+    if (_self_ == nullptr)
         return failmsgp("Incorrect type of self (must be '${name}' or its derivative)");
 """)
 
@@ -35,7 +35,7 @@ gen_template_simple_call_constructor_prelude = Template("""if(self) """)
 
 gen_template_simple_call_constructor = Template("""new (&(self->v)) ${cname}${args}""")
 
-gen_template_parse_args = Template("""const char* keywords[] = { $kw_list, NULL };
+gen_template_parse_args = Template("""const char* keywords[] = { $kw_list, nullptr };
     if( PyArg_ParseTupleAndKeywords(args, kw, "$fmtspec", (char**)keywords, $parse_arglist)$code_cvt )""")
 
 gen_template_func_body = Template("""$code_decl
@@ -77,7 +77,7 @@ template<> PyObject* pyopencv_from(const ${cname}& r)
 
 template<> bool pyopencv_to(PyObject* src, ${cname}& dst, const char* name)
 {
-    if( src == NULL || src == Py_None )
+    if( src == nullptr || src == Py_None )
         return true;
     if(!PyObject_TypeCheck(src, &pyopencv_${name}_Type))
     {
@@ -120,7 +120,7 @@ template<> PyObject* pyopencv_from(const Ptr<${cname}>& r)
 
 template<> bool pyopencv_to(PyObject* src, Ptr<${cname}>& dst, const char* name)
 {
-    if( src == NULL || src == Py_None )
+    if( src == nullptr || src == Py_None )
         return true;
     if(!PyObject_TypeCheck(src, &pyopencv_${name}_Type))
     {
@@ -158,7 +158,7 @@ ${getset_code}
 
 static PyGetSetDef pyopencv_${name}_getseters[] =
 {${getset_inits}
-    {NULL}  /* Sentinel */
+    {nullptr}  /* Sentinel */
 };
 
 ${methods_code}
@@ -166,7 +166,7 @@ ${methods_code}
 static PyMethodDef pyopencv_${name}_methods[] =
 {
 ${methods_inits}
-    {NULL,          NULL}
+    {nullptr,          nullptr}
 };
 
 static void pyopencv_${name}_specials(void)
@@ -192,7 +192,7 @@ gen_template_get_prop_algo = Template("""
 static PyObject* pyopencv_${name}_get_${member}(pyopencv_${name}_t* p, void *closure)
 {
     $cname* _self_ = dynamic_cast<$cname*>(p->v.get());
-    if (_self_ == NULL)
+    if (_self_ == nullptr)
         return failmsgp("Incorrect type of object (must be '${name}' or its derivative)");
     return pyopencv_from(_self_${access}${member});
 }
@@ -201,7 +201,7 @@ static PyObject* pyopencv_${name}_get_${member}(pyopencv_${name}_t* p, void *clo
 gen_template_set_prop = Template("""
 static int pyopencv_${name}_set_${member}(pyopencv_${name}_t* p, PyObject *value, void *closure)
 {
-    if (value == NULL)
+    if (value == nullptr)
     {
         PyErr_SetString(PyExc_TypeError, "Cannot delete the ${member} attribute");
         return -1;
@@ -213,13 +213,13 @@ static int pyopencv_${name}_set_${member}(pyopencv_${name}_t* p, PyObject *value
 gen_template_set_prop_algo = Template("""
 static int pyopencv_${name}_set_${member}(pyopencv_${name}_t* p, PyObject *value, void *closure)
 {
-    if (value == NULL)
+    if (value == nullptr)
     {
         PyErr_SetString(PyExc_TypeError, "Cannot delete the ${member} attribute");
         return -1;
     }
     $cname* _self_ = dynamic_cast<$cname*>(p->v.get());
-    if (_self_ == NULL)
+    if (_self_ == nullptr)
     {
         failmsgp("Incorrect type of object (must be '${name}' or its derivative)");
         return -1;
@@ -230,10 +230,10 @@ static int pyopencv_${name}_set_${member}(pyopencv_${name}_t* p, PyObject *value
 
 
 gen_template_prop_init = Template("""
-    {(char*)"${member}", (getter)pyopencv_${name}_get_${member}, NULL, (char*)"${member}", NULL},""")
+    {(char*)"${member}", (getter)pyopencv_${name}_get_${member}, nullptr, (char*)"${member}", nullptr},""")
 
 gen_template_rw_prop_init = Template("""
-    {(char*)"${member}", (getter)pyopencv_${name}_get_${member}, (setter)pyopencv_${name}_set_${member}, (char*)"${member}", NULL},""")
+    {(char*)"${member}", (getter)pyopencv_${name}_get_${member}, (setter)pyopencv_${name}_set_${member}, (char*)"${member}", nullptr},""")
 
 simple_argtype_mapping = {
     "bool": ("bool", "b", "0"),
@@ -350,7 +350,7 @@ class ClassInfo(object):
             methods_code.write(m.gen_code(codegen))
             methods_inits.write(m.get_tab_entry())
 
-        baseptr = "NULL"
+        baseptr = "nullptr"
         if self.base and self.base in all_classes:
             baseptr = "&pyopencv_" + all_classes[self.base].name + "_Type"
 
@@ -674,7 +674,7 @@ class FuncInfo(object):
                 parse_name = a.name
                 if a.py_inputarg:
                     if amapping[1] == "O":
-                        code_decl += "    PyObject* pyobj_%s = NULL;\n" % (a.name,)
+                        code_decl += "    PyObject* pyobj_%s = nullptr;\n" % (a.name,)
                         parse_name = "pyobj_" + a.name
                         if a.tp == 'char':
                             code_cvt_list.append("convert_to_char(pyobj_%s, &%s, %s)"% (a.name, a.name, a.crepr()))
@@ -758,7 +758,7 @@ class FuncInfo(object):
                     parse_arglist = ", ".join(["&" + all_cargs[argno][1] for aname, argno in v.py_arglist]),
                     code_cvt = " &&\n        ".join(code_cvt_list))
             else:
-                code_parse = "if(PyObject_Size(args) == 0 && (kw == NULL || PyObject_Size(kw) == 0))"
+                code_parse = "if(PyObject_Size(args) == 0 && (kw == nullptr || PyObject_Size(kw) == 0))"
 
             if len(v.py_outlist) == 0:
                 code_ret = "Py_RETURN_NONE"
@@ -788,7 +788,7 @@ class FuncInfo(object):
             # try to execute each signature
             code += "    PyErr_Clear();\n\n".join(["    {\n" + v + "    }\n" for v in all_code_variants])
 
-        def_ret = "NULL"
+        def_ret = "nullptr"
         if self.isconstructor:
             def_ret = "-1"
         code += "\n    return %s;\n}\n\n" % def_ret
@@ -949,7 +949,7 @@ class PythonWrapperGenerator(object):
             if func.isconstructor:
                 continue
             self.code_ns_reg.write(func.get_tab_entry())
-        self.code_ns_reg.write('    {NULL, NULL}\n};\n\n')
+        self.code_ns_reg.write('    {nullptr, nullptr}\n};\n\n')
 
         self.code_ns_reg.write('static ConstDef consts_%s[] = {\n'%wname)
         for name, cname in sorted(ns.consts.items()):
@@ -957,7 +957,7 @@ class PythonWrapperGenerator(object):
             compat_name = re.sub(r"([a-z])([A-Z])", r"\1_\2", name).upper()
             if name != compat_name:
                 self.code_ns_reg.write('    {"%s", %s},\n'%(compat_name, cname))
-        self.code_ns_reg.write('    {NULL, 0}\n};\n\n')
+        self.code_ns_reg.write('    {nullptr, 0}\n};\n\n')
 
     def gen_namespaces_reg(self):
         self.code_ns_reg.write('static void init_submodules(PyObject * root) \n{\n')

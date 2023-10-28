@@ -56,8 +56,8 @@
 #endif
 
 vpMbtFaceDepthNormal::vpMbtFaceDepthNormal()
-  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
-  m_planeObject(), m_polygon(NULL), m_useScanLine(false), m_faceActivated(false),
+  : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(nullptr),
+  m_planeObject(), m_polygon(nullptr), m_useScanLine(false), m_faceActivated(false),
   m_faceCentroidMethod(GEOMETRIC_CENTROID), m_faceDesiredCentroid(), m_faceDesiredNormal(),
   m_featureEstimationMethod(ROBUST_FEATURE_ESTIMATION), m_isTrackedDepthNormalFace(true), m_isVisible(false),
   m_listOfFaceLines(), m_planeCamera(),

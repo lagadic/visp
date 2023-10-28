@@ -47,7 +47,7 @@ int main(int argc, char **argv)
   // Acquiring images.
   for (;;) {
     rs.acquire(reinterpret_cast<unsigned char *>(I_color_rs.bitmap),
-               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), NULL, NULL, NULL, NULL, NULL);
+               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), nullptr, nullptr, nullptr, nullptr, nullptr);
     sc.acquire(reinterpret_cast<unsigned char *>(I_color_sc.bitmap),
                reinterpret_cast<unsigned char *>(sc_I_depth_raw.bitmap));
 

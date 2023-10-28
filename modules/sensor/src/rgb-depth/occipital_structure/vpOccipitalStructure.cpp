@@ -67,7 +67,7 @@ vpOccipitalStructure::~vpOccipitalStructure() { close(); }
   Acquire greyscale image from Structure Core device.
   \param gray        : Greyscale image.
   \param undistorted : Set to true to get undistorted grayscale image.
-  \param ts          : Image timestamp or NULL if not wanted.
+  \param ts          : Image timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(vpImage<unsigned char> &gray, bool undistorted, double *ts)
 {
@@ -80,7 +80,7 @@ void vpOccipitalStructure::acquire(vpImage<unsigned char> &gray, bool undistorte
     else
       memcpy(gray.bitmap, m_delegate.m_visibleFrame.undistorted().yData(), m_delegate.m_visibleFrame.ySize());
 
-    if (ts != NULL)
+    if (ts != nullptr)
       *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
   }
 
@@ -91,7 +91,7 @@ void vpOccipitalStructure::acquire(vpImage<unsigned char> &gray, bool undistorte
   Acquire color image from Structure Core device.
   \param rgb         : RGB image.
   \param undistorted : Set to true to get undistorted image.
-  \param ts          : Image timestamp or NULL if not wanted.
+  \param ts          : Image timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(vpImage<vpRGBa> &rgb, bool undistorted, double *ts)
 {
@@ -117,7 +117,7 @@ void vpOccipitalStructure::acquire(vpImage<vpRGBa> &rgb, bool undistorted, doubl
                                    m_delegate.m_visibleFrame.width() * m_delegate.m_visibleFrame.height());
     }
 
-    if (ts != NULL)
+    if (ts != nullptr)
       *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
   }
 
@@ -126,12 +126,12 @@ void vpOccipitalStructure::acquire(vpImage<vpRGBa> &rgb, bool undistorted, doubl
 
 /*!
  Acquire rgb image and IMU data from Structure Core device.
- \param rgb               : RGB image or NULL if not wanted.
- \param depth             : Depth image or NULL if not wanted.
- \param acceleration_data : Acceleration data or NULL if not wanted.
- \param gyroscope_data    : Gyroscope data or NULL if not wanted.
+ \param rgb               : RGB image or nullptr if not wanted.
+ \param depth             : Depth image or nullptr if not wanted.
+ \param acceleration_data : Acceleration data or nullptr if not wanted.
+ \param gyroscope_data    : Gyroscope data or nullptr if not wanted.
  \param undistorted       : Set to true to get undistorted image.
- \param ts                : Image timestamp or NULL if not wanted.
+ \param ts                : Image timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth, vpColVector *acceleration_data,
                                    vpColVector *gyroscope_data, bool undistorted, double *ts)
@@ -139,7 +139,7 @@ void vpOccipitalStructure::acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth,
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (rgb != NULL && m_delegate.m_visibleFrame.isValid()) {
+  if (rgb != nullptr && m_delegate.m_visibleFrame.isValid()) {
     // Detecting if it's a Color Structure Core device.
     if (m_delegate.m_cameraType == ST::StructureCoreCameraType::Color)
       vpImageConvert::RGBToRGBa(const_cast<unsigned char *>(m_delegate.m_visibleFrame.rgbData()),
@@ -158,29 +158,29 @@ void vpOccipitalStructure::acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth,
                                    m_delegate.m_visibleFrame.width() * m_delegate.m_visibleFrame.height());
     }
 
-    if (ts != NULL)
+    if (ts != nullptr)
       *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
   }
 
-  if (depth != NULL && m_delegate.m_depthFrame.isValid())
+  if (depth != nullptr && m_delegate.m_depthFrame.isValid())
     memcpy((unsigned char *)depth->bitmap, m_delegate.m_depthFrame.convertDepthToRgba(),
            m_delegate.m_depthFrame.width() * m_delegate.m_depthFrame.height() * 4);
 
-  if (acceleration_data != NULL) {
+  if (acceleration_data != nullptr) {
     ST::Acceleration accel = m_delegate.m_accelerometerEvent.acceleration();
     acceleration_data[0] = accel.x;
     acceleration_data[1] = accel.y;
     acceleration_data[2] = accel.z;
   }
 
-  if (gyroscope_data != NULL) {
+  if (gyroscope_data != nullptr) {
     ST::RotationRate gyro_data = m_delegate.m_gyroscopeEvent.rotationRate();
     gyroscope_data[0] = gyro_data.x;
     gyroscope_data[1] = gyro_data.y;
     gyroscope_data[2] = gyro_data.z;
   }
 
-  if (ts != NULL) // By default, frames are synchronized.
+  if (ts != nullptr) // By default, frames are synchronized.
     *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
 
   u.unlock();
@@ -188,12 +188,12 @@ void vpOccipitalStructure::acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth,
 
 /*!
  Acquire grayscale image, depth and IMU data from Structure Core device.
- \param gray              : Gray image or NULL if not wanted.
- \param depth             : Depth image or NULL if not wanted.
- \param acceleration_data : Acceleration data or NULL if not wanted.
- \param gyroscope_data    : Gyroscope data or NULL if not wanted.
+ \param gray              : Gray image or nullptr if not wanted.
+ \param depth             : Depth image or nullptr if not wanted.
+ \param acceleration_data : Acceleration data or nullptr if not wanted.
+ \param gyroscope_data    : Gyroscope data or nullptr if not wanted.
  \param undistorted       : Set to true to get undistorted image.
- \param ts                : Image timestamp or NULL if not wanted.
+ \param ts                : Image timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa> *depth, vpColVector *acceleration_data,
                                    vpColVector *gyroscope_data, bool undistorted, double *ts)
@@ -201,35 +201,35 @@ void vpOccipitalStructure::acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa>
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (gray != NULL && m_delegate.m_visibleFrame.isValid()) {
+  if (gray != nullptr && m_delegate.m_visibleFrame.isValid()) {
     if (!undistorted)
       memcpy(gray->bitmap, m_delegate.m_visibleFrame.yData(), m_delegate.m_visibleFrame.ySize());
     else
       memcpy(gray->bitmap, m_delegate.m_visibleFrame.undistorted().yData(), m_delegate.m_visibleFrame.ySize());
 
-    if (ts != NULL)
+    if (ts != nullptr)
       *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
   }
 
-  if (depth != NULL && m_delegate.m_depthFrame.isValid())
+  if (depth != nullptr && m_delegate.m_depthFrame.isValid())
     memcpy((unsigned char *)depth->bitmap, m_delegate.m_depthFrame.convertDepthToRgba(),
            m_delegate.m_depthFrame.width() * m_delegate.m_depthFrame.height() * 4);
 
-  if (acceleration_data != NULL) {
+  if (acceleration_data != nullptr) {
     ST::Acceleration accel = m_delegate.m_accelerometerEvent.acceleration();
     acceleration_data[0] = accel.x;
     acceleration_data[1] = accel.y;
     acceleration_data[2] = accel.z;
   }
 
-  if (gyroscope_data != NULL) {
+  if (gyroscope_data != nullptr) {
     ST::RotationRate gyro_data = m_delegate.m_gyroscopeEvent.rotationRate();
     gyroscope_data[0] = gyro_data.x;
     gyroscope_data[1] = gyro_data.y;
     gyroscope_data[2] = gyro_data.z;
   }
 
-  if (ts != NULL) // By default, frames are synchronized.
+  if (ts != nullptr) // By default, frames are synchronized.
     *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
 
   u.unlock();
@@ -237,14 +237,14 @@ void vpOccipitalStructure::acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa>
 
 /*!
   Acquire data from Structure Core device.
-  \param data_image        : Visible image buffer or NULL if not wanted.
-  \param data_depth        : Depth image buffer in millimeters or NULL if not wanted.
-  \param data_pointCloud   : Point cloud vector pointer or NULL if not wanted.
-  \param data_infrared     : Infrared image buffer or NULL if not wanted.
-  \param acceleration_data : Acceleration data or NULL if not wanted.
-  \param gyroscope_data    : Gyroscope data or NULL if not wanted.
+  \param data_image        : Visible image buffer or nullptr if not wanted.
+  \param data_depth        : Depth image buffer in millimeters or nullptr if not wanted.
+  \param data_pointCloud   : Point cloud vector pointer or nullptr if not wanted.
+  \param data_infrared     : Infrared image buffer or nullptr if not wanted.
+  \param acceleration_data : Acceleration data or nullptr if not wanted.
+  \param gyroscope_data    : Gyroscope data or nullptr if not wanted.
   \param undistorted       : Set to true if you want undistorted monochrome device image.
-  \param ts                : Data timestamp or NULL if not wanted.
+  \param ts                : Data timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                                    std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
@@ -254,11 +254,11 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (m_delegate.m_depthFrame.isValid() && data_depth != NULL)
+  if (m_delegate.m_depthFrame.isValid() && data_depth != nullptr)
     memcpy(data_depth, m_delegate.m_depthFrame.depthInMillimeters(),
            m_delegate.m_depthFrame.width() * m_delegate.m_depthFrame.height() * sizeof(float));
 
-  if (m_delegate.m_visibleFrame.isValid() && data_image != NULL) {
+  if (m_delegate.m_visibleFrame.isValid() && data_image != nullptr) {
     if (m_delegate.m_cameraType == ST::StructureCoreCameraType::Color)
       vpImageConvert::RGBToRGBa(const_cast<unsigned char *>(m_delegate.m_visibleFrame.rgbData()),
                                 reinterpret_cast<unsigned char *>(data_image),
@@ -277,28 +277,28 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
     }
   }
 
-  if (m_delegate.m_infraredFrame.isValid() && data_infrared != NULL)
+  if (m_delegate.m_infraredFrame.isValid() && data_infrared != nullptr)
     memcpy(data_infrared, m_delegate.m_infraredFrame.data(),
            m_delegate.m_infraredFrame.width() * m_delegate.m_infraredFrame.height() * sizeof(uint16_t));
 
-  if (data_pointCloud != NULL)
+  if (data_pointCloud != nullptr)
     getPointcloud(*data_pointCloud);
 
-  if (acceleration_data != NULL) {
+  if (acceleration_data != nullptr) {
     ST::Acceleration accel = m_delegate.m_accelerometerEvent.acceleration();
     acceleration_data[0] = accel.x;
     acceleration_data[1] = accel.y;
     acceleration_data[2] = accel.z;
   }
 
-  if (gyroscope_data != NULL) {
+  if (gyroscope_data != nullptr) {
     ST::RotationRate gyro_data = m_delegate.m_gyroscopeEvent.rotationRate();
     gyroscope_data[0] = gyro_data.x;
     gyroscope_data[1] = gyro_data.y;
     gyroscope_data[2] = gyro_data.z;
   }
 
-  if (ts != NULL) // By default, frames are synchronized.
+  if (ts != nullptr) // By default, frames are synchronized.
     *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
 
   u.unlock();
@@ -307,15 +307,15 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
 #ifdef VISP_HAVE_PCL
 /*!
   Acquire data from Structure Core device.
-  \param data_image        : Color image buffer or NULL if not wanted.
-  \param data_depth        : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud   : Point cloud vector pointer or NULL if not wanted.
-  \param pointcloud        : Point cloud (in PCL format and without texture information) pointer or NULL if not wanted.
-  \param data_infrared     : Infrared image buffer or NULL if not wanted.
-  \param acceleration_data : Acceleration data or NULL if not wanted.
-  \param gyroscope_data    : Gyroscope data or NULL if not wanted.
+  \param data_image        : Color image buffer or nullptr if not wanted.
+  \param data_depth        : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud   : Point cloud vector pointer or nullptr if not wanted.
+  \param pointcloud        : Point cloud (in PCL format and without texture information) pointer or nullptr if not wanted.
+  \param data_infrared     : Infrared image buffer or nullptr if not wanted.
+  \param acceleration_data : Acceleration data or nullptr if not wanted.
+  \param gyroscope_data    : Gyroscope data or nullptr if not wanted.
   \param undistorted       : Set to true if you want undistorted monochrome device image.
-  \param ts                : Data timestamp or NULL if not wanted.
+  \param ts                : Data timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                                    std::vector<vpColVector> *const data_pointCloud,
@@ -345,35 +345,35 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
     }
   }
 
-  if (m_delegate.m_depthFrame.isValid() && data_depth != NULL)
+  if (m_delegate.m_depthFrame.isValid() && data_depth != nullptr)
     memcpy(data_depth, m_delegate.m_depthFrame.depthInMillimeters(),
            m_delegate.m_depthFrame.width() * m_delegate.m_depthFrame.height() * sizeof(float));
 
-  if (m_delegate.m_infraredFrame.isValid() && data_infrared != NULL)
+  if (m_delegate.m_infraredFrame.isValid() && data_infrared != nullptr)
     memcpy(data_infrared, m_delegate.m_infraredFrame.data(),
            m_delegate.m_infraredFrame.width() * m_delegate.m_infraredFrame.height() * sizeof(uint16_t));
 
-  if (data_pointCloud != NULL)
+  if (data_pointCloud != nullptr)
     getPointcloud(*data_pointCloud);
 
-  if (m_delegate.m_depthFrame.isValid() && pointcloud != NULL)
+  if (m_delegate.m_depthFrame.isValid() && pointcloud != nullptr)
     getPointcloud(pointcloud);
 
-  if (acceleration_data != NULL) {
+  if (acceleration_data != nullptr) {
     ST::Acceleration accel = m_delegate.m_accelerometerEvent.acceleration();
     acceleration_data[0] = accel.x;
     acceleration_data[1] = accel.y;
     acceleration_data[2] = accel.z;
   }
 
-  if (gyroscope_data != NULL) {
+  if (gyroscope_data != nullptr) {
     ST::RotationRate gyro_data = m_delegate.m_gyroscopeEvent.rotationRate();
     gyroscope_data[0] = gyro_data.x;
     gyroscope_data[1] = gyro_data.y;
     gyroscope_data[2] = gyro_data.z;
   }
 
-  if (ts != NULL) // By default, frames are synchronized.
+  if (ts != nullptr) // By default, frames are synchronized.
     *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
 
   u.unlock();
@@ -381,15 +381,15 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
 
 /*!
   Acquire data from Structure Core device.
-  \param data_image        : Color image buffer or NULL if not wanted.
-  \param data_depth        : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud   : Point cloud vector pointer or NULL if not wanted.
-  \param pointcloud        : Point cloud (in PCL format) pointer or NULL if not wanted.
-  \param data_infrared     : Infrared image buffer or NULL if not wanted.
-  \param acceleration_data : Acceleration data or NULL if not wanted.
-  \param gyroscope_data    : Gyroscope data or NULL if not wanted.
+  \param data_image        : Color image buffer or nullptr if not wanted.
+  \param data_depth        : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud   : Point cloud vector pointer or nullptr if not wanted.
+  \param pointcloud        : Point cloud (in PCL format) pointer or nullptr if not wanted.
+  \param data_infrared     : Infrared image buffer or nullptr if not wanted.
+  \param acceleration_data : Acceleration data or nullptr if not wanted.
+  \param gyroscope_data    : Gyroscope data or nullptr if not wanted.
   \param undistorted       : Set to true if you want undistorted monochrome device image.
-  \param ts                : Data timestamp or NULL if not wanted.
+  \param ts                : Data timestamp or nullptr if not wanted.
  */
 void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                                    std::vector<vpColVector> *const data_pointCloud,
@@ -400,11 +400,11 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (m_delegate.m_depthFrame.isValid() && data_depth != NULL)
+  if (m_delegate.m_depthFrame.isValid() && data_depth != nullptr)
     memcpy(data_depth, m_delegate.m_depthFrame.depthInMillimeters(),
            m_delegate.m_depthFrame.width() * m_delegate.m_depthFrame.height() * sizeof(float));
 
-  if (m_delegate.m_visibleFrame.isValid() && data_image != NULL) {
+  if (m_delegate.m_visibleFrame.isValid() && data_image != nullptr) {
     if (m_delegate.m_cameraType == ST::StructureCoreCameraType::Color)
       vpImageConvert::RGBToRGBa(const_cast<unsigned char *>(m_delegate.m_visibleFrame.rgbData()),
                                 reinterpret_cast<unsigned char *>(data_image),
@@ -423,31 +423,31 @@ void vpOccipitalStructure::acquire(unsigned char *const data_image, unsigned cha
     }
   }
 
-  if (m_delegate.m_infraredFrame.isValid() && data_infrared != NULL)
+  if (m_delegate.m_infraredFrame.isValid() && data_infrared != nullptr)
     memcpy(data_infrared, m_delegate.m_infraredFrame.data(),
            m_delegate.m_infraredFrame.width() * m_delegate.m_infraredFrame.height() * sizeof(uint16_t));
 
-  if (m_delegate.m_depthFrame.isValid() && data_pointCloud != NULL)
+  if (m_delegate.m_depthFrame.isValid() && data_pointCloud != nullptr)
     getPointcloud(*data_pointCloud);
 
-  if (m_delegate.m_depthFrame.isValid() && m_delegate.m_visibleFrame.isValid() && pointcloud != NULL)
+  if (m_delegate.m_depthFrame.isValid() && m_delegate.m_visibleFrame.isValid() && pointcloud != nullptr)
     getColoredPointcloud(pointcloud);
 
-  if (acceleration_data != NULL) {
+  if (acceleration_data != nullptr) {
     ST::Acceleration accel = m_delegate.m_accelerometerEvent.acceleration();
     acceleration_data[0] = accel.x;
     acceleration_data[1] = accel.y;
     acceleration_data[2] = accel.z;
   }
 
-  if (gyroscope_data != NULL) {
+  if (gyroscope_data != nullptr) {
     ST::RotationRate gyro_data = m_delegate.m_gyroscopeEvent.rotationRate();
     gyroscope_data[0] = gyro_data.x;
     gyroscope_data[1] = gyro_data.y;
     gyroscope_data[2] = gyro_data.z;
   }
 
-  if (ts != NULL) // By default, frames are synchronized.
+  if (ts != nullptr) // By default, frames are synchronized.
     *ts = m_delegate.m_visibleFrame.arrivalTimestamp();
 
   u.unlock();
@@ -481,7 +481,7 @@ void vpOccipitalStructure::getIMUVelocity(vpColVector *imu_vel, double *ts)
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (imu_vel != NULL) {
+  if (imu_vel != nullptr) {
     imu_vel->resize(3, false);
     ST::RotationRate imu_rotationRate = m_delegate.m_gyroscopeEvent.rotationRate();
     (*imu_vel)[0] = imu_rotationRate.x;
@@ -489,7 +489,7 @@ void vpOccipitalStructure::getIMUVelocity(vpColVector *imu_vel, double *ts)
     (*imu_vel)[2] = imu_rotationRate.z;
   }
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = m_delegate.m_gyroscopeEvent.arrivalTimestamp();
 
   u.unlock();
@@ -521,7 +521,7 @@ void vpOccipitalStructure::getIMUAcceleration(vpColVector *imu_acc, double *ts)
   std::unique_lock<std::mutex> u(m_delegate.m_sampleLock);
   m_delegate.cv_sampleLock.wait(u);
 
-  if (imu_acc != NULL) {
+  if (imu_acc != nullptr) {
     imu_acc->resize(3, false);
     ST::Acceleration imu_acceleration = m_delegate.m_accelerometerEvent.acceleration();
     (*imu_acc)[0] = imu_acceleration.x;
@@ -529,7 +529,7 @@ void vpOccipitalStructure::getIMUAcceleration(vpColVector *imu_acc, double *ts)
     (*imu_acc)[2] = imu_acceleration.z;
   }
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = m_delegate.m_accelerometerEvent.arrivalTimestamp();
 
   u.unlock();
@@ -564,7 +564,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
   m_delegate.cv_sampleLock.wait(u);
   double imu_vel_timestamp, imu_acc_timestamp;
 
-  if (imu_vel != NULL) {
+  if (imu_vel != nullptr) {
     imu_vel->resize(3, false);
     ST::RotationRate imu_rotationRate = m_delegate.m_gyroscopeEvent.rotationRate();
     (*imu_vel)[0] = imu_rotationRate.x;
@@ -574,7 +574,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
       m_delegate.m_gyroscopeEvent.arrivalTimestamp(); // Relative to an unspecified epoch. (see documentation).
   }
 
-  if (imu_acc != NULL) {
+  if (imu_acc != nullptr) {
     imu_acc->resize(3, false);
     ST::Acceleration imu_acceleration = m_delegate.m_accelerometerEvent.acceleration();
     (*imu_acc)[0] = imu_acceleration.x;
@@ -583,7 +583,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
     imu_acc_timestamp = m_delegate.m_accelerometerEvent.arrivalTimestamp();
   }
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = std::max(imu_vel_timestamp, imu_acc_timestamp);
 
   u.unlock();

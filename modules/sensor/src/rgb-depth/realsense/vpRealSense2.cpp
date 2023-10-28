@@ -82,14 +82,14 @@ vpRealSense2::~vpRealSense2() { close(); }
 /*!
   Acquire greyscale image from RealSense device.
   \param grey : Greyscale image.
-  \param ts   : Image timestamp or NULL if not wanted.
+  \param ts   : Image timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(vpImage<unsigned char> &grey, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getGreyFrame(color_frame, grey);
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
@@ -97,46 +97,46 @@ void vpRealSense2::acquire(vpImage<unsigned char> &grey, double *ts)
 /*!
   Acquire color image from RealSense device.
   \param color : Color image.
-  \param ts    : Image timestamp or NULL if not wanted.
+  \param ts    : Image timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(vpImage<vpRGBa> &color, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getColorFrame(color_frame, color);
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
 
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
-  \param data_infrared : Infrared image buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
+  \param data_infrared : Infrared image buffer or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts    : Image timestamp or NULL if not wanted.
+  \param ts    : Image timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
                            rs2::align *const align_to, double *ts)
 {
-  acquire(data_image, data_depth, data_pointCloud, data_infrared, NULL, align_to, ts);
+  acquire(data_image, data_depth, data_pointCloud, data_infrared, nullptr, align_to, ts);
 }
 
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
-  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
+  \param data_infrared1 : First infrared image buffer or nullptr if not wanted.
   \param data_infrared2 : Second infrared image buffer (if supported by the device)
-  or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts : Data timestamp or NULL if not wanted.
+  \param ts : Data timestamp or nullptr if not wanted.
 
   The following code shows how to use this function to get color, infrared 1 and infrared 2 frames
   acquired by a D435 device:
@@ -169,7 +169,7 @@ int main() {
 #endif
 
   while (true) {
-    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii1.bitmap, Ii2.bitmap, NULL);
+    rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii1.bitmap, Ii2.bitmap, nullptr);
     vpDisplay::display(Ic);
     vpDisplay::display(Ii1);
     vpDisplay::display(Ii2);
@@ -188,7 +188,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL) {
+  if (align_to != nullptr) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
@@ -198,33 +198,33 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 #endif
   }
 
-  if (data_image != NULL) {
+  if (data_image != nullptr) {
     auto color_frame = data.get_color_frame();
     getNativeFrameData(color_frame, data_image);
   }
 
-  if (data_depth != NULL || data_pointCloud != NULL) {
+  if (data_depth != nullptr || data_pointCloud != nullptr) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL) {
+    if (data_depth != nullptr) {
       getNativeFrameData(depth_frame, data_depth);
     }
 
-    if (data_pointCloud != NULL) {
+    if (data_pointCloud != nullptr) {
       getPointcloud(depth_frame, *data_pointCloud);
     }
   }
 
-  if (data_infrared1 != NULL) {
+  if (data_infrared1 != nullptr) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrameData(infrared_frame, data_infrared1);
   }
 
-  if (data_infrared2 != NULL) {
+  if (data_infrared2 != nullptr) {
     auto infrared_frame = data.get_infrared_frame(2);
     getNativeFrameData(infrared_frame, data_infrared2);
   }
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
@@ -236,7 +236,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   \param right : Right image.
   \param ts    : Data timestamp.
 
-  Pass NULL to one of these parameters if you don't want the corresponding data.
+  Pass nullptr to one of these parameters if you don't want the corresponding data.
 
   For example if you are only interested in the right fisheye image, use:
   \code
@@ -247,14 +247,14 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
     rs.open(config);
 
     vpImage<unsigned char> I_right;
-    rs.acquire(NULL, &I_right, NULL, NULL);
+    rs.acquire(nullptr, &I_right, nullptr, nullptr);
   \endcode
  */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
 
-  if (left != NULL) {
+  if (left != nullptr) {
     auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
@@ -262,7 +262,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if (right != NULL) {
+  if (right != nullptr) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -270,7 +270,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     getNativeFrameData(right_fisheye_frame, (*right).bitmap);
   }
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
@@ -286,7 +286,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   \param confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High).
   \param ts         : Data timestamp.
 
-  Pass NULL to one of these parameters if you don't want the corresponding data.
+  Pass nullptr to one of these parameters if you don't want the corresponding data.
 
   For example if you are only interested in the pose, use:
   \code
@@ -300,7 +300,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     rs.open(config);
 
     vpHomogeneousMatrix cMw;
-    rs.acquire(NULL, NULL, &cMw, NULL, NULL, NULL, NULL);
+    rs.acquire(nullptr, nullptr, &cMw, nullptr, nullptr, nullptr, nullptr);
   \endcode
  */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
@@ -308,7 +308,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 {
   auto data = m_pipe.wait_for_frames();
 
-  if (left != NULL) {
+  if (left != nullptr) {
     auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
@@ -316,7 +316,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if (right != NULL) {
+  if (right != nullptr) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -327,11 +327,11 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
   auto pose_data = pose_frame.as<rs2::pose_frame>().get_pose_data();
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 
-  if (cMw != NULL) {
+  if (cMw != nullptr) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -344,7 +344,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if (odo_vel != NULL) {
+  if (odo_vel != nullptr) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -354,7 +354,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if (odo_acc != NULL) {
+  if (odo_acc != nullptr) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -364,7 +364,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
   }
 
-  if (confidence != NULL) {
+  if (confidence != nullptr) {
     *confidence = pose_data.tracker_confidence;
   }
 }
@@ -388,7 +388,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 {
   auto data = m_pipe.wait_for_frames();
 
-  if (left != NULL) {
+  if (left != nullptr) {
     auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
@@ -396,7 +396,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if (right != NULL) {
+  if (right != nullptr) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -407,11 +407,11 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
   auto pose_data = pose_frame.as<rs2::pose_frame>().get_pose_data();
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 
-  if (cMw != NULL) {
+  if (cMw != nullptr) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -424,7 +424,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if (odo_vel != NULL) {
+  if (odo_vel != nullptr) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -434,7 +434,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if (odo_acc != NULL) {
+  if (odo_acc != nullptr) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -447,7 +447,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto accel_frame = data.first_or_default(RS2_STREAM_ACCEL);
   auto accel_data = accel_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if (imu_acc != NULL) {
+  if (imu_acc != nullptr) {
     imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(accel_data.x);
     (*imu_acc)[1] = static_cast<double>(accel_data.y);
@@ -457,14 +457,14 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto gyro_frame = data.first_or_default(RS2_STREAM_GYRO);
   auto gyro_data = gyro_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if (imu_vel != NULL) {
+  if (imu_vel != nullptr) {
     imu_vel->resize(3, false);
     (*imu_vel)[0] = static_cast<double>(gyro_data.x);
     (*imu_vel)[1] = static_cast<double>(gyro_data.y);
     (*imu_vel)[2] = static_cast<double>(gyro_data.z);
   }
 
-  if (confidence != NULL) {
+  if (confidence != nullptr) {
     *confidence = pose_data.tracker_confidence;
   }
 }
@@ -473,37 +473,37 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 #ifdef VISP_HAVE_PCL
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
   \param pointcloud : Point cloud (in PCL format and without texture
-  information) pointer or NULL if not wanted.
-  \param data_infrared : Infrared image buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  information) pointer or nullptr if not wanted.
+  \param data_infrared : Infrared image buffer or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts : Data timestamp or NULL if not wanted.
+  \param ts : Data timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
                            pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char *const data_infrared,
                            rs2::align *const align_to, double *ts)
 {
-  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, NULL, align_to, ts);
+  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, nullptr, align_to, ts);
 }
 
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
   \param pointcloud : Point cloud (in PCL format and without texture
-  information) pointer or NULL if not wanted.
-  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  information) pointer or nullptr if not wanted.
+  \param data_infrared1 : First infrared image buffer or nullptr if not wanted.
   \param data_infrared2 : Second infrared image (if supported by the device)
-  buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  buffer or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts : Data timestamp or NULL if not wanted.
+  \param ts : Data timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
@@ -511,7 +511,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL) {
+  if (align_to != nullptr) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
@@ -521,74 +521,74 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 #endif
   }
 
-  if (data_image != NULL) {
+  if (data_image != nullptr) {
     auto color_frame = data.get_color_frame();
     getNativeFrameData(color_frame, data_image);
   }
 
-  if (data_depth != NULL || data_pointCloud != NULL || pointcloud != NULL) {
+  if (data_depth != nullptr || data_pointCloud != nullptr || pointcloud != nullptr) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL) {
+    if (data_depth != nullptr) {
       getNativeFrameData(depth_frame, data_depth);
     }
 
-    if (data_pointCloud != NULL) {
+    if (data_pointCloud != nullptr) {
       getPointcloud(depth_frame, *data_pointCloud);
     }
 
-    if (pointcloud != NULL) {
+    if (pointcloud != nullptr) {
       getPointcloud(depth_frame, pointcloud);
     }
   }
 
-  if (data_infrared1 != NULL) {
+  if (data_infrared1 != nullptr) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrameData(infrared_frame, data_infrared1);
   }
 
-  if (data_infrared2 != NULL) {
+  if (data_infrared2 != nullptr) {
     auto infrared_frame = data.get_infrared_frame(2);
     getNativeFrameData(infrared_frame, data_infrared2);
   }
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
 
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
   \param pointcloud : Point cloud (in PCL format and with texture information)
-  pointer or NULL if not wanted.
-  \param data_infrared : Infrared image buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  pointer or nullptr if not wanted.
+  \param data_infrared : Infrared image buffer or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts : Data timestamp or NULL if not wanted.
+  \param ts : Data timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
                            pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char *const data_infrared,
                            rs2::align *const align_to, double *ts)
 {
-  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, NULL, align_to, ts);
+  acquire(data_image, data_depth, data_pointCloud, pointcloud, data_infrared, nullptr, align_to, ts);
 }
 
 /*!
   Acquire data from RealSense device.
-  \param data_image : Color image buffer or NULL if not wanted.
-  \param data_depth : Depth image buffer or NULL if not wanted.
-  \param data_pointCloud : Point cloud vector pointer or NULL if not wanted.
+  \param data_image : Color image buffer or nullptr if not wanted.
+  \param data_depth : Depth image buffer or nullptr if not wanted.
+  \param data_pointCloud : Point cloud vector pointer or nullptr if not wanted.
   \param pointcloud : Point cloud (in PCL format and with texture information)
-  pointer or NULL if not wanted.
-  \param data_infrared1 : First infrared image buffer or NULL if not wanted.
+  pointer or nullptr if not wanted.
+  \param data_infrared1 : First infrared image buffer or nullptr if not wanted.
   \param data_infrared2 : Second infrared image (if supported by the device)
-  buffer or NULL if not wanted.
-  \param align_to : Align to a reference stream or NULL if not wanted.
+  buffer or nullptr if not wanted.
+  \param align_to : Align to a reference stream or nullptr if not wanted.
   Only depth and color streams can be aligned.
-  \param ts : Data timestamp or NULL if not wanted.
+  \param ts : Data timestamp or nullptr if not wanted.
  */
 void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const data_depth,
                            std::vector<vpColVector> *const data_pointCloud,
@@ -596,7 +596,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
-  if (align_to != NULL) {
+  if (align_to != nullptr) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
 #if (RS2_API_VERSION > ((2 * 10000) + (9 * 100) + 0))
@@ -607,36 +607,36 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   }
 
   auto color_frame = data.get_color_frame();
-  if (data_image != NULL) {
+  if (data_image != nullptr) {
     getNativeFrameData(color_frame, data_image);
   }
 
-  if (data_depth != NULL || data_pointCloud != NULL || pointcloud != NULL) {
+  if (data_depth != nullptr || data_pointCloud != nullptr || pointcloud != nullptr) {
     auto depth_frame = data.get_depth_frame();
-    if (data_depth != NULL) {
+    if (data_depth != nullptr) {
       getNativeFrameData(depth_frame, data_depth);
     }
 
-    if (data_pointCloud != NULL) {
+    if (data_pointCloud != nullptr) {
       getPointcloud(depth_frame, *data_pointCloud);
     }
 
-    if (pointcloud != NULL) {
+    if (pointcloud != nullptr) {
       getPointcloud(depth_frame, color_frame, pointcloud);
     }
   }
 
-  if (data_infrared1 != NULL) {
+  if (data_infrared1 != nullptr) {
     auto infrared_frame = data.first(RS2_STREAM_INFRARED);
     getNativeFrameData(infrared_frame, data_infrared1);
   }
 
-  if (data_infrared2 != NULL) {
+  if (data_infrared2 != nullptr) {
     auto infrared_frame = data.get_infrared_frame(2);
     getNativeFrameData(infrared_frame, data_infrared2);
   }
 
-  if (ts != NULL) {
+  if (ts != nullptr) {
     *ts = data.get_timestamp();
   }
 }
@@ -1187,10 +1187,10 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
   auto f = frame.first_or_default(RS2_STREAM_POSE);
   auto pose_data = f.as<rs2::pose_frame>().get_pose_data();
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = frame.get_timestamp();
 
-  if (cMw != NULL) {
+  if (cMw != nullptr) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -1203,7 +1203,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if (odo_vel != NULL) {
+  if (odo_vel != nullptr) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -1213,7 +1213,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if (odo_acc != NULL) {
+  if (odo_acc != nullptr) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -1252,10 +1252,10 @@ void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
   auto f = frame.first_or_default(RS2_STREAM_ACCEL);
   auto imu_acc_data = f.as<rs2::motion_frame>().get_motion_data();
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = f.get_timestamp();
 
-  if (imu_acc != NULL) {
+  if (imu_acc != nullptr) {
     imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
     (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
@@ -1289,10 +1289,10 @@ void vpRealSense2::getIMUVelocity(vpColVector *imu_vel, double *ts)
   auto f = frame.first_or_default(RS2_STREAM_GYRO);
   auto imu_vel_data = f.as<rs2::motion_frame>().get_motion_data();
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = f.get_timestamp();
 
-  if (imu_vel != NULL) {
+  if (imu_vel != nullptr) {
     imu_vel->resize(3, false);
     (*imu_vel)[0] = static_cast<double>(imu_vel_data.x);
     (*imu_vel)[1] = static_cast<double>(imu_vel_data.x);
@@ -1324,10 +1324,10 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
 {
   auto data = m_pipe.wait_for_frames();
 
-  if (ts != NULL)
+  if (ts != nullptr)
     *ts = data.get_timestamp();
 
-  if (imu_acc != NULL) {
+  if (imu_acc != nullptr) {
     auto acc_data = data.first_or_default(RS2_STREAM_ACCEL);
     auto imu_acc_data = acc_data.as<rs2::motion_frame>().get_motion_data();
 
@@ -1337,7 +1337,7 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
     (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
   }
 
-  if (imu_vel != NULL) {
+  if (imu_vel != nullptr) {
     auto vel_data = data.first_or_default(RS2_STREAM_GYRO);
     auto imu_vel_data = vel_data.as<rs2::motion_frame>().get_motion_data();
 

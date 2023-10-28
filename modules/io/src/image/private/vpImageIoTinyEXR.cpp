@@ -63,7 +63,7 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   EXRHeader exr_header;
   InitEXRHeader(&exr_header);
 
-  const char *err = NULL; // or `nullptr` in C++11 or later.
+  const char *err = nullptr; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
     std::string err_msg(err);
@@ -136,7 +136,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   EXRHeader exr_header;
   InitEXRHeader(&exr_header);
 
-  const char *err = NULL; // or `nullptr` in C++11 or later.
+  const char *err = nullptr; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
     std::string err_msg(err);
@@ -236,7 +236,7 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT; // pixel type of output image to be stored in .EXR
   }
 
-  const char *err = NULL; // or nullptr in C++11 or later.
+  const char *err = nullptr; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);
@@ -298,7 +298,7 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;  // pixel type of output image to be stored in .EXR
   }
 
-  const char *err = NULL; // or nullptr in C++11 or later.
+  const char *err = nullptr; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);

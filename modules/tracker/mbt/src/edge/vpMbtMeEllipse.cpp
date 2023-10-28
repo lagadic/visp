@@ -183,7 +183,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
                                   double n11_p, double n02_p, bool doNotTrack, vpImagePoint *pt1,
                                   const vpImagePoint *pt2)
 {
-  if (pt1 != NULL && pt2 != NULL) {
+  if (pt1 != nullptr && pt2 != nullptr) {
     m_trackArc = true;
   }
 
@@ -238,7 +238,7 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
   try {
     vpMeTracker::track(I);
-    if (m_mask != NULL) {
+    if (m_mask != nullptr) {
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       m_expectedDensity = static_cast<unsigned int>(list.size());
     }

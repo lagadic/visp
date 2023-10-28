@@ -193,13 +193,13 @@ int main(int argc, char *argv[])
 
       if (pcl_color) {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
+                   nullptr, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
       }
       else {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
+                   nullptr, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
       }
 
       update_pointcloud = true;

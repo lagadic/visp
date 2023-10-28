@@ -73,7 +73,7 @@ extern "C" {
 */
 
 bool vpRobotBebop2::m_running = false;
-ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
+ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = nullptr;
 
 /*!
 
@@ -123,12 +123,12 @@ vpRobotBebop2::vpRobotBebop2(bool verbose, bool setDefaultSettings, std::string 
   sigaction(SIGQUIT, &m_sigAct, 0);
 
 #ifdef VISP_HAVE_FFMPEG
-  m_codecContext = NULL;
+  m_codecContext = nullptr;
   m_packet = AVPacket();
-  m_picture = NULL;
-  m_bgr_picture = NULL;
-  m_img_convert_ctx = NULL;
-  m_buffer = NULL;
+  m_picture = nullptr;
+  m_bgr_picture = nullptr;
+  m_img_convert_ctx = nullptr;
+  m_buffer = nullptr;
   m_videoDecodingStarted = false;
 #endif
 
@@ -220,7 +220,7 @@ vpRobotBebop2::~vpRobotBebop2() { cleanUp(); }
 */
 void vpRobotBebop2::doFlatTrim()
 {
-  if (isRunning() && m_deviceController != NULL && isLanded()) {
+  if (isRunning() && m_deviceController != nullptr && isLanded()) {
 
     m_flatTrimFinished = false;
 
@@ -317,7 +317,7 @@ double vpRobotBebop2::getMaxCameraPan() const { return m_maxCameraPan; }
 */
 void vpRobotBebop2::setCameraOrientation(double tilt, double pan, bool blocking)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     m_deviceController->aRDrone3->sendCameraOrientationV2(m_deviceController->aRDrone3, static_cast<float>(tilt),
                                                           static_cast<float>(pan));
@@ -346,7 +346,7 @@ void vpRobotBebop2::setCameraOrientation(double tilt, double pan, bool blocking)
 */
 void vpRobotBebop2::setCameraTilt(double tilt, bool blocking)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     m_deviceController->aRDrone3->sendCameraOrientationV2(m_deviceController->aRDrone3, static_cast<float>(tilt),
                                                           static_cast<float>(getCurrentCameraPan()));
@@ -375,7 +375,7 @@ void vpRobotBebop2::setCameraTilt(double tilt, bool blocking)
 */
 void vpRobotBebop2::setCameraPan(double pan, bool blocking)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     m_deviceController->aRDrone3->sendCameraOrientationV2(
         m_deviceController->aRDrone3, static_cast<float>(getCurrentCameraTilt()), static_cast<float>(pan));
@@ -397,7 +397,7 @@ void vpRobotBebop2::setCameraPan(double pan, bool blocking)
 */
 bool vpRobotBebop2::isRunning()
 {
-  if (m_deviceController == NULL) {
+  if (m_deviceController == nullptr) {
     return false;
   } else {
     return m_running;
@@ -453,7 +453,7 @@ bool vpRobotBebop2::isLanded()
 */
 void vpRobotBebop2::takeOff(bool blocking)
 {
-  if (isRunning() && isLanded() && m_deviceController != NULL) {
+  if (isRunning() && isLanded() && m_deviceController != nullptr) {
 
     m_deviceController->aRDrone3->sendPilotingTakeOff(m_deviceController->aRDrone3);
 
@@ -476,7 +476,7 @@ void vpRobotBebop2::takeOff(bool blocking)
 */
 void vpRobotBebop2::land()
 {
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
   }
 }
@@ -493,7 +493,7 @@ void vpRobotBebop2::land()
 */
 void vpRobotBebop2::setVerticalSpeed(int value)
 {
-  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+  if (isRunning() && m_deviceController != nullptr && (isFlying() || isHovering())) {
     m_errorController =
         m_deviceController->aRDrone3->setPilotingPCMDGaz(m_deviceController->aRDrone3, static_cast<char>(value));
 
@@ -519,7 +519,7 @@ void vpRobotBebop2::setVerticalSpeed(int value)
 */
 void vpRobotBebop2::setYawSpeed(int value)
 {
-  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+  if (isRunning() && m_deviceController != nullptr && (isFlying() || isHovering())) {
 
     m_errorController =
         m_deviceController->aRDrone3->setPilotingPCMDYaw(m_deviceController->aRDrone3, static_cast<char>(value));
@@ -546,7 +546,7 @@ void vpRobotBebop2::setYawSpeed(int value)
 */
 void vpRobotBebop2::setPitch(int value)
 {
-  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+  if (isRunning() && m_deviceController != nullptr && (isFlying() || isHovering())) {
 
     m_errorController =
         m_deviceController->aRDrone3->setPilotingPCMDPitch(m_deviceController->aRDrone3, static_cast<char>(value));
@@ -574,7 +574,7 @@ void vpRobotBebop2::setPitch(int value)
 */
 void vpRobotBebop2::setRoll(int value)
 {
-  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+  if (isRunning() && m_deviceController != nullptr && (isFlying() || isHovering())) {
 
     m_errorController =
         m_deviceController->aRDrone3->setPilotingPCMDRoll(m_deviceController->aRDrone3, static_cast<char>(value));
@@ -598,7 +598,7 @@ void vpRobotBebop2::setRoll(int value)
 */
 void vpRobotBebop2::cutMotors()
 {
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     m_errorController = m_deviceController->aRDrone3->sendPilotingEmergency(m_deviceController->aRDrone3);
   }
 }
@@ -620,7 +620,7 @@ void vpRobotBebop2::cutMotors()
 */
 void vpRobotBebop2::setPosition(float dX, float dY, float dZ, float dPsi, bool blocking)
 {
-  if (isRunning() && m_deviceController != NULL && (isFlying() || isHovering())) {
+  if (isRunning() && m_deviceController != nullptr && (isFlying() || isHovering())) {
 
     m_relativeMoveEnded = false;
     m_deviceController->aRDrone3->sendPilotingMoveBy(m_deviceController->aRDrone3, dX, dY, dZ, dPsi);
@@ -721,7 +721,7 @@ void vpRobotBebop2::setVerbose(bool verbose)
 */
 void vpRobotBebop2::resetAllSettings()
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     m_settingsReset = false;
     m_deviceController->common->sendSettingsReset(m_deviceController->common);
@@ -748,7 +748,7 @@ void vpRobotBebop2::resetAllSettings()
 */
 void vpRobotBebop2::setMaxTilt(double maxTilt)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
     m_deviceController->aRDrone3->sendPilotingSettingsMaxTilt(m_deviceController->aRDrone3,
                                                               static_cast<float>(maxTilt));
   } else {
@@ -765,7 +765,7 @@ void vpRobotBebop2::setMaxTilt(double maxTilt)
 */
 void vpRobotBebop2::stopMoving()
 {
-  if (isRunning() && !isLanded() && m_deviceController != NULL) {
+  if (isRunning() && !isLanded() && m_deviceController != nullptr) {
     m_errorController = m_deviceController->aRDrone3->setPilotingPCMD(m_deviceController->aRDrone3, 0, 0, 0, 0, 0, 0);
   }
 }
@@ -788,7 +788,7 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
 {
   if (m_videoDecodingStarted) {
 
-    if (m_bgr_picture->data[0] != NULL) {
+    if (m_bgr_picture->data[0] != nullptr) {
       I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
 
       m_bgr_picture_mutex.lock();
@@ -796,7 +796,7 @@ void vpRobotBebop2::getGrayscaleImage(vpImage<unsigned char> &I)
                                 I.getHeight());
       m_bgr_picture_mutex.unlock();
     } else {
-      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current grayscale image : image data is NULL");
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current grayscale image : image data is nullptr");
     }
 
   } else {
@@ -816,7 +816,7 @@ void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
 {
   if (m_videoDecodingStarted) {
 
-    if (m_bgr_picture->data[0] != NULL) {
+    if (m_bgr_picture->data[0] != nullptr) {
       I.resize(static_cast<unsigned int>(m_videoHeight), static_cast<unsigned int>(m_videoWidth));
 
       m_bgr_picture_mutex.lock();
@@ -824,7 +824,7 @@ void vpRobotBebop2::getRGBaImage(vpImage<vpRGBa> &I)
                                 I.getHeight());
       m_bgr_picture_mutex.unlock();
     } else {
-      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current RGBa image : image data is NULL");
+      ARSAL_PRINT(ARSAL_PRINT_ERROR, "ERROR", "Error while getting current RGBa image : image data is nullptr");
     }
 
   } else {
@@ -855,7 +855,7 @@ int vpRobotBebop2::getVideoWidth() { return m_videoWidth; }
 */
 void vpRobotBebop2::setExposure(float expo)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
     expo = std::min(1.5f, std::max(-1.5f, expo));
 
     m_exposureSet = false;
@@ -886,7 +886,7 @@ void vpRobotBebop2::setExposure(float expo)
 */
 void vpRobotBebop2::setStreamingMode(int mode)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     if (!isStreaming() && isLanded()) {
       eARCOMMANDS_ARDRONE3_MEDIASTREAMING_VIDEOSTREAMMODE_MODE cmd_mode =
@@ -935,7 +935,7 @@ void vpRobotBebop2::setStreamingMode(int mode)
 */
 void vpRobotBebop2::setVideoResolution(int mode)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     if (!isStreaming() && isLanded()) {
 
@@ -988,7 +988,7 @@ void vpRobotBebop2::setVideoResolution(int mode)
 */
 void vpRobotBebop2::setVideoStabilisationMode(int mode)
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
 
     eARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE cmd_mode =
         ARCOMMANDS_ARDRONE3_PICTURESETTINGS_VIDEOSTABILIZATIONMODE_MODE_NONE;
@@ -1027,7 +1027,7 @@ void vpRobotBebop2::setVideoStabilisationMode(int mode)
 */
 void vpRobotBebop2::startStreaming()
 {
-  if (isRunning() && m_deviceController != NULL) {
+  if (isRunning() && m_deviceController != nullptr) {
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Starting video streaming ... ");
 
     // Sending command to the drone to start the video stream
@@ -1062,7 +1062,7 @@ void vpRobotBebop2::startStreaming()
 */
 void vpRobotBebop2::stopStreaming()
 {
-  if (m_videoDecodingStarted && m_deviceController != NULL) {
+  if (m_videoDecodingStarted && m_deviceController != nullptr) {
     ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Stopping video streaming ... ");
 
     // Sending command to the drone to stop the video stream
@@ -1122,7 +1122,7 @@ void vpRobotBebop2::sighandler(int signo)
   vpRobotBebop2::m_running = false;
 
   // Landing the drone
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     m_deviceController->aRDrone3->sendPilotingLanding(m_deviceController->aRDrone3);
   }
   std::exit(EXIT_FAILURE);
@@ -1134,7 +1134,7 @@ void vpRobotBebop2::sighandler(int signo)
 */
 eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFlyingState()
 {
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE flyingState =
         ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_MAX;
     eARCONTROLLER_ERROR error;
@@ -1142,19 +1142,19 @@ eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFl
     ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary = ARCONTROLLER_ARDrone3_GetCommandElements(
         m_deviceController->aRDrone3, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED, &error);
 
-    if (error == ARCONTROLLER_OK && elementDictionary != NULL) {
-      ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+    if (error == ARCONTROLLER_OK && elementDictionary != nullptr) {
+      ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
 
       HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-      if (element != NULL) {
+      if (element != nullptr) {
         // Suppress warnings
         //  Get the value
         HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE,
                       arg);
 
-        if (arg != NULL) {
+        if (arg != nullptr) {
           // Enums are stored as I32
           flyingState = static_cast<eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE>(arg->value.I32);
         }
@@ -1173,7 +1173,7 @@ eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFl
 */
 eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop2::getStreamingState()
 {
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED streamingState =
         ARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED_MAX;
     eARCONTROLLER_ERROR error;
@@ -1182,18 +1182,18 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
         m_deviceController->aRDrone3, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED,
         &error);
 
-    if (error == ARCONTROLLER_OK && elementDictionary != NULL) {
-      ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+    if (error == ARCONTROLLER_OK && elementDictionary != nullptr) {
+      ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+      ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
 
       HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-      if (element != NULL) {
+      if (element != nullptr) {
         // Get the value
         HASH_FIND_STR(element->arguments,
                       ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED, arg);
 
-        if (arg != NULL) {
+        if (arg != nullptr) {
           // Enums are stored as I32
           streamingState =
               static_cast<eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED>(arg->value.I32);
@@ -1267,7 +1267,7 @@ void vpRobotBebop2::setupCallbacks()
 #ifdef VISP_HAVE_FFMPEG
   // Adding frame received callback, called when a streaming frame has been received from the device
   m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks(m_deviceController, decoderConfigCallback,
-                                                                  didReceiveFrameCallback, NULL, this);
+                                                                  didReceiveFrameCallback, nullptr, this);
 
   if (m_errorController != ARCONTROLLER_OK) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error: %s", ARCONTROLLER_Error_ToString(m_errorController));
@@ -1348,7 +1348,7 @@ void vpRobotBebop2::initCodec()
   m_codecContext->flags2 |= AV_CODEC_FLAG2_CHUNKS;
 
   // Opens the codec
-  if (avcodec_open2(m_codecContext, codec, NULL) < 0) {
+  if (avcodec_open2(m_codecContext, codec, nullptr) < 0) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Failed to open codec.");
     return;
   }
@@ -1365,8 +1365,8 @@ void vpRobotBebop2::initCodec()
   m_bgr_picture_mutex.unlock();
 
   m_img_convert_ctx = sws_getContext(m_codecContext->width, m_codecContext->height, m_codecContext->pix_fmt,
-                                     m_codecContext->width, m_codecContext->height, pFormat, SWS_BICUBIC, NULL, NULL,
-                                     NULL); // Used to rescale frame received from the decoder
+                                     m_codecContext->width, m_codecContext->height, pFormat, SWS_BICUBIC, nullptr, nullptr,
+                                     nullptr); // Used to rescale frame received from the decoder
 }
 
 /*!
@@ -1524,7 +1524,7 @@ void vpRobotBebop2::computeFrame(ARCONTROLLER_Frame_t *frame)
 */
 void vpRobotBebop2::cleanUp()
 {
-  if (m_deviceController != NULL) {
+  if (m_deviceController != nullptr) {
     // Lands the drone if not landed
     land();
 
@@ -1646,14 +1646,14 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 {
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
-  if (frame != NULL) {
+  if (frame != nullptr) {
 
     if (drone->m_videoDecodingStarted) {
       drone->computeFrame(frame);
     }
 
   } else {
-    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");
+    ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is nullptr.");
   }
 
   return ARCONTROLLER_OK;
@@ -1672,19 +1672,19 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
 void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
                                               vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *singleElement = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *singleElement = nullptr;
 
-  if (elementDictionary == NULL) {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "elements is NULL");
+  if (elementDictionary == nullptr) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "elements is nullptr");
     return;
   }
 
   // Get the command received in the device controller
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, singleElement);
 
-  if (singleElement == NULL) {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "singleElement is NULL");
+  if (singleElement == nullptr) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "singleElement is nullptr");
     return;
   }
 
@@ -1692,8 +1692,8 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
   HASH_FIND_STR(singleElement->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_COMMONSTATE_BATTERYSTATECHANGED_PERCENT,
                 arg);
 
-  if (arg == NULL) {
-    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "arg is NULL");
+  if (arg == nullptr) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "arg is nullptr");
     return;
   }
   drone->m_batteryLevel = arg->value.U8;
@@ -1719,18 +1719,18 @@ void vpRobotBebop2::cmdBatteryStateChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
 void vpRobotBebop2::cmdCameraOrientationChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
                                                    vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-  if (element != NULL) {
+  if (element != nullptr) {
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_TILT, arg);
 
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_currentCameraTilt = static_cast<double>(arg->value.Float);
     }
 
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_CAMERASTATE_ORIENTATIONV2_PAN, arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_currentCameraPan = static_cast<double>(arg->value.Float);
     }
   }
@@ -1749,41 +1749,41 @@ void vpRobotBebop2::cmdCameraOrientationChangedRcv(ARCONTROLLER_DICTIONARY_ELEME
 */
 void vpRobotBebop2::cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-  if (element != NULL) {
+  if (element != nullptr) {
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_FOV,
                   arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_cameraHorizontalFOV = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Camera horizontal FOV : %f degrees.",
                   static_cast<double>(drone->m_cameraHorizontalFOV));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMAX, arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_maxCameraPan = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera pan : %f degrees.",
                   static_cast<double>(drone->m_maxCameraPan));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_PANMIN, arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_minCameraPan = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera pan : %f degrees.",
                   static_cast<double>(drone->m_minCameraPan));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMAX, arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_maxCameraTilt = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Max camera tilt : %f degrees.",
                   static_cast<double>(drone->m_maxCameraTilt));
     }
     HASH_FIND_STR(element->arguments,
                   ARCONTROLLER_DICTIONARY_KEY_COMMON_CAMERASETTINGSSTATE_CAMERASETTINGSCHANGED_TILTMIN, arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_minCameraTilt = static_cast<double>(arg->value.Float);
       ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Min camera tilt : %f degrees.",
                   static_cast<double>(drone->m_minCameraTilt));
@@ -1804,14 +1804,14 @@ void vpRobotBebop2::cmdCameraSettingsRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elem
 void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary,
                                               vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
 
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
-  if (element != NULL) {
+  if (element != nullptr) {
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSETTINGSSTATE_MAXTILTCHANGED_CURRENT,
                   arg);
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_maxTilt = static_cast<double>(arg->value.Float);
     }
   }
@@ -1829,15 +1829,15 @@ void vpRobotBebop2::cmdMaxPitchRollChangedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t 
 */
 void vpRobotBebop2::cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
 
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-  if (element != NULL) {
+  if (element != nullptr) {
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR, arg);
 
-    if (arg != NULL) {
+    if (arg != nullptr) {
       eARCOMMANDS_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR error =
           static_cast<eARCOMMANDS_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR>(arg->value.I32);
       if ((error != ARCOMMANDS_ARDRONE3_PILOTINGEVENT_MOVEBYEND_ERROR_OK) &&
@@ -1861,17 +1861,17 @@ void vpRobotBebop2::cmdRelativeMoveEndedRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *e
 */
 void vpRobotBebop2::cmdExposureSetRcv(ARCONTROLLER_DICTIONARY_ELEMENT_t *elementDictionary, vpRobotBebop2 *drone)
 {
-  ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
-  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
+  ARCONTROLLER_DICTIONARY_ARG_t *arg = nullptr;
+  ARCONTROLLER_DICTIONARY_ELEMENT_t *element = nullptr;
 
   HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-  if (element != NULL) {
+  if (element != nullptr) {
 
     HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PICTURESETTINGSSTATE_EXPOSITIONCHANGED_VALUE,
                   arg);
 
-    if (arg != NULL) {
+    if (arg != nullptr) {
       drone->m_exposureSet = true;
     }
   }
@@ -1891,7 +1891,7 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
 {
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
-  if (drone == NULL)
+  if (drone == nullptr)
     return;
 
   switch (commandKey) {

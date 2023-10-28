@@ -261,21 +261,21 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
   vpDEBUG_TRACE(10, " points are  coplanar ");
   //  vpTRACE(" points are  coplanar ") ;
 
-  // If the points are coplanar and the input/output parameters are different from NULL,
+  // If the points are coplanar and the input/output parameters are different from nullptr,
   // getting the values of the plan coefficient and storing in the input/output parameters
-  if (p_a != NULL) {
+  if (p_a != nullptr) {
     *p_a = a;
   }
 
-  if (p_b != NULL) {
+  if (p_b != nullptr) {
     *p_b = b;
   }
 
-  if (p_c != NULL) {
+  if (p_c != nullptr) {
     *p_c = c;
   }
 
-  if (p_d != NULL) {
+  if (p_d != nullptr) {
     *p_d = d;
   }
 

@@ -98,7 +98,7 @@ public:
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
                               ,
-                              const vpImage<bool> *mask = NULL);
+                              const vpImage<bool> *mask = nullptr);
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, vpColVector &desired_features,
@@ -108,7 +108,7 @@ public:
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
                               ,
-                              const vpImage<bool> *mask = NULL);
+                              const vpImage<bool> *mask = nullptr);
 
   void computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features);
 
@@ -179,10 +179,10 @@ private:
     //! The second extremity clipped in the image frame
     vpImagePoint m_imPt2;
 
-    PolygonLine() : m_p1(NULL), m_p2(NULL), m_poly(), m_imPt1(), m_imPt2() {}
+    PolygonLine() : m_p1(nullptr), m_p2(nullptr), m_poly(), m_imPt1(), m_imPt2() {}
 
     PolygonLine(const PolygonLine &polyLine)
-      : m_p1(NULL), m_p2(NULL), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
+      : m_p1(nullptr), m_p2(nullptr), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
     {
       m_p1 = &m_poly.p[0];
       m_p2 = &m_poly.p[1];

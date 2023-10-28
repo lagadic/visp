@@ -96,8 +96,8 @@ public:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpRobotBiclopsController(const vpRobotBiclopsController &)
-      //    : m_biclops(), m_axisMask(0), m_panAxis(NULL), m_tiltAxis(NULL),
-      //      m_vergeAxis(NULL),
+      //    : m_biclops(), m_axisMask(0), m_panAxis(nullptr), m_tiltAxis(nullptr),
+      //      m_vergeAxis(nullptr),
       //      m_panProfile(), m_tiltProfile(), m_vergeProfile(), m_shm(),
       //      m_stopControllerThread(false)
       //  {

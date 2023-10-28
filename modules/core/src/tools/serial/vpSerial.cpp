@@ -267,7 +267,7 @@ bool vpSerial::read(char *c, long timeout_s)
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(m_fd), &readfds);
 
-  int ret = select(FD_SETSIZE, &readfds, (fd_set *)NULL, (fd_set *)NULL, &timeout);
+  int ret = select(FD_SETSIZE, &readfds, (fd_set *)nullptr, (fd_set *)nullptr, &timeout);
 
   if (ret < 0) {
     throw(vpException(vpException::fatalError, "Serial i/o exception"));

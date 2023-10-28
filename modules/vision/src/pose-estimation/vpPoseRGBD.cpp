@@ -155,7 +155,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
                       point3d.size(), corners.size()));
   }
   std::vector<vpPoint> pose_points;
-  if (confidence_index != NULL) {
+  if (confidence_index != nullptr) {
     *confidence_index = 0.0;
   }
 
@@ -223,7 +223,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       vpPose pose;
       pose.addPoints(pose_points);
       if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-        if (confidence_index != NULL) {
+        if (confidence_index != nullptr) {
           *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
         }
         return true;
@@ -247,7 +247,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
                       point3d.size(), corners.size()));
   }
   std::vector<vpPoint> pose_points;
-  if (confidence_index != NULL) {
+  if (confidence_index != nullptr) {
     *confidence_index = 0.0;
   }
 
@@ -418,7 +418,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
         vpPose pose;
         pose.addPoints(pose_points);
         if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-          if (confidence_index != NULL) {
+          if (confidence_index != nullptr) {
             *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
           }
           return true;

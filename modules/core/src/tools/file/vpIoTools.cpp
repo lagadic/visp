@@ -1723,7 +1723,7 @@ std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   std::string real_path_str = pathname;
-  char *real_path = realpath(pathname.c_str(), NULL);
+  char *real_path = realpath(pathname.c_str(), nullptr);
 
   if (real_path) {
     real_path_str = real_path;
@@ -2030,8 +2030,8 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
   std::vector<std::string> files;
-  struct dirent **list = NULL;
-  int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
+  struct dirent **list = nullptr;
+  int filesCount = scandir(dirName.c_str(), &list, nullptr, nullptr);
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }

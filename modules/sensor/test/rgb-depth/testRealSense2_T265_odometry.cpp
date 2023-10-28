@@ -88,7 +88,7 @@ int main()
     display_pose.init(I_pose, 10, 10, "Pose visualizer");
 #endif
 
-    confidence = rs.getOdometryData(&cMw_0, NULL, NULL, &ts); // Acquire first frame (pose only)
+    confidence = rs.getOdometryData(&cMw_0, nullptr, nullptr, &ts); // Acquire first frame (pose only)
 
     vpHomogeneousMatrix cextMc_0 = cextMw * cMw_0.inverse();
     vpMeterPixelConversion::convertPoint(cam, cextMc_0[0][3] / cextMc_0[2][3], cextMc_0[1][3] / cextMc_0[2][3],
@@ -97,7 +97,7 @@ int main()
 
     while (true) {
       double t = vpTime::measureTimeMs();
-      confidence = rs.getOdometryData(&cMw, NULL, NULL, &ts); // Acquire timestamped pose only
+      confidence = rs.getOdometryData(&cMw, nullptr, nullptr, &ts); // Acquire timestamped pose only
 
       vpDisplay::display(I_pose);
 

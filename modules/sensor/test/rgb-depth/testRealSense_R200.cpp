@@ -290,24 +290,24 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
 
       if (direct_infrared_conversion) {
         if (pcl_color) {
-          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud_color,
                      (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
         }
         else {
-          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud,
                      (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream,
                      depth_stream, rs::stream::infrared, infrared2_stream);
         }
       }
       else {
         if (pcl_color) {
-          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud_color,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud_color,
                      (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                      rs::stream::infrared, infrared2_stream);
         }
         else {
-          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL, pointcloud,
+          rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud,
                      (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                      rs::stream::infrared, infrared2_stream);
         }
@@ -321,12 +321,12 @@ void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
     }
     else {
       if (direct_infrared_conversion) {
-        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
+        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr,
                    (unsigned char *)I_infrared.bitmap, (unsigned char *)I_infrared2.bitmap, color_stream, depth_stream,
                    rs::stream::infrared, infrared2_stream);
       }
       else {
-        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, NULL,
+        rs.acquire((unsigned char *)I_color.bitmap, (unsigned char *)depth.bitmap, nullptr,
                    (unsigned char *)infrared.bitmap, (unsigned char *)infrared2.bitmap, color_stream, depth_stream,
                    rs::stream::infrared, infrared2_stream);
         vpImageConvert::convert(infrared, I_infrared);

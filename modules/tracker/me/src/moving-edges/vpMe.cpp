@@ -328,7 +328,7 @@ static void calcul_masques(vpColVector &angle, // definitions des angles theta
 
 void vpMe::initMask()
 {
-  if (m_mask != NULL)
+  if (m_mask != nullptr)
     delete[] m_mask;
 
   m_mask = new vpMatrix[m_mask_number];
@@ -364,7 +364,7 @@ void vpMe::print()
 vpMe::vpMe()
   : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000),
   m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
-  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(NULL)
+  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
 {
   m_anglestep = (180 / m_mask_number);
 
@@ -374,16 +374,16 @@ vpMe::vpMe()
 vpMe::vpMe(const vpMe &me)
   : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000),
   m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
-  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(NULL)
+  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
 {
   *this = me;
 }
 
 vpMe &vpMe::operator=(const vpMe &me)
 {
-  if (m_mask != NULL) {
+  if (m_mask != nullptr) {
     delete[] m_mask;
-    m_mask = NULL;
+    m_mask = nullptr;
   }
 
   m_likelihood_threshold_type = me.m_likelihood_threshold_type;
@@ -407,9 +407,9 @@ vpMe &vpMe::operator=(const vpMe &me)
 
 vpMe &vpMe::operator=(const vpMe &&me)
 {
-  if (m_mask != NULL) {
+  if (m_mask != nullptr) {
     delete[] m_mask;
-    m_mask = NULL;
+    m_mask = nullptr;
   }
   m_likelihood_threshold_type = std::move(me.m_likelihood_threshold_type);
   m_threshold = std::move(me.m_threshold);
@@ -432,9 +432,9 @@ vpMe &vpMe::operator=(const vpMe &&me)
 
 vpMe::~vpMe()
 {
-  if (m_mask != NULL) {
+  if (m_mask != nullptr) {
     delete[] m_mask;
-    m_mask = NULL;
+    m_mask = nullptr;
   }
 }
 

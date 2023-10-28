@@ -86,7 +86,7 @@ int main()
 
     vpCameraParameters cam(300., 300., I_pose.getWidth() / 2, I_pose.getHeight() / 2); // For pose visualization
 
-    rs.acquire(&I_left, &I_right, &cMw_0, NULL, NULL, &confidence, &ts);
+    rs.acquire(&I_left, &I_right, &cMw_0, nullptr, nullptr, &confidence, &ts);
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display_left;  // Left image

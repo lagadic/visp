@@ -120,7 +120,7 @@ vpExampleDataParser::vpExampleDataParser() : m_range(0.), m_step(0), m_size_filt
  */
 void vpExampleDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
 {
-  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != NULL; dataNode = dataNode->next) {
+  for (xmlNodePtr dataNode = node->xmlChildrenNode; dataNode != nullptr; dataNode = dataNode->next) {
     if (dataNode->type == XML_ELEMENT_NODE) {
       std::map<std::string, int>::iterator iter_data = this->nodeMap.find((char *)dataNode->name);
       if (iter_data != nodeMap.end()) {
@@ -228,7 +228,7 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, opath, user);
+      usage(argv[0], nullptr, opath, user);
       return false;
       break;
 
@@ -245,7 +245,7 @@ bool getOptions(int argc, const char **argv, std::string &opath, const std::stri
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, opath, user);
+    usage(argv[0], nullptr, opath, user);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -301,7 +301,7 @@ int main(int argc, const char **argv)
         vpIoTools::makeDirectory(dirname);
       }
       catch (...) {
-        usage(argv[0], NULL, opath, username);
+        usage(argv[0], nullptr, opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;

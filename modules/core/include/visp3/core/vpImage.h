@@ -190,7 +190,7 @@ public:
   // Look for the minumum and the maximum value within the bitmap
   void getMinMaxValue(Type &min, Type &max, bool onlyFiniteVal = true) const;
   // Look for the minumum and the maximum value within the bitmap and get their location
-  void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal = NULL, Type *maxVal = NULL) const;
+  void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal = nullptr, Type *maxVal = nullptr) const;
 
   /*!
     Get the image number of pixels which corresponds to the image
@@ -352,7 +352,7 @@ private:
 
 template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Type> &I)
 {
-  if (I.bitmap == NULL) {
+  if (I.bitmap == nullptr) {
     return s;
   }
 
@@ -375,7 +375,7 @@ template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Ty
 
 inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I)
 {
-  if (I.bitmap == NULL) {
+  if (I.bitmap == nullptr) {
     return s;
   }
 
@@ -401,7 +401,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I
 
 inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
 {
-  if (I.bitmap == NULL) {
+  if (I.bitmap == nullptr) {
     return s;
   }
 
@@ -427,7 +427,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
 
 inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
 {
-  if (I.bitmap == NULL) {
+  if (I.bitmap == nullptr) {
     return s;
   }
 
@@ -454,7 +454,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
 
 inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 {
-  if (I.bitmap == NULL) {
+  if (I.bitmap == nullptr) {
     return s;
   }
 
@@ -490,7 +490,7 @@ struct vpImageLut_Param_t
   unsigned char m_lut[256];
   unsigned char *m_bitmap;
 
-  vpImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
+  vpImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
 
   vpImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
@@ -558,7 +558,7 @@ struct vpImageLutRGBa_Param_t
   vpRGBa m_lut[256];
   unsigned char *m_bitmap;
 
-  vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) { }
+  vpImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(nullptr) { }
 
   vpImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
@@ -637,20 +637,20 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, T
 template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 {
   if (h != this->height) {
-    if (row != NULL) {
+    if (row != nullptr) {
       vpDEBUG_TRACE(10, "Destruction row[]");
       delete[] row;
-      row = NULL;
+      row = nullptr;
     }
   }
 
   if ((h != this->height) || (w != this->width)) {
-    if (bitmap != NULL) {
+    if (bitmap != nullptr) {
       vpDEBUG_TRACE(10, "Destruction bitmap[]");
       if (hasOwnership) {
         delete[] bitmap;
       }
-      bitmap = NULL;
+      bitmap = nullptr;
     }
   }
 
@@ -659,18 +659,18 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 
   npixels = width * height;
 
-  if (bitmap == NULL) {
+  if (bitmap == nullptr) {
     bitmap = new Type[npixels];
     hasOwnership = true;
   }
 
-  if (bitmap == NULL) {
+  if (bitmap == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
 
-  if (row == NULL)
+  if (row == nullptr)
     row = new Type *[height];
-  if (row == NULL) {
+  if (row == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
@@ -684,19 +684,19 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool copyData)
 {
   if (h != this->height) {
-    if (row != NULL) {
+    if (row != nullptr) {
       delete[] row;
-      row = NULL;
+      row = nullptr;
     }
   }
 
   // Delete bitmap if copyData==false, otherwise only if the dimension differs
   if ((copyData && ((h != this->height) || (w != this->width))) || !copyData) {
-    if (bitmap != NULL) {
+    if (bitmap != nullptr) {
       if (hasOwnership) {
         delete[] bitmap;
       }
-      bitmap = NULL;
+      bitmap = nullptr;
     }
   }
 
@@ -707,10 +707,10 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
   npixels = width * height;
 
   if (copyData) {
-    if (bitmap == NULL)
+    if (bitmap == nullptr)
       bitmap = new Type[npixels];
 
-    if (bitmap == NULL) {
+    if (bitmap == nullptr) {
       throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
     }
 
@@ -722,9 +722,9 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
     bitmap = array;
   }
 
-  if (row == NULL)
+  if (row == nullptr)
     row = new Type *[height];
-  if (row == NULL) {
+  if (row == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
@@ -738,7 +738,7 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+  : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   init(h, w, 0);
 }
@@ -748,7 +748,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w)
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+  : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   init(h, w, value);
 }
@@ -758,7 +758,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
 */
 template <class Type>
 vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool copyData)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+  : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   init(array, h, w, copyData);
 }
@@ -767,7 +767,7 @@ vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool c
   \relates vpImage
 */
 template <class Type>
-vpImage<Type>::vpImage() : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+vpImage<Type>::vpImage() : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 { }
 
 /*!
@@ -823,20 +823,20 @@ template <class Type> void vpImage<Type>::destroy()
 {
   //   vpERROR_TRACE("Deallocate ");
 
-  if (bitmap != NULL) {
+  if (bitmap != nullptr) {
     //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
     //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
     if (hasOwnership) {
       delete[] bitmap;
     }
-    bitmap = NULL;
+    bitmap = nullptr;
   }
 
-  if (row != NULL) {
+  if (row != nullptr) {
     //   vpERROR_TRACE("Deallocate row memory %p",row);
     //    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
     delete[] row;
-    row = NULL;
+    row = nullptr;
   }
 }
 
@@ -853,7 +853,7 @@ template <class Type> vpImage<Type>::~vpImage() { destroy(); }
 */
 template <class Type>
 vpImage<Type>::vpImage(const vpImage<Type> &I)
-  : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+  : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
   memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
@@ -867,12 +867,12 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row),
   hasOwnership(I.hasOwnership)
 {
-  I.bitmap = NULL;
-  I.display = NULL;
+  I.bitmap = nullptr;
+  I.display = nullptr;
   I.npixels = 0;
   I.width = 0;
   I.height = 0;
-  I.row = NULL;
+  I.row = nullptr;
   I.hasOwnership = false;
 }
 
@@ -1203,13 +1203,13 @@ template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max
   //[...] Fill I
   vpImagePoint min_loc;
   double min_val = 0.0;
-  I.getMinMaxLoc(&min_loc, NULL, &min_val, NULL);
+  I.getMinMaxLoc(&min_loc, nullptr, &min_val, nullptr);
   \endcode
 
-  \param minLoc : Position of the pixel with minimum value if not NULL.
-  \param maxLoc : Position of the pixel with maximum value if not NULL.
-  \param minVal : Minimum pixel value if not NULL.
-  \param maxVal : Maximum pixel value if not NULL.
+  \param minLoc : Position of the pixel with minimum value if not nullptr.
+  \param maxLoc : Position of the pixel with maximum value if not nullptr.
+  \param minVal : Minimum pixel value if not nullptr.
+  \param maxVal : Maximum pixel value if not nullptr.
 
   \sa getMaxValue()
   \sa getMinValue()
@@ -1238,16 +1238,16 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
     }
   }
 
-  if (minLoc != NULL)
+  if (minLoc != nullptr)
     *minLoc = minLoc_;
 
-  if (maxLoc != NULL)
+  if (maxLoc != nullptr)
     *maxLoc = maxLoc_;
 
-  if (minVal != NULL)
+  if (minVal != nullptr)
     *minVal = min;
 
-  if (maxVal != NULL)
+  if (maxVal != nullptr)
     *maxVal = max;
 }
 
@@ -1261,7 +1261,7 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> othe
   // vpImage<unsigned char> I2(480, 640);
   // vpDisplayX d(I2);
   // I2 = I1; //copy only the data
-  if (other.display != NULL)
+  if (other.display != nullptr)
     display = other.display;
 
   return *this;

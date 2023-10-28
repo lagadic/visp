@@ -98,7 +98,7 @@ public:
    * \param featureMoments : Feature database.
    */
   vpFeatureMomentGravityCenterNormalized(vpMomentDatabase &database, double A_, double B_, double C_,
-                                         vpFeatureMomentDatabase *featureMoments = NULL)
+                                         vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 2)
   { }
   void compute_interaction() override;
@@ -252,7 +252,7 @@ public:
    * \param featureMoments : Feature database.
    */
   vpFeatureMomentGravityCenterNormalized(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                                         vpFeatureMomentDatabase *featureMoments = NULL)
+                                         vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 2)
   { }
   void compute_interaction() override;

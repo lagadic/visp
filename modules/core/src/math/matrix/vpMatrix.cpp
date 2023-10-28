@@ -207,9 +207,9 @@ vpMatrix::vpMatrix(vpMatrix &&A) : vpArray2D<double>()
 
   A.rowNum = 0;
   A.colNum = 0;
-  A.rowPtrs = NULL;
+  A.rowPtrs = nullptr;
   A.dsize = 0;
-  A.data = NULL;
+  A.data = nullptr;
 }
 
 /*!
@@ -344,7 +344,7 @@ void vpMatrix::init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned 
                       M.getCols()));
   resize(nrows, ncols, false, false);
 
-  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
   for (unsigned int i = 0; i < nrows; i++) {
     memcpy((*this)[i], &M[i + r][c], ncols * sizeof(double));
@@ -642,7 +642,7 @@ vpMatrix &vpMatrix::operator=(const vpArray2D<double> &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
 
-  if (data != NULL && A.data != NULL && data != A.data) {
+  if (data != nullptr && A.data != nullptr && data != A.data) {
     memcpy(data, A.data, dsize * sizeof(double));
   }
 
@@ -653,7 +653,7 @@ vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 {
   resize(A.getRows(), A.getCols(), false, false);
 
-  if (data != NULL && A.data != NULL && data != A.data) {
+  if (data != nullptr && A.data != nullptr && data != A.data) {
     memcpy(data, A.data, dsize * sizeof(double));
   }
 
@@ -674,9 +674,9 @@ vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 
     other.rowNum = 0;
     other.colNum = 0;
-    other.rowPtrs = NULL;
+    other.rowPtrs = nullptr;
     other.dsize = 0;
-    other.data = NULL;
+    other.data = nullptr;
   }
 
   return *this;
@@ -2365,7 +2365,7 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
   U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -2433,7 +2433,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
   U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return static_cast<unsigned int>(rank_out);
 }
@@ -2507,7 +2507,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -2643,7 +2643,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, &imA, &imAt, &kerAt);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -2712,7 +2712,7 @@ vpMatrix vpMatrix::pseudoInverseLapack(int rank_in) const
   U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -2787,7 +2787,7 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, int rank_in) const
   U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return rank_out;
 }
@@ -2869,7 +2869,7 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3081,7 +3081,7 @@ vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
   U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -3149,7 +3149,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) con
   U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return static_cast<unsigned int>(rank_out);
 }
@@ -3223,7 +3223,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3359,7 +3359,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, &imA, &imAt, &kerAt);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3428,7 +3428,7 @@ vpMatrix vpMatrix::pseudoInverseEigen3(int rank_in) const
   U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -3503,7 +3503,7 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const
   U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return rank_out;
 }
@@ -3585,7 +3585,7 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3797,7 +3797,7 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -3865,7 +3865,7 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) con
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   return static_cast<unsigned int>(rank_out);
 }
@@ -3939,7 +3939,7 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -4075,7 +4075,7 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, &imA, &imAt, &kerAt);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, nullptr, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -4144,7 +4144,7 @@ vpMatrix vpMatrix::pseudoInverseOpenCV(int rank_in) const
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return Ap;
 }
@@ -4219,7 +4219,7 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   return rank_out;
 }
@@ -4301,7 +4301,7 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) co
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, nullptr, nullptr, nullptr);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -5270,7 +5270,7 @@ vpRowVector vpMatrix::getRow(unsigned int i, unsigned int j_begin, unsigned int 
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
 
   vpRowVector r(row_size);
-  if (r.data != NULL && data != NULL) {
+  if (r.data != nullptr && data != nullptr) {
     memcpy(r.data, (*this)[i] + j_begin, row_size * sizeof(double));
   }
 
@@ -5370,24 +5370,24 @@ void vpMatrix::stack(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     }
   }
 
-  if (A.data != NULL && A.data == C.data) {
+  if (A.data != nullptr && A.data == C.data) {
     std::cerr << "A and C must be two different objects!" << std::endl;
     return;
   }
 
-  if (B.data != NULL && B.data == C.data) {
+  if (B.data != nullptr && B.data == C.data) {
     std::cerr << "B and C must be two different objects!" << std::endl;
     return;
   }
 
   C.resize(nra + nrb, B.getCols(), false, false);
 
-  if (C.data != NULL && A.data != NULL && A.size() > 0) {
+  if (C.data != nullptr && A.data != nullptr && A.size() > 0) {
     // Copy A in C
     memcpy(C.data, A.data, sizeof(double) * A.size());
   }
 
-  if (C.data != NULL && B.data != NULL && B.size() > 0) {
+  if (C.data != nullptr && B.data != nullptr && B.size() > 0) {
     // Copy B in C
     memcpy(C.data + A.size(), B.data, sizeof(double) * B.size());
   }
@@ -5423,7 +5423,7 @@ vpMatrix vpMatrix::stack(const vpMatrix &A, const vpRowVector &r)
 */
 void vpMatrix::stack(const vpMatrix &A, const vpRowVector &r, vpMatrix &C)
 {
-  if (A.data != NULL && A.data == C.data) {
+  if (A.data != nullptr && A.data == C.data) {
     std::cerr << "A and C must be two different objects!" << std::endl;
     return;
   }
@@ -5462,7 +5462,7 @@ vpMatrix vpMatrix::stack(const vpMatrix &A, const vpColVector &c)
 */
 void vpMatrix::stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C)
 {
-  if (A.data != NULL && A.data == C.data) {
+  if (A.data != nullptr && A.data == C.data) {
     std::cerr << "A and C must be two different objects!" << std::endl;
     return;
   }
@@ -5920,7 +5920,7 @@ void vpMatrix::stack(const vpRowVector &r)
     unsigned int oldSize = size();
     resize(rowNum + 1, colNum, false, false);
 
-    if (data != NULL && r.data != NULL && data != r.data) {
+    if (data != nullptr && r.data != nullptr && data != r.data) {
       // Copy r in data
       memcpy(data + oldSize, r.data, sizeof(double) * r.size());
     }
@@ -5962,7 +5962,7 @@ void vpMatrix::stack(const vpColVector &c)
     unsigned int oldColNum = colNum;
     resize(rowNum, colNum + 1, false, false);
 
-    if (data != NULL && tmp.data != NULL && data != tmp.data) {
+    if (data != nullptr && tmp.data != nullptr && data != tmp.data) {
       // Copy c in data
       for (unsigned int i = 0; i < rowNum; i++) {
         memcpy(data + i * colNum, tmp.data + i * oldColNum, sizeof(double) * oldColNum);
@@ -5985,10 +5985,10 @@ void vpMatrix::stack(const vpColVector &c)
 void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
 {
   if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
-    if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
+    if (A.colNum == colNum && data != nullptr && A.data != nullptr && A.data != data) {
       memcpy(data + r * colNum, A.data, sizeof(double) * A.size());
     }
-    else if (data != NULL && A.data != NULL && A.data != data) {
+    else if (data != nullptr && A.data != nullptr && A.data != data) {
       for (unsigned int i = r; i < (r + A.getRows()); i++) {
         memcpy(data + i * colNum + c, A.data + (i - r) * A.colNum, sizeof(double) * A.colNum);
       }

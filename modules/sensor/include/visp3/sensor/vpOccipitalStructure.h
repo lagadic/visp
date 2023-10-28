@@ -163,7 +163,7 @@
 
    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-   sc.acquire(NULL, NULL, NULL, pointcloud);
+   sc.acquire(nullptr, nullptr, nullptr, pointcloud);
 
    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
@@ -172,7 +172,7 @@
    viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
 
    while (true) {
-     sc.acquire(NULL, NULL, NULL, pointcloud);
+     sc.acquire(nullptr, nullptr, nullptr, pointcloud);
 
      static bool update = false;
      if (!update) {
@@ -284,33 +284,33 @@ public:
   vpOccipitalStructure();
   ~vpOccipitalStructure();
 
-  void acquire(vpImage<unsigned char> &gray, bool undistorted = false, double *ts = NULL);
-  void acquire(vpImage<vpRGBa> &rgb, bool undistorted = false, double *ts = NULL);
+  void acquire(vpImage<unsigned char> &gray, bool undistorted = false, double *ts = nullptr);
+  void acquire(vpImage<vpRGBa> &rgb, bool undistorted = false, double *ts = nullptr);
 
-  void acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = NULL,
-               vpColVector *gyroscope_data = NULL, bool undistorted = false, double *ts = NULL);
-  void acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = NULL,
-               vpColVector *gyroscope_data = NULL, bool undistorted = false, double *ts = NULL);
+  void acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = nullptr,
+               vpColVector *gyroscope_data = nullptr, bool undistorted = false, double *ts = nullptr);
+  void acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = nullptr,
+               vpColVector *gyroscope_data = nullptr, bool undistorted = false, double *ts = nullptr);
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
-               std::vector<vpColVector> *const data_pointCloud = NULL, unsigned char *const data_infrared = NULL,
-               vpColVector *acceleration_data = NULL, vpColVector *gyroscope_data = NULL, bool undistorted = true,
-               double *ts = NULL);
+               std::vector<vpColVector> *const data_pointCloud = nullptr, unsigned char *const data_infrared = nullptr,
+               vpColVector *acceleration_data = nullptr, vpColVector *gyroscope_data = nullptr, bool undistorted = true,
+               double *ts = nullptr);
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, vpColVector *acceleration_data = NULL,
-               vpColVector *gyroscope_data = NULL, bool undistorted = true, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, vpColVector *acceleration_data = nullptr,
+               vpColVector *gyroscope_data = nullptr, bool undistorted = true, double *ts = nullptr);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, vpColVector *acceleration_data = NULL,
-               vpColVector *gyroscope_data = NULL, bool undistorted = true, double *ts = NULL);
+               unsigned char *const data_infrared = nullptr, vpColVector *acceleration_data = nullptr,
+               vpColVector *gyroscope_data = nullptr, bool undistorted = true, double *ts = nullptr);
 #endif
 
   void getIMUVelocity(vpColVector *imu_vel, double *ts);
   void getIMUAcceleration(vpColVector *imu_acc, double *ts);
-  void getIMUData(vpColVector *imu_vel, vpColVector *imu_acc, double *ts = NULL);
+  void getIMUData(vpColVector *imu_vel, vpColVector *imu_acc, double *ts = nullptr);
 
   bool open(const ST::CaptureSessionSettings &settings);
   void close();

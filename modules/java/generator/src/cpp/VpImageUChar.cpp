@@ -38,7 +38,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar__IIB(JNI
 JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar___3BIIZ(JNIEnv *env, jclass, jbyteArray arr,
                                                                                 jint h, jint w, jboolean copyData)
 {
-  jbyte *array = env->GetByteArrayElements(arr, NULL);
+  jbyte *array = env->GetByteArrayElements(arr, nullptr);
 
   return (jlong) new vpImage<u_char>((u_char *const)array, (const unsigned int)h, (const unsigned int)w, copyData);
 
@@ -50,7 +50,7 @@ JNIEXPORT jlong JNICALL Java_org_visp_core_VpImageUChar_n_1VpImageUChar___3BIIZ(
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1cols(JNIEnv *env, jclass, jlong address)
 {
   (void)env;
-  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for NULL
+  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
   return me->getCols();
 }
 
@@ -58,7 +58,7 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1cols(JNIEnv *env, jcla
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1rows(JNIEnv *env, jclass, jlong address)
 {
   (void)env;
-  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for NULL
+  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
   return me->getRows();
 }
 
@@ -66,14 +66,14 @@ JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1rows(JNIEnv *env, jcla
 JNIEXPORT jint JNICALL Java_org_visp_core_VpImageUChar_n_1getPixel(JNIEnv *env, jclass, jlong address, jint i, jint j)
 {
   (void)env;
-  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for NULL
+  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
   return (*me)(i, j);
 }
 
 // Java Method:    getPixels()
 JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageUChar_n_1getPixels(JNIEnv *env, jclass, jlong address)
 {
-  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for NULL
+  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
   jbyteArray ret = env->NewByteArray(me->getNumberOfPixel());
   env->SetByteArrayRegion(ret, 0, me->getNumberOfPixel(), (jbyte *)me->bitmap);
   return ret;
@@ -82,7 +82,7 @@ JNIEXPORT jbyteArray JNICALL Java_org_visp_core_VpImageUChar_n_1getPixels(JNIEnv
 // Java Method:    dump()
 JNIEXPORT jstring JNICALL Java_org_visp_core_VpImageUChar_n_1dump(JNIEnv *env, jclass, jlong address)
 {
-  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for NULL
+  vpImage<u_char> *me = (vpImage<u_char> *)address; // TODO: check for nullptr
   std::stringstream ss;
   ss << *me;
   return env->NewStringUTF(ss.str().c_str());

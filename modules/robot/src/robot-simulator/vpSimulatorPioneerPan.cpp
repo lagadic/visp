@@ -77,8 +77,8 @@ void vpSimulatorPioneerPan::init()
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;
-  qmin = NULL;
-  qmax = NULL;
+  qmin = nullptr;
+  qmax = nullptr;
 
   wMc_ = wMm_ * mMp_ * pMe_ * cMe_.inverse();
 }

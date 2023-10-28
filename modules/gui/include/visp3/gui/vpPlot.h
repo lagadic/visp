@@ -125,7 +125,7 @@ private:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //    vpPlot(const vpPlot &)
-  //      : I(), display(NULL), graphNbr(0), graphList(NULL), margei(0),
+  //      : I(), display(nullptr), graphNbr(0), graphList(nullptr), margei(0),
   //      margej(0),
   //        factori(0), factorj(0)
   //    {

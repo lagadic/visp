@@ -1081,7 +1081,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVecto
                                      const vpImagePoint *pt2, bool trackCircle)
 {
   m_trackCircle = trackCircle;
-  if (pt1 != NULL && pt2 != NULL) {
+  if (pt1 != nullptr && pt2 != nullptr) {
     m_trackArc = true;
   }
   // useful for sample(I) : uc, vc, a, b, e, Ki, alpha1, alpha2

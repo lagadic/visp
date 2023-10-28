@@ -112,7 +112,7 @@ protected:
   friend void vpCreateWindow(threadParam *param);
 
 public:
-  explicit vpDisplayWin32(vpWin32Renderer *rend = NULL);
+  explicit vpDisplayWin32(vpWin32Renderer *rend = nullptr);
 
   vpDisplayWin32(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
 

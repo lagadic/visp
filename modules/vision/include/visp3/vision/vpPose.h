@@ -181,7 +181,7 @@ public:
    *   has the smallest residual.
    * - vpPose::RANSAC: Robust Ransac aproach (doesn't need an initialization)
    */
-  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+  bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * @brief Method that first computes the pose \b cMo using the linear approaches of Dementhon and Lagrange
@@ -254,7 +254,7 @@ public:
    * \param p_d: if different from null, it will be set to equal the d coefficient of the potential plan.
    * \return true if points are coplanar false otherwise.
    */
-  bool coplanar(int &coplanar_plane_type, double *p_a = NULL, double *p_b = NULL, double *p_c = NULL, double *p_d = NULL);
+  bool coplanar(int &coplanar_plane_type, double *p_a = nullptr, double *p_b = nullptr, double *p_c = nullptr, double *p_d = nullptr);
 
   /*!
    * Display the coordinates of the points in the image plane that are used to
@@ -286,14 +286,14 @@ public:
    * Compute the pose of a planar object using Lagrange approach.
    *
    * \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
-   * \param p_isPlan : if different from NULL, indicates if the object is planar or not.
-   * \param p_a : if different from NULL, the a coefficient of the plan formed by the points.
-   * \param p_b : if different from NULL, the b coefficient of the plan formed by the points.
-   * \param p_c : if different from NULL, the c coefficient of the plan formed by the points.
-   * \param p_d : if different from NULL, the d coefficient of the plan formed by the points.
+   * \param p_isPlan : if different from nullptr, indicates if the object is planar or not.
+   * \param p_a : if different from nullptr, the a coefficient of the plan formed by the points.
+   * \param p_b : if different from nullptr, the b coefficient of the plan formed by the points.
+   * \param p_c : if different from nullptr, the c coefficient of the plan formed by the points.
+   * \param p_d : if different from nullptr, the d coefficient of the plan formed by the points.
    */
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan = NULL, double *p_a = NULL, double *p_b = NULL,
-                        double *p_c = NULL, double *p_d = NULL);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan = nullptr, double *p_a = nullptr, double *p_b = nullptr,
+                        double *p_c = nullptr, double *p_d = nullptr);
 
   /*!
    * Compute the pose of a non planar object using Lagrange approach.
@@ -324,7 +324,7 @@ public:
    * The number of threads used can then be set with setNbParallelRansacThreads().
    * Filter flag can be used  with setRansacFilterFlag().
    */
-  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+  bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * Compute the pose using virtual visual servoing approach and
@@ -522,7 +522,7 @@ public:
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
                                               const vpCameraParameters &colorIntrinsics,
                                               const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
-                                              double *confidence_index = NULL);
+                                              double *confidence_index = nullptr);
 
   /*!
    * Compute the pose of multiple planar object from corresponding 2D-3D point coordinates and depth map.
@@ -560,7 +560,7 @@ public:
                                               const std::vector<std::vector<vpImagePoint> > &corners,
                                               const vpCameraParameters &colorIntrinsics,
                                               const std::vector<std::vector<vpPoint> > &point3d,
-                                              vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
+                                              vpHomogeneousMatrix &cMo, double *confidence_index = nullptr,
                                               bool coplanar_points = true);
 
   /*!
@@ -645,7 +645,7 @@ public:
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                         const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
-                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+                        bool (*func)(const vpHomogeneousMatrix &) = nullptr);
 
   /*!
    * Carries out the camera pose the image of a rectangle and

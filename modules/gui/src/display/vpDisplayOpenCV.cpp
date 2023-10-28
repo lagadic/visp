@@ -102,9 +102,9 @@ unsigned int vpDisplayOpenCV::m_nbWindows = 0;
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, vpScaleType scaleType)
   : vpDisplay(),
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -142,9 +142,9 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
                                  vpScaleType scaleType)
   : vpDisplay(),
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -176,9 +176,9 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<unsigned char> &I, int x, int y, const 
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
   :
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -212,9 +212,9 @@ vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, vpScaleType scaleType)
 vpDisplayOpenCV::vpDisplayOpenCV(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
   :
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -250,9 +250,9 @@ int main()
 vpDisplayOpenCV::vpDisplayOpenCV(int x, int y, const std::string &title)
   :
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -310,9 +310,9 @@ int main()
 vpDisplayOpenCV::vpDisplayOpenCV()
   :
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  m_background(NULL), col(NULL), cvcolor(), font(NULL),
+  m_background(nullptr), col(nullptr), cvcolor(), font(nullptr),
 #else
-  m_background(), col(NULL), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
+  m_background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN), fontScale(0.8f),
 #endif
   fontHeight(10), x_move(0), y_move(0), move(false), x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false), x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),
@@ -585,7 +585,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
     int depth = 8;
     int channels = 3;
     CvSize size = cvSize((int)this->m_width, (int)this->m_height);
-    if (m_background != NULL) {
+    if (m_background != nullptr) {
       if (m_background->nChannels != channels || m_background->depth != depth ||
           m_background->height != (int)m_height || m_background->width != (int)m_width) {
         if (m_background->nChannels != 0)
@@ -682,7 +682,7 @@ void vpDisplayOpenCV::displayImageROI(const vpImage<unsigned char> &I, const vpI
     int depth = 8;
     int channels = 3;
     CvSize size = cvSize((int)this->m_width, (int)this->m_height);
-    if (m_background != NULL) {
+    if (m_background != nullptr) {
       if (m_background->nChannels != channels || m_background->depth != depth ||
           m_background->height != (int)m_height || m_background->width != (int)m_width) {
         if (m_background->nChannels != 0)
@@ -792,7 +792,7 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
     int depth = 8;
     int channels = 3;
     CvSize size = cvSize((int)this->m_width, (int)this->m_height);
-    if (m_background != NULL) {
+    if (m_background != nullptr) {
       if (m_background->nChannels != channels || m_background->depth != depth ||
           m_background->height != (int)m_height || m_background->width != (int)m_width) {
         if (m_background->nChannels != 0)
@@ -886,7 +886,7 @@ void vpDisplayOpenCV::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoi
     int depth = 8;
     int channels = 3;
     CvSize size = cvSize((int)this->m_width, (int)this->m_height);
-    if (m_background != NULL) {
+    if (m_background != nullptr) {
       if (m_background->nChannels != channels || m_background->depth != depth ||
           m_background->height != (int)m_height || m_background->width != (int)m_width) {
         if (m_background->nChannels != 0)
@@ -992,14 +992,14 @@ void vpDisplayOpenCV::displayImage(const unsigned char * /* I */) { vpTRACE(" no
 */
 void vpDisplayOpenCV::closeDisplay()
 {
-  if (col != NULL) {
+  if (col != nullptr) {
     delete[] col;
-    col = NULL;
+    col = nullptr;
   }
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  if (font != NULL) {
+  if (font != nullptr) {
     delete font;
-    font = NULL;
+    font = nullptr;
   }
 #endif
   if (m_displayHasBeenInitialized) {

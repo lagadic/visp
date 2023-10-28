@@ -42,7 +42,7 @@
 #include <visp3/core/vpSubColVector.h>
 
 //! Default constructor that creates an empty vector.
-vpSubColVector::vpSubColVector() : vpColVector(), m_pRowNum(0), m_parent(NULL) { }
+vpSubColVector::vpSubColVector() : vpColVector(), m_pRowNum(0), m_parent(nullptr) { }
 
 /*!
  * Construct a sub-column vector from a parent column vector.
@@ -51,7 +51,7 @@ vpSubColVector::vpSubColVector() : vpColVector(), m_pRowNum(0), m_parent(NULL) {
  * \param nrows : size of the sub-column vector.
  */
 vpSubColVector::vpSubColVector(vpColVector &v, const unsigned int &offset, const unsigned int &nrows)
-  : vpColVector(), m_pRowNum(0), m_parent(NULL)
+  : vpColVector(), m_pRowNum(0), m_parent(nullptr)
 {
   init(v, offset, nrows);
 }
@@ -96,9 +96,9 @@ void vpSubColVector::init(vpColVector &v, const unsigned int &offset, const unsi
 }
 
 /*!
- * Destructor that set the pointer to the parent column vector to NULL.
+ * Destructor that set the pointer to the parent column vector to nullptr.
  */
-vpSubColVector::~vpSubColVector() { data = NULL; }
+vpSubColVector::~vpSubColVector() { data = nullptr; }
 
 /*!
  * This method can be used to detect if the parent column vector

@@ -159,7 +159,7 @@ bool getOptions(int argc, char **argv, bool &save, std::string &output_directory
       break;
 
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -172,7 +172,7 @@ bool getOptions(int argc, char **argv, bool &save, std::string &output_directory
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl
       << std::endl;
@@ -535,7 +535,7 @@ int main(int argc, char *argv[])
   d3.init(I_infrared, I_gray.getWidth() + 80, I_gray.getHeight() + 10, "RealSense infrared stream");
 
   while (true) {
-    realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, NULL);
+    realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
     vpImageConvert::convert(I_color, I_gray);
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
@@ -632,28 +632,28 @@ int main(int argc, char *argv[])
     if (use_aligned_stream) {
 #ifdef USE_REALSENSE2
 #ifdef VISP_HAVE_PCL
-      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, pointCloud, NULL,
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud, nullptr,
                         &align_to);
 #else
-      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointCloud, NULL,
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointCloud, nullptr,
                         &align_to);
 #endif
 #else
 #ifdef VISP_HAVE_PCL
-      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, pointCloud,
-                        (unsigned char *)I_infrared.bitmap, NULL, rs::stream::rectified_color,
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud,
+                        (unsigned char *)I_infrared.bitmap, nullptr, rs::stream::rectified_color,
                         rs::stream::depth_aligned_to_rectified_color);
 #else
       realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointCloud,
-                        (unsigned char *)I_infrared.bitmap, NULL, rs::stream::rectified_color,
+                        (unsigned char *)I_infrared.bitmap, nullptr, rs::stream::rectified_color,
                         rs::stream::depth_aligned_to_rectified_color);
 #endif
 #endif
     }
     else {
 #ifdef VISP_HAVE_PCL
-      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, pointCloud,
-                        (unsigned char *)I_infrared.bitmap, NULL);
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud,
+                        (unsigned char *)I_infrared.bitmap, nullptr);
 #else
       realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointCloud,
                         (unsigned char *)I_infrared.bitmap);

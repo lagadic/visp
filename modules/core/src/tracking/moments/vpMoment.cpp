@@ -48,7 +48,7 @@
 /*!
   Default constructor
 */
-vpMoment::vpMoment() : object(NULL), moments(NULL), values() {}
+vpMoment::vpMoment() : object(nullptr), moments(nullptr), values() {}
 
 /*!
   Links the moment to a database of moment primitives.

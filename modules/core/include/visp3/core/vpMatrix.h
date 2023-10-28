@@ -206,14 +206,14 @@ vpMatrix M(R);
   */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -748,7 +748,7 @@ vpMatrix M(R);
     \sa saveMatrix(), saveMatrixYAML(), loadMatrixYAML()
   */
   static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, bool binary = false,
-                                char *header = NULL)
+                                char *header = nullptr)
   {
     return vpArray2D<double>::load(filename, M, binary, header);
   }
@@ -822,7 +822,7 @@ vpMatrix M(R);
 
     \sa saveMatrixYAML(), saveMatrix(), loadMatrix()
   */
-  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
+  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = nullptr)
   {
     return vpArray2D<double>::loadYAML(filename, M, header);
   }

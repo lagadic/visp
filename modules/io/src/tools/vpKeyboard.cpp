@@ -102,7 +102,7 @@ int vpKeyboard::kbhit()
   FD_ZERO(&readfds);
   FD_SET(STDIN_FILENO, &readfds);
 
-  return select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv) == 1;
+  return select(STDIN_FILENO + 1, &readfds, nullptr, nullptr, &tv) == 1;
 #elif defined(_WIN32) && !defined(WINRT)
   return _kbhit();
 #elif defined(_WIN32) && defined(WINRT)

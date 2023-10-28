@@ -111,7 +111,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "Image size : " << I_left.getWidth() << " " << I_right.getHeight() << std::endl;
 
-    vpDisplay *display_left = NULL, *display_right = NULL;
+    vpDisplay *display_left = nullptr, *display_right = nullptr;
     if (opt_display) {
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << "No image viewer is available..." << std::endl;
@@ -148,7 +148,7 @@ int main(int argc, const char *argv[])
       vpDisplay::display(I_right);
 
       quit = image_queue_left.record(I_left);
-      quit |= image_queue_right.record(I_right, NULL, image_queue_left.getRecordingTrigger(), true);
+      quit |= image_queue_right.record(I_right, nullptr, image_queue_left.getRecordingTrigger(), true);
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";

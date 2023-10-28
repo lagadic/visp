@@ -131,7 +131,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &plot)
       plot = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
 
     default:
@@ -142,7 +142,7 @@ bool getOptions(int argc, const char **argv, bool &display, bool &plot)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Iext2);
     }
 
-    vpPlot *plotter = NULL;
+    vpPlot *plotter = nullptr;
 
     vpServo task;
     vpSimulatorCamera robot;
@@ -473,7 +473,7 @@ int main(int argc, const char **argv)
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
-    if (opt_plot && plotter != NULL) {
+    if (opt_plot && plotter != nullptr) {
       vpDisplay::display(Iint);
       sim.getInternalImage(Iint);
       vpDisplay::displayFrame(Iint, cMo, camera, 0.2, vpColor::none);

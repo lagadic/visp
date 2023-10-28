@@ -149,13 +149,13 @@ int main(int argc, char *argv[])
   while (true) {
     if (color_pointcloud) {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud_color, NULL,
-                 no_align ? NULL : &align_to);
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud_color, nullptr,
+                 no_align ? nullptr : &align_to);
     }
     else {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud, NULL,
-                 no_align ? NULL : &align_to);
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud, nullptr,
+                 no_align ? nullptr : &align_to);
     }
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
