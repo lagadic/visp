@@ -894,7 +894,7 @@ void computeIntersectionsAllAxes(const float &u_c, const float &v_c, const float
   delta_theta += (theta_v_max_right - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max_left);
 }
 
-float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi) const
+float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float &roundingTolerance) const
 {
   float delta_theta = 0.f;
   vpImagePoint center = m_center;
@@ -989,16 +989,26 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi) const
     std::cerr << "vmin_roi = " << vmin_roi << "\tvmax_roi = " << vmax_roi << std::endl << std::flush;
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
+
+  if (delta_theta < 0) { // Needed since M_PIf is used
+    float quotient = std::floor(delta_theta / (2.f * M_PIf));
+    float rest = delta_theta - quotient * 2.f * M_PIf;
+    if (rest < roundingTolerance && delta_theta < -M_PIf) {
+      // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
+      delta_theta = 2.f * M_PIf;
+    }
+    else {
+      //Otherwise, it corresponds to delta_theta modulo 2.f * M_PIf
+      delta_theta = rest;
+    }
+  }
+
   return delta_theta;
 }
 
-float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
+float vpImageCircle::computeArcLengthInRoI(const vpRect &roi, const float &roundingTolerance) const
 {
-  float delta_theta = computeAngularCoverageInRoI(roi);
-  if (delta_theta < 0) { // Needed since M_PIf is used
-    delta_theta += 4 * M_PIf;
-  }
-
+  float delta_theta = computeAngularCoverageInRoI(roi, roundingTolerance);
   return delta_theta * m_radius;
 }
 
