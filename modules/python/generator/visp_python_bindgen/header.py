@@ -140,7 +140,6 @@ class HeaderFile():
 
   def generate_binding_code(self) -> None:
     assert self.header_repr is not None, 'The header was not preprocessed before calling the generation step!'
-
     self.binding_code = self.parse_data()
 
   def compute_environment(self):
@@ -371,8 +370,27 @@ class HeaderFile():
         print(error_generating_overloads)
         raise RuntimeError
 
-      #spec_result += cls_result
-      return '\n'.join(method_strs)
+      field_strs = []
+      for field in cls.fields:
+        if field.access == 'public':
+          if is_unsupported_argument_type(field.type):
+            continue
+          field_type = get_type(field.type, owner_specs, header_env.mapping)
+          print(f'Field in {name_cpp}: {field_type} {field.name}')
+
+          field_name_python = field.name.lstrip('m_')
+
+          def_str = 'def_'
+          def_str += 'readonly' if field.type.const else 'readwrite'
+          if field.static:
+            def_str += '_static'
+
+          field_str = f'{python_ident}.{def_str}("{field_name_python}", &{name_cpp}::{field.name});'
+          field_strs.append(field_str)
+
+      definitions_strs = method_strs + field_strs
+
+      return '\n'.join(definitions_strs)
 
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])

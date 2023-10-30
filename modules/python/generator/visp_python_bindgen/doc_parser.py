@@ -259,9 +259,9 @@ class DocumentationHolder(object):
                   method.const = is_const
 
                   signature = MethodDocSignature(method_def.name,
-                                                      get_type(method.return_type, {}, env_mapping) or '', # Don't use specializations so that we can match with doc
-                                                      [get_type(param.type, {}, env_mapping) or '' for param in method.parameters],
-                                                      method.const, method.static)
+                                                get_type(method.return_type, {}, env_mapping) or '', # Don't use specializations so that we can match with doc
+                                                [get_type(param.type, {}, env_mapping) or '' for param in method.parameters],
+                                                method.const, method.static)
                   key = (compounddef.get_compoundname(), signature)
                   if key in methods_res:
                     num_paras = len(method_def.detaileddescription.para) + len(method_def.briefdescription.para)
