@@ -990,10 +990,10 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
 
-  if (delta_theta < 0) { // Needed since M_PIf is used
+  if (delta_theta < 0 || delta_theta > 2.f * M_PIf) { // Needed since M_PIf is used
     float quotient = std::floor(delta_theta / (2.f * M_PIf));
     float rest = delta_theta - quotient * 2.f * M_PIf;
-    if (rest < roundingTolerance && delta_theta < -M_PIf) {
+    if (rest < roundingTolerance && (delta_theta < -M_PIf || delta_theta > M_PIf)) {
       // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
       delta_theta = 2.f * M_PIf;
     }
