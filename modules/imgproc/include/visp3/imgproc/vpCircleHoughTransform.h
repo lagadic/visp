@@ -250,7 +250,7 @@ public:
      */
     inline int getGradientKernelSize() const
     {
-      return m_sobelKernelSize;
+      return m_gradientFilterKernelSize;
     }
 
     /**
