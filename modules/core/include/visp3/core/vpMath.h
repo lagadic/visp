@@ -140,7 +140,7 @@ public:
     if (theta1 > M_PIf) {
       theta1 -= 2.0f * M_PIf;
     }
-    else if (theta1 < -M_PIf) {
+    else if (theta1 <= -M_PIf) {
       theta1 += 2.0f * M_PIf;
     }
     return theta1;
@@ -162,6 +162,36 @@ public:
       theta1 += 2.0 * M_PI;
     }
     return theta1;
+  }
+
+  /**
+   * \brief Gives the rest of \b value divided by \b modulo when
+   * the quotient can only be an integer.
+   *
+   * \param[in] value The value we want to know the rest in the "modulo" operation.
+   * \param[in] modulo The divider.
+   * \return float The rest as in a modulo operation.
+   */
+  static float moduloFloat(const float &value, const float &modulo)
+  {
+    float quotient = std::floor(value / modulo);
+    float rest = value - quotient * modulo;
+    return rest;
+  }
+
+  /**
+   * \brief Gives the rest of \b value divided by \b modulo when
+   * the quotient can only be an integer.
+   *
+   * \param[in] value The value we want to know the rest in the "modulo" operation.
+   * \param[in] modulo The divider.
+   * \return double The rest as in a modulo operation.
+   */
+  static double moduloDouble(const double &value, const double &modulo)
+  {
+    double quotient = std::floor(value / modulo);
+    double rest = value - quotient * modulo;
+    return rest;
   }
 
   /*!
@@ -193,9 +223,9 @@ public:
     }
     return (v < lower) ? lower : (upper < v) ? upper : v;
 #endif
-    }
+  }
 
-    //   round x to the nearest integer
+  //   round x to the nearest integer
   static inline int round(double x);
 
   //   return the sign of x (+-1)
@@ -330,14 +360,14 @@ public:
 private:
   static const double ang_min_sinc;
   static const double ang_min_mc;
-  };
+};
 
-  // Begining of the inline functions definition
+// Begining of the inline functions definition
 
-  /*!
-    Computes and returns x!
-    \param x : parameter of factorial function.
-  */
+/*!
+  Computes and returns x!
+  \param x : parameter of factorial function.
+*/
 double vpMath::fact(unsigned int x)
 {
   if ((x == 1) || (x == 0))

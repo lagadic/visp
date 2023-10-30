@@ -77,6 +77,9 @@ void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi,
   float theta_min = std::min(theta1, theta2);
   float theta_max = std::max(theta1, theta2);
   delta_theta = theta_max - theta_min;
+  if (u_c < umin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -99,6 +102,9 @@ void computeIntersectionsRightBorderOnly(const float &u_c, const float &umax_roi
   float theta_min = std::min(theta1, theta2);
   float theta_max = std::max(theta1, theta2);
   delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+  if (u_c > umax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -138,6 +144,9 @@ void computeIntersectionsTopBorderOnly(const float &v_c, const float &vmin_roi, 
   else {
     delta_theta = theta_max - theta_min;
   }
+  if (v_c < vmin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -176,6 +185,9 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
   }
   else {
     delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+  }
+  if (v_c > vmax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
   }
 }
 
@@ -501,63 +513,25 @@ void computeIntersectionsTopLeftBottom(const float &u_c, const float &v_c, const
   float theta_u_max_bottom = crossing_theta_u_max.first;
   float u_umin_bottom = crossing_theta_u_min.second;
   float u_umax_bottom = crossing_theta_u_max.second;
-  int cas = -1;
   if (u_umin_top >= umin_roi && u_umin_bottom >= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
     // case intersection top + left + bottom twice
     delta_theta = (theta_v_min - theta_u_min_top) + (theta_u_max_top - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max);
-    cas = 0;
   }
   else if (u_umin_top <= umin_roi && v_vmin <= vmin_roi && u_umin_bottom <= umin_roi && v_vmax >= vmax_roi) {
     // case intersection top and bottom
     delta_theta = (theta_u_max_top - theta_u_max_bottom);
-    cas = 1;
   }
   else if (u_umax_top <= umin_roi && u_umax_bottom <= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
     // case left only
     computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
-    cas = 2;
   }
   else if (u_umax_bottom > umin_roi && v_vmin >= vmin_roi) {
     // case bottom/left corner
     computeIntersectionsBottomLeft(u_c, v_c, umin_roi, vmax_roi, radius, delta_theta);
-    cas = 3;
   }
   else if (u_umax_top > umin_roi && v_vmax <= vmax_roi) {
     // case top/left corner
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
-    cas = 4;
-  }
-
-  if (delta_theta < 0.f) {
-    std::cout << "--- computeIntersectionsTopLeftBottom with negative result ---" << std::endl;
-    std::cout << "\tu_umin_top = " << u_umin_top << "\tu_umax_top = " << u_umax_top << std::endl;
-    std::cout << "\tu_umin_bot = " << u_umin_bottom << "\tu_umax_bot = " << u_umax_bottom << std::endl;
-    std::cout << "\tv_vmin = " << v_vmin << "\tv_vmax = " << v_vmax << std::endl;
-    std::cout << "\ttheta_u_min_top = " << theta_u_min_top << "\ttheta_u_max_top = " << theta_u_max_top << std::endl;
-    std::cout << "\ttheta_u_min_bot = " << theta_u_min_bottom << "\ttheta_u_max_bot = " << theta_u_max_bottom << std::endl;
-    std::cout << "\ttheta_v_min = " << theta_v_min << "\ttheta_v_max = " << theta_v_max << std::endl;
-    std::cout << "\tcas = ";
-    std::string nameCase;
-    switch (cas) {
-    case 0:
-      nameCase = "top + left + bottom twice";
-      break;
-    case 1:
-      nameCase = "top and bottom";
-      break;
-    case 2:
-      nameCase = "left only";
-      break;
-    case 3:
-      nameCase = "bottom/left corner";
-      break;
-    case 4:
-      nameCase = "top/left corner";
-      break;
-    default:
-      throw (vpException(vpException::fatalError, "Uncorrect case"));
-    }
-    std::cout << nameCase << std::endl;
   }
 }
 
@@ -1029,8 +1003,7 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
   }
 
   if (delta_theta < 0 || delta_theta > 2.f * M_PIf) { // Needed since M_PIf is used
-    float quotient = std::floor(delta_theta / (2.f * M_PIf));
-    float rest = delta_theta - quotient * 2.f * M_PIf;
+    float rest = vpMath::moduloFloat(delta_theta, 2.f * M_PIf);
     if (rest < roundingTolerance && (delta_theta < -M_PIf || delta_theta > M_PIf)) {
       // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
       delta_theta = 2.f * M_PIf;

@@ -173,6 +173,31 @@ int main()
     hasSucceeded &= isValueOK;
   }
 
+  // Test with circle touching the left border, all the circle is hidden
+  {
+    // Formula: uc = OFFSET - RADIUS * cos(theta)
+    // theta := PI
+    float uc = OFFSET - RADIUS;
+    float vc = OFFSET - 100.f;
+    vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthCircle = circle.computeArcLengthInRoI(roi);
+    float theoreticalValue = 0.f;
+    bool isValueOK = equal(arcLengthCircle, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the left border, all the circle is hidden." << std::endl;
+    std::cout << "\tarc length =" << arcLengthCircle << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
   // Test with intersections with the right border, more than half a circle visible
   {
     // Formula: uc = OFFSET + WIDTH - RADIUS * cos(theta)
@@ -241,6 +266,31 @@ int main()
       statusTest = "FAILED";
     }
     std::cout << "Test with circle touching the right border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthCircle << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with circle touching the right border, all the circle is hidden
+  {
+    // Formula: uc = OFFSET + WIDTH - RADIUS * cos(theta)
+    // theta := 0
+    float uc = OFFSET + WIDTH + RADIUS;
+    float vc = OFFSET + 100.f;
+    vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthCircle = circle.computeArcLengthInRoI(roi);
+    float theoreticalValue = 0.f;
+    bool isValueOK = equal(arcLengthCircle, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the right border, all the circle is hidden." << std::endl;
     std::cout << "\tarc length =" << arcLengthCircle << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
     std::cout << "\ttest status = " << statusTest << std::endl;
@@ -326,6 +376,32 @@ int main()
     hasSucceeded &= isValueOK;
   }
 
+  // Test with circle touching the top border, all the circle is hidden
+  {
+    // v = vc - r sin(theta)
+    // Formula: vc = OFFSET + RADIUS * sin(theta)
+    float theta = -M_PI_2f;
+    float uc = OFFSET + 100.f;
+    float vc = OFFSET + RADIUS * sin(theta);
+    vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthCircle = circle.computeArcLengthInRoI(roi);
+    float theoreticalValue = 0.f;
+    bool isValueOK = equal(arcLengthCircle, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the top border, all the circle is hidden." << std::endl;
+    std::cout << "\tarc length =" << arcLengthCircle << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
   // Test with intersections with the bottom border, more than half a circle visible
   {
     // v = vc - r sin(theta)
@@ -395,6 +471,30 @@ int main()
       statusTest = "FAILED";
     }
     std::cout << "Test with circle touching the bottom border, all the circle is visible." << std::endl;
+    std::cout << "\tarc length =" << arcLengthCircle << std::endl;
+    std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
+    std::cout << "\ttest status = " << statusTest << std::endl;
+
+    hasSucceeded &= isValueOK;
+  }
+
+  // Test with circle touching the bottom border, all the circle is hidden
+  {
+    // Formula: vc = OFFSET + HEIGHT + RADIUS * sin(theta)
+    float uc = OFFSET + 100.f;
+    float vc = OFFSET + HEIGHT + RADIUS;
+    vpImageCircle circle(vpImagePoint(vc, uc), RADIUS);
+    float arcLengthCircle = circle.computeArcLengthInRoI(roi);
+    float theoreticalValue = 0.f;
+    bool isValueOK = equal(arcLengthCircle, theoreticalValue);
+    std::string statusTest;
+    if (isValueOK) {
+      statusTest = "SUCCESS";
+    }
+    else {
+      statusTest = "FAILED";
+    }
+    std::cout << "Test with circle touching the bottom border, all the circle is hidden." << std::endl;
     std::cout << "\tarc length =" << arcLengthCircle << std::endl;
     std::cout << "\ttheoretical length =" << theoreticalValue << std::endl;
     std::cout << "\ttest status = " << statusTest << std::endl;
@@ -2000,6 +2100,7 @@ int main()
     std::cout << "testImageCircle overall result: SUCCESS" << std::endl;
     return EXIT_SUCCESS;
   }
+
   std::cout << "testImageCircle overall result: FAILED" << std::endl;
   return EXIT_FAILURE;
 }
