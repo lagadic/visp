@@ -148,7 +148,6 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2
   (*this)[3][3] = 1.;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Construct an homogeneous matrix from a list of 12 or 16 double values.
   \param list : List of double.
@@ -158,7 +157,6 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix M {
     0, 0, 1, 0.1,
     0, 1, 0, 0.2,
@@ -170,7 +168,6 @@ int main()
     1, 0, 0, 0.3,
     0, 0, 0, 1 };
   std::cout << "N:\n" << N << std::endl;
-#endif
 }
   \endcode
   It produces the following output:
@@ -243,7 +240,6 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
     }
   }
 }
-#endif
 
 /*!
   Construct an homogeneous matrix from a vector of double.

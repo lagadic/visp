@@ -79,7 +79,7 @@ public:
       // https://en.cppreference.com/w/cpp/locale/setlocale
       // When called from Java binding, the locale seems to be changed to the default system locale
       // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
-      if (std::setlocale(LC_ALL, "C") == NULL) {
+      if (std::setlocale(LC_ALL, "C") == nullptr) {
         std::cerr << "Cannot set locale to C" << std::endl;
       }
       m_call_setlocale = false;

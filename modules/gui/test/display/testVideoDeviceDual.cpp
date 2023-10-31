@@ -170,7 +170,7 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
 
       break;
     case 'h':
-      usage(argv[0], NULL, dtype);
+      usage(argv[0], nullptr, dtype);
       return false;
       break;
     case 'c':
@@ -189,7 +189,7 @@ bool getOptions(int argc, const char **argv, vpDisplayType &dtype, bool &list, b
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, dtype);
+    usage(argv[0], nullptr, dtype);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -261,7 +261,7 @@ int main(int argc, const char **argv)
     I2 = 255;
 
     // Create 2 display
-    vpDisplay *d1 = NULL, *d2 = NULL;
+    vpDisplay *d1 = nullptr, *d2 = nullptr;
 
     // Initialize the displays
     switch (opt_dtype) {

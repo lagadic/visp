@@ -58,15 +58,15 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
 {
   double co = cos(theta_m);
   double si = sin(theta_m);
-  double d = sqrt(vpMath::sqr(cam.py * co) + vpMath::sqr(cam.px * si));
+  double d = sqrt(vpMath::sqr(cam.m_py * co) + vpMath::sqr(cam.m_px * si));
 
   if (fabs(d) < 1e-6) {
     vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
 
-  theta_p = atan2(cam.px * si, cam.py * co);
-  rho_p = (cam.px * cam.py * rho_m + cam.u0 * cam.py * co + cam.v0 * cam.px * si);
+  theta_p = atan2(cam.m_px * si, cam.m_py * co);
+  rho_p = (cam.m_px * cam.m_py * rho_m + cam.m_u0 * cam.m_py * co + cam.m_v0 * cam.m_px * si);
   rho_p /= d;
 }
 
@@ -82,7 +82,7 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -125,7 +125,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internally updated after perspective projection of the sphere.
   \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in
-  pixels. 
+  pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area (i.e.,
   such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -357,7 +357,7 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix, double 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] u : output coordinate in pixels along image horizontal axis.
@@ -384,7 +384,7 @@ void vpMeterPixelConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] x : input coordinate in meter along image plane x-axis.
   \param[in] y : input coordinate in meter along image plane y-axis.
   \param[out] iP : output coordinates in pixels.

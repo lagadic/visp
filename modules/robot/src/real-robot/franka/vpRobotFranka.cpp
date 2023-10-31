@@ -51,7 +51,7 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positioningVelocity(20.), m_velControlThread(),
+  : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
     m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
     m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
     m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
@@ -67,7 +67,7 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positioningVelocity(20.), m_velControlThread(),
+  : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
     m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
     m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
     m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
@@ -1151,7 +1151,7 @@ bool vpRobotFranka::savePosFile(const std::string &filename, const vpColVector &
 
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
 
   fprintf(fd, "#PANDA - Joint position file\n"
@@ -1195,7 +1195,7 @@ void vpRobotFranka::gripperHoming()
   if (m_franka_address.empty()) {
     throw(vpException(vpException::fatalError, "Cannot perform franka gripper homing without ip address"));
   }
-  if (m_gripper == NULL)
+  if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
   m_gripper->homing();
@@ -1215,7 +1215,7 @@ int vpRobotFranka::gripperMove(double width)
   if (m_franka_address.empty()) {
     throw(vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
   }
-  if (m_gripper == NULL)
+  if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
   // Check for the maximum grasping width.
@@ -1254,7 +1254,7 @@ int vpRobotFranka::gripperOpen()
   if (m_franka_address.empty()) {
     throw(vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
   }
-  if (m_gripper == NULL)
+  if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
   // Check for the maximum grasping width.
@@ -1275,7 +1275,7 @@ void vpRobotFranka::gripperRelease()
   if (m_franka_address.empty()) {
     throw(vpException(vpException::fatalError, "Cannot release franka gripper without ip address"));
   }
-  if (m_gripper == NULL)
+  if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
   m_gripper->stop();
@@ -1297,7 +1297,7 @@ void vpRobotFranka::gripperRelease()
 */
 int vpRobotFranka::gripperGrasp(double grasping_width, double force)
 {
-  if (m_gripper == NULL)
+  if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
   // Check for the maximum grasping width.

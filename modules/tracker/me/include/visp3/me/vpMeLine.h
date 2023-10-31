@@ -181,7 +181,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeLine();
+  virtual ~vpMeLine() override;
 
   /*!
    * Display line.
@@ -213,11 +213,7 @@ public:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
-#else
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
-#endif
 
   /*!
    * Resample the line if the number of sample is less than 80% of the

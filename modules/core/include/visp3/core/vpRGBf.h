@@ -61,7 +61,7 @@ public:
 
     Build a black value.
   */
-  inline vpRGBf() : R(0), G(0), B(0) {}
+  inline vpRGBf() : R(0), G(0), B(0) { }
 
   /*!
     Constructor.
@@ -74,8 +74,7 @@ public:
   */
   inline vpRGBf(float r, float g, float b)
     : R(r), G(g), B(b)
-  {
-  }
+  { }
 
   /*!
     Constructor.
@@ -84,12 +83,12 @@ public:
 
     \param v : Value to set.
   */
-  inline vpRGBf(float v) : R(v), G(v), B(v) {}
+  inline vpRGBf(float v) : R(v), G(v), B(v) { }
 
   /*!
     Copy constructor.
   */
-  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) {}
+  inline vpRGBf(const vpRGBf &v) : R(v.R), G(v.G), B(v.B) { }
 
   /*!
     Create a RGB value from a 3 dimensional column vector.
@@ -102,9 +101,7 @@ public:
 
   vpRGBf &operator=(float v);
   vpRGBf &operator=(const vpRGBf &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBf &operator=(const vpRGBf &&v);
-#endif
   vpRGBf &operator=(const vpColVector &v);
   bool operator==(const vpRGBf &v) const;
   bool operator!=(const vpRGBf &v) const;

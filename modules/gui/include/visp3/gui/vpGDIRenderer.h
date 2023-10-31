@@ -110,7 +110,7 @@ public:
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
-  void getImage(vpImage<vpRGBa> &I);
+  void getImage(vpImage<vpRGBa> &I) override;
 
 private:
   // updates the renderer hbitmaps.

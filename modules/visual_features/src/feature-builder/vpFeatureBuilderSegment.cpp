@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,12 @@
  *
  * Description:
  * Segment creation out of dots.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file vpFeatureBuilderSegment.cpp
-  \brief  Segment creation out of dots.
-*/
+ * \file vpFeatureBuilderSegment.cpp
+ * \brief Segment creation out of dots.
+ */
 
 #include <visp3/core/vpMath.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
@@ -47,15 +42,13 @@
 #ifdef VISP_HAVE_MODULE_BLOB
 
 /*!
-  Initialize a segment feature out of vpDots and camera parameters.
-
-  \param s : Visual feature to initialize.
-  \param cam : The parameters of the camera used to acquire the image
-  containing the point. \param d1 : The dot corresponding to the first point
-  of the segment. \param d2 : The dot corresponding to the second point of the
-  segment.
-
-*/
+ * Initialize a segment feature out of vpDots and camera parameters.
+ *
+ * \param s : Visual feature to initialize.
+ * \param cam : The parameters of the camera used to acquire the image containing the point.
+ * \param d1 : The dot corresponding to the first point of the segment.
+ * \param d2 : The dot corresponding to the second point of the segment.
+ */
 void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot &d1, const vpDot &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -71,7 +64,8 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
     s.setXc(xc / l);
     s.setYc(yc / l);
     s.setL(1 / l);
-  } else {
+  }
+  else {
     s.setXc(xc);
     s.setYc(yc);
     s.setL(l);
@@ -81,15 +75,13 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
 }
 
 /*!
-  Initialize a segment feature out of vpDots and camera parameters.
-
-  \param s : Visual feature to initialize.
-  \param cam : The parameters of the camera used to acquire the image
-  containing the point. \param d1 : The dot corresponding to the first point
-  of the segment. \param d2 : The dot corresponding to the second point of the
-  segment.
-
-*/
+ * Initialize a segment feature out of vpDots and camera parameters.
+ *
+ * \param s : Visual feature to initialize.
+ * \param cam : The parameters of the camera used to acquire the image containing the point.
+ * \param d1 : The dot corresponding to the first point of the segment.
+ * \param d2 : The dot corresponding to the second point of the segment.
+ */
 void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpDot2 &d1, const vpDot2 &d2)
 {
   double x1 = 0, y1 = 0, x2 = 0, y2 = 0;
@@ -105,7 +97,8 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
     s.setXc(xc / l);
     s.setYc(yc / l);
     s.setL(1 / l);
-  } else {
+  }
+  else {
     s.setXc(xc);
     s.setYc(yc);
     s.setL(l);
@@ -116,15 +109,13 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
 #endif //#ifdef VISP_HAVE_MODULE_BLOB
 
 /*!
-  Initialize a segment feature out of image points and camera parameters.
-
-  \param s : Visual feature to initialize.
-  \param cam : The parameters of the camera used to acquire the image
-  containing the point. \param ip1 : The image point corresponding to the
-  first point of the segment. \param ip2 : The image point corresponding to
-  the second point of the segment.
-
-*/
+ * Initialize a segment feature out of image points and camera parameters.
+ *
+ * \param s : Visual feature to initialize.
+ * \param cam : The parameters of the camera used to acquire the image containing the point.
+ * \param ip1 : The image point corresponding to the first point of the segment.
+ * \param ip2 : The image point corresponding to the second point of the segment.
+ */
 void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam, const vpImagePoint &ip1,
                               const vpImagePoint &ip2)
 {
@@ -141,7 +132,8 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
     s.setXc(xc / l);
     s.setYc(yc / l);
     s.setL(1 / l);
-  } else {
+  }
+  else {
     s.setXc(xc);
     s.setYc(yc);
     s.setL(l);
@@ -151,15 +143,13 @@ void vpFeatureBuilder::create(vpFeatureSegment &s, const vpCameraParameters &cam
 }
 
 /*!
-
-  Build a segment visual feature from two points.
-
-  \param s : Visual feature to initialize.
-  \param P1, P2 : Two points defining the segment. These points must contain
-  the 3D coordinates in the camera frame (cP) and the projected coordinates in
-  the image plane (p).
-
-*/
+ * Build a segment visual feature from two points.
+ *
+ * \param s : Visual feature to initialize.
+ * \param P1, P2 : Two points defining the segment. These points must contain
+ * the 3D coordinates in the camera frame (cP) and the projected coordinates in
+ * the image plane (p).
+ */
 void vpFeatureBuilder::create(vpFeatureSegment &s, vpPoint &P1, vpPoint &P2)
 {
   double x1 = P1.get_x();

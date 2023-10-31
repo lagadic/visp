@@ -113,9 +113,7 @@ class vpQuaternionVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   tu = {M_PI_4, M_PI_2, M_PI};
-#endif
   \endcode
 
   To get the values [rad] use:
@@ -190,8 +188,6 @@ public:
   explicit vpThetaUVector(const std::vector<double> &tu);
 
   vpThetaUVector(double tux, double tuy, double tuz);
-  //! Destructor.
-  virtual ~vpThetaUVector(){}
 
   // convert an homogeneous matrix into Theta U vector
   vpThetaUVector buildFrom(const vpHomogeneousMatrix &M);
@@ -220,9 +216,7 @@ public:
   vpThetaUVector &operator=(double x);
   vpThetaUVector operator*(const vpThetaUVector &tu_b) const;
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
-#endif
 };
 
 #endif

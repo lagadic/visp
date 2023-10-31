@@ -57,8 +57,8 @@
 */
 vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(col), Ig(), Ic(),
+    visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+    vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(col), Ig(), Ic(),
     rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(), needClipping(false)
 {
   for (int i = 0; i < 4; i++)
@@ -94,8 +94,8 @@ vpImageSimulator::vpImageSimulator(const vpColorPlan &col)
 */
 vpImageSimulator::vpImageSimulator(const vpImageSimulator &text)
   : cMt(), pt(), ptClipped(), interp(SIMPLE), normal_obj(), normal_Cam(), normal_Cam_optim(), distance(1.),
-    visible_result(1.), visible(false), X0_2_optim(NULL), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
-    vbase_v(), vbase_u_optim(NULL), vbase_v_optim(NULL), Xinter_optim(NULL), listTriangle(), colorI(GRAY_SCALED), Ig(),
+    visible_result(1.), visible(false), X0_2_optim(nullptr), frobeniusNorm_u(0.), fronbniusNorm_v(0.), vbase_u(),
+    vbase_v(), vbase_u_optim(nullptr), vbase_v_optim(nullptr), Xinter_optim(nullptr), listTriangle(), colorI(GRAY_SCALED), Ig(),
     Ic(), rect(), cleanPrevImage(false), setBackgroundTexture(false), bgColor(vpColor::white), focal(),
     needClipping(false)
 {

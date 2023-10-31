@@ -143,7 +143,7 @@ public:
   //      : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10),
   //      xmin(0), ymin(-10),
   //        xdelt(1), ydelt(1), gridx(true), gridy(true), gridColor(),
-  //        curveNbr(1), curveList(NULL), scaleInitialized(false),
+  //        curveNbr(1), curveList(nullptr), scaleInitialized(false),
   //        firstPoint(true), nbDivisionx(10), nbDivisiony(10), topLeft(),
   //        width(0), height(0), graphZone(), dTopLeft(), dWidth(0),
   //        dHeight(0), dGraphZone(), dTopLeft3D(), dGraphZone3D(), cam(),

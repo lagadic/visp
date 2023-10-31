@@ -112,14 +112,14 @@ void vpServo::kill()
     for (std::list<vpBasicFeature *>::iterator it = featureList.begin(); it != featureList.end(); ++it) {
       if ((*it)->getDeallocate() == vpBasicFeature::vpServo) {
         delete (*it);
-        (*it) = NULL;
+        (*it) = nullptr;
       }
     }
     // desired list
     for (std::list<vpBasicFeature *>::iterator it = desiredFeatureList.begin(); it != desiredFeatureList.end(); ++it) {
       if ((*it)->getDeallocate() == vpBasicFeature::vpServo) {
         delete (*it);
-        (*it) = NULL;
+        (*it) = nullptr;
       }
     }
 

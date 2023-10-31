@@ -96,7 +96,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_undist(height, width);
 
     g.open(config);
-    g.acquire(&I_left, NULL, NULL);
+    g.acquire(&I_left, nullptr, nullptr);
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     vpCameraParameters cam_left, cam_undistort;
@@ -111,8 +111,8 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *display_left = NULL;
-    vpDisplay *display_undistort = NULL;
+    vpDisplay *display_left = nullptr;
+    vpDisplay *display_undistort = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       display_left = new vpDisplayX(I_left, 100, 30, "Left image");
@@ -150,7 +150,7 @@ int main(int argc, const char **argv)
       double t = vpTime::measureTimeMs();
 
       //! [Acquisition]
-      g.acquire(&I_left, NULL, NULL);
+      g.acquire(&I_left, nullptr, nullptr);
 
       //! [Undistorting image]
       vpImageTools::undistort(I_left, mapU, mapV, mapDu, mapDv, I_undist);

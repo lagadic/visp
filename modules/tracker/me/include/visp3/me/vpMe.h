@@ -174,12 +174,10 @@ public:
    */
   vpMe &operator=(const vpMe &me);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Move operator.
    */
   vpMe &operator=(const vpMe &&me);
-#endif
 
   /*!
    * Check sample step wrt min value.

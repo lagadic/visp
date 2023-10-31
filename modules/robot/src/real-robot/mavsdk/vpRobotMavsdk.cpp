@@ -251,7 +251,7 @@ public:
 
   bool isRunning() const
   {
-    if (m_system == NULL) {
+    if (m_system == nullptr) {
       return false;
     }
     else {

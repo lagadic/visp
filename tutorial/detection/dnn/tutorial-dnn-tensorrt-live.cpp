@@ -193,7 +193,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
   //! [ParseOnnxModel engine exists]
   if (vpIoTools::checkFilename(cache_path)) {
-    char *engineStream = NULL;
+    char *engineStream = nullptr;
     size_t engineSize = 0;
 
     // determine the file size of the engine
@@ -205,7 +205,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     engineStream = (char *)malloc(engineSize);
 
     // open the engine cache file from disk
-    FILE *cacheFile = NULL;
+    FILE *cacheFile = nullptr;
     cacheFile = fopen(cache_path, "rb");
 
     // read the serialized engine into memory
@@ -222,7 +222,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 
     // Recreate the inference runtime
     TRTUniquePtr<nvinfer1::IRuntime> infer { nvinfer1::createInferRuntime(gLogger) };
-    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, NULL));
+    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, nullptr));
     context.reset(engine->createExecutionContext());
 
     return true;
@@ -281,7 +281,7 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     memcpy(engineMemory, serData, serSize);
 
     // write the cache file
-    FILE *cacheFile = NULL;
+    FILE *cacheFile = nullptr;
     cacheFile = fopen(cache_path, "wb");
 
     fwrite(engineMemory, 1, serSize, cacheFile);

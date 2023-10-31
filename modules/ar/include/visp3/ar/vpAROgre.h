@@ -280,7 +280,7 @@ public:
   */
   inline void setWindowPosition(unsigned int win_x, unsigned int win_y)
   {
-    if (mWindow == NULL) {
+    if (mWindow == nullptr) {
       throw vpException(vpException::notInitialized, "Window not initialised, cannot set its position");
     }
     mWindow->reposition(static_cast<int>(win_x), static_cast<int>(win_y));

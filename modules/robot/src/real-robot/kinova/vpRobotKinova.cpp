@@ -53,7 +53,7 @@
  */
 vpRobotKinova::vpRobotKinova()
   : m_eMc(), m_plugin_location("./"), m_verbose(false), m_plugin_loaded(false), m_devices_count(0),
-    m_devices_list(NULL), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
+    m_devices_list(nullptr), m_active_device(-1), m_command_layer(CMD_LAYER_UNSET), m_command_layer_handle()
 {
   init();
 }
@@ -761,10 +761,10 @@ void vpRobotKinova::loadPlugin()
 #endif
 
   // Verify that all functions has been loaded correctly
-  if ((KinovaCloseAPI == NULL) || (KinovaGetAngularCommand == NULL) || (KinovaGetAngularCommand == NULL) ||
-      (KinovaGetCartesianCommand == NULL) || (KinovaGetDevices == NULL) || (KinovaInitAPI == NULL) ||
-      (KinovaInitFingers == NULL) || (KinovaMoveHome == NULL) || (KinovaSendBasicTrajectory == NULL) ||
-      (KinovaSetActiveDevice == NULL) || (KinovaSetAngularControl == NULL) || (KinovaSetCartesianControl == NULL)) {
+  if ((KinovaCloseAPI == nullptr) || (KinovaGetAngularCommand == nullptr) || (KinovaGetAngularCommand == nullptr) ||
+      (KinovaGetCartesianCommand == nullptr) || (KinovaGetDevices == nullptr) || (KinovaInitAPI == nullptr) ||
+      (KinovaInitFingers == nullptr) || (KinovaMoveHome == nullptr) || (KinovaSendBasicTrajectory == nullptr) ||
+      (KinovaSetActiveDevice == nullptr) || (KinovaSetAngularControl == nullptr) || (KinovaSetCartesianControl == nullptr)) {
     throw(vpException(vpException::fatalError, "Cannot load plugin from \"%s\" folder", m_plugin_location.c_str()));
   }
   if (m_verbose) {

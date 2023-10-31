@@ -46,6 +46,11 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#endif
+
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
 static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
@@ -368,15 +373,15 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark?")    // description string for the help output
-             | Opt(imagePathColor, "imagePathColor")["--imagePathColor"]("Path to color image") |
-             Opt(imagePathGray, "imagePathColor")["--imagePathGray"] |
-             Opt(g_resize_width, "g_resize_width")["--width"]("Resize width") |
-             Opt(g_resize_height, "g_resize_height")["--height"]("Resize height");
+    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+    ["--benchmark"] // the option names it will respond to
+    ("run benchmark?")    // description string for the help output
+    | Opt(imagePathColor, "imagePathColor")["--imagePathColor"]("Path to color image") |
+    Opt(imagePathGray, "imagePathColor")["--imagePathGray"] |
+    Opt(g_resize_width, "g_resize_width")["--width"]("Resize width") |
+    Opt(g_resize_height, "g_resize_height")["--height"]("Resize height");
 
-  // Now pass the new composite back to Catch so it uses that
+// Now pass the new composite back to Catch so it uses that
   session.cli(cli);
 
   // Let Catch (using Clara) parse the command line
@@ -386,12 +391,12 @@ int main(int argc, char *argv[])
     vpImage<vpRGBa> I_color;
     vpImageIo::read(I_color, imagePathColor);
     std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight()
-              << std::endl;
+      << std::endl;
 
     vpImage<unsigned char> I_gray;
     vpImageIo::read(I_gray, imagePathGray);
     std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight()
-              << std::endl;
+      << std::endl;
     std::cout << "Resize to: " << g_resize_width << "x" << g_resize_height << std::endl;
 
     int numFailed = session.run();

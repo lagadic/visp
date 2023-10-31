@@ -73,16 +73,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
   // the first time this callback is executed, put the window in initialized
   // state
-  if (window != NULL) {
+  if (window != nullptr) {
     if (!window->isInitialized()) {
       window->initialized = true;
-      vpReleaseSemaphore(window->semaInit, 1, NULL);
+      vpReleaseSemaphore(window->semaInit, 1, nullptr);
     }
   }
   switch (message) {
   case vpWM_DISPLAY:
     // redraw the whole window
-    InvalidateRect(window->getHWnd(), NULL, TRUE);
+    InvalidateRect(window->getHWnd(), nullptr, TRUE);
     UpdateWindow(window->getHWnd());
     break;
 
@@ -104,7 +104,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickY = GET_Y_LPARAM(lParam);
 
     window->clickButton = vpMouseButton::button1;
-    vpReleaseSemaphore(window->semaClick, 1, NULL);
+    vpReleaseSemaphore(window->semaClick, 1, nullptr);
   } break;
 
   case WM_MBUTTONDOWN: {
@@ -112,7 +112,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickY = GET_Y_LPARAM(lParam);
 
     window->clickButton = vpMouseButton::button2;
-    vpReleaseSemaphore(window->semaClick, 1, NULL);
+    vpReleaseSemaphore(window->semaClick, 1, nullptr);
   } break;
 
   case WM_RBUTTONDOWN: {
@@ -120,7 +120,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickY = GET_Y_LPARAM(lParam);
 
     window->clickButton = vpMouseButton::button3;
-    vpReleaseSemaphore(window->semaClick, 1, NULL);
+    vpReleaseSemaphore(window->semaClick, 1, nullptr);
   } break;
 
   case WM_LBUTTONUP: {
@@ -128,7 +128,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickYUp = GET_Y_LPARAM(lParam);
 
     window->clickButtonUp = vpMouseButton::button1;
-    vpReleaseSemaphore(window->semaClickUp, 1, NULL);
+    vpReleaseSemaphore(window->semaClickUp, 1, nullptr);
   } break;
 
   case WM_MBUTTONUP: {
@@ -136,7 +136,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickYUp = GET_Y_LPARAM(lParam);
 
     window->clickButtonUp = vpMouseButton::button2;
-    vpReleaseSemaphore(window->semaClickUp, 1, NULL);
+    vpReleaseSemaphore(window->semaClickUp, 1, nullptr);
   } break;
 
   case WM_RBUTTONUP: {
@@ -144,12 +144,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     window->clickYUp = GET_Y_LPARAM(lParam);
 
     window->clickButtonUp = vpMouseButton::button3;
-    vpReleaseSemaphore(window->semaClickUp, 1, NULL);
+    vpReleaseSemaphore(window->semaClickUp, 1, nullptr);
   } break;
   case WM_MOUSEMOVE: {
     window->coordX = GET_X_LPARAM(lParam);
     window->coordY = GET_Y_LPARAM(lParam);
-    vpReleaseSemaphore(window->semaMove, 1, NULL);
+    vpReleaseSemaphore(window->semaMove, 1, nullptr);
   } break;
 
   case WM_SYSKEYDOWN:
@@ -160,7 +160,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
       GetKeyNameText((LONG)lParam, window->lpString,
                      10); // 10 is the size of lpString
       // window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
-      vpReleaseSemaphore(window->semaKey, 1, NULL);
+      vpReleaseSemaphore(window->semaKey, 1, nullptr);
       break;
     }
 
@@ -204,11 +204,11 @@ vpWin32Window::vpWin32Window(vpWin32Renderer *rend) : initialized(false)
   // this file (registered = false)
 
   // creates the semaphores
-  semaInit = CreateSemaphore(NULL, 0, 1, NULL);
-  semaClick = CreateSemaphore(NULL, 0, MAX_SEM_COUNT, NULL);
-  semaClickUp = CreateSemaphore(NULL, 0, MAX_SEM_COUNT, NULL);
-  semaKey = CreateSemaphore(NULL, 0, MAX_SEM_COUNT, NULL);
-  semaMove = CreateSemaphore(NULL, 0, MAX_SEM_COUNT, NULL);
+  semaInit = CreateSemaphore(nullptr, 0, 1, nullptr);
+  semaClick = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
+  semaClickUp = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
+  semaKey = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
+  semaMove = CreateSemaphore(nullptr, 0, MAX_SEM_COUNT, nullptr);
 }
 
 /*!
@@ -256,12 +256,12 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
   wcex.cbClsExtra = 0;
   wcex.cbWndExtra = 0;
   wcex.hInstance = hInst;
-  wcex.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-  wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
+  wcex.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+  wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
   wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-  wcex.lpszMenuName = NULL;
+  wcex.lpszMenuName = nullptr;
   wcex.lpszClassName = g_szClassName;
-  wcex.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+  wcex.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
 
   RegisterClassEx(&wcex);
 
@@ -271,13 +271,13 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
 
   // creates the window
   hWnd = CreateWindowEx(WS_EX_APPWINDOW, g_szClassName, title, style, posx, posy, rect.right - rect.left,
-                        rect.bottom - rect.top, NULL, NULL, hInst, NULL);
-  if (hWnd == NULL) {
+                        rect.bottom - rect.top, nullptr, nullptr, hInst, nullptr);
+  if (hWnd == nullptr) {
     DWORD err = GetLastError();
     std::cout << "err CreateWindowEx=" << err << std::endl;
     throw vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create the window!");
   }
-  SetWindowPos(hWnd, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
+  SetWindowPos(hWnd, nullptr, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE);
 
   // needed if we want to access it from the callback method (message handler)
   window = this;
@@ -294,14 +294,14 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
 
   // starts the message loop
   while (true) {
-    BOOL val = GetMessage(&msg, NULL, 0, 0);
+    BOOL val = GetMessage(&msg, nullptr, 0, 0);
     if (val == -1) {
       std::cout << "GetMessage error:" << GetLastError() << std::endl;
       break;
     } else if (val == 0) {
       break;
     } else {
-      if (!TranslateAccelerator(msg.hwnd, NULL, &msg)) {
+      if (!TranslateAccelerator(msg.hwnd, nullptr, &msg)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
       }

@@ -85,9 +85,9 @@ void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageTy
   // no image is loaded
   background = false;
 
-  if (image_background != NULL) {
+  if (image_background != nullptr) {
     free(image_background);
-    image_background = NULL;
+    image_background = nullptr;
   }
 
   typeImage = type;

@@ -183,8 +183,6 @@ public:
   vpHomography(const vpThetaUVector &tu, const vpTranslationVector &atb, const vpPlane &bP);
   //! Construction from translation and rotation and a plane.
   vpHomography(const vpPoseVector &arb, const vpPlane &bP);
-  //! Destructor.
-  virtual ~vpHomography() { };
 
   //! Construction from translation and rotation and a plane
   void buildFrom(const vpRotationMatrix &aRb, const vpTranslationVector &atb, const vpPlane &bP);
@@ -290,7 +288,7 @@ public:
    *
    * \return  \f$\bf H^{-1}\f$
    */
-  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = nullptr) const;
 
   /*!
    * Invert the homography.

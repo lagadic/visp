@@ -214,7 +214,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
       trackerType = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -227,7 +227,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &co
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -283,7 +283,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
         << "  environment variable to specify the location of the " << std::endl
@@ -656,7 +656,7 @@ int main(int argc, const char **argv)
     reader.close();
 
     delete tracker;
-    tracker = NULL;
+    tracker = nullptr;
 
     return EXIT_SUCCESS;
   }

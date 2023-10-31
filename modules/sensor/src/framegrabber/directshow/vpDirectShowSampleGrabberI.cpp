@@ -51,7 +51,7 @@ vpDirectShowSampleGrabberI::vpDirectShowSampleGrabberI()
   : acqGrayDemand(false), acqRGBaDemand(false), specialMediaType(false), invertedSource(false)
 {
   // semaphore(0), max value = 1
-  copySem = CreateSemaphore(NULL, 0, 1, NULL);
+  copySem = CreateSemaphore(nullptr, 0, 1, nullptr);
 }
 
 /*!
@@ -65,7 +65,7 @@ vpDirectShowSampleGrabberI::~vpDirectShowSampleGrabberI()
 
 STDMETHODIMP vpDirectShowSampleGrabberI::QueryInterface(REFIID riid, void **ppvObject)
 {
-  if (NULL == ppvObject)
+  if (nullptr == ppvObject)
     return E_POINTER;
   if (riid == __uuidof(IUnknown)) {
     *ppvObject = static_cast<IUnknown *>(this);
@@ -270,7 +270,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
     }
 
     // increment the semaphore - allows acquire to continue execution
-    ReleaseSemaphore(copySem, 1, NULL);
+    ReleaseSemaphore(copySem, 1, nullptr);
   }
   return S_OK;
 }

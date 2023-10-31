@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     g.setFileName(opt_videoname);
     g.open(I);
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
 #if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)

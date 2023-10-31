@@ -49,9 +49,7 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <thread>
-#endif
 
 #define eps 1e-6
 
@@ -222,7 +220,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
       bool isPoseValid = true;
-      if (m_func != NULL) {
+      if (m_func != nullptr) {
         isPoseValid = m_func(cMo_tmp);
         if (isPoseValid) {
           m_cMo = cMo_tmp;
@@ -355,15 +353,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
-#else
-  bool executeParallelVersion = false;
-#endif
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -375,19 +368,17 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     else {
       nbThreads = nbParallelRansacThreads;
     }
-#endif
   }
 
   bool foundSolution = false;
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
     std::vector<vpRansacFunctor> ransacWorkers;
 
     int splitTrials = ransacMaxTrials / nbThreads;
     for (size_t i = 0; i < (size_t)nbThreads; i++) {
-      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
+      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(nullptr) ^ i);
       if (i < (size_t)nbThreads - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
@@ -422,7 +413,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
 
     foundSolution = successRansac;
-#endif
   }
   else {
  // Sequential RANSAC
@@ -486,7 +476,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // In some rare cases, the final pose could not respect the pose
       // criterion even  if the 4 minimal points picked respect the pose
       // criterion.
-      if (func != NULL && !func(cMo)) {
+      if (func != nullptr && !func(cMo)) {
         return false;
       }
 

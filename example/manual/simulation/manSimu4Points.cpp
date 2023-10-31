@@ -187,7 +187,7 @@ static void *mainLoop(void *_simu)
   }
   simu->closeMainApplication();
 
-  void *a = NULL;
+  void *a = nullptr;
   return a;
   // return (void *);
 }

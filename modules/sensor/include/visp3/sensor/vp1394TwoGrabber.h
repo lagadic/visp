@@ -334,13 +334,13 @@ private:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vp1394TwoGrabber(const vp1394TwoGrabber &)
-  //    : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0),
-  //    verbose(false), camIsOpen(NULL),
+  //    : camera(nullptr), cameras(nullptr), num_cameras(0), camera_id(0),
+  //    verbose(false), camIsOpen(nullptr),
   //      num_buffers(4), // ring buffer size
-  //      isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
+  //      isDataModified(nullptr), initialShutterMode(nullptr), dataCam(nullptr)
   //    #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API >
-  //    libdc1394-2.0.0-rc7 , d(NULL),
-  //      list(NULL)
+  //    libdc1394-2.0.0-rc7 , d(nullptr),
+  //      list(nullptr)
   //    #endif
   //  {
   //    throw vpException(vpException::functionNotImplementedError,"Not

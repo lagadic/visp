@@ -34,17 +34,18 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::vpCircleHoughTransform(const vpCircleHoughTransformParameters &algoParams)
   : m_algoParams(algoParams)
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 void
@@ -52,6 +53,7 @@ vpCircleHoughTransform::init(const vpCircleHoughTransformParameters &algoParams)
 {
   m_algoParams = algoParams;
   initGaussianFilters();
+  initGradientFilters();
 }
 
 vpCircleHoughTransform::~vpCircleHoughTransform()
@@ -84,9 +86,10 @@ vpCircleHoughTransform::initFromJSON(const std::string &jsonPath)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  m_algoParams = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+  m_algoParams = j; // Call from_json(const json& j, vpCircleHoughTransformParameters&) to read json
   file.close();
   initGaussianFilters();
+  initGradientFilters();
 }
 
 void
@@ -94,16 +97,55 @@ vpCircleHoughTransform::saveConfigurationInJSON(const std::string &jsonPath) con
 {
   m_algoParams.saveConfigurationInJSON(jsonPath);
 }
+
 #endif
 
 void
 vpCircleHoughTransform::initGaussianFilters()
 {
   m_fg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
-  m_fgDg.resize(1, (m_algoParams.m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, false);
+  vpImageFilter::getGaussianKernel(m_fg.data, m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev, true);
   m_cannyVisp.setGaussianFilterParameters(m_algoParams.m_gaussianKernelSize, m_algoParams.m_gaussianStdev);
+}
+
+void
+vpCircleHoughTransform::initGradientFilters()
+{
+  if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
+    throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
+  }
+  m_gradientFilterX.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_gradientFilterY.resize(m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gradientFilterKernelSize);
+  m_cannyVisp.setGradientFilterAperture(m_algoParams.m_gradientFilterKernelSize);
+
+  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+    for (unsigned int r = 0; r < filter.getRows(); r++) {
+      for (unsigned int c = 0; c < filter.getCols(); c++) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }};
+
+  float scaleX = 1.f;
+  float scaleY = 1.f;
+
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+    // Compute the Sobel filters
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
+  else if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Compute the Scharr filters
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_algoParams.m_gradientFilterKernelSize  - 1)/2);
+  }
+  else {
+    std::string errMsg = "[vpCircleHoughTransform::initGradientFilters] Error: gradient filtering method \"";
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" has not been implemented yet\n";
+    throw vpException(vpException::notImplementedError, errMsg);
+  }
+  scaleFilter(m_gradientFilterX, scaleX);
+  scaleFilter(m_gradientFilterY, scaleY);
 }
 
 std::vector<vpImageCircle>
@@ -210,40 +252,45 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
 void
 vpCircleHoughTransform::computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I)
 {
-  vpImageFilter::getGradXGauss2D(I,
-    m_dIx,
-    m_fg.data,
-    m_fgDg.data,
-    m_algoParams.m_gaussianKernelSize
-  );
-  vpImageFilter::getGradYGauss2D(I,
-    m_dIy,
-    m_fg.data,
-    m_fgDg.data,
-    m_algoParams.m_gaussianKernelSize
-  );
+  if (m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
+     || m_algoParams.m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Computing the Gaussian blurr
+    vpImage<float> Iblur, GIx;
+    vpImageFilter::filterX(I, GIx, m_fg.data, m_algoParams.m_gaussianKernelSize);
+    vpImageFilter::filterY(GIx, Iblur, m_fg.data, m_algoParams.m_gaussianKernelSize);
+
+    // Computing the gradients
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY);
+  }
+  else {
+    std::string errMsg("[computeGradientsAfterGaussianSmoothing] The filtering + gradient operators \"");
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_algoParams.m_filteringAndGradientType);
+    errMsg += "\" is not implemented (yet).";
+    throw(vpException(vpException::notImplementedError, errMsg));
+  }
 }
 
 void
 vpCircleHoughTransform::edgeDetection(const vpImage<unsigned char> &I)
 {
-#if defined(HAVE_OPENCV_IMGPROC)
-  float upperCannyThresh = m_algoParams.m_upperCannyThresh;
-  float lowerCannyThresh = m_algoParams.m_lowerCannyThresh;
-  // Apply the Canny edge operator to compute the edge map
-  // The canny method performs Gaussian blur and gradient computation
-  if (m_algoParams.m_upperCannyThresh < 0.) {
-    upperCannyThresh = vpImageFilter::computeCannyThreshold(I, lowerCannyThresh);
+  if (m_algoParams.m_cannyBackendType == vpImageFilter::CANNY_VISP_BACKEND) {
+    // This is done to increase the time performances, because it avoids to
+    // recompute the gradient in the vpImageFilter::canny method
+    m_cannyVisp.setFilteringAndGradientType(m_algoParams.m_filteringAndGradientType);
+    m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
+    m_cannyVisp.setCannyThresholdsRatio(m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio);
+    m_cannyVisp.setGradients(m_dIx, m_dIy);
+    m_edgeMap = m_cannyVisp.detect(I);
   }
-  else if (m_algoParams.m_lowerCannyThresh < 0) {
-    lowerCannyThresh = upperCannyThresh / 3.f;
+  else {
+    // We will have to recompute the gradient in the desired backend format anyway so we let
+    // the vpImageFilter::canny method take care of it
+    vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, m_algoParams.m_lowerCannyThresh,
+    m_algoParams.m_upperCannyThresh, m_algoParams.m_gradientFilterKernelSize, m_algoParams.m_gaussianStdev,
+    m_algoParams.m_lowerCannyThreshRatio, m_algoParams.m_upperCannyThreshRatio, true,
+    m_algoParams.m_cannyBackendType, m_algoParams.m_filteringAndGradientType);
   }
-  vpImageFilter::canny(I, m_edgeMap, m_algoParams.m_gaussianKernelSize, lowerCannyThresh, upperCannyThresh, m_algoParams.m_sobelKernelSize);
-#else
-  m_cannyVisp.setCannyThresholds(m_algoParams.m_lowerCannyThresh, m_algoParams.m_upperCannyThresh);
-  m_cannyVisp.setGradients(m_dIx, m_dIy);
-  m_edgeMap = m_cannyVisp.detect(I);
-#endif
 
   for (int i = 0; i < m_algoParams.m_edgeMapFilteringNbIter; i++) {
     filterEdgeMap();
@@ -483,7 +530,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         float scalProd = rx * gx + ry * gy;
         float scalProd2 = scalProd * scalProd;
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
-          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
+          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additional vote
           float r = static_cast<float>(std::sqrt(r2));
           unsigned int r_bin = static_cast<unsigned int>(std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist));
           r_bin = std::min(r_bin, nbBins - 1);
@@ -620,5 +667,3 @@ std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detecto
   os << detector.toString();
   return os;
 }
-
-#endif

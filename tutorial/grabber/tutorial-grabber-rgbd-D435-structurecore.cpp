@@ -12,8 +12,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE) &&                                         \
-    (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
   // Both cameras can stream color and depth in 640x480 resolution.
   unsigned int width = 640, height = 480;
 
@@ -48,7 +47,7 @@ int main(int argc, char **argv)
   // Acquiring images.
   for (;;) {
     rs.acquire(reinterpret_cast<unsigned char *>(I_color_rs.bitmap),
-               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), NULL, NULL, NULL, NULL, NULL);
+               reinterpret_cast<unsigned char *>(rs_I_depth_raw.bitmap), nullptr, nullptr, nullptr, nullptr, nullptr);
     sc.acquire(reinterpret_cast<unsigned char *>(I_color_sc.bitmap),
                reinterpret_cast<unsigned char *>(sc_I_depth_raw.bitmap));
 
@@ -79,9 +78,6 @@ int main(int argc, char **argv)
 #endif
 #if !(defined(VISP_HAVE_REALSENSE2))
   std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

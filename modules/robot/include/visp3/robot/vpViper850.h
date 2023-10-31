@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,73 +29,68 @@
  *
  * Description:
  * Interface for the ADEPT Viper 850 robot.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpViper850_h
 #define vpViper850_h
 
-/*!
-
-  \file vpViper850.h
-
-  Modelisation of the ADEPT Viper 850 robot.
-
-*/
-
-/*!
-
-  \class vpViper850
-
-  \ingroup group_robot_real_arm group_robot_simu_arm
-
-  \brief Modelisation of the ADEPT Viper 850 robot.
-
-  The model of the robot is the following:
-  \image html model-viper.png Model of the Viper 850 robot.
-
-  The non modified Denavit-Hartenberg representation of the robot is
-  given in the table below, where \f$q_1^*, \ldots, q_6^*\f$
-  are the variable joint positions.
-
-  \f[
-  \begin{tabular}{|c|c|c|c|c|}
-  \hline
-  Joint & $a_i$ & $d_i$ & $\alpha_i$ & $\theta_i$ \\
-  \hline
-  1 & $a_1$ & $d_1$ & $-\pi/2$ & $q_1^*$ \\
-  2 & $a_2$ & 0     & 0        & $q_2^*$ \\
-  3 & $a_3$ & 0     & $-\pi/2$ & $q_3^* - \pi$ \\
-  4 & 0     & $d_4$ & $\pi/2$  & $q_4^*$ \\
-  5 & 0     & 0     & $-\pi/2$ & $q_5^*$ \\
-  6 & 0     & 0     & 0        & $q_6^*-\pi$ \\
-  7 & 0     & $d_6$ & 0        & 0 \\
-  \hline
-  \end{tabular}
-  \f]
-
-  In this modelization, different frames have to be considered.
-
-  - \f$ {\cal F}_f \f$: the reference frame, also called world frame
-
-  - \f$ {\cal F}_w \f$: the wrist frame located at the intersection of
-    the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$
-
-  - \f$ {\cal F}_e \f$: the end-effector frame located at the interface of the
-    two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
-
-  - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
-    M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
-    a calibration stage. We can also consider a custom tool TOOL_CUSTOM and
-  set this during robot initialisation or using set_eMc().
-
-  - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
-
-*/
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpViper.h>
 
+/*!
+ * \file vpViper850.h
+ *
+ * Modelization of the ADEPT Viper 850 robot.
+ */
+
+/*!
+ * \class vpViper850
+ *
+ * \ingroup group_robot_real_arm group_robot_simu_arm
+ *
+ * \brief Modelization of the ADEPT Viper 850 robot.
+ *
+ * The model of the robot is the following:
+ * \image html model-viper.png Model of the Viper 850 robot.
+ *
+ * The non modified Denavit-Hartenberg representation of the robot is
+ * given in the table below, where \f$q_1^*, \ldots, q_6^*\f$
+ * are the variable joint positions.
+ *
+ * \f[
+ * \begin{tabular}{|c|c|c|c|c|}
+ * \hline
+ * Joint & $a_i$ & $d_i$ & $\alpha_i$ & $\theta_i$ \\
+ * \hline
+ * 1 & $a_1$ & $d_1$ & $-\pi/2$ & $q_1^*$ \\
+ * 2 & $a_2$ & 0     & 0        & $q_2^*$ \\
+ * 3 & $a_3$ & 0     & $-\pi/2$ & $q_3^* - \pi$ \\
+ * 4 & 0     & $d_4$ & $\pi/2$  & $q_4^*$ \\
+ * 5 & 0     & 0     & $-\pi/2$ & $q_5^*$ \\
+ * 6 & 0     & 0     & 0        & $q_6^*-\pi$ \\
+ * 7 & 0     & $d_6$ & 0        & 0 \\
+ * \hline
+ * \end{tabular}
+ * \f]
+ *
+ * In this modelization, different frames have to be considered.
+ *
+ * - \f$ {\cal F}_f \f$: the reference frame, also called world frame
+ *
+ * - \f$ {\cal F}_w \f$: the wrist frame located at the intersection of
+ *   the last three rotations, with \f$ ^f{\bf M}_w = ^0{\bf M}_6 \f$
+ *
+ * - \f$ {\cal F}_e \f$: the end-effector frame located at the interface of the
+ *   two tool changers, with \f$^f{\bf M}_e = 0{\bf M}_7 \f$
+ *
+ * - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
+ *   M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
+ *   a calibration stage. We can also consider a custom tool TOOL_CUSTOM and
+ *   set this during robot initialisation or using set_eMc().
+ *
+ * - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
+ */
 class VISP_EXPORT vpViper850 : public vpViper
 {
 public:
@@ -122,7 +116,8 @@ public:
   static const char *const CONST_GENERIC_CAMERA_NAME;
 
   //! List of possible tools that can be attached to the robot end-effector.
-  typedef enum {
+  typedef enum
+  {
     TOOL_MARLIN_F033C_CAMERA,   /*!< Marlin F033C camera. */
     TOOL_PTGREY_FLEA2_CAMERA,   /*!< Point Grey Flea 2 camera. */
     TOOL_SCHUNK_GRIPPER_CAMERA, /*!< Camera attached to the Schunk gripper. */
@@ -134,15 +129,14 @@ public:
   static const vpToolType defaultTool;
 
   vpViper850();
-  virtual ~vpViper850(){};
 
   /** @name Inherited functionalities from vpViper850 */
   //@{
   void init(void);
   void init(const std::string &camera_extrinsic_parameters);
   void
-  init(vpViper850::vpToolType tool,
-       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+    init(vpViper850::vpToolType tool,
+         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper850::vpToolType tool, const std::string &filename);
   void init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 

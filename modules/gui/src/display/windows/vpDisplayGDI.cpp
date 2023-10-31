@@ -52,7 +52,7 @@
 /*!
   \brief Basic constructor.
 */
-vpDisplayGDI::vpDisplayGDI() : vpDisplayWin32(new vpGDIRenderer()) {}
+vpDisplayGDI::vpDisplayGDI() : vpDisplayWin32(new vpGDIRenderer()) { }
 
 /*!
 
@@ -188,13 +188,8 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const 
   init(I, winx, winy, title);
 }
 
-/*!
-  \brief Basic destructor.
-*/
-vpDisplayGDI::~vpDisplayGDI() {}
-
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDisplayGDI.cpp.o) has no
 // symbols
-void dummy_vpDisplayGDI(){};
+void dummy_vpDisplayGDI() { };
 #endif

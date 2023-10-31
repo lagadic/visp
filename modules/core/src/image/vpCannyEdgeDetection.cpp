@@ -37,24 +37,37 @@
 // // Initialization methods
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
-  : m_gaussianKernelSize(3)
-  , m_gaussianStdev(1.)
+  : m_filteringAndGradientType(vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+  , m_gaussianKernelSize(3)
+  , m_gaussianStdev(1.f)
   , m_areGradientAvailable(false)
-  , m_lowerThreshold(-1.)
-  , m_upperThreshold(-1.)
+  , m_gradientFilterKernelSize(3)
+  , m_lowerThreshold(-1.f)
+  , m_lowerThresholdRatio(0.6f)
+  , m_upperThreshold(-1.f)
+  , m_upperThresholdRatio(0.8f)
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
-                        , const float &lowerThreshold, const float &upperThreshold)
-  : m_gaussianKernelSize(gaussianKernelSize)
+                        , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
+                        , const float &lowerThresholdRatio, const float &upperThresholdRatio
+                        , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
+)
+  : m_filteringAndGradientType(filteringType)
+  , m_gaussianKernelSize(gaussianKernelSize)
   , m_gaussianStdev(gaussianStdev)
   , m_areGradientAvailable(false)
+  , m_gradientFilterKernelSize(sobelAperture)
   , m_lowerThreshold(lowerThreshold)
+  , m_lowerThresholdRatio(lowerThresholdRatio)
   , m_upperThreshold(upperThreshold)
+  , m_upperThresholdRatio(upperThresholdRatio)
 {
   initGaussianFilters();
+  initGradientFilters();
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -83,9 +96,10 @@ vpCannyEdgeDetection::initFromJSON(const std::string &jsonPath)
     msg << "Byte position of error: " << e.byte;
     throw vpException(vpException::ioError, msg.str());
   }
-  *this = j; // Call from_json(const json& j, vpDetectionCircle2D& *this) to read json
+  from_json(j, *this);
   file.close();
   initGaussianFilters();
+  initGradientFilters();
 }
 #endif
 
@@ -96,9 +110,46 @@ vpCannyEdgeDetection::initGaussianFilters()
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
   m_fg.resize(1, (m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, false);
-  m_fgDg.resize(1, (m_gaussianKernelSize + 1)/2);
-  vpImageFilter::getGaussianDerivativeKernel(m_fgDg.data, m_gaussianKernelSize, m_gaussianStdev, false);
+  vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, true);
+}
+
+void
+vpCannyEdgeDetection::initGradientFilters()
+{
+  if ((m_gradientFilterKernelSize % 2) != 1) {
+    throw vpException(vpException::badValue, "Gradient filters kernel size should be odd.");
+  }
+  m_gradientFilterX.resize(m_gradientFilterKernelSize, m_gradientFilterKernelSize);
+  m_gradientFilterY.resize(m_gradientFilterKernelSize, m_gradientFilterKernelSize);
+
+  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+    for (unsigned int r = 0; r < filter.getRows(); r++) {
+      for (unsigned int c = 0; c < filter.getCols(); c++) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }};
+
+  float scaleX = 1.f;
+  float scaleY = 1.f;
+
+  if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize  - 1)/2);
+  }
+  else if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Compute the Scharr filters
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize  - 1)/2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize  - 1)/2);
+  }
+  else {
+    std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";
+    errMsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType);
+    errMsg += "\" has not been implemented yet\n";
+    throw vpException(vpException::notImplementedError, errMsg);
+  }
+
+  scaleFilter(m_gradientFilterX, scaleX);
+  scaleFilter(m_gradientFilterY, scaleY);
 }
 
 // // Detection methods
@@ -139,9 +190,13 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 
   // // Step 4: hysteresis thresholding
   float upperThreshold = m_upperThreshold;
-
   float lowerThreshold = m_lowerThreshold;
-  if (m_lowerThreshold < 0) {
+  if (upperThreshold < 0) {
+    upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
+                                                          m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
+                                                          m_upperThresholdRatio, m_filteringAndGradientType);
+  }
+  else if (m_lowerThreshold < 0) {
     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
     lowerThreshold = m_upperThreshold / 3.f;
   }
@@ -156,18 +211,22 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 void
 vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsigned char> &I)
 {
-  vpImageFilter::getGradXGauss2D(I,
-    m_dIx,
-    m_fg.data,
-    m_fgDg.data,
-    m_gaussianKernelSize
-  );
-  vpImageFilter::getGradYGauss2D(I,
-    m_dIy,
-    m_fg.data,
-    m_fgDg.data,
-    m_gaussianKernelSize
-  );
+  if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
+     || m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+    // Computing the Gaussian blur
+    vpImage<float> Iblur;
+    vpImage<float> GIx;
+    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, m_gaussianKernelSize);
+    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize);
+
+    // Computing the gradients
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY);
+  }
+  else {
+    std::string errmsg("Currently, the only filtering and gradient operators are Gaussian blur + Sobel");
+    throw(vpException(vpException::notImplementedError, errmsg));
+  }
 }
 
 /**
@@ -273,6 +332,64 @@ getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int
   }
   return absoluteTheta;
 }
+
+/**
+ * \brief Search in the direction of the gradient for the highest value of the gradient.
+ *
+ * \param[in] dIx The gradient image along the x-axis.
+ * \param[in] dIy The gradient image along the y-axis.
+ * \param[in] row The row of the initial point that is considered.
+ * \param[in] col The column of the initial point that is considered.
+ * \param[in] thetaQuadrant The gradient orientation quadrant of the initial point.
+ * \param[in] dRowGrad The direction of the gradient for the vertical direction.
+ * \param[in] dColGrad The direction of the gradient for the horizontal direction.
+ * \param[out] pixelsSeen The list of pixels that are of same gradient orientation quadrant.
+ * \param[out] bestPixel The pixel having the highest absolute value of gradient.
+ * \param[out] bestGrad The highest absolute value of gradient.
+ */
+void
+searchForBestGradientInGradientDirection(const vpImage<float> &dIx, const vpImage<float> &dIy,
+const int &row, const int &col, const int &thetaQuadrant, const int &dRowGrad, const int &dColGrad,
+std::vector<std::pair<int, int> > &pixelsSeen, std::pair<int, int> &bestPixel, float &bestGrad)
+{
+  bool isGradientInTheSameDirection = true;
+  int rowCandidate = row + dRowGrad;
+  int colCandidate = col + dColGrad;
+
+  while (isGradientInTheSameDirection) {
+    // Getting the gradients around the edge point
+    float gradPlus = getManhattanGradient(dIx, dIy, rowCandidate, colCandidate);
+    if (std::abs(gradPlus) < std::numeric_limits<float>::epsilon()) {
+      // The gradient is almost null => ignoring the point
+      isGradientInTheSameDirection = false;
+      break;
+    }
+    int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
+    int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
+    float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
+    int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
+    if (thetaQuadrantCandidate != thetaQuadrant) {
+      isGradientInTheSameDirection = false;
+      break;
+    }
+
+    std::pair<int, int> pixelCandidate(rowCandidate, colCandidate);
+    if (gradPlus > bestGrad) {
+      // The gradient is higher with the next pixel candidate
+      // Saving it
+      bestGrad = gradPlus;
+      pixelsSeen.push_back(bestPixel);
+      bestPixel = pixelCandidate;
+    }
+    else {
+      // Best pixel is still the best
+      pixelsSeen.push_back(pixelCandidate);
+    }
+    rowCandidate += dRowGrad;
+    colCandidate += dColGrad;
+  }
+}
+
 void
 vpCannyEdgeDetection::performEdgeThining()
 {
@@ -299,45 +416,16 @@ vpCannyEdgeDetection::performEdgeThining()
       int dColGradPlus = 0, dColGradMinus = 0;
       int thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
 
-      bool isGradientInTheSameDirection = true;
       std::vector<std::pair<int, int> > pixelsSeen;
       std::pair<int, int> bestPixel(row, col);
       float bestGrad = grad;
-      int rowCandidate = row + dRowGradPlus;
-      int colCandidate = col + dColGradPlus;
 
-      while (isGradientInTheSameDirection) {
-        // Getting the gradients around the edge point
-        float gradPlus = getManhattanGradient(dIx, dIy, rowCandidate, colCandidate);
-        if (std::abs(gradPlus) < std::numeric_limits<float>::epsilon()) {
-          // The gradient is almost null => ignoring the point
-          isGradientInTheSameDirection = false;
-          break;
-        }
-        int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
-        int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
-        float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
-        int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
-        if (thetaQuadrantCandidate != thetaQuadrant) {
-          isGradientInTheSameDirection = false;
-          break;
-        }
+      // iterate over all the pixels having the same gradient orientation quadrant
+      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradPlus, dColGradPlus,
+        pixelsSeen, bestPixel, bestGrad);
 
-        std::pair<int, int> pixelCandidate(rowCandidate, colCandidate);
-        if (gradPlus > bestGrad) {
-          // The gradient is higher with the nex pixel candidate
-          // Saving it
-          bestGrad = gradPlus;
-          pixelsSeen.push_back(bestPixel);
-          bestPixel = pixelCandidate;
-        }
-        else {
-          // Best pixel is still the best
-          pixelsSeen.push_back(pixelCandidate);
-        }
-        rowCandidate += dRowGradPlus;
-        colCandidate += dColGradPlus;
-      }
+      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradMinus, dColGradMinus,
+        pixelsSeen, bestPixel, bestGrad);
 
       // Keeping the edge point that has the highest gradient
       m_edgeCandidateAndGradient[bestPixel] = bestGrad;
@@ -376,8 +464,10 @@ vpCannyEdgeDetection::performEdgeTracking()
     if (it->second == STRONG_EDGE) {
       m_edgeMap[it->first.first][it->first.second] = 255;
     }
-    else if (recursiveSearchForStrongEdge(it->first)) {
-      m_edgeMap[it->first.first][it->first.second] = 255;
+    else if (it->second == WEAK_EDGE) {
+      if (recursiveSearchForStrongEdge(it->first)) {
+        m_edgeMap[it->first.first][it->first.second] = 255;
+      }
     }
   }
 }

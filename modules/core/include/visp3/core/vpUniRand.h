@@ -72,13 +72,9 @@ typedef unsigned __int32 uint32_t;
 #include <inttypes.h>
 #endif
 
-#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
-#include <algorithm> // std::random_shuffle
-#else
 #include <algorithm> // std::shuffle
 #include <random>    // std::mt19937
 #include <numeric>   // std::iota
-#endif
 
 #include <vector>
 /*!
@@ -156,11 +152,7 @@ public:
   inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector)
   {
     std::vector<T> shuffled = inputVector;
-#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
-    std::random_shuffle(shuffled.begin(), shuffled.end());
-#else
     std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937 { std::random_device{}() });
-#endif
     return shuffled;
   }
 

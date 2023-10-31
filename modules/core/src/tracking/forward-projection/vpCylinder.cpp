@@ -121,11 +121,6 @@ vpCylinder::vpCylinder(double oA, double oB, double oC, double oX, double oY, do
 }
 
 /*!
-  Default constructor.
-  */
-vpCylinder::~vpCylinder() {}
-
-/*!
   Perspective projection of the cylinder.
 
   From the parameters of the cylinder in the camera frame, compute the

@@ -100,7 +100,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker();
+  virtual ~vpMeTracker() override;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
@@ -146,7 +146,7 @@ public:
    * Test whether the pixel is inside the mask. Mask values that are set to true
    * are considered in the tracking.
    *
-   * \param mask: Mask image or NULL if not wanted. Mask values that are set to true
+   * \param mask: Mask image or nullptr if not wanted. Mask values that are set to true
    * are considered in the tracking. To disable a pixel, set false.
    * \param i : Pixel coordinate along the rows.
    * \param j : Pixel coordinate along the columns.

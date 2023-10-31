@@ -48,6 +48,10 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/vision/vpKeyPoint.h>
 
+
+
+
+
 // List of allowed command line options
 #define GETOPTARGS "cdh"
 
@@ -113,7 +117,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
       display = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -126,7 +130,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -165,9 +169,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   // features that are scale invariant to detect potential problem in ViSP.
   std::cout << "INFORMATION: " << std::endl;
   std::cout << "Here, we want to test feature detection on a pyramid of images  even for features "
-               "that are scale invariant to detect potential problem in ViSP."
-            << std::endl
-            << std::endl;
+    "that are scale invariant to detect potential problem in ViSP."
+    << std::endl
+    << std::endl;
   vpKeyPoint keyPoints;
 
   // Will test the different types of keypoints detection to see if there is
@@ -274,11 +278,11 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
     keyPoints.detect(I, kpts);
     std::cout << "Nb keypoints detected: " << kpts.size() << " for "
-              << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i] << " method." << std::endl;
+      << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i] << " method." << std::endl;
     if (kpts.empty()) {
       std::stringstream ss;
       ss << "No keypoints detected with " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
-         << " method  and image: " << filename << "." << std::endl;
+        << " method  and image: " << filename << "." << std::endl;
       throw(vpException(vpException::fatalError, ss.str()));
     }
 
@@ -325,8 +329,8 @@ int main(int argc, const char **argv)
 
     if (env_ipath.empty()) {
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
-                   "variable value."
-                << std::endl;
+        "variable value."
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -344,7 +348,8 @@ int main(int argc, const char **argv)
       run_test(env_ipath, opt_click_allowed, opt_display, Iinput, I);
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
   }

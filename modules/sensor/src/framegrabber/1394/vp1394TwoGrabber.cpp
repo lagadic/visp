@@ -118,12 +118,12 @@ int main()
 
 */
 vp1394TwoGrabber::vp1394TwoGrabber(bool reset)
-  : camera(NULL), cameras(NULL), num_cameras(0), camera_id(0), verbose(false), camIsOpen(NULL),
+  : camera(nullptr), cameras(nullptr), num_cameras(0), camera_id(0), verbose(false), camIsOpen(nullptr),
     num_buffers(4), // ring buffer size
-    isDataModified(NULL), initialShutterMode(NULL), dataCam(NULL)
+    isDataModified(nullptr), initialShutterMode(nullptr), dataCam(nullptr)
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
     ,
-    d(NULL), list(NULL)
+    d(nullptr), list(nullptr)
 #endif
 {
   // protected members
@@ -1289,7 +1289,7 @@ void vp1394TwoGrabber::initialize(bool reset)
   if (init == false) {
 // Find cameras
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-    if (d != NULL)
+    if (d != nullptr)
       dc1394_free(d);
 
     d = dc1394_new();
@@ -1307,7 +1307,7 @@ void vp1394TwoGrabber::initialize(bool reset)
       throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No cameras found"));
     }
 
-    if (cameras != NULL)
+    if (cameras != nullptr)
       delete[] cameras;
 
     cameras = new dc1394camera_t *[list->num];
@@ -1331,14 +1331,14 @@ void vp1394TwoGrabber::initialize(bool reset)
       dc1394_reset_bus(cameras[0]);
     }
 
-    // if (list != NULL)
+    // if (list != nullptr)
     dc1394_camera_free_list(list);
-    list = NULL;
+    list = nullptr;
 
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
-    if (cameras != NULL)
+    if (cameras != nullptr)
       free(cameras);
-    cameras = NULL;
+    cameras = nullptr;
     int err = dc1394_find_cameras(&cameras, &num_cameras);
 
     if (err != DC1394_SUCCESS && err != DC1394_NO_CAMERA) {
@@ -1379,7 +1379,7 @@ void vp1394TwoGrabber::initialize(bool reset)
       std::cout << "-----------------------------" << std::endl;
     }
 
-    if (camIsOpen != NULL)
+    if (camIsOpen != nullptr)
       delete[] camIsOpen;
     camIsOpen = new bool[num_cameras];
     for (unsigned int i = 0; i < num_cameras; i++) {
@@ -1486,43 +1486,43 @@ void vp1394TwoGrabber::close()
 #endif
       }
     }
-    if (camIsOpen != NULL) {
+    if (camIsOpen != nullptr) {
       delete[] camIsOpen;
-      camIsOpen = NULL;
+      camIsOpen = nullptr;
     }
 
 #ifdef VISP_HAVE_DC1394_CAMERA_ENUMERATE // new API > libdc1394-2.0.0-rc7
-    if (cameras != NULL) {
+    if (cameras != nullptr) {
       delete[] cameras;
-      cameras = NULL;
+      cameras = nullptr;
     }
-    if (d != NULL) {
+    if (d != nullptr) {
       dc1394_free(d);
-      d = NULL;
+      d = nullptr;
     }
 
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
-    if (cameras != NULL) {
+    if (cameras != nullptr) {
       free(cameras);
-      cameras = NULL;
+      cameras = nullptr;
     }
 #endif
 
-    camIsOpen = NULL;
+    camIsOpen = nullptr;
     num_cameras = 0;
 
     // remove data for the parameters
-    if (isDataModified != NULL) {
+    if (isDataModified != nullptr) {
       delete[] isDataModified;
-      isDataModified = NULL;
+      isDataModified = nullptr;
     }
-    if (initialShutterMode != NULL) {
+    if (initialShutterMode != nullptr) {
       delete[] initialShutterMode;
-      initialShutterMode = NULL;
+      initialShutterMode = nullptr;
     }
-    if (dataCam != NULL) {
+    if (dataCam != nullptr) {
       delete[] dataCam;
-      dataCam = NULL;
+      dataCam = nullptr;
     }
 
     init = false;
@@ -2120,7 +2120,7 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No camera found"));
   }
 
-  dc1394video_frame_t *frame = NULL;
+  dc1394video_frame_t *frame = nullptr;
 
   if (dc1394_capture_dequeue(camera, DC1394_CAPTURE_POLICY_WAIT, &frame) != DC1394_SUCCESS) {
     vpERROR_TRACE("Error: Failed to capture from camera %d\n", camera_id);
@@ -2983,10 +2983,10 @@ void vp1394TwoGrabber::resetBus()
 
   dc1394_camera_free(camera);
   dc1394_free(d);
-  d = NULL;
-  // if (cameras != NULL)
+  d = nullptr;
+  // if (cameras != nullptr)
   delete[] cameras;
-  cameras = NULL;
+  cameras = nullptr;
 #elif defined VISP_HAVE_DC1394_FIND_CAMERAS // old API <= libdc1394-2.0.0-rc7
 
   setCamera(camera_id);
@@ -2996,15 +2996,15 @@ void vp1394TwoGrabber::resetBus()
       dc1394_free_camera(cameras[i]);
   }
   free(cameras);
-  cameras = NULL;
+  cameras = nullptr;
 
   dc1394_reset_bus(camera);
   dc1394_free_camera(camera);
 
 #endif
-  if (camIsOpen != NULL)
+  if (camIsOpen != nullptr)
     delete[] camIsOpen;
-  camIsOpen = NULL;
+  camIsOpen = nullptr;
 
   num_cameras = 0;
 

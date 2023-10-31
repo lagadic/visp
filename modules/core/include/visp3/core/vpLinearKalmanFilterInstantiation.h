@@ -55,11 +55,12 @@ public:
   /*!
     Selector used to set the Kalman filter state model.
   */
-  typedef enum {
-    /*! Consider the state as a constant velocity model with white
-        noise. Measures available are the successive positions of the
-        target. To know more about this state model, see
-        initStateConstVel_MeasurePos(). */
+  typedef enum
+  {
+/*! Consider the state as a constant velocity model with white
+    noise. Measures available are the successive positions of the
+    target. To know more about this state model, see
+    initStateConstVel_MeasurePos(). */
     stateConstVel_MeasurePos,
     /*! Consider the state as a constant velocity model with colored noise
         measurements as acceleration terms. Measured available are the
@@ -81,10 +82,8 @@ public:
     By default the state model is unknown and set to
     vpLinearKalmanFilterInstantiation::unknown.
   */
-  vpLinearKalmanFilterInstantiation() : model(unknown){};
+  vpLinearKalmanFilterInstantiation() : model(unknown) { };
 
-  /*! Destructor that does nothng. */
-  virtual ~vpLinearKalmanFilterInstantiation(){};
   /*!
     Return the current state model.
    */

@@ -75,7 +75,7 @@ class vpDisplayX::Impl
 {
 public:
   Impl()
-    : display(NULL), window(), Ximage(NULL), lut(), context(), screen(0), event(), pixmap(), x_color(NULL),
+    : display(nullptr), window(), Ximage(nullptr), lut(), context(), screen(0), event(), pixmap(), x_color(nullptr),
       screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
       BShift(0)
   {
@@ -108,7 +108,7 @@ public:
     if (ximage_data_init == true)
       free(Ximage->data);
 
-    Ximage->data = NULL;
+    Ximage->data = nullptr;
     XDestroyImage(Ximage);
 
     XFreePixmap(display, pixmap);
@@ -117,9 +117,9 @@ public:
     XDestroyWindow(display, window);
     XCloseDisplay(display);
 
-    if (x_color != NULL) {
+    if (x_color != nullptr) {
       delete[] x_color;
-      x_color = NULL;
+      x_color = nullptr;
     }
   }
 
@@ -363,7 +363,7 @@ public:
       /*
        * 32-bit source, 24/32-bit destination
        */
-      unsigned char *dst_32 = NULL;
+      unsigned char *dst_32 = nullptr;
       dst_32 = (unsigned char *)Ximage->data;
       if (scale == 1) {
         vpRGBa *bitmap = I.bitmap;
@@ -952,7 +952,7 @@ public:
 
     I.resize(height, width);
 
-    unsigned char *src_32 = NULL;
+    unsigned char *src_32 = nullptr;
     src_32 = (unsigned char *)xi->data;
 
     if (screen_depth == 16) {
@@ -1101,9 +1101,9 @@ public:
     int screen_;
     unsigned int depth;
 
-    if ((display_ = XOpenDisplay(NULL)) == NULL) {
+    if ((display_ = XOpenDisplay(nullptr)) == nullptr) {
       throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
-                               XDisplayName(NULL)));
+                               XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
     depth = (unsigned int)DefaultDepth(display_, screen_);
@@ -1118,9 +1118,9 @@ public:
     Display *display_;
     int screen_;
 
-    if ((display_ = XOpenDisplay(NULL)) == NULL) {
+    if ((display_ = XOpenDisplay(nullptr)) == nullptr) {
       throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server %s.",
-                               XDisplayName(NULL)));
+                               XDisplayName(nullptr)));
     }
     screen_ = DefaultScreen(display_);
     w = (unsigned int)DisplayWidth(display_, screen_);
@@ -1131,7 +1131,7 @@ public:
 
   void init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
   {
-    if (x_color == NULL) {
+    if (x_color == nullptr) {
       // id_unknown = number of predefined colors
       x_color = new unsigned long[vpColor::id_unknown];
     }
@@ -1147,8 +1147,8 @@ public:
       hints.y = win_y;
     }
 
-    if ((display = XOpenDisplay(NULL)) == NULL) {
-      vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(NULL));
+    if ((display = XOpenDisplay(nullptr)) == nullptr) {
+      vpERROR_TRACE("Can't connect display on server %s.\n", XDisplayName(nullptr));
       throw(vpDisplayException(vpDisplayException::connexionError, "Can't connect display on server."));
     }
 
@@ -1533,7 +1533,7 @@ public:
     values.background = BlackPixel(display, screen);
     context = XCreateGC(display, window, GCPlaneMask | GCFillStyle | GCForeground | GCBackground, &values);
 
-    if (context == NULL) {
+    if (context == nullptr) {
       vpERROR_TRACE("Can't create graphics context.");
       throw(vpDisplayException(vpDisplayException::XWindowsError, "Can't create graphics context"));
     }
@@ -1547,7 +1547,7 @@ public:
     //  while ( event.xany.type != Expose );
 
     {
-      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, win_width,
+      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, nullptr, win_width,
                             win_height, XBitmapPad(display), 0);
 
       Ximage->data = (char *)malloc(win_height * (unsigned int)Ximage->bytes_per_line);

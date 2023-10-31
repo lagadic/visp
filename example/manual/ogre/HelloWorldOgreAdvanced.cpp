@@ -67,7 +67,7 @@ public:
                    unsigned int height = 480)
     : vpAROgre(cam, width, height)
   {
-    mAnimationState = NULL;
+    mAnimationState = nullptr;
   }
 
 protected:

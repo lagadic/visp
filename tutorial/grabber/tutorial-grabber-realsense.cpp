@@ -10,63 +10,63 @@
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
-            << "  " << argv[0] << " [--fps <6|15|30|60>]"
-            << " [--width <image width>]"
-            << " [--height <image height>]"
-            << " [--seqname <sequence name>]"
-            << " [--record <mode>]"
-            << " [--no-display]"
-            << " [--help] [-h]" << std::endl
-            << std::endl;
+    << "  " << argv[0] << " [--fps <6|15|30|60>]"
+    << " [--width <image width>]"
+    << " [--height <image height>]"
+    << " [--seqname <sequence name>]"
+    << " [--record <mode>]"
+    << " [--no-display]"
+    << " [--help] [-h]" << std::endl
+    << std::endl;
   std::cout << "DESCRIPTION" << std::endl
-            << "  --fps <6|15|30|60>" << std::endl
-            << "    Frames per second." << std::endl
-            << "    Default: 30." << std::endl
-            << std::endl
-            << "  --width <image width>" << std::endl
-            << "    Default: 640." << std::endl
-            << std::endl
-            << "  --height <image height>" << std::endl
-            << "    Default: 480." << std::endl
-            << std::endl
-            << "  --seqname <sequence name>" << std::endl
-            << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
-            << "    Default: empty." << std::endl
-            << std::endl
-            << "  --record <mode>" << std::endl
-            << "    Allowed values for mode are:" << std::endl
-            << "      0: record all the captures images (continuous mode)," << std::endl
-            << "      1: record only images selected by a user click (single shot mode)." << std::endl
-            << "    Default mode: 0" << std::endl
-            << std::endl
-            << "  --no-display" << std::endl
-            << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
-            << std::endl
-            << std::endl
-            << "  --help, -h" << std::endl
-            << "    Print this helper message." << std::endl
-            << std::endl;
+    << "  --fps <6|15|30|60>" << std::endl
+    << "    Frames per second." << std::endl
+    << "    Default: 30." << std::endl
+    << std::endl
+    << "  --width <image width>" << std::endl
+    << "    Default: 640." << std::endl
+    << std::endl
+    << "  --height <image height>" << std::endl
+    << "    Default: 480." << std::endl
+    << std::endl
+    << "  --seqname <sequence name>" << std::endl
+    << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
+    << "    Default: empty." << std::endl
+    << std::endl
+    << "  --record <mode>" << std::endl
+    << "    Allowed values for mode are:" << std::endl
+    << "      0: record all the captures images (continuous mode)," << std::endl
+    << "      1: record only images selected by a user click (single shot mode)." << std::endl
+    << "    Default mode: 0" << std::endl
+    << std::endl
+    << "  --no-display" << std::endl
+    << "    Disable displaying captured images." << std::endl
+    << "    When used and sequence name specified, record mode is internally set to 1 (continuous mode)."
+    << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Print this helper message." << std::endl
+    << std::endl;
   std::cout << "USAGE" << std::endl
-            << "  Example to visualize images:" << std::endl
-            << "    " << argv[0] << std::endl
-            << std::endl
-            << "  Examples to record a sequence of successive images in 640x480 resolution:" << std::endl
-            << "    " << argv[0] << " --seqname I%04d.png" << std::endl
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 0" << std::endl
-            << std::endl
-            << "  Examples to record single shot 640x480 images:\n"
-            << "    " << argv[0] << " --seqname I%04d.png --record 1\n"
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
-            << std::endl
-            << "  Examples to record single shot 1280x720 images:\n"
-            << "    " << argv[0] << " --seqname I%04d.png --record 1 --width 1280 --height 720" << std::endl
-            << std::endl;
+    << "  Example to visualize images:" << std::endl
+    << "    " << argv[0] << std::endl
+    << std::endl
+    << "  Examples to record a sequence of successive images in 640x480 resolution:" << std::endl
+    << "    " << argv[0] << " --seqname I%04d.png" << std::endl
+    << "    " << argv[0] << " --seqname folder/I%04d.png --record 0" << std::endl
+    << std::endl
+    << "  Examples to record single shot 640x480 images:\n"
+    << "    " << argv[0] << " --seqname I%04d.png --record 1\n"
+    << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
+    << std::endl
+    << "  Examples to record single shot 1280x720 images:\n"
+    << "    " << argv[0] << " --seqname I%04d.png --record 1 --width 1280 --height 720" << std::endl
+    << std::endl;
 
   if (error) {
     std::cout << "Error" << std::endl
-              << "  "
-              << "Unsupported parameter " << argv[error] << std::endl;
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -75,7 +75,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -88,24 +88,31 @@ int main(int argc, const char *argv[])
       if (std::string(argv[i]) == "--fps") {
         opt_fps = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--seqname") {
+      }
+      else if (std::string(argv[i]) == "--seqname") {
         opt_seqname = std::string(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--width") {
+      }
+      else if (std::string(argv[i]) == "--width") {
         opt_width = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--height") {
+      }
+      else if (std::string(argv[i]) == "--height") {
         opt_height = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--record") {
+      }
+      else if (std::string(argv[i]) == "--record") {
         opt_record_mode = std::atoi(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--no-display") {
+      }
+      else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
         return EXIT_SUCCESS;
-      } else {
+      }
+      else {
         usage(argv, i);
         return EXIT_FAILURE;
       }
@@ -124,7 +131,7 @@ int main(int argc, const char *argv[])
     std::cout << "Display    : " << (opt_display ? "enabled" : "disabled") << std::endl;
 
     std::string text_record_mode =
-        std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
+      std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
     if (!opt_seqname.empty()) {
       std::cout << text_record_mode << std::endl;
@@ -150,7 +157,7 @@ int main(int argc, const char *argv[])
 
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;
 
-    vpDisplay *d = NULL;
+    vpDisplay *d = nullptr;
     if (opt_display) {
 #if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << "No image viewer is available..." << std::endl;
@@ -191,7 +198,8 @@ int main(int argc, const char *argv[])
     if (d) {
       delete d;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
@@ -199,9 +207,6 @@ int main(int argc, const char *argv[])
   (void)argv;
 #if !(defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2))
   std::cout << "Install librealsense version > 2.31.0, configure and build ViSP again to use this example" << std::endl;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

@@ -190,7 +190,7 @@ void vp_writePFM(const vpImage<float> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -222,7 +222,7 @@ void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename)
   }
 
   FILE *fd = fopen(filename.c_str(), "wb");
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -258,7 +258,7 @@ void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
   }
 
   FILE *fd = fopen(filename.c_str(), "wb");
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
   }
 
@@ -308,7 +308,7 @@ void vp_writePGM(const vpImage<unsigned char> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
   }
 
@@ -373,7 +373,7 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 
   fd = fopen(filename.c_str(), "wb");
 
-  if (fd == NULL) {
+  if (fd == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
   }
 
@@ -806,7 +806,7 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
 
   f = fopen(filename.c_str(), "wb");
 
-  if (f == NULL) {
+  if (f == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create PPM file \"%s\"", filename.c_str()));
   }
 

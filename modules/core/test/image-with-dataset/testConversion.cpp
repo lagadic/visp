@@ -45,6 +45,11 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#endif
+
 /*!
   \example testConversion.cpp
 
@@ -74,7 +79,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>] [-n <nb benchmark iterations>]\n\
      [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -135,7 +140,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
       nbIterations = atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, opath, user, nbIterations);
+      usage(argv[0], nullptr, ipath, opath, user, nbIterations);
       return false;
 
     case 'c':
@@ -150,7 +155,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, opath, user, nbIterations);
+    usage(argv[0], nullptr, ipath, opath, user, nbIterations);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -208,8 +213,9 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
+      }
+      catch (...) {
+        usage(argv[0], nullptr, ipath, opt_opath, username, nbIterations);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
@@ -218,24 +224,24 @@ int main(int argc, const char **argv)
     }
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (opt_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username, nbIterations);
+      usage(argv[0], nullptr, ipath, opt_opath, username, nbIterations);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -278,7 +284,7 @@ int main(int argc, const char **argv)
     // Convert a YUV pixel value to a RGB value
     vpImageConvert::YUVToRGB(y, u, v, r, g, b);
     std::cout << "   y(" << (int)y << ") u(" << (int)u << ") v(" << (int)v << ") = r(" << (int)r << ") g(" << (int)g
-              << ") b(" << (int)b << ")" << std::endl;
+      << ") b(" << (int)b << ")" << std::endl;
 
     vpChrono chrono;
 
@@ -301,7 +307,7 @@ int main(int argc, const char **argv)
     int flags = CV_LOAD_IMAGE_COLOR;
 #endif
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -320,7 +326,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_GRAYSCALE;
 #endif
     imageMat = cv::imread(filename, flags); // Forced to grayscale.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -344,7 +350,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_COLOR;
 #endif
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -364,7 +370,7 @@ int main(int argc, const char **argv)
     flags = CV_LOAD_IMAGE_GRAYSCALE;
 #endif
     imageMat = cv::imread(filename, flags);
-    if (imageMat.data == NULL) {
+    if (imageMat.data == nullptr) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return EXIT_FAILURE;
     }
@@ -433,10 +439,10 @@ int main(int argc, const char **argv)
     std::cout << "   Load " << filename << std::endl;
     vpImageIo::read(Ic, filename);
     vpImage<unsigned char> R, G, B, a;
-    vpImageConvert::split(Ic, &R, NULL, &B);
+    vpImageConvert::split(Ic, &R, nullptr, &B);
     chrono.start();
     for (int iteration = 0; iteration < nbIterations; iteration++) {
-      vpImageConvert::split(Ic, &R, NULL, &B);
+      vpImageConvert::split(Ic, &R, nullptr, &B);
     }
     chrono.stop();
 
@@ -475,8 +481,8 @@ int main(int argc, const char **argv)
     // HSV color
     ////////////////////////////////////
     std::cout << "** Convert a vpImage<vpRGBa> in RGB color space to a "
-                 "vpImage<vpRGBa> in HSV color"
-              << std::endl;
+      "vpImage<vpRGBa> in HSV color"
+      << std::endl;
     unsigned int size = Ic.getSize();
     unsigned int w = Ic.getWidth(), h = Ic.getHeight();
     std::vector<unsigned char> hue(size);
@@ -488,7 +494,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I_saturation(&saturation.front(), h, w);
     vpImage<unsigned char> I_value(&value.front(), h, w);
     vpImage<vpRGBa> I_HSV;
-    vpImageConvert::merge(&I_hue, &I_saturation, &I_value, NULL, I_HSV);
+    vpImageConvert::merge(&I_hue, &I_saturation, &I_value, nullptr, I_HSV);
 
     filename = vpIoTools::createFilePath(opath, "Klimt_HSV.ppm");
     std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -512,11 +518,11 @@ int main(int argc, const char **argv)
       for (unsigned int j = 0; j < Ic.getWidth(); j++) {
         if (Ic[i][j].R != I_HSV2RGBa[i][j].R || Ic[i][j].G != I_HSV2RGBa[i][j].G || Ic[i][j].B != I_HSV2RGBa[i][j].B) {
           std::cerr << "Ic[i][j].R=" << static_cast<unsigned>(Ic[i][j].R)
-                    << " ; I_HSV2RGBa[i][j].R=" << static_cast<unsigned>(I_HSV2RGBa[i][j].R) << std::endl;
+            << " ; I_HSV2RGBa[i][j].R=" << static_cast<unsigned>(I_HSV2RGBa[i][j].R) << std::endl;
           std::cerr << "Ic[i][j].G=" << static_cast<unsigned>(Ic[i][j].G)
-                    << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
+            << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
           std::cerr << "Ic[i][j].B=" << static_cast<unsigned>(Ic[i][j].B)
-                    << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
+            << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
           throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV");
         }
       }
@@ -586,9 +592,9 @@ int main(int argc, const char **argv)
       cv::Mat colorMat_crop = colorMat(rect_roi);
       cv::Mat colorMat_crop_continuous = colorMat(rect_roi).clone();
       std::cout << "   colorMat_crop: " << colorMat_crop.cols << "x" << colorMat_crop.rows << " is continuous? "
-                << colorMat_crop.isContinuous() << std::endl;
+        << colorMat_crop.isContinuous() << std::endl;
       std::cout << "   colorMat_crop_continuous: " << colorMat_crop_continuous.cols << "x" << colorMat_crop_continuous.rows
-                << " is continuous? " << colorMat_crop_continuous.isContinuous() << std::endl;
+        << " is continuous? " << colorMat_crop_continuous.isContinuous() << std::endl;
 
       vpImage<vpRGBa> I_color_crop((unsigned int)(rect_roi.height - rect_roi.y),
                                    (unsigned int)(rect_roi.width - rect_roi.x));
@@ -636,7 +642,8 @@ int main(int argc, const char **argv)
     }
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

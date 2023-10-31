@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpDiskGrabber.h
-  \brief Class to load image sequence from the disk.
-*/
+ * \file vpDiskGrabber.h
+ * \brief Class to load image sequence from the disk.
+ */
 #ifndef vpDiskGrabber_hh
 #define vpDiskGrabber_hh
 
@@ -46,60 +46,60 @@
 #include <visp3/io/vpImageIo.h>
 
 /*!
-  \class vpDiskGrabber
-
-  \ingroup group_io_video
-
-  \brief Class to grab (ie. read) images from the disk.
-
-  Defined a virtual video device. "Grab" the images from the disk.
-  Derived from the vpFrameGrabber class.
-
-  \sa vpFrameGrabber
-
-  Here an example of capture from the directory
-  "/local/soft/ViSP/ViSP-images/cube". We want to acquire 10 images
-  from the first named "image.0001.pgm" by steps of 2.
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpDiskGrabber.h>
-
-int main(){
-  vpImage<unsigned char> I; // Grey level image
-
-  // Declare a framegrabber able to read a sequence of successive
-  // images from the disk
-  vpDiskGrabber g;
-
-  // Set the path to the directory containing the sequence
-  g.setDirectory("/local/soft/ViSP/ViSP-images/cube");
-  // Set the image base name. The directory and the base name constitute
-  // the constant part of the full filename
-  g.setBaseName("image.");
-  // Set the step between two images of the sequence
-  g.setStep(2);
-  // Set the number of digits to build the image number
-  g.setNumberOfZero(4);
-  // Set the first frame number of the sequence
-  g.setImageNumber(1);
-  // Set the image file extension
-  g.setExtension("pgm");
-
-  // Open the framegrabber by loading the first image of the sequence
-  g.open(I) ;
-
-  unsigned int cpt = 1;
-  // this is the loop over the image sequence
-  while(cpt ++ < 10)
-  {
-    // read the image and then increment the image counter so that the next
-    // call to acquire(I) will get the next image
-    g.acquire(I) ;
-  }
-}
-  \endcode
-*/
+ * \class vpDiskGrabber
+ *
+ * \ingroup group_io_video
+ *
+ * \brief Class to grab (ie. read) images from the disk.
+ *
+ * Defined a virtual video device. "Grab" the images from the disk.
+ * Derived from the vpFrameGrabber class.
+ *
+ * \sa vpFrameGrabber
+ *
+ * Here an example of capture from the directory
+ * "/local/soft/ViSP/ViSP-images/cube". We want to acquire 10 images
+ * from the first named "image.0001.pgm" by steps of 2.
+ *
+ * \code
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/io/vpDiskGrabber.h>
+ *
+ * int main(){
+ *   vpImage<unsigned char> I; // Grey level image
+ *
+ *   // Declare a framegrabber able to read a sequence of successive
+ *   // images from the disk
+ *   vpDiskGrabber g;
+ *
+ *   // Set the path to the directory containing the sequence
+ *   g.setDirectory("/local/soft/ViSP/ViSP-images/cube");
+ *   // Set the image base name. The directory and the base name constitute
+ *   // the constant part of the full filename
+ *   g.setBaseName("image.");
+ *   // Set the step between two images of the sequence
+ *   g.setStep(2);
+ *   // Set the number of digits to build the image number
+ *   g.setNumberOfZero(4);
+ *   // Set the first frame number of the sequence
+ *   g.setImageNumber(1);
+ *   // Set the image file extension
+ *   g.setExtension("pgm");
+ *
+ *   // Open the framegrabber by loading the first image of the sequence
+ *   g.open(I) ;
+ *
+ *   unsigned int cpt = 1;
+ *   // this is the loop over the image sequence
+ *   while(cpt ++ < 10)
+ *   {
+ *     // read the image and then increment the image counter so that the next
+ *     // call to acquire(I) will get the next image
+ *     g.acquire(I) ;
+ *   }
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpDiskGrabber : public vpFrameGrabber
 {
 private:
@@ -129,6 +129,12 @@ public:
   explicit vpDiskGrabber(const std::string &genericName);
 
   /*!
+   * Destructor.
+   * In fact nothing to destroy...
+   */
+  virtual ~vpDiskGrabber() { };
+
+  /*!
    * Constructor.
    *
    * \param dir : Location of the image sequence.
@@ -140,12 +146,6 @@ public:
    */
   explicit vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step, unsigned int noz,
                          const std::string &ext);
-
-  /*!
-   * Destructor.
-   * In fact nothing to destroy...
-   */
-  virtual ~vpDiskGrabber();
 
   /*!
    * Acquire an image reading the next image from the disk.

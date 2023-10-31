@@ -293,7 +293,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
   if (n < 4)
     throw(vpException(vpException::fatalError, "There must be at least 4 matched points"));
 
-  vpUniRand random((long)time(NULL));
+  vpUniRand random((long)time(nullptr));
 
   std::vector<unsigned int> best_consensus;
   std::vector<unsigned int> cur_consensus;

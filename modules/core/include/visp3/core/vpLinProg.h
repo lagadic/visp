@@ -61,59 +61,55 @@
 class VISP_EXPORT vpLinProg
 {
 public:
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
-    Used to pass a list of bounded variables to solveLP(), as a list of (index, bound).
-
-    The type is compatible with C++11's braced initialization.
-    Construction can be done in the call to solveLP or before, as shown in this example:
-
-    \f$\begin{array}{lll}
-    (x,y,z) = &  \arg\min & -2x -3y -4z\\
-                 & \text{s.t.}& 3x + 2y + z \leq 10\\
-                 & \text{s.t.}& 2x + 5y + 3z \leq 15\\
-                  & \text{s.t.}& x, y, z \geq 0\\
-                  & \text{s.t.}& z \leq 6\end{array}\f$
-
-    Here the lower bound is built explicitly while the upper one is built during the call to solveLP():
-
-    \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using
-    cmake -DUSE_CXX_STANDARD=11.
-
-    \code
-    #include <visp3/core/vpLinProg.h>
-
-    int main()
-    {
-      vpColVector c(3), x;
-      vpMatrix C(2, 3);
-      vpColVector d(2);
-      c[0] = -2; c[1] = -3; c[2] = -4;
-      C[0][0] = 3;    C[0][1] = 2; C[0][2] = 1; d[0] = 10;
-      C[1][0] = 2; C[1][1] = 5; C[1][2] = 3;  d[1] = 15;
-
-      // build lower bounds explicitly as a std::vector of std::pair<int, double>
-      std::vector<vpLinProg::BoundedIndex> lower_bound;
-      for(unsigned int i = 0; i < 3; ++i)
-      {
-        vpLinProg::BoundedIndex bound;
-        bound.first = i;    // index
-        bound.second = 0;   // lower bound for this index
-        lower_bound.push_back(bound);
-      }
-
-      if(vpLinProg::solveLP(c, vpMatrix(0,0), vpColVector(0), C, d, x,
-                            lower_bound,
-                            {{2,6}})) // upper bound is passed with braced initialization
-      {
-          std::cout << "x: " << x.t() << std::endl;
-          std::cout << "cost: " << c.t()*x << std::endl;
-      }
-    }
-    \endcode
-
-      \sa solveLP()
-    */
+   * Used to pass a list of bounded variables to solveLP(), as a list of (index, bound).
+   *
+   * The type is compatible with C++11's braced initialization.
+   * Construction can be done in the call to solveLP or before, as shown in this example:
+   *
+   * \f$\begin{array}{lll}
+   * (x,y,z) = &  \arg\min & -2x -3y -4z\\
+   *              & \text{s.t.}& 3x + 2y + z \leq 10\\
+   *              & \text{s.t.}& 2x + 5y + 3z \leq 15\\
+   *               & \text{s.t.}& x, y, z \geq 0\\
+   *               & \text{s.t.}& z \leq 6\end{array}\f$
+   *
+   * Here the lower bound is built explicitly while the upper one is built during the call to solveLP():
+   *
+   * \code
+   * #include <visp3/core/vpLinProg.h>
+   *
+   * int main()
+   * {
+   *   vpColVector c(3), x;
+   *   vpMatrix C(2, 3);
+   *   vpColVector d(2);
+   *   c[0] = -2; c[1] = -3; c[2] = -4;
+   *   C[0][0] = 3; C[0][1] = 2; C[0][2] = 1; d[0] = 10;
+   *   C[1][0] = 2; C[1][1] = 5; C[1][2] = 3; d[1] = 15;
+   *
+   *   // build lower bounds explicitly as a std::vector of std::pair<int, double>
+   *   std::vector<vpLinProg::BoundedIndex> lower_bound;
+   *   for(unsigned int i = 0; i < 3; ++i)
+   *   {
+   *     vpLinProg::BoundedIndex bound;
+   *     bound.first = i;    // index
+   *     bound.second = 0;   // lower bound for this index
+   *     lower_bound.push_back(bound);
+   *   }
+   *
+   *   if(vpLinProg::solveLP(c, vpMatrix(0,0), vpColVector(0), C, d, x,
+   *                         lower_bound,
+   *                         {{2,6}})) // upper bound is passed with braced initialization
+   *   {
+   *       std::cout << "x: " << x.t() << std::endl;
+   *       std::cout << "cost: " << c.t()*x << std::endl;
+   *   }
+   * }
+   * \endcode
+   *
+   * \sa solveLP()
+   */
   typedef std::pair<unsigned int, double> BoundedIndex;
 
   /** @name Solvers  */
@@ -125,7 +121,6 @@ public:
                       const double &tol = 1e-6);
 
   //@}
-#endif
 
   /** @name Dimension reduction for equality constraints  */
   //@{
@@ -137,13 +132,13 @@ public:
   /** @name Vector and equality checking  */
   //@{
   /*!
-    Check if all elements of \f$x\f$ are near zero.
-
-    \param x : vector to be checked
-    \param tol : tolerance
-
-    \return True if \f$\forall i, |\mathbf{x}_i| < \text{~tol} \f$
-  */
+   * Check if all elements of \f$x\f$ are near zero.
+   *
+   * \param x : vector to be checked
+   * \param tol : tolerance
+   *
+   * \return True if \f$\forall i, |\mathbf{x}_i| < \text{~tol} \f$
+   */
   static bool allZero(const vpColVector &x, const double &tol = 1e-6)
   {
     for (unsigned int i = 0; i < x.getRows(); ++i) {
@@ -154,15 +149,15 @@ public:
   }
 
   /*!
-    Check if \f$\mathbf{A}\mathbf{x}\f$ is near \f$\mathbf{b}\f$.
-
-    \param A : matrix (dimension m x n)
-    \param x : vector (dimension n)
-    \param b : vector (dimension m)
-    \param tol : tolerance
-
-    \return True if \f$ \forall i, |\mathbf{A}_i\mathbf{x} - \mathbf{b}_i| < \text{~tol}\f$
-  */
+   * Check if \f$\mathbf{A}\mathbf{x}\f$ is near \f$\mathbf{b}\f$.
+   *
+   * \param A : matrix (dimension m x n)
+   * \param x : vector (dimension n)
+   * \param b : vector (dimension m)
+   * \param tol : tolerance
+   *
+   * \return True if \f$ \forall i, |\mathbf{A}_i\mathbf{x} - \mathbf{b}_i| < \text{~tol}\f$
+   */
   static bool allClose(const vpMatrix &A, const vpColVector &x, const vpColVector &b, const double &tol = 1e-6)
   {
     for (unsigned int i = 0; i < b.getRows(); ++i) {
@@ -173,14 +168,14 @@ public:
   }
 
   /*!
-    Check if all elements of \f$\mathbf{C}\mathbf{x} - \mathbf{d}\f$ are lesser or equal to threshold.
-    \param C : matrix (dimension m x n)
-    \param x : vector (dimension n)
-    \param d : vector (dimension m)
-    \param thr : threshold
-
-    \return True if \f$ \forall i, \mathbf{C}_i\mathbf{x} - \mathbf{d}_i \leq \text{~thr}\f$
-  */
+   * Check if all elements of \f$\mathbf{C}\mathbf{x} - \mathbf{d}\f$ are lesser or equal to threshold.
+   * \param C : matrix (dimension m x n)
+   * \param x : vector (dimension n)
+   * \param d : vector (dimension m)
+   * \param thr : threshold
+   *
+   * \return True if \f$ \forall i, \mathbf{C}_i\mathbf{x} - \mathbf{d}_i \leq \text{~thr}\f$
+   */
   static bool allLesser(const vpMatrix &C, const vpColVector &x, const vpColVector &d, const double &thr = 1e-6)
   {
     for (unsigned int i = 0; i < d.getRows(); ++i) {
@@ -191,13 +186,13 @@ public:
   }
 
   /*!
-    Check if all elements of \f$\mathbf{x}\f$ are lesser or equal to threshold.
-
-    \param x : vector (dimension n)
-    \param thr : threshold
-
-    \return True if \f$ \forall i, \mathbf{x}_i \leq \text{~thr}\f$
-  */
+   * Check if all elements of \f$\mathbf{x}\f$ are lesser or equal to threshold.
+   *
+   * \param x : vector (dimension n)
+   * \param thr : threshold
+   *
+   * \return True if \f$ \forall i, \mathbf{x}_i \leq \text{~thr}\f$
+   */
   static bool allLesser(const vpColVector &x, const double &thr = 1e-6)
   {
     for (unsigned int i = 0; i < x.getRows(); ++i) {
@@ -208,13 +203,13 @@ public:
   }
 
   /*!
-    Check if all elements of \f$\mathbf{x}\f$ are greater or equal to threshold.
-
-    \param x : vector (dimension n)
-    \param thr : threshold
-
-    \return True if \f$ \forall i, \mathbf{x}_i \geq \text{~thr}\f$
-  */
+   * Check if all elements of \f$\mathbf{x}\f$ are greater or equal to threshold.
+   *
+   * \param x : vector (dimension n)
+   * \param thr : threshold
+   *
+   * \return True if \f$ \forall i, \mathbf{x}_i \geq \text{~thr}\f$
+   */
   static bool allGreater(const vpColVector &x, const double &thr = 1e-6)
   {
     for (unsigned int i = 0; i < x.getRows(); ++i) {
@@ -225,4 +220,4 @@ public:
   }
   //@}
 };
-#endif // vpLinProgh
+#endif

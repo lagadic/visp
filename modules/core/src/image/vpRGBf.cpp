@@ -69,7 +69,6 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &v)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
 */
@@ -80,7 +79,6 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
   this->B = std::move(v.B);
   return *this;
 }
-#endif
 
 /*!
   Cast a vpColVector in a vpRGBf
@@ -88,7 +86,7 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
   \param v : Input vector. v[0], v[1], v[2] are to make into
   relation with respectively R, G and B.
 
-  \exception vpException::dimensionError : If v is not a 3-dimentional vector.
+  \exception vpException::dimensionError : If v is not a 3-dimensional vector.
 */
 vpRGBf &vpRGBf::operator=(const vpColVector &v)
 {
@@ -96,9 +94,9 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
     vpERROR_TRACE("Bad vector dimension");
     throw(vpException(vpException::dimensionError, "Bad vector dimension"));
   }
-  R = (float) v[0];
-  G = (float) v[1];
-  B = (float) v[2];
+  R = (float)v[0];
+  G = (float)v[1];
+  B = (float)v[2];
   return *this;
 }
 

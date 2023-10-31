@@ -69,17 +69,11 @@ void vpSimulatorPioneer::init()
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;
-  qmin = NULL;
-  qmax = NULL;
+  qmin = nullptr;
+  qmax = nullptr;
 
   wMc_ = wMe_ * cMe_.inverse();
 }
-
-/*!
-  Destructor.
-
-*/
-vpSimulatorPioneer::~vpSimulatorPioneer() {}
 
 /*!
   Get the robot jacobian expressed in the end-effector frame.
@@ -196,8 +190,8 @@ void vpSimulatorPioneer::getPosition(const vpRobot::vpControlFrameType frame, vp
 
   case vpRobot::ARTICULAR_FRAME:
     std::cout << "ARTICULAR_FRAME is not implemented in "
-                 "vpSimulatorPioneer::getPosition()"
-              << std::endl;
+      "vpSimulatorPioneer::getPosition()"
+      << std::endl;
     break;
   case vpRobot::REFERENCE_FRAME: {
     // Convert wMc_ to a position
