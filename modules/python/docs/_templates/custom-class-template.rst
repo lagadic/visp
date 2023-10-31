@@ -6,7 +6,7 @@
    :members:
    :show-inheritance:
    :member-order: groupwise
-   :inherited-members: pybind11_object, pybind11_type
+   :inherited-members: pybind11_builtins.pybind11_object
    :special-members:
 
    {% block methods %}

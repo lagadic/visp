@@ -56,12 +56,19 @@ def supported_const_return_binary_op_map():
     '|': 'or',
     '^': 'xor',
   }
+
 def supported_in_place_binary_op_map():
   return {
     '+=': 'iadd',
     '*=': 'imul',
     '-=': 'isub',
     '/=': 'itruediv',
+  }
+
+def supported_const_return_unary_op_map():
+  return {
+    '-': 'neg',
+    '~': 'invert',
   }
 def find_and_define_repr_str(cls: ClassScope, cls_name: str, python_ident: str) -> str:
   for friend in cls.friends:

@@ -285,6 +285,8 @@ class HeaderFile():
       # Operator definitions
       binary_return_ops = supported_const_return_binary_op_map()
       binary_in_place_ops = supported_in_place_binary_op_map()
+      unary_return_ops = supported_const_return_unary_op_map()
+
 
       for method, method_config in operators:
         method_name = get_name(method.name)
@@ -299,6 +301,15 @@ class HeaderFile():
           self.submodule.report.add_non_generated_method(rejection)
           continue
         elif len(params_strs) < 1:
+          for cpp_op, python_op_name in unary_return_ops.items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) {{
+  return {cpp_op}self;
+}}, {", ".join(py_args)});'''
+              method_strs.append(operator_str)
+              break
+
           print(f'Found unary operator {name_cpp}::{method_name}, skipping')
           continue
         for cpp_op, python_op_name in binary_return_ops.items():

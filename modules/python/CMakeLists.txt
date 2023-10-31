@@ -38,7 +38,6 @@ set(python_bindings_cpp_src "${bindings_gen_location}/src/main.cpp")
 
 foreach(module ${python_bound_modules})
   get_target_property(dirs "${module}" INCLUDE_DIRECTORIES)
-  message("Dirs = ${dirs}")
   string(REPLACE "visp_" "" clean_module_name ${module})
   set(cpp_src "${bindings_gen_location}/src/${clean_module_name}.cpp")
   list(APPEND python_bindings_cpp_src "${cpp_src}")
@@ -93,8 +92,6 @@ set(json_defines "{}")
 string(JSON json_defines SET ${json_defines} "__cplusplus" "${VISP_CXX_STANDARD}")
 # Compiler
 if(CMAKE_COMPILER_IS_GNUCXX)
-  message("${CMAKE_CXX_COMPILER_VERSION}")
-
   string(REPLACE "." ";" GCC_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
   list(GET GCC_VERSION_LIST 0 GCC_MAJOR)
   list(GET GCC_VERSION_LIST 1 GCC_MINOR)
@@ -105,8 +102,6 @@ if(CMAKE_COMPILER_IS_GNUCXX)
   string(JSON json_defines SET ${json_defines} "__GNUC_PATCHLEVEL__" "${GCC_PATCH}")
 endif()
 if(CMAKE_COMPILER_IS_CLANGCXX)
-  message("${CMAKE_CXX_COMPILER_VERSION}")
-
   string(REPLACE "." ";" CLANG_VERSION_LIST ${CMAKE_CXX_COMPILER_VERSION})
   list(GET CLANG_VERSION_LIST 0 CLANG_MAJOR)
   list(GET CLANG_VERSION_LIST 1 CLANG_MINOR)
@@ -138,7 +133,6 @@ if(APPLE)
   string(JSON json_defines SET ${json_defines} "__APPLE__" "null")
   string(JSON json_defines SET ${json_defines} "__MACH__" "null")
 endif()
-message("${json_defines}")
 
 string(JSON json_config_file SET ${json_config_file} "defines" ${json_defines})
 

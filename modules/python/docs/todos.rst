@@ -13,7 +13,7 @@ Code generation
 -------------------
 
 * There is an issue when indexing readonly arrays such as HomogeneousMatrix or RotationMatrix
-* Unary and n ary operators
+* n ary operators
 * Exclude get operators for vpArray2D ?
 * Parse subnamespaces
 
@@ -30,6 +30,8 @@ Code generation
   * Keep alive
   * GIL scope
 
+* Add callback for before_module and after_module so that we can define additional bindings by hand in the module. This is already done per class
+* Add a way to replace a default method binding with a custom one (What about doc?)
 
 Documentation
 ----------------
@@ -44,8 +46,7 @@ Documentation
 
 * Reference python types in Documentation
 * Prefer Python examples instead of C++ ones ?
-* Add callback for before_module and after_module so that we can define additional bindings by hand in the module. This is already done per class
-* Add a way to replace a default method binding with a custom one (What about doc?)
+
 
 To be written:
 * Specific changes from C++ to Python API
@@ -59,14 +60,8 @@ Packaging
 
 * Root CMake
 
-  * Build last
   * Build after doc if doc can be generated
-  * Correspondance between headers and modules
-  * Copy to binary dir
-  * Compile in binary dir
 
-* Package generator to install as an editable
-* Automatic version
 
 Python side
 -----------------
