@@ -1003,7 +1003,7 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
   }
 
   if (delta_theta < 0 || delta_theta > 2.f * M_PIf) { // Needed since M_PIf is used
-    float rest = vpMath::moduloFloat(delta_theta, 2.f * M_PIf);
+    float rest = vpMath::modulo(delta_theta, 2.f * M_PIf);
     if (rest < roundingTolerance && (delta_theta < -M_PIf || delta_theta > M_PIf)) {
       // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
       delta_theta = 2.f * M_PIf;

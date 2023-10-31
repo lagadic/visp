@@ -172,7 +172,7 @@ public:
    * \param[in] modulo The divider.
    * \return float The rest as in a modulo operation.
    */
-  static float moduloFloat(const float &value, const float &modulo)
+  static float modulo(const float &value, const float &modulo)
   {
     float quotient = std::floor(value / modulo);
     float rest = value - quotient * modulo;
@@ -187,7 +187,7 @@ public:
    * \param[in] modulo The divider.
    * \return double The rest as in a modulo operation.
    */
-  static double moduloDouble(const double &value, const double &modulo)
+  static double modulo(const double &value, const double &modulo)
   {
     double quotient = std::floor(value / modulo);
     double rest = value - quotient * modulo;
