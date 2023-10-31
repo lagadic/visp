@@ -156,6 +156,7 @@ Bindings for methods and enum values
     default_config = {
       'methods': [],
       'operators': [],
+      'ignored_attributes': [],
       'use_buffer_protocol': False,
       'additional_bindings': None,
       'ignore_repr': False,

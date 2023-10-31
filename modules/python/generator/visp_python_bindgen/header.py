@@ -100,7 +100,7 @@ class HeaderFile():
     # Includes that should be appended at the start of every file
     forced_includes = [
       'visp3/core/vpConfig.h', # Always include vpConfig: ensure that VISP macros are correctly defined
-      'opencv2/opencv.hpp'
+      'opencv2/opencv_modules.hpp'
     ]
     for include in forced_includes:
       tmp_file_content.append(f'#include <{include}>\n')
@@ -133,7 +133,7 @@ class HeaderFile():
       for line in header_file.readlines():
         if not line.startswith('#define'):
           preprocessed_header_lines.append(line)
-      preprocessed_header_content = '\n'.join(preprocessed_header_lines)
+      preprocessed_header_content = ''.join(preprocessed_header_lines)
       preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
 
     return preprocessed_header_content
@@ -372,9 +372,12 @@ class HeaderFile():
 
       field_strs = []
       for field in cls.fields:
+        if field.name in cls_config['ignored_attributes']:
+          continue
         if field.access == 'public':
           if is_unsupported_argument_type(field.type):
             continue
+
           field_type = get_type(field.type, owner_specs, header_env.mapping)
           print(f'Field in {name_cpp}: {field_type} {field.name}')
 

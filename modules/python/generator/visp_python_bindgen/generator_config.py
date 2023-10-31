@@ -87,6 +87,7 @@ class GeneratorConfig(object):
       'vp_deprecated': '', # remove symbol as it messes up the cxxheaderparsing
       'DOXYGEN_SHOULD_SKIP_THIS': None, # Do not generate methods that do not appear in public api doc
       'NLOHMANN_JSON_SERIALIZE_ENUM(a,...)': 'void ignored() {}', # Remove json enum serialization as it cnanot correctly be parsed
+      'CV_OUT': '', # In vpKeyPoint, this appears and breaks parsing
     },
     never_defined=[
       'VISP_BUILD_DEPRECATED_FUNCTIONS', # Do not bind deprecated functions

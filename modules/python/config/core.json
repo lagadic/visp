@@ -13,6 +13,9 @@
     }
   },
   "classes": {
+    "vpIoTools": {
+      "ignored_attributes": ["separator"]
+    },
     "vpArray2D": {
       "additional_bindings": "bindings_vpArray2D",
       "use_buffer_protocol": true,
