@@ -45,13 +45,15 @@ vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, int baudrate, bool
   : m_verbose(verbose)
 {
   nDof = 2;
-  m_pan = vpPololu(device, baudrate, 0, verbose);
+  m_pan.connect(device, baudrate, 0);
   m_pan.setPwmRange(4095, 7905);
   m_pan.setAngularRange(vpMath::rad(-45), vpMath::rad(45));
+  m_pan.setVerbose(verbose);
 
-  m_tilt = vpPololu(device, baudrate, 1, verbose);
+  m_tilt.connect(device, baudrate, 1);
   m_tilt.setPwmRange(4095, 7905);
   m_tilt.setAngularRange(vpMath::rad(-45), vpMath::rad(45));
+  m_tilt.setVerbose(verbose);
 }
 
 vpRobotPololuPtu::~vpRobotPololuPtu()

@@ -230,6 +230,16 @@ public:
   void setPwmVelocity(short pwm_vel);
 
   /*!
+   * Enable/disable verbose mode.
+   *
+   * \param[in] verbose : Set to true to enable verbose mode, false otherwise.
+   */
+  void setVerbose(bool verbose)
+  {
+    m_verbose = verbose;
+  }
+
+  /*!
    *  Stop the velocity command thread.
    */
   void stopVelocityCmd();

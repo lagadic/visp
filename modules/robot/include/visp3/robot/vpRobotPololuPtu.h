@@ -182,6 +182,16 @@ public:
   }
 
   /*!
+   * Enable/disable verbose mode.
+   *
+   * \param[in] verbose : Set to true to enable verbose mode, false otherwise.
+   */
+  void setVerbose(bool verbose)
+  {
+    m_verbose = verbose;
+  }
+
+  /*!
    * Send a velocity on each axis.
    *
    * \param[in] frame : Control frame. This Biclops head can only be controlled in
