@@ -77,6 +77,9 @@ void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi,
   float theta_min = std::min(theta1, theta2);
   float theta_max = std::max(theta1, theta2);
   delta_theta = theta_max - theta_min;
+  if (u_c < umin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -99,6 +102,9 @@ void computeIntersectionsRightBorderOnly(const float &u_c, const float &umax_roi
   float theta_min = std::min(theta1, theta2);
   float theta_max = std::max(theta1, theta2);
   delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+  if (u_c > umax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -138,6 +144,9 @@ void computeIntersectionsTopBorderOnly(const float &v_c, const float &vmin_roi, 
   else {
     delta_theta = theta_max - theta_min;
   }
+  if (v_c < vmin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
+  }
 }
 
 /*!
@@ -176,6 +185,9 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
   }
   else {
     delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+  }
+  if (v_c > vmax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+    delta_theta = 0.f;
   }
 }
 
@@ -481,7 +493,7 @@ void computeIntersectionsTopLeftBottom(const float &u_c, const float &v_c, const
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
   std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
   float crossing_u_top = vmin_roi; // We cross the u-axis of the top axis of the RoI at the minimum v-coordinate of the RoI
-  float crossing_v = vmin_roi; // We cross the v-axis of the RoI at the minimum u-coordinate of the RoI
+  float crossing_v = umin_roi; // We cross the v-axis of the RoI at the minimum u-coordinate of the RoI
   computePerpendicularAxesIntersections(u_c, v_c, radius, crossing_u_top, crossing_v,
                                         crossing_theta_u_min, crossing_theta_u_max,
                                         crossing_theta_v_min, crossing_theta_v_max);
@@ -894,7 +906,7 @@ void computeIntersectionsAllAxes(const float &u_c, const float &v_c, const float
   delta_theta += (theta_v_max_right - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max_left);
 }
 
-float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi) const
+float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float &roundingTolerance) const
 {
   float delta_theta = 0.f;
   vpImagePoint center = m_center;
@@ -989,16 +1001,25 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi) const
     std::cerr << "vmin_roi = " << vmin_roi << "\tvmax_roi = " << vmax_roi << std::endl << std::flush;
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
+
+  if (delta_theta < 0 || delta_theta > 2.f * M_PIf) { // Needed since M_PIf is used
+    float rest = vpMath::modulo(delta_theta, 2.f * M_PIf);
+    if (rest < roundingTolerance && (delta_theta < -M_PIf || delta_theta > M_PIf)) {
+      // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
+      delta_theta = 2.f * M_PIf;
+    }
+    else {
+      //Otherwise, it corresponds to delta_theta modulo 2.f * M_PIf
+      delta_theta = rest;
+    }
+  }
+
   return delta_theta;
 }
 
-float vpImageCircle::computeArcLengthInRoI(const vpRect &roi) const
+float vpImageCircle::computeArcLengthInRoI(const vpRect &roi, const float &roundingTolerance) const
 {
-  float delta_theta = computeAngularCoverageInRoI(roi);
-  if (delta_theta < 0) { // Needed since M_PIf is used
-    delta_theta += 4 * M_PIf;
-  }
-
+  float delta_theta = computeAngularCoverageInRoI(roi, roundingTolerance);
   return delta_theta * m_radius;
 }
 
