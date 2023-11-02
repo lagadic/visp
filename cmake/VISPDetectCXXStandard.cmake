@@ -30,19 +30,43 @@ else()
     # That's why we check more in depth for cxx_override that is not available with g++ 4.6.3
     list (FIND CMAKE_CXX11_COMPILE_FEATURES "cxx_override" _index)
     if (${_index} GREATER -1)
-      set(CXX11_STANDARD_FOUND ON CACHE STRING "cxx11 standard")
-      mark_as_advanced(CXX11_STANDARD_FOUND)
+      # Setting CMAKE_CXX_STANDARD doesn't affect check_cxx_source_compiles() used to detect isnan() in FindIsNaN.cmake
+      # or erfc() in FindErfc.cmake.
+      # That's why we have the following lines that are used to set cxx flags corresponding to the c++ standard
+      vp_check_compiler_flag(CXX "-std=c++11" HAVE_STD_CXX11_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx11.cpp")
+      if(HAVE_STD_CXX11_FLAG)
+        set(CXX11_CXX_FLAGS "-std=c++11" CACHE STRING "C++ compiler flags for C++11 support")
+        set(CXX11_STANDARD_FOUND ON CACHE STRING "cxx11 standard")
+        mark_as_advanced(CXX11_STANDARD_FOUND)
+        mark_as_advanced(CXX11_CXX_FLAGS)
+        mark_as_advanced(HAVE_STD_CXX11_FLAG)
+      endif()
     endif()
   endif()
 
   if(CMAKE_CXX14_COMPILE_FEATURES)
-    set(CXX14_STANDARD_FOUND ON CACHE STRING "cxx14 standard")
-    mark_as_advanced(CXX14_STANDARD_FOUND)
+    # Additionnal check in case of c++14 is incomplete and also needed to set CXX14_CXX_FLAGS
+    vp_check_compiler_flag(CXX "-std=c++14" HAVE_STD_CXX14_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx14.cpp")
+    if(HAVE_STD_CXX14_FLAG)
+      set(CXX14_CXX_FLAGS "-std=c++14" CACHE STRING "C++ compiler flags for C++14 support")
+      set(CXX14_STANDARD_FOUND ON CACHE STRING "cxx14 standard")
+      mark_as_advanced(CXX14_STANDARD_FOUND)
+      mark_as_advanced(CXX14_CXX_FLAGS)
+      mark_as_advanced(HAVE_STD_CXX14_FLAG)
+    endif()
   endif()
 
   if(CMAKE_CXX17_COMPILE_FEATURES)
-    set(CXX17_STANDARD_FOUND ON CACHE STRING "cxx17 standard")
-    mark_as_advanced(CXX17_STANDARD_FOUND)
+    # c++17 seems available, but on Fedora 25 and g++ 6.3.1 it seems incomplete where
+    # optional header is not found as well as std::clamp()
+    vp_check_compiler_flag(CXX "-std=c++17" HAVE_STD_CXX17_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx17.cpp")
+    if(HAVE_STD_CXX17_FLAG)
+      set(CXX17_CXX_FLAGS "-std=c++17" CACHE STRING "C++ compiler flags for C++17 support")
+      set(CXX17_STANDARD_FOUND ON CACHE STRING "cxx17 standard")
+      mark_as_advanced(CXX17_STANDARD_FOUND)
+      mark_as_advanced(CXX17_CXX_FLAGS)
+      mark_as_advanced(HAVE_STD_CXX17_FLAG)
+    endif()
   endif()
 
   # Set default c++ standard to 17, the first in the list
@@ -83,26 +107,4 @@ else()
         set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_17})
     endif()
   endif()
-
-endif()
-
-# Setting CMAKE_CXX_STANDARD doesn't affect check_cxx_source_compiles() used to detect isnan() in FindIsNaN.cmake
-# or erfc() in FindErfc.cmake.
-# That's why we have the following lines that are used to set cxx flags corresponding to the c++ standard
-vp_check_compiler_flag(CXX "-std=c++11" HAVE_STD_CXX11_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx11.cpp")
-if(HAVE_STD_CXX11_FLAG)
-  set(CXX11_CXX_FLAGS "-std=c++11" CACHE STRING "C++ compiler flags for C++11 support")
-  mark_as_advanced(CXX11_CXX_FLAGS)
-endif()
-
-vp_check_compiler_flag(CXX "-std=c++14" HAVE_STD_CXX14_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx14.cpp")
-if(HAVE_STD_CXX14_FLAG)
-  set(CXX14_CXX_FLAGS "-std=c++14" CACHE STRING "C++ compiler flags for C++14 support")
-  mark_as_advanced(CXX14_CXX_FLAGS)
-endif()
-
-vp_check_compiler_flag(CXX "-std=c++17" HAVE_STD_CXX17_FLAG "${PROJECT_SOURCE_DIR}/cmake/checks/cxx17.cpp")
-if(HAVE_STD_CXX17_FLAG)
-  set(CXX17_CXX_FLAGS "-std=c++17" CACHE STRING "C++ compiler flags for C++17 support")
-  mark_as_advanced(CXX17_CXX_FLAGS)
 endif()
