@@ -280,14 +280,14 @@ float vpPololu::speedToRadS(short speed_pwm) const
 void vpPololu::stopVelocityCmd()
 {
   if (m_verbose) {
-    std::cout << "Stoping vel cmd channel: " << m_channel << std::endl;
+    std::cout << "Stopping vel cmd channel: " << m_channel << std::endl;
   }
   m_apply_velocity_cmd = false;
 
   //std::this_thread::sleep_for(10 * millis);
   unsigned short pos_pwm = getPwmPosition();
   if (m_verbose) {
-    std::cout << "Stoping channel " << m_channel << " at position " << pos_pwm << std::endl;
+    std::cout << "Stopping channel " << m_channel << " at position " << pos_pwm << std::endl;
   }
   setPwmPosition(pos_pwm, 0); // 0 to be as fast as possible to reach pos_pwm
 }

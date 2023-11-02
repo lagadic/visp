@@ -324,7 +324,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have an Biclops PT robot connected to your computer..." << std::endl;
+  std::cout << "You do not have a Pololu PTU connected to your computer..." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif
