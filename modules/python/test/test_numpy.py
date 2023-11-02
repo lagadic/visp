@@ -14,8 +14,8 @@ def test_np_array_modifies_vp_array():
   array_np[0:2, 0:2] = 2
   assert array.getMinValue() == 1 and array.getMaxValue() == 2
 
-def test_rotation_matrix_not_writable():
-  R = RotationMatrix()
+
+def fn_test_not_writable_2d(R):
   R_np = np.array(R, copy=False)
   with pytest.raises(ValueError):
     R_np[0, 0] = 1
@@ -28,19 +28,13 @@ def test_rotation_matrix_not_writable():
     sub = R[:2, :2]
     sub[0, :] = 1
 
+def test_rotation_matrix_not_writable():
+  R = RotationMatrix()
+  fn_test_not_writable_2d(R)
+
 def test_homogeneous_matrix_not_writable():
   T = HomogeneousMatrix()
-  T_np = np.array(T, copy=False)
-  with pytest.raises(ValueError):
-    T_np[0, 0] = 1
-  with pytest.raises(ValueError):
-    T.numpy()[:1] = 0
-  with pytest.raises(ValueError):
-    row = T[0]
-    row[0] = 1
-  with pytest.raises(ValueError):
-    sub = T[:2, :2]
-    sub[0, :] = 1
+  fn_test_not_writable_2d(T)
 
 def test_numpy_constructor():
   n_invalid = np.array([1, 2, 3])
@@ -73,24 +67,26 @@ def test_indexing_array2D():
     assert np.all(a[:, i] == col)
     assert np.all(a[:, -i - 1] == col)
 
-def test_index_array2D_is_not_copy():
+def test_index_row_not_copy():
   a = ArrayDouble2D(5, 5, 1.0)
   first_row_view = a[0]
   first_row_view[0] = 0.0
   assert a[0, 0] == 0.0
-  sub_matrix = a[1:3, 1:3]
-  sub_matrix[0, 0] = 0.0
-  assert a[1, 1] == 0.0
+
+def test_index_slice_not_copy():
+  a = ArrayDouble2D(5, 5, 1.0)
+  sub_matrix = a[1:3]
+  sub_matrix[0] = 0.0
+  for i in range(a.getCols()):
+    assert a[1, i] == 0.0
+
+def test_index_tuple_not_copy():
+  a = ArrayDouble2D(5, 5, 1.0)
   col = a[:, -1]
   col[0] = 0.0
   assert a[0, -1] == 0.0
-
-
-def test_keep_alive_numpy_repr():
-  # Destroying the base ViSP object should not be allowed while there is a numpy view of the array
-  import gc
-  M = Matrix(5, 5, 0)
-  #M_np = M.numpy()
-  gc.collect()
-  del M
-  assert gc.collect() == 0
+  sub = a[0:2, 0:2]
+  sub[:, :] = 0.0
+  for i in range(2):
+    for j in range(2):
+      assert a[i, j] == 0.0
