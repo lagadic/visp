@@ -775,8 +775,34 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MATHJAX "NO")
   endif()
 
+  # HTML version of the doc
+  set(DOXYGEN_GENERATE_HTML "YES")
+  set(DOXYGEN_GENERATE_XML "NO")
+  set(DOXYGEN_GENERATE_TEST_LIST "YES")
+  set(DOXYGEN_INPUTS
+    "${VISP_SOURCE_DIR}/modules"
+    "${VISP_SOURCE_DIR}/example"
+    "${VISP_SOURCE_DIR}/tutorial"
+    "${VISP_SOURCE_DIR}/demo"
+    "${VISP_SOURCE_DIR}/doc"
+    "${VISP_BINARY_DIR}/doc"
+    "${VISP_CONTRIB_MODULES_PATH}"
+  )
+  string (REPLACE ";" " " DOXYGEN_INPUTS "${DOXYGEN_INPUTS}")
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
+    @ONLY )
+
+  # XML version  of the doc
+  set(DOXYGEN_GENERATE_HTML "NO")
+  set(DOXYGEN_GENERATE_XML "YES")
+  set(DOXYGEN_GENERATE_TEST_LIST "NO")
+  set(DOXYGEN_INPUTS
+    "${VISP_SOURCE_DIR}/modules"
+  )
+  string (REPLACE ";" " " DOXYGEN_INPUTS "${DOXYGEN_INPUTS}")
+  configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
+    ${VISP_DOC_DIR}/config-doxygen-xml
     @ONLY )
 
   # set vars used in mainpage.dox.in
