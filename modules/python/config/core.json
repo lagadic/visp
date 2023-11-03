@@ -286,6 +286,15 @@
           "custom_name": "displayCircleStatic"
         }
       ]
+    },
+    "vpMomentDatabase": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "const vpMoment& get(const char*, bool&)",
+          "ignore": true
+        }
+      ]
     }
   }
 

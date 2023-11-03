@@ -259,7 +259,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
       maybe_get_return = ''
       maybe_return_in_tuple = ''
     else:
-      maybe_get_return = 'auto res = '
+      maybe_get_return = f'{return_type} res = '
       maybe_return_in_tuple = 'res, '
 
     if len(output_param_names) == 1 and (return_type is None or return_type == 'void'):

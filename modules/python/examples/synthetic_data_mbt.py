@@ -66,7 +66,7 @@ if __name__ == '__main__':
   tracker = MbGenericTracker(tracker_types)
 
   if args.disable_depth:
-    tracker.loadConfigFile(str(mbt_model.config_color), False)
+    tracker.loadConfigFile(str(mbt_model.config_color))
   else:
-    tracker.loadConfigFile(str(mbt_model.config_color), str(mbt_model.config_depth), False)
+    tracker.loadConfigFile(str(mbt_model.config_color), str(mbt_model.config_depth))
   tracker.loadModel(str(mbt_model.cad_file))

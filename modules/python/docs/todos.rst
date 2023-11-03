@@ -12,7 +12,7 @@ Changes to ViSP
 Code generation
 -------------------
 
-* There is an issue when indexing readonly arrays such as HomogeneousMatrix or RotationMatrix
+* There is an issue with vpFeatureMomentDatabse::get and vpMomentDatabase::get, ignored for now
 * n ary operators
 * Exclude get operators for vpArray2D ?
 * Parse subnamespaces

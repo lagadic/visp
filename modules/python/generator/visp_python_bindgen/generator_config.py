@@ -48,7 +48,7 @@ Regular expressions that should match with types that are considered as immutabl
 This only encompasses raw types
 '''
 IMMUTABLE_TYPES_REGEXS = [
-  '^(float|double|u?int\d+_t|unsigned|char|long|long\wlong)$',
+  '^(float|double|u?int\d+_t|unsigned|char|long|long\wlong|bool)$',
   '^std::string$'
 ]
 
