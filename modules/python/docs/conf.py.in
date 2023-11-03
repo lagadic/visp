@@ -153,6 +153,13 @@ html_theme = 'sphinx_immaterial'
 # html_theme_options = {}
 html_theme_options = {
     "toc_title_is_page_title": True,
+    "repo_url": "https://github.com/lagadic/visp",
+    "repo_name": "visp",
+    "features": [
+      "toc.follow",
+      "toc.integrate",
+      "navigation.instant"
+    ]
 }
 
 # Add any paths that contain custom themes here, relative to this directory.

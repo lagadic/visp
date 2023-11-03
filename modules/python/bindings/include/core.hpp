@@ -150,7 +150,7 @@ py::buffer_info get_buffer_info(vpHomogeneousMatrix &array)
 
 /*Array 2D indexing*/
 template<typename PyClass, typename Class, typename Item>
-void define_get_item_2d_array(PyClass &pyClass, bool readonly)
+void define_get_item_2d_array(PyClass &pyClass)
 {
 
   pyClass.def("__getitem__", [](const Class &self, std::pair<int, int> pair) -> Item {
@@ -203,6 +203,7 @@ const char *numpy_fn_doc_nonwritable = R"doc(
   If you try to modify the array, an exception will be raised.
 )doc";
 
+
 template<typename T>
 void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
 {
@@ -219,9 +220,14 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }));
+  }), R"doc(
+Construct a 2D ViSP array by **copying** a 2D numpy array.
 
-  define_get_item_2d_array<py::class_<vpArray2D<T>>, vpArray2D<T>, T>(pyArray2D, false);
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
+
+  define_get_item_2d_array<py::class_<vpArray2D<T>>, vpArray2D<T>, T>(pyArray2D);
 }
 
 void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
@@ -239,9 +245,14 @@ void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
     vpMatrix result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }));
+  }), R"doc(
+Construct a matrix by **copying** a 2D numpy array.
 
-  define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix, false);
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
+
+  define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
 
 
@@ -259,7 +270,12 @@ void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVecto
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }));
+  }), R"doc(
+Construct a column vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
 
 }
 
@@ -275,7 +291,12 @@ void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVecto
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-  }));
+  }), R"doc(
+Construct a row vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
 }
 
 
@@ -295,8 +316,15 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
       throw std::runtime_error("Input numpy array is not a valid rotation matrix");
     }
     return result;
-  }));
-  define_get_item_2d_array<py::class_<vpRotationMatrix, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix, true);
+  }), R"doc(
+Construct a rotation matrix by **copying** a 2D numpy array.
+This numpy array should be of dimensions :math:`3 \times 3` and be a valid rotation matrix.
+If it is not a rotation matrix, an exception will be raised.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_2d_array<py::class_<vpRotationMatrix, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
 }
 
 void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<double>> &pyHomogeneousMatrix)
@@ -316,8 +344,15 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<doub
       throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
     }
     return result;
-  }));
-  define_get_item_2d_array<py::class_<vpHomogeneousMatrix, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix, false);
+  }), R"doc(
+Construct a homogeneous matrix by **copying** a 2D numpy array.
+This numpy array should be of dimensions :math:`4 \times 4` and be a valid homogeneous matrix.
+If it is not a homogeneous matrix, an exception will be raised.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_2d_array<py::class_<vpHomogeneousMatrix, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
 }
 
 
