@@ -21,7 +21,7 @@ endif()
 
 # Step 1: Generate configuration file
 # Define modules for which to generate python bindings
-set(python_ignored_modules "visp_python" "visp_java_bindings_generator" "visp_java")
+set(python_ignored_modules "visp_python" "visp_java_bindings_generator" "visp_java" )
 set(python_bound_modules ${VISP_MODULES_BUILD})
 list(REMOVE_ITEM python_bound_modules ${python_ignored_modules})
 

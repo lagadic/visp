@@ -14,6 +14,14 @@ if TYPE_CHECKING:
   from visp_python_bindgen.submodule import Submodule
   from visp_python_bindgen.header import HeaderFile, HeaderEnvironment, BoundObjectNames
 
+@dataclass
+class MethodData:
+  py_name: str
+  method: types.Method
+  lambda_variant: str
+  py_arg_strs: List[str]
+
+
 def cpp_operator_list():
   '''
   List of cpp methods that are considered operators.
@@ -193,6 +201,7 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
 
   return py_args
 
+
 def define_method(method: types.Method, method_config: Dict, is_class_method, specs: Dict, header: 'HeaderFile', header_env: 'HeaderEnvironment', bound_object: 'BoundObjectNames'):
   params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
   py_arg_strs = get_py_args(method.parameters, specs, header_env.mapping)
@@ -236,54 +245,55 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
       py_arg_strs = [method_doc.documentation] + py_arg_strs
 
 
+  child_lambda = None
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
-  if should_wrap_for_tuple_return:
 
-    # Arguments that are inputs to the lambda function that wraps the ViSP function
-    input_param_types = [params_strs[i] for i in range(len(param_is_input)) if param_is_input[i]]
-    params_with_names = [t + ' ' + name for t, name in zip(input_param_types, input_param_names)]
+  # Arguments that are inputs to the lambda function that wraps the ViSP function
+  input_param_types = [params_strs[i] for i in range(len(param_is_input)) if param_is_input[i]]
+  params_with_names = [t + ' ' + name for t, name in zip(input_param_types, input_param_names)]
 
-    # Params that are only outputs: they should be declared in function. Assume that they are default constructible
-    param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
-    param_declarations = [f'{get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping)} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
-    param_declarations = '\n'.join(param_declarations)
-    if is_class_method and not method.static:
-      self_param_with_name = bound_object.cpp_name + '& self'
-      method_caller = 'self.'
-    else:
-      self_param_with_name = None
-      method_caller = bound_object.cpp_name + '::' if is_class_method else bound_object.cpp_name
+  # Params that are only outputs: they should be declared in function. Assume that they are default constructible
+  param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
+  param_declarations = [f'{get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping)} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+  param_declarations = '\n'.join(param_declarations)
 
-    if return_type is None or return_type == 'void':
-      maybe_get_return = ''
-      maybe_return_in_tuple = ''
-    else:
-      maybe_get_return = f'{return_type} res = '
-      maybe_return_in_tuple = 'res, '
-
-    if len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
-      return_str = output_param_names[0]
-    else:
-      return_str = f'std::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)})'
-
-    lambda_body = f'''
-      {param_declarations}
-      {maybe_get_return}{method_caller}{method_name}({", ".join(param_names)});
-      return {return_str};
-    '''
-    final_lambda_params = [self_param_with_name] + params_with_names if self_param_with_name is not None else params_with_names
-    method_body_str = define_lambda('', final_lambda_params, None, lambda_body)
-
+  if is_class_method and not method.static:
+    self_param_with_name = bound_object.cpp_name + '& self'
+    method_caller = 'self.'
   else:
-    if is_class_method:
-      method_body_str = ref_to_class_method(method, bound_object.cpp_name, method_name, return_type, params_strs)
-    else:
-      method_body_str = ref_to_function(bound_object.cpp_name + method_name, return_type, params_strs)
+    self_param_with_name = None
+    method_caller = bound_object.cpp_name + '::' if is_class_method else bound_object.cpp_name
+  if return_type is None or return_type == 'void':
+    maybe_get_return = ''
+    maybe_return_in_tuple = ''
+  else:
+    maybe_get_return = f'{return_type} res = '
+    maybe_return_in_tuple = 'res, '
+
+  if len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
+    return_str = output_param_names[0]
+  else:
+    return_str = f'std::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)})'
+
+  lambda_body = f'''
+    {param_declarations}
+    {maybe_get_return}{method_caller}{method_name}({", ".join(param_names)});
+    return {return_str};
+  '''
+  final_lambda_params = [self_param_with_name] + params_with_names if self_param_with_name is not None else params_with_names
+  lambda_variant = define_lambda('', final_lambda_params, None, lambda_body)
+
+  if should_wrap_for_tuple_return:
+    method_body_str = lambda_variant
+  elif is_class_method:
+    method_body_str = ref_to_class_method(method, bound_object.cpp_name, method_name, return_type, params_strs)
+  else:
+    method_body_str = ref_to_function(bound_object.cpp_name + method_name, return_type, params_strs)
 
   method_str = method_def(py_method_name, method_body_str, py_arg_strs, method.static if is_class_method else False)
   method_str = f'{bound_object.python_ident}.{method_str};'
-  return method_str, (py_method_name, method)
+  return method_str, MethodData(py_method_name, method, lambda_variant, py_arg_strs)
 
 def define_constructor(params: List[str], additional_args: List[str]) -> str:
   additional_args_str = ', '.join(additional_args)

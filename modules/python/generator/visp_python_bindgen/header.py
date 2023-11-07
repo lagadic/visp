@@ -155,7 +155,7 @@ class HeaderFile():
       print(f'No documentation found for header {self.path}')
 
     for cls in self.header_repr.namespace.classes:
-      bindings_container.add_bindings(self.generate_class(cls, self.environment))
+      self.generate_class(bindings_container, cls, self.environment)
     enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule)
     for enum_binding in enum_bindings:
       bindings_container.add_bindings(enum_binding)
@@ -194,6 +194,12 @@ class HeaderFile():
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
       class_doc = None
+      methods_dict: Dict[str, List[MethodBinding]] = {}
+      def add_to_method_dict(key, value):
+        if key not in methods_dict:
+          methods_dict[key] = [value]
+        else:
+          methods_dict[key].append(value)
       if self.documentation_holder is not None:
         class_doc = self.documentation_holder.get_documentation_for_class(name_cpp_no_template, {}, owner_specs)
       else:
@@ -208,15 +214,14 @@ class HeaderFile():
         name_cpp += template_str
 
       # Reference public base classes when creating pybind class binding
-      base_class_strs = map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
-                            filter(lambda b: b.access == 'public', cls.class_decl.bases))
-      class_template_str = ', '.join([name_cpp] + list(base_class_strs))
+      base_class_strs = list(map(lambda base_class: get_typename(base_class.typename, owner_specs, header_env.mapping),
+                            filter(lambda b: b.access == 'public', cls.class_decl.bases)))
+      class_template_str = ', '.join([name_cpp] + base_class_strs)
       doc_param = [] if class_doc is None else [class_doc.documentation]
       buffer_protocol_arg = ['py::buffer_protocol()'] if cls_config['use_buffer_protocol'] else []
       cls_argument_strs = ['submodule', f'"{name_python}"'] + doc_param + buffer_protocol_arg
 
       class_decl = f'\tpy::class_ {python_ident} = py::class_<{class_template_str}>({", ".join(cls_argument_strs)});'
-      self.declarations.append(class_decl)
 
       # Definitions
       # Skip constructors for classes that have pure virtual methods since they cannot be instantiated
@@ -233,7 +238,6 @@ class HeaderFile():
 
       # Find bindable methods
       generated_methods = []
-      method_strs = []
       bindable_methods_and_config, rejected_methods = get_bindable_methods_with_config(self.submodule, cls.methods,
                                                                                     name_cpp_no_template, owner_specs, header_env.mapping)
       # Display rejected methods
@@ -272,7 +276,9 @@ class HeaderFile():
               py_arg_strs = [method_doc.documentation] + py_arg_strs
 
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
-          method_strs.append(ctor_str)
+          add_to_method_dict('__init__', MethodBinding(ctor_str, is_static=False, is_lambda=False,
+                                                       is_operator=False, is_constructor=True))
+
 
       # Operator definitions
       binary_return_ops = supported_const_return_binary_op_map()
@@ -299,7 +305,8 @@ class HeaderFile():
 {python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) {{
   return {cpp_op}self;
 }}, {", ".join(py_args)});'''
-              method_strs.append(operator_str)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                       is_operator=True, is_constructor=False))
               break
 
           print(f'Found unary operator {name_cpp}::{method_name}, skipping')
@@ -310,7 +317,8 @@ class HeaderFile():
 {python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
   return (self {cpp_op} o);
 }}, {", ".join(py_args)});'''
-            method_strs.append(operator_str)
+            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                       is_operator=True, is_constructor=False))
             break
         for cpp_op, python_op_name in binary_in_place_ops.items():
           if method_name == f'operator{cpp_op}':
@@ -319,7 +327,8 @@ class HeaderFile():
   self {cpp_op} o;
   return self;
 }}, {", ".join(py_args)});'''
-            method_strs.append(operator_str)
+            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                       is_operator=True, is_constructor=False))
             break
 
       # Define classical methods
@@ -335,19 +344,53 @@ class HeaderFile():
             new_specs.update(method_spec_dict)
             method_str, generated_method_tuple = define_method(method, method_config, True,
                                                                 new_specs, self, header_env, class_def_names)
-            method_strs.append(method_str)
+            add_to_method_dict(generated_method_tuple[0], MethodBinding(method_str, is_static=method.static,
+                                                                        is_lambda=f'{name_cpp}::*' not in method_str,
+                                                                        is_operator=False, is_constructor=False, lambda_child=generated_method_tuple[-1]))
             generated_methods.append(generated_method_tuple)
         else:
           method_str, generated_method_tuple = define_method(method, method_config, True,
                                                               owner_specs, self, header_env, class_def_names)
-          method_strs.append(method_str)
+          add_to_method_dict(generated_method_tuple[0], MethodBinding(method_str, is_static=method.static,
+                                                                      is_lambda=f'{name_cpp}::*' not in method_str,
+                                                                      is_operator=False, is_constructor=False, lambda_child=generated_method_tuple[-1]))
           generated_methods.append(generated_method_tuple)
+
+      # See https://github.com/pybind/pybind11/issues/974
+      # Update with overloads that are shadowed by new overloads defined in this class
+      # For instance, declaring:
+      # class A { void foo(int); };
+      # class B: public A { void foo(std::string& s); }
+      # Will result in the following code generating an error:
+      # from visp.core import B
+      # b = B()
+      # b.foo(0) # no overload known with int
+      base_bindings = list(filter(lambda b: b is not None, map(lambda s: bindings_container.find_bindings(s), base_class_strs)))
+
+      # assert not any(map(lambda b: b is None, base_bindings)), f'Could not retrieve the bindings for a base class of {name_cpp}'
+      print(base_bindings)
+      for base_binding_container in base_bindings:
+        base_defs = base_binding_container.definitions
+        if not isinstance(base_defs, ClassBindingDefinitions):
+          raise RuntimeError
+        base_methods_dict = base_defs.methods
+        for method_name in methods_dict.keys():
+          if method_name == '__init__': # Do not bring constructors of the base class in this class defs as it makes no sense
+            continue
+          if method_name in base_methods_dict:
+            for overload in base_methods_dict[method_name]:
+             ov = overload
+             bn = base_binding_container.object_names
+             ov = ov.replace(bn.python_ident, python_ident)
+             ov = ov.replace(bn.cpp_name + '::*', name_cpp + '::*')
+
+             methods_dict[method_name].append(ov)
 
       # Add to string representation
       if not cls_config['ignore_repr']:
         to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
         if len(to_string_str) > 0:
-          method_strs.append(to_string_str)
+          add_to_method_dict('__repr__', to_string_str)
 
       # Add call to user defined bindings function
       # Binding function should be defined in the static part of the generator
@@ -358,22 +401,19 @@ class HeaderFile():
         if len(owner_specs.keys()) > 0:
           template_types = owner_specs.values()
           template_str = f'<{", ".join([template_type for template_type in template_types])}>'
-        method_strs.append(f'{cls_config["additional_bindings"]}({python_ident});')
+        add_to_method_dict('__additional_bindings', MethodBinding(f'{cls_config["additional_bindings"]}({python_ident});',
+                                                                  is_static=False, is_lambda=False,
+                                                                  is_operator=False, is_constructor=False))
 
 
       # Check for potential error-generating definitions
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
-      for error_overload in error_generating_overloads:
-        print(f'Overload {error_overload} defined for instance and class, this will generate a pybind error')
-        for method_str in method_strs:
-          if error_overload in method_str:
-            print(method_str)
-        print()
       if len(error_generating_overloads) > 0:
+        print(f'Overloads defined for instance and class, this will generate a pybind error')
         print(error_generating_overloads)
         raise RuntimeError
 
-      field_strs = []
+      field_dict = {}
       for field in cls.fields:
         if field.name in cls_config['ignored_attributes']:
           continue
@@ -392,10 +432,10 @@ class HeaderFile():
             def_str += '_static'
 
           field_str = f'{python_ident}.{def_str}("{field_name_python}", &{name_cpp}::{field.name});'
-          field_strs.append(field_str)
+          field_dict[field_name_python] = field_str
 
-      definitions_strs = method_strs + field_strs
-      return SingleObjectBindings(class_def_names, class_decl, definitions_strs, GenerationObjectType.Class)
+      classs_binding_defs = ClassBindingDefinitions(field_dict, methods_dict)
+      bindings_container.add_bindings(SingleObjectBindings(class_def_names, class_decl, classs_binding_defs, GenerationObjectType.Class))
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
     print(f'Parsing class "{name_cpp_no_template}"')
@@ -412,9 +452,7 @@ class HeaderFile():
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         print(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
         self.submodule.report.add_non_generated_class(name_cpp_no_template, cls_config, 'Skipped because there was no declared specializations')
-        return
       else:
-        specialization_strs = []
         specs = cls_config['specializations']
         template_names = [t.name for t in cls.class_decl.template.params]
         for spec in specs:
@@ -422,6 +460,4 @@ class HeaderFile():
           args = spec['arguments']
           assert len(template_names) == len(args), f'Specializing {name_cpp_no_template}: Template arguments are {template_names} but found specialization {args} which has the wrong number of arguments'
           spec_dict = OrderedDict(k for k in zip(template_names, args))
-          specialization_strs.append(generate_class_with_potiental_specialization(name_python, spec_dict, cls_config))
-
-        return '\n'.join(specialization_strs)
+          generate_class_with_potiental_specialization(name_python, spec_dict, cls_config)

@@ -25,12 +25,31 @@ class GenerationObjectType(Enum):
   Namespace = 'namespace'
 
 @dataclass
+class MethodBinding:
+  binding: str
+  is_static: bool
+  is_lambda: bool
+  is_operator: bool
+  is_constructor: bool
+  method_data: Optional['MethodData']
+
+
+  def get_definition_in_child_class(self, child_py_ident) -> str:
+    if self.is_lambda:
+      return self.binding
+
+    return self.lambda_child.format(py_ident=child_py_ident)
+
+
+
+
+@dataclass
 class ClassBindingDefinitions:
   '''
   Class containing the bindings for a single class
   '''
   fields: Dict[str, str]
-  methods: Dict[str, List[str]] # Mapping from python method name to the bindings definitions. There can be overloads
+  methods: Dict[str, List[MethodBinding]] # Mapping from python method name to the bindings definitions. There can be overloads
 
 @dataclass
 class SingleObjectBindings:
@@ -54,6 +73,27 @@ class BindingsContainer:
       if sob.object_names.cpp_name == cpp_name:
         return sob
     return None
+
+  def get_declarations(self) -> str:
+    decls = []
+    for sob in self.object_bindings:
+      if sob.declaration is not None:
+        decls.append(sob.declaration)
+    return '\n'.join(decls)
+
+  def get_definitions(self) -> str:
+    defs = []
+    for sob in self.object_bindings:
+      odefs = sob.definitions
+      if isinstance(odefs, list):
+        defs.extend(odefs)
+      elif isinstance(odefs, ClassBindingDefinitions):
+        defs.extend(list(odefs.fields.values()))
+        for method_overloads in odefs.methods.values():
+          defs.extend(method_overloads.binding)
+    return '\n'.join(defs)
+
+
 
 
 def get_name(name: types.PQName) -> str:

@@ -144,7 +144,7 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
   return final_data, temp_data
 
 
-def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List['SingleObjectBindings']:
+def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[SingleObjectBindings]:
 
   final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
 

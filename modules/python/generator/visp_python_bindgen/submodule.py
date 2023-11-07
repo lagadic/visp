@@ -68,20 +68,17 @@ class Submodule():
   def generate(self) -> None:
 
     # Sort by dependency level so that generation is in correct order
-
-    header_code = []
-    declarations = []
+    module_bindings = BindingsContainer()
     includes = []
     for header in self.headers:
-      header.generate_binding_code()
-      header_code.append(header.binding_code)
-      declarations.extend(header.declarations)
+      header.generate_binding_code(module_bindings)
       includes.extend(header.includes)
-    includes_set = set(includes)
     submodule_declaration = f'py::module_ submodule = m.def_submodule("{self.name}");\n'
-    bindings = '\n'.join(header_code)
-    declarations = '\n'.join(declarations)
+    bindings = module_bindings.get_definitions()
+    declarations = module_bindings.get_declarations()
     user_defined_headers = '\n'.join(self.get_user_defined_headers())
+
+    includes_set = set(includes)
     includes_strs = [f'#include {include}' for include in includes_set]
     includes_str = '\n'.join(includes_strs)
     additional_required_headers = '\n'.join(self.get_required_headers())
