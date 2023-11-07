@@ -8,6 +8,11 @@ from visp_python_bindgen.utils import *
 from visp_python_bindgen.submodule import Submodule
 
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+  from visp_python_bindgen.header import SingleObjectBindings
+
+
 @dataclass
 class EnumRepr:
   '''
@@ -139,14 +144,14 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
   return final_data, temp_data
 
 
-def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[Tuple[str, str]]:
+def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List['SingleObjectBindings']:
 
   final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
 
   for repr in filtered_reprs:
     print(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')
 
-  result = []
+  result: List['SingleObjectBindings'] = []
   final_reprs = []
   for repr in final_data:
     enum_config = submodule.get_enum_config(repr.name)
@@ -186,6 +191,7 @@ def enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodul
       values.append(f'{py_ident}.value("{enumerator.name}", {enum_repr.name}::{enumerator.name});')
 
     values.append(f'{py_ident}.export_values();')
-    definition = '\n'.join(values)
-    result.append((declaration, definition))
+    enum_names = BoundObjectNames(py_ident, py_name, enum_repr.name, enum_repr.name)
+    enum_binding = SingleObjectBindings(enum_names, declaration, values, GenerationObjectType.Enum)
+    result.append(enum_binding)
   return result

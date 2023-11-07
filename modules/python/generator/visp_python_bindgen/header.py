@@ -17,15 +17,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from submodule import Submodule
 
-@dataclass
-class BoundObjectNames:
-  '''
-  The different names that link to a cpp class
-  '''
-  python_ident: str # the identifier (variable) that defines the pybind object
-  python_name: str # the name exposed in Python
-  cpp_no_template_name: str # C++ name without any template => vpArray2D<T> becomes vpArray2D (useful for dependencies)
-  cpp_name: str # C++ name with templates
 
 
 class HeaderFile():
@@ -35,7 +26,6 @@ class HeaderFile():
     self.includes = [f'<visp3/{self.submodule.name}/{self.path.name}>']
     self.binding_code = None
     self.header_repr = None
-    self.declarations = []
     self.contains = []
     self.depends = []
     self.documentation_holder_path: Path = None
@@ -138,23 +128,26 @@ class HeaderFile():
 
     return preprocessed_header_content
 
-  def generate_binding_code(self) -> None:
+  def generate_binding_code(self, bindings_container: BindingsContainer) -> None:
     assert self.header_repr is not None, 'The header was not preprocessed before calling the generation step!'
-    self.binding_code = self.parse_data()
+    self.parse_data(bindings_container)
 
   def compute_environment(self):
     '''
     Compute the header environment
     This environment contains:
       - The mapping from partially qualified names to fully qualified names
-    If a class inherits from another, the environment should be updated with what is contained in the base class environment. This should be done in another step
+    If a class inherits from another, the environment should be updated with what is contained in the base class environment.
+    This should be done in another step
     '''
     self.environment = HeaderEnvironment(self.header_repr)
 
-  def parse_data(self):
-    from visp_python_bindgen.enum_binding import enum_bindings
-    result = '' # String containing the definitions (actual bindings and not class/enum declarations)
+  def parse_data(self, bindings_container: BindingsContainer) -> None:
+    '''
+    Update the bindings container passed in parameter with the bindings linked to this header file
+    '''
 
+    from visp_python_bindgen.enum_binding import get_enum_bindings
     # Fetch documentation if available
     if self.documentation_holder_path is not None:
       self.documentation_holder = DocumentationHolder(self.documentation_holder_path, self.environment.mapping)
@@ -162,20 +155,18 @@ class HeaderFile():
       print(f'No documentation found for header {self.path}')
 
     for cls in self.header_repr.namespace.classes:
-      result += self.generate_class(cls, self.environment) + '\n'
-    enum_decls_and_bindings = enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule)
-    for declaration, binding in enum_decls_and_bindings:
-      self.declarations.append(declaration)
-      result += binding
+      bindings_container.add_bindings(self.generate_class(cls, self.environment))
+    enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule)
+    for enum_binding in enum_bindings:
+      bindings_container.add_bindings(enum_binding)
+
     # Parse functions that are not linked to a class
-    result += self.parse_sub_namespace(self.header_repr.namespace)
-    return result
+    self.parse_sub_namespace(bindings_container, self.header_repr.namespace)
 
-  def parse_sub_namespace(self, ns: NamespaceScope, namespace_prefix = '', is_root=True) -> str:
+  def parse_sub_namespace(self, bindings_container: BindingsContainer, ns: NamespaceScope, namespace_prefix = '', is_root=True) -> None:
     if not is_root and ns.name == '': # Anonymous namespace, only visible in header, so we ignore it
-      return ''
+      return
 
-    result = ''
     functions_with_configs, rejected_functions = get_bindable_functions_with_config(self.submodule, ns.functions, self.environment.mapping)
 
     # Log rejected functions
@@ -189,15 +180,16 @@ class HeaderFile():
       print('\n'.join(rejection_strs))
 
     bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
+    defs = []
     for function, function_config in functions_with_configs:
-      result += define_method(function, function_config, False, {}, self, self.environment, bound_object)[0] + '\n'
+      defs.append(define_method(function, function_config, False, {}, self, self.environment, bound_object)[0])
 
+    bindings_container.add_bindings(SingleObjectBindings(bound_object, None, defs, GenerationObjectType.Namespace))
     for sub_ns in ns.namespaces:
-      result += self.parse_sub_namespace(ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
+      self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
-    return result
 
-  def generate_class(self, cls: ClassScope, header_env: HeaderEnvironment) -> str:
+  def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment) -> SingleObjectBindings:
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
@@ -403,9 +395,7 @@ class HeaderFile():
           field_strs.append(field_str)
 
       definitions_strs = method_strs + field_strs
-
-      return '\n'.join(definitions_strs)
-
+      return SingleObjectBindings(class_def_names, class_decl, definitions_strs, GenerationObjectType.Class)
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
     print(f'Parsing class "{name_cpp_no_template}"')
@@ -422,7 +412,7 @@ class HeaderFile():
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
         print(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
         self.submodule.report.add_non_generated_class(name_cpp_no_template, cls_config, 'Skipped because there was no declared specializations')
-        return ''
+        return
       else:
         specialization_strs = []
         specs = cls_config['specializations']

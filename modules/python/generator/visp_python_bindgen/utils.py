@@ -1,10 +1,60 @@
 from typing import List, Optional, Set, Tuple, Dict, Union
-
+from enum import Enum
+from dataclasses import dataclass
 from cxxheaderparser.tokfmt import tokfmt
 from cxxheaderparser import types
 from cxxheaderparser.simple import NamespaceScope, ClassScope
 
 from visp_python_bindgen.generator_config import GeneratorConfig
+
+
+@dataclass
+class BoundObjectNames:
+  '''
+  The different names that link to a cpp class
+  '''
+  python_ident: str # the identifier (variable) that defines the pybind object
+  python_name: str # the name exposed in Python
+  cpp_no_template_name: str # C++ name without any template => vpArray2D<T> becomes vpArray2D (useful for dependencies)
+  cpp_name: str # C++ name with templates
+
+class GenerationObjectType(Enum):
+  Enum = 'enum'
+  Class = 'class'
+  Function = 'function'
+  Namespace = 'namespace'
+
+@dataclass
+class ClassBindingDefinitions:
+  '''
+  Class containing the bindings for a single class
+  '''
+  fields: Dict[str, str]
+  methods: Dict[str, List[str]] # Mapping from python method name to the bindings definitions. There can be overloads
+
+@dataclass
+class SingleObjectBindings:
+  '''
+  Result of running the binding generator for a single type (class, enum)
+  '''
+  object_names: BoundObjectNames
+  declaration: Optional[str] # Pybind type instanciation, eg py::class_<> ... (if any)
+  definitions: Union[List[str], ClassBindingDefinitions] # List of method bindings, attributes etc for this pybind object
+  object_type: GenerationObjectType # Type of the object
+
+class BindingsContainer:
+  def __init__(self):
+    self.object_bindings: List[SingleObjectBindings] = []
+
+  def add_bindings(self, other: SingleObjectBindings) -> None:
+    self.object_bindings.append(other)
+
+  def find_bindings(self, cpp_name: str) -> Optional[SingleObjectBindings]:
+    for sob in self.object_bindings:
+      if sob.object_names.cpp_name == cpp_name:
+        return sob
+    return None
+
 
 def get_name(name: types.PQName) -> str:
   '''
