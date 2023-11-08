@@ -1,12 +1,27 @@
 from typing import List, Optional, Set, Tuple, Dict, Union
+import copy
 from enum import Enum
 from dataclasses import dataclass
+
 from cxxheaderparser.tokfmt import tokfmt
 from cxxheaderparser import types
 from cxxheaderparser.simple import NamespaceScope, ClassScope
 
 from visp_python_bindgen.generator_config import GeneratorConfig
 
+@dataclass
+class MethodData:
+  py_name: str
+  method: types.Method
+  lambda_variant: str
+  py_arg_strs: List[str]
+
+  def as_lambda(self, py_ident: str) -> str:
+    args_str = ', '.join(self.py_arg_strs)
+    def_val = 'def' if not self.method.static else 'def_static'
+    return f'''
+      {py_ident}.{def_val}("{self.py_name}", {self.lambda_variant}, {args_str});
+    '''
 
 @dataclass
 class BoundObjectNames:
@@ -31,16 +46,18 @@ class MethodBinding:
   is_lambda: bool
   is_operator: bool
   is_constructor: bool
-  method_data: Optional['MethodData']
+  method_data: Optional[MethodData] = None
 
 
-  def get_definition_in_child_class(self, child_py_ident) -> str:
+  def get_definition_in_child_class(self, child_py_ident) -> 'MethodBinding':
+    if self.is_constructor:
+      raise RuntimeError('We should not try to redefine a constructor for a child class')
     if self.is_lambda:
-      return self.binding
-
-    return self.lambda_child.format(py_ident=child_py_ident)
-
-
+      return copy.deepcopy(self)
+    new_binding_code = self.method_data.as_lambda(child_py_ident)
+    res = copy.deepcopy(self)
+    res.binding = new_binding_code
+    return res
 
 
 @dataclass
@@ -90,7 +107,8 @@ class BindingsContainer:
       elif isinstance(odefs, ClassBindingDefinitions):
         defs.extend(list(odefs.fields.values()))
         for method_overloads in odefs.methods.values():
-          defs.extend(method_overloads.binding)
+          for method_overload_binding in method_overloads:
+            defs.append(method_overload_binding.binding)
     return '\n'.join(defs)
 
 
@@ -332,11 +350,11 @@ def method_matches_config(method: types.Method, config: Dict, owner_specs, heade
 
   return True
 
-def get_static_and_instance_overloads(methods: List[Tuple[str, types.Method]]) -> Set[str]:
+def get_static_and_instance_overloads(methods: List[MethodData]) -> Set[str]:
   '''
   Return the set of method names that have static and non-static versions.
   This is not allowed in PyBind, so this function can be used to raise an error if the resulting set is not empty
   '''
-  instance_methods = set([method[0] for method in methods if not method[1].static])
-  static_methods = set([method[0] for method in methods if method[1].static])
+  instance_methods = set([method.py_name for method in methods if not method.method.static])
+  static_methods = set([method.py_name for method in methods if method.method.static])
   return instance_methods.intersection(static_methods)

@@ -753,7 +753,7 @@ CITE_BIB_FILES         = @DOXYGEN_CITE_BIB_FILES@
 # messages are off.
 # The default value is: NO.
 
-QUIET                  = NO
+QUIET                  = @DOXYGEN_QUIET@
 
 # The WARNINGS tag can be used to turn on/off the warning messages that are
 # generated to standard error (stderr) by doxygen. If WARNINGS is set to YES

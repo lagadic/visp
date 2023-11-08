@@ -14,12 +14,7 @@ if TYPE_CHECKING:
   from visp_python_bindgen.submodule import Submodule
   from visp_python_bindgen.header import HeaderFile, HeaderEnvironment, BoundObjectNames
 
-@dataclass
-class MethodData:
-  py_name: str
-  method: types.Method
-  lambda_variant: str
-  py_arg_strs: List[str]
+
 
 
 def cpp_operator_list():
@@ -122,8 +117,6 @@ def method_def(py_name: str, method: str, additional_args: List[str], static: bo
 
 def tokens_to_str(tokens: List[types.Token]) -> str:
   return ''.join([token.value for token in tokens])
-
-
 
 
 def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapping) -> bool:
@@ -245,7 +238,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
       py_arg_strs = [method_doc.documentation] + py_arg_strs
 
 
-  child_lambda = None
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
 

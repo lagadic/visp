@@ -237,7 +237,7 @@ class HeaderFile():
       contains_pure_virtual_methods = contains_pure_virtual_methods or cls_config['is_virtual']
 
       # Find bindable methods
-      generated_methods = []
+      generated_methods: List[MethodData] = []
       bindable_methods_and_config, rejected_methods = get_bindable_methods_with_config(self.submodule, cls.methods,
                                                                                     name_cpp_no_template, owner_specs, header_env.mapping)
       # Display rejected methods
@@ -342,19 +342,19 @@ class HeaderFile():
             assert len(method_template_names) == len(method_spec)
             method_spec_dict = OrderedDict(k for k in zip(method_template_names, method_spec))
             new_specs.update(method_spec_dict)
-            method_str, generated_method_tuple = define_method(method, method_config, True,
+            method_str, method_data = define_method(method, method_config, True,
                                                                 new_specs, self, header_env, class_def_names)
-            add_to_method_dict(generated_method_tuple[0], MethodBinding(method_str, is_static=method.static,
+            add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
                                                                         is_lambda=f'{name_cpp}::*' not in method_str,
-                                                                        is_operator=False, is_constructor=False, lambda_child=generated_method_tuple[-1]))
-            generated_methods.append(generated_method_tuple)
+                                                                        is_operator=False, is_constructor=False, method_data=method_data))
+            generated_methods.append(method_data)
         else:
-          method_str, generated_method_tuple = define_method(method, method_config, True,
+          method_str, method_data = define_method(method, method_config, True,
                                                               owner_specs, self, header_env, class_def_names)
-          add_to_method_dict(generated_method_tuple[0], MethodBinding(method_str, is_static=method.static,
+          add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
                                                                       is_lambda=f'{name_cpp}::*' not in method_str,
-                                                                      is_operator=False, is_constructor=False, lambda_child=generated_method_tuple[-1]))
-          generated_methods.append(generated_method_tuple)
+                                                                      is_operator=False, is_constructor=False, method_data=method_data))
+          generated_methods.append(method_data)
 
       # See https://github.com/pybind/pybind11/issues/974
       # Update with overloads that are shadowed by new overloads defined in this class
@@ -378,19 +378,15 @@ class HeaderFile():
           if method_name == '__init__': # Do not bring constructors of the base class in this class defs as it makes no sense
             continue
           if method_name in base_methods_dict:
-            for overload in base_methods_dict[method_name]:
-             ov = overload
-             bn = base_binding_container.object_names
-             ov = ov.replace(bn.python_ident, python_ident)
-             ov = ov.replace(bn.cpp_name + '::*', name_cpp + '::*')
-
-             methods_dict[method_name].append(ov)
+            for parent_method_binding in base_methods_dict[method_name]:
+              methods_dict[method_name].append(parent_method_binding.get_definition_in_child_class(python_ident))
 
       # Add to string representation
       if not cls_config['ignore_repr']:
         to_string_str = find_and_define_repr_str(cls, name_cpp, python_ident)
         if len(to_string_str) > 0:
-          add_to_method_dict('__repr__', to_string_str)
+          add_to_method_dict('__repr__', MethodBinding(to_string_str, is_static=False, is_lambda=True, is_operator=True,
+                                                       is_constructor=False))
 
       # Add call to user defined bindings function
       # Binding function should be defined in the static part of the generator
