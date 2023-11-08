@@ -61,7 +61,7 @@ vpMbDepthNormalTracker::vpMbDepthNormalTracker()
     m_robust_depthNormal(), m_w_depthNormal(), m_weightedError_depthNormal()
 #if DEBUG_DISPLAY_DEPTH_NORMAL
     ,
-    m_debugDisp_depthNormal(NULL), m_debugImage_depthNormal()
+    m_debugDisp_depthNormal(nullptr), m_debugImage_depthNormal()
 #endif
 {
 #ifdef VISP_HAVE_OGRE
@@ -476,7 +476,7 @@ void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const 
 
   for (size_t i = 0; i < m_depthNormalFaces.size(); i++) {
     delete m_depthNormalFaces[i];
-    m_depthNormalFaces[i] = NULL;
+    m_depthNormalFaces[i] = nullptr;
   }
 
   m_depthNormalFaces.clear();
@@ -503,7 +503,7 @@ void vpMbDepthNormalTracker::resetTracker()
        ++it) {
     vpMbtFaceDepthNormal *normal_face = *it;
     delete normal_face;
-    normal_face = NULL;
+    normal_face = nullptr;
   }
 
   m_depthNormalFaces.clear();

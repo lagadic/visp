@@ -551,8 +551,8 @@ VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OF
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"      "" ON IF NOT (WIN32 OR MINGW))
 
-# We need threads with c++11
-if((VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND NOT USE_THREADS)
+# We need threads. To be changed to make threads optional
+if(NOT USE_THREADS)
   if(Threads_FOUND)
     message(WARNING "We need std::thread. We turn USE_THREADS=ON.")
     unset(USE_THREADS)
@@ -589,38 +589,7 @@ VP_OPTION(USE_NLOHMANN_JSON  nlohmann_json QUIET "Include nlohmann json support"
 # ----------------------------------------------------------------------------
 # Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
 # ----------------------------------------------------------------------------
-# if c++ standard is not at leat c++11, force 3rd parties that require at least c++11 to OFF
-if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
-  if(USE_REALSENSE)
-     message(WARNING "librealsense 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable librealsense usage turning USE_REALSENSE=OFF.")
-     unset(USE_REALSENSE)
-     set(USE_REALSENSE OFF CACHE BOOL "Include RealSense SDK support" FORCE)
-  endif()
-  if(USE_REALSENSE2)
-     message(WARNING "librealsense2 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable librealsense2 usage turning USE_REALSENSE2=OFF.")
-     unset(USE_REALSENSE2)
-     set(USE_REALSENSE2 OFF CACHE BOOL "Include RealSense2 SDK support" FORCE)
-  endif()
-  if(USE_FRANKA)
-     message(WARNING "libfranka 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable libfranka usage turning USE_FRANKA=OFF.")
-     unset(USE_FRANKA)
-     set(USE_FRANKA OFF CACHE BOOL "Include libfranka SDK support for Franka Emika robots" FORCE)
-  endif()
-  if(USE_UR_RTDE)
-    message(WARNING "ur_rtde 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable ur_rtde usage turning USE_UR_RTDE=OFF.")
-    unset(USE_UR_RTDE)
-    set(USE_UR_RTDE OFF CACHE BOOL "Include ur_rtde SDK support for Universal Robots robots" FORCE)
-  endif()
-  if((OpenCV_VERSION VERSION_GREATER 4.0.0) OR (OpenCV_VERSION VERSION_EQUAL 4.0.0))
-    # if c++ standard is not at least 11: disable opencv 4.x usage
-    message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs c++11 or higher compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable OpenCV usage turning USE_OPENCV=OFF")
-    unset(USE_OPENCV)
-    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
-  endif()
-  # Downgrade to cxx98 to completely disable cxx11
-  unset(CMAKE_CXX_STANDARD)
-endif()
-
+# if c++ standard is not at leat c++17, force 3rd parties that require at least c++17 to OFF
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
   if(USE_MAVSDK)
     message(WARNING "mavsdk 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable MAVSDK usage turning USE_MAVSDK=OFF.")
@@ -665,9 +634,9 @@ VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
-VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WINRT) AND (NOT IOS))
-VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS))
+VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
+VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2 for testing" "" ON)
 
 # ----------------------------------------------------------------------------
 # Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka

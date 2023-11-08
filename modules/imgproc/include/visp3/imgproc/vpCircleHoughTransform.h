@@ -46,8 +46,6 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRect.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
@@ -649,7 +647,6 @@ public:
    */
   virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /**
    * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
    * Get only the \b nbCircles circles having the greatest number of votes.
@@ -661,7 +658,6 @@ public:
    * of votes detected in the image.
    */
   virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
-#endif
   //@}
 
   /** @name  Configuration from files */
@@ -1192,5 +1188,4 @@ protected:
   std::vector<float> m_finalCirclesProbabilities; /*!< Probabilities of each final circle, i.e. resulting from the merge of the circle candidates.*/
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the final circles.*/
 };
-#endif
 #endif

@@ -103,11 +103,11 @@ std::vector<double> List_to_vector_double(JNIEnv *env, jdoubleArray arr)
 jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<std::vector<vpImagePoint> > &V)
 {
   if (V.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   size_t outerSize = V.size();
-  jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), NULL);
+  jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
   for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
     size_t innerSize = V[i].size();
@@ -128,11 +128,11 @@ jobjectArray vector_vector_vpImagePoint_to_List(JNIEnv *env, const std::vector<s
 jobjectArray vector_vector_double_to_List(JNIEnv *env, const std::vector<std::vector<double> > &V)
 {
   if (V.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   size_t outerSize = V.size();
-  jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), NULL);
+  jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
   for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
     size_t innerSize = V[i].size();
@@ -166,17 +166,17 @@ map_string_vector_vector_double_to_array_native(JNIEnv *env,
                                                 const std::map<std::string, std::vector<std::vector<double> > > &map)
 {
   if (map.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   size_t mapSize = map.size();
-  jobjectArray mapArray = env->NewObjectArray(mapSize, env->FindClass("java/lang/Object"), NULL);
+  jobjectArray mapArray = env->NewObjectArray(mapSize, env->FindClass("java/lang/Object"), nullptr);
 
   int idx = 0;
   for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = map.begin(); it != map.end();
        ++it, idx++) {
     size_t outerSize = it->second.size();
-    jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), NULL);
+    jobjectArray outerArray = env->NewObjectArray(outerSize, env->FindClass("java/lang/Object"), nullptr);
 
     for (int i = 0; i < env->GetArrayLength(outerArray); i++) {
       size_t innerSize = it->second[i].size();
@@ -200,7 +200,7 @@ map_string_vector_vector_double_to_array_native(JNIEnv *env,
 jobjectArray vector_string_to_array_native(JNIEnv *env, const std::vector<std::string> &V)
 {
   if (V.empty()) {
-    return NULL;
+    return nullptr;
   }
 
   size_t vecSize = V.size();

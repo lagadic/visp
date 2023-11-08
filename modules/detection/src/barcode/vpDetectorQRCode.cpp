@@ -84,7 +84,7 @@ bool vpDetectorQRCode::detect(const vpImage<unsigned char> &I)
   }
 
   // clean up
-  img.set_data(NULL, 0);
+  img.set_data(nullptr, 0);
 
   return detected;
 }

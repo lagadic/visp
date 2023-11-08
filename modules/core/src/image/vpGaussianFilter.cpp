@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Gaussian filter class
- *
-*****************************************************************************/
+ */
 
 #include <Simd/SimdLib.h>
 #include <visp3/core/vpGaussianFilter.h>
@@ -42,7 +40,7 @@ class vpGaussianFilter::Impl
 {
 public:
   Impl(unsigned int width, unsigned int height, float sigma, bool deinterleave)
-    : m_funcPtrGray(NULL), m_funcPtrRGBa(NULL), m_deinterleave(deinterleave)
+    : m_funcPtrGray(nullptr), m_funcPtrRGBa(nullptr), m_deinterleave(deinterleave)
   {
     const float epsilon = 0.001f;
     {
@@ -88,7 +86,8 @@ public:
     if (!m_deinterleave) {
       SimdGaussianBlurRun(m_funcPtrRGBa, reinterpret_cast<unsigned char *>(I.bitmap), I.getWidth() * 4,
                           reinterpret_cast<unsigned char *>(I_blur.bitmap), I_blur.getWidth() * 4);
-    } else {
+    }
+    else {
       vpImageConvert::split(I, &m_red, &m_green, &m_blue);
       SimdGaussianBlurRun(m_funcPtrGray, m_red.bitmap, m_red.getWidth(), m_redBlurred.bitmap, m_redBlurred.getWidth());
       SimdGaussianBlurRun(m_funcPtrGray, m_green.bitmap, m_green.getWidth(), m_greenBlurred.bitmap,
@@ -96,7 +95,7 @@ public:
       SimdGaussianBlurRun(m_funcPtrGray, m_blue.bitmap, m_blue.getWidth(), m_blueBlurred.bitmap,
                           m_blueBlurred.getWidth());
 
-      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, NULL, I_blur);
+      vpImageConvert::merge(&m_redBlurred, &m_greenBlurred, &m_blueBlurred, nullptr, I_blur);
     }
   }
 
@@ -125,8 +124,7 @@ protected:
 */
 vpGaussianFilter::vpGaussianFilter(unsigned int width, unsigned int height, float sigma, bool deinterleave)
   : m_impl(new Impl(width, height, sigma, deinterleave))
-{
-}
+{ }
 
 vpGaussianFilter::~vpGaussianFilter() { delete m_impl; }
 

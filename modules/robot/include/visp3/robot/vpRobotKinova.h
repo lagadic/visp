@@ -91,12 +91,12 @@ public:
   typedef enum { CMD_LAYER_USB, CMD_LAYER_ETHERNET, CMD_LAYER_UNSET } CommandLayer;
 
   vpRobotKinova();
-  virtual ~vpRobotKinova();
+  virtual ~vpRobotKinova() override;
 
   int connect();
 
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe) override;
+  void get_fJe(vpMatrix &fJe) override;
 
   /*!
    * Return constant transformation between end-effector and tool frame.
@@ -106,8 +106,8 @@ public:
 
   int getActiveDevice() const { return m_active_device; }
   int getNumDevices() const { return m_devices_count; }
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) override;
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
   void homing();
@@ -124,7 +124,7 @@ public:
    */
   void setCommandLayer(CommandLayer command_layer) { m_command_layer = command_layer; }
   void setDoF(unsigned int dof);
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
   /*!
    * \param[in] plugin_location: Path to Jaco SDK plugins (ie. `Kinova.API.USBCommandLayerUbuntu.so` on
    * unix-like platform or `CommandLayerWindows.dll` on Windows platform). By default this location is empty,
@@ -132,7 +132,7 @@ public:
    * them.
    */
   void setPluginLocation(const std::string &plugin_location) { m_plugin_location = plugin_location; }
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
   /*!
    * Enable or disable verbose mode to print to stdout additional information.
    * \param[in] verbose : true to enable verbose, false to disable. By default verbose

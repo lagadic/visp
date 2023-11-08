@@ -117,7 +117,7 @@ private:
   //      curPoints(), curPointsInd(),
   //        nbPointsCur(0), nbPointsInit(0), minNbPoint(4),
   //        enoughPoints(false), dt(1.), d0(1.), cam(),
-  //        isTrackedKltPoints(true), polygon(NULL), hiddenface(NULL),
+  //        isTrackedKltPoints(true), polygon(nullptr), hiddenface(nullptr),
   //        useScanLine(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
@@ -133,7 +133,7 @@ public:
   vpMbtDistanceKltPoints();
   virtual ~vpMbtDistanceKltPoints();
 
-  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask = NULL);
+  unsigned int computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask = nullptr);
   void computeHomography(const vpHomogeneousMatrix &_cTc0, vpHomography &cHc0);
   void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 
@@ -185,7 +185,7 @@ public:
 
   inline bool hasEnoughPoints() const { return enoughPoints; }
 
-  void init(const vpKltOpencv &_tracker, const vpImage<bool> *mask = NULL);
+  void init(const vpKltOpencv &_tracker, const vpImage<bool> *mask = nullptr);
 
   /*!
    Return if the klt points are used for tracking.

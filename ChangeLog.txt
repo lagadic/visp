@@ -12,9 +12,11 @@ ViSP 3.x.x (Version in development)
     .
   - Deprecated removed
     . vpPlanarObjectDetector, vpFernClassifier classes are removed
+    . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
   - New features and improvements
     . Introduce applications in apps folder, a collection of useful tools that
       have a dependency to the install target
+    . Bump minimal c++ standard to c++11
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials

@@ -78,7 +78,7 @@ vpAROgre::vpAROgre(const vpCameraParameters &cam, unsigned int width, unsigned i
     mInputManager(0), mKeyboard(0),
 #endif
     keepOn(true), // When created no reason to stop displaying
-    mImageRGBA(), mImage(), mPixelBuffer(), mBackground(NULL), mBackgroundHeight(0), mBackgroundWidth(0),
+    mImageRGBA(), mImage(), mPixelBuffer(), mBackground(nullptr), mBackgroundHeight(0), mBackgroundWidth(0),
     mWindowHeight(height), mWindowWidth(width), windowHidden(false), mNearClipping(0.001), mFarClipping(200), mcam(cam),
     mshowConfigDialog(true), mOptionalResourceLocation()
 {
@@ -246,7 +246,7 @@ void vpAROgre::init(bool
   }
   std::cout << "######################### Load plugin file: " << pluginFile << std::endl;
 
-  if (Ogre::Root::getSingletonPtr() == NULL) {
+  if (Ogre::Root::getSingletonPtr() == nullptr) {
     mRoot = new Ogre::Root(pluginFile, "ogre.cfg", "Ogre.log");
   } else {
     mRoot = Ogre::Root::getSingletonPtr();

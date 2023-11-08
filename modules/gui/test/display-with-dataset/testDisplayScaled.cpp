@@ -61,7 +61,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
   // backup the input image
   vpImage<Type> Ibackup(I);
 
-  vpDisplay *d = NULL;
+  vpDisplay *d = nullptr;
   if (display == "GDI") {
 #ifdef VISP_HAVE_GDI
     d = new vpDisplayGDI;
@@ -249,7 +249,7 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 
   vpDisplay::close(I);
 
-  if (d != NULL)
+  if (d != nullptr)
     delete d;
 
   if (success)

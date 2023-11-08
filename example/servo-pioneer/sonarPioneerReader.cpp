@@ -81,11 +81,11 @@ void sonarPrinter(void)
   ArPose *pose;
 
   sd = (ArSonarDevice *)robot->findRangeDevice("sonar");
-  if (sd != NULL)
+  if (sd != nullptr)
   {
     sd->lockDevice();
     readings = sd->getCurrentBuffer();
-    if (readings != NULL)
+    if (readings != nullptr)
     {
       for (it = readings->begin(); it != readings->end(); ++it)
       {
@@ -158,7 +158,7 @@ void sonarPrinter(void)
   ArSensorReading *reading;
   for (int sensor = 0; sensor < robot->getNumSonar(); sensor++) {
     reading = robot->getSonarReading(sensor);
-    if (reading != NULL) {
+    if (reading != nullptr) {
       angle = reading->getSensorTh();
       range = reading->getRange();
       double sx = reading->getSensorX(); // position of the sensor in the robot frame
@@ -328,7 +328,7 @@ int main(int argc, char **argv)
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
     if (isInitialized) {
-      if (d != NULL)
+      if (d != nullptr)
         delete d;
     }
 #endif

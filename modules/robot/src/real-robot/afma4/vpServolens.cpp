@@ -715,7 +715,7 @@ bool vpServolens::read(char *c, long timeout_s) const
   FD_ZERO(&readfds);
   FD_SET(static_cast<unsigned int>(this->remfd), &readfds);
 
-  if (select(FD_SETSIZE, &readfds, (fd_set *)NULL, (fd_set *)NULL, &timeout) > 0) {
+  if (select(FD_SETSIZE, &readfds, (fd_set *)nullptr, (fd_set *)nullptr, &timeout) > 0) {
     ssize_t n = ::read(this->remfd, c, 1); /* read one character at a time */
     if (n != 1)
       return false;

@@ -60,19 +60,19 @@ int main(int argc, const char ** argv)
   {
     {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *) &b_val,
      "Flag enabled."},
-    {"-int", vpParseArgv::ARGV_INT, (char*) NULL, (char *) &i_val,
+    {"-int", vpParseArgv::ARGV_INT, (char*) nullptr, (char *) &i_val,
      "An integer value."},
-    {"-long", vpParseArgv::ARGV_LONG, (char*) NULL, (char *) &l_val,
+    {"-long", vpParseArgv::ARGV_LONG, (char*) nullptr, (char *) &l_val,
      "An integer value."},
-    {"-float", vpParseArgv::ARGV_FLOAT, (char*) NULL, (char *) &f_val,
+    {"-float", vpParseArgv::ARGV_FLOAT, (char*) nullptr, (char *) &f_val,
      "A float value."},
-    {"-double", vpParseArgv::ARGV_DOUBLE, (char*) NULL, (char *) &d_val,
+    {"-double", vpParseArgv::ARGV_DOUBLE, (char*) nullptr, (char *) &d_val,
      "A double value."},
-    {"-string", vpParseArgv::ARGV_STRING, (char*) NULL, (char *) &s_val,
+    {"-string", vpParseArgv::ARGV_STRING, (char*) nullptr, (char *) &s_val,
      "A string value."},
-    {"-h", vpParseArgv::ARGV_HELP, (char*) NULL, (char *) NULL,
+    {"-h", vpParseArgv::ARGV_HELP, (char*) nullptr, (char *) nullptr,
      "Print the help."},
-    {(char*) NULL, vpParseArgv::ARGV_END, (char*) NULL, (char*) NULL, (char*) NULL} } ;
+    {(char*) nullptr, vpParseArgv::ARGV_END, (char*) nullptr, (char*) nullptr, (char*) nullptr} } ;
 
   // Read the command line options
   if(vpParseArgv::parse(&argc, argv, argTable,

@@ -110,11 +110,6 @@ vpSphere::vpSphere(double oX, double oY, double oZ, double R)
 }
 
 /*!
- * Destructor that does nothing.
- */
-vpSphere::~vpSphere() {}
-
-/*!
  * Perspective projection of the sphere.
  * This method updates internal parameters (cP and p).
  *
@@ -172,12 +167,14 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
       E = e;
       A = a;
       B = b;
-    } else {
+    }
+    else {
       E = -1.0 / e;
       A = b;
       B = a;
     }
-  } else {
+  }
+  else {
     E = 0.0;
     A = r / sqrt(s);
     B = r * sqrt(y0 * y0 + z0 * z0 - r * r) / s;

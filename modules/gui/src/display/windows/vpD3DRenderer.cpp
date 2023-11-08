@@ -73,11 +73,11 @@
 */
 vpD3DRenderer::vpD3DRenderer()
 {
-  pD3D = NULL;
-  pd3dDevice = NULL;
-  pSprite = NULL;
-  pd3dText = NULL;
-  pd3dVideoText = NULL;
+  pD3D = nullptr;
+  pd3dDevice = nullptr;
+  pSprite = nullptr;
+  pd3dText = nullptr;
+  pd3dVideoText = nullptr;
   textWidth = 0;
 
   // D3D palette
@@ -159,7 +159,7 @@ vpD3DRenderer::vpD3DRenderer()
 
   // Creates a logical font
   hFont = CreateFont(18, 0, 0, 0, FW_NORMAL, false, false, false, DEFAULT_CHARSET, OUT_DEFAULT_PRECIS,
-                     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, NULL);
+                     CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, DEFAULT_PITCH | FF_DONTCARE, nullptr);
 }
 
 /*!
@@ -170,13 +170,13 @@ vpD3DRenderer::~vpD3DRenderer()
 {
   DeleteObject(hFont);
 
-  if (pd3dDevice != NULL)
+  if (pd3dDevice != nullptr)
     pd3dDevice->Release();
-  if (pD3D != NULL)
+  if (pD3D != nullptr)
     pD3D->Release();
-  if (pd3dText != NULL)
+  if (pd3dText != nullptr)
     pd3dText->Release();
-  if (pd3dVideoText != NULL)
+  if (pd3dVideoText != nullptr)
     pd3dVideoText->Release();
 }
 
@@ -210,7 +210,7 @@ bool vpD3DRenderer::init(HWND hwnd, unsigned int width, unsigned int height)
   hWnd = hwnd;
 
   // D3D initialize
-  if (NULL == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
+  if (nullptr == (pD3D = Direct3DCreate9(D3D_SDK_VERSION)))
     throw vpDisplayException(vpDisplayException::notInitializedError, "Can't initialize D3D!");
 
   D3DDISPLAYMODE d3ddm;
@@ -443,7 +443,7 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
 void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -479,7 +479,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
                               unsigned int height)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
@@ -519,7 +519,7 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
 void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -555,7 +555,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
                               unsigned int height)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
@@ -596,7 +596,7 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
 bool vpD3DRenderer::render()
 {
   // Clears the back buffer to a blue color
-  // pd3dDevice->Clear( 0, NULL, D3DCLEAR_TARGET,
+  // pd3dDevice->Clear( 0, nullptr, D3DCLEAR_TARGET,
   // D3DCOLOR_XRGB(0,0,255), 1.0f, 0 );
 
   // Begins the scene.
@@ -617,17 +617,17 @@ bool vpD3DRenderer::render()
 
 #if (D3DX_SDK_VERSION <= 9)
   pSprite->Begin(); //
-  pSprite->Draw(pd3dVideoText, &r, NULL, NULL, NULL, NULL, 0xFFFFFFFF);
+  pSprite->Draw(pd3dVideoText, &r, nullptr, nullptr, nullptr, nullptr, 0xFFFFFFFF);
 #else
   pSprite->Begin(0);
-  pSprite->Draw(pd3dVideoText, &r, NULL, NULL, 0xFFFFFFFF);
+  pSprite->Draw(pd3dVideoText, &r, nullptr, nullptr, 0xFFFFFFFF);
 #endif
   pSprite->End();
 
   // Ends the scene.
   pd3dDevice->EndScene();
   // Presents the backbuffer
-  pd3dDevice->Present(NULL, NULL, NULL, NULL);
+  pd3dDevice->Present(nullptr, nullptr, nullptr, nullptr);
 
   return true;
 }
@@ -647,7 +647,7 @@ void vpD3DRenderer::setPixel(const vpImagePoint &iP, const vpColor &color)
   }
 
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -687,7 +687,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
                              unsigned int thickness, int style)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     // Will contain the texture's surface drawing context
     HDC hDCMem;
 
@@ -742,7 +742,7 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
           double j = ip1_.get_j();
 
           // Move to the starting point
-          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
           // Draw the line
           LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
@@ -750,14 +750,14 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
           double i = slope * j + orig;
           // Move to the starting point
-          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), nullptr);
           // Draw the line
           LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
       }
     } else {
       // move to the starting point
-      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), NULL);
+      MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
       // Draw the line
       LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
     }
@@ -784,7 +784,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
                              bool fill, unsigned int thickness)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     if (fill == false) {
       drawLine(topLeft, topLeft + vpImagePoint(0, width), color, thickness);
       drawLine(topLeft + vpImagePoint(0, width), topLeft + vpImagePoint(height, width), color, thickness);
@@ -846,7 +846,7 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
 void vpD3DRenderer::clear(const vpColor &color)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT r;
@@ -928,7 +928,7 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
     return;
 
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
     RECT rec;
@@ -1146,7 +1146,7 @@ void TextureToRGBa(vpImage<vpRGBa> &I, unsigned char *imBuffer, unsigned int pit
 void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 {
   // if the device has been initialized
-  if (pd3dDevice != NULL) {
+  if (pd3dDevice != nullptr) {
 
     // resize the destination image as needed
     I.resize(m_rheight, m_rwidth);

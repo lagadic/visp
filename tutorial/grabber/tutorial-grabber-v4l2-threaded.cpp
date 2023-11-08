@@ -61,7 +61,7 @@ vpThread::Return displayFunction(vpThread::Args args)
   t_CaptureState capture_state_;
   bool display_initialized_ = false;
 #if defined(VISP_HAVE_X11)
-  vpDisplayX *d_ = NULL;
+  vpDisplayX *d_ = nullptr;
 #endif
 
   do {

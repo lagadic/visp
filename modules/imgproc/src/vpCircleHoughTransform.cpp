@@ -34,7 +34,6 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
 {
@@ -98,6 +97,7 @@ vpCircleHoughTransform::saveConfigurationInJSON(const std::string &jsonPath) con
 {
   m_algoParams.saveConfigurationInJSON(jsonPath);
 }
+
 #endif
 
 void
@@ -709,10 +709,10 @@ vpCircleHoughTransform::computeCircleCandidates()
         float scalProd = rx * gx + ry * gy;
         float scalProd2 = scalProd * scalProd;
         if (scalProd2 >= circlePerfectness2 * r2 * grad2) {
-          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additionnal vote
-          float r = std::sqrt(r2);
-          int r_bin = static_cast<int>(std::floor((r - m_algoParams.m_minRadius)/ m_algoParams.m_mergingRadiusDiffThresh));
-          r_bin = std::min(r_bin, nbBins - 1);
+          // Look for the Radius Candidate Bin RCB_k to which d_ij is "the closest" will have an additional vote
+          float r = static_cast<float>(std::sqrt(r2));
+          unsigned int r_bin = static_cast<unsigned int>(std::ceil((r - m_algoParams.m_minRadius)/ m_algoParams.m_centerMinDist));
+          r_bin = std::min(r_bin, static_cast<unsigned int>(nbBins) - 1);
           if ((r < m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * 0.5f)
             || (r > m_algoParams.m_minRadius + m_algoParams.m_mergingRadiusDiffThresh * (nbBins - 1 + 0.5f))) {
             // If the radius is at the very beginning of the allowed radii or at the very end, we do not span the vote
@@ -886,5 +886,3 @@ std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detecto
   os << detector.toString();
   return os;
 }
-
-#endif

@@ -137,7 +137,6 @@ class vpPoint;
 
   int main()
   {
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpHomogeneousMatrix M( vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix( {0, 0, -1, 0, -1, 0, -1, 0, 0} ) );
       std::cout << "M:\n" << M << std::endl;
@@ -148,7 +147,6 @@ class vpPoint;
                             -1,  0,  0, 0.3 };
       std::cout << "M:\n" << M << std::endl;
     }
-  #endif
   }
   \endcode
 
@@ -209,13 +207,7 @@ public:
   explicit vpHomogeneousMatrix(const std::vector<float> &v);
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix(const std::initializer_list<double> &list);
-#endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpHomogeneousMatrix() { }
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -356,10 +348,10 @@ public:
   void print() const;
 
   /*!
-    This function is not applicable to an homogeneous matrix that is always a
-    4-by-4 matrix.
-    \exception vpException::fatalError When this function is called.
-    */
+   * This function is not applicable to an homogeneous matrix that is always a
+   * 4-by-4 matrix.
+   * \exception vpException::fatalError When this function is called.
+   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
@@ -387,16 +379,16 @@ public:
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
-  */
+   * @name Deprecated functions
+   */
   //@{
   /*!
-     \deprecated Provided only for compat with previous releases.
-     This function does nothing.
+   * \deprecated Provided only for compat with previous releases.
+   *  This function does nothing.
    */
   vp_deprecated void init() { }
   /*!
-     \deprecated You should rather use eye().
+   *  \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
   //@}

@@ -151,7 +151,7 @@ int main()
     }
 
     // From now, in target[i], we have the 3D coordinates of a point in the
-    // object frame, and their correspondances in the camera frame. We can now
+    // object frame, and their correspondences in the camera frame. We can now
     // compute the pose cMo between the camera and the object.
     vpPose pose;
     // Add the 4 points to compute the pose

@@ -201,7 +201,7 @@ $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 --out=udpo
 
 \subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
 
-The code sendMocapToPixhawk.cpp allows you to send the MoCap stream comming from a Qualisys or Vicon motion capture system
+The code sendMocapToPixhawk.cpp allows you to send the MoCap stream coming from a Qualisys or Vicon motion capture system
 to the Pixhawk using MavLink. This code is based on vpMocapQualisys and vpMocapVicon classes that allows to get the vehicle FLU body
 frame in the MoCAP ENU reference frame. Then we use vpRobotMavsdk class and more precisely vpRobotMavsdk::sendMocapData() that internally send the
 FRD body frame pose with respect to the NED reference frame as a MavLink message to the Pixhawk.
@@ -272,7 +272,7 @@ In order to do this part, make sure you add a camera to your drone. We added a i
 Jetson through USB.
 
 The code servoPixhawkDroneIBVS.cpp is an example that needs to be run on the Jetson and that allows to do visual servoing with the drone.
-This program establishes a rigid link between the drone (equiped with a camera) and an Apriltag.
+This program establishes a rigid link between the drone (equipped with a camera) and an Apriltag.
 Depending on where the camera is placed, the matrices expressing the transformation between the FLU body frame of the drone and the
 camera frame need to be modified. Here is a picture of the drone showing where the D405 camera was attached.
 

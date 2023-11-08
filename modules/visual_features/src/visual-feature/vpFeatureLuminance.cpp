@@ -55,7 +55,7 @@
 */
 void vpFeatureLuminance::init()
 {
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -84,7 +84,7 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 
   s.resize(dim_s);
 
-  if (pixInfo != NULL)
+  if (pixInfo != nullptr)
     delete[] pixInfo;
 
   pixInfo = new vpLuminance[dim_s];
@@ -95,11 +95,11 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 /*!
   Default constructor that build a visual feature.
 */
-vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
+vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   nbParameters = 1;
   dim_s = 0;
-  flags = NULL;
+  flags = nullptr;
 
   init();
 }
@@ -108,7 +108,7 @@ vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixIn
  Copy constructor.
  */
 vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
-  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(NULL), firstTimeIn(0), cam()
+  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   *this = f;
 }
@@ -137,7 +137,7 @@ vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
 */
 vpFeatureLuminance::~vpFeatureLuminance()
 {
-  if (pixInfo != NULL)
+  if (pixInfo != nullptr)
     delete[] pixInfo;
 }
 

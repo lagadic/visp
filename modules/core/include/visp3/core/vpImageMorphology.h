@@ -114,11 +114,11 @@ public:
   template <typename T>
   static void dilatation(vpImage<T> &I, const vpConnexityType &connexity = CONNEXITY_4);
 
-  template<typename T>
-  static void erosion(vpImage<T> &I, const int size = 3);
+  template <typename T>
+  static void erosion(vpImage<T> &I, const int &size);
 
-  template<typename T>
-  static void dilatation(vpImage<T> &I, const int size = 3);
+  template <typename T>
+  static void dilatation(vpImage<T> &I, const int &size);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -399,7 +399,7 @@ void vpImageMorphology::erosion(vpImage<T> &I, const vpConnexityType &connexity)
   \param I : Image to process.
   \param connexity : Type of connexity: 4 or 8.
 
-  \sa erosion(vpImage<unsigned char> &, const vpConnexityType &)
+  \sa erosion(vpImage<T> &, const vpConnexityType &)
 */
 template <typename T>
 void vpImageMorphology::dilatation(vpImage<T> &I, const vpConnexityType &connexity)
@@ -412,7 +412,7 @@ template<typename T>
 void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size)
 {
   if (size % 2 != 1) {
-    throw(vpException(vpException::badValue, "Dilatation kernel must be odd."));
+    throw(vpException(vpException::badValue, "Dilatation/erosion kernel must be odd."));
   }
 
   const int width_in = I.getWidth();
@@ -451,6 +451,15 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
 
 /*!
  * \brief Erosion of \b size >=3 with 8-connectivity.
+  Erode an image using the given structuring element.
+
+  The erosion of \f$ A \left( x, y \right) \f$ by \f$ B \left (x, y
+  \right) \f$ is defined as: \f[ \left ( A \ominus B \right ) \left( x,y
+  \right) = \textbf{min} \left \{ A \left ( x+x', y+y' \right ) - B \left (
+  x', y'\right ) | \left ( x', y'\right ) \subseteq D_B \right \} \f] where
+  \f$ D_B \f$ is the domain of the structuring element \f$ B \f$ and \f$ A
+  \left( x,y \right) \f$ is assumed to be \f$ + \infty \f$ outside the domain
+  of the image.
 
   In our case, the erosion is performed with a flat structuring element
   \f$ \left( B \left( x,y \right) = 0 \right) \f$. The erosion using
@@ -467,7 +476,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
   \sa dilatation(vpImage<T> &, const int &)
 */
 template <typename T>
-void vpImageMorphology::erosion(vpImage<T> &I, const int size)
+void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
 {
   const T &(*operation)(const T & a, const T & b) = std::min;
   vpImageMorphology::imageOperation(I, operation, size);
@@ -476,7 +485,15 @@ void vpImageMorphology::erosion(vpImage<T> &I, const int size)
 /**
  * \brief Dilatation of \b size >=3 with 8-connectivity.
  *
- *  In our case, the dilatation is performed with a flat structuring element
+ * The dilatation of \f$ A \left( x, y \right) \f$ by \f$ B \left
+  (x, y \right) \f$ is defined as: \f[ \left ( A \oplus B \right ) \left( x,y
+  \right) = \textbf{max} \left \{ A \left ( x-x', y-y' \right ) + B \left (
+  x', y'\right ) | \left ( x', y'\right ) \subseteq D_B \right \} \f] where
+  \f$ D_B \f$ is the domain of the structuring element \f$ B \f$ and \f$ A
+  \left( x,y \right) \f$ is assumed to be \f$ - \infty \f$ outside the domain
+  of the image.
+
+  In our case, the dilatation is performed with a flat structuring element
   \f$ \left( B \left( x,y \right) = 0 \right) \f$. The dilatation using
   such a structuring element is equivalent to a local-maximum operator: \f[
     \left ( A \oplus B \right ) \left( x,y \right) = \textbf{max} \left \{ A
@@ -491,7 +508,7 @@ void vpImageMorphology::erosion(vpImage<T> &I, const int size)
  * \sa erosion(vpImage<T> &, const int &)
  */
 template<typename T>
-void vpImageMorphology::dilatation(vpImage<T> &I, const int size)
+void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
 {
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, operation, size);

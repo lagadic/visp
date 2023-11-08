@@ -322,7 +322,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
       if (isOuter || isHole) { // else (1) (c)
         vpContour *border = new vpContour;
-        vpContour *borderPrime = NULL;
+        vpContour *borderPrime = nullptr;
         vpImagePoint from(i, j);
 
         if (isOuter) {
@@ -399,13 +399,13 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
   if (retrievalMode == CONTOUR_RETR_EXTERNAL || retrievalMode == CONTOUR_RETR_LIST) {
     // Delete contours content
-    contours.m_parent = NULL;
+    contours.m_parent = nullptr;
 
     for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
-      (*it)->m_parent = NULL;
-      if (*it != NULL) {
+      (*it)->m_parent = nullptr;
+      if (*it != nullptr) {
         delete *it;
-        *it = NULL;
+        *it = nullptr;
       }
     }
 
@@ -444,6 +444,6 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
   }
 
   delete root;
-  root = NULL;
+  root = nullptr;
 }
 };

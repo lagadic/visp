@@ -244,7 +244,7 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    vpDisplay *d = NULL;
+    vpDisplay *d = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       d = new vpDisplayX(I);

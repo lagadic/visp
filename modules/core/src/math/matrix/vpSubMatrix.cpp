@@ -42,7 +42,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpSubMatrix.h>
 
-vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
+vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) {}
 
 /*!
   \brief Constructor
@@ -54,7 +54,7 @@ vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(NULL) {}
 */
 vpSubMatrix::vpSubMatrix(vpMatrix &m, const unsigned int &row_offset, const unsigned int &col_offset,
                          const unsigned int &nrows, const unsigned int &ncols)
-  : pRowNum(0), pColNum(0), parent(NULL)
+  : pRowNum(0), pColNum(0), parent(nullptr)
 {
   init(m, row_offset, col_offset, nrows, ncols);
 }
@@ -173,4 +173,4 @@ vpSubMatrix &vpSubMatrix::operator=(const double &x)
   return *this;
 }
 
-vpSubMatrix::~vpSubMatrix() { data = NULL; }
+vpSubMatrix::~vpSubMatrix() { data = nullptr; }

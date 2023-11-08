@@ -132,13 +132,15 @@ void vpPoint::setWorldCoordinates(const vpColVector &oP_)
     oP[1] = oP_[1];
     oP[2] = oP_[2];
     oP[3] = 1.;
-  } else if (oP_.size() == 4) {
+  }
+  else if (oP_.size() == 4) {
     oP[0] = oP_[0];
     oP[1] = oP_[1];
     oP[2] = oP_[2];
     oP[3] = oP_[3];
     oP /= oP[3];
-  } else {
+  }
+  else {
     throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", oP_.size()));
   }
 }
@@ -160,13 +162,15 @@ void vpPoint::setWorldCoordinates(const std::vector<double> &oP_)
     oP[1] = oP_[1];
     oP[2] = oP_[2];
     oP[3] = 1.;
-  } else if (oP_.size() == 4) {
+  }
+  else if (oP_.size() == 4) {
     oP[0] = oP_[0];
     oP[1] = oP_[1];
     oP[2] = oP_[2];
     oP[3] = oP_[3];
     oP /= oP[3];
-  } else {
+  }
+  else {
     throw(vpException(vpException::dimensionError, "Cannot initialize vpPoint from vector with size %d", oP_.size()));
   }
 }
@@ -283,36 +287,36 @@ void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
   frame are set to the same coordinates than the one in the camera frame.
 */
 const vpPoint
-operator*(const vpHomogeneousMatrix &aMb, const vpPoint& bP)
+operator*(const vpHomogeneousMatrix &aMb, const vpPoint &bP)
 {
-  vpPoint aP ;
+  vpPoint aP;
 
-  vpColVector v(4),v1(4) ;
+  vpColVector v(4), v1(4);
 
-  v[0] = bP.get_X() ;
-  v[1] = bP.get_Y() ;
-  v[2] = bP.get_Z() ;
-  v[3] = bP.get_W() ;
+  v[0] = bP.get_X();
+  v[1] = bP.get_Y();
+  v[2] = bP.get_Z();
+  v[3] = bP.get_W();
 
-  v1[0] = aMb[0][0]*v[0] + aMb[0][1]*v[1]+ aMb[0][2]*v[2]+ aMb[0][3]*v[3] ;
-  v1[1] = aMb[1][0]*v[0] + aMb[1][1]*v[1]+ aMb[1][2]*v[2]+ aMb[1][3]*v[3] ;
-  v1[2] = aMb[2][0]*v[0] + aMb[2][1]*v[1]+ aMb[2][2]*v[2]+ aMb[2][3]*v[3] ;
-  v1[3] = aMb[3][0]*v[0] + aMb[3][1]*v[1]+ aMb[3][2]*v[2]+ aMb[3][3]*v[3] ;
+  v1[0] = aMb[0][0]*v[0] + aMb[0][1]*v[1]+ aMb[0][2]*v[2]+ aMb[0][3]*v[3];
+  v1[1] = aMb[1][0]*v[0] + aMb[1][1]*v[1]+ aMb[1][2]*v[2]+ aMb[1][3]*v[3];
+  v1[2] = aMb[2][0]*v[0] + aMb[2][1]*v[1]+ aMb[2][2]*v[2]+ aMb[2][3]*v[3];
+  v1[3] = aMb[3][0]*v[0] + aMb[3][1]*v[1]+ aMb[3][2]*v[2]+ aMb[3][3]*v[3];
 
-  v1 /= v1[3] ;
+  v1 /= v1[3];
 
   //  v1 = M*v ;
-  aP.set_X(v1[0]) ;
-  aP.set_Y(v1[1]) ;
-  aP.set_Z(v1[2]) ;
-  aP.set_W(v1[3]) ;
+  aP.set_X(v1[0]);
+  aP.set_Y(v1[1]);
+  aP.set_Z(v1[2]);
+  aP.set_W(v1[3]);
 
-  aP.set_oX(v1[0]) ;
-  aP.set_oY(v1[1]) ;
-  aP.set_oZ(v1[2]) ;
-  aP.set_oW(v1[3]) ;
+  aP.set_oX(v1[0]);
+  aP.set_oY(v1[1]);
+  aP.set_oZ(v1[2]);
+  aP.set_oW(v1[3]);
 
-  return aP ;
+  return aP;
 }
 
 /*!
@@ -325,25 +329,25 @@ operator*(const vpHomogeneousMatrix &aMb, const vpPoint& bP)
   \return A point with 2D coordinates in the image plane a.
 */
 const vpPoint
-operator*(const vpHomography &aHb, const vpPoint& bP)
+operator*(const vpHomography &aHb, const vpPoint &bP)
 {
-  vpPoint aP ;
-  vpColVector v(3),v1(3) ;
+  vpPoint aP;
+  vpColVector v(3), v1(3);
 
-  v[0] = bP.get_x() ;
-  v[1] = bP.get_y() ;
-  v[2] = bP.get_w() ;
+  v[0] = bP.get_x();
+  v[1] = bP.get_y();
+  v[2] = bP.get_w();
 
-  v1[0] = aHb[0][0]*v[0] + aHb[0][1]*v[1]+ aHb[0][2]*v[2] ;
-  v1[1] = aHb[1][0]*v[0] + aHb[1][1]*v[1]+ aHb[1][2]*v[2] ;
-  v1[2] = aHb[2][0]*v[0] + aHb[2][1]*v[1]+ aHb[2][2]*v[2] ;
+  v1[0] = aHb[0][0]*v[0] + aHb[0][1]*v[1]+ aHb[0][2]*v[2];
+  v1[1] = aHb[1][0]*v[0] + aHb[1][1]*v[1]+ aHb[1][2]*v[2];
+  v1[2] = aHb[2][0]*v[0] + aHb[2][1]*v[1]+ aHb[2][2]*v[2];
 
   //  v1 = M*v ;
-  aP.set_x(v1[0]) ;
-  aP.set_y(v1[1]) ;
-  aP.set_w(v1[2]) ;
+  aP.set_x(v1[0]);
+  aP.set_y(v1[1]);
+  aP.set_w(v1[2]);
 
-  return aP ;
+  return aP;
 }
 #endif
 //! For memory issue (used by the vpServo class only).
@@ -403,18 +407,6 @@ void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, 
 }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }
-
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-vpPoint &vpPoint::operator=(const vpPoint &vpp)
-{
-  p = vpp.p;
-  cP = vpp.cP;
-  oP = vpp.oP;
-  cPAvailable = vpp.cPAvailable;
-
-  return *this;
-}
-#endif
 
 /*!
  * Display the projection of a 3D point in image \e I.

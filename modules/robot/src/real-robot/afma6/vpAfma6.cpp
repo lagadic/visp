@@ -59,7 +59,7 @@
 /* ---------------------------------------------------------------------- */
 
 static const char *opt_Afma6[] = {"JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
-                                  "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", NULL};
+                                  "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr};
 
 #ifdef VISP_HAVE_AFMA6_DATA
 const std::string vpAfma6::CONST_AFMA6_FILENAME =
@@ -1116,7 +1116,7 @@ void vpAfma6::parseConfigFile(const std::string &filename)
     std::string key;
     ss >> key;
 
-    for (code = 0; NULL != opt_Afma6[code]; ++code) {
+    for (code = 0; nullptr != opt_Afma6[code]; ++code) {
       if (key.compare(opt_Afma6[code]) == 0) {
         break;
       }

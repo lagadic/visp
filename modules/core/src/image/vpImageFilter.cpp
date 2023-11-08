@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Various image tools, convolution, ...
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImageFilter.h>
@@ -645,7 +643,7 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
  * \param[in] p_cv_dIx : If different from nullptr, the gradient of cv_I with regard to the horizontal axis.
  * \param[in] p_cv_dIy : If different from nullptr, the gradient of cv_I with regard to the vertical axis.
  * \param[out] lowerThresh : The lower threshold for the Canny edge filter.
- * \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to apply (an odd number).
+ * \param[in] gaussianKernelSize : The size of the mask of the Gaussian filter to apply (an odd number).
  * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
  * \param[in] apertureGradient : Size of the mask for the Sobel operator (odd number).
  * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
@@ -656,10 +654,10 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
  * \return The upper Canny edge filter threshold.
  */
 float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
-                                     float &lowerThresh, const unsigned int &gaussianKernelSize,
-                                     const float &gaussianStdev, const unsigned int &apertureGradient,
-                                     const float &lowerThresholdRatio, const float &upperThresholdRatio,
-                                     const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
+                                           float &lowerThresh, const unsigned int &gaussianKernelSize,
+                                           const float &gaussianStdev, const unsigned int &apertureGradient,
+                                           const float &lowerThresholdRatio, const float &upperThresholdRatio,
+                                           const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
   double w = cv_I.cols;
   double h = cv_I.rows;
@@ -713,21 +711,22 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
  * \param[in] cv_I The input image we want the partial derivatives.
  * \param[out] cv_dIx The horizontal partial derivative, i.e. horizontal gradient.
  * \param[out] cv_dIy The vertical partial derivative, i.e. vertical gradient.
- * \param[in] computeDx Idicate if we must compute the horizontal gradient.
- * \param[in] computeDy Idicate if we must compute  the vertical gradient.
- * \param[in] normalize Idicate if we must normalize the gradient filters.
+ * \param[in] computeDx Indicate if we must compute the horizontal gradient.
+ * \param[in] computeDy Indicate if we must compute  the vertical gradient.
+ * \param[in] normalize Indicate if we must normalize the gradient filters.
  * \param[in] gaussianKernelSize The size of the kernel of the Gaussian filter used to blur the image.
  * \param[in] gaussianStdev The standard deviation of the Gaussian filter used to blur the image.
+ * If it is non-positive, it is computed from kernel size (`gaussianKernelSize` parameter) as
+ * \f$\sigma = 0.3*((gaussianKernelSize-1)*0.5 - 1) + 0.8\f$.
  * \param[in] apertureGradient The size of the kernel of the gradient filter.
  * \param[in] filteringType The type of filters to apply to compute the gradients.
- * \param[in] backend The type of backend to use to compute the gradients.
  */
 void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
-                      cv::Mat &cv_dIx, cv::Mat &cv_dIy,
-                      const bool &computeDx, const bool &computeDy, const bool &normalize,
-                      const unsigned int &gaussianKernelSize, const float &gaussianStdev,
-                      const unsigned int &apertureGradient,
-                      const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
+                                              cv::Mat &cv_dIx, cv::Mat &cv_dIy,
+                                              const bool &computeDx, const bool &computeDy, const bool &normalize,
+                                              const unsigned int &gaussianKernelSize, const float &gaussianStdev,
+                                              const unsigned int &apertureGradient,
+                                              const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
   if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
     || filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
@@ -952,80 +951,81 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
 }
 
 /*!
-  Apply the Canny edge operator on the image \e Isrc and return the resulting
-  image \e Ires.
-
-  The following example shows how to use the method:
-
-  \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageFilter.h>
-
-int main()
-{
-  // Constants for the Canny operator.
-  const unsigned int gaussianFilterSize = 5;
-  const float gaussianStdev = 2.0f;
-  const float upperThresholdCanny = 15.f;
-  const float lowerThresholdCanny = 5.f;
-  const float upperThresholdRatio = 0.8f;
-  const float lowerThresholdRatio = 0.6f;
-  const unsigned int apertureSobel = 3;
-  const bool normalizeGradient = true;
-  const vpCannyBackendType cannyBackend = CANNY_OPENCV_BACKEND; // or CANNY_VISP_BACKEND;
-  const vpCannyFilteringAndGradientType filteringType = CANNY_GBLUR_SOBEL_FILTERING; // or CANNY_GBLUR_SCHARR_FILTERING
-
-  // Image for the Canny edge operator
-  vpImage<unsigned char> Isrc;
-  vpImage<unsigned char> Icanny;
-
-  // First grab the source image Isrc.
-
-  // Apply the Canny edge operator and set the Icanny image.
-  vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel,
-                       gaussianStdev, lowerThresholdRatio, upperThresholdRatio, normalizeGradient,
-                       cannyBackend, filteringType);
-  return (0);
-}
-  \endcode
-
-  \param[in] Isrc : Image to apply the Canny edge detector to.
-  \param[out] Ires : Filtered image (255 means an edge, 0 otherwise).
-  \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to
-  apply (an odd number).
-  \param[in] lowerThreshold : The lower threshold for the Canny operator. Values lower
-  than this value are rejected. If negative, it will be set to one third
-  of the thresholdCanny .
-  \param[in] upperThreshold : The upper threshold for the Canny operator. Only value
-  greater than this value are marked as an edge. If negative, it will be automatically
-  computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
-  of the upper threshold .
-  \param[in] apertureGradient : Size of the mask for the gardient (Sobel or Scharr) operator (odd number).
-  \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
-  \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
-  It is used only if the user asks to compute the Canny thresholds.
-  \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient Gabs is lower or equal to define
-  the upper threshold. It is used only if the user asks to compute the Canny thresholds.
-  \param[in] normalizeGradients : Needs to be true if asking to compute the \b upperThreshold , otherwise it depends on
-  the user application and user-defined thresholds.
-  \param[in] cannyBackend : The backend to use to perform the Canny edge filtering.
-  \param[in] cannyFilteringSteps : The filtering + gradient operators to apply to compute the gradient in the early
-  stage of the Canny algoritgm.
-*/
+ * Apply the Canny edge operator on the image \e Isrc and return the resulting
+ * image \e Ires.
+ *
+ * The following example shows how to use the method:
+ *
+ * \code
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/core/vpImageFilter.h>
+ *
+ * int main()
+ * {
+ *   // Constants for the Canny operator.
+ *   const unsigned int gaussianFilterSize = 5;
+ *   const float gaussianStdev = 2.0f;
+ *   const float upperThresholdCanny = 15.f;
+ *   const float lowerThresholdCanny = 5.f;
+ *   const float upperThresholdRatio = 0.8f;
+ *   const float lowerThresholdRatio = 0.6f;
+ *   const unsigned int apertureSobel = 3;
+ *   const bool normalizeGradient = true;
+ *   const vpCannyBackendType cannyBackend = CANNY_OPENCV_BACKEND; // or CANNY_VISP_BACKEND;
+ *   const vpCannyFilteringAndGradientType filteringType = CANNY_GBLUR_SOBEL_FILTERING; // or CANNY_GBLUR_SCHARR_FILTERING
+ *
+ *   // Image for the Canny edge operator
+ *   vpImage<unsigned char> Isrc;
+ *   vpImage<unsigned char> Icanny;
+ *
+ *   // First grab the source image Isrc.
+ *
+ *   // Apply the Canny edge operator and set the Icanny image.
+ *   vpImageFilter::canny(Isrc, Icanny, gaussianFilterSize, lowerThresholdCanny, upperThresholdCanny, apertureSobel,
+ *                       gaussianStdev, lowerThresholdRatio, upperThresholdRatio, normalizeGradient,
+ *                       cannyBackend, filteringType);
+ *   return (0);
+ * }
+ * \endcode
+ *
+ * \param[in] Isrc : Image to apply the Canny edge detector to.
+ * \param[out] Ires : Filtered image (255 means an edge, 0 otherwise).
+ * \param[in] gaussianFilterSize : The size of the mask of the Gaussian filter to
+ * apply (an odd number).
+ * \param[in] lowerThreshold : The lower threshold for the Canny operator. Values lower
+ * than this value are rejected. If negative, it will be set to one third
+ * of the thresholdCanny.
+ * \param[in] upperThreshold : The upper threshold for the Canny operator. Only value
+ * greater than this value are marked as an edge. If negative, it will be automatically
+ * computed, along with the lower threshold. Otherwise, the lower threshold will be set to one third
+ * of the upper threshold.
+ * \param[in] apertureGradient : Size of the mask for the gradient (Sobel or Scharr) operator (odd number).
+ * \param[in] gaussianStdev : The standard deviation of the Gaussian filter to apply.
+ * If it is non-positive, it is computed from kernel size (`gaussianKernelSize` parameter) as
+ * \f$\sigma = 0.3*((gaussianKernelSize-1)*0.5 - 1) + 0.8\f$.
+ * \param[in] lowerThresholdRatio : The ratio of the upper threshold the lower threshold must be equal to.
+ * It is used only if the user asks to compute the Canny thresholds.
+ * \param[in] upperThresholdRatio : The ratio of pixels whose absolute gradient is lower or equal to define
+ * the upper threshold. It is used only if the user asks to compute the Canny thresholds.
+ * \param[in] normalizeGradients : Needs to be true if asking to compute the \b upperThreshold, otherwise it depends on
+ * the user application and user-defined thresholds.
+ * \param[in] cannyBackend : The backend to use to perform the Canny edge filtering.
+ * \param[in] cannyFilteringSteps : The filtering + gradient operators to apply to compute the gradient in the early
+ * stage of the Canny algorithm.
+ */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                    const unsigned int &gaussianFilterSize,
-                    const float &lowerThreshold, const float &upperThreshold, const unsigned int &apertureGradient,
-                    const float &gaussianStdev, const float &lowerThresholdRatio, const float &upperThresholdRatio,
-                    const bool &normalizeGradients,
-                    const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps
-)
+                          const unsigned int &gaussianFilterSize,
+                          const float &lowerThreshold, const float &upperThreshold, const unsigned int &apertureGradient,
+                          const float &gaussianStdev, const float &lowerThresholdRatio, const float &upperThresholdRatio,
+                          const bool &normalizeGradients,
+                          const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps)
 {
   if (cannyBackend == CANNY_OPENCV_BACKEND) {
 #if defined(HAVE_OPENCV_IMGPROC)
     cv::Mat img_cvmat, cv_dx, cv_dy, edges_cvmat;
     vpImageConvert::convert(Isrc, img_cvmat);
     computePartialDerivatives(img_cvmat, cv_dx, cv_dy, true, true, normalizeGradients, gaussianFilterSize,
-      gaussianStdev, apertureGradient, cannyFilteringSteps);
+                              gaussianStdev, apertureGradient, cannyFilteringSteps);
     float upperCannyThresh = upperThreshold;
     float lowerCannyThresh = lowerThreshold;
     if (upperCannyThresh < 0) {
@@ -1036,7 +1036,13 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     else if (lowerCannyThresh < 0) {
       lowerCannyThresh = upperCannyThresh / 3.f;
     }
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
     cv::Canny(cv_dx, cv_dy, edges_cvmat, lowerCannyThresh, upperCannyThresh, false);
+#else
+    cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize),
+                     gaussianStdev, gaussianStdev);
+    cv::Canny(img_cvmat, edges_cvmat, lowerCannyThresh, upperCannyThresh);
+#endif
     vpImageConvert::convert(edges_cvmat, Ires);
 #else
     std::string errMsg("[vpImageFilter::canny]You asked for CANNY_OPENCV_BACKEND but ViSP has not been compiled with OpenCV");

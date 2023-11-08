@@ -209,14 +209,14 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
       mediatypeID = atoi(optarg);
       break;
     default:
-      usage(argv[0], NULL, camera, nframes, opath);
+      usage(argv[0], nullptr, camera, nframes, opath);
       break;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, camera, nframes, opath);
+    usage(argv[0], nullptr, camera, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
   }

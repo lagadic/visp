@@ -124,9 +124,7 @@ class vpThetaUVector;
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   rzyx = {M_PI_4, M_PI_2, M_PI};
-#endif
   \endcode
 
   To get the values [rad] use:
@@ -175,7 +173,6 @@ int main()
   \endcode
 
 */
-
 class VISP_EXPORT vpRzyxVector : public vpRotationVector
 {
 public:
@@ -191,9 +188,6 @@ public:
   explicit vpRzyxVector(const vpColVector &rzyx);
   explicit vpRzyxVector(const std::vector<double> &rzyx);
 
-  //! Destructor.
-  virtual ~vpRzyxVector(){}
-
   // convert a rotation matrix into Rzyx vector
   vpRzyxVector buildFrom(const vpRotationMatrix &R);
 
@@ -206,10 +200,8 @@ public:
 
   vpRzyxVector &operator=(const vpColVector &rzyx);
   vpRzyxVector &operator=(double x);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRzyxVector &operator=(const vpRzyxVector &rzyx) = default;
   vpRzyxVector &operator=(const std::initializer_list<double> &list);
-#endif
 };
 
 #endif

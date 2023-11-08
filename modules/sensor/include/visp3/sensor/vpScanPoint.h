@@ -73,7 +73,7 @@ class /* VISP_EXPORT */ vpScanPoint // Note that here VISP_EXPORT should not
 {
 public:
   /*! Default constructor. */
-  inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) {}
+  inline vpScanPoint() : rDist(0), hAngle(0), vAngle(0) { }
   /*! Copy constructor. */
   inline vpScanPoint(const vpScanPoint &scanpoint) : rDist(0), hAngle(0), vAngle(0)
   {
@@ -94,7 +94,7 @@ public:
     this->vAngle = v_angle;
   }
   /*! Destructor that does nothing. */
-  inline virtual ~vpScanPoint(){};
+  inline virtual ~vpScanPoint() { };
   /*!
     Set the polar point coordinates.
     \param r_dist : Radial distance in meter.
@@ -143,9 +143,7 @@ public:
   */
   inline double getZ() const { return (rDist * cos(this->hAngle) * sin(this->vAngle)); }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpScanPoint &operator=(const vpScanPoint &) = default;
-#endif
 
   friend inline std::ostream &operator<<(std::ostream &s, const vpScanPoint &p);
 

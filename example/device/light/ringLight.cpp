@@ -141,7 +141,7 @@ bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
       nmsec = atof(optarg);
       break;
     case 'h':
-      usage(argv[0], NULL, nsec, nmsec);
+      usage(argv[0], nullptr, nsec, nmsec);
       return false;
       break;
 
@@ -154,7 +154,7 @@ bool getOptions(int argc, const char **argv, bool &on, int &nsec, double &nmsec)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, nsec, nmsec);
+    usage(argv[0], nullptr, nsec, nmsec);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;

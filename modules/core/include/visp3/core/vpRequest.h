@@ -49,7 +49,7 @@
 
   \brief This the request that will transit on the network
 
-  Exemple request decoding an image on a specific form.
+  Example request decoding an image on a specific form.
   First parameter : Height of the image.
   Second parameter : Width of the image.
   Thirs parameter : Bitmap of the image (not compress).

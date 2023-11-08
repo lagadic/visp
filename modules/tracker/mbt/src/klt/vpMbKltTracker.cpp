@@ -138,30 +138,30 @@ vpMbKltTracker::~vpMbKltTracker()
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
-    if (kltpoly != NULL) {
+    if (kltpoly != nullptr) {
       delete kltpoly;
     }
-    kltpoly = NULL;
+    kltpoly = nullptr;
   }
   kltPolygons.clear();
 
   for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
        ++it) {
     vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (kltPolyCylinder != NULL) {
+    if (kltPolyCylinder != nullptr) {
       delete kltPolyCylinder;
     }
-    kltPolyCylinder = NULL;
+    kltPolyCylinder = nullptr;
   }
   kltCylinders.clear();
 
   // delete the structures used to display circles
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
-    if (ci != NULL) {
+    if (ci != nullptr) {
       delete ci;
     }
-    ci = NULL;
+    ci = nullptr;
   }
 
   circles_disp.clear();
@@ -281,30 +281,30 @@ void vpMbKltTracker::resetTracker()
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
-    if (kltpoly != NULL) {
+    if (kltpoly != nullptr) {
       delete kltpoly;
     }
-    kltpoly = NULL;
+    kltpoly = nullptr;
   }
   kltPolygons.clear();
 
   for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
        ++it) {
     vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (kltPolyCylinder != NULL) {
+    if (kltPolyCylinder != nullptr) {
       delete kltPolyCylinder;
     }
-    kltPolyCylinder = NULL;
+    kltPolyCylinder = nullptr;
   }
   kltCylinders.clear();
 
   // delete the structures used to display circles
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
-    if (ci != NULL) {
+    if (ci != nullptr) {
       delete ci;
     }
-    ci = NULL;
+    ci = nullptr;
   }
 
   circles_disp.clear();
@@ -606,7 +606,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImag
 */
 void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo)
 {
-  vpMbKltTracker::setPose(&I, NULL, cdMo);
+  vpMbKltTracker::setPose(&I, nullptr, cdMo);
 }
 
 /*!
@@ -620,7 +620,7 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> &I, const vpHomogeneou
 */
 void vpMbKltTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo)
 {
-  vpMbKltTracker::setPose(NULL, &I_color, cdMo);
+  vpMbKltTracker::setPose(nullptr, &I_color, cdMo);
 }
 
 /*!
@@ -1391,30 +1391,30 @@ void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::str
   // delete the Klt Polygon features
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
-    if (kltpoly != NULL) {
+    if (kltpoly != nullptr) {
       delete kltpoly;
     }
-    kltpoly = NULL;
+    kltpoly = nullptr;
   }
   kltPolygons.clear();
 
   for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
        ++it) {
     vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    if (kltPolyCylinder != NULL) {
+    if (kltPolyCylinder != nullptr) {
       delete kltPolyCylinder;
     }
-    kltPolyCylinder = NULL;
+    kltPolyCylinder = nullptr;
   }
   kltCylinders.clear();
 
   // delete the structures used to display circles
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
-    if (ci != NULL) {
+    if (ci != nullptr) {
       delete ci;
     }
-    ci = NULL;
+    ci = nullptr;
   }
 
   faces.reset();

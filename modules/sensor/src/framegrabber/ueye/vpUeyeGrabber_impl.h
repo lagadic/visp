@@ -38,7 +38,7 @@
 class CameraList
 {
 public:
-  CameraList() : m_pCamList(NULL), m_CamInfo()
+  CameraList() : m_pCamList(nullptr), m_CamInfo()
   {
     // init the internal camera info structure
     ZeroMemory(&m_CamInfo, sizeof(UEYE_CAMERA_INFO));
@@ -73,7 +73,7 @@ public:
     if (is_GetCameraList(m_pCamList) == IS_SUCCESS) {
       DWORD dw = m_pCamList->dwCount;
       delete m_pCamList;
-      m_pCamList = NULL;
+      m_pCamList = nullptr;
 
       if (dw) {
         // Reallocate the required camera list size
@@ -101,7 +101,7 @@ public:
   {
     if (m_pCamList)
       delete m_pCamList;
-    m_pCamList = NULL;
+    m_pCamList = nullptr;
 
     ZeroMemory(&m_CamInfo, sizeof(UEYE_CAMERA_INFO));
   }

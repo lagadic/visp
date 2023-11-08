@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_UR_RTDE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_UR_RTDE)
 
 #include <visp3/robot/vpRobotUniversalRobots.h>
 
@@ -54,9 +54,10 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip " << robot_ip << "] [--help] [-h]"
-                << "\n";
+        << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -74,10 +75,12 @@ int main(int argc, char **argv)
     std::cout << "Robot model      : " << db_client->getRobotModel() << std::endl;
     std::cout << "PolyScope version: " << db_client->polyscopeVersion() << std::endl;
     robot.disconnect();
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "ur_rtde exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -147,13 +150,16 @@ int main(int argc, char **argv)
           return EXIT_FAILURE;
         }
       }
-    } else {
+    }
+    else {
       std::cout << "To proceed with this test you need to power on the robot" << std::endl;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "ur_rtde exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -177,10 +183,12 @@ int main(int argc, char **argv)
       std::cout << "Camera or tool frame force/torque: " << cFc.t() << std::endl;
       vpTime::wait(10);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cout << "ur_rtde exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -192,12 +200,8 @@ int main(int argc, char **argv)
 #else
 int main()
 {
-#if !defined(VISP_HAVE_UR_RTDE)
   std::cout << "ViSP is not build with libur_rtde 3rd party used to control a robot from Universal Robots..."
-            << std::endl;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
-#endif
+    << std::endl;
+
 }
 #endif

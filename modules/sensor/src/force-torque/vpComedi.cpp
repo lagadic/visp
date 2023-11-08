@@ -46,7 +46,7 @@
   Default constructor.
  */
 vpComedi::vpComedi()
-  : m_device("/dev/comedi0"), m_handler(NULL), m_subdevice(0), m_range(0), m_aref(AREF_DIFF), m_nchannel(6),
+  : m_device("/dev/comedi0"), m_handler(nullptr), m_subdevice(0), m_range(0), m_aref(AREF_DIFF), m_nchannel(6),
     m_range_info(6), m_maxdata(6), m_chanlist(6)
 {
 }
@@ -91,7 +91,7 @@ void vpComedi::close()
 {
   if (m_handler) {
     comedi_close(m_handler);
-    m_handler = NULL;
+    m_handler = nullptr;
   }
 }
 
@@ -104,7 +104,7 @@ void vpComedi::close()
  */
 std::vector<lsampl_t> vpComedi::getRawData() const
 {
-  if (m_handler == NULL) {
+  if (m_handler == nullptr) {
     throw vpException(vpException::fatalError, "Comedi device not open");
   }
   // Get raw data
@@ -132,7 +132,7 @@ std::vector<lsampl_t> vpComedi::getRawData() const
  */
 vpColVector vpComedi::getPhyData() const
 {
-  if (m_handler == NULL) {
+  if (m_handler == nullptr) {
     throw vpException(vpException::fatalError, "Comedi device not open");
   }
   // Get raw data
@@ -154,7 +154,7 @@ vpColVector vpComedi::getPhyData() const
 //! getPhyDataAsync().
 std::string vpComedi::getPhyDataUnits() const
 {
-  if (m_handler == NULL) {
+  if (m_handler == nullptr) {
     throw vpException(vpException::fatalError, "Comedi device not open");
   }
   std::string units;

@@ -152,7 +152,7 @@ int main()
   // Does the filtering
   vpColVector vm(2); // Measured velocities
   for ( ; ; ) {
-    // Get the two dimentional velocity measures
+    // Get the two dimensional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;
 
@@ -187,7 +187,7 @@ void vpLinearKalmanFilterInstantiation::initFilter(unsigned int n_signal, vpColV
 }
 
 /*!
-  Modelisation of a constant speed state model with white noise. The
+  Modelization of a constant speed state model with white noise. The
   measure is assumed to be the position of the target.
 
   The considered state model is the following
@@ -336,7 +336,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned in
 
 /*!
 
-  Modelisation of a constant speed state model with colored noise. The
+  Modelization of a constant speed state model with colored noise. The
   measure is assumed to be the velocity of the target.
 
   This state model assume that there is some memory associated with
@@ -472,7 +472,7 @@ int main()
   // Does the filtering
   vpColVector vm(2); // Measured velocities
   for ( ; ; ) {
-    // Get the two dimentional velocity measures
+    // Get the two dimensional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;
 
@@ -544,7 +544,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_Measur
 
 /*!
 
-  Modelisation of a constant acceleration state model with colored noise. The
+  Modelization of a constant acceleration state model with colored noise. The
   measure is assumed to be the velocity of the target.
 
   This state model assume that there is some memory associated with
@@ -691,7 +691,7 @@ int main()
   // Does the filtering
   vpColVector vm(2); // Measured velocities
   for ( ; ; ) {
-    // Get the two dimentional velocity measures
+    // Get the two dimensional velocity measures
     // vm[0] = ...;
     // vm[1] = ...;
 

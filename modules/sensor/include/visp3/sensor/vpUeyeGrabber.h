@@ -86,8 +86,8 @@ public:
   vpUeyeGrabber();
   virtual ~vpUeyeGrabber();
 
-  void acquire(vpImage<unsigned char> &I, double *timestamp_camera = NULL, std::string *timestamp_system = NULL);
-  void acquire(vpImage<vpRGBa> &I, double *timestamp_camera = NULL, std::string *timestamp_system = NULL);
+  void acquire(vpImage<unsigned char> &I, double *timestamp_camera = nullptr, std::string *timestamp_system = nullptr);
+  void acquire(vpImage<vpRGBa> &I, double *timestamp_camera = nullptr, std::string *timestamp_system = nullptr);
 
   std::string getActiveCameraModel() const;
   std::string getActiveCameraSerialNumber() const;

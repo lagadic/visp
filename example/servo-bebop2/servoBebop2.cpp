@@ -73,13 +73,7 @@ int main()
   std::cout << "\nThis example requires ffmpeg library. You should install it.\n" << std::endl;
   return EXIT_SUCCESS;
 }
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-int main()
-{
-  std::cout << "\nThis example requires cxx11 standard or higher. Turn it on using cmake -DUSE_CXX_STANDARD=11.\n"
-            << std::endl;
-  return EXIT_SUCCESS;
-}
+
 #else
 
 bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)
@@ -125,7 +119,8 @@ int main(int argc, char **argv)
         if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
           ip_address = std::string(argv[i + 1]);
           i++;
-        } else if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
+        }
+        else if (std::string(argv[i]) == "--distance_to_tag" && i + 1 < argc) {
           opt_distance_to_tag = std::atof(argv[i + 1]);
           if (opt_distance_to_tag <= 0) {
             std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
@@ -133,65 +128,71 @@ int main(int argc, char **argv)
           }
           opt_has_distance_to_tag = true;
           i++;
-        } else if (std::string(argv[i]) == "--intrinsic") {
+        }
+        else if (std::string(argv[i]) == "--intrinsic") {
 
           opt_cam_parameters = std::string(argv[i + 1]);
           opt_has_cam_parameters = true;
           i++;
-        } else if (std::string(argv[i]) == "--hd_stream") {
+        }
+        else if (std::string(argv[i]) == "--hd_stream") {
           stream_res = 1;
-        } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+        }
+        else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
           verbose = true;
-        } else {
+        }
+        else {
           std::cout << "Error : unknown parameter " << argv[i] << std::endl
-                    << "See " << argv[0] << " --help" << std::endl;
+            << "See " << argv[0] << " --help" << std::endl;
           return EXIT_FAILURE;
         }
       }
-    } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+    }
+    else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
       std::cout << "\nUsage:\n"
-                << "  " << argv[0]
-                << " [--tag_size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
-                << "[--hd_stream] [--verbose] [-v] [--help] [-h]\n"
-                << std::endl
-                << "Description:\n"
-                << "  --tag_size <size>\n"
-                << "      The size of the tag to detect in meters, required.\n\n"
-                << "  --ip <drone ip>\n"
-                << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
-                << "  --distance_to_tag <distance>\n"
-                << "      The desired distance to the tag in meters (default: 1 meter).\n\n"
-                << "  --intrinsic <xml file>\n"
-                << "      XML file containing computed intrinsic camera parameters (default: empty).\n\n"
-                << "  --hd_stream\n"
-                << "      Enables HD 720p streaming instead of default 480p.\n"
-                << "      Allows to increase range and accuracy of the tag detection,\n"
-                << "      but increases latency and computation time.\n"
-                << "      Caution: camera calibration settings are different for the two resolutions.\n"
-                << "      Make sure that if you pass custom intrinsic camera parameters,\n"
-                << "      they were obtained with the correct resolution.\n\n"
-                << "  --verbose, -v\n"
-                << "      Enables verbose (drone information messages and velocity commands\n"
-                << "      are then displayed).\n\n"
-                << "  --help, -h\n"
-                << "      Print help message.\n"
-                << std::endl;
+        << "  " << argv[0]
+        << " [--tag_size <size>] [--ip <drone ip>] [--distance_to_tag <distance>] [--intrinsic <xml file>] "
+        << "[--hd_stream] [--verbose] [-v] [--help] [-h]\n"
+        << std::endl
+        << "Description:\n"
+        << "  --tag_size <size>\n"
+        << "      The size of the tag to detect in meters, required.\n\n"
+        << "  --ip <drone ip>\n"
+        << "      Ip address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
+        << "  --distance_to_tag <distance>\n"
+        << "      The desired distance to the tag in meters (default: 1 meter).\n\n"
+        << "  --intrinsic <xml file>\n"
+        << "      XML file containing computed intrinsic camera parameters (default: empty).\n\n"
+        << "  --hd_stream\n"
+        << "      Enables HD 720p streaming instead of default 480p.\n"
+        << "      Allows to increase range and accuracy of the tag detection,\n"
+        << "      but increases latency and computation time.\n"
+        << "      Caution: camera calibration settings are different for the two resolutions.\n"
+        << "      Make sure that if you pass custom intrinsic camera parameters,\n"
+        << "      they were obtained with the correct resolution.\n\n"
+        << "  --verbose, -v\n"
+        << "      Enables verbose (drone information messages and velocity commands\n"
+        << "      are then displayed).\n\n"
+        << "  --help, -h\n"
+        << "      Print help message.\n"
+        << std::endl;
       return EXIT_SUCCESS;
-    } else {
+    }
+    else {
       std::cout << "Error : tag size parameter required." << std::endl << "See " << argv[0] << " --help" << std::endl;
       return EXIT_FAILURE;
     }
 
     std::cout
-        << "\nWARNING: \n - This program does no sensing or avoiding of "
-           "obstacles, \n"
-           "the drone WILL collide with any objects in the way! Make sure "
-           "the \n"
-           "drone has approximately 3 meters of free space on all sides.\n"
-           "  - The drone uses a downward-facing camera for horizontal speed estimation,\n make sure the drone flies "
-           "above a non-uniform flooring,\n or its movement will be inacurate and dangerous !\n"
+      << "\nWARNING: \n - This program does no sensing or avoiding of "
+      "obstacles, \n"
+      "the drone WILL collide with any objects in the way! Make sure "
+      "the \n"
+      "drone has approximately 3 meters of free space on all sides.\n"
+      "  - The drone uses a downward-facing camera for horizontal speed estimation,\n make sure the drone flies "
+      "above a non-uniform flooring,\n or its movement will be inacurate and dangerous !\n"
 
-        << std::endl;
+      << std::endl;
 
     vpRobotBebop2 drone(
         verbose, true, ip_address); // Create the drone with desired verbose level, settings reset, and corresponding IP
@@ -254,15 +255,18 @@ int main(int argc, char **argv)
           std::cout << "Cannot find parameters in XML file " << opt_cam_parameters << std::endl;
           if (drone.getVideoHeight() == 720) { // 720p streaming
             cam.initPersProjWithoutDistortion(785.6412585, 785.3322447, 637.9049857, 359.7524531);
-          } else { // 480p streaming
+          }
+          else { // 480p streaming
             cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
           }
         }
-      } else {
+      }
+      else {
         std::cout << "Setting default camera parameters ... " << std::endl;
         if (drone.getVideoHeight() == 720) { // 720p streaming
           cam.initPersProjWithoutDistortion(785.6412585, 785.3322447, 637.9049857, 359.7524531);
-        } else { // 480p streaming
+        }
+        else { // 480p streaming
           cam.initPersProjWithoutDistortion(531.9213063, 520.8495788, 429.133986, 240.9464457);
         }
       }
@@ -291,7 +295,7 @@ int main(int argc, char **argv)
       vpRotationMatrix c1Rc2(c1_rxyz_c2);                      // Rotation between camera 1 and 2
       vpHomogeneousMatrix c1Mc2(vpTranslationVector(), c1Rc2); // Homogeneous matrix between c1 and c2
 
-      vpRotationMatrix c1Re{0, 1, 0, 0, 0, 1, 1, 0, 0}; // Rotation between camera 1 and E
+      vpRotationMatrix c1Re { 0, 1, 0, 0, 0, 1, 1, 0, 0 }; // Rotation between camera 1 and E
       vpTranslationVector c1te(0, 0, -0.09);            // Translation between camera 1 and E
       vpHomogeneousMatrix c1Me(c1te, c1Re);             // Homogeneous matrix between c1 and E
 
@@ -311,8 +315,8 @@ int main(int argc, char **argv)
       double Z_d = (opt_has_distance_to_tag ? opt_distance_to_tag : 1.);
 
       // Define the desired polygon corresponding the the AprilTag CLOCKWISE
-      double X[4] = {tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2.};
-      double Y[4] = {tagSize / 2., -tagSize / 2., -tagSize / 2., tagSize / 2.};
+      double X[4] = { tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2. };
+      double Y[4] = { tagSize / 2., -tagSize / 2., -tagSize / 2., tagSize / 2. };
       std::vector<vpPoint> vec_P, vec_P_d;
 
       for (int i = 0; i < 4; i++) {
@@ -499,7 +503,8 @@ int main(int argc, char **argv)
           vpDisplay::displayLine(I, vec_ip[vec_ip_sorted[2].first], vec_ip[vec_ip_sorted[3].first], vpColor::red, 1,
                                  false);
 
-        } else {
+        }
+        else {
           std::stringstream sserr;
           sserr << "Failed to detect an Apriltag, or detected multiple ones";
           vpDisplay::displayText(I, 120, 20, sserr.str(), vpColor::red);
@@ -528,11 +533,13 @@ int main(int argc, char **argv)
 
       return EXIT_SUCCESS;
 
-    } else {
+    }
+    else {
       std::cout << "ERROR : failed to setup drone control." << std::endl;
       return EXIT_FAILURE;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

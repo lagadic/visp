@@ -73,9 +73,7 @@
   \endcode
   Or you can also initialize the vector from a list of doubles if ViSP is build with c++11 enabled:
   \code
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   t = {0, 0.1, 0.5};
-#endif
   \endcode
 
   To get the values [meters] use:
@@ -117,7 +115,7 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { };
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) { }
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
@@ -150,9 +148,7 @@ public:
   vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
   vpTranslationVector &operator=(double x);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpTranslationVector &operator=(const std::initializer_list<double> &list);
-#endif
 
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }
@@ -173,7 +169,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
-  };
+  }
 
   void set(double tx, double ty, double tz);
 

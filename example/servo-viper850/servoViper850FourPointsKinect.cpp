@@ -200,7 +200,7 @@ int main()
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the camera space" << std::endl;
     std::cout << " Use of the Viper850 robot " << std::endl;
-    std::cout << " task : servo 4 points on a square with dimention " << L << " meters" << std::endl;
+    std::cout << " task : servo 4 points on a square with dimension " << L << " meters" << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 

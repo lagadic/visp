@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
         compiler: [ {CC: /usr/bin/gcc-9, CXX: /usr/bin/g++-9}, {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
-        standard: [ 98, 11, 14, 17 ]
+        standard: [ 11, 14, 17 ]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -36,7 +36,7 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
-    - name: Install dependencies for ubuntu 18.04 and 20.04
+    - name: Install dependencies for ubuntu 20.04
       if: matrix.os != 'ubuntu-22.04'
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev nlohmann-json3-dev
 

@@ -116,7 +116,7 @@ void *laser_display_and_save_loop(void *)
     }
   }
 
-  vpDisplay *display = NULL;
+  vpDisplay *display = nullptr;
 #ifdef VISP_HAVE_MODULE_GUI
 #if defined(VISP_HAVE_X11)
   display = new vpDisplayX;
@@ -194,7 +194,7 @@ void *laser_display_and_save_loop(void *)
     // std::endl;
   }
   delete display;
-  return NULL;
+  return nullptr;
 }
 
 void *laser_acq_loop(void *)
@@ -223,7 +223,7 @@ void *laser_acq_loop(void *)
     std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
   }
 
-  return NULL;
+  return nullptr;
 }
 
 void *camera_acq_and_display_loop(void *)
@@ -235,7 +235,7 @@ void *camera_acq_and_display_loop(void *)
 
     // If no camera found return
     if (g.getNumCameras() == 0)
-      return NULL;
+      return nullptr;
 
     //     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     //     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
@@ -245,7 +245,7 @@ void *camera_acq_and_display_loop(void *)
     g.acquire(I);             // Acquire an image
     I.quarterSizeImage(Q);
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
 #ifdef VISP_HAVE_MODULE_GUI
 #if defined(VISP_HAVE_X11)
     display = new vpDisplayX;
@@ -292,7 +292,7 @@ void *camera_acq_and_display_loop(void *)
   } catch (...) {
   }
 #endif
-  return NULL;
+  return nullptr;
 }
 
 int main(int argc, const char **argv)
@@ -312,18 +312,18 @@ int main(int argc, const char **argv)
 
     // Parse the command line to set the variables
     vpParseArgv::vpArgvInfo argTable[] = {
-        {"-layer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&layerToDisplay,
+        {"-layer", vpParseArgv::ARGV_INT, (char *)nullptr, (char *)&layerToDisplay,
          "The layer to display:\n"
          "\t\t. 0x1 for layer 1.\n"
          "\t\t. 0x2 for layer 2.\n"
          "\t\t. 0x4 for layer 3.\n"
          "\t\t. 0x8 for layer 4.\n"
          "\t\tTo display all the layers you should set 0xF value."},
-        {"-save", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&save, "Turn to 1 in order to save data."},
-        {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL,
+        {"-save", vpParseArgv::ARGV_INT, (char *)nullptr, (char *)&save, "Turn to 1 in order to save data."},
+        {"-h", vpParseArgv::ARGV_HELP, (char *)nullptr, (char *)nullptr,
          "Display one or more measured layers form a Sick LD-MRS laser "
          "scanner."},
-        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}};
+        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr}};
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable,
@@ -337,9 +337,9 @@ int main(int argc, const char **argv)
     pthread_t thread_camera_acq;
     pthread_t thread_laser_acq;
     pthread_t thread_laser_display;
-    pthread_create(&thread_camera_acq, NULL, &camera_acq_and_display_loop, NULL);
-    pthread_create(&thread_laser_acq, NULL, &laser_acq_loop, NULL);
-    pthread_create(&thread_laser_display, NULL, &laser_display_and_save_loop, NULL);
+    pthread_create(&thread_camera_acq, nullptr, &camera_acq_and_display_loop, nullptr);
+    pthread_create(&thread_laser_acq, nullptr, &laser_acq_loop, nullptr);
+    pthread_create(&thread_laser_display, nullptr, &laser_display_and_save_loop, nullptr);
     pthread_join(thread_camera_acq, 0);
     pthread_join(thread_laser_acq, 0);
     pthread_join(thread_laser_display, 0);

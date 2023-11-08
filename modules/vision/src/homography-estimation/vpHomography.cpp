@@ -125,7 +125,7 @@ vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) cons
   vpMatrix M = (*this).convert();
   vpMatrix Minv;
   unsigned int r = M.pseudoInverse(Minv, sv_threshold);
-  if (rank != NULL) {
+  if (rank != nullptr) {
     *rank = r;
   }
 

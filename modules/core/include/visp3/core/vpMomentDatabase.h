@@ -52,19 +52,19 @@ class vpMomentObject;
   \ingroup group_core_moments
 
   \brief This class allows to register all vpMoments so they can access each
-other according to their dependencies.
+  other according to their dependencies.
 
   Sometimes, a moment needs to have access to other moment's values to be
-computed. For example vpMomentCentered needs additionnal information about the
-gravity center vpMomentGravityCenter in order to compute the moment's value
-from a vpMomentObject. This gravity center should be stored in a
-vpMomentDatabase where it can be accessed.
+  computed. For example vpMomentCentered needs additional information about the
+  gravity center vpMomentGravityCenter in order to compute the moment's value
+  from a vpMomentObject. This gravity center should be stored in a
+  vpMomentDatabase where it can be accessed.
 
   All moments in a database can access each other freely at any time. They can
-also verify if a moment is present in the database or not. Here is a example
-of a dependency between two moments using a vpMomentDatabase:
+  also verify if a moment is present in the database or not. Here is a example
+  of a dependency between two moments using a vpMomentDatabase:
 
-\code
+  \code
 #include <iostream>
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentDatabase.h>
@@ -127,7 +127,8 @@ class VISP_EXPORT vpMomentDatabase
 {
 private:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct vpCmpStr_t {
+  struct vpCmpStr_t
+  {
     bool operator()(char const *a, char const *b) const { return std::strcmp(a, b) < 0; }
   };
 #endif
@@ -135,8 +136,8 @@ private:
   void add(vpMoment &moment, const char *name);
 
 public:
-  vpMomentDatabase() : moments() {}
-  virtual ~vpMomentDatabase() {}
+  vpMomentDatabase() : moments() { }
+  virtual ~vpMomentDatabase() { }
 
   /** @name Inherited functionalities from vpMomentDatabase */
   //@{

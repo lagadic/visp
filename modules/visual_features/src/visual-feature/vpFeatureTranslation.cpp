@@ -69,7 +69,7 @@ void vpFeatureTranslation::init()
 
   // memory allocation
   s.resize(dim_s);
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
@@ -587,7 +587,7 @@ void vpFeatureTranslation::print(unsigned int select) const
 */
 vpFeatureTranslation *vpFeatureTranslation::duplicate() const
 {
-  vpFeatureTranslation *feature = NULL;
+  vpFeatureTranslation *feature = nullptr;
   if (translation == cdMc)
     feature = new vpFeatureTranslation(cdMc);
   if (translation == cMo)

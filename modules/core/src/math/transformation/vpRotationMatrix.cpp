@@ -89,7 +89,6 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set a rotation matrix from a list of 9 double values.
   \param list : List of double.
@@ -99,11 +98,9 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRotationMatrix R
   R = { 0, 0, -1, 0, -1, 0, -1, 0, 0 };
   std::cout << "R:\n" << R << std::endl;
-#endif
 }
   \endcode
   It produces the following output:
@@ -137,7 +134,6 @@ vpRotationMatrix &vpRotationMatrix::operator=(const std::initializer_list<double
 
   return *this;
 }
-#endif
 
 /*!
   Converts a 3-by-3 matrix into a rotation matrix.
@@ -539,7 +535,6 @@ vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray
  */
 vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(q); }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Construct a rotation matrix from a list of 9 double values.
   \param list : List of double.
@@ -549,10 +544,8 @@ vpRotationMatrix::vpRotationMatrix(const vpQuaternionVector &q) : vpArray2D<doub
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRotationMatrix R{ 0, 0, -1, 0, -1, 0, -1, 0, 0 };
   std::cout << "R:\n" << R << std::endl;
-#endif
 }
   \endcode
   It produces the following output:
@@ -577,7 +570,6 @@ vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list)
     }
   }
 }
-#endif
 
 /*!
   Return the rotation matrix transpose which is also the inverse of the

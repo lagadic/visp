@@ -62,7 +62,7 @@ vpMbScanLine::vpMbScanLine()
   : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(), visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
     ,
-    dispMaskDebug(NULL), dispLineDebug(NULL), linedebugImg()
+    dispMaskDebug(nullptr), dispLineDebug(nullptr), linedebugImg()
 #endif
 {
 #if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
@@ -77,9 +77,9 @@ vpMbScanLine::vpMbScanLine()
 vpMbScanLine::~vpMbScanLine()
 {
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(DEBUG_DISP)
-  if (dispLineDebug != NULL)
+  if (dispLineDebug != nullptr)
     delete dispLineDebug;
-  if (dispMaskDebug != NULL)
+  if (dispMaskDebug != nullptr)
     delete dispMaskDebug;
 #endif
 }

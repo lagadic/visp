@@ -118,12 +118,12 @@ public:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //    vpMbtDistanceCylinder(const vpMbtDistanceCylinder &)
-  //      : name(), index(0), cam(), me(NULL), wmean1(1), wmean2(1),
+  //      : name(), index(0), cam(), me(nullptr), wmean1(1), wmean2(1),
   //        featureline1(), featureline2(), isTrackedCylinder(true),
-  //        meline1(NULL), meline2(NULL), cercle1(NULL), cercle2(NULL),
-  //        radius(0), p1(NULL), p2(NULL), L(), error(), nbFeature(0),
-  //        nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(NULL),
-  //        hiddenface(NULL), index_polygon(-1), isvisible(false)
+  //        meline1(nullptr), meline2(nullptr), cercle1(nullptr), cercle2(nullptr),
+  //        radius(0), p1(nullptr), p2(nullptr), L(), error(), nbFeature(0),
+  //        nbFeaturel1(0), nbFeaturel2(0), Reinit(false), c(nullptr),
+  //        hiddenface(nullptr), index_polygon(-1), isvisible(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
   //      implemented!");
@@ -197,7 +197,7 @@ public:
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                      const vpImage<bool> *mask = NULL);
+                      const vpImage<bool> *mask = nullptr);
 
   /*!
    Return if the cylinder is used for tracking.
@@ -214,7 +214,7 @@ public:
   inline bool isVisible() const { return isvisible; }
 
   void reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                        const vpImage<bool> *mask = NULL);
+                        const vpImage<bool> *mask = nullptr);
 
   /*!
    Set the camera parameters.

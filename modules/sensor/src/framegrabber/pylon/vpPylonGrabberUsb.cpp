@@ -105,7 +105,7 @@ std::ostream &vpPylonGrabberUsb::getCameraInfo(std::ostream &os)
 }
 
 /*!
-  Return the handler to the active camera or NULL if the camera is not
+  Return the handler to the active camera or nullptr if the camera is not
   connected. This function was designed to provide a direct access to
   the Pylon SDK to get access to advanced functionalities that are not
   implemented in this class.
@@ -117,7 +117,7 @@ Pylon::CInstantCamera *vpPylonGrabberUsb::getCameraHandler()
   if (m_connected == true) {
     return &m_camera;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 

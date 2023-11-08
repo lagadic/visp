@@ -42,7 +42,7 @@
 #include <iostream>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE2)
 
 int main()
 {
@@ -57,11 +57,13 @@ int main()
 
     if (rs.getDepthScale() != 0) // If it has depth sensor
       std::cout << "Depth scale: " << std::setprecision(std::numeric_limits<float>::max_digits10) << rs.getDepthScale()
-                << std::endl;
+      << std::endl;
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -75,11 +77,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

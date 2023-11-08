@@ -216,7 +216,7 @@ public:
    *
    * \param I : Grey level image used as input. This image should have only 1 channel.
    * \param mask : Image mask used to restrict the keypoint detection
-   * area. If mask is NULL, all the image will be considered.
+   * area. If mask is nullptr, all the image will be considered.
    *
    * \exception vpTrackingException::initializationError : If the image I is not
    * initialized, or if the image or the mask have bad coding format.

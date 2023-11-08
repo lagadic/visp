@@ -41,8 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -101,7 +100,7 @@ int main(int argc, char *argv[])
 
     rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
                &pointcloud_colvector, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-               reinterpret_cast<unsigned char *>(infrared2.bitmap), NULL);
+               reinterpret_cast<unsigned char *>(infrared2.bitmap), nullptr);
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 
@@ -135,7 +134,7 @@ int main(int argc, char *argv[])
   d4.close(infrared2);
 
   std::cout << "Acquisition1 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   width = 640;
   height = 480;
@@ -161,7 +160,7 @@ int main(int argc, char *argv[])
     double t = vpTime::measureTimeMs();
 
     rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-               NULL, reinterpret_cast<unsigned char *>(infrared1.bitmap));
+               nullptr, reinterpret_cast<unsigned char *>(infrared1.bitmap));
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 
@@ -185,7 +184,7 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Acquisition2 - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -195,11 +194,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test work"
-            << std::endl;
 #endif
 #if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
   std::cout << "X11 or GDI are needed." << std::endl;

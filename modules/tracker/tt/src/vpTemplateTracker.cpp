@@ -41,13 +41,13 @@
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
-  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(NULL),
-    ptTemplatePyr(NULL), ptTemplateInit(false), templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL),
-    ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL),
-    ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
-    pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(nullptr),
+    ptTemplatePyr(nullptr), ptTemplateInit(false), templateSize(0), templateSizePyr(nullptr), ptTemplateSelect(nullptr),
+    ptTemplateSelectPyr(nullptr), ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(nullptr),
+    ptTemplateSuppPyr(nullptr), ptTemplateCompo(nullptr), ptTemplateCompoPyr(nullptr), zoneTracked(nullptr), zoneTrackedPyr(nullptr),
+    pyr_IDes(nullptr), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
     HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true),
-    useBrent(false), nbIterBrent(3), taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
+    useBrent(false), nbIterBrent(3), taillef(7), fgG(nullptr), fgdG(nullptr), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
     lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true),
     useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
 {
@@ -169,7 +169,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplatePyr;
-      ptTemplatePyr = NULL;
+      ptTemplatePyr = nullptr;
     }
 
     if (ptTemplateCompoPyr) {
@@ -182,7 +182,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplateCompoPyr;
-      ptTemplateCompoPyr = NULL;
+      ptTemplateCompoPyr = nullptr;
     }
 
     if (ptTemplateSuppPyr) {
@@ -200,7 +200,7 @@ void vpTemplateTracker::resetTracker()
         }
       }
       delete[] ptTemplateSuppPyr;
-      ptTemplateSuppPyr = NULL;
+      ptTemplateSuppPyr = nullptr;
     }
 
     if (ptTemplateSelectPyr) {
@@ -209,37 +209,37 @@ void vpTemplateTracker::resetTracker()
           delete[] ptTemplateSelectPyr[i];
       }
       delete[] ptTemplateSelectPyr;
-      ptTemplateSelectPyr = NULL;
+      ptTemplateSelectPyr = nullptr;
     }
 
     if (templateSizePyr) {
       delete[] templateSizePyr;
-      templateSizePyr = NULL;
+      templateSizePyr = nullptr;
     }
 
     if (HdesirePyr) {
       delete[] HdesirePyr;
-      HdesirePyr = NULL;
+      HdesirePyr = nullptr;
     }
 
     if (HLMdesirePyr) {
       delete[] HLMdesirePyr;
-      HLMdesirePyr = NULL;
+      HLMdesirePyr = nullptr;
     }
 
     if (HLMdesireInversePyr) {
       delete[] HLMdesireInversePyr;
-      HLMdesireInversePyr = NULL;
+      HLMdesireInversePyr = nullptr;
     }
 
     if (zoneTrackedPyr) {
       delete[] zoneTrackedPyr;
-      zoneTrackedPyr = NULL;
+      zoneTrackedPyr = nullptr;
     }
 
     if (pyr_IDes) {
       delete[] pyr_IDes;
-      pyr_IDes = NULL;
+      pyr_IDes = nullptr;
     }
   } else {
     if (ptTemplateInit) {
@@ -248,7 +248,7 @@ void vpTemplateTracker::resetTracker()
         delete[] ptTemplate[point].HiG;
       }
       delete[] ptTemplate;
-      ptTemplate = NULL;
+      ptTemplate = nullptr;
       ptTemplateInit = false;
     }
     if (ptTemplateCompo) {
@@ -256,7 +256,7 @@ void vpTemplateTracker::resetTracker()
         delete[] ptTemplateCompo[point].dW;
       }
       delete[] ptTemplateCompo;
-      ptTemplateCompo = NULL;
+      ptTemplateCompo = nullptr;
     }
     if (ptTemplateSupp) {
       for (unsigned int point = 0; point < templateSize; point++) {
@@ -268,12 +268,12 @@ void vpTemplateTracker::resetTracker()
         delete[] ptTemplateSupp[point].d2Wy;
       }
       delete[] ptTemplateSupp;
-      ptTemplateSupp = NULL;
+      ptTemplateSupp = nullptr;
     }
     if (ptTemplateSelectInit) {
       if (ptTemplateSelect) {
         delete[] ptTemplateSelect;
-        ptTemplateSelect = NULL;
+        ptTemplateSelect = nullptr;
       }
     }
   }
@@ -519,10 +519,10 @@ void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
   ptTemplateSuppPyr = new vpTemplateTrackerPointSuppMIInv *[nbLvlPyr];
   ptTemplateCompoPyr = new vpTemplateTrackerPointCompo *[nbLvlPyr];
   for (unsigned int i = 0; i < nbLvlPyr; i++) {
-    ptTemplatePyr[i] = NULL;
-    ptTemplateSuppPyr[i] = NULL;
-    ptTemplateSelectPyr[i] = NULL;
-    ptTemplateCompoPyr[i] = NULL;
+    ptTemplatePyr[i] = nullptr;
+    ptTemplateSuppPyr[i] = nullptr;
+    ptTemplateSelectPyr[i] = nullptr;
+    ptTemplateCompoPyr[i] = nullptr;
   }
   templateSizePyr = new unsigned int[nbLvlPyr];
   HdesirePyr = new vpMatrix[nbLvlPyr];

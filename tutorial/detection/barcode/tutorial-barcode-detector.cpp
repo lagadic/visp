@@ -27,7 +27,7 @@ int main(int argc, const char **argv)
 #endif
 
     //! [Create base detector]
-    vpDetectorBase *detector = NULL;
+    vpDetectorBase *detector = nullptr;
     //! [Create base detector]
 
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))

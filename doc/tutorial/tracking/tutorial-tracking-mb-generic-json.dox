@@ -116,7 +116,7 @@ stating that this tracker uses both edge (see the vpMe class) and KLT (see vpKlt
 The next important definition is:
 \snippet realsense-color-and-depth.json.example Transformation
 Describing the transformation between this camera and the reference camera. It can also be given as a vpPoseVector JSON representation.
-If the current camera is the reference, then "camTref" may be ommitted or set as the identity transformation.
+If the current camera is the reference, then "camTref" may be omitted or set as the identity transformation.
 
 Next, we must define the camera intrinsics (see vpCameraParameters):
 \snippet realsense-color-and-depth.json.example Camera
