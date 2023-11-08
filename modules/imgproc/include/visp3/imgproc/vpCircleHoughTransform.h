@@ -101,10 +101,12 @@ public:
     std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
     float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
     float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
-    int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
+    int m_dilatationKernelSize; /*!< Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.*/
     int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
                                     center candidate such as it is the barycenter of the window. Must be odd.*/
     float m_centerMinThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+    int m_expectedNbCenters; /*!< Expected number of different centers in the image. If negative, all candidates centers
+                                  are kept, otherwise only up to this number are kept.*/
 
     // // Circle candidates computation attributes
     float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
@@ -134,9 +136,10 @@ public:
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_minRadius(0.f)
       , m_maxRadius(1000.f)
-      , m_dilatationNbIter(1)
+      , m_dilatationKernelSize(3)
       , m_averagingWindowSize(5)
       , m_centerMinThresh(50.f)
+      , m_expectedNbCenters(-1)
       , m_circleProbaThresh(0.9f)
       , m_circlePerfectness(0.9f)
       , m_centerMinDist(15.f)
@@ -160,7 +163,7 @@ public:
      * \param[in] centerYlimits Minimum and maximum position on the vertical axis of the center of the circle we want to detect.
      * \param[in] minRadius Minimum radius of the circles we want to detect.
      * \param[in] maxRadius Maximum radius of the circles we want to detect.
-     * \param[in] dilatationNbIter Number of times dilatation is performed to detect the maximum number of votes for the center candidates
+     * \param[in] dilatationKernelSize Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.
      * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
      * \param[in] circleProbabilityThresh Probability threshold in order to keep a circle candidate.
      * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
@@ -176,6 +179,8 @@ public:
      * \param[in] upperCannyThreshRatio If the thresholds must be computed,the upper threshold will be equal to the value
      * such as the number of pixels of the image times \b upperThresholdRatio have an absolute gradient lower than the
      * upper threshold.
+     * \param[in] expectedNbCenters Expected number of centers in the image. If the number is negative, all the centers
+     * are kept. Otherwise, maximum up to this number of centers are kept.
      */
     vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
@@ -188,7 +193,7 @@ public:
       , const std::pair<int, int> &centerYlimits
       , const float &minRadius
       , const float &maxRadius
-      , const int &dilatationNbIter
+      , const int &dilatationKernelSize
       , const float &centerThresh
       , const float &circleProbabilityThresh
       , const float &circlePerfectness
@@ -199,6 +204,7 @@ public:
       , const vpImageFilter::vpCannyBackendType &backendType = vpImageFilter::CANNY_OPENCV_BACKEND
       , const float &lowerCannyThreshRatio = 0.6f
       , const float &upperCannyThreshRatio = 0.8f
+      , const int &expectedNbCenters = -1
     )
       : m_filteringAndGradientType(filteringAndGradientMethod)
       , m_gaussianKernelSize(gaussianKernelSize)
@@ -214,9 +220,10 @@ public:
       , m_centerYlimits(centerYlimits)
       , m_minRadius(std::min(minRadius, maxRadius))
       , m_maxRadius(std::max(minRadius, maxRadius))
-      , m_dilatationNbIter(dilatationNbIter)
+      , m_dilatationKernelSize(dilatationKernelSize)
       , m_averagingWindowSize(averagingWindowSize)
       , m_centerMinThresh(centerThresh)
+      , m_expectedNbCenters(expectedNbCenters)
       , m_circleProbaThresh(circleProbabilityThresh)
       , m_circlePerfectness(circlePerfectness)
       , m_centerMinDist(centerMinDistThresh)
@@ -326,14 +333,14 @@ public:
     }
 
     /**
-     * \brief Get the number of times dilatation is performed to detect the maximum number of votes
+     * \brief Get the kernel size of the dilatation that is performed to detect the maximum number of votes
      * for the center candidates.
      *
-     * \return int The number of iterations.
+     * \return int The kernel size.
      */
-    inline int getDilatationNbIter() const
+    inline int getDilatationKernelSize() const
     {
-      return m_dilatationNbIter;
+      return m_dilatationKernelSize;
     }
 
     /**
@@ -355,6 +362,17 @@ public:
     inline float getCenterMinThreshold() const
     {
       return m_centerMinThresh;
+    }
+
+    /**
+     * \brief Get the expected number of centers in the image. If the number is negative, all the centers
+     * are kept. Otherwise, maximum up to this number of centers are kept.
+     *
+     * \return int The expected number of centers.
+     */
+    inline int getExpectedNbCenters() const
+    {
+      return m_expectedNbCenters;
     }
 
     /**
@@ -414,9 +432,10 @@ public:
       txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) +"\n";
       txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
       txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
-      txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
+      txt += "\tKernel size of the dilatation filter = " + std::to_string(m_dilatationKernelSize) + "\n";
       txt += "\tAveraging window size for center detection = " + std::to_string(m_averagingWindowSize) + "\n";
       txt += "\tCenters votes threshold = " + std::to_string(m_centerMinThresh) + "\n";
+      txt += "\tExpected number of centers = " + (m_expectedNbCenters > 0 ? std::to_string(m_expectedNbCenters) : "no limits") + "\n";
       txt += "\tCircle probability threshold = " + std::to_string(m_circleProbaThresh) + "\n";
       txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
       txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
@@ -515,12 +534,14 @@ public:
       params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
       params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
 
-      params.m_dilatationNbIter = j.value("dilatationNbIter", params.m_dilatationNbIter);
+      params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
 
       params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
       if (params.m_averagingWindowSize <= 0 || params.m_averagingWindowSize % 2 == 0) {
         throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
       }
+
+      params.m_expectedNbCenters = j.value("expectedNbCenters", params.m_expectedNbCenters);
 
       params.m_centerMinThresh = j.value("centerThresh", params.m_centerMinThresh);
       if (params.m_centerMinThresh <= 0.f) {
@@ -570,9 +591,10 @@ public:
           {"centerXlimits", params.m_centerXlimits},
           {"centerYlimits", params.m_centerYlimits},
           {"radiusLimits", radiusLimits},
-          {"dilatationNbIter", params.m_dilatationNbIter},
+          {"dilatationKernelSize", params.m_dilatationKernelSize},
           {"averagingWindowSize", params.m_averagingWindowSize},
           {"centerThresh", params.m_centerMinThresh},
+          {"expectedNbCenters", params.m_expectedNbCenters},
           {"circleProbabilityThreshold", params.m_circleProbaThresh},
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
@@ -866,20 +888,26 @@ public:
   /**
    * \brief Set the parameters of the computation of the circle center candidates.
    *
-   * \param[in] dilatationRepet Number of repetition of the dilatation operation to detect the maxima in the center accumulator.
+   * \param[in] dilatationSize Kernel size of the dilatation operation used to detect the maxima in the center accumulator.
    * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
    * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
                                       center candidate such as it is the barycenter of the window. Must be odd.
+   * \param[in] expectedNbCenters Expected number of centers in the image. If the number is negative, all the centers
+   * are kept. Otherwise, maximum up to this number of centers are kept.
    */
-  inline void setCenterComputationParameters(const int &dilatationRepet, const float &centerThresh,
-                                             const int &averagingWindowSize = 5)
+  inline void setCenterComputationParameters(const int &dilatationSize, const float &centerThresh,
+                                             const int &averagingWindowSize = 5, const int expectedNbCenters = -1)
   {
-    m_algoParams.m_dilatationNbIter = dilatationRepet;
+    m_algoParams.m_dilatationKernelSize = dilatationSize;
     m_algoParams.m_centerMinThresh = centerThresh;
     m_algoParams.m_averagingWindowSize = averagingWindowSize;
+    m_algoParams.m_expectedNbCenters = expectedNbCenters;
 
-    if (m_algoParams.m_dilatationNbIter < 0) {
-      throw vpException(vpException::badValue, "Dilatations for center detection must be positive.");
+    if (m_algoParams.m_dilatationKernelSize < 3) {
+      throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be greater or equal to 3.");
+    }
+    else if ((m_algoParams.m_dilatationKernelSize % 2) == 0) {
+      throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be odd.");
     }
 
     if (m_algoParams.m_centerMinThresh <= 0.f) {

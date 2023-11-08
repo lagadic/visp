@@ -8,6 +8,7 @@
   "upperCannyThresh": -1.0,
   "centerMinDistance": 15.0,
   "centerThresh": 25.0,
+  "expectedNbCenters": 4,
   "centerXlimits": [
     0,
     640
@@ -17,7 +18,7 @@
     480
   ],
   "circlePerfectnessThreshold": 0.9,
-  "dilatationNbIter": 5,
+  "dilatationKernelSize": 5,
   "edgeMapFilteringNbIter" : 0,
   "gaussianKernelSize": 5,
   "gaussianStdev": 1.0,
