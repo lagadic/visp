@@ -197,18 +197,18 @@ public:
 
         if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
           if (computeDx) {
-            scaleX = vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
+            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2));
           }
           if (computeDy) {
-            scaleY = vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
+            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2));
           }
         }
         else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
           if (computeDx) {
-            scaleX = vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2);
+            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2));
           }
           if (computeDy) {
-            scaleY = vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2);
+            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2));
           }
         }
 
@@ -315,7 +315,7 @@ public:
         float dy = (float)dIy[r][c];
         float gradient = std::abs(dx) + std::abs(dy);
         float gradientClamped = std::min(gradient, (float)std::numeric_limits<unsigned char>::max());
-        dI[r][c] = gradientClamped;
+        dI[r][c] = static_cast<unsigned char>(gradientClamped);
       }
     }
 
@@ -665,11 +665,11 @@ public:
 
     for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
       if (c > i)
-        result += filter[i] * (I[r][c + i] + I[r][c - i]);
+        result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
       else
-        result += filter[i] * (I[r][c + i] + I[r][i - c]);
+        result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
   static inline double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -730,11 +730,11 @@ public:
 
     for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
       if (c + i < I.getWidth())
-        result += filter[i] * (I[r][c + i] + I[r][c - i]);
+        result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
       else
-        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
+        result += filter[i] * static_cast<FilterType>(I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
   static inline double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -869,11 +869,11 @@ public:
 
     for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
       if (r > i)
-        result += filter[i] * (I[r + i][c] + I[r - i][c]);
+        result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
       else
-        result += filter[i] * (I[r + i][c] + I[i - r][c]);
+        result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
   double static inline filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -931,11 +931,11 @@ public:
 
     for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
       if (r + i < I.getHeight())
-        result += filter[i] * (I[r + i][c] + I[r - i][c]);
+        result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
       else
-        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
+        result += filter[i] * static_cast<FilterType>(I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
   double static inline filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -1348,7 +1348,7 @@ public:
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
 
     const unsigned int kernel_size = size * 2 + 1;
-    double scale = (1. / 8.); // Scale to normalize Sobel3x3
+    FilterType scale = static_cast<FilterType>(1. / 8.); // Scale to normalize Sobel3x3
     if (kernel_size == 3) {
       memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return scale;

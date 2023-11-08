@@ -690,7 +690,7 @@ void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool cop
   vpImage<float> I_float(nbRows, nbCols);
   for (unsigned int i = 0; i < nbRows; ++i) {
     for (unsigned int j = 0; j < nbCols; ++j) {
-      I_float[i][j] = src[i][j];
+      I_float[i][j] = static_cast<float>(src[i][j]);
     }
   }
   convert(I_float, dest, copyData);
