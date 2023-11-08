@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-11, macos-12]
+        os: [macos-12]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -33,12 +33,7 @@ jobs:
     - name: Print OS information
       run: system_profiler SPSoftwareDataType
 
-    - name: Install dependencies for macos-11
-      if: matrix.os == 'macos-11'
-      run: brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json protobuf
-
-    - name: Install dependencies for macos-12
-      if: matrix.os == 'macos-12'
+    - name: Install dependencies
       run: brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
 
     - name: Clone visp-images
