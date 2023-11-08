@@ -668,7 +668,6 @@ vpCircleHoughTransform::computeCenterCandidates()
     int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : nbPeaks);
     nbPeaksToKeep = std::min(nbPeaksToKeep, (int)nbPeaks);
     for (int i = 0; i < nbPeaksToKeep; i++) {
-      std::cout << "Peak : (" << merged_peaks_position_votes[i].first.first << " ; " << merged_peaks_position_votes[i].first.second << ")\tVotes = " << merged_peaks_position_votes[i].second << std::endl;
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].first);
       m_centerVotes.push_back(merged_peaks_position_votes[i].second);
     }
