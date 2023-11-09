@@ -2,12 +2,19 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List, Optional
+import numpy as np
+import time
+import faulthandler
+faulthandler.enable()
+
 
 from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousMatrix, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16
 from visp.io import ImageIo
 from visp.mbt import MbGenericTracker, MbTracker
 from visp.gui import DisplayOpenCV
+from visp.core import Color
+from visp.core import PixelMeterConversion
 
 try:
   import cv2
@@ -125,10 +132,11 @@ class FrameData:
 
 
 
-def read_data(exp_config: MBTConfig, use_depth: bool, I: ImageGray):
+
+def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: ImageGray):
   color_format = '{:04d}_L.jpg'
   depth_format = 'Image{:04d}_R.exr'
-
+  use_depth = cam_depth is not None
   iteration = 1
   while True:
     color_filepath = exp_config.color_images_dir / color_format.format(iteration)
@@ -139,22 +147,35 @@ def read_data(exp_config: MBTConfig, use_depth: bool, I: ImageGray):
 
 
     I_depth_raw = None
+    point_cloud = None
     if use_depth:
       depth_filepath = exp_config.depth_images_dir / depth_format.format(iteration)
       if not depth_filepath.exists():
-        print(f'Could not find image {depth_filepath}, is the sequence finished?')
+        print(f'Could not find image {depth_filepath}')
         return
       I_depth_np = cv2.imread(str(depth_filepath), cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH)
       I_depth_np = I_depth_np[..., 0]
       I_depth_raw = ImageUInt16(I_depth_np * 32767.5)
       if I_depth_np.size == 0:
         print('Could not successfully read the depth image')
+        return
+      point_cloud = np.empty((*I_depth_np.shape, 3), dtype=np.float64)
+      Z = I_depth_np
+      Z[Z > 2] = 0.0 # Clamping values that are too high
+      t = time.time()
+      for i in range(I_depth_np.shape[0]):
+        for j in range(I_depth_np.shape[1]):
+          x, y = PixelMeterConversion.convertPoint(cam_depth, j, i, 0.0, 0.0)
+          point_cloud[i, j, :2] = [x, y]
+      point_cloud[:, :, 2] = Z
+      print(f'Point_cloud took {time.time() - t}')
+
 
     cMo_ground_truth = HomogeneousMatrix()
     ground_truth_file = exp_config.ground_truth_dir / (exp_config.color_camera_name + '_{:04d}.txt'.format(iteration))
     cMo_ground_truth.load(str(ground_truth_file))
     iteration += 1
-    yield FrameData(I, I_depth_raw, None, cMo_ground_truth)
+    yield FrameData(I, I_depth_raw, point_cloud, cMo_ground_truth)
 
 
 
@@ -212,7 +233,7 @@ if __name__ == '__main__':
   print('Color intrinsics:', cam_color)
   print('Depth intrinsics:', cam_depth)
   I = ImageGray()
-  data_generator = read_data(exp_config, not args.disable_depth, I)
+  data_generator = read_data(exp_config, cam_depth, I)
 
   frame_data = next(data_generator) # Get first frame for init
 
@@ -220,7 +241,6 @@ if __name__ == '__main__':
   if not args.disable_depth:
     depth_M_color.load(exp_config.extrinsic_file)
     tracker.setCameraTransformationMatrix('Camera2', depth_M_color)
-
 
   # tracker.initClick(I, str(mbt_model.init_file), True, HomogeneousMatrix()) TODO: does not work
   tracker.initFromPose(I, frame_data.cMo_ground_truth)
@@ -232,22 +252,42 @@ if __name__ == '__main__':
   dDepth = DisplayOpenCV()
   if not args.disable_depth:
     ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
-    dDepth.init(I_depth, 0, 640, 'Depth')
+    dDepth.init(I_depth, 0, I.getWidth(), 'Depth')
 
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
       ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
+
     Display.display(I)
     if not args.disable_depth:
       Display.display(I_depth)
-    tracker.track(I=I)
+
+    if args.disable_depth:
+      tracker.track(I=I)
+    else:
+      pc = frame_data.point_cloud
+      k = 'Camera2'
+      print(pc.shape)
+      image_dict = {
+        'Camera1': I
+      }
+      pc_h, pc_w, _ = pc.shape
+      pc_flat = np.reshape(pc, (-1, 3))
+      converted_pc = [ColVector(pc_flat[i]) for i in range(len(pc_flat))]
+
+      pc_dict, width_dict, height_dict = ({'Camera2': v} for v in (converted_pc, pc_w, pc_h))
+      print(len(converted_pc), converted_pc[0])
+      tracker.track(image_dict, pc_dict, width_dict, height_dict)
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
-    print(cMo)
+
+    Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2);
+
     Display.flush(I)
     if not args.disable_depth:
       Display.flush(I_depth)
 
+    Display.getKeyboardEvent(I, blocking=True)
 
 
 

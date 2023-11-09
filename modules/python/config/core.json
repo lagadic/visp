@@ -295,7 +295,14 @@
           "ignore": true
         }
       ]
+    },
+    "vpPixelMeterConversion": {
+      "additional_bindings": "bindings_vpPixelMeterConversion"
+    },
+    "vpMeterPixelConversion": {
+      "additional_bindings": "bindings_vpMeterPixelConversion"
     }
+
   }
 
 }
