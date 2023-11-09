@@ -240,7 +240,7 @@ if __name__ == '__main__':
     Display.display(I)
     if not args.disable_depth:
       Display.display(I_depth)
-    tracker.track(I)
+    tracker.track(I=I)
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
     print(cMo)

@@ -263,7 +263,11 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     maybe_get_return = f'{return_type} res = '
     maybe_return_in_tuple = 'res, '
 
-  if len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
+  if len(output_param_names) == 0 and (return_type is None or return_type == 'void'):
+    return_str = ''
+  elif len(output_param_names) == 0:
+    return_str = 'res'
+  elif len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
     return_str = output_param_names[0]
   else:
     return_str = f'std::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)})'
