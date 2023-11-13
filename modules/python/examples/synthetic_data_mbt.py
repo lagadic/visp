@@ -25,73 +25,6 @@ except:
 
 import matplotlib.pyplot as plt
 
-# bool read_data(unsigned int cpt, const std::string &video_color_images, const std::string &video_depth_images,
-#                bool disable_depth, const std::string &video_ground_truth,
-#                vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
-#                unsigned int &depth_width, unsigned int &depth_height,
-#                std::vector<vpColVector> &pointcloud, const vpCameraParameters &cam_depth,
-#                vpHomogeneousMatrix &cMo_ground_truth)
-# {
-#   char buffer[FILENAME_MAX];
-#   // Read color
-#   snprintf(buffer, FILENAME_MAX, video_color_images.c_str(), cpt);
-#   std::string filename_color = buffer;
-
-#   if (!vpIoTools::checkFilename(filename_color)) {
-#     std::cerr << "Cannot read: " << filename_color << std::endl;
-#     return false;
-#   }
-#   vpImageIo::read(I, filename_color);
-
-#   if (!disable_depth) {
-#     // Read depth
-#     snprintf(buffer, FILENAME_MAX, video_depth_images.c_str(), cpt);
-#     std::string filename_depth = buffer;
-
-#     if (!vpIoTools::checkFilename(filename_depth)) {
-#       std::cerr << "Cannot read: " << filename_depth << std::endl;
-#       return false;
-#     }
-#     cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
-#     if (depth_raw.empty()) {
-#       std::cerr << "Cannot read: " << filename_depth << std::endl;
-#       return false;
-#     }
-
-#     depth_width = static_cast<unsigned int>(depth_raw.cols);
-#     depth_height = static_cast<unsigned int>(depth_raw.rows);
-#     I_depth_raw.resize(depth_height, depth_width);
-#     pointcloud.resize(depth_width * depth_height);
-
-#     for (int i = 0; i < depth_raw.rows; i++) {
-#       for (int j = 0; j < depth_raw.cols; j++) {
-#         I_depth_raw[i][j] = static_cast<uint16_t>(32767.5f * depth_raw.at<cv::Vec3f>(i, j)[0]);
-#         double x = 0.0, y = 0.0;
-#         // Manually limit the field of view of the depth camera
-#         double Z = depth_raw.at<cv::Vec3f>(i, j)[0] > 2.0f ? 0.0 : static_cast<double>(depth_raw.at<cv::Vec3f>(i, j)[0]);
-#         vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
-#         size_t idx = static_cast<size_t>(i * depth_raw.cols + j);
-#         pointcloud[idx].resize(3);
-#         pointcloud[idx][0] = x * Z;
-#         pointcloud[idx][1] = y * Z;
-#         pointcloud[idx][2] = Z;
-#       }
-#     }
-#   }
-
-#   // Read ground truth
-#   snprintf(buffer, FILENAME_MAX, video_ground_truth.c_str(), cpt);
-#   std::string filename_pose = buffer;
-
-#   cMo_ground_truth.load(filename_pose);
-
-#   return true;
-
-
-
-
-
-
 
 class MBTModelData:
   def __init__(self, data_root: Path):
@@ -127,7 +60,7 @@ class MBTConfig:
 class FrameData:
   I: ImageGray
   I_depth: Optional[ImageUInt16]
-  point_cloud: Optional[List[ColVector]]
+  point_cloud: Optional[np.ndarray]
   cMo_ground_truth: HomogeneousMatrix
 
 
@@ -159,15 +92,16 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
       if I_depth_np.size == 0:
         print('Could not successfully read the depth image')
         return
-      point_cloud = np.empty((*I_depth_np.shape, 3), dtype=np.float64)
-      Z = I_depth_np
-      Z[Z > 2] = 0.0 # Clamping values that are too high
       t = time.time()
-      for i in range(I_depth_np.shape[0]):
-        for j in range(I_depth_np.shape[1]):
-          x, y = PixelMeterConversion.convertPoint(cam_depth, j, i, 0.0, 0.0)
-          point_cloud[i, j, :2] = [x, y]
-      point_cloud[:, :, 2] = Z
+      point_cloud = np.empty((*I_depth_np.shape, 3), dtype=np.float64)
+      Z = I_depth_np.copy()
+      Z[Z > 2] = 0.0 # Clamping values that are too high
+
+      vs, us = np.meshgrid(range(I_depth_np.shape[0]), range(I_depth_np.shape[1]), indexing='ij')
+      xs, ys = PixelMeterConversion.convertPoints(cam_depth, us, vs)
+      point_cloud[..., 0] = xs * Z
+      point_cloud[..., 1] = ys * Z
+      point_cloud[..., 2] = Z
       print(f'Point_cloud took {time.time() - t}')
 
 
@@ -234,7 +168,6 @@ if __name__ == '__main__':
   print('Depth intrinsics:', cam_depth)
   I = ImageGray()
   data_generator = read_data(exp_config, cam_depth, I)
-
   frame_data = next(data_generator) # Get first frame for init
 
   depth_M_color = HomogeneousMatrix()
@@ -242,12 +175,13 @@ if __name__ == '__main__':
     depth_M_color.load(exp_config.extrinsic_file)
     tracker.setCameraTransformationMatrix('Camera2', depth_M_color)
 
-  # tracker.initClick(I, str(mbt_model.init_file), True, HomogeneousMatrix()) TODO: does not work
-  tracker.initFromPose(I, frame_data.cMo_ground_truth)
-
   # Initialize displays
   dI = DisplayOpenCV()
   dI.init(I, 0, 0, 'Color image')
+
+  tracker.initClick(I, str(mbt_model.init_file))
+  tracker.initFromPose(I, frame_data.cMo_ground_truth)
+
   I_depth = None if args.disable_depth else ImageGray()
   dDepth = DisplayOpenCV()
   if not args.disable_depth:
@@ -266,30 +200,19 @@ if __name__ == '__main__':
       tracker.track(I=I)
     else:
       pc = frame_data.point_cloud
-      k = 'Camera2'
-      print(pc.shape)
       image_dict = {
         'Camera1': I
       }
-      pc_h, pc_w, _ = pc.shape
-      pc_flat = np.reshape(pc, (-1, 3))
-      converted_pc = [ColVector(pc_flat[i]) for i in range(len(pc_flat))]
-
-      pc_dict, width_dict, height_dict = ({'Camera2': v} for v in (converted_pc, pc_w, pc_h))
-      print(len(converted_pc), converted_pc[0])
-      tracker.track(image_dict, pc_dict, width_dict, height_dict)
+      t = time.time()
+      tracker.track(image_dict, {'Camera2': pc})
+      print(f'Tracking took {time.time() - t}s')
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
-    Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2);
+    Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2)
 
     Display.flush(I)
     if not args.disable_depth:
       Display.flush(I_depth)
 
     Display.getKeyboardEvent(I, blocking=True)
-
-
-
-
-    pass

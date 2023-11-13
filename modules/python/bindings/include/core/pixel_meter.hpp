@@ -30,7 +30,7 @@ void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
     double *x_ptr = static_cast<double *>(xs.request().ptr);
     double *y_ptr = static_cast<double *>(ys.request().ptr);
 
-    for (size_t i = 0; i < bufu.size; ++i) {
+    for (ssize_t i = 0; i < bufu.size; ++i) {
       vpPixelMeterConversion::convertPoint(cam, u_ptr[i], v_ptr[i], x_ptr[i], y_ptr[i]);
     }
 
@@ -54,6 +54,40 @@ Convert a set of 2D pixel coordinates to normalized coordinates.
 
 void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
 {
+  pyMP.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &xs, const py::array_t<double> &ys) {
+    py::buffer_info bufx = xs.request(), bufy = ys.request();
+    if (bufx.ndim != bufy.ndim || bufx.shape != bufy.shape) {
+      std::stringstream ss;
+      ss << "xs and ys must have the same number of dimensions and same number of elements, but got xs = " << shape_to_string(bufx.shape);
+      ss << "and ys = " << shape_to_string(bufy.shape);
+      throw std::runtime_error(ss.str());
+    }
+    py::array_t<double> us(bufx.shape);
+    py::array_t<double> vs(bufy.shape);
+
+    const double *x_ptr = static_cast<const double *>(bufx.ptr);
+    const double *y_ptr = static_cast<const double *>(bufy.ptr);
+    double *u_ptr = static_cast<double *>(us.request().ptr);
+    double *v_ptr = static_cast<double *>(vs.request().ptr);
+
+    for (ssize_t i = 0; i < bufx.size; ++i) {
+      vpMeterPixelConversion::convertPoint(cam, x_ptr[i], y_ptr[i], u_ptr[i], v_ptr[i]);
+    }
+
+
+    return std::make_tuple(std::move(us), std::move(vs));
+
+  }, R"doc(
+Convert a set of 2D normalized coordinates to pixel coordinates.
+:param cam: The camera intrinsics with which to convert normalized coordinates to pixels.
+:param xs: The normalized coordinates along the horizontal axis.
+:param ys: The normalized coordinates along the vertical axis.
+
+:raises RuntimeError: If xs and ys do not have the same dimensions and shape.
+
+:return: A tuple containing the u,v pixel coordinates of the input normalized coordinates.
+
+)doc", py::arg("cam"), py::arg("xs"), py::arg("ys"));
 
 }
 
