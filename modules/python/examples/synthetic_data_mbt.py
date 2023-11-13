@@ -132,7 +132,8 @@ if __name__ == '__main__':
   parser.add_argument('--display-ground-truth', action='store_true')
   parser.add_argument('--disable-klt', action='store_true')
   parser.add_argument('--disable-depth', action='store_true')
-
+  parser.add_argument('--step-by-step', action='store_true')
+  parser.add_argument('--init-ground-truth', action='store_true')
 
 
   args = parser.parse_args()
@@ -179,14 +180,16 @@ if __name__ == '__main__':
   dI = DisplayOpenCV()
   dI.init(I, 0, 0, 'Color image')
 
-  tracker.initClick(I, str(mbt_model.init_file))
-  tracker.initFromPose(I, frame_data.cMo_ground_truth)
-
   I_depth = None if args.disable_depth else ImageGray()
   dDepth = DisplayOpenCV()
   if not args.disable_depth:
     ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
-    dDepth.init(I_depth, 0, I.getWidth(), 'Depth')
+    dDepth.init(I_depth,  I.getWidth(), 0, 'Depth')
+
+  if args.init_ground_truth:
+    tracker.initFromPose(I, frame_data.cMo_ground_truth)
+  else:
+    tracker.initClick(I, str(mbt_model.init_file))
 
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
@@ -210,9 +213,9 @@ if __name__ == '__main__':
     tracker.getPose(cMo)
 
     Display.displayFrame(I, cMo, cam_color, 0.05, Color.none, 2)
-
+    tracker.display(I, cMo, cam_color, Color.red, 2)
     Display.flush(I)
     if not args.disable_depth:
       Display.flush(I_depth)
-
-    Display.getKeyboardEvent(I, blocking=True)
+    if args.step_by_step:
+      Display.getKeyboardEvent(I, blocking=True)
