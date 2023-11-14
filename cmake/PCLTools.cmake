@@ -37,6 +37,18 @@
 # IN: pcl_libraries
 # OUT: pcl_deps_include_dirs
 # OUT: pcl_deps_libraries
+#
+# PCL_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
+# full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
+# The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
+# is able to find the real name and location of the libraries.
+# But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
+# PCL_LIBRARIES and especially with VTK_LIBRARIES.
+# The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
+# with these names.
+# An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
+# will be not able to give the names of PCL libraries when used without CMake.
+#
 macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
