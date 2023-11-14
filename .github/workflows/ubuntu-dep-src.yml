@@ -79,6 +79,12 @@ jobs:
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
 
+    - name: DEBUG VTK
+      run: |
+        cd $VTK_DIR
+        ls lib/cmake/vtk-9.3
+        grep -R INCLUDE_DIRECTORIES lib/cmake/vtk-9.3/VTK-targets.cmake
+
     - name: Build OpenCV from source
       run: |
         pwd
