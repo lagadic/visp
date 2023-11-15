@@ -174,8 +174,6 @@ int main()
 #endif
 
 
-#if defined(VISP_HAVE_CXX11)
-
 #include <memory>
 #include <map>
 #include <cassert>
@@ -438,7 +436,6 @@ template<typename T> EXPORT std::vector<char> create_npy_header(const std::vecto
 
 }
 }
-#endif
 
 class VISP_EXPORT vpIoTools
 {

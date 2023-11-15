@@ -108,8 +108,6 @@
 // Released under MIT License
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
 
-#if defined(VISP_HAVE_CXX11)
-
 #include <regex>
 
 char visp::cnpy::BigEndianTest()
@@ -442,7 +440,6 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
   fclose(fp);
   return arr;
 }
-#endif
 
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";

@@ -140,7 +140,7 @@ void vp_readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsign
   const int req_channels = 1;
   unsigned char *buffer_read = stbi_load_from_memory(buffer, last_pos, &x, &y, &comp, req_channels);
 
-  I = vpImage(buffer_read, y, x, true);
+  I = vpImage<unsigned char>(buffer_read, y, x, true);
   delete[] buffer_read;
 }
 
