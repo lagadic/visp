@@ -25,6 +25,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
+    . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
+      standard enabled
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

@@ -33,10 +33,40 @@
 #
 #############################################################################
 
+# Remove BUILD_INTERFACE from __include_dirs
+# IN/OUT: __include_dirs
+#
+# If __include_dirs contains "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" as input,
+# it will be filtered as output to /home/VTK/install/include/vtk-9.3
+macro(vp_filter_build_interface __include_dirs)
+  if(${__include_dirs})
+    set(__include_dirs_filtered)
+    foreach(inc_ ${${__include_dirs}})
+      string(REGEX REPLACE "\\$<BUILD_INTERFACE:" "" inc_ ${inc_})
+      string(REGEX REPLACE ">" "" inc_ ${inc_})
+      list(APPEND __include_dirs_filtered ${inc_})
+    endforeach()
+
+    set(${__include_dirs} ${__include_dirs_filtered})
+  endif()
+endmacro()
+
 # Find pcl libraries and dependencies
 # IN: pcl_libraries
 # OUT: pcl_deps_include_dirs
 # OUT: pcl_deps_libraries
+#
+# PCL_LIBRARIES contains VTK 3rd party such as vtkalglib and not /usr/local/Cellar/vtk/6.3.0/lib/libvtkalglib-6.3.1.dylib
+# full path as requested to use ViSP as 3rd party. This is the case for all VTK libraries that are PCL dependencies.
+# The build of ViSP works with PCL_LIBRARIES since in that case thanks to vtkalglib properties, CMake
+# is able to find the real name and location of the libraries.
+# But when ViSP is used as a 3rd party where it should import PCL libraries, it doesn't work with
+# PCL_LIBRARIES and especially with VTK_LIBRARIES.
+# The solution here is to get the full location of VTK_LIBRARIES libraries thanks to the properties and link
+# with these names.
+# An other way could be to include PCLConfig.cmake, but in that case, visp-config and visp.pc
+# will be not able to give the names of PCL libraries when used without CMake.
+#
 macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   foreach(lib_ ${${pcl_libraries}})
     mark_as_advanced(${lib_}_LOCATION)
@@ -97,6 +127,10 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
@@ -159,6 +193,10 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       while(PCL_VTK_IMPORTED_LIBS)
