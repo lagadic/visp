@@ -33,6 +33,24 @@
 #
 #############################################################################
 
+# Remove BUILD_INTERFACE from __include_dirs
+# IN/OUT: __include_dirs
+#
+# If __include_dirs contains "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" as input,
+# it will be filtered as output to /home/VTK/install/include/vtk-9.3
+macro(vp_filter_build_interface __include_dirs)
+  if(${__include_dirs})
+    set(__include_dirs_filtered)
+    foreach(inc_ ${${__include_dirs}})
+      string(REGEX REPLACE "\\$<BUILD_INTERFACE:" "" inc_ ${inc_})
+      string(REGEX REPLACE ">" "" inc_ ${inc_})
+      list(APPEND __include_dirs_filtered ${inc_})
+    endforeach()
+
+    set(${__include_dirs} ${__include_dirs_filtered})
+  endif()
+endmacro()
+
 # Find pcl libraries and dependencies
 # IN: pcl_libraries
 # OUT: pcl_deps_include_dirs
@@ -93,7 +111,6 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
     # Get pcl link libraries like opengl
     vp_list_unique(PCL_VTK_LIBRARIES)
     if(NOT VTK_ENABLE_KITS)
-      message("--- DEBUG VTK: case 1: NOT VTK_ENABLE_KITS")
       foreach(lib_ ${PCL_VTK_LIBRARIES})
         get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
         if(imported_libs_)
@@ -104,13 +121,16 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
         endif()
 
         get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
-        message("--- DEBUG VTK: ${lib_} imported_incs_: ${imported_incs_}")
         if(imported_incs_)
           list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
         endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
@@ -155,7 +175,6 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       endwhile()
       vp_list_unique(PCL_VTK_LIBS)
     else()
-      message("--- DEBUG VTK: case 2: VTK_ENABLE_KITS")
       foreach(lib_ ${PCL_VTK_LIBRARIES})
         get_target_property(imported_libs_ ${lib_} INTERFACE_LINK_LIBRARIES)
         if(imported_libs_)
@@ -168,13 +187,16 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
         endif()
 
         get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
-        message("--- DEBUG VTK: ${lib_} imported_incs_: ${imported_incs_}")
         if(imported_incs_)
           list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
         endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
       vp_list_unique(PCL_VTK_IMPORTED_INCS)
+
+      # Filter "$<BUILD_INTERFACE:/home/VTK/install/include/vtk-9.3>" into /home/VTK/install/include/vtk-9.3
+      vp_filter_build_interface(PCL_VTK_IMPORTED_INCS)
+
       list(APPEND ${pcl_deps_include_dirs} ${PCL_VTK_IMPORTED_INCS})
 
       while(PCL_VTK_IMPORTED_LIBS)
