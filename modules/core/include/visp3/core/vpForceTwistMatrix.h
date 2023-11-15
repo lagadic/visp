@@ -177,11 +177,6 @@ public:
   vpForceTwistMatrix(const vpRotationMatrix &R);
   vpForceTwistMatrix(const vpThetaUVector &thetau);
 
-  /*!
-    Destructor.
-  */
-  virtual ~vpForceTwistMatrix(){}
-
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   vpForceTwistMatrix buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau);
   vpForceTwistMatrix buildFrom(const vpHomogeneousMatrix &M, bool full = true);
@@ -224,7 +219,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use eye().
    */

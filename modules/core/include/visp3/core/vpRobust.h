@@ -83,7 +83,8 @@ class VISP_EXPORT vpRobust
 {
 public:
   //! Enumeration of influence functions
-  typedef enum {
+  typedef enum
+  {
     TUKEY,  //!< Tukey influence function.
     CAUCHY, //!< Cauchy influence function.
     HUBER   //!< Huber influence function.
@@ -115,7 +116,7 @@ public:
   vpRobust(const vpRobust &other);
 
   //! Destructor
-  virtual ~vpRobust(){};
+  virtual ~vpRobust() { };
 
   /*!
    * Return residual vector Median Absolute Deviation (MAD).
@@ -130,7 +131,7 @@ public:
 
   /*!
    * Return the min value used to threshold residual vector Median Absolute Deviation (MAD).
-   * This value corresponds to the mimimal value of \f$\sigma\f$ computed in MEstimator().
+   * This value corresponds to the minimal value of \f$\sigma\f$ computed in MEstimator().
    *
    * \sa setMinMedianAbsoluteDeviation()
    */
@@ -139,12 +140,10 @@ public:
   void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
 
   vpRobust &operator=(const vpRobust &other);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRobust &operator=(const vpRobust &&other);
-#endif
 
   /*!
-   * Set minimal median absolute deviation (MAD) value corresponding to the mimimal value of
+   * Set minimal median absolute deviation (MAD) value corresponding to the minimal value of
    * \f$\sigma\f$ computed in MEstimator() with
    * \f$ \sigma = 1.48{Med}(|r_i - {Med}(r_i)|) \f$.
    * \param mad_min : Minimal Median Absolute Deviation value.

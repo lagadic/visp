@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Pseudo-database used to handle dependencies between moment features.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <iostream>
 #include <typeinfo>
@@ -43,24 +38,24 @@
 #include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
 /*!
-  Add a moment and it's corresponding name to the database
-  \param featureMoment : database for moment features
-  \param name : the feature's name, usually the string naming it's class. Each
-  name must be unique
-*/
+ * Add a moment and it's corresponding name to the database
+ * \param featureMoment : database for moment features
+ * \param name : the feature's name, usually the string naming it's class. Each
+ * name must be unique
+ */
 void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, char *name)
 {
   featureMomentsDataBase.insert(std::pair<const char *, vpFeatureMoment *>((const char *)name, &featureMoment));
 }
 
 /*!
-  Retrieves a moment feature from the database
-  \param type : the name of the feature, the one specified when using add
-  \param found : true if the type string is found inside the database, false
-  otherwise
-
-  \return the moment feature corresponding to the type string
-*/
+ * Retrieves a moment feature from the database
+ * \param type : the name of the feature, the one specified when using add
+ * \param found : true if the type string is found inside the database, false
+ * otherwise
+ *
+ * \return the moment feature corresponding to the type string
+ */
 vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 {
   std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator it =
@@ -71,12 +66,11 @@ vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
 }
 
 /*!
-  Update all moment features in the database with plane coefficients
-  \param A : first plane coefficient for a plane equation of the following
-  type Ax+By+C=1/Z \param B : second plane coefficient for a plane equation of
-  the following type Ax+By+C=1/Z \param C : third plane coefficient for a
-  plane equation of the following type Ax+By+C=1/Z
-*/
+ * Update all moment features in the database with plane coefficients
+ * \param A : first plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param B : second plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ * \param C : third plane coefficient for a plane equation of the following type Ax+By+C=1/Z
+ */
 void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 {
   std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr;
@@ -97,17 +91,3 @@ void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
   }
 #endif
 }
-
-/*
-std::ostream & operator<<(std::ostream & os, const vpFeatureMomentDatabase&
-m){ std::map<const
-char*,vpMoment*,vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr; os <<
-"{";
-
-    for(itr = m.featureMoments.begin(); itr != m.featureMoments.end(); itr++){
-        os << (*itr).first << ": [" << *((*itr).second) << "],";
-    }
-    os << "}";
-
-    return os;
-}*/

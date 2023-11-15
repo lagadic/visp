@@ -152,7 +152,7 @@ public:
     \note Call the constructor with something like
     vpTraceOutput(__FILE__,__LINE__, __FUNCTION__).
   */
-  vpTraceOutput(const char *file, int line, const char *func, bool error = false, const char *s = NULL)
+  vpTraceOutput(const char *file, int line, const char *func, bool error = false, const char *s = nullptr)
     : currentFile(file), currentFunc(func), currentLine(line), err(error), header(s)
   {
   }
@@ -216,7 +216,7 @@ public:
     // if we want to write to std::cerr/stderr
     if (err) {
       // first writes the header if there is one
-      if (header != NULL)
+      if (header != nullptr)
         std::cerr << header;
       // then writes the recorded namefile, function and line
       std::cerr << "!!\t" << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";
@@ -227,7 +227,7 @@ public:
       fflush(stderr);
     } else {
       // first writes the header if there is one
-      if (header != NULL)
+      if (header != nullptr)
         std::cout << header;
       // then writes the recorded namefile, function and line
       std::cout << currentFile << ": " << currentFunc << "(#" << currentLine << ") : ";

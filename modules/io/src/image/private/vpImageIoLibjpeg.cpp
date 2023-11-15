@@ -74,7 +74,7 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -133,7 +133,7 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
 
   file = fopen(filename.c_str(), "wb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -204,7 +204,7 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
   }
 
@@ -284,7 +284,7 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
 
   file = fopen(filename.c_str(), "rb");
 
-  if (file == NULL) {
+  if (file == nullptr) {
     throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
   }
 

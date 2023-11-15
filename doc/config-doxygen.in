@@ -444,7 +444,7 @@ TYPEDEF_HIDES_STRUCT   = NO
 # the optimal cache size from a speed point of view.
 # Minimum value: 0, maximum value: 9, default value: 0.
 
-LOOKUP_CACHE_SIZE      = 0
+LOOKUP_CACHE_SIZE      = 1
 
 #---------------------------------------------------------------------------
 # Build related configuration options
@@ -2153,9 +2153,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_COIN3D \
                          VISP_HAVE_COIN3D_AND_GUI \
                          VISP_HAVE_COMEDI \
-                         VISP_HAVE_CPP11_COMPATIBILITY \
-                         VISP_HAVE_CXX11 \
-                         VISP_CXX_STANDARD_98=@VISP_CXX_STANDARD_98@ \
                          VISP_CXX_STANDARD_11=@VISP_CXX_STANDARD_11@ \
                          VISP_CXX_STANDARD_14=@VISP_CXX_STANDARD_14@ \
                          VISP_CXX_STANDARD_17=@VISP_CXX_STANDARD_17@ \
@@ -2220,6 +2217,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_SOXT \
                          VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_TENSORRT \
+                         VISP_HAVE_THREADS \
                          VISP_HAVE_UEYE \
                          VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \

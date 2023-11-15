@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,15 @@
  *
  * Description:
  * Basic class used to make robot simulators.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpRobotWireFrameSimulator_HH
 #define vpRobotWireFrameSimulator_HH
 
 /*!
-  \file vpRobotWireFrameSimulator.h
-  \brief Basic class used to make robot simulators.
-*/
+ * \file vpRobotWireFrameSimulator.h
+ * \brief Basic class used to make robot simulators.
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -67,22 +65,22 @@
 #include <visp3/robot/vpWireFrameSimulator.h>
 
 /*!
-  \class vpRobotWireFrameSimulator
-
-  \ingroup group_robot_simu_gantry group_robot_simu_arm
-
-  \brief This class aims to be a basis used to create all the
-  simulators of robots.
-
-  Thus in this class you will find all the parameters and methods
-  which are necessary to create a simulator. Several methods are pure
-  virtual. In this case it means that they are specific to the each
-  robot, for example the computation of the geometrical model.
-
-  \warning This class uses threading capabilities. Thus on Unix-like
-  platforms, the libpthread third-party library need to be
-  installed. On Windows, we use the native threading capabilities.
-*/
+ * \class vpRobotWireFrameSimulator
+ *
+ * \ingroup group_robot_simu_gantry group_robot_simu_arm
+ *
+ * \brief This class aims to be a basis used to create all the
+ * simulators of robots.
+ *
+ * Thus in this class you will find all the parameters and methods
+ * which are necessary to create a simulator. Several methods are pure
+ * virtual. In this case it means that they are specific to the each
+ * robot, for example the computation of the geometrical model.
+ *
+ * \warning This class uses threading capabilities. Thus on Unix-like
+ * platforms, the libpthread third-party library need to be
+ * installed. On Windows, we use the native threading capabilities.
+ */
 class VISP_EXPORT vpRobotWireFrameSimulator : protected vpWireFrameSimulator, public vpRobotSimulator
 {
 public:
@@ -178,15 +176,14 @@ protected:
 public:
   vpRobotWireFrameSimulator();
   explicit vpRobotWireFrameSimulator(bool display);
-  virtual ~vpRobotWireFrameSimulator();
 
   /** @name Inherited functionalities from vpRobotWireFrameSimulator */
   //@{
   /*!
-    Get the parameters of the virtual external camera.
-
-    \return It returns the camera parameters.
-  */
+   * Get the parameters of the virtual external camera.
+   *
+   * \return It returns the camera parameters.
+   */
   vpCameraParameters getExternalCameraParameters() const
   {
     // if(px_ext != 1 && py_ext != 1)
@@ -200,12 +197,12 @@ public:
     }
   }
   /*!
-    Get the external camera's position relative to the the world reference
-    frame.
-
-    \return the main external camera position relative to the the world
-    reference frame.
-  */
+   * Get the external camera's position relative to the the world reference
+   * frame.
+   *
+   * \return the main external camera position relative to the the world
+   * reference frame.
+   */
   vpHomogeneousMatrix getExternalCameraPosition() const
   {
     return this->vpWireFrameSimulator::getExternalCameraPosition();
@@ -216,10 +213,10 @@ public:
 
   vpHomogeneousMatrix get_cMo();
   /*!
-    Get the pose between the object and the fixed world frame.
-
-    \return The pose between the object and the fixed world frame.
-  */
+   * Get the pose between the object and the fixed world frame.
+   *
+   * \return The pose between the object and the fixed world frame.
+   */
   vpHomogeneousMatrix get_fMo() const { return fMo; }
 
   /* Display functions */
@@ -229,106 +226,108 @@ public:
   void initScene(const char *obj);
 
   /*!
-    Set the color used to display the camera in the external view.
-
-    \param col : The desired color.
-  */
+   * Set the color used to display the camera in the external view.
+   *
+   * \param col : The desired color.
+   */
   void setCameraColor(const vpColor &col) { camColor = col; }
 
   /*!
-    Set the flag used to force the sampling time in the thread computing the
-    robot's displacement to a constant value; see setSamplingTime(). It may be
-    useful if the main thread (computing the features) is very time consuming.
-    False by default.
-
-    \param _constantSamplingTimeMode : The new value of the
-    constantSamplingTimeMode flag.
-  */
+   * Set the flag used to force the sampling time in the thread computing the
+   * robot's displacement to a constant value; see setSamplingTime(). It may be
+   * useful if the main thread (computing the features) is very time consuming.
+   * False by default.
+   *
+   * \param _constantSamplingTimeMode : The new value of the
+   * constantSamplingTimeMode flag.
+   */
   inline void setConstantSamplingTimeMode(const bool _constantSamplingTimeMode)
   {
     constantSamplingTimeMode = _constantSamplingTimeMode;
   }
 
   /*!
-    Set the color used to display the object at the current position in the
-    robot's camera view.
-
-    \param col : The desired color.
-  */
+   * Set the color used to display the object at the current position in the
+   * robot's camera view.
+   *
+   * \param col : The desired color.
+   */
   void setCurrentViewColor(const vpColor &col) { curColor = col; }
 
   /*!
-    Set the color used to display the object at the desired position in the
-    robot's camera view.
-
-    \param col : The desired color.
-  */
+   * Set the color used to display the object at the desired position in the
+   * robot's camera view.
+   *
+   * \param col : The desired color.
+   */
   void setDesiredViewColor(const vpColor &col) { desColor = col; }
 
   /*!
-    Set the desired position of the robot's camera relative to the object.
-
-    \param cdMo_ : The desired pose of the camera.
-  */
+   * Set the desired position of the robot's camera relative to the object.
+   *
+   * \param cdMo_ : The desired pose of the camera.
+   */
   void setDesiredCameraPosition(const vpHomogeneousMatrix &cdMo_)
   {
     this->vpWireFrameSimulator::setDesiredCameraPosition(cdMo_);
   }
 
   /*!
-    Set the way to draw the robot. Depending on what you choose you can
-    display a 3D wireframe model or a set of lines linking the frames used to
-    compute the geometrical model.
-
-    \param dispType : Type of display. Can be MODEL_3D or MODEL_DH.
-  */
+   * Set the way to draw the robot. Depending on what you choose you can
+   * display a 3D wireframe model or a set of lines linking the frames used to
+   * compute the geometrical model.
+   *
+   * \param dispType : Type of display. Can be MODEL_3D or MODEL_DH.
+   */
   inline void setDisplayRobotType(const vpDisplayRobotType dispType) { displayType = dispType; }
   /*!
-    Set the external camera point of view.
-
-    \param camMf_ : The pose of the external camera relative to the world
-    reference frame.
-  */
+   * Set the external camera point of view.
+   *
+   * \param camMf_ : The pose of the external camera relative to the world
+   * reference frame.
+   */
   void setExternalCameraPosition(const vpHomogeneousMatrix &camMf_)
   {
     this->vpWireFrameSimulator::setExternalCameraPosition(camMf_);
   }
   /*!
-    Specify the thickness of the graphics drawings.
-    */
+   * Specify the thickness of the graphics drawings.
+   */
   void setGraphicsThickness(unsigned int thickness) { this->thickness_ = thickness; }
 
   /*!
-    Set the sampling time.
-
-    \param delta_t : Sampling time in second used to compute the robot
-    displacement from the velocity applied to the robot during this time.
-
-    Since the wireframe simulator is threaded, the sampling time is set to
-    vpTime::getMinTimeForUsleepCall() / 1000 seconds.
-
-  */
+   * Set the sampling time.
+   *
+   * \param delta_t : Sampling time in second used to compute the robot
+   * displacement from the velocity applied to the robot during this time.
+   *
+   * Since the wireframe simulator is threaded, the sampling time is set to
+   * vpTime::getMinTimeForUsleepCall() / 1000 seconds.
+   */
   inline void setSamplingTime(const double &delta_t)
   {
     if (delta_t < static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3)) {
       this->delta_t_ = static_cast<float>(vpTime::getMinTimeForUsleepCall() * 1e-3);
-    } else {
+    }
+    else {
       this->delta_t_ = delta_t;
     }
   }
-  /*! Set the parameter which enable or disable the singularity mangement */
+  /*!
+   * Set the parameter which enable or disable the singularity management.
+   */
   void setSingularityManagement(bool sm) { singularityManagement = sm; }
 
   /*!
-    Activates extra printings when the robot reaches joint limits...
-    */
+   * Activates extra printings when the robot reaches joint limits...
+   */
   void setVerbose(bool verbose) { this->verbose_ = verbose; }
 
   /*!
-    Set the pose between the object and the fixed world frame.
-
-    \param fMo_ : The pose between the object and the fixed world frame.
-  */
+   * Set the pose between the object and the fixed world frame.
+   *
+   * \param fMo_ : The pose between the object and the fixed world frame.
+   */
   void set_fMo(const vpHomogeneousMatrix &fMo_) { this->fMo = fMo_; }
   //@}
 
@@ -337,8 +336,8 @@ protected:
  */
 //@{
 /*!
-  Function used to launch the thread which moves the robot.
-*/
+ * Function used to launch the thread which moves the robot.
+ */
 #if defined(_WIN32)
   static DWORD WINAPI launcher(LPVOID lpParam)
   {
@@ -350,12 +349,10 @@ protected:
   {
     (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))->updateArticularPosition();
     // pthread_exit((void*) 0);
-    return NULL;
+    return nullptr;
   }
 #endif
 
-  /* Robot functions */
-  void init() { ; }
   /*! Method lauched by the thread to compute the position of the robot in the
    * articular frame. */
   virtual void updateArticularPosition() = 0;

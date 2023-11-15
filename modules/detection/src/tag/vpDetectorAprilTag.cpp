@@ -65,7 +65,7 @@ class vpDetectorAprilTag::Impl
 {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
-    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(NULL), m_tf(NULL), m_detections(NULL),
+    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily), m_td(nullptr), m_tf(nullptr), m_detections(nullptr),
       m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
@@ -134,8 +134,8 @@ public:
   }
 
   Impl(const Impl &o)
-    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily), m_td(NULL),
-      m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
+    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily), m_td(nullptr),
+      m_tf(nullptr), m_detections(nullptr), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -201,7 +201,7 @@ public:
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
 
-    if (o.m_detections != NULL) {
+    if (o.m_detections != nullptr) {
       m_detections = apriltag_detections_copy(o.m_detections);
     }
   }
@@ -272,7 +272,7 @@ public:
 
     if (m_detections) {
       apriltag_detections_destroy(m_detections);
-      m_detections = NULL;
+      m_detections = nullptr;
     }
   }
 
@@ -306,7 +306,7 @@ public:
     }
 #endif
 
-    const bool computePose = (cMo_vec != NULL);
+    const bool computePose = (cMo_vec != nullptr);
 
     image_u8_t im = {/*.width =*/(int32_t)I.getWidth(),
                      /*.height =*/(int32_t)I.getHeight(),
@@ -315,7 +315,7 @@ public:
 
     if (m_detections) {
       apriltag_detections_destroy(m_detections);
-      m_detections = NULL;
+      m_detections = nullptr;
     }
 
     m_detections = apriltag_detector_detect(m_td, &im);
@@ -359,8 +359,8 @@ public:
       if (computePose) {
         vpHomogeneousMatrix cMo, cMo2;
         double err1, err2;
-        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : NULL, projErrors ? &err1 : NULL,
-                    projErrors2 ? &err2 : NULL)) {
+        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : nullptr, projErrors ? &err1 : nullptr,
+                    projErrors2 ? &err2 : nullptr)) {
           cMo_vec->push_back(cMo);
           if (cMo_vec2) {
             cMo_vec2->push_back(cMo2);
@@ -446,7 +446,7 @@ public:
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2, double *projErrors, double *projErrors2)
   {
-    if (m_detections == NULL) {
+    if (m_detections == nullptr) {
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
     }
     if (m_tagFamily == TAG_36ARTOOLKIT) {
@@ -849,7 +849,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   std::vector<vpHomogeneousMatrix> cMo_vec;
   const double tagSize = 1.0;
   bool detected = m_impl->detect(I, tagSize, m_defaultCam, m_polygon, m_message, m_displayTag, m_displayTagColor,
-                                 m_displayTagThickness, NULL, NULL, NULL, NULL);
+                                 m_displayTagThickness, nullptr, nullptr, nullptr, nullptr);
   m_nb_objects = m_message.size();
 
   return detected;

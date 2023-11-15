@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Implementation for alpha moment features.
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpMomentCentered.h>
 #include <visp3/core/vpMomentGravityCenter.h>
@@ -49,21 +44,21 @@
 #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 /*!
-  Computes interaction matrix for alpha moment. Called internally.
-  The moment primitives must be computed before calling this.
-  This feature depends on:
-  - vpMomentCentered
-  - vpFeatureMomentCentered
-*/
+ * Computes interaction matrix for alpha moment. Called internally.
+ * The moment primitives must be computed before calling this.
+ * This feature depends on:
+ * - vpMomentCentered
+ * - vpFeatureMomentCentered
+ */
 void vpFeatureMomentAlpha::compute_interaction()
 {
   bool found_moment_centered;
   bool found_FeatureMoment_centered;
 
   const vpMomentCentered &momentCentered =
-      (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
+    (static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered)));
   vpFeatureMomentCentered &featureMomentCentered = (static_cast<vpFeatureMomentCentered &>(
-      featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
+    featureMomentsDataBase->get("vpFeatureMomentCentered", found_FeatureMoment_centered)));
 
   if (!found_moment_centered)
     throw vpException(vpException::notInitialized, "vpMomentCentered not found");
@@ -75,28 +70,28 @@ void vpFeatureMomentAlpha::compute_interaction()
   double dinv = 1 / (4 * u11 * u11 + u20_u02 * u20_u02);
   interaction_matrices[0].resize(1, 6);
   interaction_matrices[0] =
-      (u20_u02 * dinv) * featureMomentCentered.interaction(1, 1) +
-      (u11 * dinv) * (featureMomentCentered.interaction(0, 2) - featureMomentCentered.interaction(2, 0));
+    (u20_u02 * dinv) * featureMomentCentered.interaction(1, 1) +
+    (u11 * dinv) * (featureMomentCentered.interaction(0, 2) - featureMomentCentered.interaction(2, 0));
 }
 
 #else // #ifdef VISP_MOMENTS_COMBINE_MATRICES
 
 /*!
-  Computes interaction matrix for alpha moment. Called internally.
-  The moment primitives must be computed before calling this.
-  This feature depends on:
-  - vpMomentCentered
-  - vpMomentGravityCenter
-*/
+ * Computes interaction matrix for alpha moment. Called internally.
+ * The moment primitives must be computed before calling this.
+ * This feature depends on:
+ * - vpMomentCentered
+ * - vpMomentGravityCenter
+ */
 void vpFeatureMomentAlpha::compute_interaction()
 {
   bool found_moment_centered;
   bool found_moment_gravity;
 
   const vpMomentCentered &momentCentered =
-      static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
+    static_cast<const vpMomentCentered &>(moments.get("vpMomentCentered", found_moment_centered));
   const vpMomentGravityCenter &momentGravity =
-      static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
+    static_cast<const vpMomentGravityCenter &>(moments.get("vpMomentGravityCenter", found_moment_gravity));
   const vpMomentObject &momentObject = moment->getObject();
 
   if (!found_moment_centered)
@@ -128,10 +123,10 @@ void vpFeatureMomentAlpha::compute_interaction()
 
   Awx = (beta * (mu12 * (mu20 - mu02) + mu11 * (mu03 - mu21)) + Xg * (mu02 * (mu20 - mu02) - 2 * mu11_2) +
          Yg * mu11 * (mu20 + mu02)) /
-        d;
+    d;
   Awy = (beta * (mu21 * (mu02 - mu20) + mu11 * (mu30 - mu12)) + Xg * mu11 * (mu20 + mu02) +
          Yg * (mu20 * (mu02 - mu20) - 2 * mu11_2)) /
-        d;
+    d;
 
   Avz = B * Awx - A * Awy;
   interaction_matrices.resize(1);

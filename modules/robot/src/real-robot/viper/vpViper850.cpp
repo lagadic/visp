@@ -37,7 +37,7 @@
 
   \file vpViper850.cpp
 
-  Modelisation of the ADEPT Viper 850 robot.
+  Modelization of the ADEPT Viper 850 robot.
 
 */
 
@@ -46,7 +46,7 @@
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/robot/vpViper850.h>
 
-static const char *opt_viper850[] = {"CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", NULL};
+static const char *opt_viper850[] = {"CAMERA", "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr};
 
 #ifdef VISP_HAVE_VIPER850_DATA
 const std::string vpViper850::CONST_EMC_MARLIN_F033C_WITHOUT_DISTORTION_FILENAME =
@@ -93,14 +93,14 @@ const vpViper850::vpToolType vpViper850::defaultTool = vpViper850::TOOL_PTGREY_F
 /*!
 
   Default constructor.
-  Sets the specific parameters like the Denavit Hartenberg parameters.
+  Sets the specific parameters like the Denavit-Hartenberg parameters.
 
 */
 vpViper850::vpViper850()
   : tool_current(vpViper850::defaultTool), projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 
 {
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   a1 = 0.075;
   a2 = 0.365;
   a3 = 0.090;
@@ -439,7 +439,7 @@ void vpViper850::parseConfigFile(const std::string &filename)
     std::string key;
     ss >> key;
 
-    for (code = 0; NULL != opt_viper850[code]; ++code) {
+    for (code = 0; nullptr != opt_viper850[code]; ++code) {
       if (key.compare(opt_viper850[code]) == 0) {
         break;
       }

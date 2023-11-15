@@ -49,22 +49,21 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <thread>
-#endif
 
 #define eps 1e-6
 
 namespace
 {
 // For std::map<vpPoint>
-struct CompareObjectPointDegenerate {
+struct CompareObjectPointDegenerate
+{
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
     const double dist1 =
-        point1.get_oX() * point1.get_oX() + point1.get_oY() * point1.get_oY() + point1.get_oZ() * point1.get_oZ();
+      point1.get_oX() * point1.get_oX() + point1.get_oY() * point1.get_oY() + point1.get_oZ() * point1.get_oZ();
     const double dist2 =
-        point2.get_oX() * point2.get_oX() + point2.get_oY() * point2.get_oY() + point2.get_oZ() * point2.get_oZ();
+      point2.get_oX() * point2.get_oX() + point2.get_oY() * point2.get_oY() + point2.get_oZ() * point2.get_oZ();
     if (dist1 - dist2 < -3 * eps * eps)
       return true;
     if (dist1 - dist2 > 3 * eps * eps)
@@ -90,7 +89,8 @@ struct CompareObjectPointDegenerate {
 };
 
 // For std::map<vpPoint>
-struct CompareImagePointDegenerate {
+struct CompareImagePointDegenerate
+{
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
     const double dist1 = point1.get_x() * point1.get_x() + point1.get_y() * point1.get_y();
@@ -115,8 +115,9 @@ struct CompareImagePointDegenerate {
 };
 
 // std::find_if
-struct FindDegeneratePoint {
-  explicit FindDegeneratePoint(const vpPoint &pt) : m_pt(pt) {}
+struct FindDegeneratePoint
+{
+  explicit FindDegeneratePoint(const vpPoint &pt) : m_pt(pt) { }
 
   bool operator()(const vpPoint &pt)
   {
@@ -129,7 +130,7 @@ struct FindDegeneratePoint {
 };
 } // namespace
 
-bool vpPose::RansacFunctor::poseRansacImpl()
+bool vpPose::vpRansacFunctor::poseRansacImpl()
 {
   const unsigned int size = (unsigned int)m_listOfUniquePoints.size();
   unsigned int nbMinRandom = 4;
@@ -204,7 +205,8 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     try {
       is_pose_valid = poseMin.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_tmp);
       r_min = poseMin.computeResidual(cMo_tmp);
-    } catch (...) {
+    }
+    catch (...) {
     }
 
     // If residual returned is not a number (NAN), set valid to false
@@ -218,13 +220,14 @@ bool vpPose::RansacFunctor::poseRansacImpl()
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
       bool isPoseValid = true;
-      if (m_func != NULL) {
+      if (m_func != nullptr) {
         isPoseValid = m_func(cMo_tmp);
         if (isPoseValid) {
           m_cMo = cMo_tmp;
         }
-      } else {
-        // No post filtering on pose, so copy cMo_temp to cMo
+      }
+      else {
+     // No post filtering on pose, so copy cMo_temp to cMo
         m_cMo = cMo_tmp;
       }
 
@@ -251,10 +254,12 @@ bool vpPose::RansacFunctor::poseRansacImpl()
               nbInliersCur++;
               cur_consensus.push_back(iter);
               cur_inliers.push_back(*it);
-            } else {
+            }
+            else {
               cur_outliers.push_back(iter);
             }
-          } else {
+          }
+          else {
             cur_outliers.push_back(iter);
           }
         }
@@ -270,10 +275,12 @@ bool vpPose::RansacFunctor::poseRansacImpl()
         if (nbTrials >= m_ransacMaxTrials) {
           foundSolution = true;
         }
-      } else {
+      }
+      else {
         nbTrials++;
       }
-    } else {
+    }
+    else {
       nbTrials++;
     }
   }
@@ -281,19 +288,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
   return foundSolution;
 }
 
-/*!
-  Compute the pose using the Ransac approach.
-
-  \param cMo : Computed pose
-  \param func : Pointer to a function that takes in parameter a
-  vpHomogeneousMatrix and returns true if the pose check is OK or false
-  otherwise
-  \return True if we found at least 4 points with a reprojection
-  error below ransacThreshold.
-  \note You can enable a multithreaded version if you have C++11 enabled using setUseParallelRansac().
-  The number of threads used can then be set with setNbParallelRansacThreads().
-  Filter flag can be used  with setRansacFilterFlag().
-*/
 bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
   // Check only for adding / removing problem
@@ -343,8 +337,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         mapOfUniquePointIndex[listOfUniquePoints.size() - 1] = it->second;
       }
     }
-  } else {
-    // No prefiltering
+  }
+  else {
+ // No prefiltering
     listOfUniquePoints = listOfPoints;
 
     size_t index_pt = 0;
@@ -358,15 +353,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
-#else
-  bool executeParallelVersion = false;
-#endif
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -374,26 +364,26 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         nbThreads = 1;
         executeParallelVersion = false;
       }
-    } else {
+    }
+    else {
       nbThreads = nbParallelRansacThreads;
     }
-#endif
   }
 
   bool foundSolution = false;
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
-    std::vector<RansacFunctor> ransacWorkers;
+    std::vector<vpRansacFunctor> ransacWorkers;
 
     int splitTrials = ransacMaxTrials / nbThreads;
     for (size_t i = 0; i < (size_t)nbThreads; i++) {
-      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
+      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(nullptr) ^ i);
       if (i < (size_t)nbThreads - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
-      } else {
+      }
+      else {
         int maxTrialsRemainder = ransacMaxTrials - splitTrials * (nbThreads - 1);
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, maxTrialsRemainder, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
@@ -401,7 +391,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
 
     for (auto &worker : ransacWorkers) {
-      threadpool.emplace_back(&RansacFunctor::operator(), &worker);
+      threadpool.emplace_back(&vpRansacFunctor::operator(), &worker);
     }
 
     for (auto &th : threadpool) {
@@ -423,10 +413,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
 
     foundSolution = successRansac;
-#endif
-  } else {
-    // Sequential RANSAC
-    RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
+  }
+  else {
+ // Sequential RANSAC
+    vpRansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
                                    checkDegeneratePoints, listOfUniquePoints, func);
     sequentialRansac();
     foundSolution = sequentialRansac.getResult();
@@ -486,14 +476,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // In some rare cases, the final pose could not respect the pose
       // criterion even  if the 4 minimal points picked respect the pose
       // criterion.
-      if (func != NULL && !func(cMo)) {
+      if (func != nullptr && !func(cMo)) {
         return false;
       }
 
       if (computeCovariance) {
         covarianceMatrix = pose.covarianceMatrix;
       }
-    } else {
+    }
+    else {
       return false;
     }
   }
@@ -501,25 +492,6 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   return foundSolution;
 }
 
-/*!
-  Compute the number of RANSAC iterations to ensure with a probability \e p
-  that at least one of the random samples of \e s points is free from
-  outliers.
-  \note See: Hartley and Zisserman, Multiple View Geometry in
-  Computer Vision, p119 (2. How many samples?).
-
-  \param probability : Probability that at least one of the random samples is
-  free from outliers (typically p=0.99).
-  \param epsilon : Probability that a
-  selected point is an outlier (between 0 and 1).
-  \param sampleSize : Minimum
-  number of points to estimate the model (4 for a pose estimation).
-  \param maxIterations : Upper bound on the number of iterations or -1 for INT_MAX.
-  \return The number of RANSAC iterations to ensure with a probability \e p
-  that at least one of the random samples of \e s points is free from outliers
-  or \p maxIterations if it exceeds the desired upper bound or \e INT_MAX if
-  maxIterations=-1.
-*/
 int vpPose::computeRansacIterations(double probability, double epsilon, const int sampleSize, int maxIterations)
 {
   probability = (std::max)(probability, 0.0);
@@ -545,8 +517,8 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
 #endif
   if (vpMath::nul(logval, std::numeric_limits<double>::epsilon())) {
     std::cerr << "vpMath::nul(log(1.0 - std::pow(1.0 - epsilon, "
-                 "sampleSize)), std::numeric_limits<double>::epsilon())"
-              << std::endl;
+      "sampleSize)), std::numeric_limits<double>::epsilon())"
+      << std::endl;
     return 0;
   }
 
@@ -558,36 +530,6 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
   return maxIterations;
 }
 
-/*!
-  Match a vector p2D of  2D point (x,y)  and  a vector p3D of 3D points
-  (X,Y,Z) using the Ransac algorithm.
-
-  At least numberOfInlierToReachAConsensus of true correspondance are required
-  to validate the pose
-
-  The inliers are given in a vector of vpPoint listInliers.
-
-  The pose is returned in cMo.
-
-  \param p2D : Vector of 2d points (x and y attributes are used).
-  \param p3D : Vector of 3d points (oX, oY and oZ attributes are used).
-  \param numberOfInlierToReachAConsensus : The minimum number of inlier to
-  have to consider a trial as correct.
-  \param threshold : The maximum error
-  allowed between the 2d points and the reprojection of its associated 3d
-  points by the current pose (in meter).
-  \param ninliers : Number of inliers found for the best solution.
-  \param listInliers : Vector of points (2d and
-  3d) that are inliers for the best solution.
-  \param cMo : The computed pose (best solution).
-  \param maxNbTrials : Maximum number of trials before
-  considering a solution fitting the required \e
-  numberOfInlierToReachAConsensus and \e threshold cannot be found.
-  \param useParallelRansac : If true, use parallel RANSAC version (if C++11 is available).
-  \param nthreads : Number of threads to use, if 0 the number of CPU threads will be determined.
-  \param func : Pointer to a function that takes in parameter a vpHomogeneousMatrix and returns
-  true if the pose check is OK or false otherwise
-*/
 void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
@@ -611,7 +553,8 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
     vpERROR_TRACE("Not enough point (%d) to compute the pose  ", pose.listP.size());
     throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough point (%d) to compute the pose by ransac",
                           pose.listP.size()));
-  } else {
+  }
+  else {
     pose.setUseParallelRansac(useParallelRansac);
     pose.setNbParallelRansacThreads(nthreads);
     // Since we add duplicate points, we need to check for degenerate configuration

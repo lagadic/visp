@@ -95,7 +95,7 @@ class vpUeyeGrabber::vpUeyeGrabberImpl
 {
 public:
   vpUeyeGrabberImpl()
-    : m_hCamera((HIDS)0), m_activeCameraSelected(-1), m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true),
+    : m_hCamera((HIDS)0), m_activeCameraSelected(-1), m_pLastBuffer(nullptr), m_cameraList(nullptr), m_bLive(true),
       m_bLiveStarted(false), m_verbose(false), m_I_temp()
   {
     ZeroMemory(&m_SensorInfo, sizeof(SENSORINFO));
@@ -140,7 +140,7 @@ public:
 
       if (ret == IS_SUCCESS) {
         INT dummy = 0;
-        char *pLast = NULL, *pMem = NULL;
+        char *pLast = nullptr, *pMem = nullptr;
 
         is_GetActSeqBuf(m_hCamera, &dummy, &pMem, &pLast);
         m_pLastBuffer = pLast;
@@ -149,14 +149,14 @@ public:
           return;
 
         int nNum = getImageNum(m_pLastBuffer);
-        if (timestamp_camera != NULL || timestamp_system != NULL) {
+        if (timestamp_camera != nullptr || timestamp_system != nullptr) {
           int nImageID = getImageID(m_pLastBuffer);
           UEYEIMAGEINFO ImageInfo;
           if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof(ImageInfo)) == IS_SUCCESS) {
-            if (timestamp_camera != NULL) {
+            if (timestamp_camera != nullptr) {
               *timestamp_camera = static_cast<double>(ImageInfo.u64TimestampDevice) / 10000.;
             }
-            if (timestamp_system != NULL) {
+            if (timestamp_system != nullptr) {
               std::stringstream ss;
               ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
                  << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
@@ -243,7 +243,7 @@ public:
 
       if (ret == IS_SUCCESS) {
         INT dummy = 0;
-        char *pLast = NULL, *pMem = NULL;
+        char *pLast = nullptr, *pMem = nullptr;
 
         is_GetActSeqBuf(m_hCamera, &dummy, &pMem, &pLast);
         m_pLastBuffer = pLast;
@@ -252,14 +252,14 @@ public:
           return;
 
         int nNum = getImageNum(m_pLastBuffer);
-        if (timestamp_camera != NULL || timestamp_system != NULL) {
+        if (timestamp_camera != nullptr || timestamp_system != nullptr) {
           int nImageID = getImageID(m_pLastBuffer);
           UEYEIMAGEINFO ImageInfo;
           if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof(ImageInfo)) == IS_SUCCESS) {
-            if (timestamp_camera != NULL) {
+            if (timestamp_camera != nullptr) {
               *timestamp_camera = static_cast<double>(ImageInfo.u64TimestampDevice) / 10000.;
             }
-            if (timestamp_system != NULL) {
+            if (timestamp_system != nullptr) {
               std::stringstream ss;
               ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
                  << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
@@ -321,7 +321,7 @@ public:
 
   bool allocImages()
   {
-    m_pLastBuffer = NULL;
+    m_pLastBuffer = nullptr;
     int nWidth = 0;
     int nHeight = 0;
 
@@ -424,7 +424,7 @@ public:
       enableEvent(IS_SET_EVENT_FRAME);
     }
 
-    m_pLastBuffer = NULL;
+    m_pLastBuffer = nullptr;
 
     return ret;
   }
@@ -471,8 +471,8 @@ public:
     int ret = 0;
     m_event = event;
 #ifndef __linux__
-    m_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
-    if (m_hEvent == NULL) {
+    m_hEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+    if (m_hEvent == nullptr) {
       return -1;
     }
     ret = is_InitEvent(m_hCamera, m_hEvent, m_event);
@@ -497,14 +497,14 @@ public:
 
   void freeImages()
   {
-    m_pLastBuffer = NULL;
+    m_pLastBuffer = nullptr;
     // printf ("freeing image buffers\n");
     for (unsigned int i = 0; i < sizeof(m_Images) / sizeof(m_Images[0]); i++) {
-      if (NULL != m_Images[i].pBuf) {
+      if (nullptr != m_Images[i].pBuf) {
         is_FreeImageMem(m_hCamera, m_Images[i].pBuf, m_Images[i].nImageID);
       }
 
-      m_Images[i].pBuf = NULL;
+      m_Images[i].pBuf = nullptr;
       m_Images[i].nImageID = 0;
       m_Images[i].nImageSeqNum = 0;
     }
@@ -1027,14 +1027,14 @@ public:
 
     if (auto_wb) {
       dblAutoWb = 0.0;
-      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, nullptr);
 
       dblAutoWb = 1.0;
-      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, nullptr);
     } else {
       dblAutoWb = 0.0;
-      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
-      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, nullptr);
+      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, nullptr);
     }
   }
 
@@ -1124,7 +1124,7 @@ vpUeyeGrabber::~vpUeyeGrabber() { delete m_impl; }
  * Capture a new grayscale image.
  *
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or nullptr if not
  * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.
@@ -1149,7 +1149,7 @@ void vpUeyeGrabber::acquire(vpImage<unsigned char> &I, double *timestamp_camera,
 /*!
  * Capture a new color image.
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or nullptr if not
  * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.

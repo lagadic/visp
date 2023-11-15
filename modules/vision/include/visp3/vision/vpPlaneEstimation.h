@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpPlaneEstimation.h
-  \brief Tools for plane estimation.
-*/
+ * \file vpPlaneEstimation.h
+ * \brief Tools for plane estimation.
+ */
 
 #pragma once
 
@@ -55,22 +55,35 @@
 #include <visp3/core/vpPolygon.h>
 
 /*!
-  \class vpPlaneEstimation
-  \ingroup group_vision
-
-  \note This class is only available with c++17 enabled.
+ * \class vpPlaneEstimation
+ * \ingroup group_vision
+ *
+ * \note This class is only available with c++17 enabled.
  */
 class VISP_EXPORT vpPlaneEstimation
 {
 public:
+  /*!
+   * Based on depth, estimate the plane equation of the roi.
+   *
+   * \param[in] I_depth_raw : Depth raw value.
+   * \param[in] depth_scale : Depth scale (used to convert depth value into meters).
+   * \param[in] depth_intrinsics : Depth camera parameters.
+   * \param[in] roi : Region of interest.
+   * \param[in] avg_nb_of_pts_to_estimate : Average number of points to use to estimate the plane (default: 500).
+   * \param[out] heat_map : Plane estimation heat map (optional).
+   * \return Plane equation.
+   */
   static std::optional<vpPlane> estimatePlane(const vpImage<uint16_t> &I_depth_raw, double depth_scale,
                                               const vpCameraParameters &depth_intrinsics, const vpPolygon &roi,
                                               const unsigned int avg_nb_of_pts_to_estimate = 500,
                                               std::optional<std::reference_wrapper<vpImage<vpRGBa> > > heat_map = {});
 
 private:
-  static constexpr auto MinPointNbToEstimatePlane{20u};
-  static constexpr auto MaxSubSampFactorToEstimatePlane{20u};
+  //! Minimal number of points required to estimate a plane
+  static constexpr auto MinPointNbToEstimatePlane { 20u };
+  //! Maximal subsampling factor applied to the point cloud to estimate a plane
+  static constexpr auto MaxSubSampFactorToEstimatePlane { 20u };
 };
 
 #endif

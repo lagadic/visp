@@ -43,6 +43,11 @@ foreach(cpp ${tutorial_cpp})
   endif()
 endforeach()
 
+visp_add_target(tutorial-canny.cpp drawingHelpers.cpp)
+if(COMMAND visp_add_dependency)
+    visp_add_dependency(tutorial-canny.cpp "tutorials")
+endif()
+
 # Copy the data files to the same location than the target
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-viewer.cpp ${data})

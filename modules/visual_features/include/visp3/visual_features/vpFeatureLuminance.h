@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Luminance based feature.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpFeatureLuminance_h
 #define vpFeatureLuminance_h
@@ -41,20 +39,20 @@
 #include <visp3/visual_features/vpBasicFeature.h>
 
 /*!
-  \file vpFeatureLuminance.h
-  \brief Class that defines the image luminance visual feature
-
-  For more details see \cite Collewet08c.
-*/
+ * \file vpFeatureLuminance.h
+ * \brief Class that defines the image luminance visual feature
+ *
+ * For more details see \cite Collewet08c.
+ */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
-  \class vpLuminance
-  \brief Class that defines the luminance and gradient of a point
-
-  \sa vpFeatureLuminance
-*/
+ * \class vpLuminance
+ * \brief Class that defines the luminance and gradient of a point.
+ *
+ * \sa vpFeatureLuminance
+ */
 class VISP_EXPORT vpLuminance
 {
 public:
@@ -66,13 +64,12 @@ public:
 #endif
 
 /*!
-  \class vpFeatureLuminance
-  \ingroup group_visual_features
-  \brief Class that defines the image luminance visual feature
-
-  For more details see \cite Collewet08c.
-*/
-
+ * \class vpFeatureLuminance
+ * \ingroup group_visual_features
+ * \brief Class that defines the image luminance visual feature
+ *
+ * For more details see \cite Collewet08c.
+ */
 class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
 {
 protected:
@@ -95,30 +92,30 @@ public:
   vpFeatureLuminance();
   vpFeatureLuminance(const vpFeatureLuminance &f);
   //! Destructor.
-  virtual ~vpFeatureLuminance();
+  virtual ~vpFeatureLuminance() override;
 
   void buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+               unsigned int thickness = 1) const override;
 
-  vpFeatureLuminance *duplicate() const;
+  vpFeatureLuminance *duplicate() const override;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
   double get_Z() const;
 
-  void init();
+  void init() override;
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
-  vpMatrix interaction(unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
   void interaction(vpMatrix &L);
 
   vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
-  void print(unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const override;
 
   void setCameraParameters(vpCameraParameters &_cam);
   void set_Z(double Z);

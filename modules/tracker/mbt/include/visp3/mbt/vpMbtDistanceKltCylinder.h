@@ -117,7 +117,7 @@ private:
   //        initPoints(), initPoints3D(), curPoints(), curPointsInd(),
   //        nbPointsCur(0), nbPointsInit(0), minNbPoint(4),
   //        enoughPoints(false), cam(), isTrackedKltCylinder(true),
-  //        listIndicesCylinderBBox(), hiddenface(NULL), useScanLine(false)
+  //        listIndicesCylinderBBox(), hiddenface(nullptr), useScanLine(false)
   //    {
   //      throw vpException(vpException::functionNotImplementedError, "Not
   //      implemented!");

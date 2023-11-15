@@ -156,7 +156,7 @@
                                       colorSpace,                                 // colorspace
                                       kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
                                       provider,                                   // CGDataProviderRef
-                                      NULL,                                       // decode
+                                      nullptr,                                       // decode
                                       false,                                      // should interpolate
                                       kCGRenderingIntentDefault                   // intent
                                       );
@@ -192,7 +192,7 @@
                                       colorSpace,                                 // colorspace
                                       kCGImageAlphaNone|kCGBitmapByteOrderDefault,// bitmap info
                                       provider,                                   // CGDataProviderRef
-                                      NULL,                                       // decode
+                                      nullptr,                                       // decode
                                       false,                                      // should interpolate
                                       kCGRenderingIntentDefault                   // intent
                                       );
@@ -211,4 +211,3 @@
 @end
 
 #endif
-

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,8 +29,7 @@
  *
  * Description:
  * Common features for Pioneer unicycle mobile robots.
- *
-*****************************************************************************/
+ */
 #ifndef VPPIONEERPAN_H
 #define VPPIONEERPAN_H
 
@@ -41,62 +39,60 @@
 #include <visp3/robot/vpUnicycle.h>
 
 /*!
-
-  \class vpPioneerPan
-
-  \ingroup group_robot_real_unicycle group_robot_simu_unicycle
-
-  \brief Generic functions for Pioneer mobile robots equiped with a pan head.
-
-  This class provides common features for Pioneer mobile robots equiped with a
-  pan head.
-
-  This robot has three control velocities \f$(v_x, w_z, \dot{q_1})\f$, the
-  translational and rotational velocities of the mobile platform, the pan head
-  velocity respectively.
-
-  The figure below shows the position of the frames that are used to model the
-  robot. The end effector frame is here located at the pan axis.
-
-  \image html pioneer-pan.png
-
-  Considering
-  \f[{\bf v} = {^e}{\bf J}_e \;
-  \left(\begin{array}{c}
-  v_x \\
-  w_z \\
-  \dot{q_1} \\
-  \end{array}
-  \right)
-  \f]
-  with
-  \f$(v_x, w_z)\f$ respectively the translational and rotational control
-  velocities of the mobile platform, \f$\dot{q_1}\f$ the joint velocity of the
-  pan head and \f$\bf v\f$ the six dimention velocity skew expressed at point
-  E in frame E, the robot jacobian is given by:
-
-  \f[
-  {^e}{\bf J}_e = \left(\begin{array}{ccc}
-  c_1  & -c_1*p_y - s_1*p_x & 0   \\
-  0  & 0 & 0 \\
-  s_1  & -s_1*p_y + c_1*p_x & 0   \\
-  0  & 0 & 0  \\
-  0  & -1 & 1   \\
-  0  & 0 & 0  \\
-  \end{array}
-  \right)
-  \f]
-
-  with \f$p_x, p_y\f$ the position of the head base frame in the mobile
-  platform frame located at the middle point between the two weels.
-
-*/
+ * \class vpPioneerPan
+ *
+ * \ingroup group_robot_real_unicycle group_robot_simu_unicycle
+ *
+ * \brief Generic functions for Pioneer mobile robots equipped with a pan head.
+ *
+ * This class provides common features for Pioneer mobile robots equipped with a
+ * pan head.
+ *
+ * This robot has three control velocities \f$(v_x, w_z, \dot{q_1})\f$, the
+ * translational and rotational velocities of the mobile platform, the pan head
+ * velocity respectively.
+ *
+ * The figure below shows the position of the frames that are used to model the
+ * robot. The end effector frame is here located at the pan axis.
+ *
+ * \image html pioneer-pan.png
+ *
+ * Considering
+ * \f[{\bf v} = {^e}{\bf J}_e \;
+ * \left(\begin{array}{c}
+ * v_x \\
+ * w_z \\
+ * \dot{q_1} \\
+ * \end{array}
+ * \right)
+ * \f]
+ * with
+ * \f$(v_x, w_z)\f$ respectively the translational and rotational control
+ * velocities of the mobile platform, \f$\dot{q_1}\f$ the joint velocity of the
+ * pan head and \f$\bf v\f$ the six dimension velocity skew expressed at point
+ * E in frame E, the robot jacobian is given by:
+ *
+ * \f[
+ * {^e}{\bf J}_e = \left(\begin{array}{ccc}
+ * c_1  & -c_1*p_y - s_1*p_x & 0   \\
+ * 0  & 0 & 0 \\
+ * s_1  & -s_1*p_y + c_1*p_x & 0   \\
+ * 0  & 0 & 0  \\
+ * 0  & -1 & 1   \\
+ * 0  & 0 & 0  \\
+ * \end{array}
+ * \right)
+ * \f]
+ *
+ * with \f$p_x, p_y\f$ the position of the head base frame in the mobile
+ * platform frame located at the middle point between the two wheels.
+ */
 class VISP_EXPORT vpPioneerPan : public vpUnicycle
 {
 public:
   /*!
-    Create a pioneer mobile robot equiped with a pan head.
-    */
+   * Create a pioneer mobile robot equipped with a pan head.
+   */
   vpPioneerPan() : mMp_(), pMe_()
   {
     double q = 0; // Initial position of the pan axis
@@ -106,40 +102,34 @@ public:
     set_eJe(q);
   }
 
-  /*!
-    Destructor that does nothing.
-    */
-  virtual ~vpPioneerPan(){};
-
   /** @name Inherited functionalities from vpPioneerPan */
   //@{
 
   /*!
-    Set the robot jacobian expressed at point E the end effector frame located
-    on the pan head.
-
-    Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z, \dot{q_1}]\f$ with
-    \f$(v_x, w_z)\f$ respectively the translational and rotational control
-    velocities of the mobile platform, \f$\dot{q_1}\f$ the joint velocity of
-    the pan head and \f$\bf v\f$ the six dimention velocity skew expressed at
-    point E in frame E, the robot jacobian is given by:
-
-    \f[
-    {^e}{\bf J}_e = \left(\begin{array}{ccc}
-    c_1  & -c_1*p_y - s_1*p_x & 0   \\
-    0  & 0 & 0 \\
-    s_1  & -s_1*p_y + c_1*p_x & 0   \\
-    0  & 0 & 0  \\
-    0  & -1 & 1   \\
-    0  & 0 & 0  \\
-    \end{array}
-    \right)
-    \f]
-
-    with \f$p_x, p_y\f$ the position of the head base frame in the mobile
-    platform frame located at the middle point between the two weels.
-
-  */
+   * Set the robot jacobian expressed at point E the end effector frame located
+   * on the pan head.
+   *
+   * Considering \f${\bf v} = {^e}{\bf J}_e \; [v_x, w_z, \dot{q_1}]\f$ with
+   * \f$(v_x, w_z)\f$ respectively the translational and rotational control
+   * velocities of the mobile platform, \f$\dot{q_1}\f$ the joint velocity of
+   * the pan head and \f$\bf v\f$ the six dimension velocity skew expressed at
+   * point E in frame E, the robot jacobian is given by:
+   *
+   * \f[
+   * {^e}{\bf J}_e = \left(\begin{array}{ccc}
+   * c_1  & -c_1*p_y - s_1*p_x & 0   \\
+   * 0  & 0 & 0 \\
+   * s_1  & -s_1*p_y + c_1*p_x & 0   \\
+   * 0  & 0 & 0  \\
+   * 0  & -1 & 1   \\
+   * 0  & 0 & 0  \\
+   * \end{array}
+   * \right)
+   * \f]
+   *
+   * with \f$p_x, p_y\f$ the position of the head base frame in the mobile
+   * platform frame located at the middle point between the two wheels.
+   */
   void set_eJe(double q_pan)
   {
     double px = mMp_[0][3];
@@ -166,9 +156,9 @@ protected:
   /** @name Protected Member Functions Inherited from vpPioneerPan */
   //@{
   /*!
-    Set the transformation between the camera frame and the pan head end
-    effector frame.
-    */
+   * Set the transformation between the camera frame and the pan head end
+   * effector frame.
+   */
   void set_cMe()
   {
     // Position of pan head end effector frame in the camera frame
@@ -189,10 +179,10 @@ protected:
   }
 
   /*!
-    Set the transformation between the mobile platform frame
-    located at the middle point between the two weels and the base frame of
-    the pan head.
-    */
+   * Set the transformation between the mobile platform frame
+   * located at the middle point between the two wheels and the base frame of
+   * the pan head.
+   */
   void set_mMp()
   {
     // Position of the pan head in the mobile platform frame
@@ -210,12 +200,11 @@ protected:
   }
 
   /*!
-    Set the transformation between the pan head reference frame and the
-    end-effector frame.
-
-    \param q : Position in rad of the pan axis.
-
-    */
+   * Set the transformation between the pan head reference frame and the
+   * end-effector frame.
+   *
+   * \param q : Position in rad of the pan axis.
+   */
   void set_pMe(const double q)
   {
     vpRotationMatrix pRe;

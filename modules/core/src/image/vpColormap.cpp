@@ -34,8 +34,6 @@
 
 #include <visp3/core/vpColormap.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 namespace
 {
 unsigned char m_autumnSrgbBytes[256][3] = {
@@ -1219,5 +1217,3 @@ void vpColormap::convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor)
   }
   convert(I_float, Icolor);
 }
-
-#endif

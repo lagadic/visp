@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,13 +29,12 @@
  *
  * Description:
  * Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
- *
-*****************************************************************************/
+ */
 
 /*!
- \file vpMbEdgeKltTracker.h
- \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
-*/
+ * \file vpMbEdgeKltTracker.h
+ * \brief Hybrid tracker based on edges (vpMbt) and points of interests (KLT)
+ */
 
 #ifndef _vpMbEdgeKltTracker_h_
 #define _vpMbEdgeKltTracker_h_
@@ -55,156 +53,156 @@
 #include <visp3/mbt/vpMbTracker.h>
 
 /*!
-  \class vpMbEdgeKltTracker
-  \ingroup group_mbt_trackers
-  \warning This class is deprecated for user usage. You should rather use the high level
-  vpMbGenericTracker class.
-  \warning This class is only available if OpenCV is installed, and used.
-
-  \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT
-  tracker.
-
-  The \ref tutorial-tracking-mb-deprecated is a good starting point to use this class.
-
-  The tracker requires the knowledge of the 3D model that could be provided in
-  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
-  also use an xml file used to tune the behavior of the tracker and an init file
-  used to compute the pose at the very first image.
-
-  The following code shows the simplest way to use the tracker. The \ref
-  tutorial-tracking-mb-deprecated is also a good starting point to use this class.
-
-\code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-
-int main()
-{
-#if defined VISP_HAVE_OPENCV
-  vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
-  vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose computed using the tracker.
-  vpCameraParameters cam;
-
-  // Acquire an image
-  vpImageIo::read(I, "cube.pgm");
-
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-  display.init(I,100,100,"Mb Hybrid Tracker");
-#endif
-
-  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  // Load the 3d model in cao format. No 3rd party library is required
-  tracker.loadModel("cube.cao");
-  // Get the camera parameters used by the tracker (from the configuration file).
-  tracker.getCameraParameters(cam);
-  // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the
-  // cube.init file.
-  tracker.initClick(I, "cube.init");
-
-  while(true){
-    // Acquire a new image
-    vpDisplay::display(I);
-    tracker.track(I);     // Track the object on this image
-    tracker.getPose(cMo); // Get the pose
-
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
-    vpDisplay::flush(I);
-  }
-
-  return 0;
-#endif
-}
-\endcode
-
-  The tracker can also be used without display, in that case the initial pose
-  must be known (object always at the same initial pose for example) or
-computed using another method:
-
-\code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-
-int main()
-{
-#if defined VISP_HAVE_OPENCV
-  vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
-  vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker.
-
-  //acquire an image
-  vpImageIo::read(I, "cube.pgm"); // Example of acquisition
-
-  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
-  tracker.loadModel("cube.cao");
-  tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
-
-  while(true){
-    // acquire a new image
-    tracker.track(I); // track the object on this image
-    tracker.getPose(cMo); // get the pose
-  }
-
-  return 0;
-#endif
-}
-\endcode
-
-  Finally it can be used not to track an object but just to display a model at
-a given pose:
-
-\code
-#include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/mbt/vpMbEdgeKltTracker.h>
-
-int main()
-{
-#if defined VISP_HAVE_OPENCV
-  vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
-  vpImage<unsigned char> I;
-  vpHomogeneousMatrix cMo; // Pose used to display the model.
-  vpCameraParameters cam;
-
-  // Acquire an image
-  vpImageIo::read(I, "cube.pgm");
-
-#if defined(VISP_HAVE_X11)
-  vpDisplayX display;
-  display.init(I,100,100,"Mb Hybrid Tracker");
-#endif
-
-  tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
-  tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
-  // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
-  tracker.loadModel("cube.cao");
-
-  while(true){
-    // acquire a new image
-    // Get the pose using any method
-    vpDisplay::display(I);
-    tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
-    vpDisplay::flush(I);
-  }
-
-#endif
-
-  return 0;
-}
-\endcode
-*/
+ * \class vpMbEdgeKltTracker
+ * \ingroup group_mbt_trackers
+ * \warning This class is deprecated for user usage. You should rather use the high level
+ * vpMbGenericTracker class.
+ * \warning This class is only available if OpenCV is installed, and used.
+ *
+ * \brief Hybrid tracker based on moving-edges and keypoints tracked using KLT
+ * tracker.
+ *
+ * The \ref tutorial-tracking-mb-deprecated is a good starting point to use this class.
+ *
+ * The tracker requires the knowledge of the 3D model that could be provided in
+ * a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+ * also use an xml file used to tune the behavior of the tracker and an init file
+ * used to compute the pose at the very first image.
+ *
+ * The following code shows the simplest way to use the tracker. The \ref
+ * tutorial-tracking-mb-deprecated is also a good starting point to use this class.
+ *
+ * \code
+ * #include <visp3/core/vpCameraParameters.h>
+ * #include <visp3/core/vpHomogeneousMatrix.h>
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/gui/vpDisplayX.h>
+ * #include <visp3/io/vpImageIo.h>
+ * #include <visp3/mbt/vpMbEdgeKltTracker.h>
+ *
+ * int main()
+ * {
+ * #if defined VISP_HAVE_OPENCV
+ *   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
+ *   vpImage<unsigned char> I;
+ *   vpHomogeneousMatrix cMo; // Pose computed using the tracker.
+ *   vpCameraParameters cam;
+ *
+ *   // Acquire an image
+ *   vpImageIo::read(I, "cube.pgm");
+ *
+ * #if defined(VISP_HAVE_X11)
+ *   vpDisplayX display;
+ *   display.init(I,100,100,"Mb Hybrid Tracker");
+ * #endif
+ *
+ *   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+ *   // Load the 3d model in cao format. No 3rd party library is required
+ *   tracker.loadModel("cube.cao");
+ *   // Get the camera parameters used by the tracker (from the configuration file).
+ *   tracker.getCameraParameters(cam);
+ *   // Initialise manually the pose by clicking on the image points associated to the 3d points contained in the
+ *   // cube.init file.
+ *   tracker.initClick(I, "cube.init");
+ *
+ *   while(true){
+ *     // Acquire a new image
+ *     vpDisplay::display(I);
+ *     tracker.track(I);     // Track the object on this image
+ *     tracker.getPose(cMo); // Get the pose
+ *
+ *     tracker.display(I, cMo, cam, vpColor::darkRed, 1); // Display the model at the computed pose.
+ *     vpDisplay::flush(I);
+ *   }
+ *
+ *   return 0;
+ * #endif
+ * }
+ * \endcode
+ *
+ * The tracker can also be used without display, in that case the initial pose
+ * must be known (object always at the same initial pose for example) or
+ * computed using another method:
+ *
+ * \code
+ * #include <visp3/core/vpCameraParameters.h>
+ * #include <visp3/core/vpHomogeneousMatrix.h>
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/io/vpImageIo.h>
+ * #include <visp3/mbt/vpMbEdgeKltTracker.h>
+ *
+ * int main()
+ * {
+ * #if defined VISP_HAVE_OPENCV
+ *   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
+ *   vpImage<unsigned char> I;
+ *   vpHomogeneousMatrix cMo; // Pose used in entry (has to be defined), then computed using the tracker.
+ *
+ *   //acquire an image
+ *   vpImageIo::read(I, "cube.pgm"); // Example of acquisition
+ *
+ *   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+ *   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+ *   tracker.loadModel("cube.cao");
+ *   tracker.initFromPose(I, cMo); // initialise the tracker with the given pose.
+ *
+ *   while(true){
+ *     // acquire a new image
+ *     tracker.track(I); // track the object on this image
+ *     tracker.getPose(cMo); // get the pose
+ *   }
+ *
+ *   return 0;
+ * #endif
+ * }
+ * \endcode
+ *
+ * Finally it can be used not to track an object but just to display a model at
+ * a given pose:
+ *
+ * \code
+ * #include <visp3/core/vpCameraParameters.h>
+ * #include <visp3/core/vpHomogeneousMatrix.h>
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/gui/vpDisplayX.h>
+ * #include <visp3/io/vpImageIo.h>
+ * #include <visp3/mbt/vpMbEdgeKltTracker.h>
+ *
+ * int main()
+ * {
+ * #if defined VISP_HAVE_OPENCV
+ *   vpMbEdgeKltTracker tracker; // Create an hybrid model based tracker.
+ *   vpImage<unsigned char> I;
+ *   vpHomogeneousMatrix cMo; // Pose used to display the model.
+ *   vpCameraParameters cam;
+ *
+ *   // Acquire an image
+ *   vpImageIo::read(I, "cube.pgm");
+ *
+ * #if defined(VISP_HAVE_X11)
+ *   vpDisplayX display;
+ *   display.init(I,100,100,"Mb Hybrid Tracker");
+ * #endif
+ *
+ *   tracker.loadConfigFile("cube.xml"); // Load the configuration of the tracker
+ *   tracker.getCameraParameters(cam); // Get the camera parameters used by the tracker (from the configuration file).
+ *   // load the 3d model, to read .wrl model coin is required, if coin is not installed .cao file can be used.
+ *   tracker.loadModel("cube.cao");
+ *
+ *   while(true){
+ *     // acquire a new image
+ *     // Get the pose using any method
+ *     vpDisplay::display(I);
+ *     tracker.display(I, cMo, cam, vpColor::darkRed, 1, true); // Display the model at the computed pose.
+ *     vpDisplay::flush(I);
+ *   }
+ *
+ * #endif
+ *
+ *   return 0;
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpMbEdgeKltTracker :
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   public vpMbKltTracker,
@@ -232,66 +230,66 @@ public:
   virtual ~vpMbEdgeKltTracker();
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
 
-  virtual inline vpColVector getError() const { return m_error_hybrid; }
+  virtual inline vpColVector getError() const override { return m_error_hybrid; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false);
+                                                               bool displayFullModel = false) override;
 
-  virtual inline vpColVector getRobustWeights() const { return m_w_hybrid; }
+  virtual inline vpColVector getRobustWeights() const override { return m_w_hybrid; }
 
   /*!
-    Get the near distance for clipping.
-
-    \return Near clipping value.
+   * Get the near distance for clipping.
+   *
+   * \return Near clipping value.
    */
-  virtual inline double getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
+  virtual inline double getNearClippingDistance() const override { return vpMbKltTracker::getNearClippingDistance(); }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) override;
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
-  void resetTracker();
+                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) override;
+  void resetTracker() override;
 
-  virtual void setCameraParameters(const vpCameraParameters &cam);
-
-  /*!
-    Specify which clipping to use.
-
-    \sa vpMbtPolygonClipping
-
-    \param flags : New clipping flags.
-   */
-  virtual void setClipping(const unsigned int &flags) { vpMbEdgeTracker::setClipping(flags); }
+  virtual void setCameraParameters(const vpCameraParameters &cam) override;
 
   /*!
-    Set the far distance for clipping.
-
-    \param dist : Far clipping value.
+   * Specify which clipping to use.
+   *
+   * \sa vpMbtPolygonClipping
+   *
+   * \param flags : New clipping flags.
    */
-  virtual void setFarClippingDistance(const double &dist) { vpMbEdgeTracker::setFarClippingDistance(dist); }
+  virtual void setClipping(const unsigned int &flags) override { vpMbEdgeTracker::setClipping(flags); }
 
   /*!
-    Set the near distance for clipping.
-
-    \param dist : Near clipping value.
+   * Set the far distance for clipping.
+   *
+   * \param dist : Far clipping value.
    */
-  virtual void setNearClippingDistance(const double &dist) { vpMbEdgeTracker::setNearClippingDistance(dist); }
+  virtual void setFarClippingDistance(const double &dist) override { vpMbEdgeTracker::setFarClippingDistance(dist); }
 
   /*!
-    Use Ogre3D for visibility tests
-
-    \warning This function has to be called before the initialization of the
-    tracker.
-
-    \param v : True to use it, False otherwise
+   * Set the near distance for clipping.
+   *
+   * \param dist : Near clipping value.
    */
-  virtual void setOgreVisibilityTest(const bool &v)
+  virtual void setNearClippingDistance(const double &dist) override { vpMbEdgeTracker::setNearClippingDistance(dist); }
+
+  /*!
+   * Use Ogre3D for visibility tests
+   *
+   * \warning This function has to be called before the initialization of the
+   * tracker.
+   *
+   * \param v : True to use it, False otherwise
+   */
+  virtual void setOgreVisibilityTest(const bool &v) override
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -300,44 +298,48 @@ public:
   }
 
   /*!
-    Use Scanline algorithm for visibility tests
-
-    \param v : True to use it, False otherwise
-  */
-  virtual void setScanLineVisibilityTest(const bool &v)
+   * Use Scanline algorithm for visibility tests
+   *
+   * \param v : True to use it, False otherwise
+   */
+  virtual void setScanLineVisibilityTest(const bool &v) override
   {
     vpMbEdgeTracker::setScanLineVisibilityTest(v);
     vpMbKltTracker::setScanLineVisibilityTest(v);
   }
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) override;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) override;
+
   /*!
-    Set if the projection error criteria has to be computed.
+   * Set if the projection error criteria has to be computed.
+   *
+   * \param flag : True if the projection error criteria has to be computed,
+   * false otherwise
+   */
+  virtual void setProjectionErrorComputation(const bool &flag) override
+  {
+    vpMbEdgeTracker::setProjectionErrorComputation(flag);
+  }
 
-    \param flag : True if the projection error criteria has to be computed,
-    false otherwise
-  */
-  virtual void setProjectionErrorComputation(const bool &flag) { vpMbEdgeTracker::setProjectionErrorComputation(flag); }
-
-  virtual void testTracking() {}
-  virtual void track(const vpImage<unsigned char> &I);
-  virtual void track(const vpImage<vpRGBa> &I_color);
+  virtual void testTracking() override { }
+  virtual void track(const vpImage<unsigned char> &I) override;
+  virtual void track(const vpImage<vpRGBa> &I_color) override;
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                          unsigned int lvl = 0, double *edge_residual = NULL, double *klt_residual = NULL);
-  virtual void computeVVSInit();
-  virtual void computeVVSInteractionMatrixAndResidu();
+                          unsigned int lvl = 0, double *edge_residual = nullptr, double *klt_residual = nullptr);
+  virtual void computeVVSInit() override;
+  virtual void computeVVSInteractionMatrixAndResidu() override;
   using vpMbTracker::computeCovarianceMatrixVVS;
   using vpMbTracker::computeVVSPoseEstimation;
 
-  virtual void init(const vpImage<unsigned char> &I);
+  virtual void init(const vpImage<unsigned char> &I) override;
   virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
-                          const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "");
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon);
-  virtual void initFaceFromLines(vpMbtPolygon &polygon);
+                          const std::string &name = "") override;
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "") override;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) override;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) override;
   unsigned int initMbtTracking(unsigned int level = 0);
 
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt, unsigned int lvl = 0);

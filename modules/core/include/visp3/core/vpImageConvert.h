@@ -111,11 +111,13 @@ public:
   static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false, unsigned int nThreads = 0);
   static void convert(const cv::Mat &src, vpImage<float> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<double> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
   static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<float> &src, cv::Mat &dest, bool copyData = true);
+  static void convert(const vpImage<double> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<vpRGBf> &src, cv::Mat &dest);
 #endif
 
@@ -133,7 +135,7 @@ public:
 #endif
 
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
-                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = NULL);
+                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
 
   static void merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G, const vpImage<unsigned char> *B,
                     const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa);

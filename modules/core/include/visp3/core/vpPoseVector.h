@@ -137,11 +137,8 @@ class vpRowVector;
   {
     vpTranslationVector t;
     vpThetaUVector tu;
-
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     t = { 0.1, 0.2, 0.3 };
     tu = { M_PI, M_PI_2, M_PI_4 };
-  #endif
     vpPoseVector pose(t, tu);
   }
   \endcode
@@ -201,10 +198,6 @@ public:
   vpPoseVector(const vpTranslationVector &tv, const vpThetaUVector &tu);
   // constructor  convert a translation and a rotation matrix into a pose
   vpPoseVector(const vpTranslationVector &tv, const vpRotationMatrix &R);
-  /*!
-    Destructor.
-  */
-  virtual ~vpPoseVector() { };
 
   vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose

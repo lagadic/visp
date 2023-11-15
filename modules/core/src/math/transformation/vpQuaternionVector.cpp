@@ -52,10 +52,10 @@ const double vpQuaternionVector::minimum = 0.0001;
 */
 
 /*! Default constructor that initialize all the 4 angles to zero. */
-vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) {}
+vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) { }
 
 /*! Copy constructor. */
-vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) {}
+vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) { }
 
 //! Constructor from doubles.
 vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(4)
@@ -281,7 +281,8 @@ vpQuaternionVector vpQuaternionVector::inverse() const
   double mag_square = w() * w() + x() * x() + y() * y() + z() * z();
   if (!vpMath::nul(mag_square, std::numeric_limits<double>::epsilon())) {
     q_inv = this->conjugate() / mag_square;
-  } else {
+  }
+  else {
     std::cerr << "The current quaternion is null ! The inverse cannot be computed !" << std::endl;
   }
 
@@ -314,30 +315,29 @@ void vpQuaternionVector::normalize()
 
   \return The dot product between q0 and q1.
 */
-double vpQuaternionVector::dot(const vpQuaternionVector& q0, const vpQuaternionVector& q1)
+double vpQuaternionVector::dot(const vpQuaternionVector &q0, const vpQuaternionVector &q1)
 {
   return q0.x() * q1.x() + q0.y() * q1.y() + q0.z() * q1.z() + q0.w() * q1.w();
 }
 
 //! Returns the x-component of the quaternion.
-const double& vpQuaternionVector::x() const { return data[0]; }
+const double &vpQuaternionVector::x() const { return data[0]; }
 //! Returns the y-component of the quaternion.
-const double& vpQuaternionVector::y() const { return data[1]; }
+const double &vpQuaternionVector::y() const { return data[1]; }
 //! Returns the z-component of the quaternion.
-const double& vpQuaternionVector::z() const { return data[2]; }
+const double &vpQuaternionVector::z() const { return data[2]; }
 //! Returns the w-component of the quaternion.
-const double& vpQuaternionVector::w() const { return data[3]; }
+const double &vpQuaternionVector::w() const { return data[3]; }
 
 //! Returns a reference to the x-component of the quaternion.
-double& vpQuaternionVector::x() { return data[0]; }
+double &vpQuaternionVector::x() { return data[0]; }
 //! Returns a reference to the y-component of the quaternion.
-double& vpQuaternionVector::y() { return data[1]; }
+double &vpQuaternionVector::y() { return data[1]; }
 //! Returns a reference to the z-component of the quaternion.
-double& vpQuaternionVector::z() { return data[2]; }
+double &vpQuaternionVector::z() { return data[2]; }
 //! Returns a reference to the w-component of the quaternion.
-double& vpQuaternionVector::w() { return data[3]; }
+double &vpQuaternionVector::w() { return data[3]; }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 4 double angle values.
   \code
@@ -359,14 +359,13 @@ vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<do
 {
   if (list.size() > size()) {
     throw(vpException(
-        vpException::dimensionError,
-        "Cannot set quaternion vector out of bounds. It has only %d values while you try to initialize with %d values",
-        size(), list.size()));
+      vpException::dimensionError,
+      "Cannot set quaternion vector out of bounds. It has only %d values while you try to initialize with %d values",
+      size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 /*!
   Compute Quaternion Linear intERPolation (LERP).
@@ -440,7 +439,7 @@ vpQuaternionVector vpQuaternionVector::nlerp(const vpQuaternionVector &q0, const
 
   \return The interpolated quaternion using the SLERP method.
 */
-vpQuaternionVector vpQuaternionVector::slerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t)
+vpQuaternionVector vpQuaternionVector::slerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t)
 {
   assert(t >= 0 && t <= 1);
   // Some additional references:

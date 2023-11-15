@@ -137,7 +137,6 @@ class vpPoint;
 
   int main()
   {
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpHomogeneousMatrix M( vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix( {0, 0, -1, 0, -1, 0, -1, 0, 0} ) );
       std::cout << "M:\n" << M << std::endl;
@@ -148,7 +147,6 @@ class vpPoint;
                             -1,  0,  0, 0.3 };
       std::cout << "M:\n" << M << std::endl;
     }
-  #endif
   }
   \endcode
 
@@ -209,13 +207,7 @@ public:
   explicit vpHomogeneousMatrix(const std::vector<float> &v);
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix(const std::initializer_list<double> &list);
-#endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpHomogeneousMatrix() { }
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -255,10 +247,87 @@ public:
   void extract(vpTranslationVector &t) const;
   void extract(vpQuaternionVector &q) const;
 
-  // Load an homogeneous matrix from a file
+  /*!
+   * Read an homogeneous matrix from an input file stream. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param f : Input file stream.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * std::ifstream f("homogeneous.dat");
+   * M.load(f);
+   * \endcode
+   *
+   * \sa load(const std::string &), save(std::ifstream &)
+   */
   void load(std::ifstream &f);
-  // Save an homogeneous matrix in a file
+
+  /*!
+   * Read an homogeneous matrix from an input file. The
+   * homogeneous matrix is considered as a 4 by 4 matrix.
+   *
+   * \param filename : Input file name.
+   *
+   * The code below shows how to get an homogeneous matrix from a file.
+   *
+   * \code
+   * vpHomogeneousMatrix M;
+   *
+   * M.load("homogeneous.dat");
+   * \endcode
+   *
+   * \sa load(std::ifstream &), save(const std::string &)
+   */
+  void load(const std::string &filename);
+
+  /*!
+   * Save an homogeneous matrix in an output file stream.
+   *
+   * \param f : Output file stream. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * std::ofstream f("homogeneous.dat");
+   * M.save(f);
+   * \endcode
+   *
+   * \sa save(const std::string &), load(std::ifstream &)
+   */
   void save(std::ofstream &f) const;
+
+  /*!
+   * Save an homogeneous matrix in a file.
+   *
+   * \param filename : Output file name. The homogeneous matrix is saved as a 4 by 4 matrix.
+   *
+   * The code below shows how to save an homogeneous matrix in a file.
+   *
+   * \code
+   * // Construct an homogeneous matrix
+   * vpTranslationVector t(1,2,3);
+   * vpRxyzVector r(M_PI, 0, -M_PI/4.);
+   * vpRotationMatrix R(r);
+   * vpHomogeneousMatrix M(t, R);
+   *
+   * // Save the content of the matrix in "homogeneous.dat"
+   * M.save("homogeneous.dat");
+   * \endcode
+   *
+   * \sa save(std::ofstream &), load(const std::string &)
+   */
+  void save(const std::string &filename) const;
 
   vpHomogeneousMatrix &operator=(const vpHomogeneousMatrix &M);
   vpHomogeneousMatrix operator*(const vpHomogeneousMatrix &M) const;
@@ -279,10 +348,10 @@ public:
   void print() const;
 
   /*!
-    This function is not applicable to an homogeneous matrix that is always a
-    4-by-4 matrix.
-    \exception vpException::fatalError When this function is called.
-    */
+   * This function is not applicable to an homogeneous matrix that is always a
+   * 4-by-4 matrix.
+   * \exception vpException::fatalError When this function is called.
+   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
@@ -310,16 +379,16 @@ public:
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
-  */
+   * @name Deprecated functions
+   */
   //@{
   /*!
-     \deprecated Provided only for compat with previous releases.
-     This function does nothing.
+   * \deprecated Provided only for compat with previous releases.
+   *  This function does nothing.
    */
   vp_deprecated void init() { }
   /*!
-     \deprecated You should rather use eye().
+   *  \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
   //@}

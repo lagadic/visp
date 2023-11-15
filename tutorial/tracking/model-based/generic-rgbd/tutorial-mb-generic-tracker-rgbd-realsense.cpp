@@ -181,7 +181,7 @@ int main(int argc, char *argv[])
     d2.init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
 
   while (true) {
-    realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, NULL);
+    realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
 
     if (use_edges || use_klt) {
       vpImageConvert::convert(I_color, I_gray);
@@ -319,7 +319,7 @@ int main(int argc, char *argv[])
       bool tracking_failed = false;
 
       // Acquire images and update tracker input data
-      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointcloud, NULL, NULL);
+      realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointcloud, nullptr, nullptr);
 
       if (use_edges || use_klt || run_auto_init) {
         vpImageConvert::convert(I_color, I_gray);

@@ -51,13 +51,13 @@
   Basic constructor.
 */
 vpPolygon3D::vpPolygon3D()
-  : nbpt(0), nbCornersInsidePrev(0), p(NULL), polyClipped(), clippingFlag(vpPolygon3D::NO_CLIPPING),
+  : nbpt(0), nbCornersInsidePrev(0), p(nullptr), polyClipped(), clippingFlag(vpPolygon3D::NO_CLIPPING),
     distNearClip(0.001), distFarClip(100.)
 {
 }
 
 vpPolygon3D::vpPolygon3D(const vpPolygon3D &mbtp)
-  : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev), p(NULL), polyClipped(mbtp.polyClipped),
+  : nbpt(mbtp.nbpt), nbCornersInsidePrev(mbtp.nbCornersInsidePrev), p(nullptr), polyClipped(mbtp.polyClipped),
     clippingFlag(mbtp.clippingFlag), distNearClip(mbtp.distNearClip), distFarClip(mbtp.distFarClip)
 {
   if (p)
@@ -90,9 +90,9 @@ vpPolygon3D &vpPolygon3D::operator=(const vpPolygon3D &mbtp)
 */
 vpPolygon3D::~vpPolygon3D()
 {
-  if (p != NULL) {
+  if (p != nullptr) {
     delete[] p;
-    p = NULL;
+    p = nullptr;
   }
 }
 
@@ -119,7 +119,7 @@ vpPoint &vpPolygon3D::getPoint(const unsigned int _index)
 void vpPolygon3D::setNbPoint(unsigned int nb)
 {
   nbpt = nb;
-  if (p != NULL)
+  if (p != nullptr)
     delete[] p;
   p = new vpPoint[nb];
 }
@@ -132,7 +132,7 @@ void vpPolygon3D::setNbPoint(unsigned int nb)
 */
 void vpPolygon3D::addPoint(unsigned int n, const vpPoint &P)
 {
-  // if( p!NULL && n < nbpt )
+  // if( p!nullptr && n < nbpt )
   p[n] = P;
 }
 

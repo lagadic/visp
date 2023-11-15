@@ -104,20 +104,16 @@ class vpPoseVector;
  *
  * int main()
  * {
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   vpColVector v({-1, -2.1, -3});
  *   std::cout << "v:\n" << v << std::endl;
- * #endif
  * }
  * \endcode
  * The vector could also be initialized using operator=(const std::initializer_list< double > &)
  * \code
  * int main()
  * {
- * #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
  *   vpColVector v;
  *   v = {-1, -2.1, -3};
- * #endif
  * }
  * \endcode
  *
@@ -244,7 +240,7 @@ public:
    * Constructor that creates a column vector from a std vector of float.
    */
   vpColVector(const std::vector<float> &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
   /*!
    * Move constructor that take rvalue.
    */
@@ -253,11 +249,6 @@ public:
   {
     std::copy(list.begin(), list.end(), data);
   }
-#endif
-  /*!
-   * Destructor.
-   */
-  virtual ~vpColVector() { }
 
   /*!
    * Removes all elements from the vector (which are destroyed),
@@ -265,14 +256,14 @@ public:
    */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -486,40 +477,6 @@ public:
   void insert(unsigned int i, const vpColVector &v);
 
   /*!
-   * Insert a column vector.
-   * \param i : Index of the first element to introduce. This index starts from 0.
-   * \param v : Column vector to insert.
-   *
-   * The following example shows how to use this function:
-   * \code
-   * #include <visp3/core/vpColVector.h>
-   *
-   * int main()
-   * {
-   *   vpColVector v(4);
-   *   for (unsigned int i=0; i < v.size(); i++)
-   *     v[i] = i;
-   *   std::cout << "v: " << v.t() << std::endl;
-   *
-   *   vpColVector w(2);
-   *   for (unsigned int i=0; i < w.size(); i++)
-   *     w[i] = i+10;
-   *   std::cout << "w: " << w.t() << std::endl;
-   *
-   *   v.insert(w, 1);
-   *   std::cout << "v: " << v.t() << std::endl;
-   * }
-   * \endcode
-   * It produces the following output:
-   * \code
-   * v: 0 1 2 3
-   * w: 10 11
-   * v: 0 10 11 3
-   * \endcode
-   */
-  void insert(const vpColVector &v, unsigned int i);
-
-  /*!
    * Print using Maple syntax, to copy/paste in Maple later.
    *
    * The following code
@@ -670,7 +627,6 @@ public:
    */
   vpColVector &operator=(double x);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Overloaded move assignment operator taking rvalue.
    */
@@ -700,7 +656,6 @@ public:
    * \sa operator<<()
    */
   vpColVector &operator=(const std::initializer_list<double> &list);
-#endif
 
   /*!
    * Compare two column vectors.
@@ -1376,7 +1331,7 @@ public:
    * Retrieve a vpColVector object from a JSON representation.
    *
    * @param j : JSON representation to convert.
-   * @param me : Converted object.
+   * @param v : Converted object.
    */
   friend void from_json(const nlohmann::json &j, vpColVector &v);
 #endif
@@ -1387,10 +1342,47 @@ public:
   */
   //@{
   /*!
-   *  \deprecated Provided only for compat with previous releases.
-   *  This function does nothing.
+   * \deprecated Provided only for compat with previous releases.
+   * This function does nothing.
    */
   vp_deprecated void init() { }
+
+  /*!
+   * \deprecated Provided only for compat with previous releases. Use rather
+   * insert(unsigned int i, const vpColVector &v)
+   *
+   * Insert a column vector.
+   * \param i : Index of the first element to introduce. This index starts from 0.
+   * \param v : Column vector to insert.
+   *
+   * The following example shows how to use this function:
+   * \code
+   * #include <visp3/core/vpColVector.h>
+   *
+   * int main()
+   * {
+   *   vpColVector v(4);
+   *   for (unsigned int i=0; i < v.size(); i++)
+   *     v[i] = i;
+   *   std::cout << "v: " << v.t() << std::endl;
+   *
+   *   vpColVector w(2);
+   *   for (unsigned int i=0; i < w.size(); i++)
+   *     w[i] = i+10;
+   *   std::cout << "w: " << w.t() << std::endl;
+   *
+   *   v.insert(w, 1);
+   *   std::cout << "v: " << v.t() << std::endl;
+   * }
+   * \endcode
+   * It produces the following output:
+   * \code
+   * v: 0 1 2 3
+   * w: 10 11
+   * v: 0 10 11 3
+   * \endcode
+   */
+  vp_deprecated void insert(const vpColVector &v, unsigned int i);
 
   /*!
    * \deprecated You should rather use extract().
@@ -1399,11 +1391,6 @@ public:
   {
     return vpColVector(*this, first_row - 1, last_row - first_row + 1);
   }
-
-  /*!
-   * \deprecated You should rather use eye()
-   */
-  vp_deprecated void setIdentity(const double &val = 1.0);
 
   /*!
    * \deprecated You should rather use stack(const vpColVector &)

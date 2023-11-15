@@ -40,8 +40,6 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpQuadProg.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 /*!
   Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
   to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
@@ -127,7 +125,7 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMa
   r = -Q.t().pseudoInverse() * c;
 #else
   throw(vpException(vpException::functionNotImplementedError, "Symmetric matrix decomposition is not implemented. You "
-                                                              "should install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "should install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -184,7 +182,8 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMa
       x = b + A * (Q * A).solveBySVD(r - Q * b);
     else
       x = b;
-  } else
+  }
+  else
     x = Q.solveBySVD(r);
   return true;
 }
@@ -246,7 +245,7 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &
   unsigned int n = Q.getCols();
   if (Q.getRows() != r.getRows() || Z.getRows() != n || x1.getRows() != n) {
     std::cout << "vpQuadProg::solveQPe: wrong dimension\n"
-              << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
+      << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
     std::cout << "Z: " << Z.getRows() << "x" << Z.getCols() << " - x1: " << x1.getRows() << std::endl;
     throw vpMatrixException::dimensionError;
   }
@@ -255,7 +254,8 @@ bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &
       x = x1 + Z * (Q * Z).solveBySVD(r - Q * x1);
     else
       x = x1;
-  } else
+  }
+  else
     x = Q.solveBySVD(r);
   return true;
 }
@@ -386,7 +386,8 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vp
   if (A.getCols() && solveQPi(Q * A, r - Q * b, C * A, d - C * b, x, false, tol)) {
     x = b + A * x;
     return true;
-  } else if (vpLinProg::allLesser(C, b, d, tol)) // Ax = b has only 1 solution
+  }
+  else if (vpLinProg::allLesser(C, b, d, tol)) // Ax = b has only 1 solution
   {
     x = b;
     return true;
@@ -451,13 +452,15 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
         // back to initial solution
         x = x1 + Z * x;
         return true;
-      } else if (vpLinProg::allLesser(C, x1, d, tol)) {
+      }
+      else if (vpLinProg::allLesser(C, x1, d, tol)) {
         x = x1;
         return true;
       }
       std::cout << "vpQuadProg::solveQPi: inequality constraint infeasible" << std::endl;
       return false;
-    } else
+    }
+    else
       std::cout << "vpQuadProg::solveQPi: use_equality before setEqualityConstraint" << std::endl;
   }
 
@@ -532,7 +535,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
         A_lp[i][2 * n + p + l] = -1;
         xc[2 * n + p + l] = -e[i];
         l++;
-      } else
+      }
+      else
         xc[2 * n + i] = e[i];
     }
     vpLinProg::simplex(c, A_lp, e, xc);
@@ -555,7 +559,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
       else
         active.push_back(i);
     }
-  } else // warm start feasible
+  }
+  else // warm start feasible
   {
     // using previous active set, check that inactive is sync
     if (active.size() + inactive.size() != p) {
@@ -616,7 +621,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
       else
         active.erase(active.begin() + ineqInd);
       update_Ap = true;
-    } else // u != 0, can improve xc
+    }
+    else // u != 0, can improve xc
     {
       unsigned int ineqInd = 0;
       // step length to next constraint
@@ -638,11 +644,13 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatri
           while (it != active.end() && *it < inactive[ineqInd])
             it++;
           active.insert(it, inactive[ineqInd]);
-        } else
+        }
+        else
           active.push_back(inactive[ineqInd]);
         inactive.erase(inactive.begin() + ineqInd);
         update_Ap = true;
-      } else
+      }
+      else
         update_Ap = false;
       // update x for next iteration
       x += alpha * u;
@@ -668,6 +676,3 @@ vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
     return A.solveBySVD(b);
   return A.solveByQR(b);
 }
-#else
-void dummy_vpQuadProg(){};
-#endif

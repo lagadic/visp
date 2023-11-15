@@ -50,7 +50,7 @@ const double vpRobot::maxRotationVelocityDefault = 0.7;
 vpRobot::vpRobot(void)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
     maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
+    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
     verbose_(true)
 {
 }
@@ -58,7 +58,7 @@ vpRobot::vpRobot(void)
 vpRobot::vpRobot(const vpRobot &robot)
   : stateRobot(vpRobot::STATE_STOP), frameRobot(vpRobot::CAMERA_FRAME),
     maxTranslationVelocity(maxTranslationVelocityDefault), maxRotationVelocity(maxRotationVelocityDefault), nDof(0),
-    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(NULL), qmax(NULL),
+    eJe(), eJeAvailable(false), fJe(), fJeAvailable(false), areJointLimitsAvailable(false), qmin(nullptr), qmax(nullptr),
     verbose_(true)
 {
   *this = robot;
@@ -69,13 +69,13 @@ vpRobot::vpRobot(const vpRobot &robot)
  */
 vpRobot::~vpRobot()
 {
-  if (qmin != NULL) {
+  if (qmin != nullptr) {
     delete[] qmin;
-    qmin = NULL;
+    qmin = nullptr;
   }
-  if (qmax != NULL) {
+  if (qmax != nullptr) {
     delete[] qmax;
-    qmax = NULL;
+    qmax = nullptr;
   }
 }
 

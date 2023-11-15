@@ -109,8 +109,9 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const doubl
     vpMatrix::computeHLM(H, lambda, HLM);
     try {
       dp = HLM.inverseByLU() * G_;
-    } catch (const vpException &e) {
-      // std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
+    }
+    catch (const vpException &e) {
+   // std::cout<<"Cannot inverse the matrix by LU "<<std::endl;
       throw(e);
     }
     pRondp(p, dp, p);
@@ -152,8 +153,6 @@ vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3() : G(), 
   A[6][2][0] = 1;
   A[7][2][1] = 1;
 }
-
-vpTemplateTrackerWarpHomographySL3::~vpTemplateTrackerWarpHomographySL3() {}
 
 // get the parameter corresponding to the lower level of a gaussian pyramid
 // a refaire de facon analytique

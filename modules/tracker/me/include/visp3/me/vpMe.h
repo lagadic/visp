@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,13 +29,12 @@
  *
  * Description:
  * Moving edges.
- *
-*****************************************************************************/
+ */
 
 /*!
-  \file vpMe.h
-  \brief Moving edges
-*/
+ * \file vpMe.h
+ * \brief Moving edges
+ */
 
 #ifndef _vpMe_h_
 #define _vpMe_h_
@@ -46,77 +44,77 @@
 #include <visp3/core/vpMatrix.h>
 
 /*!
-  \class vpMe
-  \ingroup module_me
-
-  This class defines predetermined masks for sites and holds moving edges
-  tracking parameters.
-
-  <b>JSON serialization</b>
-
-  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMe.
-  The following sample code shows how to save moving-edges settings in a file named `me.json`
-  and reload the values from this JSON file.
-  \code
-  #include <visp3/me/vpMe.h>
-
-  int main()
-  {
-  #if defined(VISP_HAVE_NLOHMANN_JSON)
-    std::string filename = "me.json";
-    {
-      vpMe me;
-      me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
-      me.setThreshold(20);    // Value in range [0 ; 255]
-      me.setMaskNumber(180);
-      me.setMaskSign(0);
-      me.setMu1(0.5);
-      me.setMu2(0.5);
-      me.setNbTotalSample(0);
-      me.setPointsToTrack(200);
-      me.setRange(5);
-      me.setStrip(2);
-
-      std::ofstream file(filename);
-      const nlohmann::json j = me;
-      file << j;
-      file.close();
-    }
-    {
-      std::ifstream file(filename);
-      const nlohmann::json j = nlohmann::json::parse(file);
-      vpMe me;
-      me = j;
-      file.close();
-      std::cout << "Read moving-edges settings from " << filename << ":" << std::endl;
-      me.print();
-    }
-  #endif
-  }
-  \endcode
-  If you build and execute the sample code, it will produce the following output:
-  \code{.unparsed}
-  Read moving-edges settings from me.json:
-
-  Moving edges settings
-
-   Size of the convolution masks....5x5 pixels
-   Number of masks..................180
-   Query range +/- J................5 pixels
-   Likelihood threshold type........normalized
-   Likelihood threshold.............20
-   Contrast tolerance +/-...........50% and 50%
-   Sample step......................10 pixels
-   Strip............................2 pixels
-   Min sample step..................4 pixels
-  \endcode
-
-  The content of the `me.json` file is the following:
-  \code{.unparsed}
-  $ cat me.json
-  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
-   "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
-  \endcode
+ * \class vpMe
+ * \ingroup module_me
+ *
+ * This class defines predetermined masks for sites and holds moving edges
+ * tracking parameters.
+ *
+ * <b>JSON serialization</b>
+ *
+ * Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMe.
+ * The following sample code shows how to save moving-edges settings in a file named `me.json`
+ * and reload the values from this JSON file.
+ * \code
+ * #include <visp3/me/vpMe.h>
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_NLOHMANN_JSON)
+ *   std::string filename = "me.json";
+ *   {
+ *     vpMe me;
+ *     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+ *     me.setThreshold(20);    // Value in range [0 ; 255]
+ *     me.setMaskNumber(180);
+ *     me.setMaskSign(0);
+ *     me.setMu1(0.5);
+ *     me.setMu2(0.5);
+ *     me.setNbTotalSample(0);
+ *     me.setPointsToTrack(200);
+ *     me.setRange(5);
+ *     me.setStrip(2);
+ *
+ *     std::ofstream file(filename);
+ *     const nlohmann::json j = me;
+ *     file << j;
+ *     file.close();
+ *   }
+ *   {
+ *     std::ifstream file(filename);
+ *     const nlohmann::json j = nlohmann::json::parse(file);
+ *     vpMe me;
+ *     me = j;
+ *     file.close();
+ *     std::cout << "Read moving-edges settings from " << filename << ":" << std::endl;
+ *     me.print();
+ *   }
+ * #endif
+ * }
+ * \endcode
+ * If you build and execute the sample code, it will produce the following output:
+ * \code{.unparsed}
+ * Read moving-edges settings from me.json:
+ *
+ * Moving edges settings
+ *
+ *  Size of the convolution masks....5x5 pixels
+ *  Number of masks..................180
+ *  Query range +/- J................5 pixels
+ *  Likelihood threshold type........normalized
+ *  Likelihood threshold.............20
+ *  Contrast tolerance +/-...........50% and 50%
+ *  Sample step......................10 pixels
+ *  Strip............................2 pixels
+ *  Min sample step..................4 pixels
+ * \endcode
+ *
+ * The content of the `me.json` file is the following:
+ * \code{.unparsed}
+ * $ cat me.json
+ * {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
+ *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
+ * \endcode
  */
 class VISP_EXPORT vpMe
 {
@@ -128,52 +126,44 @@ public:
   {
     //! Old likelihood ratio threshold (to be avoided).
     OLD_THRESHOLD = 0,
-    //! Easy-to-use normalized likelihood threshold corresponding to the minimal luminance contrast to consider with values in [0 ; 255].
+    //! Easy-to-use normalized likelihood threshold corresponding to the minimal luminance contrast to consider
+    //! with values in [0 ; 255].
     NORMALIZED_THRESHOLD = 1
   } vpLikelihoodThresholdType;
 
 private:
-  vpLikelihoodThresholdType m_likelihood_threshold_type;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-#else
-private:
-#endif
-  double threshold; //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
-  double mu1;       //! Contrast continuity parameter (left boundary)
-  double mu2;       //! Contrast continuity parameter (right boundary)
-  double min_samplestep;
-  unsigned int anglestep;
-  int mask_sign;
-  unsigned int range; //! Seek range - on both sides of the reference pixel
-  double sample_step; //! Distance between sampled points in pixels
-  int ntotal_sample;
-  int points_to_track;
-  //! Convolution masks' size in pixels (masks are square), \warning should
-  //! not be public, use setMaskSize() and getMaskSize() instead (kept public
-  //! for compatibility reasons).
-  unsigned int mask_size;
-  //! The number of convolution masks available for tracking ; defines
-  //! resolution. \warning Should not be public, use setMaskNumber() and
-  //! getMaskNumber() instead (kept public for compatibility reasons).
-  unsigned int n_mask;
-  // Strip: defines a "security strip" such that Seek_Extremities()
-  // cannot return a new extremity which is too close to the
-  // frame borders which may cause Get_Sampling_Grid to refuse
-  // the that extremity
-  int strip;
-  vpMatrix *mask; //! Array of matrices defining the different masks (one for every angle step).
+  vpLikelihoodThresholdType m_likelihood_threshold_type; //!< Likelihood threshold type
+  //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
+  double m_threshold;
+  double m_mu1;       //!< Contrast continuity parameter (left boundary)
+  double m_mu2;       //!< Contrast continuity parameter (right boundary)
+  double m_min_samplestep;
+  unsigned int m_anglestep;
+  int m_mask_sign;
+  unsigned int m_range; //! Seek range - on both sides of the reference pixel
+  double m_sample_step; //! Distance between sampled points in pixels
+  int m_ntotal_sample;
+  int m_points_to_track; //!< Expected number of points to track
+  //! Convolution masks' size in pixels (masks are square)
+  unsigned int m_mask_size;
+  //! The number of convolution masks available for tracking ; defines resolution
+  unsigned int m_mask_number;
+  //! Strip: defines a "security strip" such that when seeking extremities
+  //! cannot return a new extremity which is too close to the frame borders
+  int m_strip;
+  vpMatrix *m_mask; //!< Array of matrices defining the different masks (one for every angle step).
 
 public:
   /*!
    * Default constructor.
    */
   vpMe();
+
   /*!
    * Copy constructor.
    */
   vpMe(const vpMe &me);
+
   /*!
    * Destructor.
    */
@@ -183,12 +173,11 @@ public:
    * Copy operator.
    */
   vpMe &operator=(const vpMe &me);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
   /*!
    * Move operator.
    */
   vpMe &operator=(const vpMe &&me);
-#endif
 
   /*!
    * Check sample step wrt min value.
@@ -197,109 +186,128 @@ public:
    */
   void checkSamplestep(double &sample_step)
   {
-    if (sample_step < min_samplestep)
-      sample_step = min_samplestep;
+    if (sample_step < m_min_samplestep)
+      sample_step = m_min_samplestep;
   }
-  /*!
-    Return the angle step.
-
-    \return Value of anglestep.
-  */
-  inline unsigned int getAngleStep() const { return anglestep; }
-  /*!
-    Get the matrix of the mask.
-
-    \return the value of mask.
-  */
-  inline vpMatrix *getMask() const { return mask; }
-  /*!
-    Return the number of mask  applied to determine the object contour. The
-    number of mask determines the precision of the normal of the edge for
-    every sample. If precision is 2deg, then there are 360/2 = 180 masks.
-
-    \return the current number of mask.
-  */
-  inline unsigned int getMaskNumber() const { return n_mask; }
-  /*!
-    Return the mask sign.
-
-    \return Value of mask_sign.
-  */
-  inline int getMaskSign() const { return mask_sign; }
-  /*!
-    Return the actual mask size (in pixel) used to compute the image gradient
-    and determine the object contour. The mask size defines the size of the
-    convolution mask used to detect an edge.
-
-    \return the current mask size.
-  */
-  inline unsigned int getMaskSize() const { return mask_size; }
-  /*!
-    Get the minimum allowed sample step. Useful to specify a lower bound when
-    the sample step is changed.
-
-    \return Value of min_samplestep.
-  */
-  inline double getMinSampleStep() const { return min_samplestep; }
-  /*!
-    Get the minimum image contrast allowed to detect a contour.
-
-    \return Value of mu1.
-  */
-  inline double getMu1() const { return mu1; }
-  /*!
-    Get the maximum image contrast allowed to detect a contour.
-
-    \return Value of mu2.
-  */
-  inline double getMu2() const { return mu2; }
-  /*!
-    Get how many discretizied points are used to track the feature.
-
-    \return Value of ntotal_sample.
-  */
-  inline int getNbTotalSample() const { return ntotal_sample; }
-  /*!
-    Return the number of points to track.
-
-    \return Value of points_to_track.
-  */
-  inline int getPointsToTrack() const { return points_to_track; }
-  /*!
-    Return the seek range on both sides of the reference pixel.
-
-    \return Value of range.
-  */
-  inline unsigned int getRange() const { return range; }
-  /*!
-    Get the number of pixels that are ignored around the image borders.
-
-    \return the value of strip.
-  */
-  inline int getStrip() const { return strip; }
 
   /*!
-    Return the likelihood threshold used to determine if the moving edge is valid or not.
-
-    \return Value of the likelihood threshold.
-
-    \sa setThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
-  */
-  inline double getThreshold() const { return threshold; }
+   * Return the angle step.
+   *
+   * \return Value of angle step.
+   */
+  inline unsigned int getAngleStep() const { return m_anglestep; }
 
   /*!
-    Return the selected choice for the likelihood threshold.
+   * Get the matrix of the mask.
+   *
+   * \return the value of mask.
+   */
+  inline vpMatrix *getMask() const { return m_mask; }
 
-    \return The likelihood threshold type to consider.
+  /*!
+   * Return the number of mask  applied to determine the object contour. The
+   * number of mask determines the precision of the normal of the edge for
+   * every sample. If precision is 2deg, then there are 360/2 = 180 masks.
+   *
+   * \return the current number of mask.
+   */
+  inline unsigned int getMaskNumber() const { return m_mask_number; }
 
-    \sa setLikelihoodThresholdType(), setThreshold(), getThreshold()
-  */
+  /*!
+   * Return the mask sign.
+   *
+   * \return Value of mask_sign.
+   */
+  inline int getMaskSign() const { return m_mask_sign; }
+
+  /*!
+   * Return the actual mask size (in pixel) used to compute the image gradient
+   * and determine the object contour. The mask size defines the size of the
+   * convolution mask used to detect an edge.
+   *
+   * \return the current mask size.
+   */
+  inline unsigned int getMaskSize() const { return m_mask_size; }
+
+  /*!
+   * Get the minimum allowed sample step. Useful to specify a lower bound when
+   * the sample step is changed.
+   *
+   * \return Value of min sample step.
+   */
+  inline double getMinSampleStep() const { return m_min_samplestep; }
+
+  /*!
+   * Get the minimum image contrast allowed to detect a contour.
+   *
+   * \return Value of mu1.
+   */
+  inline double getMu1() const { return m_mu1; }
+
+  /*!
+   * Get the maximum image contrast allowed to detect a contour.
+   *
+   * \return Value of mu2.
+   */
+  inline double getMu2() const { return m_mu2; }
+
+  /*!
+   * Get how many discretized points are used to track the feature.
+   *
+   * \return Value of ntotal_sample.
+   */
+  inline int getNbTotalSample() const { return m_ntotal_sample; }
+
+  /*!
+   * Return the number of points to track.
+   *
+   * \return Value of points_to_track.
+   */
+  inline int getPointsToTrack() const { return m_points_to_track; }
+
+  /*!
+   * Return the seek range on both sides of the reference pixel.
+   *
+   * \return Value of range.
+   */
+  inline unsigned int getRange() const { return m_range; }
+
+  /*!
+   * Get the minimum distance in pixel between two discretized points.
+   *
+   * \return Value of sample_step.
+   */
+  inline double getSampleStep() const { return m_sample_step; }
+
+  /*!
+   * Get the number of pixels that are ignored around the image borders.
+   *
+   * \return the value of strip.
+   */
+  inline int getStrip() const { return m_strip; }
+
+  /*!
+   * Return the likelihood threshold used to determine if the moving edge is valid or not.
+   *
+   * \return Value of the likelihood threshold.
+   *
+   * \sa setThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
+   */
+  inline double getThreshold() const { return m_threshold; }
+
+  /*!
+   * Return the selected choice for the likelihood threshold.
+   *
+   * \return The likelihood threshold type to consider.
+   *
+   * \sa setLikelihoodThresholdType(), setThreshold(), getThreshold()
+   */
   inline vpLikelihoodThresholdType getLikelihoodThresholdType() const { return m_likelihood_threshold_type; }
 
   /*!
-    Initialise the array of matrices with the defined size and the number of
-    matrices to create.
-  */
+   * Initialise the array of matrices with the defined size and the number of
+   * matrices to create.
+   */
   void initMask(); // convolution masks - offset computation
 
   /*!
@@ -308,140 +316,135 @@ public:
   void print();
 
   /*!
-    Set the angle step.
-
-    \param a : new angle step.
-  */
-  void setAngleStep(const unsigned int &a) { anglestep = a; }
-  /*!
-    Set the number of mask applied to determine the object contour. The number
-    of mask determines the precision of the normal of the edge for every
-    sample. If precision is 2deg, then there are 360/2 = 180 masks.
-
-    \param a : the number of mask.
-  */
-  void setMaskNumber(const unsigned int &a);
+   * Set the angle step.
+   *
+   * \param anglestep : New angle step value.
+   */
+  void setAngleStep(const unsigned int &anglestep) { m_anglestep = anglestep; }
 
   /*!
-    Set the mask sign.
-
-    \param a : new mask sign.
-  */
-  void setMaskSign(const int &a) { mask_sign = a; }
-
-  /*!
-    Set the mask size (in pixel) used to compute the image gradient and
-    determine the object contour. The mask size defines the size of the
-    convolution mask used to detect an edge.
-
-    \param a : new mask size.
-  */
-  void setMaskSize(const unsigned int &a);
-  /*!
-    Set the minimum allowed sample step. Useful to specify a lower bound when
-    the sample step is changed.
-
-    \param min : new minimum sample step.
-  */
-  void setMinSampleStep(const double &min) { min_samplestep = min; }
+   * Set the number of mask applied to determine the object contour. The number
+   * of mask determines the precision of the normal of the edge for every
+   * sample. If precision is 2deg, then there are 360/2 = 180 masks.
+   *
+   * \param mask_number : The number of mask.
+   */
+  void setMaskNumber(const unsigned int &mask_number);
 
   /*!
-    Set the minimum image contrast allowed to detect a contour.
-
-    \param mu_1 : new mu1.
-  */
-  void setMu1(const double &mu_1) { this->mu1 = mu_1; }
-
-  /*!
-    Set the maximum image contrast allowed to detect a contour.
-
-    \param mu_2 : new mu2.
-  */
-  void setMu2(const double &mu_2) { this->mu2 = mu_2; }
+   * Set the mask sign.
+   *
+   * \param mask_sign : New mask sign.
+   */
+  void setMaskSign(const int &mask_sign) { m_mask_sign = mask_sign; }
 
   /*!
-    Set how many discretizied points are used to track the feature.
-
-    \param nb : new total number of sample.
-  */
-  void setNbTotalSample(const int &nb) { ntotal_sample = nb; }
-
-  /*!
-    Set the number of points to track.
-
-    \param n : new number of points to track.
-
-    \warning This method is useful only for the vpMeNurbsTracker.
-  */
-  void setPointsToTrack(const int &n) { points_to_track = n; }
+   * Set the mask size (in pixel) used to compute the image gradient and
+   * determine the object contour. The mask size defines the size of the
+   * convolution mask used to detect an edge.
+   *
+   * \param mask_size : New mask size.
+   */
+  void setMaskSize(const unsigned int &mask_size);
 
   /*!
-    Set the seek range on both sides of the reference pixel.
-
-    \param r : new range.
-  */
-  void setRange(const unsigned int &r) { range = r; }
-
-  /*!
-    Set the minimum distance in pixel between two discretized points.
-
-    \param s : new sample_step.
-  */
-  void setSampleStep(const double &s) { sample_step = s; }
+   * Set the minimum allowed sample step. Useful to specify a lower bound when
+   * the sample step is changed.
+   *
+   * \param min_samplestep : New minimum sample step.
+   */
+  void setMinSampleStep(const double &min_samplestep) { m_min_samplestep = min_samplestep; }
 
   /*!
-    Get the minimum distance in pixel between two discretized points.
-
-    \return Value of sample_step.
-  */
-  inline double getSampleStep() const { return sample_step; }
-
-  /*!
-    Set the number of pixels that are ignored around the image borders.
-
-    \param a : new strip.
-  */
-  void setStrip(const int &a) { strip = a; }
+   * Set the minimum image contrast allowed to detect a contour.
+   *
+   * \param mu_1 : new mu1.
+   */
+  void setMu1(const double &mu_1) { this->m_mu1 = mu_1; }
 
   /*!
-    Set the likelihood threshold used to determined if the moving edge is valid or not.
-
-    \param t : Threshold to consider. Two different cases need to be considered depending on the likelihood threshold type that
-    can be set using setLikelihoodThresholdType() or get using getLikelihoodThresholdType(). The default likelihood threshold type
-    is set to OLD_THRESHOLD to keep compatibility with ViSP previous releases, but it is recommended to use rather the NORMALIZED_THRESHOLD
-    type like in the following sample code. When doing so, the threshold is more easy to set since it corresponds to the minimal luminance
-    contrast to consider with values in range [0 ; 255].
-
-    \code
-    vpMe me;
-    me.setLikelihoodThresholdType(NORMALIZED_THRESHOLD);
-    me.setThreshold(20); // Value in range [0 ; 255]
-    \endcode
-
-    When the likelihood threshold type is set by default to OLD_THRESHOLD like in the next example, values of the likelihood threshold
-    depends on the minimal luminance contrast to consider and the mask size that can be set using setMaskSize() and retrieved using getMaskSize().
-    \code
-    vpMe me;                // By default the constructor set the threshold type to OLD_THRESHOLD
-    me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
-    \endcode
-    The previous sample code is similar to the next one:
-    \code
-    vpMe me;
-    me.setLikelihoodThresholdType(OLD_THRESHOLD);
-    me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
-    \endcode
-    \sa getThreshold(), getLikelihoodThresholdType()
-  */
-  void setThreshold(const double &t) { threshold = t; }
+   * Set the maximum image contrast allowed to detect a contour.
+   *
+   * \param mu_2 : New mu2.
+   */
+  void setMu2(const double &mu_2) { this->m_mu2 = mu_2; }
 
   /*!
-    Set the likelihood threshold type used to determine if the moving edge is valid or not.
+   * Set how many discretized points are used to track the feature.
+   *
+   * \param ntotal_sample : New total number of sample.
+   */
+  void setNbTotalSample(const int &ntotal_sample) { m_ntotal_sample = ntotal_sample; }
 
-    \param likelihood_threshold_type : Likelihood threshold type. It is recommended to use NORMALIZED_THRESHOLD and set the threshold
-    using setThreshold() with a value corresponding to the minimal luminance contrast to consider that can handle values in range [0 ; 255].
+  /*!
+   * Set the number of points to track.
+   *
+   * \param points_to_track : New number of points to track.
+   *
+   * \warning This method is useful only for the vpMeNurbsTracker.
+   */
+  void setPointsToTrack(const int &points_to_track) { m_points_to_track = points_to_track; }
 
-    \sa setThreshold()
-  */
+  /*!
+   * Set the seek range on both sides of the reference pixel.
+   *
+   * \param range : New range.
+   */
+  void setRange(const unsigned int &range) { m_range = range; }
+
+  /*!
+   * Set the minimum distance in pixel between two discretized points.
+   *
+   * \param sample_step : New sample_step.
+   */
+  void setSampleStep(const double &sample_step) { m_sample_step = sample_step; }
+
+  /*!
+   * Set the number of pixels that are ignored around the image borders.
+   *
+   * \param strip : New strip.
+   */
+  void setStrip(const int &strip) { m_strip = strip; }
+
+  /*!
+   * Set the likelihood threshold used to determined if the moving edge is valid or not.
+   *
+   * \param threshold : Threshold to consider. Two different cases need to be considered depending on the likelihood threshold type that
+   * can be set using setLikelihoodThresholdType() or get using getLikelihoodThresholdType(). The default likelihood threshold type
+   * is set to OLD_THRESHOLD to keep compatibility with ViSP previous releases, but it is recommended to use rather the NORMALIZED_THRESHOLD
+   * type like in the following sample code. When doing so, the threshold is more easy to set since it corresponds to the minimal luminance
+   * contrast to consider with values in range [0 ; 255].
+   *
+   * \code
+   * vpMe me;
+   * me.setLikelihoodThresholdType(NORMALIZED_THRESHOLD);
+   * me.setThreshold(20); // Value in range [0 ; 255]
+   * \endcode
+   *
+   * When the likelihood threshold type is set by default to OLD_THRESHOLD like in the next example, values of the likelihood threshold
+   * depends on the minimal luminance contrast to consider and the mask size that can be set using setMaskSize() and retrieved using getMaskSize().
+   * \code
+   * vpMe me;                // By default the constructor set the threshold type to OLD_THRESHOLD
+   * me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+   * \endcode
+   * The previous sample code is similar to the next one:
+   * \code
+   * vpMe me;
+   * me.setLikelihoodThresholdType(OLD_THRESHOLD);
+   * me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+   * \endcode
+   * \sa getThreshold(), getLikelihoodThresholdType()
+   */
+  void setThreshold(const double &threshold) { m_threshold = threshold; }
+
+  /*!
+   * Set the likelihood threshold type used to determine if the moving edge is valid or not.
+   *
+   * \param likelihood_threshold_type : Likelihood threshold type. It is recommended to use NORMALIZED_THRESHOLD and set the threshold
+   * using setThreshold() with a value corresponding to the minimal luminance contrast to consider that can handle values in range [0 ; 255].
+   *
+   * \sa setThreshold()
+   */
   void setLikelihoodThresholdType(const vpLikelihoodThresholdType likelihood_threshold_type) { m_likelihood_threshold_type = likelihood_threshold_type; }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

@@ -60,9 +60,6 @@ double computeDelta(double deltai, double deltaj);
 void findAngle(const vpImage<unsigned char> &I, const vpImagePoint &iP, vpMe *me, double &angle, double &convlt);
 vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePoint &iP);
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list);
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list);
-#endif
 
 // Compute the angle delta = arctan(deltai/deltaj)
 // and normalize it between 0 and pi
@@ -167,24 +164,6 @@ vpImagePoint findFirstBorder(const vpImage<unsigned char> &Isub, const vpImagePo
   return index;
 }
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-// Check if the list of vpImagePoint contains a distant point of less tha 4
-// pixels  from the center of the sub image (ie the point (15,15).
-vp_deprecated bool findCenterPoint(vpList<vpImagePoint> *ip_edges_list)
-{
-  ip_edges_list->front();
-  while (!ip_edges_list->outside()) {
-    vpImagePoint iP = ip_edges_list->value();
-    double dist = vpImagePoint::sqrDistance(iP, vpImagePoint(15, 15));
-    if (dist <= 16) {
-      return true;
-    }
-    ip_edges_list->next();
-  }
-  return false;
-}
-#endif
-
 // Check if the list of vpImagePoint contains a distant point of less tha 4
 // pixels  from the center of the sub image (ie the point (15,15).
 bool findCenterPoint(std::list<vpImagePoint> *ip_edges_list)
@@ -218,8 +197,6 @@ vpMeNurbs::vpMeNurbs(const vpMeNurbs &menurbs)
   cannyTh1 = menurbs.cannyTh1;
   cannyTh2 = menurbs.cannyTh2;
 }
-
-vpMeNurbs::~vpMeNurbs() { }
 
 void vpMeNurbs::initTracking(const vpImage<unsigned char> &I)
 {
@@ -264,10 +241,10 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   list.clear();
 
   double u = 0.0;
-  vpImagePoint *pt = NULL;
+  vpImagePoint *pt = nullptr;
   vpImagePoint pt_1(-rows, -cols);
   while (u <= 1.0) {
-    if (pt != NULL)
+    if (pt != nullptr)
       delete[] pt;
     pt = nurbs.computeCurveDersPoint(u, 1);
     double delta = computeDelta(pt[1].get_i(), pt[1].get_j());
@@ -284,7 +261,7 @@ void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     }
     u = u + step;
   }
-  if (pt != NULL)
+  if (pt != nullptr)
     delete[] pt;
 }
 
@@ -309,7 +286,7 @@ void vpMeNurbs::updateDelta()
   std::list<vpMeSite>::iterator it = list.begin();
 
   vpImagePoint Cu;
-  vpImagePoint *der = NULL;
+  vpImagePoint *der = nullptr;
   double step = 0.01;
   while (u < 1 && it != list.end()) {
     vpMeSite s = *it;
@@ -322,7 +299,7 @@ void vpMeNurbs::updateDelta()
     }
 
     u -= step;
-    if (der != NULL)
+    if (der != nullptr)
       delete[] der;
     der = nurbs.computeCurveDersPoint(u, 1);
     // vpImagePoint toto(der[0].get_i(),der[0].get_j());
@@ -334,7 +311,7 @@ void vpMeNurbs::updateDelta()
     d = 1e6;
     d_1 = 1.5e6;
   }
-  if (der != NULL)
+  if (der != nullptr)
     delete[] der;
 }
 
@@ -343,8 +320,8 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
 
-  vpImagePoint *begin = NULL;
-  vpImagePoint *end = NULL;
+  vpImagePoint *begin = nullptr;
+  vpImagePoint *end = nullptr;
 
   begin = nurbs.computeCurveDersPoint(0.0, 1);
   end = nurbs.computeCurveDersPoint(1.0, 1);
@@ -444,8 +421,8 @@ void vpMeNurbs::seekExtremities(const vpImage<unsigned char> &I)
   else {
     list.pop_front();
   }
-  /*if(begin != NULL)*/ delete[] begin;
-  /*if(end != NULL)  */ delete[] end;
+  /*if(begin != nullptr)*/ delete[] begin;
+  /*if(end != nullptr)  */ delete[] end;
 }
 
 void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
@@ -455,7 +432,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
   pt = list.back();
   vpImagePoint lastPoint(pt.ifloat, pt.jfloat);
   if (beginPtFound >= 3 && farFromImageEdge(I, firstPoint)) {
-    vpImagePoint *begin = NULL;
+    vpImagePoint *begin = nullptr;
     begin = nurbs.computeCurveDersPoint(0.0, 1);
     vpImage<unsigned char> Isub(32, 32); // Sub image.
     vpImagePoint topLeft(begin[0].get_i() - 15, begin[0].get_j() - 15);
@@ -575,12 +552,12 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       me->setRange(memory_range);
     }
 
-    /* if (begin != NULL) */ delete[] begin;
+    /* if (begin != nullptr) */ delete[] begin;
     beginPtFound = 0;
   }
 
   if (endPtFound >= 3 && farFromImageEdge(I, lastPoint)) {
-    vpImagePoint *end = NULL;
+    vpImagePoint *end = nullptr;
     end = nurbs.computeCurveDersPoint(1.0, 1);
 
     vpImage<unsigned char> Isub(32, 32); // Sub image.
@@ -705,7 +682,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> &I)
       me->setRange(memory_range);
     }
 
-    /* if (end != NULL) */ delete[] end;
+    /* if (end != nullptr) */ delete[] end;
     endPtFound = 0;
   }
 }
@@ -725,7 +702,7 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 {
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
-  vpImagePoint *iP = NULL;
+  vpImagePoint *iP = nullptr;
 
   int n = (int)numberOfSignal();
 
@@ -776,9 +753,9 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
 
         while (vpImagePoint::sqrDistance(iP[0], iPend) > vpMath::sqr(me->getSampleStep()) && u < uend) {
           u += 0.01;
-          /*if (iP!=NULL)*/ {
+          /*if (iP!=nullptr)*/ {
             delete[] iP;
-            iP = NULL;
+            iP = nullptr;
           }
           iP = nurbs.computeCurveDersPoint(u, 1);
           if (vpImagePoint::sqrDistance(iP[0], iP_1) > vpMath::sqr(me->getSampleStep()) &&
@@ -794,9 +771,9 @@ void vpMeNurbs::localReSample(const vpImage<unsigned char> &I)
             }
           }
         }
-        /*if (iP!=NULL)*/ {
+        /*if (iP!=nullptr)*/ {
           delete[] iP;
-          iP = NULL;
+          iP = nullptr;
         }
       }
     }

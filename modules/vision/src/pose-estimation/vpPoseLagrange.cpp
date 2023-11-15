@@ -104,10 +104,11 @@ static void calculTranslation(vpMatrix &a, vpMatrix &b, unsigned int nl, unsigne
 
     for (i = 0; i < nc1; i++)
       x2[i + nc3] = X3[i];
-  } catch (...) {
+  }
+  catch (...) {
 
-    // en fait il y a des dizaines de raisons qui font que cette fonction
-    // rende une erreur (matrice pas inversible, pb de memoire etc...)
+ // en fait il y a des dizaines de raisons qui font que cette fonction
+ // rende une erreur (matrice pas inversible, pb de memoire etc...)
     vpERROR_TRACE(" ");
     throw;
   }
@@ -230,7 +231,8 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
       std::cout << " V : " << std::endl << ata << std::endl;
     }
 #endif
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE(" ");
     throw;
   }
@@ -241,17 +243,6 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 
 //#undef EPS
 
-/*!
-  \brief  Compute the pose of a planar object using Lagrange approach.
-
-  \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
-  \param p_isPlan : if different from NULL, indicates if the object is planar or not.
-  \param p_a : if different from NULL, the a coefficient of the plan formed by the points.
-  \param p_b : if different from NULL, the b coefficient of the plan formed by the points.
-  \param p_c : if different from NULL, the c coefficient of the plan formed by the points.
-  \param p_d : if different from NULL, the d coefficient of the plan formed by the points.
-*/
-
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
 {
 #if (DEBUG_LEVEL1)
@@ -261,33 +252,27 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   double a, b, c, d;
 
   // Checking if coplanar has already been called and if the plan coefficients have been given
-  if((p_isPlan != NULL) && (p_a != NULL) && (p_b != NULL) && (p_c != NULL) && (p_d != NULL))
-  {
-    if(*p_isPlan)
-    {
-      // All the pointers towards the plan coefficients are different from NULL => using them in the rest of the method
+  if ((p_isPlan != nullptr) && (p_a != nullptr) && (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr)) {
+    if (*p_isPlan) {
+      // All the pointers towards the plan coefficients are different from nullptr => using them in the rest of the method
       a = *p_a;
       b = *p_b;
       c = *p_c;
       d = *p_d;
     }
-    else
-    {
+    else {
       // The call to coplanar that was performed outside vpPose::poseLagrangePlan indicated that the points are not coplanar.
       throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but the call to vpPose::coplanar done outside the method indicated that the points are not coplanar");
     }
   }
-  else
-  {
-    // At least one of the coefficient is a NULL pointer => calling coplanar by ourselves
+  else {
+    // At least one of the coefficient is a nullptr pointer => calling coplanar by ourselves
     int coplanarType;
     bool areCoplanar = coplanar(coplanarType, &a, &b, &c, &d);
-    if(!areCoplanar)
-    {
+    if (!areCoplanar) {
       throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but call to vpPose::coplanar indicates that the points are not coplanar");
     }
   }
-
 
   if (c < 0.0) { // imposing c >= 0
     a = -a;
@@ -315,7 +300,8 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     r1[0] = n1;
     r1[1] = -a * b / n1;
     r1[2] = -a * c / n1;
-  } else {
+  }
+  else {
     r1[0] = -a * b / n2;
     r1[1] = n2;
     r1[2] = -b * c / n2;
@@ -428,7 +414,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     //                  (*it).get_oZ() << std::endl;
     //      }
     throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation "
-                                                      "(planar plane case)"));
+                      "(planar plane case)"));
   }
 
   s = 1.0 / sqrt(s);
@@ -579,7 +565,7 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       //      }
       // vpERROR_TRACE(" division par zero " ) ;
       throw(vpException(vpException::divideByZeroError, "Division by zero in Lagrange pose computation (non "
-                                                        "planar plane case)"));
+                        "planar plane case)"));
     }
 
     s = 1.0 / sqrt(s);
@@ -600,7 +586,8 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
       cMo[i][3] = X2[i + 6];
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
 

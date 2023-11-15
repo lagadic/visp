@@ -67,14 +67,10 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
   std::transform(cbegin(ips), cend(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
     return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
   });
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#else
   std::transform(begin(ips), end(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
     return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
   });
-#else
-  for (typename IpContainer::const_iterator it = ips.begin(); it != ips.end(); ++it) {
-    cv_pts.push_back(cv::Point(static_cast<int>(it->get_u()), static_cast<int>(it->get_v())));
-  }
 #endif
 
   // Get convex hull from OpenCV
@@ -86,18 +82,13 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
   std::transform(cbegin(cv_conv_hull_corners), cend(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
                  [](const cv::Point &pt) {
-                   return vpImagePoint{static_cast<double>(pt.y), static_cast<double>(pt.x)};
-                 });
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::transform(begin(cv_conv_hull_corners), end(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
-                 [](const cv::Point &pt) {
-                   return vpImagePoint{static_cast<double>(pt.y), static_cast<double>(pt.x)};
+                   return vpImagePoint { static_cast<double>(pt.y), static_cast<double>(pt.x) };
                  });
 #else
-  for (std::vector<cv::Point>::const_iterator it = cv_conv_hull_corners.begin(); it != cv_conv_hull_corners.end();
-       ++it) {
-    conv_hull_corners.push_back(vpImagePoint(static_cast<double>(it->y), static_cast<double>(it->x)));
-  }
+  std::transform(begin(cv_conv_hull_corners), end(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
+                 [](const cv::Point &pt) {
+                   return vpImagePoint { static_cast<double>(pt.y), static_cast<double>(pt.x) };
+                 });
 #endif
 
   return conv_hull_corners;
@@ -110,8 +101,7 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 */
 vpPolygon::vpPolygon()
   : _corners(), _center(), _area(0.), _goodPoly(true), _bbox(), m_PnPolyConstants(), m_PnPolyMultiples()
-{
-}
+{ }
 
 /*!
   Constructor which initialises the polygon thanks to the given corners.
@@ -154,14 +144,13 @@ vpPolygon::vpPolygon(const std::list<vpImagePoint> &corners)
 */
 vpPolygon::vpPolygon(const vpPolygon &poly)
   : _corners(poly._corners), _center(poly._center), _area(poly._area), _goodPoly(poly._goodPoly), _bbox(poly._bbox),
-    m_PnPolyConstants(poly.m_PnPolyConstants), m_PnPolyMultiples(poly.m_PnPolyMultiples)
-{
-}
+  m_PnPolyConstants(poly.m_PnPolyConstants), m_PnPolyMultiples(poly.m_PnPolyMultiples)
+{ }
 
 /*!
   Basic destructor
 */
-vpPolygon::~vpPolygon() {}
+vpPolygon::~vpPolygon() { }
 
 /*!
   Equal operator.
@@ -197,7 +186,8 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool c
 #else
     vpException(vpException::notImplementedError, "Cannot build a convex hull without OpenCV imgproc module");
 #endif
-  } else {
+  }
+  else {
     init(corners);
   }
 }
@@ -219,7 +209,8 @@ void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool cre
 #else
     vpException(vpException::notImplementedError, "Cannot build a convex hull without OpenCV imgproc module");
 #endif
-  } else {
+  }
+  else {
     init(corners);
   }
 }
@@ -423,7 +414,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
 
       try {
         intersection = testIntersectionSegments(ip1, ip2, ip, infPoint);
-      } catch (...) {
+      }
+      catch (...) {
         return isInside(ip);
       }
 
@@ -468,10 +460,11 @@ void vpPolygon::precalcValuesPnPoly()
     if (vpMath::equal(_corners[j].get_v(), _corners[i].get_v(), std::numeric_limits<double>::epsilon())) {
       m_PnPolyConstants[i] = _corners[i].get_u();
       m_PnPolyMultiples[i] = 0.0;
-    } else {
+    }
+    else {
       m_PnPolyConstants[i] = _corners[i].get_u() -
-                             (_corners[i].get_v() * _corners[j].get_u()) / (_corners[j].get_v() - _corners[i].get_v()) +
-                             (_corners[i].get_v() * _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
+        (_corners[i].get_v() * _corners[j].get_u()) / (_corners[j].get_v() - _corners[i].get_v()) +
+        (_corners[i].get_v() * _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
       m_PnPolyMultiples[i] = (_corners[j].get_u() - _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
     }
 
@@ -529,28 +522,29 @@ void vpPolygon::updateCenter()
   double i_tmp = 0;
   double j_tmp = 0;
 #if 0
-  for(unsigned int i=0; i<(_corners.size()-1); ++i){
+  for (unsigned int i = 0; i<(_corners.size()-1); ++i) {
     i_tmp += (_corners[i].get_i() + _corners[i+1].get_i()) *
-             (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
+      (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
 
     j_tmp += (_corners[i].get_j() + _corners[i+1].get_j()) *
-             (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
+      (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
   }
 #else
   for (unsigned int i = 0; i < _corners.size(); ++i) {
     unsigned int i_p_1 = (i + 1) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
+      (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
 
     j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
-             (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
+      (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
   }
 #endif
 
   if (_area > 0) {
     _center.set_i(fabs(i_tmp / (6 * _area)));
     _center.set_j(fabs(j_tmp / (6 * _area)));
-  } else {
+  }
+  else {
     _center = _corners[0];
     _goodPoly = false;
   }

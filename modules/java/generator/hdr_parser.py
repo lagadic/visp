@@ -533,7 +533,7 @@ class CppHeaderParser(object):
                             eqpos = a.find("CV_WRAP_DEFAULT")
                             if eqpos >= 0:
                                 defval, pos3 = self.get_macro_arg(a, eqpos)
-                    if defval == "NULL":
+                    if defval == "nullptr":
                         defval = "0"
                     if eqpos >= 0:
                         a = a[:eqpos].strip()

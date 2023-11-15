@@ -40,7 +40,7 @@
 
   \file vpAfma4.h
 
-  Modelisation of Irisa's cylindrical robot named Afma4.
+  Modelization of Irisa's cylindrical robot named Afma4.
 
 */
 
@@ -50,7 +50,7 @@
 
   \ingroup group_robot_real_cylindrical
 
-  \brief Modelisation of Irisa's cylindrical robot named Afma4.
+  \brief Modelization of Irisa's cylindrical robot named Afma4.
 
   This robot has five degrees of freedom, but only four motorized
   joints (joint 3 is not motorized). Joint 2 and 3 are prismatic. The
@@ -137,7 +137,7 @@ public:
   static const unsigned int njoint; ///< Number of joint.
 
 protected:
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   double _a1;           // distance along x2
   double _d3;           // distance along z2
   double _d4;           // distance along z3

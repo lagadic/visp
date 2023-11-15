@@ -328,21 +328,21 @@ static void calcul_masques(vpColVector &angle, // definitions des angles theta
 
 void vpMe::initMask()
 {
-  if (mask != NULL)
-    delete[] mask;
+  if (m_mask != nullptr)
+    delete[] m_mask;
 
-  mask = new vpMatrix[n_mask];
+  m_mask = new vpMatrix[m_mask_number];
 
-  vpColVector angle(n_mask);
+  vpColVector angle(m_mask_number);
 
   unsigned int angle_pas;
-  angle_pas = 180 / n_mask;
+  angle_pas = 180 / m_mask_number;
 
   unsigned int k = 0;
-  for (unsigned int i = 0; k < n_mask; i += angle_pas)
+  for (unsigned int i = 0; k < m_mask_number; i += angle_pas)
     angle[k++] = i;
 
-  calcul_masques(angle, mask_size, mask);
+  calcul_masques(angle, m_mask_size, m_mask);
 }
 
 void vpMe::print()
@@ -350,107 +350,103 @@ void vpMe::print()
   std::cout << std::endl;
   std::cout << "Moving edges settings " << std::endl;
   std::cout << std::endl;
-  std::cout << " Size of the convolution masks...." << mask_size << "x" << mask_size << " pixels" << std::endl;
-  std::cout << " Number of masks.................." << n_mask << std::endl;
-  std::cout << " Query range +/- J................" << range << " pixels" << std::endl;
+  std::cout << " Size of the convolution masks...." << m_mask_size << "x" << m_mask_size << " pixels" << std::endl;
+  std::cout << " Number of masks.................." << m_mask_number << std::endl;
+  std::cout << " Query range +/- J................" << m_range << " pixels" << std::endl;
   std::cout << " Likelihood threshold type........" << (m_likelihood_threshold_type == NORMALIZED_THRESHOLD ? "normalized " : "old threshold (to be avoided)") << std::endl;
-  std::cout << " Likelihood threshold............." << threshold << std::endl;
-  std::cout << " Contrast tolerance +/-..........." << mu1 * 100 << "% and " << mu2 * 100 << "%     " << std::endl;
-  std::cout << " Sample step......................" << sample_step << " pixels" << std::endl;
-  std::cout << " Strip............................" << strip << " pixels  " << std::endl;
-  std::cout << " Min sample step.................." << min_samplestep << " pixels  " << std::endl;
+  std::cout << " Likelihood threshold............." << m_threshold << std::endl;
+  std::cout << " Contrast tolerance +/-..........." << m_mu1 * 100 << "% and " << m_mu2 * 100 << "%     " << std::endl;
+  std::cout << " Sample step......................" << m_sample_step << " pixels" << std::endl;
+  std::cout << " Strip............................" << m_strip << " pixels  " << std::endl;
+  std::cout << " Min sample step.................." << m_min_samplestep << " pixels  " << std::endl;
 }
 
 vpMe::vpMe()
-  : m_likelihood_threshold_type(OLD_THRESHOLD), threshold(10000),
-  mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0), range(4), sample_step(10),
-  ntotal_sample(0), points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
+  : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000),
+  m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
+  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
 {
-  // ntotal_sample = 0; // not sure that it is used -> Fabien
-  // points_to_track = 500; // not sure that it is used -> Fabien
-  anglestep = (180 / n_mask);
+  m_anglestep = (180 / m_mask_number);
 
   initMask();
 }
 
 vpMe::vpMe(const vpMe &me)
-  : m_likelihood_threshold_type(OLD_THRESHOLD), threshold(10000),
-  mu1(0.5), mu2(0.5), min_samplestep(4), anglestep(1), mask_sign(0), range(4), sample_step(10),
-  ntotal_sample(0), points_to_track(500), mask_size(5), n_mask(180), strip(2), mask(NULL)
+  : m_likelihood_threshold_type(OLD_THRESHOLD), m_threshold(10000),
+  m_mu1(0.5), m_mu2(0.5), m_min_samplestep(4), m_anglestep(1), m_mask_sign(0), m_range(4), m_sample_step(10),
+  m_ntotal_sample(0), m_points_to_track(500), m_mask_size(5), m_mask_number(180), m_strip(2), m_mask(nullptr)
 {
   *this = me;
 }
 
 vpMe &vpMe::operator=(const vpMe &me)
 {
-  if (mask != NULL) {
-    delete[] mask;
-    mask = NULL;
+  if (m_mask != nullptr) {
+    delete[] m_mask;
+    m_mask = nullptr;
   }
 
   m_likelihood_threshold_type = me.m_likelihood_threshold_type;
-  threshold = me.threshold;
-  mu1 = me.mu1;
-  mu2 = me.mu2;
-  min_samplestep = me.min_samplestep;
-  anglestep = me.anglestep;
-  mask_size = me.mask_size;
-  n_mask = me.n_mask;
-  mask_sign = me.mask_sign;
-  range = me.range;
-  sample_step = me.sample_step;
-  ntotal_sample = me.ntotal_sample;
-  points_to_track = me.points_to_track;
-  strip = me.strip;
+  m_threshold = me.m_threshold;
+  m_mu1 = me.m_mu1;
+  m_mu2 = me.m_mu2;
+  m_min_samplestep = me.m_min_samplestep;
+  m_anglestep = me.m_anglestep;
+  m_mask_size = me.m_mask_size;
+  m_mask_number = me.m_mask_number;
+  m_mask_sign = me.m_mask_sign;
+  m_range = me.m_range;
+  m_sample_step = me.m_sample_step;
+  m_ntotal_sample = me.m_ntotal_sample;
+  m_points_to_track = me.m_points_to_track;
+  m_strip = me.m_strip;
 
   initMask();
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpMe &vpMe::operator=(const vpMe &&me)
 {
-  if (mask != NULL) {
-    delete[] mask;
-    mask = NULL;
+  if (m_mask != nullptr) {
+    delete[] m_mask;
+    m_mask = nullptr;
   }
   m_likelihood_threshold_type = std::move(me.m_likelihood_threshold_type);
-  threshold = std::move(me.threshold);
-  mu1 = std::move(me.mu1);
-  mu2 = std::move(me.mu2);
-  min_samplestep = std::move(me.min_samplestep);
-  anglestep = std::move(me.anglestep);
-  mask_size = std::move(me.mask_size);
-  n_mask = std::move(me.n_mask);
-  mask_sign = std::move(me.mask_sign);
-  range = std::move(me.range);
-  sample_step = std::move(me.sample_step);
-  ntotal_sample = std::move(me.ntotal_sample);
-  points_to_track = std::move(me.points_to_track);
-  strip = std::move(me.strip);
+  m_threshold = std::move(me.m_threshold);
+  m_mu1 = std::move(me.m_mu1);
+  m_mu2 = std::move(me.m_mu2);
+  m_min_samplestep = std::move(me.m_min_samplestep);
+  m_anglestep = std::move(me.m_anglestep);
+  m_mask_size = std::move(me.m_mask_size);
+  m_mask_number = std::move(me.m_mask_number);
+  m_mask_sign = std::move(me.m_mask_sign);
+  m_range = std::move(me.m_range);
+  m_sample_step = std::move(me.m_sample_step);
+  m_ntotal_sample = std::move(me.m_ntotal_sample);
+  m_points_to_track = std::move(me.m_points_to_track);
+  m_strip = std::move(me.m_strip);
 
   initMask();
   return *this;
 }
-#endif
 
 vpMe::~vpMe()
 {
-  if (mask != NULL) {
-    delete[] mask;
-    mask = NULL;
+  if (m_mask != nullptr) {
+    delete[] m_mask;
+    m_mask = nullptr;
   }
 }
 
-void vpMe::setMaskNumber(const unsigned int &n)
+void vpMe::setMaskNumber(const unsigned int &mask_number)
 {
-  n_mask = n;
-  anglestep = 180 / n_mask;
+  m_mask_number = mask_number;
+  m_anglestep = 180 / m_mask_number;
   initMask();
 }
 
-void vpMe::setMaskSize(const unsigned int &s)
+void vpMe::setMaskSize(const unsigned int &mask_size)
 {
-  mask_size = s;
+  m_mask_size = mask_size;
   initMask();
 }

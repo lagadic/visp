@@ -57,10 +57,8 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
                vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
-#endif
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
@@ -130,7 +128,7 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
     vpMbGenericTracker tracker(tracker_type);
 
     const std::string input_directory =
-        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "mbt-depth/Castle-simu");
+      vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "mbt-depth/Castle-simu");
     const std::string configFileCam1 = input_directory + std::string("/Config/chateau.xml");
     const std::string configFileCam2 = input_directory + std::string("/Config/chateau_depth.xml");
     REQUIRE(vpIoTools::checkFilename(configFileCam1));
@@ -191,16 +189,16 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
     {
       std::vector<std::map<std::string, int> > mapOfTrackerTypes;
       mapOfTrackerTypes.push_back(
-          {{"Camera1", vpMbGenericTracker::EDGE_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER}});
+          { {"Camera1", vpMbGenericTracker::EDGE_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER} });
       mapOfTrackerTypes.push_back(
-          {{"Camera1", vpMbGenericTracker::EDGE_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER}});
+          { {"Camera1", vpMbGenericTracker::EDGE_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER} });
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       mapOfTrackerTypes.push_back(
-          {{"Camera1", vpMbGenericTracker::KLT_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER}});
-      mapOfTrackerTypes.push_back({{"Camera1", vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER},
-                                   {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER}});
-      mapOfTrackerTypes.push_back({{"Camera1", vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER},
-                                   {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER}});
+          { {"Camera1", vpMbGenericTracker::KLT_TRACKER}, {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER} });
+      mapOfTrackerTypes.push_back({ {"Camera1", vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER},
+                                   {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER} });
+      mapOfTrackerTypes.push_back({ {"Camera1", vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER},
+                                   {"Camera2", vpMbGenericTracker::DEPTH_DENSE_TRACKER} });
 #endif
 
       std::vector<std::string> benchmarkNames = {
@@ -289,7 +287,7 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
           return cMo;
         };
 #else
-        }
+      }
 #endif
 
         vpPoseVector pose_est(cMo);
@@ -304,9 +302,9 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         const double max_rotation_error = 0.03;
         CHECK(sqrt(t_err.sumSquare()) < max_translation_error);
         CHECK(sqrt(tu_err.sumSquare()) < max_rotation_error);
-      }
     }
-  } // if (runBenchmark)
+  }
+} // if (runBenchmark)
 }
 
 int main(int argc, char *argv[])
@@ -316,11 +314,11 @@ int main(int argc, char *argv[])
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
   auto cli = session.cli()         // Get Catch's composite command line parser
-             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
-                   ["--benchmark"] // the option names it will respond to
-             ("run benchmark comparing naive code with ViSP implementation"); // description string for the help output
+    | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+    ["--benchmark"] // the option names it will respond to
+    ("run benchmark comparing naive code with ViSP implementation"); // description string for the help output
 
-  // Now pass the new composite back to Catch so it uses that
+// Now pass the new composite back to Catch so it uses that
   session.cli(cli);
 
   // Let Catch (using Clara) parse the command line

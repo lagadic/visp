@@ -37,7 +37,7 @@
 
   \file vpViper.cpp
 
-  Modelisation of the ADEPT Viper 650 or 850 robot.
+  Modelization of the ADEPT Viper 650 or 850 robot.
 
 */
 
@@ -64,7 +64,7 @@ vpViper::vpViper()
 {
   // Default values are initialized
 
-  // Denavit Hartenberg parameters
+  // Denavit-Hartenberg parameters
   a1 = 0.075;
   a2 = 0.365;
   a3 = 0.090;

@@ -65,18 +65,12 @@ void vpSimulatorCamera::init()
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;
-  qmin = NULL;
-  qmax = NULL;
+  qmin = nullptr;
+  qmax = nullptr;
 
   setMaxTranslationVelocity(1.);           // vx, vy and vz max set to 1 m/s
   setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
 }
-
-/*!
-  Destructor.
-
-*/
-vpSimulatorCamera::~vpSimulatorCamera() {}
 
 /*!
 

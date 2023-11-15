@@ -144,8 +144,8 @@ int main()
 
 */
 vpV4l2Grabber::vpV4l2Grabber()
-  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL), fmt_v4l2(), fmt_me(), reqbufs(),
-  buf_v4l2(NULL), buf_me(NULL), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
+  : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
+  buf_v4l2(nullptr), buf_me(nullptr), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
   streaming(false), m_input(vpV4l2Grabber::DEFAULT_INPUT), m_framerate(vpV4l2Grabber::framerate_25fps),
   m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT), m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
@@ -200,8 +200,8 @@ vpV4l2Grabber::vpV4l2Grabber()
 
 */
 vpV4l2Grabber::vpV4l2Grabber(bool verbose)
-  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL), fmt_v4l2(), fmt_me(), reqbufs(),
-  buf_v4l2(NULL), buf_me(NULL), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(verbose), m_nbuffers(3), field(0),
+  : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
+  buf_v4l2(nullptr), buf_me(nullptr), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(verbose), m_nbuffers(3), field(0),
   streaming(false), m_input(vpV4l2Grabber::DEFAULT_INPUT), m_framerate(vpV4l2Grabber::framerate_25fps),
   m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT), m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
@@ -246,8 +246,8 @@ vpV4l2Grabber::vpV4l2Grabber(bool verbose)
     \endcode
 */
 vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
-  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL), fmt_v4l2(), fmt_me(), reqbufs(),
-  buf_v4l2(NULL), buf_me(NULL), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
+  : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
+  buf_v4l2(nullptr), buf_me(nullptr), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
   streaming(false), m_input(vpV4l2Grabber::DEFAULT_INPUT), m_framerate(vpV4l2Grabber::framerate_25fps),
   m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT), m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
@@ -292,8 +292,8 @@ vpV4l2Grabber::vpV4l2Grabber(unsigned input, unsigned scale)
     \endcode
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned scale)
-  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL), fmt_v4l2(), fmt_me(), reqbufs(),
-  buf_v4l2(NULL), buf_me(NULL), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
+  : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
+  buf_v4l2(nullptr), buf_me(nullptr), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
   streaming(false), m_input(vpV4l2Grabber::DEFAULT_INPUT), m_framerate(vpV4l2Grabber::framerate_25fps),
   m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT), m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
@@ -341,8 +341,8 @@ vpV4l2Grabber::vpV4l2Grabber(vpImage<unsigned char> &I, unsigned input, unsigned
 
 */
 vpV4l2Grabber::vpV4l2Grabber(vpImage<vpRGBa> &I, unsigned input, unsigned scale)
-  : fd(-1), device(), cap(), streamparm(), inp(NULL), std(NULL), fmt(NULL), ctl(NULL), fmt_v4l2(), fmt_me(), reqbufs(),
-  buf_v4l2(NULL), buf_me(NULL), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
+  : fd(-1), device(), cap(), streamparm(), inp(nullptr), std(nullptr), fmt(nullptr), ctl(nullptr), fmt_v4l2(), fmt_me(), reqbufs(),
+  buf_v4l2(nullptr), buf_me(nullptr), queue(0), waiton_cpt(0), index_buffer(0), m_verbose(false), m_nbuffers(3), field(0),
   streaming(false), m_input(vpV4l2Grabber::DEFAULT_INPUT), m_framerate(vpV4l2Grabber::framerate_25fps),
   m_frameformat(vpV4l2Grabber::V4L2_FRAME_FORMAT), m_pixelformat(vpV4l2Grabber::V4L2_YUYV_FORMAT)
 {
@@ -853,29 +853,29 @@ void vpV4l2Grabber::close()
     fd = -1;
   }
 
-  if (inp != NULL) {
+  if (inp != nullptr) {
     delete [] inp;
-    inp = NULL;
+    inp = nullptr;
   }
-  if (std != NULL) {
+  if (std != nullptr) {
     delete [] std;
-    std = NULL;
+    std = nullptr;
   }
-  if (fmt != NULL) {
+  if (fmt != nullptr) {
     delete [] fmt;
-    fmt = NULL;
+    fmt = nullptr;
   }
-  if (ctl != NULL) {
+  if (ctl != nullptr) {
     delete [] ctl;
-    ctl = NULL;
+    ctl = nullptr;
   }
-  if (buf_v4l2 != NULL) {
+  if (buf_v4l2 != nullptr) {
     delete [] buf_v4l2;
-    buf_v4l2 = NULL;
+    buf_v4l2 = nullptr;
   }
-  if (buf_me != NULL) {
+  if (buf_me != nullptr) {
     delete [] buf_me;
-    buf_me = NULL;
+    buf_me = nullptr;
   }
 }
 
@@ -912,29 +912,29 @@ void vpV4l2Grabber::open()
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Can't access to video device"));
   }
 
-  if (inp != NULL) {
+  if (inp != nullptr) {
     delete [] inp;
-    inp = NULL;
+    inp = nullptr;
   }
-  if (std != NULL) {
+  if (std != nullptr) {
     delete [] std;
-    std = NULL;
+    std = nullptr;
   }
-  if (fmt != NULL) {
+  if (fmt != nullptr) {
     delete [] fmt;
-    fmt = NULL;
+    fmt = nullptr;
   }
-  if (ctl != NULL) {
+  if (ctl != nullptr) {
     delete [] ctl;
-    ctl = NULL;
+    ctl = nullptr;
   }
-  if (buf_v4l2 != NULL) {
+  if (buf_v4l2 != nullptr) {
     delete [] buf_v4l2;
-    buf_v4l2 = NULL;
+    buf_v4l2 = nullptr;
   }
-  if (buf_me != NULL) {
+  if (buf_me != nullptr) {
     delete [] buf_me;
-    buf_me = NULL;
+    buf_me = nullptr;
   }
 
   inp = new struct v4l2_input[vpV4l2Grabber::MAX_INPUTS];
@@ -1194,7 +1194,7 @@ void vpV4l2Grabber::startStreaming()
     memcpy(&buf_me[i].fmt, &fmt_me, sizeof(ng_video_fmt));
     buf_me[i].size = buf_me[i].fmt.bytesperline * buf_me[i].fmt.height;
 
-    buf_me[i].data = (unsigned char *)v4l2_mmap(NULL, buf_v4l2[i].length, PROT_READ | PROT_WRITE, MAP_SHARED, fd,
+    buf_me[i].data = (unsigned char *)v4l2_mmap(nullptr, buf_v4l2[i].length, PROT_READ | PROT_WRITE, MAP_SHARED, fd,
       (off_t)buf_v4l2[i].m.offset);
 
     if (buf_me[i].data == MAP_FAILED) {
@@ -1252,7 +1252,7 @@ void vpV4l2Grabber::stopStreaming()
 }
 
 /*!
-  Fill the next buffer. If all the buffers are filled return NULL.
+  Fill the next buffer. If all the buffers are filled return nullptr.
 
   Update the buffer index. If all the buffers are filled index is set to -1.
 
@@ -1277,17 +1277,17 @@ again:
   tv.tv_usec = 0;
   FD_ZERO(&rdset);
   FD_SET(static_cast<unsigned int>(fd), &rdset);
-  switch (select(fd + 1, &rdset, NULL, NULL, &tv)) {
+  switch (select(fd + 1, &rdset, nullptr, nullptr, &tv)) {
   case -1:
     if (EINTR == errno)
       goto again;
     index = 0;
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Can't access to the frame"));
-    return NULL;
+    return nullptr;
   case 0:
     index = 0;
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Can't access to the frame: timeout"));
-    return NULL;
+    return nullptr;
   }
 
   /* get it */
@@ -1310,7 +1310,7 @@ again:
       throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "VIDIOC_DQBUF"));
       break;
     }
-    return NULL;
+    return nullptr;
   }
 
   waiton_cpt++;

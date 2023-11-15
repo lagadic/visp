@@ -38,7 +38,7 @@
  * \example servoBiclopsPoint2DArtVelocity.cpp
  *
  * Example of eye-in-hand control law. We control here a real robot, the
- * biclops robot (pan-tilt head provided by Traclabs). The velocity is computed
+ * Biclops robot (pan-tilt head provided by Traclabs). The velocity is computed
  * in articular. The visual feature is the center of gravity of a point.
  */
 
@@ -90,7 +90,7 @@ SYNOPSIS\n\
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c <Biclops configuration file>                      %s\n\
-     Sets the biclops robot configuration file.\n",
+     Sets the Biclops robot configuration file.\n",
           conf.c_str());
 
   if (badparam) {
@@ -120,7 +120,7 @@ bool getOptions(int argc, const char **argv, std::string &conf)
       conf = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, conf);
+      usage(argv[0], nullptr, conf);
       return false;
       break;
 
@@ -133,7 +133,7 @@ bool getOptions(int argc, const char **argv, std::string &conf)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, conf);
+    usage(argv[0], nullptr, conf);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -338,7 +338,7 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have an biclops PT robot connected to your computer..." << std::endl;
+  std::cout << "You do not have an Biclops PT robot connected to your computer..." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

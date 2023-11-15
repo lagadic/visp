@@ -43,11 +43,8 @@
 
 vpMeEllipse::vpMeEllipse()
   : K(), iPc(), a(0.), b(0.), e(0.), iP1(), iP2(), alpha1(0), alpha2(2 * M_PI), ce(0.), se(0.), angle(), m00(0.),
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  mu11(0.), mu20(0.), mu02(0.), m10(0.), m01(0.), m11(0.), m02(0.), m20(0.),
-#endif
-  thresholdWeight(0.2), m_alphamin(0.), m_alphamax(0.), m_uc(0.), m_vc(0.), m_n20(0.), m_n11(0.), m_n02(0.), m_expectedDensity(0),
-  m_numberOfGoodPoints(0), m_trackCircle(false), m_trackArc(false), m_arcEpsilon(1e-6)
+  thresholdWeight(0.2), m_alphamin(0.), m_alphamax(0.), m_uc(0.), m_vc(0.), m_n20(0.), m_n11(0.), m_n02(0.),
+  m_expectedDensity(0), m_numberOfGoodPoints(0), m_trackCircle(false), m_trackArc(false), m_arcEpsilon(1e-6)
 {
   // Resize internal parameters vector
   // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 =  0
@@ -60,12 +57,7 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
   : vpMeTracker(me_ellipse), K(me_ellipse.K), iPc(me_ellipse.iPc), a(me_ellipse.a), b(me_ellipse.b), e(me_ellipse.e),
   iP1(me_ellipse.iP1), iP2(me_ellipse.iP2), alpha1(me_ellipse.alpha1), alpha2(me_ellipse.alpha2), ce(me_ellipse.ce),
   se(me_ellipse.se), angle(me_ellipse.angle), m00(me_ellipse.m00),
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  mu11(me_ellipse.mu11), mu20(me_ellipse.mu20), mu02(me_ellipse.mu02), m10(me_ellipse.m10), m01(me_ellipse.m01),
-  m11(me_ellipse.m11), m02(me_ellipse.m02), m20(me_ellipse.m20),
-#endif
   thresholdWeight(me_ellipse.thresholdWeight),
-
   m_alphamin(me_ellipse.m_alphamin), m_alphamax(me_ellipse.m_alphamax), m_uc(me_ellipse.m_uc), m_vc(me_ellipse.m_vc),
   m_n20(me_ellipse.m_n20), m_n11(me_ellipse.m_n11), m_n02(me_ellipse.m_n02),
   m_expectedDensity(me_ellipse.m_expectedDensity), m_numberOfGoodPoints(me_ellipse.m_numberOfGoodPoints),
@@ -491,7 +483,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   }
 
   if (vpDEBUG_ENABLE(3)) {
-    if (nb_pts_added > 0) std::cout << "Number of added points from holes and first extremity : " << nb_pts_added << std::endl;
+    if (nb_pts_added > 0) {
+      std::cout << "Number of added points from holes and first extremity : " << nb_pts_added << std::endl;
+    }
   }
 
   // Try to fill the second extremity: from alphamax + incr to alpha2 - incr/2
@@ -533,7 +527,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   me->setRange(memory_range);
 
   if (vpDEBUG_ENABLE(3)) {
-    if (nb_pts_added > 0) std::cout << "In plugHoles(): nb of added points : " << nb_pts_added << std::endl;
+    if (nb_pts_added > 0) {
+      std::cout << "In plugHoles(): nb of added points : " << nb_pts_added << std::endl;
+    }
   }
   return nb_pts_added;
 }
@@ -712,8 +708,12 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
         double ang = computeAngleOnEllipse(ip1);
         computePointOnEllipse(ang, ip2);
         // residu = 0 if point is exactly on the ellipse, not otherwise
-        if (sign > 0) residu[i] = vpImagePoint::distance(ip1, ip2);
-        else residu[i] = -vpImagePoint::distance(ip1, ip2);
+        if (sign > 0) {
+          residu[i] = vpImagePoint::distance(ip1, ip2);
+        }
+        else {
+          residu[i] = -vpImagePoint::distance(ip1, ip2);
+        }
       }
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
@@ -809,8 +809,12 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
         double ang = computeAngleOnEllipse(ip1);
         computePointOnEllipse(ang, ip2);
         // residu = 0 if point is exactly on the ellipse, not otherwise
-        if (sign > 0) residu[i] = vpImagePoint::distance(ip1, ip2);
-        else residu[i] = -vpImagePoint::distance(ip1, ip2);
+        if (sign > 0) {
+          residu[i] = vpImagePoint::distance(ip1, ip2);
+        }
+        else {
+          residu[i] = -vpImagePoint::distance(ip1, ip2);
+        }
       }
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
@@ -1077,7 +1081,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVecto
                                      const vpImagePoint *pt2, bool trackCircle)
 {
   m_trackCircle = trackCircle;
-  if (pt1 != NULL && pt2 != NULL) {
+  if (pt1 != nullptr && pt2 != nullptr) {
     m_trackArc = true;
   }
   // useful for sample(I) : uc, vc, a, b, e, Ki, alpha1, alpha2
@@ -1186,10 +1190,6 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
   computePointOnEllipse(alpha1, iP1);
   computePointOnEllipse(alpha2, iP2);
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  computeMoments();
-#endif
-
   if (vpDEBUG_ENABLE(3)) {
     display(I, vpColor::red);
     vpMeTracker::display(I);
@@ -1198,108 +1198,6 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
 }
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-/*!
-  \deprecated Computes the first and second order moments \f$ m_{ij} \f$
-*/
-void vpMeEllipse::computeMoments()
-{
-  // m00 = M_PI * a * b;  // moved in track(I)
-
-  m10 = m_uc * m00;
-  m01 = m_vc * m00;
-
-  mu20 = m_n20 * m00;
-  mu11 = m_n11 * m00;
-  mu02 = m_n02 * m00;
-
-  m20 = mu20 + m10 * m_uc;
-  m11 = mu11 + m10 * m_vc;
-  m02 = mu02 + m01 * m_vc;
-}
-
-/*!
-  \deprecated Initialization of the tracking. The arc of the ellipse is defined thanks to
-  its center, semi major axis, semi minor axis, orientation and the angle
-  of its two extremities
-
-  \param I : Image in which the ellipse appears.
-  \param center_p : Ellipse center.
-  \param a_p : Semi major axis.
-  \param b_p : Semi minor axis.
-  \param e_p : Orientation in rad.
-  \param alpha1_p : Angle in rad defining the first extremity of the arc.
-  \param alpha2_p : Angle in rad defining the second extremity of the arc.
-*/
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p,
-                                     double b_p, double e_p, double alpha1_p, double alpha2_p)
-{
-  m_trackArc = true;
-  // useful for sample(I): uc, vc, a, b, e, Ki, alpha1, alpha2
-  m_uc = center_p.get_u();
-  m_vc = center_p.get_v();
-  a = a_p;
-  b = b_p;
-  e = e_p;
-  ce = cos(e);
-  se = sin(e);
-  computeNijFromAbe();
-  computeKiFromNij();
-
-  alpha1 = alpha1_p;
-  alpha2 = alpha2_p;
-  if (alpha2 < alpha1) {
-    alpha2 += 2 * M_PI;
-  }
-  // useful for track(I)
-  vpImagePoint ip;
-  computePointOnEllipse(alpha1, ip);
-  iP1 = ip;
-  computePointOnEllipse(alpha2, ip);
-  iP2 = ip;
-  // currently not used after, but done to be complete
-  // would be needed for displaying the ellipse here
-  iPc = center_p;
-
-  sample(I);
-  track(I);
-  vpMeTracker::display(I);
-  vpDisplay::flush(I);
-}
-
-/*!
-  \deprecated Initialization of the tracking. The ellipse is defined thanks to the
-  coordinates of n points.
-
-  \warning It is mandatory to use at least five points to estimate the
-  ellipse parameters.
-  \warning The n points should be selected as far as possible from each other.
-
-  \param I : Image in which the ellipse appears.
-  \param n : The number of points in the list.
-  \param iP : A pointer to a list of points belonging to the ellipse edge.
-*/
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP)
-{
-  std::vector<vpImagePoint> v_iP(n);
-
-  for (unsigned int i = 0; i < n; i++) {
-    v_iP[i] = iP[i];
-  }
-  initTracking(I, v_iP);
-}
-
-/*!
- * \deprecated Use an other initTracking() function.
- */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j)
-{
-  std::vector<vpImagePoint> v_iP(n);
-
-  for (unsigned int k = 0; k < n; k++) {
-    v_iP[k].set_ij(i[k], j[k]);
-  }
-  initTracking(I, v_iP);
-}
 
 /*!
   \deprecated This static function is deprecated. Use rather vpMeEllipse::displayEllipse().

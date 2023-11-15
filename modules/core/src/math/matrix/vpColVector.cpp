@@ -161,7 +161,7 @@ void vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
                       v.getRows()));
   resize(nrows, false);
 
-  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
     return;                  // Nothing to do
   for (unsigned int i = r; i < rnrows; i++)
     (*this)[i - r] = v[i];
@@ -214,7 +214,6 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -225,11 +224,10 @@ vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 
   v.rowNum = 0;
   v.colNum = 0;
-  v.rowPtrs = NULL;
+  v.rowPtrs = nullptr;
   v.dsize = 0;
-  v.data = NULL;
+  v.data = nullptr;
 }
-#endif
 
 vpColVector vpColVector::operator-() const
 {
@@ -404,8 +402,6 @@ std::vector<double> vpColVector::toStdVector() const
   return v;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -420,9 +416,9 @@ vpColVector &vpColVector::operator=(vpColVector &&other)
 
     other.rowNum = 0;
     other.colNum = 0;
-    other.rowPtrs = NULL;
+    other.rowPtrs = nullptr;
     other.dsize = 0;
-    other.data = NULL;
+    other.data = nullptr;
   }
 
   return *this;
@@ -434,7 +430,6 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 bool vpColVector::operator==(const vpColVector &v) const
 {
@@ -483,10 +478,10 @@ vpColVector operator*(const double &x, const vpColVector &v)
 
 double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 {
-  if (a.data == NULL) {
+  if (a.data == nullptr) {
     throw(vpException(vpException::fatalError, "Cannot compute the dot product: first vector empty"));
   }
-  if (b.data == NULL) {
+  if (b.data == nullptr) {
     throw(vpException(vpException::fatalError, "Cannot compute the dot product: second vector empty"));
   }
   if (a.size() != b.size()) {
@@ -529,7 +524,7 @@ vpColVector &vpColVector::normalize()
 
 vpColVector vpColVector::invSort(const vpColVector &v)
 {
-  if (v.data == NULL) {
+  if (v.data == nullptr) {
     throw(vpException(vpException::fatalError, "Cannot sort content of column vector: vector empty"));
   }
   vpColVector tab;
@@ -554,7 +549,7 @@ vpColVector vpColVector::invSort(const vpColVector &v)
 
 vpColVector vpColVector::sort(const vpColVector &v)
 {
-  if (v.data == NULL) {
+  if (v.data == nullptr) {
     throw(vpException(vpException::fatalError, "Cannot sort content of column vector: vector empty"));
   }
   vpColVector tab;
@@ -624,7 +619,7 @@ void vpColVector::stack(const vpColVector &A, const vpColVector &B, vpColVector 
 
 double vpColVector::mean(const vpColVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute column vector mean: vector empty"));
   }
 
@@ -636,7 +631,7 @@ double vpColVector::mean(const vpColVector &v)
 
 double vpColVector::median(const vpColVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute column vector median: vector empty"));
   }
 
@@ -647,7 +642,7 @@ double vpColVector::median(const vpColVector &v)
 
 double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute column vector stdev: vector empty"));
   }
 
@@ -658,7 +653,7 @@ vpMatrix vpColVector::skew(const vpColVector &v)
 {
   vpMatrix M;
   if (v.getRows() != 3) {
-    throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimention vector (%d)",
+    throw(vpException(vpException::dimensionError, "Cannot compute skew vector of a non 3-dimension vector (%d)",
                       v.getRows()));
   }
 
@@ -714,13 +709,9 @@ void vpColVector::insert(unsigned int i, const vpColVector &v)
   if (i + v.size() > this->size())
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
 
-  if (data != NULL && v.data != NULL && v.rowNum > 0) {
+  if (data != nullptr && v.data != nullptr && v.rowNum > 0) {
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
-}
-void vpColVector::insert(const vpColVector &v, unsigned int i)
-{
-  insert(i, v);
 }
 
 int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) const
@@ -904,6 +895,11 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
 };
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+void vpColVector::insert(const vpColVector &v, unsigned int i)
+{
+  insert(i, v);
+}
 
 void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 {

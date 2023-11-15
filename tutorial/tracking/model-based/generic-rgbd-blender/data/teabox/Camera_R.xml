@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<root>
+  <camera>
+    <name>Camera_R</name>
+    <image_width>640</image_width>
+    <image_height>480</image_height>
+    <model>
+      <type>perspectiveProjWithoutDistortion</type>
+      <px>600.0</px>
+      <py>600.0</py>
+      <u0>320.0</u0>
+      <v0>240.0</v0>
+    </model>
+  </camera>
+</root>
+

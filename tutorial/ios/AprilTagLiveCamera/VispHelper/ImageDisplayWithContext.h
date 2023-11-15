@@ -37,7 +37,7 @@
 
 #import "ImageDisplay.h"
 
-NS_ASSUME_NONNULL_BEGIN
+NS_ASSUME_NONnullptr_BEGIN
 
 @interface ImageDisplay (withContext)
 
@@ -49,4 +49,4 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-NS_ASSUME_NONNULL_END
+NS_ASSUME_NONnullptr_END

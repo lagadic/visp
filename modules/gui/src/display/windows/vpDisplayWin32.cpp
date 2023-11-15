@@ -147,10 +147,10 @@ void vpDisplayWin32::init(unsigned int width, unsigned int height, int x, int y,
   param->title = this->m_title;
 
   // creates the window in a separate thread
-  hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
+  hThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)vpCreateWindow, param, 0, &threadId);
 
   // the initialization worked
-  iStatus = (hThread != (HANDLE)NULL);
+  iStatus = (hThread != (HANDLE)nullptr);
 
   m_displayHasBeenInitialized = true;
 }

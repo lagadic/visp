@@ -90,20 +90,16 @@ v:
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector v{-1, -2.1, -3};
   std::cout << "v:\n" << v << std::endl;
-#endif
 }
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector v;
   v = {-1, -2.1, -3};
-#endif
 }
   \endcode
 */
@@ -111,28 +107,22 @@ class VISP_EXPORT vpRowVector : public vpArray2D<double>
 {
 public:
   //! Basic constructor that creates an empty 0-size row vector.
-  vpRowVector() : vpArray2D<double>() {}
+  vpRowVector() : vpArray2D<double>() { }
   //! Construct a row vector of size n. All the elements are initialized to
   //! zero.
-  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n) {}
+  explicit vpRowVector(unsigned int n) : vpArray2D<double>(1, n) { }
   //! Construct a row vector of size n. Each element is set to \e val.
-  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) {}
+  vpRowVector(unsigned int n, double val) : vpArray2D<double>(1, n, val) { }
   //! Copy constructor that allows to construct a row vector from an other
   //! one.
-  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) {}
+  vpRowVector(const vpRowVector &v) : vpArray2D<double>(v) { }
   vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncols);
   vpRowVector(const vpMatrix &M);
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
-#endif
-  /*!
-    Destructor.
-  */
-  virtual ~vpRowVector() {}
+  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -140,14 +130,14 @@ public:
   */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -170,7 +160,8 @@ public:
   /*!
      Extract a sub-row vector from a row vector.
      \param c : Index of the column corresponding to the first element of the
-     vector to extract. \param rowsize : Size of the vector to extract.
+     vector to extract.
+     \param rowsize : Size of the vector to extract.
      \exception vpException::fatalError If the vector to extract is not
      contained in the original one.
 
@@ -216,10 +207,8 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(double x);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
-#endif
   //! Comparison operator.
   bool operator==(const vpRowVector &v) const;
   bool operator!=(const vpRowVector &v) const;
@@ -310,7 +299,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use stack(const vpRowVector &)
    */

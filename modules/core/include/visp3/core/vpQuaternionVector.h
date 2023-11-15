@@ -117,9 +117,6 @@ public:
   explicit vpQuaternionVector(const vpColVector &q);
   explicit vpQuaternionVector(const std::vector<double> &q);
 
-  //! Destructor.
-  virtual ~vpQuaternionVector(){}
-
   vpQuaternionVector buildFrom(const double qx, const double qy, const double qz, const double qw);
   vpQuaternionVector buildFrom(const vpRotationMatrix &R);
   vpQuaternionVector buildFrom(const vpThetaUVector &tu);
@@ -127,15 +124,15 @@ public:
   vpQuaternionVector buildFrom(const std::vector<double> &q);
   void set(double x, double y, double z, double w);
 
-  const double& x() const;
-  const double& y() const;
-  const double& z() const;
-  const double& w() const;
+  const double &x() const;
+  const double &y() const;
+  const double &z() const;
+  const double &w() const;
 
-  double& x();
-  double& y();
-  double& z();
-  double& w();
+  double &x();
+  double &y();
+  double &z();
+  double &w();
 
   vpQuaternionVector operator+(const vpQuaternionVector &q) const;
   vpQuaternionVector operator-(const vpQuaternionVector &q) const;
@@ -144,21 +141,19 @@ public:
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;
   vpQuaternionVector &operator=(const std::initializer_list<double> &list);
-#endif
 
   vpQuaternionVector conjugate() const;
   vpQuaternionVector inverse() const;
   double magnitude() const;
   void normalize();
 
-  static double dot(const vpQuaternionVector& q0, const vpQuaternionVector& q1);
+  static double dot(const vpQuaternionVector &q0, const vpQuaternionVector &q1);
 
-  static vpQuaternionVector lerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
-  static vpQuaternionVector nlerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
-  static vpQuaternionVector slerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
+  static vpQuaternionVector lerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+  static vpQuaternionVector nlerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
+  static vpQuaternionVector slerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t);
 };
 
 #endif

@@ -139,7 +139,7 @@ int vpNetwork::getReceptorIndex(const char *name)
 {
   struct hostent *server = gethostbyname(name);
 
-  if (server == NULL) {
+  if (server == nullptr) {
     std::string noSuchHostMessage("ERROR, ");
     noSuchHostMessage.append(name);
     noSuchHostMessage.append(": no such host\n");
@@ -673,7 +673,7 @@ int vpNetwork::privReceiveRequestOnce()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
@@ -757,7 +757,7 @@ int vpNetwork::privReceiveRequestOnceFrom(const unsigned int &receptorEmitting)
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
   if (value == -1) {
     if (verboseMode)

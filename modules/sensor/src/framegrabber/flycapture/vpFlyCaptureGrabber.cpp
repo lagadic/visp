@@ -100,7 +100,7 @@ std::ostream &vpFlyCaptureGrabber::getCameraInfo(std::ostream &os)
 }
 
 /*!
-  Return the handler to the active camera or NULL if the camera is not
+  Return the handler to the active camera or nullptr if the camera is not
 connected. This function was designed to provide a direct access to the
 FlyCapture SDK to get access to advanced functionalities that are not
 implemented in this class.
@@ -185,7 +185,7 @@ FlyCapture2::Camera *vpFlyCaptureGrabber::getCameraHandler()
   if (m_connected == true) {
     return &m_camera;
   } else {
-    return NULL;
+    return nullptr;
   }
 }
 

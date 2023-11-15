@@ -250,6 +250,21 @@ dyld[33644]: Library not loaded: /System/Library/Frameworks/Python.framework/Ver
 To overcome this error, download and install the latest Python 2
 for macOS from [offical site](https://www.python.org/downloads/macos/).
 
+\subsubsection install_brew_3rdparty_other Other optional 3rd parties
+
+We give also the way to install other 3rd party libraries to enable specific capabilities.
+
+- Gtk-2 for gui capabilities instead of X11
+\verbatim
+$ brew install gtk
+\endverbatim
+After installing the gtk packages, you need to explicitly enable gtk usage during ViSP cmake configuration step by:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DUSE_GTK=ON
+\endverbatim
+
+
 \subsection install_brew_get_source Get ViSP source code
 
 There are different ways to get ViSP source code:

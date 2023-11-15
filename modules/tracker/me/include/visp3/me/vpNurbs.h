@@ -35,10 +35,10 @@
 #define vpNurbs_H
 
 /*!
-  \file vpNurbs.h
-  \brief Class that provides tools to compute and manipulate a Non Uniform
-  Rational B-Spline curve.
-*/
+ * \file vpNurbs.h
+ * \brief Class that provides tools to compute and manipulate a Non Uniform
+ * Rational B-Spline curve.
+ */
 
 #include <visp3/core/vpBSpline.h>
 #include <visp3/core/vpImagePoint.h>
@@ -50,45 +50,44 @@
 #include <list>
 
 /*!
-  \class vpNurbs
-  \ingroup module_me
-
-  \brief Class that provides tools to compute and manipulate a Non Uniform
-  Rational B-Spline curve.
-
-  The different parameters are :
-
-  - The knot vector \f$ U = {u_0, ... , u_m} \f$ where the knots \f$ u_i, i =
-  0, ...,m \f$ are real number such as \f$ u_i < u_{i+1} i = 0, ...,m \f$. To
-  define a curve, the knot vector is such as : \f$ U = {a , ... , a, u_{p+1} ,
-  ... , u_{m-p-1} , b , ... , b} \f$ where \f$ a \f$ and \f$ b \f$ are real
-  numbers and p is the degree of the B-Spline basis functions.
-
-  - The B-Spline basis functions \f$ N_{i,p} \f$ defined as :
-  \f[ N_{i,0}(u) = \left\{\begin{array}{cc}
-  1 & \mbox{if } u_i \leq u_{i+1} \\ 0 & else
-  \end{array}\right.\f]
-
-  \f[ N_{i,p}(u) =
-  \frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)\f]
-
-  where \f$ i = 0 , ... , m-1 \f$ and p is the degree of the B-Spline basis
-  functions.
-
-  - The control points \f$ {P_i} \f$ which are defined by the coordinates \f$
-  (i,j) \f$ of a point in an image.
-
-  - The weight \f$ {w_i} \f$ associated to each control points. The weights
-  value is upper than 0.
-
-  It is possible to compute the coordinates of a point corresponding to the
-  knots \f$ u \f$ (\f$ u \in [u_0,u_m]\f$) thanks to the formula : \f[ C(u) =
-  \frac{\sum_{i=0}^n (N_{i,p}(u)w_iP_i)}{\sum_{i=0}^n (N_{i,p}(u)w_i)}\f]
-
-  You can find much more information about the B-Splines and the
-  implementation of all the methods in the Nurbs Book.
-*/
-
+ * \class vpNurbs
+ * \ingroup module_me
+ *
+ * \brief Class that provides tools to compute and manipulate a Non Uniform
+ * Rational B-Spline curve.
+ *
+ * The different parameters are :
+ *
+ * - The knot vector \f$ U = {u_0, ... , u_m} \f$ where the knots \f$ u_i, i =
+ * 0, ...,m \f$ are real number such as \f$ u_i < u_{i+1} i = 0, ...,m \f$. To
+ * define a curve, the knot vector is such as : \f$ U = {a , ... , a, u_{p+1} ,
+ * ... , u_{m-p-1} , b , ... , b} \f$ where \f$ a \f$ and \f$ b \f$ are real
+ * numbers and p is the degree of the B-Spline basis functions.
+ *
+ * - The B-Spline basis functions \f$ N_{i,p} \f$ defined as :
+ * \f[ N_{i,0}(u) = \left\{\begin{array}{cc}
+ * 1 & \mbox{if } u_i \leq u_{i+1} \\ 0 & else
+ * \end{array}\right.\f]
+ *
+ * \f[ N_{i,p}(u) =
+ * \frac{u-u_i}{u_{i+p}-u_i}N_{i,p-1}(u)+\frac{u_{i+p+1}-u}{u_{i+p+1}-u_{i+1}}N_{i+1,p-1}(u)\f]
+ *
+ * where \f$ i = 0 , ... , m-1 \f$ and p is the degree of the B-Spline basis
+ * functions.
+ *
+ * - The control points \f$ {P_i} \f$ which are defined by the coordinates \f$
+ * (i,j) \f$ of a point in an image.
+ *
+ * - The weight \f$ {w_i} \f$ associated to each control points. The weights
+ * value is upper than 0.
+ *
+ * It is possible to compute the coordinates of a point corresponding to the
+ * knots \f$ u \f$ (\f$ u \in [u_0,u_m]\f$) thanks to the formula : \f[ C(u) =
+ * \frac{\sum_{i=0}^n (N_{i,p}(u)w_iP_i)}{\sum_{i=0}^n (N_{i,p}(u)w_i)}\f]
+ *
+ * You can find much more information about the B-Splines and the
+ * implementation of all the methods in the Nurbs Book.
+ */
 class VISP_EXPORT vpNurbs : public vpBSpline
 {
 protected:
@@ -168,10 +167,6 @@ public:
    */
   vpNurbs(const vpNurbs &nurbs);
 
-  /*!
-   * Destructor.
-   */
-  virtual ~vpNurbs();
 
   /*!
    * Gets all the weights relative to the control points.

@@ -116,10 +116,8 @@ M:
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M( {-1, -2, -3}, {4, 5.5, 6.0f} );
   std::cout << "M:\n" << M << std::endl;
-#endif
 }
   \endcode
   You can also create and initialize a matrix this way:
@@ -128,9 +126,7 @@ int main()
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M(2, 3, {-1, -2, -3, 4, 5.5, 6.0f} );
-#endif
 }
   \endcode
 
@@ -138,10 +134,8 @@ int main()
   \code
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix M;
   M = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-#endif
 }
   \endcode
 
@@ -201,15 +195,10 @@ vpMatrix M(R);
 
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
   explicit vpMatrix(const std::initializer_list<double> &list);
   explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
   explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
-#endif
-
-  //! Destructor (Memory de-allocation)
-  virtual ~vpMatrix() { }
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -217,14 +206,14 @@ vpMatrix M(R);
   */
   void clear()
   {
-    if (data != NULL) {
+    if (data != nullptr) {
       free(data);
-      data = NULL;
+      data = nullptr;
     }
 
-    if (rowPtrs != NULL) {
+    if (rowPtrs != nullptr) {
       free(rowPtrs);
-      rowPtrs = NULL;
+      rowPtrs = nullptr;
     }
     rowNum = colNum = dsize = 0;
   }
@@ -282,13 +271,11 @@ vpMatrix M(R);
   vpMatrix &operator<<(double val);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
 
   vpMatrix &operator=(const std::initializer_list<double> &list);
   vpMatrix &operator=(const std::initializer_list<std::initializer_list<double> > &lists);
-#endif
   vpMatrix &operator=(double x);
   //@}
 
@@ -761,7 +748,7 @@ vpMatrix M(R);
     \sa saveMatrix(), saveMatrixYAML(), loadMatrixYAML()
   */
   static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, bool binary = false,
-                                char *header = NULL)
+                                char *header = nullptr)
   {
     return vpArray2D<double>::load(filename, M, binary, header);
   }
@@ -835,7 +822,7 @@ vpMatrix M(R);
 
     \sa saveMatrixYAML(), saveMatrix(), loadMatrix()
   */
-  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
+  static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = nullptr)
   {
     return vpArray2D<double>::loadYAML(filename, M, header);
   }
@@ -998,7 +985,7 @@ vpMatrix M(R);
   */
   //@{
   /*!
-     \deprecated Only provided for compatibilty with ViSP previous releases.
+     \deprecated Only provided for compatibility with ViSP previous releases.
      This function does nothing.
    */
   vp_deprecated void init() { }

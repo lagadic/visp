@@ -67,7 +67,7 @@ int main(int argc, const char **argv)
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");
 
-    vpDetectorBase *detector = NULL;
+    vpDetectorBase *detector = nullptr;
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     if (opt_barcode == 0)
       detector = new vpDetectorQRCode;

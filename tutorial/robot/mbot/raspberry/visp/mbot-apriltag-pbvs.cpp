@@ -73,7 +73,7 @@ int main(int argc, const char **argv)
   // if motor left: led 3 blue
   // if motor right: led 4 blue
 
-  vpSerial *serial = NULL;
+  vpSerial *serial = nullptr;
   if (!serial_off) {
     serial = new vpSerial("/dev/ttyAMA0", 115200);
 
@@ -91,7 +91,7 @@ int main(int argc, const char **argv)
     g.setScale(1);
     g.acquire(I);
 
-    vpDisplay *d = NULL;
+    vpDisplay *d = nullptr;
     vpImage<vpRGBa> O;
 #ifdef VISP_HAVE_X11
     if (display_on) {

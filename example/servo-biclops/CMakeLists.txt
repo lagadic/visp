@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(example-servo-biclops)
 
-find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
+find_package(VISP REQUIRED visp_core visp_detection visp_vs visp_robot visp_sensor visp_gui)
 
 set(example_cpp
   moveBiclops.cpp

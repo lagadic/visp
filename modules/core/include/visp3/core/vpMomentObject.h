@@ -98,7 +98,7 @@ class vpCameraParameters;
   to get the basic moments that are computed and how to compute other classical
   moments such as the gravity center or the centered moments.
 
-\code
+  \code
 #include <visp3/core/vpMomentCommon.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>

@@ -67,7 +67,7 @@ vpSimulatorAfma6::vpSimulatorAfma6()
 
 #if defined(_WIN32)
   DWORD dwThreadIdArray;
-  hThread = CreateThread(NULL,              // default security attributes
+  hThread = CreateThread(nullptr,              // default security attributes
                          0,                 // use default stack size
                          launcher,          // thread function name
                          this,              // argument to thread function
@@ -77,7 +77,7 @@ vpSimulatorAfma6::vpSimulatorAfma6()
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-  pthread_create(&thread, NULL, launcher, (void *)this);
+  pthread_create(&thread, nullptr, launcher, (void *)this);
 #endif
 
   compute_fMi();
@@ -100,7 +100,7 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
 
 #if defined(_WIN32)
   DWORD dwThreadIdArray;
-  hThread = CreateThread(NULL,              // default security attributes
+  hThread = CreateThread(nullptr,              // default security attributes
                          0,                 // use default stack size
                          launcher,          // thread function name
                          this,              // argument to thread function
@@ -110,7 +110,7 @@ vpSimulatorAfma6::vpSimulatorAfma6(bool do_display)
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-  pthread_create(&thread, NULL, launcher, (void *)this);
+  pthread_create(&thread, nullptr, launcher, (void *)this);
 #endif
 
   compute_fMi();
@@ -134,10 +134,10 @@ vpSimulatorAfma6::~vpSimulatorAfma6()
   CloseHandle(hThread);
 #elif defined(VISP_HAVE_PTHREAD)
   pthread_attr_destroy(&attr);
-  pthread_join(thread, NULL);
+  pthread_join(thread, nullptr);
 #endif
 
-  if (robotArms != NULL) {
+  if (robotArms != nullptr) {
     for (int i = 0; i < 6; i++)
       free_Bound_scene(&(robotArms[i]));
   }
@@ -225,7 +225,7 @@ void vpSimulatorAfma6::init()
 */
 void vpSimulatorAfma6::initDisplay()
 {
-  robotArms = NULL;
+  robotArms = nullptr;
   robotArms = new Bound_scene[6];
   initArms();
   setExternalCameraPosition(vpHomogeneousMatrix(0, 0, 0, 0, 0, vpMath::rad(180)) *
@@ -276,7 +276,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
 
     setCameraParameters(vpCameraParameters(1109.5735473989, 1112.1520168160, 320, 240));
 
-    if (robotArms != NULL) {
+    if (robotArms != nullptr) {
       while (get_displayBusy())
         vpTime::wait(2);
       free_Bound_scene(&(robotArms[5]));
@@ -299,7 +299,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
 
     setCameraParameters(vpCameraParameters(852.6583228197, 854.8084224761, 320, 240));
 
-    if (robotArms != NULL) {
+    if (robotArms != nullptr) {
       while (get_displayBusy())
         vpTime::wait(2);
       free_Bound_scene(&(robotArms[5]));
@@ -322,7 +322,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
 
     setCameraParameters(vpCameraParameters(853.4876600807, 856.0339170706, 320, 240));
 
-    if (robotArms != NULL) {
+    if (robotArms != nullptr) {
       while (get_displayBusy())
         vpTime::wait(2);
       free_Bound_scene(&(robotArms[5]));
@@ -816,7 +816,7 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \warning Velocities could be saturated if one of them exceed the
-  maximal autorized speed (see vpRobot::maxTranslationVelocity and
+  maximal authorized speed (see vpRobot::maxTranslationVelocity and
   vpRobot::maxRotationVelocity). To change these values use
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
@@ -2027,7 +2027,7 @@ bool vpSimulatorAfma6::savePosFile(const std::string &filename, const vpColVecto
 {
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
 
   fprintf(fd, "\
@@ -2450,7 +2450,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
     double t = vpTime::measureTimeMs();
 
     // update image
-    if (Iint != NULL) {
+    if (Iint != nullptr) {
       vpDisplay::display(*Iint);
       getInternalView(*Iint);
       vpDisplay::flush(*Iint);

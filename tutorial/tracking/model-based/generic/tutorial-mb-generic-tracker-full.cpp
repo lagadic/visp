@@ -26,9 +26,9 @@ int main(int argc, char **argv)
   unsigned int thickness = 2;
 
   vpImage<unsigned char> I;
-  vpDisplay *display = NULL;
-  vpPlot *plot = NULL;
-  vpVideoWriter *writer = NULL;
+  vpDisplay *display = nullptr;
+  vpPlot *plot = nullptr;
+  vpVideoWriter *writer = nullptr;
 
   try {
     for (int i = 0; i < argc; i++) {
@@ -209,7 +209,8 @@ int main(int argc, char **argv)
     display->init(I, 100, 100, "Model-based tracker");
 
     if (opt_plot) {
-      plot = new vpPlot(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30, display->getWindowYPosition(), "Estimated pose");
+      plot = new vpPlot(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30,
+                        display->getWindowYPosition(), "Estimated pose");
       plot->initGraph(0, 3); // Translation
       plot->setTitle(0, "Translation [m]");
       plot->setColor(0, 0, vpColor::red);

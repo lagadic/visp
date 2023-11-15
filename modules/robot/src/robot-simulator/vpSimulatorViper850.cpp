@@ -68,7 +68,7 @@ vpSimulatorViper850::vpSimulatorViper850()
 #if defined(_WIN32)
 
   DWORD dwThreadIdArray;
-  hThread = CreateThread(NULL,              // default security attributes
+  hThread = CreateThread(nullptr,              // default security attributes
                          0,                 // use default stack size
                          launcher,          // thread function name
                          this,              // argument to thread function
@@ -78,7 +78,7 @@ vpSimulatorViper850::vpSimulatorViper850()
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-  pthread_create(&thread, NULL, launcher, (void *)this);
+  pthread_create(&thread, nullptr, launcher, (void *)this);
 #endif
 
   compute_fMi();
@@ -101,7 +101,7 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
 
 #if defined(_WIN32)
   DWORD dwThreadIdArray;
-  hThread = CreateThread(NULL,              // default security attributes
+  hThread = CreateThread(nullptr,              // default security attributes
                          0,                 // use default stack size
                          launcher,          // thread function name
                          this,              // argument to thread function
@@ -111,7 +111,7 @@ vpSimulatorViper850::vpSimulatorViper850(bool do_display)
   pthread_attr_init(&attr);
   pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 
-  pthread_create(&thread, NULL, launcher, (void *)this);
+  pthread_create(&thread, nullptr, launcher, (void *)this);
 #endif
 
   compute_fMi();
@@ -135,10 +135,10 @@ vpSimulatorViper850::~vpSimulatorViper850()
   CloseHandle(hThread);
 #elif defined(VISP_HAVE_PTHREAD)
   pthread_attr_destroy(&attr);
-  pthread_join(thread, NULL);
+  pthread_join(thread, nullptr);
 #endif
 
-  if (robotArms != NULL) {
+  if (robotArms != nullptr) {
     // free_Bound_scene (&(camera));
     for (int i = 0; i < 6; i++)
       free_Bound_scene(&(robotArms[i]));
@@ -229,7 +229,7 @@ void vpSimulatorViper850::init()
 */
 void vpSimulatorViper850::initDisplay()
 {
-  robotArms = NULL;
+  robotArms = nullptr;
   robotArms = new Bound_scene[6];
   initArms();
   setExternalCameraPosition(vpHomogeneousMatrix(0.0, 0.5, 1.5, vpMath::rad(90), 0, 0));
@@ -753,7 +753,7 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
   vpRobot::STATE_VELOCITY_CONTROL) before setVelocity().
 
   \warning Velocities could be saturated if one of them exceed the
-  maximal autorized speed (see vpRobot::maxTranslationVelocity and
+  maximal authorized speed (see vpRobot::maxTranslationVelocity and
   vpRobot::maxRotationVelocity). To change these values use
   setMaxTranslationVelocity() and setMaxRotationVelocity().
 
@@ -2018,7 +2018,7 @@ bool vpSimulatorViper850::savePosFile(const std::string &filename, const vpColVe
 
   FILE *fd;
   fd = fopen(filename.c_str(), "w");
-  if (fd == NULL)
+  if (fd == nullptr)
     return false;
 
   fprintf(fd, "\

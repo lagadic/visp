@@ -41,8 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
 
 #include <mutex>
 #include <thread>
@@ -66,7 +65,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) { }
 
   void run()
   {
@@ -96,7 +95,8 @@ public:
           if (local_update) {
             if (m_colorMode) {
               local_pointcloud_color = pointcloud_color->makeShared();
-            } else {
+            }
+            else {
               local_pointcloud = pointcloud->makeShared();
             }
           }
@@ -111,15 +111,18 @@ public:
             viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1,
                                                      "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
             viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           }
           init = false;
-        } else {
+        }
+        else {
           if (m_colorMode) {
             viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud_color, rgb, "RGB sample cloud");
-          } else {
+          }
+          else {
             viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
           }
         }
@@ -144,7 +147,8 @@ int main(int argc, char *argv[])
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pcl_color") {
       pcl_color = true;
-    } else if (std::string(argv[i]) == "--show_infrared2") {
+    }
+    else if (std::string(argv[i]) == "--show_infrared2") {
       show_infrared2 = true;
     }
   }
@@ -189,12 +193,13 @@ int main(int argc, char *argv[])
 
       if (pcl_color) {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
-      } else {
+                   nullptr, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
+      }
+      else {
         rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
+                   nullptr, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : nullptr, nullptr);
       }
 
       update_pointcloud = true;
@@ -232,7 +237,7 @@ int main(int argc, char *argv[])
   viewer_thread.join();
 
   std::cout << "Acquisition - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -242,11 +247,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test work"
-            << std::endl;
 #endif
 #if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
   std::cout << "X11 or GDI are needed." << std::endl;

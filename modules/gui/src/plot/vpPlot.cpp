@@ -55,7 +55,7 @@
   Needs then a call to init().
 
 */
-vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
+vpPlot::vpPlot() : I(), display(nullptr), graphNbr(1), graphList(nullptr), margei(30), margej(40), factori(1.f), factorj(1.)
 { }
 /*!
   This constructor creates a new window where the curves
@@ -75,7 +75,7 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
   \param title : Window title.
 */
 vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y, const std::string &title)
-  : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
+  : I(), display(nullptr), graphNbr(1), graphList(nullptr), margei(30), margej(40), factori(1.f), factorj(1.)
 {
   init(graph_nbr, height, width, x, y, title);
 }
@@ -124,13 +124,13 @@ void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int widt
 */
 vpPlot::~vpPlot()
 {
-  if (graphList != NULL) {
+  if (graphList != nullptr) {
     delete[] graphList;
-    graphList = NULL;
+    graphList = nullptr;
   }
-  if (display != NULL) {
+  if (display != nullptr) {
     delete display;
-    display = NULL;
+    display = nullptr;
   }
 }
 

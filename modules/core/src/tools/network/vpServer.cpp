@@ -228,7 +228,7 @@ bool vpServer::checkForConnections()
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   if (value == -1) {
     // vpERROR_TRACE( "vpServer::run(), select()" );
     return false;

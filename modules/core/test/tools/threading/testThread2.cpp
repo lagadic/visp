@@ -144,7 +144,7 @@ int main()
 {
   unsigned int nb_threads = 4;
   unsigned int size = 1000007;
-  srand((unsigned int)time(NULL));
+  srand((unsigned int)time(nullptr));
 
   vpColVector v1(size), v2(size);
   for (unsigned int i = 0; i < size; i++) {

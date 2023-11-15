@@ -80,14 +80,14 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const do
 {
   double co = cos(theta_p);
   double si = sin(theta_p);
-  double d = vpMath::sqr(cam.px * co) + vpMath::sqr(cam.py * si);
+  double d = vpMath::sqr(cam.m_px * co) + vpMath::sqr(cam.m_py * si);
 
   if (fabs(d) < 1e-6) {
     vpERROR_TRACE("division by zero");
     throw(vpException(vpException::divideByZeroError, "division by zero"));
   }
-  theta_m = atan2(si * cam.py, co * cam.px);
-  rho_m = (rho_p - cam.u0 * co - cam.v0 * si) / sqrt(d);
+  theta_m = atan2(si * cam.m_py, co * cam.m_px);
+  rho_m = (rho_p - cam.m_u0 * co - cam.m_v0 * si) / sqrt(d);
 }
 
 /*!
@@ -131,8 +131,8 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
                                            const vpMatrix &moment_pixel, vpMatrix &moment_meter)
 {
   vpMatrix m(order, order);
-  double yc = -cam.v0;
-  double xc = -cam.u0;
+  double yc = -cam.m_v0;
+  double xc = -cam.m_u0;
 
   for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
   {
@@ -145,7 +145,7 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
             for (unsigned int t = 0; t <= q; t++) // somme interne
             {
               m[p][q] += static_cast<double>(vpMath::comb(p, r)) * static_cast<double>(vpMath::comb(q, t)) *
-                         pow(xc, (int)(p - r)) * pow(yc, (int)(q - t)) * moment_pixel[r][t];
+                pow(xc, (int)(p - r)) * pow(yc, (int)(q - t)) * moment_pixel[r][t];
             }
         }
   }
@@ -154,7 +154,7 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
     for (unsigned int p = 0; p < order; p++)
       for (unsigned int q = 0; q < order; q++)
         if (p + q == k) {
-          m[p][q] *= pow(cam.inv_px, (int)(1 + p)) * pow(cam.inv_py, (int)(1 + q));
+          m[p][q] *= pow(cam.m_inv_px, (int)(1 + p)) * pow(cam.m_inv_py, (int)(1 + q));
         }
 
   for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
@@ -172,7 +172,7 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
  * to meters \f$(x_c, y_c, n_{{20}_m}, n_{{11}_m}, n_{{02}_m})\f$ in the image plane.
  * \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
  * \param[in] distCoeffs : Input vector of distortion coefficients \f$(k_1, k_2, p_1, p_2[, k_3[, k_4,
- * k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of 4, 5, 8, 12 or 14 elements. If the vector is NULL/empty,
+ * k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of 4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty,
  * the zero distortion coefficients are assumed.
  * \param[in] center_p : Center of the ellipse (uc, vc) with pixel coordinates.
  * \param[in] n20_p, n11_p, n02_p : Normalized second order moments of the ellipse in pixels.
@@ -254,7 +254,7 @@ void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix, unsigned
             for (unsigned int t = 0; t <= q; t++) // somme interne
             {
               m[p][q] += static_cast<double>(vpMath::comb(p, r)) * static_cast<double>(vpMath::comb(q, t)) *
-                         pow(xc, static_cast<int>(p - r)) * pow(yc, static_cast<int>(q - t)) * moment_pixel[r][t];
+                pow(xc, static_cast<int>(p - r)) * pow(yc, static_cast<int>(q - t)) * moment_pixel[r][t];
             }
         }
   }
@@ -281,7 +281,7 @@ void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix, unsigned
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] u : input coordinate in pixels along image horizontal axis.
   \param[in] v : input coordinate in pixels along image vertical axis.
   \param[out] x : output coordinate in meter along image plane x-axis.
@@ -306,7 +306,7 @@ void vpPixelMeterConversion::convertPoint(const cv::Mat &cameraMatrix, const cv:
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] distCoeffs : Input vector of distortion coefficients
   \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
-  4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
+  4, 5, 8, 12 or 14 elements. If the vector is nullptr/empty, the zero distortion coefficients are assumed.
   \param[in] iP : input coordinates in pixels.
   \param[out] x : output coordinate in meter along image plane x-axis.
   \param[out] y : output coordinate in meter along image plane y-axis.

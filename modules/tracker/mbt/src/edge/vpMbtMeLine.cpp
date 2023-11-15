@@ -561,7 +561,7 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
 {
   try {
     vpMeTracker::track(I);
-    if (m_mask != NULL) {
+    if (m_mask != nullptr) {
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       expecteddensity = (double)list.size();
     }

@@ -123,7 +123,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
       break;
     }
     case 'h':
-      usage(argv[0], NULL, data);
+      usage(argv[0], nullptr, data);
       return false;
       break;
 
@@ -136,7 +136,7 @@ bool getOptions(int argc, const char **argv, unsigned char &data)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, data);
+    usage(argv[0], nullptr, data);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
     return false;

@@ -236,7 +236,7 @@ static void *mainLoop(void *_simu)
   task.print();
   simu->closeMainApplication();
 
-  void *a = NULL;
+  void *a = nullptr;
   return a;
 }
 

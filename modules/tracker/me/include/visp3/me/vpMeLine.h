@@ -32,8 +32,8 @@
  */
 
 /*!
-  \file vpMeLine.h
-  \brief Moving edges on a line
+ * \file vpMeLine.h
+ * \brief Moving edges on a line
 */
 
 #ifndef vpMeLine_HH
@@ -47,103 +47,102 @@
 #include <math.h>
 
 /*!
-  \class vpMeLine
-
-  \ingroup module_me
-
-  \brief Class that tracks in an image a line moving edges.
-
-  In this class the line is defined by its equation in the \f$ (i,j) =
-  (line,column) \f$ image plane. Two kinds of parametrization are available to
-  describe a 2D line. The first one corresponds to the following
-  equation
-
-  \f[ ai + bj + c = 0 \f]
-
-  where \f$ i \f$ and \f$ j \f$ are the coordinates of the points
-  belonging to the line. The line features are \f$ (a, b, c) \f$.
-
-  The second way to write the line equation is to consider polar coordinates
-  \f[ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f]
-
-  where \f$ i \f$ and \f$ j \f$ are still the coordinates of the
-  points belonging to the line. But now the line features are \f$
-  (\rho, \theta) \f$. The computation of \f$ \rho \f$ and \f$ \theta
-  \f$ is easy thanks to \f$ (a, b, c) \f$.
-
-  \f[ \theta = arctan(b/a) \f]
-  \f[ \rho = -c/\sqrt{a^2+b^2} \f]
-
-  The value of \f$ \theta \f$ is between \f$ 0 \f$ and \f$ 2\pi
-  \f$. And the value of \f$ \rho \f$ can be positive or negative. The
-  conventions to find the right values of the two features are
-  illustrated in the following pictures.
-
-  \image html vpMeLine.gif
-  \image latex vpMeLine.ps  width=10cm
-
-  The angle \f$\theta\f$ is computed thanks to the direction of the
-  arrow. The arrow points to the side of the line which is darker.
-
-  The example below available in tutorial-me-line-tracker.cpp and described
-  in \ref tutorial-tracking-me shows how to use this class.
-
-  \include tutorial-me-line-tracker.cpp
-
-  The code below shows how to use this class.
-\code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/me/vpMeLine.h>
-
-int main()
-{
-  vpImage<unsigned char> I(240, 320);
-
-  // Fill the image with a black rectangle
-  I = 0;
-  for (int i = 100; i < 180; i ++) {
-    for (int j = 120; j < 250; j ++) {
-      I[i][j] = 255;
-    }
-  }
-
-  // Set the moving-edges tracker parameters
-  vpMe me;
-  me.setRange(25);
-  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
-  me.setThreshold(20);
-  me.setSampleStep(10);
-
-  // Initialize the moving-edges line tracker parameters
-  vpMeLine line;
-  line.setMe(&me);
-
-  // Initialize the location of the vertical line to track
-  vpImagePoint ip1, ip2; // Two points belonging to the line to track
-  ip1.set_i( 120 );
-  ip1.set_j( 119 );
-  ip2.set_i( 170 );
-  ip2.set_j( 122 );
-
-  line.initTracking(I, ip1, ip2);
-
-  while ( 1 )
-  {
-    // ... Here the code to read or grab the next image.
-
-    // Track the line.
-    line.track(I);
-  }
-  return 0;
-}
-\endcode
-
-  \note It is possible to display the line as an overlay. For that you
-  must use the display function of the class vpMeLine.
-*/
-
+ * \class vpMeLine
+ *
+ * \ingroup module_me
+ *
+ * \brief Class that tracks in an image a line moving edges.
+ *
+ * In this class the line is defined by its equation in the \f$ (i,j) =
+ * (line,column) \f$ image plane. Two kinds of parametrization are available to
+ * describe a 2D line. The first one corresponds to the following
+ * equation
+ *
+ * \f[ ai + bj + c = 0 \f]
+ *
+ * where \f$ i \f$ and \f$ j \f$ are the coordinates of the points
+ * belonging to the line. The line features are \f$ (a, b, c) \f$.
+ *
+ * The second way to write the line equation is to consider polar coordinates
+ * \f[ i \; cos(\theta) + j \; sin(\theta) - \rho = 0 \f]
+ *
+ * where \f$ i \f$ and \f$ j \f$ are still the coordinates of the
+ * points belonging to the line. But now the line features are \f$
+ * (\rho, \theta) \f$. The computation of \f$ \rho \f$ and \f$ \theta
+ * \f$ is easy thanks to \f$ (a, b, c) \f$.
+ *
+ * \f[ \theta = arctan(b/a) \f]
+ * \f[ \rho = -c/\sqrt{a^2+b^2} \f]
+ *
+ * The value of \f$ \theta \f$ is between \f$ 0 \f$ and \f$ 2\pi
+ * \f$. And the value of \f$ \rho \f$ can be positive or negative. The
+ * conventions to find the right values of the two features are
+ * illustrated in the following pictures.
+ *
+ * \image html vpMeLine.gif
+ * \image latex vpMeLine.ps * width=10cm
+ *
+ * The angle \f$\theta\f$ is computed thanks to the direction of the
+ * arrow. The arrow points to the side of the line which is darker.
+ *
+ * The example below available in tutorial-me-line-tracker.cpp and described
+ * in \ref tutorial-tracking-me shows how to use this class.
+ *
+ * \include tutorial-me-line-tracker.cpp
+ *
+ * The code below shows how to use this class.
+ * \code
+ * #include <visp3/core/vpConfig.h>
+ * #include <visp3/core/vpImage.h>
+ * #include <visp3/core/vpImagePoint.h>
+ * #include <visp3/me/vpMeLine.h>
+ *
+ * int main()
+ * {
+ *   vpImage<unsigned char> I(240, 320);
+ *
+ *   // Fill the image with a black rectangle
+ *   I = 0;
+ *   for (int i = 100; i < 180; i ++) {
+ *     for (int j = 120; j < 250; j ++) {
+ *       I[i][j] = 255;
+ *     }
+ *   }
+ *
+ *   // Set the moving-edges tracker parameters
+ *   vpMe me;
+ *   me.setRange(25);
+ *   me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+ *   me.setThreshold(20);
+ *   me.setSampleStep(10);
+ *
+ *   // Initialize the moving-edges line tracker parameters
+ *   vpMeLine line;
+ *   line.setMe(&me);
+ *
+ *   // Initialize the location of the vertical line to track
+ *   vpImagePoint ip1, ip2; // Two points belonging to the line to track
+ *   ip1.set_i( 120 );
+ *   ip1.set_j( 119 );
+ *   ip2.set_i( 170 );
+ *   ip2.set_j( 122 );
+ *
+ *   line.initTracking(I, ip1, ip2);
+ *
+ *   while ( 1 )
+ *   {
+ *     // ... Here the code to read or grab the next image.
+ *
+ *     // Track the line.
+ *     line.track(I);
+ *   }
+ *   return 0;
+ * }
+ * \endcode
+ *
+ * \note It is possible to display the line as an overlay. For that you
+ * must use the display function of the class vpMeLine.
+ */
 class VISP_EXPORT vpMeLine : public vpMeTracker
 {
 private:
@@ -164,12 +163,6 @@ protected:
   //! used to compute the sign of rho or not.
   bool _useIntensityForRho;
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-#else
-protected:
-#endif
-
   double a; //!< Parameter a of the line equation a*i + b*j + c = 0
   double b; //!< Parameter b of the line equation a*i + b*j + c = 0
   double c; //!< Parameter c of the line equation a*i + b*j + c = 0
@@ -188,7 +181,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeLine();
+  virtual ~vpMeLine() override;
 
   /*!
    * Display line.
@@ -220,11 +213,7 @@ public:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
-#else
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
-#endif
 
   /*!
    * Resample the line if the number of sample is less than 80% of the
@@ -369,8 +358,6 @@ public:
   */
   inline void computeRhoSignFromIntensity(bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
 
-  // Static Functions
-public:
   /*!
    * Display of a moving line thanks to its equation parameters and its
    * extremities.
@@ -442,16 +429,30 @@ public:
                           const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+   * \deprecated Use rather displayLine().
+   */
   vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
                                     const double &B, const double &C, const vpColor &color = vpColor::green,
                                     unsigned int thickness = 1);
+
+  /*!
+   * \deprecated Use rather displayLine().
+   */
   vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2, const double &A,
                                     const double &B, const double &C, const vpColor &color = vpColor::green,
                                     unsigned int thickness = 1);
 
+  /*!
+   * \deprecated Use rather displayLine().
+   */
   vp_deprecated static void display(const vpImage<unsigned char> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
                                     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  /*!
+   * \deprecated Use rather displayLine().
+   */
   vp_deprecated static void display(const vpImage<vpRGBa> &I, const vpMeSite &PExt1, const vpMeSite &PExt2,
                                     const std::list<vpMeSite> &site_list, const double &A, const double &B, const double &C,
                                     const vpColor &color = vpColor::green, unsigned int thickness = 1);

@@ -149,6 +149,9 @@
 // Defined if pthread library available.
 #cmakedefine VISP_HAVE_PTHREAD
 
+// Defined if std::thread available.
+#cmakedefine VISP_HAVE_THREADS
+
 // Defined if YARP available.
 #cmakedefine VISP_HAVE_YARP
 
@@ -164,7 +167,7 @@
 // OpenCV version in hexadecimal (for example 2.1.0 gives 0x020100).
 #ifdef VISP_HAVE_OPENCV
 #  define VISP_HAVE_OPENCV_VERSION ${VISP_HAVE_OPENCV_VERSION}
-#  include <opencv2/opencv.hpp>
+#  include <opencv2/opencv_modules.hpp>
 #endif
 
 // For compat with previous releases
@@ -482,18 +485,12 @@
 #cmakedefine VISP_HAVE_NLOHMANN_JSON
 
 // Define c++ standard values also available in __cplusplus when gcc is used
-#define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}
+#define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98} # Keep for compat with previous releases
 #define VISP_CXX_STANDARD_11 ${VISP_CXX_STANDARD_11}
 #define VISP_CXX_STANDARD_14 ${VISP_CXX_STANDARD_14}
 #define VISP_CXX_STANDARD_17 ${VISP_CXX_STANDARD_17}
 
 #define VISP_CXX_STANDARD ${VISP_CXX_STANDARD}
-
-// Defined to keep compat with previous releases when c++ 11 available
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#  define VISP_HAVE_CXX11
-#  define VISP_HAVE_CPP11_COMPATIBILITY
-#endif
 
 // Defined if isnan macro is available
 #cmakedefine VISP_HAVE_FUNC_ISNAN

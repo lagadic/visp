@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpMeTracker.h
-  \brief Contains abstract elements for a Distance to Feature type feature.
-*/
+ * \file vpMeTracker.h
+ * \brief Contains abstract elements for a Distance to Feature type feature.
+ */
 
 #ifndef _vpMeTracker_h_
 #define _vpMeTracker_h_
@@ -49,13 +49,13 @@
 #include <math.h>
 
 /*!
-  \class vpMeTracker
-
-  \ingroup module_me
-  \brief Contains abstract elements for a Distance to Feature type feature.
-
-  2D state = list of points, 3D state = feature
-*/
+ * \class vpMeTracker
+ *
+ * \ingroup module_me
+ * \brief Contains abstract elements for a Distance to Feature type feature.
+ *
+ * 2D state = list of points, 3D state = feature
+ */
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
@@ -100,7 +100,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker();
+  virtual ~vpMeTracker() override;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
@@ -146,7 +146,7 @@ public:
    * Test whether the pixel is inside the mask. Mask values that are set to true
    * are considered in the tracking.
    *
-   * \param mask: Mask image or NULL if not wanted. Mask values that are set to true
+   * \param mask: Mask image or nullptr if not wanted. Mask values that are set to true
    * are considered in the tracking. To disable a pixel, set false.
    * \param i : Pixel coordinate along the rows.
    * \param j : Pixel coordinate along the columns.
@@ -285,7 +285,7 @@ public:
   /** @name Public Attributes Inherited from vpMeTracker */
   //@{
   int query_range;
-  bool display_point; // if 1 (TRUE) displays the line that is being tracked
+  bool display_point; //! If true displays the line that is being tracked
   //@}
 #endif
 };

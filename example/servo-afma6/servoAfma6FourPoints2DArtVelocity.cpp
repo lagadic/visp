@@ -120,7 +120,7 @@ int main()
 
   try {
 // Define the square CAD model
-// Square dimention
+// Square dimension
 #define L 0.075
 // Distance between the camera and the square at the desired
 // position after visual servoing convergence
@@ -154,7 +154,7 @@ int main()
     std::cout << " Test program for vpServo " << std::endl;
     std::cout << " Eye-in-hand task control, velocity computed in the joint space" << std::endl;
     std::cout << " Use of the Afma6 robot " << std::endl;
-    std::cout << " task : servo 4 points on a square with dimention " << L << " meters" << std::endl;
+    std::cout << " task : servo 4 points on a square with dimension " << L << " meters" << std::endl;
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << std::endl;
 
