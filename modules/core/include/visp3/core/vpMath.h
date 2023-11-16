@@ -215,7 +215,10 @@ public:
   */
   template <typename T> static inline T clamp(const T &v, const T &lower, const T &upper)
   {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+    // Check if std:c++17 or higher.
+    // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) when ViSP
+    // is used as a 3rdparty. See issue #1274
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
     return std::clamp(v, lower, upper);
 #else
     if (upper < lower) {
