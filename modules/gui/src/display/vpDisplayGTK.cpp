@@ -276,7 +276,7 @@ public:
     gdk_flush();
   }
 
-  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color, unsigned int scale)
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color, unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(m_gc, m_col[color.id]);
@@ -289,7 +289,7 @@ public:
     }
     if (m_font != nullptr)
       gdk_draw_string(m_background, m_font, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
-                      (const gchar *)text);
+                      (const gchar *)text.c_str());
     else
       std::cout << "Cannot draw string: no font is selected" << std::endl;
   }
@@ -818,14 +818,14 @@ void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win
 /*!
 
   Set the font used to display a text in overlay. The display is
-  performed using displayCharString().
+  performed using displayText().
 
   \param fontname : The expected font name.
 
   \note Under UNIX, to know all the available fonts, use the
   "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
 
-  \sa displayCharString()
+  \sa displayText()
 */
 void vpDisplayGTK::setFont(const std::string &fontname) { m_impl->setFont(fontname); }
 
@@ -1089,15 +1089,16 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2
 
   \sa setFont()
 */
-void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
+void vpDisplayGTK::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
-    m_impl->displayCharString(ip, text, color, m_scale);
+    m_impl->displayText(ip, text, color, m_scale);
   }
   else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
 }
+
 /*!
   Display a circle.
   \param center : Circle center position.

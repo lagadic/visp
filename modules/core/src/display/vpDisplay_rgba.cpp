@@ -96,8 +96,9 @@ void vpDisplay::displayCamera(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
   vp_display_display_camera(I, cMo, cam, size, color, thickness);
 }
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
-  Display a string at the image point \e ip location.
+  \deprecated Display a string at the image point \e ip location.
   Use rather displayText() that does the same.
 
   To select the font used to display the string, use setFont().
@@ -112,11 +113,11 @@ void vpDisplay::displayCamera(const vpImage<vpRGBa> &I, const vpHomogeneousMatri
 void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
                                   const vpColor &color)
 {
-  vp_display_display_char_string(I, ip, string, color);
+  vp_display_display_text(I, ip, string, color);
 }
 
 /*!
-  Display a string at the image point (i,j) location.
+  \deprecated Display a string at the image point (i,j) location.
   Use rather displayText() that does the same.
 
   To select the font used to display the string, use setFont().
@@ -130,8 +131,9 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &
 */
 void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color)
 {
-  vp_display_display_char_string(I, i, j, string, color);
+  vp_display_display_text(I, i, j, string, color);
 }
+#endif
 
 /*!
   Display a circle.
@@ -1265,7 +1267,7 @@ void vpDisplay::setBackground(const vpImage<vpRGBa> &I, const vpColor &color) { 
 
 /*!
   Set the font of a text printed in the display overlay. To print a
-  text you may use displayCharString().
+  text you may use displayText().
 
   \param I : Image associated to the display window.
   \param fontname : The expected font name.

@@ -155,8 +155,6 @@ protected:
   void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color = vpColor::white,
                     unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) override;
 
-  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green) override;
-
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
                      unsigned int thickness = 1) override;
 
@@ -174,6 +172,8 @@ protected:
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
                         bool fill = false, unsigned int thickness = 1) override;
   void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1) override;
+
+  void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color = vpColor::green) override;
 
   bool getClick(bool blocking = true) override;
   bool getClick(vpImagePoint &ip, bool blocking = true) override;
