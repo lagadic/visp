@@ -175,15 +175,11 @@ public:
   static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
   /*!
-         Define the directory separator character, backslash ('\') for windows
-     platform or slash ('/') otherwise.
+   * Define the directory separator character, backslash ('\') for windows
+   * platform or slash ('/') otherwise.
    */
-  static const char separator =
-#if defined(_WIN32)
-    '\\';
-#else
-    '/';
-#endif
+  static const char separator;
+
   static std::string toUpperCase(const std::string &input);
   static std::string toLowerCase(const std::string &input);
   static std::string getAbsolutePathname(const std::string &pathname);
