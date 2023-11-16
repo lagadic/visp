@@ -248,8 +248,8 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
   }
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vector<vpPoint> &points, const vpHomogeneousMatrix &cMo)
 {
   auto residu_1 { 1e8 }, r { 1e8 - 1 };
