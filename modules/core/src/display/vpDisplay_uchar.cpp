@@ -585,6 +585,20 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vecto
 }
 
 /*!
+  Display a polygon defined by a set of image points.
+  \param I : The image associated to the display.
+  \param polygon : Polygon to display.
+  \param color : Line color.
+  \param thickness : Line thickness.
+  \param closed : When true display a closed polygon with a segment between first and last image point.
+*/
+void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const vpPolygon &polygon, const vpColor &color,
+                               unsigned int thickness, bool closed)
+{
+  vp_display_display_polygon(I, polygon, color, thickness, closed);
+}
+
+/*!
   Display a rectangle with \e topLeft as the top-left corner and \e
   width and \e height the rectangle size.
 

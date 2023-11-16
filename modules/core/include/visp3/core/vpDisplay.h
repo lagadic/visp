@@ -45,6 +45,7 @@
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMouseButton.h>
+#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
 
 /*!
@@ -761,6 +762,8 @@ public:
                            unsigned int thickness = 1);
   static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                              const vpColor &color, unsigned int thickness = 1, bool closed = true);
+  static void displayPolygon(const vpImage<unsigned char> &I, const vpPolygon &polygon,
+                             const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
                                unsigned int thickness = 1);
@@ -867,6 +870,8 @@ public:
   static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness = 1);
   static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
                              unsigned int thickness = 1, bool closed = true);
+  static void displayPolygon(const vpImage<vpRGBa> &I, const vpPolygon &polygon,
+                             const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
                                unsigned int thickness = 1);

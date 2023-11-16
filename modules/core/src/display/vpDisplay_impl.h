@@ -457,6 +457,13 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
 }
 
 template <class Type>
+void vp_display_display_polygon(const vpImage<Type> &I, const vpPolygon &polygon, const vpColor &color,
+                                unsigned int thickness, bool closed = true)
+{
+  vp_display_display_polygon(I, polygon.getCorners(), color, thickness, closed);
+}
+
+template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int width,
                                   unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
 {
