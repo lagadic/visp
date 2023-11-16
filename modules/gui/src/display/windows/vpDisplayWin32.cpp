@@ -59,7 +59,7 @@ void vpCreateWindow(threadParam *param)
 /*!
   Constructor.
 */
-vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) {}
+vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) { }
 
 /*!
   Destructor.
@@ -301,7 +301,8 @@ bool vpDisplayWin32::getClick(bool blocking)
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
   }
 
@@ -339,7 +340,8 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, bool blocking)
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
   }
 
@@ -383,7 +385,8 @@ bool vpDisplayWin32::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType
     WaitForSingleObject(window.semaClickUp, 0); // to erase previous events
     WaitForSingleObject(window.semaClick, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClick, 0));
 
   u = window.clickX;
@@ -432,7 +435,8 @@ bool vpDisplayWin32::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonTy
     WaitForSingleObject(window.semaClick, 0); // to erase previous events
     WaitForSingleObject(window.semaClickUp, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaClickUp, 0));
 
   u = window.clickXUp;
@@ -471,7 +475,8 @@ bool vpDisplayWin32::getKeyboardEvent(bool blocking)
     WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;
-  } else
+  }
+  else
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
 
   return ret;
@@ -507,7 +512,8 @@ bool vpDisplayWin32::getKeyboardEvent(std::string &key, bool blocking)
     WaitForSingleObject(window.semaKey, 0); // key up
     WaitForSingleObject(window.semaKey, INFINITE);
     ret = true;
-  } else {
+  }
+  else {
     ret = (WAIT_OBJECT_0 == WaitForSingleObject(window.semaKey, 0));
   }
   //  printf("key: %ud\n", window.key);
@@ -664,7 +670,8 @@ void vpDisplayWin32::displayPoint(const vpImagePoint &ip, const vpColor &color, 
   waitForInit();
   if (thickness == 1) {
     window.renderer->setPixel(ip, color);
-  } else {
+  }
+  else {
     window.renderer->drawRect(ip, thickness * m_scale, thickness * m_scale, color, true, 1);
   }
 }
@@ -788,11 +795,11 @@ void vpDisplayWin32::displayCircle(const vpImagePoint &center, unsigned int radi
   \param text : The string to display
   \param color : The text's color
 */
-void vpDisplayWin32::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
+void vpDisplayWin32::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   // wait if the window is not initialized
   waitForInit();
-  window.renderer->drawText(ip, text, color);
+  window.renderer->drawText(ip, text.c_str(), color);
 }
 
 /*!
@@ -901,5 +908,5 @@ unsigned int vpDisplayWin32::getScreenHeight()
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no
 // symbols
-void dummy_vpDisplayWin32(){};
+void dummy_vpDisplayWin32() { };
 #endif

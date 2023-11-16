@@ -47,10 +47,10 @@
 class vpQbDevice::Impl
 {
 public:
-  Impl() : Impl(std::make_shared<qb_device_driver::qbDeviceAPI>()) {}
+  Impl() : Impl(std::make_shared<qb_device_driver::qbDeviceAPI>()) { }
   Impl(std::shared_ptr<qb_device_driver::qbDeviceAPI> device_api)
     : m_serial_protectors(), m_connected_devices(), m_position_limits(2), m_device_api(device_api),
-      m_file_descriptors(), m_max_repeats(1), m_current_max(750.)
+    m_file_descriptors(), m_max_repeats(1), m_current_max(750.)
   {
     // Default values updated after a call to init()
     m_position_limits[0] = 0;
@@ -62,7 +62,8 @@ public:
     for (auto it = m_file_descriptors.begin(); it != m_file_descriptors.end();) {
       if (close(it->first)) {
         it = m_file_descriptors.erase(it);
-      } else {
+      }
+      else {
         ++it;
       }
     }
@@ -112,7 +113,7 @@ public:
 
 public:
   std::map<std::string, std::unique_ptr<std::mutex> >
-      m_serial_protectors; // only callbacks must lock the serial resources
+    m_serial_protectors; // only callbacks must lock the serial resources
   std::map<int, std::string> m_connected_devices;
 
 protected:
@@ -228,8 +229,8 @@ int vpQbDevice::Impl::getMeasurements(const int &id, const int &max_repeats, std
 
 int vpQbDevice::Impl::getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions)
 {
-  std::vector<int> input_mode = {-1};
-  std::vector<int> control_mode = {-1};
+  std::vector<int> input_mode = { -1 };
+  std::vector<int> control_mode = { -1 };
   m_device_api->getParameters(&m_file_descriptors.at(m_connected_devices.at(id)), id, input_mode, control_mode,
                               resolutions, limits);
   if (!input_mode.front() && !control_mode.front()) { // both input and control modes equals 0 are required, i.e.
@@ -276,7 +277,8 @@ int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
     }
 
     // 'serial_protectors_' is not cleared because of the previously acquired lock, do not do it!
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+    // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
     m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::make_unique<std::mutex>())); // never override
 #else
     m_serial_protectors.insert(
@@ -309,7 +311,7 @@ bool vpQbDevice::Impl::init(const int &id)
 {
   std::vector<int> encoder_resolutions;
   std::vector<std::unique_lock<std::mutex> >
-      serial_locks; // need to lock on all the serial resources to scan for new ports/devices
+    serial_locks; // need to lock on all the serial resources to scan for new ports/devices
   for (auto const &mutex : m_serial_protectors) {
     serial_locks.push_back(std::unique_lock<std::mutex>(*mutex.second));
   }
@@ -326,7 +328,7 @@ bool vpQbDevice::Impl::init(const int &id)
 
   if (getParameters(id, position_limits, encoder_resolutions)) {
     std::cout << "fails while initializing device [" << id
-              << "] because it requires 'USB' input mode and 'Position' control mode." << std::endl;
+      << "] because it requires 'USB' input mode and 'Position' control mode." << std::endl;
     return false;
   }
 
@@ -363,13 +365,13 @@ bool vpQbDevice::Impl::init(const int &id)
   failures = activate(id, m_max_repeats);
   if (!isReliable(failures, m_max_repeats)) {
     std::cout << "has not initialized device [" << id
-              << "] because it cannot activate its motors (please, check the motor positions)." << std::endl;
+      << "] because it cannot activate its motors (please, check the motor positions)." << std::endl;
     return false;
   }
 
   std::string serial_port = m_connected_devices.at(id);
   std::cout << "Device [" + std::to_string(id) + "] connected on port [" << serial_port << "] initialization succeeds."
-            << std::endl;
+    << std::endl;
 
   return true;
 }
@@ -410,19 +412,19 @@ int vpQbDevice::Impl::open(const std::string &serial_port)
 #if (defined(__APPLE__) && defined(__MACH__))
   if (!std::regex_match(serial_port, std::regex("/dev/tty.usbserial-[[:digit:]]+"))) {
     std::cout << "vpQbDevice fails while opening [" << serial_port
-              << "] because it does not match the expected pattern [/dev/tty.usbserial-*]." << std::endl;
+      << "] because it does not match the expected pattern [/dev/tty.usbserial-*]." << std::endl;
     return -1;
   }
 #elif defined(__unix__) || defined(__unix)
   if (!std::regex_match(serial_port, std::regex("/dev/ttyUSB[[:digit:]]+"))) {
     std::cout << "vpQbDevice fails while opening [" << serial_port
-              << "] because it does not match the expected pattern [/dev/ttyUSB*]." << std::endl;
+      << "] because it does not match the expected pattern [/dev/ttyUSB*]." << std::endl;
     return -1;
   }
 #elif defined(_WIN32)
   if (!std::regex_match(serial_port, std::regex("COM[[:digit:]]+"))) {
     std::cout << "vpQbDevice fails while opening [" << serial_port
-              << "] because it does not match the expected pattern [COM*]." << std::endl;
+      << "] because it does not match the expected pattern [COM*]." << std::endl;
     return -1;
   }
 #endif
@@ -435,8 +437,8 @@ int vpQbDevice::Impl::open(const std::string &serial_port)
   m_device_api->open(&m_file_descriptors[serial_port], serial_port); // also create a pair in the map
   if (m_file_descriptors.at(serial_port).file_handle == INVALID_HANDLE_VALUE) {
     std::cout << "vpQbDevice fails while opening [" << serial_port << "] and sets errno [" << strerror(errno) << "]."
-              << std::endl;
-    // remove file descriptor entry
+      << std::endl;
+// remove file descriptor entry
     m_file_descriptors.erase(serial_port);
     return -1;
   }

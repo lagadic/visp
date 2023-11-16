@@ -45,6 +45,7 @@
 #include <visp3/core/vpImageCircle.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMouseButton.h>
+#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRect.h>
 
 /*!
@@ -284,18 +285,6 @@ public:
    */
   virtual void displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color = vpColor::white,
                             unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1) = 0;
-  /*!
-   * Display a string at the image point \e ip location.
-   *
-   * To select the font used to display the string, use setFont().
-   *
-   * \param ip : Upper left image point location of the string in the display.
-   * \param text : String to display in overlay.
-   * \param color : String color.
-   *
-   * \sa setFont()
-   */
-  virtual void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green) = 0;
 
   /*!
    * Display a circle.
@@ -423,6 +412,19 @@ public:
    */
   virtual void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false,
                                 unsigned int thickness = 1) = 0;
+
+  /*!
+   * Display a string at the image point \e ip location.
+   *
+   * To select the font used to display the string, use setFont().
+   *
+   * \param ip : Upper left image point location of the string in the display.
+   * \param text : String to display in overlay.
+   * \param color : String color.
+   *
+   * \sa setFont()
+   */
+  virtual void displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color = vpColor::green) = 0;
 
   /*!
    * Flushes the display.
@@ -671,7 +673,7 @@ public:
 
   /*!
    * Set the font used to display a text in overlay. The display is
-   * performed using displayCharString().
+   * performed using displayText().
    *
    * \param font : The expected font name. The available fonts are given by
    * the "xlsfonts" binary. To choose a font you can also use the
@@ -680,7 +682,7 @@ public:
    * \note Under UNIX, to know all the available fonts, use the
    * "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
    *
-   * \sa displayCharString()
+   * \sa displayText()
    */
   virtual void setFont(const std::string &font) = 0;
   /*!
@@ -713,10 +715,6 @@ public:
                            unsigned int thickness = 1);
   static void displayCamera(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                             const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness);
-  static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
-                                const vpColor &color);
-  static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
-                                const vpColor &color);
   static void displayCircle(const vpImage<unsigned char> &I, const vpImageCircle &circle,
                             const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
@@ -760,6 +758,8 @@ public:
   static void displayPoint(const vpImage<unsigned char> &I, int i, int j, const vpColor &color,
                            unsigned int thickness = 1);
   static void displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
+                             const vpColor &color, unsigned int thickness = 1, bool closed = true);
+  static void displayPolygon(const vpImage<unsigned char> &I, const vpPolygon &polygon,
                              const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
@@ -822,11 +822,8 @@ public:
                            unsigned int thickness = 1);
   static void displayCamera(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                             double size, const vpColor &color, unsigned int thickness);
-  static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
-                                const vpColor &color);
-  static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color);
   static void displayCircle(const vpImage<vpRGBa> &I, const vpImageCircle &circle,
-                            const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                          const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
                             const vpColor &color, bool fill = false, unsigned int thickness = 1);
   static void displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color,
@@ -867,6 +864,8 @@ public:
   static void displayPoint(const vpImage<vpRGBa> &I, int i, int j, const vpColor &color, unsigned int thickness = 1);
   static void displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
                              unsigned int thickness = 1, bool closed = true);
+  static void displayPolygon(const vpImage<vpRGBa> &I, const vpPolygon &polygon,
+                             const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
                                unsigned int thickness = 1);
@@ -909,6 +908,22 @@ public:
   static void setTitle(const vpImage<vpRGBa> &I, const std::string &windowtitle);
   static void setWindowPosition(const vpImage<vpRGBa> &I, int winx, int winy);
   //@}
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+   * @name Deprecated functions
+   */
+  //@{
+  vp_deprecated static void displayCharString(const vpImage<unsigned char> &I, const vpImagePoint &ip, const char *string,
+                                              const vpColor &color);
+  vp_deprecated static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
+                                              const vpColor &color);
+  vp_deprecated static void displayCharString(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const char *string,
+                                              const vpColor &color);
+  vp_deprecated static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string,
+                                              const vpColor &color);
+  //@}
+#endif
 
 private:
   //! Get the window pixmap and put it in vpRGBa image.

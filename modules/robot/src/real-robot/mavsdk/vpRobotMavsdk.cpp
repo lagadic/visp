@@ -35,7 +35,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <iostream>
 #include <math.h>
@@ -193,7 +194,7 @@ private:
                                       calibration_promise.set_value();
                                       break;
                                     }
-    };
+      };
   }
 
   void calibrate_gyro(mavsdk::Calibration &calibration)
