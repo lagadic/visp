@@ -32,10 +32,10 @@
  */
 
 /*!
-  \file vpMath.h
-  \brief Provides simple Math computation that are not available in
-  the C mathematics library (math.h)
-*/
+ * \file vpMath.h
+ * \brief Provides simple Math computation that are not available in
+ * the C mathematics library (math.h)
+ */
 
 #ifndef vpMATH_HH
 #define vpMATH_HH
@@ -109,21 +109,21 @@ class VISP_EXPORT vpMath
 {
 public:
   /*!
-    Convert an angle in radians into degrees.
-
-    \param rad : Angle in radians.
-    \return Angle converted in degrees.
-  */
+   * Convert an angle in radians into degrees.
+   *
+   * \param rad : Angle in radians.
+   * \return Angle converted in degrees.
+   */
   static inline double deg(double rad) { return (rad * 180.0) / M_PI; }
 
   static vpColVector deg(const vpRotationVector &r);
   static vpColVector deg(const vpColVector &r);
 
   /*!
-    Convert an angle in degrees into radian.
-    \param deg : Angle in degrees.
-    \return Angle converted in radians.
-  */
+   * Convert an angle in degrees into radian.
+   * \param deg : Angle in degrees.
+   * \return Angle converted in radians.
+   */
   static inline double rad(double deg) { return (deg * M_PI) / 180.0; }
 
   static vpColVector rad(const vpColVector &r);
