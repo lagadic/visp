@@ -63,6 +63,7 @@
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
+#include <visp3/vs/vpAdaptiveGain.h>
 #include <visp3/vs/vpServoDisplay.h>
 
 void usage(const char **argv, int error, const std::string &device, int baudrate)
@@ -230,7 +231,10 @@ int main(int argc, const char **argv)
     // We want to see a point on a point
     task.addFeature(p, pd);
     // Set the gain
-    task.setLambda(0.2);
+    //task.setLambda(2.0);
+    //vpAdaptiveGain lambda(2, 0.7, 30);
+    vpAdaptiveGain lambda(3.5, 2, 50);
+    task.setLambda(lambda);
 
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
@@ -253,6 +257,8 @@ int main(int argc, const char **argv)
     bool quit = false;
     bool send_velocities = false;
     vpColVector q_dot(robot.getNDof());
+    double min_pix_error = 10; // In pixels
+    double min_error = vpMath::sqr(min_pix_error / cam.get_px());
 
     while (!quit) {
       g.acquire(I);
@@ -279,7 +285,16 @@ int main(int argc, const char **argv)
         vpServoDisplay::display(task, cam, I);
         vpDisplay::flush(I);
 
-        std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
+        double error = (task.getError()).sumSquare();
+        if (opt_verbose) {
+          std::cout << "|| s - s* || = " << error << std::endl;
+        }
+        if (error < min_error) {
+          if (opt_verbose) {
+            std::cout << "Stop the robot" << std::endl;
+          }
+          q_dot = 0;
+        }
       }
       else {
         q_dot = 0;

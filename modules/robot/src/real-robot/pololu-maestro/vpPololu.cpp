@@ -52,12 +52,12 @@ int vpPololu::m_nb_servo = 0;
 
 vpPololu::vpPololu(bool verbose)
   : m_channel(0), m_apply_velocity_cmd(false), m_stop_velocity_cmd_thread(false),
-  m_vel_speed(0), m_vel_target_position(0), m_verbose(verbose)
+  m_vel_speed(1), m_vel_target_position(0), m_vel_speed_prev(1), m_vel_target_position_prev(0), m_mutex_velocity_cmd(), m_verbose(verbose)
 { }
 
 vpPololu::vpPololu(const std::string &device, int baudrate, int channel, bool verbose)
   : m_channel(channel), m_apply_velocity_cmd(false), m_stop_velocity_cmd_thread(false),
-  m_vel_speed(0), m_vel_target_position(0), m_verbose(verbose)
+  m_vel_speed(1), m_vel_target_position(0), m_vel_speed_prev(1), m_vel_target_position_prev(0), m_mutex_velocity_cmd(), m_verbose(verbose)
 {
   connect(device, baudrate, channel);
 }
@@ -253,18 +253,25 @@ void vpPololu::setAngularVelocity(float vel_rad_s)
 
 void vpPololu::setPwmVelocity(short pwm_vel)
 {
+  unsigned short vel_speed;
+  unsigned short vel_target_position;
   if (pwm_vel <= 1000) {
-    m_vel_speed = static_cast<short>(std::abs(pwm_vel));
+    vel_speed = static_cast<short>(std::abs(pwm_vel));
     if (pwm_vel > 0) {
-      m_vel_target_position = m_max_pwm;
+      vel_target_position = m_max_pwm;
     }
     else if (pwm_vel < 0) {
-      m_vel_target_position = m_min_pwm;
+      vel_target_position = m_min_pwm;
     }
     else { // pwm_vel = 0
-      m_vel_target_position = getPwmPosition(); // Stay at current position
+      vel_target_position = getPwmPosition(); // Stay at current position
+      vel_speed = 1; // Set to min speed to keep current position
     }
+    m_mutex_velocity_cmd.lock();
+    m_vel_speed = vel_speed;
+    m_vel_target_position = vel_target_position;
     m_apply_velocity_cmd = true;
+    m_mutex_velocity_cmd.unlock();
   }
   else {
     throw(vpRobotException(vpRobotException::positionOutOfRangeError,
@@ -280,14 +287,17 @@ float vpPololu::speedToRadS(short speed_pwm) const
 void vpPololu::stopVelocityCmd()
 {
   if (m_verbose) {
-    std::cout << "Stopping vel cmd channel: " << m_channel << std::endl;
+    std::cout << "Stoping vel cmd channel: " << m_channel << std::endl;
   }
+
+  m_mutex_velocity_cmd.lock();
   m_apply_velocity_cmd = false;
+  m_mutex_velocity_cmd.unlock();
 
   //std::this_thread::sleep_for(10 * millis);
   unsigned short pos_pwm = getPwmPosition();
   if (m_verbose) {
-    std::cout << "Stopping channel " << m_channel << " at position " << pos_pwm << std::endl;
+    std::cout << "Stoping channel " << m_channel << " at position " << pos_pwm << std::endl;
   }
   setPwmPosition(pos_pwm, 0); // 0 to be as fast as possible to reach pos_pwm
 }
@@ -297,13 +307,27 @@ void vpPololu::VelocityCmdThread()
   if (m_verbose) {
     std::cout << "Create Velocity command thread" << std::endl;
   }
+  unsigned short vel_speed;
+  unsigned short vel_target_position;
+  bool apply_velocity_cmd;
+
   while (!m_stop_velocity_cmd_thread) {
-    if (m_apply_velocity_cmd) {
-      unsigned short position = getPwmPosition();
-      if (position != m_vel_target_position) {
-        setPwmPosition(m_vel_target_position, m_vel_speed);
+    m_mutex_velocity_cmd.lock();
+    vel_speed = m_vel_speed;
+    vel_target_position = m_vel_target_position;
+    apply_velocity_cmd = m_apply_velocity_cmd;
+    m_mutex_velocity_cmd.unlock();
+    if (apply_velocity_cmd) {
+      //unsigned short position = getPwmPosition();
+      //if (position != m_vel_target_position) {
+      if (m_vel_speed_prev != vel_speed || m_vel_target_position_prev != vel_target_position) {
+        setPwmPosition(vel_target_position, vel_speed);
       }
+
+      m_vel_speed_prev = vel_speed;
+      m_vel_target_position_prev = vel_target_position;
     }
+
     std::this_thread::sleep_for(20 * millis);
   }
 }

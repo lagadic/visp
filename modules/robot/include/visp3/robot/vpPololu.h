@@ -40,6 +40,7 @@
 
 #include <iostream>
 #include <string>
+#include <mutex>
 
 class RPMSerialInterface;
 
@@ -303,6 +304,11 @@ private:
 
   unsigned short m_vel_speed;    //!< PWM speed to in velocity control
   unsigned short m_vel_target_position; //!< Min or max PWM target position to reach in velocity control
+
+  unsigned short m_vel_speed_prev; //!< Previous PWM speed to in velocity control
+  unsigned short m_vel_target_position_prev; //!< Previous Min or max PWM target position to reach in velocity control
+
+  std::mutex m_mutex_velocity_cmd;
 
   // ranges
   unsigned short m_min_pwm = 4095;
