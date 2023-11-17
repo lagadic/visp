@@ -68,7 +68,7 @@ public:
    * Default constructor.
    *
    * \param[in] device : Name of the serial interface used for communication.
-   * \param[in] baudrate : Baudrate used for the serial communication.
+   * \param[in] baudrate : Baudrate used for the serial communication. Note that this parameter is only used on Windows.
    * \param[in] verbose : When true, enable verbose mode.
    */
   vpRobotPololuPtu(const std::string &device = "/dev/ttyACM0", int baudrate = 9600, bool verbose = false);

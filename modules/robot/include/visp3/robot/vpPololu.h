@@ -89,7 +89,7 @@ public:
    * You can set velocity commands using setPwmVelocity() or setAngularVelocity().
    *
    * \param[in] device : Serial device name to dial with Pololu board.
-   * \param[in] baudrate : Baudrate used to dial with Pololu board.
+   * \param[in] baudrate : Baudrate used to dial with Pololu board. Note that this parameter is only used on Windows.
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    * \param[in] verbose : When true enable verbose mode.
    */
@@ -113,7 +113,7 @@ public:
    * Open a connection with the Pololu board.
    *
    * \param[in] device : Serial device name to dial with Pololu board.
-   * \param[in] baudrate : Baudrate used to dial with Pololu board.
+   * \param[in] baudrate : Baudrate used to dial with Pololu board. Note that this parameter is only used on Windows.
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    */
   void connect(const std::string &device, int baudrate, int channel);
