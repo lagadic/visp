@@ -99,12 +99,12 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentAreaNormalized"; }
+  const std::string momentName() const override { return "vpMomentAreaNormalized"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentAreaNormalized"; }
+  const std::string name() const override { return "vpFeatureMomentAreaNormalized"; }
 };
 
 #else
@@ -192,14 +192,14 @@ public:
   void compute_interaction() override;
 
   /*!
-   * Associated moment name
+   * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentAreaNormalized"; }
+  const std::string momentName() const override { return "vpMomentAreaNormalized"; }
 
   /*!
-   * Feature name
+   * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentAreaNormalized"; }
+  const std::string name() const override { return "vpFeatureMomentAreaNormalized"; }
 };
 #endif
 #endif

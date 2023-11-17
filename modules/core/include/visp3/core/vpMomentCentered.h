@@ -83,7 +83,7 @@ public:
   /*!
      Moment name.
   */
-  inline const char *name() const { return "vpMomentCentered"; }
+  inline const std::string name() const { return "vpMomentCentered"; }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &v);
   void printWithIndices(std::ostream &os) const;

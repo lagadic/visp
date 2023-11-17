@@ -62,7 +62,7 @@ public:
   //@{
   void compute();
   //! Moment name.
-  const char *name() const { return "vpMomentArea"; }
+  const std::string name() const { return "vpMomentArea"; }
   void printDependencies(std::ostream &os) const;
   //@}
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentArea &m);
