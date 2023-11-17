@@ -276,16 +276,16 @@ public:
    *
    * \param speed_rad_s : Speed converted to rad/s.
    *
-   * \return speed : Speed in units of (0.25 μs)/(10 ms).
+   * \return Signed speed in units of (0.25 μs)/(10 ms).
    *
    * \sa speedToRadS()
    */
-  unsigned short radSToSpeed(float speed_rad_s) const;
+  short radSToSpeed(float speed_rad_s) const;
 
   /*!
    * Convert Pololu's pwm velocity to rad/s velocity.
    *
-   * \param[in] speed : Speed in units of (0.25 μs)/(10 ms).
+   * \param[in] speed : Signed speed in units of (0.25 μs)/(10 ms).
    *
    * \return Speed converted to rad/s.
    *
