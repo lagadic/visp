@@ -42,6 +42,7 @@
 #define _vpFeatureMoment_h_
 
 #include <vector>
+#include <string>
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/visual_features/vpBasicFeature.h>
@@ -164,7 +165,7 @@ protected:
   double A;
   double B;
   double C;
-  char _name[255];
+  std::string m_name;
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -200,7 +201,7 @@ public:
   vpFeatureMoment(vpMomentDatabase &data_base, double A_ = 0.0, double B_ = 0.0, double C_ = 0.0,
                   vpFeatureMomentDatabase *featureMoments = nullptr, unsigned int nbmatrices = 1)
     : vpBasicFeature(), moment(nullptr), moments(data_base), featureMomentsDataBase(featureMoments),
-    interaction_matrices(nbmatrices), A(A_), B(B_), C(C_), _name()
+    interaction_matrices(nbmatrices), A(A_), B(B_), C(C_), m_name()
   { }
 
   /** @name Inherited functionalities from vpFeatureMoment */
@@ -221,11 +222,13 @@ public:
    * Name of the moment corresponding to the feature. This allows to locate
    * the moment associated with the feature in the provided database.
    */
-  virtual const char *momentName() const = 0;
+  virtual const std::string momentName() const = 0;
+
   /*!
    * Name of the feature used to locate it in the database of features.
    */
-  virtual const char *name() const = 0;
+  virtual const std::string name() const = 0;
+
   void print(unsigned int select = FEATURE_ALL) const override;
   virtual void printDependencies(std::ostream &os) const;
 
@@ -265,12 +268,12 @@ public:
   /*!
    * No specific moment name.
    */
-  const char *momentName() const { return nullptr; }
+  const std::string momentName() const { return std::string(); }
 
   /*!
    * No specific feature name.
    */
-  virtual const char *name() const { return nullptr; }
+  virtual const std::string name() const { return std::string(); }
 };
 
 #endif

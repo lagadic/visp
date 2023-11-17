@@ -119,12 +119,12 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentAlpha"; }
+  const std::string momentName() const override { return "vpMomentAlpha"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentAlpha"; }
+  const std::string name() const override { return "vpFeatureMomentAlpha"; }
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
 };

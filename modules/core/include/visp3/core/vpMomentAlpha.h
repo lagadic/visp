@@ -220,7 +220,7 @@ public:
   /*!
    * Moment name.
    */
-  const char *name() const { return "vpMomentAlpha"; }
+  const std::string name() const { return "vpMomentAlpha"; }
 
   /*!
    * Returns true if the alpha moment was constructed as a reference with values in \f$ [-\pi/2 ; \pi/2] \f$, false

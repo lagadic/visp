@@ -148,8 +148,6 @@ int main(int argc, const char **argv)
     }
   }
 
-  std::chrono::seconds sec(1);
-
   try {
     // Creating the servo object on channel 0
     vpPololu servo(opt_device, opt_baudrate, opt_channel, opt_verbose);

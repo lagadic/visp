@@ -103,9 +103,9 @@ void vpFeatureMoment::print(unsigned int select) const
 }
 
 /*!
-  Not implemented since visual representation of a moment doesn't often make
-  sense.
-*/
+ * Not implemented since visual representation of a moment doesn't often make
+ * sense.
+ */
 void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                               unsigned int thickness) const
 {
@@ -235,19 +235,14 @@ vpBasicFeature *vpFeatureMoment::duplicate() const
  * Links the feature to the feature's database.
  *
  * \note The feature's database is different from the moment's database.
- * \param featureMoments : database in
- * which the moment features are stored.
+ * \param featureMoments : database in which the moment features are stored.
 */
 void vpFeatureMoment::linkTo(vpFeatureMomentDatabase &featureMoments)
 {
-  if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the moment name"));
-  }
-
-  std::strcpy(_name, name());
+  m_name = name();
   this->featureMomentsDataBase = &featureMoments;
 
-  featureMoments.add(*this, _name);
+  featureMoments.add(*this, m_name);
 }
 
 void vpFeatureMoment::compute_interaction() { }

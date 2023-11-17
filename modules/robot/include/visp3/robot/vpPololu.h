@@ -89,7 +89,7 @@ public:
    * You can set velocity commands using setPwmVelocity() or setAngularVelocity().
    *
    * \param[in] device : Serial device name to dial with Pololu board.
-   * \param[in] baudrate : Baudrate used to dial with Pololu board.
+   * \param[in] baudrate : Baudrate used to dial with Pololu board. Note that this parameter is only used on Windows.
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    * \param[in] verbose : When true enable verbose mode.
    */
@@ -113,7 +113,7 @@ public:
    * Open a connection with the Pololu board.
    *
    * \param[in] device : Serial device name to dial with Pololu board.
-   * \param[in] baudrate : Baudrate used to dial with Pololu board.
+   * \param[in] baudrate : Baudrate used to dial with Pololu board. Note that this parameter is only used on Windows.
    * \param[in] channel : Channel to which the servo is connected to the Pololu board.
    */
   void connect(const std::string &device, int baudrate, int channel);
@@ -276,16 +276,16 @@ public:
    *
    * \param speed_rad_s : Speed converted to rad/s.
    *
-   * \return speed : Speed in units of (0.25 μs)/(10 ms).
+   * \return Signed speed in units of (0.25 μs)/(10 ms).
    *
    * \sa speedToRadS()
    */
-  unsigned short radSToSpeed(float speed_rad_s) const;
+  short radSToSpeed(float speed_rad_s) const;
 
   /*!
    * Convert Pololu's pwm velocity to rad/s velocity.
    *
-   * \param[in] speed : Speed in units of (0.25 μs)/(10 ms).
+   * \param[in] speed : Signed speed in units of (0.25 μs)/(10 ms).
    *
    * \return Speed converted to rad/s.
    *

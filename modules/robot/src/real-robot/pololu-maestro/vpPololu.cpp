@@ -136,9 +136,9 @@ bool vpPololu::connected() const
   return true;
 }
 
-unsigned short vpPololu::radSToSpeed(float speed_rad_s) const
+short vpPololu::radSToSpeed(float speed_rad_s) const
 {
-  return static_cast<unsigned short>((speed_rad_s / 100.f) * (m_range_pwm / m_range_angle));
+  return static_cast<short>((speed_rad_s / 100.f) * (m_range_pwm / m_range_angle));
 }
 
 unsigned short vpPololu::getPwmPosition() const
@@ -194,7 +194,7 @@ void vpPololu::setAngularPosition(float pos_rad, float vel_rad_s)
 {
   if ((m_min_angle <= pos_rad) && (pos_rad <= m_max_angle)) {
     unsigned short pos_pwm = radToPwm(pos_rad);
-    unsigned short pos_speed = radSToSpeed(vel_rad_s);
+    unsigned short pos_speed = std::fabs(radSToSpeed(vel_rad_s));
     // Handle the case where pos_speed = 0 which corresponds to the pwm max speed
     if (pos_speed == 0) {
       pos_speed = 1;
@@ -237,7 +237,7 @@ void vpPololu::setPwmPosition(unsigned short pos_pwm, unsigned short speed_pwm)
 
 void vpPololu::setAngularVelocity(float vel_rad_s)
 {
-  short pwm_vel = static_cast<short>(std::abs(radSToSpeed(vel_rad_s)));
+  short pwm_vel = radSToSpeed(vel_rad_s);
 
   // Handle the case where vel_rad_s != 0 but pwm_vel == 0. In that case we set a minimal speed
   if (pwm_vel == 0) {
@@ -256,7 +256,7 @@ void vpPololu::setPwmVelocity(short pwm_vel)
   unsigned short vel_speed;
   unsigned short vel_target_position;
   if (pwm_vel <= 1000) {
-    vel_speed = static_cast<short>(std::abs(pwm_vel));
+    vel_speed = static_cast<unsigned short>(std::abs(pwm_vel));
     if (pwm_vel > 0) {
       vel_target_position = m_max_pwm;
     }
