@@ -36,6 +36,7 @@ RPMSerialInterface *RPMSerialInterface::createSerialInterface(const std::string 
   serialInterface = new RPMSerialInterfaceWindows(portName, baudRate, errorMessage);
 #else
   serialInterface = new RPMSerialInterfacePOSIX(portName, errorMessage);
+  (void)baudRate;
 #endif
 
   // If the interface couldn't be open properly, delete it
