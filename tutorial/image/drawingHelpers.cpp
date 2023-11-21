@@ -33,37 +33,67 @@
 #include <visp3/core/vpImageConvert.h>
 
 #if defined(VISP_HAVE_X11)
-vpDisplayX drawingHelpers::d;
+vpDisplayX drawingHelpers::d_Iinput;
+vpDisplayX drawingHelpers::d_dIx;
+vpDisplayX drawingHelpers::d_dIy;
+vpDisplayX drawingHelpers::d_IcannyVisp;
+vpDisplayX drawingHelpers::d_IcannyImgFilter;
 #elif defined(HAVE_OPENCV_HIGHGUI)
-vpDisplayOpenCV drawingHelpers::d;
+vpDisplayOpenCV drawingHelpers::d_Iinput;
+vpDisplayOpenCV drawingHelpers::d_dIx;
+vpDisplayOpenCV drawingHelpers::d_dIy;
+vpDisplayOpenCV drawingHelpers::d_IcannyVisp;
+vpDisplayOpenCV drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GTK)
-vpDisplayGTK drawingHelpers::d;
+vpDisplayGTK drawingHelpers::d_Iinput;
+vpDisplayGTK drawingHelpers::d_dIx;
+vpDisplayGTK drawingHelpers::d_dIy;
+vpDisplayGTK drawingHelpers::d_IcannyVisp;
+vpDisplayGTK drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GDI)
-vpDisplayGDI drawingHelpers::d;
+vpDisplayGDI drawingHelpers::d_Iinput;
+vpDisplayGDI drawingHelpers::d_dIx;
+vpDisplayGDI drawingHelpers::d_dIy;
+vpDisplayGDI drawingHelpers::d_IcannyVisp;
+vpDisplayGDI drawingHelpers::d_IcannyImgFilter;
 #elif defined(VISP_HAVE_D3D9)
-vpDisplayD3D drawingHelpers::d;
+vpDisplayD3D drawingHelpers::d_Iinput;
+vpDisplayD3D drawingHelpers::d_dIx;
+vpDisplayD3D drawingHelpers::d_dIy;
+vpDisplayD3D drawingHelpers::d_IcannyVisp;
+vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
 #endif
 
-vpImage<vpRGBa> drawingHelpers::I_disp;
-
-bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const bool &blockingMode)
+void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
+            vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
 {
-  I_disp = I;
-#if defined(VISP_HAVE_DISPLAY)
-  if (!d.isInitialised()) {
-    d.init(I_disp);
-    vpDisplay::setTitle(I_disp, title);
+  d_Iinput.init(Iinput, 10, 10);
+  d_IcannyVisp.init(IcannyVisp, 10, Iinput.getHeight() + 10 * 2);
+  if (p_dIx != nullptr) {
+    d_dIx.init(*p_dIx, Iinput.getWidth() + 2 * 10, 10);
   }
-#else
-  (void)title;
-#endif
+  if (p_dIy != nullptr) {
+    d_dIy.init(*p_dIy, 2 * Iinput.getWidth() + 3 * 10, 10);
+  }
+  if (p_IcannyimgFilter != nullptr) {
+    d_IcannyImgFilter.init(*p_IcannyimgFilter, Iinput.getWidth() + 2 * 10, Iinput.getHeight() + 10 * 2);
+  }
+}
 
-  vpDisplay::display(I_disp);
-  vpDisplay::displayText(I_disp, 15, 15, "Left click to continue...", vpColor::red);
-  vpDisplay::displayText(I_disp, 35, 15, "Right click to stop...", vpColor::red);
-  vpDisplay::flush(I_disp);
+void drawingHelpers::display(vpImage<unsigned char> &I, const std::string &title)
+{
+  vpDisplay::display(I);
+  vpDisplay::setTitle(I, title);
+  vpDisplay::flush(I);
+}
+
+bool drawingHelpers::waitForClick(const vpImage<unsigned char> &I, const bool &blockingMode)
+{
+  vpDisplay::displayText(I, 15, 15, "Left click to continue...", vpColor::red);
+  vpDisplay::displayText(I, 35, 15, "Right click to stop...", vpColor::red);
+  vpDisplay::flush(I);
   vpMouseButton::vpMouseButtonType button;
-  vpDisplay::getClick(I_disp, button, blockingMode);
+  vpDisplay::getClick(I, button, blockingMode);
   bool hasToContinue = true;
   if (button == vpMouseButton::button3) {
     // Right click => stop the program
@@ -71,25 +101,4 @@ bool drawingHelpers::display(vpImage<vpRGBa> &I, const std::string &title, const
   }
 
   return hasToContinue;
-}
-
-bool drawingHelpers::display(vpImage<unsigned char> &D, const std::string &title, const bool &blockingMode)
-{
-  vpImage<vpRGBa> I; // Image to display
-  vpImageConvert::convert(D, I);
-  return display(I, title, blockingMode);
-}
-
-bool drawingHelpers::display(vpImage<double> &D, const std::string &title, const bool &blockingMode)
-{
-  vpImage<unsigned char> I; // Image to display
-  vpImageConvert::convert(D, I);
-  return display(I, title, blockingMode);
-}
-
-bool drawingHelpers::display(vpImage<float> &F, const std::string &title, const bool &blockingMode)
-{
-  vpImage<unsigned char> I; // Image to display
-  vpImageConvert::convert(F, I);
-  return display(I, title, blockingMode);
 }
