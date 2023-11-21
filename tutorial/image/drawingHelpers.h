@@ -48,25 +48,25 @@ extern vpDisplayOpenCV d_Iinput;
 extern vpDisplayOpenCV d_dIx;
 extern vpDisplayOpenCV d_dIy;
 extern vpDisplayOpenCV d_IcannyVisp;
-extern vpDisplayOpenCV d_IcannyImgFilter
+extern vpDisplayOpenCV d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GTK)
 extern vpDisplayGTK d_Iinput;
 extern vpDisplayGTK d_dIx;
 extern vpDisplayGTK d_dIy;
 extern vpDisplayGTK d_IcannyVisp;
-extern vpDisplayGTK d_IcannyImgFilter
+extern vpDisplayGTK d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GDI)
 extern vpDisplayGDI d_Iinput;
 extern vpDisplayGDI d_dIx;
 extern vpDisplayGDI d_dIy;
 extern vpDisplayGDI d_IcannyVisp;
-extern vpDisplayGDI d_IcannyImgFilter
+extern vpDisplayGDI d_IcannyImgFilter;
 #elif defined(VISP_HAVE_D3D9)
 extern vpDisplayD3D d_Iinput;
 extern vpDisplayD3D d_dIx;
 extern vpDisplayD3D d_dIy;
 extern vpDisplayD3D d_IcannyVisp;
-extern vpDisplayD3D d_IcannyImgFilter
+extern vpDisplayD3D d_IcannyImgFilter;
 #endif
 
 /**
@@ -79,8 +79,8 @@ extern vpDisplayD3D d_IcannyImgFilter
  * \param[out] p_IcannyimgFilter If different from nullptr, pointer towards the result of the vpImageFilter::canny
  * method.
  */
-  void init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
-            vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter);
+void init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
+          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter);
 
 /**
  * \brief Display a gray-scale image.
