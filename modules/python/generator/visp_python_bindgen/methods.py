@@ -256,12 +256,16 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   else:
     self_param_with_name = None
     method_caller = bound_object.cpp_name + '::' if is_class_method else bound_object.cpp_name
+  output_param_symbols = []
   if return_type is None or return_type == 'void':
     maybe_get_return = ''
-    maybe_return_in_tuple = ''
+    output_param_symbols.append('')
   else:
     maybe_get_return = f'{return_type} res = '
-    maybe_return_in_tuple = 'res, '
+    if '&' in return_type:
+      output_param_symbols.append('&res')
+    else:
+      output_param_symbols.append('res')
 
   if len(output_param_names) == 0 and (return_type is None or return_type == 'void'):
     return_str = ''
@@ -270,7 +274,11 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   elif len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
     return_str = output_param_names[0]
   else:
-    return_str = f'std::make_tuple({maybe_return_in_tuple}{", ".join(output_param_names)})'
+    # When returning a tuple we need to explicitely convert references to pointer.
+    # This is required since std::tuple will upcast the ref to its base class and try to store a copy of the object
+    # If a class is pure virtual, this is not possible and will a compilation error!
+    output_param_symbols.extend(['&' + name for name in output_param_names if '&' in name])
+    return_str = f'std::make_tuple({", ".join(output_param_symbols)})'
 
   lambda_body = f'''
     {param_declarations}
