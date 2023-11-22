@@ -202,6 +202,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   py_method_name = method_config.get('custom_name') or method_name
   return_type = get_type(method.return_type, specs, header_env.mapping)
 
+
   # Detect input and output parameters for a method
   use_default_param_policy = method_config['use_default_param_policy']
   param_is_input, param_is_output = method_config['param_is_input'], method_config['param_is_output']
@@ -218,6 +219,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
   input_param_names = [param_names[i] for i in range(len(param_is_input)) if param_is_input[i]]
   output_param_names = [param_names[i] for i in range(len(param_is_output)) if param_is_output[i]]
+  output_param_is_ref = [isinstance(method.parameters[i], types.Reference) for i in range(len(params_strs)) if param_is_output[i]]
 
   # Fetch documentation if available
   if header.documentation_holder is not None:
@@ -259,7 +261,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   output_param_symbols = []
   if return_type is None or return_type == 'void':
     maybe_get_return = ''
-    output_param_symbols.append('')
   else:
     maybe_get_return = f'{return_type} res = '
     if '&' in return_type:
@@ -277,7 +278,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     # When returning a tuple we need to explicitely convert references to pointer.
     # This is required since std::tuple will upcast the ref to its base class and try to store a copy of the object
     # If a class is pure virtual, this is not possible and will a compilation error!
-    output_param_symbols.extend(['&' + name for name in output_param_names if '&' in name])
+    output_param_symbols.extend(['&' + name if is_ref else name for is_ref, name in zip(output_param_is_ref, output_param_names)])
     return_str = f'std::make_tuple({", ".join(output_param_symbols)})'
 
   lambda_body = f'''

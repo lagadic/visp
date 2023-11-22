@@ -21,13 +21,6 @@
       ]
     },
     "vpFeatureMomentDatabase": {
-      "methods": [
-        {
-          "static": false,
-          "signature": "vpFeatureMoment& get(const char*, bool&)",
-          "ignore": true
-        }
-      ]
     }
 
   }
