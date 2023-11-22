@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpImageCircle.h
-  \brief Image circle, i.e. circle in the image space.
-*/
+ * \file vpImageCircle.h
+ * \brief Image circle, i.e. circle in the image space.
+ */
 
 #ifndef _vpImageCircle_h_
 #define _vpImageCircle_h_
@@ -50,8 +50,8 @@
 #endif
 
 /**
-   * \brief Class that defines a 2D circle in an image.
-   */
+ * \brief Class that defines a 2D circle in an image.
+ */
 class VISP_EXPORT vpImageCircle
 {
 public:
@@ -73,27 +73,26 @@ public:
 #endif
 
   /*!
-  * Default destructor.
-  */
-  virtual ~vpImageCircle();
-
-  /*!
   * Compute the angular coverage, in terms of radians, that is contained in the Region of Interest (RoI).
-  * \sa \ref vpImageCircle::computeArcLengthInRoI() "vpImageCircle::computeArcLengthInRoI(const vpRect &roi)"
+  * \sa computeArcLengthInRoI(), computeArcLengthInRoI(const vpRect &roi)
   * \param[in] roi The rectangular RoI in which we want to know the number of pixels of the circle that are contained.
-  * \return Returns 2.f * M_PI for a circle that is fully visible in the RoI, or the sum of the angles of the arc(s) that is(are) visible in the RoI.
+  * \param[in] roundingTolerance The tolerance on the angle when the angle is close to a negative multiple of 2 * M_PIf.
+  * \return Returns angular coverage of a circle in a ROI as an angle value in radians.
+  * More precisely, it returns 2.f * M_PI for a circle that is fully visible in the RoI, or the sum of the angles
+  * of the arc(s) that is(are) visible in the RoI.
   */
-  float computeAngularCoverageInRoI(const vpRect &roi) const;
+  float computeAngularCoverageInRoI(const vpRect &roi, const float &roundingTolerance = 0.001f) const;
 
   /*!
   * Compute the arc length, in terms of number of pixels, that is contained in the Region of Interest (RoI).
-  * \sa \ref vpImageCircle::computeAngularCoverageInRoI() "vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi)"
+  * \sa computeAngularCoverageInRoI(), computeAngularCoverageInRoI(const vpRect &roi)
   * \param[in] roi The rectangular RoI in which we want to know the number of pixels of the circle that are contained.
+  * \param[in] roundingTolerance The tolerance on the angle when the angle is close to 2.f * M_PIf .
   * \return The number of pixels of the circle that are contained in the RoI.
   */
-  float computeArcLengthInRoI(const vpRect &roi) const;
+  float computeArcLengthInRoI(const vpRect &roi, const float &roundingTolerance = 0.001f) const;
 
-   /*!
+  /*!
    * Get the center of the image (2D) circle
    * \return The center of the image (2D) circle.
    */

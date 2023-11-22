@@ -55,25 +55,21 @@ TEST_CASE("Check OpenCV-bsed convex hull")
 {
   SECTION("From vpRect")
   {
-    const vpRect rect{0, 0, 200, 400};
-    const std::vector<vpImagePoint> rect_corners{rect.getTopLeft(), rect.getTopRight(), rect.getBottomRight(),
-                                                 rect.getBottomLeft()};
+    const vpRect rect { 0, 0, 200, 400 };
+    const std::vector<vpImagePoint> rect_corners { rect.getTopLeft(), rect.getTopRight(), rect.getBottomRight(),
+                                                 rect.getBottomLeft() };
 
-    vpPolygon poly{};
+    vpPolygon poly {};
     poly.buildFrom(rect_corners, true);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
     for (const auto &poly_corner : poly.getCorners()) {
       REQUIRE(std::find(cbegin(rect_corners), cend(rect_corners), poly_corner) != cend(rect_corners));
     }
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#else
     for (const auto &poly_corner : poly.getCorners()) {
       REQUIRE(std::find(begin(rect_corners), end(rect_corners), poly_corner) != end(rect_corners));
-    }
-#else
-    for (std::vector<vpImagePoint>::const_iterator it = poly.getCorners().begin(); it != poly.getCorners().end();
-         ++it) {
-      REQUIRE(std::find(rect_corners.begin(), rect_corners.end(), *it) != rect_corners.end());
     }
 #endif
   }
@@ -103,21 +99,16 @@ bool testConvexHull()
   vpPolygon poly;
   poly.buildFrom(rect_corners, true);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   for (const auto &poly_corner : poly.getCorners()) {
     if (std::find(cbegin(rect_corners), cend(rect_corners), poly_corner) == cend(rect_corners)) {
       return false;
     }
   }
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#else
   for (const auto &poly_corner : poly.getCorners()) {
     if (std::find(begin(rect_corners), end(rect_corners), poly_corner) == end(rect_corners)) {
-      return false;
-    }
-  }
-#else
-  for (std::vector<vpImagePoint>::const_iterator it = poly.getCorners().begin(); it != poly.getCorners().end(); ++it) {
-    if (std::find(rect_corners.begin(), rect_corners.end(), *it) == rect_corners.end()) {
       return false;
     }
   }
@@ -130,7 +121,7 @@ bool testConvexHull()
 
 int main()
 {
-  if (! testConvexHull()) {
+  if (!testConvexHull()) {
     return EXIT_FAILURE;
   }
 

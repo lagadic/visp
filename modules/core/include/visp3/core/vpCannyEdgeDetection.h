@@ -56,14 +56,20 @@ private:
     ON_CHECK /*!< This pixel is currently tested to know if it is linked to a strong edge point.*/
   } EdgeType;
 
+  // Filtering + gradient methods choice
+  vpImageFilter::vpCannyFilteringAndGradientType m_filteringAndGradientType; /*!< Choice of the filter and
+      gradient operator to apply before the edge detection step*/
+
   // // Gaussian smoothing attributes
   int m_gaussianKernelSize; /*!< Size of the Gaussian filter kernel used to smooth the input image. Must be an odd number.*/
   float m_gaussianStdev;   /*!< Standard deviation of the Gaussian filter.*/
+  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
 
   // // Gradient computation attributes
   bool m_areGradientAvailable; /*!< Set to true if the user provides the gradient images, false otherwise. In the latter case, the class will compute the gradients.*/
-  vpArray2D<float> m_fg; /*!< Array that contains the Gaussian kernel.*/
-  vpArray2D<float> m_fgDg; /*!< Array that contains the derivative of the Gaussian kernel.*/
+  unsigned int m_gradientFilterKernelSize; /*!< The size of the Sobel kernels used to compute the gradients of the image.*/
+  vpArray2D<float> m_gradientFilterX; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the X-axis.*/
+  vpArray2D<float> m_gradientFilterY; /*!< Array that contains the gradient filter kernel (Sobel or Scharr) along the Y-axis.*/
   vpImage<float> m_dIx; /*!< X-axis gradient.*/
   vpImage<float> m_dIy; /*!< Y-axis gradient.*/
 
@@ -71,8 +77,13 @@ private:
   std::map<std::pair<unsigned int, unsigned int>, float> m_edgeCandidateAndGradient; /*!< Map that contains point image coordinates and corresponding gradient value.*/
 
   // // Hysteresis thresholding attributes
-  float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced as from m_upperThreshold. */
+  float m_lowerThreshold; /*!< Lower threshold for the hysteresis step. If negative, it will be deduced
+                               as from m_upperThreshold. */
+  float m_lowerThresholdRatio; /*!< If the thresholds must be computed, the ratio of the upper threshold the lower
+                                    threshold is equal: m_lowerThreshold = m_lowerThresholdRatio * m_upperThreshold. */
   float m_upperThreshold; /*!< Upper threshold for the hysteresis step.*/
+  float m_upperThresholdRatio; /*!< If the thresholds must be computed, the ratio of pixels of the gradient image that
+                                    must be lower than the upper threshold \b m_upperThreshold.*/
 
   // // Edge tracking attributes
   std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
@@ -82,10 +93,14 @@ private:
   /** @name Constructors and initialization */
   //@{
   /**
-   * \brief Initialize the Gaussian filters used to filter the input image and
-   * to compute its gradients.
+   * \brief Initialize the Gaussian filters used to filter the input image.
    */
   void initGaussianFilters();
+
+  /**
+   * \brief Initialize the gradient filters (Sobel or Scharr) used to compute the input image gradients.
+   */
+  void initGradientFilters();
   //@}
 
   /** @name Different steps methods */
@@ -112,15 +127,15 @@ private:
    * \b m_weakEdgePoints and will be kept in the final edge map only if they are connected
    * to a strong edge point.
    * Edge candidates that are below \b m_lowerThreshold are discarded.
-   * \param lowerThreshold Edge candidates that are below this threshold are definitely not
+   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
    * edges.
-   * \param upperThreshold Edge candidates that are greater than this threshold are classified
+   * \param[in] upperThreshold Edge candidates that are greater than this threshold are classified
    * as strong edges.
    */
   void performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold);
 
   /**
-   * @brief Search recursively for a strong edge in the neighborhood of a weak edge.
+   * \brief Search recursively for a strong edge in the neighborhood of a weak edge.
    *
    * \param[in] coordinates : The coordinates we are checking.
    * \return true We found a strong edge point in its 8-connected neighborhood.
@@ -147,15 +162,28 @@ public:
   vpCannyEdgeDetection();
 
   /**
-   * \brief Construct a new vpCannyEdgeDetection object.
+   * \brief Construct a new vpCannyEdgeDetection object that uses Gaussian blur + Sobel operators to compute
+   * the edge map.
    *
    * \param[in] gaussianKernelSize : The size of the Gaussian filter kernel. Must be odd.
    * \param[in] gaussianStdev : The standard deviation of the Gaussian filter.
-   * \param[in] lowerThreshold : The lower threshold of the hysteresis thresholding step. If negative, will be computed from the upper threshold.
-   * \param[in] upperThreshold : The upper threshold of the hysteresis thresholding step. If negative, will be computed from the median of the gray values of the image.
+   * \param[in] sobelAperture : The size of the Sobel filters kernel. Must be odd.
+   * \param[in] lowerThreshold : The lower threshold of the hysteresis thresholding step. If negative, will be computed
+   * from the upper threshold.
+   * \param[in] upperThreshold : The upper threshold of the hysteresis thresholding step. If negative, will be computed
+   * from the histogram of the absolute gradient.
+   * \param[in] lowerThresholdRatio : If the thresholds must be computed,the lower threshold will be equal to the upper
+   * threshold times \b lowerThresholdRatio .
+   * \param[in] upperThresholdRatio : If the thresholds must be computed,the upper threshold will be equal to the value
+   * such as the number of pixels of the image times \b upperThresholdRatio have an absolute gradient lower than the
+   * upper threshold.
+   * \param[in] filteringType : The filtering and gradient operators to apply to the image before the edge detection
+   * operation.
    */
-  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev,
-                       const float &lowerThreshold = -1., const float &upperThreshold = -1.);
+  vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev, const unsigned int &sobelAperture,
+                       const float &lowerThreshold = -1.f, const float &upperThreshold = -1.f,
+                       const float &lowerThresholdRatio = 0.6f, const float &upperThresholdRatio = 0.8f,
+                       const vpImageFilter::vpCannyFilteringAndGradientType &filteringType = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING);
 
   // // Configuration from files
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -179,30 +207,42 @@ public:
    * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
    * the default value defined in the constructor is kept
    *
-   * \param j : The JSON object, resulting from the parsing of a JSON file.
-   * \param detector : The detector that will be initialized from the JSON data.
+   * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
+   * \param[out] detector : The detector that will be initialized from the JSON data.
    */
   friend inline void from_json(const json &j, vpCannyEdgeDetection &detector)
   {
+    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
+    filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
+    detector.m_filteringAndGradientType = vpImageFilter::vpCannyFilteringAndGradientTypeFromString(filteringAndGradientName);
     detector.m_gaussianKernelSize = j.value("gaussianSize", detector.m_gaussianKernelSize);
     detector.m_gaussianStdev = j.value("gaussianStdev", detector.m_gaussianStdev);
     detector.m_lowerThreshold = j.value("lowerThreshold", detector.m_lowerThreshold);
+    detector.m_lowerThresholdRatio = j.value("lowerThresholdRatio", detector.m_lowerThresholdRatio);
+    detector.m_gradientFilterKernelSize = j.value("gradientFilterKernelSize", detector.m_gradientFilterKernelSize);
     detector.m_upperThreshold = j.value("upperThreshold", detector.m_upperThreshold);
+    detector.m_upperThresholdRatio = j.value("upperThresholdRatio", detector.m_upperThresholdRatio);
   }
 
   /**
    * \brief Parse a vpCannyEdgeDetection object into JSON format.
    *
-   * \param j : A JSON parser object.
-   * \param detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
+   * \param[out] j : A JSON parser object.
+   * \param[in] detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
   friend inline void to_json(json &j, const vpCannyEdgeDetection &detector)
   {
+    std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
     j = json {
+            {"filteringAndGradientType", filteringAndGradientName},
             {"gaussianSize", detector.m_gaussianKernelSize},
             {"gaussianStdev", detector.m_gaussianStdev},
             {"lowerThreshold", detector.m_lowerThreshold},
-            {"upperThreshold", detector.m_upperThreshold} };
+            {"lowerThresholdRatio", detector.m_lowerThresholdRatio},
+            {"gradientFilterKernelSize", detector.m_gradientFilterKernelSize},
+            {"upperThreshold", detector.m_upperThreshold},
+            {"upperThresholdRatio", detector.m_upperThresholdRatio}
+    };
   }
 #endif
   //@}
@@ -241,6 +281,17 @@ public:
   /** @name  Setters */
   //@{
   /**
+   * \brief Set the Filtering And Gradient operators to apply to the image before the edge detection operation.
+   *
+   * \param[in] type The operators to apply.
+   */
+  inline void setFilteringAndGradientType(const vpImageFilter::vpCannyFilteringAndGradientType &type)
+  {
+    m_filteringAndGradientType = type;
+    initGradientFilters();
+  }
+
+  /**
    * \brief Set the Gradients of the image that will be processed.
    *
    * \param[in] dIx : Gradient along the horizontal axis of the image.
@@ -271,7 +322,25 @@ public:
   }
 
   /**
-   * @brief Set the Gaussian Filters kernel size and standard deviation
+   * \brief Set the lower and upper Canny Thresholds ratio that are used to compute them automatically. To ask to
+   * compute automatically the thresholds, you must set the lower and upper thresholds with negative values using the
+   * appropriate setter.
+   *
+   * \sa \ref vpCannyEdgeDetection::setCannyThresholds() "vpCannyEdgeDetection::setCannyThresholds(const float&, const float&)"
+   * \param[in] lowerThreshRatio : The lower threshold ratio: if the thresholds are computed automatically, the lower
+   * threshold will be equal to the upper threshold multiplied by \b lowerThreshRatio.
+   * \param[in] upperThreshRatio : The upper threshold ratio: if the thresholds are computed automatically, the  upper
+   * threshold will be set such as \b upperThreshRatio times the number of pixels of the image have their absolute
+   * gradient lower then the upper threshold.
+   */
+  inline void setCannyThresholdsRatio(const float &lowerThreshRatio, const float &upperThreshRatio)
+  {
+    m_lowerThresholdRatio = lowerThreshRatio;
+    m_upperThresholdRatio = upperThreshRatio;
+  }
+
+  /**
+   * \brief Set the Gaussian Filters kernel size and standard deviation
    * and initialize the aforementioned filters.
    *
    * \param[in] kernelSize : The size of the Gaussian filters kernel.
@@ -283,6 +352,17 @@ public:
     m_gaussianKernelSize = kernelSize;
     m_gaussianStdev = stdev;
     initGaussianFilters();
+  }
+
+  /**
+   * \brief  Set the parameters of the gradient filter (Sobel or Scharr) kernel size filters.
+   *
+   * \param[in] apertureSize The size of the gradient filters kernel. Must be an odd value.
+   */
+  inline void setGradientFilterAperture(const unsigned int &apertureSize)
+  {
+    m_gradientFilterKernelSize = apertureSize;
+    initGradientFilters();
   }
   //@}
 };

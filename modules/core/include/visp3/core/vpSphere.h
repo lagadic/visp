@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpSphere.h
-  \brief  forward projection of a sphere
-*/
+ * \file vpSphere.h
+ * \brief forward projection of a sphere
+ */
 
 #ifndef vpSphere_hh
 #define vpSphere_hh
@@ -46,55 +46,54 @@
 #include <math.h>
 #include <visp3/core/vpForwardProjection.h>
 /*!
-  \class vpSphere
-  \ingroup group_core_geometry
-  \brief Class that defines a 3D sphere in the object frame and allows forward projection of a 3D sphere in the
-  camera frame and in the 2D image plane by perspective projection.
-  All the parameters must be set in meter.
-
-  A sphere has the followings parameters:
-  - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
-  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double
-  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the functions setWorldCoordinates(double oX,
-  double oY, double oZ, double R) and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
-
-  - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These
-  parameters registered in vpTracker::cP internal 4-dim vector are computed using
-  changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
-  These parameters could be retrieved using getX(), getY(), getZ() and getR().
-  To get theses parameters use get_cP().
-
-  - **in the image plane**: here we consider the parameters of the ellipse corresponding
-  to the perspective projection of the 3D sphere. The parameters are the ellipse centroid (x, y)
-  and n20, n11, n02 which are the second order centered moments of
-  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
-  \f$\mu_{ij}\f$ are the centered moments and a the area).
-  These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
-  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
-  get_n11() and get_n02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
-  To get theses parameters use get_p().
-*/
+ * \class vpSphere
+ * \ingroup group_core_geometry
+ * \brief Class that defines a 3D sphere in the object frame and allows forward projection of a 3D sphere in the
+ * camera frame and in the 2D image plane by perspective projection.
+ * All the parameters must be set in meter.
+ *
+ * A sphere has the followings parameters:
+ * - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
+ *. parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double
+ *. oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the functions setWorldCoordinates(double oX,
+ *. double oY, double oZ, double R) and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
+ *
+ * - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These
+ *. parameters registered in vpTracker::cP internal 4-dim vector are computed using
+ *. changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
+ *. These parameters could be retrieved using getX(), getY(), getZ() and getR().
+ *. To get theses parameters use get_cP().
+ *
+ * - **in the image plane**: here we consider the parameters of the ellipse corresponding
+ *. to the perspective projection of the 3D sphere. The parameters are the ellipse centroid (x, y)
+ *. and n20, n11, n02 which are the second order centered moments of
+ *. the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+ *. \f$\mu_{ij}\f$ are the centered moments and a the area).
+ *. These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
+ *. projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
+ *. get_n11() and get_n02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
+ *. To get theses parameters use get_p().
+ */
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {
 public:
   vpSphere();
   explicit vpSphere(const vpColVector &oP);
   vpSphere(double oX, double oY, double oZ, double R);
-  virtual ~vpSphere();
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) override;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1);
+               unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpSphere *duplicate() const;
+  vpSphere *duplicate() const override;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -108,20 +107,20 @@ public:
   double getZ() const { return cP[2]; }
   double getR() const { return cP[3]; }
 
-  void projection();
-  void projection(const vpColVector &cP, vpColVector &p) const;
+  void projection() override;
+  void projection(const vpColVector &cP, vpColVector &p) const override;
 
-  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(const vpColVector &oP) override;
   void setWorldCoordinates(double oX, double oY, double oZ, double R);
 
 protected:
-  void init();
+  void init() override;
 
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
-  */
+   * @name Deprecated functions
+   */
   //@{
   /*!
    * \deprecated You should rather use get_n20().

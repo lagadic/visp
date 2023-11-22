@@ -47,7 +47,7 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 #include <functional>
@@ -61,7 +61,7 @@ int main()
   unsigned int confidence;
   vpImagePoint frame_origin;
   std::list<std::pair<unsigned int, vpImagePoint> >
-      frame_origins; // Frame origin's history for trajectory visualization.
+    frame_origins; // Frame origin's history for trajectory visualization.
   unsigned int display_scale = 2;
 
   try {
@@ -118,8 +118,9 @@ int main()
         odo_acc[5] = static_cast<double>(pose_data.angular_acceleration.z);
 
         confidence = pose_data.tracker_confidence;
-      } else {
-        // Stream that bypass synchronization (such as IMU, Pose, ...) will produce single frames.
+      }
+      else {
+     // Stream that bypass synchronization (such as IMU, Pose, ...) will produce single frames.
         rs2_pose pose_data = frame.as<rs2::pose_frame>().get_pose_data();
         vpTranslationVector ctw(static_cast<double>(pose_data.translation.x),
                                 static_cast<double>(pose_data.translation.y),
@@ -152,9 +153,9 @@ int main()
       vpHomogeneousMatrix cextMc = cextMw * cMw.inverse();
       vpMeterPixelConversion::convertPoint(cam, cextMc[0][3] / cextMc[2][3], cextMc[1][3] / cextMc[2][3], frame_origin);
       frame_origins.push_back(std::make_pair(confidence, frame_origin));
-    };
+      };
 
-    // Open vpRealSense2 object according to configuration and with the callback to be called.
+      // Open vpRealSense2 object according to configuration and with the callback to be called.
     g.open(config, callback);
 
     I_left.resize(g.getIntrinsics(RS2_STREAM_FISHEYE, 1).height, g.getIntrinsics(RS2_STREAM_FISHEYE, 1).width);
@@ -225,9 +226,11 @@ int main()
       vpDisplay::flush(I_right);
       vpDisplay::flush(I_pose);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -241,10 +244,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
 #elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))

@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+#if defined(VISP_HAVE_REALSENSE2) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 
 #include <visp3/core/vpImage.h>
@@ -54,10 +54,11 @@
 
 namespace
 {
-struct float3 {
+struct float3
+{
   float x, y, z;
-  float3() : x(0), y(0), z(0) {}
-  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
+  float3() : x(0), y(0), z(0) { }
+  float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) { }
 };
 
 void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<float3> &pointcloud)
@@ -141,10 +142,12 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
     memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
-  } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, const_cast<void *>(f.get_data()), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
-  } else if (f.get_profile().format() == RS2_FORMAT_Y8) {
+  }
+  else if (f.get_profile().format() == RS2_FORMAT_Y8) {
     memcpy(img.ptr<uchar>(), f.get_data(), size);
   }
 }
@@ -238,7 +241,7 @@ int main()
   }
 
   std::cout << "Acquisition - Mean time: " << vpMath::getMean(time_vector)
-            << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
+    << " ms ; Median time: " << vpMath::getMedian(time_vector) << " ms" << std::endl;
 
   return EXIT_SUCCESS;
 }
@@ -247,11 +250,6 @@ int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense2 to make this test work." << std::endl;
-#endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
-               "to make this test work"
-            << std::endl;
 #endif
 #if !(VISP_HAVE_OPENCV_VERSION >= 0x030000)
   std::cout << "Install OpenCV version >= 3 to make this test work." << std::endl;

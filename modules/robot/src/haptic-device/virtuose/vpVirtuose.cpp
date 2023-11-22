@@ -49,7 +49,7 @@
  * Authorize indexing on all movements by default.
  */
 vpVirtuose::vpVirtuose()
-  : m_virtContext(NULL), m_ip_port("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
+  : m_virtContext(nullptr), m_ip_port("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
     m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
     m_is_init(false), m_period(0.001f), m_njoints(6)
 {
@@ -62,9 +62,9 @@ vpVirtuose::vpVirtuose()
  */
 void vpVirtuose::close()
 {
-  if (m_virtContext != NULL) {
+  if (m_virtContext != nullptr) {
     virtClose(m_virtContext);
-    m_virtContext = NULL;
+    m_virtContext = nullptr;
   }
 }
 
@@ -538,7 +538,7 @@ void vpVirtuose::init()
   if (!m_is_init) {
     m_virtContext = virtOpen(m_ip_port.c_str());
 
-    if (m_virtContext == NULL) {
+    if (m_virtContext == nullptr) {
       int err = virtGetErrorCode(m_virtContext);
       throw(vpException(vpException::fatalError,
                         "Cannot open communication with haptic device using %s: %s. Check ip and port values",

@@ -66,7 +66,7 @@
   body messages.
 */
 vpSickLDMRS::vpSickLDMRS()
-  : socket_fd(-1), body(NULL), vAngle(), time_offset(0), isFirstMeasure(true), maxlen_body(104000)
+  : socket_fd(-1), body(nullptr), vAngle(), time_offset(0), isFirstMeasure(true), maxlen_body(104000)
 {
   ip = "131.254.12.119";
   port = 12002;
@@ -135,7 +135,7 @@ bool vpSickLDMRS::setup()
     tv.tv_usec = 0;
     FD_ZERO(&myset);
     FD_SET(static_cast<unsigned int>(socket_fd), &myset);
-    res = select(socket_fd + 1, NULL, &myset, NULL, &tv);
+    res = select(socket_fd + 1, nullptr, &myset, nullptr, &tv);
     if (res < 0 && errno != EINTR) {
       fprintf(stderr, "Error connecting to server %d - %s\n", errno, strerror(errno));
       return false;

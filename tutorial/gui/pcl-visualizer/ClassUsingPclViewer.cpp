@@ -1,7 +1,7 @@
 //! \example ClassUsingPclViewer.cpp
 #include "ClassUsingPclViewer.h"
 
-#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL)
 // PCL
 #include <pcl/io/pcd_io.h>
 

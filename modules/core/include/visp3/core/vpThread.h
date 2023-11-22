@@ -92,7 +92,7 @@ public:
      arguments. \param fn : A pointer to a function. \param args : Arguments
      passed to the call to \e fn (if any).
    */
-  vpThread(vpThread::Fn fn, vpThread::Args args = NULL) : m_handle(), m_isCreated(false), m_isJoinable(false)
+  vpThread(vpThread::Fn fn, vpThread::Args args = nullptr) : m_handle(), m_isCreated(false), m_isJoinable(false)
   {
     create(fn, args);
   }
@@ -102,18 +102,18 @@ public:
      execution. \param fn : A pointer to a function. \param args : Arguments
      passed to the call to \e fn (if any).
    */
-  void create(vpThread::Fn fn, vpThread::Args args = NULL)
+  void create(vpThread::Fn fn, vpThread::Args args = nullptr)
   {
     if (m_isCreated)
       throw vpException(vpException::fatalError, "The thread is already created");
 #if defined(VISP_HAVE_PTHREAD)
-    int err = pthread_create(&m_handle, NULL, fn, args);
+    int err = pthread_create(&m_handle, nullptr, fn, args);
     if (err != 0) {
       throw vpException(vpException::cannotUseConstructorError, "Can't create thread : %s", strerror(err));
     }
 #elif defined(_WIN32)
     DWORD dwThreadIdArray;
-    m_handle = CreateThread(NULL,              // default security attributes
+    m_handle = CreateThread(nullptr,              // default security attributes
                             0,                 // use default stack size
                             fn,                // thread function name
                             args,              // argument to thread function
@@ -150,7 +150,7 @@ public:
   {
     if (m_isJoinable) {
 #if defined(VISP_HAVE_PTHREAD)
-      pthread_join(m_handle, NULL);
+      pthread_join(m_handle, nullptr);
 #elif defined(_WIN32)
 #if defined(WINRT_8_1)
       WaitForSingleObjectEx(m_handle, INFINITE, FALSE);

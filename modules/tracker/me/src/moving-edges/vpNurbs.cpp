@@ -50,12 +50,10 @@ vpNurbs::vpNurbs() : weights() { p = 3; }
 
 vpNurbs::vpNurbs(const vpNurbs &nurbs) : vpBSpline(nurbs), weights(nurbs.weights) { }
 
-vpNurbs::~vpNurbs() { }
-
 vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
                                         std::vector<vpImagePoint> &l_controlPoints, std::vector<double> &l_weights)
 {
-  vpBasisFunction *N = NULL;
+  vpBasisFunction *N = nullptr;
   N = computeBasisFuns(l_u, l_i, l_p, l_knots);
   vpImagePoint pt;
 
@@ -71,7 +69,7 @@ vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned i
   pt.set_i(ic / wc);
   pt.set_j(jc / wc);
 
-  if (N != NULL)
+  if (N != nullptr)
     delete[] N;
 
   return pt;
@@ -79,7 +77,7 @@ vpImagePoint vpNurbs::computeCurvePoint(double l_u, unsigned int l_i, unsigned i
 
 vpImagePoint vpNurbs::computeCurvePoint(double u)
 {
-  vpBasisFunction *N = NULL;
+  vpBasisFunction *N = nullptr;
   N = computeBasisFuns(u);
   vpImagePoint pt;
 
@@ -95,7 +93,7 @@ vpImagePoint vpNurbs::computeCurvePoint(double u)
   pt.set_i(ic / wc);
   pt.set_j(jc / wc);
 
-  if (N != NULL)
+  if (N != nullptr)
     delete[] N;
 
   return pt;
@@ -106,7 +104,7 @@ vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_
                                    std::vector<double> &l_weights)
 {
   vpMatrix derivate(l_der + 1, 3);
-  vpBasisFunction **N = NULL;
+  vpBasisFunction **N = nullptr;
   N = computeDersBasisFuns(l_u, l_i, l_p, l_der, l_knots);
 
   for (unsigned int k = 0; k <= l_der; k++) {
@@ -121,7 +119,7 @@ vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_
     }
   }
 
-  if (N != NULL) {
+  if (N != nullptr) {
     for (unsigned int i = 0; i <= l_der; i++)
       delete[] N[i];
     delete[] N;
@@ -132,7 +130,7 @@ vpMatrix vpNurbs::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_
 vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
 {
   vpMatrix derivate(der + 1, 3);
-  vpBasisFunction **N = NULL;
+  vpBasisFunction **N = nullptr;
   N = computeDersBasisFuns(u, der);
 
   for (unsigned int k = 0; k <= der; k++) {
@@ -146,7 +144,7 @@ vpMatrix vpNurbs::computeCurveDers(double u, unsigned int der)
     }
   }
 
-  if (N != NULL)
+  if (N != nullptr)
     delete[] N;
 
   return derivate;

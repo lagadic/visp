@@ -2197,6 +2197,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PCL \
                          VISP_HAVE_PIONEER \
                          VISP_HAVE_PNG \
+                         VISP_HAVE_POLOLU \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_PTU46 \
                          VISP_HAVE_PYLON \

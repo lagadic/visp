@@ -64,7 +64,7 @@ vpPylonFactory &vpPylonFactory::instance()
   \param  dev_class The device class. See vpPylonFactory::DeviceClass
   for valid values.
   \return The pointer towards the vpPylonGrabber object. It's the
-  caller's responsibility to destroy the object. NULL pointer will be
+  caller's responsibility to destroy the object. nullptr pointer will be
   returned if requested object can't be properly created.
  */
 vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
@@ -77,7 +77,7 @@ vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
     return new vpPylonGrabberUsb();
     break;
   default:
-    return NULL;
+    return nullptr;
     break;
   }
 }

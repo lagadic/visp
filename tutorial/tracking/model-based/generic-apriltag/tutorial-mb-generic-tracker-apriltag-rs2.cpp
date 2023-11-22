@@ -277,8 +277,8 @@ int main(int argc, const char **argv)
     std::cout << "  Projection error: " << opt_projection_error_threshold << std::endl;
 
     // Construct display
-    vpDisplay *d_gray = NULL;
-    vpDisplay *d_depth = NULL;
+    vpDisplay *d_gray = nullptr;
+    vpDisplay *d_depth = nullptr;
 
     if (!display_off) {
 #ifdef VISP_HAVE_X11
@@ -370,10 +370,10 @@ int main(int argc, const char **argv)
     while (state != state_quit) {
       if (opt_use_depth) {
 #ifdef VISP_HAVE_PCL
-        realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, pointcloud, NULL);
+        realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointcloud, nullptr);
 #else
-        realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointcloud, NULL,
-          NULL);
+        realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, &pointcloud, nullptr,
+          nullptr);
 #endif
         vpImageConvert::convert(I_color, I_gray);
         vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);

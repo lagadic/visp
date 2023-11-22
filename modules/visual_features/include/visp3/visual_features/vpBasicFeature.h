@@ -69,21 +69,20 @@
 // #define FEATURE_LINE8 0x80
 
 /*!
-  \class vpBasicFeature
-  \ingroup group_core_features
-  \brief class that defines what is a visual feature
-*/
+ * \class vpBasicFeature
+ * \ingroup group_core_features
+ * \brief class that defines what is a visual feature
+ */
 class VISP_EXPORT vpBasicFeature
 {
-public: // Public constantes
+public:
   static const unsigned int FEATURE_LINE[32];
 
   enum vpBasicFeatureSelect { FEATURE_ALL = 0xffff };
   /*!
-    \enum vpBasicFeatureDeallocatorType
-    Indicates who should deallocate the feature.
-
-  */
+   * \enum vpBasicFeatureDeallocatorType
+   * Indicates who should deallocate the feature.
+   */
   typedef enum { user, vpServo } vpBasicFeatureDeallocatorType;
 
 protected:
@@ -92,7 +91,7 @@ protected:
   //! Dimension of the visual feature.
   unsigned int dim_s;
   // int featureLine[8] ;
-  //! Ensure that all the parameters needed to compute the iteraction matrix
+  //! Ensure that all the parameters needed to compute the interaction matrix
   //! are set.
   bool *flags;
   //! Number of parameters needed to compute the interaction matrix.

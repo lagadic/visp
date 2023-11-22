@@ -33,8 +33,8 @@
 
 #include <visp3/vision/vpPlaneEstimation.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 // OpenMP
 #ifdef VISP_HAVE_OPENMP
@@ -109,7 +109,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     }
 
     // Compute centroid
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_17)
+#if ((__cplusplus > 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG > 201703L)))
     auto [centroid, total_w] = compute_centroid(point_cloud, weights);
 #else
     // C++17 structured binding are not fully supported by clang 13.0 on macOS

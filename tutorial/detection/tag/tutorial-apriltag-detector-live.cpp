@@ -183,7 +183,7 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *d = NULL;
+    vpDisplay *d = nullptr;
     if (!display_off) {
 #ifdef VISP_HAVE_X11
       d = new vpDisplayX(I);

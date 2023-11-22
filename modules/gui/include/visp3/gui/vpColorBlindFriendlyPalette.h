@@ -40,7 +40,6 @@
 #include<visp3/core/vpConfig.h>
 #include<visp3/core/vpColor.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
  * \brief Class that furnishes a set of colors that color blind people
  * should be able to distinguish one from another.
@@ -192,5 +191,4 @@ std::ostream &operator<<(std::ostream &os, const vpColorBlindFriendlyPalette &co
  */
 std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color);
 
-#endif
 #endif // _vpColorBlindFliendlyPalette_h_

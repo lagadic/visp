@@ -82,18 +82,12 @@ void vpRobotCamera::init()
   eJeAvailable = true;
   fJeAvailable = false;
   areJointLimitsAvailable = false;
-  qmin = NULL;
-  qmax = NULL;
+  qmin = nullptr;
+  qmax = nullptr;
 
   setMaxTranslationVelocity(1.);           // vx, vy and vz max set to 1 m/s
   setMaxRotationVelocity(vpMath::rad(90)); // wx, wy and wz max set to 90 deg/s
 }
-
-/*!
-  Destructor.
-
-*/
-vpRobotCamera::~vpRobotCamera() {}
 
 /*!
 
@@ -256,5 +250,5 @@ void vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMw)
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no
 // symbols
-void dummy_vpRobotCamera(){};
+void dummy_vpRobotCamera() { };
 #endif

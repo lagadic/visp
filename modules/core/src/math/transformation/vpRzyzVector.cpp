@@ -44,9 +44,9 @@
 */
 
 /*! Default constructor that initialize all the 3 angles to zero. */
-vpRzyzVector::vpRzyzVector() : vpRotationVector(3) {}
+vpRzyzVector::vpRzyzVector() : vpRotationVector(3) { }
 /*! Copy constructor. */
-vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz) {}
+vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz) { }
 
 /*!
   Constructor from 3 angles (in radian).
@@ -223,7 +223,6 @@ vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
@@ -245,11 +244,10 @@ vpRzyzVector &vpRzyzVector::operator=(const std::initializer_list<double> &list)
 {
   if (list.size() > size()) {
     throw(vpException(
-        vpException::dimensionError,
-        "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values",
-        size(), list.size()));
+      vpException::dimensionError,
+      "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values",
+      size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif

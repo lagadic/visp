@@ -39,15 +39,15 @@
 
 template <class Type> void vp_display_close(vpImage<Type> &I)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->closeDisplay();
-    I.display = NULL;
+    I.display = nullptr;
   }
 }
 
 template <class Type> void vp_display_display(const vpImage<Type> &I)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayImage(I);
   }
 }
@@ -56,7 +56,7 @@ template <class Type>
 void vp_display_display_arrow(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                               const vpColor &color, unsigned int w, unsigned int h, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayArrow(ip1, ip2, color, w, h, thickness);
   }
 }
@@ -65,7 +65,7 @@ template <class Type>
 void vp_display_display_arrow(const vpImage<Type> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                               unsigned int w, unsigned int h, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip1, ip2;
     ip1.set_i(i1);
     ip1.set_j(j1);
@@ -103,23 +103,23 @@ void vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix
 }
 
 template <class Type>
-void vp_display_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip, const char *string,
+void vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip, const char *string,
                                     const vpColor &color)
 {
-  if (I.display != NULL) {
-    (I.display)->displayCharString(ip, string, color);
+  if (I.display != nullptr) {
+    (I.display)->displayText(ip, string, color);
   }
 }
 
 template <class Type>
-void vp_display_display_char_string(const vpImage<Type> &I, int i, int j, const char *string, const vpColor &color)
+void vp_display_display_text(const vpImage<Type> &I, int i, int j, const char *string, const vpColor &color)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
 
-    (I.display)->displayCharString(ip, string, color);
+    (I.display)->displayText(ip, string, color);
   }
 }
 
@@ -127,7 +127,7 @@ template <class Type>
 void vp_display_display_circle(const vpImage<Type> &I, const vpImagePoint &center, unsigned int radius,
                                const vpColor &color, bool fill, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayCircle(center, radius, color, fill, thickness);
   }
 }
@@ -136,7 +136,7 @@ template <class Type>
 void vp_display_display_circle(const vpImage<Type> &I, int i, int j, unsigned int radius, const vpColor &color,
                                bool fill, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
@@ -149,7 +149,7 @@ template <class Type>
 void vp_display_display_cross(const vpImage<Type> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color,
                               unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayCross(ip, size, color, thickness);
   }
 }
@@ -158,7 +158,7 @@ template <class Type>
 void vp_display_display_cross(const vpImage<Type> &I, int i, int j, unsigned int size, const vpColor &color,
                               unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
@@ -171,7 +171,7 @@ template <class Type>
 void vp_display_display_dot_line(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                                  const vpColor &color, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayDotLine(ip1, ip2, color, thickness);
   }
 }
@@ -180,7 +180,7 @@ template <class Type>
 void vp_display_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                                  unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip1, ip2;
     ip1.set_i(i1);
     ip1.set_j(j1);
@@ -196,7 +196,7 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
                                 const double &highalpha, bool use_normalized_centered_moments, const vpColor &color,
                                 unsigned int thickness, bool display_center, bool display_arc)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     double a = 0., b = 0., e = 0.;
 
     if (use_normalized_centered_moments) {
@@ -399,7 +399,7 @@ template <class Type>
 void vp_display_display_line(const vpImage<Type> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                              const vpColor &color, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayLine(ip1, ip2, color, thickness);
   }
 }
@@ -408,7 +408,7 @@ template <class Type>
 void vp_display_display_line(const vpImage<Type> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                              unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip1, ip2;
     ip1.set_i(i1);
     ip1.set_j(j1);
@@ -422,7 +422,7 @@ template <class Type>
 void vp_display_display_point(const vpImage<Type> &I, const vpImagePoint &ip, const vpColor &color,
                               unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayPoint(ip, color, thickness);
   }
 }
@@ -430,7 +430,7 @@ void vp_display_display_point(const vpImage<Type> &I, const vpImagePoint &ip, co
 template <class Type>
 void vp_display_display_point(const vpImage<Type> &I, int i, int j, const vpColor &color, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
@@ -442,7 +442,7 @@ template <class Type>
 void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
                                 unsigned int thickness, bool closed = true)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     if (closed) {
       for (unsigned int i = 0; i < vip.size(); i++) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
@@ -457,10 +457,17 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
 }
 
 template <class Type>
+void vp_display_display_polygon(const vpImage<Type> &I, const vpPolygon &polygon, const vpColor &color,
+                                unsigned int thickness, bool closed = true)
+{
+  vp_display_display_polygon(I, polygon.getCorners(), color, thickness, closed);
+}
+
+template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int width,
                                   unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayRectangle(topLeft, width, height, color, fill, thickness);
   }
 }
@@ -469,7 +476,7 @@ template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle, const vpColor &color, bool fill,
                                   unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayRectangle(rectangle, color, fill, thickness);
   }
 }
@@ -478,7 +485,7 @@ template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &center, float angle, unsigned int width,
                                   unsigned int height, const vpColor &color, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     double i = center.get_i();
     double j = center.get_j();
 
@@ -506,7 +513,7 @@ template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
                                   const vpColor &color, bool fill, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayRectangle(topLeft, bottomRight, color, fill, thickness);
   }
 }
@@ -515,7 +522,7 @@ template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, int i, int j, unsigned int width, unsigned int height,
                                   const vpColor &color, bool fill, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint topLeft;
     topLeft.set_i(i);
     topLeft.set_j(j);
@@ -528,7 +535,7 @@ template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, unsigned int i, unsigned int j, float angle,
                                   unsigned int width, unsigned int height, const vpColor &color, unsigned int thickness)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     // A, B, C, D, corners of the rectangle clockwise
     vpImagePoint ipa, ipb, ipc, ipd;
     float cosinus = cos(angle);
@@ -562,28 +569,28 @@ template <class Type> void vp_display_display_roi(const vpImage<Type> &I, const 
     throw(vpException(vpException::dimensionError, "Region of interest outside of the image"));
   }
 
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->displayImageROI(I, vpImagePoint(top, left), (unsigned int)roiwidth, (unsigned int)roiheight);
   }
 }
 
 template <class Type> void vp_display_flush(const vpImage<Type> &I)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->flushDisplay();
   }
 }
 
 template <class Type> void vp_display_flush_roi(const vpImage<Type> &I, const vpRect &roi)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->flushDisplayROI(roi.getTopLeft(), (unsigned int)roi.getWidth(), (unsigned int)roi.getHeight());
   }
 }
 
 template <class Type> bool vp_display_get_click(const vpImage<Type> &I, bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getClick(blocking);
   }
   return false;
@@ -591,7 +598,7 @@ template <class Type> bool vp_display_get_click(const vpImage<Type> &I, bool blo
 
 template <class Type> bool vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip, bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getClick(ip, blocking);
   }
   return false;
@@ -601,7 +608,7 @@ template <class Type>
 bool vp_display_get_click(const vpImage<Type> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button,
                           bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getClick(ip, button, blocking);
   }
   return false;
@@ -611,7 +618,7 @@ template <class Type>
 bool vp_display_get_click_up(const vpImage<Type> &I, vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button,
                              bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getClickUp(ip, button, blocking);
   }
   return false;
@@ -619,7 +626,7 @@ bool vp_display_get_click_up(const vpImage<Type> &I, vpImagePoint &ip, vpMouseBu
 
 template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I, bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getKeyboardEvent(blocking);
   }
   return false;
@@ -627,7 +634,7 @@ template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I,
 
 template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I, std::string &key, bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getKeyboardEvent(key, blocking);
   }
   return false;
@@ -635,7 +642,7 @@ template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I,
 
 template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I, char *key, bool blocking)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     std::string str;
     bool ret = (I.display)->getKeyboardEvent(str, blocking);
     snprintf(key, str.size(), "%s", str.c_str());
@@ -646,7 +653,7 @@ template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I,
 
 template <class Type> bool vp_display_get_pointer_motion_event(const vpImage<Type> &I, vpImagePoint &ip)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getPointerMotionEvent(ip);
   }
   return false;
@@ -654,7 +661,7 @@ template <class Type> bool vp_display_get_pointer_motion_event(const vpImage<Typ
 
 template <class Type> bool vp_display_get_pointer_position(const vpImage<Type> &I, vpImagePoint &ip)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getPointerPosition(ip);
   }
   return false;
@@ -662,7 +669,7 @@ template <class Type> bool vp_display_get_pointer_position(const vpImage<Type> &
 
 template <class Type> void vp_display_set_background(const vpImage<Type> &I, const vpColor &color)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->clearDisplay(color);
   }
 }
@@ -670,47 +677,47 @@ template <class Type> void vp_display_set_background(const vpImage<Type> &I, con
 template <class Type>
 void vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color)
 {
-  if (I.display != NULL) {
-    (I.display)->displayCharString(ip, s.c_str(), color);
+  if (I.display != nullptr) {
+    (I.display)->displayText(ip, s.c_str(), color);
   }
 }
 
 template <class Type>
 void vp_display_display_text(const vpImage<Type> &I, int i, int j, const std::string &s, const vpColor &color)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
 
-    (I.display)->displayCharString(ip, s.c_str(), color);
+    (I.display)->displayText(ip, s.c_str(), color);
   }
 }
 
 template <class Type> void vp_display_set_font(const vpImage<Type> &I, const std::string &fontname)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->setFont(fontname);
   }
 }
 
 template <class Type> void vp_display_set_title(const vpImage<Type> &I, const std::string &windowtitle)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->setTitle(windowtitle);
   }
 }
 
 template <class Type> void vp_display_set_window_position(const vpImage<Type> &I, int winx, int winy)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     (I.display)->setWindowPosition(winx, winy);
   }
 }
 
 template <class Type> unsigned int vp_display_get_down_scaling_factor(const vpImage<Type> &I)
 {
-  if (I.display != NULL) {
+  if (I.display != nullptr) {
     return (I.display)->getDownScalingFactor();
   }
   else {

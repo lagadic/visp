@@ -8,7 +8,7 @@ public class VpImageUChar {
 
     public VpImageUChar(long addr){
         if (addr == 0)
-            throw new java.lang.UnsupportedOperationException("Native object address is NULL");
+            throw new java.lang.UnsupportedOperationException("Native object address is nullptr");
         nativeObj = addr;
     }
 

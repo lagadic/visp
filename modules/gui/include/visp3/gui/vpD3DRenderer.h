@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * D3D renderer for windows 32 display
- *
- * Authors:
- * Bruno Renier
- *
-*****************************************************************************/
+ */
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -56,15 +51,13 @@
 #include <iostream>
 
 /*!
-  \class vpD3DRenderer.h
-
-  \brief Display under windows using Direct3D9.
-  Is used by vpDisplayD3D to do the drawing.
-
-*/
+ * \class vpD3DRenderer.h
+ *
+ * \brief Display under windows using Direct3D9.
+ * Is used by vpDisplayD3D to do the drawing.
+ */
 class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
 {
-
   IDirect3D9 *pD3D;
 
   // The d3d device we will be working with.
@@ -87,7 +80,7 @@ class VISP_EXPORT vpD3DRenderer : public vpWin32Renderer
   // The window's handle.
   HWND hWnd;
 
-  // Colors  for overlay drawn with d3d directly.
+  // Colors for overlay drawn with d3d directly.
   unsigned long colors[vpColor::id_unknown];
 
   // Colors for overlay drawn with GDI.
@@ -101,7 +94,7 @@ public:
   bool render();
 
   vpD3DRenderer();
-  virtual ~vpD3DRenderer();
+  virtual ~vpD3DRenderer() override;
 
   void setImg(const vpImage<vpRGBa> &im);
   void setImg(const vpImage<unsigned char> &im);
@@ -128,7 +121,7 @@ public:
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
-  void getImage(vpImage<vpRGBa> &I);
+  void getImage(vpImage<vpRGBa> &I) override;
 
 private:
   void initView(float, float);

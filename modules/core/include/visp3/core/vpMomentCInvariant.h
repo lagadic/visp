@@ -51,25 +51,25 @@ class vpMomentBasic;
   \ingroup group_core_moments
 
   This class defines several 2D (translation+rotation+scale) invariants for
-both symmetric and non-symmetric objects. These moment-based invariants are
-described in the following papers \cite Chaumette04a, \cite Tahri05z.
+  both symmetric and non-symmetric objects. These moment-based invariants are
+  described in the following papers \cite Chaumette04a, \cite Tahri05z.
 
   The descriptions for the invariants \f$C_1\f$ to \f$C_{10}\f$ can be found
-in \cite Chaumette04a and for invariants
-\f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in \cite Tahri05z.
+  in \cite Chaumette04a and for invariants
+  \f$P_x\f$,\f$P_y\f$,\f$S_x\f$,\f$S_y\f$ in \cite Tahri05z.
 
   These invariants are classicaly used in visual servoing to control the
-out-of-plane rotations. The C-type or P-type invariants are used for
-non-symmetric objects whereas the S-type invariants are used for symmetric
-objects.
+  out-of-plane rotations. The C-type or P-type invariants are used for
+  non-symmetric objects whereas the S-type invariants are used for symmetric
+  objects.
 
   For most cases of non-symmetric objects, (\f$C_4\f$,\f$C_6\f$) or
-(\f$P_x\f$,\f$P_y\f$) couples are widely used to control x and y rotations.
+  (\f$P_x\f$,\f$P_y\f$) couples are widely used to control x and y rotations.
   For symmetric objects \f$S_x\f$ and \f$S_y\f$ are the only choice.
 
   There are 14 translation+rotation+scale invariants (10 C-type, 2 P-type and
-2 S-type) that can be accessed from by vpMomentCInvariant::get or any of the
-get shortcuts.
+  2 S-type) that can be accessed from by vpMomentCInvariant::get or any of the
+  get shortcuts.
 
   The example below shows how to retrieve the \f$C_2\f$ invariant:
   \code
@@ -140,7 +140,6 @@ private:
 
 public:
   explicit vpMomentCInvariant(bool flg_sxsynormalization = false);
-  virtual ~vpMomentCInvariant() { };
 
   /*!
     Shorcut for getting the value of \f$C_1\f$.
@@ -224,7 +223,7 @@ public:
   /*!
     Moment name.
     */
-  const char *name() const { return "vpMomentCInvariant"; }
+  const std::string name() const { return "vpMomentCInvariant"; }
 
   /*!
     Print partial invariant.

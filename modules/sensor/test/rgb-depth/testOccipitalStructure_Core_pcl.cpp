@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_PCL))
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (defined(VISP_HAVE_PCL))
 
 #ifdef VISP_HAVE_PCL
 #include <pcl/visualization/cloud_viewer.h>
@@ -85,7 +85,7 @@ int main()
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-    sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
+    sc.acquire((unsigned char *)I_visible.bitmap, nullptr, nullptr, pointcloud);
 
     pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
@@ -98,7 +98,7 @@ int main()
       double t = vpTime::measureTimeMs();
 
       // Acquire depth as point cloud.
-      sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
+      sc.acquire((unsigned char *)I_visible.bitmap, nullptr, nullptr, pointcloud);
       vpDisplay::display(I_visible);
       vpDisplay::displayText(I_visible, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
       vpDisplay::flush(I_visible);
@@ -111,7 +111,8 @@ int main()
         viewer->addPointCloud<pcl::PointXYZRGB>(pointcloud, rgb, "sample cloud");
         viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
         update = true;
-      } else {
+      }
+      else {
         viewer->updatePointCloud<pcl::PointXYZRGB>(pointcloud, rgb, "sample cloud");
       }
 
@@ -119,9 +120,11 @@ int main()
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Structure SDK error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
@@ -135,10 +138,6 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !defined(VISP_HAVE_PCL)
   std::cout << "You do not have PCL 3rd party installed." << std::endl;
 #endif

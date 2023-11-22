@@ -28,7 +28,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Exemple of a Nurbs curve.
+ * Example of a Nurbs curve.
  */
 /*!
   \example testNurbs.cpp
@@ -121,7 +121,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
       display = false;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
 
@@ -134,7 +134,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -255,13 +255,13 @@ int main(int argc, const char **argv)
     unsigned int i = Nurbs.findSpan(5 / 2.0);
     std::cout << "The knot interval number for the value u = 5/2 is : " << i << std::endl;
 
-    vpBasisFunction *N = NULL;
+    vpBasisFunction *N = nullptr;
     N = Nurbs.computeBasisFuns(5 / 2.0);
     std::cout << "The nonvanishing basis functions N(u=5/2) are :" << std::endl;
     for (unsigned int j = 0; j < Nurbs.get_p() + 1; j++)
       std::cout << N[j].value << std::endl;
 
-    vpBasisFunction **N2 = NULL;
+    vpBasisFunction **N2 = nullptr;
     N2 = Nurbs.computeDersBasisFuns(5 / 2.0, 2);
     std::cout << "The first derivatives of the basis functions N'(u=5/2) are :" << std::endl;
     for (unsigned int j = 0; j < Nurbs.get_p() + 1; j++)
@@ -345,9 +345,9 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(I3);
     }
 
-    if (N != NULL)
+    if (N != nullptr)
       delete[] N;
-    if (N2 != NULL) {
+    if (N2 != nullptr) {
       for (int j = 0; j <= 2; j++)
         delete[] N2[j];
       delete[] N2;

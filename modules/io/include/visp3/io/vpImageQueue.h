@@ -36,8 +36,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-
 #include <condition_variable>
 #include <mutex>
 #include <queue>
@@ -157,7 +155,7 @@ public:
 
     m_queue_image.push(I);
 
-    if (data != NULL) {
+    if (data != nullptr) {
       m_queue_data.push(*data);
     }
 
@@ -166,7 +164,7 @@ public:
       m_queue_image.pop();
     }
 
-    if (data != NULL) {
+    if (data != nullptr) {
       while (m_queue_data.size() > m_maxQueueSize) {
         m_queue_data.pop();
       }
@@ -179,12 +177,12 @@ public:
    * Record helper that display information in the windows associated to the image, pop current image and additional
    * data in the queue.
    * \param[in] I : Image to record.
-   * \param[in] data : Data to record. Set to NULL when no additional data have to be considered.
+   * \param[in] data : Data to record. Set to nullptr when no additional data have to be considered.
    * \param[in] trigger_recording : External trigger to start data saving.
    * \param[in] disable_left_click : Disable left click usage to trigger data saving.
    * \return true when the used asked to quit using a right click in the display window.
    */
-  bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false,
+  bool record(const vpImage<Type> &I, std::string *data = nullptr, bool trigger_recording = false,
               bool disable_left_click = false)
   {
     if (I.display) {
@@ -283,5 +281,4 @@ private:
   bool m_recording_trigger;
 };
 
-#endif
 #endif

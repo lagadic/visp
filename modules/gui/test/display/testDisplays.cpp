@@ -80,7 +80,7 @@ Test video devices or display.\n\
 SYNOPSIS\n\
   %s [-l] [-c] [-d] [-h]\n\
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -122,7 +122,7 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
       list = true;
       break;
     case 'h':
-      usage(argv[0], NULL);
+      usage(argv[0], nullptr);
       return false;
       break;
     case 'c':
@@ -141,7 +141,7 @@ static bool getOptions(int argc, const char **argv, bool &list, bool &click_allo
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL);
+    usage(argv[0], nullptr);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -247,18 +247,34 @@ template <typename Type> static void draw(vpImage<Type> &I)
   iP1.set_j(400);
   vpDisplay::displayRectangle(I, iP1, 45, w, h, vpColor::green, 3);
 
-  std::vector<vpImagePoint> polygon;
-  polygon.push_back(vpImagePoint(250, 500));
-  polygon.push_back(vpImagePoint(350, 600));
-  polygon.push_back(vpImagePoint(450, 500));
-  polygon.push_back(vpImagePoint(350, 400));
+  std::vector<vpImagePoint> vip;
+  vip.push_back(vpImagePoint(250, 500));
+  vip.push_back(vpImagePoint(350, 600));
+  vip.push_back(vpImagePoint(450, 500));
+  vip.push_back(vpImagePoint(350, 400));
+  vpDisplay::displayPolygon(I, vip, vpColor::green, 3);
+
+  vip.clear();
+  vip.push_back(vpImagePoint(300, 500));
+  vip.push_back(vpImagePoint(350, 550));
+  vip.push_back(vpImagePoint(400, 500));
+  vip.push_back(vpImagePoint(350, 450));
+  vpDisplay::displayPolygon(I, vip, vpColor::cyan, 3, false);
+
+  vip.clear();
+  vip.push_back(vpImagePoint(250, 300));
+  vip.push_back(vpImagePoint(350, 400));
+  vip.push_back(vpImagePoint(450, 300));
+  vip.push_back(vpImagePoint(350, 200));
+  vpPolygon polygon(vip);
   vpDisplay::displayPolygon(I, polygon, vpColor::green, 3);
 
-  polygon.clear();
-  polygon.push_back(vpImagePoint(300, 500));
-  polygon.push_back(vpImagePoint(350, 550));
-  polygon.push_back(vpImagePoint(400, 500));
-  polygon.push_back(vpImagePoint(350, 450));
+  vip.clear();
+  vip.push_back(vpImagePoint(300, 300));
+  vip.push_back(vpImagePoint(350, 350));
+  vip.push_back(vpImagePoint(400, 300));
+  vip.push_back(vpImagePoint(350, 250));
+  polygon.buildFrom(vip);
   vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
 }
 
@@ -408,7 +424,8 @@ int main(int argc, const char **argv)
     runTest<unsigned char>(opt_display, opt_click_allowed);
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

@@ -336,7 +336,8 @@ class VISP_EXPORT vpRobotViper650 : public vpViper650, public vpRobot
 
 public: /* Constantes */
   /*! \enum vpControlModeType Control mode. */
-  typedef enum {
+  typedef enum
+  {
     AUTO,   //!< Automatic control mode (default).
     MANUAL, //!< Manual control mode activated when the dead man switch is in
             //!< use.
@@ -421,13 +422,13 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe) override;
+  void get_fJe(vpMatrix &fJe) override;
 
   void init(void);
   void
-  init(vpViper650::vpToolType tool,
-       vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
+    init(vpViper650::vpToolType tool,
+         vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper650::vpToolType tool, const std::string &filename);
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
 
@@ -448,7 +449,7 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) override;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -457,7 +458,7 @@ public: /* Methode publiques */
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;
 
   void stopMotion();
 

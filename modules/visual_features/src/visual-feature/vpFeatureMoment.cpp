@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,11 +29,7 @@
  *
  * Description:
  * Base for all moment features
- *
- * Authors:
- * Filip Novotny
- *
-*****************************************************************************/
+ */
 
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMoment.h>
@@ -51,8 +46,8 @@
 class vpBasicFeature;
 
 /*!
-  Initialize common parameters for moment features.
-*/
+ * Initialize common parameters for moment features.
+ */
 void vpFeatureMoment::init()
 {
   // feature dimension
@@ -61,7 +56,7 @@ void vpFeatureMoment::init()
    * vpMoment associated to it. This partly explains why vpFeatureMomentBasic
    * cannot be used directly as a visual feature.
    */
-  if (this->moment != NULL)
+  if (this->moment != nullptr)
     dim_s = (unsigned int)this->moment->get().size();
   else
     dim_s = 0;
@@ -73,15 +68,15 @@ void vpFeatureMoment::init()
   for (unsigned int i = 0; i < dim_s; i++)
     s[i] = 0;
 
-  if (flags == NULL)
+  if (flags == nullptr)
     flags = new bool[nbParameters];
   for (unsigned int i = 0; i < nbParameters; i++)
     flags[i] = false;
 }
 
 /*!
-  Feature's dimension according to selection.
-*/
+ * Feature's dimension according to selection.
+ */
 int vpFeatureMoment::getDimension(unsigned int select) const
 {
   int dim = 0;
@@ -94,8 +89,8 @@ int vpFeatureMoment::getDimension(unsigned int select) const
 }
 
 /*!
-  Outputs the content of the feature: it's corresponding selected moments.
-*/
+ * Outputs the content of the feature: it's corresponding selected moments.
+ */
 void vpFeatureMoment::print(unsigned int select) const
 {
   for (unsigned int i = 0; i < dim_s; ++i) {
@@ -108,9 +103,9 @@ void vpFeatureMoment::print(unsigned int select) const
 }
 
 /*!
-  Not implemented since visual representation of a moment doesn't often make
-  sense.
-*/
+ * Not implemented since visual representation of a moment doesn't often make
+ * sense.
+ */
 void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                               unsigned int thickness) const
 {
@@ -122,9 +117,8 @@ void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<unsig
 }
 
 /*!
-  Not implemented since visual representation of a moment doesn't often make
-  sense.
-*/
+ * Not implemented since visual representation of a moment doesn't often make sense.
+ */
 void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                               unsigned int thickness) const
 {
@@ -135,35 +129,35 @@ void vpFeatureMoment::display(const vpCameraParameters &cam, const vpImage<vpRGB
 }
 
 /*!
-  Updates the interaction matrices with the image plane the camera is facing.
-  The plane must be in the format: \f$ \frac{1}{Z}=Ax+By+C \f$ . The moment
-  primitives MUST be updated before calling this function.
-
-  This method also computes the interaction matrix. Therefore, you must call
-  vpFeatureMoment::update before calling vpFeatureMoment::interaction.
-
-  \attention The behaviour of this method is not the same as vpMoment::update
-  which only acknowledges the new object. This method also computes the
-  interaction matrices.
-
-  \param A_ : A coefficient of the plane.
-  \param B_ : B coefficient of the plane.
-  \param C_ : C coefficient of the plane.
-*/
+ * Updates the interaction matrices with the image plane the camera is facing.
+ * The plane must be in the format: \f$ \frac{1}{Z}=Ax+By+C \f$ . The moment
+ * primitives MUST be updated before calling this function.
+ *
+ * This method also computes the interaction matrix. Therefore, you must call
+ * vpFeatureMoment::update before calling vpFeatureMoment::interaction.
+ *
+ * \attention The behaviour of this method is not the same as vpMoment::update
+ * which only acknowledges the new object. This method also computes the
+ * interaction matrices.
+ *
+ * \param A_ : A coefficient of the plane.
+ * \param B_ : B coefficient of the plane.
+ * \param C_ : C coefficient of the plane.
+ */
 void vpFeatureMoment::update(double A_, double B_, double C_)
 {
   this->A = A_;
   this->B = B_;
   this->C = C_;
 
-  if (moment == NULL) {
+  if (moment == nullptr) {
     bool found;
     this->moment = &(moments.get(momentName(), found));
     if (!found)
       throw vpException(vpException::notInitialized, "Moment not found for feature");
   }
   nbParameters = 1;
-  if (this->moment != NULL) {
+  if (this->moment != nullptr) {
     dim_s = (unsigned int)this->moment->get().size();
 
     s.resize(dim_s);
@@ -171,31 +165,32 @@ void vpFeatureMoment::update(double A_, double B_, double C_)
     for (unsigned int i = 0; i < dim_s; i++)
       s[i] = this->moment->get()[i];
 
-    if (flags == NULL)
+    if (flags == nullptr)
       flags = new bool[nbParameters];
     for (unsigned int i = 0; i < nbParameters; i++)
       flags[i] = false;
-  } else
+  }
+  else
     dim_s = 0;
 
   compute_interaction();
 }
 
 /*!
-  Retrieves the interaction matrix. No computation is done.
-
-  \param select : Feature selector.
-
-  \return The corresponding interaction matrix.
-
-  There is no rule about the format of the feature selector. It may be
-  different for different features.  For example, for
-  vpFeatureMomentBasic or vpFeatureMomentCentered features, select may
-  refer to the \f$ (i,j) \f$ couple in the \f$ j \times order + i \f$
-  format, but for vpFeatureMomentCInvariant the selector allows to
-  select couples \f$ (i,j,k,l...) \f$ in the following format: 1 << i
-  + 1 << j + 1 << k + 1 << l.
-*/
+ * Retrieves the interaction matrix. No computation is done.
+ *
+ * \param select : Feature selector.
+ *
+ * \return The corresponding interaction matrix.
+ *
+ * There is no rule about the format of the feature selector. It may be
+ * different for different features. For example, for
+ * vpFeatureMomentBasic or vpFeatureMomentCentered features, select may
+ * refer to the \f$ (i,j) \f$ couple in the \f$ j \times order + i \f$
+ * format, but for vpFeatureMomentCInvariant the selector allows to
+ * select couples \f$ (i,j,k,l...) \f$ in the following format: 1 << i
+ * + 1 << j + 1 << k + 1 << l.
+ */
 vpMatrix vpFeatureMoment::interaction(unsigned int select)
 {
   vpMatrix L(0, 0);
@@ -209,14 +204,15 @@ vpMatrix vpFeatureMoment::interaction(unsigned int select)
   return L;
 }
 
-/*!  Duplicates the feature into a vpGenericFeature harbouring the
-  same properties.  The resulting feature is of vpMomentGenericFeature
-  type. While it still can compute interaction matrices and has acces
-  to it's moment primitive, it has lost all precise information about
-  its precise type and therefore cannot be used in a feature database.
-
-  \return The corresponding feature.
-*/
+/*!
+ * Duplicates the feature into a vpGenericFeature harbouring the
+ * same properties. The resulting feature is of vpMomentGenericFeature
+ * type. While it still can compute interaction matrices and has access
+ * to it's moment primitive, it has lost all precise information about
+ * its precise type and therefore cannot be used in a feature database.
+ *
+ * \return The corresponding feature.
+ */
 vpBasicFeature *vpFeatureMoment::duplicate() const
 {
   vpFeatureMoment *feat = new vpMomentGenericFeature(moments, A, B, C, featureMomentsDataBase, moment);
@@ -236,52 +232,46 @@ vpBasicFeature *vpFeatureMoment::duplicate() const
 }
 
 /*!
-  Links the feature to the feature's database. NB: The feature's database is
-  different from the moment's database. \param featureMoments : database in
-  which the moment features are stored.
-
+ * Links the feature to the feature's database.
+ *
+ * \note The feature's database is different from the moment's database.
+ * \param featureMoments : database in which the moment features are stored.
 */
 void vpFeatureMoment::linkTo(vpFeatureMomentDatabase &featureMoments)
 {
-  if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the moment name"));
-  }
-
-  std::strcpy(_name, name());
+  m_name = name();
   this->featureMomentsDataBase = &featureMoments;
 
-  featureMoments.add(*this, _name);
+  featureMoments.add(*this, m_name);
 }
 
-void vpFeatureMoment::compute_interaction() {}
-
-vpFeatureMoment::~vpFeatureMoment() {}
+void vpFeatureMoment::compute_interaction() { }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMoment &featM)
 {
   /*
-  A const_cast is forced here since interaction() defined in vpBasicFeature()
-  is not const But introducing const in vpBasicFeature() can break a lot of
-  client code
-  */
-  vpMatrix Lcomplete((unsigned int)featM.getDimension(),
-                     6); // 6 corresponds to 6velocities in standard interaction matrix
+   * - A static_cast is forced here since interaction() defined in vpBasicFeature()
+   *   is not const. But introducing const in vpBasicFeature() can break a lot of
+   *   client code.
+   * - 6 corresponds to 6 velocities in standard interaction matrix
+   */
+  vpMatrix Lcomplete(static_cast<unsigned int>(featM.getDimension()), 6);
   Lcomplete = const_cast<vpFeatureMoment &>(featM).interaction(vpBasicFeature::FEATURE_ALL);
   Lcomplete.matlabPrint(os);
   return os;
 }
 
 /*!
-Interface function to display the moments and other interaction matrices
-on which a particular vpFeatureMoment is dependent upon
-Not made pure to maintain compatibility
-Recommended : Types inheriting from vpFeatureMoment should implement this
-function
-*/
+ * Interface function to display the moments and other interaction matrices
+ * on which a particular vpFeatureMoment is dependent upon
+ * Not made pure to maintain compatibility
+ * Recommended : Types inheriting from vpFeatureMoment should implement this
+ * function.
+ */
 void vpFeatureMoment::printDependencies(std::ostream &os) const
 {
   os << " WARNING : Falling back to base class version of "
-        "printDependencies() in vpFeatureMoment. To prevent that, this has "
-        "to be implemented in the derived classes!"
-     << std::endl;
+    "printDependencies() in vpFeatureMoment. To prevent that, this has "
+    "to be implemented in the derived classes!"
+    << std::endl;
 }

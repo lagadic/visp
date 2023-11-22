@@ -167,10 +167,6 @@ public:
    */
   vpNurbs(const vpNurbs &nurbs);
 
-  /*!
-   * Destructor.
-   */
-  virtual ~vpNurbs();
 
   /*!
    * Gets all the weights relative to the control points.

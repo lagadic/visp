@@ -99,9 +99,9 @@ public:
   void connect(const std::string &portname, int baudrate = 9600);
   void disconnect();
 
-  void get_eJe(vpMatrix &eJe);
+  void get_eJe(vpMatrix &eJe) override;
   vpMatrix get_eJe();
-  void get_fJe(vpMatrix &fJe);
+  void get_fJe(vpMatrix &fJe) override;
   vpMatrix get_fJe();
   vpMatrix get_fMe();
 
@@ -112,13 +112,13 @@ public:
   vpHomogeneousMatrix get_eMc() const { return m_eMc; }
   vpVelocityTwistMatrix get_cVe() const;
 
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
 
   std::string getNetworkIP();
   std::string getNetworkGateway();
   std::string getNetworkHostName();
 
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
   vpColVector getPanPosLimits();
   vpColVector getTiltPosLimits();
   vpColVector getPanTiltVelMax();
@@ -130,13 +130,13 @@ public:
     If your tool is a camera, this transformation is obtained by hand-eye calibration.
    */
   void set_eMc(vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
   void setPanPosLimits(const vpColVector &pan_limits);
   void setTiltPosLimits(const vpColVector &tilt_limits);
 
   void setPositioningVelocity(double velocity);
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
   void stopMotion();
 
   static void emergencyStop(int signo);

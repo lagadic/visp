@@ -137,7 +137,7 @@ int main()
 */
 void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Idest)
 {
-  if (Isrc.display != NULL) {
+  if (Isrc.display != nullptr) {
     (Isrc.display)->getImage(Idest);
   }
   else {
@@ -211,7 +211,7 @@ int main()
 */
 void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
 {
-  if (Isrc.display != NULL) {
+  if (Isrc.display != nullptr) {
     (Isrc.display)->getImage(Idest);
   }
   else {

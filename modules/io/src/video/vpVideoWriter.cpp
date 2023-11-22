@@ -74,7 +74,7 @@ vpVideoWriter::~vpVideoWriter() {}
   which will be saved.
 
   If you want to write a sequence of images, `filename` corresponds to
-  the path followed by the image name template. For exemple, if you want to
+  the path followed by the image name template. For example, if you want to
   write different images named `image0001.jpeg`, `image0002.jpg`, ... and located
   in the folder `/local/image`, `filename` will be `/local/image/image%04d.jpg`.
 

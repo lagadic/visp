@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 
 #include <random>
 #include <visp3/core/vpIoTools.h>
@@ -95,7 +95,7 @@ private:
   vpMe current;
 
 public:
-  RandomMeGenerator() : m_rand(std::random_device{}()), m_dist(0.0, 1.0), m_int_dist(1, 10)
+  RandomMeGenerator() : m_rand(std::random_device {}()), m_dist(0.0, 1.0), m_int_dist(1, 10)
   {
     static_cast<void>(next());
   }
@@ -150,11 +150,11 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
       const auto testInt = [&j, &me](const std::string &key, std::function<void(vpMe *, int)> setter,
         std::function<int(vpMe *)> getter) -> void {
           testOptionalProperty<int>(j, { key }, me, setter, getter, [](int v) -> int { return v - 1; });
-      };
+        };
       const auto testDouble = [&j, &me](const std::string &key, std::function<void(vpMe *, double)> setter,
         std::function<double(vpMe *)> getter) -> void {
           testOptionalProperty<double>(j, { key }, me, setter, getter, [](double v) -> double { return v + 1.0; });
-      };
+        };
 
       WHEN("Removing threshold") { testDouble("threshold", &vpMe::setThreshold, &vpMe::getThreshold); }
       WHEN("Removing mu1 and mu2")
@@ -175,7 +175,7 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
   }
 }
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

@@ -76,18 +76,30 @@ public:
 
 private:
   /**
-   * @brief Modify the image by applying the \b operation on each of its elements on a 3x3
+   * \brief Modify the image by applying the \b operation on each of its elements on a 3x3
    * grid.
    *
-   * @param T Either a class such as vpRGBa or a type such as double, unsigned char ...
-   * @param I The image we want to modify.
-   * @param null_value The value that is padded to the input image to manage the borders.
-   * @param operation The operation to apply to its elements on a 3x3 grid.
-   * @param connexity Either a 4-connexity, if we want to take into account only the horizontal
+   * \tparam T Either a class such as vpRGBa or a type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] null_value The value that is padded to the input image to manage the borders.
+   * \param[in] operation The operation to apply to its elements on a 3x3 grid.
+   * \param[in] connexity Either a 4-connexity, if we want to take into account only the horizontal
    * and vertical neighbors, or a 8-connexity, if we want to also take into account the diagonal neighbors.
    */
   template <typename T>
   static void imageOperation(vpImage<T> &I, const T &null_value, const T &(*operation)(const T &, const T &), const vpConnexityType &connexity = CONNEXITY_4);
+
+  /**
+   * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
+   * grid. The connexity that is used is a 8-connexity.
+   *
+   * \tparam T Any type such as double, unsigned char ...
+   * \param[out] I The image we want to modify.
+   * \param[in] size The size of the window with which we want to work.
+   * \param[in] operation The operation to apply to its elements.
+   */
+  template <typename T>
+  static void imageOperation(vpImage<T> &I, const int &size, const T &(*operation)(const T &, const T &));
 
 public:
   template <class Type>
@@ -101,6 +113,12 @@ public:
 
   template <typename T>
   static void dilatation(vpImage<T> &I, const vpConnexityType &connexity = CONNEXITY_4);
+
+  template <typename T>
+  static void erosion(vpImage<T> &I, const int &size);
+
+  template <typename T>
+  static void dilatation(vpImage<T> &I, const int &size);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -351,7 +369,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
   \param I : Image to process.
   \param connexity : Type of connexity: 4 or 8.
 
-  \sa dilatation(vpImage<unsigned char> &, const vpConnexityType &)
+  \sa dilatation(vpImage<T> &, const vpConnexityType &)
 */
 template <typename T>
 void vpImageMorphology::erosion(vpImage<T> &I, const vpConnexityType &connexity)
@@ -381,13 +399,122 @@ void vpImageMorphology::erosion(vpImage<T> &I, const vpConnexityType &connexity)
   \param I : Image to process.
   \param connexity : Type of connexity: 4 or 8.
 
-  \sa erosion(vpImage<unsigned char> &, const vpConnexityType &)
+  \sa erosion(vpImage<T> &, const vpConnexityType &)
 */
 template <typename T>
 void vpImageMorphology::dilatation(vpImage<T> &I, const vpConnexityType &connexity)
 {
   const T &(*operation)(const T & a, const T & b) = std::max;
   vpImageMorphology::imageOperation(I, std::numeric_limits<T>::min(), operation, connexity);
+}
+
+/**
+ * \brief Dilatation of \b size >=3 with 8-connectivity.
+ *
+ * \tparam T Any type of image, except vpRGBa .
+ * \param[out] I The image to which the dilatation must be applied, where the dilatation corresponds
+ * to a max operator on a window of size \b size.
+ * \param[in] size The size of the window on which is performed the max operator for each pixel.
+ */
+template<typename T>
+void vpImageMorphology::imageOperation(vpImage<T> &I, const int &size, const T &(*operation)(const T &, const T &))
+{
+  if (size % 2 != 1) {
+    throw(vpException(vpException::badValue, "Dilatation kernel must be odd."));
+  }
+
+  const int width_in = I.getWidth();
+  const int height_in = I.getHeight();
+  int halfKernelSize = size / 2;
+  vpImage<T> J = I;
+
+  for (int r = 0; r < height_in; r++) {
+    // Computing the rows we can explore without going outside the limits of the image
+    int r_iterator_start = -halfKernelSize, r_iterator_stop = halfKernelSize + 1;
+    if (r - halfKernelSize < 0) {
+      r_iterator_start = -r;
+    }
+    else if (r + halfKernelSize >= height_in) {
+      r_iterator_stop = height_in - r;
+    }
+    for (int c = 0; c < width_in; c++) {
+      T value = I[r][c];
+      // Computing the columns we can explore without going outside the limits of the image
+      int c_iterator_start = -halfKernelSize, c_iterator_stop = halfKernelSize + 1;
+      if (c - halfKernelSize < 0) {
+        c_iterator_start = -c;
+      }
+      else if (c + halfKernelSize >= width_in) {
+        c_iterator_stop = width_in - c;
+      }
+      for (int r_iterator = r_iterator_start; r_iterator < r_iterator_stop; r_iterator++) {
+        for (int c_iterator = c_iterator_start; c_iterator < c_iterator_stop; c_iterator++) {
+          value = operation(value, J[r + r_iterator][c + c_iterator]);
+        }
+      }
+      I[r][c] = value;
+    }
+  }
+}
+
+/*!
+  Erode an image using the given structuring element.
+
+  The erosion of \f$ A \left( x, y \right) \f$ by \f$ B \left (x, y
+  \right) \f$ is defined as: \f[ \left ( A \ominus B \right ) \left( x,y
+  \right) = \textbf{min} \left \{ A \left ( x+x', y+y' \right ) - B \left (
+  x', y'\right ) | \left ( x', y'\right ) \subseteq D_B \right \} \f] where
+  \f$ D_B \f$ is the domain of the structuring element \f$ B \f$ and \f$ A
+  \left( x,y \right) \f$ is assumed to be \f$ + \infty \f$ outside the domain
+  of the image.
+
+  In our case, the erosion is performed with a flat structuring element
+  \f$ \left( B \left( x,y \right) = 0 \right) \f$. The erosion using
+  such a structuring element is equivalent to a local-minimum operator: \f[
+    \left ( A \ominus B \right ) \left( x,y \right) = \textbf{min} \left \{ A
+  \left ( x+x', y+y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
+  \f]
+
+  \param I : Image to process.
+  \param size : The size of the kernel
+
+  \sa dilatation(vpImage<T> &, const int &)
+*/
+template <typename T>
+void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
+{
+  const T &(*operation)(const T & a, const T & b) = std::min;
+  vpImageMorphology::imageOperation(I, size, operation);
+}
+
+/*!
+  Dilate an image using the given structuring element.
+
+  The dilatation of \f$ A \left( x, y \right) \f$ by \f$ B \left
+  (x, y \right) \f$ is defined as: \f[ \left ( A \oplus B \right ) \left( x,y
+  \right) = \textbf{max} \left \{ A \left ( x-x', y-y' \right ) + B \left (
+  x', y'\right ) | \left ( x', y'\right ) \subseteq D_B \right \} \f] where
+  \f$ D_B \f$ is the domain of the structuring element \f$ B \f$ and \f$ A
+  \left( x,y \right) \f$ is assumed to be \f$ - \infty \f$ outside the domain
+  of the image.
+
+  In our case, the dilatation is performed with a flat structuring element
+  \f$ \left( B \left( x,y \right) = 0 \right) \f$. The dilatation using
+  such a structuring element is equivalent to a local-maximum operator: \f[
+    \left ( A \oplus B \right ) \left( x,y \right) = \textbf{max} \left \{ A
+  \left ( x-x', y-y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
+  \f]
+
+  \param I : Image to process.
+  \param size : The size of the kernel.
+
+  \sa erosion(vpImage<T> &, const int &)
+*/
+template <typename T>
+void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
+{
+  const T &(*operation)(const T & a, const T & b) = std::max;
+  vpImageMorphology::imageOperation(I, size, operation);
 }
 #endif
 

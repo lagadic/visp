@@ -31,7 +31,7 @@ jobs:
     - name: Print OS information
       run: lsb_release -a
 
-    - name: Install dependencies for ubuntu 18.04 and 20.04
+    - name: Install dependencies for ubuntu 20.04
       if: matrix.os != 'ubuntu-22.04'
       run: |
         sudo apt-get update && sudo apt-get install -y libdc1394-22-dev
@@ -128,7 +128,14 @@ jobs:
         cmake .. -DCMAKE_INSTALL_PREFIX=$(pwd)/install
         cat ViSP-third-party.txt
 
-    - name: Compile
+    - name: Build visp-config script
+      working-directory: build
+      run: |
+        make -j$(nproc) developer_scripts
+        ./bin/visp-config --cflags
+        ./bin/visp-config --libs
+
+    - name: Build and install ViSP
       working-directory: build
       run: |
         make -j$(nproc) install

@@ -304,7 +304,7 @@ template <typename T> int vpNetwork::receive(T *object, const unsigned int &size
       socketMax = receptor_list[i].socketFileDescriptorReceptor;
   }
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {
@@ -381,7 +381,7 @@ int vpNetwork::receiveFrom(T *object, const unsigned int &receptorEmitting, cons
   socketMax = receptor_list[receptorEmitting].socketFileDescriptorReceptor;
   FD_SET((unsigned int)receptor_list[receptorEmitting].socketFileDescriptorReceptor, &readFileDescriptor);
 
-  int value = select((int)socketMax + 1, &readFileDescriptor, NULL, NULL, &tv);
+  int value = select((int)socketMax + 1, &readFileDescriptor, nullptr, nullptr, &tv);
   int numbytes = 0;
 
   if (value == -1) {

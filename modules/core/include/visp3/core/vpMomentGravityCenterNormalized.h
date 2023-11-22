@@ -44,27 +44,26 @@
 class vpMomentObject;
 
 /*!
-  \class vpMomentGravityCenterNormalized
-
-  \ingroup group_core_moments
-
-  \brief Class describing 2D normalized gravity center moment.
-
-  Centered and normalized gravity center moment is defined as follows:
-  \f$(x_n,y_n)\f$ where \f$x_n = x_g a_n\f$ and \f$y_n = y_g a_n\f$.
-
-  vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get
-  access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
-  \f$(x_g,y_g)\f$ .
-*/
+ * \class vpMomentGravityCenterNormalized
+ *
+ * \ingroup group_core_moments
+ *
+ * \brief Class describing 2D normalized gravity center moment.
+ *
+ * Centered and normalized gravity center moment is defined as follows:
+ * \f$(x_n,y_n)\f$ where \f$x_n = x_g a_n\f$ and \f$y_n = y_g a_n\f$.
+ *
+ * vpMomentGravityCenterNormalized depends on vpMomentAreaNormalized to get
+ * access to \f$a_n\f$ and on vpMomentGravityCenter to get access to
+ * \f$(x_g,y_g)\f$ .
+ */
 class VISP_EXPORT vpMomentGravityCenterNormalized : public vpMomentGravityCenter
 {
 public:
   vpMomentGravityCenterNormalized();
-  virtual ~vpMomentGravityCenterNormalized(){};
   void compute();
   //! Moment name.
-  const char *name() const { return "vpMomentGravityCenterNormalized"; }
+  const std::string name() const { return "vpMomentGravityCenterNormalized"; }
   void printDependencies(std::ostream &os) const;
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentGravityCenterNormalized &v);
 };

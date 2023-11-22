@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,17 +29,16 @@
  *
  * Description:
  * Pioneer mobile robot simulator without display.
- *
-*****************************************************************************/
+ */
 
 #ifndef vpSimulatorPioneer_H
 #define vpSimulatorPioneer_H
 
 /*!
-  \file vpSimulatorPioneer.h
-  \brief class that defines the Pioneer mobile robot simulator equipped with a
-  static camera.
-*/
+ * \file vpSimulatorPioneer.h
+ * \brief class that defines the Pioneer mobile robot simulator equipped with a
+ * static camera.
+ */
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -50,53 +48,52 @@
 #include <visp3/robot/vpRobotSimulator.h>
 
 /*!
-  \class vpSimulatorPioneer
-
-  \ingroup group_robot_simu_unicycle
-
-  \brief Class that defines the Pioneer mobile robot simulator equipped with a
-static camera.
-
-  It intends to simulate the mobile robot described in vpPioneer class.
-  This robot has 2 dof: \f$(v_x, w_z)\f$, the translational and
-  rotational velocities that are applied at point E.
-
-  The robot position evolves with respect to a world frame; wMc. When a new
-joint velocity is applied to the robot using setVelocity(), the position of
-the camera wrt the world frame is updated.
-
-  \image html pioneer.png
-
-  The following code shows how to control this robot in position and velocity.
-  \code
-#include <visp3/robot/vpSimulatorPioneer.h>
-
-int main()
-{
-  vpHomogeneousMatrix wMc;
-  vpSimulatorPioneer robot;
-
-  robot.getPosition(wMc); // Position of the camera in the world frame
-  std::cout << "Default position of the camera in the world frame wMc:\n" << wMc << std::endl;
-
-  robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
-  robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
-  robot.setMaxRotationVelocity(vpMath::rad(90)); // wz max set to 90 deg/s
-
-  vpColVector v(2); // we control vx and wz dof
-  v = 0;
-  v[0] = 1.; // set vx to 1 m/s
-  robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
-  // The robot has moved from 0.1 meters along the z axis
-  robot.getPosition(wMc); // Position of the camera in the world frame
-  std::cout << "New position of the camera wMc:\n" << wMc << std::endl;
-}
-  \endcode
-
-  The usage of this class is also highlighted in \ref
-tutorial-simu-robot-pioneer.
-
-*/
+ * \class vpSimulatorPioneer
+ *
+ * \ingroup group_robot_simu_unicycle
+ *
+ * \brief Class that defines the Pioneer mobile robot simulator equipped with a
+ * static camera.
+ *
+ * It intends to simulate the mobile robot described in vpPioneer class.
+ * This robot has 2 dof: \f$(v_x, w_z)\f$, the translational and
+ * rotational velocities that are applied at point E.
+ *
+ * The robot position evolves with respect to a world frame; wMc. When a new
+ * joint velocity is applied to the robot using setVelocity(), the position of
+ * the camera wrt the world frame is updated.
+ *
+ * \image html pioneer.png
+ *
+ * The following code shows how to control this robot in position and velocity.
+ * \code
+ * #include <visp3/robot/vpSimulatorPioneer.h>
+ *
+ * int main()
+ * {
+ *   vpHomogeneousMatrix wMc;
+ *   vpSimulatorPioneer robot;
+ *
+ *   robot.getPosition(wMc); // Position of the camera in the world frame
+ *   std::cout << "Default position of the camera in the world frame wMc:\n" << wMc << std::endl;
+ *
+ *   robot.setSamplingTime(0.100); // Modify the default sampling time to 0.1 second
+ *   robot.setMaxTranslationVelocity(1.); // vx max set to 1 m/s
+ *   robot.setMaxRotationVelocity(vpMath::rad(90)); // wz max set to 90 deg/s
+ *
+ *   vpColVector v(2); // we control vx and wz dof
+ *   v = 0;
+ *   v[0] = 1.; // set vx to 1 m/s
+ *   robot.setVelocity(vpRobot::ARTICULAR_FRAME, v);
+ *   // The robot has moved from 0.1 meters along the z axis
+ *   robot.getPosition(wMc); // Position of the camera in the world frame
+ *   std::cout << "New position of the camera wMc:\n" << wMc << std::endl;
+ * }
+ * \endcode
+ *
+ * The usage of this class is also highlighted in \ref
+ * tutorial-simu-robot-pioneer.
+ */
 class VISP_EXPORT vpSimulatorPioneer : public vpPioneer, public vpRobotSimulator
 {
 
@@ -114,25 +111,24 @@ protected:
 
 public:
   vpSimulatorPioneer();
-  virtual ~vpSimulatorPioneer();
 
 public:
   /** @name Inherited functionalities from vpSimulatorPioneer */
   //@{
-  void get_eJe(vpMatrix &eJe);
+  void get_eJe(vpMatrix &eJe) override;
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
   //@}
 
 private:
-  void init();
+  void init() override;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */){};
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */){};
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */){};
+  void get_fJe(vpMatrix & /*_fJe */) override { };
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) override { };
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) override { };
 };
 
 #endif

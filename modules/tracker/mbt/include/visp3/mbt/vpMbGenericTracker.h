@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,12 +29,12 @@
  *
  * Description:
  * Generic model-based tracker.
- *
-*****************************************************************************/
+ */
+
 /*!
- \file vpMbGenericTracker.h
- \brief Generic model-based tracker
-*/
+ * \file vpMbGenericTracker.h
+ *\brief Generic model-based tracker
+ */
 
 #ifndef _vpMbGenericTracker_h_
 #define _vpMbGenericTracker_h_
@@ -52,151 +51,150 @@
 #endif
 
 /*!
-  \class vpMbGenericTracker
-  \ingroup group_mbt_trackers
-  \brief Real-time 6D object pose tracking using its CAD model.
-
-  The tracker requires the knowledge of the 3D model that could be provided in
-  a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
-  also use an xml file used to tune the behavior of the tracker and an init file
-  used to compute the pose at the very first image.
-
-  This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
-  A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
-
-  \htmlonly
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
-  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-  \endhtmlonly
-
-  The \ref tutorial-tracking-mb-generic is a good starting point to use this
-  class. If you want to track an object with a stereo camera refer to
-  \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
-  the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
-  There is also \ref tutorial-detection-object that shows how to initialize the tracker from
-  an initial pose provided by a detection algorithm.
-
-  <b>JSON serialization</b>
-
-  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMbGenericTracker.
-  The following sample code shows how to save a model-based tracker settings in a file named `mbt.json`
-  and reload the values from this JSON file.
-  \code
-  #include <visp3/mbt/vpMbGenericTracker.h>
-
-  int main()
-  {
-  #if defined(VISP_HAVE_NLOHMANN_JSON)
-    std::string filename = "mbt-generic.json";
-    {
-      vpMbGenericTracker mbt;
-      mbt.saveConfigFile(filename);
-    }
-    {
-      vpMbGenericTracker mbt;
-      bool verbose = false;
-      std::cout << "Read model-based tracker settings from " << filename << std::endl;
-      mbt.loadConfigFile(filename, verbose);
-    }
-  #endif
-  }
-  \endcode
-  If you build and execute the sample code, it will produce the following output:
-  \code{.unparsed}
-  Read model-based tracker settings from mbt-generic.json
-  \endcode
-
-  The content of the `mbt.json` file is the following:
-  \code{.unparsed}
-  $ cat mbt-generic.json
-  {
-    "referenceCameraName": "Camera",
-    "trackers": {
-        "Camera": {
-            "angleAppear": 89.0,
-            "angleDisappear": 89.0,
-            "camTref": {
-                "cols": 4,
-                "data": [
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    0.0,
-                    1.0
-                ],
-                "rows": 4,
-                "type": "vpHomogeneousMatrix"
-            },
-            "camera": {
-                "model": "perspectiveWithoutDistortion",
-                "px": 600.0,
-                "py": 600.0,
-                "u0": 192.0,
-                "v0": 144.0
-            },
-            "clipping": {
-                "far": 100.0,
-                "flags": [
-                    "none"
-                ],
-                "near": 0.001
-            },
-            "display": {
-                "features": false,
-                "projectionError": false
-            },
-            "edge": {
-                "maskSign": 0,
-                "maskSize": 5,
-                "minSampleStep": 4.0,
-                "mu": [
-                    0.5,
-                    0.5
-                ],
-                "nMask": 180,
-                "ntotalSample": 0,
-                "pointsToTrack": 500,
-                "range": 4,
-                "sampleStep": 10.0,
-                "strip": 2,
-                "threshold": 1500.0
-            },
-            "lod": {
-                "minLineLengthThresholdGeneral": 50.0,
-                "minPolygonAreaThresholdGeneral": 2500.0,
-                "useLod": false
-            },
-            "type": [
-                "edge"
-            ],
-            "visibilityTest": {
-                "ogre": false,
-                "scanline": false
-            }
-        }
-    },
-    "version": "1.0"
-  }
-  \endcode
-
-*/
+ * \class vpMbGenericTracker
+ * \ingroup group_mbt_trackers
+ * \brief Real-time 6D object pose tracking using its CAD model.
+ *
+ * The tracker requires the knowledge of the 3D model that could be provided in
+ * a vrml or in a cao file. The cao format is described in loadCAOModel(). It may
+ * also use an xml file used to tune the behavior of the tracker and an init file
+ * used to compute the pose at the very first image.
+ *
+ * This class allows tracking an object or a scene given its 3D model. More information in \cite Trinh18a.
+ * A lot of videos can be found on <a href="https://www.youtube.com/user/VispTeam">YouTube VispTeam</a> channel.
+ *
+ * \htmlonly
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/UK10KMMJFCI"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/DDdIXja7YpE"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/M3XAxu9QC7Q"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * <iframe width="280" height="160" src="https://www.youtube.com/embed/4FARYLYzNL8"
+ * frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+ * \endhtmlonly
+ *
+ * The \ref tutorial-tracking-mb-generic is a good starting point to use this
+ * class. If you want to track an object with a stereo camera refer to
+ * \ref tutorial-tracking-mb-generic-stereo. If you want rather use a RGB-D camera and exploit
+ * the depth information, you may see \ref tutorial-tracking-mb-generic-rgbd.
+ * There is also \ref tutorial-detection-object that shows how to initialize the tracker from
+ * an initial pose provided by a detection algorithm.
+ *
+ * <b>JSON serialization</b>
+ *
+ * Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMbGenericTracker.
+ * The following sample code shows how to save a model-based tracker settings in a file named `mbt.json`
+ * and reload the values from this JSON file.
+ * \code
+ * #include <visp3/mbt/vpMbGenericTracker.h>
+ *
+ * int main()
+ * {
+ * #if defined(VISP_HAVE_NLOHMANN_JSON)
+ *   std::string filename = "mbt-generic.json";
+ *   {
+ *     vpMbGenericTracker mbt;
+ *     mbt.saveConfigFile(filename);
+ *   }
+ *   {
+ *     vpMbGenericTracker mbt;
+ *     bool verbose = false;
+ *     std::cout << "Read model-based tracker settings from " << filename << std::endl;
+ *     mbt.loadConfigFile(filename, verbose);
+ *   }
+ * #endif
+ * }
+ * \endcode
+ * If you build and execute the sample code, it will produce the following output:
+ * \code{.unparsed}
+ * Read model-based tracker settings from mbt-generic.json
+ * \endcode
+ *
+ * The content of the `mbt.json` file is the following:
+ * \code{.unparsed}
+ * $ cat mbt-generic.json
+ * {
+ *   "referenceCameraName": "Camera",
+ *   "trackers": {
+ *       "Camera": {
+ *           "angleAppear": 89.0,
+ *           "angleDisappear": 89.0,
+ *           "camTref": {
+ *               "cols": 4,
+ *               "data": [
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   0.0,
+ *                   1.0
+ *               ],
+ *               "rows": 4,
+ *               "type": "vpHomogeneousMatrix"
+ *           },
+ *           "camera": {
+ *               "model": "perspectiveWithoutDistortion",
+ *               "px": 600.0,
+ *               "py": 600.0,
+ *               "u0": 192.0,
+ *               "v0": 144.0
+ *           },
+ *           "clipping": {
+ *               "far": 100.0,
+ *               "flags": [
+ *                   "none"
+ *               ],
+ *               "near": 0.001
+ *           },
+ *           "display": {
+ *               "features": false,
+ *               "projectionError": false
+ *           },
+ *           "edge": {
+ *               "maskSign": 0,
+ *               "maskSize": 5,
+ *               "minSampleStep": 4.0,
+ *               "mu": [
+ *                   0.5,
+ *                   0.5
+ *               ],
+ *               "nMask": 180,
+ *               "ntotalSample": 0,
+ *               "pointsToTrack": 500,
+ *               "range": 4,
+ *               "sampleStep": 10.0,
+ *               "strip": 2,
+ *               "threshold": 1500.0
+ *           },
+ *           "lod": {
+ *               "minLineLengthThresholdGeneral": 50.0,
+ *               "minPolygonAreaThresholdGeneral": 2500.0,
+ *               "useLod": false
+ *           },
+ *           "type": [
+ *               "edge"
+ *           ],
+ *           "visibilityTest": {
+ *               "ogre": false,
+ *               "scanline": false
+ *           }
+ *       }
+ *   },
+ *   "version": "1.0"
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
 public:
@@ -215,17 +213,17 @@ public:
   explicit vpMbGenericTracker(const std::vector<int> &trackerTypes);
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
-  virtual ~vpMbGenericTracker();
+  virtual ~vpMbGenericTracker() override;
 
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
-    const vpCameraParameters &_cam);
+    const vpCameraParameters &_cam) override;
   virtual double computeCurrentProjectionError(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &_cMo,
     const vpCameraParameters &_cam);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+    const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
 
   virtual void display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1,
@@ -247,7 +245,7 @@ public:
   virtual std::vector<std::string> getCameraNames() const;
 
   using vpMbTracker::getCameraParameters;
-  virtual void getCameraParameters(vpCameraParameters &camera) const;
+  virtual void getCameraParameters(vpCameraParameters &camera) const override;
   virtual void getCameraParameters(vpCameraParameters &cam1, vpCameraParameters &cam2) const;
   virtual void getCameraParameters(std::map<std::string, vpCameraParameters> &mapOfCameraParameters) const;
 
@@ -257,9 +255,9 @@ public:
   virtual void getClipping(unsigned int &clippingFlag1, unsigned int &clippingFlag2) const;
   virtual void getClipping(std::map<std::string, unsigned int> &mapOfClippingFlags) const;
 
-  virtual inline vpColVector getError() const { return m_error; }
+  virtual inline vpColVector getError() const override { return m_error; }
 
-  virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces();
+  virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces() override;
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces(const std::string &cameraName);
 
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
@@ -304,7 +302,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
     const vpHomogeneousMatrix &cMo,
     const vpCameraParameters &cam,
-    bool displayFullModel = false);
+    bool displayFullModel = false) override;
   virtual void getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfModels,
     const std::map<std::string, unsigned int> &mapOfwidths,
     const std::map<std::string, unsigned int> &mapOfheights,
@@ -320,16 +318,19 @@ public:
    * Return the number of depth dense features taken into account in the virtual visual-servoing scheme.
    */
   virtual inline unsigned int getNbFeaturesDepthDense() const { return m_nb_feat_depthDense; }
+
   /*!
    * Return the number of depth normal features features taken into account in the virtual visual-servoing scheme.
    */
   virtual inline unsigned int getNbFeaturesDepthNormal() const { return m_nb_feat_depthNormal; }
+
   /*!
    * Return the number of moving-edges features taken into account in the virtual visual-servoing scheme.
    *
    * This function is similar to getNbPoints().
    */
   virtual inline unsigned int getNbFeaturesEdge() const { return m_nb_feat_edge; }
+
   /*!
    * Return the number of klt keypoints features taken into account in the virtual visual-servoing scheme.
    */
@@ -338,30 +339,30 @@ public:
   virtual unsigned int getNbPoints(unsigned int level = 0) const;
   virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, unsigned int level = 0) const;
 
-  virtual unsigned int getNbPolygon() const;
+  virtual unsigned int getNbPolygon() const override;
   virtual void getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const;
 
-  virtual vpMbtPolygon *getPolygon(unsigned int index);
+  virtual vpMbtPolygon *getPolygon(unsigned int index) override;
   virtual vpMbtPolygon *getPolygon(const std::string &cameraName, unsigned int index);
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-    getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
+    getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false) override;
   virtual void getPolygonFaces(std::map<std::string, std::vector<vpPolygon> > &mapOfPolygons,
     std::map<std::string, std::vector<std::vector<vpPoint> > > &mapOfPoints,
     bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
 
   using vpMbTracker::getPose;
-  virtual void getPose(vpHomogeneousMatrix &cMo) const;
+  virtual void getPose(vpHomogeneousMatrix &cMo) const override;
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
   virtual std::string getReferenceCameraName() const;
 
-  virtual inline vpColVector getRobustWeights() const { return m_w; }
+  virtual inline vpColVector getRobustWeights() const override { return m_w; }
 
   virtual int getTrackerType() const;
 
-  virtual void init(const vpImage<unsigned char> &I);
+  virtual void init(const vpImage<unsigned char> &I) override;
 
 #ifdef VISP_HAVE_MODULE_GUI
   using vpMbTracker::initClick;
@@ -396,7 +397,7 @@ public:
     const std::map<std::string, std::string> &mapOfInitPoints);
 
   using vpMbTracker::initFromPose;
-  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
+  virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo) override;
   virtual void initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const std::string &initFile1, const std::string &initFile2);
   virtual void initFromPose(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
@@ -417,7 +418,7 @@ public:
   virtual void initFromPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) override;
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose = true);
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose = true);
 
@@ -426,7 +427,7 @@ public:
 #endif
 
   virtual void loadModel(const std::string &modelFile, bool verbose = false,
-    const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+    const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) override;
   virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
     const vpHomogeneousMatrix &T1 = vpHomogeneousMatrix(),
     const vpHomogeneousMatrix &T2 = vpHomogeneousMatrix());
@@ -462,17 +463,17 @@ public:
       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses, bool verbose = false,
       const std::map<std::string, vpHomogeneousMatrix> &mapOfT = std::map<std::string, vpHomogeneousMatrix>());
 
-  virtual void resetTracker();
+  virtual void resetTracker() override;
 
-  virtual void setAngleAppear(const double &a);
+  virtual void setAngleAppear(const double &a) override;
   virtual void setAngleAppear(const double &a1, const double &a2);
   virtual void setAngleAppear(const std::map<std::string, double> &mapOfAngles);
 
-  virtual void setAngleDisappear(const double &a);
+  virtual void setAngleDisappear(const double &a) override;
   virtual void setAngleDisappear(const double &a1, const double &a2);
   virtual void setAngleDisappear(const std::map<std::string, double> &mapOfAngles);
 
-  virtual void setCameraParameters(const vpCameraParameters &camera);
+  virtual void setCameraParameters(const vpCameraParameters &camera) override;
   virtual void setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2);
   virtual void setCameraParameters(const std::map<std::string, vpCameraParameters> &mapOfCameraParameters);
 
@@ -481,7 +482,7 @@ public:
   virtual void
     setCameraTransformationMatrix(const std::map<std::string, vpHomogeneousMatrix> &mapOfTransformationMatrix);
 
-  virtual void setClipping(const unsigned int &flags);
+  virtual void setClipping(const unsigned int &flags) override;
   virtual void setClipping(const unsigned int &flags1, const unsigned int &flags2);
   virtual void setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags);
 
@@ -498,9 +499,9 @@ public:
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
   virtual void setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY);
 
-  virtual void setDisplayFeatures(bool displayF);
+  virtual void setDisplayFeatures(bool displayF) override;
 
-  virtual void setFarClippingDistance(const double &dist);
+  virtual void setFarClippingDistance(const double &dist) override;
   virtual void setFarClippingDistance(const double &dist1, const double &dist2);
   virtual void setFarClippingDistance(const std::map<std::string, double> &mapOfClippingDists);
 
@@ -525,28 +526,28 @@ public:
   virtual void setKltThresholdAcceptation(double th);
 #endif
 
-  virtual void setLod(bool useLod, const std::string &name = "");
+  virtual void setLod(bool useLod, const std::string &name = "") override;
 
-  virtual void setMask(const vpImage<bool> &mask);
+  virtual void setMask(const vpImage<bool> &mask) override;
 
-  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "");
-  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "");
+  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "") override;
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "") override;
 
   virtual void setMovingEdge(const vpMe &me);
   virtual void setMovingEdge(const vpMe &me1, const vpMe &me2);
   virtual void setMovingEdge(const std::map<std::string, vpMe> &mapOfMe);
 
-  virtual void setNearClippingDistance(const double &dist);
+  virtual void setNearClippingDistance(const double &dist) override;
   virtual void setNearClippingDistance(const double &dist1, const double &dist2);
   virtual void setNearClippingDistance(const std::map<std::string, double> &mapOfDists);
 
-  virtual void setOgreShowConfigDialog(bool showConfigDialog);
-  virtual void setOgreVisibilityTest(const bool &v);
+  virtual void setOgreShowConfigDialog(bool showConfigDialog) override;
+  virtual void setOgreVisibilityTest(const bool &v) override;
 
-  virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);
+  virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt) override;
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) override;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) override;
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo);
@@ -558,15 +559,15 @@ public:
   virtual void setPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void setProjectionErrorComputation(const bool &flag);
+  virtual void setProjectionErrorComputation(const bool &flag) override;
 
-  virtual void setProjectionErrorDisplay(bool display);
-  virtual void setProjectionErrorDisplayArrowLength(unsigned int length);
-  virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness);
+  virtual void setProjectionErrorDisplay(bool display) override;
+  virtual void setProjectionErrorDisplayArrowLength(unsigned int length) override;
+  virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness) override;
 
   virtual void setReferenceCameraName(const std::string &referenceCameraName);
 
-  virtual void setScanLineVisibilityTest(const bool &v);
+  virtual void setScanLineVisibilityTest(const bool &v) override;
 
   virtual void setTrackerType(int type);
   virtual void setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes);
@@ -578,10 +579,10 @@ public:
   virtual void setUseKltTracking(const std::string &name, const bool &useKltTracking);
 #endif
 
-  virtual void testTracking();
+  virtual void testTracking() override;
 
-  virtual void track(const vpImage<unsigned char> &I);
-  virtual void track(const vpImage<vpRGBa> &I_color);
+  virtual void track(const vpImage<unsigned char> &I) override;
+  virtual void track(const vpImage<vpRGBa> &I_color) override;
 
   virtual void track(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2);
   virtual void track(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2);
@@ -610,23 +611,23 @@ protected:
 
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
 
-  virtual void computeVVSInit();
+  virtual void computeVVSInit() override;
   virtual void computeVVSInit(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages);
-  virtual void computeVVSInteractionMatrixAndResidu();
+  virtual void computeVVSInteractionMatrixAndResidu() override;
   virtual void computeVVSInteractionMatrixAndResidu(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
     std::map<std::string, vpVelocityTwistMatrix> &mapOfVelocityTwist);
   using vpMbTracker::computeVVSWeights;
   virtual void computeVVSWeights();
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-    const std::string &name = "");
+    const std::string &name = "") override;
 
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-    const std::string &name = "");
+    const std::string &name = "") override;
 
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon);
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) override;
 
-  virtual void initFaceFromLines(vpMbtPolygon &polygon);
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) override;
 
   virtual void loadConfigFileXML(const std::string &configFile, bool verbose = true);
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -671,63 +672,60 @@ private:
     TrackerWrapper();
     explicit TrackerWrapper(int trackerType);
 
-    virtual ~TrackerWrapper();
+    virtual inline vpColVector getError() const override { return m_error; }
 
-
-    virtual inline vpColVector getError() const { return m_error; }
-
-    virtual inline vpColVector getRobustWeights() const { return m_w; }
+    virtual inline vpColVector getRobustWeights() const override { return m_w; }
 
     virtual inline int getTrackerType() const { return m_trackerType; }
 
     virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
     virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
+      const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
 
     virtual std::vector<std::vector<double> > getFeaturesForDisplay();
 
     virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
       const vpHomogeneousMatrix &cMo,
       const vpCameraParameters &cam,
-      bool displayFullModel = false);
+      bool displayFullModel = false) override;
 
-    virtual void init(const vpImage<unsigned char> &I);
+    virtual void init(const vpImage<unsigned char> &I) override;
 
-    virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
+    virtual void loadConfigFile(const std::string &configFile, bool verbose = true) override;
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
       const vpHomogeneousMatrix &cMo, bool verbose = false,
-      const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+      const vpHomogeneousMatrix &T = vpHomogeneousMatrix()) override;
     virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
       const vpHomogeneousMatrix &cMo, bool verbose = false,
       const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
 
-    virtual void resetTracker();
+    virtual void resetTracker() override;
 
-    virtual void setCameraParameters(const vpCameraParameters &camera);
+    virtual void setCameraParameters(const vpCameraParameters &camera) override;
 
-    virtual void setClipping(const unsigned int &flags);
+    virtual void setClipping(const unsigned int &flags) override;
 
-    virtual void setFarClippingDistance(const double &dist);
+    virtual void setFarClippingDistance(const double &dist) override;
 
-    virtual void setNearClippingDistance(const double &dist);
+    virtual void setNearClippingDistance(const double &dist) override;
 
-    virtual void setOgreVisibilityTest(const bool &v);
+    virtual void setOgreVisibilityTest(const bool &v) override;
 
-    virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo);
-    virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo);
+    virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) override;
+    virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) override;
 
-    virtual void setProjectionErrorComputation(const bool &flag);
+    virtual void setProjectionErrorComputation(const bool &flag) override;
 
-    virtual void setScanLineVisibilityTest(const bool &v);
+    virtual void setScanLineVisibilityTest(const bool &v) override;
 
     virtual void setTrackerType(int type);
 
-    virtual void testTracking();
+    virtual void testTracking() override;
 
-    virtual void track(const vpImage<unsigned char> &I);
-    virtual void track(const vpImage<vpRGBa> &I_color);
+    virtual void track(const vpImage<unsigned char> &I) override;
+    virtual void track(const vpImage<vpRGBa> &I_color) override;
 #ifdef VISP_HAVE_PCL
     // Fix error: using declaration ‘using vpMbDepthDenseTracker::setPose’ conflicts with a previous
     // using declaration that occurs with g++ 4.6.3 on Ubuntu 12.04
@@ -742,22 +740,22 @@ private:
 
   protected:
     virtual void computeVVS(const vpImage<unsigned char> *const ptr_I);
-    virtual void computeVVSInit();
+    virtual void computeVVSInit() override;
     virtual void computeVVSInit(const vpImage<unsigned char> *const ptr_I);
-    virtual void computeVVSInteractionMatrixAndResidu();
+    virtual void computeVVSInteractionMatrixAndResidu() override;
     using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;
     virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> *const ptr_I);
     using vpMbTracker::computeVVSWeights;
-    virtual void computeVVSWeights();
+    virtual void computeVVSWeights() override;
 
     virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-      const std::string &name = "");
+      const std::string &name = "") override;
 
     virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-      const std::string &name = "");
+      const std::string &name = "") override;
 
-    virtual void initFaceFromCorners(vpMbtPolygon &polygon);
-    virtual void initFaceFromLines(vpMbtPolygon &polygon);
+    virtual void initFaceFromCorners(vpMbtPolygon &polygon) override;
+    virtual void initFaceFromLines(vpMbtPolygon &polygon) override;
 
     virtual void initMbtTracking(const vpImage<unsigned char> *const ptr_I);
 
@@ -767,10 +765,10 @@ private:
     virtual void preTracking(const vpImage<unsigned char> *const ptr_I,
       const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-    virtual void postTracking(const vpImage<unsigned char> *const ptr_I = NULL, const unsigned int pointcloud_width = 0,
+    virtual void postTracking(const vpImage<unsigned char> *const ptr_I = nullptr, const unsigned int pointcloud_width = 0,
       const unsigned int pointcloud_height = 0);
-    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = NULL,
-      const std::vector<vpColVector> *const point_cloud = NULL,
+    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = nullptr,
+      const std::vector<vpColVector> *const point_cloud = nullptr,
       const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
 
     virtual void reInitModel(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
@@ -785,8 +783,13 @@ private:
 #endif
     using vpMbDepthDenseTracker::setPose;
 #endif
-    virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+    virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
+      const vpHomogeneousMatrix &cdMo) override;
+#else
+    virtual void setPose(const vpImage<unsigned char> *I, const vpImage<vpRGBa> *I_color,
       const vpHomogeneousMatrix &cdMo);
+#endif
   };
 #ifdef VISP_HAVE_NLOHMANN_JSON
   friend void to_json(nlohmann::json &j, const TrackerWrapper &t);
@@ -853,7 +856,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
 * @brief Serialize a tracker wrapper's settings into a JSON representation.
 * \sa from_json for more details on what is serialized
 * @param j The modified json object.
-* @param t  The tracker to serialize.
+* @param t The tracker to serialize.
 */
 inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper &t)
 {
@@ -1050,6 +1053,5 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
 }
 
 #endif
-
 
 #endif

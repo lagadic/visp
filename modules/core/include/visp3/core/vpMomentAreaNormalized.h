@@ -31,9 +31,9 @@
  * 2D normalized surface moment descriptor (usually described as An)
  */
 /*!
-  \file vpMomentAreaNormalized.h
-  \brief 2D normalized surface moment descriptor (usually described as An).
-*/
+ * \file vpMomentAreaNormalized.h
+ * \brief 2D normalized surface moment descriptor (usually described as An).
+ */
 #ifndef _vpMomentAreaNormalized_h_
 #define _vpMomentAreaNormalized_h_
 
@@ -43,93 +43,92 @@ class vpMomentObject;
 class vpMomentCentered;
 
 /*!
-  \class vpMomentAreaNormalized
-
-  \ingroup group_core_moments
-
-  \brief Class handling the normalized surface moment that is invariant in
-scale and used to estimate depth.
-
-  This moment depends on vpMomentCentered.
-
-  The idea behind vpMomentAreaNormalized is described in \cite Tahri05z.
-
-  During a visual servoing process, a vpMomentAreaNormalized will converge
-towards the desired depth when the current surface will converge to the
-destination surface. It is defined as follows: \f$ a_n=Z^*
-\sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the
-destination surface. Consequently, the vpMomentAreaNormalized needs to have
-information about the desired depth \e Z* and the desired surface \e a*.
-
-  \warning About the order of the object.
-  The surface (refered to as \e a in the above paragraph) depends of the
-nature of the object.
-  - In case of a continuous object (when vpMomentObject::getType() is
-vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON)
-\f$a=m_{00}\f$.
-  - In case of a discrete object (when vpMomentObject::getType() is
-vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
-
-  Therefore, a vpMomentObject has to be of minimum order 2 in order to compute
-a vpMomentAreaNormalized moment in the discrete case and of minimum order 0 in
-continous cases.
-
-  This example shows a computation in the discrete case.
-  \code
-#include <visp3/core/vpMomentAreaNormalized.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
-
-int main()
-{
-  vpPoint p;
-  std::vector<vpPoint> vec_p; // vector that contains object points
-
-  p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point 1
-  vec_p.push_back(p);
-  p.set_x(2); p.set_y(2); // coordinates in meters in the image plane of point 2
-  vec_p.push_back(p);
-
-  //////////////////////////////REFERENCE VALUES////////////////////////////////
-  vpMomentObject obj(2); // Object where all the moment defined with
-                         // i+j <= 2 will be computed below. Order is
-                         // 2 because in discrete mode, the surface
-                         // computation is a=mu02+mu02
-
-
-  obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
-  obj.fromVector(vec_p); // initialize the object with the points coordinates
-
-  vpMomentDatabase db; //reference database
-  vpMomentGravityCenter g; // declaration of gravity center
-  vpMomentCentered mc; //  centered moments
-  vpMomentAreaNormalized an(2,1); //declare normalized surface with
-                                //destination depth of 1 meter and
-                                //destination surface of 2 m2
-
-  g.linkTo(db); //add gravity center to database
-  mc.linkTo(db); //add centered moments
-  an.linkTo(db); //add alpha depending on centered moments
-
-  db.updateAll(obj); // All of the moments must be updated, not just an
-
-  g.compute(); // compute the moment
-  mc.compute(); //compute centered moments AFTER gravity center
-  an.compute(); //compute alpha AFTER centered moments.
-
-  std::cout << an << std::endl;
-
-  return 0;
-}
-  \endcode
-    This code produces the following output:
-  \code
-An:1.41421
-  \endcode
-*/
+ * \class vpMomentAreaNormalized
+ *
+ * \ingroup group_core_moments
+ *
+ * \brief Class handling the normalized surface moment that is invariant in
+ * scale and used to estimate depth.
+ *
+ * This moment depends on vpMomentCentered.
+ *
+ * The idea behind vpMomentAreaNormalized is described in \cite Tahri05z.
+ *
+ * During a visual servoing process, a vpMomentAreaNormalized will converge
+ * towards the desired depth when the current surface will converge to the
+ * destination surface. It is defined as follows: \f$ a_n=Z^*
+ * \sqrt{\frac{a^*}{a}} \f$ where \e a is the current surface and \e a* the
+ * destination surface. Consequently, the vpMomentAreaNormalized needs to have
+ * information about the desired depth \e Z* and the desired surface \e a*.
+ *
+ * \warning About the order of the object.
+ * The surface (referred to as \e a in the above paragraph) depends of the
+ * nature of the object.
+ * - In case of a continuous object (when vpMomentObject::getType() is
+ *   vpMomentObject::DENSE_FULL_OBJECT or vpMomentObject::DENSE_POLYGON)
+ *   \f$a=m_{00}\f$.
+ * - In case of a discrete object (when vpMomentObject::getType() is
+ *   vpMomentObject::DISCRETE) \f$a=\mu_{20}+\mu_{02}\f$.
+ *
+ * Therefore, a vpMomentObject has to be of minimum order 2 in order to compute
+ * a vpMomentAreaNormalized moment in the discrete case and of minimum order 0 in
+ * continuous cases.
+ *
+ * This example shows a computation in the discrete case.
+ * \code
+ * #include <visp3/core/vpMomentAreaNormalized.h>
+ * #include <visp3/core/vpMomentCentered.h>
+ * #include <visp3/core/vpMomentDatabase.h>
+ * #include <visp3/core/vpMomentGravityCenter.h>
+ * #include <visp3/core/vpMomentObject.h>
+ * #include <visp3/core/vpPoint.h>
+ *
+ * int main()
+ * {
+ *   vpPoint p;
+ *   std::vector<vpPoint> vec_p; // vector that contains object points
+ *
+ *   p.set_x(1); p.set_y(1); // coordinates in meters in the image plane of point 1
+ *   vec_p.push_back(p);
+ *   p.set_x(2); p.set_y(2); // coordinates in meters in the image plane of point 2
+ *   vec_p.push_back(p);
+ *
+ *   //////////////////////////////REFERENCE VALUES////////////////////////////////
+ *   vpMomentObject obj(2); // Object where all the moment defined with
+ *                         // i+j <= 2 will be computed below. Order is
+ *                         // 2 because in discrete mode, the surface
+ *                         // computation is a=mu02+mu02
+ *
+ *   obj.setType(vpMomentObject::DISCRETE); // Discrete mode for object
+ *   obj.fromVector(vec_p); // initialize the object with the points coordinates
+ *
+ *   vpMomentDatabase db; //reference database
+ *   vpMomentGravityCenter g; // declaration of gravity center
+ *   vpMomentCentered mc; //  centered moments
+ *  vpMomentAreaNormalized an(2,1); //declare normalized surface with
+ *                                 //destination depth of 1 meter and
+ *                                 //destination surface of 2 m2
+ *
+ *   g.linkTo(db); //add gravity center to database
+ *   mc.linkTo(db); //add centered moments
+ *   an.linkTo(db); //add alpha depending on centered moments
+ *
+ *   db.updateAll(obj); // All of the moments must be updated, not just an
+ *
+ *   g.compute(); // compute the moment
+ *   mc.compute(); //compute centered moments AFTER gravity center
+ *   an.compute(); //compute alpha AFTER centered moments.
+ *
+ *   std::cout << an << std::endl;
+ *
+ *   return 0;
+ * }
+ * \endcode
+ * This code produces the following output:
+ * \code
+ * An:1.41421
+ * \endcode
+ */
 class VISP_EXPORT vpMomentAreaNormalized : public vpMoment
 {
 private:
@@ -138,46 +137,47 @@ private:
 
 public:
   vpMomentAreaNormalized(double a_star, double Z_star);
-  virtual ~vpMomentAreaNormalized() { };
   void compute();
+
   /*!
-    Retrieves the desired surface \e a* as specified in the constructor.
-  */
+   * Retrieves the desired surface \e a* as specified in the constructor.
+   */
   double getDesiredArea() const { return desiredSurface; }
+
   /*!
-    Retrieves the desired depth \e Z* as specified in the constructor.
-  */
+   * Retrieves the desired depth \e Z* as specified in the constructor.
+   */
   double getDesiredDepth() const { return desiredDepth; }
 
   /*!
-    Set the desired depth \e Z* to a new value than the one specified in the constructor.
-    This value has to be set before calling compute().
-  */
+   * Set the desired depth \e Z* to a new value than the one specified in the constructor.
+   * This value has to be set before calling compute().
+   */
   void setDesiredDepth(double Z_star) { desiredDepth = Z_star; }
-  /*!
-    Set the desired area \e a* to a new value than the one specified in the constructor.
-    This value has to be set before calling compute().
-  */
-  void setDesiredArea(double a_star) { desiredSurface = a_star; }
 
+  /*!
+   * Set the desired area \e a* to a new value than the one specified in the constructor.
+   * This value has to be set before calling compute().
+   */
+  void setDesiredArea(double a_star) { desiredSurface = a_star; }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
-    @name Deprecated functions
-  */
+   * @name Deprecated functions
+   */
   //@{
   /*!
-    \deprecated Use rather getDesiredArea()
-    Retrieves the desired surface \e a* as specified in the constructor.
-  */
+   * \deprecated Use rather getDesiredArea()
+   * Retrieves the desired surface \e a* as specified in the constructor.
+   */
   vp_deprecated double getDesiredSurface() const { return desiredSurface; }
   //@}
 #endif
 
   /*!
-    Moment name.
-  */
-  const char *name() const { return "vpMomentAreaNormalized"; }
+   * Moment name.
+   */
+  const std::string name() const { return "vpMomentAreaNormalized"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
   void printDependencies(std::ostream &os) const;
 };

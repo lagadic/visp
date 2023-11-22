@@ -58,7 +58,7 @@ vpMbDepthDenseTracker::vpMbDepthDenseTracker()
     m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
     ,
-    m_debugDisp_depthDense(NULL), m_debugImage_depthDense()
+    m_debugDisp_depthDense(nullptr), m_debugImage_depthDense()
 #endif
 {
 #ifdef VISP_HAVE_OGRE
@@ -439,7 +439,7 @@ void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const s
 
   for (size_t i = 0; i < m_depthDenseFaces.size(); i++) {
     delete m_depthDenseFaces[i];
-    m_depthDenseFaces[i] = NULL;
+    m_depthDenseFaces[i] = nullptr;
   }
 
   m_depthDenseFaces.clear();
@@ -466,7 +466,7 @@ void vpMbDepthDenseTracker::resetTracker()
        ++it) {
     vpMbtFaceDepthDense *normal_face = *it;
     delete normal_face;
-    normal_face = NULL;
+    normal_face = nullptr;
   }
 
   m_depthDenseFaces.clear();

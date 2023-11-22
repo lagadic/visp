@@ -121,7 +121,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       ppath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath);
+      usage(argv[0], nullptr, ipath);
       return false;
       break;
 
@@ -138,7 +138,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath);
+    usage(argv[0], nullptr, ipath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -174,7 +174,7 @@ int main(int argc, const char **argv)
       ipath = opt_ipath;
 
     // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
+    // the input path coming from the command line option
     if (!opt_ipath.empty() && !env_ipath.empty()) {
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;

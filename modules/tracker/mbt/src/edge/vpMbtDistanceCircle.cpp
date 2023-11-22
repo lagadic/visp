@@ -56,26 +56,25 @@
   Basic constructor
 */
 vpMbtDistanceCircle::vpMbtDistanceCircle()
-  : name(), index(0), cam(), me(NULL), wmean(1), featureEllipse(), isTrackedCircle(true), meEllipse(NULL), circle(NULL),
-    radius(0.), p1(NULL), p2(NULL), p3(NULL), L(), error(), nbFeature(0), Reinit(false), hiddenface(NULL),
-    index_polygon(-1), isvisible(false)
-{
-}
+  : name(), index(0), cam(), me(nullptr), wmean(1), featureEllipse(), isTrackedCircle(true), meEllipse(nullptr), circle(nullptr),
+  radius(0.), p1(nullptr), p2(nullptr), p3(nullptr), L(), error(), nbFeature(0), Reinit(false), hiddenface(nullptr),
+  index_polygon(-1), isvisible(false)
+{ }
 
 /*!
   Basic destructor useful to deallocate the memory.
 */
 vpMbtDistanceCircle::~vpMbtDistanceCircle()
 {
-  if (meEllipse != NULL)
+  if (meEllipse != nullptr)
     delete meEllipse;
-  if (circle != NULL)
+  if (circle != nullptr)
     delete circle;
-  if (p1 != NULL)
+  if (p1 != nullptr)
     delete p1;
-  if (p2 != NULL)
+  if (p2 != nullptr)
     delete p2;
-  if (p3 != NULL)
+  if (p3 != nullptr)
     delete p3;
 }
 
@@ -126,7 +125,7 @@ void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, cons
 void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
 {
   me = _me;
-  if (meEllipse != NULL) {
+  if (meEllipse != nullptr) {
     meEllipse->setMe(me);
   }
 }
@@ -139,7 +138,7 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false. \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
@@ -151,7 +150,8 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem when projecting circle\n";
       return false;
     }
@@ -169,8 +169,9 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
       meEllipse->initTracking(I, ic, n20_p, n11_p, n02_p, doNotTrack);
-    } catch (...) {
-      // vpTRACE("the circle can't be initialized");
+    }
+    catch (...) {
+   // vpTRACE("the circle can't be initialized");
       return false;
     }
   }
@@ -188,8 +189,9 @@ void vpMbtDistanceCircle::trackMovingEdge(const vpImage<unsigned char> &I, const
   if (isvisible) {
     try {
       meEllipse->track(I);
-    } catch (...) {
-      // std::cout << "Track meEllipse failed" << std::endl;
+    }
+    catch (...) {
+   // std::cout << "Track meEllipse failed" << std::endl;
       meEllipse->reset();
       Reinit = true;
     }
@@ -215,7 +217,8 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem when projecting circle\n";
     }
 
@@ -225,7 +228,8 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
       double n20_p, n11_p, n02_p;
       vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
       meEllipse->updateParameters(I, ic, n20_p, n11_p, n02_p);
-    } catch (...) {
+    }
+    catch (...) {
       Reinit = true;
     }
     nbFeature = (unsigned int)meEllipse->getMeList().size();
@@ -240,16 +244,16 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  \param mask: Mask image or nullptr if not wanted. Mask values that are set to true are considered in the tracking. To
   disable a pixel, set false.
 */
 void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                            const vpImage<bool> *mask)
 {
-  if (meEllipse != NULL)
+  if (meEllipse != nullptr)
     delete meEllipse;
 
-  meEllipse = NULL;
+  meEllipse = nullptr;
 
   if (!initMovingEdge(I, cMo, false, mask))
     Reinit = true;
@@ -313,20 +317,13 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 {
   std::vector<std::vector<double> > features;
 
-  if (meEllipse != NULL) {
+  if (meEllipse != nullptr) {
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
-#else
-      std::vector<double> params;
-      params.push_back(0); // ME
-      params.push_back(p_me.get_ifloat());
-      params.push_back(p_me.get_jfloat());
-      params.push_back(static_cast<double>(p_me.getState()));
-#endif
+      std::vector<double> params = { 0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+
       features.push_back(params);
     }
   }
@@ -356,7 +353,8 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
 
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot project the circle";
     }
 
@@ -387,7 +385,7 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
 */
 void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 {
-  if (meEllipse != NULL) {
+  if (meEllipse != nullptr) {
     meEllipse->display(I); // display the me
     if (vpDEBUG_ENABLE(3))
       vpDisplay::flush(I);
@@ -396,7 +394,7 @@ void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 
 void vpMbtDistanceCircle::displayMovingEdges(const vpImage<vpRGBa> &I)
 {
-  if (meEllipse != NULL) {
+  if (meEllipse != nullptr) {
     meEllipse->display(I); // display the me
     if (vpDEBUG_ENABLE(3))
       vpDisplay::flush(I);
@@ -412,7 +410,8 @@ void vpMbtDistanceCircle::initInteractionMatrixError()
     nbFeature = (unsigned int)meEllipse->getMeList().size();
     L.resize(nbFeature, 6);
     error.resize(nbFeature);
-  } else
+  }
+  else
     nbFeature = 0;
 }
 
@@ -427,7 +426,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     circle->changeFrame(cMo);
     try {
       circle->projection();
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Problem projection circle\n";
     }
 
@@ -461,8 +461,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
         L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
       error[j] = n02 * vpMath::sqr(x) + n20 * vpMath::sqr(y) - 2 * n11 * x * y + 2 * (n11 * yg - n02 * xg) * x +
-                 2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
-                 4.0 * vpMath::sqr(n11) - 4.0 * n20 * n02;
+        2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
+        4.0 * vpMath::sqr(n11) - 4.0 * n20 * n02;
       j++;
     }
   }

@@ -252,9 +252,9 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   double a, b, c, d;
 
   // Checking if coplanar has already been called and if the plan coefficients have been given
-  if ((p_isPlan != NULL) && (p_a != NULL) && (p_b != NULL) && (p_c != NULL) && (p_d != NULL)) {
+  if ((p_isPlan != nullptr) && (p_a != nullptr) && (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr)) {
     if (*p_isPlan) {
-      // All the pointers towards the plan coefficients are different from NULL => using them in the rest of the method
+      // All the pointers towards the plan coefficients are different from nullptr => using them in the rest of the method
       a = *p_a;
       b = *p_b;
       c = *p_c;
@@ -266,7 +266,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
     }
   }
   else {
-    // At least one of the coefficient is a NULL pointer => calling coplanar by ourselves
+    // At least one of the coefficient is a nullptr pointer => calling coplanar by ourselves
     int coplanarType;
     bool areCoplanar = coplanar(coplanarType, &a, &b, &c, &d);
     if (!areCoplanar) {

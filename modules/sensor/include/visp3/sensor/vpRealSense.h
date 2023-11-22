@@ -46,7 +46,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE)
 
 #include <librealsense/rs.hpp>
 
@@ -212,7 +212,7 @@ rs.getIntrinsics(rs::stream::infrared).width);
 #endif
 
   while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, NULL, NULL, Ii.bitmap);
+    rs.acquire((unsigned char *) Ic.bitmap, nullptr, nullptr, Ii.bitmap);
     vpDisplay::display(Ic);
     vpDisplay::display(Ii);
     vpDisplay::flush(Ic);
@@ -254,7 +254,7 @@ int main() {
 #endif
 
   while (1) {
-    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, NULL, NULL, NULL,
+    rs.acquire((unsigned char *) Ic.bitmap, (unsigned char *) Id_raw.bitmap, nullptr, nullptr, nullptr,
                rs::stream::color, rs::stream::depth_aligned_to_color);
     vpImageConvert::createDepthHistogram(Id_raw, Id);
     vpDisplay::display(Ic);
@@ -358,7 +358,7 @@ public:
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
-               unsigned char *const data_infrared2 = NULL, const rs::stream &stream_color = rs::stream::color,
+               unsigned char *const data_infrared2 = nullptr, const rs::stream &stream_color = rs::stream::color,
                const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
@@ -372,13 +372,13 @@ public:
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared, unsigned char *const data_infrared2 = NULL,
+               unsigned char *const data_infrared, unsigned char *const data_infrared2 = nullptr,
                const rs::stream &stream_color = rs::stream::color, const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared, unsigned char *const data_infrared2 = NULL,
+               unsigned char *const data_infrared, unsigned char *const data_infrared2 = nullptr,
                const rs::stream &stream_color = rs::stream::color, const rs::stream &stream_depth = rs::stream::depth,
                const rs::stream &stream_infrared = rs::stream::infrared,
                const rs::stream &stream_infrared2 = rs::stream::infrared2);
@@ -413,7 +413,8 @@ public:
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRealSense &rs);
 
-  struct vpRsStreamParams {
+  struct vpRsStreamParams
+  {
     int m_streamWidth;
     int m_streamHeight;
     rs::format m_streamFormat;
@@ -421,15 +422,13 @@ public:
 
     vpRsStreamParams()
       : m_streamWidth(640), m_streamHeight(480), m_streamFormat(rs::format::rgba8), m_streamFramerate(30)
-    {
-    }
+    { }
 
     vpRsStreamParams(const int streamWidth, const int streamHeight, const rs::format &streamFormat,
                      const int streamFramerate)
       : m_streamWidth(streamWidth), m_streamHeight(streamHeight), m_streamFormat(streamFormat),
-        m_streamFramerate(streamFramerate)
-    {
-    }
+      m_streamFramerate(streamFramerate)
+    { }
   };
 
   void setEnableStream(const rs::stream &stream, bool status);

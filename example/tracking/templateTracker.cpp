@@ -260,7 +260,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
       display = false;
       break;
     case 'h':
-      usage(argv[0], NULL, warp_type, tracker_type, last_frame, threshold_residual);
+      usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
       return false;
       break;
     case 'i':
@@ -296,13 +296,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   }
 
   if (warp_type >= WARP_LAST) {
-    usage(argv[0], NULL, warp_type, tracker_type, last_frame, threshold_residual);
+    usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument -w <warp type> with \"warp type\"=" << (int)warp_type << std::endl << std::endl;
     return false;
   }
   if (tracker_type >= TRACKER_LAST) {
-    usage(argv[0], NULL, warp_type, tracker_type, last_frame, threshold_residual);
+    usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument -t <tracker type> with \"tracker type\"=" << (int)tracker_type << std::endl
               << std::endl;
@@ -310,7 +310,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
   }
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, warp_type, tracker_type, last_frame, threshold_residual);
+    usage(argv[0], nullptr, warp_type, tracker_type, last_frame, threshold_residual);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -374,7 +374,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, opt_warp_type, opt_tracker_type, opt_last_frame, opt_threshold_residual);
+      usage(argv[0], nullptr, opt_warp_type, opt_tracker_type, opt_last_frame, opt_threshold_residual);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
                 << "  environment variable to specify the location of the " << std::endl
@@ -408,7 +408,7 @@ int main(int argc, const char **argv)
     }
     reader.acquire(I);
 
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
     if (opt_display) {
 // initialise a  display
 #if defined(VISP_HAVE_X11)
@@ -431,7 +431,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    vpTemplateTrackerWarp *warp = NULL;
+    vpTemplateTrackerWarp *warp = nullptr;
     switch (opt_warp_type) {
     case WARP_AFFINE:
       warp = new vpTemplateTrackerWarpAffine;
@@ -457,7 +457,7 @@ int main(int argc, const char **argv)
       return EXIT_FAILURE;
     }
 
-    vpTemplateTracker *tracker = NULL;
+    vpTemplateTracker *tracker = nullptr;
     switch (opt_tracker_type) {
     case TRACKER_SSD_ESM:
       tracker = new vpTemplateTrackerSSDESM(warp);

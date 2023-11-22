@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
     d2.init(I_depth, _posx + I_gray.getWidth() + 10, _posy, "Depth stream");
 
   while (true) {
-    sc.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, NULL, NULL, NULL);
+    sc.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr, nullptr);
 
     if (use_edges || use_klt) {
       vpImageConvert::convert(I_color, I_gray);

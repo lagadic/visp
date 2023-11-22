@@ -72,16 +72,16 @@ public:
   vpMutex() : m_mutex()
   {
 #if defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_init(&m_mutex, NULL);
+    pthread_mutex_init(&m_mutex, nullptr);
 #elif defined(_WIN32)
 #ifdef WINRT_8_1
-    m_mutex = CreateMutexEx(NULL, NULL, 0, NULL);
+    m_mutex = CreateMutexEx(nullptr, nullptr, 0, nullptr);
 #else
-    m_mutex = CreateMutex(NULL,                   // default security attributes
+    m_mutex = CreateMutex(nullptr,                   // default security attributes
                           FALSE,                  // initially not owned
-                          NULL);                  // unnamed mutex
+                          nullptr);                  // unnamed mutex
 #endif
-    if (m_mutex == NULL) {
+    if (m_mutex == nullptr) {
       std::cout << "CreateMutex error: " << GetLastError() << std::endl;
       return;
     }

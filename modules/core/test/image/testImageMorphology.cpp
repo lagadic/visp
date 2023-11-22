@@ -124,6 +124,26 @@ TEST_CASE("Binary image morphology", "[image_morphology]")
       CHECK((I_morpho_ref == I_morpho_tpl));
       CHECK((I_morpho_ref == I_morpho));
     }
+
+    SECTION("8-connexity-size5")
+    {
+      vpImage<unsigned char> I_dilatation_ref(8, 16, 1);
+      I_dilatation_ref[0][0] = 0;
+      I_dilatation_ref[0][1] = 0;
+      I_dilatation_ref[0][2] = 0;
+      I_dilatation_ref[6][12] = 0;
+      I_dilatation_ref[7][12] = 0;
+      vpImage<unsigned char> I_dilatation = I;
+      vpImage<unsigned char> I_erosion_ref(8, 16, 0);
+      vpImage<unsigned char> I_erosion = I;
+
+      const int size = 5;
+      vpImageMorphology::dilatation(I_dilatation, size);
+      vpImageMorphology::erosion(I_erosion, size);
+
+      CHECK((I_dilatation_ref == I_dilatation));
+      CHECK((I_erosion_ref == I_erosion));
+    }
   }
 
   SECTION("Matlab reference")
@@ -211,6 +231,37 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
 
       CHECK((I_morpho_ref == I_morpho));
     }
+
+    SECTION("8-connexity-size5")
+    {
+      const int size = 5;
+      vpImage<unsigned char> I_morpho(12, 12);
+      unsigned char count = 1;
+      for (int r = 0; r < 12; r++) {
+        for (int c = 0; c < 12; c++) {
+          I_morpho[r][c] = count;
+          count++;
+        }
+      }
+      unsigned char image_data_dilatation[12 * 12] = {
+         27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  36,  36,
+         39,  40,  41,  42,  43,  44,  45,  46,  47,  48,  48,  48,
+         51,  52,  53,  54,  55,  56,  57,  58,  59,  60,  60,  60,
+         63,  64,  65,  66,  67,  68,  69,  70,  71,  72,  72,  72,
+         75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  84,  84,
+         87,  88,  89,  90,  91,  92,  93,  94,  95,  96,  96,  96,
+         99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 108, 108,
+        111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 120, 120,
+        123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 132, 132,
+        135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 144, 144,
+        135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 144, 144,
+        135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 144, 144 };
+      vpImage<unsigned char> I_dilatation_ref(image_data_dilatation, 12, 12, true);
+
+      vpImageMorphology::dilatation<unsigned char>(I_morpho, size);
+
+      CHECK((I_dilatation_ref == I_morpho));
+    }
   }
 
   SECTION("Erosion")
@@ -237,6 +288,37 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
       vpImageMorphology::erosion<unsigned char>(I_morpho, connexity);
 
       CHECK((I_morpho_ref == I_morpho));
+    }
+
+    SECTION("8-connexity-size5")
+    {
+      const int size = 5;
+      vpImage<unsigned char> I_morpho(12, 12);
+      unsigned char count = 1;
+      for (int r = 0; r < 12; r++) {
+        for (int c = 0; c < 12; c++) {
+          I_morpho[r][c] = count;
+          count++;
+        }
+      }
+      unsigned char image_data_erosion[12 * 12] = {
+          1,   1,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,
+          1,   1,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,
+          1,   1,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,
+         13,  13,  13,  14,  15,  16,  17,  18,  19,  20,  21,  22,
+         25,  25,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,
+         37,  37,  37,  38,  39,  40,  41,  42,  43,  44,  45,  46,
+         49,  49,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,
+         61,  61,  61,  62,  63,  64,  65,  66,  67,  68,  69,  70,
+         73,  73,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,
+         85,  85,  85,  86,  87,  88,  89,  90,  91,  92,  93,  94,
+         97,  97,  97,  98,  99, 100, 101, 102, 103, 104, 105, 106,
+        109, 109, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118 };
+      vpImage<unsigned char> I_erosion_ref(image_data_erosion, 12, 12, true);
+
+      vpImageMorphology::erosion<unsigned char>(I_morpho, size);
+
+      CHECK((I_erosion_ref == I_morpho));
     }
   }
 
@@ -336,7 +418,7 @@ TEST_CASE("Gray image morphology", "[image_morphology]")
   }
 }
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
 

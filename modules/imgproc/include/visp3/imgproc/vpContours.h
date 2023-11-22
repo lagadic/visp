@@ -218,18 +218,18 @@ struct vpContour
   /*!
    * Default constructor.
    */
-  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(NULL), m_points() { }
+  vpContour() : m_children(), m_contourType(vp::CONTOUR_HOLE), m_parent(nullptr), m_points() { }
 
   /*!
    * Constructor of a given contour type.
    */
-  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(NULL), m_points() { }
+  vpContour(const vpContourType &type) : m_children(), m_contourType(type), m_parent(nullptr), m_points() { }
 
   /*!
    * Copy constructor.
    */
   vpContour(const vpContour &contour)
-    : m_children(), m_contourType(contour.m_contourType), m_parent(NULL), m_points(contour.m_points)
+    : m_children(), m_contourType(contour.m_contourType), m_parent(nullptr), m_points(contour.m_points)
   {
 
     // Copy the underlying contours
@@ -247,10 +247,10 @@ struct vpContour
   virtual ~vpContour()
   {
     for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-      (*it)->m_parent = NULL;
-      if (*it != NULL) {
+      (*it)->m_parent = nullptr;
+      if (*it != nullptr) {
         delete *it;
-        *it = NULL;
+        *it = nullptr;
       }
     }
   }
@@ -262,20 +262,20 @@ struct vpContour
   {
     m_contourType = other.m_contourType;
 
-    if (m_parent == NULL) {
+    if (m_parent == nullptr) {
       // We are a root or an uninitialized contour so delete everything
       for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        (*it)->m_parent = NULL;
-        if (*it != NULL) {
+        (*it)->m_parent = nullptr;
+        if (*it != nullptr) {
           delete *it;
-          *it = NULL;
+          *it = nullptr;
         }
       }
     }
     else {
       // Make the current contour the root contour
       // to avoid problem when deleting
-      m_parent = NULL;
+      m_parent = nullptr;
     }
 
     m_children.clear();
@@ -295,7 +295,7 @@ struct vpContour
   {
     m_parent = parent;
 
-    if (parent != NULL) {
+    if (parent != nullptr) {
       parent->m_children.push_back(this);
     }
   }

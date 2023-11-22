@@ -96,7 +96,7 @@ OPTIONS:                                               Default\n\
   -h \n\
      Print the help.\n\
 \n",
-          nframes, opath.c_str());
+nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
@@ -136,7 +136,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
       opath = optarg_;
       break;
     case 'h':
-      usage(argv[0], NULL, nframes, opath);
+      usage(argv[0], nullptr, nframes, opath);
       return false;
       break;
 
@@ -149,7 +149,7 @@ bool getOptions(int argc, const char **argv, bool &display, unsigned int &nframe
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, nframes, opath);
+    usage(argv[0], nullptr, nframes, opath);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -257,7 +257,8 @@ int main(int argc, const char **argv)
     std::cout << "Mean loop time: " << ttotal / nframes << " ms" << std::endl;
     std::cout << "Mean frequency: " << 1000. / (ttotal / nframes) << " fps" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

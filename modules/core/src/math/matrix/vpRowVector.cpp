@@ -122,7 +122,6 @@ vpRowVector &vpRowVector::operator=(double x)
   return *this;
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
   if (this != &other) {
@@ -137,9 +136,9 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 
     other.rowNum = 0;
     other.colNum = 0;
-    other.rowPtrs = NULL;
+    other.rowPtrs = nullptr;
     other.dsize = 0;
-    other.data = NULL;
+    other.data = nullptr;
   }
 
   return *this;
@@ -169,7 +168,6 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
-#endif
 
 bool vpRowVector::operator==(const vpRowVector &v) const
 {
@@ -578,7 +576,6 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
   init(v, c, ncols);
 }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -589,14 +586,13 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 
   v.rowNum = 0;
   v.colNum = 0;
-  v.rowPtrs = NULL;
+  v.rowPtrs = nullptr;
   v.dsize = 0;
-  v.data = NULL;
+  v.data = nullptr;
 }
-#endif
 
 /*!
-  Normalise the vector given as input parameter and return the normalized
+  Normalize the vector given as input parameter and return the normalized
   vector:
 
   \f[
@@ -889,7 +885,7 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
 */
 double vpRowVector::mean(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -906,7 +902,7 @@ double vpRowVector::mean(const vpRowVector &v)
 */
 double vpRowVector::median(const vpRowVector &v)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -920,7 +916,7 @@ double vpRowVector::median(const vpRowVector &v)
 */
 double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
 {
-  if (v.data == NULL || v.size() == 0) {
+  if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -1154,7 +1150,7 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
                       cncols, v.getCols()));
   resize(ncols);
-  if (this->rowPtrs == NULL) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
   for (unsigned int i = 0; i < ncols; i++)
     (*this)[i] = v[i + c];

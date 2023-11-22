@@ -127,7 +127,7 @@
   void
   vpDataParser::readMainClass(xmlDocPtr doc, xmlNodePtr node)
   {
-    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != NULL; tmpNode = tmpNode->next) {
+    for (xmlNodePtr tmpNode = node->xmlChildrenNode; tmpNode != nullptr; tmpNode = tmpNode->next) {
       if(tmpNode->type == XML_ELEMENT_NODE) {
 
         std::map<std::string, int>::iterator iter = this->nodeMap.find((char*)tmpNode->name);

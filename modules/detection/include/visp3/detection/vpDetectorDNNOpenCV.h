@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,14 +29,17 @@
  *
  * Description:
  * DNN object detection using OpenCV DNN module.
- *
-*****************************************************************************/
+ */
 #ifndef _vpDetectorDNN_h_
 #define _vpDetectorDNN_h_
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+
 #include <map>
 #include <string>
 #include <vector>
@@ -56,27 +58,27 @@ using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 /*!
-  \class vpDetectorDNNOpenCV
-  \ingroup group_detection_dnn
-  This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
-  OpenCV DNN module</a> and specialized to handle object detection task.
-
-  This class supports the following networks dedicated to object detection:
-
-  - Faster-RCNN, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_faster_rcnn network
-  - SSD MobileNet, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_mobilenet_ssd network
-  - ResNet 10, see usage for \ref dnn_usecase_face_detection
-  - Yolo v3, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov3 network
-  - Yolo v4, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov4 network
-  - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
-  - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
-  - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
-
-  This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
-  Examples of such JSON files can be found in the tutorial folder.
-
-  \sa \ref tutorial-detection-dnn
-*/
+ * \class vpDetectorDNNOpenCV
+ * \ingroup group_detection_dnn
+ * This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
+ * OpenCV DNN module</a> and specialized to handle object detection task.
+ *
+ * This class supports the following networks dedicated to object detection:
+ *
+ * - Faster-RCNN, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_faster_rcnn network
+ * - SSD MobileNet, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_mobilenet_ssd network
+ * - ResNet 10, see usage for \ref dnn_usecase_face_detection
+ * - Yolo v3, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov3 network
+ * - Yolo v4, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov4 network
+ * - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
+ * - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
+ * - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
+ *
+ * This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
+ * Examples of such JSON files can be found in the tutorial folder.
+ *
+ * \sa \ref tutorial-detection-dnn
+ */
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
 public:

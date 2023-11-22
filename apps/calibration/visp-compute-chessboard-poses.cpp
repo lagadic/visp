@@ -211,7 +211,7 @@ int main(int argc, const char **argv)
 
 
 #if defined(VISP_HAVE_MODULE_GUI)
-    vpDisplay *display = NULL;
+    vpDisplay *display = nullptr;
     if (opt_interactive) {
 #if defined(VISP_HAVE_X11)
       display = new vpDisplayX(I);

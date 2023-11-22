@@ -64,17 +64,17 @@ int main(int argc, const char **argv)
     long long_val = 33333333;
     float float_val = 3.14f;
     double double_val = 3.1415;
-    char *string_val = NULL;
+    char *string_val = nullptr;
 
     vpParseArgv::vpArgvInfo argTable[] = {
         {"-bool", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&bool_val, "Bool enabled."},
-        {"-integer", vpParseArgv::ARGV_INT, (char *)NULL, (char *)&int_val, "An integer value."},
-        {"-long", vpParseArgv::ARGV_LONG, (char *)NULL, (char *)&long_val, "A long value."},
-        {"-float", vpParseArgv::ARGV_FLOAT, (char *)NULL, (char *)&float_val, "A float value."},
-        {"-double", vpParseArgv::ARGV_DOUBLE, (char *)NULL, (char *)&double_val, "A double value."},
-        {"-string", vpParseArgv::ARGV_STRING, (char *)NULL, (char *)&string_val, "A chain value."},
-        {"-h", vpParseArgv::ARGV_HELP, (char *)NULL, (char *)NULL, "Print the help."},
-        {(char *)NULL, vpParseArgv::ARGV_END, (char *)NULL, (char *)NULL, (char *)NULL}};
+        {"-integer", vpParseArgv::ARGV_INT, (char *)nullptr, (char *)&int_val, "An integer value."},
+        {"-long", vpParseArgv::ARGV_LONG, (char *)nullptr, (char *)&long_val, "A long value."},
+        {"-float", vpParseArgv::ARGV_FLOAT, (char *)nullptr, (char *)&float_val, "A float value."},
+        {"-double", vpParseArgv::ARGV_DOUBLE, (char *)nullptr, (char *)&double_val, "A double value."},
+        {"-string", vpParseArgv::ARGV_STRING, (char *)nullptr, (char *)&string_val, "A chain value."},
+        {"-h", vpParseArgv::ARGV_HELP, (char *)nullptr, (char *)nullptr, "Print the help."},
+        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr}};
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
@@ -87,7 +87,7 @@ int main(int argc, const char **argv)
     cout << "  Long    value: " << long_val << endl;
     cout << "  Float   value: " << float_val << endl;
     cout << "  Double  value: " << double_val << endl;
-    if (string_val != NULL)
+    if (string_val != nullptr)
       cout << "  String  value: " << string_val << endl;
     else
       cout << "  String  value: \"\"" << endl << endl;

@@ -42,7 +42,7 @@
 #include <visp3/core/vpException.h>
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 
-static Calibration *s_calibinfo = NULL; //!< Struct containing calibration information
+static Calibration *s_calibinfo = nullptr; //!< Struct containing calibration information
 
 /*!
  * Default constructor.
@@ -120,10 +120,10 @@ void vpForceTorqueAtiSensor::unbias()
  */
 void vpForceTorqueAtiSensor::close()
 {
-  if (s_calibinfo != NULL) {
+  if (s_calibinfo != nullptr) {
     // free memory allocated to calibration structure
     destroyCalibration(s_calibinfo);
-    s_calibinfo = NULL;
+    s_calibinfo = nullptr;
   }
   vpComedi::close();
 }
@@ -202,7 +202,7 @@ void vpForceTorqueAtiSensor::setCalibrationFile(const std::string &calibfile, un
 
   // Create calibration struct
   s_calibinfo = createCalibration(m_calibfile.c_str(), m_index);
-  if (s_calibinfo == NULL) {
+  if (s_calibinfo == nullptr) {
     throw vpException(vpException::fatalError, "Calibration file %s couldn't be loaded", m_calibfile.c_str());
   }
 
@@ -231,7 +231,7 @@ int main()
  */
 std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 {
-  if (s_calibinfo == NULL) {
+  if (s_calibinfo == nullptr) {
     os << "Calibration Information is not available" << std::endl;
     return os;
   }

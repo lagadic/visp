@@ -165,7 +165,7 @@ public:
     */
   virtual std::ostream &getCameraInfo(std::ostream &os) = 0;
   /*!
-    Return the handler to the active camera or NULL if the camera is not
+    Return the handler to the active camera or nullptr if the camera is not
     connected. This function was designed to provide a direct access to
     the Pylon SDK to get access to advanced functionalities that are not
     implemented in this class.

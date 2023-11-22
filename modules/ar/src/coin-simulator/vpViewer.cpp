@@ -50,13 +50,13 @@
 
 #if defined(VISP_HAVE_SOWIN)
 vpViewer::vpViewer(HWND parent, vpSimulator *_simu, vpViewerType type)
-  : SoWinExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoWinExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOQT)
 vpViewer::vpViewer(QWidget *parent, vpSimulator *_simu, vpViewerType type)
-  : SoQtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoQtExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #elif defined(VISP_HAVE_SOXT)
 vpViewer::vpViewer(Widget parent, vpSimulator *_simu, vpViewerType type)
-  : SoXtExaminerViewer(parent, (char *)NULL, false), viewerType(type), simu(_simu)
+  : SoXtExaminerViewer(parent, (char *)nullptr, false), viewerType(type), simu(_simu)
 #endif
 {
   // Coin should not clear the pixel-buffer, so the background image
@@ -84,7 +84,7 @@ void vpViewer::actualRedraw(void)
 
     // this should be used only with the vpAR:vpSimulator
     // to diplay an image background
-    if (simu->image_background != NULL) {
+    if (simu->image_background != nullptr) {
       glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
       if (simu->typeImage == vpSimulator::grayImage)
         glDrawPixels((GLsizei)simu->getInternalWidth(), (GLsizei)simu->getInternalHeight(), (GLenum)GL_LUMINANCE,

@@ -37,7 +37,7 @@
 #include <visp3/core/vpMoment.h>
 /*!
   \file vpMomentCentered.h
-  \brief Centered moment descriptor (also refered to as \f$\mu_{ij}\f$).
+  \brief Centered moment descriptor (also referred as \f$\mu_{ij}\f$).
 
 */
 
@@ -75,7 +75,6 @@ class VISP_EXPORT vpMomentCentered : public vpMoment
 {
 public:
   vpMomentCentered();
-  virtual ~vpMomentCentered(){};
 
   void compute();
   double get(unsigned int i, unsigned int j) const;
@@ -84,7 +83,7 @@ public:
   /*!
      Moment name.
   */
-  inline const char *name() const { return "vpMomentCentered"; }
+  inline const std::string name() const { return "vpMomentCentered"; }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentCentered &v);
   void printWithIndices(std::ostream &os) const;

@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -30,16 +29,13 @@
  *
  * Description:
  * Definition of vpFeatureMomentArea associated to vpMomentArea
- *
- * Authors:
- * Manikandan Bakthavatchalam
- *
-*****************************************************************************/
+ */
+
 /*!
-  \file vpFeatureMomentArea.h
-  \brief Implementation of the interaction matrix computation for
-  vpMomentArea.
-*/
+ * \file vpFeatureMomentArea.h
+ * \brief Implementation of the interaction matrix computation for
+ * vpMomentArea.
+ */
 #ifndef _vpFeatureMomentArea_h_
 #define _vpFeatureMomentArea_h_
 
@@ -48,43 +44,40 @@
 class vpMomentDatabase;
 
 /*!
-  \class vpFeatureMomentArea
-
-  \ingroup group_visual_features
-
-  \brief Surface moment feature. Computes the interaction matrix associated
-  with vpMomentArea.
-
-*/
-
+ * \class vpFeatureMomentArea
+ *
+ * \ingroup group_visual_features
+ *
+ * \brief Surface moment feature. Computes the interaction matrix associated
+ * with vpMomentArea.
+ */
 class VISP_EXPORT vpFeatureMomentArea : public vpFeatureMoment
 {
 public:
   /*!
-  Initializes the feature with information about the database of moment
-  primitives, the object plane and feature database.
-  \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory.
-  It is used to access different moment values later used to compute the final matrix.
-  \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
-  \param featureMoments : Feature database.
-
-  */
+   * Initializes the feature with information about the database of moment
+   * primitives, the object plane and feature database.
+   * \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory.
+   * It is used to access different moment values later used to compute the final matrix.
+   * \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+   * \param featureMoments : Feature database.
+   */
   vpFeatureMomentArea(vpMomentDatabase &data_base, double A_, double B_, double C_,
-                      vpFeatureMomentDatabase *featureMoments = NULL)
+                      vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
-  {
-  }
+  { }
 
-  void compute_interaction();
+  void compute_interaction() override;
   /*!
-    associated moment name
-    */
-  const char *momentName() const { return "vpMomentArea"; }
+   * Associated moment name.
+   */
+  const std::string momentName() const override { return "vpMomentArea"; }
+
   /*!
-    feature name
-    */
-  const char *name() const { return "vpFeatureMomentArea"; }
+   * Feature name.
+   */
+  const std::string name() const override { return "vpFeatureMomentArea"; }
 };
 #endif

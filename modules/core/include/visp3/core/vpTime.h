@@ -41,9 +41,7 @@
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 #include <chrono>
-#endif
 
 #include <visp3/core/vpException.h>
 
@@ -94,8 +92,7 @@ public:
 
 private:
   double m_durationMs;
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 &&                                                                       \
-    (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+#if (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
   std::chrono::steady_clock::time_point m_lastTimePoint;
 #else
   double m_lastTimePoint;
