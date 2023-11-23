@@ -34,6 +34,27 @@
         }
       ]
     },
+    "vpMath" :{
+      "methods": [
+        {
+          "static": true,
+          "signature": "double lineFitting(const std::vector<vpImagePoint>&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            true
+          ]
+        }
+      ]
+    },
     "vpImage": {
       "additional_bindings": "bindings_vpImage",
       "use_buffer_protocol": true,
@@ -190,7 +211,42 @@
     },
     "vpHomogeneousMatrix": {
       "additional_bindings": "bindings_vpHomogeneousMatrix",
-      "use_buffer_protocol": true
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": false,
+          "signature": "void convert(std::vector<double>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void convert(std::vector<float>&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpThetaUVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void extract(double&, vpColVector&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
     },
     "vpPolygon": {
       "methods":
@@ -200,6 +256,22 @@
           "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const vpPolygon::PointInPolygonMethod&)",
           "custom_name": "isInsideFromPoints"
         }
+      ]
+    },
+    "vpPoint": {
+      "methods":
+      [
+        {
+          "static": false,
+          "ignore": true,
+          "signature": "void getWorldCoordinates(std::vector<double>&)"
+        },
+        {
+          "static": false,
+          "ignore": true,
+          "signature": "void getWorldCoordinates(double&, double&, double&)"
+        }
+
       ]
     },
     "vpBSpline": {
