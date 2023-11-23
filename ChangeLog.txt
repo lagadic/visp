@@ -28,6 +28,8 @@ ViSP 3.x.x (Version in development)
     . Update tutorial: How to use Blender to generate simulated data for model-based tracking
       experiments with step by step detailed explanations
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
+    . New tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-conda-package.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -35,6 +37,7 @@ ViSP 3.x.x (Version in development)
     . [#1272] Unable to build ViSP with PCL/VTK build from source, VTK headers are not found by ViSP
     . [#1273] Build error in visp_java without deprecated functionalities
     . [#1274] Build issue no member named clamp in namespace std
+    . [#1279] Issue in vpPoseVector json serialization
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
