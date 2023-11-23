@@ -3,39 +3,38 @@
 \page tutorial-install-conda-package Tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
 \tableofcontents
 
-Conda is both a package and environment manager. It provides a simple way to install packages inside an isolated environment, avoiding the 
-installation alongside system wide packages and letting you switch between different environment that may use different and/or 
+Conda is both a package manager and an environment manager. It provides a simple way to install packages inside an isolated environment, avoiding the
+installation alongside system wide packages and letting you switch between different environment that may use different and/or
 incompatible versions. More especially, it can easily handle different Python versions and installations.
 Conda packages are not restricted to Python and can be written in any language, so it is well suited for C++ or C++ / Python packages.
-It also provides an mecanism to handle package dependency and can detect dependencies incompatibilities, preventing the user 
-to break its environment. 
+Conda also provides a package dependency management mechanism and can detect incompatible dependencies, saving the user from breaking their environment.
 
-Since release 3.5.0, ViSP is available as a <a href=https://github.com/conda-forge/visp-feedstock/tree/main>Conda package from conda-forge</a> 
+Since release 3.5.0, ViSP is available as a <a href=https://github.com/conda-forge/visp-feedstock/tree/main>Conda package from conda-forge</a>
 for x86 64 bits architectures on Linux, OSX and Windows platforms.
 
-If you are already familiar to Conda and your Conda installation is configured with `conda-forge` as the default channel,
-then you can skip the first sections and directly go to the \ref install_visp_conda_package. Otherwise, these steps will guide 
-you on how to install and configure Conda first. 
- 
-If you are new to Conda, this <a href=https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf> cheat sheet</a> 
+If you are already familiar with Conda and your Conda installation is configured with `conda-forge` as the default channel,
+then you can skip the first sections and directly go to the \ref install_visp_conda_package. Otherwise, these steps will guide
+you on how to install and configure Conda first.
+
+If you are new to Conda, this <a href=https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf> cheat sheet</a>
 might be also very useful.
 
 \section install_conda Installing Conda
 
-We recommend to install Conda from the installers provided by the conda-forge community, such as 
+We recommend to install Conda from the installers provided by the conda-forge community, such as
 <a href=https://github.com/conda-forge/miniforge>Miniforge</a>, which will be already configured as desired.
 
-Since release v23.10, Conda is automatically configured to use `libmamba-solver` by default to resolve dependencies. We highly recommand 
+Since release v23.10, Conda is automatically configured to use `libmamba-solver` by default to resolve dependencies. We highly recommand
 the use of this solver as it dramastically improve the performances.
 To check your current Conda version, just run:
 \verbatim
-conda info
+$ conda info
 \endverbatim
 and check for the `conda version` line.
 If your version is `23.10.0` or above, you have nothing to do, `libmamba-solver` is already set-up by default.
 Otherwise, we recommand you to update your Conda version:
 \verbatim
-conda update -n base conda -c conda-forge
+$ conda update -n base conda -c conda-forge
 \endverbatim
 
 \section check_conda_install Checking your Conda installation
@@ -43,7 +42,7 @@ conda update -n base conda -c conda-forge
 The initial Conda configuration can differ depending on the installer and distribution you have used. If you
 installed Conda using Miniforge distribution as in previous section, then you can skip this section
 and directly go to \ref install_visp_conda_package. If you have an old Conda installation, used another installer or are
-unsure about your Conda configuration, please proceed this section carefully.
+ensure about your Conda configuration, please proceed this section carefully.
 First, you need to ensure that the conda-forge channel is enabled in your Conda installation
 and has priority:
 \verbatim
@@ -57,30 +56,30 @@ channels:
   - defaults
 \endverbatim
 
-If not present in the list, you to add it permanently to your channels list using:
+If not present in the list, you may add it permanently to your channels list using:
 \verbatim
 $ conda config --add channels conda-forge
 \endverbatim
 
-If the order in the list (channel priority) is reversed, just type re-add 
+If the order in the list (channel priority) is reversed, just type re-add
 the conda-forge channel using the previous command and you should get the desired output.
 
 We also strongly advise that you use the strict channel priority mode, as recommended by Conda
  <a href=https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html#strict>here</a>:
 \verbatim
-$ conda config --show channel_priority    
+$ conda config --show channel_priority
 \endverbatim
 
 \note You can also directly access to your Conda configuration by editing the `~/.condarc` file.
 
 \section create_conda_env Optional: Creating a new Conda environment
 
-After a fresh installation, your shell should have been configured to support Conda. 
+After a fresh installation, your shell should have been configured to support Conda.
 The current active environment (default is `base`) should appear in your command prompt between parenthesis, e.g.:
 \verbatim
-(base)$ 
+(base)$
 \endverbatim
-`base` is the default and root environment. Most of the time, you should avoid installing packages directly in this 
+`base` is the default and root environment. Most of the time, you should avoid installing packages directly in this
 environment. Instead, you should create a new environment for each desired context.This can be done by:
 \verbatim
 $ conda create -n my-visp-env
@@ -98,7 +97,7 @@ You can also check this by:
 \verbatim
 $ conda env list
 \endverbatim
-This command will list all your existing Conda environment, and your active environment will have its name suffixed 
+This command will list all your existing Conda environment, and your active environment will have its name suffixed
 by an asterisk (*).
 
 You can deactivate the active environment by:
@@ -107,7 +106,7 @@ $ conda deactivate
 \endverbatim
 which should get you back to the environment from which your did your last activation (recall that environments stack).
 
-It might be interesting to note that a sysroot directory structure is created for each Conda environment, when the environment is created. 
+It might be interesting to note that a sysroot directory structure is created for each Conda environment, when the environment is created.
 This is then the place where your libraries, headers and so will be put when installing Conda packages.
 You can access to the active environment sysroot directory directly using the `CONDA_PREFIX` environment variable.
 Depending on how much populated your sysroot already is, you should have a directory structure similar to:
@@ -134,13 +133,13 @@ $ conda install visp
 $ conda update -n base conda -c conda-forge
 \endverbatim
 
-- If you develop C++ code with Conda, it is good practice to keep your project sources associated to one Conda environment.
+- If you develop C++ code with Conda, it is a good practice to keep your project sources associated to one Conda environment.
 This ease keeping integrity between code and the environment and mixing with dependencies managers such vcpkg.
 One way to do so is to put all the code associated to an environment inside the Conda environment hierarchy sysroot.
 More precisely, you could have a `src` directory in every Conda environment sysroot like this:
 \image html conda_sysroot_sources.svg One way to organize your sources associated to a given Conda environment.
 
-Another way to do so is to create the Conda environment in a dedicated directory (commonly named `envs/`) within your project source, 
+Another way to do so is to create the Conda environment in a dedicated directory (commonly named `envs/`) within your project source,
 as recommanded <a href=hhttps://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#specifying-a-location-for-an-environment>here</a>
 in the official Conda documentation:
 \verbatim
@@ -148,11 +147,10 @@ $ conda create --prefix <project_source_dir>/envs
 $ conda activate <project_source_dir>/envs
 \endverbatim
 
-\section install_ubuntu_package_next Next tutorial
-
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
-
 \section conda_package_config Configuration used for the Conda package
+
+To get an idea of the third parties available in the ViSP Conda package, we provide below the contents of the file
+ViSP-third-party.txt file for the Conda Linux-64, OSX-64 and Windows-64 packages.
 
 \subsection conda_package_config_linux_64 Configuration for the Linux-64 Conda package
 
@@ -203,20 +201,20 @@ General configuration information for ViSP 3.6.0
 
   Python (for build):            $PREFIX/bin/python
 
-  Java:                          
+  Java:
     ant:                         no
     JNI:                         no
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  OpenCV: 
+  OpenCV:
     Version:                     4.8.1
     Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm bioinspired ccalib cvv datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
     OpenCV dir:                  $PREFIX/lib/cmake/opencv4
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  yes
     \- Use OpenBLAS:             no
@@ -227,11 +225,11 @@ General configuration information for ViSP 3.6.0
     Use Eigen3:                  yes (ver 3.4.0)
     Use OpenCV:                  yes (ver 4.8.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -240,7 +238,7 @@ General configuration information for ViSP 3.6.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    yes (ver 80)
     Use PNG:                     yes (ver 1.6.39)
     \- Use ZLIB:                 yes (ver 1.2.13)
@@ -248,7 +246,7 @@ General configuration information for ViSP 3.6.0
     Use stb_image (built-in):    yes (ver 2.27.0)
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -267,14 +265,14 @@ General configuration information for ViSP 3.6.0
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI: 
+  GUI:
     Use X11:                     yes
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.8.1)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              yes (ver 2.2.7)
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -284,7 +282,7 @@ General configuration information for ViSP 3.6.0
     Use Basler Pylon:            no
     Use IDS uEye:                no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              yes (ver 2.54.1)
     Use Occipital Structure:     no
@@ -295,38 +293,38 @@ General configuration information for ViSP 3.6.0
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Mocap: 
+  Mocap:
     Use Qualisys:                no
     Use Vicon:                   no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 yes (ver 2.11.5)
     Use json (nlohmann):         no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
     Use Simd (built-in):         yes (ver 4.9.109)
 
-  DNN: 
+  DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 no
     \- Use mathjax:              no
 
@@ -397,20 +395,20 @@ General configuration information for ViSP 3.6.0
 
   Python (for build):            $PREFIX/bin/python
 
-  Java:                          
+  Java:
     ant:                         no
     JNI:                         /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include/darwin /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  OpenCV: 
+  OpenCV:
     Version:                     4.8.1
     Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm bioinspired ccalib datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
     OpenCV dir:                  $PREFIX/lib/cmake/opencv4
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -421,11 +419,11 @@ General configuration information for ViSP 3.6.0
     Use Eigen3:                  yes (ver 3.4.0)
     Use OpenCV:                  yes (ver 4.8.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -434,7 +432,7 @@ General configuration information for ViSP 3.6.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    yes (ver 80)
     Use PNG:                     yes (ver 1.6.39)
     \- Use ZLIB:                 yes (ver 1.2.13)
@@ -442,7 +440,7 @@ General configuration information for ViSP 3.6.0
     Use stb_image (built-in):    yes (ver 2.27.0)
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -461,14 +459,14 @@ General configuration information for ViSP 3.6.0
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI: 
+  GUI:
     Use X11:                     yes
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.8.1)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              yes (ver 2.2.7)
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -478,7 +476,7 @@ General configuration information for ViSP 3.6.0
     Use Basler Pylon:            no
     Use IDS uEye:                no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              yes (ver 2.54.1)
     Use Occipital Structure:     no
@@ -489,38 +487,38 @@ General configuration information for ViSP 3.6.0
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Mocap: 
+  Mocap:
     Use Qualisys:                no
     Use Vicon:                   no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
     Use json (nlohmann):         no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
     Use Simd (built-in):         yes (ver 4.9.109)
 
-  DNN: 
+  DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 no
     \- Use mathjax:              no
 
@@ -593,20 +591,20 @@ General configuration information for ViSP 3.6.0
 
   Python (for build):            D:/bld/visp_1698083699413/_h_env/python.exe
 
-  Java:                          
+  Java:
     ant:                         no
     JNI:                         C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include/win32 C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  OpenCV: 
+  OpenCV:
     Version:                     4.8.1
     Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm ccalib cvv datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
     OpenCV dir:                  D:/bld/visp_1698083699413/_h_env/Library/cmake
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -617,11 +615,11 @@ General configuration information for ViSP 3.6.0
     Use Eigen3:                  yes (ver 3.4.0)
     Use OpenCV:                  yes (ver 4.8.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -630,7 +628,7 @@ General configuration information for ViSP 3.6.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    yes (ver 80)
     Use PNG:                     yes (ver 1.6.39)
     \- Use ZLIB:                 yes (ver 1.2.13)
@@ -638,7 +636,7 @@ General configuration information for ViSP 3.6.0
     Use stb_image (built-in):    yes (ver 2.27.0)
     Use TinyEXR (built-in):      yes (ver 1.0.2)
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -657,14 +655,14 @@ General configuration information for ViSP 3.6.0
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
-  GUI: 
+  GUI:
     Use X11:                     no
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.8.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -674,7 +672,7 @@ General configuration information for ViSP 3.6.0
     Use Basler Pylon:            no
     Use IDS uEye:                no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
     Use Occipital Structure:     no
@@ -685,38 +683,38 @@ General configuration information for ViSP 3.6.0
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Mocap: 
+  Mocap:
     Use Qualisys:                no
     Use Vicon:                   no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
     Use json (nlohmann):         no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
     Use Simd (built-in):         yes (ver 4.9.109)
 
-  DNN: 
+  DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 no
     \- Use mathjax:              no
 
@@ -736,4 +734,9 @@ General configuration information for ViSP 3.6.0
 
 ==========================================================
 \endverbatim
+
+\section install_conda_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
 */
