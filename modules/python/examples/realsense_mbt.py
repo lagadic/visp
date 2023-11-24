@@ -16,6 +16,9 @@ from visp.gui import DisplayOpenCV
 from visp.core import Color
 from visp.core import PixelMeterConversion
 
+import pyrealsense2 as rs
+
+
 try:
   import cv2
 except:
@@ -67,20 +70,19 @@ class FrameData:
 
 
 def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: ImageGray):
-  color_format = '{:04d}_L.jpg'
-  depth_format = 'Image{:04d}_R.exr'
+  pipe = rs.pipeline()
+  profile = pipe.start()
+
   use_depth = cam_depth is not None
   iteration = 1
   while True:
-    start_parse_time = time.time()
-    color_filepath = exp_config.color_images_dir / color_format.format(iteration)
-    if not color_filepath.exists():
-      print(f'Could not find image {color_filepath}, is the sequence finished?')
-      return
-    ImageIo.read(I, str(color_filepath), ImageIo.IO_DEFAULT_BACKEND)
+    frames = pipe.wait_for_frames()
+    print(frames)
+    I_depth_raw = np.asanyarray(frames.get_depth_frame().as_frame().get_data())
 
-
-    I_depth_raw = None
+    print(I_depth_raw.shape)
+    I = np.asanyarray(frames.get_color_frame().as_frame().get_data())
+    print(I.shape)
     point_cloud = None
     if use_depth:
       t = time.time()
@@ -105,7 +107,6 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
       point_cloud = np.stack((xs * Z, ys * Z, Z), axis=-1)
 
       print(f'\tPoint_cloud took {(time.time() - t) * 1000}ms')
-
 
     cMo_ground_truth = HomogeneousMatrix()
     ground_truth_file = exp_config.ground_truth_dir / (exp_config.color_camera_name + '_{:04d}.txt'.format(iteration))
