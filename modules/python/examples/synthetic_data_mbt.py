@@ -72,6 +72,7 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
   use_depth = cam_depth is not None
   iteration = 1
   while True:
+    start_parse_time = time.time()
     color_filepath = exp_config.color_images_dir / color_format.format(iteration)
     if not color_filepath.exists():
       print(f'Could not find image {color_filepath}, is the sequence finished?')
@@ -82,12 +83,14 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
     I_depth_raw = None
     point_cloud = None
     if use_depth:
+      t = time.time()
       depth_filepath = exp_config.depth_images_dir / depth_format.format(iteration)
       if not depth_filepath.exists():
         print(f'Could not find image {depth_filepath}')
         return
       I_depth_np = cv2.imread(str(depth_filepath), cv2.IMREAD_ANYCOLOR | cv2.IMREAD_ANYDEPTH)
       I_depth_np = I_depth_np[..., 0]
+      print(f'\tDepth load took {(time.time() - t) * 1000}ms')
       I_depth_raw = ImageUInt16(I_depth_np * 32767.5)
       if I_depth_np.size == 0:
         print('Could not successfully read the depth image')
@@ -102,13 +105,15 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
       point_cloud[..., 0] = xs * Z
       point_cloud[..., 1] = ys * Z
       point_cloud[..., 2] = Z
-      print(f'Point_cloud took {time.time() - t}')
+      print(f'\tPoint_cloud took {(time.time() - t) * 1000}ms')
 
 
     cMo_ground_truth = HomogeneousMatrix()
     ground_truth_file = exp_config.ground_truth_dir / (exp_config.color_camera_name + '_{:04d}.txt'.format(iteration))
     cMo_ground_truth.load(str(ground_truth_file))
     iteration += 1
+    end_parse_time = time.time()
+    print(f'Data parsing took: {(end_parse_time - start_parse_time) * 1000}ms')
     yield FrameData(I, I_depth_raw, point_cloud, cMo_ground_truth)
 
 
@@ -190,7 +195,7 @@ if __name__ == '__main__':
     tracker.initFromPose(I, frame_data.cMo_ground_truth)
   else:
     tracker.initClick(I, str(mbt_model.init_file))
-
+  start_time =  time.time()
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
       ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
@@ -208,7 +213,7 @@ if __name__ == '__main__':
       }
       t = time.time()
       tracker.track(image_dict, {'Camera2': pc})
-      print(f'Tracking took {time.time() - t}s')
+      print(f'Tracking took {(time.time() - t) * 1000}ms')
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
@@ -219,3 +224,5 @@ if __name__ == '__main__':
       Display.flush(I_depth)
     if args.step_by_step:
       Display.getKeyboardEvent(I, blocking=True)
+  end_time = time.time()
+  print(f'total time = {end_time - start_time}')

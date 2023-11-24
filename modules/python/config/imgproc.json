@@ -3,5 +3,24 @@
   "ignored_classes": [],
   "user_defined_headers": [],
   "classes": {},
+  "functions": [
+    {
+      "static": false,
+      "signature": "void findContours(const vpImage<unsigned char>&, vp::vpContour&, std::vector<std::vector<vpImagePoint>>&, const vp::vpContourRetrievalType&)",
+      "use_default_param_policy": false,
+      "param_is_input": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "param_is_output": [
+        false,
+        false,
+        true,
+        false
+      ]
+    }
+  ],
   "enums": {}
 }

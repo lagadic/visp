@@ -13,7 +13,7 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
   pyMbGenericTracker.def("track", [](vpMbGenericTracker &self, std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {
     std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-    std::map<std::string, std::vector<vpColVector>> mapOfVectors;
+    std::map<std::string, vpMatrix> mapOfVectors;
     double t = vpTime::measureTimeMs();
     for (const auto &point_cloud_pair: mapOfPointClouds) {
 
@@ -27,20 +27,12 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
       const auto shape = buffer.shape;
       mapOfHeights[point_cloud_pair.first] = shape[0];
       mapOfWidths[point_cloud_pair.first] = shape[1];
-
-      std::vector<vpColVector> pc(shape[0] * shape[1], vpColVector(3));
+      vpMatrix pc(shape[0] * shape[1], 3);
       const double *data = point_cloud_pair.second.unchecked<3>().data(0, 0, 0);
-      for (ssize_t i = 0; i < shape[0]; ++i) {
-        for (ssize_t j = 0; j < shape[1]; ++j) {
-          size_t vec_idx = i * shape[1] + j;
-          size_t idx = i * shape[1] * 3 + j * 3;
-          memcpy(pc[vec_idx].data, data + idx, sizeof(double) * 3);
-        }
-      }
-
+      memcpy(pc.data, data, shape[0] * shape[1] * 3 * sizeof(double));
       mapOfVectors[point_cloud_pair.first] = std::move(pc);
     }
-    std::map<std::string, const std::vector<vpColVector> * > mapOfVectorPtrs;
+    std::map<std::string, const vpMatrix * > mapOfVectorPtrs;
     for (const auto &p: mapOfVectors) {
       mapOfVectorPtrs[p.first] = &(p.second);
     }

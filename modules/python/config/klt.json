@@ -9,6 +9,23 @@
           "static": false,
           "signature": "void display(const vpImage<unsigned char>&, const vpColor&, unsigned int)",
           "custom_name": "displaySelf"
+        },
+        {
+          "static": false,
+          "signature": "void getFeature(const int&, long&, float&, float&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            true
+          ]
         }
       ]
     }

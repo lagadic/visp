@@ -53,7 +53,8 @@
 class VISP_EXPORT vpMbtFaceDepthDense
 {
 public:
-  enum vpDepthDenseFilteringType {
+  enum vpDepthDenseFilteringType
+  {
     NO_FILTERING = 0,                         ///< Face is used if visible
     DEPTH_OCCUPANCY_RATIO_FILTERING = 1 << 1, ///< Face is used if there is
                                               ///< enough depth information in
@@ -106,6 +107,14 @@ public:
 #endif
                               ,
                               const vpImage<bool> *mask = nullptr);
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
+                              const vpMatrix &point_cloud, unsigned int stepX, unsigned int stepY
+#if DEBUG_DISPLAY_DEPTH_DENSE
+                              ,
+                              vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
+#endif
+                              ,
+                              const vpImage<bool> *mask = nullptr);
 
   void computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &error);
 
@@ -146,7 +155,8 @@ public:
   {
     if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
       std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
-    } else {
+    }
+    else {
       m_depthDenseFilteringOccupancyRatio = occupancyRatio;
     }
   }
@@ -168,7 +178,7 @@ private:
     //! The second extremity clipped in the image frame
     vpImagePoint m_imPt2;
 
-    PolygonLine() : m_p1(nullptr), m_p2(nullptr), m_poly(), m_imPt1(), m_imPt2() {}
+    PolygonLine() : m_p1(nullptr), m_p2(nullptr), m_poly(), m_imPt1(), m_imPt2() { }
 
     PolygonLine(const PolygonLine &polyLine)
       : m_p1(nullptr), m_p2(nullptr), m_poly(polyLine.m_poly), m_imPt1(polyLine.m_imPt1), m_imPt2(polyLine.m_imPt2)
