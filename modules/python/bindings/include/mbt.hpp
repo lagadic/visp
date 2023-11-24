@@ -14,7 +14,6 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {
     std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
     std::map<std::string, vpMatrix> mapOfVectors;
-    double t = vpTime::measureTimeMs();
     for (const auto &point_cloud_pair: mapOfPointClouds) {
 
       py::buffer_info buffer = point_cloud_pair.second.request();
@@ -36,8 +35,6 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
     for (const auto &p: mapOfVectors) {
       mapOfVectorPtrs[p.first] = &(p.second);
     }
-    double tt = vpTime::measureTimeMs();
-    std::cout << (tt - t) << std::endl;
     self.track(mapOfImages, mapOfVectorPtrs, mapOfWidths, mapOfHeights);
 
 

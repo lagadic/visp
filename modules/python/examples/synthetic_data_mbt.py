@@ -96,15 +96,14 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
         print('Could not successfully read the depth image')
         return
       t = time.time()
-      point_cloud = np.empty((*I_depth_np.shape, 3), dtype=np.float64)
+      # point_cloud = np.empty((*I_depth_np.shape, 3), dtype=np.float64)
       Z = I_depth_np.copy()
       Z[Z > 2] = 0.0 # Clamping values that are too high
 
       vs, us = np.meshgrid(range(I_depth_np.shape[0]), range(I_depth_np.shape[1]), indexing='ij')
       xs, ys = PixelMeterConversion.convertPoints(cam_depth, us, vs)
-      point_cloud[..., 0] = xs * Z
-      point_cloud[..., 1] = ys * Z
-      point_cloud[..., 2] = Z
+      point_cloud = np.stack((xs * Z, ys * Z, Z), axis=-1)
+
       print(f'\tPoint_cloud took {(time.time() - t) * 1000}ms')
 
 
