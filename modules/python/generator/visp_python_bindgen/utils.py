@@ -203,6 +203,13 @@ def get_type(param: Union[types.FunctionType, types.DecoratedType, types.Value],
       return repr_str + '*'
     else:
       return None
+  elif isinstance(param, types.Array):
+    repr_str = get_type(param.array_of, owner_specs, header_env_mapping)
+    if repr_str is not None:
+      return repr_str + '[]'
+    else:
+      return None
+
   else:
     return None
 
