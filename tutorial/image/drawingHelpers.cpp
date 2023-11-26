@@ -65,8 +65,9 @@ vpDisplayD3D drawingHelpers::d_IcannyImgFilter;
 #endif
 
 void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
-            vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
+                          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter)
 {
+#if defined(VISP_HAVE_DISPLAY)
   d_Iinput.init(Iinput, 10, 10);
   d_IcannyVisp.init(IcannyVisp, 10, Iinput.getHeight() + 10 * 2);
   if (p_dIx != nullptr) {
@@ -78,6 +79,7 @@ void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char>
   if (p_IcannyimgFilter != nullptr) {
     d_IcannyImgFilter.init(*p_IcannyimgFilter, Iinput.getWidth() + 2 * 10, Iinput.getHeight() + 10 * 2);
   }
+#endif
 }
 
 void drawingHelpers::display(vpImage<unsigned char> &I, const std::string &title)
