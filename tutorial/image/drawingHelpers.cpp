@@ -79,6 +79,12 @@ void drawingHelpers::init(vpImage<unsigned char> &Iinput, vpImage<unsigned char>
   if (p_IcannyimgFilter != nullptr) {
     d_IcannyImgFilter.init(*p_IcannyimgFilter, Iinput.getWidth() + 2 * 10, Iinput.getHeight() + 10 * 2);
   }
+#else
+  (void)Iinput;
+  (void)IcannyVisp;
+  (void)p_dIx;
+  (void)p_dIy;
+  (void)p_IcannyimgFilter;
 #endif
 }
 
