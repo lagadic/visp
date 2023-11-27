@@ -9,6 +9,41 @@ set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
 # HTML output directory
 set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
 
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings module
+#
+#############################################################################
+
 # Sphinx Template directory
 set(SPHINX_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/_templates")
 
@@ -16,8 +51,6 @@ configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
 	"${BINARY_BUILD_DIR}/conf.py"
 	@ONLY)
-
-
 
 foreach(module ${python_bound_modules})
   # start string with 2 spaces since its included in autosummary
@@ -30,8 +63,8 @@ configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/api.rst"
   @ONLY)
 
-add_custom_target(visp_python_docs
-  COMMAND ${Python_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+add_custom_target(visp_python_bindings_docs
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
 	COMMAND sphinx-build
 		-q -b html
 		-c "${BINARY_BUILD_DIR}"
@@ -40,4 +73,4 @@ add_custom_target(visp_python_docs
 		"${SPHINX_HTML_DIR}"
 	COMMENT "Building HTML documentation for ViSP Python doc with Sphinx")
 
-add_dependencies(visp_python_docs visp_python_bindings_install)
+add_dependencies(visp_python_bindings_docs visp_python_bindings_install)

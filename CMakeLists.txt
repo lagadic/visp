@@ -275,20 +275,22 @@ endif()
 # --- Python Bindings requirements ---
 
 # this avoids non-active conda from getting picked anyway on Windows
-set(Python_FIND_REGISTRY LAST)
+#set(Python_FIND_REGISTRY LAST)
 # Use environment variable PATH to decide preference for Python
-set(Python_FIND_VIRTUALENV FIRST)
-set(Python_FIND_STRATEGY LOCATION)
+#set(Python_FIND_VIRTUALENV FIRST)
+#set(Python_FIND_STRATEGY LOCATION)
 
-find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
-if(Python_FOUND)
-  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
-endif()
-find_package(pybind11)
-if(pybind11_FOUND)
-  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
-endif()
-message("${pybind11_FOUND}")
+#find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
+#if(Python_FOUND)
+#  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
+#endif()
+#find_package(pybind11)
+VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+
+#if(pybind11_FOUND)
+#  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
+#endif()
+#message("${pybind11_FOUND}")
 # ---
 
 
@@ -434,8 +436,8 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON  "" "" "Enable Python support" "" ON IF (VISP_PYTHON_BINDINGS_EXECUTABLE AND VISP_PYBIND11_DIR) )
-VP_OPTION(BUILD_PYTHON_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11) )
+VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
 # Build demos as an option.
@@ -1230,7 +1232,7 @@ endif()
 if(BUILD_APPS)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
 endif()
-if(BUILD_PYTHON)
+if(BUILD_PYTHON_BINDINGS)
   add_subdirectory(modules/python)
 endif()
 
@@ -1505,7 +1507,8 @@ endif()
 
 # ========================== java ==========================
 status("")
-status("  Python (for java build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE "no")
+status("  Python 3:")
+status("    Interpreter:"     PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (ver ${PYTHON3_VERSION_STRING})"    ELSE "no")
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
@@ -1516,16 +1519,15 @@ if(BUILD_JAVA OR BUILD_visp_java)
   endif()
 endif()
 
-# ========================== Python ==========================
+# ======================= Python bindings ========================
 status("")
-status("  Building Python wrapper :"   BUILD_PYTHON    THEN "yes" ELSE "no")
-if(BUILD_PYTHON)
-  status("    Python interpreter:"     Python_FOUND   THEN "${Python_EXECUTABLE}" ELSE "no")
-  status("    Pybind11:"               pybind11_FOUND THEN "${pybind11_DIR}" ELSE "no")
+status("  Python3 bindings:"           BUILD_PYTHON_BINDINGS    THEN "yes" ELSE "no")
+if(BUILD_PYTHON_BINDINGS)
+  status("    Python3 interpreter:"    PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (ver ${PYTHON3_VERSION_STRING})" ELSE "no")
+  status("    Pybind11:"               USE_PYBIND11         THEN "${pybind11_DIR}" ELSE "no")
   status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
   status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
   status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
-
 endif()
 
 # ============================ Options ===========================
