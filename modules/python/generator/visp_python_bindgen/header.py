@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 from typing import List, Optional, Dict
 from pathlib import Path
 from dataclasses import dataclass
@@ -16,8 +51,6 @@ from visp_python_bindgen.generator_config import GeneratorConfig
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from submodule import Submodule
-
-
 
 class HeaderFile():
   def __init__(self, path: Path, submodule: 'Submodule'):
@@ -188,7 +221,6 @@ class HeaderFile():
     for sub_ns in ns.namespaces:
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
-
   def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment) -> SingleObjectBindings:
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
       python_ident = f'py{name_python}'
@@ -279,12 +311,10 @@ class HeaderFile():
           add_to_method_dict('__init__', MethodBinding(ctor_str, is_static=False, is_lambda=False,
                                                        is_operator=False, is_constructor=True))
 
-
       # Operator definitions
       binary_return_ops = supported_const_return_binary_op_map()
       binary_in_place_ops = supported_in_place_binary_op_map()
       unary_return_ops = supported_const_return_unary_op_map()
-
 
       for method, method_config in operators:
         method_name = get_name(method.name)
@@ -400,7 +430,6 @@ class HeaderFile():
         add_to_method_dict('__additional_bindings', MethodBinding(f'{cls_config["additional_bindings"]}({python_ident});',
                                                                   is_static=False, is_lambda=False,
                                                                   is_operator=False, is_constructor=False))
-
 
       # Check for potential error-generating definitions
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)

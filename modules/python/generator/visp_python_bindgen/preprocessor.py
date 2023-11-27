@@ -1,4 +1,39 @@
 
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 # '''
 # Preprocessor, derived from the command line preprocesor provided at https://github.com/ned14/pcpp/blob/master/pcpp/pcmd.py
 
@@ -8,8 +43,6 @@
 # import sys, argparse, traceback, os, copy, io, re
 # from pcpp.preprocessor import Preprocessor, OutputDirective, Action
 # from visp_python_bindgen.generator_config import PreprocessorConfig
-
-
 
 # class CmdPreprocessor(Preprocessor):
 #     def __init__(self, config: PreprocessorConfig, input: str):
@@ -66,7 +99,6 @@
 #         self.bypass_ifpassthru = False
 #         self.potential_include_guard = None
 
-
 #         for d in config.defines:
 #             if '=' not in d:
 #                 d += '=1'
@@ -80,7 +112,6 @@
 
 #         for include in config.include_directories:
 #             self.add_path(include)
-
 
 #         try:
 #             if len(self.args.inputs) == 1:
@@ -101,8 +132,6 @@
 #                 i.close()
 #             if self.args.output != sys.stdout:
 #                 self.args.output.close()
-
-
 
 #     def on_include_not_found(self,is_malformed,is_system_include,curdir,includepath):
 #         if self.args.passthru_unfound_includes:

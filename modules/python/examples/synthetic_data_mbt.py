@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings example
+#
+#############################################################################
+
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
@@ -6,7 +41,6 @@ import numpy as np
 import time
 import faulthandler
 faulthandler.enable()
-
 
 from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousMatrix, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16
@@ -63,9 +97,6 @@ class FrameData:
   point_cloud: Optional[np.ndarray]
   cMo_ground_truth: HomogeneousMatrix
 
-
-
-
 def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: ImageGray):
   color_format = '{:04d}_L.jpg'
   depth_format = 'Image{:04d}_R.exr'
@@ -115,8 +146,6 @@ def read_data(exp_config: MBTConfig, cam_depth: CameraParameters | None, I: Imag
     print(f'Data parsing took: {(end_parse_time - start_parse_time) * 1000}ms')
     yield FrameData(I, I_depth_raw, point_cloud, cMo_ground_truth)
 
-
-
 def parse_camera_file(exp_config: MBTConfig, is_color: bool) -> CameraParameters:
   cam = CameraParameters()
   xml_parser = XmlParserCamera()
@@ -138,7 +167,6 @@ if __name__ == '__main__':
   parser.add_argument('--disable-depth', action='store_true')
   parser.add_argument('--step-by-step', action='store_true')
   parser.add_argument('--init-ground-truth', action='store_true')
-
 
   args = parser.parse_args()
   data_root = Path(args.data_root)

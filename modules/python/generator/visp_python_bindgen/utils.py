@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 from typing import List, Optional, Set, Tuple, Dict, Union
 import copy
 from enum import Enum
@@ -48,7 +83,6 @@ class MethodBinding:
   is_constructor: bool
   method_data: Optional[MethodData] = None
 
-
   def get_definition_in_child_class(self, child_py_ident) -> 'MethodBinding':
     if self.is_constructor:
       raise RuntimeError('We should not try to redefine a constructor for a child class')
@@ -58,7 +92,6 @@ class MethodBinding:
     res = copy.deepcopy(self)
     res.binding = new_binding_code
     return res
-
 
 @dataclass
 class ClassBindingDefinitions:
@@ -110,9 +143,6 @@ class BindingsContainer:
           for method_overload_binding in method_overloads:
             defs.append(method_overload_binding.binding)
     return '\n'.join(defs)
-
-
-
 
 def get_name(name: types.PQName) -> str:
   '''
@@ -259,7 +289,6 @@ def fetch_fully_qualified_id(scope: Union[NamespaceScope, ClassScope], segments:
 
   return None
 
-
 def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
   '''
   Whether the passed in pointer is of type const char*
@@ -270,8 +299,6 @@ def is_pointer_to_const_cstr(param: types.Pointer) -> bool:
       return True
 
   return False
-
-
 
 def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
   '''
@@ -290,8 +317,6 @@ def is_non_const_ref_to_immutable_type(param: types.DecoratedType) -> bool:
   if GeneratorConfig.is_immutable_type(param_type):
     return True
   return GeneratorConfig.is_immutable_type(param_type) or GeneratorConfig.is_immutable_container(param_type)
-
-
 
 def is_unsupported_return_type(param: Union[types.FunctionType, types.DecoratedType]) -> bool:
   '''
