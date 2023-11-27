@@ -20,6 +20,7 @@ void bindings_vpDot2(py::class_<vpDot2, vpTracker> &pyDot2)
   }, R"doc(
 Wrapper for the defineDots method, see the C++ ViSP documentation.
 )doc", py::arg("dots"), py::arg("dotFile"), py::arg("I"), py::arg("color"), py::arg("trackDot") = true);
+
   pyDot2.def_static("trackAndDisplay", [](std::vector<vpDot2> &dots,
                                           vpImage<unsigned char> &I,
                                           std::vector<vpImagePoint> &cogs,

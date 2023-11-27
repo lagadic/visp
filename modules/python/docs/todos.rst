@@ -12,7 +12,7 @@ Changes to ViSP
 Code generation
 -------------------
 
-* There is an issue with vpFeatureMomentDatabse::get and vpMomentDatabase::get, ignored for now
+* There is an issue with vpFeatureMomentDatabse::get and vpMomentDatabase::get, ignored for now => a tester
 * n ary operators
 * Exclude get operators for vpArray2D ?
 * Parse subnamespaces
@@ -66,13 +66,6 @@ To be written:
     This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class
 
 
-
-Packaging
-------------------
-
-* Root CMake
-
-  * Build after doc if doc can be generated
 
 
 Python side
