@@ -188,7 +188,8 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
       SimpleConversionStruct("RGBToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::RGBToRGBa), 3, 4),
       SimpleConversionStruct("RGBaToRGB", &vpImageConvert::RGBaToRGB, 4, 3),
       SimpleConversionStruct("GreyToRGB", &vpImageConvert::GreyToRGB, 1, 3),
-      SimpleConversionStruct("GreyToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::GreyToRGBa), 1, 4)
+      SimpleConversionStruct("GreyToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::GreyToRGBa), 1, 4),
+      SimpleConversionStruct("RGBToGrey", static_cast<ConversionFunction1D>(&vpImageConvert::RGBToGrey), 3, 1),
     };
     for (auto &conversion: conversions) {
       conversion.add_conversion_binding(pyImageConvert);

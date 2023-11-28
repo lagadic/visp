@@ -258,6 +258,60 @@
         }
       ]
     },
+    "vpPolygon3D": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void getClippedPolygon(const std::vector<vpPoint>&, std::vector<vpPoint>&, const vpHomogeneousMatrix&, const unsigned int&, const vpCameraParameters&, const double&, const double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true, true, true, true, true],
+          "param_is_output": [false, true, false, false, false, false, false]
+        },
+        {
+          "static": false,
+          "signature": "void getPolygonClipped(std::vector<vpPoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "void getPolygonClipped(std::vector<std::pair<vpPoint, unsigned int>>&)",
+          "custom_name": "getPolygonClippedWithInfo",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&, const vpHomogeneousMatrix&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true],
+          "param_is_output": [false, true, false]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&, const vpHomogeneousMatrix&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true],
+          "param_is_output": [false, true, false]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        }
+      ]
+    },
     "vpPoint": {
       "methods":
       [
@@ -364,6 +418,11 @@
         },
         {
           "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
           "signature": "void YUYVToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
           "ignore": true
         },
@@ -404,6 +463,11 @@
         },
         {
           "static": true,
+          "signature": "void YUV422ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
           "signature": "void YUV420ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
           "ignore": true
         },
@@ -435,6 +499,31 @@
         {
           "static": true,
           "signature": "void YVU9ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGBa(unsigned char*, unsigned char*, unsigned int)",
           "ignore": true
         }
       ]
