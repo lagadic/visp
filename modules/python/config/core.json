@@ -315,7 +315,7 @@
     },
     "vpImageConvert": {
       "additional_bindings": "bindings_vpImageConvert",
-      "methods": 
+      "methods":
       [
         {
           "static": true,
@@ -361,7 +361,82 @@
           "static": true,
           "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
           "ignore": true
-        }        
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        }
       ]
     },
     "vpConvert": {

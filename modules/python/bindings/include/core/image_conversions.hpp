@@ -106,13 +106,14 @@ struct SimpleConversionStruct
 
 };
 
+template <typename ConversionFn>
 struct ConversionFromYUVLike
 {
-  ConversionFromYUVLike(const std::string &name, ConversionFunction2D fn, ComputeBytesFunction sourceBytesFn, unsigned int destBytesPerPixel) :
-    name(name), fn(fn), , destBytesPerPixel(destBytesPerPixel)
+  ConversionFromYUVLike(const std::string &name, ConversionFn fn, ComputeBytesFunction sourceBytesFn, unsigned int destBytesPerPixel) :
+    name(name), fn(fn), sourceBytesFn(sourceBytesFn), destBytesPerPixel(destBytesPerPixel)
   { }
   std::string name;
-  ConversionFunction2D fn;
+  ConversionFn fn;
   ComputeBytesFunction sourceBytesFn;
 
   unsigned int destBytesPerPixel;
@@ -159,7 +160,18 @@ struct ConversionFromYUVLike
 
 };
 
-
+unsigned size422(unsigned h, unsigned w)
+{
+  return h * w + (h * (w / 2)) * 2;
+}
+unsigned size420(unsigned h, unsigned w)
+{
+  return h * w + ((h / 2) * (w / 2)) * 2;
+}
+unsigned size411(unsigned h, unsigned w)
+{
+  return h * w + ((h / 4) * (w / 4)) * 2;
+}
 
 }
 
@@ -182,17 +194,43 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
       conversion.add_conversion_binding(pyImageConvert);
     }
   }
-  //Simple conversions where the size input are height and width
+
+  //YUV conversions
   {
-    std::vector<SimpleConversionStruct<ConversionFunction2D>> conversions = {
+    using Conv = ConversionFromYUVLike<ConversionFunction2D>;
+    std::vector<Conv> conversions = {
+      Conv("YUYVToRGBa",    &vpImageConvert::YUYVToRGBa,    &size422, 4),
+      Conv("YUYVToRGB",     &vpImageConvert::YUYVToRGB,     &size422, 3),
+
+      Conv("YV12ToRGBa",    &vpImageConvert::YV12ToRGBa,    &size420, 4),
+      Conv("YV12ToRGB",     &vpImageConvert::YV12ToRGB,     &size420, 3),
+      Conv("YUV420ToRGBa",  &vpImageConvert::YUV420ToRGBa,  &size420, 4),
+      Conv("YUV420ToRGB",   &vpImageConvert::YUV420ToRGB,   &size420, 3),
+
+      Conv("YVU9ToRGBa",    &vpImageConvert::YVU9ToRGBa,    &size411, 4),
+      Conv("YVU9ToRGB",     &vpImageConvert::YVU9ToRGB,     &size411, 3),
     };
     for (auto &conversion: conversions) {
       conversion.add_conversion_binding(pyImageConvert);
     }
   }
-  //YUV conversions
   {
-    std::vector<SimpleConversionStruct<ConversionFunction2D>> conversions = {
+    using Conv = ConversionFromYUVLike<ConversionFunction1D>;
+    std::vector<Conv> conversions = {
+
+      Conv("YUYVToGrey",    &vpImageConvert::YUYVToGrey,    &size422, 1),
+      Conv("YUV422ToRGBa",  &vpImageConvert::YUV422ToRGBa,  &size422, 4),
+      Conv("YUV422ToRGB",   &vpImageConvert::YUV422ToRGB,   &size422, 3),
+      Conv("YUV422ToGrey",  &vpImageConvert::YUV422ToGrey,  &size422, 1),
+      Conv("YCbCrToRGBa",   &vpImageConvert::YCbCrToRGBa,   &size422, 4),
+      Conv("YCbCrToRGB",    &vpImageConvert::YCbCrToRGB,    &size422, 3),
+      Conv("YCbCrToGrey",   &vpImageConvert::YCbCrToGrey,   &size422, 1),
+      Conv("YCrCbToRGBa",   &vpImageConvert::YCrCbToRGBa,   &size422, 4),
+      Conv("YCrCbToRGB",    &vpImageConvert::YCrCbToRGB,    &size422, 3),
+      Conv("YUV420ToGrey",  &vpImageConvert::YUV420ToGrey,  &size420, 1),
+      Conv("YUV411ToRGBa",  &vpImageConvert::YUV411ToRGBa,  &size411, 4),
+      Conv("YUV411ToRGB",   &vpImageConvert::YUV411ToRGB,   &size411, 3),
+      Conv("YUV411ToGrey",  &vpImageConvert::YUV411ToGrey,  &size411, 1),
     };
     for (auto &conversion: conversions) {
       conversion.add_conversion_binding(pyImageConvert);

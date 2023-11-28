@@ -54,8 +54,9 @@ class MethodData:
   def as_lambda(self, py_ident: str) -> str:
     args_str = ', '.join(self.py_arg_strs)
     def_val = 'def' if not self.method.static else 'def_static'
+    maybe_comma = ',' if len(args_str.strip()) > 0 else ''
     return f'''
-      {py_ident}.{def_val}("{self.py_name}", {self.lambda_variant}, {args_str});
+      {py_ident}.{def_val}("{self.py_name}", {self.lambda_variant}{maybe_comma} {args_str});
     '''
 
 @dataclass

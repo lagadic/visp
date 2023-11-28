@@ -398,7 +398,6 @@ class HeaderFile():
       base_bindings = list(filter(lambda b: b is not None, map(lambda s: bindings_container.find_bindings(s), base_class_strs)))
 
       # assert not any(map(lambda b: b is None, base_bindings)), f'Could not retrieve the bindings for a base class of {name_cpp}'
-      print(base_bindings)
       for base_binding_container in base_bindings:
         base_defs = base_binding_container.definitions
         if not isinstance(base_defs, ClassBindingDefinitions):

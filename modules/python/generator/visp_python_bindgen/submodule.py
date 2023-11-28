@@ -259,6 +259,4 @@ def sort_submodules(submodules: List[Submodule]) -> List[Submodule]:
     res_round = list(filter(can_add, submodules_tmp))
     submodules_tmp = [submodule for submodule in submodules_tmp if submodule not in res_round]
     res += res_round
-
-  print(list(map(lambda sub: sub.name, res)))
   return res
