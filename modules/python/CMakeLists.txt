@@ -119,6 +119,12 @@ if(BUILD_PYTHON_BINDINGS_DOC)
   add_subdirectory(docs)
 endif()
 
+# Global target: compile and install the Python bindings
+add_custom_target(
+  visp_python_bindings
+  DEPENDS visp_python_bindings_stubs
+)
+
 # Export Variables to parent cmake
 set(VISP_PYTHON_BOUND_MODULES "")
 foreach(module ${python_bound_modules})
