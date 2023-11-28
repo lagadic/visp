@@ -38,5 +38,7 @@
 #include "core/arrays.hpp"
 #include "core/images.hpp"
 #include "core/pixel_meter.hpp"
+#include "core/image_conversions.hpp"
+
 
 #endif

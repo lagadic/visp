@@ -313,7 +313,116 @@
         }
       ]
     },
-
+    "vpImageConvert": {
+      "additional_bindings": "bindings_vpImageConvert",
+      "methods": 
+      [
+        {
+          "static": true,
+          "signature": "void RGBaToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        }        
+      ]
+    },
+    "vpConvert": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3d>&, bool)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3f>&, bool)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpImagePoint>&, std::vector<cv::Point2d>&)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpImagePoint>&, std::vector<cv::Point2f>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::DMatch>&, std::vector<unsigned int>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::DMatch>&, std::vector<unsigned int>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point3d>&, std::vector<vpPoint>&, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point3f>&, std::vector<vpPoint>&, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point2d>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point2f>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::KeyPoint>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        }
+      ]
+    },
     "vpDisplay": {
       "methods":
       [
@@ -361,7 +470,19 @@
     },
     "vpMomentDatabase": {
       "methods": [
-
+        {
+          "static": false,
+          "signature": "const vpMoment& get(const std::string&, bool&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        }
       ]
     },
     "vpPixelMeterConversion": {
@@ -369,6 +490,17 @@
     },
     "vpMeterPixelConversion": {
       "additional_bindings": "bindings_vpMeterPixelConversion"
+    },
+    "vpCircle": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void computeIntersectionPoint(const vpCircle&, const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, false, false],
+          "param_is_output": [false, false, false, false, true, true]
+        }
+      ]
     }
 
   }
