@@ -68,10 +68,8 @@ def read_data(cam_depth: CameraParameters | None, I: ImageGray, pipe: rs.pipelin
     I_depth_raw = None
     point_cloud = None
     if use_depth:
-      depth_proc_start = time.time()
       I_depth_raw = np.asanyarray(frames.get_depth_frame().as_frame().get_data())
       point_cloud = np.asanyarray(point_cloud_computer.calculate(frames.get_depth_frame()).get_vertices()).view((np.float32, 3))
-      print(f'Depth processing took {(time.time() - depth_proc_start) * 1000}ms')
     iteration += 1
     yield FrameData(I, ImageUInt16(I_depth_raw), point_cloud)
 
@@ -100,10 +98,11 @@ if __name__ == '__main__':
 
   # Initialize realsense2
   pipe = rs.pipeline()
-  cfg = pipe.start()
+  config = rs.config()
+  config.enable_stream(rs.stream.depth, 640, 480, rs.format.z16, 60)
+  config.enable_stream(rs.stream.color, 640, 480, rs.format.rgb8, 60)
 
-  for i in range(10):
-    pipe.wait_for_frames()
+  cfg = pipe.start(config)
 
   assert data_root.exists() and data_root.is_dir()
 
@@ -153,6 +152,15 @@ if __name__ == '__main__':
   if not args.disable_depth:
     ImageConvert.createDepthHistogram(frame_data.I_depth, I_depth)
     dDepth.init(I_depth,  I.getWidth(), 0, 'Depth')
+
+  for frame in data_generator:
+    Display.display(I)
+    Display.displayText(I, 0, 0, 'Click to initialize tracking', Color.red)
+    Display.flush(I)
+    event = Display.getClick(I, blocking=False)
+    if event:
+      break
+
   tracker.initClick(I, str(mbt_model.init_file))
   start_time =  time.time()
   for frame_data in data_generator:
@@ -172,7 +180,6 @@ if __name__ == '__main__':
       }
       t = time.time()
       tracker.track(image_dict, {'Camera2': pc.reshape(depth_height, depth_width, 3)})
-      print(f'Tracking took {(time.time() - t) * 1000}ms')
     cMo = HomogeneousMatrix()
     tracker.getPose(cMo)
 
@@ -181,7 +188,12 @@ if __name__ == '__main__':
     Display.flush(I)
     if not args.disable_depth:
       Display.flush(I_depth)
+
     if args.step_by_step:
       Display.getKeyboardEvent(I, blocking=True)
+    else:
+      event = Display.getClick(I, blocking=False)
+      if event:
+        break
   end_time = time.time()
   print(f'total time = {end_time - start_time}s')
