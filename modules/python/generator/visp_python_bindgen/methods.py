@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 from typing import Any, Callable, List, Optional, Tuple, Dict
 from enum import Enum
 from dataclasses import dataclass
@@ -13,9 +48,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from visp_python_bindgen.submodule import Submodule
   from visp_python_bindgen.header import HeaderFile, HeaderEnvironment, BoundObjectNames
-
-
-
 
 def cpp_operator_list():
   '''
@@ -118,7 +150,6 @@ def method_def(py_name: str, method: str, additional_args: List[str], static: bo
 def tokens_to_str(tokens: List[types.Token]) -> str:
   return ''.join([token.value for token in tokens])
 
-
 def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapping) -> bool:
   '''
   Return whether an argument can have a default value.
@@ -142,14 +173,12 @@ def parameter_can_have_default_value(parameter: types.Parameter, specs, env_mapp
   if GeneratorConfig.is_forbidden_default_argument_type(type_name):
     return False
 
-
   if is_const: # Parameter is const, so we can safely give a default value knowing it won't be modified
     return True
   if GeneratorConfig.is_immutable_type(type_name): # Immutable type on python side
     return True
 
   return False
-
 
 def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[str]:
   '''
@@ -194,14 +223,12 @@ def get_py_args(parameters: List[types.Parameter], specs, env_mapping) -> List[s
 
   return py_args
 
-
 def define_method(method: types.Method, method_config: Dict, is_class_method, specs: Dict, header: 'HeaderFile', header_env: 'HeaderEnvironment', bound_object: 'BoundObjectNames'):
   params_strs = [get_type(param.type, specs, header_env.mapping) for param in method.parameters]
   py_arg_strs = get_py_args(method.parameters, specs, header_env.mapping)
   method_name = get_name(method.name)
   py_method_name = method_config.get('custom_name') or method_name
   return_type = get_type(method.return_type, specs, header_env.mapping)
-
 
   # Detect input and output parameters for a method
   use_default_param_policy = method_config['use_default_param_policy']
@@ -239,7 +266,6 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
     else:
       py_arg_strs = [method_doc.documentation] + py_arg_strs
 
-
   # If a function has refs to immutable params, we need to return them.
   should_wrap_for_tuple_return = param_is_output is not None and any(param_is_output)
 
@@ -275,7 +301,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   elif len(output_param_names) == 1 and (return_type is None or return_type == 'void'):
     return_str = output_param_names[0]
   else:
-    # When returning a tuple we need to explicitely convert references to pointer.
+    # When returning a tuple we need to explicitly convert references to pointer.
     # This is required since std::tuple will upcast the ref to its base class and try to store a copy of the object
     # If a class is pure virtual, this is not possible and will a compilation error!
     output_param_symbols.extend(['&' + name if is_ref else name for is_ref, name in zip(output_param_is_ref, output_param_names)])
@@ -314,7 +340,6 @@ def define_lambda(capture: str, params: List[str], return_type: Optional[str], b
 }}
 
 '''
-
 class NotGeneratedReason(Enum):
   UserIgnored = 'user_ignored',
   Access = 'access',

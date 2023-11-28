@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 from typing import List, Optional, Dict
 from pathlib import Path
 import json
@@ -5,10 +40,6 @@ import json
 from visp_python_bindgen.header import HeaderFile
 from visp_python_bindgen.utils import *
 from visp_python_bindgen.gen_report import Report
-
-
-
-
 
 class Submodule():
   def __init__(self, name: str, include_path: Path, config_file_path: Path, submodule_file_path: Path):
@@ -99,23 +130,21 @@ class Submodule():
 
 namespace py = pybind11;
 
-
 void {self.generation_function_name()}(py::module_ &m) {{
 
 /*
-Submodule declaration
-*/
+ * Submodule declaration
+ */
 {submodule_declaration}
 
 /*
-Class and enums declarations
-*/
+ * Class and enums declarations
+ */
 {declarations}
 
-
 /*
-Bindings for methods and enum values
-*/
+ * Bindings for methods and enum values
+ */
 {bindings}
 }}
 '''
@@ -201,7 +230,6 @@ Bindings for methods and enum values
     #import sys; sys.exit()
     return res
 
-
 def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
   modules_input_data = GeneratorConfig.module_data
   result: Dict[str, Submodule] = {}
@@ -222,7 +250,6 @@ def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
     if module_data.name in result:
       result[module_data.name].set_dependencies_from_dict(result, module_data.dependencies)
   return sort_submodules(list(result.values()))
-
 
 def sort_submodules(submodules: List[Submodule]) -> List[Submodule]:
   res = []

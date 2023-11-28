@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 from typing import List, Optional, Tuple, Dict, Union
 from dataclasses import dataclass
 
@@ -12,7 +47,6 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
   from visp_python_bindgen.header import SingleObjectBindings
 
-
 @dataclass
 class EnumRepr:
   '''
@@ -22,7 +56,6 @@ class EnumRepr:
   name: Optional[str] # Name of the enumeration
   values: Optional[List[types.Enumerator]] # The values of the enumeration
   public_access: bool = True # Whether this enum is visible from outside the header file
-
 
 def is_typedef_to_enum(typedef: types.Typedef):
   '''
@@ -34,7 +67,6 @@ def is_typedef_to_enum(typedef: types.Typedef):
     return False
   return True
 
-
 def is_anonymous_name(typename: types.PQName) -> Tuple[bool, int]:
   '''
   Check whether the name is anonymous. If it is, then the actual name is defined in a typedef.
@@ -43,7 +75,6 @@ def is_anonymous_name(typename: types.PQName) -> Tuple[bool, int]:
     if isinstance(segment, types.AnonymousName):
       return True, segment.id
   return False, None
-
 
 def get_owner_py_ident(owner_name: str, root_scope: NamespaceScope) -> Optional[str]:
   '''
@@ -56,8 +87,6 @@ def get_owner_py_ident(owner_name: str, root_scope: NamespaceScope) -> Optional[
     return None
 
   return f'py{get_name(scope.class_decl.typename).replace("vp", "")}' #TODO: fix for custom names
-
-
 
 def get_cpp_identifier_scope(fully_qualified_name: str, root_scope: Union[NamespaceScope, ClassScope]) -> Union[NamespaceScope, ClassScope]:
   if fully_qualified_name == '':
@@ -142,7 +171,6 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
 
   accumulate_data(root_scope)
   return final_data, temp_data
-
 
 def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[SingleObjectBindings]:
 

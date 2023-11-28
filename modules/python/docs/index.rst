@@ -14,8 +14,6 @@ Todos and known issues
     todos.rst
     api.rst
 
-
-
 .. Core module
 .. ==============
 

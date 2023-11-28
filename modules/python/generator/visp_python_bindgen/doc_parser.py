@@ -1,3 +1,38 @@
+#############################################################################
+#
+# ViSP, open source Visual Servoing Platform software.
+# Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+#
+# This software is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# See the file LICENSE.txt at the root directory of this source
+# distribution for additional information about the GNU GPL.
+#
+# For using ViSP with software that can not be combined with the GNU
+# GPL, please contact Inria about acquiring a ViSP Professional
+# Edition License.
+#
+# See https://visp.inria.fr for more information.
+#
+# This software was developed at:
+# Inria Rennes - Bretagne Atlantique
+# Campus Universitaire de Beaulieu
+# 35042 Rennes Cedex
+# France
+#
+# If you have questions regarding the use of this file, please contact
+# Inria at visp@inria.fr
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# Description:
+# ViSP Python bindings generator
+#
+#############################################################################
+
 import_failed = False
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass
@@ -83,7 +118,6 @@ class DocElements(object):
   compounddefs: Dict[str, compounddefType]
   methods: Dict[Tuple[str, MethodDocSignature], List[doxmlparser.memberdefType]]
 
-
 IGNORED_MIXED_CONTAINERS = [
 
   'parameterlist'
@@ -131,7 +165,6 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
     url_value = url.url
     return level_string + (' ' if requires_space else '') + f'`{text} <{url_value}>`_ '
 
-
   if container.name == 'formula':
     v: str = container.value.valueOf_.strip()
     if v.startswith(('\\[', '$$')):
@@ -175,7 +208,6 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
     item_content = '\n'.join(map(process_fn, blockquote.para))
     return level_string + item_content + '\n'
 
-
   if container.name == 'programlisting':
     program: doxmlparser.listingType = container.value
     codelines: List[doxmlparser.codelineType] = program.codeline
@@ -194,7 +226,6 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
     code = ('\n' + indent_str + one_indent).join(lines)
     res += code + '\n\n'
     return level_string + res
-
 
   if container.name == 'itemizedlist':
     items: List[doxmlparser.docListItemType] = container.value.listitem
