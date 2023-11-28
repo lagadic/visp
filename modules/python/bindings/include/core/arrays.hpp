@@ -95,7 +95,7 @@ void define_get_item_2d_array(PyClass &pyClass)
 {
   pyClass.def("__getitem__", [](const Class &self, std::pair<int, int> pair) -> Item {
     int i = pair.first, j = pair.second;
-    const unsigned int rows = self.getRows(), cols = self.getCols();
+    const int rows = (int)self.getRows(), cols = (int)self.getCols();
     if (abs(i) > rows || abs(j) > cols) {
       std::stringstream ss;
       ss << "Invalid indexing into a 2D array: got indices " << shape_to_string({ i, j })
@@ -111,7 +111,7 @@ void define_get_item_2d_array(PyClass &pyClass)
     return self[i][j];
   });
   pyClass.def("__getitem__", [](const Class &self, int i) -> np_array_cf<Item> {
-    const unsigned int rows = self.getRows();
+    const int rows = (int)self.getRows();
     if (abs(i) > rows) {
       std::stringstream ss;
       ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
@@ -157,7 +157,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-                         }), R"doc(
+  }), R"doc(
 Construct a 2D ViSP array by **copying** a 2D numpy array.
 
 :param np_array: The numpy array to copy.
@@ -181,7 +181,7 @@ void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
     vpMatrix result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
-                        }), R"doc(
+  }), R"doc(
 Construct a matrix by **copying** a 2D numpy array.
 
 :param np_array: The numpy array to copy.
@@ -205,7 +205,7 @@ void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVecto
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-                           }), R"doc(
+  }), R"doc(
 Construct a column vector by **copying** a 1D numpy array.
 
 :param np_array: The numpy 1D array to copy.
@@ -225,7 +225,7 @@ void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVecto
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
-                           }), R"doc(
+  }), R"doc(
 Construct a row vector by **copying** a 1D numpy array.
 
 :param np_array: The numpy 1D array to copy.
@@ -249,7 +249,7 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
       throw std::runtime_error("Input numpy array is not a valid rotation matrix");
     }
     return result;
-                                }), R"doc(
+  }), R"doc(
 Construct a rotation matrix by **copying** a 2D numpy array.
 This numpy array should be of dimensions :math:`3 \times 3` and be a valid rotation matrix.
 If it is not a rotation matrix, an exception will be raised.
@@ -276,7 +276,7 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<doub
       throw std::runtime_error("Input numpy array is not a valid homogeneous matrix");
     }
     return result;
-                                   }), R"doc(
+  }), R"doc(
 Construct a homogeneous matrix by **copying** a 2D numpy array.
 This numpy array should be of dimensions :math:`4 \times 4` and be a valid homogeneous matrix.
 If it is not a homogeneous matrix, an exception will be raised.

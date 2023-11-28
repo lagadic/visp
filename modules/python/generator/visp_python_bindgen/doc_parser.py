@@ -82,6 +82,8 @@ class DocumentationData(object):
 def to_cstring(s: str) -> str:
   s = s.replace('\t', '  ')
   s = re.sub('\n\n\n+', '\n\n', s)
+  s = re.sub('\\\\ +', '\\\\', s)
+
   return f'''R"doc(
 {s}
 )doc"'''
