@@ -57,7 +57,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
     vpImage<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.bitmap);
     return result;
-                       }), R"doc(
+  }), R"doc(
 Construct an image by **copying** a 2D numpy array.
 
 :param np_array: The numpy array to copy.
@@ -86,7 +86,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
     vpImage<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, (unsigned char *)result.bitmap);
     return result;
-                       }), R"doc(
+  }), R"doc(
 Construct an image by **copying** a 3D numpy array. this numpy array should be of the form :math:`H \times W \times 4`
 where the 4 denotes the red, green, blue and alpha components of the image.
 

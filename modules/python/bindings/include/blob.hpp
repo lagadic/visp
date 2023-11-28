@@ -50,7 +50,7 @@ void bindings_vpDot2(py::class_<vpDot2, vpTracker> &pyDot2)
                                      vpImage<unsigned char> &I,
                                      vpColor col = vpColor::blue,
                                      bool trackDot = true) {
-                                       return vpDot2::defineDots(&dots[0], dots.size(), dotFile, I, col, trackDot);
+    return vpDot2::defineDots(&dots[0], dots.size(), dotFile, I, col, trackDot);
   }, R"doc(
 Wrapper for the defineDots method, see the C++ ViSP documentation.
 )doc", py::arg("dots"), py::arg("dotFile"), py::arg("I"), py::arg("color"), py::arg("trackDot") = true);
@@ -59,8 +59,8 @@ Wrapper for the defineDots method, see the C++ ViSP documentation.
                                           vpImage<unsigned char> &I,
                                           std::vector<vpImagePoint> &cogs,
                                           std::optional<std::vector<vpImagePoint>> cogStar) {
-                                            vpImagePoint *desireds = cogStar ? &((*cogStar)[0]) : nullptr;
-                                            vpDot2::trackAndDisplay(&dots[0], dots.size(), I, cogs, desireds);
+    vpImagePoint *desireds = cogStar ? &((*cogStar)[0]) : nullptr;
+    vpDot2::trackAndDisplay(&dots[0], dots.size(), I, cogs, desireds);
   }, R"doc(
 Wrapper for the trackAndDisplay method, see the C++ ViSP documentation.
 )doc", py::arg("dots"), py::arg("I"), py::arg("cogs"), py::arg("desiredCogs"));
