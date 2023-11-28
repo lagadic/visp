@@ -104,13 +104,17 @@ class Report(object):
     self.result['default_param_policy_methods'].append(report_dict)
 
   def write(self, path: Path) -> None:
-    print(f'Statistics for module {self.submodule_name} report:')
+    print('=' * 50)
+    print(f'Statistics for module {self.submodule_name}:')
     stats = [
       f'Ignored headers: {len(self.result["ignored_headers"])}',
       f'Ignored classes: {len(self.result["classes"].keys())}',
       f'Not generated methods: {len(self.result["methods"].keys())}',
       f'Method with default parameter policy: {len(self.result["default_param_policy_methods"])}',
     ]
-    print('\n\t'.join(stats))
+    print('\n\t', '\n\t'.join(stats), '\n', sep='')
     with open(path, 'w') as report_file:
       json.dump(self.result, report_file, indent=2)
+
+    print(f'A JSON report has been written to {path.absolute()}')
+    print('=' * 50)

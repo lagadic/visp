@@ -36,6 +36,8 @@
 from typing import List, Set, Dict, Union
 import sys
 
+import logging
+
 from cxxheaderparser import types
 from cxxheaderparser.simple import ParsedData, NamespaceScope, ClassScope
 
@@ -75,7 +77,11 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
       else:
         new_remainder.append(header_file)
     if new_remainder == remainder:
-      print(f'Warning: Could not completely solve dependencies, generating but might have some errors\n Faulty headers: {[h.path.name for h in remainder]}', file=sys.stderr)
+      warning_msg = f'''
+      Warning: Could not completely solve dependencies, generating but might have some errors
+      Faulty headers: {[h.path.name for h in remainder]}'''
+      logging.warning(warning_msg)
+      print(warning_msg, file=sys.stderr)
       result.extend(remainder)
     else:
       add_level(result, new_remainder, set(new_dependencies))

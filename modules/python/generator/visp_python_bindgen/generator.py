@@ -38,6 +38,7 @@ import sys
 from pathlib import Path
 from multiprocessing import Pool
 import argparse
+import logging
 
 from cxxheaderparser.errors import CxxParseError
 
@@ -53,13 +54,15 @@ def header_preprocess(header: HeaderFile):
     header.preprocess()
     return header
   except Exception as e:
-    print('There was an error when processing header', header.path)
+    error_msg = 'There was an error when processing header' +  str(header.path)
+    logging.error(error_msg)
     import traceback
-    traceback.print_exc()
-    print(type(e))
+    logging.error(traceback.format_exc())
+    logging.error(type(e))
     if isinstance(e, CxxParseError):
+      logging.error(header.preprocessed_header_str)
 
-      print(header.preprocessed_header_str)
+    print(error_msg, 'See the text log in the build folder for more information.')
 
     return None
 
@@ -147,9 +150,11 @@ def main():
   args = parser.parse_args()
 
   generation_path = Path(args.build_folder)
+  logging.basicConfig(filename=str(generation_path / 'generation.log'),  filemode='w', level=logging.DEBUG)
   assert generation_path.exists(), f'Path to where to generate bindings does not exist! Path: {generation_path}'
-  generation_path = generation_path / 'src'
-  generation_path.mkdir(exist_ok=True)
+
+  generation_path_src = generation_path / 'src'
+  generation_path_src.mkdir(exist_ok=True)
 
   config_path = Path(args.config)
   assert config_path.exists(), f'Path to the folder containing the configuration files does not exist! Path: {config_path}'
@@ -157,7 +162,7 @@ def main():
   main_config_path = Path(args.main_config)
   assert main_config_path.exists(), f'Path to the main JSON configuration is invalid! Path: {main_config_path}'
   GeneratorConfig.update_from_main_config_file(main_config_path)
-  generate_module(generation_path, config_path)
+  generate_module(generation_path_src, config_path)
 
 if __name__ == '__main__':
   main()

@@ -33,10 +33,12 @@
 #
 #############################################################################
 
+
 from typing import List, Optional, Dict
 from pathlib import Path
 from dataclasses import dataclass
 from collections import OrderedDict
+import logging
 
 import pcpp
 from cxxheaderparser import types
@@ -185,7 +187,7 @@ class HeaderFile():
     if self.documentation_holder_path is not None:
       self.documentation_holder = DocumentationHolder(self.documentation_holder_path, self.environment.mapping)
     else:
-      print(f'No documentation found for header {self.path}')
+      logging.warning(f'No documentation found for header {self.path}')
 
     for cls in self.header_repr.namespace.classes:
       self.generate_class(bindings_container, cls, self.environment)
@@ -209,8 +211,8 @@ class HeaderFile():
       if NotGeneratedReason.is_non_trivial_reason(rejected_function.rejection_reason):
         rejection_strs.append(f'\t{rejected_function.signature} was rejected! Reason: {rejected_function.rejection_reason}')
     if len(rejection_strs) > 0:
-      print(f'Rejected function in namespace: {ns.name}')
-      print('\n'.join(rejection_strs))
+      logging.warning(f'Rejected function in namespace: {ns.name}')
+      logging.warning('\n'.join(rejection_strs))
 
     bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
     defs = []
@@ -235,7 +237,7 @@ class HeaderFile():
       if self.documentation_holder is not None:
         class_doc = self.documentation_holder.get_documentation_for_class(name_cpp_no_template, {}, owner_specs)
       else:
-        print(f'Documentation not found when looking up {name_cpp_no_template}')
+        logging.warning(f'Documentation not found when looking up {name_cpp_no_template}')
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
@@ -279,8 +281,8 @@ class HeaderFile():
         if NotGeneratedReason.is_non_trivial_reason(rejected_method.rejection_reason):
           rejection_strs.append(f'\t{rejected_method.signature} was rejected! Reason: {rejected_method.rejection_reason}')
       if len(rejection_strs) > 0:
-        print(f'Rejected method in class: {name_cpp}')
-        print('\n'.join(rejection_strs))
+        logging.warning(f'Rejected method in class: {name_cpp}')
+        logging.warning('\n'.join(rejection_strs))
 
       # Split between constructors and other methods
       constructors, non_constructors = split_methods_with_config(bindable_methods_and_config, lambda m: m.constructor)
@@ -303,7 +305,7 @@ class HeaderFile():
                                                       method.const, method.static)
             method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, owner_specs, param_names, [])
             if method_doc is None:
-              print(f'Could not find documentation for {name_cpp}::{method_name}!')
+              logging.warning(f'Could not find documentation for {name_cpp}::{method_name}!')
             else:
               py_arg_strs = [method_doc.documentation] + py_arg_strs
 
@@ -324,7 +326,7 @@ class HeaderFile():
         py_args = get_py_args(method.parameters, owner_specs, header_env.mapping)
         py_args = py_args + ['py::is_operator()']
         if len(params_strs) > 1:
-          print(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
+          logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
           rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
           self.submodule.report.add_non_generated_method(rejection)
           continue
@@ -339,7 +341,7 @@ class HeaderFile():
                                                        is_operator=True, is_constructor=False))
               break
 
-          print(f'Found unary operator {name_cpp}::{method_name}, skipping')
+          logging.info(f'Found unary operator {name_cpp}::{method_name}, skipping')
           continue
         for cpp_op, python_op_name in binary_return_ops.items():
           if method_name == f'operator{cpp_op}':
@@ -433,20 +435,21 @@ class HeaderFile():
       # Check for potential error-generating definitions
       error_generating_overloads = get_static_and_instance_overloads(generated_methods)
       if len(error_generating_overloads) > 0:
-        print(f'Overloads defined for instance and class, this will generate a pybind error')
-        print(error_generating_overloads)
+        logging.error(f'Overloads defined for instance and class, this will generate a pybind error')
+        logging.error(error_generating_overloads)
         raise RuntimeError
 
       field_dict = {}
       for field in cls.fields:
         if field.name in cls_config['ignored_attributes']:
+          logging.info(f'Ignoring field in class/struct {name_cpp}: {field.name}')
           continue
         if field.access == 'public':
           if is_unsupported_argument_type(field.type):
             continue
 
           field_type = get_type(field.type, owner_specs, header_env.mapping)
-          print(f'Field in {name_cpp}: {field_type} {field.name}')
+          logging.info(f'Found field in class/struct {name_cpp}: {field_type} {field.name}')
 
           field_name_python = field.name.lstrip('m_')
 
@@ -462,7 +465,7 @@ class HeaderFile():
       bindings_container.add_bindings(SingleObjectBindings(class_def_names, class_decl, classs_binding_defs, GenerationObjectType.Class))
 
     name_cpp_no_template = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
-    print(f'Parsing class "{name_cpp_no_template}"')
+    logging.info(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
       self.submodule.report.add_non_generated_class(name_cpp_no_template, {}, 'Skipped by user')
@@ -474,7 +477,7 @@ class HeaderFile():
       return generate_class_with_potiental_specialization(name_python, {}, cls_config)
     else:
       if cls_config is None or 'specializations' not in cls_config or len(cls_config['specializations']) == 0:
-        print(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
+        logging.warning(f'Could not find template specialization for class {name_cpp_no_template}: skipping!')
         self.submodule.report.add_non_generated_class(name_cpp_no_template, cls_config, 'Skipped because there was no declared specializations')
       else:
         specs = cls_config['specializations']

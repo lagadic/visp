@@ -35,6 +35,7 @@
 
 from typing import List, Optional, Tuple, Dict, Union
 from dataclasses import dataclass
+import logging
 
 from cxxheaderparser import types
 from cxxheaderparser.simple import NamespaceScope, ClassScope
@@ -177,7 +178,7 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
   final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
 
   for repr in filtered_reprs:
-    print(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')
+    logging.info(f'Enum {repr} was ignored, because it is incomplete (missing values or name)')
 
   result: List['SingleObjectBindings'] = []
   final_reprs = []
@@ -185,7 +186,7 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
     enum_config = submodule.get_enum_config(repr.name)
     if enum_config['ignore']:
       filtered_reprs.append(repr)
-      print(f'Enum {repr.name} is ignored by user')
+      logging.info(f'Enum {repr.name} is ignored by user')
     elif repr.public_access:
       final_reprs.append(repr)
     else:
@@ -206,7 +207,7 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
         break
 
     if parent_ignored:
-      print(f'Ignoring enum {py_name} because {ignored_parent_name} is ignored')
+      logging.info(f'Ignoring enum {py_name} because {ignored_parent_name} is ignored')
       continue
 
     owner_full_name = '::'.join(name_segments[:-1])

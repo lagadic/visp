@@ -57,7 +57,7 @@ if(PYTHON3INTERP_FOUND)
   configure_file("${CMAKE_CURRENT_SOURCE_DIR}/setup.py.in" "${CMAKE_CURRENT_BINARY_DIR}/setup.py" @ONLY)
   add_custom_target( visp_python_bindings_install
     COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/visp" "${CMAKE_CURRENT_BINARY_DIR}/visp"
-    COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} -v "${CMAKE_CURRENT_BINARY_DIR}"
+    COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} "${CMAKE_CURRENT_BINARY_DIR}"
     DEPENDS _visp
   )
 endif()

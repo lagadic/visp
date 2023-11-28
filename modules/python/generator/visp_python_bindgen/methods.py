@@ -33,6 +33,7 @@
 #
 #############################################################################
 
+import logging
 from typing import Any, Callable, List, Optional, Tuple, Dict
 from enum import Enum
 from dataclasses import dataclass
@@ -262,7 +263,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
                                                 True, True)
     method_doc = header.documentation_holder.get_documentation_for_method(bound_object.cpp_no_template_name, method_doc_signature, {}, specs, input_param_names, output_param_names)
     if method_doc is None:
-      print(f'Could not find documentation for {bound_object.cpp_name}::{method_name}!')
+      logging.warning(f'Could not find documentation for {bound_object.cpp_name}::{method_name}!')
     else:
       py_arg_strs = [method_doc.documentation] + py_arg_strs
 

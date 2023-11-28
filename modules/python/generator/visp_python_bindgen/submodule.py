@@ -151,7 +151,7 @@ void {self.generation_function_name()}(py::module_ &m) {{
     with open(self.submodule_file_path, 'w') as submodule_file:
       submodule_file.write(format_str)
 
-    logs_path = self.submodule_file_path.parent / 'logs'
+    logs_path = self.submodule_file_path.parent.parent / 'logs'
     logs_path.mkdir(exist_ok=True)
     self.report.write(logs_path / f'{self.name}_log.json')
 

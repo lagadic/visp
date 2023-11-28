@@ -41,7 +41,7 @@ add_custom_target( visp_python_bindings_stubs
   COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/visp-stubs"
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} pybind11-stubgen
   COMMAND ${PYTHON3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/run_stub_generator.py --output-root ${CMAKE_CURRENT_BINARY_DIR}
-  COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} -v "${CMAKE_CURRENT_BINARY_DIR}"
-
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} "${CMAKE_CURRENT_BINARY_DIR}"
+  COMMENT "Generating Python stubs with pybind11-stubgen..."
   DEPENDS visp_python_bindings_install
 )
