@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-12]
+        os: [macos-12, macos-13, macos-13-arm64]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
