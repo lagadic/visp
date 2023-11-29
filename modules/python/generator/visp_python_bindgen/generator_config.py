@@ -32,7 +32,7 @@
 # ViSP Python bindings generator
 #
 #############################################################################
-
+import logging
 from typing import Dict, Final, List, Optional
 import re
 from pathlib import Path
@@ -124,10 +124,10 @@ class GeneratorConfig(object):
       'VISP_BUILD_DEPRECATED_FUNCTIONS', # Do not bind deprecated functions
       'VISP_RUBIK_REGULAR_FONT_RESOURCES'
     ],
-    include_directories=[], # Populate through the main configuration file
+    include_directories=[], # Populated through the main configuration file
     passthrough_includes_regex="^.*$", # Never output the result of other includes.
     line_directive=None,
-    other_args=["--passthru-unfound-includes"] #"--passthru-comments"
+    other_args=['--passthru-unfound-includes'] #"--passthru-comments"
   )
 
   xml_doc_path: Optional[Path] = None
@@ -159,6 +159,7 @@ class GeneratorConfig(object):
     assert path.exists()
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
+      logging.info('Updating the generator config from dict: ', main_config)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
 
       defines = main_config.get('defines')
@@ -178,4 +179,6 @@ class GeneratorConfig(object):
 
         # Include only headers that are in the VISP source directory
         headers = list(filter(lambda h: source_dir in h.parents, headers))
+        headers_log_str = '\n\t'.join([str(header) for header in headers])
+        logging.info(f'Module {module_name} headers: \n\t{headers_log_str}')
         GeneratorConfig.module_data.append(ModuleInputData(module_name, headers, deps))

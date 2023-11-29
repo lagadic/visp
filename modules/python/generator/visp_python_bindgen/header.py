@@ -116,6 +116,7 @@ class HeaderFile():
         self.documentation_holder_path = DocumentationData.get_xml_path_if_exists(name_cpp_no_template, DocumentationObjectKind.Class)
 
   def run_preprocessor(self):
+    logging.info(f'Preprocessing header {self.path.name}')
     tmp_dir = self.submodule.submodule_file_path.parent / "tmp"
     tmp_dir.mkdir(exist_ok=True)
     tmp_file_path = tmp_dir / (self.path.name + '.in')
@@ -148,6 +149,8 @@ class HeaderFile():
 
     argv = [''] + GeneratorConfig.pcpp_config.to_pcpp_args_list()
     argv += ['-o', f'{preprocessor_output_path}', str(tmp_file_path.absolute())]
+    argv_str = ", ".join(argv)
+    logging.info(f'Preprocessor arguments:\n{argv_str}')
 
     pcpp.CmdPreprocessor(argv)
     preprocessed_header_content = None
@@ -212,7 +215,7 @@ class HeaderFile():
         rejection_strs.append(f'\t{rejected_function.signature} was rejected! Reason: {rejected_function.rejection_reason}')
     if len(rejection_strs) > 0:
       logging.warning(f'Rejected function in namespace: {ns.name}')
-      logging.warning('\n'.join(rejection_strs))
+      logging.warning('\n' + '\n'.join(rejection_strs))
 
     bound_object = BoundObjectNames('submodule', self.submodule.name, namespace_prefix, namespace_prefix)
     defs = []
@@ -221,6 +224,7 @@ class HeaderFile():
 
     bindings_container.add_bindings(SingleObjectBindings(bound_object, None, defs, GenerationObjectType.Namespace))
     for sub_ns in ns.namespaces:
+      logging.info(f'Parsing subnamespace {namespace_prefix + sub_ns}')
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
   def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment) -> SingleObjectBindings:
