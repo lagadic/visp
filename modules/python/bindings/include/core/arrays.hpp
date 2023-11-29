@@ -96,7 +96,7 @@ void define_get_item_2d_array(PyClass &pyClass)
   pyClass.def("__getitem__", [](const Class &self, std::pair<int, int> pair) -> Item {
     int i = pair.first, j = pair.second;
     const int rows = (int)self.getRows(), cols = (int)self.getCols();
-    if (abs(i) > rows || abs(j) > cols) {
+    if (i >= rows || j >= cols || i < -rows || j < -cols) {
       std::stringstream ss;
       ss << "Invalid indexing into a 2D array: got indices " << shape_to_string({ i, j })
         << " but array has dimensions " << shape_to_string({ rows, cols });
@@ -112,7 +112,7 @@ void define_get_item_2d_array(PyClass &pyClass)
   });
   pyClass.def("__getitem__", [](const Class &self, int i) -> np_array_cf<Item> {
     const int rows = (int)self.getRows();
-    if (abs(i) > rows) {
+    if (i >= rows || i < -rows) {
       std::stringstream ss;
       ss << "Invalid indexing into a 2D array: got row index " << shape_to_string({ i })
         << " but array has " << rows << " rows";
