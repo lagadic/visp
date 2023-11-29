@@ -89,6 +89,7 @@ set(bindings_dependencies
   ${json_config_file_path} ${config_files}
   ${python_sources} ${pip_files}
 )
+
 # If we have doxygen, we should first generate the XML documentation
 # so that the binding stubs and doc is as complete as possible
 if(DOXYGEN_FOUND)

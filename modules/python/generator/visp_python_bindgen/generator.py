@@ -107,11 +107,13 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
   #     if result is None:
   #       raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
   #     new_all_headers.append(result)
+
   new_all_headers = []
   for result in list(tqdm(map(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr, unit="hdr")):
     if result is None:
       raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
     new_all_headers.append(result)
+
   # Sort headers according to the dependencies. This is done across all modules.
   # TODO: sort module generation order. For now this works but it's fairly brittle
   new_all_headers = sort_headers(new_all_headers)
