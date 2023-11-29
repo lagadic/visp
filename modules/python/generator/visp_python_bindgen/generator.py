@@ -96,15 +96,22 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
   for submodule in submodules:
     all_headers.extend(submodule.headers)
 
-  # Parallel processing of headers to speedup this step
   from tqdm import tqdm
-  with Pool() as pool:
-    new_all_headers = []
-    for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr)):
-      if result is None:
-        raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
-      new_all_headers.append(result)
-
+  # Parallel processing of headers to speedup this step
+  # This parallel implementation is disabled,
+  # since the behaviour on Mac is different and leads to preprocessing not finding vpConfig.h and others
+  # Reverting to a single process version fixes the issue
+  # with Pool() as pool:
+  #   new_all_headers = []
+  #   for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr)):
+  #     if result is None:
+  #       raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
+  #     new_all_headers.append(result)
+  new_all_headers = []
+  for result in list(tqdm(map(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr, unit="hdr")):
+    if result is None:
+      raise RuntimeError('There was an exception when processing headers: You should either ignore the faulty header/class, or fix the generator code!')
+    new_all_headers.append(result)
   # Sort headers according to the dependencies. This is done across all modules.
   # TODO: sort module generation order. For now this works but it's fairly brittle
   new_all_headers = sort_headers(new_all_headers)
