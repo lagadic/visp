@@ -235,7 +235,7 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
 /**
  * \brief Get the interpolation weights and offsets.
  *
- * \param[in] absoluteTheta : The absolute value of the angle of the edge, expressed in degrees.
+ * \param[in] positiveTheta : The positive value of the angle of the edge, expressed in degrees.
  * \param[out] alpha : The weight of the first point used for the interpolation.
  * \param[out] beta : The weight of the second point used for the interpolation.
  * \param[out] dRowGradAlpha : The offset along the row attached to the alpha weight.
@@ -244,21 +244,21 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
  * \param[out] dColGradBeta : The offset along the column attached to the beta weight.
  */
 void
-getInterpolationWeightsAndOffsets(const float &absoluteTheta,
+getInterpolationWeightsAndOffsets(const float &positiveTheta,
                  float &alpha, float &beta,
                  int &dRowGradAlpha, int &dRowGradBeta,
                  int &dColGradAlpha, int &dColGradBeta
 )
 {
   float thetaMin = 0.f;
-  if (absoluteTheta < 45.f) {
+  if (positiveTheta < 45.f) {
     // Angles between 0 and 45 deg rely on the horizontal and diagonal points
     dColGradAlpha = 1;
     dColGradBeta = 1;
     dRowGradAlpha = 0;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 45.f && absoluteTheta < 90.f) {
+  else if (positiveTheta >= 45.f && positiveTheta < 90.f) {
     // Angles between 45 and 90 deg rely on the diagonal and vertical points
     thetaMin = 45.f;
     dColGradAlpha = 1;
@@ -266,7 +266,7 @@ getInterpolationWeightsAndOffsets(const float &absoluteTheta,
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 90.f && absoluteTheta < 135.f) {
+  else if (positiveTheta >= 90.f && positiveTheta < 135.f) {
     // Angles between 90 and 135 deg rely on the vertical and diagonal points
     thetaMin = 90.f;
     dColGradAlpha = 0;
@@ -274,7 +274,7 @@ getInterpolationWeightsAndOffsets(const float &absoluteTheta,
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 135.f && absoluteTheta < 180.f) {
+  else if (positiveTheta >= 135.f && positiveTheta < 180.f) {
     // Angles between 135 and 180 deg rely on the vertical and diagonal points
     thetaMin = 135.f;
     dColGradAlpha = -1;
@@ -282,7 +282,7 @@ getInterpolationWeightsAndOffsets(const float &absoluteTheta,
     dRowGradAlpha = -1;
     dRowGradBeta = 0;
   }
-  beta = (absoluteTheta - thetaMin) / 45.f;
+  beta = (positiveTheta - thetaMin) / 45.f;
   alpha = 1.f - beta;
 }
 
@@ -325,24 +325,24 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
  * @return float The positive value of the gradient orientation, expressed in degrees.
  */
 float
-getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+getPositiveTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
 {
-  float absoluteTheta = 0.f;
+  float positiveTheta = 0.f;
   float dx = dIx[row][col];
   float dy = dIy[row][col];
 
   if (std::abs(dx) < std::numeric_limits<float>::epsilon()) {
-    absoluteTheta = 90.f;
+    positiveTheta = 90.f;
   }
   else {
     // -dy because the y-axis of the image is oriented towards the bottom of the screen
     // while we later work with a y-axis oriented towards the top when getting the theta quadrant.
-    absoluteTheta = static_cast<float>(vpMath::deg(std::atan2(-dy , dx)));
-    if(absoluteTheta < 0.f) {
-      absoluteTheta += 180.f; // + M_PI in order to be between 0 and M_PI
+    positiveTheta = static_cast<float>(vpMath::deg(std::atan2(-dy , dx)));
+    if(positiveTheta < 0.f) {
+      positiveTheta += 180.f; // + M_PI in order to be between 0 and M_PI
     }
   }
-  return absoluteTheta;
+  return positiveTheta;
 }
 
 void
@@ -365,9 +365,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       // depending on the gradient orientation
       int dRowAlphaPlus = 0, dRowBetaPlus = 0;
       int dColAphaPlus = 0, dColBetaPlus = 0;
-      float absTheta = getAbsoluteTheta(m_dIx, m_dIy, row, col);
+      float positiveTheta = getPositiveTheta(m_dIx, m_dIy, row, col);
       float alpha = 0.f, beta = 0.f;
-      getInterpolationWeightsAndOffsets(absTheta, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+      getInterpolationWeightsAndOffsets(positiveTheta, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
       int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
       int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
       float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
