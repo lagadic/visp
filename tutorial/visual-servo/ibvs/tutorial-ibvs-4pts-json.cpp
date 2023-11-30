@@ -266,7 +266,7 @@ int main(int argc, char *argv[])
 
     unsigned int iter = 0;
     bool end = false;
-    std::cout << "Start visual-servoing loop until convergence..." << std::endl;
+    std::cout << "Starting visual-servoing loop until convergence..." << std::endl;
     //! [VS loop]
     while (!end) {
       robot.getPosition(wMc);

@@ -40,8 +40,8 @@
 
 #include <visp3/core/vpMunkres.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 // System
 #include <iostream>
@@ -67,21 +67,21 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 {
   auto testMunkres = [](const std::vector<std::vector<double> > &cost_matrix,
                         const std::vector<std::pair<unsigned int, unsigned int> > &expected_pairs) {
-    const auto munkres_pairs = vpMunkres::run(cost_matrix);
-    REQUIRE(expected_pairs.size() == munkres_pairs.size());
-    for (auto i = 0u; i < munkres_pairs.size(); i++) {
-      REQUIRE(expected_pairs.at(i) == munkres_pairs.at(i));
-    }
-  };
+                          const auto munkres_pairs = vpMunkres::run(cost_matrix);
+                          REQUIRE(expected_pairs.size() == munkres_pairs.size());
+                          for (auto i = 0u; i < munkres_pairs.size(); i++) {
+                            REQUIRE(expected_pairs.at(i) == munkres_pairs.at(i));
+                          }
+    };
 
   SECTION("Square cost matrix")
   {
-    std::vector<std::vector<double> > costs{};
+    std::vector<std::vector<double> > costs {};
     costs.push_back(std::vector<double>{3, 1, 2});
     costs.push_back(std::vector<double>{2, 3, 1});
     costs.push_back(std::vector<double>{1, 2, 3});
 
-    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs{};
+    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs {};
     expected_pairs.emplace_back(0, 1);
     expected_pairs.emplace_back(1, 2);
     expected_pairs.emplace_back(2, 0);
@@ -91,12 +91,12 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 
   SECTION("Horizontal cost matrix")
   {
-    std::vector<std::vector<double> > costs{};
+    std::vector<std::vector<double> > costs {};
     costs.push_back(std::vector<double>{4, 1, 2, 3});
     costs.push_back(std::vector<double>{3, 4, 1, 2});
     costs.push_back(std::vector<double>{2, 3, 4, 1});
 
-    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs{};
+    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs {};
     expected_pairs.emplace_back(0, 1);
     expected_pairs.emplace_back(1, 2);
     expected_pairs.emplace_back(2, 3);
@@ -106,13 +106,13 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 
   SECTION("Vertical cost matrix")
   {
-    std::vector<std::vector<double> > costs{};
+    std::vector<std::vector<double> > costs {};
     costs.push_back(std::vector<double>{4, 1, 2});
     costs.push_back(std::vector<double>{3, 4, 1});
     costs.push_back(std::vector<double>{2, 3, 4});
     costs.push_back(std::vector<double>{1, 2, 3});
 
-    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs{};
+    std::vector<std::pair<unsigned int, unsigned int> > expected_pairs {};
     expected_pairs.emplace_back(0, 1);
     expected_pairs.emplace_back(1, 2);
     expected_pairs.emplace_back(3, 0);
@@ -139,9 +139,9 @@ bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
   if (pairs.size() != expected_pairs.size()) {
     // clang-format off
     std::cerr << "Expected nb of association | Munkres nb of association: "
-              << expected_pairs.size() << " | " << pairs.size()
-              << std::endl;
-    // clang-format on
+      << expected_pairs.size() << " | " << pairs.size()
+      << std::endl;
+// clang-format on
     return false;
   }
 
@@ -161,8 +161,8 @@ bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
 
       // Output the pair which fails
       std::cerr << "FAIL: "
-                << "Expected association | Munkres association: " << expected_pairs.at(i) << " | " << pairs.at(i)
-                << std::endl;
+        << "Expected association | Munkres association: " << expected_pairs.at(i) << " | " << pairs.at(i)
+        << std::endl;
 
       return false;
     }
@@ -173,13 +173,13 @@ bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
 
 bool testSquareMat()
 {
-  std::vector<std::vector<double> > costs{};
+  std::vector<std::vector<double> > costs {};
   costs.push_back(std::vector<double>{3, 4, 1, 2});
   costs.push_back(std::vector<double>{3, 4, 2, 1});
   costs.push_back(std::vector<double>{1, 2, 3, 4});
   costs.push_back(std::vector<double>{2, 1, 4, 3});
 
-  std::vector<std::pair<unsigned int, unsigned int> > pairs{};
+  std::vector<std::pair<unsigned int, unsigned int> > pairs {};
   pairs.emplace_back(0, 2);
   pairs.emplace_back(1, 3);
   pairs.emplace_back(2, 0);
@@ -190,13 +190,13 @@ bool testSquareMat()
 
 bool testVertMat()
 {
-  std::vector<std::vector<double> > costs{};
+  std::vector<std::vector<double> > costs {};
   costs.push_back(std::vector<double>{3, 2, 1});
   costs.push_back(std::vector<double>{4, 3, 2});
   costs.push_back(std::vector<double>{1, 4, 3});
   costs.push_back(std::vector<double>{2, 1, 4});
 
-  std::vector<std::pair<unsigned int, unsigned int> > pairs{};
+  std::vector<std::pair<unsigned int, unsigned int> > pairs {};
   pairs.emplace_back(0, 2);
   pairs.emplace_back(2, 0);
   pairs.emplace_back(3, 1);
@@ -206,12 +206,12 @@ bool testVertMat()
 
 bool testHorMat()
 {
-  std::vector<std::vector<double> > costs{};
+  std::vector<std::vector<double> > costs {};
   costs.push_back(std::vector<double>{2, 3, 4, 1});
   costs.push_back(std::vector<double>{4, 1, 2, 3});
   costs.push_back(std::vector<double>{1, 2, 3, 4});
 
-  std::vector<std::pair<unsigned int, unsigned int> > pairs{};
+  std::vector<std::pair<unsigned int, unsigned int> > pairs {};
   pairs.emplace_back(0, 3);
   pairs.emplace_back(1, 1);
   pairs.emplace_back(2, 0);

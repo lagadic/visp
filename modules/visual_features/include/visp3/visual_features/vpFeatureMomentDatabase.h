@@ -42,6 +42,7 @@
 #include <cstring>
 #include <iostream>
 #include <map>
+#include <string>
 #include <visp3/core/vpConfig.h>
 
 class vpFeatureMoment;
@@ -154,11 +155,11 @@ class VISP_EXPORT vpFeatureMomentDatabase
 private:
   struct vpCmpStr_t
   {
-    bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; }
-    char *operator=(const char *) { return nullptr; } // Only to avoid a warning under Visual with /Wall flag
+    bool operator()(const std::string &a, const std::string &b) const { return std::strcmp(a.c_str(), b.c_str()) < 0; }
+    std::string operator=(const std::string) { return std::string(); } // Only to avoid a warning under Visual with /Wall flag
   };
-  std::map<const char *, vpFeatureMoment *, vpCmpStr_t> featureMomentsDataBase;
-  void add(vpFeatureMoment &featureMoment, char *name);
+  std::map<const std::string, vpFeatureMoment *, vpCmpStr_t> featureMomentsDataBase;
+  void add(vpFeatureMoment &featureMoment, const std::string &name);
 
 public:
   /*!
@@ -173,7 +174,7 @@ public:
 
   virtual void updateAll(double A = 0.0, double B = 0.0, double C = 1.0);
 
-  vpFeatureMoment &get(const char *type, bool &found);
+  vpFeatureMoment &get(const std::string &feature_name, bool &found);
 
   // friend VISP_EXPORT std::ostream & operator<<(std::ostream& os, const
   // vpFeatureMomentDatabase& m);

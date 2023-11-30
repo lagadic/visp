@@ -186,9 +186,6 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   m_areGradientAvailable = false; // Reset for next call
 
   // // Step 3: edge thining
-  performEdgeThining();
-
-  // // Step 4: hysteresis thresholding
   float upperThreshold = m_upperThreshold;
   float lowerThreshold = m_lowerThreshold;
   if (upperThreshold < 0) {
@@ -200,7 +197,11 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
     lowerThreshold = m_upperThreshold / 3.f;
   }
+  // To ensure that if lowerThreshold = 0, we reject null gradient points
+  lowerThreshold = std::max(lowerThreshold, std::numeric_limits<float>::epsilon());
+  performEdgeThinning(lowerThreshold);
 
+  // // Step 4: hysteresis thresholding
   performHysteresisThresholding(lowerThreshold, upperThreshold);
 
   // // Step 5: edge tracking
@@ -220,65 +221,69 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
     vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize);
 
     // Computing the gradients
-    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX);
-    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY);
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY, true);
   }
   else {
-    std::string errmsg("Currently, the only filtering and gradient operators are Gaussian blur + Sobel");
+    std::string errmsg("Currently, the filtering operation \"");
+    errmsg += vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType);
+    errmsg += "\" is not handled.";
     throw(vpException(vpException::notImplementedError, errmsg));
   }
 }
 
 /**
- * \brief Get the theta quadrant in which lies absoluteTheta and the offset along the horizontal
- * and vertical direction where to look for the neighbors.
+ * \brief Get the interpolation weights and offsets.
  *
  * \param[in] absoluteTheta : The absolute value of the angle of the edge, expressed in degrees.
- * \param[out] dRowGradPlus : The offset in the vertical positive direction.
- * \param[out] dRowGradMinus : The offset in the vertical negative direction.
- * \param[out] dColGradPlus : The offset in the horizontal positive direction.
- * \param[out] dColGradMinus : The offset in the horizontal negative direction.
- * \return The quadrant in which lies the angle of the edge, expressed in degrees.
+ * \param[out] alpha : The weight of the first point used for the interpolation.
+ * \param[out] beta : The weight of the second point used for the interpolation.
+ * \param[out] dRowGradAlpha : The offset along the row attached to the alpha weight.
+ * \param[out] dRowGradBeta : The offset along the row attached to the beta weight.
+ * \param[out] dColGradAlpha : The offset along the column attached to the alpha weight.
+ * \param[out] dColGradBeta : The offset along the column attached to the beta weight.
  */
-int
-getThetaQuadrant(const float &absoluteTheta, int &dRowGradPlus, int &dRowGradMinus, int &dColGradPlus, int &dColGradMinus)
+void
+getInterpolationWeightsAndOffsets(const float &absoluteTheta,
+                 float &alpha, float &beta,
+                 int &dRowGradAlpha, int &dRowGradBeta,
+                 int &dColGradAlpha, int &dColGradBeta
+)
 {
-  if (absoluteTheta < 22.5) {
-    // Angles between -22.5 and 22.5 are mapped to be horizontal axis
-    dColGradMinus = -1;
-    dColGradPlus = 1;
-    dRowGradPlus = dRowGradMinus = 0;
-    return 0;
+  float thetaMin = 0.f;
+  if (absoluteTheta < 45.f) {
+    // Angles between 0 and 45 deg rely on the horizontal and diagonal points
+    dColGradAlpha = 1;
+    dColGradBeta = 1;
+    dRowGradAlpha = 0;
+    dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 22.5 && absoluteTheta < 67.5) {
-    // Angles between 22.5 and 67.5 are mapped to the diagonal 45degree
-    dRowGradMinus = dColGradMinus = -1;
-    dRowGradPlus = dColGradPlus = 1;
-    return 45;
+  else if (absoluteTheta >= 45.f && absoluteTheta < 90.f) {
+    // Angles between 45 and 90 deg rely on the diagonal and vertical points
+    thetaMin = 45.f;
+    dColGradAlpha = 1;
+    dColGradBeta = 0;
+    dRowGradAlpha = -1;
+    dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 67.5 && absoluteTheta < 112.5) {
-    // Angles between 67.5 and 112.5 are mapped to the vertical axis
-    dColGradMinus = dColGradPlus = 0;
-    dRowGradMinus = -1;
-    dRowGradPlus = 1;
-    return 90;
+  else if (absoluteTheta >= 90.f && absoluteTheta < 135.f) {
+    // Angles between 90 and 135 deg rely on the vertical and diagonal points
+    thetaMin = 90.f;
+    dColGradAlpha = 0;
+    dColGradBeta = -1;
+    dRowGradAlpha = -1;
+    dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 112.5 && absoluteTheta < 157.5) {
-    // Angles between 112.5 and 157.5 are mapped to the diagonal -45degree
-    dRowGradMinus = -1;
-    dColGradMinus = 1;
-    dRowGradPlus = 1;
-    dColGradPlus = -1;
-    return 135;
+  else if (absoluteTheta >= 135.f && absoluteTheta < 180.f) {
+    // Angles between 135 and 180 deg rely on the vertical and diagonal points
+    thetaMin = 135.f;
+    dColGradAlpha = -1;
+    dColGradBeta = -1;
+    dRowGradAlpha = -1;
+    dRowGradBeta = 0;
   }
-  else {
-    // Angles greater than 157.5 are mapped to be horizontal axis
-    dColGradMinus = 1;
-    dColGradPlus = -1;
-    dRowGradMinus = dRowGradPlus = 0;
-    return 180;
-  }
-  return -1; // Should not reach this point
+  beta = (absoluteTheta - thetaMin) / 45.f;
+  alpha = 1.f - beta;
 }
 
 /**
@@ -320,123 +325,55 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
 float
 getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
 {
-  float absoluteTheta;
+  float absoluteTheta = 0.f;
   float dx = dIx[row][col];
   float dy = dIy[row][col];
 
   if (std::abs(dx) < std::numeric_limits<float>::epsilon()) {
-    absoluteTheta = 90.;
+    absoluteTheta = 90.f;
   }
   else {
-    absoluteTheta = static_cast<float>(vpMath::deg(std::abs(std::atan(dy / dx))));
+    absoluteTheta = static_cast<float>(vpMath::deg(std::abs(std::atan2(dy, dx))));
   }
   return absoluteTheta;
 }
 
-/**
- * \brief Search in the direction of the gradient for the highest value of the gradient.
- *
- * \param[in] dIx The gradient image along the x-axis.
- * \param[in] dIy The gradient image along the y-axis.
- * \param[in] row The row of the initial point that is considered.
- * \param[in] col The column of the initial point that is considered.
- * \param[in] thetaQuadrant The gradient orientation quadrant of the initial point.
- * \param[in] dRowGrad The direction of the gradient for the vertical direction.
- * \param[in] dColGrad The direction of the gradient for the horizontal direction.
- * \param[out] pixelsSeen The list of pixels that are of same gradient orientation quadrant.
- * \param[out] bestPixel The pixel having the highest absolute value of gradient.
- * \param[out] bestGrad The highest absolute value of gradient.
- */
 void
-searchForBestGradientInGradientDirection(const vpImage<float> &dIx, const vpImage<float> &dIy,
-const int &row, const int &col, const int &thetaQuadrant, const int &dRowGrad, const int &dColGrad,
-std::vector<std::pair<int, int> > &pixelsSeen, std::pair<int, int> &bestPixel, float &bestGrad)
+vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 {
-  bool isGradientInTheSameDirection = true;
-  int rowCandidate = row + dRowGrad;
-  int colCandidate = col + dColGrad;
-
-  while (isGradientInTheSameDirection) {
-    // Getting the gradients around the edge point
-    float gradPlus = getManhattanGradient(dIx, dIy, rowCandidate, colCandidate);
-    if (std::abs(gradPlus) < std::numeric_limits<float>::epsilon()) {
-      // The gradient is almost null => ignoring the point
-      isGradientInTheSameDirection = false;
-      break;
-    }
-    int dRowGradPlusCandidate = 0, dRowGradMinusCandidate = 0;
-    int dColGradPlusCandidate = 0, dColGradMinusCandidate = 0;
-    float absThetaPlus = getAbsoluteTheta(dIx, dIy, rowCandidate, colCandidate);
-    int thetaQuadrantCandidate = getThetaQuadrant(absThetaPlus, dRowGradPlusCandidate, dRowGradMinusCandidate, dColGradPlusCandidate, dColGradMinusCandidate);
-    if (thetaQuadrantCandidate != thetaQuadrant) {
-      isGradientInTheSameDirection = false;
-      break;
-    }
-
-    std::pair<int, int> pixelCandidate(rowCandidate, colCandidate);
-    if (gradPlus > bestGrad) {
-      // The gradient is higher with the next pixel candidate
-      // Saving it
-      bestGrad = gradPlus;
-      pixelsSeen.push_back(bestPixel);
-      bestPixel = pixelCandidate;
-    }
-    else {
-      // Best pixel is still the best
-      pixelsSeen.push_back(pixelCandidate);
-    }
-    rowCandidate += dRowGrad;
-    colCandidate += dColGrad;
-  }
-}
-
-void
-vpCannyEdgeDetection::performEdgeThining()
-{
-  vpImage<float> dIx = m_dIx;
-  vpImage<float> dIy = m_dIy;
   int nbRows = m_dIx.getRows();
   int nbCols = m_dIx.getCols();
 
   for (int row = 0; row < nbRows; row++) {
     for (int col = 0; col < nbCols; col++) {
       // Computing the gradient orientation and magnitude
-      float grad = getManhattanGradient(dIx, dIy, row, col);
+      float grad = getManhattanGradient(m_dIx, m_dIy, row, col);
 
-      if (grad < std::numeric_limits<float>::epsilon()) {
-        // The gradient is almost null => ignoring the point
+      if (grad < lowerThreshold) {
+        // The gradient is lower than minimum threshold => ignoring the point
         continue;
       }
 
-      float absoluteTheta = getAbsoluteTheta(dIx, dIy, row, col);
-
       // Getting the offset along the horizontal and vertical axes
       // depending on the gradient orientation
-      int dRowGradPlus = 0, dRowGradMinus = 0;
-      int dColGradPlus = 0, dColGradMinus = 0;
-      int thetaQuadrant = getThetaQuadrant(absoluteTheta, dRowGradPlus, dRowGradMinus, dColGradPlus, dColGradMinus);
+      int dRowAlphaPlus = 0, dRowBetaPlus = 0;
+      int dColAphaPlus = 0, dColBetaPlus = 0;
+      float absTheta = getAbsoluteTheta(m_dIx, m_dIy, row, col);
+      float alpha = 0.f, beta = 0.f;
+      getInterpolationWeightsAndOffsets(absTheta, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+      int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
+      int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
+      float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
+      float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaPlus, col + dColBetaPlus);
+      float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaMinus, col + dColAphaMinus);
+      float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaMinus, col + dColBetaMinus);
+      float gradPlus = alpha * gradAlphaPlus + beta * gradBetaPlus;
+      float gradMinus = alpha * gradAlphaMinus + beta * gradBetaMinus;
 
-      std::vector<std::pair<int, int> > pixelsSeen;
-      std::pair<int, int> bestPixel(row, col);
-      float bestGrad = grad;
-
-      // iterate over all the pixels having the same gradient orientation quadrant
-      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradPlus, dColGradPlus,
-        pixelsSeen, bestPixel, bestGrad);
-
-      searchForBestGradientInGradientDirection(dIx, dIy, row, col, thetaQuadrant, dRowGradMinus, dColGradMinus,
-        pixelsSeen, bestPixel, bestGrad);
-
-      // Keeping the edge point that has the highest gradient
-      m_edgeCandidateAndGradient[bestPixel] = bestGrad;
-
-      // Suppressing non-maximum gradient
-      for (std::vector<std::pair<int, int> >::iterator it = pixelsSeen.begin(); it != pixelsSeen.end(); it++) {
-        // Suppressing non-maximum gradient
-        int row_temp = it->first;
-        int col_temp = it->second;
-        dIx[row_temp][col_temp] = 0.;
-        dIy[row_temp][col_temp] = 0.;
+      if (grad >= gradPlus && grad >= gradMinus) {
+        // Keeping the edge point that has the highest gradient
+        std::pair<unsigned int, unsigned int> bestPixel(row, col);
+        m_edgeCandidateAndGradient[bestPixel] = grad;
       }
     }
   }
@@ -482,7 +419,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   for (int dr = -1; dr <= 1 && !hasFoundStrongEdge; dr++) {
     for (int dc = -1; dc <= 1 && !hasFoundStrongEdge; dc++) {
       int idRow = dr + (int)coordinates.first;
+      idRow = std::max(idRow, 0); // Avoid getting negative pixel ID
       int idCol = dc + (int)coordinates.second;
+      idCol = std::max(idCol, 0); // Avoid getting negative pixel ID
 
       // Checking if we are still looking for an edge in the limit of the image
       if ((idRow < 0 || idRow >= nbRows)
@@ -501,6 +440,7 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
           hasFoundStrongEdge = true;
         }
         else if (type_candidate == WEAK_EDGE) {
+          // Checking if the WEAK_EDGE neighbor has a STRONG_EDGE neighbor
           hasFoundStrongEdge = recursiveSearchForStrongEdge(key_candidate);
         }
       }

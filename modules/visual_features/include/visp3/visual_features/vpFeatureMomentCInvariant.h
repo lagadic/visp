@@ -108,12 +108,12 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentCInvariant"; }
+  const std::string momentName() const override { return "vpMomentCInvariant"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentCInvariant"; }
+  const std::string name() const override { return "vpFeatureMomentCInvariant"; }
 
   /*!
    * Shortcut selector for \f$C_1\f$.
@@ -246,11 +246,11 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentCInvariant"; }
+  const std::string momentName() const override { return "vpMomentCInvariant"; }
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentCInvariant"; }
+  const std::string name() const override { return "vpFeatureMomentCInvariant"; }
 
   /*!
    * Shortcut selector for \f$C_1\f$.

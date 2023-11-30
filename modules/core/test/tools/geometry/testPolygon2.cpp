@@ -62,7 +62,8 @@ TEST_CASE("Check OpenCV-bsed convex hull")
     vpPolygon poly {};
     poly.buildFrom(rect_corners, true);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
     for (const auto &poly_corner : poly.getCorners()) {
       REQUIRE(std::find(cbegin(rect_corners), cend(rect_corners), poly_corner) != cend(rect_corners));
     }
@@ -98,7 +99,8 @@ bool testConvexHull()
   vpPolygon poly;
   poly.buildFrom(rect_corners, true);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   for (const auto &poly_corner : poly.getCorners()) {
     if (std::find(cbegin(rect_corners), cend(rect_corners), poly_corner) == cend(rect_corners)) {
       return false;

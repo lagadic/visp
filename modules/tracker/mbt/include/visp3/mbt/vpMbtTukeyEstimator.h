@@ -113,7 +113,8 @@ private:
 #if HAVE_TRANSFORM
 namespace
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+// Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
 auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); };
 #else
 template <typename T> struct AbsDiff : public std::binary_function<T, T, T>
@@ -166,7 +167,8 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+// Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
 #else
   std::transform(residues.begin(), residues.end(), m_normres.begin(),
@@ -270,7 +272,8 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+// Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
 #else
   std::transform(residues.begin(), residues.end(), m_normres.begin(),

@@ -20,9 +20,8 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911))) &&                     \
-    defined(VISP_HAVE_DISPLAY)
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && defined(VISP_HAVE_DISPLAY)
 
 // Local helper
 namespace
@@ -40,16 +39,16 @@ using Display = vpDisplayGTK;
 using Display = vpDisplayD3D;
 #endif
 
-constexpr auto DispScaleType{vpDisplay::SCALE_AUTO};
+constexpr auto DispScaleType { vpDisplay::SCALE_AUTO };
 
 // Model
-constexpr auto ModelCommentHeader{"#"};
-constexpr auto ModelKeypointsHeader{"Keypoints"};
-constexpr auto ModelBoundsHeader{"Bounds"};
-constexpr auto ModelDataHeader{"data:"};
+constexpr auto ModelCommentHeader { "#" };
+constexpr auto ModelKeypointsHeader { "Keypoints" };
+constexpr auto ModelBoundsHeader { "Bounds" };
+constexpr auto ModelDataHeader { "data:" };
 
 // Depth
-constexpr auto DepthScale{0.001};
+constexpr auto DepthScale { 0.001 };
 } // namespace
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -73,8 +72,8 @@ public:
   std::map<Id, vpPoint> bounds(const vpHomogeneousMatrix &cMo = {}) const;
 
 private:
-  std::map<Id, vpPoint> m_keypoints{};
-  std::map<Id, vpPoint> m_bounds{};
+  std::map<Id, vpPoint> m_keypoints {};
+  std::map<Id, vpPoint> m_bounds {};
 };
 
 inline Model::Model(const std::string &model_filename)
@@ -82,27 +81,29 @@ inline Model::Model(const std::string &model_filename)
   std::fstream file;
   file.open(model_filename.c_str(), std::fstream::in);
 
-  std::string line{}, subs{};
-  bool in_model_bounds{false};
-  bool in_model_keypoints{false};
-  unsigned int data_curr_line{0};
-  unsigned int data_line_start_pos{0};
+  std::string line {}, subs {};
+  bool in_model_bounds { false };
+  bool in_model_keypoints { false };
+  unsigned int data_curr_line { 0 };
+  unsigned int data_line_start_pos { 0 };
 
   auto reset = [&]() {
     in_model_bounds = false;
     in_model_keypoints = false;
     data_curr_line = 0;
     data_line_start_pos = 0;
-  };
+    };
 
   while (getline(file, line)) {
     if (line.substr(0, std::string(ModelCommentHeader).size()) == ModelCommentHeader || line == ModelDataHeader) {
       continue;
-    } else if (line == ModelBoundsHeader) {
+    }
+    else if (line == ModelBoundsHeader) {
       reset();
       in_model_bounds = true;
       continue;
-    } else if (line == ModelKeypointsHeader) {
+    }
+    else if (line == ModelKeypointsHeader) {
       reset();
       in_model_keypoints = true;
       continue;
@@ -116,18 +117,20 @@ inline Model::Model(const std::string &model_filename)
     try {
       std::stringstream ss(line.substr(data_line_start_pos, line.find("]") - data_line_start_pos));
       unsigned int data_on_curr_line = 0;
-      vpColVector oXYZ({0, 0, 0, 1});
+      vpColVector oXYZ({ 0, 0, 0, 1 });
       while (getline(ss, subs, ',')) {
         oXYZ[data_on_curr_line++] = std::atof(subs.c_str());
       }
       if (in_model_bounds) {
         m_bounds.try_emplace(data_curr_line, oXYZ[0], oXYZ[1], oXYZ[2]);
-      } else if (in_model_keypoints) {
+      }
+      else if (in_model_keypoints) {
         m_keypoints.try_emplace(data_curr_line, oXYZ[0], oXYZ[1], oXYZ[2]);
       }
       data_curr_line++;
-    } catch (...) {
-      // Line is empty or incomplete. We skeep it
+    }
+    catch (...) {
+   // Line is empty or incomplete. We skeep it
     }
   }
 
@@ -156,20 +159,20 @@ std::ostream &operator<<(std::ostream &os, const Model &model)
   for (const auto &[id, bound] : model.bounds()) {
     // clang-format off
     os << std::setw(4) << std::setfill(' ') << id << ": "
-       << std::setw(6) << std::setfill(' ') << bound.get_X() << ", "
-       << std::setw(6) << std::setfill(' ') << bound.get_Y() << ", "
-       << std::setw(6) << std::setfill(' ') << bound.get_Z() << std::endl;
-    // clang-format on
+      << std::setw(6) << std::setfill(' ') << bound.get_X() << ", "
+      << std::setw(6) << std::setfill(' ') << bound.get_Y() << ", "
+      << std::setw(6) << std::setfill(' ') << bound.get_Z() << std::endl;
+   // clang-format on
   }
 
   os << "-Keypoints:" << std::endl;
   for (const auto &[id, keypoint] : model.keypoints()) {
     // clang-format off
     os << std::setw(4) << std::setfill(' ') << id << ": "
-       << std::setw(6) << std::setfill(' ') << keypoint.get_X() << ", "
-       << std::setw(6) << std::setfill(' ') << keypoint.get_Y() << ", "
-       << std::setw(6) << std::setfill(' ') << keypoint.get_Z() << std::endl;
-    // clang-format on
+      << std::setw(6) << std::setfill(' ') << keypoint.get_X() << ", "
+      << std::setw(6) << std::setfill(' ') << keypoint.get_Y() << ", "
+      << std::setw(6) << std::setfill(' ') << keypoint.get_Z() << std::endl;
+   // clang-format on
   }
 
   return os;
@@ -190,11 +193,11 @@ readData(const std::string &input_directory, const unsigned int cpt = 0)
   const std::string filename_depth = buffer;
 
   // Read color
-  vpImage<vpRGBa> I_color{};
+  vpImage<vpRGBa> I_color {};
   vpImageIo::read(I_color, filename_color);
 
   // Read raw depth
-  vpImage<uint16_t> I_depth_raw{};
+  vpImage<uint16_t> I_depth_raw {};
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (file_depth.is_open()) {
     unsigned int height = 0, width = 0;
@@ -213,8 +216,8 @@ readData(const std::string &input_directory, const unsigned int cpt = 0)
   ss.str("");
   ss << input_directory << "/camera.xml";
 
-  vpXmlParserCamera parser{};
-  vpCameraParameters color_param{}, depth_param{};
+  vpXmlParserCamera parser {};
+  vpCameraParameters color_param {}, depth_param {};
   parser.parse(color_param, ss.str(), "color_camera", vpCameraParameters::perspectiveProjWithDistortion);
   parser.parse(depth_param, ss.str(), "depth_camera", vpCameraParameters::perspectiveProjWithDistortion);
 
@@ -223,10 +226,10 @@ readData(const std::string &input_directory, const unsigned int cpt = 0)
   ss << input_directory << "/depth_M_color.txt";
   std::ifstream file_depth_M_color(ss.str().c_str(), std::ios::in | std::ios::binary);
 
-  vpHomogeneousMatrix depth_M_color{};
+  vpHomogeneousMatrix depth_M_color {};
   depth_M_color.load(file_depth_M_color);
 
-  return {I_color, I_depth_raw, color_param, depth_param, depth_M_color};
+  return { I_color, I_depth_raw, color_param, depth_param, depth_M_color };
 }
 
 std::vector<vpImagePoint> getRoiFromUser(vpImage<vpRGBa> color_img)
@@ -236,11 +239,11 @@ std::vector<vpImagePoint> getRoiFromUser(vpImage<vpRGBa> color_img)
   disp_color.display(color_img);
   disp_color.flush(color_img);
 
-  std::vector<vpImagePoint> v_ip{};
+  std::vector<vpImagePoint> v_ip {};
   do {
     // Prepare display
     disp_color.display(color_img);
-    auto disp_lane{0};
+    auto disp_lane { 0 };
 
     vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Select point along the d435 box boundary", vpColor::green);
     vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Left click to select a point", vpColor::green);
@@ -255,8 +258,8 @@ std::vector<vpImagePoint> getRoiFromUser(vpImage<vpRGBa> color_img)
     disp_color.flush(color_img);
 
     // Wait for new point
-    vpImagePoint ip{};
-    vpMouseButton::vpMouseButtonType button{};
+    vpImagePoint ip {};
+    vpMouseButton::vpMouseButtonType button {};
     vpDisplay::getClick(color_img, ip, button, true);
 
     switch (button) {
@@ -288,14 +291,14 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   disp_color.display(color_img);
   disp_color.flush(color_img);
 
-  vpImage<vpRGBa> I_help{};
+  vpImage<vpRGBa> I_help {};
   vpImageIo::read(I_help, parent_data + "/data/d435_box_keypoints_user_helper.png");
   Display disp_help(I_help, disp_color.getWindowXPosition() + color_img.getWidth(), disp_color.getWindowYPosition(),
                     "Keypoints [help]", DispScaleType);
   disp_help.display(I_help);
   disp_help.flush(I_help);
 
-  std::map<Model::Id, vpImagePoint> keypoints{};
+  std::map<Model::Id, vpImagePoint> keypoints {};
   // - The next line produces an internal compiler error with Visual Studio 2017:
   //   tutorial-pose-from-planar-object.cpp(304): fatal error C1001: An internal error has occurred in the compiler.
   //   [C:\projects\visp\build\tutorial\computer-vision\tutorial-pose-from-planar-object.vcxproj] (compiler file
@@ -309,7 +312,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
     (void)ip_unused;
     // Prepare display
     disp_color.display(color_img);
-    auto disp_lane{0};
+    auto disp_lane { 0 };
 
     vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Select the keypoints " + Model::to_string(id),
                            vpColor::green);
@@ -323,7 +326,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
     disp_color.flush(color_img);
 
     // Wait for new point
-    vpImagePoint ip{};
+    vpImagePoint ip {};
     vpDisplay::getClick(color_img, ip, true);
     keypoints.try_emplace(id, ip);
   }
@@ -331,20 +334,18 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   return keypoints;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-#endif // #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
-// VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911))) && defined(VISP_HAVE_DISPLAY)
+#endif
 
 int main(int, char *argv[])
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #if defined(VISP_HAVE_DISPLAY)
 
   // Get prior data
   //! [Prior_Data]
   auto [color_img, depth_raw, color_param, depth_param, depth_M_color] =
-      readData(vpIoTools::getParent(argv[0]) + "/data/d435_not_align_depth", 0);
+    readData(vpIoTools::getParent(argv[0]) + "/data/d435_not_align_depth", 0);
   const auto model = Model(vpIoTools::getParent(argv[0]) + "/data/d435_box.model");
   //! [Prior_Data]
 
@@ -358,7 +359,7 @@ int main(int, char *argv[])
   display_color.display(color_img);
   display_color.flush(color_img);
 
-  vpImage<unsigned char> depth_img{};
+  vpImage<unsigned char> depth_img {};
   vpImageConvert::createDepthHistogram(depth_raw, depth_img);
   Display display_depth(depth_img, display_color.getWindowXPosition() + display_color.getWidth(), 0, "Depth",
                         DispScaleType);
@@ -367,29 +368,29 @@ int main(int, char *argv[])
 
   // Ask roi for plane estimation
   //! [Roi_Plane_Estimation]
-  vpPolygon roi_color_img{};
+  vpPolygon roi_color_img {};
   roi_color_img.buildFrom(getRoiFromUser(color_img), true);
 
-  std::vector<vpImagePoint> roi_corners_depth_img{};
+  std::vector<vpImagePoint> roi_corners_depth_img {};
   std::transform(
       cbegin(roi_color_img.getCorners()), cend(roi_color_img.getCorners()), std::back_inserter(roi_corners_depth_img),
       std::bind((vpImagePoint(*)(const vpImage<uint16_t> &, double, double, double, const vpCameraParameters &,
                                  const vpCameraParameters &, const vpHomogeneousMatrix &, const vpHomogeneousMatrix &,
                                  const vpImagePoint &)) &
-                    vpColorDepthConversion::projectColorToDepth,
+                vpColorDepthConversion::projectColorToDepth,
                 depth_raw, DepthScale, 0.1, 0.6, depth_param, color_param, depth_M_color.inverse(), depth_M_color,
                 std::placeholders::_1));
-  const vpPolygon roi_depth_img{roi_corners_depth_img};
+  const vpPolygon roi_depth_img { roi_corners_depth_img };
   //! [Roi_Plane_Estimation]
 
   vpDisplay::displayPolygon(depth_img, roi_depth_img.getCorners(), vpColor::green);
   display_depth.flush(depth_img);
 
   // Estimate the plane
-  vpImage<vpRGBa> heat_map{};
+  vpImage<vpRGBa> heat_map {};
   //! [Plane_Estimation]
   const auto obj_plane_in_depth =
-      vpPlaneEstimation::estimatePlane(depth_raw, DepthScale, depth_param, roi_depth_img, 1000, heat_map);
+    vpPlaneEstimation::estimatePlane(depth_raw, DepthScale, depth_param, roi_depth_img, 1000, heat_map);
   if (!obj_plane_in_depth) {
     return EXIT_FAILURE;
   }
@@ -417,7 +418,7 @@ int main(int, char *argv[])
   //! [Pose_Estimation]
 
   // Display the model
-  std::vector<vpImagePoint> d435_box_bound{};
+  std::vector<vpImagePoint> d435_box_bound {};
   // - The next line produces an internal compiler error with Visual Studio 2017:
   //   tutorial-pose-from-planar-object.cpp(428): fatal error C1001: An internal error has occurred in the compiler.
   //   [C:\projects\visp\build\tutorial\computer-vision\tutorial-pose-from-planar-object.vcxproj] (compiler file
@@ -430,14 +431,14 @@ int main(int, char *argv[])
   // for ([[maybe_unused]] const auto &[_, bound] : model.bounds(*cMo)) {
   for (const auto &[id_unused, bound] : model.bounds(*cMo)) {
     (void)id_unused;
-    vpImagePoint ip{};
+    vpImagePoint ip {};
     vpMeterPixelConversion::convertPoint(color_param, bound.get_x(), bound.get_y(), ip);
     d435_box_bound.push_back(ip);
   }
   vpDisplay::displayPolygon(color_img, d435_box_bound, vpColor::blue);
 
   for (const auto &[id, keypoint] : model.keypoints(*cMo)) {
-    vpImagePoint ip{};
+    vpImagePoint ip {};
     vpMeterPixelConversion::convertPoint(color_param, keypoint.get_x(), keypoint.get_y(), ip);
     vpDisplay::displayCross(color_img, ip, 15, vpColor::orange);
     vpDisplay::displayText(color_img, ip + vpImagePoint(10, 10), Model::to_string(id), vpColor::orange);
@@ -448,7 +449,7 @@ int main(int, char *argv[])
   vpDisplay::displayFrame(color_img, *cMo, color_param, 0.05, vpColor::none, 3);
 
   // Wait before exiting
-  auto disp_lane{0};
+  auto disp_lane { 0 };
   vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "D435 box boundary [from model]", vpColor::blue);
   vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Keypoints [from model]", vpColor::orange);
   vpDisplay::displayText(color_img, 15 * ++disp_lane, 15, "Click to quit", vpColor::green);
@@ -463,8 +464,7 @@ int main(int, char *argv[])
 #else
   (void)argv;
   std::cout << "c++17 should be enabled to run this tutorial." << std::endl;
-#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
-       // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+#endif
 
   return EXIT_SUCCESS;
 }

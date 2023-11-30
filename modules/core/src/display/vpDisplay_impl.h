@@ -103,23 +103,23 @@ void vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix
 }
 
 template <class Type>
-void vp_display_display_char_string(const vpImage<Type> &I, const vpImagePoint &ip, const char *string,
+void vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip, const char *string,
                                     const vpColor &color)
 {
   if (I.display != nullptr) {
-    (I.display)->displayCharString(ip, string, color);
+    (I.display)->displayText(ip, string, color);
   }
 }
 
 template <class Type>
-void vp_display_display_char_string(const vpImage<Type> &I, int i, int j, const char *string, const vpColor &color)
+void vp_display_display_text(const vpImage<Type> &I, int i, int j, const char *string, const vpColor &color)
 {
   if (I.display != nullptr) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
 
-    (I.display)->displayCharString(ip, string, color);
+    (I.display)->displayText(ip, string, color);
   }
 }
 
@@ -457,6 +457,13 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
 }
 
 template <class Type>
+void vp_display_display_polygon(const vpImage<Type> &I, const vpPolygon &polygon, const vpColor &color,
+                                unsigned int thickness, bool closed = true)
+{
+  vp_display_display_polygon(I, polygon.getCorners(), color, thickness, closed);
+}
+
+template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int width,
                                   unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
 {
@@ -671,7 +678,7 @@ template <class Type>
 void vp_display_display_text(const vpImage<Type> &I, const vpImagePoint &ip, const std::string &s, const vpColor &color)
 {
   if (I.display != nullptr) {
-    (I.display)->displayCharString(ip, s.c_str(), color);
+    (I.display)->displayText(ip, s.c_str(), color);
   }
 }
 
@@ -683,7 +690,7 @@ void vp_display_display_text(const vpImage<Type> &I, int i, int j, const std::st
     ip.set_i(i);
     ip.set_j(j);
 
-    (I.display)->displayCharString(ip, s.c_str(), color);
+    (I.display)->displayText(ip, s.c_str(), color);
   }
 }
 

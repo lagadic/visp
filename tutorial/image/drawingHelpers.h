@@ -38,66 +38,67 @@
 namespace drawingHelpers
 {
 #if defined(VISP_HAVE_X11)
-extern vpDisplayX d;
+extern vpDisplayX d_Iinput;
+extern vpDisplayX d_dIx;
+extern vpDisplayX d_dIy;
+extern vpDisplayX d_IcannyVisp;
+extern vpDisplayX d_IcannyImgFilter;
 #elif defined(HAVE_OPENCV_HIGHGUI)
-extern vpDisplayOpenCV d;
+extern vpDisplayOpenCV d_Iinput;
+extern vpDisplayOpenCV d_dIx;
+extern vpDisplayOpenCV d_dIy;
+extern vpDisplayOpenCV d_IcannyVisp;
+extern vpDisplayOpenCV d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GTK)
-extern vpDisplayGTK d;
+extern vpDisplayGTK d_Iinput;
+extern vpDisplayGTK d_dIx;
+extern vpDisplayGTK d_dIy;
+extern vpDisplayGTK d_IcannyVisp;
+extern vpDisplayGTK d_IcannyImgFilter;
 #elif defined(VISP_HAVE_GDI)
-extern vpDisplayGDI d;
+extern vpDisplayGDI d_Iinput;
+extern vpDisplayGDI d_dIx;
+extern vpDisplayGDI d_dIy;
+extern vpDisplayGDI d_IcannyVisp;
+extern vpDisplayGDI d_IcannyImgFilter;
 #elif defined(VISP_HAVE_D3D9)
-extern vpDisplayD3D d;
+extern vpDisplayD3D d_Iinput;
+extern vpDisplayD3D d_dIx;
+extern vpDisplayD3D d_dIy;
+extern vpDisplayD3D d_IcannyVisp;
+extern vpDisplayD3D d_IcannyImgFilter;
 #endif
 
-extern vpImage<vpRGBa> I_disp; /*!< Displayed image.*/
-
 /**
- * \brief Display a RGB image and catch the user clicks to know if
- * the user wants to stop the program.
+ * \brief Initialize the different displays.
  *
- * \param[out] I The RGB image to display.
- * \param[in] title The title of the window.
- * \param[in] blockingMode If true, wait for a click to switch to the next image.
- * \return true The user wants to continue the application.
- * \return false The user wants to stop the application.
+ * \param[out] Iinput Input image of the program.
+ * \param[out] IcannyVisp Image resulting from the vpCannyEdgeDetection method.
+ * \param[out] p_dIx If different from nullptr, pointer towards the gradient along the horizontal axis.
+ * \param[out] p_dIy If different from nullptr, pointer towards the gradient along the vertical axis.
+ * \param[out] p_IcannyimgFilter If different from nullptr, pointer towards the result of the vpImageFilter::canny
+ * method.
  */
-bool display(vpImage<vpRGBa> &I, const std::string &title, const bool &blockingMode);
+void init(vpImage<unsigned char> &Iinput, vpImage<unsigned char> &IcannyVisp, vpImage<unsigned char> *p_dIx,
+          vpImage<unsigned char> *p_dIy, vpImage<unsigned char> *p_IcannyimgFilter);
 
 /**
- * \brief Display a gray-scale image and catch the user clicks to know if
- * the user wants to stop the program.
+ * \brief Display a gray-scale image.
  *
  * \param[out] I The gray-scale image to display.
  * \param[in] title The title of the window.
- * \param[in] blockingMode If true, wait for a click to switch to the next image.
- * \return true The user wants to continue the application.
- * \return false The user wants to stop the application.
  */
-bool display(vpImage<unsigned char> &I, const std::string &title, const bool &blockingMode);
+void display(vpImage<unsigned char> &I, const std::string &title);
 
 /**
- * \brief Display a double precision image and catch the user clicks to know if
- * the user wants to stop the program.
+ * \brief Catch the user clicks to know if the user wants to stop the program.
  *
- * \param[out] D The double precision image to display.
- * \param[in] title The title of the window.
+ * \param[in] I The gray-scale image to display.
  * \param[in] blockingMode If true, wait for a click to switch to the next image.
  * \return true The user wants to continue the application.
  * \return false The user wants to stop the application.
  */
-bool display(vpImage<double> &D, const std::string &title, const bool &blockingMode);
-
-/**
- * \brief Display a floating-point precision image and catch the user clicks to know if
- * the user wants to stop the program.
- *
- * \param[out] F The floating-point precision image to display.
- * \param[in] title The title of the window.
- * \param[in] blockingMode If true, wait for a click to switch to the next image.
- * \return true The user wants to continue the application.
- * \return false The user wants to stop the application.
- */
-bool display(vpImage<float> &F, const std::string &title, const bool &blockingMode);
+bool waitForClick(const vpImage<unsigned char> &I, const bool &blockingMode);
 }
 
 #endif

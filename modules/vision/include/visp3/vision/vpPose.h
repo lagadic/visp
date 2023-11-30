@@ -54,8 +54,9 @@
 #include <vector>
 #include <atomic>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 #include <map>
 #include <optional>
 #endif
@@ -669,8 +670,9 @@ public:
   static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
                                   vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+  // Check if std:c++17 or higher.
+  // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
   /*!
    * Compute the pose of a planar object from corresponding 2D-3D point coordinates and plane equation.

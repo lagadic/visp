@@ -47,18 +47,19 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 #include <visp3/robot/vpRobotMavsdk.h>
 
 void usage(const std::string &bin_name)
 {
   std::cerr << "Usage : " << bin_name << " <connection information>\n"
-            << "Connection information format should be :\n"
-            << "  - For TCP: tcp://[server_host][:server_port]\n"
-            << "  - For UDP: udp://[bind_host][:bind_port]\n"
-            << "  - For Serial: serial:///path/to/serial/dev[:baudrate]\n"
-            << "For example, to connect to the simulator use URL: udp://:14540\n";
+    << "Connection information format should be :\n"
+    << "  - For TCP: tcp://[server_host][:server_port]\n"
+    << "  - For UDP: udp://[bind_host][:bind_port]\n"
+    << "  - For Serial: serial:///path/to/serial/dev[:baudrate]\n"
+    << "For example, to connect to the simulator use URL: udp://:14540\n";
 }
 
 int main(int argc, char **argv)
@@ -75,8 +76,7 @@ int main(int argc, char **argv)
   drone.takeControl(); // Start off-board or guided mode
 
   // Drone takeoff
-  if (! drone.takeOff() )
-  {
+  if (!drone.takeOff()) {
     std::cout << "Takeoff failed" << std::endl;
     return EXIT_FAILURE;
   }
@@ -90,8 +90,8 @@ int main(int argc, char **argv)
   drone.getPosition(ned_M_frd);
   vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
   std::cout << "Vehicle position in NED frame: "
-            << ned_M_frd.getTranslationVector().t() << " [m] and "
-            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
+    << ned_M_frd.getTranslationVector().t() << " [m] and "
+    << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
 
   std::cout << "Hold position for 4 sec" << std::endl;
   drone.holdPosition();
@@ -109,13 +109,13 @@ int main()
 {
 #ifndef VISP_HAVE_MAVSDK
   std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
-            << std::endl;
+    << std::endl;
 #endif
-#if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   std::cout
-      << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
-         "rebuild ViSP.\n"
-      << std::endl;
+    << "\nThis example requires at least cxx17. You should enable cxx17 during ViSP configuration with cmake and "
+    "rebuild ViSP.\n"
+    << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

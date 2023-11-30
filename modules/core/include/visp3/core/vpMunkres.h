@@ -35,11 +35,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
-
-// Visual Studio: Optionals are available from Visual Studio 2017 RTW (15.0) [1910]
-// Visual Studio: Structured bindings are available from Visual Studio 2017 version 15.3 [1911]
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 // System
 #include <optional>
@@ -98,8 +96,8 @@ private:
   static STEP_T stepThree(const std::vector<std::vector<ZERO_T> > &mask, std::vector<bool> &col_cover);
   template <typename Type>
   static std::tuple<STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
-  stepFour(const std::vector<std::vector<Type> > &costs, std::vector<std::vector<ZERO_T> > &mask,
-           std::vector<bool> &row_cover, std::vector<bool> &col_cover);
+    stepFour(const std::vector<std::vector<Type> > &costs, std::vector<std::vector<ZERO_T> > &mask,
+             std::vector<bool> &row_cover, std::vector<bool> &col_cover);
   static STEP_T stepFive(std::vector<std::vector<ZERO_T> > &mask, const std::pair<unsigned int, unsigned int> &path_0,
                          std::vector<bool> &row_cover, std::vector<bool> &col_cover);
   template <typename Type>
@@ -107,7 +105,7 @@ private:
                         const std::vector<bool> &col_cover);
 
 private:
-  static constexpr auto ZeroEpsilon{1e-6};
+  static constexpr auto ZeroEpsilon { 1e-6 };
 };
 
 enum vpMunkres::ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
@@ -267,12 +265,14 @@ vpMunkres::stepFour(const std::vector<std::vector<Type> > &costs, std::vector<st
     if (const auto star_in_row = findStarInRow(mask, row)) {
       row_cover.at(row) = true;
       col_cover.at(*star_in_row) = false;
-      return {vpMunkres::STEP_T(4), std::nullopt}; // Repeat
-    } else {
-      return {vpMunkres::STEP_T(5), std::make_optional<std::pair<unsigned int, unsigned int> >(row, col)};
+      return { vpMunkres::STEP_T(4), std::nullopt }; // Repeat
     }
-  } else {
-    return {vpMunkres::STEP_T(6), std::nullopt};
+    else {
+      return { vpMunkres::STEP_T(5), std::make_optional<std::pair<unsigned int, unsigned int> >(row, col) };
+    }
+  }
+  else {
+    return { vpMunkres::STEP_T(6), std::nullopt };
   }
 }
 
@@ -323,9 +323,9 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
   auto row_cover = std::vector<bool>(sq_size, false);
   auto col_cover = std::vector<bool>(sq_size, false);
 
-  std::optional<std::pair<unsigned int, unsigned int> > path_0{std::nullopt};
+  std::optional<std::pair<unsigned int, unsigned int> > path_0 { std::nullopt };
 
-  auto step{vpMunkres::STEP_T::ENTRY};
+  auto step { vpMunkres::STEP_T::ENTRY };
   while (step != vpMunkres::STEP_T::DONE) {
     switch (step) {
     case vpMunkres::STEP_T::ENTRY:
@@ -357,7 +357,7 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
   }
 
   // Compute the pairs
-  std::vector<std::pair<unsigned int, unsigned int> > ret{};
+  std::vector<std::pair<unsigned int, unsigned int> > ret {};
   for (auto i = 0u; i < original_row_size; i++) {
     if (const auto it = std::find(begin(mask.at(i)), end(mask.at(i)), vpMunkres::ZERO_T::STARRED);
         it != end(mask.at(i))) {

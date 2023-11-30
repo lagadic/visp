@@ -66,8 +66,11 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
   stdev = std::sqrt(stdev);
 }
 
-void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev, vpCannyEdgeDetection &cannyDetector,
-                             const unsigned int apertureSize, const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
+void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussianKernelSize, const float &gaussianStdev,
+                             vpCannyEdgeDetection &cannyDetector, const unsigned int apertureSize,
+                             const vpImageFilter::vpCannyFilteringAndGradientType &filteringType,
+                             vpImage<unsigned char> &dIx_uchar, vpImage<unsigned char> &dIy_uchar
+)
 {
   // Computing the gradients
   vpImage<float> dIx, dIy;
@@ -82,11 +85,13 @@ void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussia
   computeMeanMaxStdev(dIx, mean, max, stdev);
   std::string title = "Gradient along the horizontal axis. Mean = " + std::to_string(mean)
     + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max);
-  drawingHelpers::display(dIx, title, true);
+  vpImageConvert::convert(dIx, dIx_uchar);
+  drawingHelpers::display(dIx_uchar, title);
   computeMeanMaxStdev(dIy, mean, max, stdev);
   title = "Gradient along the horizontal axis. Mean = " + std::to_string(mean)
     + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max);
-  drawingHelpers::display(dIy, title, true);
+  vpImageConvert::convert(dIy, dIy_uchar);
+  drawingHelpers::display(dIy_uchar, title);
 }
 
 void usage(const std::string &softName, int gaussianKernelSize, float gaussianStdev, float lowerThresh, float upperThresh,
@@ -222,7 +227,7 @@ int main(int argc, const char *argv[])
   vpCannyEdgeDetection cannyDetector(opt_gaussianKernelSize, opt_gaussianStdev, opt_apertureSize,
                                      opt_lowerThresh, opt_upperThresh, opt_lowerThreshRatio, opt_upperThreshRatio,
                                      opt_filteringType);
-  vpImage<unsigned char> I_canny_input;
+  vpImage<unsigned char> I_canny_input, I_canny_visp, dIx_uchar, dIy_uchar, I_canny_imgFilter;
   if (!opt_img.empty()) {
     // Detection on the user image
     vpImageIo::read(I_canny_input, opt_img);
@@ -237,24 +242,41 @@ int main(int argc, const char *argv[])
     }
   }
 
+  // Initialization of the displays
+  I_canny_visp = I_canny_imgFilter = dIx_uchar = dIy_uchar = I_canny_input;
+  vpImage<unsigned char> *p_dIx = nullptr, *p_dIy = nullptr, *p_IcannyImgFilter = nullptr;
+
   if (opt_gradientOutsideClass) {
-    setGradientOutsideClass(I_canny_input, opt_gaussianKernelSize, opt_gaussianStdev, cannyDetector, opt_apertureSize, opt_filteringType);
+    p_dIx = &dIx_uchar;
+    p_dIy = &dIy_uchar;
   }
-  vpImage<unsigned char> I_canny = cannyDetector.detect(I_canny_input);
+
+  if (opt_useVpImageFilterCanny) {
+    p_IcannyImgFilter = &I_canny_imgFilter;
+  }
+  drawingHelpers::init(I_canny_input, I_canny_visp, p_dIx, p_dIy, p_IcannyImgFilter);
+
+  // Computing the gradient outside the vpCannyEdgeDetection class if asked
+  if (opt_gradientOutsideClass) {
+    setGradientOutsideClass(I_canny_input, opt_gaussianKernelSize, opt_gaussianStdev, cannyDetector, opt_apertureSize,
+                            opt_filteringType, dIx_uchar, dIy_uchar);
+  }
+  I_canny_visp = cannyDetector.detect(I_canny_input);
   float mean, max, stdev;
   computeMeanMaxStdev(I_canny_input, mean, max, stdev);
   std::string title("Input of the Canny edge detector. Mean = " + std::to_string(mean) + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max));
-  drawingHelpers::display(I_canny_input, title, true);
-  drawingHelpers::display(I_canny, "Canny results on image " + opt_img, true);
+  drawingHelpers::display(I_canny_input, title);
+  drawingHelpers::display(I_canny_visp, "Canny results on image " + opt_img);
 
   if (opt_useVpImageFilterCanny) {
     float cannyThresh = opt_upperThresh;
     float lowerThresh(opt_lowerThresh);
-    vpImageFilter::canny(I_canny_input, I_canny, opt_gaussianKernelSize, lowerThresh, cannyThresh,
+    vpImageFilter::canny(I_canny_input, I_canny_imgFilter, opt_gaussianKernelSize, lowerThresh, cannyThresh,
                          opt_apertureSize, opt_gaussianStdev, opt_lowerThreshRatio, opt_upperThreshRatio, true,
                          opt_backend, opt_filteringType);
-    drawingHelpers::display(I_canny, "Canny results with \"" + vpImageFilter::vpCannyBackendTypeToString(opt_backend) + "\" backend", true);
+    drawingHelpers::display(I_canny_imgFilter, "Canny results with \"" + vpImageFilter::vpCannyBackendTypeToString(opt_backend) + "\" backend");
   }
 
+  drawingHelpers::waitForClick(I_canny_input, true);
   return EXIT_SUCCESS;
 }

@@ -77,7 +77,7 @@ public:
   /*!
     Moment name.
     */
-  const char *name() const { return "vpMomentBasic"; }
+  const std::string name() const { return "vpMomentBasic"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentBasic &v);
   void printDependencies(std::ostream &os) const;
 };

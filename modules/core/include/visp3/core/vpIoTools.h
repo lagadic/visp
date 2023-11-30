@@ -35,9 +35,9 @@
 #define _vpIoTools_h_
 
 /*!
-  \file vpIoTools.h
-  \brief File and directories basic tools.
-*/
+ * \file vpIoTools.h
+ * \brief File and directories basic tools.
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -50,107 +50,6 @@
 #include <numeric>
 #include <zlib.h>
 #include <visp3/core/vpColor.h>
-
-/*!
-  \class vpIoTools
-  \ingroup group_core_files_io
-  \brief File and directories basic tools.
-
-  The example below shows how to manipulate the functions of this
-  class to create first a directory which name corresponds to the user
-  name and then create a file in this directory.
-
-  \code
-#include <fstream>
-#include <iostream>
-#include <string>
-#include <visp3/core/vpIoTools.h>
-
-int main()
-{
-  std::string username;
-  vpIoTools::getUserName(username);
-
-  // Test if a username directory exist. If no try to create it
-  if (vpIoTools::checkDirectory(username) == false) {
-     try {
-       // Create a directory with name "username"
-       vpIoTools::makeDirectory(username);
-     }
-     catch (...) {
-       std::cout << "Cannot create " << username << " directory" << std::endl;
-       return EXIT_FAILURE;
-     }
-   }
-  // Create a empty filename with name "username/file.txt"
-  std::ofstream f;
-  std::string filename = username + "/file.txt";
-  // Under Windows converts the filename string into "username\\file.txt"
-  filename = vpIoTools::path(filename);
-  std::cout << "Create: " << filename << std::endl;
-  f.open(filename.c_str());
-  f.close();
-
-  // Rename the file
-  std::string newfilename = username + "/newfile.txt";
-  std::cout << "Rename: " << filename << " in: " << newfilename << std::endl;
-  if (vpIoTools::rename(filename, newfilename) == false)
-    std::cout << "Unable to rename: " << filename << std::endl;
-
-  // Remove the file
-  std::cout << "Remove: " << newfilename << std::endl;
-  if (vpIoTools::remove(newfilename) == false)
-    std::cout << "Unable to remove: " << newfilename << std::endl;
-
-  return EXIT_SUCCESS;
-}
-  \endcode
-
-  The example below shows how to read a configuration file and how to create a name
-  for experiment files. We assume the following file "/home/user/demo/config.txt" :
-  \code
-expNumber 2
-save 0
-lambda 0.4
-use2D 0
-use3D 1
-  \endcode
-
-  \code
-#include <iostream>
-#include <string>
-#include <visp3/core/vpIoTools.h>
-
-int main()
-{
-  // reading configuration file
-  vpIoTools::loadConfigFile("/home/user/demo/config.txt");
-  std::string nExp;vpIoTools::readConfigVar("expNumber", nExp); // nExp <- "2"
-  double lambda;vpIoTools::readConfigVar("lambda", lambda);     // lambda <- 0.4
-  bool use2D;vpIoTools::readConfigVar("use2D", use2D);          // use2D <- false
-  bool use3D;vpIoTools::readConfigVar("use3D", use3D);          // use3D <- true
-  bool doSave;vpIoTools::readConfigVar("save", doSave);         //  doSave <- false
-
-  // creating name for experiment files
-  vpIoTools::setBaseDir("/home/user/data");
-  // full name <- "/home/user/data/exp2"
-  vpIoTools::setBaseName("exp" + nExp);
-  // full name <- "/home/user/data/exp2" since use2D==false
-  vpIoTools::addNameElement("2D", use2D);
-  // full name <- "/home/user/data/exp2_3D"
-  vpIoTools::addNameElement("3D", use3D);
-  // full name <- "/home/user/data/exp2_3D_lambda0.4"
-  vpIoTools::addNameElement("lambda", lambda);
-
-  // Saving file.Would copy "/home/user/demo/config.txt" to
-  // "/home/user/data/exp2_3D_lambda0.4_config.txt" if doSave was true
-  vpIoTools::saveConfigFile(doSave);
-  // create sub directory
-  vpIoTools::createBaseNamePath();  // creates "/home/user/data/exp2_3D_lambda0.4/"
-}
-  \endcode
-
- */
 
 // TODO:
 // Copyright (C) 2011  Carl Rogers
@@ -434,9 +333,108 @@ template<typename T> EXPORT std::vector<char> create_npy_header(const std::vecto
   return header;
 }
 
-}
-}
+} // namespace cnpy
+} // namespace visp
 
+/*!
+ * \class vpIoTools
+ * \ingroup group_core_files_io
+ * \brief File and directories basic tools.
+ *
+ * The example below shows how to manipulate the functions of this
+ * class to create first a directory which name corresponds to the user
+ * name and then create a file in this directory.
+ *
+ * \code
+ * #include <fstream>
+ * #include <iostream>
+ * #include <string>
+ * #include <visp3/core/vpIoTools.h>
+ *
+ * int main()
+ * {
+ *   std::string username;
+ *   vpIoTools::getUserName(username);
+ *
+ *   // Test if a username directory exist. If no try to create it
+ *   if (vpIoTools::checkDirectory(username) == false) {
+ *     try {
+ *       // Create a directory with name "username"
+ *       vpIoTools::makeDirectory(username);
+ *     }
+ *     catch (...) {
+ *       std::cout << "Cannot create " << username << " directory" << std::endl;
+ *       return EXIT_FAILURE;
+ *     }
+ *   }
+ *   // Create a empty filename with name "username/file.txt"
+ *   std::ofstream f;
+ *   std::string filename = username + "/file.txt";
+ *   // Under Windows converts the filename string into "username\\file.txt"
+ *   filename = vpIoTools::path(filename);
+ *   std::cout << "Create: " << filename << std::endl;
+ *   f.open(filename.c_str());
+ *   f.close();
+ *
+ *   // Rename the file
+ *   std::string newfilename = username + "/newfile.txt";
+ *   std::cout << "Rename: " << filename << " in: " << newfilename << std::endl;
+ *   if (vpIoTools::rename(filename, newfilename) == false)
+ *     std::cout << "Unable to rename: " << filename << std::endl;
+ *
+ *   // Remove the file
+ *   std::cout << "Remove: " << newfilename << std::endl;
+ *   if (vpIoTools::remove(newfilename) == false)
+ *     std::cout << "Unable to remove: " << newfilename << std::endl;
+ *
+ *   return EXIT_SUCCESS;
+ * }
+ * \endcode
+ *
+ * The example below shows how to read a configuration file and how to create a name
+ * for experiment files. We assume the following file "/home/user/demo/config.txt" :
+ * \code
+ * expNumber 2
+ * save 0
+ * lambda 0.4
+ * use2D 0
+ * use3D 1
+ * \endcode
+ *
+ * \code
+ * #include <iostream>
+ * #include <string>
+ * #include <visp3/core/vpIoTools.h>
+ *
+ * int main()
+ * {
+ *   // reading configuration file
+ *   vpIoTools::loadConfigFile("/home/user/demo/config.txt");
+ *   std::string nExp;vpIoTools::readConfigVar("expNumber", nExp); // nExp <- "2"
+ *   double lambda;vpIoTools::readConfigVar("lambda", lambda);     // lambda <- 0.4
+ *   bool use2D;vpIoTools::readConfigVar("use2D", use2D);          // use2D <- false
+ *   bool use3D;vpIoTools::readConfigVar("use3D", use3D);          // use3D <- true
+ *   bool doSave;vpIoTools::readConfigVar("save", doSave);         //  doSave <- false
+ *
+ *   // creating name for experiment files
+ *   vpIoTools::setBaseDir("/home/user/data");
+ *   // full name <- "/home/user/data/exp2"
+ *   vpIoTools::setBaseName("exp" + nExp);
+ *   // full name <- "/home/user/data/exp2" since use2D==false
+ *   vpIoTools::addNameElement("2D", use2D);
+ *   // full name <- "/home/user/data/exp2_3D"
+ *   vpIoTools::addNameElement("3D", use3D);
+ *   // full name <- "/home/user/data/exp2_3D_lambda0.4"
+ *   vpIoTools::addNameElement("lambda", lambda);
+ *
+ *   // Saving file.Would copy "/home/user/demo/config.txt" to
+ *   // "/home/user/data/exp2_3D_lambda0.4_config.txt" if doSave was true
+ *   vpIoTools::saveConfigFile(doSave);
+ *   // create sub directory
+ *   vpIoTools::createBaseNamePath();  // creates "/home/user/data/exp2_3D_lambda0.4/"
+ * }
+ * \endcode
+ */
 class VISP_EXPORT vpIoTools
 {
 
@@ -462,15 +460,11 @@ public:
   static bool rename(const std::string &oldfilename, const std::string &newfilename);
 
   /*!
-         Define the directory separator character, backslash ('\') for windows
-     platform or slash ('/') otherwise.
+   * Define the directory separator character, backslash ('\') for windows
+   * platform or slash ('/') otherwise.
    */
-  static const char separator =
-#if defined(_WIN32)
-    '\\';
-#else
-    '/';
-#endif
+  static const char separator;
+
   static std::string toUpperCase(const std::string &input);
   static std::string toLowerCase(const std::string &input);
   static std::string getAbsolutePathname(const std::string &pathname);
@@ -487,8 +481,8 @@ public:
   static std::vector<std::string> getDirFiles(const std::string &dirname);
 
   /*!
-    @name Configuration file parsing
-  */
+   * @name Configuration file parsing
+   */
   //@{
   // read configuration file
   static bool loadConfigFile(const std::string &confFile);
