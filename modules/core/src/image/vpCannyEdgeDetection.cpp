@@ -314,13 +314,15 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
 }
 
 /**
- * @brief Get the absolute value of the gradient orientation.
+ * @brief Get the gradient orientation, expressed in degrees, between 0 and +180 degrees.
+ * If the gradient orientation is negative, we add 180 degrees (i.e. M_PI radiants) in
+ * order to keep the same orientation but in the positive direction.
  *
  * @param dIx : Gradient along the horizontal axis.
  * @param dIy : Gradient along the vertical axis.
  * @param row : Index along the vertical axis.
  * @param col : Index along the horizontal axis.
- * @return float The absolute value of the gradient orientation, expressed in degrees.
+ * @return float The positive value of the gradient orientation, expressed in degrees.
  */
 float
 getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
@@ -333,7 +335,12 @@ getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int
     absoluteTheta = 90.f;
   }
   else {
-    absoluteTheta = static_cast<float>(vpMath::deg(std::abs(std::atan2(dy, dx))));
+    // -dy because the y-axis of the image is oriented towards the bottom of the screen
+    // while we later work with a y-axis oriented towards the top when getting the theta quadrant.
+    absoluteTheta = static_cast<float>(vpMath::deg(std::atan2(-dy , dx)));
+    if(absoluteTheta < 0.f) {
+      absoluteTheta += 180.f; // + M_PI in order to be between 0 and M_PI
+    }
   }
   return absoluteTheta;
 }
