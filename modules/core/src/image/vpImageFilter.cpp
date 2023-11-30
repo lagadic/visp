@@ -684,7 +684,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   const float range[] = { 0.f, 256.f }; // The upper boundary is exclusive
   const float *ranges[] = { range };
   int channels[] = { 0 };
-  bool dims = 1; // The number of dimensions of the histogram
+  int dims = 1; // The number of dimensions of the histogram
   int histSize[] = { bins };
   bool uniform = true;
   bool accumulate = false; // Clear the histogram at the beginning of calcHist if false, does not clear it otherwise
@@ -741,14 +741,14 @@ void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
       if (normalize) {
         scale = 1. / 8.;
         if (apertureGradient > 3) {
-          scale *= std::pow(1./16., ((apertureGradient -1.)/2.) - 1.);
+          scale *= std::pow(1./2., (apertureGradient * 2. - 3.)); // 1 / 2^(2 x ksize - dx - dy -2) with ksize =apertureGradient and dx xor dy = 1
         }
       }
       if (computeDx) {
-        cv::Sobel(img_blur, cv_dIx, CV_16S, 1, 0, apertureGradient, 1, 0, scale);
+        cv::Sobel(img_blur, cv_dIx, CV_16S, 1, 0, apertureGradient, scale, 0., cv::BORDER_REPLICATE);
       }
       if (computeDy) {
-        cv::Sobel(img_blur, cv_dIy, CV_16S, 0, 1, apertureGradient, 1, 0, scale);
+        cv::Sobel(img_blur, cv_dIy, CV_16S, 0, 1, apertureGradient, scale, 0., cv::BORDER_REPLICATE);
       }
     }
     else if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
