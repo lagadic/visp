@@ -94,6 +94,7 @@
       ]
     },
     "vpTranslationVector": {
+      "additional_bindings": "bindings_vpTranslationVector",
       "methods":
       [
         {

@@ -77,6 +77,11 @@ py::buffer_info get_buffer_info(vpRowVector &array)
   return make_array_buffer<double, 1>(array.data, { array.getCols() }, false);
 }
 template<>
+py::buffer_info get_buffer_info(vpTranslationVector &array)
+{
+  return make_array_buffer<double, 1>(array.data, { 3 }, false);
+}
+template<>
 py::buffer_info get_buffer_info(vpRotationMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
@@ -123,11 +128,36 @@ void define_get_item_2d_array(PyClass &pyClass)
     }
     return (py::cast(self).template cast<np_array_cf<Item> >())[py::cast(i)].template cast<np_array_cf<Item>>();
   });
-  pyClass.def("__getitem__", [](const Class &self, py::slice slice) -> np_array_cf<Item> {
+  pyClass.def("__getitem__", [](const Class &self, py::slice slice) -> py::array_t<Item> {
     return (py::cast(self).template cast<np_array_cf<Item> >())[slice].template cast<np_array_cf<Item>>();
   });
   pyClass.def("__getitem__", [](const Class &self, py::tuple tuple) {
     return (py::cast(self).template cast<np_array_cf<Item> >())[tuple].template cast<py::array_t<Item>>();
+  });
+}
+
+/*
+ * Array 2D indexing
+ */
+template<typename PyClass, typename Class, typename Item>
+void define_get_item_1d_array(PyClass &pyClass)
+{
+  pyClass.def("__getitem__", [](const Class &self, int i) -> Item {
+
+    const int elems = (int)self.getRows() * (int)self.getCols();
+    if (i >= elems || i < -elems) {
+      std::stringstream ss;
+      ss << "Invalid indexing into a 1D array: got indices " << shape_to_string({ i })
+        << " but array has dimensions " << shape_to_string({ elems });
+      throw std::runtime_error(ss.str());
+    }
+    if (i < 0) {
+      i = elems + i;
+    }
+    return self[i];
+  });
+  pyClass.def("__getitem__", [](const Class &self, py::slice slice) -> py::array_t<Item> {
+    return (py::cast(self).template cast<np_array_cf<Item> >())[slice].template cast<py::array_t<Item>>();
   });
 }
 
@@ -191,47 +221,6 @@ Construct a matrix by **copying** a 2D numpy array.
   define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
 
-void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
-{
-  pyColVector.def_buffer(&get_buffer_info<vpColVector>);
-
-  pyColVector.def("numpy", [](vpColVector &self) -> np_array_cf<double> {
-    return py::cast(self).cast<np_array_cf<double>>();
-  }, numpy_fn_doc_writable);
-
-  pyColVector.def(py::init([](np_array_cf<double> np_array) {
-    verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
-    vpColVector result(shape[0]);
-    copy_data_from_np(np_array, result.data);
-    return result;
-  }), R"doc(
-Construct a column vector by **copying** a 1D numpy array.
-
-:param np_array: The numpy 1D array to copy.
-
-)doc", py::arg("np_array"));
-}
-
-void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
-{
-  pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
-  pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
-    return np_array_cf<double>(get_buffer_info<vpRowVector>(self), py::cast(self));
-  }, numpy_fn_doc_writable);
-  pyRowVector.def(py::init([](np_array_cf<double> np_array) {
-    verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
-    vpRowVector result(shape[0]);
-    copy_data_from_np(np_array, result.data);
-    return result;
-  }), R"doc(
-Construct a row vector by **copying** a 1D numpy array.
-
-:param np_array: The numpy 1D array to copy.
-
-)doc", py::arg("np_array"));
-}
 
 void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &pyRotationMatrix)
 {
@@ -286,5 +275,77 @@ If it is not a homogeneous matrix, an exception will be raised.
 )doc", py::arg("np_array"));
   define_get_item_2d_array<py::class_<vpHomogeneousMatrix, vpArray2D<double>>, vpHomogeneousMatrix, double>(pyHomogeneousMatrix);
 }
+
+
+
+void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<double>> &pyTranslationVector)
+{
+  pyTranslationVector.def_buffer(&get_buffer_info<vpTranslationVector>);
+
+  pyTranslationVector.def("numpy", [](vpTranslationVector &self) -> np_array_cf<double> {
+    return py::cast(self).cast<np_array_cf<double>>();
+  }, numpy_fn_doc_writable);
+
+  pyTranslationVector.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, { 3 }, "ViSP translation vector");
+    const std::vector<ssize_t> shape = np_array.request().shape;
+    vpTranslationVector result;
+    copy_data_from_np(np_array, result.data);
+    return result;
+  }), R"doc(
+Construct a Translation vector by **copying** a 1D numpy array of size 3.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_1d_array<py::class_<vpTranslationVector, vpArray2D<double>>, vpTranslationVector, double>(pyTranslationVector);
+}
+
+
+void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
+{
+  pyColVector.def_buffer(&get_buffer_info<vpColVector>);
+
+  pyColVector.def("numpy", [](vpColVector &self) -> np_array_cf<double> {
+    return py::cast(self).cast<np_array_cf<double>>();
+  }, numpy_fn_doc_writable);
+
+  pyColVector.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
+    const std::vector<ssize_t> shape = np_array.request().shape;
+    vpColVector result(shape[0]);
+    copy_data_from_np(np_array, result.data);
+    return result;
+  }), R"doc(
+Construct a column vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_1d_array<py::class_<vpColVector, vpArray2D<double>>, vpColVector, double>(pyColVector);
+
+}
+
+void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
+{
+  pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
+  pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
+    return np_array_cf<double>(get_buffer_info<vpRowVector>(self), py::cast(self));
+  }, numpy_fn_doc_writable);
+  pyRowVector.def(py::init([](np_array_cf<double> np_array) {
+    verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
+    const std::vector<ssize_t> shape = np_array.request().shape;
+    vpRowVector result(shape[0]);
+    copy_data_from_np(np_array, result.data);
+    return result;
+  }), R"doc(
+Construct a row vector by **copying** a 1D numpy array.
+
+:param np_array: The numpy 1D array to copy.
+
+)doc", py::arg("np_array"));
+  define_get_item_1d_array<py::class_<vpRowVector, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+}
+
 
 #endif
