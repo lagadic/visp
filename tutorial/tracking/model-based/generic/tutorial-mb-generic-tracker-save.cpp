@@ -75,8 +75,8 @@ int main(int argc, char **argv)
       << camera_name.c_str()[i] << " ; " << int(camera_name.c_str()[i]) << std::endl;
   }
 
-  visp::cnpy::npz_save(npz_filename, "camera_name", &vec_camera_name[0], { vec_camera_name.size() }, "a");
-  visp::cnpy::npz_save(npz_filename, "height", &height, { 1 }, "a");
+  visp::cnpy::npz_save(npz_filename, "camera_name", &vec_camera_name[0], { vec_camera_name.size() }, "w"); // overwrite
+  visp::cnpy::npz_save(npz_filename, "height", &height, { 1 }, "a"); // append
   visp::cnpy::npz_save(npz_filename, "width", &width, { 1 }, "a");
   visp::cnpy::npz_save(npz_filename, "channel", &channel, { 1 }, "a");
 
@@ -85,6 +85,9 @@ int main(int argc, char **argv)
   visp::cnpy::npz_save(npz_filename, "cam_py", &cam_py, { 1 }, "a");
   visp::cnpy::npz_save(npz_filename, "cam_u0", &cam_u0, { 1 }, "a");
   visp::cnpy::npz_save(npz_filename, "cam_v0", &cam_v0, { 1 }, "a");
+
+  std::vector<double> vec_poses;
+  vec_poses.reserve(g.getLastFrameIndex() * 6);
 
   int iter = 0;
   while (!g.end()) {
@@ -98,7 +101,9 @@ int main(int argc, char **argv)
     visp::cnpy::npz_save(npz_filename, toString("png_image_%06d", iter), &img_buffer[0], { (unsigned int) last_pos }, "a");
 
     std::vector<double> vec_pose = poseToVec(cMo);
-    visp::cnpy::npz_save(npz_filename, toString("vec_pose_%06d", iter), &vec_pose[0], { vec_pose.size() }, "a");
+    vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
+    // Commented, use instead a "multidimensional" array
+    // visp::cnpy::npz_save(npz_filename, toString("vec_pose_%06d", iter), &vec_pose[0], { vec_pose.size() }, "a");
 
     std::map<std::string, std::vector<std::vector<double> > > mapOfModels;
     std::map<std::string, unsigned int> mapOfW;
@@ -129,6 +134,9 @@ int main(int argc, char **argv)
 
     iter++;
   }
+
+  // Show how to save a "multidimensional" array
+  visp::cnpy::npz_save(npz_filename, "vec_poses", &vec_poses[0], { static_cast<size_t>(iter), 6 }, "a");
 
   visp::cnpy::npz_save(npz_filename, "nb_data", &iter, { 1 }, "a");
 

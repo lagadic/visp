@@ -53,6 +53,10 @@ int main(int argc, char **argv)
   int nb_data = *arr_nb_data.data<int>();
   std::cout << "Number of images: " << nb_data << std::endl;
 
+  // Load all the poses
+  visp::cnpy::NpyArray arr_vec_poses = npz_data["vec_poses"];
+  double* vec_poses_ptr = arr_vec_poses.data<double>();
+
   for (int iter = 0; iter < nb_data; iter++) {
     std::string img_data_str = toString("png_image_%06d", iter);
      visp::cnpy::NpyArray arr_nb_data = npz_data[img_data_str];
@@ -81,10 +85,13 @@ int main(int argc, char **argv)
       }
     }
 
-    const std::string vec_pose_str = toString("vec_pose_%06d", iter);
-    visp::cnpy::NpyArray arr_vec_pose = npz_data[vec_pose_str];
-    vpHomogeneousMatrix cMo(vpTranslationVector(arr_vec_pose.data<double>()[3], arr_vec_pose.data<double>()[4], arr_vec_pose.data<double>()[5]),
-      vpThetaUVector(arr_vec_pose.data<double>()[0], arr_vec_pose.data<double>()[1], arr_vec_pose.data<double>()[2])
+    // const std::string vec_pose_str = toString("vec_pose_%06d", iter);
+    // visp::cnpy::NpyArray arr_vec_pose = npz_data[vec_pose_str];
+    // vpHomogeneousMatrix cMo(vpTranslationVector(arr_vec_pose.data<double>()[3], arr_vec_pose.data<double>()[4], arr_vec_pose.data<double>()[5]),
+    //   vpThetaUVector(arr_vec_pose.data<double>()[0], arr_vec_pose.data<double>()[1], arr_vec_pose.data<double>()[2])
+    // );
+    vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[6*iter + 3], vec_poses_ptr[6*iter + 4], vec_poses_ptr[6*iter + 5]),
+      vpThetaUVector(vec_poses_ptr[6*iter], vec_poses_ptr[6*iter + 1], vec_poses_ptr[6*iter + 2])
     );
     std::cout << "\ncMo:\n" << cMo << std::endl;
 
