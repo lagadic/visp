@@ -157,8 +157,30 @@ html_theme_options = {
     "repo_name": "visp",
     "features": [
       "toc.follow",
-      "toc.integrate",
+      "toc.sticky",
       "navigation.instant"
+    ],
+    "palette": [
+        {
+            "media": "(prefers-color-scheme: light)",
+            "scheme": "default",
+            "toggle": {
+                "icon": "material/toggle-switch-off-outline",
+                "name": "Switch to dark mode",
+            },
+            "primary": "red",
+            "accent": "indigo"
+        },
+        {
+            "media": "(prefers-color-scheme: dark)",
+            "scheme": "slate",
+            "toggle": {
+                "icon": "material/toggle-switch",
+                "name": "Switch to light mode",
+            },
+            "primary": "red",
+            "accent": "indigo"
+        },
     ]
 }
 
@@ -356,6 +378,11 @@ class FilterNoIndexWarnings(WarningLogRecordTranslator):
     if 'use :no-index: for' in record.msg:
       return False
     return super(FilterNoIndexWarnings, self).filter(record)
+
+
+object_description_options = [
+  ("py:.*", dict(include_fields_in_toc=False)),
+]
 
 
 def setup(app):
