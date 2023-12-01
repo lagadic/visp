@@ -1,4 +1,4 @@
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+
 
 # configured documentation tools and intermediate build results
 set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
@@ -7,7 +7,7 @@ set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
 set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
 
 # HTML output directory
-set(SPHINX_HTML_DIR "${CMAKE_CURRENT_BINARY_DIR}/html")
+set(SPHINX_HTML_DIR "${VISP_DOC_DIR}/python")
 
 #############################################################################
 #
@@ -61,9 +61,10 @@ endforeach()
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/api.rst.in"
   "${CMAKE_CURRENT_SOURCE_DIR}/api.rst"
-  @ONLY)
+  @ONLY
+)
 
-add_custom_target(visp_python_bindings_docs
+add_custom_target(visp_python_bindings_doc
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
 	COMMAND sphinx-build
 		-q -b html
@@ -71,6 +72,7 @@ add_custom_target(visp_python_bindings_docs
 		-d "${SPHINX_CACHE_DIR}"
 		"${CMAKE_CURRENT_SOURCE_DIR}"
 		"${SPHINX_HTML_DIR}"
-	COMMENT "Building HTML documentation for ViSP Python doc with Sphinx")
+	COMMENT "Building Sphinx HTML documentation for ViSP's Python bindings"
+)
 
-add_dependencies(visp_python_bindings_docs visp_python_bindings_install)
+add_dependencies(visp_python_bindings_doc visp_python_bindings_install)

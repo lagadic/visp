@@ -117,7 +117,7 @@ add_subdirectory(stubs)
 
 # Step 5: Build documentation
 if(BUILD_PYTHON_BINDINGS_DOC)
-  add_subdirectory(docs)
+  add_subdirectory(doc)
 endif()
 
 # Global target: compile and install the Python bindings
