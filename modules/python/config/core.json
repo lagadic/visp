@@ -76,7 +76,7 @@
           "arguments": ["uint16_t"]
         },
         {
-          "python_name": "ImageRGBA",
+          "python_name": "ImageRGBa",
           "arguments": ["vpRGBa"]
         },
         {

@@ -44,7 +44,7 @@ faulthandler.enable()
 
 
 from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousMatrix, Display, ImageConvert
-from visp.core import ImageGray, ImageUInt16, ImageRGBA
+from visp.core import ImageGray, ImageUInt16, ImageRGBa
 from visp.io import ImageIo
 from visp.mbt import MbGenericTracker, MbTracker
 from visp.gui import DisplayOpenCV
@@ -98,7 +98,7 @@ def read_data(cam_depth: CameraParameters | None, I: ImageGray, pipe: rs.pipelin
     frames = pipe.wait_for_frames()
     I_np = np.asanyarray(frames.get_color_frame().as_frame().get_data())
     I_np = np.concatenate((I_np, np.ones_like(I_np[..., 0:1], dtype=np.uint8)), axis=-1)
-    I_rgba = ImageRGBA(I_np)
+    I_rgba = ImageRGBa(I_np)
     ImageConvert.convert(I_rgba, I, 0)
     I_depth_raw = None
     point_cloud = None

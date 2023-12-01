@@ -34,7 +34,7 @@
 #############################################################################
 
 from typing import Any, List, Dict
-from visp.core import ImageGray, ImageRGBA, ImageRGBf, RGBa, RGBf
+from visp.core import ImageGray, ImageRGBa, ImageRGBf, RGBa, RGBf
 
 import numpy as np
 import pytest
@@ -51,7 +51,7 @@ def get_data_dicts() -> List[Dict[str, Any]]:
       'dtype': np.uint8
     },
     {
-      'instance': ImageRGBA(h, w, RGBa(0, 50, 75, 255)),
+      'instance': ImageRGBa(h, w, RGBa(0, 50, 75, 255)),
       'base_value': RGBa(0, 50, 75, 255),
       'value': RGBa(255, 128, 0, 100),
       'np_value': np.asarray([255, 128, 0, 100], dtype=np.uint8),
