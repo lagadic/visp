@@ -237,8 +237,6 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
       conversion.add_conversion_binding(pyImageConvert);
     }
   }
-
-
 }
 
 #endif

@@ -86,10 +86,10 @@ void define_get_item_2d_image(py::class_<vpImage<T>> &pyClass)
   });
   pyClass.def("__getitem__", [](const vpImage<T> &self, py::slice slice) -> py::array_t<NpRep> {
     return (py::cast(self).template cast<np_array_cf<NpRep> >())[slice].template cast<py::array_t<NpRep>>();
-  });
+  }, py::keep_alive<0, 1>());
   pyClass.def("__getitem__", [](const vpImage<T> &self, py::tuple tuple) {
     return (py::cast(self).template cast<np_array_cf<NpRep> >())[tuple].template cast<py::array_t<NpRep>>();
-  });
+  }, py::keep_alive<0, 1>());
 }
 
 /*
@@ -104,7 +104,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
   });
   pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<T> {
     return py::cast(self).template cast<np_array_cf<T>>();
-  }, numpy_fn_doc_image);
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
 
   pyImage.def(py::init([](np_array_cf<T> &np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP Image");
@@ -133,7 +133,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
   });
   pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<NpRep> {
     return py::cast(self).template cast<np_array_cf<NpRep>>();
-  }, numpy_fn_doc_image);
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
 
   pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
     verify_array_shape_and_dims(np_array, 3, "ViSP RGBa image");
@@ -163,9 +163,27 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
   pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
     return make_array_buffer<NpRep, 3>(reinterpret_cast<NpRep *>(image.bitmap), { image.getHeight(), image.getWidth(), 3 }, false);
   });
+
   pyImage.def("numpy", [](vpImage<T> &self) -> np_array_cf<NpRep> {
     return py::cast(self).template cast<np_array_cf<NpRep>>();
-  }, numpy_fn_doc_image);
+  }, numpy_fn_doc_image, py::keep_alive<0, 1>());
+
+  pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
+    verify_array_shape_and_dims(np_array, 3, "ViSP RGBa image");
+    const std::vector<ssize_t> shape = np_array.request().shape;
+    if (shape[2] != 3) {
+      throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
+    }
+    vpImage<T> result(shape[0], shape[1]);
+    copy_data_from_np(np_array, (NpRep *)result.bitmap);
+    return result;
+  }), R"doc(
+Construct an image by **copying** a 3D numpy array. this numpy array should be of the form :math:`H \times W \times 3`
+where the 3 denotes the red, green and blue components of the image.
+
+:param np_array: The numpy array to copy.
+
+)doc", py::arg("np_array"));
   define_get_item_2d_image<T, NpRep>(pyImage);
 }
 
