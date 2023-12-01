@@ -287,7 +287,8 @@ void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<doub
   }, numpy_fn_doc_writable);
 
   pyTranslationVector.def(py::init([](np_array_cf<double> np_array) {
-    verify_array_shape_and_dims(np_array, { 3 }, "ViSP translation vector");
+    const std::vector<ssize_t> required_shape = { 3 };
+    verify_array_shape_and_dims(np_array, required_shape, "ViSP translation vector");
     const std::vector<ssize_t> shape = np_array.request().shape;
     vpTranslationVector result;
     copy_data_from_np(np_array, result.data);
