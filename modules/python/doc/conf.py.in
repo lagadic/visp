@@ -16,6 +16,9 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys
 import os
+from sphinx.util.logging import *
+
+
 
 sys.path.insert(0, os.path.abspath('../build'))
 
@@ -336,3 +339,29 @@ texinfo_documents = [
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ("https://docs.python.org/", None)}
+
+from sphinx.util.logging import WarningLogRecordTranslator
+
+# Filter warning about Parameter names not matching function signature
+# This is somethiing that is due to pybind overloads, so we cannot do anything about it
+class FilterPybindArgWarnings(WarningLogRecordTranslator):
+  def filter(self, record):
+    if 'Parameter name' in record.msg and 'does not match any of the parameters' in record.msg:
+      return False
+    return super(FilterPybindArgWarnings, self).filter(record)
+
+# Filter warning about duplicate objects
+class FilterNoIndexWarnings(WarningLogRecordTranslator):
+  def filter(self, record):
+    if 'use :no-index: for' in record.msg:
+      return False
+    return super(FilterNoIndexWarnings, self).filter(record)
+
+
+def setup(app):
+  import logging
+  from sphinx.util.logging import NAMESPACE
+  logger = logging.getLogger(NAMESPACE)
+  for handler in logger.handlers:
+    handler.addFilter(FilterPybindArgWarnings(app))
+    handler.addFilter(FilterNoIndexWarnings(app))

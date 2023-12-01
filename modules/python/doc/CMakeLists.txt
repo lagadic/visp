@@ -67,7 +67,7 @@ configure_file(
 add_custom_target(visp_python_bindings_doc
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
 	COMMAND sphinx-build
-		-q -b html
+		-b html
 		-c "${BINARY_BUILD_DIR}"
 		-d "${SPHINX_CACHE_DIR}"
 		"${CMAKE_CURRENT_SOURCE_DIR}"
