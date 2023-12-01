@@ -110,7 +110,7 @@ public:
 
 public:
   vpFrameGrabber() : init(false), height(0), width(0) { };
-
+  virtual ~vpFrameGrabber() = default;
   virtual void open(vpImage<unsigned char> &I) = 0;
   virtual void open(vpImage<vpRGBa> &I) = 0;
 
