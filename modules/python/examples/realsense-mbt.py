@@ -43,21 +43,19 @@ import faulthandler
 faulthandler.enable()
 
 
-from visp.core import XmlParserCamera, CameraParameters, ColVector, HomogeneousMatrix, Display, ImageConvert
+from visp.core import CameraParameters, HomogeneousMatrix
+from visp.core import Color, Display, ImageConvert
 from visp.core import ImageGray, ImageUInt16, ImageRGBa
 from visp.io import ImageIo
-from visp.mbt import MbGenericTracker, MbTracker
+from visp.mbt import MbGenericTracker
 from visp.gui import DisplayOpenCV
-from visp.core import Color
-from visp.core import PixelMeterConversion
-
 import pyrealsense2 as rs
 
 
 try:
   import cv2
 except:
-  print('Could not import opencv python! make sure that it is installed as it is required')
+  print('Could not import opencv-python! make sure that it is installed as it is required')
   import sys
   sys.exit(1)
 
@@ -79,7 +77,7 @@ class MBTConfig:
     data_path = data_root / 'data'
     assert data_path.exists()
     self.extrinsic_file = str(data_path / 'depth_M_color.txt')
-    # self.ground_truth = str(data_root / 'data' / 'depth_M_color.txt')
+
 
 @dataclass
 class FrameData:
@@ -117,14 +115,12 @@ def cam_from_rs_profile(profile) -> Tuple[CameraParameters, int, int]:
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--data-root', type=str, required=True,
-                      help='Path to the folder containing all the data for the MBT example')
+                      help='Path to the folder containing all the data for the MBT example.')
   parser.add_argument('--object-name', type=str, required=True,
-                      help='Name of the object to track')
-  parser.add_argument('--display-ground-truth', action='store_true')
-  parser.add_argument('--disable-klt', action='store_true')
-  parser.add_argument('--disable-depth', action='store_true')
-  parser.add_argument('--step-by-step', action='store_true')
-  parser.add_argument('--init-ground-truth', action='store_true')
+                      help='Name of the object to track.')
+  parser.add_argument('--disable-klt', action='store_true', help='Disable KLT features for tracking.')
+  parser.add_argument('--disable-depth', action='store_true', help='Do not use depth to perform tracking.')
+  parser.add_argument('--step-by-step', action='store_true', help='Perform tracking frame by frame. Go to the next frame by clicking.')
 
 
   args = parser.parse_args()

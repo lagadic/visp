@@ -162,10 +162,9 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument('--data-root', type=str, required=True,
                       help='Path to the folder containing all the data for the synthetic MBT example')
-  parser.add_argument('--display-ground-truth', action='store_true')
-  parser.add_argument('--disable-klt', action='store_true')
-  parser.add_argument('--disable-depth', action='store_true')
-  parser.add_argument('--step-by-step', action='store_true')
+  parser.add_argument('--disable-klt', action='store_true', help='Disable KLT features for tracking.')
+  parser.add_argument('--disable-depth', action='store_true', help='Do not use depth to perform tracking.')
+  parser.add_argument('--step-by-step', action='store_true', help='Perform tracking frame by frame. Go to the next frame by clicking.')
   parser.add_argument('--init-ground-truth', action='store_true')
 
   args = parser.parse_args()
@@ -222,6 +221,7 @@ if __name__ == '__main__':
     tracker.initFromPose(I, frame_data.cMo_ground_truth)
   else:
     tracker.initClick(I, str(mbt_model.init_file))
+
   start_time =  time.time()
   for frame_data in data_generator:
     if frame_data.I_depth is not None:
