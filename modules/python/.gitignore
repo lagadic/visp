@@ -4,7 +4,7 @@ build
 stubs/visp
 stubs/build
 *.eggs
-docs/_build
-docs/_autosummary
-docs/generated
-docs/api.rst
+doc/_build
+doc/_autosummary
+doc/generated
+doc/api.rst
