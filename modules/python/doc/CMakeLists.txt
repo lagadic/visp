@@ -70,6 +70,7 @@ add_custom_target(visp_python_bindings_doc
 		-b html
 		-c "${BINARY_BUILD_DIR}"
 		-d "${SPHINX_CACHE_DIR}"
+    -j 8
 		"${CMAKE_CURRENT_SOURCE_DIR}"
 		"${SPHINX_HTML_DIR}"
 	COMMENT "Building Sphinx HTML documentation for ViSP's Python bindings"

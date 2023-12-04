@@ -46,7 +46,7 @@ from visp_python_bindgen.submodule import Submodule
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-  from visp_python_bindgen.header import SingleObjectBindings
+  from visp_python_bindgen.header import SingleObjectBindings, HeaderFile
 
 @dataclass
 class EnumRepr:
@@ -173,7 +173,7 @@ def resolve_enums_and_typedefs(root_scope: NamespaceScope, mapping: Dict) -> Tup
   accumulate_data(root_scope)
   return final_data, temp_data
 
-def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule) -> List[SingleObjectBindings]:
+def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Submodule, header: 'HeaderFile') -> List[SingleObjectBindings]:
 
   final_data, filtered_reprs = resolve_enums_and_typedefs(root_scope, mapping)
 
@@ -183,6 +183,7 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
   result: List['SingleObjectBindings'] = []
   final_reprs = []
   for repr in final_data:
+
     enum_config = submodule.get_enum_config(repr.name)
     if enum_config['ignore']:
       filtered_reprs.append(repr)
@@ -191,13 +192,16 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
       final_reprs.append(repr)
     else:
       filtered_reprs.append(repr)
-
+  doc_holder = header.documentation_holder
   for enum_repr in final_reprs:
     name_segments = enum_repr.name.split('::')
     py_name = name_segments[-1].replace('vp', '')
     # If an owner class is ignored, don't export this enum
     parent_ignored = False
     ignored_parent_name = None
+    enum_doc = None
+    if doc_holder is not None:
+      enum_doc = header.documentation_holder.get_documentation_for_enum(repr.name)
 
     for segment in name_segments[:-1]:
       full_segment_name = mapping.get(segment)
@@ -213,11 +217,21 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
     owner_full_name = '::'.join(name_segments[:-1])
     owner_py_ident = get_owner_py_ident(owner_full_name, root_scope) or 'submodule'
     py_ident = f'py{owner_py_ident}{py_name}'
+    py_args = ['py::arithmetic()']
+    if enum_doc is not None:
+      if enum_doc.general_documentation is not None:
+        py_args = [enum_doc.general_documentation] + py_args
 
-    declaration = f'py::enum_<{enum_repr.name}> {py_ident}({owner_py_ident}, "{py_name}", py::arithmetic());'
+    py_args_str = ','.join(py_args)
+    declaration = f'py::enum_<{enum_repr.name}> {py_ident}({owner_py_ident}, "{py_name}", {py_args_str});'
     values = []
     for enumerator in enum_repr.values:
-      values.append(f'{py_ident}.value("{enumerator.name}", {enum_repr.name}::{enumerator.name});')
+      maybe_value_doc = None
+      if enum_doc is not None:
+        maybe_value_doc = enum_doc.value_documentation.get(enumerator.name)
+      maybe_value_doc_str = f', {maybe_value_doc}' if maybe_value_doc else ''
+
+      values.append(f'{py_ident}.value("{enumerator.name}", {enum_repr.name}::{enumerator.name}{maybe_value_doc_str});')
 
     values.append(f'{py_ident}.export_values();')
     enum_names = BoundObjectNames(py_ident, py_name, enum_repr.name, enum_repr.name)

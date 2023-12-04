@@ -184,7 +184,6 @@ class HeaderFile():
     '''
     Update the bindings container passed in parameter with the bindings linked to this header file
     '''
-
     from visp_python_bindgen.enum_binding import get_enum_bindings
     # Fetch documentation if available
     if self.documentation_holder_path is not None:
@@ -194,7 +193,7 @@ class HeaderFile():
 
     for cls in self.header_repr.namespace.classes:
       self.generate_class(bindings_container, cls, self.environment)
-    enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule)
+    enum_bindings = get_enum_bindings(self.header_repr.namespace, self.environment.mapping, self.submodule, self)
     for enum_binding in enum_bindings:
       bindings_container.add_bindings(enum_binding)
 
@@ -202,6 +201,11 @@ class HeaderFile():
     self.parse_sub_namespace(bindings_container, self.header_repr.namespace)
 
   def parse_sub_namespace(self, bindings_container: BindingsContainer, ns: NamespaceScope, namespace_prefix = '', is_root=True) -> None:
+    '''
+    Parse a subnamespace and all its subnamespaces.
+    In a namespace, only the functions are exported.
+    '''
+
     if not is_root and ns.name == '': # Anonymous namespace, only visible in header, so we ignore it
       return
 
@@ -228,20 +232,59 @@ class HeaderFile():
       self.parse_sub_namespace(bindings_container, ns.namespaces[sub_ns], namespace_prefix + sub_ns + '::', False)
 
   def generate_class(self, bindings_container: BindingsContainer, cls: ClassScope, header_env: HeaderEnvironment) -> SingleObjectBindings:
+    '''
+    Generate the bindings for a single class:
+    This method will generate one Python class per template instanciation.
+    If the class has no template argument, then a single python class is generated
+
+    If it is templated, the mapping (template argument types => Python class name) must be provided in the JSON config file
+    '''
     def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
+      '''
+      Generate the bindings of a single class, handling a potential template specialization.
+      The handled information is:
+        - The inheritance of this class
+        - Its public fields that are not pointers
+        - Its constructors
+        - Most of its operators
+        - Its public methods
+      '''
       python_ident = f'py{name_python}'
       name_cpp = get_typename(cls.class_decl.typename, owner_specs, header_env.mapping)
       class_doc = None
+
       methods_dict: Dict[str, List[MethodBinding]] = {}
-      def add_to_method_dict(key, value):
+      def add_to_method_dict(key: str, value: MethodBinding):
+        '''
+        Add a method binding to the dictionary containing all the methods bindings of the class.
+        This dict is a mapping str => List[MethodBinding]
+        '''
         if key not in methods_dict:
           methods_dict[key] = [value]
         else:
           methods_dict[key].append(value)
+
+      def add_method_doc_to_pyargs(method: types.Method, py_arg_strs: List[str]) -> List[str]:
+        if self.documentation_holder is not None:
+          method_name = get_name(method.name)
+          method_doc_signature = MethodDocSignature(method_name,
+                                                    get_type(method.return_type, {}, header_env.mapping) or '', # Don't use specializations so that we can match with doc
+                                                    [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
+                                                    method.const, method.static)
+          method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, owner_specs, param_names, [])
+          if method_doc is None:
+            logging.warning(f'Could not find documentation for {name_cpp}::{method_name}!')
+            return py_arg_strs
+          else:
+            return [method_doc.documentation] + py_arg_strs
+        else:
+          return py_arg_strs
+
       if self.documentation_holder is not None:
         class_doc = self.documentation_holder.get_documentation_for_class(name_cpp_no_template, {}, owner_specs)
       else:
         logging.warning(f'Documentation not found when looking up {name_cpp_no_template}')
+
       # Declaration
       # Add template specializations to cpp class name. e.g., vpArray2D becomes vpArray2D<double> if the template T is double
       template_decl: Optional[types.TemplateDecl] = cls.class_decl.template
@@ -302,16 +345,8 @@ class HeaderFile():
           params_strs = [get_type(param.type, owner_specs, header_env.mapping) for param in method.parameters]
           py_arg_strs = get_py_args(method.parameters, owner_specs, header_env.mapping)
           param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
-          if self.documentation_holder is not None:
-            method_doc_signature = MethodDocSignature(method_name,
-                                                      get_type(method.return_type, {}, header_env.mapping) or '', # Don't use specializations so that we can match with doc
-                                                      [get_type(param.type, {}, header_env.mapping) for param in method.parameters],
-                                                      method.const, method.static)
-            method_doc = self.documentation_holder.get_documentation_for_method(name_cpp_no_template, method_doc_signature, {}, owner_specs, param_names, [])
-            if method_doc is None:
-              logging.warning(f'Could not find documentation for {name_cpp}::{method_name}!')
-            else:
-              py_arg_strs = [method_doc.documentation] + py_arg_strs
+
+          py_arg_strs = add_method_doc_to_pyargs(method, py_arg_strs)
 
           ctor_str = f'''{python_ident}.{define_constructor(params_strs, py_arg_strs)};'''
           add_to_method_dict('__init__', MethodBinding(ctor_str, is_static=False, is_lambda=False,
@@ -329,6 +364,10 @@ class HeaderFile():
         return_type_str = get_type(method.return_type, owner_specs, header_env.mapping)
         py_args = get_py_args(method.parameters, owner_specs, header_env.mapping)
         py_args = py_args + ['py::is_operator()']
+        param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
+
+        py_args = add_method_doc_to_pyargs(method, py_args)
+
         if len(params_strs) > 1:
           logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
           rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
@@ -381,15 +420,17 @@ class HeaderFile():
             method_str, method_data = define_method(method, method_config, True,
                                                                 new_specs, self, header_env, class_def_names)
             add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
-                                                                        is_lambda=f'{name_cpp}::*' not in method_str,
-                                                                        is_operator=False, is_constructor=False, method_data=method_data))
+                                                                  is_lambda=f'{name_cpp}::*' not in method_str,
+                                                                  is_operator=False, is_constructor=False,
+                                                                  method_data=method_data))
             generated_methods.append(method_data)
         else:
           method_str, method_data = define_method(method, method_config, True,
                                                               owner_specs, self, header_env, class_def_names)
           add_to_method_dict(method_data.py_name, MethodBinding(method_str, is_static=method.static,
-                                                                      is_lambda=f'{name_cpp}::*' not in method_str,
-                                                                      is_operator=False, is_constructor=False, method_data=method_data))
+                                                                is_lambda=f'{name_cpp}::*' not in method_str,
+                                                                is_operator=False, is_constructor=False,
+                                                                method_data=method_data))
           generated_methods.append(method_data)
 
       # See https://github.com/pybind/pybind11/issues/974

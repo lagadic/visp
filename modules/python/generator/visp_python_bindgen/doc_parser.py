@@ -114,10 +114,16 @@ class MethodDocumentation(object):
 @dataclass
 class ClassDocumentation(object):
   documentation: str
+@dataclass
+class EnumDocumentation(object):
+  general_documentation: str
+  value_documentation: Dict[str, str]
+
 
 @dataclass
 class DocElements(object):
   compounddefs: Dict[str, compounddefType]
+  enums: Dict[str, doxmlparser.memberdefType]
   methods: Dict[Tuple[str, MethodDocSignature], List[doxmlparser.memberdefType]]
 
 IGNORED_MIXED_CONTAINERS = [
@@ -130,6 +136,9 @@ IGNORED_SIMPLE_SECTS = [
   'date',
 ]
 
+def escape_for_rst(text: str) -> str:
+  return text
+
 def process_mixed_container(container: MixedContainer, level: int, level_string='') -> str:
   '''
   :param level_string: the string being built for a single level (e.g. a line/paragraph of text)
@@ -141,15 +150,15 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
   requires_space = not level_string.endswith(('\n', '\t', ' ')) and len(level_string) > 0
   # Inline blocks
   if isinstance(container.value, str):
-    return level_string + container.value.replace('\n', '\n' + indent_str).strip()
+    return level_string + escape_for_rst(container.value.replace('\n', '\n' + indent_str).strip())
   if container.name == 'text':
-    return container.value.replace('\n', '\n' + indent_str).strip()
+    return escape_for_rst(container.value.replace('\n', '\n' + indent_str).strip())
   if container.name == 'bold':
     markup_start = '**' if not requires_space or len(level_string) == 0 else ' **'
     return level_string + markup_start + container.value.valueOf_ + '** '
   if container.name == 'computeroutput':
     markup_start = '`' if not requires_space or len(level_string) == 0 else ' `'
-    return level_string + markup_start + container.value.valueOf_ + '` '
+    return level_string + markup_start + escape_for_rst(container.value.valueOf_) + '` '
   if container.name == 'emphasis':
     markup_start = '*' if not requires_space else ' *'
     return level_string + markup_start + container.value.valueOf_ + '* '
@@ -266,6 +275,7 @@ class DocumentationHolder(object):
       else:
         self.xml_doc = doxmlparser.compound.parse(str(path), True, False)
         compounddefs_res = {}
+        enums_res = {}
         methods_res = {}
         for compounddef in self.xml_doc.get_compounddef():
           compounddef: compounddefType = compounddef
@@ -275,6 +285,7 @@ class DocumentationHolder(object):
             section_defs: List[doxmlparser.sectiondefType] = compounddef.sectiondef
             for section_def in section_defs:
               member_defs: List[doxmlparser.memberdefType] = section_def.memberdef
+              enum_defs = [d for d in member_defs if d.kind == doxmlparser.compound.DoxMemberKind.ENUM and d.prot == 'public']
               method_defs = [d for d in member_defs if d.kind == doxmlparser.compound.DoxMemberKind.FUNCTION and d.prot == 'public']
               for method_def in method_defs:
                 is_const = False if method_def.const == 'no' else True
@@ -283,7 +294,6 @@ class DocumentationHolder(object):
                 param_types = []
                 for param in method_def.get_param():
                   t = ''.join(process_mixed_container(c, 0) for c in param.type_.content_)
-
                   param_types.append(t)
                 if method_def.name == cls_name or ret_type != '':
                   signature_str = f'{ret_type} {cls_name}::{method_def.name}({",".join(param_types)}) {{}}'
@@ -302,7 +312,11 @@ class DocumentationHolder(object):
                       methods_res[key] = method_def
                   else:
                     methods_res[key] = method_def
-        self.elements = DocElements(compounddefs_res, methods_res)
+
+              for enum_def in enum_defs:
+                enums_res[compounddef.get_compoundname() + '::' +  enum_def.name] = enum_def
+
+        self.elements = DocElements(compounddefs_res, enums_res, methods_res)
 
   def get_documentation_for_class(self, name: str, cpp_ref_to_python: Dict[str, str], specs: Dict[str, str]) -> Optional[ClassDocumentation]:
     compounddef = self.elements.compounddefs.get(name)
@@ -310,6 +324,20 @@ class DocumentationHolder(object):
       return None
     cls_str = to_cstring(self.generate_class_description_string(compounddef))
     return ClassDocumentation(cls_str)
+
+  def get_documentation_for_enum(self, enum_name: str) -> Optional[EnumDocumentation]:
+    member_def = self.elements.enums.get(enum_name)
+    print(self.elements.enums)
+    if member_def is None:
+      return None
+    general_doc = to_cstring(self.generate_method_description_string(member_def))
+    value_doc = {}
+    for enum_val in member_def.enumvalue:
+      enum_value: doxmlparser.enumvalueType = enum_val
+      brief = process_description(enum_value.briefdescription)
+      detailed = process_description(enum_value.detaileddescription)
+      value_doc[enum_value.name] = to_cstring(brief + '\n\n' + detailed)
+    return EnumDocumentation(general_doc, value_doc)
 
   def generate_class_description_string(self, compounddef: compounddefType) -> str:
     brief = process_description(compounddef.get_briefdescription())

@@ -31,7 +31,6 @@ sys.path.insert(0, os.path.abspath('../build'))
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
-    "sphinx.ext.napoleon",
     "sphinx.ext.mathjax",
     "sphinx.ext.autosummary",
     "sphinx_immaterial",
@@ -384,11 +383,31 @@ object_description_options = [
   ("py:.*", dict(include_fields_in_toc=False)),
 ]
 
+python_type_aliases = {
+  "_visp.": "visp.",
+}
+
+
+autodoc_excludes = [
+'__weakref__',  '__doc__', '__module__', '__dict__',
+'__dir__', '__delattr__', '__format__', '__init_subclass__', '__new__',
+'__reduce__', '__reduce_ex__', '__repr__', '__setattr__',
+'__sizeof__', '__str__', '__subclasshook__', '__getattribute__'
+]
+def autodoc_skip_member(app, what, name, obj, skip, options):
+  # Ref: https://stackoverflow.com/a/21449475/
+
+  exclude = name in autodoc_excludes
+  # return True if (skip or exclude) else None  # Can interfere with subsequent skip functions.
+  return True if exclude else skip
 
 def setup(app):
   import logging
   from sphinx.util.logging import NAMESPACE
   logger = logging.getLogger(NAMESPACE)
   for handler in logger.handlers:
-    handler.addFilter(FilterPybindArgWarnings(app))
-    handler.addFilter(FilterNoIndexWarnings(app))
+    if isinstance(handler, WarningStreamHandler):
+      handler.addFilter(FilterPybindArgWarnings(app))
+      handler.addFilter(FilterNoIndexWarnings(app))
+
+  app.connect('autodoc-skip-member', autodoc_skip_member)
