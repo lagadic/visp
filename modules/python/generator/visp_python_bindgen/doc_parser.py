@@ -119,6 +119,21 @@ class EnumDocumentation(object):
   general_documentation: str
   value_documentation: Dict[str, str]
 
+  def get_overall_doc(self) -> str:
+    full_doc = ''
+    full_doc += self.general_documentation.strip('\n')
+    full_doc += '\n\nValues: \n\n'
+    for k,v in self.value_documentation.items():
+      full_doc += '* '
+      full_doc += '**' + k + '**'
+      if len(v.strip('\n').strip()) > 0:
+        full_doc += ': ' + v.strip('\n')
+      full_doc += '\n\n'
+
+    return to_cstring(full_doc)
+
+  def get_value_doc(self, k: str) -> Optional[str]:
+    return to_cstring(self.value_documentation.get(k) or '')
 
 @dataclass
 class DocElements(object):
@@ -327,16 +342,15 @@ class DocumentationHolder(object):
 
   def get_documentation_for_enum(self, enum_name: str) -> Optional[EnumDocumentation]:
     member_def = self.elements.enums.get(enum_name)
-    print(self.elements.enums)
     if member_def is None:
       return None
-    general_doc = to_cstring(self.generate_method_description_string(member_def))
+    general_doc = self.generate_method_description_string(member_def)
     value_doc = {}
     for enum_val in member_def.enumvalue:
       enum_value: doxmlparser.enumvalueType = enum_val
       brief = process_description(enum_value.briefdescription)
       detailed = process_description(enum_value.detaileddescription)
-      value_doc[enum_value.name] = to_cstring(brief + '\n\n' + detailed)
+      value_doc[enum_value.name] = brief + '\n\n' + detailed
     return EnumDocumentation(general_doc, value_doc)
 
   def generate_class_description_string(self, compounddef: compounddefType) -> str:

@@ -219,16 +219,15 @@ def get_enum_bindings(root_scope: NamespaceScope, mapping: Dict, submodule: Subm
     py_ident = f'py{owner_py_ident}{py_name}'
     py_args = ['py::arithmetic()']
     if enum_doc is not None:
-      if enum_doc.general_documentation is not None:
-        py_args = [enum_doc.general_documentation] + py_args
+      py_args = [enum_doc.get_overall_doc()] + py_args
 
     py_args_str = ','.join(py_args)
     declaration = f'py::enum_<{enum_repr.name}> {py_ident}({owner_py_ident}, "{py_name}", {py_args_str});'
     values = []
     for enumerator in enum_repr.values:
       maybe_value_doc = None
-      if enum_doc is not None:
-        maybe_value_doc = enum_doc.value_documentation.get(enumerator.name)
+      # if enum_doc is not None:
+      #   maybe_value_doc = enum_doc.get_value_doc(enumerator.name)
       maybe_value_doc_str = f', {maybe_value_doc}' if maybe_value_doc else ''
 
       values.append(f'{py_ident}.value("{enumerator.name}", {enum_repr.name}::{enumerator.name}{maybe_value_doc_str});')

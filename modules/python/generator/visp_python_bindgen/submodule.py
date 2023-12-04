@@ -131,6 +131,8 @@ class Submodule():
 namespace py = pybind11;
 
 void {self.generation_function_name()}(py::module_ &m) {{
+py::options options;
+options.disable_enum_members_docstring();
 
 /*
  * Submodule declaration
