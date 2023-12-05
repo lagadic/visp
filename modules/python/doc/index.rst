@@ -1,50 +1,16 @@
 ViSP Python Documentation
 ============================
 
-Contents:
+Welcome to the ViSP Python binding documentation!
 
-Todos and known issues
-============================
+
 
 .. currentmodule:: visp
 
 .. toctree::
     :glob:
+    :maxdepth: 2
 
     todos.rst
+    conversions.rst
     api.rst
-
-.. Core module
-.. ==============
-
-.. .. automodule:: visp.core
-..    :members:
-..    :undoc-members:
-
-.. Visual servoing module
-.. =======================
-
-.. .. automodule:: visp.vs
-..    :members:
-..    :undoc-members:
-
-.. Vision module
-.. =======================
-
-.. .. automodule:: visp.vision
-..    :members:
-..    :undoc-members:
-
-.. Visual features
-.. =======================
-
-.. .. automodule:: visp.visual_features
-..    :members:
-..    :undoc-members:
-
-.. Input/output module
-.. ====================
-
-.. .. automodule:: visp.io
-..    :members:
-..    :undoc-members:
