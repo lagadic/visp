@@ -18,7 +18,7 @@ std::string toString(const std::string &name, int val)
 }
 }
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char **/*argv*/)
 {
   const std::string npz_filename = "npz_tracking_teabox.npz";
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
@@ -53,6 +53,13 @@ int main(int argc, char **argv)
   int nb_data = *arr_nb_data.data<int>();
   std::cout << "Number of images: " << nb_data << std::endl;
 
+  // Load all the images data
+  visp::cnpy::NpyArray arr_vec_img_data_size = npz_data["vec_img_data_size"];
+  int* vec_img_data_size_ptr = arr_vec_img_data_size.data<int>();
+  visp::cnpy::NpyArray arr_vec_img = npz_data["vec_img"];
+  unsigned char* vec_img_ptr = arr_vec_img.data<unsigned char>();
+  size_t img_data_offset = 0;
+
   // Load all the poses
   visp::cnpy::NpyArray arr_vec_poses = npz_data["vec_poses"];
   double* vec_poses_ptr = arr_vec_poses.data<double>();
@@ -61,10 +68,8 @@ int main(int argc, char **argv)
   size_t pose_size = arr_vec_poses.shape[1];
 
   for (int iter = 0; iter < nb_data; iter++) {
-    std::string img_data_str = toString("png_image_%06d", iter);
-     visp::cnpy::NpyArray arr_nb_data = npz_data[img_data_str];
-
-    vpImageIo::readPNGfromMem(arr_nb_data.data<unsigned char>(), arr_nb_data.shape[0], I);
+    vpImageIo::readPNGfromMem(vec_img_ptr + img_data_offset, vec_img_data_size_ptr[iter], I);
+    img_data_offset += vec_img_data_size_ptr[iter];
     vpImageConvert::convert(I, I_display);
 
     const std::string str_model_iter_sz = toString("model_%06d", iter) + "_sz";
@@ -88,11 +93,6 @@ int main(int argc, char **argv)
       }
     }
 
-    // const std::string vec_pose_str = toString("vec_pose_%06d", iter);
-    // visp::cnpy::NpyArray arr_vec_pose = npz_data[vec_pose_str];
-    // vpHomogeneousMatrix cMo(vpTranslationVector(arr_vec_pose.data<double>()[3], arr_vec_pose.data<double>()[4], arr_vec_pose.data<double>()[5]),
-    //   vpThetaUVector(arr_vec_pose.data<double>()[0], arr_vec_pose.data<double>()[1], arr_vec_pose.data<double>()[2])
-    // );
     vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[pose_size*iter + 3], vec_poses_ptr[pose_size*iter + 4], vec_poses_ptr[pose_size*iter + 5]),
       vpThetaUVector(vec_poses_ptr[pose_size*iter], vec_poses_ptr[pose_size*iter + 1], vec_poses_ptr[pose_size*iter + 2])
     );

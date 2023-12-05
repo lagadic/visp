@@ -27,7 +27,7 @@ std::string toString(const std::string &name, int val)
 }
 }
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char **/*argv*/)
 {
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
@@ -70,10 +70,6 @@ int main(int argc, char **argv)
   const std::string npz_filename = "npz_tracking_teabox.npz";
   const std::string camera_name = "Camera";
   std::vector<char> vec_camera_name(camera_name.begin(), camera_name.end());
-  for (size_t i = 0; i < vec_camera_name.size(); i++) {
-    std::cout << i << "): " << vec_camera_name[i] << " ; " << int(vec_camera_name[i]) << " ; "
-      << camera_name.c_str()[i] << " ; " << int(camera_name.c_str()[i]) << std::endl;
-  }
 
   visp::cnpy::npz_save(npz_filename, "camera_name", &vec_camera_name[0], { vec_camera_name.size() }, "w"); // overwrite
   visp::cnpy::npz_save(npz_filename, "height", &height, { 1 }, "a"); // append
@@ -89,6 +85,11 @@ int main(int argc, char **argv)
   std::vector<double> vec_poses;
   vec_poses.reserve(g.getLastFrameIndex() * 6);
 
+  std::vector<int> vec_img_data_size;
+  vec_img_data_size.reserve(g.getLastFrameIndex());
+  std::vector<unsigned char> vec_img_data;
+  vec_img_data.reserve(g.getLastFrameIndex() * height * width);
+
   int iter = 0;
   while (!g.end()) {
     g.acquire(I);
@@ -98,18 +99,17 @@ int main(int argc, char **argv)
 
     int last_pos = 0;
     vpImageIo::writePNGtoMem(I, last_pos, img_buffer.data());
-    visp::cnpy::npz_save(npz_filename, toString("png_image_%06d", iter), &img_buffer[0], { (unsigned int) last_pos }, "a");
+    vec_img_data_size.push_back(last_pos);
+    vec_img_data.insert(vec_img_data.end(), img_buffer.data(), img_buffer.data() + last_pos);
 
     std::vector<double> vec_pose = poseToVec(cMo);
     vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
-    // Commented, use instead a "multidimensional" array
-    // visp::cnpy::npz_save(npz_filename, toString("vec_pose_%06d", iter), &vec_pose[0], { vec_pose.size() }, "a");
 
     std::map<std::string, std::vector<std::vector<double> > > mapOfModels;
     std::map<std::string, unsigned int> mapOfW;
     mapOfW[camera_name] = I.getWidth();
     std::map<std::string, unsigned int> mapOfH;
-    mapOfH[camera_name] = I.getHeight();;
+    mapOfH[camera_name] = I.getHeight();
     std::map<std::string, vpHomogeneousMatrix> mapOfcMos;
     mapOfcMos[camera_name] = cMo;
     std::map<std::string, vpCameraParameters> mapOfCams;
@@ -135,6 +135,8 @@ int main(int argc, char **argv)
     iter++;
   }
 
+  visp::cnpy::npz_save(npz_filename, "vec_img_data_size", &vec_img_data_size[0], { vec_img_data_size.size() }, "a");
+  visp::cnpy::npz_save(npz_filename, "vec_img", &vec_img_data[0], { vec_img_data.size() }, "a");
   // Show how to save a "multidimensional" array
   visp::cnpy::npz_save(npz_filename, "vec_poses", &vec_poses[0], { static_cast<size_t>(iter), 6 }, "a");
 
