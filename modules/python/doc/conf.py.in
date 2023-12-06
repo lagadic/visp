@@ -285,8 +285,8 @@ latex_elements = {
     #'figure_align': 'htbp',
 }
 
-html_logo = 'visp_icon.png'
-html_favicon = 'visp_icon.png'
+html_logo = '_static/visp_icon_white.png'
+html_favicon = '_static/visp_icon.png'
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
@@ -397,7 +397,7 @@ autodoc_excludes = [
 '__weakref__',  '__doc__', '__module__', '__dict__',
 '__dir__', '__delattr__', '__format__', '__init_subclass__', '__new__',
 '__reduce__', '__reduce_ex__', '__repr__', '__setattr__',
-'__sizeof__', '__str__', '__subclasshook__', '__getattribute__'
+'__sizeof__', '__str__', '__subclasshook__', '__getattribute__', '__entries',
 ]
 def autodoc_skip_member(app, what, name, obj, skip, options):
   # Ref: https://stackoverflow.com/a/21449475/

@@ -52,6 +52,7 @@ configure_file(
 	"${BINARY_BUILD_DIR}/conf.py"
 	@ONLY)
 
+
 foreach(module ${python_bound_modules})
   # start string with 2 spaces since its included in autosummary
   string(REPLACE "visp_" "  visp." python_module_name ${module})
@@ -66,6 +67,7 @@ configure_file(
 
 add_custom_target(visp_python_bindings_doc
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/_static" "${BINARY_BUILD_DIR}/_static"
 	COMMAND sphinx-build
 		-b html
 		-c "${BINARY_BUILD_DIR}"

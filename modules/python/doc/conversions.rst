@@ -19,26 +19,24 @@ ViSP provides multiple types to manipulate mathematical objects, such as:
 While these representations should allow you to work with all the ViSP functions,
 they are a foreign concept to all the other Python libraries.
 
-For most scientific computing libraries, the standard data representation is based on`NumPy <https://numpy.org/>`_.
+For most scientific computing libraries, the standard data representation is based on `NumPy <https://numpy.org/>`_.
 Since most libraries will accept and manipulate these arrays, ViSP provides conversion functions.
 
 To reinterpret a supported ViSP object as a Numpy array, use either:
 
 
-.. testcode::
+.. doctest::
 
-  from visp.core import ColVector
-  import numpy as np
+  >>> from visp.core import ColVector
+  >>> import numpy as np
 
-  list_representation = [i for i in range(3)]
-  vec = ColVector(list_representation) # Initialize a 3 vector from a list
-  np_vec = vec.numpy() # A 1D numpy array of size 3
+  >>> list_representation = [i for i in range(3)]
+  >>> vec = ColVector(list_representation) # Initialize a 3 vector from a list
+  >>> np_vec = vec.numpy() # A 1D numpy array of size 3
 
-  print(np.all(np_vec == list_representation))
+  >>> np.all(np_vec == list_representation)
+  True
 
-.. testoutput::
-
-   True
 
 
 

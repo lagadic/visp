@@ -1848,13 +1848,13 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I1 : Input grayscale image for the first camera.
   \param I2 : Input grayscale image for the second camera.
@@ -1918,13 +1918,13 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I_color1 : Input color image for the first camera.
   \param I_color2 : Input color image for the second camera.
@@ -1988,13 +1988,13 @@ void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImag
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   The cameras that have not an init file will be automatically initialized but
   the camera transformation matrices have to be set before.
@@ -2093,13 +2093,13 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   The cameras that have not an init file will be automatically initialized but
   the camera transformation matrices have to be set before.
@@ -2213,7 +2213,7 @@ void vpMbGenericTracker::initFaceFromLines(vpMbtPolygon & /*polygon*/)
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
-  \code
+  \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -2224,7 +2224,7 @@ void vpMbGenericTracker::initFaceFromLines(vpMbtPolygon & /*polygon*/)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I1 : Input grayscale image for the first camera.
   \param I2 : Input grayscale image for the second camera.
@@ -2274,7 +2274,7 @@ void vpMbGenericTracker::initFromPoints(const vpImage<unsigned char> &I1, const 
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
-  \code
+  \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -2285,7 +2285,7 @@ void vpMbGenericTracker::initFromPoints(const vpImage<unsigned char> &I1, const 
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10              #  /
-  \endcode
+  \endverbatim
 
   \param I_color1 : Input color image for the first camera.
   \param I_color2 : Input color image for the second camera.
