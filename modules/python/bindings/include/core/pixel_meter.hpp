@@ -69,13 +69,39 @@ void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
 
   }, R"doc(
 Convert a set of 2D pixel coordinates to normalized coordinates.
+
 :param cam: The camera intrinsics with which to convert pixels to normalized coordinates.
+
 :param us: The pixel coordinates along the horizontal axis.
+
 :param vs: The pixel coordinates along the vertical axis.
 
 :raises RuntimeError: If us and vs do not have the same dimensions and shape.
 
 :return: A tuple containing the x and y normalized coordinates of the input pixels.
+Both arrays have the same shape as xs and ys.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import PixelMeterConversion, CameraParameters
+  import numpy as np
+
+  h, w = 240, 320
+  cam = CameraParameters(px=600, py=600, u0=320, v0=240)
+
+  vs, us = np.meshgrid(range(h), range(w), indexing='ij') # vs and us are 2D arrays
+  vs.shape == (h, w) and us.shape == (h, w)
+
+  xs, ys = PixelMeterConversion.convertPoints(cam, us, vs)
+  # xs and ys have the same shape as us and vs
+  assert xs.shape == (h, w) and ys.shape == (h, w)
+
+  # Converting a numpy array to normalized coords has the same effect as calling on a single image point
+  u, v = 120, 120
+  x, y = PixelMeterConversion.convertPoint(cam, u, v)
+  assert x == xs[v, u] and y == ys[v, u]
 
 )doc", py::arg("cam"), py::arg("us"), py::arg("vs"));
 }
@@ -106,13 +132,39 @@ void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
 
   }, R"doc(
 Convert a set of 2D normalized coordinates to pixel coordinates.
+
 :param cam: The camera intrinsics with which to convert normalized coordinates to pixels.
+
 :param xs: The normalized coordinates along the horizontal axis.
+
 :param ys: The normalized coordinates along the vertical axis.
 
 :raises RuntimeError: If xs and ys do not have the same dimensions and shape.
 
-:return: A tuple containing the u,v pixel coordinates of the input normalized coordinates.
+:return: A tuple containing the u,v pixel coordinate arrays of the input normalized coordinates.
+Both arrays have the same shape as xs and ys.
+
+Example usage:
+
+.. testcode::
+
+  from visp.core import MeterPixelConversion, CameraParameters
+  import numpy as np
+
+  cam = CameraParameters(px=600, py=600, u0=320, v0=240)
+  n = 20
+  xs, ys = np.random.rand(n), np.random.rand(n)
+
+
+  us, vs = MeterPixelConversion.convertPoints(cam, xs, ys)
+
+  # xs and ys have the same shape as us and vs
+  assert us.shape == (n,) and vs.shape == (n,)
+
+  # Converting a numpy array to pixel coords has the same effect as calling on a single image point
+  x, y = xs[0],  ys[0]
+  u, v = MeterPixelConversion.convertPoint(cam, x, y)
+  assert u == us[0] and v == vs[0]
 
 )doc", py::arg("cam"), py::arg("xs"), py::arg("ys"));
 }

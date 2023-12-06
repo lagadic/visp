@@ -13,4 +13,3 @@ Welcome to the ViSP Python binding documentation!
 
     todos.rst
     conversions.rst
-    api.rst

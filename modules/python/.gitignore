@@ -5,6 +5,6 @@ stubs/visp
 stubs/build
 *.eggs
 doc/_build
-doc/_autosummary
+doc/_autosummary/*
 doc/generated
 doc/api.rst

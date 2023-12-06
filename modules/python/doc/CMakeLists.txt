@@ -68,11 +68,12 @@ configure_file(
 add_custom_target(visp_python_bindings_doc
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
   COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/_static" "${BINARY_BUILD_DIR}/_static"
-	COMMAND sphinx-build
+	COMMAND ${PYTHON3_EXECUTABLE} -m sphinx
 		-b html
 		-c "${BINARY_BUILD_DIR}"
 		-d "${SPHINX_CACHE_DIR}"
     -j 8
+    -E
 		"${CMAKE_CURRENT_SOURCE_DIR}"
 		"${SPHINX_HTML_DIR}"
 	COMMENT "Building Sphinx HTML documentation for ViSP's Python bindings"

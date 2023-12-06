@@ -66,7 +66,6 @@ nbsphinx_allow_errors = True  # Continue through Jupyter errors
 autodoc_typehints = "both" # Sphinx-native method. Not as good as sphinx_autodoc_typehints
 add_module_names = False # Remove namespaces from class/method signatures
 
-import visp
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -153,7 +152,6 @@ html_theme = 'sphinx_immaterial'
 # html_theme_options = {}
 html_theme_options = {
     "toc_title_is_page_title": True,
-    "navigation_depth": 2,
     "repo_url": "https://github.com/lagadic/visp",
     "repo_name": "visp",
     "features": [
@@ -193,7 +191,7 @@ html_theme_options = {
 # html_title = None
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
-# html_short_title = None
+# html_short_title = 'ViSP documentation'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.

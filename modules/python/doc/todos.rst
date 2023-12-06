@@ -36,12 +36,7 @@ Documentation
 ----------------
 * Generate documentation for:
 
-  * Enums
   * Functions in namespaces etc.
-  * In classes
-
-    * Constructors
-    * Operators
 
 * Reference python types in Documentation
 * Prefer Python examples instead of C++ ones ?

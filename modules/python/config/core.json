@@ -651,10 +651,111 @@
       ]
     },
     "vpPixelMeterConversion": {
-      "additional_bindings": "bindings_vpPixelMeterConversion"
+      "additional_bindings": "bindings_vpPixelMeterConversion",
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
+          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,false,false],
+          "param_is_output": [false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double&, double&)",
+          "ignore": true
+        }
+      ]
+
     },
     "vpMeterPixelConversion": {
-      "additional_bindings": "bindings_vpMeterPixelConversion"
+      "additional_bindings": "bindings_vpMeterPixelConversion",
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
+          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,false,false],
+          "param_is_output": [false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double&, double&)",
+          "ignore": true
+        }
+      ]
     },
     "vpCircle": {
       "methods": [
