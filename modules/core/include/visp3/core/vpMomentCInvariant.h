@@ -223,7 +223,7 @@ public:
   /*!
     Moment name.
     */
-  const char *name() const { return "vpMomentCInvariant"; }
+  const std::string name() const { return "vpMomentCInvariant"; }
 
   /*!
     Print partial invariant.

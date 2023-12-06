@@ -58,7 +58,7 @@ public:
   enum errorRobotCodeEnum
   {
 
-//! Error from constructor
+    //! Error from constructor
     constructionError,
 
     //! Not unique robot object construction

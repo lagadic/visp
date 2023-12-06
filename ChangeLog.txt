@@ -7,24 +7,37 @@
 
 ViSP 3.x.x (Version in development)
   - Contributors:
-    . Fabien Spindler, Florent Lamiraux
+    . Fabien Spindler, Romain Lagneau, Pierre Perraud, Florent Lamiraux, Samuel Felton, François Chaumette,
+      Souriya Trinh
   - New classes
-    .
-  - Deprecated removed
-    . vpPlanarObjectDetector, vpFernClassifier classes are removed
+    . vpPololu and vpRobotPololuPtu to control respectively a servo motor using a pololu maestro board or a 3D printed
+      2 dof pan-tilt unit. Visual servoing example provided in example/servo-pololu-ptu. Tests available in
+      modules/robot/test/servo-pololu/
+  - Deprecated
+    . vpPlanarObjectDetector, vpFernClassifier deprecated classes are removed
     . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
+    . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
   - New features and improvements
     . Introduce applications in apps folder, a collection of useful tools that
       have a dependency to the install target
     . Bump minimal c++ standard to c++11
+    . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
     . Update tutorial: How to use Blender to generate simulated data for model-based tracking
       experiments with step by step detailed explanations
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
+    . New tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-conda-package.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
+    . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
+      standard enabled
+    . [#1272] Unable to build ViSP with PCL/VTK build from source, VTK headers are not found by ViSP
+    . [#1273] Build error in visp_java without deprecated functionalities
+    . [#1274] Build issue no member named clamp in namespace std
+    . [#1279] Issue in vpPoseVector json serialization
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

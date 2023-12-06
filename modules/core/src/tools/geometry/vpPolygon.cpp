@@ -63,7 +63,8 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
   // Visp -> CV
   std::vector<cv::Point> cv_pts;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   std::transform(cbegin(ips), cend(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
     return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
   });
@@ -79,7 +80,8 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
   // CV -> Visp
   std::vector<vpImagePoint> conv_hull_corners;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
+  // Check if std:c++14 or higher
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
   std::transform(cbegin(cv_conv_hull_corners), cend(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
                  [](const cv::Point &pt) {
                    return vpImagePoint { static_cast<double>(pt.y), static_cast<double>(pt.x) };

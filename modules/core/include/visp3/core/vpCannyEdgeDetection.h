@@ -116,8 +116,10 @@ private:
    * \brief Step 3: Edge thining.
    * \details Perform the edge thining step.
    * Perform a non-maximum suppression to keep only local maxima as edge candidates.
+   * \param[in] lowerThreshold Edge candidates that are below this threshold are definitely not
+   * edges.
    */
-  void performEdgeThining();
+  void performEdgeThinning(const float &lowerThreshold);
 
   /**
    * \brief Perform hysteresis thresholding.

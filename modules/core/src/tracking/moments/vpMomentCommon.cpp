@@ -135,10 +135,9 @@ void vpMomentCommon::updateAll(vpMomentObject &object)
     momentSurfaceNormalized.compute();
     momentGravityNormalized.compute();
     momentArea.compute();
-
   }
-  catch (const char *ex) {
-    std::cout << "exception:" << ex << std::endl;
+  catch (const vpException &e) {
+    std::cout << "Exception in vpMomentCommon:" << e.getStringMessage() << std::endl;
   }
 }
 

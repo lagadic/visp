@@ -28,6 +28,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#include <limits>
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpImageMorphology.h>
@@ -476,9 +478,9 @@ vpCircleHoughTransform::computeCenterCandidates()
   for (int y = 0; y < nbRowsAccum; y++) {
     int left = -1;
     for (int x = 0; x < nbColsAccum; x++) {
-      if (centersAccum[y][x] >= m_algoParams.m_centerThresh
-         && centersAccum[y][x] == centerCandidatesMaxima[y][x]
-         && centersAccum[y][x] >  centersAccum[y][x + 1]
+      if ((centersAccum[y][x] >= m_algoParams.m_centerThresh)
+         && (std::fabs(centersAccum[y][x] - centerCandidatesMaxima[y][x]) < std::numeric_limits<float>::epsilon())
+         && (centersAccum[y][x] > centersAccum[y][x + 1])
          ) {
         if (left < 0)
           left = x;

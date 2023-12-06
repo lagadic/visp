@@ -64,9 +64,11 @@ std::string getAvailableDetectionContainer()
   return availableContainers;
 }
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
-#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  // Check if std:c++17 or higher
+#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   try {
     std::string opt_device("0");
     //! [OpenCV DNN face detector]

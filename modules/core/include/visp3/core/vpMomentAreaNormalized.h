@@ -177,7 +177,7 @@ public:
   /*!
    * Moment name.
    */
-  const char *name() const { return "vpMomentAreaNormalized"; }
+  const std::string name() const { return "vpMomentAreaNormalized"; }
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentAreaNormalized &v);
   void printDependencies(std::ostream &os) const;
 };

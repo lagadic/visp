@@ -32,10 +32,10 @@
  */
 
 /*!
-  \file vpMath.h
-  \brief Provides simple Math computation that are not available in
-  the C mathematics library (math.h)
-*/
+ * \file vpMath.h
+ * \brief Provides simple Math computation that are not available in
+ * the C mathematics library (math.h)
+ */
 
 #ifndef vpMATH_HH
 #define vpMATH_HH
@@ -109,21 +109,21 @@ class VISP_EXPORT vpMath
 {
 public:
   /*!
-    Convert an angle in radians into degrees.
-
-    \param rad : Angle in radians.
-    \return Angle converted in degrees.
-  */
+   * Convert an angle in radians into degrees.
+   *
+   * \param rad : Angle in radians.
+   * \return Angle converted in degrees.
+   */
   static inline double deg(double rad) { return (rad * 180.0) / M_PI; }
 
   static vpColVector deg(const vpRotationVector &r);
   static vpColVector deg(const vpColVector &r);
 
   /*!
-    Convert an angle in degrees into radian.
-    \param deg : Angle in degrees.
-    \return Angle converted in radians.
-  */
+   * Convert an angle in degrees into radian.
+   * \param deg : Angle in degrees.
+   * \return Angle converted in radians.
+   */
   static inline double rad(double deg) { return (deg * M_PI) / 180.0; }
 
   static vpColVector rad(const vpColVector &r);
@@ -215,7 +215,10 @@ public:
   */
   template <typename T> static inline T clamp(const T &v, const T &lower, const T &upper)
   {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+    // Check if std:c++17 or higher.
+    // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) when ViSP
+    // is used as a 3rdparty. See issue #1274
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
     return std::clamp(v, lower, upper);
 #else
     if (upper < lower) {

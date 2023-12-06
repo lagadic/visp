@@ -59,7 +59,8 @@ public:
   /*!
     Robot control states.
   */
-  typedef enum {
+  typedef enum
+  {
     STATE_STOP,                 //!< Stops robot motion especially in velocity and acceleration control.
     STATE_VELOCITY_CONTROL,     //!< Initialize the velocity controller.
     STATE_POSITION_CONTROL,     //!< Initialize the position controller.
@@ -70,7 +71,8 @@ public:
   /*!
     Robot control frames.
   */
-  typedef enum {
+  typedef enum
+  {
     REFERENCE_FRAME,               /*!< Corresponds to a fixed reference frame
                 attached to the robot structure. */
     ARTICULAR_FRAME,               /*!< Corresponds to the joint state. This value is deprecated.
@@ -134,6 +136,15 @@ public:
 
   double getMaxTranslationVelocity(void) const;
   double getMaxRotationVelocity(void) const;
+
+  /*!
+   * Return robot degrees of freedom number.
+   */
+  int getNDof() const
+  {
+    return nDof;
+  }
+
   //! Get the robot position (frame has to be specified).
   virtual void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) = 0;
 

@@ -407,6 +407,12 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4(double *Prt, double *dPrt, dou
   double Bti[4];
   double dBti[4];
   double d2Bti[4];
+  
+  for (size_t i = 0; i < 4; ++i) {
+    Bti[i] = 0.;
+    dBti[i] = 0.;
+    d2Bti[i] = 0.;
+  }
 
   double *ptBti = &Bti[0];
   double *ptdBti = &dBti[0];

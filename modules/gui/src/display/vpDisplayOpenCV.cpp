@@ -514,7 +514,7 @@ void vpDisplayOpenCV::init(unsigned int w, unsigned int h, int x, int y, const s
   \warning This method is not yet implemented.
 
   Set the font used to display a text in overlay. The display is
-  performed using displayCharString().
+  performed using displayText().
 
   \param font : The expected font name. The available fonts are given by
   the "xlsfonts" binary. To choose a font you can also use the
@@ -523,7 +523,7 @@ void vpDisplayOpenCV::init(unsigned int w, unsigned int h, int x, int y, const s
   \note Under UNIX, to know all the available fonts, use the
   "xlsfonts" binary in a terminal. You can also use the "xfontsel" binary.
 
-  \sa displayCharString()
+  \sa displayText()
 */
 void vpDisplayOpenCV::setFont(const std::string & /* font */) { vpERROR_TRACE("Not yet implemented"); }
 
@@ -1137,7 +1137,7 @@ void vpDisplayOpenCV::displayArrow(const vpImagePoint &ip1, const vpImagePoint &
 
   \sa setFont()
 */
-void vpDisplayOpenCV::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
+void vpDisplayOpenCV::displayText(const vpImagePoint &ip, const std::string &text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown) {

@@ -71,13 +71,13 @@ public:
 
   void compute_interaction() override;
   /*!
-   * associated moment name
+   * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentArea"; }
+  const std::string momentName() const override { return "vpMomentArea"; }
 
   /*!
-   * feature name
+   * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentArea"; }
+  const std::string name() const override { return "vpFeatureMomentArea"; }
 };
 #endif
