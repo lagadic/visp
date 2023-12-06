@@ -48,12 +48,12 @@ std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const
                                                   const std::string &suf)
 {
   std::string list(pref);
-  for (unsigned int i = 0; i < vpCannyBackendType::CANNY_COUNT_BACKEND - 1; i++) {
-    vpCannyBackendType type = (vpCannyBackendType)i;
+  for (unsigned int i = 0; i < (vpCannyBackendType::CANNY_COUNT_BACKEND - 1); ++i) {
+    vpCannyBackendType type = static_cast<vpCannyBackendType>(i);
     list += vpCannyBackendTypeToString(type);
     list += sep;
   }
-  vpCannyBackendType type = (vpCannyBackendType)(vpCannyBackendType::CANNY_COUNT_BACKEND - 1);
+  vpCannyBackendType type = static_cast<vpCannyBackendType>(vpCannyBackendType::CANNY_COUNT_BACKEND - 1);
   list += vpCannyBackendTypeToString(type);
   list += suf;
   return list;
@@ -92,14 +92,16 @@ vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(co
 {
   vpCannyBackendType type(vpCannyBackendType::CANNY_COUNT_BACKEND);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
-  unsigned int count = (unsigned int)vpCannyBackendType::CANNY_COUNT_BACKEND;
-  bool found = false;
-  for (unsigned int i = 0; i < count && !found; i++) {
-    vpCannyBackendType temp = (vpCannyBackendType)i;
+  unsigned int count = static_cast<unsigned int>(vpCannyBackendType::CANNY_COUNT_BACKEND);
+  bool notFound = true;
+  unsigned int i = 0;
+  while ((i < count) && notFound) {
+    vpCannyBackendType temp = static_cast<vpCannyBackendType>(i);
     if (nameLowerCase == vpCannyBackendTypeToString(temp)) {
       type = temp;
-      found = true;
+      notFound = false;
     }
+    ++i;
   }
   return type;
 }
@@ -116,12 +118,12 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeList(const std::string
                                                   const std::string &suf)
 {
   std::string list(pref);
-  for (unsigned int i = 0; i < vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING - 1; i++) {
-    vpCannyFilteringAndGradientType type = (vpCannyFilteringAndGradientType)i;
+  for (unsigned int i = 0; i < (vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING - 1); ++i) {
+    vpCannyFilteringAndGradientType type = static_cast<vpCannyFilteringAndGradientType>(i);
     list += vpCannyFilteringAndGradientTypeToString(type);
     list += sep;
   }
-  vpCannyFilteringAndGradientType type = (vpCannyFilteringAndGradientType)(CANNY_COUNT_FILTERING - 1);
+  vpCannyFilteringAndGradientType type = static_cast<vpCannyFilteringAndGradientType>(CANNY_COUNT_FILTERING - 1);
   list += vpCannyFilteringAndGradientTypeToString(type);
   list += suf;
   return list;
@@ -160,14 +162,16 @@ vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFilteringAn
 {
   vpCannyFilteringAndGradientType type(vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
-  unsigned int count = (unsigned int)vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING;
-  bool found = false;
-  for (unsigned int i = 0; i < count && !found; i++) {
-    vpCannyFilteringAndGradientType temp = (vpCannyFilteringAndGradientType)i;
+  unsigned int count = static_cast<unsigned int>(vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING);
+  bool notFound = true;
+  unsigned int i = 0;
+  while ((i < count) && notFound) {
+    vpCannyFilteringAndGradientType temp = static_cast<vpCannyFilteringAndGradientType>(i);
     if (nameLowerCase == vpCannyFilteringAndGradientTypeToString(temp)) {
       type = temp;
-      found = true;
+      notFound = false;
     }
+    ++i;
   }
   return type;
 }
@@ -260,27 +264,28 @@ void vpImageFilter::filter<double, double>(const vpImage<double> &I, vpImage<dou
 void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
   const vpColVector &kernelV)
 {
-  unsigned int size = kernelH.size();
+  unsigned int size = kernelH.size(), sizeV = kernelV.size();
+  unsigned int widthI = I.getWidth(), heightI = I.getHeight();
   unsigned int half_size = size / 2;
 
-  If.resize(I.getHeight(), I.getWidth(), 0.0);
-  vpImage<double> I_filter(I.getHeight(), I.getWidth(), 0.0);
+  If.resize(heightI, widthI, 0.0);
+  vpImage<double> I_filter(heightI, widthI, 0.0);
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = half_size; j < I.getWidth() - half_size; j++) {
+  for (unsigned int i = 0; i < heightI; ++i) {
+    for (unsigned int j = half_size; j < (widthI - half_size); ++j) {
       double conv = 0.0;
-      for (unsigned int a = 0; a < kernelH.size(); a++) {
-        conv += kernelH[a] * I[i][j + half_size - a];
+      for (unsigned int a = 0; a < size; ++a) {
+        conv += kernelH[a] * static_cast<double>(I[i][j + half_size - a]);
       }
 
       I_filter[i][j] = conv;
     }
   }
 
-  for (unsigned int i = half_size; i < I.getHeight() - half_size; i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = half_size; i < (heightI - half_size); ++i) {
+    for (unsigned int j = 0; j < widthI; ++j) {
       double conv = 0.0;
-      for (unsigned int a = 0; a < kernelV.size(); a++) {
+      for (unsigned int a = 0; a < sizeV; ++a) {
         conv += kernelV[a] * I_filter[i + half_size - a][j];
       }
 
@@ -311,19 +316,20 @@ void vpImageFilter::filterX<double, double>(const vpImage<double> &I, vpImage<do
 
 void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size)
 {
-  dIx.resize(I.getHeight(), I.getWidth());
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+  const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
+  dIx.resize(heightI, widthI);
+  for (unsigned int i = 0; i < heightI; i++) {
+    for (unsigned int j = 0; j < ((size - 1) / 2); ++j) {
       dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderR(I, i, j, filter, size));
       dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderG(I, i, j, filter, size));
       dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderB(I, i, j, filter, size));
     }
-    for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
+    for (unsigned int j = (size - 1) / 2; j < (widthI - (size - 1) / 2); ++j) {
       dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXR(I, i, j, filter, size));
       dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXG(I, i, j, filter, size));
       dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXB(I, i, j, filter, size));
     }
-    for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
+    for (unsigned int j = widthI - (size - 1) / 2; j < widthI; ++j) {
       dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXRightBorderR(I, i, j, filter, size));
       dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXRightBorderG(I, i, j, filter, size));
       dIx[i][j].B = static_cast<unsigned char>(vpImageFilter::filterXRightBorderB(I, i, j, filter, size));
@@ -353,23 +359,24 @@ void vpImageFilter::filterY<double, double>(const vpImage<double> &I, vpImage<do
 
 void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter, unsigned int size)
 {
-  dIy.resize(I.getHeight(), I.getWidth());
-  for (unsigned int i = 0; i < (size - 1) / 2; i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
+  dIy.resize(heightI, widthI);
+  for (unsigned int i = 0; i < (size - 1) / 2; ++i) {
+    for (unsigned int j = 0; j < widthI; ++j) {
       dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYTopBorderR(I, i, j, filter, size));
       dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYTopBorderG(I, i, j, filter, size));
       dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYTopBorderB(I, i, j, filter, size));
     }
   }
-  for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = (size - 1) / 2; i < (heightI - (size - 1) / 2); ++i) {
+    for (unsigned int j = 0; j < widthI; ++j) {
       dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYR(I, i, j, filter, size));
       dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYG(I, i, j, filter, size));
       dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYB(I, i, j, filter, size));
     }
   }
-  for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = heightI - (size - 1) / 2; i < heightI; ++i) {
+    for (unsigned int j = 0; j < widthI; ++j) {
       dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderR(I, i, j, filter, size));
       dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderG(I, i, j, filter, size));
       dIy[i][j].B = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderB(I, i, j, filter, size));
@@ -524,12 +531,13 @@ void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<u
 
 void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
-  unsigned int w = I.getWidth() / 2;
+  const unsigned int w = I.getWidth() / 2;
+  const unsigned int height = I.getHeight();
 
-  GI.resize(I.getHeight(), w);
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
+  GI.resize(height, w);
+  for (unsigned int i = 0; i < height; ++i) {
     GI[i][0] = I[i][0];
-    for (unsigned int j = 1; j < w - 1; j++) {
+    for (unsigned int j = 1; j < (w - 1); ++j) {
       GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, 2 * j);
     }
     GI[i][w - 1] = I[i][2 * w - 1];
@@ -538,12 +546,13 @@ void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<
 
 void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
-  unsigned int h = I.getHeight() / 2;
+  const unsigned int h = I.getHeight() / 2;
+  const unsigned int width = I.getWidth();
 
-  GI.resize(h, I.getWidth());
-  for (unsigned int j = 0; j < I.getWidth(); j++) {
+  GI.resize(h, width);
+  for (unsigned int j = 0; j < width; ++j) {
     GI[0][j] = I[0][j];
-    for (unsigned int i = 1; i < h - 1; i++) {
+    for (unsigned int i = 1; i < (h - 1); ++i) {
       GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
     }
     GI[h - 1][j] = I[2 * h - 1][j];
@@ -589,10 +598,13 @@ float vpImageFilter::median(const cv::Mat &channel)
   cv::Mat hist;
   cv::calcHist(&channel, 1, 0, cv::Mat(), hist, 1, &histSize, &histRange, uniform, accumulate);
 
-  for (int i = 0; i < histSize && med < 0.0; ++i) {
+  int i = 0;
+  while ((i < histSize) && (med < 0.0f)) {
     bin += cvRound(hist.at<float>(i));
-    if (bin > m && med < 0.0)
+    if ((bin > m) && (med < 0.0f)) {
       med = static_cast<float>(i);
+    }
+    ++i;
   }
 
   return med;
@@ -629,7 +641,7 @@ std::vector<float> vpImageFilter::median(const vpImage<vpRGBa> &Isrc)
   std::vector<float> meds(3);
   const int orderMeds[] = { 2, 1, 0 }; // To keep the order R, G, B
   const int orderCvChannels[] = { 0, 1, 2 }; // Because the order of the cv::Mat is B, G, R
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     meds[orderMeds[i]] = median(channels[orderCvChannels[i]]);
   }
   return meds;
@@ -664,7 +676,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   int bins = 256;
   cv::Mat dI, dIx, dIy, dIx_abs, dIy_abs;
 
-  if (p_cv_dIx == nullptr || p_cv_dIy == nullptr) {
+  if ((p_cv_dIx == nullptr) || (p_cv_dIy == nullptr)) {
     computePartialDerivatives(cv_I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev, apertureGradient,
       filteringType);
   }
@@ -690,13 +702,13 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
   bool accumulate = false; // Clear the histogram at the beginning of calcHist if false, does not clear it otherwise
   cv::calcHist(&dI, 1, channels, cv::Mat(), hist, dims, histSize, ranges, uniform, accumulate);
   float accu = 0;
-  float t = (float)(upperThresholdRatio * w * h);
+  float t = static_cast<float>(upperThresholdRatio * w * h);
   float bon = 0;
-  for (int i = 0; i < bins; i++) {
+  for (int i = 0; i < bins; ++i) {
     float tf = hist.at<float>(i);
     accu = accu + tf;
     if (accu > t) {
-      bon = (float)i;
+      bon = static_cast<float>(i);
       break;
     }
   }
@@ -728,8 +740,8 @@ void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
                                               const unsigned int &apertureGradient,
                                               const vpImageFilter::vpCannyFilteringAndGradientType &filteringType)
 {
-  if (filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING
-    || filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
+  if ((filteringType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)
+    || (filteringType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)) {
     cv::Mat img_blur;
     // Apply Gaussian blur to the image
     cv::Size gsz(gaussianKernelSize, gaussianKernelSize);
@@ -741,7 +753,7 @@ void vpImageFilter::computePartialDerivatives(const cv::Mat &cv_I,
       if (normalize) {
         scale = 1. / 8.;
         if (apertureGradient > 3) {
-          scale *= std::pow(1./2., (apertureGradient * 2. - 3.)); // 1 / 2^(2 x ksize - dx - dy -2) with ksize =apertureGradient and dx xor dy = 1
+          scale *= std::pow(1./2., (static_cast<double>(apertureGradient) * 2. - 3.)); // 1 / 2^(2 x ksize - dx - dy -2) with ksize =apertureGradient and dx xor dy = 1
         }
       }
       if (computeDx) {
@@ -1028,12 +1040,12 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
                               gaussianStdev, apertureGradient, cannyFilteringSteps);
     float upperCannyThresh = upperThreshold;
     float lowerCannyThresh = lowerThreshold;
-    if (upperCannyThresh < 0) {
+    if (upperCannyThresh < 0.f) {
       upperCannyThresh = computeCannyThreshold(img_cvmat, &cv_dx, &cv_dy, lowerCannyThresh, gaussianFilterSize,
                                               gaussianStdev, apertureGradient, lowerThresholdRatio, upperThresholdRatio,
                                               cannyFilteringSteps);
     }
-    else if (lowerCannyThresh < 0) {
+    else if (lowerCannyThresh < 0.f) {
       lowerCannyThresh = upperCannyThresh / 3.f;
     }
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030200)
@@ -1057,12 +1069,12 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
     computePartialDerivatives(Isrc, dIx, dIy, true, true, normalizeGradients, gaussianFilterSize,
       gaussianStdev, apertureGradient, cannyFilteringSteps, cannyBackend);
 
-    if (upperCannyThresh < 0) {
+    if (upperCannyThresh < 0.f) {
       upperCannyThresh = computeCannyThreshold(Isrc, lowerCannyThresh, &dIx, &dIy, gaussianFilterSize, gaussianStdev,
                                               apertureGradient, lowerThresholdRatio, upperThresholdRatio,
                                               cannyFilteringSteps);
     }
-    else if (lowerCannyThresh < 0) {
+    else if (lowerCannyThresh < 0.f) {
       lowerCannyThresh = upperCannyThresh / 3.;
     }
     vpCannyEdgeDetection edgeDetector(gaussianFilterSize, gaussianStdev, apertureGradient, lowerCannyThresh, upperCannyThresh,

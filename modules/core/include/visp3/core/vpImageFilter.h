@@ -171,7 +171,7 @@ public:
 #endif
     }
     else {
-      if (filteringType == CANNY_GBLUR_SCHARR_FILTERING || filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
+      if ((filteringType == CANNY_GBLUR_SCHARR_FILTERING) || (filteringType == CANNY_GBLUR_SOBEL_FILTERING)) {
         dIx.resize(I.getHeight(), I.getWidth());
         dIy.resize(I.getHeight(), I.getWidth());
 
@@ -311,10 +311,10 @@ public:
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
     for (unsigned int r = 0; r < h; r++) {
       for (unsigned int c = 0; c < w; c++) {
-        float dx = (float)dIx[r][c];
-        float dy = (float)dIy[r][c];
+        float dx = static_cast<float>(dIx[r][c]);
+        float dy = static_cast<float>(dIy[r][c]);
         float gradient = std::abs(dx) + std::abs(dy);
-        float gradientClamped = std::min(gradient, (float)std::numeric_limits<unsigned char>::max());
+        float gradientClamped = std::min(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
         dI[r][c] = static_cast<unsigned char>(gradientClamped);
       }
     }
@@ -326,7 +326,7 @@ public:
     float accu = 0;
     float t = (float)(upperThresholdRatio * w * h);
     float bon = 0;
-    for (unsigned int i = 0; i < nbBins; i++) {
+    for (unsigned int i = 0; i < nbBins; ++i) {
       float tf = hist[i];
       accu = accu + tf;
       if (accu > t) {
@@ -348,8 +348,8 @@ public:
    */
   template <class ImageType> static double derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
-    return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
-            112.0 * (I[r][c + 3] - I[r][c - 3])) / 8418.0;
+    return (2047.0 * static_cast<double>(I[r][c + 1] - I[r][c - 1]) + 913.0 * static_cast<double>(I[r][c + 2] - I[r][c - 2]) +
+            112.0 * static_cast<double>(I[r][c + 3] - I[r][c - 3])) / 8418.0;
   }
 
   /*!
@@ -361,8 +361,8 @@ public:
    */
   template <class ImageType> static double derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c)
   {
-    return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
-            112.0 * (I[r + 3][c] - I[r - 3][c])) / 8418.0;
+    return (2047.0 * static_cast<double>(I[r + 1][c] - I[r - 1][c]) + 913.0 * static_cast<double>(I[r + 2][c] - I[r - 2][c]) +
+            112.0 * static_cast<double>(I[r + 3][c] - I[r - 3][c])) / 8418.0;
   }
 
   /*!
@@ -386,8 +386,8 @@ public:
 
     result = 0;
 
-    for (i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i] - I[r][c - i]);
+    for (i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<FilterType>(I[r][c + i] - I[r][c - i]);
     }
     return result;
   }
@@ -413,8 +413,8 @@ public:
 
     result = 0;
 
-    for (i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c] - I[r - i][c]);
+    for (i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<FilterType>(I[r + i][c] - I[r - i][c]);
     }
     return result;
   }
@@ -456,13 +456,13 @@ public:
     If.resize(I.getHeight(), I.getWidth(), 0.0);
 
     if (convolve) {
-      for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
-        for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {
+      for (unsigned int i = half_size_y; i < (I.getHeight() - half_size_y); ++i) {
+        for (unsigned int j = half_size_x; j < (I.getWidth() - half_size_x); ++j) {
           FilterType conv = 0;
 
-          for (unsigned int a = 0; a < size_y; a++) {
-            for (unsigned int b = 0; b < size_x; b++) {
-              FilterType val = I[i + half_size_y - a][j + half_size_x - b]; // Convolution
+          for (unsigned int a = 0; a < size_y; ++a) {
+            for (unsigned int b = 0; b < size_x; ++b) {
+              FilterType val = static_cast<FilterType>(I[i + half_size_y - a][j + half_size_x - b]); // Convolution
               conv += M[a][b] * val;
             }
           }
@@ -471,13 +471,13 @@ public:
       }
     }
     else {
-      for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
-        for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {
+      for (unsigned int i = half_size_y; i < (I.getHeight() - half_size_y); ++i) {
+        for (unsigned int j = half_size_x; j < (I.getWidth() - half_size_x); ++j) {
           FilterType corr = 0;
 
-          for (unsigned int a = 0; a < size_y; a++) {
-            for (unsigned int b = 0; b < size_x; b++) {
-              FilterType val = I[i - half_size_y + a][j - half_size_x + b]; // Correlation
+          for (unsigned int a = 0; a < size_y; ++a) {
+            for (unsigned int b = 0; b < size_x; ++b) {
+              FilterType val = static_cast<FilterType>(I[i - half_size_y + a][j - half_size_x + b]); // Correlation
               corr += M[a][b] * val;
             }
           }
@@ -513,14 +513,14 @@ public:
     Iv.resize(I.getHeight(), I.getWidth(), 0.0);
 
     if (convolve) {
-      for (unsigned int v = half_size; v < I.getHeight() - half_size; v++) {
-        for (unsigned int u = half_size; u < I.getWidth() - half_size; u++) {
+      for (unsigned int v = half_size; v < (I.getHeight() - half_size); v++) {
+        for (unsigned int u = half_size; u < (I.getWidth() - half_size); u++) {
           FilterType conv_u = 0;
           FilterType conv_v = 0;
 
           for (unsigned int a = 0; a < size; a++) {
             for (unsigned int b = 0; b < size; b++) {
-              FilterType val = I[v + half_size - a][u + half_size - b]; // Convolution
+              FilterType val = static_cast<FilterType>(I[v + half_size - a][u + half_size - b]); // Convolution
               conv_u += M[a][b] * val;
               conv_v += M[b][a] * val;
             }
@@ -531,14 +531,14 @@ public:
       }
     }
     else {
-      for (unsigned int v = half_size; v < I.getHeight() - half_size; v++) {
-        for (unsigned int u = half_size; u < I.getWidth() - half_size; u++) {
+      for (unsigned int v = half_size; v < (I.getHeight() - half_size); v++) {
+        for (unsigned int u = half_size; u < (I.getWidth() - half_size); u++) {
           FilterType conv_u = 0;
           FilterType conv_v = 0;
 
           for (unsigned int a = 0; a < size; a++) {
             for (unsigned int b = 0; b < size; b++) {
-              FilterType val = I[v - half_size + a][u - half_size + b]; // Correlation
+              FilterType val = static_cast<FilterType>(I[v - half_size + a][u - half_size + b]); // Correlation
               conv_u += M[a][b] * val;
               conv_v += M[b][a] * val;
             }
@@ -577,25 +577,25 @@ public:
 
   static inline unsigned char filterGaussXPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return (unsigned char)((1. * I[i][j - 2] + 4. * I[i][j - 1] + 6. * I[i][j] + 4. * I[i][j + 1] + 1. * I[i][j + 2]) / 16.);
+    return static_cast<unsigned char>((1. * I[i][j - 2] + 4. * I[i][j - 1] + 6. * I[i][j] + 4. * I[i][j + 1] + 1. * I[i][j + 2]) / 16.);
   }
   static inline unsigned char filterGaussYPyramidal(const vpImage<unsigned char> &I, unsigned int i, unsigned int j)
   {
-    return (unsigned char)((1. * I[i - 2][j] + 4. * I[i - 1][j] + 6. * I[i][j] + 4. * I[i + 1][j] + 1. * I[i + 2][j]) / 16.);
+    return static_cast<unsigned char>((1. * I[i - 2][j] + 4. * I[i - 1][j] + 6. * I[i][j] + 4. * I[i + 1][j] + 1. * I[i + 2][j]) / 16.);
   }
 
   template <typename ImageType, typename FilterType>
   static void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
     dIx.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < (size - 1) / 2; j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < ((size - 1) / 2); ++j) {
         dIx[i][j] = vpImageFilter::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
-      for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
+      for (unsigned int j = (size - 1) / 2; j < (I.getWidth() - (size - 1) / 2); ++j) {
         dIx[i][j] = vpImageFilter::filterX<ImageType, FilterType>(I, i, j, filter, size);
       }
-      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
+      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); ++j) {
         dIx[i][j] = vpImageFilter::filterXRightBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
@@ -613,10 +613,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i] + I[r][c - i]);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r][c + i] + I[r][c - i]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<double>(I[r][c]);
   }
 
   static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -625,10 +625,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
 
   static inline double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -637,10 +637,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   static inline double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -649,10 +649,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   template <typename ImageType, typename FilterType>
@@ -663,11 +663,13 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c > i)
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (c > i) {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
-      else
+      }
+      else {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][i - c]);
+      }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
@@ -679,13 +681,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c > i)
-        result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
-      else
-        result += filter[i] * (I[r][c + i].R + I[r][i - c].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (c > i) {
+        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][i - c].R);
+      }
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
 
   static inline double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -695,13 +699,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c > i)
-        result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
-      else
-        result += filter[i] * (I[r][c + i].G + I[r][i - c].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (c > i) {
+        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][i - c].G);
+      }
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   static inline double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -711,13 +717,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c > i)
-        result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
-      else
-        result += filter[i] * (I[r][c + i].B + I[r][i - c].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (c > i) {
+        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][i - c].B);
+      }
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   template <typename ImageType, typename FilterType>
@@ -728,11 +736,13 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c + i < I.getWidth())
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((c + i) < I.getWidth()) {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
-      else
+      }
+      else {
         result += filter[i] * static_cast<FilterType>(I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
+      }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
@@ -744,13 +754,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c + i < I.getWidth())
-        result += filter[i] * (I[r][c + i].R + I[r][c - i].R);
-      else
-        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].R + I[r][c - i].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((c + i) < I.getWidth()) {
+        result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].R + I[r][c - i].R);
+      }
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
 
   static inline double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -760,13 +772,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c + i < I.getWidth())
-        result += filter[i] * (I[r][c + i].G + I[r][c - i].G);
-      else
-        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].G + I[r][c - i].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((c + i) < I.getWidth()) {
+        result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].G + I[r][c - i].G);
+      }
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   static inline double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -776,13 +790,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (c + i < I.getWidth())
-        result += filter[i] * (I[r][c + i].B + I[r][c - i].B);
-      else
-        result += filter[i] * (I[r][2 * I.getWidth() - c - i - 1].B + I[r][c - i].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((c + i) < I.getWidth()) {
+        result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].B + I[r][c - i].B);
+      }
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
@@ -794,18 +810,18 @@ public:
   static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
     dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < ((size - 1) / 2); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         dIy[i][j] = vpImageFilter::filterYTopBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
-    for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = (size - 1) / 2; i < (I.getHeight() - (size - 1) / 2); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         dIy[i][j] = vpImageFilter::filterY<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
-    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         dIy[i][j] = vpImageFilter::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
@@ -818,10 +834,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c] + I[r - i][c]);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
-    return result + filter[0] * I[r][c];
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
   static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -830,10 +846,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
   static inline double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
@@ -841,10 +857,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   static inline double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -853,10 +869,10 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   template<typename ImageType, typename FilterType>
@@ -867,11 +883,13 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r > i)
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (r > i) {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
-      else
+      }
+      else {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[i - r][c]);
+      }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
@@ -882,13 +900,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r > i)
-        result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
-      else
-        result += filter[i] * (I[r + i][c].R + I[i - r][c].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (r > i) {
+        result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r + i][c].R + I[i - r][c].R);
+      }
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
 
   double static inline filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -897,13 +917,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r > i)
-        result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
-      else
-        result += filter[i] * (I[r + i][c].G + I[i - r][c].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (r > i) {
+        result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r + i][c].G + I[i - r][c].G);
+      }
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   double static inline filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
@@ -912,13 +934,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r > i)
-        result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
-      else
-        result += filter[i] * (I[r + i][c].B + I[i - r][c].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if (r > i) {
+        result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[r + i][c].B + I[i - r][c].B);
+      }
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   template<typename ImageType, typename FilterType>
@@ -929,11 +953,13 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r + i < I.getHeight())
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((r + i) < I.getHeight()) {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
-      else
+      }
+      else {
         result += filter[i] * static_cast<FilterType>(I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
+      }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
@@ -945,13 +971,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r + i < I.getHeight())
-        result += filter[i] * (I[r + i][c].R + I[r - i][c].R);
-      else
-        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].R + I[r - i][c].R);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((r + i) < I.getHeight()) {
+        result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].R + I[r - i][c].R);
+      }
     }
-    return result + filter[0] * I[r][c].R;
+    return result + filter[0] * static_cast<double>(I[r][c].R);
   }
 
   double static inline filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -961,13 +989,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r + i < I.getHeight())
-        result += filter[i] * (I[r + i][c].G + I[r - i][c].G);
-      else
-        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].G + I[r - i][c].G);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((r + i) < I.getHeight()) {
+        result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].G + I[r - i][c].G);
+      }
     }
-    return result + filter[0] * I[r][c].G;
+    return result + filter[0] * static_cast<double>(I[r][c].G);
   }
 
   double static inline filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
@@ -977,13 +1007,15 @@ public:
 
     result = 0;
 
-    for (unsigned int i = 1; i <= (size - 1) / 2; i++) {
-      if (r + i < I.getHeight())
-        result += filter[i] * (I[r + i][c].B + I[r - i][c].B);
-      else
-        result += filter[i] * (I[2 * I.getHeight() - r - i - 1][c].B + I[r - i][c].B);
+    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+      if ((r + i) < I.getHeight()) {
+        result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
+      }
+      else {
+        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].B + I[r - i][c].B);
+      }
     }
-    return result + filter[0] * I[r][c].B;
+    return result + filter[0] * static_cast<double>(I[r][c].B);
   }
 
   /*!
@@ -1052,28 +1084,30 @@ public:
   template<typename FilterType>
   static void getGaussianKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
-    if (size % 2 != 1)
+    if ((size % 2) != 1) {
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
+    }
 
-    if (sigma <= 0)
+    if (sigma <= 0) {
       sigma = static_cast<FilterType>((size - 1) / 6.0);
+    }
 
-    int middle = (int)(size - 1) / 2;
+    int middle = (static_cast<int>(size) - 1) / 2;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
     FilterType coef1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
     FilterType _2_sigma2 = static_cast<FilterType>(2. * sigma2);
-    for (int i = 0; i <= middle; i++) {
-      filter[i] = coef1 * exp(-(i * i) / _2_sigma2);
+    for (int i = 0; i <= middle; ++i) {
+      filter[i] = coef1 * static_cast<FilterType>(exp(-(i * i) / _2_sigma2));
     }
     if (normalize) {
       // renormalization
       FilterType sum = 0;
-      for (int i = 1; i <= middle; i++) {
+      for (int i = 1; i <= middle; ++i) {
         sum += 2 * filter[i];
       }
       sum += filter[0];
 
-      for (int i = 0; i <= middle; i++) {
+      for (int i = 0; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
@@ -1096,31 +1130,33 @@ public:
   template <typename FilterType>
   static void getGaussianDerivativeKernel(FilterType *filter, unsigned int size, FilterType sigma = 0., bool normalize = true)
   {
-    if (size % 2 != 1)
+    if ((size % 2) != 1) {
       throw(vpImageException(vpImageException::incorrectInitializationError, "Bad Gaussian filter size"));
+    }
 
-    if (sigma <= 0)
+    if (sigma <= 0) {
       sigma = static_cast<FilterType>((size - 1) / 6.0);
+    }
 
-    int middle = (int)(size - 1) / 2;
+    int middle = (static_cast<int>(size) - 1) / 2;
     FilterType sigma2 = static_cast<FilterType>(vpMath::sqr(sigma));
     FilterType coef_1 = static_cast<FilterType>(1. / (sigma * sqrt(2. * M_PI)));
     FilterType coef_1_over_2 = coef_1 / static_cast<FilterType>(2.);
     FilterType _2_coef_1 = static_cast<FilterType>(2.) * coef_1;
     FilterType _2_sigma2 = static_cast<FilterType>(2. * sigma2);
     filter[0] = 0.;
-    for (int i = 1; i <= middle; i++) {
+    for (int i = 1; i <= middle; ++i) {
       filter[i] = -coef_1_over_2 * (static_cast<FilterType>(exp(-((i + 1) * (i + 1)) / _2_sigma2)) - static_cast<FilterType>(exp(-((i - 1) * (i - 1)) / _2_sigma2)));
     }
 
     if (normalize) {
       FilterType sum = 0;
-      for (int i = 1; i <= middle; i++) {
+      for (int i = 1; i <= middle; ++i) {
         sum += _2_coef_1 * static_cast<FilterType>(exp(-(i * i) / _2_sigma2));
       }
       sum += coef_1;
 
-      for (int i = 1; i <= middle; i++) {
+      for (int i = 1; i <= middle; ++i) {
         filter[i] = filter[i] / sum;
       }
     }
@@ -1132,15 +1168,15 @@ public:
   {
     dIx.resize(I.getHeight(), I.getWidth());
     // dIx=0;
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < 3; j++) {
-        dIx[i][j] = 0;
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < 3; ++j) {
+        dIx[i][j] = static_cast<FilterType>(0);
       }
-      for (unsigned int j = 3; j < I.getWidth() - 3; j++) {
-        dIx[i][j] = vpImageFilter::derivativeFilterX(I, i, j);
+      for (unsigned int j = 3; j < (I.getWidth() - 3); ++j) {
+        dIx[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterX(I, i, j));
       }
-      for (unsigned int j = I.getWidth() - 3; j < I.getWidth(); j++) {
-        dIx[i][j] = 0;
+      for (unsigned int j = I.getWidth() - 3; j < I.getWidth(); ++j) {
+        dIx[i][j] = static_cast<FilterType>(0);
       }
     }
   }
@@ -1149,15 +1185,15 @@ public:
   static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
   {
     dIx.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < (size - 1) / 2; j++) {
-        dIx[i][j] = 0;
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < ((size - 1) / 2); ++j) {
+        dIx[i][j] = static_cast<FilterType>(0);
       }
-      for (unsigned int j = (size - 1) / 2; j < I.getWidth() - (size - 1) / 2; j++) {
+      for (unsigned int j = (size - 1) / 2; j < (I.getWidth() - (size - 1) / 2); ++j) {
         dIx[i][j] = vpImageFilter::derivativeFilterX<ImageType, FilterType>(I, i, j, filter, size);
       }
-      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); j++) {
-        dIx[i][j] = 0;
+      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); ++j) {
+        dIx[i][j] = static_cast<FilterType>(0);
       }
     }
   }
@@ -1186,19 +1222,19 @@ public:
   static void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy)
   {
     dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < 3; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = 0;
+    for (unsigned int i = 0; i < 3; ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+        dIy[i][j] = static_cast<FilterType>(0);
       }
     }
-    for (unsigned int i = 3; i < I.getHeight() - 3; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = vpImageFilter::derivativeFilterY(I, i, j);
+    for (unsigned int i = 3; i < (I.getHeight() - 3); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+        dIy[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterY(I, i, j));
       }
     }
-    for (unsigned int i = I.getHeight() - 3; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = 0;
+    for (unsigned int i = I.getHeight() - 3; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+        dIy[i][j] = static_cast<FilterType>(0);
       }
     }
   }
@@ -1207,19 +1243,19 @@ public:
   static void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
     dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = 0;
+    for (unsigned int i = 0; i < ((size - 1) / 2); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+        dIy[i][j] = static_cast<FilterType>(0);
       }
     }
-    for (unsigned int i = (size - 1) / 2; i < I.getHeight() - (size - 1) / 2; i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = (size - 1) / 2; i < (I.getHeight() - (size - 1) / 2); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         dIy[i][j] = vpImageFilter::derivativeFilterY<ImageType, FilterType>(I, i, j, filter, size);
       }
     }
-    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-        dIy[i][j] = 0;
+    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
+        dIy[i][j] = static_cast<FilterType>(0);
       }
     }
   }
@@ -1287,10 +1323,10 @@ public:
     const unsigned int kernel_size = size * 2 + 1;
     if (kernel_size == 3) {
       memcpy(filter, ScharrY3x3, kernel_size * kernel_size * sizeof(FilterType));
-      return 1 / 32.0;
+      return static_cast<FilterType>(1.0 / 32.0);
     }
 
-    return 0.;
+    return static_cast<FilterType>(0.);
   }
 
   /*!
@@ -1303,10 +1339,12 @@ public:
   template <typename FilterType>
   inline static FilterType getSobelKernelX(FilterType *filter, unsigned int size)
   {
-    if (size == 0)
+    if (size == 0) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
-    if (size > 20)
+    }
+    if (size > 20) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
+    }
 
     vpArray2D<FilterType> SobelY(size * 2 + 1, size * 2 + 1);
     FilterType norm = getSobelKernelY<FilterType>(SobelY.data, size);
@@ -1342,10 +1380,12 @@ public:
     smoothingKernel[2][1] = 2.0;
     smoothingKernel[2][2] = 1.0;
 
-    if (size == 0)
+    if (size == 0) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
-    if (size > 20)
+    }
+    if (size > 20) {
       throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
+    }
 
     const unsigned int kernel_size = size * 2 + 1;
     FilterType scale = static_cast<FilterType>(1. / 8.); // Scale to normalize Sobel3x3
@@ -1353,12 +1393,12 @@ public:
       memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
-    scale *= 1./ 16.; // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
+    scale *= static_cast<FilterType>(1./ 16.); // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
     if (kernel_size == 5) {
       memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
-    scale *= 1./ 16.; // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
+    scale *= static_cast<FilterType>(1./ 16.); // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
     if (kernel_size == 7) {
       memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
@@ -1366,10 +1406,10 @@ public:
 
     vpArray2D<FilterType> sobelY(7, 7);
     memcpy(sobelY.data, SobelY7x7, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
-    for (unsigned int i = 4; i <= size; i++) {
+    for (unsigned int i = 4; i <= size; ++i) {
       sobelY = vpArray2D<FilterType>::conv2(sobelY, smoothingKernel, "full");
       // Sobel(N+1)x(N+1) is the convolution of smoothingKernel, which needs 1/16 scale factor, with SobelNxN
-      scale *= 1./ 16.;
+      scale *= static_cast<FilterType>(1./ 16.);
     }
 
     memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));
