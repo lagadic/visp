@@ -405,7 +405,6 @@ int main(int argc, char **argv)
   }
   //! [Algo init]
   std::cout << detector;
-  detector.saveConfigurationInJSON("runConfiguration.json");
 
   vpImage<unsigned char> I_src;
 
