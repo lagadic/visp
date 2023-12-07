@@ -99,7 +99,7 @@ Thus, this code will not work:
   ValueError: assignment destination is read-only
 
   >>> T = HomogeneousMatrix()
-  >>> R.numpy()[0, 1] = 1.0
+  >>> T.numpy()[0, 1] = 1.0
   Traceback (most recent call last):
    File "<stdin>", line 1, in <module>
   ValueError: assignment destination is read-only

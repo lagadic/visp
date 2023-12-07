@@ -16,11 +16,7 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 import sys
 import os
-from sphinx.util.logging import *
 
-
-
-sys.path.insert(0, os.path.abspath('../build'))
 
 # If your documentation needs a minimal Sphinx version, state it here.
 # needs_sphinx = '1.0'
@@ -35,7 +31,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx_immaterial",
-    # "sphinx_immaterial.apidoc.python.apigen"
+    "sphinx_design"
 ]
 
 # python_apigen_modules = {
@@ -159,6 +155,7 @@ html_theme_options = {
       "toc.sticky",
       "navigation.instant"
     ],
+    "globaltoc_collapse": False,
     "palette": [
         {
             "media": "(prefers-color-scheme: light)",
@@ -282,7 +279,11 @@ latex_elements = {
     # Latex figure (float) alignment
     #'figure_align': 'htbp',
 }
-
+rst_prolog = """
+.. role:: python(code)
+    :language: python
+    :class: highlight
+"""
 html_logo = '_static/visp_icon_white.png'
 html_favicon = '_static/visp_icon.png'
 
@@ -364,7 +365,7 @@ texinfo_documents = [
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {"python": ("https://docs.python.org/", None)}
 
-from sphinx.util.logging import WarningLogRecordTranslator
+from sphinx.util.logging import WarningLogRecordTranslator, WarningStreamHandler
 
 # Filter warning about Parameter names not matching function signature
 # This is somethiing that is due to pybind overloads, so we cannot do anything about it

@@ -1,0 +1,2 @@
+How bindings are generated
+===========================

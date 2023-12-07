@@ -1,8 +1,11 @@
-Python tips
+.. _Tutorials:
+
+Tutorials
 ====================
 
 .. toctree::
     :glob:
     :maxdepth: 2
 
-    python_api/conversions.rst
+    ibvs.rst
+    pbvs.rst

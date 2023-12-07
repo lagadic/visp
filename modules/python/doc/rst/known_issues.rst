@@ -1,7 +1,24 @@
-List of todos
+.. _Known issues:
+
+Known issues
 ======================
 
-What remains to be done
+We are aware of some issues remaining
+
+
+No implicit conversion from ViSP types to Numpy
+-------------------------------------------------
+
+
+ViSP 3rd party types (such as cv::Mat) cannot be used from Python
+-------------------------------------------------
+
+Cannot inherit from ViSP
+------------------------------------------------
+
+
+
+
 
 Changes to ViSP
 ------------------

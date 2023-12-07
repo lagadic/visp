@@ -66,7 +66,7 @@ configure_file(
 )
 
 add_custom_target(visp_python_bindings_doc
-  COMMAND ${PYTHON3_EXECUTABLE} -m pip install -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip install -q -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
   COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/_static" "${BINARY_BUILD_DIR}/_static"
 	COMMAND ${PYTHON3_EXECUTABLE} -m sphinx
 		-b html
