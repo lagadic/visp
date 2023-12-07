@@ -11,5 +11,6 @@ Welcome to the ViSP Python binding documentation!
     :glob:
     :maxdepth: 2
 
-    todos.rst
-    conversions.rst
+    rst/coming_from_cpp.rst
+    rst/python_api.rst
+    rst/known_issues.rst
