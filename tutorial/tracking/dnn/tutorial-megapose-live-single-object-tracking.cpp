@@ -2,8 +2,11 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_DNN) && \
-  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
+
+// Check if std:c++17 or higher
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
+  defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
+  defined(HAVE_OPENCV_DNN) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
 
 #include <optional>
 
@@ -188,7 +191,7 @@ NLOHMANN_JSON_SERIALIZE_ENUM(DetectionMethod, {
 );
 
 
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   unsigned width = 640, height = 480;
   vpCameraParameters cam;
@@ -279,7 +282,8 @@ int main(int argc, const char *argv [])
   vpDisplayOpenCV d;
 #endif
   //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
     vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
@@ -367,7 +371,8 @@ int main(int argc, const char *argv [])
       if (!initialized) {
         tracking = false;
         std::optional<vpRect> detection = std::nullopt;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(HAVE_OPENCV_DNN) && \
+    ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
         if (detectionMethod == DetectionMethod::DNN) {
           detection = detectObjectForInitMegaposeDnn(
             dnn, frame, objectName, initialized ? std::optional(megaposeEstimate) : std::nullopt);

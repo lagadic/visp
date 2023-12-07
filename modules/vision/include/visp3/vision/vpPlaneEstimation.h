@@ -40,11 +40,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
-
-// Visual Studio: Optionals are available from Visual Studio 2017 RTW (15.0)  [1910]
-// Visual Studio: Structured bindings are available from Visual Studio 2017 version 15.3 [1911] (cf .cpp)
+// Check if std:c++17 or higher.
+// Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
 // System
 #include <functional>

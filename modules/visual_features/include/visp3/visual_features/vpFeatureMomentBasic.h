@@ -96,11 +96,11 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentBasic"; }
+  const std::string momentName() const override { return "vpMomentBasic"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentBasic"; }
+  const std::string name() const override { return "vpFeatureMomentBasic"; }
 };
 #endif

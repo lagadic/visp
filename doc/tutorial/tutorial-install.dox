@@ -17,6 +17,7 @@ This page introduces the user to the way to install ViSP from existing prebuild 
 - \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu or Debian packages.
 - \subpage tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
+- \subpage tutorial-install-conda-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK using Conda (compatible with Linux, OSX and Windows).
 
 */
 

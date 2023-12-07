@@ -224,6 +224,7 @@ int main(int argc, char **argv)
   const vpImageFilter::vpCannyBackendType def_cannyBackendType = vpImageFilter::CANNY_OPENCV_BACKEND;
   const float def_lowerCannyThreshRatio = 0.6f;
   const float def_upperCannyThreshRatio = 0.9f;
+  const int def_expectedNbCenters = -1;
 
   std::string opt_input(def_input);
   std::string opt_jsonFilePath = def_jsonFilePath;
@@ -249,6 +250,7 @@ int main(int argc, char **argv)
   vpImageFilter::vpCannyBackendType opt_cannyBackendType = def_cannyBackendType;
   float opt_lowerCannyThreshRatio = def_lowerCannyThreshRatio;
   float opt_upperCannyThreshRatio = def_upperCannyThreshRatio;
+  int opt_expectedNbCenters = def_expectedNbCenters;
   bool opt_displayCanny = false;
 
   for (int i = 1; i < argc; i++) {
@@ -342,6 +344,10 @@ int main(int argc, char **argv)
       opt_upperCannyThreshRatio = atof(argv[i + 1]);
       i++;
     }
+    else if (argName == "--expected-nb-centers" && i + 1 < argc) {
+      opt_expectedNbCenters = atoi(argv[i + 1]);
+      i++;
+    }
     else if (argName == "--display-edge-map") {
       opt_displayCanny = true;
     }
@@ -370,14 +376,16 @@ int main(int argc, char **argv)
         << "\t [--circle-probability-thresh <probability-threshold>] (default: " << def_circleProbaThresh  << ")" << std::endl
         << "\t [--circle-perfectness <circle-perfectness-threshold>] (default: " << def_circlePerfectness << ")" << std::endl
         << "\t [--merging-thresh <center-distance-thresh> <radius-difference-thresh>] (default: centers distance threshold = " << def_centerDistanceThresh << ", radius difference threshold = " << def_radiusDifferenceThresh << ")" << std::endl
-        << "\t [--filtering-type]"
+        << "\t [--filtering-type <type-name>]"
         << " (default: " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(def_filteringAndGradientType) << ")" << std::endl
-        << "\t [--canny-backend]"
+        << "\t [--canny-backend <backend-name>]"
         << " (default: " << vpImageFilter::vpCannyBackendTypeToString(def_cannyBackendType) << ")" << std::endl
-        << "\t [--lower-canny-ratio]"
+        << "\t [--lower-canny-ratio <value>]"
         << " (default: " << def_lowerCannyThreshRatio<< ")" << std::endl
-        << "\t [--upper-canny-ratio]"
+        << "\t [--upper-canny-ratio <value>]"
         << " (default: " << def_upperCannyThreshRatio << ")" << std::endl
+        << "\t [--expected-nb-centers <number>]"
+        << " (default: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << ")" << std::endl
         << "\t [--display-edge-map]" << std::endl
         << "\t [--help, -h]" << std::endl
         << std::endl;
@@ -481,6 +489,11 @@ int main(int argc, char **argv)
         << "\t\tPermit to choose the ratio for the upper threshold if automatic thresholding is chosen." << std::endl
         << "\t\tDefault: " << def_upperCannyThreshRatio << std::endl
         << std::endl
+        << "\t--expected-nb-centers" << std::endl
+        << "\t\tPermit to choose the maximum number of centers having more votes than the threshold that are kept." << std::endl
+        << "\t\tA negative value makes that all the centers having more votes than the threshold are kept." << std::endl
+        << "\t\tDefault: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << std::endl
+        << std::endl
         << "\t--display-edge-map" << std::endl
         << "\t\tPermit to display the edge map used to detect the circles" << std::endl
         << "\t\tDefault: off" << std::endl
@@ -542,6 +555,7 @@ int main(int argc, char **argv)
       , opt_cannyBackendType
       , opt_lowerCannyThreshRatio
       , opt_upperCannyThreshRatio
+      , opt_expectedNbCenters
     );
   //! [Algo params]
 
@@ -561,6 +575,7 @@ int main(int argc, char **argv)
   }
   //! [Algo init]
   std::cout << detector;
+  detector.saveConfigurationInJSON("runConfiguration.json");
 
   vpImage<unsigned char> I_src;
   TypeInputImage inputType = typeInputImageFromString(opt_input);

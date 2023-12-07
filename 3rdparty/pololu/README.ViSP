@@ -1,0 +1,6 @@
+Porting of the RapaPololuMaestro project: https://github.com/jbitoniau/RapaPololuMaestro commit d30b0af210
+
+2023-10-20:
+- Changes introduced to fix warnings
+- Remove the RPM namespace that makes the SerialInterface class nested and prevents it from being used as a private
+  class in vpServoPololuMaestro.h

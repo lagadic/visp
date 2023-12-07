@@ -100,12 +100,12 @@ public:
   /*!
    * Associated moment name
    */
-  const char *momentName() const override { return "vpMomentCentered"; }
+  const std::string momentName() const override { return "vpMomentCentered"; }
 
   /*!
    * Feature name
    */
-  const char *name() const override { return "vpFeatureMomentCentered"; }
+  const std::string name() const override { return "vpFeatureMomentCentered"; }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
 };

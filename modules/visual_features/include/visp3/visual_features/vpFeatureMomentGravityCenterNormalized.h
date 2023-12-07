@@ -106,12 +106,12 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentGravityCenterNormalized"; }
+  const std::string momentName() const override { return "vpMomentGravityCenterNormalized"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentGravityCenterNormalized"; }
+  const std::string name() const override { return "vpFeatureMomentGravityCenterNormalized"; }
 
   /*!
    * Shortcut selector for \f$x_n\f$.
@@ -260,12 +260,12 @@ public:
   /*!
    * Associated moment name.
    */
-  const char *momentName() const override { return "vpMomentGravityCenterNormalized"; }
+  const std::string momentName() const override { return "vpMomentGravityCenterNormalized"; }
 
   /*!
    * Feature name.
    */
-  const char *name() const override { return "vpFeatureMomentGravityCenterNormalized"; }
+  const std::string name() const override { return "vpFeatureMomentGravityCenterNormalized"; }
 
   /*!
    * Shortcut selector for \f$x_n\f$.

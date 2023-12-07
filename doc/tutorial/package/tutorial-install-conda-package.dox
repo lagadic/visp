@@ -1,0 +1,742 @@
+/**
+
+\page tutorial-install-conda-package Tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
+\tableofcontents
+
+Conda is both a package manager and an environment manager. It provides a simple way to install packages inside an isolated environment, avoiding the
+installation alongside system wide packages and letting you switch between different environment that may use different and/or
+incompatible versions. More especially, it can easily handle different Python versions and installations.
+Conda packages are not restricted to Python and can be written in any language, so it is well suited for C++ or C++ / Python packages.
+Conda also provides a package dependency management mechanism and can detect incompatible dependencies, saving the user from breaking their environment.
+
+Since release 3.5.0, ViSP is available as a <a href=https://github.com/conda-forge/visp-feedstock/tree/main>Conda package from conda-forge</a>
+for x86 64 bits architectures on Linux, OSX and Windows platforms.
+
+If you are already familiar with Conda and your Conda installation is configured with `conda-forge` as the default channel,
+then you can skip the first sections and directly go to the \ref install_visp_conda_package. Otherwise, these steps will guide
+you on how to install and configure Conda first.
+
+If you are new to Conda, this <a href=https://docs.conda.io/projects/conda/en/latest/_downloads/843d9e0198f2a193a3484886fa28163c/conda-cheatsheet.pdf> cheat sheet</a>
+might be also very useful.
+
+\section install_conda Installing Conda
+
+We recommend to install Conda from the installers provided by the conda-forge community, such as
+<a href=https://github.com/conda-forge/miniforge>Miniforge</a>, which will be already configured as desired.
+
+Since release v23.10, Conda is automatically configured to use `libmamba-solver` by default to resolve dependencies. We highly recommand
+the use of this solver as it dramastically improve the performances.
+To check your current Conda version, just run:
+\verbatim
+$ conda info
+\endverbatim
+and check for the `conda version` line.
+If your version is `23.10.0` or above, you have nothing to do, `libmamba-solver` is already set-up by default.
+Otherwise, we recommand you to update your Conda version:
+\verbatim
+$ conda update -n base conda -c conda-forge
+\endverbatim
+
+\section check_conda_install Checking your Conda installation
+
+The initial Conda configuration can differ depending on the installer and distribution you have used. If you
+installed Conda using Miniforge distribution as in previous section, then you can skip this section
+and directly go to \ref install_visp_conda_package. If you have an old Conda installation, used another installer or are
+ensure about your Conda configuration, please proceed this section carefully.
+First, you need to ensure that the conda-forge channel is enabled in your Conda installation
+and has priority:
+\verbatim
+$ conda config --show channels
+\endverbatim
+
+Check that conda-forge is present in the list and appears first:
+\verbatim
+channels:
+  - conda-forge
+  - defaults
+\endverbatim
+
+If not present in the list, you may add it permanently to your channels list using:
+\verbatim
+$ conda config --add channels conda-forge
+\endverbatim
+
+If the order in the list (channel priority) is reversed, just type re-add
+the conda-forge channel using the previous command and you should get the desired output.
+
+We also strongly advise that you use the strict channel priority mode, as recommended by Conda
+ <a href=https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-channels.html#strict>here</a>:
+\verbatim
+$ conda config --show channel_priority
+\endverbatim
+
+\note You can also directly access to your Conda configuration by editing the `~/.condarc` file.
+
+\section create_conda_env Optional: Creating a new Conda environment
+
+After a fresh installation, your shell should have been configured to support Conda.
+The current active environment (default is `base`) should appear in your command prompt between parenthesis, e.g.:
+\verbatim
+(base)$
+\endverbatim
+`base` is the default and root environment. Most of the time, you should avoid installing packages directly in this
+environment. Instead, you should create a new environment for each desired context.This can be done by:
+\verbatim
+$ conda create -n my-visp-env
+\endverbatim
+where `my-visp-env` is the name you want to give to this environment.
+
+At this point, your environment `my-visp-env` is created, but not active.
+You can activate your environment `my-visp-env` by:
+\verbatim
+$ conda activate my-visp-env
+\endverbatim
+
+The active environment between parenthesis in your command prompt should have been updated to `my-visp-env`.
+You can also check this by:
+\verbatim
+$ conda env list
+\endverbatim
+This command will list all your existing Conda environment, and your active environment will have its name suffixed
+by an asterisk (*).
+
+You can deactivate the active environment by:
+\verbatim
+$ conda deactivate
+\endverbatim
+which should get you back to the environment from which your did your last activation (recall that environments stack).
+
+It might be interesting to note that a sysroot directory structure is created for each Conda environment, when the environment is created.
+This is then the place where your libraries, headers and so will be put when installing Conda packages.
+You can access to the active environment sysroot directory directly using the `CONDA_PREFIX` environment variable.
+Depending on how much populated your sysroot already is, you should have a directory structure similar to:
+
+\image html conda_sysroot.svg Typical sysroot directory hierarchy for each Conda environment. You may have more or less directories, depending on your Conda environment.
+
+\section install_visp_conda_package Installing ViSP Conda package
+
+One line install:
+\verbatim
+$ conda install visp
+\endverbatim
+
+\section good_practices_conda Some good practices with Conda
+
+- Minimize system-wide packages, install as much as possible from Conda in your dedicated environment.
+
+- Be careful when mixing different channels: prefer to restrict to conda-forge channel only.
+
+- Do not install in the `base` environment, excepted Conda global or configuration packages (e.g. `conda-build`)
+
+- Keep Conda up-to-date:
+\verbatim
+$ conda update -n base conda -c conda-forge
+\endverbatim
+
+- If you develop C++ code with Conda, it is a good practice to keep your project sources associated to one Conda environment.
+This ease keeping integrity between code and the environment and mixing with dependencies managers such vcpkg.
+One way to do so is to put all the code associated to an environment inside the Conda environment hierarchy sysroot.
+More precisely, you could have a `src` directory in every Conda environment sysroot like this:
+\image html conda_sysroot_sources.svg One way to organize your sources associated to a given Conda environment.
+
+Another way to do so is to create the Conda environment in a dedicated directory (commonly named `envs/`) within your project source,
+as recommanded <a href=hhttps://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#specifying-a-location-for-an-environment>here</a>
+in the official Conda documentation:
+\verbatim
+$ conda create --prefix <project_source_dir>/envs
+$ conda activate <project_source_dir>/envs
+\endverbatim
+
+\section conda_package_config Configuration used for the Conda package
+
+To get an idea of the third parties available in the ViSP Conda package, we provide below the contents of the file
+ViSP-third-party.txt file for the Conda Linux-64, OSX-64 and Windows-64 packages.
+
+\subsection conda_package_config_linux_64 Configuration for the Linux-64 Conda package
+
+\verbatim
+==========================================================
+General configuration information for ViSP 3.6.0
+
+  Version control:               unknown
+
+  Platform:
+    Timestamp:                   2023-10-23T17:58:44Z
+    Host:                        Linux 6.2.0-1014-azure x86_64
+    CMake:                       3.27.6
+    CMake generator:             Unix Makefiles
+    CMake build tool:            $BUILD_PREFIX/bin/make
+    Configuration:               Release
+
+  System information:
+    Number of CPU logical cores: 2
+    Number of CPU physical cores: 2
+    Total physical memory (in MiB): 6921
+    OS name:                     Linux
+    OS release:                  6.2.0-1014-azure
+    OS version:                  #14~22.04.1-Ubuntu SMP Wed Sep 13 16:15:26 UTC 2023
+    OS platform:                 x86_64
+    CPU name:                    Unknown P6 family
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                $BUILD_PREFIX/bin/x86_64-conda-linux-gnu-c++  (ver 12.3.0)
+    C++ flags (Release):         -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp -pthread -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -fvisibility-inlines-hidden -fmessage-length=0 -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp -pthread -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C Compiler:                  $BUILD_PREFIX/bin/x86_64-conda-linux-gnu-cc
+    C flags (Release):           -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp -pthread -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp -pthread -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    Linker flags (Release):      -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,$PREFIX/lib -Wl,-rpath-link,$PREFIX/lib -L$PREFIX/lib
+    Linker flags (Debug):        -Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,$PREFIX/lib -Wl,-rpath-link,$PREFIX/lib -L$PREFIX/lib
+    Use cxx standard:            17
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 java
+
+  Python (for build):            $PREFIX/bin/python
+
+  Java:
+    ant:                         no
+    JNI:                         no
+
+  Build options:
+    Build deprecated:            yes
+    Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.8.1
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm bioinspired ccalib cvv datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
+    OpenCV dir:                  $PREFIX/lib/cmake/opencv4
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  yes
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.8.1)
+
+  Simulator:
+    Ogre simulator:
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
+    Coin simulator:
+    \- Use Coin3D:               no
+    \- Use SoWin:                no
+    \- Use SoXt:                 no
+    \- Use SoQt:                 no
+    \- Use Qt5:                  no
+    \- Use Qt4:                  no
+    \- Use Qt3:                  no
+
+  Media I/O:
+    Use JPEG:                    yes (ver 80)
+    Use PNG:                     yes (ver 1.6.39)
+    \- Use ZLIB:                 yes (ver 1.2.13)
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use stb_image (built-in):    yes (ver 2.27.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.2)
+
+  Real robots:
+    Use Afma4:                   no
+    Use Afma6:                   no
+    Use Franka:                  no
+    Use Viper650:                no
+    Use Viper850:                no
+    Use ur_rtde:                 no
+    Use Kinova Jaco:             no
+    Use aria (Pioneer):          no
+    Use PTU46:                   no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
+    Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
+
+  GUI:
+    Use X11:                     yes
+    Use GTK:                     no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use GDI:                     no
+    Use Direct3D:                no
+
+  Cameras:
+    Use DC1394-2.x:              yes (ver 2.2.7)
+    Use CMU 1394:                no
+    Use V4L2:                    no
+    Use directshow:              no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
+
+  RGB-D sensors:
+    Use Realsense:               no
+    Use Realsense2:              yes (ver 2.54.1)
+    Use Occipital Structure:     no
+    Use Kinect:                  no
+    \- Use libfreenect:          no
+    \- Use libusb-1:             yes (ver 1.0.26)
+    \- Use pthread:              yes
+    Use PCL:                     no
+    \- Use VTK:                  no
+
+  F/T sensors:
+    Use atidaq (built-in):       no
+    Use comedi:                  no
+    Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
+
+  Detection:
+    Use zbar:                    no
+    Use dmtx:                    no
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
+
+  Misc:
+    Use Clipper (built-in):      yes (ver 6.4.2)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 yes (ver 2.11.5)
+    Use json (nlohmann):         no
+
+  Optimization:
+    Use OpenMP:                  yes
+    Use pthread:                 yes
+    Use pthread (built-in):      no
+    Use Simd (built-in):         yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
+
+  Documentation:
+    Use doxygen:                 no
+    \- Use mathjax:              no
+
+  Tests and samples:
+    Use catch2 (built-in):       yes (ver 2.13.7)
+    Tests:                       yes
+    Demos:                       yes
+    Examples:                    yes
+    Tutorials:                   yes
+    Dataset found:               no
+
+  Library dirs:
+    Eigen3 include dir:          $PREFIX/share/eigen3/cmake
+    MKL include dir:             $PREFIX/include
+    OpenCV dir:                  $PREFIX/lib/cmake/opencv4
+
+  Install path:                  $PREFIX
+
+==========================================================
+\endverbatim
+
+\subsection conda_package_config_osx_64 Configuration for the OSX-64 Conda package
+
+\verbatim
+==========================================================
+General configuration information for ViSP 3.6.0
+
+  Version control:               unknown
+
+  Platform:
+    Timestamp:                   2023-10-23T18:01:45Z
+    Host:                        Darwin 20.6.0 x86_64
+    CMake:                       3.27.6
+    CMake generator:             Unix Makefiles
+    CMake build tool:            $BUILD_PREFIX/bin/make
+    Configuration:               Release
+
+  System information:
+    Number of CPU logical cores: 3
+    Number of CPU physical cores: 3
+    Total physical memory (in MiB): 14336
+    OS name:                     macOS
+    OS release:                  11.7.10
+    OS version:                  20G1427
+    OS platform:                 x86_64
+    CPU name:                    Intel(R) Xeon(R) CPU E5-1650 v2 @ 3.50GHz
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:            SSE2 SSE3 SSSE3
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                $BUILD_PREFIX/bin/x86_64-apple-darwin13.4.0-clang++  (ver 16.0.6)
+    C++ flags (Release):         -march=core2 -mtune=haswell -mssse3 -ftree-vectorize -fPIC -fPIE -fstack-protector-strong -O2 -pipe -stdlib=libc++ -fvisibility-inlines-hidden -fmessage-length=0 -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix -D_LIBCPP_DISABLE_AVAILABILITY  -Wall -Wextra -fopenmp=libomp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -march=core2 -mtune=haswell -mssse3 -ftree-vectorize -fPIC -fPIE -fstack-protector-strong -O2 -pipe -stdlib=libc++ -fvisibility-inlines-hidden -fmessage-length=0 -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix -D_LIBCPP_DISABLE_AVAILABILITY  -Wall -Wextra -fopenmp=libomp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C Compiler:                  $BUILD_PREFIX/bin/x86_64-apple-darwin13.4.0-clang
+    C flags (Release):           -march=core2 -mtune=haswell -mssse3 -ftree-vectorize -fPIC -fPIE -fstack-protector-strong -O2 -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp=libomp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -march=core2 -mtune=haswell -mssse3 -ftree-vectorize -fPIC -fPIE -fstack-protector-strong -O2 -pipe -isystem $PREFIX/include -fdebug-prefix-map=$SRC_DIR=/usr/local/src/conda/visp-3.6.0 -fdebug-prefix-map=$PREFIX=/usr/local/src/conda-prefix  -Wall -Wextra -fopenmp=libomp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    Linker flags (Release):      -Wl,-pie -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib
+    Linker flags (Debug):        -Wl,-pie -Wl,-headerpad_max_install_names -Wl,-dead_strip_dylibs -Wl,-rpath,$PREFIX/lib -L$PREFIX/lib
+    Use cxx standard:            17
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 java
+
+  Python (for build):            $PREFIX/bin/python
+
+  Java:
+    ant:                         no
+    JNI:                         /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include/darwin /Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/17.0.8-101/x64/Contents/Home/include
+
+  Build options:
+    Build deprecated:            yes
+    Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.8.1
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm bioinspired ccalib datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
+    OpenCV dir:                  $PREFIX/lib/cmake/opencv4
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               yes (ver n/a)
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.8.1)
+
+  Simulator:
+    Ogre simulator:
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
+    Coin simulator:
+    \- Use Coin3D:               no
+    \- Use SoWin:                no
+    \- Use SoXt:                 no
+    \- Use SoQt:                 no
+    \- Use Qt5:                  no
+    \- Use Qt4:                  no
+    \- Use Qt3:                  no
+
+  Media I/O:
+    Use JPEG:                    yes (ver 80)
+    Use PNG:                     yes (ver 1.6.39)
+    \- Use ZLIB:                 yes (ver 1.2.13)
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use stb_image (built-in):    yes (ver 2.27.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.2)
+
+  Real robots:
+    Use Afma4:                   no
+    Use Afma6:                   no
+    Use Franka:                  no
+    Use Viper650:                no
+    Use Viper850:                no
+    Use ur_rtde:                 no
+    Use Kinova Jaco:             no
+    Use aria (Pioneer):          no
+    Use PTU46:                   no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
+    Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
+
+  GUI:
+    Use X11:                     yes
+    Use GTK:                     no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use GDI:                     no
+    Use Direct3D:                no
+
+  Cameras:
+    Use DC1394-2.x:              yes (ver 2.2.7)
+    Use CMU 1394:                no
+    Use V4L2:                    no
+    Use directshow:              no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
+
+  RGB-D sensors:
+    Use Realsense:               no
+    Use Realsense2:              yes (ver 2.54.1)
+    Use Occipital Structure:     no
+    Use Kinect:                  no
+    \- Use libfreenect:          no
+    \- Use libusb-1:             no
+    \- Use pthread:              yes
+    Use PCL:                     no
+    \- Use VTK:                  no
+
+  F/T sensors:
+    Use atidaq (built-in):       no
+    Use comedi:                  no
+    Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
+
+  Detection:
+    Use zbar:                    no
+    Use dmtx:                    no
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
+
+  Misc:
+    Use Clipper (built-in):      yes (ver 6.4.2)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 no
+    Use json (nlohmann):         no
+
+  Optimization:
+    Use OpenMP:                  yes
+    Use pthread:                 yes
+    Use pthread (built-in):      no
+    Use Simd (built-in):         yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
+
+  Documentation:
+    Use doxygen:                 no
+    \- Use mathjax:              no
+
+  Tests and samples:
+    Use catch2 (built-in):       yes (ver 2.13.7)
+    Tests:                       yes
+    Demos:                       yes
+    Examples:                    yes
+    Tutorials:                   yes
+    Dataset found:               no
+
+  Library dirs:
+    Eigen3 include dir:          $PREFIX/share/eigen3/cmake
+    OpenCV dir:                  $PREFIX/lib/cmake/opencv4
+
+  Install path:                  $PREFIX
+
+==========================================================
+\endverbatim
+
+\subsection conda_package_config_windows_64 Configuration for the Windows-64 Conda package
+
+\verbatim
+==========================================================
+General configuration information for ViSP 3.6.0
+
+  Version control:               unknown
+
+  Platform:
+    Timestamp:                   2023-10-23T18:06:34Z
+    Host:                        Windows 10.0.20348 AMD64
+    CMake:                       3.27.6
+    CMake generator:             Ninja
+    CMake build tool:            D:/bld/visp_1698083699413/_build_env/Library/bin/ninja.exe
+    MSVC:                        1929
+    Configuration:               Release
+
+  System information:
+    Number of CPU logical cores: 2
+    Number of CPU physical cores: 2
+    Total physical memory (in MiB): 7167
+    OS name:                     Windows
+    OS release:                  DataCenter Server
+    OS version:                  (Build 20348)
+    OS platform:                 AMD64
+    CPU name:                    Unknown P6 family
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       yes
+    CPU optimization:
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                D:/bld/visp_1698083699413/_build_env/Library/bin/clang-cl.exe  (ver 17.0.3)
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP2   -Wall -Wextra -Xclang -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP2   -Wall -Wextra -Xclang -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C Compiler:                  D:/bld/visp_1698083699413/_build_env/Library/bin/clang-cl.exe
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP2   -Wall -Wextra -Xclang -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP2   -Wall -Wextra -Xclang -fopenmp -fvisibility=hidden -msse2 -msse3 -mssse3 /MDd /Zi /Ob0 /Od /RTC1
+    Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
+    Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+    Use cxx standard:            17
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 java
+
+  Windows RT support:            no
+
+  Python (for build):            D:/bld/visp_1698083699413/_h_env/python.exe
+
+  Java:
+    ant:                         no
+    JNI:                         C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include/win32 C:/Program Files/Microsoft/jdk-11.0.16.101-hotspot/include
+
+  Build options:
+    Build deprecated:            yes
+    Build with moment combine:   no
+
+  OpenCV:
+    Version:                     4.8.1
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio alphamat aruco bgsegm ccalib cvv datasets dnn_objdetect dnn_superres dpm face freetype fuzzy hdf hfs img_hash intensity_transform line_descriptor mcc optflow phase_unwrapping plot quality rapid reg rgbd saliency shape stereo structured_light superres surface_matching text tracking videostab wechat_qrcode xfeatures2d ximgproc xobjdetect xphoto
+    OpenCV dir:                  D:/bld/visp_1698083699413/_h_env/Library/cmake
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    yes (ver 3.2.1)
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.8.1)
+
+  Simulator:
+    Ogre simulator:
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
+    Coin simulator:
+    \- Use Coin3D:               no
+    \- Use SoWin:                no
+    \- Use SoXt:                 no
+    \- Use SoQt:                 no
+    \- Use Qt5:                  no
+    \- Use Qt4:                  no
+    \- Use Qt3:                  no
+
+  Media I/O:
+    Use JPEG:                    yes (ver 80)
+    Use PNG:                     yes (ver 1.6.39)
+    \- Use ZLIB:                 yes (ver 1.2.13)
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use stb_image (built-in):    yes (ver 2.27.0)
+    Use TinyEXR (built-in):      yes (ver 1.0.2)
+
+  Real robots:
+    Use Afma4:                   no
+    Use Afma6:                   no
+    Use Franka:                  no
+    Use Viper650:                no
+    Use Viper850:                no
+    Use ur_rtde:                 no
+    Use Kinova Jaco:             no
+    Use aria (Pioneer):          no
+    Use PTU46:                   no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
+    Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    no
+
+  GUI:
+    Use X11:                     no
+    Use GTK:                     no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use GDI:                     yes
+    Use Direct3D:                no
+
+  Cameras:
+    Use DC1394-2.x:              no
+    Use CMU 1394:                no
+    Use V4L2:                    no
+    Use directshow:              no
+    Use OpenCV:                  yes (ver 4.8.1)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
+
+  RGB-D sensors:
+    Use Realsense:               no
+    Use Realsense2:              no
+    Use Occipital Structure:     no
+    Use Kinect:                  no
+    \- Use libfreenect:          no
+    \- Use libusb-1:             no
+    \- Use pthread:              no
+    Use PCL:                     no
+    \- Use VTK:                  no
+
+  F/T sensors:
+    Use atidaq (built-in):       no
+    Use comedi:                  no
+    Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
+
+  Detection:
+    Use zbar:                    no
+    Use dmtx:                    no
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
+
+  Misc:
+    Use Clipper (built-in):      yes (ver 6.4.2)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 no
+    Use json (nlohmann):         no
+
+  Optimization:
+    Use OpenMP:                  yes
+    Use pthread:                 no
+    Use pthread (built-in):      yes (ver 3.0.1)
+    Use Simd (built-in):         yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
+
+  Documentation:
+    Use doxygen:                 no
+    \- Use mathjax:              no
+
+  Tests and samples:
+    Use catch2 (built-in):       yes (ver 2.13.7)
+    Tests:                       yes
+    Demos:                       yes
+    Examples:                    yes
+    Tutorials:                   yes
+    Dataset found:               no
+
+  Library dirs:
+    Eigen3 include dir:          D:/bld/visp_1698083699413/_h_env/Library/share/eigen3/cmake
+    OpenCV dir:                  D:/bld/visp_1698083699413/_h_env/Library/cmake
+
+  Install path:                  D:/bld/visp_1698083699413/_h_env/Library
+
+==========================================================
+\endverbatim
+
+\section install_conda_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

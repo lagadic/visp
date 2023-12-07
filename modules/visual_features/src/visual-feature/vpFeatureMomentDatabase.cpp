@@ -43,23 +43,23 @@
  * \param name : the feature's name, usually the string naming it's class. Each
  * name must be unique
  */
-void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, char *name)
+void vpFeatureMomentDatabase::add(vpFeatureMoment &featureMoment, const std::string &name)
 {
-  featureMomentsDataBase.insert(std::pair<const char *, vpFeatureMoment *>((const char *)name, &featureMoment));
+  featureMomentsDataBase.insert(std::pair<const std::string, vpFeatureMoment *>(name, &featureMoment));
 }
 
 /*!
  * Retrieves a moment feature from the database
- * \param type : the name of the feature, the one specified when using add
+ * \param feature_name : The name of the feature, the one specified when using add
  * \param found : true if the type string is found inside the database, false
  * otherwise
  *
  * \return the moment feature corresponding to the type string
  */
-vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
+vpFeatureMoment &vpFeatureMomentDatabase::get(const std::string &feature_name, bool &found)
 {
-  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator it =
-    featureMomentsDataBase.find(type);
+  std::map<const std::string, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator it =
+    featureMomentsDataBase.find(feature_name);
 
   found = (it != featureMomentsDataBase.end());
   return *(it->second);
@@ -73,7 +73,7 @@ vpFeatureMoment &vpFeatureMomentDatabase::get(const char *type, bool &found)
  */
 void vpFeatureMomentDatabase::updateAll(double A, double B, double C)
 {
-  std::map<const char *, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr;
+  std::map<const std::string, vpFeatureMoment *, vpFeatureMomentDatabase::vpCmpStr_t>::const_iterator itr;
 #ifdef VISP_HAVE_OPENMP
   std::vector<vpFeatureMoment *> values;
   values.reserve(featureMomentsDataBase.size());

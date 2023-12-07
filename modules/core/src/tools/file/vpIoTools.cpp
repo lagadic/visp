@@ -110,6 +110,13 @@ std::string vpIoTools::configFile = "";
 std::vector<std::string> vpIoTools::configVars = std::vector<std::string>();
 std::vector<std::string> vpIoTools::configValues = std::vector<std::string>();
 
+const char vpIoTools::separator =
+#if defined(_WIN32)
+'\\';
+#else
+'/';
+#endif
+
 namespace
 {
 // The following code is not working on iOS since wordexp() is not available

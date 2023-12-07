@@ -77,8 +77,8 @@
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/io/vpVideoWriter.h>
 
-
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
+// Check if std:c++17 or higher
+#if defined(VISP_HAVE_REALSENSE2) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_MODULE_DNN_TRACKER)
 
 #include <optional>
@@ -455,8 +455,8 @@ int main()
 #if !defined(VISP_HAVE_REALSENSE2)
   std::cout << "Install librealsense-2.x" << std::endl;
 #endif
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
-  std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=17)." << std::endl;
+#if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+  std::cout << "Build ViSP with c++17 or higher compiler flag (cmake -DUSE_CXX_STANDARD=17)." << std::endl;
 #endif
 #if !defined(VISP_HAVE_AFMA6)
   std::cout << "ViSP is not built with Afma-6 robot support..." << std::endl;
