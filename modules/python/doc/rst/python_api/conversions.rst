@@ -23,7 +23,7 @@ For most scientific computing libraries, the standard data representation is bas
 Since most libraries will accept and manipulate these arrays, ViSP provides conversion functions.
 
 
-NumPy <-> ViSP
+NumPy ↔ ViSP
 -----------------------------------------
 
 
@@ -31,13 +31,53 @@ NumPy <-> ViSP
 Mapping between NumPy arrays and ViSP types
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Here, we give the list of all supported NumPy-convertible types
+
+.. list-table:: Core math types
+   :header-rows: 1
+
+   * - Python type
+     - NumPy Shape and dtype
+   * - :py:class:`visp.core.Matrix`
+     - (N, M), np.float64
+   * - :py:class:`visp.core.ColVector`
+     - (M,), np.float64
+   * - :py:class:`visp.core.RowVector`
+     - (N,), np.float64
+   * - :py:class:`visp.core.RotationMatrix`
+     - (3, 3), np.float64
+   * - :py:class:`visp.core.HomogeneousMatrix`
+     - (4, 4), np.float64
+   * - :py:class:`visp.core.ThetaUVector`
+     - (3,), np.float64
+
+.. list-table:: Core image types
+   :header-rows: 1
+
+   * - C++ type
+     - Python type
+     - NumPy Shape and dtype
+   * - :code:`vpImage<unsigned char>`
+     - :py:class:`visp.core.ImageGray`
+     - (H, W), np.uint8
+   * - :code:`vpImage<uint16_t>`
+     - :py:class:`visp.core.ImageUInt16`
+     - (H, W), np.uint16
+   * - :code:`vpImage<vpRGBa>`
+     - :py:class:`visp.core.ImageRGBa`
+     - (H, W, 4), np.uint8
+   * - :code:`vpImage<vpRGBf>`
+     - :py:class:`visp.core.ImageRGBf`
+     - (H, W, 3), np.float32
 
 
 
 Acquiring a view of a ViSP object
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can view
+It is possible to view a ViSP object as a NumPy array. When using a view, changes made to one representation is reflected in the other.
+
+See `the NumPy documentation <https://numpy.org/doc/stable/user/basics.copies.html>`_ for more information.
 
 To reinterpret a supported ViSP object as a Numpy array, use either:
 
@@ -117,21 +157,24 @@ Thus, this code will not work:
   ValueError: assignment destination is read-only
 
 
-Obtaining a copy of the data
+Copying to a NumPy array
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To obtain a copy of the ViSP representation you can simply use:
 
-.. doctest::
+.. testcode::
 
-  >>> from visp.core import ColVector
-  >>> import numpy as np
+  from visp.core import ColVector
+  import numpy as np
 
-  >>> vec = ColVector(3, 0)
-  >>> np_vec = vec.numpy().copy() # or np.array(vec, copy=True)
-  >>> np_vec[0] = 1
+  vec = ColVector(3, 0)
+  np_vec = vec.numpy().copy() # or np.array(vec, copy=True)
+  np_vec[0] = 1
 
-  >>> np_vec[0] == vec[0]
+  print(np_vec[0] == vec[0])
+
+.. testoutput::
+
   False
 
 
@@ -144,43 +187,69 @@ For instance, the following code will lead to an undesired behaviour:
   from visp.core import ColVector
   import numpy as np
 
-  def compute_velocity(velocity) -> None:
-    # Dummy function to illustrate in place
+  def compute_velocity(velocity: ColVector) -> None:
+    # Dummy function to illustrate in place ops
     velocity *= 2.0 # This code modifies the content of velocity
 
-  velocity = ColVector(6, 0.1)
+  velocity = ColVector(6, 1.0)
   iteration = 0
   # Store the velocities in a list
   log_data = []
 
   # Servoing loop
   while iteration < 10:
-    compute_velocity(v)
-    log_data.append(v.numpy())
+    compute_velocity(velocity)
+    log_data.append(velocity.numpy())
     iteration += 1
 
   # Do some logging...
   print(log_data[0])
   print(log_data[-1])
 
-.. test_output::
+.. testoutput::
 
-  array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
-  array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+  [1024. 1024. 1024. 1024. 1024. 1024.]
+  [1024. 1024. 1024. 1024. 1024. 1024.]
 
 
 Although we're multiplying the velocity by 2 at each iteration,
 we can see that we have the same values for the first and last iterations.
 
-In essence, this is because while we store 10 different NumPy arrays, they all share the same underlying storage.
-This storage is, at each iteration, modified by the :python:`compute_velocity` function.
 
-To remedy, you can either:
+.. warning::
 
-* Make a copy of the NumPy array at every iteration before storing it in the list
-* Change the :python:`compute_velocity` to return a new :py:class:`visp.core.ColVector`
+  In essence, this is because while we store 10 different NumPy arrays, they all share the same underlying storage.
+  This storage is, at each iteration, modified by the :python:`compute_velocity` function.
+
+.. note::
+
+  To remedy this, you can either:
+
+  * Make a copy of the NumPy array at every iteration before storing it in the list :python:`log_data.append(velocity.numpy().copy())`
+  * Change the :python:`compute_velocity` to return a new :py:class:`visp.core.ColVector`
 
 
+Building a ViSP object from a NumPy array
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Potential issues
---------------------
+In the above section, we have shown how to convert a ViSP representation to a NumPy array.
+
+To perform the inverse operation, a custom constructor is defined for each class that allows the Numpy -> ViSP conversion.
+
+This constructor performs a **copy** of the NumPy data into the newly created ViSP object.
+
+For instance, to build a new matrix
+
+
+.. testsetup::
+
+  from visp.core import Matrix
+  import numpy as np
+
+
+.. testcode::
+
+  random_mat = np.random.rand(10, 10) # 10 x 10 random matrix
+
+  mat = Matrix(random_mat)
+  print(mat.getRows(), mat.getCols())
