@@ -41,7 +41,6 @@
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/gui/vpPlotGraph.h>
-//#include <visp3/vision/vpPose.h>
 
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -171,22 +170,7 @@ void vpPlotGraph::findPose()
   iP[3].set_ij(dHeight - 1, 0);
 
   double x = 0, y = 0;
-#if 0
-  // Modified by FS to remove dependency with visp_vision (pose) module
-  vpPose pose;
-  pose.clearPoint();
 
-  for (unsigned int i = 0; i < 4; i++) {
-    vpPixelMeterConversion::convertPoint(cam, iP[i], x, y);
-    point_[i].set_x(x);
-    point_[i].set_y(y);
-    pose.addPoint(point_[i]);
-  }
-
-  // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
-  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-
-#else
   // Instead of pose computation we use an approximation
   double Z = 0;
   for (unsigned int i = 0; i < 4; i++) {
@@ -195,7 +179,6 @@ void vpPlotGraph::findPose()
     Z = vpMath::maximum(Z, point_[i].get_oY() / y);
   }
   cMo[2][3] = Z;
-#endif
 }
 
 void vpPlotGraph::computeGraphParameters()
