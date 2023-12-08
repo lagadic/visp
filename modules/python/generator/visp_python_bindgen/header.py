@@ -377,7 +377,7 @@ class HeaderFile():
           for cpp_op, python_op_name in unary_return_ops.items():
             if method_name == f'operator{cpp_op}':
               operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) {{
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) -> {return_type_str} {{
   return {cpp_op}self;
 }}, {", ".join(py_args)});'''
               add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
@@ -389,7 +389,7 @@ class HeaderFile():
         for cpp_op, python_op_name in binary_return_ops.items():
           if method_name == f'operator{cpp_op}':
             operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
   return (self {cpp_op} o);
 }}, {", ".join(py_args)});'''
             add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
@@ -398,7 +398,7 @@ class HeaderFile():
         for cpp_op, python_op_name in binary_in_place_ops.items():
           if method_name == f'operator{cpp_op}':
             operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) {{
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
   self {cpp_op} o;
   return self;
 }}, {", ".join(py_args)});'''

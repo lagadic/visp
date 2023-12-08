@@ -41,42 +41,51 @@ You can view
 
 To reinterpret a supported ViSP object as a Numpy array, use either:
 
-.. doctest::
+.. testcode::
 
-  >>> from visp.core import ColVector
-  >>> import numpy as np
+  from visp.core import ColVector
+  import numpy as np
 
-  >>> list_representation = [i for i in range(3)]
-  >>> vec = ColVector(list_representation) # Initialize a 3 vector from a list
-  >>> np_vec = vec.numpy() # A 1D numpy array of size 3
+  list_representation = [i for i in range(3)]
+  vec = ColVector(list_representation) # Initialize a 3 vector from a list
+  np_vec = vec.numpy() # A 1D numpy array of size 3
 
-  >>> np.all(np_vec == list_representation)
+  print(np.all(np_vec == list_representation))
+
+
+  vec *= 2.0
+  print(np.all(np_vec == list_representation))
+
+.. testoutput::
+
   True
-
-  >>> vec *= 2.0
-  >>> np.all(np_vec == list_representation)
   False
+
 
 or
 
-.. doctest::
+.. testcode::
 
-  >>> from visp.core import ColVector
-  >>> import numpy as np
+  from visp.core import ColVector
+  import numpy as np
 
-  >>> list_representation = [i for i in range(3)]
-  >>> vec = ColVector(list_representation) # Initialize a 3 vector from a list
-  >>> np_vec = np.array(vec, copy=False) # A 1D numpy array of size 3
+  list_representation = [i for i in range(3)]
+  vec = ColVector(list_representation) # Initialize a 3 vector from a list
+  np_vec = np.array(vec, copy=False) # A 1D numpy array of size 3
 
-  >>> np.all(np_vec == list_representation)
+  print(np.all(np_vec == list_representation))
+  # Modifying the ViSP vector modifies the NumPy view
+  vec *= 2.0
+  print(np.all(np_vec == list_representation))
+
+  # Modifying the NumPy array modifies the ViSP object
+  np_vec[:2] = 0.0
+  print(vec[0] == 0.0 and vec[1] == 0.0)
+
+.. testoutput::
+
   True
-
-  >>> vec *= 2.0 # Modifying the ViSP vector modifies the NumPy view
-  >>> np.all(np_vec == list_representation)
   False
-
-  >>> np_vec[:2] = 0.0 # Modifying the NumPy array modifies the ViSP object
-  >>> vec[0] == 0.0 and vec[1] = 0.0
   True
 
 
@@ -86,20 +95,23 @@ may lead to an invalid representation (Such as a rotation matrix not conserving 
 
 Thus, this code will not work:
 
-.. doctest::
+.. testcode::
+
+  from visp.core import RotationMatrix, HomogeneousMatrix
+  import numpy as np
+
+  R = RotationMatrix()
+  R.numpy()[0, 1] = 1.0
+
+  T = HomogeneousMatrix()
+  T.numpy()[0, 1] = 1.0
+
+.. testoutput::
   :options: +IGNORE_EXCEPTION_DETAIL
 
-  >>> from visp.core import RotationMatrix, HomogeneousMatrix
-  >>> import numpy as np
-
-  >>> R = RotationMatrix()
-  >>> R.numpy()[0, 1] = 1.0
   Traceback (most recent call last):
    File "<stdin>", line 1, in <module>
   ValueError: assignment destination is read-only
-
-  >>> T = HomogeneousMatrix()
-  >>> T.numpy()[0, 1] = 1.0
   Traceback (most recent call last):
    File "<stdin>", line 1, in <module>
   ValueError: assignment destination is read-only
@@ -139,7 +151,7 @@ For instance, the following code will lead to an undesired behaviour:
   velocity = ColVector(6, 0.1)
   iteration = 0
   # Store the velocities in a list
-  log_data: List[np.ndarray] = []
+  log_data = []
 
   # Servoing loop
   while iteration < 10:
