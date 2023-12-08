@@ -17,18 +17,27 @@ ViSP provides multiple types to manipulate mathematical objects, such as:
 
 
 While these representations should allow you to work with all the ViSP functions,
-they are a foreign concept to all the other Python libraries.
+they are foreign to all the other Python libraries.
 
 For most scientific computing libraries, the standard data representation is based on `NumPy <https://numpy.org/>`_.
 Since most libraries will accept and manipulate these arrays, ViSP provides conversion functions.
 
 
-From ViSP to NumPy
+NumPy <-> ViSP
 -----------------------------------------
 
 
-Obtaining a view of a ViSP object
+
+Mapping between NumPy arrays and ViSP types
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+
+Acquiring a view of a ViSP object
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+You can view
 
 To reinterpret a supported ViSP object as a Numpy array, use either:
 
@@ -66,19 +75,10 @@ or
   >>> np.all(np_vec == list_representation)
   False
 
-To obtain a copy of the ViSP representation you can simply use:
+  >>> np_vec[:2] = 0.0 # Modifying the NumPy array modifies the ViSP object
+  >>> vec[0] == 0.0 and vec[1] = 0.0
+  True
 
-.. doctest::
-
-  >>> from visp.core import ColVector
-  >>> import numpy as np
-
-  >>> vec = ColVector(3, 0)
-  >>> np_vec = vec.numpy().copy() # or np.array(vec, copy=True)
-  >>> np_vec[0] = 1
-
-  >>> np_vec[0] == vec[0]
-  False
 
 Note that with these methods, some ViSP objects cannot be modified.
 That is the case for :py:class:`visp.core.HomogeneousMatrix` and :py:class:`visp.core.RotationMatrix`, where an undesired modification
@@ -105,9 +105,68 @@ Thus, this code will not work:
   ValueError: assignment destination is read-only
 
 
+Obtaining a copy of the data
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To obtain a copy of the ViSP representation you can simply use:
+
+.. doctest::
+
+  >>> from visp.core import ColVector
+  >>> import numpy as np
+
+  >>> vec = ColVector(3, 0)
+  >>> np_vec = vec.numpy().copy() # or np.array(vec, copy=True)
+  >>> np_vec[0] = 1
+
+  >>> np_vec[0] == vec[0]
+  False
 
 
+Keep in mind that it may be preferable to use a copy of the data, especially if you are using both numpy and ViSP representations for different tasks at the same time
 
+For instance, the following code will lead to an undesired behaviour:
+
+.. testcode::
+
+  from visp.core import ColVector
+  import numpy as np
+
+  def compute_velocity(velocity) -> None:
+    # Dummy function to illustrate in place
+    velocity *= 2.0 # This code modifies the content of velocity
+
+  velocity = ColVector(6, 0.1)
+  iteration = 0
+  # Store the velocities in a list
+  log_data: List[np.ndarray] = []
+
+  # Servoing loop
+  while iteration < 10:
+    compute_velocity(v)
+    log_data.append(v.numpy())
+    iteration += 1
+
+  # Do some logging...
+  print(log_data[0])
+  print(log_data[-1])
+
+.. test_output::
+
+  array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+  array([0.1, 0.1, 0.1, 0.1, 0.1, 0.1])
+
+
+Although we're multiplying the velocity by 2 at each iteration,
+we can see that we have the same values for the first and last iterations.
+
+In essence, this is because while we store 10 different NumPy arrays, they all share the same underlying storage.
+This storage is, at each iteration, modified by the :python:`compute_velocity` function.
+
+To remedy, you can either:
+
+* Make a copy of the NumPy array at every iteration before storing it in the list
+* Change the :python:`compute_velocity` to return a new :py:class:`visp.core.ColVector`
 
 
 

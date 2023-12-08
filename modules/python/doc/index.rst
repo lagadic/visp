@@ -38,28 +38,29 @@ Other, more general resources, are available:
 * Results and demonstrations can be seen on the `ViSP YouTube channel <https://www.youtube.com/@VispTeam>`_
 
 
-Disclaimer
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. note::
 
-This documentation does not cover the full capabilities of ViSP. Please see the C++ documentation, which contains:
+  This documentation does not cover the full capabilities of ViSP. Please see the C++ documentation, which contains:
 
-* `Tutorials <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial_users.html>`_ on:
+  * `Tutorials <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial_users.html>`_ on:
 
-  * The core concepts: linear algebra, image processing, etc.
-  * Visual servoing with 3D, 2D or photometric features
-  * Object pose estimation and tracking
+    * The core concepts: linear algebra, image processing, etc.
+    * Visual servoing with 3D, 2D or photometric features
+    * Object pose estimation and tracking
 
-    * With the model-based tracker (MBT) :py:class:`visp.mbt.MbGenericTracker`
-    * With MegaPose, a deep learning approach to pose estimation :py:class:`visp.dnn_tracker.Megapose`
+      * With the model-based tracker (MBT) :py:class:`visp.mbt.MbGenericTracker`
+      * With MegaPose, a deep learning approach to pose estimation :py:class:`visp.dnn_tracker.MegaPose`
 
-* `Examples <https://visp-doc.inria.fr/doxygen/visp-daily/examples.html>`_
+  * `Examples <https://visp-doc.inria.fr/doxygen/visp-daily/examples.html>`_
 
-  * Demonstrating basic feature usage
-  * Servoing on specific robotics platforms
-  * Tracking
+    * Demonstrating basic feature usage
+    * Servoing on specific robotics platforms
+    * Tracking
 
 
-There are still issues with these generated bindings: see :ref:`Known issues`
+.. warning::
+
+  There are still issues with these generated bindings: see :ref:`Known issues`.
 
 
 Getting started
@@ -67,9 +68,7 @@ Getting started
 
 If you are transitioning from C++, please have a look at the :ref:`CPP guide` to understand the differences between the Python and C++ versions.
 
-
 For general ViSP + Python guidance, see the :ref:`Python API guide`.
-
 
 For tutorials on specific features: see :ref:`Tutorials`.
 
@@ -79,4 +78,4 @@ Finally, if you wish to browse the full ViSP class documentation, go to the :ref
 Customizing, extending and contributing to the bindings
 --------------------------------------------------------
 
-If you wish to contribute, extend or modify the bindings for your own needs, please read the :ref:`Development guide`
+If you wish to contribute, extend or modify the bindings for your own needs, please read :ref:`Development guide`
