@@ -104,7 +104,8 @@ Naively translating the use of :code:`convertPoint` from C++:
   cam = CameraParameters(600, 600, 320, 240)
   u, v = 240, 320
   x, y = 0, 0
-  PixelMeterConversion.convertPoint(cam, u, v, x, y) # WRONG: C++-like version, using references to modify x and y
+  # WRONG: C++-like version, using references to modify x and y
+  PixelMeterConversion.convertPoint(cam, u, v, x, y)
 
 Would lead to an error such as:
 
@@ -136,22 +137,3 @@ Thus, the correct function call is:
 
 
 If you have such errors, it is recommended that you look at the Python :ref:`API reference` for the function and look at its signature.
-
-
-
-.. tab-set::
-
-    .. tab-item:: C++
-        :sync: cpp
-
-        .. code-block:: cpp
-
-          #include <visp3/visp_core.h>
-
-
-    .. tab-item:: Python
-        :sync: python
-
-        .. testcode::
-
-          from visp.core import *

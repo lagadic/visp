@@ -69,7 +69,15 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
       mapOfVectorPtrs[p.first] = &(p.second);
     }
     self.track(mapOfImages, mapOfVectorPtrs, mapOfWidths, mapOfHeights);
-  });
+  }, R"doc(
+Perform tracking, with point clouds being represented as numpy arrays
+
+:param mapOfImages: Dictionary mapping from a camera name to a grayscale image
+
+:param: mapOfPointclouds: Dictionary mapping from a camera name to a point cloud.
+A point cloud is represented as a H x W x 3 double NumPy array.
+
+)doc", py::arg("mapOfImages"), py::arg("mapOfPointclouds"));
 }
 
 #endif

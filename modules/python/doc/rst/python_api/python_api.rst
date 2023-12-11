@@ -1,6 +1,6 @@
 .. _Python API guide:
 
-General ViSP + Python help
+Python specific features and help
 ====================
 
 .. toctree::
@@ -8,3 +8,4 @@ General ViSP + Python help
     :maxdepth: 2
 
     conversions.rst
+    python_specific_fns.rst

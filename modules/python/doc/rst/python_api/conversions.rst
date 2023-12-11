@@ -234,22 +234,118 @@ Building a ViSP object from a NumPy array
 
 In the above section, we have shown how to convert a ViSP representation to a NumPy array.
 
-To perform the inverse operation, a custom constructor is defined for each class that allows the Numpy -> ViSP conversion.
+To perform the inverse operation, a custom constructor is defined for each class that allows the Numpy → ViSP conversion.
 
 This constructor performs a **copy** of the NumPy data into the newly created ViSP object.
 
 For instance, to build a new matrix
 
-
-.. testsetup::
+.. testcode::
 
   from visp.core import Matrix
   import numpy as np
 
-
-.. testcode::
-
-  random_mat = np.random.rand(10, 10) # 10 x 10 random matrix
+  random_mat = np.random.rand(5, 10) # 10 x 10 random matrix
 
   mat = Matrix(random_mat)
   print(mat.getRows(), mat.getCols())
+  print(np.all(random_mat == mat))
+
+  # We built a matrix by copying the numpy array: modifying one does not impact the other
+  random_mat[:, 0] = 0
+  print(np.all(random_mat == mat))
+
+.. testoutput::
+
+  5 10
+  True
+  False
+
+
+.. warning::
+
+  A way to build a ViSP object as a view of a NumPy array is still lacking
+
+Numpy-like indexing of ViSP arrays
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+
+
+Using RealSense cameras with ViSP
+---------------------------------------
+
+In the C++ version of ViSP, a class is provided to work with Intel cameras such as the D435.
+This class, that acts as a thin wrapper around the Realsense libraries, cannot be used in Python.
+
+Instead we recommend to use the Python wrapper provided by Intel, :code:`pyrealsense2`.
+
+You can install it with:
+
+  python -m pip install pyrealsense2
+
+This library allows us to acquire frames from the camera.
+It is possible to convert them to a numpy representation,
+and they can thus be used with ViSP.
+
+The code below demonstrates how to use the Realsense package with ViSP:
+
+.. code-block:: python
+
+  import pyrealsense2 as rs
+  import numpy as np
+  from visp.core import CameraParameters
+  from visp.core import ImageRGBa, ImageUInt16, ImageGray
+  from visp.core import ImageConvert, Display
+  from visp.gui import DisplayX
+
+  def cam_from_rs_profile(profile) -> CameraParameters:
+    '''Get camera intrinsics from the realsense framework'''
+    # Downcast to video_stream_profile and fetch intrinsics
+    intr = profile.as_video_stream_profile().get_intrinsics()
+    return CameraParameters(intr.fx, intr.fy, intr.ppx, intr.ppy)
+
+  if __name__ == '__main__':
+
+    # Initialize realsense2
+    pipe = rs.pipeline()
+    config = rs.config()
+    fps = 60
+    h, w = 480, 640
+    config.enable_stream(rs.stream.depth, w, h, rs.format.z16, fps)
+    config.enable_stream(rs.stream.color, w, h, rs.format.rgba8, fps)
+
+    cfg = pipe.start(config)
+
+    I_gray = ImageGray(h, w)
+    display_gray = DisplayX()
+    display_gray.init(I_gray, 0, 0, 'Color')
+    I_depth_hist = ImageGray(h, w)
+    display_depth = DisplayX()
+    display_depth.init(I_depth_hist, 640, 0, 'Color')
+
+
+    # Retrieve intrinsics
+    cam_color = cam_from_rs_profile(cfg.get_stream(rs.stream.color))
+    cam_depth = cam_from_rs_profile(cfg.get_stream(rs.stream.depth))
+
+    point_cloud_computer = rs.pointcloud()
+    while True:
+      frames = pipe.wait_for_frames()
+      color_frame = frames.get_color_frame()
+      depth_frame = frames.get_depth_frame()
+      # NumPy Representations of realsense frames
+      I_color_np = np.asanyarray(color_frame.as_frame().get_data())
+      I_depth_np = np.asanyarray(depth_frame.as_frame().get_data())
+      # ViSP representations
+      I_color = ImageRGBa(I_color_np) # This works because format is rs.format.rgba8, otherwise concat or conversion needed
+      I_depth = ImageUInt16(I_depth_np)
+      # Transform depth frame as point cloud and view it as an N x 3 numpy array
+      point_cloud = np.asanyarray(point_cloud_computer.calculate(depth_frame).get_vertices()).view((np.float32, 3))
+
+      ImageConvert.convert(I_color, I_gray)
+      ImageConvert.createDepthHistogram(I_depth, I_depth_hist)
+
+      Display.display(I_gray)
+      Display.display(I_depth_hist)
+      Display.flush(I_gray)
+      Display.flush(I_depth_hist)
