@@ -965,7 +965,6 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
   else if (touchBottomBorder  && touchTopBorder && touchLeftBorder && !touchRightBorder) {
-    std::cout << "DEBUG ici" << std::endl;
     // Touches/intersects the top, left and bottom borders of the RoI
     computeIntersectionsTopLeftBottom(u_c, v_c, umin_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }

@@ -22,7 +22,9 @@ we vote along a straight line that follows the gradient.
 Then, during the step where the algorithm votes for radius candidates for each center candidate,
 we check the colinearity between the gradient at a considered point and the line which links the
 point towards the center candidate. If they are "enough" colinear, we increment the corresponding
-radius bin vote by 1. The "enough" characteristic is controlled by the circle perfectness
+radius bin vote by 1. (*NB*: instead of incrementing one bin by one, we increment two bins by a number between
+0 and 1 in our implementation to be more robust against the limits min and max of the radius and
+the bin size). The "enough" characteristic is controlled by the circle perfectness
 parameter.
 
 \image html img-tutorial-cht-radius-votes.png
@@ -40,44 +42,53 @@ $ cd tutorial/imgproc/hough-transform
 $ ./tutorial-circle-hough --help
 ```
 
-\subsection imgproc_cht_howto_synthetic How to use synthetic images
-
-
-To run the software on the synthetic images using a JSON configuration file,
-please run:
-```
-$ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks --config config/detector_${TARGET}.json
-```
-
-To run the software on the synthetic images using the default parameters,
-please run:
-```
-$ TARGET=full # or TARGET=half # or TARGET=quarter
-$ ./tutorial-circle-hough --input ${TARGET}_disks
-```
-
-\subsection imgproc_cht_howto_images How to use actual images
-
-To run the software on an actual image like `coins2.jpg` provided with the tutorial and using a JSON configuration file, please run:
+To run the software on an image like `coins2.jpg` provided with the tutorial and using a JSON configuration file, please run:
 ```
 $ ./tutorial-circle-hough --input coins2.jpg --config config/detector_img.json
 ```
 
+If you would rather use the command line arguments, please run:
+```
+$ ./tutorial-circle-hough --input coins2.jpg \
+    --averaging-window-size 5 \
+    --canny-backend opencv-backend \
+    --filtering-type gaussianblur+scharr-filtering \
+    --canny-thresh -1 -1 \
+    --lower-canny-ratio 0.6 \
+    --upper-canny-ratio 0.9 \
+    --gaussian-kernel 5 \
+    --gaussian-sigma 1 \
+    --dilatation-kernel-size 5 \
+    --center-thresh 70 \
+    --circle-probability-thresh 0.725 \
+    --radius-limits 34 75 \
+    --merging-thresh 5 5 \
+    --circle-perfectness 0.65 \
+    --circle-probability-thresh 0.725 \
+    --center-xlim 0 1920 \
+    --center-ylim 0 1080 \
+    --expected-nb-centers -1 \
+    --edge-filter 3 \
+    --gradient-kernel 3
+```
+
 \note The configuration file `config/detector_img.json` has been tuned to detect circles in the image `coins2.jpg`.
-If the detections seem a bit off, you might need to change the parameters in `config/detector_img.json`.
+If the detections seem a bit off, you might need to change the parameters in `config/detector_img.json` or in the
+command line.
 
-To run the software on an actual image using command line arguments instead, please run:
+\note The default values of the program corresponds to these fine-tuned parameters. Running the program
+without any additionnal parameters should give the same result:
 ```
-$ ./tutorial-circle-hough --input /path/to/my/image --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh 100. 200. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --circle-probability-thresh 0.75 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
+./tutorial-circle-hough
 ```
-
-If the detections seem a bit off, you might need to change the parameters
 
 \subsection imgproc_cht_howto_video How to use a video
 
 You can use the software to run circle detection on a video saved as a
-sequence of images that are named `${BASENAME}%d.png`.
+sequence of images that are named
+```
+${BASENAME}%d.png
+```
 For instance with `${BASENAME}` = `video_`, you can have the following list
 of images: `video_0001.png`, `video_0002.png` and so on.
 
@@ -88,21 +99,30 @@ $ ./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png --config conf
 
 To run the software using the command arguments, please run:
 ```
-./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png --gaussian-kernel 5 --gaussian-sigma 1 --canny-thresh -1. --dilatation-repet 1 --center-thresh 200 --radius-bin 2 --radius-thresh 2 --radius-limits 80 90 --merging-thresh 15 2 --circle-perfectness 0.9
+$ ./tutorial-circle-hough --input /path/to/video/${BASENAME}%d.png \
+    --averaging-window-size 5 \
+    --canny-backend opencv-backend \
+    --filtering-type gaussianblur+scharr-filtering \
+    --canny-thresh -1 -1 \
+    --lower-canny-ratio 0.6 \
+    --upper-canny-ratio 0.9 \
+    --gaussian-kernel 5 \
+    --gaussian-sigma 1 \
+    --dilatation-kernel-size 5 \
+    --center-thresh 70 \
+    --circle-probability-thresh 0.725 \
+    --radius-limits 34 75 \
+    --merging-thresh 5 5 \
+    --circle-perfectness 0.65 \
+    --circle-probability-thresh 0.725 \
+    --center-xlim 0 1920 \
+    --center-ylim 0 1080 \
+    --expected-nb-centers -1 \
+    --edge-filter 3 \
+    --gradient-kernel 3
 ```
 
 \section imgproc_cht_explanations Detailed explanations about the tutorial
-
-An enumeration permits to choose between the different types of synthetic images
-or using actual images or videos:
-
-\snippet tutorial-circle-hough.cpp Enum input
-
-You can choose the type you want using the command line arguments. To know how to do it,
-please run:
-```
-$ ./tutorial-circle-hough --help
-```
 
 If you decide to use a video as input, the relevant piece of code that permits to
 perform circle detection on the successive images of the video is the following:
@@ -111,16 +131,6 @@ perform circle detection on the successive images of the video is the following:
 If you decide to use a single image as input, the relevant piece of code that permits to
 perform circle detection on the image is the following:
 \snippet tutorial-circle-hough.cpp Manage single image
-
-If you decide to use a synthetic image as input, the relevant piece of code that
-launches the detection on the synthetic image is the following:
-\snippet tutorial-circle-hough.cpp Manage synthetic image
-
-The function that draws the synthetic image is the following:
-\snippet tutorial-circle-hough.cpp Draw synthetic
-
-It relies on the following function to draw the disks:
-\snippet tutorial-circle-hough.cpp Draw disks
 
 If you did not use a JSON file to configure the `vpCircleHoughTransform` detector,
 the following structure defines the parameters of the algorithm based on the

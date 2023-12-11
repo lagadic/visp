@@ -97,10 +97,14 @@ public:
     // // Center candidates computation attributes
     std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
     std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
-    unsigned int m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
-    unsigned int m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
-    int m_dilatationNbIter; /*!< Number of times dilatation is performed to detect the maximum number of votes for the center candidates.*/
-    float m_centerThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+    float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
+    float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
+    int m_dilatationKernelSize; /*!< Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.*/
+    int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
+                                    center candidate such as it is the barycenter of the window. Must be odd.*/
+    float m_centerMinThresh;  /*!< Minimum number of votes a point must exceed to be considered as center candidate.*/
+    int m_expectedNbCenters; /*!< Expected number of different centers in the image. If negative, all candidates centers
+                                  are kept, otherwise only up to this number are kept.*/
 
     // // Circle candidates computation attributes
     float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
@@ -128,10 +132,12 @@ public:
       , m_upperCannyThreshRatio(0.8f)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
-      , m_minRadius(0)
-      , m_maxRadius(1000)
-      , m_dilatationNbIter(1)
-      , m_centerThresh(50.f)
+      , m_minRadius(0.f)
+      , m_maxRadius(1000.f)
+      , m_dilatationKernelSize(3)
+      , m_averagingWindowSize(5)
+      , m_centerMinThresh(50.f)
+      , m_expectedNbCenters(-1)
       , m_circleProbaThresh(0.9f)
       , m_circlePerfectness(0.9f)
       , m_centerMinDist(15.f)
@@ -155,12 +161,14 @@ public:
      * \param[in] centerYlimits Minimum and maximum position on the vertical axis of the center of the circle we want to detect.
      * \param[in] minRadius Minimum radius of the circles we want to detect.
      * \param[in] maxRadius Maximum radius of the circles we want to detect.
-     * \param[in] dilatationNbIter Number of times dilatation is performed to detect the maximum number of votes for the center candidates
+     * \param[in] dilatationKernelSize Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.
      * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
      * \param[in] circleProbabilityThresh Probability threshold in order to keep a circle candidate.
      * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
+     * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
+                                      center candidate such as it is the barycenter of the window. Must be odd.
      * \param[in] filteringAndGradientMethod The choice of the filter and gradient operator to apply before the edge
      * detection step.
      * \param[in] backendType Permits to choose the backend used to compute the edge map.
@@ -169,6 +177,8 @@ public:
      * \param[in] upperCannyThreshRatio If the thresholds must be computed,the upper threshold will be equal to the value
      * such as the number of pixels of the image times \b upperThresholdRatio have an absolute gradient lower than the
      * upper threshold.
+     * \param[in] expectedNbCenters Expected number of centers in the image. If the number is negative, all the centers
+     * are kept. Otherwise, maximum up to this number of centers are kept.
      */
     vpCircleHoughTransformParameters(
         const int &gaussianKernelSize
@@ -179,18 +189,20 @@ public:
       , const int &edgeMapFilterNbIter
       , const std::pair<int, int> &centerXlimits
       , const std::pair<int, int> &centerYlimits
-      , const unsigned int &minRadius
-      , const unsigned int &maxRadius
-      , const int &dilatationNbIter
+      , const float &minRadius
+      , const float &maxRadius
+      , const int &dilatationKernelSize
       , const float &centerThresh
       , const float &circleProbabilityThresh
       , const float &circlePerfectness
       , const float &centerMinDistThresh
       , const float &mergingRadiusDiffThresh
+      , const int &averagingWindowSize = 5
       , const vpImageFilter::vpCannyFilteringAndGradientType &filteringAndGradientMethod = vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
       , const vpImageFilter::vpCannyBackendType &backendType = vpImageFilter::CANNY_OPENCV_BACKEND
       , const float &lowerCannyThreshRatio = 0.6f
       , const float &upperCannyThreshRatio = 0.8f
+      , const int &expectedNbCenters = -1
     )
       : m_filteringAndGradientType(filteringAndGradientMethod)
       , m_gaussianKernelSize(gaussianKernelSize)
@@ -206,13 +218,200 @@ public:
       , m_centerYlimits(centerYlimits)
       , m_minRadius(std::min(minRadius, maxRadius))
       , m_maxRadius(std::max(minRadius, maxRadius))
-      , m_dilatationNbIter(dilatationNbIter)
-      , m_centerThresh(centerThresh)
+      , m_dilatationKernelSize(dilatationKernelSize)
+      , m_averagingWindowSize(averagingWindowSize)
+      , m_centerMinThresh(centerThresh)
+      , m_expectedNbCenters(expectedNbCenters)
       , m_circleProbaThresh(circleProbabilityThresh)
       , m_circlePerfectness(circlePerfectness)
       , m_centerMinDist(centerMinDistThresh)
       , m_mergingRadiusDiffThresh(mergingRadiusDiffThresh)
     { }
+
+    /**
+     * \brief Get the size of the Gaussian filter kernel used to smooth the input image.
+     *
+     * \return int The size of the kernel.
+     */
+    inline int getGaussianKernelSize() const
+    {
+      return m_gaussianKernelSize;
+    }
+
+    /**
+     * \brief Get the standard deviation of the Gaussian filter.
+     *
+     * \return float The standard deviation.
+     */
+    inline float getGaussianStdev() const
+    {
+      return m_gaussianStdev;
+    }
+
+    /**
+     * \brief Get the size of the gradient kernel filters used to compute the gradients.
+     *
+     * \return int The size of the kernel.
+     */
+    inline int getGradientKernelSize() const
+    {
+      return m_gradientFilterKernelSize;
+    }
+
+    /**
+     * \brief Get the lower threshold for the Canny operator. Values lower than this value are rejected.
+     * A negative value means that the algorithm computes the lower threshold automatically.
+     *
+     * \return float The lower Canny threshold.
+     */
+    inline float getLowerCannyThreshold() const
+    {
+      return m_lowerCannyThresh;
+    }
+
+    /**
+     * \brief Get the upper threshold for the Canny operator. Values lower than this value are rejected.
+     * A negative value means that the algorithm computes the lower and upper thresholds automatically.
+     *
+     * \return float The upper Canny threshold.
+     */
+    inline float getUpperCannyThreshold() const
+    {
+      return m_upperCannyThresh;
+    }
+
+    /**
+     * \brief Get the number of iterations of 8-neighbor connectivity filtering to apply to the edge map.
+     *
+     * \return int The number of iterations.
+     */
+    inline int getEdgeMapFilteringNbIter() const
+    {
+      return m_edgeMapFilteringNbIter;
+    }
+
+    /**
+     * \brief Get the minimum and maximum position on the horizontal axis of the center of the circle we want to detect.
+     *
+     * \return std::pair<int, int> The min and max x positions.
+     */
+    inline std::pair<int, int> getCenterXLimits() const
+    {
+      return m_centerXlimits;
+    }
+
+    /**
+     * \brief Get the minimum and maximum position on the vertical axis of the center of the circle we want to detect.
+     *
+     * \return std::pair<int, int> The min and max y positions.
+     */
+    inline std::pair<int, int> getCenterYLimits() const
+    {
+      return m_centerYlimits;
+    }
+
+    /**
+     * \brief Get the minimum radius of the circles we want to detect.
+     *
+     * \return float The radius min.
+     */
+    inline float getMinRadius() const
+    {
+      return m_minRadius;
+    }
+
+    /**
+     * \brief Get the maximum radius of the circles we want to detect.
+     *
+     * \return float The radius max.
+     */
+    inline float getMaxRadius() const
+    {
+      return m_maxRadius;
+    }
+
+    /**
+     * \brief Get the kernel size of the dilatation that is performed to detect the maximum number of votes
+     * for the center candidates.
+     *
+     * \return int The kernel size.
+     */
+    inline int getDilatationKernelSize() const
+    {
+      return m_dilatationKernelSize;
+    }
+
+    /**
+     * \brief Get the size of the averaging window around the maximum number of votes to compute the
+     * center candidate such as it is the barycenter of the window.
+     *
+     * \return int The size of the averaging window.
+     */
+    inline int getAveragingWindowSize() const
+    {
+      return m_averagingWindowSize;
+    }
+
+    /**
+     * \brief Get the minimum number of votes a point must exceed to be considered as center candidate.
+     *
+     * \return float The threshold.
+     */
+    inline float getCenterMinThreshold() const
+    {
+      return m_centerMinThresh;
+    }
+
+    /**
+     * \brief Get the expected number of centers in the image. If the number is negative, all the centers
+     * are kept. Otherwise, maximum up to this number of centers are kept.
+     *
+     * \return int The expected number of centers.
+     */
+    inline int getExpectedNbCenters() const
+    {
+      return m_expectedNbCenters;
+    }
+
+    /**
+     * \brief Get the probability threshold in order to keep a circle candidate.
+     *
+     * \return float The threshold.
+     */
+    inline float getProbabilityThreshold() const
+    {
+      return m_circleProbaThresh;
+    }
+
+    /**
+     * \brief Get the threshold for the scalar product between the radius and the gradient to count a vote.
+     *
+     * \return float The threshold.
+     */
+    inline float getCirclePerfectness() const
+    {
+      return m_circlePerfectness;
+    }
+
+    /**
+     * \brief Get the Maximum distance between two circle candidates centers to consider merging them.
+     *
+     * \return float The maximum distance between two centers.
+     */
+    inline float getCenterMinDist() const
+    {
+      return m_centerMinDist;
+    }
+
+    /**
+     * \brief Get the Maximum radius difference between two circle candidates to consider merging them.
+     *
+     * @return float The merging radius difference.
+     */
+    inline float getMergingRadiusDiff() const
+    {
+      return m_mergingRadiusDiffThresh;
+    }
 
     /**
      * Create a string with all the Hough transform parameters.
@@ -231,8 +430,10 @@ public:
       txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) +"\n";
       txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) +"\n";
       txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) +"\n";
-      txt += "\tNumber of repetitions of the dilatation filter = " + std::to_string(m_dilatationNbIter) + "\n";
-      txt += "\tCenters votes threshold = " + std::to_string(m_centerThresh) + "\n";
+      txt += "\tKernel size of the dilatation filter = " + std::to_string(m_dilatationKernelSize) + "\n";
+      txt += "\tAveraging window size for center detection = " + std::to_string(m_averagingWindowSize) + "\n";
+      txt += "\tCenters votes threshold = " + std::to_string(m_centerMinThresh) + "\n";
+      txt += "\tExpected number of centers = " + (m_expectedNbCenters > 0 ? std::to_string(m_expectedNbCenters) : "no limits") + "\n";
       txt += "\tCircle probability threshold = " + std::to_string(m_circleProbaThresh) + "\n";
       txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
       txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
@@ -327,14 +528,21 @@ public:
 
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
-      std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
+      std::pair<float, float> radiusLimits = j.value("radiusLimits", std::pair<float, float>(params.m_minRadius, params.m_maxRadius));
       params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
       params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
 
-      params.m_dilatationNbIter = j.value("dilatationNbIter", params.m_dilatationNbIter);
+      params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
 
-      params.m_centerThresh = j.value("centerThresh", params.m_centerThresh);
-      if (params.m_centerThresh <= 0) {
+      params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
+      if (params.m_averagingWindowSize <= 0 || params.m_averagingWindowSize % 2 == 0) {
+        throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
+      }
+
+      params.m_expectedNbCenters = j.value("expectedNbCenters", params.m_expectedNbCenters);
+
+      params.m_centerMinThresh = j.value("centerThresh", params.m_centerMinThresh);
+      if (params.m_centerMinThresh <= 0.f) {
         throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
       }
 
@@ -365,7 +573,7 @@ public:
      */
     inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
-      std::pair<unsigned int, unsigned int> radiusLimits = { params.m_minRadius, params.m_maxRadius };
+      std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = json {
           {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
@@ -381,8 +589,10 @@ public:
           {"centerXlimits", params.m_centerXlimits},
           {"centerYlimits", params.m_centerYlimits},
           {"radiusLimits", radiusLimits},
-          {"dilatationNbIter", params.m_dilatationNbIter},
-          {"centerThresh", params.m_centerThresh},
+          {"dilatationKernelSize", params.m_dilatationKernelSize},
+          {"averagingWindowSize", params.m_averagingWindowSize},
+          {"centerThresh", params.m_centerMinThresh},
+          {"expectedNbCenters", params.m_expectedNbCenters},
           {"circleProbabilityThreshold", params.m_circleProbaThresh},
           {"circlePerfectnessThreshold", params.m_circlePerfectness},
           {"centerMinDistance", params.m_centerMinDist},
@@ -417,7 +627,7 @@ public:
    * \param[in] I The input gray scale image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const cv::Mat &cv_I);
+  virtual std::vector<vpImageCircle> detect(const cv::Mat &cv_I);
 #endif
 
   /**
@@ -427,7 +637,7 @@ public:
    * \param[in] I The input color image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<vpRGBa> &I);
+  virtual std::vector<vpImageCircle> detect(const vpImage<vpRGBa> &I);
 
   /**
    * \brief Perform Circle Hough Transform to detect the circles in a gray-scale image
@@ -435,7 +645,7 @@ public:
    * \param[in] I The input gray scale image.
    * \return std::vector<vpImageCircle> The list of 2D circles detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
+  virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
   /**
    * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
@@ -447,7 +657,7 @@ public:
    * \return std::vector<vpImageCircle> The list of 2D circles with the most number
    * of votes detected in the image.
    */
-  std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
+  virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
   //@}
 
   /** @name  Configuration from files */
@@ -468,7 +678,7 @@ public:
    *
    * \param[in] jsonPath The path towards the JSON configuration file.
    */
-  void initFromJSON(const std::string &jsonPath);
+  virtual void initFromJSON(const std::string &jsonPath);
 
   /**
    * \brief Save the configuration of the detector in a JSON file
@@ -477,7 +687,7 @@ public:
    *
    * \param[in] jsonPath The path towards the JSON output file.
    */
-  void saveConfigurationInJSON(const std::string &jsonPath) const;
+  virtual void saveConfigurationInJSON(const std::string &jsonPath) const;
 
   /**
    * \brief Read the detector configuration from JSON. All values are optional and if an argument is not present,
@@ -647,7 +857,7 @@ public:
    */
   inline void setCircleMinRadius(const float &circle_min_radius)
   {
-    m_algoParams.m_minRadius = static_cast<unsigned int>(circle_min_radius);
+    m_algoParams.m_minRadius = circle_min_radius;
   }
 
   /*!
@@ -656,7 +866,7 @@ public:
    */
   inline void setCircleMaxRadius(const float &circle_max_radius)
   {
-    m_algoParams.m_maxRadius = static_cast<unsigned int>(circle_max_radius);
+    m_algoParams.m_maxRadius = circle_max_radius;
   }
 
   /*!
@@ -674,16 +884,34 @@ public:
   /**
    * \brief Set the parameters of the computation of the circle center candidates.
    *
-   * \param[in] dilatationRepet Number of repetition of the dilatation operation to detect the maxima in the center accumulator.
+   * \param[in] dilatationSize Kernel size of the dilatation operation used to detect the maxima in the center accumulator.
    * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
+   * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
+                                      center candidate such as it is the barycenter of the window. Must be odd.
+   * \param[in] expectedNbCenters Expected number of centers in the image. If the number is negative, all the centers
+   * are kept. Otherwise, maximum up to this number of centers are kept.
    */
-  inline void setCenterComputationParameters(const int &dilatationRepet, const float &centerThresh)
+  inline void setCenterComputationParameters(const int &dilatationSize, const float &centerThresh,
+                                             const int &averagingWindowSize = 5, const int expectedNbCenters = -1)
   {
-    m_algoParams.m_dilatationNbIter = dilatationRepet;
-    m_algoParams.m_centerThresh = centerThresh;
+    m_algoParams.m_dilatationKernelSize = dilatationSize;
+    m_algoParams.m_centerMinThresh = centerThresh;
+    m_algoParams.m_averagingWindowSize = averagingWindowSize;
+    m_algoParams.m_expectedNbCenters = expectedNbCenters;
 
-    if (m_algoParams.m_centerThresh <= 0) {
+    if (m_algoParams.m_dilatationKernelSize < 3) {
+      throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be greater or equal to 3.");
+    }
+    else if ((m_algoParams.m_dilatationKernelSize % 2) == 0) {
+      throw vpException(vpException::badValue, "Dilatation kernel size for center detection must be odd.");
+    }
+
+    if (m_algoParams.m_centerMinThresh <= 0.f) {
       throw vpException(vpException::badValue, "Votes thresholds for center detection must be positive.");
+    }
+
+    if (m_algoParams.m_averagingWindowSize <= 0 || m_algoParams.m_averagingWindowSize % 2 == 0) {
+      throw vpException(vpException::badValue, "Averaging window size must be positive and odd.");
     }
   }
 
@@ -722,9 +950,9 @@ public:
   /**
    * \brief Get the list of Center Candidates, stored as pair <idRow, idCol>
    *
-   * \return std::vector<std::pair<unsigned int, unsigned int> > The list of Center Candidates, stored as pair <idRow, idCol>
+   * \return std::vector<std::pair<float, float> > The list of Center Candidates, stored as pair <idRow, idCol>
    */
-  inline std::vector<std::pair<int, int> > getCenterCandidatesList()
+  inline std::vector<std::pair<float, float> > getCenterCandidatesList()
   {
     return m_centerCandidatesList;
   }
@@ -810,7 +1038,7 @@ public:
   /*!
    * Get circles min radius in pixels.
    */
-  inline unsigned int getCircleMinRadius() const
+  inline float getCircleMinRadius() const
   {
     return m_algoParams.m_minRadius;
   }
@@ -818,7 +1046,7 @@ public:
   /*!
    * Get circles max radius in pixels.
    */
-  inline unsigned int getCircleMaxRadius() const
+  inline float getCircleMaxRadius() const
   {
     return m_algoParams.m_maxRadius;
   }
@@ -850,11 +1078,11 @@ public:
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detector);
 
-private:
+protected:
   /**
    * \brief Initialize the Gaussian filters used to blur the image.
    */
-  void initGaussianFilters();
+  virtual void initGaussianFilters();
 
   /**
    * \brief Initialize the gradient filters used to compute the gradient images.
@@ -868,7 +1096,7 @@ private:
    *
    * \param[in] I The input gray scale image.
    */
-  void computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I);
+  virtual void computeGradientsAfterGaussianSmoothing(const vpImage<unsigned char> &I);
 
   /**
    * \brief Perform edge detection based on the computed gradients.
@@ -876,19 +1104,19 @@ private:
    *
    * \param[in] I The input gray scale image.
    */
-  void edgeDetection(const vpImage<unsigned char> &I);
+  virtual void edgeDetection(const vpImage<unsigned char> &I);
 
   /**
    * \brief Filter the edge map in order to remove isolated edge points.
    */
-  void filterEdgeMap();
+  virtual void filterEdgeMap();
 
   /**
    * \brief Determine the image points that are circle center candidates.
    * Increment the center accumulator based on the edge points and gradient information.
    * Perform thresholding to keep only the center candidates that exceed the threshold.
    */
-  void computeCenterCandidates();
+  virtual void computeCenterCandidates();
 
   /**
    * \brief Compute the probability of \b circle given the number of pixels voting for
@@ -900,7 +1128,7 @@ private:
    * \param[in] nbVotes The number of visible pixels of the given circle.
    * \return float The probability of the circle.
    */
-  float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
+  virtual float computeCircleProbability(const vpImageCircle &circle, const unsigned int &nbVotes);
 
   /**
    * \brief For each center candidate CeC_i, do:
@@ -910,7 +1138,12 @@ private:
    * - If accum_rc[CeC_i][RCB_k] > radius_count_thresh, add the circle candidate (CeC_i, RCB_k)
    *   to the list of circle candidates
    */
-  void computeCircleCandidates();
+  virtual void computeCircleCandidates();
+
+  /**
+   * \brief For each circle candidate CiC_i, check if similar circles have also been detected and if so merges them.
+   */
+  virtual void mergeCircleCandidates();
 
   /**
    * \brief For each circle candidate CiC_i do:
@@ -918,8 +1151,12 @@ private:
    * +- Compute the similarity between CiC_i and CiC_j
    * +- If the similarity exceeds a threshold, merge the circle candidates CiC_i and CiC_j and remove CiC_j of the list
    * - Add the circle candidate CiC_i to the final list of detected circles
+   * \param[out] circleCandidates List of circle candidates in which we want to merge the similar circles.
+   * \param[out] circleCandidatesVotes List of votes of the circle candidates.
+   * \param[out] circleCandidatesProba List of probabilities of the circle candidates.
    */
-  void mergeCircleCandidates();
+  virtual void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
+                       std::vector<float> &circleCandidatesProba);
 
 
   vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
@@ -938,7 +1175,7 @@ private:
 
   // // Center candidates computation attributes
   std::vector<std::pair<unsigned int, unsigned int> > m_edgePointsList;       /*!< Vector that contains the list of edge points, to make faster some parts of the algo. They are stored as pair<#row, #col>.*/
-  std::vector<std::pair<int, int> > m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
+  std::vector<std::pair<float, float> > m_centerCandidatesList; /*!< Vector that contains the list of center candidates. They are stored as pair<#row, #col>.*/
   std::vector<int> m_centerVotes; /*!< Number of votes for the center candidates that are kept.*/
 
   // // Circle candidates computation attributes

@@ -235,7 +235,8 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
 /**
  * \brief Get the interpolation weights and offsets.
  *
- * \param[in] absoluteTheta : The absolute value of the angle of the edge, expressed in degrees.
+ * \param[in] gradientOrientation : The positive value of the angle of the edge, expressed in radians.
+ * Its value is between 0 and M_PIf radians.
  * \param[out] alpha : The weight of the first point used for the interpolation.
  * \param[out] beta : The weight of the second point used for the interpolation.
  * \param[out] dRowGradAlpha : The offset along the row attached to the alpha weight.
@@ -244,45 +245,45 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
  * \param[out] dColGradBeta : The offset along the column attached to the beta weight.
  */
 void
-getInterpolationWeightsAndOffsets(const float &absoluteTheta,
+getInterpolationWeightsAndOffsets(const float &gradientOrientation,
                  float &alpha, float &beta,
                  int &dRowGradAlpha, int &dRowGradBeta,
                  int &dColGradAlpha, int &dColGradBeta
 )
 {
   float thetaMin = 0.f;
-  if (absoluteTheta < 45.f) {
+  if (gradientOrientation < M_PI_4f) {
     // Angles between 0 and 45 deg rely on the horizontal and diagonal points
     dColGradAlpha = 1;
     dColGradBeta = 1;
     dRowGradAlpha = 0;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 45.f && absoluteTheta < 90.f) {
+  else if (gradientOrientation >= M_PI_4f && gradientOrientation < M_PI_2f) {
     // Angles between 45 and 90 deg rely on the diagonal and vertical points
-    thetaMin = 45.f;
+    thetaMin = M_PI_4f;
     dColGradAlpha = 1;
     dColGradBeta = 0;
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 90.f && absoluteTheta < 135.f) {
+  else if (gradientOrientation >= M_PI_2f && gradientOrientation < (3.f * M_PI_4f)) {
     // Angles between 90 and 135 deg rely on the vertical and diagonal points
-    thetaMin = 90.f;
+    thetaMin = M_PI_2f;
     dColGradAlpha = 0;
     dColGradBeta = -1;
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (absoluteTheta >= 135.f && absoluteTheta < 180.f) {
+  else if (gradientOrientation >= (3.f * M_PI_4f) && gradientOrientation < M_PIf) {
     // Angles between 135 and 180 deg rely on the vertical and diagonal points
-    thetaMin = 135.f;
+    thetaMin = 3.f * M_PI_4f;
     dColGradAlpha = -1;
     dColGradBeta = -1;
     dRowGradAlpha = -1;
     dRowGradBeta = 0;
   }
-  beta = (absoluteTheta - thetaMin) / 45.f;
+  beta = (gradientOrientation - thetaMin) / M_PI_4f;
   alpha = 1.f - beta;
 }
 
@@ -314,28 +315,35 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
 }
 
 /**
- * @brief Get the absolute value of the gradient orientation.
+ * @brief Get the gradient orientation, expressed in radians, between 0 and M_PIf radians.
+ * If the gradient orientation is negative, we add M_PI radians in
+ * order to keep the same orientation but in the positive direction.
  *
  * @param dIx : Gradient along the horizontal axis.
  * @param dIy : Gradient along the vertical axis.
  * @param row : Index along the vertical axis.
  * @param col : Index along the horizontal axis.
- * @return float The absolute value of the gradient orientation, expressed in degrees.
+ * @return float The positive value of the gradient orientation, expressed in radians.
  */
 float
-getAbsoluteTheta(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
+getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, const int &row, const int &col)
 {
-  float absoluteTheta = 0.f;
+  float gradientOrientation = 0.f;
   float dx = dIx[row][col];
   float dy = dIy[row][col];
 
   if (std::abs(dx) < std::numeric_limits<float>::epsilon()) {
-    absoluteTheta = 90.f;
+    gradientOrientation = M_PI_2f;
   }
   else {
-    absoluteTheta = static_cast<float>(vpMath::deg(std::abs(std::atan2(dy, dx))));
+    // -dy because the y-axis of the image is oriented towards the bottom of the screen
+    // while we later work with a y-axis oriented towards the top when getting the theta quadrant.
+    gradientOrientation = static_cast<float>(std::atan2(-dy , dx));
+    if(gradientOrientation < 0.f) {
+      gradientOrientation += M_PIf; // + M_PI in order to be between 0 and M_PIf
+    }
   }
-  return absoluteTheta;
+  return gradientOrientation;
 }
 
 void
@@ -358,9 +366,9 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       // depending on the gradient orientation
       int dRowAlphaPlus = 0, dRowBetaPlus = 0;
       int dColAphaPlus = 0, dColBetaPlus = 0;
-      float absTheta = getAbsoluteTheta(m_dIx, m_dIy, row, col);
+      float gradientOrientation = getGradientOrientation(m_dIx, m_dIy, row, col);
       float alpha = 0.f, beta = 0.f;
-      getInterpolationWeightsAndOffsets(absTheta, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
+      getInterpolationWeightsAndOffsets(gradientOrientation, alpha, beta, dRowAlphaPlus, dRowBetaPlus, dColAphaPlus, dColBetaPlus);
       int dRowAlphaMinus = -dRowAlphaPlus, dRowBetaMinus = -dRowBetaPlus;
       int dColAphaMinus = -dColAphaPlus, dColBetaMinus = -dColBetaPlus;
       float gradAlphaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaPlus, col + dColAphaPlus);
