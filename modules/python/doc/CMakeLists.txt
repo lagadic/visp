@@ -1,15 +1,4 @@
-
-
-# configured documentation tools and intermediate build results
-set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
-
-# Sphinx cache with pickled ReST documents
-set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
-
-# HTML output directory
-set(SPHINX_HTML_DIR "${VISP_DOC_DIR}/python")
-
-#############################################################################
+############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
 # Copyright (C) 2005 - 2023 by Inria. All rights reserved.
@@ -44,8 +33,20 @@ set(SPHINX_HTML_DIR "${VISP_DOC_DIR}/python")
 #
 #############################################################################
 
+# configured documentation tools and intermediate build results
+set(BINARY_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}/_build")
+
+# Sphinx cache with pickled ReST documents
+set(SPHINX_CACHE_DIR "${CMAKE_CURRENT_BINARY_DIR}/_doctrees")
+
+# HTML output directory
+set(SPHINX_HTML_DIR "${VISP_DOC_DIR}/python")
+
+set(SPHINX_SOURCE_DIR "${${CMAKE_CURRENT_BINARY_DIR}/_src}")
+
 # Sphinx Template directory
 set(SPHINX_TEMPLATE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/_templates")
+
 
 configure_file(
 	"${CMAKE_CURRENT_SOURCE_DIR}/conf.py.in"
@@ -61,21 +62,55 @@ endforeach()
 
 configure_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/api.rst.in"
-  "${CMAKE_CURRENT_SOURCE_DIR}/api.rst"
+  "${BINARY_BUILD_DIR}/api.rst"
   @ONLY
 )
 
+set(SPHINX_INPUT_SOURCE_DIRS
+  "_static"
+  "rst"
+  "_templates"
+)
+
+set(generated_deps "")
+
+foreach(source_dir ${SPHINX_INPUT_SOURCE_DIRS})
+  set(output_dir "${BINARY_BUILD_DIR}/${source_dir}")
+  add_custom_command(
+    OUTPUT "${output_dir}"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/${source_dir}" "${output_dir}"
+  )
+  list(APPEND generated_deps "${output_dir}")
+endforeach()
+add_custom_command(
+  OUTPUT "${BINARY_BUILD_DIR}/examples"
+  COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/../examples" "${BINARY_BUILD_DIR}/examples"
+)
+list(APPEND generated_deps "${BINARY_BUILD_DIR}/examples")
+
+set(SPHINX_INPUT_SOURCE_FILES
+  "index.rst"
+)
+foreach(source_file ${SPHINX_INPUT_SOURCE_FILES})
+  set(output_file "${BINARY_BUILD_DIR}/${source_file}")
+  add_custom_command(
+    OUTPUT "${output_file}"
+    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${source_file}" "${BINARY_BUILD_DIR}"
+  )
+  list(APPEND generated_deps "${output_file}")
+endforeach()
+
 add_custom_target(visp_python_bindings_doc
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install -q -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
-  COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/_static" "${BINARY_BUILD_DIR}/_static"
 	COMMAND ${PYTHON3_EXECUTABLE} -m sphinx
 		-b html
 		-c "${BINARY_BUILD_DIR}"
 		-d "${SPHINX_CACHE_DIR}"
     -j 8
     -E
-		"${CMAKE_CURRENT_SOURCE_DIR}"
+		"${BINARY_BUILD_DIR}"
 		"${SPHINX_HTML_DIR}"
+  DEPENDS "${generated_deps}"
 	COMMENT "Building Sphinx HTML documentation for ViSP's Python bindings"
 )
 

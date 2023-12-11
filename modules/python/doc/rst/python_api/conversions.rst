@@ -269,6 +269,25 @@ For instance, to build a new matrix
 Numpy-like indexing of ViSP arrays
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+ViSP data types now support numpy-like indexing, and methods like slicing and iterating on values.
+
+To read values, rows and columns of a Matrix, you can use:
+
+.. testcode::
+
+  from visp.core import Matrix
+
+  m = Matrix(2, 3, 1.0)
+  print(m[0, 0])
+  print(m[0]) # First row
+  print(m[:, 0]) # First column
+
+
+.. testoutput::
+
+  1.0
+  [1. 1. 1.]
+  [1. 1.]
 
 
 Using RealSense cameras with ViSP
