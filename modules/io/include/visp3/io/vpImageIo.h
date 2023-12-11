@@ -98,7 +98,8 @@ int main()
 class VISP_EXPORT vpImageIo
 {
 private:
-  typedef enum {
+  typedef enum
+  {
     FORMAT_PGM,
     FORMAT_PPM,
     FORMAT_JPEG,
@@ -118,7 +119,8 @@ private:
 
 public:
   //! Image IO backend for only jpeg and png formats image loading and saving
-  enum vpImageIoBackendType {
+  enum vpImageIoBackendType
+  {
     IO_DEFAULT_BACKEND,    //!< Default backend
     IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg
     IO_OPENCV_BACKEND,     //!< Use OpenCV
@@ -172,12 +174,18 @@ public:
 
   static void writeEXR(const vpImage<float> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
-  
+
   // not working with Java bindings generator
   // static void writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, char *buffer);
   // error: cannot bind non-const lvalue reference of type ‘int&’ to an rvalue of type ‘jint’ {aka ‘int’}
   // need to disable Java when building the library
-  static void readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I);
-  static void writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer);
+  // static void readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I,
+  //     int backend = IO_DEFAULT_BACKEND);
+  // static void writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer,
+  //     int backend = IO_DEFAULT_BACKEND);
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I,
+      int backend = IO_DEFAULT_BACKEND);
+  static void writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND);
 };
 #endif

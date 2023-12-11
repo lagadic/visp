@@ -134,17 +134,24 @@ static void custom_stbi_write_mem(void *context, void *data, int size)
 }
 }
 
-void vp_readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I)
+/*!
+  Read the content of the image bitmap stored in memory and encoded using the PNG format.
+
+  \param buffer : Grayscale image buffer or 1D vector of unsigned char data.
+  \param lastPos : Size of the grayscale image buffer.
+  \param I : Output decoded grayscale image.
+*/
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
 {
   int x = 0, y = 0, comp = 0;
   const int req_channels = 1;
-  unsigned char *buffer_read = stbi_load_from_memory(buffer, last_pos, &x, &y, &comp, req_channels);
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
 
   I = vpImage<unsigned char>(buffer_read, y, x, true);
   delete[] buffer_read;
 }
 
-void vp_writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer)
+void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
 {
   const int height = I.getRows();
   const int width = I.getCols();
@@ -152,13 +159,14 @@ void vp_writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned c
 
   custom_stbi_mem_context context;
   context.last_pos = 0;
-  context.context = (void *)buffer;
+  buffer.resize(I.getHeight() * I.getWidth());
+  context.context = (void *)buffer.data();
 
   const int stride_bytes = 0;
   int result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, I.bitmap, stride_bytes);
 
   if (result) {
-    last_pos = context.last_pos;
+    buffer.resize(context.last_pos);
   }
   else {
     std::string message = "Cannot write png to memory, result: " + std::to_string(result);

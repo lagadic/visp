@@ -167,6 +167,20 @@ void readOpenCV(vpImage<vpRGBf> &I, const std::string &filename)
 }
 
 /*!
+  Read the content of the image bitmap stored in memory and encoded using the PNG format.
+
+  \param buffer : Grayscale image buffer / 1D vector of unsigned char data.
+  \param I : Output decoded grayscale image.
+*/
+void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
+{
+  cv::Mat1b buf(buffer.size(), 1, const_cast<unsigned char *>(buffer.data()));
+  cv::Mat1b img = cv::imdecode(buf, cv::IMREAD_GRAYSCALE);
+  I.resize(img.rows, img.cols);
+  std::copy(img.begin(), img.end(), I.bitmap);
+}
+
+/*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
 
@@ -216,6 +230,21 @@ void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename)
   vpImageConvert::convert(I, Ip);
 
   cv::imwrite(filename.c_str(), Ip);
+}
+
+void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
+{
+  cv::Mat1b img(I.getRows(), I.getCols(), I.bitmap);
+  std::vector<unsigned char> buf;
+  bool result = cv::imencode(".png", img, buf);
+
+  if (result) {
+    buffer = buf;
+  }
+  else {
+    std::string message = "Cannot write png to memory";
+    throw(vpImageException(vpImageException::ioError, message));
+  }
 }
 
 #endif

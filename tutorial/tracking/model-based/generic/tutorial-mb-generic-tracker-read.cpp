@@ -18,8 +18,16 @@ std::string toString(const std::string &name, int val)
 }
 }
 
-int main(int /*argc*/, char **/*argv*/)
+int main(int argc, char **argv)
 {
+  bool opencv_backend = false;
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--cv-backend") {
+      opencv_backend = true;
+    }
+  }
+  std::cout << "OpenCV backend? " << opencv_backend << std::endl;
+
   const std::string npz_filename = "npz_tracking_teabox.npz";
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
 
@@ -55,20 +63,29 @@ int main(int /*argc*/, char **/*argv*/)
 
   // Load all the images data
   visp::cnpy::NpyArray arr_vec_img_data_size = npz_data["vec_img_data_size"];
-  int* vec_img_data_size_ptr = arr_vec_img_data_size.data<int>();
+  int *vec_img_data_size_ptr = arr_vec_img_data_size.data<int>();
   visp::cnpy::NpyArray arr_vec_img = npz_data["vec_img"];
-  unsigned char* vec_img_ptr = arr_vec_img.data<unsigned char>();
+  unsigned char *vec_img_ptr = arr_vec_img.data<unsigned char>();
+  std::vector<unsigned char> vec_img;
   size_t img_data_offset = 0;
 
   // Load all the poses
   visp::cnpy::NpyArray arr_vec_poses = npz_data["vec_poses"];
-  double* vec_poses_ptr = arr_vec_poses.data<double>();
+  double *vec_poses_ptr = arr_vec_poses.data<double>();
   assert(arr_vec_poses.shape.size() == 2);
   assert(arr_vec_poses.shape[1] == 6);
   size_t pose_size = arr_vec_poses.shape[1];
 
   for (int iter = 0; iter < nb_data; iter++) {
-    vpImageIo::readPNGfromMem(vec_img_ptr + img_data_offset, vec_img_data_size_ptr[iter], I);
+    // std::copy(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter],
+    //     std::back_inserter(vec_img));
+    vec_img = std::vector<unsigned char>(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter]);
+    if (opencv_backend) {
+      vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_OPENCV_BACKEND);
+    }
+    else {
+      vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_STB_IMAGE_BACKEND);
+    }
     img_data_offset += vec_img_data_size_ptr[iter];
     vpImageConvert::convert(I, I_display);
 
@@ -96,7 +113,7 @@ int main(int /*argc*/, char **/*argv*/)
     vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[pose_size*iter + 3], vec_poses_ptr[pose_size*iter + 4], vec_poses_ptr[pose_size*iter + 5]),
       vpThetaUVector(vec_poses_ptr[pose_size*iter], vec_poses_ptr[pose_size*iter + 1], vec_poses_ptr[pose_size*iter + 2])
     );
-    std::cout << "\ncMo:\n" << cMo << std::endl;
+    // std::cout << "\ncMo:\n" << cMo << std::endl;
 
     vpDisplay::display(I_display);
     vpDisplay::displayFrame(I_display, cMo, cam, 0.025, vpColor::none, 3);

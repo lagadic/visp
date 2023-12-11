@@ -85,6 +85,9 @@ void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int qual
 void writeOpenCV(const vpImage<float> &I, const std::string &filename);
 void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename);
 
+void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I);
+void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer);
+
 // Simd lib
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename);
 void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
@@ -109,8 +112,8 @@ void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename, int qua
 void writePNGStb(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename);
 
-void vp_readPNGfromMem(const unsigned char *buffer, int last_pos, vpImage<unsigned char> &I);
-void vp_writePNGtoMem(const vpImage<unsigned char> &I, int &last_pos, unsigned char *buffer);
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I);
+void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer);
 
 // TinyEXR lib
 void writeEXRTiny(const vpImage<float> &I, const std::string &filename);

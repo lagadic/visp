@@ -27,8 +27,16 @@ std::string toString(const std::string &name, int val)
 }
 }
 
-int main(int /*argc*/, char **/*argv*/)
+int main(int argc, char **argv)
 {
+  bool opencv_backend = false;
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--cv-backend") {
+      opencv_backend = true;
+    }
+  }
+  std::cout << "OpenCV backend? " << opencv_backend << std::endl;
+
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
 
@@ -65,7 +73,7 @@ int main(int /*argc*/, char **/*argv*/)
   const int channel = 1;
 
   std::vector<unsigned char> img_buffer;
-  img_buffer.resize(height * width * channel);
+  // img_buffer.resize(height * width * channel);
 
   const std::string npz_filename = "npz_tracking_teabox.npz";
   const std::string camera_name = "Camera";
@@ -95,12 +103,16 @@ int main(int /*argc*/, char **/*argv*/)
     g.acquire(I);
     tracker.track(I);
     tracker.getPose(cMo);
-    std::cout << "\ncMo:\n" << cMo << std::endl;
+    // std::cout << "\ncMo:\n" << cMo << std::endl;
 
-    int last_pos = 0;
-    vpImageIo::writePNGtoMem(I, last_pos, img_buffer.data());
-    vec_img_data_size.push_back(last_pos);
-    vec_img_data.insert(vec_img_data.end(), img_buffer.data(), img_buffer.data() + last_pos);
+    if (opencv_backend) {
+      vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_OPENCV_BACKEND);
+    }
+    else {
+      vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND);
+    }
+    vec_img_data_size.push_back(img_buffer.size());
+    vec_img_data.insert(vec_img_data.end(), img_buffer.begin(), img_buffer.end());
 
     std::vector<double> vec_pose = poseToVec(cMo);
     vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
@@ -135,10 +147,16 @@ int main(int /*argc*/, char **/*argv*/)
     iter++;
   }
 
-  visp::cnpy::npz_save(npz_filename, "vec_img_data_size", &vec_img_data_size[0], { vec_img_data_size.size() }, "a");
-  visp::cnpy::npz_save(npz_filename, "vec_img", &vec_img_data[0], { vec_img_data.size() }, "a");
+  // visp::cnpy::npz_save(npz_filename, "vec_img_data_size", &vec_img_data_size[0], { vec_img_data_size.size() }, "a");
+  // visp::cnpy::npz_save(npz_filename, "vec_img", &vec_img_data[0], { vec_img_data.size() }, "a");
+  // std::cout << "vec_img_data.size()=" << vec_img_data.size() << std::endl;
+  // // Show how to save a "multidimensional" array
+  // visp::cnpy::npz_save(npz_filename, "vec_poses", &vec_poses[0], { static_cast<size_t>(iter), 6 }, "a");
+
+  visp::cnpy::npz_save(npz_filename, "vec_img_data_size", vec_img_data_size.data(), { vec_img_data_size.size() }, "a");
+  visp::cnpy::npz_save(npz_filename, "vec_img", vec_img_data.data(), { vec_img_data.size() }, "a");
   // Show how to save a "multidimensional" array
-  visp::cnpy::npz_save(npz_filename, "vec_poses", &vec_poses[0], { static_cast<size_t>(iter), 6 }, "a");
+  visp::cnpy::npz_save(npz_filename, "vec_poses", vec_poses.data(), { static_cast<size_t>(iter), 6 }, "a");
 
   visp::cnpy::npz_save(npz_filename, "nb_data", &iter, { 1 }, "a");
 
