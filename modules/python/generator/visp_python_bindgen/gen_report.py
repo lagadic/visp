@@ -51,6 +51,8 @@ class Report(object):
     self.submodule_name = submodule.name
     self.result = {
       'ignored_headers': [],
+      'returns_ref': [],
+      'holds_pointer_or_ref': [],
       'classes': {},
       'methods': {},
       'default_param_policy_methods': [],
@@ -102,6 +104,24 @@ class Report(object):
       'possible_fixes': proposed_help
     }
     self.result['default_param_policy_methods'].append(report_dict)
+  def add_method_returning_ref(self, cls_name: str, method: types.Method, signature: str) -> None:
+    proposed_help = [
+      {
+        'static': method.static,
+        'signature': signature,
+        'return_policy': 'reference',
+        'keep_alive': [[1, 0]],
+        'returns_ref_ok': True
+      },
+    ]
+    report_dict = {
+      'reason': 'Method returns a reference: this can lead to memory leaks or unwarranted copies. Ensure that keep_alive and return_policy are correctly set. If ok, set return_ref_ok to True',
+      'signature': signature,
+      'static': method.static,
+      'class': cls_name,
+      'possible_fixes': proposed_help
+    }
+    self.result['returns_ref'].append(report_dict)
 
   def write(self, path: Path) -> None:
     print('=' * 50)
@@ -109,8 +129,9 @@ class Report(object):
     stats = [
       f'Ignored headers: {len(self.result["ignored_headers"])}',
       f'Ignored classes: {len(self.result["classes"].keys())}',
-      f'Not generated methods: {len(self.result["methods"].keys())}',
-      f'Method with default parameter policy: {len(self.result["default_param_policy_methods"])}',
+      f'Ignored methods: {len(self.result["methods"].keys())}',
+      f'Methods with default parameter policy: {len(self.result["default_param_policy_methods"])}',
+      f'Methods returning a reference: {len(self.result["returns_ref"])}',
     ]
     print('\n\t', '\n\t'.join(stats), '\n', sep='')
     with open(path, 'w') as report_file:

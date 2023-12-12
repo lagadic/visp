@@ -174,6 +174,7 @@ options.disable_enum_members_docstring();
       header_names = self.config['user_defined_headers']
       return [f'#include "{header_name}"' for header_name in header_names]
     return []
+
   def get_required_headers(self) -> List[str]:
     if 'required_headers' in self.config:
       header_names = self.config['required_headers']
@@ -210,11 +211,14 @@ options.disable_enum_members_docstring();
   def get_method_config(self, class_name: Optional[str], method, owner_specs, header_mapping) -> Dict:
     res = {
       'ignore': False,
-      'use_default_param_policy': False,
+      'use_default_param_policy': False, # Handling
       'param_is_input': None,
       'param_is_output': None,
       'custom_name': None,
-      'custom_code': None
+      'custom_code': None,
+      'keep_alive': None,
+      'return_policy': None,
+      'returns_ref_ok': False,
     }
     functions_container = None
     keys = ['classes', class_name, 'methods'] if class_name is not None else ['functions']

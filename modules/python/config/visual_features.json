@@ -1,5 +1,7 @@
 {
-  "ignored_headers": ["vpFeatureException.h"],
+  "ignored_headers": [
+    "vpFeatureException.h"
+  ],
   "classes": {
     "vpGenericFeature": {
       "methods": [
@@ -20,8 +22,66 @@
         }
       ]
     },
-    "vpFeatureMomentDatabase": {
+    "vpFeatureMomentDatabase": {},
+    "vpFeatureMomentCommon": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpFeatureMomentAlpha& getFeatureAlpha()",
+          "return_policy": "reference",
+          "keep_alive": [1, 0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentAreaNormalized& getFeatureAn()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentBasic& getFeatureMomentBasic()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentCentered& getFeatureCentered()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentCInvariant& getFeatureCInvariant()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentGravityCenterNormalized& getFeatureGravityNormalized()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentArea& getFeatureArea()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        },
+        {
+          "static": false,
+          "signature": "vpFeatureMomentGravityCenter& getFeatureGravityCenter()",
+          "return_policy": "reference",
+          "keep_alive": [1,0],
+          "returns_ref_ok": true
+        }
+      ]
     }
-
   }
 }
