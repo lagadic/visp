@@ -267,7 +267,7 @@ For instance, to build a new matrix
   A way to build a ViSP object as a view of a NumPy array is still lacking
 
 Numpy-like indexing of ViSP arrays
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 ViSP data types now support numpy-like indexing, and methods like slicing and iterating on values.
 

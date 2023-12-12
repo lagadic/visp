@@ -1,7 +1,7 @@
 .. _Development guide:
 
 Modifying and contributing to the bindings
-====================
+============================================
 
 .. toctree::
     :glob:

@@ -74,19 +74,37 @@ set(SPHINX_INPUT_SOURCE_DIRS
 
 set(generated_deps "")
 
+# Copy all the source subdirectories: we're building in the cmake build folder, not in the cmake folder
 foreach(source_dir ${SPHINX_INPUT_SOURCE_DIRS})
   set(output_dir "${BINARY_BUILD_DIR}/${source_dir}")
-  add_custom_command(
-    OUTPUT "${output_dir}"
-    COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/${source_dir}" "${output_dir}"
-  )
-  list(APPEND generated_deps "${output_dir}")
+  set(input_dir "${CMAKE_CURRENT_SOURCE_DIR}/${source_dir}")
+  file(GLOB_RECURSE files RELATIVE "${input_dir}" "${input_dir}/*")
+  foreach(f ${files})
+    add_custom_command(
+        OUTPUT "${output_dir}/${f}"
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
+        MAIN_DEPENDENCY "${input_dir}/${f}"
+        COMMENT "Copying ${f}")
+    list(APPEND generated_deps "${input_dir}/${f}" "${output_dir}/${f}")
+  endforeach()
 endforeach()
-add_custom_command(
-  OUTPUT "${BINARY_BUILD_DIR}/examples"
-  COMMAND ${CMAKE_COMMAND} -E copy_directory "${CMAKE_CURRENT_SOURCE_DIR}/../examples" "${BINARY_BUILD_DIR}/examples"
-)
-list(APPEND generated_deps "${BINARY_BUILD_DIR}/examples")
+
+set(output_dir "${BINARY_BUILD_DIR}/examples")
+set(input_dir "${CMAKE_CURRENT_SOURCE_DIR}/../examples")
+file(GLOB_RECURSE files RELATIVE "${input_dir}" "${input_dir}/*")
+foreach(f ${files})
+  add_custom_command(
+      OUTPUT "${output_dir}/${f}"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
+      MAIN_DEPENDENCY "${input_dir}/${f}"
+      COMMENT "Copying ${f}")
+  list(APPEND generated_deps "${input_dir}/${f}" "${output_dir}/${f}")
+endforeach()
+
+
+message("${generated_deps}")
+
+
 
 set(SPHINX_INPUT_SOURCE_FILES
   "index.rst"
@@ -95,7 +113,7 @@ foreach(source_file ${SPHINX_INPUT_SOURCE_FILES})
   set(output_file "${BINARY_BUILD_DIR}/${source_file}")
   add_custom_command(
     OUTPUT "${output_file}"
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${source_file}" "${BINARY_BUILD_DIR}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${CMAKE_CURRENT_SOURCE_DIR}/${source_file}" "${BINARY_BUILD_DIR}"
   )
   list(APPEND generated_deps "${output_file}")
 endforeach()
@@ -110,8 +128,8 @@ add_custom_target(visp_python_bindings_doc
     -E
 		"${BINARY_BUILD_DIR}"
 		"${SPHINX_HTML_DIR}"
-  DEPENDS "${generated_deps}"
+  DEPENDS ${generated_deps}
 	COMMENT "Building Sphinx HTML documentation for ViSP's Python bindings"
 )
 
-add_dependencies(visp_python_bindings_doc visp_python_bindings_install)
+add_dependencies(visp_python_bindings_doc visp_python_bindings)

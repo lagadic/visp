@@ -115,16 +115,17 @@ add_subdirectory(bindings)
 # Step 4: Copy stubs dir and install stubs for autocompletion
 add_subdirectory(stubs)
 
-# Step 5: Build documentation
-if(BUILD_PYTHON_BINDINGS_DOC)
-  add_subdirectory(doc)
-endif()
-
 # Global target: compile and install the Python bindings
 add_custom_target(
   visp_python_bindings
   DEPENDS visp_python_bindings_stubs
 )
+
+# Step 5: Build documentation
+if(BUILD_PYTHON_BINDINGS_DOC)
+  add_subdirectory(doc)
+endif()
+
 
 # Export Variables to parent cmake
 set(VISP_PYTHON_BOUND_MODULES "")

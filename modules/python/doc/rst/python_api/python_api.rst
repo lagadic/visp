@@ -1,7 +1,7 @@
 .. _Python API guide:
 
 Python specific features and help
-====================
+==================================
 
 .. toctree::
     :glob:
