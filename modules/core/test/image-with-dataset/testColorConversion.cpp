@@ -964,7 +964,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("BGGR")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
       readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
@@ -995,7 +995,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("GBRG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
       readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
@@ -1026,7 +1026,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("GRBG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
       readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
@@ -1057,7 +1057,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("RGGB")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
       readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
@@ -1095,7 +1095,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("BGGR")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
 
       std::FILE *f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
@@ -1128,7 +1128,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("GBRG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
 
       std::FILE *f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
@@ -1161,7 +1161,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("GRBG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
 
       std::FILE *f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
@@ -1194,7 +1194,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("RGGB")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
 
       std::FILE *f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);

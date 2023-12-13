@@ -41,6 +41,8 @@
 
 #include <visp3/core/vpImage.h>
 
+#if defined(VISP_HAVE_SIMDLIB)
+
 /*!
   \class vpGaussianFilter
 
@@ -68,4 +70,5 @@ private:
   Impl *m_impl;
 };
 
+#endif
 #endif

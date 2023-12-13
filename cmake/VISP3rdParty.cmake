@@ -64,11 +64,12 @@ set(PUGIXML_INCLUDE_DIRS "${${PUGIXML_LIBRARY}_SOURCE_DIR}" "${${PUGIXML_LIBRARY
 set(PUGIXML_LIBRARIES ${PUGIXML_LIBRARY})
 set(PUGIXML_VERSION ${PUGIXML_MAJOR_VERSION}.${PUGIXML_MINOR_VERSION}.${PUGIXML_PATCH_VERSION})
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-set(SIMD_LIBRARY visp_simdlib)
-add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/simdlib")
-set(SIMDLIB_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/simdlib")
-set(SIMDLIB_LIBRARIES ${SIMD_LIBRARY})
+if(WITH_SIMDLIB)
+  set(SIMD_LIBRARY visp_simdlib)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/simdlib")
+  set(SIMDLIB_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/simdlib")
+  set(SIMDLIB_LIBRARIES ${SIMD_LIBRARY})
+endif()
 
 # stb is always enabled
 set(STBIMAGE_LIBRARY visp_stbimage)

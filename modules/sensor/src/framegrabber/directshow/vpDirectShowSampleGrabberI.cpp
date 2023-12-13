@@ -94,7 +94,7 @@ STDMETHODIMP vpDirectShowSampleGrabberI::BufferCB(double Time, BYTE *pBuffer, lo
       BITMAPINFOHEADER bmpInfo = pVih->bmiHeader;
 
       // if biHeight > 0 and the source is not special
-      // then  the image needs to be verticaly flipped
+      // then  the image needs to be vertically flipped
       bool flip;
       if (!specialMediaType)
         flip = bmpInfo.biHeight >= 0;

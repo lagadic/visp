@@ -56,9 +56,12 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backends
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
-      vpImageIo::IO_OPENCV_BACKEND,
+  vpImageIo::IO_OPENCV_BACKEND,
 #endif
-      vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
+#if defined VISP_HAVE_SIMDLIB
+  vpImageIo::IO_SIMDLIB_BACKEND,
+#endif
+  vpImageIo::IO_STB_IMAGE_BACKEND
 };
 static const std::vector<std::string> backendNamesJpeg
 {
@@ -209,7 +212,7 @@ TEST_CASE("Test grayscale JPEG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -235,7 +238,7 @@ TEST_CASE("Test RGBA JPEG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -261,7 +264,7 @@ TEST_CASE("Test grayscale PNG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -287,7 +290,7 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 

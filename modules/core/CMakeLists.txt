@@ -39,6 +39,9 @@
 set(opt_incs "")
 set(opt_libs "")
 
+# Add private libraries
+set(PRIVATE_LIBRARIES ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES})
+
 # Add library ws2_32.a or ws2_32.lib for vpNetwork class
 if(WS2_32_FOUND)
   list(APPEND opt_libs ${WS2_32_LIBRARY})
@@ -265,9 +268,11 @@ if(WITH_CATCH2)
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND PRIVATE_LIBRARIES ${SIMDLIB_LIBRARIES})
+endif()
 
 if(MSVC)
   # Disable Visual C++ C4996 warning
@@ -369,7 +374,7 @@ if(USE_XML2)
   endif()
 endif()
 
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
+vp_add_module(core PRIVATE_OPTIONAL ${PRIVATE_LIBRARIES} WRAP java)
 
 #-----------------------------------------------------------------------------
 # Enable large file support
