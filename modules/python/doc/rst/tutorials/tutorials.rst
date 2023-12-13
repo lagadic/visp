@@ -1,11 +1,25 @@
-.. _Tutorials:
+.. _Examples:
 
-Tutorials
+Examples
 ====================
+
+
+Visual servoing
+-----------------------
 
 .. toctree::
     :glob:
     :maxdepth: 2
 
-    ibvs.rst
-    pbvs.rst
+    vs/*
+
+
+
+Tracking
+-----------------------
+
+.. toctree::
+    :glob:
+    :maxdepth: 2
+
+    tracking/*

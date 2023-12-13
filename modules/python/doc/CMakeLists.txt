@@ -81,10 +81,10 @@ foreach(source_dir ${SPHINX_INPUT_SOURCE_DIRS})
   file(GLOB_RECURSE files RELATIVE "${input_dir}" "${input_dir}/*")
   foreach(f ${files})
     add_custom_command(
-        OUTPUT "${output_dir}/${f}"
-        COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
-        MAIN_DEPENDENCY "${input_dir}/${f}"
-        COMMENT "Copying ${f}")
+      OUTPUT "${output_dir}/${f}"
+      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
+      MAIN_DEPENDENCY "${input_dir}/${f}"
+    )
     list(APPEND generated_deps "${input_dir}/${f}" "${output_dir}/${f}")
   endforeach()
 endforeach()
@@ -94,16 +94,12 @@ set(input_dir "${CMAKE_CURRENT_SOURCE_DIR}/../examples")
 file(GLOB_RECURSE files RELATIVE "${input_dir}" "${input_dir}/*")
 foreach(f ${files})
   add_custom_command(
-      OUTPUT "${output_dir}/${f}"
-      COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
-      MAIN_DEPENDENCY "${input_dir}/${f}"
-      COMMENT "Copying ${f}")
+    OUTPUT "${output_dir}/${f}"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "${input_dir}/${f}" "${output_dir}/${f}"
+    MAIN_DEPENDENCY "${input_dir}/${f}"
+  )
   list(APPEND generated_deps "${input_dir}/${f}" "${output_dir}/${f}")
 endforeach()
-
-
-message("${generated_deps}")
-
 
 
 set(SPHINX_INPUT_SOURCE_FILES

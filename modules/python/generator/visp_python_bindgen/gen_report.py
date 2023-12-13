@@ -123,12 +123,27 @@ class Report(object):
     }
     self.result['returns_ref'].append(report_dict)
 
+  def add_pointer_or_ref_holder(self, cls_name: str, fieldnames: List[str]) -> None:
+    proposed_help = [
+      {
+        'acknowledge_pointer_or_ref_fields': fieldnames
+      },
+    ]
+    report_dict = {
+      'reason': 'This class stores a pointer or a raw reference, when interfaced with python, methods that return this reference or pointer lead to double frees or memory leaks',
+      'class': cls_name,
+      'possible_fixes': proposed_help
+    }
+    self.result['holds_pointer_or_ref'].append(report_dict)
+
   def write(self, path: Path) -> None:
     print('=' * 50)
     print(f'Statistics for module {self.submodule_name}:')
     stats = [
       f'Ignored headers: {len(self.result["ignored_headers"])}',
       f'Ignored classes: {len(self.result["classes"].keys())}',
+      f'Unacknowledged pointer/ref holders: {len(self.result["holds_pointer_or_ref"])}',
+
       f'Ignored methods: {len(self.result["methods"].keys())}',
       f'Methods with default parameter policy: {len(self.result["default_param_policy_methods"])}',
       f'Methods returning a reference: {len(self.result["returns_ref"])}',

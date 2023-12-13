@@ -39,6 +39,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include <sstream>
 
 namespace
 {
@@ -120,6 +121,19 @@ Construct an image by **copying** a 2D numpy array.
 )doc", py::arg("np_array"));
 
   define_get_item_2d_image<T, T>(pyImage);
+
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
+
 }
 
 template<typename T>
@@ -153,6 +167,18 @@ where the 4 denotes the red, green, blue and alpha components of the image.
 )doc", py::arg("np_array"));
   define_get_item_2d_image<T, NpRep>(pyImage);
 
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<RGBa Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
+
 }
 template<typename T>
 typename std::enable_if<std::is_same<vpRGBf, T>::value, void>::type
@@ -185,6 +211,18 @@ where the 3 denotes the red, green and blue components of the image.
 
 )doc", py::arg("np_array"));
   define_get_item_2d_image<T, NpRep>(pyImage);
+
+  pyImage.def("__repr__", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << "<RGBf Image (" << self.getHeight() << ", " << self.getWidth() << ")>";
+    return ss.str();
+  });
+
+  pyImage.def("_visp_repr", [](const vpImage<T> &self) -> std::string {
+    std::stringstream ss;
+    ss << self;
+    return ss.str();
+  }, R"doc(Get the full ViSP image string representation.)doc");
 }
 
 #endif

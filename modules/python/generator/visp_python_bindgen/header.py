@@ -513,10 +513,21 @@ class HeaderFile():
     logging.info(f'Parsing class "{name_cpp_no_template}"')
 
     if self.submodule.class_should_be_ignored(name_cpp_no_template):
-      self.submodule.report.add_non_generated_class(name_cpp_no_template, {}, 'Skipped by user')
       return ''
 
     cls_config = self.submodule.get_class_config(name_cpp_no_template)
+
+    # Warning for potential double frees
+    acknowledged_pointer_fields = cls_config.get('acknowledge_pointer_or_ref_fields') or []
+    refs_or_ptr_fields = list(filter(lambda tn: '&' in tn or '*' in tn,
+                                map(lambda field: get_type(field.type, {}, header_env.mapping),
+                                    cls.fields)))
+
+    # If some pointer or refs are not acknowledged as existing by user, emit a warning
+    if len(set(refs_or_ptr_fields).difference(set(acknowledged_pointer_fields))) > 0:
+      self.submodule.report.add_pointer_or_ref_holder(name_cpp_no_template, refs_or_ptr_fields)
+
+
     if cls.class_decl.template is None:
       name_python = name_cpp_no_template.replace('vp', '')
       return generate_class_with_potiental_specialization(name_python, {}, cls_config)

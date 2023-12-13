@@ -163,6 +163,9 @@ def get_typename(typename: types.PQName, owner_specs, header_env_mapping) -> str
   def segment_repr(segment: types.PQNameSegment) -> str:
     if isinstance(segment, types.FundamentalSpecifier):
       return segment.name
+    if isinstance(segment, types.AutoSpecifier):
+      return segment.name
+
     segment_name = segment.name
     if segment.name in owner_specs:
       segment_name = owner_specs[segment.name]

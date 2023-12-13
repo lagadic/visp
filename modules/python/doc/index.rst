@@ -70,7 +70,7 @@ If you are transitioning from C++, please have a look at the :ref:`CPP guide` to
 
 For general ViSP + Python guidance, see the :ref:`Python API guide`.
 
-For tutorials on specific features: see :ref:`Tutorials`.
+For tutorials and examples of specific features: see :ref:`Examples`.
 
 Finally, if you wish to browse the full ViSP class documentation, go to the :ref:`API reference`.
 

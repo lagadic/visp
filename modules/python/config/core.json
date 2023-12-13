@@ -56,6 +56,7 @@
       ]
     },
     "vpImage": {
+      "ignore_repr": true,
       "additional_bindings": "bindings_vpImage",
       "use_buffer_protocol": true,
       "specializations": [
@@ -147,7 +148,6 @@
       "use_buffer_protocol": true,
       "methods":
       [
-
         {
 
           "static": true,
