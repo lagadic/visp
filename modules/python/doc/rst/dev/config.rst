@@ -186,4 +186,103 @@ If a class does not appear in the configuration dictionary, it takes on the defa
 
 .. _Function options:
 Function-level options
-^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: json
+  {
+    "signature": "vpImage<Type>& fn(vpImage<vpRGBa>&, Type, double&)",
+    "static": false,
+    "ignore": false,
+    "use_default_param_policy": false,
+    "param_is_input": [true, true, false],
+    "param_is_output": [false, true, true],
+    "return_policy": "reference",
+    "keep_alive": [1, 0],
+    "returns_ref_ok": true,
+    "specializations":
+    [
+      ["unsigned char"],
+      ["vpRGBa"]
+    ],
+    "custom_name": "function_name"
+  }
+
+.. list-table:: Parameters
+   :header-rows: 1
+
+   * - Name
+     - Type
+     - Explanation
+   * - :code:`signature`
+     - String
+     - Signature of the function for which the functions apply.
+
+       * Signature does not include the name of the parameters
+       * The templated types should not be replaced with specializations.
+       * Spaces are stripped when matching with parsed signatures
+       * Signature does not include the *;*
+
+   * - :code:`static`
+     - Boolean
+     - Whether this function is static. In the case of free functions (not related to a class), it should be false.
+   * - :code:`ignore`
+     - Boolean
+     - Whether the binding for this method should be skipped. Defaults to false.
+
+       .. note::
+
+          If you provide an alternative to this function through custom bindings,
+          you should set this to true so that the default is ignored or no warning is emitted
+
+   * - :code:`use_default_param_policy`
+     - Boolean
+     - Whether to use the default parameter policy. With this policy,
+       non-const references (**&**) to types that are immutable in Python (including STL containers)
+       are considered as both inputs and outputs. Defaults to false.
+       If true, no warning is emitted in the logs about parameter policy
+
+       .. note::
+
+          This is required since we do not know whether
+          the references are used as inputs or outputs (or both) of the function.
+
+       When a parameter is an output, it is either returned (it is the only output) or it is aggregated to a result tuple.
+
+
+   * - :code:`param_is_input`
+     - List of booleans
+     - For a function with n arguments, a list of n booleans. at index i, describes whether the i-eth parameter is an input.
+       If false, a default value is created.
+       Requires that the type is default constructible.
+
+       .. warning::
+
+          The basic types (int, double, etc.) are left uninitialized.
+
+   * - :code:`param_is_output`
+     - List of booleans
+     - For a function with n arguments, a list of n booleans. at index i, describes whether the i-eth parameter is an output.
+       if true it is added to the return tuple.
+   * - :code:`return_policy`
+     - String
+     - How C++ returns the type to Python. If there are issues about unwanted copies or memory freeing, configure this.
+       See `The Pybind documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#return-value-policies>`_
+   * - :code:`keep_alive`
+     - 2-tuple of ints or List of 2-tuples
+     - Dictates the lifetime of arguments and return types.
+       Each tuple indicates that the second argument should be kept alive until the first argument is deleted.
+       0 indicates the return value, 1 indicates self.
+       See `The pybind documentation <https://pybind11.readthedocs.io/en/stable/advanced/functions.html#keep-alive>`_
+   * - :code:`returns_ref_ok`
+     - Boolean
+     - If this function returns a ref, mark it as ok or not. Returning a ref may lead to double frees or copy depending on return policy.
+       Make sure that :code:`keep_alive` and :code:`return_policy` are correctly set if you get a warning in the log, then set this to true to ignore the warning.
+   * - :code:`specializations`
+     - List of list of strings
+     - Each list of string denotes a specialization, for a templated function. For each specialization,
+       each string is a typename that is used to instanciate the template.
+       The typenames should be in the same order ar the template specification of the function.
+       If there are multiple specializations, the function will be overloaded.
+   * - :code:`custom_name`
+     - String
+     - Rename this function to another name. Especially useful in the case of both static and member functions having the same name, which is forbidden by Pybind11.
