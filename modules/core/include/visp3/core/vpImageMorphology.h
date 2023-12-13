@@ -91,15 +91,15 @@ private:
 
   /**
    * \brief Modify the image by applying the \b operation on each of its elements on a \b size x \b size
-   * grid. The connexity that is used is a 8-connexity.
+   * grid.
    *
    * \tparam T Any type such as double, unsigned char ...
    * \param[out] I The image we want to modify.
-   * \param[in] size The size of the window with which we want to work.
-   * \param[in] operation The operation to apply to its elements.
+   * \param[in] operation The operation to apply to its elements on a the grid.
+   * \param[in] size Size of the kernel of the operation.
    */
   template <typename T>
-  static void imageOperation(vpImage<T> &I, const int &size, const T &(*operation)(const T &, const T &));
+  static void imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size = 3);
 
 public:
   template <class Type>
@@ -408,19 +408,11 @@ void vpImageMorphology::dilatation(vpImage<T> &I, const vpConnexityType &connexi
   vpImageMorphology::imageOperation(I, std::numeric_limits<T>::min(), operation, connexity);
 }
 
-/**
- * \brief Dilatation of \b size >=3 with 8-connectivity.
- *
- * \tparam T Any type of image, except vpRGBa .
- * \param[out] I The image to which the dilatation must be applied, where the dilatation corresponds
- * to a max operator on a window of size \b size.
- * \param[in] size The size of the window on which is performed the max operator for each pixel.
- */
 template<typename T>
-void vpImageMorphology::imageOperation(vpImage<T> &I, const int &size, const T &(*operation)(const T &, const T &))
+void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(const T &, const T &), const int &size)
 {
   if (size % 2 != 1) {
-    throw(vpException(vpException::badValue, "Dilatation kernel must be odd."));
+    throw(vpException(vpException::badValue, "Dilatation/erosion kernel must be odd."));
   }
 
   const int width_in = I.getWidth();
@@ -458,6 +450,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const int &size, const T &
 }
 
 /*!
+ * \brief Erosion of \b size >=3 with 8-connectivity.
   Erode an image using the given structuring element.
 
   The erosion of \f$ A \left( x, y \right) \f$ by \f$ B \left (x, y
@@ -475,8 +468,10 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const int &size, const T &
   \left ( x+x', y+y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
   \f]
 
-  \param I : Image to process.
-  \param size : The size of the kernel
+ * \tparam T Any type of image, except vpRGBa .
+ * \param[out] I The image to which the erosion must be applied, where the erosion corresponds
+ * to a min operator on a window of size \b size.
+ * \param[in] size The size of the window on which is performed the min operator for each pixel.
 
   \sa dilatation(vpImage<T> &, const int &)
 */
@@ -484,13 +479,13 @@ template <typename T>
 void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
 {
   const T &(*operation)(const T & a, const T & b) = std::min;
-  vpImageMorphology::imageOperation(I, size, operation);
+  vpImageMorphology::imageOperation(I, operation, size);
 }
 
-/*!
-  Dilate an image using the given structuring element.
-
-  The dilatation of \f$ A \left( x, y \right) \f$ by \f$ B \left
+/**
+ * \brief Dilatation of \b size >=3 with 8-connectivity.
+ *
+ * The dilatation of \f$ A \left( x, y \right) \f$ by \f$ B \left
   (x, y \right) \f$ is defined as: \f[ \left ( A \oplus B \right ) \left( x,y
   \right) = \textbf{max} \left \{ A \left ( x-x', y-y' \right ) + B \left (
   x', y'\right ) | \left ( x', y'\right ) \subseteq D_B \right \} \f] where
@@ -504,17 +499,19 @@ void vpImageMorphology::erosion(vpImage<T> &I, const int &size)
     \left ( A \oplus B \right ) \left( x,y \right) = \textbf{max} \left \{ A
   \left ( x-x', y-y' \right ) | \left ( x', y'\right ) \subseteq D_B \right \}
   \f]
-
-  \param I : Image to process.
-  \param size : The size of the kernel.
-
-  \sa erosion(vpImage<T> &, const int &)
-*/
-template <typename T>
+ *
+ * \tparam T Any type of image, except vpRGBa .
+ * \param[out] I The image to which the dilatation must be applied, where the dilatation corresponds
+ * to a max operator on a window of size \b size.
+ * \param[in] size The size of the window on which is performed the max operator for each pixel.
+ *
+ * \sa erosion(vpImage<T> &, const int &)
+ */
+template<typename T>
 void vpImageMorphology::dilatation(vpImage<T> &I, const int &size)
 {
   const T &(*operation)(const T & a, const T & b) = std::max;
-  vpImageMorphology::imageOperation(I, size, operation);
+  vpImageMorphology::imageOperation(I, operation, size);
 }
 #endif
 
