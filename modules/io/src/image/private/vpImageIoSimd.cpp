@@ -37,8 +37,9 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include "vpImageIoBackend.h"
+
 #if defined(VISP_HAVE_SIMDLIB)
+#include "vpImageIoBackend.h"
 #include <Simd/SimdLib.h>
 
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)

@@ -195,6 +195,9 @@
 // Defined if simdlib library available
 #cmakedefine VISP_HAVE_SIMDLIB
 
+// Defined if tinyexr library available
+#cmakedefine VISP_HAVE_TINYEXR
+
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3
 
