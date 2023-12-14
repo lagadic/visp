@@ -86,12 +86,14 @@ Module-level options
 
 
 .. warning::
+
   Exceptions are not handled: they should always be placed in :code:`ignored_classes`.
 
   When a ViSP exception is thrown to the Python interpreter, it is converted to a RuntimeError
 
 
 .. _Enum options:
+
 Enum-level options
 ^^^^^^^^^^^^^^^^^^^
 
@@ -111,6 +113,7 @@ If this flag is true, no binding is generated for this enum. The default value i
   A possible improvement would be to add an :code:`arithmetic` flag to the configuration options to handle this.
 
 .. _Class options:
+
 Class-level options
 ^^^^^^^^^^^^^^^^^^^
 
@@ -118,6 +121,7 @@ If a class does not appear in the configuration dictionary, it takes on the defa
 
 
 .. code-block:: json
+
   "ignored_attributes": ["myAttribute"]
   "additional_bindings": "bindings_vpArray2D",
   "use_buffer_protocol": true,
@@ -185,10 +189,12 @@ If a class does not appear in the configuration dictionary, it takes on the defa
 
 
 .. _Function options:
+
 Function-level options
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code-block:: json
+
   {
     "signature": "vpImage<Type>& fn(vpImage<vpRGBa>&, Type, double&)",
     "static": false,

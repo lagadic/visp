@@ -152,31 +152,51 @@ IGNORED_SIMPLE_SECTS = [
 ]
 
 def escape_for_rst(text: str) -> str:
-  return text
+  forbidden_chars = ['_', '*']
+  res = text
+  for c in forbidden_chars:
+    res = res.replace(c, '\\' + c)
+  return res
 
-def process_mixed_container(container: MixedContainer, level: int, level_string='') -> str:
+
+
+def process_mixed_container(container: MixedContainer, level: int, level_string='', escape_rst=False) -> str:
   '''
   :param level_string: the string being built for a single level (e.g. a line/paragraph of text)
+  This is equivalent to a left fold operation,
+  so don't forget to aggregate the results in level_string if you add another component
   '''
   if container.name in IGNORED_MIXED_CONTAINERS:
     return level_string
   one_indent = ' ' * 2
   indent_str = one_indent * level
   requires_space = not level_string.endswith(('\n', '\t', ' ')) and len(level_string) > 0
+
+  def process_markup(symbol: str) -> str:
+    text = symbol if not requires_space or len(level_string) == 0 else ' ' + symbol
+    for c in container.value.content_:
+      text = process_mixed_container(c, level, text, escape_rst=escape_rst)
+    text += symbol + ' '
+    return text
+
   # Inline blocks
-  if isinstance(container.value, str):
-    return level_string + escape_for_rst(container.value.replace('\n', '\n' + indent_str).strip())
+  if isinstance(container.value, str) and container.name != 'verbatim':
+    content = container.value.replace('\n', '\n' + indent_str).strip()
+    if escape_rst:
+      content = escape_for_rst(content)
+    return level_string + content
   if container.name == 'text':
-    return escape_for_rst(container.value.replace('\n', '\n' + indent_str).strip())
+    content = container.value.replace('\n', '\n' + indent_str).strip()
+    if escape_rst:
+      content = escape_for_rst(content)
+    return level_string + content
   if container.name == 'bold':
-    markup_start = '**' if not requires_space or len(level_string) == 0 else ' **'
-    return level_string + markup_start + container.value.valueOf_ + '** '
+    return level_string + process_markup('**')
   if container.name == 'computeroutput':
-    markup_start = '`' if not requires_space or len(level_string) == 0 else ' `'
-    return level_string + markup_start + escape_for_rst(container.value.valueOf_) + '` '
+    return level_string + process_markup('`')
   if container.name == 'emphasis':
     markup_start = '*' if not requires_space else ' *'
-    return level_string + markup_start + container.value.valueOf_ + '* '
+    return level_string + process_markup('*')
   if container.name == 'sp':
     return level_string + ' '
   if container.name == 'linebreak':
@@ -204,7 +224,10 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
     return level_string + (' ' if requires_space else '') + container.value.valueOf_ + ' '
 
   if container.name == 'verbatim':
-    raise NotImplementedError()
+    text = container.value
+    text = escape_for_rst(text)
+    text = '\n' * 2 + indent_str + '::\n\n' + indent_str + one_indent + text.strip().replace('\n', '\n' + indent_str + one_indent).strip() + '\n' * 2
+    return level_string + text
 
   # Block types
   if container.name == 'simplesect':
@@ -244,7 +267,7 @@ def process_mixed_container(container: MixedContainer, level: int, level_string=
       for h in line.highlight:
         c = ''
         for hh in h.content_:
-          c = process_mixed_container(hh, level, c)
+          c = process_mixed_container(hh, level, c, escape_rst=False)
         cs.append(c)
       s = ''.join(cs)
       lines.append(s)
@@ -271,7 +294,7 @@ def process_paragraph(para: docParaType, level: int) -> str:
   res = ''
   contents: List[MixedContainer] = para.content_
   for content_item in contents:
-    res = process_mixed_container(content_item, level, res)
+    res = process_mixed_container(content_item, level, res, escape_rst=True)
   return res
 
 def process_description(brief: Optional[descriptionType]) -> str:
@@ -305,10 +328,10 @@ class DocumentationHolder(object):
               for method_def in method_defs:
                 is_const = False if method_def.const == 'no' else True
                 is_static = False if method_def.static == 'no' else True
-                ret_type = ''.join(process_mixed_container(c, 0) for c in method_def.type_.content_).replace('vp_deprecated', '').replace('VISP_EXPORT', '')
+                ret_type = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in method_def.type_.content_).replace('vp_deprecated', '').replace('VISP_EXPORT', '')
                 param_types = []
                 for param in method_def.get_param():
-                  t = ''.join(process_mixed_container(c, 0) for c in param.type_.content_)
+                  t = ''.join(process_mixed_container(c, 0, escape_rst=False) for c in param.type_.content_)
                   param_types.append(t)
                 if method_def.name == cls_name or ret_type != '':
                   signature_str = f'{ret_type} {cls_name}::{method_def.name}({",".join(param_types)}) {{}}'
@@ -368,20 +391,22 @@ class DocumentationHolder(object):
 
     params_dict = self.get_method_params(method_def)
     cpp_return_str = self.get_method_return_str(method_def)
+
     param_strs = []
     for param_name in input_param_names:
       if param_name in params_dict:
-        param_strs.append(f':param {param_name}: {params_dict[param_name]}')
+        param_strs.append(f':param {escape_for_rst(param_name)}: {params_dict[param_name]}')
     param_str = '\n'.join(param_strs)
+
     if len(output_param_names) > 0:
       return_str = ':return: A tuple containing:\n' # TODO: if we only return a single element, we should modify this
       if signature.ret != 'void' and signature.ret is not None:
         return_str += f'\n\t * {cpp_return_str}'
       for param_name in output_param_names:
         if param_name in params_dict:
-          return_str += f'\n\t * {param_name}: {params_dict[param_name]}'
+          return_str += f'\n\t * {escape_for_rst(param_name)}: {params_dict[param_name]}'
         else:
-          return_str += f'\n\t * {param_name}'
+          return_str += f'\n\t * {escape_for_rst(param_name)}'
     else:
       return_str = f':return: {cpp_return_str}' if len(cpp_return_str) > 0 else ''
 

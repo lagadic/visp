@@ -3,100 +3,28 @@
 Known issues
 ======================
 
-We are aware of some issues remaining
+We are aware of some remaining issues.
+If you encounter another problem, please file an issue on Github.
 
+
+Usability
+--------------------
 
 No implicit conversion from ViSP types to Numpy
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Numpy array cannot be implicitely converted to a ViSP representation when calling a ViSP function.
 
 
 ViSP 3rd party types (such as cv::Mat) cannot be used from Python
--------------------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Cannot inherit from ViSP
-------------------------------------------------
+We do not interface with other bindings (as it is not trivial and may require specific Pybind ABI), and we do not wrap third party types.
+Thus, alternatives must be provided by hand into the ViSP API (or wrapped through custom bindings) so that the functionalities can be used from Python
 
+Cannot inherit from a ViSP class in Python
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
-
-
-Changes to ViSP
-------------------
-
-* Write initTracking for vpKltOpencv taking a vpImage<unsigned char> as input. Ignore setInitialGuess.
-
-Code generation
--------------------
-
-* There is an issue with vpFeatureMomentDatabse::get and vpMomentDatabase::get, ignored for now => a tester
-* n ary operators
-* Exclude get operators for vpArray2D ?
-* Parse subnamespaces
-
-  * Classes in subnamespaces are ignored
-
-* Keep alive for numpy interfaces
-* Keep alive very probably for mbt
-* How should we handle parameters coming from external APIs ? e.g. realsense2, PCL. Can we interact with other bindings such as of opencv's
-* Reimplement a framegrabber tutorial in python, with matplotlib
-* Test return policy for lvalue references (automatic is copy, so this is problematic)
-* Add parameters in config for:
-
-  * Return policy (feature moments database)
-  * Keep alive
-  * GIL scope
-
-* Add callback for before_module and after_module so that we can define additional bindings by hand in the module. This is already done per class
-* Add a way to replace a default method binding with a custom one (What about doc?)
-
-Documentation
-----------------
-* Generate documentation for:
-
-  * Functions in namespaces etc.
-
-* Reference python types in Documentation
-* Prefer Python examples instead of C++ ones ?
-
-
-To be written:
-* Specific changes from C++ to Python API
-* Documentation for the overall workflow of the bindings generation
-* In code documentation for the generator
-* Document config files
-
-* Failure cases
-
-  *  If you have this error:
-      error: invalid new-expression of abstract class type ‘vpTemplateTrackerMI’
-      return new Class{std::forward<Args>(args)...};
-      In file included from /home/visp_ws/visp_build/modules/python/bindings/src/tt_mi.cpp:13:0:
-      /home/visp_ws/visp/modules/tracker/tt_mi/include/visp3/tt_mi/vpTemplateTrackerMI.h:46:19: note:   because the following virtual functions are pure within ‘vpTemplateTrackerMI’:
-      class VISP_EXPORT vpTemplateTrackerMI : public vpTemplateTracker
-    You should define the class (here vpTemplaterMI) as pure virtual in the config file (via the flag is_virtual).
-    This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
-
-Packaging
-------------------
-
-* Root CMake
-
-  * Build after doc if doc can be generated
-
-Python side
------------------
-* Testing
-
-  * Test numpy arrays, partially done
-  * Test specific methods with specific returns
-  * Test keep alive if possible ?
-
-* Generate some examples
-
-  * Tracking (megapose/mbt)
-  * Frame grabbing
-  * UI
-
-* Add python sources to visp package
-
-  * Matplotlib based plotter
+Right now, it is not possible to inherit from a ViSP class with a Python class. Virtual methods cannot be overriden.
+To remedy this, trampoline classes should be implemented into the generator, either fully automated (but that is a lot of complexity)
+or by providing the trampoline by hand and adding a way to reference the trampoline class in the configuration file.
