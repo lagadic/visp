@@ -201,7 +201,7 @@ public:
      * \param j The JSON object, resulting from the parsing of a JSON file.
      * \param config The configuration of the network, that will be initialized from the JSON data.
      */
-    inline friend void from_json(const json &j, NetConfig &config)
+    friend inline void from_json(const json &j, NetConfig &config)
     {
       config.m_confThreshold = j.value("confidenceThreshold", config.m_confThreshold);
       if (config.m_confThreshold <= 0) {
@@ -241,7 +241,7 @@ public:
      * \param j A JSON parser object.
      * \param config The vpDetectorDNNOpenCV::NetConfig that must be parsed into JSON format.
      */
-    inline friend void to_json(json &j, const NetConfig &config)
+    friend inline void to_json(json &j, const NetConfig &config)
     {
       std::pair<unsigned int, unsigned int> resolution = { config.m_inputSize.width, config.m_inputSize.height };
       std::vector<double> v_mean = { config.m_mean[0], config.m_mean[1], config.m_mean[2] };
@@ -440,7 +440,7 @@ public:
       return text;
     }
 
-    inline friend std::ostream &operator<<(std::ostream &os, const NetConfig &config)
+    friend inline std::ostream &operator<<(std::ostream &os, const NetConfig &config)
     {
       os << config.toString();
       return os;
@@ -515,7 +515,7 @@ public:
    * \param j The JSON object, resulting from the parsing of a JSON file.
    * \param network The network, that will be initialized from the JSON data.
    */
-  inline friend void from_json(const json &j, vpDetectorDNNOpenCV &network)
+  friend inline void from_json(const json &j, vpDetectorDNNOpenCV &network)
   {
     network.m_netConfig = j.value("networkSettings", network.m_netConfig);
   }
@@ -526,7 +526,7 @@ public:
    * \param j The JSON parser.
    * \param network  The network we want to parse the configuration.
    */
-  inline friend void to_json(json &j, const vpDetectorDNNOpenCV &network)
+  friend inline void to_json(json &j, const vpDetectorDNNOpenCV &network)
   {
     j = json {
       {"networkSettings", network.m_netConfig}
@@ -534,7 +534,7 @@ public:
   }
 #endif
 
-  inline friend std::ostream &operator<<(std::ostream &os, const vpDetectorDNNOpenCV &network)
+  friend inline std::ostream &operator<<(std::ostream &os, const vpDetectorDNNOpenCV &network)
   {
     os << network.m_netConfig;
     return os;

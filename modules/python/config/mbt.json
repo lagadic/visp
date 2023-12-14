@@ -1,0 +1,13 @@
+{
+
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": ["mbt.hpp"],
+  "classes": {
+
+    "vpMbGenericTracker": {
+      "additional_bindings": "bindings_vpMbGenericTracker"
+    }
+  },
+  "enums": {}
+}

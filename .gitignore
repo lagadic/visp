@@ -11,3 +11,4 @@ modules/java/\.idea/
 .scannerwork
 build
 *.blend1
+**/results/**

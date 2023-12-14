@@ -570,13 +570,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I : Input grayscale image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -607,13 +607,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I_color : Input color image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -965,7 +965,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -977,7 +977,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I : Input grayscale image
   \param initFile : Path to the file containing all the points.
@@ -994,7 +994,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -1006,7 +1006,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I_color : Input color image
   \param initFile : Path to the file containing all the points.

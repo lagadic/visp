@@ -1,0 +1,10 @@
+*.egg-info
+bindings/src
+build
+stubs/visp
+stubs/build
+*.eggs
+doc/_build
+doc/_autosummary/*
+doc/generated
+doc/api.rst

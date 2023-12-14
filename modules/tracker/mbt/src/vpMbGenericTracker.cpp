@@ -1848,13 +1848,13 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I1 : Input grayscale image for the first camera.
   \param I2 : Input grayscale image for the second camera.
@@ -1918,13 +1918,13 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I_color1 : Input color image for the first camera.
   \param I_color2 : Input color image for the second camera.
@@ -1988,13 +1988,13 @@ void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImag
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   The cameras that have not an init file will be automatically initialized but
   the camera transformation matrices have to be set before.
@@ -2093,13 +2093,13 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   The cameras that have not an init file will be automatically initialized but
   the camera transformation matrices have to be set before.
@@ -2213,7 +2213,7 @@ void vpMbGenericTracker::initFaceFromLines(vpMbtPolygon & /*polygon*/)
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
-  \code
+  \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -2224,7 +2224,7 @@ void vpMbGenericTracker::initFaceFromLines(vpMbtPolygon & /*polygon*/)
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I1 : Input grayscale image for the first camera.
   \param I2 : Input grayscale image for the second camera.
@@ -2274,7 +2274,7 @@ void vpMbGenericTracker::initFromPoints(const vpImage<unsigned char> &I1, const 
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
-  \code
+  \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -2285,7 +2285,7 @@ void vpMbGenericTracker::initFromPoints(const vpImage<unsigned char> &I1, const 
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10              #  /
-  \endcode
+  \endverbatim
 
   \param I_color1 : Input color image for the first camera.
   \param I_color2 : Input color image for the second camera.
@@ -3265,6 +3265,19 @@ void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigne
 
 void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
   std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+  std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+  std::map<std::string, unsigned int> &mapOfPointCloudHeights)
+{
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    tracker->preTracking(mapOfImages[it->first], mapOfPointClouds[it->first], mapOfPointCloudWidths[it->first],
+      mapOfPointCloudHeights[it->first]);
+  }
+}
+
+void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+  std::map<std::string, const vpMatrix *> &mapOfPointClouds,
   std::map<std::string, unsigned int> &mapOfPointCloudWidths,
   std::map<std::string, unsigned int> &mapOfPointCloudHeights)
 {
@@ -5754,6 +5767,166 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
   computeProjectionError();
 }
 
+void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+  std::map<std::string, const vpMatrix *> &mapOfPointClouds,
+  std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+  std::map<std::string, unsigned int> &mapOfPointCloudHeights)
+{
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    if ((tracker->m_trackerType & (EDGE_TRACKER |
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+                                   KLT_TRACKER |
+#endif
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+      throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
+    }
+
+    if (tracker->m_trackerType & (EDGE_TRACKER
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+                                  | KLT_TRACKER
+#endif
+                                  ) &&
+      mapOfImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
+    }
+
+    if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
+      (mapOfPointClouds[it->first] == nullptr)) {
+      throw vpException(vpException::fatalError, "Pointcloud is nullptr!");
+    }
+  }
+
+  preTracking(mapOfImages, mapOfPointClouds, mapOfPointCloudWidths, mapOfPointCloudHeights);
+
+  try {
+    computeVVS(mapOfImages);
+  }
+  catch (...) {
+    covarianceMatrix = -1;
+    throw; // throw the original exception
+  }
+
+  testTracking();
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
+    }
+
+    tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
+  }
+
+  computeProjectionError();
+}
+
+/*!
+  Realize the tracking of the object in the image.
+
+  \throw vpException : if the tracking is supposed to have failed
+
+  \param mapOfColorImages : Map of images.
+  \param mapOfPointClouds : Map of pointclouds.
+  \param mapOfPointCloudWidths : Map of pointcloud widths.
+  \param mapOfPointCloudHeights : Map of pointcloud heights.
+*/
+void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
+  std::map<std::string, const vpMatrix *> &mapOfPointClouds,
+  std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+  std::map<std::string, unsigned int> &mapOfPointCloudHeights)
+{
+  std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    if ((tracker->m_trackerType & (EDGE_TRACKER |
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+                                   KLT_TRACKER |
+#endif
+                                   DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER)) == 0) {
+      throw vpException(vpException::fatalError, "Bad tracker type: %d", tracker->m_trackerType);
+    }
+
+    if (tracker->m_trackerType & (EDGE_TRACKER
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+                                  | KLT_TRACKER
+#endif
+                                  ) &&
+      mapOfColorImages[it->first] == nullptr) {
+      throw vpException(vpException::fatalError, "Image pointer is nullptr!");
+    }
+    else if (tracker->m_trackerType & (EDGE_TRACKER
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+                                       | KLT_TRACKER
+#endif
+                                       ) &&
+      mapOfColorImages[it->first] != nullptr) {
+      vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
+      mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
+    }
+
+    if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
+      (mapOfPointClouds[it->first] == nullptr)) {
+      throw vpException(vpException::fatalError, "Pointcloud is nullptr!");
+    }
+  }
+
+  preTracking(mapOfImages, mapOfPointClouds, mapOfPointCloudWidths, mapOfPointCloudHeights);
+
+  try {
+    computeVVS(mapOfImages);
+  }
+  catch (...) {
+    covarianceMatrix = -1;
+    throw; // throw the original exception
+  }
+
+  testTracking();
+
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+    it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+
+    if (tracker->m_trackerType & EDGE_TRACKER && displayFeatures) {
+      tracker->m_featuresToBeDisplayedEdge = tracker->getFeaturesForDisplayEdge();
+    }
+
+    tracker->postTracking(mapOfImages[it->first], mapOfPointCloudWidths[it->first], mapOfPointCloudHeights[it->first]);
+
+    if (displayFeatures) {
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+      if (tracker->m_trackerType & KLT_TRACKER) {
+        tracker->m_featuresToBeDisplayedKlt = tracker->getFeaturesForDisplayKlt();
+      }
+#endif
+
+      if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+        tracker->m_featuresToBeDisplayedDepthNormal = tracker->getFeaturesForDisplayDepthNormal();
+      }
+    }
+  }
+
+  computeProjectionError();
+}
+
 /** TrackerWrapper **/
 vpMbGenericTracker::TrackerWrapper::TrackerWrapper()
   : m_error(), m_L(), m_trackerType(EDGE_TRACKER), m_w(), m_weightedError()
@@ -6785,6 +6958,54 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
 
 void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> *const ptr_I,
   const std::vector<vpColVector> *const point_cloud,
+  const unsigned int pointcloud_width,
+  const unsigned int pointcloud_height)
+{
+  if (m_trackerType & EDGE_TRACKER) {
+    try {
+      vpMbEdgeTracker::trackMovingEdge(*ptr_I);
+    }
+    catch (...) {
+      std::cerr << "Error in moving edge tracking" << std::endl;
+      throw;
+    }
+  }
+
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+  if (m_trackerType & KLT_TRACKER) {
+    try {
+      vpMbKltTracker::preTracking(*ptr_I);
+    }
+    catch (const vpException &e) {
+      std::cerr << "Error in KLT tracking: " << e.what() << std::endl;
+      throw;
+    }
+  }
+#endif
+
+  if (m_trackerType & DEPTH_NORMAL_TRACKER) {
+    try {
+      vpMbDepthNormalTracker::segmentPointCloud(*point_cloud, pointcloud_width, pointcloud_height);
+    }
+    catch (...) {
+      std::cerr << "Error in Depth tracking" << std::endl;
+      throw;
+    }
+  }
+
+  if (m_trackerType & DEPTH_DENSE_TRACKER) {
+    try {
+      vpMbDepthDenseTracker::segmentPointCloud(*point_cloud, pointcloud_width, pointcloud_height);
+    }
+    catch (...) {
+      std::cerr << "Error in Depth dense tracking" << std::endl;
+      throw;
+    }
+  }
+}
+
+void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> *const ptr_I,
+  const vpMatrix *const point_cloud,
   const unsigned int pointcloud_width,
   const unsigned int pointcloud_height)
 {

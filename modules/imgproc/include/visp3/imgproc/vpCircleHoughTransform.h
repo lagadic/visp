@@ -496,7 +496,7 @@ public:
      * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
      * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
-    inline friend void from_json(const json &j, vpCircleHoughTransformParameters &params)
+    friend inline void from_json(const json &j, vpCircleHoughTransformParameters &params)
     {
       std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType);
       filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
@@ -571,7 +571,7 @@ public:
      * \param[out] j : A JSON parser object.
      * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
-    inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
+    friend inline void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
@@ -696,7 +696,7 @@ public:
    * \param[in] j The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector The detector, that will be initialized from the JSON data.
    */
-  inline friend void from_json(const json &j, vpCircleHoughTransform &detector)
+  friend inline void from_json(const json &j, vpCircleHoughTransform &detector)
   {
     detector.m_algoParams = j;
   }
@@ -707,7 +707,7 @@ public:
    * \param[out] j A JSON parser object.
    * \param[in] detector The vpCircleHoughTransform that must be parsed into JSON format.
    */
-  inline friend void to_json(json &j, const vpCircleHoughTransform &detector)
+  friend inline void to_json(json &j, const vpCircleHoughTransform &detector)
   {
     j = detector.m_algoParams;
   }

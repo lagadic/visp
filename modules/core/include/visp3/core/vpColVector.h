@@ -319,7 +319,7 @@ public:
    *   ofs.close();
    * }
    * \endcode
-   * produces `log.csvè file that contains:
+   * produces `log.csv` file that contains:
    * \code
    * 0
    * 1

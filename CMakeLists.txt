@@ -272,6 +272,28 @@ if(NOT IOS)
   include(cmake/VISPDetectPython.cmake)
 endif()
 
+# --- Python Bindings requirements ---
+
+# this avoids non-active conda from getting picked anyway on Windows
+#set(Python_FIND_REGISTRY LAST)
+# Use environment variable PATH to decide preference for Python
+#set(Python_FIND_VIRTUALENV FIRST)
+#set(Python_FIND_STRATEGY LOCATION)
+
+#find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
+#if(Python_FOUND)
+#  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
+#endif()
+#find_package(pybind11)
+VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+
+#if(pybind11_FOUND)
+#  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
+#endif()
+#message("${pybind11_FOUND}")
+# ---
+
+
 include_directories(${VISP_INCLUDE_DIR})
 
 #----------------------------------------------------------------------
@@ -412,6 +434,11 @@ VP_OPTION(BUILD_ANDROID_SERVICE   "" "" "Build ViSP Manager for Google Play"    
 VP_OPTION(BUILD_ANDROID_PROJECTS  "" "" "Build Android projects providing .apk files" "" ON  IF ANDROID )
 VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"         "" ON  IF ANDROID )
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
+
+# Build python bindings as an option
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11) )
+VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
+
 
 # Build demos as an option.
 VP_OPTION(BUILD_DEMOS  "" "" "Build ViSP demos" "" ON)
@@ -730,8 +757,36 @@ if(DOXYGEN_FOUND)
     set(DOXYGEN_USE_MATHJAX "NO")
   endif()
 
+  # HTML version of the doc
+  set(DOXYGEN_GENERATE_HTML "YES")
+  set(DOXYGEN_GENERATE_XML "NO")
+  set(DOXYGEN_GENERATE_TEST_LIST "YES")
+  set(DOXYGEN_QUIET "NO")
+  set(DOXYGEN_INPUTS
+    "${VISP_SOURCE_DIR}/modules"
+    "${VISP_SOURCE_DIR}/example"
+    "${VISP_SOURCE_DIR}/tutorial"
+    "${VISP_SOURCE_DIR}/demo"
+    "${VISP_SOURCE_DIR}/doc"
+    "${VISP_BINARY_DIR}/doc"
+    "${VISP_CONTRIB_MODULES_PATH}"
+  )
+  string (REPLACE ";" " " DOXYGEN_INPUTS "${DOXYGEN_INPUTS}")
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
+    @ONLY )
+
+  # XML version  of the doc
+  set(DOXYGEN_GENERATE_HTML "NO")
+  set(DOXYGEN_GENERATE_XML "YES")
+  set(DOXYGEN_GENERATE_TEST_LIST "NO")
+  set(DOXYGEN_QUIET "YES")
+  set(DOXYGEN_INPUTS
+    "${VISP_SOURCE_DIR}/modules"
+  )
+  string (REPLACE ";" " " DOXYGEN_INPUTS "${DOXYGEN_INPUTS}")
+  configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
+    ${VISP_DOC_DIR}/config-doxygen-xml
     @ONLY )
 
   # set vars used in mainpage.dox.in
@@ -825,6 +880,8 @@ if(BUILD_JAVA)
     find_package(JNI)
   endif()
 endif()
+
+
 
 if(ANDROID AND ANDROID_EXECUTABLE AND ANT_EXECUTABLE AND (ANT_VERSION VERSION_GREATER 1.7) AND (ANDROID_TOOLS_Pkg_Revision GREATER 13))
   SET(CAN_BUILD_ANDROID_PROJECTS TRUE)
@@ -1172,6 +1229,14 @@ if(BUILD_TUTORIALS)
   add_subdirectory(tutorial)
   vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH tutorial)
 endif()
+if(BUILD_APPS)
+  vp_add_subdirectories(VISP_CONTRIB_MODULES_PATH apps)
+endif()
+if(BUILD_PYTHON_BINDINGS)
+  add_subdirectory(modules/python)
+endif()
+
+
 
 # ----------------------------------------------------------------------------
 #  Make some cmake vars advanced
@@ -1442,7 +1507,8 @@ endif()
 
 # ========================== java ==========================
 status("")
-status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE "no")
+status("  Python 3:")
+status("    Interpreter:"     PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (ver ${PYTHON3_VERSION_STRING})"    ELSE "no")
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
@@ -1451,6 +1517,17 @@ if(BUILD_JAVA OR BUILD_visp_java)
   if(NOT ANDROID)
     status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE "no")
   endif()
+endif()
+
+# ======================= Python bindings ========================
+status("")
+status("  Python3 bindings:"           BUILD_PYTHON_BINDINGS    THEN "yes" ELSE "no")
+if(BUILD_PYTHON_BINDINGS)
+  status("    Python3 interpreter:"    PYTHON3INTERP_FOUND  THEN "${PYTHON3_EXECUTABLE} (ver ${PYTHON3_VERSION_STRING})" ELSE "no")
+  status("    Pybind11:"               USE_PYBIND11         THEN "${pybind11_DIR} (${pybind11_VERSION})" ELSE "no")
+  status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
+  status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
+  status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
 endif()
 
 # ============================ Options ===========================

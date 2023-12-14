@@ -602,9 +602,11 @@ public:
   }
 
   static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#endif
 
   template<typename ImageType, typename FilterType>
   static inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
@@ -618,7 +620,7 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c]);
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -800,12 +802,15 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
   }
+#endif
+
 
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-
+#endif
   template<typename ImageType, typename FilterType>
   static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
@@ -839,7 +844,7 @@ public:
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -1017,19 +1022,21 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
   }
+#endif
+
 
   /*!
-   * Apply a Gaussian blur to an image.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Input image.
-   * \param GI : Filtered image.
-   * \param size : Filter size. This value should be odd.
-   * \param sigma : Gaussian standard deviation. If it is equal to zero or
-   * negative, it is computed from filter size as sigma = (size-1)/6.
-   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-   *
-   * \sa getGaussianKernel() to know which kernel is used.
-   */
+    * Apply a Gaussian blur to an image.
+    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    * \param I : Input image.
+    * \param GI : Filtered image.
+    * \param size : Filter size. This value should be odd.
+    * \param sigma : Gaussian standard deviation. If it is equal to zero or
+    * negative, it is computed from filter size as sigma = (size-1)/6.
+    * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+    *
+  * \sa getGaussianKernel() to know which kernel is used.
+  */
   template <typename ImageType, typename FilterType>
   static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
   {

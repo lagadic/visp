@@ -57,17 +57,25 @@ if(DOXYGEN_FOUND)
     COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
     DEPENDS "${VISP_DOC_DIR}/config-doxygen"
   )
+  add_custom_target(visp_doc_xml
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen-xml"
+    DEPENDS "${VISP_DOC_DIR}/config-doxygen-xml"
+  )
 
   if(CMAKE_GENERATOR MATCHES "Xcode")
     add_dependencies(visp_doc man) # developer_scripts not available when Xcode
+    add_dependencies(visp_doc man)
   elseif(UNIX AND NOT ANDROID) # man target available only on unix
     add_dependencies(visp_doc man developer_scripts)
+    add_dependencies(visp_doc_xml man developer_scripts)
   elseif(NOT(MINGW OR IOS))
     add_dependencies(visp_doc developer_scripts)
+    add_dependencies(visp_doc_xml developer_scripts)
   endif()
 
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_doc PROPERTIES FOLDER "extra")
+    set_target_properties(visp_doc_xml PROPERTIES FOLDER "extra")
     set_target_properties(html-doc PROPERTIES FOLDER "extra")
   endif()
 endif()

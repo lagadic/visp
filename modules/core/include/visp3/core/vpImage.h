@@ -482,6 +482,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 namespace
 {
+
 struct vpImageLut_Param_t
 {
   unsigned int m_start_index;

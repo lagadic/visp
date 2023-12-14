@@ -1,0 +1,4 @@
+sphinx
+sphinx-immaterial
+sphinxcontrib-jsmath
+sphinx-design
