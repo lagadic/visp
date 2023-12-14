@@ -120,7 +120,7 @@ add_custom_target(visp_python_bindings_doc
 		-b html
 		-c "${BINARY_BUILD_DIR}"
 		-d "${SPHINX_CACHE_DIR}"
-    -j 8
+    -j auto
     -E
 		"${BINARY_BUILD_DIR}"
 		"${SPHINX_HTML_DIR}"
