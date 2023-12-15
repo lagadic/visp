@@ -161,7 +161,7 @@ void vpFeatureLuminance::set_Z(double Z_)
 */
 double vpFeatureLuminance::get_Z() const { return Z; }
 
-void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam) { cam = _cam; }
+void vpFeatureLuminance::setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
 /*!
 

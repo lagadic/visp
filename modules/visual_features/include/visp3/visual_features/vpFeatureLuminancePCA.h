@@ -31,68 +31,59 @@
  * Luminance based feature.
  */
 
-#ifndef vpFeatureLuminance_h
-#define vpFeatureLuminance_h
+#ifndef vpFeatureLuminancePCA_h
+#define vpFeatureLuminancePCA_h
+
+#include <memory>
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
+#include <visp3/visual_features/vpFeatureLuminance.h>
 
-/*!
- * \file vpFeatureLuminance.h
- * \brief Class that defines the image luminance visual feature
+
+/**
+ * @brief
  *
- * For more details see \cite Collewet08c.
  */
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-/*!
- * \class vpLuminance
- * \brief Class that defines the luminance and gradient of a point.
- *
- * \sa vpFeatureLuminance
- */
-class VISP_EXPORT vpLuminance
+class VISP_EXPORT vpLuminancePCA
 {
 public:
-  double x, y;   // point coordinates (in meter)
-  double I;      // pixel intensity
-  double Ix, Iy; // pixel gradient
-  double Z;      // pixel depth
+  vpLuminancePCA() = default;
+  vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean);
+
+  unsigned int getProjectionSize() const { return m_basis->getRows(); }
+  std::shared_ptr<vpMatrix> getBasis() const { return m_basis; }
+  std::shared_ptr<vpColVector> getMean() const { return m_mean; }
+  void save(const std::string &basisFilename, const std::string &meanFileName) const;
+
+
+  static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName);
+
+  static vpLuminancePCA learn(std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder);
+
+private:
+  std::shared_ptr<vpMatrix> m_basis;
+  std::shared_ptr<vpColVector> m_mean;
 };
-#endif
 
-/*!
- * \class vpFeatureLuminance
- * \ingroup group_visual_features
- * \brief Class that defines the image luminance visual feature
- *
- * For more details see \cite Collewet08c.
- */
-class VISP_EXPORT vpFeatureLuminance : public vpBasicFeature
+
+class VISP_EXPORT vpFeatureLuminancePCA : public vpBasicFeature
 {
-protected:
-  //! FeaturePoint depth (required to compute the interaction matrix)
-  //! default Z = 1m
-  double Z;
-
-  //! Number of rows.
-  unsigned int nbr;
-  //! Number of column.
-  unsigned int nbc;
-  //! Border size.
-  unsigned int bord;
-
-  //! Store the image (as a vector with intensity and gradient I, Ix, Iy)
-  vpLuminance *pixInfo;
-  int firstTimeIn;
 
 public:
-  vpFeatureLuminance();
-  vpFeatureLuminance(const vpFeatureLuminance &f);
-  //! Destructor.
-  virtual ~vpFeatureLuminance() override;
+
+  vpFeatureLuminancePCA(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const vpLuminancePCA &pca);
+  vpFeatureLuminancePCA(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca);
+  void init() override;
+  void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const vpLuminancePCA &pca);
+  void init(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca);
+
+  vpFeatureLuminancePCA(const vpFeatureLuminancePCA &f);
+  vpFeatureLuminancePCA &operator=(const vpFeatureLuminancePCA &f);
+  vpFeatureLuminancePCA *duplicate() const override;
+
+  virtual ~vpFeatureLuminancePCA() = default;
 
   void buildFrom(vpImage<unsigned char> &I);
 
@@ -101,27 +92,27 @@ public:
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const override;
 
-  vpFeatureLuminance *duplicate() const override;
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
-  double get_Z() const;
-
-  void init() override;
-  void init(unsigned int _nbr, unsigned int _nbc, double _Z);
   vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
   void interaction(vpMatrix &L);
 
-  vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
   void print(unsigned int select = FEATURE_ALL) const override;
 
-  void setCameraParameters(const vpCameraParameters &_cam);
-  void set_Z(double Z);
+  vpFeatureLuminance &getLuminanceFeature() { return m_featI; }
 
-public:
-  vpCameraParameters cam;
+
+
+
+private:
+
+  vpLuminancePCA m_pca;
+  vpFeatureLuminance m_featI;
+  vpMatrix m_LI; //! Photometric interaction matrix
+
 };
 
 #endif
