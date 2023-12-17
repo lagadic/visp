@@ -98,6 +98,8 @@ int main(int argc, char **argv)
   std::vector<unsigned char> vec_img_data;
   vec_img_data.reserve(g.getLastFrameIndex() * height * width);
 
+  std::vector<double> times;
+
   int iter = 0;
   while (!g.end()) {
     g.acquire(I);
@@ -105,12 +107,15 @@ int main(int argc, char **argv)
     tracker.getPose(cMo);
     // std::cout << "\ncMo:\n" << cMo << std::endl;
 
+    double start = vpTime::measureTimeMs();
     if (opencv_backend) {
       vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_OPENCV_BACKEND);
     }
     else {
       vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND);
     }
+    double end = vpTime::measureTimeMs();
+    times.push_back(end-start);
     vec_img_data_size.push_back(img_buffer.size());
     vec_img_data.insert(vec_img_data.end(), img_buffer.begin(), img_buffer.end());
 
@@ -146,6 +151,9 @@ int main(int argc, char **argv)
 
     iter++;
   }
+
+  std::cout << "Mean time: " << vpMath::getMean(times) << " ms ; Median time: "
+    << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
 
   // visp::cnpy::npz_save(npz_filename, "vec_img_data_size", &vec_img_data_size[0], { vec_img_data_size.size() }, "a");
   // visp::cnpy::npz_save(npz_filename, "vec_img", &vec_img_data[0], { vec_img_data.size() }, "a");

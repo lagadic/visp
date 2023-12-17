@@ -104,6 +104,16 @@
 #define VP_STAT stat
 #endif
 
+#define USE_ZLIB_API 0
+
+#if !USE_ZLIB_API
+#include "basisu_miniz.h"
+
+using namespace buminiz;
+#else
+#include <zlib.h>
+#endif
+
 // Copyright (C) 2011  Carl Rogers
 // Released under MIT License
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php

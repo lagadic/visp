@@ -76,16 +76,21 @@ int main(int argc, char **argv)
   assert(arr_vec_poses.shape[1] == 6);
   size_t pose_size = arr_vec_poses.shape[1];
 
+  std::vector<double> times;
+
   for (int iter = 0; iter < nb_data; iter++) {
     // std::copy(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter],
     //     std::back_inserter(vec_img));
     vec_img = std::vector<unsigned char>(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter]);
+    double start = vpTime::measureTimeMs();
     if (opencv_backend) {
       vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_OPENCV_BACKEND);
     }
     else {
       vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_STB_IMAGE_BACKEND);
     }
+    double end = vpTime::measureTimeMs();
+    times.push_back(end-start);
     img_data_offset += vec_img_data_size_ptr[iter];
     vpImageConvert::convert(I, I_display);
 
@@ -121,6 +126,9 @@ int main(int argc, char **argv)
 
     vpTime::wait(30);
   }
+
+  std::cout << "Mean time: " << vpMath::getMean(times) << " ms ; Median time: "
+    << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
 
   vpDisplay::getClick(I_display, true);
 

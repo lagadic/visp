@@ -48,7 +48,6 @@
 #include <string>
 #include <vector>
 #include <numeric>
-#include <zlib.h>
 #include <visp3/core/vpColor.h>
 
 // TODO:
@@ -80,6 +79,20 @@
 
 namespace visp
 {
+static unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)
+{
+  static const unsigned int s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
+    0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
+  unsigned int crcu32 = (unsigned int)crc;
+  if (!ptr) return 0;
+  crcu32 = ~crcu32;
+  while (buf_len--) {
+    unsigned char b = *ptr++;
+    crcu32 = (crcu32 >> 4) ^ s_crc32[(crcu32 & 0xF) ^ (b & 0xF)];
+    crcu32 = (crcu32 >> 4) ^ s_crc32[(crcu32 & 0xF) ^ (b >> 4)];
+  }
+  return ~crcu32;
+}
 namespace cnpy
 {
 struct NpyArray
@@ -236,8 +249,8 @@ template<typename T> EXPORT void npz_save(std::string zipname, std::string fname
   size_t nbytes = nels*sizeof(T) + npy_header.size();
 
   //get the CRC of the data to be added
-  uint32_t crc = crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
-  crc = crc32(crc, (uint8_t *)data, nels*sizeof(T));
+  uint32_t crc = vp_mz_crc32(0L, (uint8_t *)&npy_header[0], npy_header.size());
+  crc = vp_mz_crc32(crc, (uint8_t *)data, nels*sizeof(T));
 
   //build the local header
   std::vector<char> local_header;
