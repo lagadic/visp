@@ -1,5 +1,8 @@
+#include <memory>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageDraw.h>
 
@@ -16,19 +19,36 @@ std::string toString(const std::string &name, int val)
 
   return str;
 }
+
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique_compat(Args&&... args)
+{
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
+  return std::make_unique<T>(args...);
+#else
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+#endif
+}
 }
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)
   bool opencv_backend = false;
+  std::string npz_filename = "npz_tracking_teabox.npz";
+
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--cv-backend") {
       opencv_backend = true;
     }
+    else if ((std::string(argv[i]) == "--read" || std::string(argv[i]) == "-i") && i+1 < argc) {
+      npz_filename = argv[i+1];
+    }
   }
+
+  std::cout << "Read file: " << npz_filename << std::endl;
   std::cout << "OpenCV backend? " << opencv_backend << std::endl;
 
-  const std::string npz_filename = "npz_tracking_teabox.npz";
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
 
   visp::cnpy::NpyArray arr_height = npz_data["height"];
@@ -40,6 +60,7 @@ int main(int argc, char **argv)
   std::cout << "height: " << height << std::endl;
   std::cout << "width: " << width << std::endl;
   std::cout << "channel: " << channel << std::endl;
+  std::cout << "Color mode? " << (channel > 1) << std::endl;
 
   visp::cnpy::NpyArray arr_camera_name = npz_data["camera_name"];
   const std::string camera_name = std::string(arr_camera_name.data<char>());
@@ -53,9 +74,16 @@ int main(int argc, char **argv)
   std::cout << "Cam: " << cam << std::endl;
 
   vpImage<unsigned char> I(height, width);
-  vpImage<vpRGBa> I_display;
-  vpImageConvert::convert(I, I_display);
-  vpDisplayX d(I_display, 100, 100, "Model-based tracker");
+  vpImage<vpRGBa> I_display(height, width);
+
+  std::unique_ptr<vpDisplay> display;
+#if defined(VISP_HAVE_X11)
+  display = make_unique_compat<vpDisplayX>(I_display, 100, 100, "Model-based tracker");
+#elif defined(VISP_HAVE_GDI)
+  display = make_unique_compat<vpDisplayGDI>(I_display, 100, 100, "Model-based tracker");
+#elif defined(HAVE_OPENCV_HIGHGUI)
+  display = make_unique_compat<vpDisplayOpenCV>(I_display, 100, 100, "Model-based tracker");
+#endif
 
   visp::cnpy::NpyArray arr_nb_data = npz_data["nb_data"];
   int nb_data = *arr_nb_data.data<int>();
@@ -82,17 +110,23 @@ int main(int argc, char **argv)
     // std::copy(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter],
     //     std::back_inserter(vec_img));
     vec_img = std::vector<unsigned char>(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter]);
-    double start = vpTime::measureTimeMs();
+    double start = vpTime::measureTimeMs(), end = -1;
     if (opencv_backend) {
       vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_OPENCV_BACKEND);
     }
     else {
-      vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_STB_IMAGE_BACKEND);
+      if (channel > 1) {
+        vpImageIo::readPNGfromMem(vec_img, I_display, vpImageIo::IO_STB_IMAGE_BACKEND, channel == 4);
+        end = vpTime::measureTimeMs();
+      }
+      else {
+        vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_STB_IMAGE_BACKEND);
+        end = vpTime::measureTimeMs();
+        vpImageConvert::convert(I, I_display);
+      }
     }
-    double end = vpTime::measureTimeMs();
     times.push_back(end-start);
     img_data_offset += vec_img_data_size_ptr[iter];
-    vpImageConvert::convert(I, I_display);
 
     const std::string str_model_iter_sz = toString("model_%06d", iter) + "_sz";
     visp::cnpy::NpyArray arr_model_iter_sz = npz_data[str_model_iter_sz];
@@ -132,5 +166,9 @@ int main(int argc, char **argv)
 
   vpDisplay::getClick(I_display, true);
 
-  return EXIT_SUCCESS;
+#else
+  std::cerr << "Error, a missing display library is needed (X11, GDI or OpenCV built with HighGUI module)."
+#endif
+
+    return EXIT_SUCCESS;
 }

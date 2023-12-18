@@ -1098,6 +1098,11 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
   }
 }
 
+void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I, int backend, bool alpha)
+{
+  readPNGfromMemStb(buffer, I, alpha);
+}
+
 void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer, int backend)
 {
   if (backend == IO_DEFAULT_BACKEND) {
@@ -1127,4 +1132,9 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
   else {
     writePNGtoMemStb(I, buffer);
   }
+}
+
+void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer, int backend, bool saveAlpha)
+{
+  writePNGtoMemStb(I, buffer, saveAlpha);
 }

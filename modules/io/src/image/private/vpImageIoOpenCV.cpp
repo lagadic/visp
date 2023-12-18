@@ -247,4 +247,20 @@ void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned c
   }
 }
 
+// void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer)
+// {
+
+//   cv::Mat4b img(I.getRows(), I.getCols(), reinterpret_cast<cv::Vec4b *>(I.bitmap));
+//   std::vector<unsigned char> buf;
+//   bool result = cv::imencode(".png", img, buf);
+
+//   if (result) {
+//     buffer = buf;
+//   }
+//   else {
+//     std::string message = "Cannot write png to memory";
+//     throw(vpImageException(vpImageException::ioError, message));
+//   }
+// }
+
 #endif

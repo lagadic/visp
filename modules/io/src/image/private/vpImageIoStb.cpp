@@ -37,6 +37,7 @@
 */
 
 #include "vpImageIoBackend.h"
+#include <visp3/core/vpImageConvert.h>
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #define VISP_HAVE_SSE2 1
@@ -151,6 +152,33 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigne
   delete[] buffer_read;
 }
 
+/*!
+  Read the content of the image bitmap stored in memory and encoded using the PNG format.
+
+  \param buffer : Color image buffer stored in RGB formar or 1D vector of unsigned char data.
+  \param lastPos : Size of the color image buffer.
+  \param I : Output decoded color image.
+  \param alpha : If true, buffer contains RGBa pixels.
+*/
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I, bool alpha)
+{
+  int x = 0, y = 0, comp = 0;
+  const int req_channels = alpha ? 4 : 3;
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
+
+  if (alpha) {
+    const bool copyData = true;
+    I = vpImage<vpRGBa>(reinterpret_cast<vpRGBa *>(buffer_read), y, x, copyData);
+  }
+  else {
+    I.init(y, x);
+    const bool flip = false;
+    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I.bitmap), x, y, flip);
+  }
+
+  delete[] buffer_read;
+}
+
 void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
 {
   const int height = I.getRows();
@@ -164,6 +192,41 @@ void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char
 
   const int stride_bytes = 0;
   int result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, I.bitmap, stride_bytes);
+
+  if (result) {
+    buffer.resize(context.last_pos);
+  }
+  else {
+    std::string message = "Cannot write png to memory, result: " + std::to_string(result);
+    throw(vpImageException(vpImageException::ioError, message));
+  }
+}
+
+void writePNGtoMemStb(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer, bool saveAlpha)
+{
+  const int height = I.getRows();
+  const int width = I.getCols();
+  const int channels = saveAlpha ? 4 : 3;
+
+  custom_stbi_mem_context context;
+  context.last_pos = 0;
+  buffer.resize(I.getHeight() * I.getWidth() * channels);
+  context.context = (void *)buffer.data();
+
+  unsigned char *bitmap = nullptr;
+  const int stride_bytes = 0;
+  int result = 0;
+  if (saveAlpha) {
+    result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels,
+      reinterpret_cast<unsigned char *>(I.bitmap), stride_bytes);
+  }
+  else {
+    bitmap = new unsigned char[height * width * channels];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I.bitmap), bitmap, height*width);
+    result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, bitmap, stride_bytes);
+  }
+
+  delete[] bitmap;
 
   if (result) {
     buffer.resize(context.last_pos);

@@ -30,12 +30,29 @@ std::string toString(const std::string &name, int val)
 int main(int argc, char **argv)
 {
   bool opencv_backend = false;
+  std::string npz_filename = "npz_tracking_teabox.npz";
+  bool color_mode = false;
+  bool save_alpha = false;
+
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--cv-backend") {
       opencv_backend = true;
     }
+    else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-i") && i+1 < argc) {
+      npz_filename = argv[i+1];
+    }
+    else if (std::string(argv[i]) == "--color" || std::string(argv[i]) == "-c") {
+      color_mode = true;
+    }
+    else if (std::string(argv[i]) == "--alpha" || std::string(argv[i]) == "-a") {
+      save_alpha = true;
+    }
   }
+
+  std::cout << "Save file: " << npz_filename << std::endl;
   std::cout << "OpenCV backend? " << opencv_backend << std::endl;
+  std::cout << "Color image? " << color_mode << std::endl;
+  std::cout << "Save alpha channel? " << save_alpha << std::endl;
 
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
@@ -49,6 +66,7 @@ int main(int argc, char **argv)
   std::cout << "Video name: " << opt_videoname << std::endl;
 
   vpImage<unsigned char> I;
+  vpImage<vpRGBa> I_color;
 
   vpVideoReader g;
   g.setFileName(opt_videoname);
@@ -70,12 +88,15 @@ int main(int argc, char **argv)
 
   const int height = I.getRows();
   const int width = I.getCols();
-  const int channel = 1;
+  // const int channel = 1;
+  int channel = 1;
+  if (color_mode) {
+    channel = save_alpha ? 4 : 3;
+  }
 
   std::vector<unsigned char> img_buffer;
   // img_buffer.resize(height * width * channel);
 
-  const std::string npz_filename = "npz_tracking_teabox.npz";
   const std::string camera_name = "Camera";
   std::vector<char> vec_camera_name(camera_name.begin(), camera_name.end());
 
@@ -107,12 +128,18 @@ int main(int argc, char **argv)
     tracker.getPose(cMo);
     // std::cout << "\ncMo:\n" << cMo << std::endl;
 
+    vpImageConvert::convert(I, I_color);
     double start = vpTime::measureTimeMs();
     if (opencv_backend) {
       vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_OPENCV_BACKEND);
     }
     else {
-      vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND);
+      if (color_mode) {
+        vpImageIo::writePNGtoMem(I_color, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND, save_alpha);
+      }
+      else {
+        vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND);
+      }
     }
     double end = vpTime::measureTimeMs();
     times.push_back(end-start);
@@ -154,12 +181,6 @@ int main(int argc, char **argv)
 
   std::cout << "Mean time: " << vpMath::getMean(times) << " ms ; Median time: "
     << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
-
-  // visp::cnpy::npz_save(npz_filename, "vec_img_data_size", &vec_img_data_size[0], { vec_img_data_size.size() }, "a");
-  // visp::cnpy::npz_save(npz_filename, "vec_img", &vec_img_data[0], { vec_img_data.size() }, "a");
-  // std::cout << "vec_img_data.size()=" << vec_img_data.size() << std::endl;
-  // // Show how to save a "multidimensional" array
-  // visp::cnpy::npz_save(npz_filename, "vec_poses", &vec_poses[0], { static_cast<size_t>(iter), 6 }, "a");
 
   visp::cnpy::npz_save(npz_filename, "vec_img_data_size", vec_img_data_size.data(), { vec_img_data_size.size() }, "a");
   visp::cnpy::npz_save(npz_filename, "vec_img", vec_img_data.data(), { vec_img_data.size() }, "a");

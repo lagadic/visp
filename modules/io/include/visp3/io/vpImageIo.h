@@ -185,7 +185,12 @@ public:
   //     int backend = IO_DEFAULT_BACKEND);
   static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I,
       int backend = IO_DEFAULT_BACKEND);
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I,
+      int backend = IO_DEFAULT_BACKEND, bool alpha = false);
+
   static void writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer,
       int backend = IO_DEFAULT_BACKEND);
+  static void writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
 #endif
