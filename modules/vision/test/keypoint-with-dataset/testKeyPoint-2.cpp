@@ -179,9 +179,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   // Load config for tracker
   std::string tracker_config_file = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
 
+#if defined(VISP_HAVE_PUGYXML)
   tracker.loadConfigFile(tracker_config_file);
   tracker.getCameraParameters(cam);
-#if 0
+#else
   // Corresponding parameters manually set to have an example code
   vpMe me;
   me.setMaskSize(5);

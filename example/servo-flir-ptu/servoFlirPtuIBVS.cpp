@@ -71,8 +71,8 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
-#if defined(VISP_HAVE_FLIR_PTU_SDK) && defined(VISP_HAVE_FLYCAPTURE) &&                                                \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_FLIR_PTU_SDK) && defined(VISP_HAVE_FLYCAPTURE) && \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const vpImagePoint &ip,
                               std::vector<vpImagePoint> &traj_ip)
@@ -82,7 +82,8 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const vpImagePoin
     if (vpImagePoint::distance(ip, traj_ip.back()) > 2.) {
       traj_ip.push_back(ip);
     }
-  } else {
+  }
+  else {
     traj_ip.push_back(ip);
   }
   for (size_t j = 1; j < traj_ip.size(); j++) {
@@ -117,113 +118,127 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--portname" || std::string(argv[i]) == "-p") && (i + 1 < argc)) {
       opt_portname = std::string(argv[i + 1]);
-    } else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
+    }
+    else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
       opt_baudrate = std::atoi(argv[i + 1]);
-    } else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
+    }
+    else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
       opt_network = true;
-    } else if (std::string(argv[i]) == "--extrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--extrinsic" && i + 1 < argc) {
       opt_extrinsic = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       opt_intrinsic = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
       opt_camera_name = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+    }
+    else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
-    } else if (std::string(argv[i]) == "--plot" || std::string(argv[i]) == "-p") {
+    }
+    else if (std::string(argv[i]) == "--plot" || std::string(argv[i]) == "-p") {
       opt_plot = true;
-    } else if (std::string(argv[i]) == "--display-image-trajectory" || std::string(argv[i]) == "-traj") {
+    }
+    else if (std::string(argv[i]) == "--display-image-trajectory" || std::string(argv[i]) == "-traj") {
       opt_display_trajectory = true;
-    } else if (std::string(argv[i]) == "--adaptive-gain" || std::string(argv[i]) == "-a") {
+    }
+    else if (std::string(argv[i]) == "--adaptive-gain" || std::string(argv[i]) == "-a") {
       opt_adaptive_gain = true;
-    } else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
+    }
+    else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
       opt_constant_gain = std::stod(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--task-sequencing") {
+    }
+    else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
-    } else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
     }
     if (std::string(argv[i]) == "--tag-size" && i + 1 < argc) {
       opt_tag_size = std::stod(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--no-convergence-threshold") {
+    }
+    else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSIS" << std::endl
-                << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] "
-                << "[--extrinsic <extrinsic.yaml>] [--intrinsic <intrinsic.xml>] [--camera-name <name>] "
-                << "[--quad-decimate <decimation>] [--tag-size <size>] "
-                << "[--adaptive-gain] [--constant-gain] [--display-image-trajectory] [--plot] [--task-sequencing] "
-                << "[--no-convergence-threshold] [--verbose] [--help] [-h]" << std::endl
-                << std::endl;
+        << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] "
+        << "[--extrinsic <extrinsic.yaml>] [--intrinsic <intrinsic.xml>] [--camera-name <name>] "
+        << "[--quad-decimate <decimation>] [--tag-size <size>] "
+        << "[--adaptive-gain] [--constant-gain] [--display-image-trajectory] [--plot] [--task-sequencing] "
+        << "[--no-convergence-threshold] [--verbose] [--help] [-h]" << std::endl
+        << std::endl;
       std::cout << "DESCRIPTION" << std::endl
-                << "  --portname, -p <portname>" << std::endl
-                << "    Set serial or tcp port name." << std::endl
-                << std::endl
-                << "  --baudrate, -b <rate>" << std::endl
-                << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl
-                << std::endl
-                << "  --network, -n" << std::endl
-                << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl
-                << std::endl
-                << "  --reset, -r" << std::endl
-                << "    Reset PTU axis and exit. " << std::endl
-                << std::endl
-                << "  --extrinsic <extrinsic.yaml>" << std::endl
-                << "    YAML file containing extrinsic camera parameters as a vpHomogeneousMatrix." << std::endl
-                << "    It corresponds to the homogeneous transformation eMc, between end-effector" << std::endl
-                << "    and camera frame." << std::endl
-                << std::endl
-                << "  --intrinsic <intrinsic.xml>" << std::endl
-                << "    Intrinsic camera parameters obtained after camera calibration." << std::endl
-                << std::endl
-                << "  --camera-name <name>" << std::endl
-                << "    Name of the camera to consider in the xml file provided for intrinsic camera parameters."
-                << std::endl
-                << std::endl
-                << "  --quad-decimate <decimation>" << std::endl
-                << "    Decimation factor used to detect AprilTag. Default " << opt_quad_decimate << "." << std::endl
-                << std::endl
-                << "  --tag-size <size>" << std::endl
-                << "    Width in meter or the black part of the AprilTag used as target. Default " << opt_tag_size
-                << "." << std::endl
-                << std::endl
-                << "  --adaptive-gain, -a" << std::endl
-                << "    Enable adaptive gain instead of constant gain to speed up convergence. " << std::endl
-                << std::endl
-                << "  --constant-gain, -g" << std::endl
-                << "    Constant gain value. Default value: " << opt_constant_gain << std::endl
-                << std::endl
-                << "  --display-image-trajectory, -traj" << std::endl
-                << "    Display the trajectory of the target cog in the image. " << std::endl
-                << std::endl
-                << "  --plot, -p" << std::endl
-                << "    Enable curve plotter. " << std::endl
-                << std::endl
-                << "  --task-sequencing" << std::endl
-                << "    Enable task sequencing that allows to smoothly control the velocity of the robot. " << std::endl
-                << std::endl
-                << "  --no-convergence-threshold" << std::endl
-                << "    Disable ending servoing when it reaches the desired position." << std::endl
-                << std::endl
-                << "  --verbose, -v" << std::endl
-                << "    Additional printings. " << std::endl
-                << std::endl
-                << "  --help, -h" << std::endl
-                << "    Print this helper message. " << std::endl
-                << std::endl;
+        << "  --portname, -p <portname>" << std::endl
+        << "    Set serial or tcp port name." << std::endl
+        << std::endl
+        << "  --baudrate, -b <rate>" << std::endl
+        << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl
+        << std::endl
+        << "  --network, -n" << std::endl
+        << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl
+        << std::endl
+        << "  --reset, -r" << std::endl
+        << "    Reset PTU axis and exit. " << std::endl
+        << std::endl
+        << "  --extrinsic <extrinsic.yaml>" << std::endl
+        << "    YAML file containing extrinsic camera parameters as a vpHomogeneousMatrix." << std::endl
+        << "    It corresponds to the homogeneous transformation eMc, between end-effector" << std::endl
+        << "    and camera frame." << std::endl
+        << std::endl
+        << "  --intrinsic <intrinsic.xml>" << std::endl
+        << "    Intrinsic camera parameters obtained after camera calibration." << std::endl
+        << std::endl
+        << "  --camera-name <name>" << std::endl
+        << "    Name of the camera to consider in the xml file provided for intrinsic camera parameters."
+        << std::endl
+        << std::endl
+        << "  --quad-decimate <decimation>" << std::endl
+        << "    Decimation factor used to detect AprilTag. Default " << opt_quad_decimate << "." << std::endl
+        << std::endl
+        << "  --tag-size <size>" << std::endl
+        << "    Width in meter or the black part of the AprilTag used as target. Default " << opt_tag_size
+        << "." << std::endl
+        << std::endl
+        << "  --adaptive-gain, -a" << std::endl
+        << "    Enable adaptive gain instead of constant gain to speed up convergence. " << std::endl
+        << std::endl
+        << "  --constant-gain, -g" << std::endl
+        << "    Constant gain value. Default value: " << opt_constant_gain << std::endl
+        << std::endl
+        << "  --display-image-trajectory, -traj" << std::endl
+        << "    Display the trajectory of the target cog in the image. " << std::endl
+        << std::endl
+        << "  --plot, -p" << std::endl
+        << "    Enable curve plotter. " << std::endl
+        << std::endl
+        << "  --task-sequencing" << std::endl
+        << "    Enable task sequencing that allows to smoothly control the velocity of the robot. " << std::endl
+        << std::endl
+        << "  --no-convergence-threshold" << std::endl
+        << "    Disable ending servoing when it reaches the desired position." << std::endl
+        << std::endl
+        << "  --verbose, -v" << std::endl
+        << "    Additional printings. " << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "    Print this helper message. " << std::endl
+        << std::endl;
       std::cout << "EXAMPLE" << std::endl
-                << "  - How to get network IP" << std::endl
+        << "  - How to get network IP" << std::endl
 #ifdef _WIN32
-                << "    $ " << argv[0] << " --portname COM1 --network" << std::endl
-                << "    Try to connect FLIR PTU to port: COM1 with baudrate: 9600" << std::endl
+        << "    $ " << argv[0] << " --portname COM1 --network" << std::endl
+        << "    Try to connect FLIR PTU to port: COM1 with baudrate: 9600" << std::endl
 #else
-                << "    $ " << argv[0] << " -p /dev/ttyUSB0 --network" << std::endl
-                << "    Try to connect FLIR PTU to port: /dev/ttyUSB0 with baudrate: 9600" << std::endl
+        << "    $ " << argv[0] << " -p /dev/ttyUSB0 --network" << std::endl
+        << "    Try to connect FLIR PTU to port: /dev/ttyUSB0 with baudrate: 9600" << std::endl
 #endif
-                << "       PTU HostName: PTU-5" << std::endl
-                << "       PTU IP      : 169.254.110.254" << std::endl
-                << "       PTU Gateway : 0.0.0.0" << std::endl
-                << "  - How to run this binary using network communication" << std::endl
-                << "    $ " << argv[0] << " --portname tcp:169.254.110.254 --tag-size 0.1 --gain 0.1" << std::endl;
+        << "       PTU HostName: PTU-5" << std::endl
+        << "       PTU IP      : 169.254.110.254" << std::endl
+        << "       PTU Gateway : 0.0.0.0" << std::endl
+        << "  - How to run this binary using network communication" << std::endl
+        << "    $ " << argv[0] << " --portname tcp:169.254.110.254 --tag-size 0.1 --gain 0.1" << std::endl;
 
       return EXIT_SUCCESS;
     }
@@ -259,24 +274,25 @@ int main(int argc, char **argv)
       vpPoseVector ePc;
       ePc.loadYAML(opt_extrinsic, ePc);
       eMc.buildFrom(ePc);
-    } else {
+    }
+    else {
       std::cout << "***************************************************************" << std::endl;
       std::cout << "Warning, use hard coded values for extrinsic camera parameters." << std::endl;
       std::cout << "Create a yaml file that contains the extrinsic:" << std::endl
-                << std::endl
-                << "$ cat eMc.yaml" << std::endl
-                << "rows: 4" << std::endl
-                << "cols: 4" << std::endl
-                << "data:" << std::endl
-                << "  - [0, 0, 1, -0.1]" << std::endl
-                << "  - [-1, 0, 0, -0.123]" << std::endl
-                << "  - [0, -1, 0, 0.035]" << std::endl
-                << "  - [0, 0, 0, 1]" << std::endl
-                << std::endl
-                << "and load this file with [--extrinsic <extrinsic.yaml] command line option, like:" << std::endl
-                << std::endl
-                << "$ " << argv[0] << "-p " << opt_portname << " --extrinsic eMc.yaml" << std::endl
-                << std::endl;
+        << std::endl
+        << "$ cat eMc.yaml" << std::endl
+        << "rows: 4" << std::endl
+        << "cols: 4" << std::endl
+        << "data:" << std::endl
+        << "  - [0, 0, 1, -0.1]" << std::endl
+        << "  - [-1, 0, 0, -0.123]" << std::endl
+        << "  - [0, -1, 0, 0.035]" << std::endl
+        << "  - [0, 0, 0, 1]" << std::endl
+        << std::endl
+        << "and load this file with [--extrinsic <extrinsic.yaml] command line option, like:" << std::endl
+        << std::endl
+        << "$ " << argv[0] << "-p " << opt_portname << " --extrinsic eMc.yaml" << std::endl
+        << std::endl;
       std::cout << "***************************************************************" << std::endl;
     }
 
@@ -289,14 +305,15 @@ int main(int argc, char **argv)
     if (!opt_intrinsic.empty() && !opt_camera_name.empty()) {
       vpXmlParserCamera parser;
       parser.parse(cam, opt_intrinsic, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-    } else {
+    }
+    else {
       std::cout << "***************************************************************" << std::endl;
       std::cout << "Warning, use hard coded values for intrinsic camera parameters." << std::endl;
       std::cout << "Calibrate your camera and load the parameters from command line options, like:" << std::endl
-                << std::endl
-                << "$ " << argv[0] << "-p " << opt_portname << " --intrinsic camera.xml --camera-name \"Camera\""
-                << std::endl
-                << std::endl;
+        << std::endl
+        << "$ " << argv[0] << "-p " << opt_portname << " --intrinsic camera.xml --camera-name \"Camera\""
+        << std::endl
+        << std::endl;
       std::cout << "***************************************************************" << std::endl;
     }
 
@@ -331,7 +348,8 @@ int main(int argc, char **argv)
     if (opt_adaptive_gain) {
       vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
-    } else {
+    }
+    else {
       task.setLambda(opt_constant_gain);
     }
 
@@ -411,7 +429,8 @@ int main(int argc, char **argv)
             t_init_servo = vpTime::measureTimeMs();
           }
           qdot = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
-        } else {
+        }
+        else {
           qdot = task.computeControlLaw();
         }
 
@@ -444,7 +463,7 @@ int main(int argc, char **argv)
         if (error < convergence_threshold) {
           has_converged = true;
           std::cout << "Servo task has converged"
-                    << "\n";
+            << "\n";
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
       } // end if (cMo_vec.size() == 1)
@@ -504,10 +523,12 @@ int main(int argc, char **argv)
         vpDisplay::flush(I);
       }
     }
-  } catch (const vpRobotException &e) {
+  }
+  catch (const vpRobotException &e) {
     std::cout << "Catch Flir Ptu signal exception: " << e.getMessage() << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
@@ -523,6 +544,9 @@ int main()
 #endif
 #if !defined(VISP_HAVE_FLIR_PTU_SDK)
   std::cout << "Install FLIR PTU SDK." << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "pugixml built-in 3rdparty is requested." << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

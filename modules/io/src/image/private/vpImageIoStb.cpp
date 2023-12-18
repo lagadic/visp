@@ -36,6 +36,10 @@
   \brief stb backend for JPEG and PNG image I/O operations.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_STBIMAGE)
+
 #include "vpImageIoBackend.h"
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
@@ -111,3 +115,5 @@ void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
   }
 }
+
+#endif

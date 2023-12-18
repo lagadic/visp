@@ -396,15 +396,13 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_JPEG)
-    std::string message =
-      "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    // Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
-    std::string message =
-      "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    // OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
@@ -413,29 +411,58 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_SIMDLIB)
+    backend = IO_SIMDLIB_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     readStb(I, filename);
-  }
-#if defined(VISP_HAVE_SIMDLIB)
-  else if (backend == IO_SIMDLIB_BACKEND) {
-    readSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
+  else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
+    readSimdlib(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
 }
 
 /*!
@@ -469,29 +496,58 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_SIMDLIB)
+    backend = IO_SIMDLIB_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     readStb(I, filename);
-  }
-#if defined(VISP_HAVE_SIMDLIB)
-  else if (backend == IO_SIMDLIB_BACKEND) {
-    readSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
+  else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
+    readSimdlib(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
 }
 
 /*!
@@ -525,29 +581,58 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
     backend = IO_SYSTEM_LIB_BACKEND;
 #elif defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
     backend = IO_OPENCV_BACKEND;
-#else
+#elif defined(VISP_HAVE_SIMDLIB)
+    backend = IO_SIMDLIB_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     readStb(I, filename);
-  }
-#if defined(VISP_HAVE_SIMDLIB)
-  else if (backend == IO_SIMDLIB_BACKEND) {
-    readSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
+  else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
+    readSimdlib(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
 }
 
 /*!
@@ -579,29 +664,58 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   else if (backend == IO_DEFAULT_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     backend = IO_OPENCV_BACKEND;
-#else
+#elif defined(VISP_HAVE_SIMDLIB)
+    backend = IO_SIMDLIB_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readOpenCV(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     readStb(I, filename);
-  }
-#if defined(VISP_HAVE_SIMDLIB)
-  else if (backend == IO_SIMDLIB_BACKEND) {
-    readSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
+  else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
+    readSimdlib(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
 }
 
 /*!
@@ -744,28 +858,59 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_SIMDLIB)
     backend = IO_SIMDLIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": jpeg backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
-#if defined(VISP_HAVE_SIMDLIB)
   else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
     writeJPEGSimdlib(I, filename, quality);
-  }
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     writeJPEGStb(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 
@@ -811,28 +956,59 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_SIMDLIB)
     backend = IO_SIMDLIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": jpeg library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
-#if defined(VISP_HAVE_SIMDLIB)
   else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
     writeJPEGSimdlib(I, filename, quality);
-  }
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     writeJPEGStb(I, filename, quality);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 
@@ -875,27 +1051,56 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_SIMDLIB)
     backend = IO_SIMDLIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
-#if defined(VISP_HAVE_SIMDLIB)
   else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
     writePNGSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     writePNGStb(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
   else if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    (void)quality;
+    std::string message = "Cannot save file \"" + filename + "\": png library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
@@ -939,27 +1144,54 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_SIMDLIB)
     backend = IO_SIMDLIB_BACKEND;
-#else
+#elif defined(VISP_HAVE_STBIMAGE)
     backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 
   if (backend == IO_OPENCV_BACKEND) {
 #if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, 90);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
-#if defined(VISP_HAVE_SIMDLIB)
   else if (backend == IO_SIMDLIB_BACKEND) {
+#if defined(VISP_HAVE_SIMDLIB)
     writePNGSimdlib(I, filename);
-  }
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
+  }
   else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
     writePNGStb(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
   else if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
+#else
+    (void)I;
+    (void)filename;
+    std::string message = "Cannot save file \"" + filename + "\": libpng backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }

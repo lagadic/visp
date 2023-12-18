@@ -106,7 +106,8 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename);
 void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename);
 #endif
 
-// stb lib
+#if defined(VISP_HAVE_STBIMAGE)
+// stb_image lib
 void readStb(vpImage<unsigned char> &I, const std::string &filename);
 void readStb(vpImage<vpRGBa> &I, const std::string &filename);
 
@@ -115,5 +116,6 @@ void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename, int qua
 
 void writePNGStb(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename);
+#endif
 
 #endif

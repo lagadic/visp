@@ -43,7 +43,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA) && \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA) && defined(VISP_HAVE_PUGIXML) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
 void usage(const char **argv, int error, const std::string &robot_ip)
@@ -103,8 +103,9 @@ int main(int argc, const char **argv)
     std::cout << "Image size: " << width << " x " << height << std::endl;
     // Save intrinsics
     vpCameraParameters cam;
-    vpXmlParserCamera xml_camera;
+
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+    vpXmlParserCamera xml_camera;
     xml_camera.save(cam, "franka_camera.xml", "Camera", width, height);
 
 #if defined(VISP_HAVE_X11)
@@ -171,6 +172,9 @@ int main()
 #endif
 #if !defined(VISP_HAVE_FRANKA)
   std::cout << "Install libfranka." << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "Enable pugyxml built-in usage." << std::endl;
 #endif
 
   std::cout << "After installation of the missing 3rd parties, configure ViSP with cmake "

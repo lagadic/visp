@@ -3,7 +3,6 @@
 #include <ios>
 #include <iostream>
 
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>

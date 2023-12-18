@@ -3779,6 +3779,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
@@ -3799,6 +3800,11 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 /*!

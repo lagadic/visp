@@ -30,8 +30,8 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-              << "xml,"
-              << "cao or wrl]" << std::endl;
+      << "xml,"
+      << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
     vpImage<unsigned char> I;
     vpCameraParameters cam;
@@ -57,10 +57,12 @@ int main(int argc, char **argv)
     vpMbKltTracker tracker;
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     //! [Load xml]
     if (!usexml) {
       //! [Set parameters]
@@ -104,7 +106,8 @@ int main(int argc, char **argv)
         break;
     }
     vpDisplay::getClick(I);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }
 #ifdef VISP_HAVE_OGRE

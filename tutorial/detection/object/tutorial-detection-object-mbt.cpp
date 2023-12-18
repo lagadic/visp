@@ -58,11 +58,13 @@ int main(int argc, char **argv)
 
     vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
     bool usexml = false;
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       tracker.getCameraParameters(cam);
       usexml = true;
     }
+#endif
     if (!usexml) {
       vpMe me;
       me.setMaskSize(5);

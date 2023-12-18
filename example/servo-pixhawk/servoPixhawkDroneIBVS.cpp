@@ -38,7 +38,8 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))  && defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
+  defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PUGIXML)
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMomentAreaNormalized.h>
@@ -574,12 +575,13 @@ int main(int argc, char **argv)
 int main()
 {
 #ifndef VISP_HAVE_MAVSDK
-  std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n"
-    << std::endl;
+  std::cout << "\nThis example requires mavsdk library. You should install it, configure and rebuid ViSP.\n" << std::endl;
 #endif
 #ifndef VISP_HAVE_REALSENSE2
-  std::cout << "\nThis example requires librealsense2 library. You should install it, configure and rebuid ViSP.\n"
-    << std::endl;
+  std::cout << "\nThis example requires librealsense2 library. You should install it, configure and rebuid ViSP.\n" << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "\nThis example requires pugixml built-in 3rdparty." << std::endl;
 #endif
 #if !((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
   std::cout

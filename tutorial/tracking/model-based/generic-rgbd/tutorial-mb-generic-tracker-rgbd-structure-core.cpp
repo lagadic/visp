@@ -3,7 +3,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_OPENCV)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_OPENCV) && defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
@@ -33,56 +33,71 @@ int main(int argc, char *argv[])
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--config_color" && i + 1 < argc) {
       config_color = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--config_depth" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--config_depth" && i + 1 < argc) {
       config_depth = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--model_color" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--model_color" && i + 1 < argc) {
       model_color = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--model_depth" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--model_depth" && i + 1 < argc) {
       model_depth = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
       init_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--proj_error_threshold" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--proj_error_threshold" && i + 1 < argc) {
       proj_error_threshold = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--use_ogre") {
+    }
+    else if (std::string(argv[i]) == "--use_ogre") {
       use_ogre = true;
-    } else if (std::string(argv[i]) == "--use_scanline") {
+    }
+    else if (std::string(argv[i]) == "--use_scanline") {
       use_scanline = true;
-    } else if (std::string(argv[i]) == "--use_edges" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--use_edges" && i + 1 < argc) {
       use_edges = (std::atoi(argv[i + 1]) == 0 ? false : true);
-    } else if (std::string(argv[i]) == "--use_klt" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--use_klt" && i + 1 < argc) {
       use_klt = (std::atoi(argv[i + 1]) == 0 ? false : true);
-    } else if (std::string(argv[i]) == "--use_depth" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--use_depth" && i + 1 < argc) {
       use_depth = (std::atoi(argv[i + 1]) == 0 ? false : true);
-    } else if (std::string(argv[i]) == "--learn") {
+    }
+    else if (std::string(argv[i]) == "--learn") {
       learn = true;
-    } else if (std::string(argv[i]) == "--learning_data" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--learning_data" && i + 1 < argc) {
       learning_data = argv[i + 1];
-    } else if (std::string(argv[i]) == "--auto_init") {
+    }
+    else if (std::string(argv[i]) == "--auto_init") {
       auto_init = true;
-    } else if (std::string(argv[i]) == "--display_proj_error") {
+    }
+    else if (std::string(argv[i]) == "--display_proj_error") {
       display_projection_error = true;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n"
-                << argv[0]
-                << " [--model_color <object.cao>] [--model_depth <object.cao>]"
-                   " [--config_color <object.xml>] [--config_depth <object.xml>]"
-                   " [--init_file <object.init>] [--use_ogre] [--use_scanline]"
-                   " [--proj_error_threshold <threshold between 0 and 90> (default: "
-                << proj_error_threshold
-                << ")]"
-                   " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 1)] [--use_depth <0|1> (default: 1)]"
-                   " [--learn] [--auto_init] [--learning_data <path to .bin> (default: learning/data-learned.bin)]"
-                   " [--display_proj_error]"
-                << std::endl;
+        << argv[0]
+        << " [--model_color <object.cao>] [--model_depth <object.cao>]"
+        " [--config_color <object.xml>] [--config_depth <object.xml>]"
+        " [--init_file <object.init>] [--use_ogre] [--use_scanline]"
+        " [--proj_error_threshold <threshold between 0 and 90> (default: "
+        << proj_error_threshold
+        << ")]"
+        " [--use_edges <0|1> (default: 1)] [--use_klt <0|1> (default: 1)] [--use_depth <0|1> (default: 1)]"
+        " [--learn] [--auto_init] [--learning_data <path to .bin> (default: learning/data-learned.bin)]"
+        " [--display_proj_error]"
+        << std::endl;
 
       std::cout << "\n** How to track a 4.2 cm width cube with manual initialization:\n"
-                << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1" << std::endl;
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1" << std::endl;
       std::cout << "\n** How to learn the cube and create a learning database:\n"
-                << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --learn"
-                << std::endl;
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --learn"
+        << std::endl;
       std::cout << "\n** How to track the cube with initialization from learning database:\n"
-                << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --auto_init"
-                << std::endl;
+        << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --auto_init"
+        << std::endl;
 
       return EXIT_SUCCESS;
     }
@@ -112,15 +127,15 @@ int main(int argc, char *argv[])
   std::cout << "  Display proj. error: " << display_projection_error << std::endl;
   std::cout << "Config files: " << std::endl;
   std::cout << "  Config color: "
-            << "\"" << config_color << "\"" << std::endl;
+    << "\"" << config_color << "\"" << std::endl;
   std::cout << "  Config depth: "
-            << "\"" << config_depth << "\"" << std::endl;
+    << "\"" << config_depth << "\"" << std::endl;
   std::cout << "  Model color : "
-            << "\"" << model_color << "\"" << std::endl;
+    << "\"" << model_color << "\"" << std::endl;
   std::cout << "  Model depth : "
-            << "\"" << model_depth << "\"" << std::endl;
+    << "\"" << model_depth << "\"" << std::endl;
   std::cout << "  Init file   : "
-            << "\"" << init_file << "\"" << std::endl;
+    << "\"" << init_file << "\"" << std::endl;
   std::cout << "Learning options   : " << std::endl;
   std::cout << "  Learn       : " << learn << std::endl;
   std::cout << "  Auto init   : " << auto_init << std::endl;
@@ -133,8 +148,8 @@ int main(int argc, char *argv[])
 
   if (config_color.empty() || config_depth.empty() || model_color.empty() || model_depth.empty() || init_file.empty()) {
     std::cout << "config_color.empty() || config_depth.empty() || model_color.empty() || model_depth.empty() || "
-                 "init_file.empty()"
-              << std::endl;
+      "init_file.empty()"
+      << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -146,7 +161,8 @@ int main(int argc, char *argv[])
 
   try {
     sc.open(settings);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.what() << std::endl;
     std::cout << "Check if the Structure Core camera is connected..." << std::endl;
     return EXIT_SUCCESS;
@@ -236,11 +252,13 @@ int main(int argc, char *argv[])
     mapOfImages["Camera2"] = &I_depth;
     mapOfInitFiles["Camera1"] = init_file;
     tracker.setCameraParameters(cam_color, cam_depth);
-  } else if (use_edges || use_klt) {
+  }
+  else if (use_edges || use_klt) {
     tracker.loadConfigFile(config_color);
     tracker.loadModel(model_color);
     tracker.setCameraParameters(cam_color);
-  } else if (use_depth) {
+  }
+  else if (use_depth) {
     tracker.loadConfigFile(config_depth);
     tracker.loadModel(model_depth);
     tracker.setCameraParameters(cam_depth);
@@ -285,7 +303,8 @@ int main(int argc, char *argv[])
       return EXIT_FAILURE;
     }
     keypoint.loadLearningData(learning_data, true);
-  } else {
+  }
+  else {
     if ((use_edges || use_klt) && use_depth)
       tracker.initClick(mapOfImages, mapOfInitFiles, true);
     else if (use_edges || use_klt)
@@ -332,9 +351,11 @@ int main(int argc, char *argv[])
         mapOfPointclouds["Camera2"] = &pointcloud;
         mapOfWidths["Camera2"] = width;
         mapOfHeights["Camera2"] = height;
-      } else if (use_edges || use_klt) {
+      }
+      else if (use_edges || use_klt) {
         mapOfImages["Camera"] = &I_gray;
-      } else if (use_depth) {
+      }
+      else if (use_depth) {
         mapOfPointclouds["Camera"] = &pointcloud;
         mapOfWidths["Camera"] = width;
         mapOfHeights["Camera"] = height;
@@ -348,12 +369,15 @@ int main(int argc, char *argv[])
             mapOfCameraPoses["Camera1"] = cMo;
             mapOfCameraPoses["Camera2"] = depth_M_color * cMo;
             tracker.initFromPose(mapOfImages, mapOfCameraPoses);
-          } else if (use_edges || use_klt) {
+          }
+          else if (use_edges || use_klt) {
             tracker.initFromPose(I_gray, cMo);
-          } else if (use_depth) {
+          }
+          else if (use_depth) {
             tracker.initFromPose(I_depth, depth_M_color * cMo);
           }
-        } else {
+        }
+        else {
           if (use_edges || use_klt) {
             vpDisplay::flush(I_gray);
           }
@@ -374,12 +398,15 @@ int main(int argc, char *argv[])
         }
         if ((use_edges || use_klt) && use_depth) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
-        } else if (use_edges || use_klt) {
+        }
+        else if (use_edges || use_klt) {
           tracker.track(I_gray);
-        } else if (use_depth) {
+        }
+        else if (use_depth) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
         tracking_failed = true;
         if (auto_init) {
@@ -396,7 +423,8 @@ int main(int argc, char *argv[])
       if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
         // Check tracking errors
         proj_error = tracker.getProjectionError();
-      } else {
+      }
+      else {
         proj_error = tracker.computeCurrentProjectionError(I_gray, cMo, cam_color);
       }
 
@@ -415,10 +443,12 @@ int main(int argc, char *argv[])
           tracker.display(I_gray, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
           vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 3);
-        } else if (use_edges || use_klt) {
+        }
+        else if (use_edges || use_klt) {
           tracker.display(I_gray, cMo, cam_color, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
-        } else if (use_depth) {
+        }
+        else if (use_depth) {
           tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
         }
@@ -431,7 +461,7 @@ int main(int argc, char *argv[])
         {
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
-             << ", depth " << tracker.getNbFeaturesDepthDense();
+            << ", depth " << tracker.getNbFeaturesDepthDense();
           vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
       }
@@ -454,9 +484,11 @@ int main(int argc, char *argv[])
         if (vpDisplay::getClick(I_gray, button, false)) {
           if (button == vpMouseButton::button3) {
             quit = true;
-          } else if (button == vpMouseButton::button1 && learn) {
+          }
+          else if (button == vpMouseButton::button1 && learn) {
             learn_position = true;
-          } else if (button == vpMouseButton::button1 && auto_init && !learn) {
+          }
+          else if (button == vpMouseButton::button1 && auto_init && !learn) {
             run_auto_init = true;
           }
         }
@@ -504,14 +536,15 @@ int main(int argc, char *argv[])
       std::cout << "Save learning file: " << learning_data << std::endl;
       keypoint.saveLearningData(learning_data, true, true);
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.what() << std::endl;
   }
 
   if (!times_vec.empty()) {
     std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec)
-              << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
-              << std::endl;
+      << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
+      << std::endl;
   }
 
   return EXIT_SUCCESS;

@@ -54,14 +54,14 @@
 
 vpMbDepthNormalTracker::vpMbDepthNormalTracker()
   : m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
-    m_depthNormalHiddenFacesDisplay(), m_depthNormalListOfActiveFaces(), m_depthNormalListOfDesiredFeatures(),
-    m_depthNormalFaces(), m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
-    m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
-    m_depthNormalUseRobust(false), m_error_depthNormal(), m_featuresToBeDisplayedDepthNormal(), m_L_depthNormal(),
-    m_robust_depthNormal(), m_w_depthNormal(), m_weightedError_depthNormal()
+  m_depthNormalHiddenFacesDisplay(), m_depthNormalListOfActiveFaces(), m_depthNormalListOfDesiredFeatures(),
+  m_depthNormalFaces(), m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
+  m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
+  m_depthNormalUseRobust(false), m_error_depthNormal(), m_featuresToBeDisplayedDepthNormal(), m_L_depthNormal(),
+  m_robust_depthNormal(), m_w_depthNormal(), m_weightedError_depthNormal()
 #if DEBUG_DISPLAY_DEPTH_NORMAL
-    ,
-    m_debugDisp_depthNormal(nullptr), m_debugImage_depthNormal()
+  ,
+  m_debugDisp_depthNormal(nullptr), m_debugImage_depthNormal()
 #endif
 {
 #ifdef VISP_HAVE_OGRE
@@ -282,7 +282,7 @@ void vpMbDepthNormalTracker::display(const vpImage<unsigned char> &I, const vpHo
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -308,7 +308,7 @@ void vpMbDepthNormalTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneo
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -381,7 +381,7 @@ std::vector<std::vector<double> > vpMbDepthNormalTracker::getModelForDisplay(uns
        it != m_depthNormalFaces.end(); ++it) {
     vpMbtFaceDepthNormal *face_normal = *it;
     std::vector<std::vector<double> > modelLines =
-        face_normal->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      face_normal->getModelForDisplay(width, height, cMo, cam, displayFullModel);
     models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
 
@@ -397,7 +397,8 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
   bool reInitialisation = false;
   if (!useOgre) {
     faces.setVisible(I.getWidth(), I.getHeight(), m_cam, m_cMo, angleAppears, angleDisappears, reInitialisation);
-  } else {
+  }
+  else {
 #ifdef VISP_HAVE_OGRE
     if (!faces.isOgreInitialised()) {
       faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
@@ -423,6 +424,7 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
@@ -441,7 +443,8 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile, bool 
       std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
     }
     xmlp.parse(configFile);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }
@@ -467,6 +470,11 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile, bool 
   setDepthNormalPclPlaneEstimationRansacMaxIter(xmlp.getDepthNormalPclPlaneEstimationRansacMaxIter());
   setDepthNormalPclPlaneEstimationRansacThreshold(xmlp.getDepthNormalPclPlaneEstimationRansacThreshold());
   setDepthNormalSamplingStep(xmlp.getDepthNormalSamplingStepX(), xmlp.getDepthNormalSamplingStepY());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbDepthDenseTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
@@ -584,7 +592,7 @@ void vpMbDepthNormalTracker::setUseDepthNormalTracking(const std::string &name, 
   }
 }
 
-void vpMbDepthNormalTracker::testTracking() {}
+void vpMbDepthNormalTracker::testTracking() { }
 
 #ifdef VISP_HAVE_PCL
 void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)

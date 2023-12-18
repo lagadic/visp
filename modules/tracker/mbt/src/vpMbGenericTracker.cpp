@@ -6514,6 +6514,7 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile, verbose);
 
@@ -6642,6 +6643,11 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 
   // Depth dense
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbGenericTracker::TrackerWrapper::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 #ifdef VISP_HAVE_PCL

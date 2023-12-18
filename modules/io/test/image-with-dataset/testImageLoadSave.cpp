@@ -61,7 +61,9 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backends
 #if defined VISP_HAVE_SIMDLIB
   vpImageIo::IO_SIMDLIB_BACKEND,
 #endif
+#if defined VISP_HAVE_STBIMAGE
   vpImageIo::IO_STB_IMAGE_BACKEND
+#endif
 };
 static const std::vector<std::string> backendNamesJpeg
 {

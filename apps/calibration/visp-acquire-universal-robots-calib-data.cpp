@@ -43,7 +43,7 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE) && \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE) && defined(VISP_HAVE_PUGIXML) && \
     defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_MODULE_ROBOT) && defined(VISP_HAVE_MODULE_SENSOR) // optional
 
 void usage(const char **argv, int error, const std::string &robot_ip)
@@ -174,6 +174,9 @@ int main()
 #if !defined(VISP_HAVE_UR_RTDE)
   std::cout << "ViSP is not build with libur_rtde 3rd party used to control a robot from Universal Robots..."
     << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "Enable pugyxml built-in usage." << std::endl;
 #endif
 
   std::cout << "After installation of the missing 3rd parties, configure ViSP with cmake"

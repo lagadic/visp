@@ -129,12 +129,65 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
 
     const std::string input_directory =
       vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "mbt-depth/Castle-simu");
+
+    const bool verbose = false;
+#if defined(VISP_HAVE_PUGIXML)
     const std::string configFileCam1 = input_directory + std::string("/Config/chateau.xml");
     const std::string configFileCam2 = input_directory + std::string("/Config/chateau_depth.xml");
     REQUIRE(vpIoTools::checkFilename(configFileCam1));
     REQUIRE(vpIoTools::checkFilename(configFileCam2));
-    const bool verbose = false;
     tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
+#else
+    {
+      vpCameraParameters cam_color, cam_depth;
+      cam_color.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+      tracker.setCameraParameters(cam_color, cam_depth);
+    }
+
+    // Edge
+    vpMe me;
+    me.setMaskSize(5);
+    me.setMaskNumber(180);
+    me.setRange(8);
+    me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+    me.setThreshold(5);
+    me.setMu1(0.5);
+    me.setMu2(0.5);
+    me.setSampleStep(5);
+    tracker.setMovingEdge(me);
+
+    // Klt
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+    vpKltOpencv klt;
+    tracker.setKltMaskBorder(5);
+    klt.setMaxFeatures(10000);
+    klt.setWindowSize(5);
+    klt.setQuality(0.01);
+    klt.setMinDistance(5);
+    klt.setHarrisFreeParameter(0.02);
+    klt.setBlockSize(3);
+    klt.setPyramidLevels(3);
+
+    tracker.setKltOpencv(klt);
+#endif
+
+    // Depth
+    tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+    tracker.setDepthNormalPclPlaneEstimationMethod(2);
+    tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
+    tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
+    tracker.setDepthNormalSamplingStep(2, 2);
+
+    tracker.setDepthDenseSamplingStep(4, 4);
+
+    tracker.setAngleAppear(vpMath::rad(85.0));
+    tracker.setAngleDisappear(vpMath::rad(89.0));
+    tracker.setNearClippingDistance(0.01);
+    tracker.setFarClippingDistance(2.0);
+    tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+#endif
+
     REQUIRE(vpIoTools::checkFilename(input_directory + "/Models/chateau.cao"));
     tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao", verbose);
 
@@ -226,7 +279,58 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         tracker.setTrackerType(mapOfTrackerTypes[idx]);
 
         const bool verbose = false;
+#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
+#else
+        {
+          vpCameraParameters cam_color, cam_depth;
+          cam_color.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+          cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
+          tracker.setCameraParameters(cam_color, cam_depth);
+        }
+
+        // Edge
+        vpMe me;
+        me.setMaskSize(5);
+        me.setMaskNumber(180);
+        me.setRange(8);
+        me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+        me.setThreshold(5);
+        me.setMu1(0.5);
+        me.setMu2(0.5);
+        me.setSampleStep(5);
+        tracker.setMovingEdge(me);
+
+        // Klt
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
+        vpKltOpencv klt;
+        tracker.setKltMaskBorder(5);
+        klt.setMaxFeatures(10000);
+        klt.setWindowSize(5);
+        klt.setQuality(0.01);
+        klt.setMinDistance(5);
+        klt.setHarrisFreeParameter(0.02);
+        klt.setBlockSize(3);
+        klt.setPyramidLevels(3);
+
+        tracker.setKltOpencv(klt);
+#endif
+
+        // Depth
+        tracker.setDepthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION);
+        tracker.setDepthNormalPclPlaneEstimationMethod(2);
+        tracker.setDepthNormalPclPlaneEstimationRansacMaxIter(200);
+        tracker.setDepthNormalPclPlaneEstimationRansacThreshold(0.001);
+        tracker.setDepthNormalSamplingStep(2, 2);
+
+        tracker.setDepthDenseSamplingStep(4, 4);
+
+        tracker.setAngleAppear(vpMath::rad(85.0));
+        tracker.setAngleDisappear(vpMath::rad(89.0));
+        tracker.setNearClippingDistance(0.01);
+        tracker.setFarClippingDistance(2.0);
+        tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+#endif
         tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao", verbose);
         tracker.loadModel(input_directory + "/Models/cube.cao", verbose, T);
         tracker.initFromPose(images.front(), cMo_truth_all.front());

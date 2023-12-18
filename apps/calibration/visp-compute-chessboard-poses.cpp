@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(VISP_HAVE_PUGIXML)
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/core.hpp>
@@ -345,7 +345,12 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cerr << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl;
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D))
+  std::cerr << "OpenCV calib3d module is requested to run the calibration." << std::endl;
+#endif
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "pugixml built-in 3rdparty is requested to run the calibration." << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
 #endif

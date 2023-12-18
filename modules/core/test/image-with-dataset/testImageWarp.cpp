@@ -58,10 +58,10 @@ static const double g_threshold_percentage_bilinear = 0.75;
 static const double g_threshold_percentage_pers = 0.75;
 static const double g_threshold_percentage_pers_bilinear = 0.65;
 
-static const std::vector<vpImageTools::vpImageInterpolationType> interp_methods = {vpImageTools::INTERPOLATION_NEAREST,
-                                                                                   vpImageTools::INTERPOLATION_LINEAR};
-static const std::vector<std::string> interp_names = {"Nearest Neighbor", "Bilinear"};
-static const std::vector<std::string> suffixes = {"_NN.png", "_bilinear.png"};
+static const std::vector<vpImageTools::vpImageInterpolationType> interp_methods = { vpImageTools::INTERPOLATION_NEAREST,
+                                                                                   vpImageTools::INTERPOLATION_LINEAR };
+static const std::vector<std::string> interp_names = { "Nearest Neighbor", "Bilinear" };
+static const std::vector<std::string> suffixes = { "_NN.png", "_bilinear.png" };
 
 bool almostEqual(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, double threshold_val,
                  double threshold_percentage, double &percentage)
@@ -180,6 +180,7 @@ TEST_CASE("Affine warp on grayscale", "[warp_image]")
               vpIoTools::getViSPImagesDataPath(), std::string("warp/cv_warp_affine_rot_45_gray" + suffixes[i]));
           REQUIRE(vpIoTools::checkFilename(refImgPath));
           vpImage<unsigned char> I_ref_opencv;
+
           vpImageIo::read(I_ref_opencv, refImgPath);
 
           vpImage<unsigned char> I_affine;
@@ -548,10 +549,10 @@ TEST_CASE("Perspective warp on grayscale", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " Ref): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
 
@@ -568,10 +569,10 @@ TEST_CASE("Perspective warp on grayscale", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref_opencv, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref_opencv, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " OpenCV): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
 
@@ -588,10 +589,10 @@ TEST_CASE("Perspective warp on grayscale", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref_pil, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref_pil, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " PIL): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
       }
@@ -660,10 +661,10 @@ TEST_CASE("Perspective warp on color", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " Ref): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
 
@@ -680,10 +681,10 @@ TEST_CASE("Perspective warp on color", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref_opencv, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref_opencv, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " OpenCV): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
 
@@ -700,10 +701,10 @@ TEST_CASE("Perspective warp on color", "[warp_image]")
 
           double percentage = 0.0;
           bool equal =
-              almostEqual(I_ref_pil, I_perspective, g_threshold_value,
-                          (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
+            almostEqual(I_ref_pil, I_perspective, g_threshold_value,
+                        (i == 0) ? g_threshold_percentage_pers : g_threshold_percentage_pers_bilinear, percentage);
           std::cout << "Percentage valid pixels (Homography " << interp_names[i] << " PIL): " << percentage
-                    << std::endl;
+            << std::endl;
           CHECK(equal);
         }
       }

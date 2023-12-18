@@ -275,12 +275,14 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
   tracker_type[0] = trackerType_image;
   tracker_type[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
   vpMbGenericTracker tracker(tracker_type);
+
+#if defined(VISP_HAVE_PUGIXML)
   std::string configFileCam1 = input_directory + std::string("/Config/chateau.xml");
   std::string configFileCam2 = input_directory + std::string("/Config/chateau_depth.xml");
   std::cout << "Load config file for camera 1: " << configFileCam1 << std::endl;
   std::cout << "Load config file for camera 2: " << configFileCam2 << std::endl;
   tracker.loadConfigFile(configFileCam1, configFileCam2);
-#if 0
+#else
   // Corresponding parameters manually set to have an example code
   {
     vpCameraParameters cam_color, cam_depth;

@@ -54,11 +54,11 @@
 
 vpMbDepthDenseTracker::vpMbDepthDenseTracker()
   : m_depthDenseHiddenFacesDisplay(), m_depthDenseListOfActiveFaces(), m_denseDepthNbFeatures(0), m_depthDenseFaces(),
-    m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2), m_error_depthDense(), m_L_depthDense(),
-    m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
+  m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2), m_error_depthDense(), m_L_depthDense(),
+  m_robust_depthDense(), m_w_depthDense(), m_weightedError_depthDense()
 #if DEBUG_DISPLAY_DEPTH_DENSE
-    ,
-    m_debugDisp_depthDense(nullptr), m_debugImage_depthDense()
+  ,
+  m_debugDisp_depthDense(nullptr), m_debugImage_depthDense()
 #endif
 {
 #ifdef VISP_HAVE_OGRE
@@ -287,7 +287,7 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -303,7 +303,7 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
-      vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+    vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -352,7 +352,7 @@ std::vector<std::vector<double> > vpMbDepthDenseTracker::getModelForDisplay(unsi
        ++it) {
     vpMbtFaceDepthDense *face_dense = *it;
     std::vector<std::vector<double> > modelLines =
-        face_dense->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      face_dense->getModelForDisplay(width, height, cMo, cam, displayFullModel);
     models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
 
@@ -368,7 +368,8 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
   bool reInitialisation = false;
   if (!useOgre) {
     faces.setVisible(I.getWidth(), I.getHeight(), m_cam, m_cMo, angleAppears, angleDisappears, reInitialisation);
-  } else {
+  }
+  else {
 #ifdef VISP_HAVE_OGRE
     if (!faces.isOgreInitialised()) {
       faces.setBackgroundSizeOgre(I.getHeight(), I.getWidth());
@@ -394,6 +395,7 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
@@ -408,7 +410,8 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile, bool v
       std::cout << " *********** Parsing XML for Mb Depth Dense Tracker ************ " << std::endl;
     }
     xmlp.parse(configFile);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
   }
@@ -430,6 +433,11 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile, bool v
     setClipping(clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbDepthDenseTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
@@ -710,7 +718,7 @@ void vpMbDepthDenseTracker::setUseDepthDenseTracking(const std::string &name, co
   }
 }
 
-void vpMbDepthDenseTracker::testTracking() {}
+void vpMbDepthDenseTracker::testTracking() { }
 
 void vpMbDepthDenseTracker::track(const vpImage<unsigned char> &)
 {

@@ -60,4 +60,5 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 # Copy the data files
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)

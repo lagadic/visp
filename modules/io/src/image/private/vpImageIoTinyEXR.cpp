@@ -39,7 +39,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_TINYEXR)
+#if defined(VISP_HAVE_STBIMAGE) && defined(VISP_HAVE_TINYEXR)
+
 #include "vpImageIoBackend.h"
 
 #define TINYEXR_USE_MINIZ 0

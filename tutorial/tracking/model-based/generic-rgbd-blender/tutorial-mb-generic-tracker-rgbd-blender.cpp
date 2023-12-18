@@ -10,7 +10,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(VISP_HAVE_PUGIXML)
 namespace
 {
 bool read_data(unsigned int cpt, const std::string &video_color_images, const std::string &video_depth_images,
@@ -225,6 +225,7 @@ int main(int argc, const char **argv)
      != vpXmlParserCamera::SEQUENCE_OK) {
     std::cout << "Cannot found intrinsics for camera " << depth_camera_name << std::endl;
   }
+
   if (!opt_disable_depth)
     tracker.setCameraParameters(cam_color, cam_depth);
   else
