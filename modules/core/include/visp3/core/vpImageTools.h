@@ -58,7 +58,7 @@
 #include <math.h>
 #include <string.h>
 
-#if defined _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
@@ -1091,7 +1091,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned 
 template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
                           unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                               nThreads
 #endif
 )
@@ -1110,7 +1110,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
   const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
   const float half = 0.5f;
 
-#if defined _OPENMP
+#if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -1144,7 +1144,7 @@ template <>
 inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires,
                                  const vpImageInterpolationType &method,
                                  unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                      nThreads
 #endif
 )
@@ -1165,7 +1165,7 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
 
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
@@ -1194,7 +1194,7 @@ template <>
 inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
                                  const vpImageInterpolationType &method,
                                  unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                      nThreads
 #endif
 )
@@ -1215,7 +1215,7 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
     const float half = 0.5f;
 
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }

@@ -726,7 +726,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
       I_tpl_double.bitmap[cpt] -= mean2;
     }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
 #pragma omp parallel for schedule(dynamic)
     for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
       for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
@@ -740,7 +740,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight() - height_tpl; cpt += step_v, idx++) {
       vec_step_v[(size_t)idx] = cpt;
     }
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int cpt = 0; cpt < end; cpt++) {
@@ -837,7 +837,7 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
 {
   Iundist.resize(I.getHeight(), I.getWidth());
 
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
   for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
@@ -881,7 +881,7 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 {
   Iundist.resize(I.getHeight(), I.getWidth());
 
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
   for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {

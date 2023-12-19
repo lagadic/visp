@@ -41,7 +41,7 @@
 #include <map>
 #include <sstream>
 
-#if defined _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
@@ -3389,13 +3389,13 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
                                 unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                     nThreads
 #endif
 )
 {
 #if defined(VISP_HAVE_SIMDLIB)
-#if defined _OPENMP
+#if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -3405,7 +3405,9 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
     SimdRgbaToGray(rgba + i * width * 4, width, 1, width * 4, grey + i * width, width);
   }
 #else
+#if defined(_OPENMP)
   (void)nThreads;
+#endif
   vpImageConvert::RGBaToGrey(rgba, grey, width * height);
 #endif
 }
@@ -3640,14 +3642,14 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip,
                                unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                    nThreads
 #endif
 )
 {
 #if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
@@ -3679,7 +3681,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 #if defined(VISP_HAVE_SIMDLIB)
   }
 #endif
-#if !defined(VISP_HAVE_SIMD)
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
   (void)nThreads;
 #endif
 }
@@ -3701,14 +3703,14 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
                                 bool flip,
                                 unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                     nThreads
 #endif
 )
 {
 #if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
@@ -3740,7 +3742,7 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
 #if defined(VISP_HAVE_SIMDLIB)
   }
 #endif
-#if !defined(VISP_HAVE_SIMD)
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
   (void)nThreads;
 #endif
 }

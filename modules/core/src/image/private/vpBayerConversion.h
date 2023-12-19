@@ -145,7 +145,8 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
       rgba[j * 4 + 0] = static_cast<T>(0.5f * bggr[width + j - 1] + 0.5f * bggr[width + j + 1]);
       rgba[j * 4 + 1] = static_cast<T>(0.5f * bggr[j - 1] + 0.5f * bggr[j + 1]);
       rgba[j * 4 + 2] = bggr[j];
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = bggr[width + j];
       rgba[j * 4 + 1] = bggr[j];
       rgba[j * 4 + 2] = static_cast<T>(0.5f * bggr[j - 1] + 0.5f * bggr[j + 1]);
@@ -158,7 +159,8 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * bggr[(i - 1) * width + 1] + 0.5f * bggr[(i + 1) * width + 1]);
       rgba[i * width * 4 + 1] = bggr[i * width + 1];
       rgba[i * width * 4 + 2] = bggr[i * width];
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = bggr[i * width + 1];
       rgba[i * width * 4 + 1] = bggr[i * width];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * bggr[(i - 1) * width] + 0.5f * bggr[(i + 1) * width]);
@@ -169,14 +171,15 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[i * width - 1] + 0.5f * bggr[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * bggr[i * width - 1] + 0.5f * bggr[(i + 2) * width - 1]);
       rgba[(i * width + width - 1) * 4 + 1] = bggr[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] = bggr[(i + 1) * width - 2];
-    } else {
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] = bggr[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 1] = bggr[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
     }
   }
 
@@ -184,19 +187,20 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] = bggr[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] = bggr[(height - 2) * width + j];
-    } else {
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] = bggr[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -210,15 +214,18 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerBilinear(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 2] = bggr[i * width + j];
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiBilinear(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaBilinear(bggr, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaBilinear(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiBilinear(bggr, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerBilinear(bggr, width, i, j);
@@ -262,7 +269,8 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
       rgba[j * 4 + 0] = gbrg[width + j];
       rgba[j * 4 + 1] = gbrg[j];
       rgba[j * 4 + 2] = static_cast<T>(0.5f * gbrg[j - 1] + 0.5f * gbrg[j + 1]);
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = static_cast<T>(0.5f * gbrg[width + j - 1] + 0.5f * gbrg[width + j + 1]);
       rgba[j * 4 + 1] = static_cast<T>(0.5f * gbrg[j - 1] + 0.5f * gbrg[j + 1]);
       rgba[j * 4 + 2] = gbrg[j];
@@ -275,7 +283,8 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * gbrg[(i - 1) * width] + 0.5f * gbrg[(i + 1) * width]);
       rgba[i * width * 4 + 1] = gbrg[i * width];
       rgba[i * width * 4 + 2] = gbrg[i * width + 1];
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = gbrg[i * width];
       rgba[i * width * 4 + 1] = static_cast<T>(0.5f * gbrg[(i - 1) * width] + 0.5f * gbrg[(i + 1) * width]);
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * gbrg[(i - 1) * width + 1] + 0.5f * gbrg[(i + 1) * width + 1]);
@@ -286,14 +295,15 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
       rgba[(i * width + width - 1) * 4 + 1] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] = gbrg[(i + 1) * width - 1];
-    } else {
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 1] = gbrg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[i * width - 1] + 0.5f * gbrg[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * gbrg[i * width - 1] + 0.5f * gbrg[(i + 2) * width - 1]);
     }
   }
 
@@ -302,18 +312,19 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] = gbrg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
-    } else {
+        static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] = gbrg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] = gbrg[(height - 2) * width + j];
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -327,15 +338,18 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
         rgba[(i * width + j) * 4 + 0] = demosaicPhiBilinear(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaBilinear(gbrg, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerBilinear(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = gbrg[i * width + j];
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerBilinear(gbrg, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaBilinear(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiBilinear(gbrg, width, i, j);
@@ -379,7 +393,8 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
       rgba[j * 4 + 0] = static_cast<T>(0.5f * grbg[j - 1] + 0.5f * grbg[j + 1]);
       rgba[j * 4 + 1] = grbg[j];
       rgba[j * 4 + 2] = grbg[width + j];
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = grbg[j];
       rgba[j * 4 + 1] = static_cast<T>(0.5f * grbg[j - 1] + 0.5f * grbg[j + 1]);
       rgba[j * 4 + 2] = static_cast<T>(0.5f * grbg[width + j - 1] + 0.5f * grbg[width + j + 1]);
@@ -392,7 +407,8 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
       rgba[i * width * 4 + 0] = grbg[i * width + 1];
       rgba[i * width * 4 + 1] = grbg[i * width];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * grbg[(i - 1) * width] + 0.5f * grbg[(i + 1) * width]);
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * grbg[(i - 1) * width + 1] + 0.5f * grbg[(i + 1) * width + 1]);
       rgba[i * width * 4 + 1] = grbg[i * width + 1];
       rgba[i * width * 4 + 2] = grbg[i * width];
@@ -405,10 +421,11 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
       rgba[(i * width + width - 1) * 4 + 0] = grbg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 1] = grbg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
-    } else {
+        static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[i * width - 1] + 0.5f * grbg[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * grbg[i * width - 1] + 0.5f * grbg[(i + 2) * width - 1]);
       rgba[(i * width + width - 1) * 4 + 1] = grbg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] = grbg[(i + 1) * width - 2];
     }
@@ -418,19 +435,20 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] = grbg[(height - 1) * width + j];
-    } else {
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] = grbg[(height - 2) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] = grbg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -444,15 +462,18 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
         rgba[(i * width + j) * 4 + 0] = demosaicThetaBilinear(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiBilinear(grbg, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerBilinear(grbg, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerBilinear(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = grbg[i * width + j];
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiBilinear(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaBilinear(grbg, width, i, j);
@@ -496,7 +517,8 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
       rgba[j * 4 + 0] = rggb[j];
       rgba[j * 4 + 1] = static_cast<T>(0.5f * rggb[j - 1] + 0.5f * rggb[j + 1]);
       rgba[j * 4 + 2] = static_cast<T>(0.5f * rggb[width + j - 1] + 0.5f * rggb[width + j + 1]);
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = static_cast<T>(0.5f * rggb[j - 1] + 0.5f * rggb[j + 1]);
       rgba[j * 4 + 1] = rggb[j];
       rgba[j * 4 + 2] = rggb[width + j];
@@ -509,7 +531,8 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
       rgba[i * width * 4 + 0] = rggb[i * width];
       rgba[i * width * 4 + 1] = rggb[i * width + 1];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * rggb[(i - 1) * width + 1] + 0.5f * rggb[(i + 1) * width + 1]);
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * rggb[(i - 1) * width] + 0.5f * rggb[(i + 1) * width]);
       rgba[i * width * 4 + 1] = rggb[i * width];
       rgba[i * width * 4 + 2] = rggb[i * width + 1];
@@ -522,10 +545,11 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
       rgba[(i * width + width - 1) * 4 + 0] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 1] = rggb[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[i * width - 1] + 0.5f * rggb[(i + 2) * width - 1]);
-    } else {
+        static_cast<T>(0.5f * rggb[i * width - 1] + 0.5f * rggb[(i + 2) * width - 1]);
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
       rgba[(i * width + width - 1) * 4 + 1] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] = rggb[(i + 1) * width - 1];
     }
@@ -537,17 +561,18 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
       rgba[((height - 1) * width + j) * 4 + 0] = rggb[(height - 2) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] = rggb[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
-    } else {
+        static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] = rggb[(height - 1) * width + j];
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -561,15 +586,18 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
         rgba[(i * width + j) * 4 + 0] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerBilinear(rggb, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaBilinear(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiBilinear(rggb, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiBilinear(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaBilinear(rggb, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerBilinear(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossBilinear(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 2] = rggb[i * width + j];
@@ -614,7 +642,8 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
       rgba[j * 4 + 0] = static_cast<T>(0.5f * bggr[width + j - 1] + 0.5f * bggr[width + j + 1]);
       rgba[j * 4 + 1] = static_cast<T>(0.5f * bggr[j - 1] + 0.5f * bggr[j + 1]);
       rgba[j * 4 + 2] = bggr[j];
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = bggr[width + j];
       rgba[j * 4 + 1] = bggr[j];
       rgba[j * 4 + 2] = static_cast<T>(0.5f * bggr[j - 1] + 0.5f * bggr[j + 1]);
@@ -627,7 +656,8 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
       rgba[(width + j) * 4 + 0] = static_cast<T>(0.5f * bggr[width + j - 1] + 0.5f * bggr[width + j + 1]);
       rgba[(width + j) * 4 + 1] = bggr[width + j];
       rgba[(width + j) * 4 + 2] = static_cast<T>(0.5f * bggr[j] + 0.5f * bggr[2 * width + j]);
-    } else {
+    }
+    else {
       rgba[(width + j) * 4 + 0] = bggr[width + j];
       rgba[(width + j) * 4 + 1] = static_cast<T>(0.25f * bggr[j] + 0.25f * bggr[width + j - 1] +
                                                  0.25f * bggr[width + j + 1] + 0.25f * bggr[2 * width + j]);
@@ -642,7 +672,8 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * bggr[(i - 1) * width + 1] + 0.5f * bggr[(i + 1) * width + 1]);
       rgba[i * width * 4 + 1] = bggr[i * width + 1];
       rgba[i * width * 4 + 2] = bggr[i * width];
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = bggr[i * width + 1];
       rgba[i * width * 4 + 1] = bggr[i * width];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * bggr[(i - 1) * width] + 0.5f * bggr[(i + 1) * width]);
@@ -653,10 +684,11 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + 1) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[(i - 1) * width + 1] + 0.5f * bggr[(i + 1) * width + 1]);
+        static_cast<T>(0.5f * bggr[(i - 1) * width + 1] + 0.5f * bggr[(i + 1) * width + 1]);
       rgba[(i * width + 1) * 4 + 1] = bggr[i * width + 1];
       rgba[(i * width + 1) * 4 + 2] = static_cast<T>(0.5f * bggr[i * width] + 0.5f * bggr[i * width + 2]);
-    } else {
+    }
+    else {
       rgba[(i * width + 1) * 4 + 0] = bggr[i * width + 1];
       rgba[(i * width + 1) * 4 + 1] = static_cast<T>(0.25f * bggr[(i - 1) * width + 1] + 0.25f * bggr[i * width] +
                                                      0.25f * bggr[i * width + 2] + 0.25f * bggr[(i + 1) * width + 1]);
@@ -669,18 +701,19 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.25f * bggr[i * width - 3] + 0.25f * bggr[i * width - 1] + 0.25f * bggr[(i + 2) * width - 3] +
-                         0.25f * bggr[(i + 2) * width - 1]);
+        static_cast<T>(0.25f * bggr[i * width - 3] + 0.25f * bggr[i * width - 1] + 0.25f * bggr[(i + 2) * width - 3] +
+                       0.25f * bggr[(i + 2) * width - 1]);
       rgba[(i * width + width - 2) * 4 + 1] =
-          static_cast<T>(0.25f * bggr[i * width - 2] + 0.25f * bggr[(i + 1) * width - 3] +
-                         0.25f * bggr[(i + 1) * width - 1] + 0.25f * bggr[(i + 2) * width - 2]);
+        static_cast<T>(0.25f * bggr[i * width - 2] + 0.25f * bggr[(i + 1) * width - 3] +
+                       0.25f * bggr[(i + 1) * width - 1] + 0.25f * bggr[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 2] = bggr[(i + 1) * width - 2];
-    } else {
+    }
+    else {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[(i + 1) * width - 3] + 0.5f * bggr[(i + 1) * width - 1]);
+        static_cast<T>(0.5f * bggr[(i + 1) * width - 3] + 0.5f * bggr[(i + 1) * width - 1]);
       rgba[(i * width + width - 2) * 4 + 1] = bggr[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
     }
   }
 
@@ -688,14 +721,15 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[i * width - 1] + 0.5f * bggr[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * bggr[i * width - 1] + 0.5f * bggr[(i + 2) * width - 1]);
       rgba[(i * width + width - 1) * 4 + 1] = bggr[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] = bggr[(i + 1) * width - 2];
-    } else {
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] = bggr[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 1] = bggr[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * bggr[i * width - 2] + 0.5f * bggr[(i + 2) * width - 2]);
     }
   }
 
@@ -703,17 +737,18 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.25f * bggr[(height - 3) * width + j - 1] + 0.25f * bggr[(height - 3) * width + j + 1] +
-                         0.25f * bggr[(height - 1) * width + j - 1] + 0.25f * bggr[(height - 1) * width + j + 1]);
+        static_cast<T>(0.25f * bggr[(height - 3) * width + j - 1] + 0.25f * bggr[(height - 3) * width + j + 1] +
+                       0.25f * bggr[(height - 1) * width + j - 1] + 0.25f * bggr[(height - 1) * width + j + 1]);
       rgba[((height - 2) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
       rgba[((height - 2) * width + j) * 4 + 2] = bggr[(height - 2) * width + j];
-    } else {
+    }
+    else {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[(height - 3) * width + j] + 0.5f * bggr[(height - 1) * width + j]);
+        static_cast<T>(0.5f * bggr[(height - 3) * width + j] + 0.5f * bggr[(height - 1) * width + j]);
       rgba[((height - 2) * width + j) * 4 + 1] = bggr[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
     }
   }
 
@@ -721,19 +756,20 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] = bggr[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] = bggr[(height - 2) * width + j];
-    } else {
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] = bggr[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 1) * width + j - 1] + 0.5f * bggr[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * bggr[(height - 2) * width + j - 1] + 0.5f * bggr[(height - 2) * width + j + 1]);
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -747,15 +783,18 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerMalvar(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 2] = bggr[i * width + j];
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiMalvar(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaMalvar(bggr, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaMalvar(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 1] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiMalvar(bggr, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = bggr[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(bggr, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerMalvar(bggr, width, i, j);
@@ -798,7 +837,8 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
       rgba[j * 4 + 0] = gbrg[width + j];
       rgba[j * 4 + 1] = gbrg[j];
       rgba[j * 4 + 2] = static_cast<T>(0.5f * gbrg[j - 1] + 0.5f * gbrg[j + 1]);
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = static_cast<T>(0.5f * gbrg[width + j - 1] + 0.5f * gbrg[width + j + 1]);
       rgba[j * 4 + 1] = static_cast<T>(0.5f * gbrg[j - 1] + 0.5f * gbrg[j + 1]);
       rgba[j * 4 + 2] = gbrg[j];
@@ -813,7 +853,8 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
                                                  0.25f * gbrg[width + j + 1] + 0.25f * gbrg[2 * width + j]);
       rgba[(width + j) * 4 + 2] = static_cast<T>(0.25f * gbrg[j - 1] + 0.25f * gbrg[j + 1] +
                                                  0.25f * gbrg[2 * width + j - 1] + 0.25f * gbrg[2 * width + j + 1]);
-    } else {
+    }
+    else {
       rgba[(width + j) * 4 + 0] = static_cast<T>(0.5f * gbrg[width + j - 1] + 0.5f * gbrg[width + j + 1]);
       rgba[(width + j) * 4 + 1] = gbrg[width + j];
       rgba[(width + j) * 4 + 2] = static_cast<T>(0.5f * gbrg[j] + 0.5f * gbrg[2 * width + j]);
@@ -826,7 +867,8 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * gbrg[(i - 1) * width] + 0.5f * gbrg[(i + 1) * width]);
       rgba[i * width * 4 + 1] = gbrg[i * width];
       rgba[i * width * 4 + 2] = gbrg[i * width + 1];
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = gbrg[i * width];
       rgba[i * width * 4 + 1] = static_cast<T>(0.5f * gbrg[(i - 1) * width] + 0.5f * gbrg[(i + 1) * width]);
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * gbrg[(i - 1) * width + 1] + 0.5f * gbrg[(i + 1) * width + 1]);
@@ -841,11 +883,12 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
       rgba[(i * width + 1) * 4 + 1] = static_cast<T>(0.25f * gbrg[(i - 1) * width + 1] + 0.25f * gbrg[i * width] +
                                                      0.25f * gbrg[i * width + 2] + 0.5f * gbrg[(i + 1) * width + 1]);
       rgba[(i * width + 1) * 4 + 2] = gbrg[i * width + 1];
-    } else {
+    }
+    else {
       rgba[(i * width + 1) * 4 + 0] = static_cast<T>(0.5f * gbrg[i * width] + 0.5f * gbrg[i * width + 2]);
       rgba[(i * width + 1) * 4 + 1] = gbrg[i * width + 1];
       rgba[(i * width + 1) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[(i - 1) * width + 1] + 0.5f * gbrg[(i + 1) * width + 1]);
+        static_cast<T>(0.5f * gbrg[(i - 1) * width + 1] + 0.5f * gbrg[(i + 1) * width + 1]);
     }
   }
 
@@ -853,18 +896,19 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 1] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[(i + 1) * width - 3] + 0.5f * gbrg[(i + 1) * width - 1]);
-    } else {
+        static_cast<T>(0.5f * gbrg[(i + 1) * width - 3] + 0.5f * gbrg[(i + 1) * width - 1]);
+    }
+    else {
       rgba[(i * width + width - 2) * 4 + 0] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 1] =
-          static_cast<T>(0.25f * gbrg[i * width - 2] + 0.25f * gbrg[(i + 1) * width - 3] +
-                         0.25f * gbrg[(i + 1) * width - 1] + 0.25f * gbrg[(i + 2) * width - 2]);
+        static_cast<T>(0.25f * gbrg[i * width - 2] + 0.25f * gbrg[(i + 1) * width - 3] +
+                       0.25f * gbrg[(i + 1) * width - 1] + 0.25f * gbrg[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.25f * gbrg[i * width - 3] + 0.25f * gbrg[i * width - 1] + 0.25f * gbrg[(i + 2) * width - 3] +
-                         0.25f * gbrg[(i + 2) * width - 1]);
+        static_cast<T>(0.25f * gbrg[i * width - 3] + 0.25f * gbrg[i * width - 1] + 0.25f * gbrg[(i + 2) * width - 3] +
+                       0.25f * gbrg[(i + 2) * width - 1]);
     }
   }
 
@@ -872,14 +916,15 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * gbrg[i * width - 2] + 0.5f * gbrg[(i + 2) * width - 2]);
       rgba[(i * width + width - 1) * 4 + 1] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] = gbrg[(i + 1) * width - 1];
-    } else {
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] = gbrg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 1] = gbrg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[i * width - 1] + 0.5f * gbrg[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * gbrg[i * width - 1] + 0.5f * gbrg[(i + 2) * width - 1]);
     }
   }
 
@@ -887,17 +932,18 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[(height - 3) * width + j] + 0.5f * gbrg[(height - 1) * width + j]);
+        static_cast<T>(0.5f * gbrg[(height - 3) * width + j] + 0.5f * gbrg[(height - 1) * width + j]);
       rgba[((height - 2) * width + j) * 4 + 1] = gbrg[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
-    } else {
+        static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
+    }
+    else {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.25f * gbrg[(height - 3) * width + j - 1] + 0.25f * gbrg[(height - 3) * width + j + 1] +
-                         0.25f * gbrg[(height - 1) * width + j - 1] + 0.25f * gbrg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.25f * gbrg[(height - 3) * width + j - 1] + 0.25f * gbrg[(height - 3) * width + j + 1] +
+                       0.25f * gbrg[(height - 1) * width + j - 1] + 0.25f * gbrg[(height - 1) * width + j + 1]);
       rgba[((height - 2) * width + j) * 4 + 1] =
-          static_cast<T>(0.25f * gbrg[(height - 3) * width + j] + 0.25f * gbrg[(height - 2) * width + j - 1] +
-                         0.25f * gbrg[(height - 2) * width + j + 1] + 0.25f * gbrg[(height - 1) * width + j]);
+        static_cast<T>(0.25f * gbrg[(height - 3) * width + j] + 0.25f * gbrg[(height - 2) * width + j - 1] +
+                       0.25f * gbrg[(height - 2) * width + j + 1] + 0.25f * gbrg[(height - 1) * width + j]);
       rgba[((height - 2) * width + j) * 4 + 2] = gbrg[(height - 2) * width + j];
     }
   }
@@ -907,18 +953,19 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] = gbrg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
-    } else {
+        static_cast<T>(0.5f * gbrg[(height - 2) * width + j - 1] + 0.5f * gbrg[(height - 2) * width + j + 1]);
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * gbrg[(height - 1) * width + j - 1] + 0.5f * gbrg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] = gbrg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] = gbrg[(height - 2) * width + j];
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -932,15 +979,18 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
         rgba[(i * width + j) * 4 + 0] = demosaicPhiMalvar(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaMalvar(gbrg, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerMalvar(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = gbrg[i * width + j];
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerMalvar(gbrg, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaMalvar(gbrg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = gbrg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiMalvar(gbrg, width, i, j);
@@ -983,7 +1033,8 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
       rgba[j * 4 + 0] = static_cast<T>(0.5f * grbg[j - 1] + 0.5f * grbg[j + 1]);
       rgba[j * 4 + 1] = grbg[j];
       rgba[j * 4 + 2] = grbg[width + j];
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = grbg[j];
       rgba[j * 4 + 1] = static_cast<T>(0.5f * grbg[j - 1] + 0.5f * grbg[j + 1]);
       rgba[j * 4 + 2] = static_cast<T>(0.5f * grbg[width + j - 1] + 0.5f * grbg[width + j + 1]);
@@ -998,7 +1049,8 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
       rgba[(width + j) * 4 + 1] = static_cast<T>(0.25f * grbg[j] + 0.25f * grbg[width + j - 1] +
                                                  0.25f * grbg[width + j + 1] + 0.25f * grbg[2 * width + j]);
       rgba[(width + j) * 4 + 2] = grbg[width + j];
-    } else {
+    }
+    else {
       rgba[(width + j) * 4 + 0] = static_cast<T>(0.5f * grbg[j] + 0.5f * grbg[2 * width + j]);
       rgba[(width + j) * 4 + 1] = grbg[width + j];
       rgba[(width + j) * 4 + 2] = static_cast<T>(0.5f * grbg[width + j - 1] + 0.5f * grbg[width + j + 1]);
@@ -1011,7 +1063,8 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
       rgba[i * width * 4 + 0] = grbg[i * width + 1];
       rgba[i * width * 4 + 1] = grbg[i * width];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * grbg[(i - 1) * width] + 0.5f * grbg[(i + 1) * width]);
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * grbg[(i - 1) * width + 1] + 0.5f * grbg[(i + 1) * width + 1]);
       rgba[i * width * 4 + 1] = grbg[i * width + 1];
       rgba[i * width * 4 + 2] = grbg[i * width];
@@ -1026,9 +1079,10 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
                                                      0.25f * grbg[i * width + 2] + 0.25f * grbg[(i + 1) * width + 1]);
       rgba[(i * width + 1) * 4 + 2] = static_cast<T>(0.25f * grbg[(i - 1) * width] + 0.25f * grbg[(i - 1) * width + 2] +
                                                      0.25f * grbg[(i + 1) * width] + 0.25f * grbg[(i + 1) * width + 2]);
-    } else {
+    }
+    else {
       rgba[(i * width + 1) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[(i - 1) * width + 1] + 0.5f * grbg[(i + 1) * width + 1]);
+        static_cast<T>(0.5f * grbg[(i - 1) * width + 1] + 0.5f * grbg[(i + 1) * width + 1]);
       rgba[(i * width + 1) * 4 + 1] = grbg[i * width + 1];
       rgba[(i * width + 1) * 4 + 2] = static_cast<T>(0.5f * grbg[i * width] + 0.5f * grbg[i * width + 2]);
     }
@@ -1038,17 +1092,18 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   for (unsigned int i = 1; i < height - 1; i++) {
     if (i % 2 == 0) {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[(i + 1) * width - 3] + 0.5f * grbg[(i + 1) * width - 1]);
+        static_cast<T>(0.5f * grbg[(i + 1) * width - 3] + 0.5f * grbg[(i + 1) * width - 1]);
       rgba[(i * width + width - 2) * 4 + 1] = grbg[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
-    } else {
+        static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
+    }
+    else {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.25f * grbg[i * width - 3] + 0.25f * grbg[i * width - 1] + 0.25f * grbg[(i + 2) * width - 3] +
-                         0.25f * grbg[(i + 2) * width - 1]);
+        static_cast<T>(0.25f * grbg[i * width - 3] + 0.25f * grbg[i * width - 1] + 0.25f * grbg[(i + 2) * width - 3] +
+                       0.25f * grbg[(i + 2) * width - 1]);
       rgba[(i * width + width - 2) * 4 + 1] =
-          static_cast<T>(0.25f * grbg[i * width - 2] + 0.25f * grbg[(i + 1) * width - 3] +
-                         0.25f * grbg[(i + 1) * width - 1] + 0.25f * grbg[(i + 2) * width - 2]);
+        static_cast<T>(0.25f * grbg[i * width - 2] + 0.25f * grbg[(i + 1) * width - 3] +
+                       0.25f * grbg[(i + 1) * width - 1] + 0.25f * grbg[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 2] = grbg[(i + 1) * width - 2];
     }
   }
@@ -1059,10 +1114,11 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
       rgba[(i * width + width - 1) * 4 + 0] = grbg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 1] = grbg[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
-    } else {
+        static_cast<T>(0.5f * grbg[i * width - 2] + 0.5f * grbg[(i + 2) * width - 2]);
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[i * width - 1] + 0.5f * grbg[(i + 2) * width - 1]);
+        static_cast<T>(0.5f * grbg[i * width - 1] + 0.5f * grbg[(i + 2) * width - 1]);
       rgba[(i * width + width - 1) * 4 + 1] = grbg[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] = grbg[(i + 1) * width - 2];
     }
@@ -1072,18 +1128,19 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
       rgba[((height - 2) * width + j) * 4 + 1] = grbg[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[(height - 3) * width + j] + 0.5f * grbg[(height - 1) * width + j]);
-    } else {
+        static_cast<T>(0.5f * grbg[(height - 3) * width + j] + 0.5f * grbg[(height - 1) * width + j]);
+    }
+    else {
       rgba[((height - 2) * width + j) * 4 + 0] = grbg[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 1] =
-          static_cast<T>(0.25f * grbg[(height - 3) * width + j] + 0.25f * grbg[(height - 2) * width + j - 1] +
-                         0.25f * grbg[(height - 2) * width + j + 1] + 0.25f * grbg[(height - 1) * width + j]);
+        static_cast<T>(0.25f * grbg[(height - 3) * width + j] + 0.25f * grbg[(height - 2) * width + j - 1] +
+                       0.25f * grbg[(height - 2) * width + j + 1] + 0.25f * grbg[(height - 1) * width + j]);
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.25f * grbg[(height - 3) * width + j - 1] + 0.25f * grbg[(height - 3) * width + j + 1] +
-                         0.25f * grbg[(height - 1) * width + j - 1] + 0.25f * grbg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.25f * grbg[(height - 3) * width + j - 1] + 0.25f * grbg[(height - 3) * width + j + 1] +
+                       0.25f * grbg[(height - 1) * width + j - 1] + 0.25f * grbg[(height - 1) * width + j + 1]);
     }
   }
 
@@ -1091,19 +1148,20 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   for (unsigned int j = 1; j < width - 1; j++) {
     if (j % 2 == 0) {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 2) * width + j - 1] + 0.5f * grbg[(height - 2) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] = grbg[(height - 1) * width + j];
-    } else {
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] = grbg[(height - 2) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] = grbg[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * grbg[(height - 1) * width + j - 1] + 0.5f * grbg[(height - 1) * width + j + 1]);
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -1117,15 +1175,18 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
         rgba[(i * width + j) * 4 + 0] = demosaicThetaMalvar(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiMalvar(grbg, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerMalvar(grbg, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerMalvar(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 2] = grbg[i * width + j];
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiMalvar(grbg, width, i, j);
         rgba[(i * width + j) * 4 + 1] = grbg[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaMalvar(grbg, width, i, j);
@@ -1168,7 +1229,8 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[j * 4 + 0] = rggb[j];
       rgba[j * 4 + 1] = static_cast<T>(0.5f * rggb[j - 1] + 0.5f * rggb[j + 1]);
       rgba[j * 4 + 2] = static_cast<T>(0.5f * rggb[width + j - 1] + 0.5f * rggb[width + j + 1]);
-    } else {
+    }
+    else {
       rgba[j * 4 + 0] = static_cast<T>(0.5f * rggb[j - 1] + 0.5f * rggb[j + 1]);
       rgba[j * 4 + 1] = rggb[j];
       rgba[j * 4 + 2] = rggb[width + j];
@@ -1181,7 +1243,8 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[(width + j) * 4 + 0] = static_cast<T>(0.5f * rggb[j] + 0.5f * rggb[2 * width + j]);
       rgba[(width + j) * 4 + 1] = rggb[width + j];
       rgba[(width + j) * 4 + 2] = static_cast<T>(0.5f * rggb[width + j - 1] + 0.5f * rggb[width + j + 1]);
-    } else {
+    }
+    else {
       rgba[(width + j) * 4 + 0] = static_cast<T>(0.25f * rggb[j - 1] + 0.25f * rggb[j + 1] +
                                                  0.25f * rggb[2 * width + j - 1] + 0.25f * rggb[2 * width + j + 1]);
       rgba[(width + j) * 4 + 1] = static_cast<T>(0.25f * rggb[j] + 0.25f * rggb[width + j - 1] +
@@ -1196,7 +1259,8 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[i * width * 4 + 0] = rggb[i * width];
       rgba[i * width * 4 + 1] = rggb[i * width + 1];
       rgba[i * width * 4 + 2] = static_cast<T>(0.5f * rggb[(i - 1) * width + 1] + 0.5f * rggb[(i + 1) * width + 1]);
-    } else {
+    }
+    else {
       rgba[i * width * 4 + 0] = static_cast<T>(0.5f * rggb[(i - 1) * width] + 0.5f * rggb[(i + 1) * width]);
       rgba[i * width * 4 + 1] = rggb[i * width];
       rgba[i * width * 4 + 2] = rggb[i * width + 1];
@@ -1209,8 +1273,9 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[(i * width + 1) * 4 + 0] = static_cast<T>(0.5f * rggb[i * width] + 0.5f * rggb[i * width + 2]);
       rgba[(i * width + 1) * 4 + 1] = rggb[i * width + 1];
       rgba[(i * width + 1) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[(i - 1) * width + 1] + 0.5f * rggb[(i + 1) * width + 1]);
-    } else {
+        static_cast<T>(0.5f * rggb[(i - 1) * width + 1] + 0.5f * rggb[(i + 1) * width + 1]);
+    }
+    else {
       rgba[(i * width + 1) * 4 + 0] = static_cast<T>(0.25f * rggb[(i - 1) * width] + 0.25f * rggb[(i - 1) * width + 2] +
                                                      0.25f * rggb[(i + 1) * width] + 0.25f * rggb[(i + 1) * width + 2]);
       rgba[(i * width + 1) * 4 + 1] = static_cast<T>(0.25f * rggb[(i - 1) * width + 1] + 0.25f * rggb[i * width] +
@@ -1224,17 +1289,18 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
     if (i % 2 == 0) {
       rgba[(i * width + width - 2) * 4 + 0] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 1] =
-          static_cast<T>(0.25f * rggb[i * width - 2] + 0.25f * rggb[(i + 1) * width - 3] +
-                         0.25f * rggb[(i + 1) * width - 1] + 0.25f * rggb[(i + 2) * width - 2]);
+        static_cast<T>(0.25f * rggb[i * width - 2] + 0.25f * rggb[(i + 1) * width - 3] +
+                       0.25f * rggb[(i + 1) * width - 1] + 0.25f * rggb[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.25f * rggb[i * width - 3] + 0.25f * rggb[i * width - 1] + 0.25f * rggb[(i + 2) * width - 3] +
-                         0.25f * rggb[(i + 2) * width - 1]);
-    } else {
+        static_cast<T>(0.25f * rggb[i * width - 3] + 0.25f * rggb[i * width - 1] + 0.25f * rggb[(i + 2) * width - 3] +
+                       0.25f * rggb[(i + 2) * width - 1]);
+    }
+    else {
       rgba[(i * width + width - 2) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
       rgba[(i * width + width - 2) * 4 + 1] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 2) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[(i + 1) * width - 3] + 0.5f * rggb[(i + 1) * width - 1]);
+        static_cast<T>(0.5f * rggb[(i + 1) * width - 3] + 0.5f * rggb[(i + 1) * width - 1]);
     }
   }
 
@@ -1244,10 +1310,11 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[(i * width + width - 1) * 4 + 0] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 1] = rggb[(i + 1) * width - 1];
       rgba[(i * width + width - 1) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[i * width - 1] + 0.5f * rggb[(i + 2) * width - 1]);
-    } else {
+        static_cast<T>(0.5f * rggb[i * width - 1] + 0.5f * rggb[(i + 2) * width - 1]);
+    }
+    else {
       rgba[(i * width + width - 1) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
+        static_cast<T>(0.5f * rggb[i * width - 2] + 0.5f * rggb[(i + 2) * width - 2]);
       rgba[(i * width + width - 1) * 4 + 1] = rggb[(i + 1) * width - 2];
       rgba[(i * width + width - 1) * 4 + 2] = rggb[(i + 1) * width - 1];
     }
@@ -1258,17 +1325,18 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
     if (j % 2 == 0) {
       rgba[((height - 2) * width + j) * 4 + 0] = rggb[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 1] =
-          static_cast<T>(0.25f * rggb[(height - 3) * width + j] + 0.25f * rggb[(height - 2) * width + j - 1] +
-                         0.25f * rggb[(height - 2) * width + j + 1] + 0.25f * rggb[(height - 1) * width + j]);
+        static_cast<T>(0.25f * rggb[(height - 3) * width + j] + 0.25f * rggb[(height - 2) * width + j - 1] +
+                       0.25f * rggb[(height - 2) * width + j + 1] + 0.25f * rggb[(height - 1) * width + j]);
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.25f * rggb[(height - 3) * width + j - 1] + 0.25f * rggb[(height - 3) * width + j + 1] +
-                         0.25f * rggb[(height - 1) * width + j - 1] + 0.25f * rggb[(height - 1) * width + j + 1]);
-    } else {
+        static_cast<T>(0.25f * rggb[(height - 3) * width + j - 1] + 0.25f * rggb[(height - 3) * width + j + 1] +
+                       0.25f * rggb[(height - 1) * width + j - 1] + 0.25f * rggb[(height - 1) * width + j + 1]);
+    }
+    else {
       rgba[((height - 2) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
       rgba[((height - 2) * width + j) * 4 + 1] = rggb[(height - 2) * width + j];
       rgba[((height - 2) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[(height - 3) * width + j] + 0.5f * rggb[(height - 1) * width + j]);
+        static_cast<T>(0.5f * rggb[(height - 3) * width + j] + 0.5f * rggb[(height - 1) * width + j]);
     }
   }
 
@@ -1278,17 +1346,18 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
       rgba[((height - 1) * width + j) * 4 + 0] = rggb[(height - 2) * width + j];
       rgba[((height - 1) * width + j) * 4 + 1] = rggb[(height - 1) * width + j];
       rgba[((height - 1) * width + j) * 4 + 2] =
-          static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
-    } else {
+        static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
+    }
+    else {
       rgba[((height - 1) * width + j) * 4 + 0] =
-          static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
+        static_cast<T>(0.5f * rggb[(height - 2) * width + j - 1] + 0.5f * rggb[(height - 2) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 1] =
-          static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
+        static_cast<T>(0.5f * rggb[(height - 1) * width + j - 1] + 0.5f * rggb[(height - 1) * width + j + 1]);
       rgba[((height - 1) * width + j) * 4 + 2] = rggb[(height - 1) * width + j];
     }
   }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -1302,15 +1371,18 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
         rgba[(i * width + j) * 4 + 0] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 2] = demosaicCheckerMalvar(rggb, width, i, j);
-      } else if (i % 2 == 0 && j % 2 != 0) {
+      }
+      else if (i % 2 == 0 && j % 2 != 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicThetaMalvar(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicPhiMalvar(rggb, width, i, j);
-      } else if (i % 2 != 0 && j % 2 == 0) {
+      }
+      else if (i % 2 != 0 && j % 2 == 0) {
         rgba[(i * width + j) * 4 + 0] = demosaicPhiMalvar(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = rggb[i * width + j];
         rgba[(i * width + j) * 4 + 2] = demosaicThetaMalvar(rggb, width, i, j);
-      } else {
+      }
+      else {
         rgba[(i * width + j) * 4 + 0] = demosaicCheckerMalvar(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 1] = demosaicCrossMalvar(rggb, width, i, j);
         rgba[(i * width + j) * 4 + 2] = rggb[i * width + j];
