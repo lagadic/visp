@@ -1098,7 +1098,6 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    (void)quality;
     std::string message = "Cannot save file \"" + filename + "\": png library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
