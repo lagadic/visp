@@ -62,7 +62,6 @@
 
 #define GETOPTARGS "x:X:m:M:i:n:dchfolwvpt:T:e:"
 
-#define USE_XML 1
 #define USE_SMALL_DATASET 1 // small depth dataset in ViSP-images
 
 namespace
@@ -356,17 +355,17 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
 void loadConfiguration(vpMbTracker *const tracker,
   const std::string &
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
   configFile
 #endif
   ,
   const std::string &
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
   configFile_depth
 #endif
 )
 {
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
   // From the xml file
   dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile, configFile_depth);
 #else

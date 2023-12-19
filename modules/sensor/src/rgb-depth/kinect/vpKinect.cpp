@@ -52,8 +52,8 @@
 */
 vpKinect::vpKinect(freenect_context *ctx, int index)
   : Freenect::FreenectDevice(ctx, index), m_rgb_mutex(), m_depth_mutex(), RGBcam(), IRcam(), rgbMir(), irMrgb(),
-    DMres(DMAP_LOW_RES), hd(240), wd(320), dmap(), IRGB(), m_new_rgb_frame(false), m_new_depth_map(false),
-    m_new_depth_image(false), height(480), width(640)
+  DMres(DMAP_LOW_RES), hd(240), wd(320), dmap(), IRGB(), m_new_rgb_frame(false), m_new_depth_map(false),
+  m_new_depth_image(false), height(480), width(640)
 {
   dmap.resize(height, width);
   IRGB.resize(height, width);
@@ -68,7 +68,7 @@ vpKinect::vpKinect(freenect_context *ctx, int index)
 /*!
   Destructor.
 */
-vpKinect::~vpKinect() {}
+vpKinect::~vpKinect() { }
 
 void vpKinect::start(vpKinect::vpDMResolution res)
 {
@@ -82,7 +82,8 @@ void vpKinect::start(vpKinect::vpDMResolution res)
     IRcam.initPersProjWithDistortion(303.06, 297.89, 160.75, 117.9, -0.27, 0);
     hd = 240;
     wd = 320;
-  } else {
+  }
+  else {
     std::cout << "vpKinect::start MEDIUM depth map resolution 480x640" << std::endl;
 
     IRcam.initPersProjWithDistortion(606.12, 595.78, 321.5, 235.8, -0.27, 0);
@@ -91,7 +92,7 @@ void vpKinect::start(vpKinect::vpDMResolution res)
     wd = 640;
   }
 
-#if defined(VISP_HAVE_VIPER850_DATA)
+#if defined(VISP_HAVE_VIPER850_DATA) && defined(VISP_HAVE_PUGIXML)
   vpXmlParserCamera cameraParser;
   std::string cameraXmlFile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/include/const_camera_Viper850.xml");
   cameraParser.parse(RGBcam, cameraXmlFile, "Generic-camera", vpCameraParameters::perspectiveProjWithDistortion, width,
@@ -150,8 +151,8 @@ void vpKinect::DepthCallback(void *depth, uint32_t /* timestamp */)
   for (unsigned i = 0; i < height; i++) {
     for (unsigned j = 0; j < width; j++) {
       dmap[i][j] =
-          0.1236f * tan(depth_[width * i + j] / 2842.5f + 1.1863f); // formula from
-                                                                    // http://openkinect.org/wiki/Imaging_Information
+        0.1236f * tan(depth_[width * i + j] / 2842.5f + 1.1863f); // formula from
+                                                                  // http://openkinect.org/wiki/Imaging_Information
       if (depth_[width * i + j] > 1023) {                           // Depth cannot be computed
         dmap[i][j] = -1;
       }
@@ -203,7 +204,8 @@ bool vpKinect::getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap)
         else
           Imap[i][j] = 255;
       }
-  } else {
+  }
+  else {
     for (unsigned i = 0; i < height; i++)
       for (unsigned j = 0; j < width; j++) {
         map[i][j] = tempMap[i][j];
@@ -239,7 +241,8 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
 {
   if ((Idepth.getHeight() != hd) || (Idepth.getWidth() != wd)) {
     vpERROR_TRACE(1, "Idepth image size does not match vpKinect DM resolution");
-  } else {
+  }
+  else {
     if ((IrgbWarped.getHeight() != hd) || (IrgbWarped.getWidth() != wd))
       IrgbWarped.resize(hd, wd);
     IrgbWarped = 0;
@@ -267,7 +270,8 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
           if (std::fabs(Z2) > std::numeric_limits<double>::epsilon()) {
             x2 = P2[0] / P2[2];
             y2 = P2[1] / P2[2];
-          } else
+          }
+          else
             std::cout << "Z2 = 0 !!" << std::endl;
 
           //! compute pixel coordinates of the corresponding point in the
@@ -279,7 +283,8 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
           //! Fill warped image value
           if ((u_ < width) && (v_ < height)) {
             IrgbWarped[i][j] = Irgb[v_][u_];
-          } else
+          }
+          else
             IrgbWarped[i][j] = 0;
         }
       }
@@ -289,5 +294,5 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no
 // symbols
-void dummy_vpKinect(){};
+void dummy_vpKinect() { };
 #endif // VISP_HAVE_LIBFREENECT

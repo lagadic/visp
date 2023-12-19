@@ -85,21 +85,29 @@ void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int qual
 void writeOpenCV(const vpImage<float> &I, const std::string &filename);
 void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename);
 
+#if defined(VISP_HAVE_SIMDLIB)
 // Simd lib
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename);
 void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
-
-// TinyEXR lib
-void readEXRTiny(vpImage<float> &I, const std::string &filename);
-void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename);
 
 void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename, int quality);
 void writeJPEGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename, int quality);
 
 void writePNGSimdlib(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename);
+#endif
 
-// stb lib
+#if defined(VISP_HAVE_TINYEXR)
+// TinyEXR lib
+void readEXRTiny(vpImage<float> &I, const std::string &filename);
+void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename);
+
+void writeEXRTiny(const vpImage<float> &I, const std::string &filename);
+void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename);
+#endif
+
+#if defined(VISP_HAVE_STBIMAGE)
+// stb_image lib
 void readStb(vpImage<unsigned char> &I, const std::string &filename);
 void readStb(vpImage<vpRGBa> &I, const std::string &filename);
 
@@ -108,9 +116,6 @@ void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename, int qua
 
 void writePNGStb(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename);
-
-// TinyEXR lib
-void writeEXRTiny(const vpImage<float> &I, const std::string &filename);
-void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename);
+#endif
 
 #endif

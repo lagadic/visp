@@ -58,7 +58,6 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -91,55 +90,60 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--portname" || std::string(argv[i]) == "-p") && (i + 1 < argc)) {
       opt_portname = std::string(argv[i + 1]);
-    } else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
+    }
+    else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
       opt_baudrate = std::atoi(argv[i + 1]);
-    } else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
+    }
+    else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
       opt_network = true;
-    } else if (std::string(argv[i]) == "--extrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--extrinsic" && i + 1 < argc) {
       opt_extrinsic = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
+    }
+    else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
       opt_constant_gain = std::stod(argv[i + 1]);
       ;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSIS" << std::endl
-                << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] "
-                << "[--extrinsic <extrinsic.yaml>] [--constant-gain] [--help] [-h]" << std::endl
-                << std::endl;
+        << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] "
+        << "[--extrinsic <extrinsic.yaml>] [--constant-gain] [--help] [-h]" << std::endl
+        << std::endl;
       std::cout << "DESCRIPTION" << std::endl
-                << "  --portname, -p <portname>" << std::endl
-                << "    Set serial or tcp port name." << std::endl
-                << std::endl
-                << "  --baudrate, -b <rate>" << std::endl
-                << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl
-                << std::endl
-                << "  --network, -n" << std::endl
-                << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl
-                << std::endl
-                << "  --extrinsic <extrinsic.yaml>" << std::endl
-                << "    YAML file containing extrinsic camera parameters as a vpHomogeneousMatrix." << std::endl
-                << "    It corresponds to the homogeneous transformation eMc, between end-effector" << std::endl
-                << "    and camera frame." << std::endl
-                << std::endl
-                << "  --constant-gain, -g" << std::endl
-                << "    Constant gain value. Default value: " << opt_constant_gain << std::endl
-                << std::endl
-                << "  --help, -h" << std::endl
-                << "    Print this helper message. " << std::endl
-                << std::endl;
+        << "  --portname, -p <portname>" << std::endl
+        << "    Set serial or tcp port name." << std::endl
+        << std::endl
+        << "  --baudrate, -b <rate>" << std::endl
+        << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl
+        << std::endl
+        << "  --network, -n" << std::endl
+        << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl
+        << std::endl
+        << "  --extrinsic <extrinsic.yaml>" << std::endl
+        << "    YAML file containing extrinsic camera parameters as a vpHomogeneousMatrix." << std::endl
+        << "    It corresponds to the homogeneous transformation eMc, between end-effector" << std::endl
+        << "    and camera frame." << std::endl
+        << std::endl
+        << "  --constant-gain, -g" << std::endl
+        << "    Constant gain value. Default value: " << opt_constant_gain << std::endl
+        << std::endl
+        << "  --help, -h" << std::endl
+        << "    Print this helper message. " << std::endl
+        << std::endl;
       std::cout << "EXAMPLE" << std::endl
-                << "  - How to get network IP" << std::endl
+        << "  - How to get network IP" << std::endl
 #ifdef _WIN32
-                << "    $ " << argv[0] << " --portname COM1 --network" << std::endl
-                << "    Try to connect FLIR PTU to port: COM1 with baudrate: 9600" << std::endl
+        << "    $ " << argv[0] << " --portname COM1 --network" << std::endl
+        << "    Try to connect FLIR PTU to port: COM1 with baudrate: 9600" << std::endl
 #else
-                << "    $ " << argv[0] << " --portname /dev/ttyUSB0 --network" << std::endl
-                << "    Try to connect FLIR PTU to port: /dev/ttyUSB0 with baudrate: 9600" << std::endl
+        << "    $ " << argv[0] << " --portname /dev/ttyUSB0 --network" << std::endl
+        << "    Try to connect FLIR PTU to port: /dev/ttyUSB0 with baudrate: 9600" << std::endl
 #endif
-                << "       PTU HostName: PTU-5" << std::endl
-                << "       PTU IP      : 169.254.110.254" << std::endl
-                << "       PTU Gateway : 0.0.0.0" << std::endl
-                << "  - How to run this binary using network communication" << std::endl
-                << "    $ " << argv[0] << " --portname tcp:169.254.110.254 --tag-size 0.1 --gain 0.1" << std::endl;
+        << "       PTU HostName: PTU-5" << std::endl
+        << "       PTU IP      : 169.254.110.254" << std::endl
+        << "       PTU Gateway : 0.0.0.0" << std::endl
+        << "  - How to run this binary using network communication" << std::endl
+        << "    $ " << argv[0] << " --portname tcp:169.254.110.254 --tag-size 0.1 --gain 0.1" << std::endl;
 
       return EXIT_SUCCESS;
     }
@@ -285,7 +289,8 @@ int main(int argc, char **argv)
     }
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-  } catch (const vpRobotException &e) {
+  }
+  catch (const vpRobotException &e) {
     std::cout << "Catch Flir Ptu exception: " << e.getMessage() << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
   }

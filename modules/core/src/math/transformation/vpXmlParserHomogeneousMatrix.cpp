@@ -44,6 +44,7 @@
 */
 #include <visp3/core/vpXmlParserHomogeneousMatrix.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
 
 /* ----------------------------- LABEL XML ----------------------------- */
@@ -67,7 +68,8 @@ class vpXmlParserHomogeneousMatrix::Impl
 private:
   /* --- XML Code------------------------------------------------------------
    */
-  enum vpXmlCodeType {
+  enum vpXmlCodeType
+  {
     CODE_XML_BAD = -1,
     CODE_XML_OTHER,
     CODE_XML_M,
@@ -82,7 +84,7 @@ private:
   };
 
 public:
-  Impl() : m_M(), m_name() {}
+  Impl() : m_M(), m_name() { }
 
   int parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name)
   {
@@ -132,18 +134,20 @@ public:
       if (prop == CODE_XML_M) {
         if (SEQUENCE_OK == read_matrix(node, name))
           nbM++;
-      } else
+      }
+      else
         back = SEQUENCE_ERROR;
     }
 
     if (nbM == 0) {
       back = SEQUENCE_ERROR;
       std::cerr << "No Homogeneous matrix is available" << std::endl << "with name: " << name << std::endl;
-    } else if (nbM > 1) {
+    }
+    else if (nbM > 1) {
       back = SEQUENCE_ERROR;
       std::cerr << nbM << " There are more Homogeneous matrix" << std::endl
-                << "with the same name : " << std::endl
-                << "precise your choice..." << std::endl;
+        << "with the same name : " << std::endl
+        << "precise your choice..." << std::endl;
     }
 
     return back;
@@ -206,7 +210,8 @@ public:
 
     if (!(name == M_name_tmp)) {
       back = SEQUENCE_ERROR;
-    } else {
+    }
+    else {
       this->m_M = M_tmp;
       // std::cout << "Convert in Homogeneous Matrix:"<< std::endl;
       // std::cout << this-> M << std::endl;
@@ -335,8 +340,8 @@ public:
 
     if (M_isFound) {
       std::cout << "There is already an homogeneous matrix " << std::endl
-                << "available in the file with the input name: " << name << "." << std::endl
-                << "Please delete it manually from the xml file." << std::endl;
+        << "available in the file with the input name: " << name << "." << std::endl
+        << "Please delete it manually from the xml file." << std::endl;
       return SEQUENCE_ERROR;
     }
 
@@ -459,23 +464,32 @@ public:
 
     if (!strcmp(str, LABEL_XML_M)) {
       val_int = CODE_XML_M;
-    } else if (!strcmp(str, LABEL_XML_M_NAME)) {
+    }
+    else if (!strcmp(str, LABEL_XML_M_NAME)) {
       val_int = CODE_XML_M_NAME;
-    } else if (!strcmp(str, LABEL_XML_VALUE)) {
+    }
+    else if (!strcmp(str, LABEL_XML_VALUE)) {
       val_int = CODE_XML_VALUE;
-    } else if (!strcmp(str, LABEL_XML_TX)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TX)) {
       val_int = CODE_XML_TX;
-    } else if (!strcmp(str, LABEL_XML_TY)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TY)) {
       val_int = CODE_XML_TY;
-    } else if (!strcmp(str, LABEL_XML_TZ)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TZ)) {
       val_int = CODE_XML_TZ;
-    } else if (!strcmp(str, LABEL_XML_TUX)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TUX)) {
       val_int = CODE_XML_TUX;
-    } else if (!strcmp(str, LABEL_XML_TUY)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TUY)) {
       val_int = CODE_XML_TUY;
-    } else if (!strcmp(str, LABEL_XML_TUZ)) {
+    }
+    else if (!strcmp(str, LABEL_XML_TUZ)) {
       val_int = CODE_XML_TUZ;
-    } else {
+    }
+    else {
       val_int = CODE_XML_OTHER;
     }
     res = val_int;
@@ -494,7 +508,7 @@ private:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix() : m_impl(new Impl()) {}
+vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix() : m_impl(new Impl()) { }
 
 vpXmlParserHomogeneousMatrix::~vpXmlParserHomogeneousMatrix() { delete m_impl; }
 
@@ -539,3 +553,9 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 {
   m_impl->setHomogeneousMatrixName(name);
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
+void dummy_vpXmlParserHomogeneousMatrix() { };
+
+#endif

@@ -564,7 +564,11 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D = m_planeCamera.getD();
 
+#if defined(VISP_HAVE_SIMDLIB)
   bool useSIMD = vpCPUFeatures::checkSSE2() || vpCPUFeatures::checkNeon();
+#else
+  bool useSIMD = vpCPUFeatures::checkSSE2();
+#endif
 #if USE_OPENCV_HAL
   useSIMD = true;
 #endif
@@ -573,7 +577,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
 #endif
 
   if (useSIMD) {
-#if USE_SSE  || USE_NEON|| USE_OPENCV_HAL
+#if USE_SSE || USE_NEON || USE_OPENCV_HAL
     size_t cpt = 0;
     if (getNbFeatures() >= 2) {
       double *ptr_point_cloud = &m_pointCloudFace[0];

@@ -73,6 +73,12 @@ int main()
   std::cout << "\nThis example requires ffmpeg library. You should install it.\n" << std::endl;
   return EXIT_SUCCESS;
 }
+#elif !defined(VISP_HAVE_PUGIXML)
+int main()
+{
+  std::cout << "\nThis example requires pugixml built-in 3rdparty library. You should enable it.\n" << std::endl;
+  return EXIT_SUCCESS;
+}
 
 #else
 

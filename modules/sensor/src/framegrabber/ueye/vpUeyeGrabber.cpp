@@ -1278,7 +1278,7 @@ bool vpUeyeGrabber::setActiveCamera(unsigned int cam_index)
 /*!
  * Updates active camera color mode.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param[in] color_mode : Desired color mode. Admissible values are "MONO8", "RGB8", "RGB32" or "BAYER8".
  * \note - When acquiring gray level images using acquire(vpImage<unsigned char> &) we strongly recommend to
@@ -1298,7 +1298,7 @@ bool vpUeyeGrabber::setColorMode(const std::string &color_mode)
 /*!
  * Updates active camera exposure / shutter either to auto mode, or to specified manual parameters.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param[in] auto_exposure : When true enable camera's hardware auto exposure / shutter.
  * This function returns false if the camera does not support auto exposure mode. When set to false, set manual exposure
@@ -1319,7 +1319,7 @@ bool vpUeyeGrabber::setExposure(bool auto_exposure, double exposure_ms)
  * Enabling auto frame rate mode requires to enable auto shutter mode.
  * Enabling auto frame rate mode will disable auto gain mode.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param[in] auto_frame_rate : Updates camera's hardware auto frame rate mode. When true enable auto frame rate mode.
  * When set to false, enables manual frame rate mode.
@@ -1353,7 +1353,7 @@ bool vpUeyeGrabber::setFrameRate(bool auto_frame_rate, double manual_frame_rate_
  *
  * Auto gain mode is disabled if auto frame rate mode is enabled.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param[in] auto_gain : Updates camera's hardware auto gain mode.
  * - Set to true to enable auto gain.  If this mode is not supported, returns false.
@@ -1372,7 +1372,7 @@ bool vpUeyeGrabber::setGain(bool auto_gain, int master_gain, bool gain_boost)
 /*!
  * Updates active camera image subsampling factor to reduce image size.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param[in] factor : Desired subsampling factor. The number of rows and columns
  * of the resulting image corresponds to the full resolution image size divided by this factor.
@@ -1384,7 +1384,7 @@ void vpUeyeGrabber::setSubsampling(int factor) { m_impl->setSubsampling(factor);
 /*!
  * Enables or disables the active camera auto white balance mode.
  *
- * \warning Before caling this function the connexion with the active camera should be opened.
+ * \warning Before calling this function the connexion with the active camera should be opened.
  *
  * \param auto_wb : If true enable auto white balance mode. If false, disable auto white balance mode.
  *

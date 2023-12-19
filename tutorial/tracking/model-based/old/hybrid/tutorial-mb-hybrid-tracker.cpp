@@ -54,10 +54,12 @@ int main(int argc, char **argv)
 
     vpMbEdgeKltTracker tracker;
     bool usexml = false;
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     if (!usexml) {
       vpMe me;
       me.setMaskSize(5);

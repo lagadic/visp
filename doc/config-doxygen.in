@@ -2415,6 +2415,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_POLOLU \
                          VISP_HAVE_PTHREAD \
                          VISP_HAVE_PTU46 \
+                         VISP_HAVE_PUGIXML \
                          VISP_HAVE_PYLON \
                          VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
@@ -2422,12 +2423,15 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_REALSENSE \
                          VISP_HAVE_REALSENSE_VERSION=0x020000 \
                          VISP_HAVE_REALSENSE2 \
+                         VISP_HAVE_SIMDLIB \
                          VISP_HAVE_SOWIN \
                          VISP_HAVE_SOQT \
                          VISP_HAVE_SOXT \
+                         VISP_HAVE_STBIMAGE \
                          VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_TENSORRT \
                          VISP_HAVE_THREADS \
+                         VISP_HAVE_TINYEXR \
                          VISP_HAVE_UEYE \
                          VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \

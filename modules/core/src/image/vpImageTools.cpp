@@ -37,7 +37,9 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 
+#if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.hpp>
+#endif
 
 /*!
   Change the look up table (LUT) of an image. Considering pixel gray
@@ -142,7 +144,14 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
     Idiff.resize(I1.getHeight(), I1.getWidth());
   }
 
+#if defined(VISP_HAVE_SIMDLIB)
   SimdImageDifference(I1.bitmap, I2.bitmap, I1.getSize(), Idiff.bitmap);
+#else
+  for (unsigned int i = 0; i < I1.getSize(); ++i) {
+    int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
+    Idiff.bitmap[i] = static_cast<unsigned char>(std::max(std::min(diff, 255), 0));
+  }
+#endif
 }
 
 /*!
@@ -171,8 +180,21 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
     Idiff.resize(I1.getHeight(), I1.getWidth());
   }
 
+#if defined(VISP_HAVE_SIMDLIB)
   SimdImageDifference(reinterpret_cast<unsigned char *>(I1.bitmap), reinterpret_cast<unsigned char *>(I2.bitmap),
                       I1.getSize() * 4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
+#else
+  for (unsigned int i = 0; i < I1.getSize() * 4; ++i) {
+    int diffR = I1.bitmap[i].R - I2.bitmap[i].R + 128;
+    int diffG = I1.bitmap[i].G - I2.bitmap[i].G + 128;
+    int diffB = I1.bitmap[i].B - I2.bitmap[i].B + 128;
+    int diffA = I1.bitmap[i].A - I2.bitmap[i].A + 128;
+    Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
+    Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
+    Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
+    Idiff.bitmap[i].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
+  }
+#endif
 }
 
 /*!
@@ -287,6 +309,7 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
+#if defined(VISP_HAVE_SIMDLIB)
   typedef Simd::View<Simd::Allocator> View;
   View img1(I1.getWidth(), I1.getHeight(), I1.getWidth(), View::Gray8, I1.bitmap);
   View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
@@ -294,6 +317,14 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
 
   Simd::OperationBinary8u(img1, img2, imgAdd,
                           saturate ? SimdOperationBinary8uSaturatedAddition : SimdOperationBinary8uAddition);
+#else
+  unsigned char *ptr_I1 = I1.bitmap;
+  unsigned char *ptr_I2 = I2.bitmap;
+  unsigned char *ptr_Ires = Ires.bitmap;
+  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 + (short int)*ptr_I2) : *ptr_I1 + *ptr_I2;
+  }
+#endif
 }
 
 /*!
@@ -320,6 +351,7 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
+#if defined(VISP_HAVE_SIMDLIB)
   typedef Simd::View<Simd::Allocator> View;
   View img1(I1.getWidth(), I1.getHeight(), I1.getWidth(), View::Gray8, I1.bitmap);
   View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
@@ -327,6 +359,16 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
 
   Simd::OperationBinary8u(img1, img2, imgAdd,
                           saturate ? SimdOperationBinary8uSaturatedSubtraction : SimdOperationBinary8uSubtraction);
+#else
+  unsigned char *ptr_I1 = I1.bitmap;
+  unsigned char *ptr_I2 = I2.bitmap;
+  unsigned char *ptr_Ires = Ires.bitmap;
+  for (unsigned int cpt = 0; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
+    *ptr_Ires = saturate ?
+      vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) - static_cast<short int>(*ptr_I2)) :
+      *ptr_I1 - *ptr_I2;
+  }
+#endif
 }
 
 /*!
@@ -351,7 +393,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
 
   vpCameraParameters::vpCameraParametersProjType projModel = cam.get_projModel();
   bool is_KannalaBrandt =
-      (projModel == vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
+    (projModel == vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
 
   float u0 = static_cast<float>(cam.get_u0());
   float v0 = static_cast<float>(cam.get_v0());
@@ -499,7 +541,16 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
   double a2 = 0.0;
   double b2 = 0.0;
 
+#if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation(I1.bitmap, a, I2.bitmap, b, I1.getSize(), a2, b2, ab, useOptimized);
+#else
+  for (unsigned int cpt = 0; cpt < I1.getSize(); cpt++) {
+    ab += (I1.bitmap[cpt] - a) * (I2.bitmap[cpt] - b);
+    a2 += vpMath::sqr(I1.bitmap[cpt] - a);
+    b2 += vpMath::sqr(I2.bitmap[cpt] - b);
+  }
+  (void)useOptimized;
+#endif
 
   return ab / sqrt(a2 * b2);
 }
@@ -556,7 +607,8 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
     if (x1 == x2) {
       v1 = I(x1, y1);
       v2 = I(x1, y2);
-    } else {
+    }
+    else {
       v1 = (x2 - point.get_i()) * I(x1, y1) + (point.get_i() - x1) * I(x2, y1);
       v2 = (x2 - point.get_i()) * I(x1, y2) + (point.get_i() - x1) * I(x2, y2);
     }
@@ -674,7 +726,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
       I_tpl_double.bitmap[cpt] -= mean2;
     }
 
-#if defined _OPENMP && _OPENMP >= 200711 // OpenMP 3.1
+#if defined(_OPENMP) && (_OPENMP >= 200711) // OpenMP 3.1
 #pragma omp parallel for schedule(dynamic)
     for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
       for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
@@ -688,17 +740,18 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight() - height_tpl; cpt += step_v, idx++) {
       vec_step_v[(size_t)idx] = cpt;
     }
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int cpt = 0; cpt < end; cpt++) {
       for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
         I_score[vec_step_v[cpt]][j] =
-            normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
+          normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
       }
     }
 #endif
-  } else {
+  }
+  else {
     vpImage<double> I_cur;
 
     for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
@@ -743,11 +796,20 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
                                            unsigned int i0, unsigned int j0)
 {
   double ab = 0.0;
+
+#if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation2(I1.bitmap, I1.getWidth(), I2.bitmap, I2.getWidth(), I2.getHeight(), i0, j0, ab);
+#else
+  for (unsigned int i = 0; i < I2.getHeight(); i++) {
+    for (unsigned int j = 0; j < I2.getWidth(); j++) {
+      ab += (I1[i0 + i][j0 + j]) * I2[i][j];
+    }
+  }
+#endif
 
   unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
-      (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
+    (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
   const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
 
   double a2 = ((IIsq[i0 + I2.getHeight()][j0 + I2.getWidth()] + IIsq[i0][j0] - IIsq[i0][j0 + I2.getWidth()] -
@@ -775,7 +837,7 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
 {
   Iundist.resize(I.getHeight(), I.getWidth());
 
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
   for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
@@ -796,7 +858,8 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
         float value = lerp(col0, col1, dv);
 
         Iundist[i][j] = static_cast<unsigned char>(value);
-      } else {
+      }
+      else {
         Iundist[i][j] = 0;
       }
     }
@@ -818,15 +881,59 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 {
   Iundist.resize(I.getHeight(), I.getWidth());
 
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
+#if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
   for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {
+#if defined(VISP_HAVE_SIMDLIB)
     SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
+#else
+    const unsigned int i_ = static_cast<unsigned int>(i);
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+
+      int u_round = mapU[i_][j];
+      int v_round = mapV[i_][j];
+
+      float du = mapDu[i_][j];
+      float dv = mapDv[i_][j];
+
+      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
+          && v_round < static_cast<int>(I.getHeight()) - 1) {
+        // process interpolation
+        float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
+        float col1 = lerp(I[v_round + 1][u_round].R, I[v_round + 1][u_round + 1].R, du);
+        float value = lerp(col0, col1, dv);
+
+        Iundist[i][j].R = static_cast<unsigned char>(value);
+
+        col0 = lerp(I[v_round][u_round].G, I[v_round][u_round + 1].G, du);
+        col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
+        value = lerp(col0, col1, dv);
+
+        Iundist[i][j].G = static_cast<unsigned char>(value);
+
+        col0 = lerp(I[v_round][u_round].B, I[v_round][u_round + 1].B, du);
+        col1 = lerp(I[v_round + 1][u_round].B, I[v_round + 1][u_round + 1].B, du);
+        value = lerp(col0, col1, dv);
+
+        Iundist[i][j].B = static_cast<unsigned char>(value);
+
+        col0 = lerp(I[v_round][u_round].A, I[v_round][u_round + 1].A, du);
+        col1 = lerp(I[v_round + 1][u_round].A, I[v_round + 1][u_round + 1].A, du);
+        value = lerp(col0, col1, dv);
+
+        Iundist[i][j].A = static_cast<unsigned char>(value);
+      }
+      else {
+        Iundist[i][j] = 0;
+      }
+    }
+#endif
   }
 }
 
+#if defined(VISP_HAVE_SIMDLIB)
 void vpImageTools::resizeSimdlib(const vpImage<vpRGBa> &Isrc, unsigned int resizeWidth, unsigned int resizeHeight,
                                  vpImage<vpRGBa> &Idst, int method)
 {
@@ -850,6 +957,7 @@ void vpImageTools::resizeSimdlib(const vpImage<unsigned char> &Isrc, unsigned in
 
   Simd::Resize(src, dst, method == INTERPOLATION_LINEAR ? SimdResizeMethodBilinear : SimdResizeMethodArea);
 }
+#endif
 
 bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine)
 {

@@ -148,11 +148,15 @@ int main(int argc, char **argv)
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(839, 839, 325, 243);
     //! [Set camera parameters]
-    vpXmlParserCamera parser;
-    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty())
-      parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
 
-    //! [cMo]
+#if defined(VISP_HAVE_PUGIXML)
+    vpXmlParserCamera parser;
+    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
+      parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+    }
+#endif
+
+//! [cMo]
     vpHomogeneousMatrix cMo;
     //! [cMo]
 
@@ -260,10 +264,12 @@ int main(int argc, char **argv)
 
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     //! [Load xml]
 
     if (!usexml) {

@@ -41,14 +41,18 @@
 #include <map>
 #include <sstream>
 
-#if defined _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
+
+#include <visp3/core/vpConfig.h>
 // image
 #include "private/vpBayerConversion.h"
 #include "private/vpImageConvert_impl.h"
-#include <Simd/SimdLib.hpp>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 #include <visp3/core/vpImageConvert.h>
 
 bool vpImageConvert::YCbCrLUTcomputed = false;
@@ -285,25 +289,25 @@ void vpImageConvert::createDepthHistogram(const vpImage<float> &src_depth, vpIma
   \param[in] flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpRGBa.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/core/vpRGBa.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<vpRGBa> Ic; // A color image
-  cv::Mat Ip;
+  int main()
+  {
+  #if defined(VISP_HAVE_OPENCV)
+    vpImage<vpRGBa> Ic; // A color image
+    cv::Mat Ip;
 
-  // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", cv::IMREAD_COLOR); // Second parameter for a BGR encoding.
-  // Convert the grayscale cv::Mat into vpImage<vpRGBa>
-  vpImageConvert::convert(Ip, Ic);
+    // Read an image on a disk with openCV library
+    Ip = cv::imread("image.pgm", cv::IMREAD_COLOR); // Second parameter for a BGR encoding.
+    // Convert the grayscale cv::Mat into vpImage<vpRGBa>
+    vpImageConvert::convert(Ip, Ic);
 
-  // ...
-#endif
-}
+    // ...
+  #endif
+  }
   \endcode
 */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip)
@@ -326,11 +330,13 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
       }
   }
   else if (src.type() == CV_8UC3) {
+#if defined(VISP_HAVE_SIMDLIB)
     if (src.isContinuous() && !flip) {
       SimdRgbToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                     dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     }
     else {
+#endif
       vpRGBa rgbaVal;
       rgbaVal.A = vpRGBa::alpha_default;
       for (unsigned int i = 0; i < dest.getRows(); ++i) {
@@ -347,18 +353,23 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
           }
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
   else if (src.type() == CV_8UC1) {
+#if defined(VISP_HAVE_SIMDLIB)
     if (src.isContinuous() && !flip) {
       SimdGrayToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                      dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     }
     else {
+#endif
       vpRGBa rgbaVal;
       for (unsigned int i = 0; i < dest.getRows(); ++i) {
         for (unsigned int j = 0; j < dest.getCols(); ++j) {
           rgbaVal = src.at<unsigned char>((int)i, (int)j);
+          rgbaVal.A = vpRGBa::alpha_default;
           if (flip) {
             dest[dest.getRows() - i - 1][j] = rgbaVal;
           }
@@ -367,7 +378,9 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
           }
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
 }
 
@@ -386,24 +399,24 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   OpenMP will choose the number of threads.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<unsigned char> Ig; // A grayscale image
-  cv::Mat Ip;
+  int main()
+  {
+  #if defined(VISP_HAVE_OPENCV)
+    vpImage<unsigned char> Ig; // A grayscale image
+    cv::Mat Ip;
 
-  // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", cv::IMREAD_GRAYSCALE); // Second parameter for a gray level.
-  // Convert the grayscale cv::Mat into vpImage<unsigned char>
-  vpImageConvert::convert(Ip, Ig);
+    // Read an image on a disk with openCV library
+    Ip = cv::imread("image.pgm", cv::IMREAD_GRAYSCALE); // Second parameter for a gray level.
+    // Convert the grayscale cv::Mat into vpImage<unsigned char>
+    vpImageConvert::convert(Ip, Ig);
 
-  // ...
-#endif
-}
+    // ...
+  #endif
+  }
   \endcode
 */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip, unsigned int nThreads)
@@ -3215,7 +3228,7 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
   Converts a RGB image to RGBa. Alpha component is set to
   vpRGBa::alpha_default.
 
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that rgba is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3229,12 +3242,14 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdBgrToBgra(rgb, width, height, width * 3, rgba, width * 4, vpRGBa::alpha_default);
   }
   else {
-    // if we have to flip the image, we start from the end last scanline so the
-    // step is negative
+#endif
+// if we have to flip the image, we start from the end last scanline so the
+// step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
 
     // starting source address = last line if we need to flip the image
@@ -3254,7 +3269,9 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
@@ -3271,11 +3288,24 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 */
 void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdBgraToBgr(rgba, size, 1, size * 4, rgb, size * 3);
+#else
+  unsigned char *pt_input = rgba;
+  unsigned char *pt_end = rgba + 4 * size;
+  unsigned char *pt_output = rgb;
+
+  while (pt_input != pt_end) {
+    *(pt_output++) = *(pt_input++); // R
+    *(pt_output++) = *(pt_input++); // G
+    *(pt_output++) = *(pt_input++); // B
+    pt_input++;
+  }
+#endif
 }
 
 /*!
-  Convert an RGB image to a greyscale one.
+  Convert an RGB image to a grey scale one.
 
   See Charles Pontyon's Colour FAQ
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
@@ -3292,8 +3322,8 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 }
 
 /*!
-  Converts a RGB image to a greyscale one.
-  Flips the image verticaly if needed.
+  Converts a RGB image to a grey scale one.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3307,10 +3337,12 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdRgbToGray(rgb, width, height, width * 3, grey, width);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3335,11 +3367,13 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
-  Convert a RGBa image to a greyscale one.
+  Convert a RGBa image to a grey scale one.
 
   See Charles Pontyon's Colour FAQ
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
@@ -3355,12 +3389,13 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
                                 unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                     nThreads
 #endif
 )
 {
-#if defined _OPENMP
+#if defined(VISP_HAVE_SIMDLIB)
+#if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
@@ -3369,6 +3404,12 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
   for (int i = 0; i < static_cast<int>(height); i++) {
     SimdRgbaToGray(rgba + i * width * 4, width, 1, width * 4, grey + i * width, width);
   }
+#else
+#if defined(_OPENMP)
+  (void)nThreads;
+#endif
+  vpImageConvert::RGBaToGrey(rgba, grey, width * height);
+#endif
 }
 
 /*!
@@ -3387,7 +3428,19 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdRgbaToGray(rgba, size, 1, size * 4, grey, size);
+#else
+  unsigned char *pt_input = rgba;
+  unsigned char *pt_end = rgba + size * 4;
+  unsigned char *pt_output = grey;
+
+  while (pt_input != pt_end) {
+    *pt_output = (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
+    pt_input += 4;
+    pt_output++;
+  }
+#endif
 }
 
 /*!
@@ -3403,7 +3456,11 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdGrayToBgra(grey, width, height, width, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
+#else
+  vpImageConvert::GreyToRGBa(grey, rgba, width * height);
+#endif
 }
 
 /*!
@@ -3420,7 +3477,24 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsign
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   GreyToRGBa(grey, rgba, size, 1);
+#else
+  unsigned char *pt_input = grey;
+  unsigned char *pt_end = grey + size;
+  unsigned char *pt_output = rgba;
+
+  while (pt_input != pt_end) {
+    unsigned char p = *pt_input;
+    *(pt_output) = p;                         // R
+    *(pt_output + 1) = p;                     // G
+    *(pt_output + 2) = p;                     // B
+    *(pt_output + 3) = vpRGBa::alpha_default; // A
+
+    pt_input++;
+    pt_output += 4;
+  }
+#endif
 }
 
 /*!
@@ -3435,14 +3509,30 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsign
 */
 void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdGrayToBgr(grey, size, 1, size, rgb, size * 3);
+#else
+  unsigned char *pt_input = grey;
+  unsigned char *pt_end = grey + size;
+  unsigned char *pt_output = rgb;
+
+  while (pt_input != pt_end) {
+    unsigned char p = *pt_input;
+    *(pt_output) = p;     // R
+    *(pt_output + 1) = p; // G
+    *(pt_output + 2) = p; // B
+
+    pt_input++;
+    pt_output += 3;
+  }
+#endif
 }
 
 /*!
   Converts a BGR image to RGBa. The alpha component is set to
   vpRGBa::alpha_default.
 
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that rgba is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3456,10 +3546,12 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned
 void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdRgbToBgra(bgr, width, height, width * 3, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3480,14 +3572,16 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
   Converts a BGRa image to RGBa.
 
-  Flips the image verticaly if needed.
-  Assumes that rgba is already resized before caling this function.
+  Flips the image vertically if needed.
+  Assumes that rgba is already resized before calling this function.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
 
@@ -3500,10 +3594,12 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
 void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height,
                                 bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdBgraToRgba(bgra, width, height, width * 4, rgba, width * 4);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
     int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
@@ -3524,12 +3620,14 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
   Converts a BGR image to greyscale.
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3544,13 +3642,14 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip,
                                unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                    nThreads
 #endif
 )
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
@@ -3561,6 +3660,7 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
     }
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
@@ -3578,12 +3678,17 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
+  (void)nThreads;
+#endif
 }
 
 /*!
   Converts a BGRa image to greyscale.
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3598,13 +3703,14 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
                                 bool flip,
                                 unsigned int
-#if defined _OPENMP
+#if defined(_OPENMP)
                                     nThreads
 #endif
 )
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
@@ -3615,6 +3721,7 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
     }
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
     int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
@@ -3632,7 +3739,12 @@ void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsign
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
+  (void)nThreads;
+#endif
 }
 
 /*!
@@ -3930,32 +4042,33 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
   Example code using split:
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<vpRGBa> Ic; // A color image
+  int main()
+  {
+    vpImage<vpRGBa> Ic; // A color image
 
-  // Load a color image from the disk
-  vpImageIo::read(Ic,"image.ppm");
+    // Load a color image from the disk
+    vpImageIo::read(Ic,"image.ppm");
 
-  // Only R and B Channels are desired.
-  vpImage<unsigned char> R, B;
+    // Only R and B Channels are desired.
+    vpImage<unsigned char> R, B;
 
-  // Split Ic color image
-  // R and B will be resized in split function if needed
-  vpImageConvert::split(Ic, &R, nullptr, &B, nullptr);
+    // Split Ic color image
+    // R and B will be resized in split function if needed
+    vpImageConvert::split(Ic, &R, nullptr, &B, nullptr);
 
-  // Save the the R Channel.
-  vpImageIo::write(R, "RChannel.pgm");
-}
+    // Save the the R Channel.
+    vpImageIo::write(R, "RChannel.pgm");
+  }
   \endcode
 */
 void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
                            vpImage<unsigned char> *pB, vpImage<unsigned char> *pa)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (src.getSize() > 0) {
     if (pR) {
       pR->resize(src.getHeight(), src.getWidth());
@@ -3992,6 +4105,64 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
       delete[] ptrA;
     }
   }
+#else
+  size_t n = src.getNumberOfPixel();
+  unsigned int height = src.getHeight();
+  unsigned int width = src.getWidth();
+  unsigned char *input;
+  unsigned char *dst;
+
+  vpImage<unsigned char> *tabChannel[4];
+
+  /*  incrsrc[0] = 0; //init
+  incrsrc[1] = 0; //step after the first used channel
+  incrsrc[2] = 0; //step after the second used channel
+  incrsrc[3] = 0;
+  incrsrc[4] = 0;
+ */
+  tabChannel[0] = pR;
+  tabChannel[1] = pG;
+  tabChannel[2] = pB;
+  tabChannel[3] = pa;
+
+  size_t i; /* ordre    */
+  for (unsigned int j = 0; j < 4; j++) {
+    if (tabChannel[j] != NULL) {
+      if (tabChannel[j]->getHeight() != height || tabChannel[j]->getWidth() != width) {
+        tabChannel[j]->resize(height, width);
+      }
+      dst = (unsigned char *)tabChannel[j]->bitmap;
+
+      input = (unsigned char *)src.bitmap + j;
+      i = 0;
+      // optimization
+      if (n >= 4) {
+        n -= 3;
+        for (; i < n; i += 4) {
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+        }
+        n += 3;
+      }
+
+      for (; i < n; i++) {
+        *dst = *input;
+        input += 4;
+        dst++;
+      }
+    }
+  }
+#endif
 }
 
 /*!
@@ -4035,11 +4206,14 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
 
     RGBa.resize(height, width);
 
+
+#if defined(VISP_HAVE_SIMDLIB)
     if (R != nullptr && G != nullptr && B != nullptr && a != nullptr) {
       SimdInterleaveBgra(R->bitmap, width, G->bitmap, width, B->bitmap, width, a->bitmap, width, width, height,
                          reinterpret_cast<uint8_t *>(RGBa.bitmap), width * sizeof(vpRGBa));
     }
     else {
+#endif
       unsigned int size = width * height;
       for (unsigned int i = 0; i < size; i++) {
         if (R != nullptr) {
@@ -4058,7 +4232,9 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
           RGBa.bitmap[i].A = a->bitmap[i];
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
   else {
     throw vpException(vpException::dimensionError, "Mismatched dimensions!");

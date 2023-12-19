@@ -248,8 +248,10 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
   std::vector<int> tracker_type;
   tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
   vpMbGenericTracker tracker(tracker_type);
+
+#if defined(VISP_HAVE_PUGIXML)
   tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
-#if 0
+#else
     // Corresponding parameters manually set to have an example code
   {
     vpCameraParameters cam_depth;

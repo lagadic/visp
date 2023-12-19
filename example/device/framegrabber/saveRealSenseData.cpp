@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 #if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
 
 #include <condition_variable>
 #include <fstream>
@@ -728,6 +728,10 @@ int main(int argc, char *argv[])
 int main()
 {
   std::cerr << "Need libRealSense or libRealSense2 and C++11 and displayX or displayGDI!" << std::endl;
+
+#if !defined(VISP_HAVE_PUGIXML)
+  std::cout << "pugixml built-in 3rdparty is requested." << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
 #endif

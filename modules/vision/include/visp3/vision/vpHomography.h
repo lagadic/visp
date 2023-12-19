@@ -635,11 +635,11 @@ public:
   static bool degenerateConfiguration(const vpColVector &x, unsigned int *ind, double threshold_area);
   static bool degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
                                       const std::vector<double> &xa, const std::vector<double> &ya);
-  static void HartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn, double &xg,
+  static void hartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn, double &xg,
                                    double &yg, double &coef);
-  static void HartleyNormalization(const std::vector<double> &x, const std::vector<double> &y, std::vector<double> &xn,
+  static void hartleyNormalization(const std::vector<double> &x, const std::vector<double> &y, std::vector<double> &xn,
                                    std::vector<double> &yn, double &xg, double &yg, double &coef);
-  static void HartleyDenormalization(vpHomography &aHbn, vpHomography &aHb, double xg1, double yg1, double coef1,
+  static void hartleyDenormalization(vpHomography &aHbn, vpHomography &aHb, double xg1, double yg1, double coef1,
                                      double xg2, double yg2, double coef2);
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS

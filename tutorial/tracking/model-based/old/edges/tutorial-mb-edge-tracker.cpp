@@ -65,11 +65,13 @@ int main(int argc, char **argv)
     //! [Constructor]
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
-    //! [Load xml]
+#endif
+//! [Load xml]
     if (!usexml) {
       //! [Set parameters]
       vpMe me;

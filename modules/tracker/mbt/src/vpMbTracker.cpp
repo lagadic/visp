@@ -43,7 +43,10 @@
 #include <limits>
 #include <sstream>
 
-#include <Simd/SimdLib.hpp>
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDisplay.h>
@@ -2865,8 +2868,19 @@ void vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &err
   }
 
   JTR.resize(6, false);
-
+#if defined(VISP_HAVE_SIMDLIB)
   SimdComputeJtR(interaction.data, interaction.getRows(), error.data, JTR.data);
+#else
+  const unsigned int N = interaction.getRows();
+
+  for (unsigned int i = 0; i < 6; i += 1) {
+    double ssum = 0;
+    for (unsigned int j = 0; j < N; j += 1) {
+      ssum += interaction[j][i] * error[j];
+    }
+    JTR[i] = ssum;
+  }
+#endif
 }
 
 void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error,
@@ -3765,6 +3779,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
@@ -3785,6 +3800,11 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 /*!

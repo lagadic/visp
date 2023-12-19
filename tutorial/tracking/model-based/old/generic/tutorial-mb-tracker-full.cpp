@@ -89,10 +89,12 @@ int main(int argc, char **argv)
 
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker->loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     //! [Load xml]
 
     if (!usexml) {
