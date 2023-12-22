@@ -1663,7 +1663,7 @@ status("    Use json (nlohmann):"     USE_NLOHMANN_JSON THEN "yes (ver ${nlohman
 status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
-status("    Use st::thread:"         USE_THREADS        THEN "yes" ELSE "no")
+status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
 status("")
