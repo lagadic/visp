@@ -101,7 +101,7 @@ add_custom_command(
   COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} ${bindgen_package_location}
   COMMAND ${PYTHON3_EXECUTABLE} -m visp_python_bindgen.generator --config "${CMAKE_CURRENT_SOURCE_DIR}/config" --build-folder ${bindings_gen_location} --main-config "${json_config_file_path}"
   DEPENDS ${bindings_dependencies}
-  COMMENT "Installing the bindings generator and running it..."
+  COMMENT "Installing the python bindings generator and running it..."
 )
 add_custom_target(
   visp_python_bindings_generator_run
