@@ -37,7 +37,7 @@
 #include <limits> // numeric_limits
 
 #include <visp3/core/vpMath.h>
-#include <visp3/vision/vpLevenbergMarquartd.h>
+#include "vpLevenbergMarquartd.h"
 
 #define SIGN(x) ((x) < 0 ? -1 : 1)
 #define SWAP(a, b, c)                                                                                                  \
