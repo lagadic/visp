@@ -554,7 +554,7 @@ public:
 
     camera = cam;
 
-    int nbCamera = count(node, cam_name, cam.get_projModel(), verbose, im_width, im_height);
+    int nbCamera = count(node, cam_name, cam.get_projModel(), im_width, im_height, verbose);
     if (nbCamera) {
       return SEQUENCE_ERROR;
     }
