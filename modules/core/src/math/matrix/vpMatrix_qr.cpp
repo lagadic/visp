@@ -560,7 +560,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   integer dimWork = -1;
   double *qrdata = new double[m * na];
-  double *tau = new double[std::min<double>(m, q)];
+  double *tau = new double[(std::min<double>(m, q))];
   double *work = new double[1];
   integer info;
 
@@ -842,7 +842,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 #else
   integer m = (integer)rowNum; // also rows of Q
   integer n = (integer)colNum; // also columns of R
-  integer r = <integer>>(n, m);  // a priori non-null rows of R = rank of R
+  integer r = std::min<integer>(n, m);  // a priori non-null rows of R = rank of R
   integer q = r;               // columns of Q and rows of R
   integer na = n;              // columns of A
 
