@@ -560,7 +560,7 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
   integer dimWork = -1;
   double *qrdata = new double[m * na];
-  double *tau = new double[(std::min<double>(m, q))];
+  double *tau = new double[std::min<integer>(m, q)];
   double *work = new double[1];
   integer info;
 
