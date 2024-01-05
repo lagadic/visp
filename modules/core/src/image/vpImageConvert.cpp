@@ -4392,12 +4392,12 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     blue = rgb[i * step + 2] / 255.0;
 
     if (red > green) {
-      max = ((std::max))(red, blue);
-      min = ((std::min))(green, blue);
+      max = std::max<double>(red, blue);
+      min = std::min<double>(green, blue);
     }
     else {
-      max = ((std::max))(green, blue);
-      min = ((std::min))(red, blue);
+      max = std::max<double>(green, blue);
+      min = std::min<double>(red, blue);
     }
 
     v = max;

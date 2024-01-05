@@ -485,12 +485,12 @@ public:
                   w, h);
       }
       else {
-     // Correction de l'image de facon a liberer les niveaux de gris
-     // ROUGE, VERT, BLEU, JAUNE
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        // Correction de l'image de facon a liberer les niveaux de gris
+        // ROUGE, VERT, BLEU, JAUNE
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -529,10 +529,10 @@ public:
                   w, h);
       }
       else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -602,10 +602,10 @@ public:
                   w, h);
       }
       else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -672,10 +672,10 @@ public:
       }
       else {
         unsigned int bytes_per_line = (unsigned int)Ximage->bytes_per_line;
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;
@@ -758,10 +758,10 @@ public:
                   w, h);
       }
       else {
-        int i_min = (std::max)((int)ceil(iP.get_i() / scale), 0);
-        int j_min = (std::max)((int)ceil(iP.get_j() / scale), 0);
-        int i_max = (std::min)((int)ceil((iP.get_i() + h) / scale), (int)height);
-        int j_max = (std::min)((int)ceil((iP.get_j() + w) / scale), (int)width);
+        int i_min = std::max<int>((int)ceil(iP.get_i() / scale), 0);
+        int j_min = std::max<int>((int)ceil(iP.get_j() / scale), 0);
+        int i_max = std::min<int>((int)ceil((iP.get_i() + h) / scale), (int)height);
+        int j_max = std::min<int>((int)ceil((iP.get_j() + w) / scale), (int)width);
 
         unsigned int i_min_ = (unsigned int)i_min;
         unsigned int i_max_ = (unsigned int)i_max;

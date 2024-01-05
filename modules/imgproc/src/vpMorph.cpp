@@ -141,7 +141,7 @@ void reconstruct(const vpImage<unsigned char> &marker, const vpImage<unsigned ch
     // Keep min
     for (unsigned int i = 0; i < h_kp1.getHeight(); i++) {
       for (unsigned int j = 0; j < h_kp1.getWidth(); j++) {
-        h_kp1[i][j] = std::min(h_kp1[i][j], mask[i][j]);
+        h_kp1[i][j] = std::min<unsigned char>(h_kp1[i][j], mask[i][j]);
       }
     }
 

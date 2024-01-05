@@ -53,7 +53,7 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
   for (unsigned int r = 0; r < nbRows; r++) {
     for (unsigned int c = 0; c < nbCols; c++) {
       mean += I[r][c];
-      max = std::max(max, static_cast<float>(I[r][c]));
+      max = std::max<float>(max, static_cast<float>(I[r][c]));
     }
   }
   mean *= scale;

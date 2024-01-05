@@ -165,12 +165,12 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
 
   vpPolygon polygon(corners);
   vpRect bb = polygon.getBoundingBox();
-  unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
+  unsigned int top = static_cast<unsigned int>(std::max<int>(0, static_cast<int>(bb.getTop())));
   unsigned int bottom =
-    static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
-  unsigned int left = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getLeft())));
+    static_cast<unsigned int>(std::min<int>(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max<int>(0, static_cast<int>(bb.getLeft())));
   unsigned int right =
-    static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
+    static_cast<unsigned int>(std::min<int>(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
 
   std::vector<double> points_3d;
   points_3d.reserve((bottom - top) * (right - left));
@@ -224,7 +224,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       pose.addPoints(pose_points);
       if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
         if (confidence_index != nullptr) {
-          *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
+          *confidence_index = std::min<double>(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
         }
         return true;
       }
@@ -277,12 +277,12 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     // The area to calculate final confidence index should be total area of the tags
     totalArea += polygon.getArea();
 
-    unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
+    unsigned int top = static_cast<unsigned int>(std::max<int>(0, static_cast<int>(bb.getTop())));
     unsigned int bottom = static_cast<unsigned int>(
-        std::min(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
-    unsigned int left = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getLeft())));
+        std::min<int>(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
+    unsigned int left = static_cast<unsigned int>(std::max<int>(0, static_cast<int>(bb.getLeft())));
     unsigned int right =
-      static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
+      static_cast<unsigned int>(std::min<int>(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
 
     points_3d.reserve((bottom - top) * (right - left));
     for (unsigned int idx_i = top; idx_i < bottom; idx_i++) {
@@ -419,7 +419,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
         pose.addPoints(pose_points);
         if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
           if (confidence_index != nullptr) {
-            *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
+            *confidence_index = std::min<double>(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
           }
           return true;
         }

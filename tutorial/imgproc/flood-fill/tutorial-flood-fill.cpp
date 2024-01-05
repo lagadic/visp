@@ -111,25 +111,32 @@ int getOctant(const vpImagePoint &imPt1, const vpImagePoint &imPt2)
   if (dx >= 0 && dy >= 0) {
     if (dy >= dx) {
       return 1;
-    } else {
+    }
+    else {
       return 0;
     }
-  } else if (dx < 0 && dy >= 0) {
+  }
+  else if (dx < 0 && dy >= 0) {
     if (-dx >= dy) {
       return 3;
-    } else {
+    }
+    else {
       return 2;
     }
-  } else if (dx < 0 && dy < 0) {
+  }
+  else if (dx < 0 && dy < 0) {
     if (dy <= dx) {
       return 5;
-    } else {
+    }
+    else {
       return 4;
     }
-  } else {
+  }
+  else {
     if (dx >= -dy) {
       return 7;
-    } else {
+    }
+    else {
       return 6;
     }
   }
@@ -154,8 +161,8 @@ void drawLine(vpImage<unsigned char> &I, const unsigned char value, const vpImag
     vpImagePoint currentPt(y, x);
     currentPt = switchFromOctantZeroTo(octant, currentPt);
 
-    unsigned int i = std::min(I.getHeight() - 1, (unsigned int)std::max(0.0, currentPt.get_i()));
-    unsigned int j = std::min(I.getWidth() - 1, (unsigned int)std::max(0.0, currentPt.get_j()));
+    unsigned int i = std::min<unsigned int>(I.getHeight() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_i()));
+    unsigned int j = std::min<unsigned int>(I.getWidth() - 1, (unsigned int)std::max<double>(0.0, currentPt.get_j()));
     I[i][j] = value;
 
     if (D >= 0) {
@@ -196,7 +203,7 @@ int main()
     vpDisplay::display(I);
     std::stringstream ss;
     ss << "Left click to draw polygon " << i + 1 << "/3"
-       << ", right click to close the shape.";
+      << ", right click to close the shape.";
     vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
     vpDisplay::flush(I);
 

@@ -359,7 +359,7 @@ double pythag(double a, double b)
     return (pyth);
   }
 
-  r = ((std::min)(std::fabs(a), std::fabs(b)) / p) * ((std::min)(std::fabs(a), std::fabs(b)) / p);
+  r = (std::min<double>(std::fabs(a), std::fabs(b)) / p) * (std::min<double>(std::fabs(a), std::fabs(b)) / p);
   t = 4.0 + r;
 
   // while (t != 4.0)

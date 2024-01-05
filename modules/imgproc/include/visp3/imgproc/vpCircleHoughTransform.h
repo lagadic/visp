@@ -216,8 +216,8 @@ public:
       , m_upperCannyThreshRatio(upperCannyThreshRatio)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
-      , m_minRadius(std::min(minRadius, maxRadius))
-      , m_maxRadius(std::max(minRadius, maxRadius))
+      , m_minRadius(std::min<float>(minRadius, maxRadius))
+      , m_maxRadius(std::max<float>(minRadius, maxRadius))
       , m_dilatationKernelSize(dilatationKernelSize)
       , m_averagingWindowSize(averagingWindowSize)
       , m_centerMinThresh(centerThresh)
@@ -529,8 +529,8 @@ public:
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
       std::pair<float, float> radiusLimits = j.value("radiusLimits", std::pair<float, float>(params.m_minRadius, params.m_maxRadius));
-      params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
-      params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
+      params.m_minRadius = std::min<float>(radiusLimits.first, radiusLimits.second);
+      params.m_maxRadius = std::max<float>(radiusLimits.first, radiusLimits.second);
 
       params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
 

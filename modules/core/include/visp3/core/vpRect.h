@@ -239,10 +239,10 @@ public:
    */
   inline vpRect &operator&=(const vpRect &r)
   {
-    double x1 = (std::max)(left, r.left);
-    double y1 = (std::max)(top, r.top);
-    width = (std::min)(left + width, r.left + r.width) - x1;
-    height = (std::min)(top + height, r.top + r.height) - y1;
+    double x1 = std::max<double>(left, r.left);
+    double y1 = std::max<double>(top, r.top);
+    width = std::min<double>(left + width, r.left + r.width) - x1;
+    height = std::min<double>(top + height, r.top + r.height) - y1;
     left = x1;
     top = y1;
 

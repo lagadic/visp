@@ -434,7 +434,7 @@ int main(int argc, const char *argv[])
     }
     const double frameEnd = vpTime::measureTimeMs();
     if (!isLiveCapture) {
-      vpTime::wait(std::max(0.0, videoFrametime - (frameEnd - frameStart)));
+      vpTime::wait(std::max<double>(0.0, videoFrametime - (frameEnd - frameStart)));
     }
     frameTimes.push_back(vpTime::measureTimeMs() - frameStart);
   }

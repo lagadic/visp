@@ -184,10 +184,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -350,10 +350,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -511,10 +511,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);

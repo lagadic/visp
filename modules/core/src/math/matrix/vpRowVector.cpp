@@ -998,7 +998,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
   if (maxAfter == 1)
     maxAfter = 0;
 

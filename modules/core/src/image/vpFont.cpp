@@ -197,8 +197,8 @@ public:
       for (size_t i = 0; i < text.size(); i++) {
         if (text[i] >= _symbolMin && text[i] <= _symbolMax) {
           curr.x += _currentSize.x;
-          size.x = std::max(size.x, curr.x);
-          size.y = std::max(size.y, curr.y + _currentSize.y);
+          size.x = std::max<int>(size.x, curr.x);
+          size.y = std::max<int>(size.y, curr.y + _currentSize.y);
         }
         else if (text[i] == '\n') {
           curr.x = 0;
@@ -317,8 +317,8 @@ public:
     case TRUETYPE_FILE: {
       Measure(text);
       // Try to resize only if new size is bigger
-      _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
-                         std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
+      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
+                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 
@@ -428,8 +428,8 @@ public:
     case TRUETYPE_FILE: {
       Measure(text);
       // Try to resize only if new size is bigger
-      _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
-                         std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
+      _fontBuffer.resize(std::max<unsigned int>(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom() + 1)),
+                         std::max<unsigned int>(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight() + 1)));
 
       int wordUTF32_size = static_cast<int>(_wordUTF32.size());
 

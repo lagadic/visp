@@ -494,10 +494,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
 int vpPose::computeRansacIterations(double probability, double epsilon, const int sampleSize, int maxIterations)
 {
-  probability = (std::max)(probability, 0.0);
-  probability = (std::min)(probability, 1.0);
-  epsilon = (std::max)(epsilon, 0.0);
-  epsilon = (std::min)(epsilon, 1.0);
+  probability = std::max<double>(probability, 0.0);
+  probability = std::min<double>(probability, 1.0);
+  epsilon = std::max<double>(epsilon, 0.0);
+  epsilon = std::min<double>(epsilon, 1.0);
 
   if (vpMath::nul(epsilon)) {
     // no outliers
@@ -522,7 +522,7 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
     return 0;
   }
 
-  N = log((std::max)(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
+  N = log(std::max<double>(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
   if (logval < 0.0 && N < maxIterations) {
     return (int)ceil(N);
   }

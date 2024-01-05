@@ -712,7 +712,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
       break;
     }
   }
-  float upperThresh = std::max(bon, 1.f);
+  float upperThresh = std::max<float>(bon, 1.f);
   lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }

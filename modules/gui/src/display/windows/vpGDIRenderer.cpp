@@ -224,7 +224,8 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
       imBuffer[i + 2] = I.bitmap[k].R;
       imBuffer[i + 3] = I.bitmap[k].A;
     }
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < m_rheight; i++) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * m_rwidth;
@@ -255,10 +256,10 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
 void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -284,7 +285,8 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
         k = 0;
       }
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < h; i++) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * w;
@@ -323,7 +325,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
       imBuffer[i + 2] = I.bitmap[k];
       imBuffer[i + 3] = vpRGBa::alpha_default;
     }
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < m_rheight; i++) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * m_rwidth;
@@ -354,10 +357,10 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
 void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                                unsigned int height)
 {
-  int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-  int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-  int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-  int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+  int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+  int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+  int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+  int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
   int h = i_max - i_min;
   int w = j_max - j_min;
@@ -378,7 +381,8 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoi
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < h; i++) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * w;
@@ -420,7 +424,8 @@ bool vpGDIRenderer::updateBitmap(HBITMAP &hBmp, unsigned char *imBuffer, unsigne
   if ((m_bmp_width == w) && (m_bmp_height == h) && w != 0 && h != 0) {
     // just replace the content
     SetBitmapBits(hBmp, w * h * 4, imBuffer);
-  } else {
+  }
+  else {
     if (hBmp != nullptr) {
       // delete the old BITMAP
       DeleteObject(hBmp);
@@ -601,7 +606,8 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
       if (ip2_.get_i() < ip1_.get_i()) {
         std::swap(ip1_, ip2_);
       }
-    } else if (ip2_.get_j() < ip1_.get_j()) {
+    }
+    else if (ip2_.get_j() < ip1_.get_j()) {
       std::swap(ip1_, ip2_);
     }
 
@@ -620,7 +626,8 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         // Draw the line
         LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
       }
-    } else {
+    }
+    else {
       for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
         double i = slope * j + orig;
         // Move to the starting point
@@ -629,8 +636,9 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
       }
     }
-  } else {
-    // move to the starting point
+  }
+  else {
+ // move to the starting point
     MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
     // Draw the line
     LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
@@ -681,7 +689,8 @@ void vpGDIRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
     else {
       lBrush.lbColor = gdicolor;
     }
-  } else
+  }
+  else
     lBrush.lbStyle = BS_HOLLOW;
   HBRUSH hbrush = CreateBrushIndirect(&lBrush);
 
@@ -893,7 +902,8 @@ void vpGDIRenderer::drawCross(const vpImagePoint &ip, unsigned int size, const v
     DeleteObject(hPen);
     DeleteDC(hDCMem);
     ReleaseDC(m_hWnd, hDCScreen);
-  } else {
+  }
+  else {
     setPixel(ip, color);
   }
 }
@@ -940,7 +950,8 @@ void vpGDIRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
 
   if ((a == 0) && (b == 0)) {
     // DisplayCrossLarge(i1,j1,3,col) ;
-  } else {
+  }
+  else {
     a /= lg;
     b /= lg;
 
@@ -1020,5 +1031,5 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpGDIRenderer.cpp.o) has no
 // symbols
-void dummy_vpGDIRenderer(){};
+void dummy_vpGDIRenderer() { };
 #endif

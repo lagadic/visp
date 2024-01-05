@@ -584,7 +584,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
   }
 
   if (ts != nullptr)
-    *ts = std::max(imu_vel_timestamp, imu_acc_timestamp);
+    *ts = std::max<double>(imu_vel_timestamp, imu_acc_timestamp);
 
   u.unlock();
 }

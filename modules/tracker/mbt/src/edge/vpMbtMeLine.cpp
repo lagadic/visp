@@ -66,9 +66,8 @@ static void normalizeAngle(double &delta)
 */
 vpMbtMeLine::vpMbtMeLine()
   : rho(0.), theta(0.), theta_1(M_PI / 2), delta(0.), delta_1(0), sign(1), a(0.), b(0.), c(0.), imin(0), imax(0),
-    jmin(0), jmax(0), expecteddensity(0.)
-{
-}
+  jmin(0), jmax(0), expecteddensity(0.)
+{ }
 
 /*!
   Basic destructor.
@@ -120,7 +119,8 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
 
     if (!doNoTrack)
       vpMeTracker::track(I);
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
   vpCDEBUG(1) << " end vpMeLine::initTracking()" << std::endl;
@@ -142,7 +142,7 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
   // if (me->getSampleStep==0)
   if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     throw(vpTrackingException(vpTrackingException::fatalError, "Function vpMbtMeLine::sample() called with "
-                                                               "moving-edges sample step = 0"));
+                              "moving-edges sample step = 0"));
   }
 
   // i, j portions of the line_p
@@ -288,14 +288,16 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
     if ((P.i < imin) || (P.i > imax) || (P.j < jmin) || (P.j > jmax)) {
       if (vpDEBUG_ENABLE(3))
         vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::cyan);
-    } else if (!outOfImage(P.i, P.j, (int)(me->getRange() + me->getMaskSize() + 1), (int)rows, (int)cols)) {
+    }
+    else if (!outOfImage(P.i, P.j, (int)(me->getRange() + me->getMaskSize() + 1), (int)rows, (int)cols)) {
       P.track(I, me, false);
 
       if (P.getState() == vpMeSite::NO_SUPPRESSION) {
         list.push_back(P);
         if (vpDEBUG_ENABLE(3))
           vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::green);
-      } else if (vpDEBUG_ENABLE(3))
+      }
+      else if (vpDEBUG_ENABLE(3))
         vpDisplay::displayCross(I, P.i, P.j, 10, vpColor::blue);
     }
   }
@@ -320,7 +322,8 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
         list.push_back(P);
         if (vpDEBUG_ENABLE(3))
           vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::green);
-      } else if (vpDEBUG_ENABLE(3))
+      }
+      else if (vpDEBUG_ENABLE(3))
         vpDisplay::displayCross(I, P.i, P.j, 10, vpColor::blue);
     }
   }
@@ -434,26 +437,15 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
           vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle)),
                                   (int)(it->get_j() + length * sin(angle)), vpColor::red, length >= 20 ? length / 5 : 4,
                                   length >= 20 ? length / 10 : 2, thickness);
-        } else {
+        }
+        else {
           vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle + M_PI)),
                                   (int)(it->get_j() + length * sin(angle + M_PI)), vpColor::red,
                                   length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         }
       }
 
-      //      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      double angle2 = sqrt(vpMath::sqr(deltaNormalized-
-      //      (angle-M_PI)));
-
-      _sumErrorRad += (std::min)(angle1, angle2);
-
-      //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
-      //      {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle)) - M_PI
-      //        / 2;
-      //      } else {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      }
+      _sumErrorRad += std::min<double>(angle1, angle2);
 
       _nbFeatures++;
     }
@@ -565,7 +557,8 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
       expecteddensity = (double)list.size();
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
 }
@@ -693,11 +686,9 @@ void vpMbtMeLine::bubbleSortI()
 {
 #if 0
   unsigned int nbElmt = list.size();
-  for (unsigned int pass = 1; pass < nbElmt; pass++)
-  {
+  for (unsigned int pass = 1; pass < nbElmt; pass++) {
     list.front();
-    for (unsigned int i=0; i < nbElmt-pass; i++)
-    {
+    for (unsigned int i = 0; i < nbElmt-pass; i++) {
       vpMeSite s1 = list.value();
       vpMeSite s2 = list.nextValue();
       if (s1.ifloat > s2.ifloat)
@@ -716,11 +707,9 @@ void vpMbtMeLine::bubbleSortJ()
 {
 #if 0
   unsigned int nbElmt = list.size();
-  for(unsigned int pass=1; pass < nbElmt; pass++)
-  {
+  for (unsigned int pass = 1; pass < nbElmt; pass++) {
     list.front();
-    for (unsigned int i=0; i < nbElmt-pass; i++)
-    {
+    for (unsigned int i = 0; i < nbElmt-pass; i++) {
       vpMeSite s1 = list.value();
       vpMeSite s2 = list.nextValue();
       if (s1.jfloat > s2.jfloat)

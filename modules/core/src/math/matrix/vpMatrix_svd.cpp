@@ -247,7 +247,8 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
       U = this->transpose();
       nc = getRows();
       nr = getCols();
-    } else {
+    }
+    else {
       nc = getCols();
       nr = getRows();
     }
@@ -263,7 +264,8 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     A.tda = A.size2;
     if (rowNum < colNum) {
       A.data = U.data;
-    } else {
+    }
+    else {
       A.data = this->data;
     }
     A.owner = 0;
@@ -302,13 +304,13 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     integer n = (integer)(this->getRows());
     integer lda = m;
     integer ldu = m;
-    integer ldvt = (std::min)(m, n);
+    integer ldvt = std::min<integer>(m, n);
     integer info, lwork;
 
     double wkopt;
     double *work;
 
-    integer *iwork = new integer[8 * static_cast<integer>((std::min)(n, m))];
+    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(n, m))];
 
     double *s = w.data;
     double *a = new double[static_cast<unsigned int>(lda * n)];

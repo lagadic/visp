@@ -5364,7 +5364,7 @@ V ^\top}_ { n\times n } \f] \f[
      */
     vpColVector vpMatrix::getDiag() const
     {
-      unsigned int min_size = std::min(rowNum, colNum);
+      unsigned int min_size = std::min<unsigned int>(rowNum, colNum);
       vpColVector diag;
 
       if (min_size > 0) {
@@ -5688,7 +5688,7 @@ V ^\top}_ { n\times n } \f] \f[
       // increase totalLength according to maxBefore
       totalLength = vpMath::maximum(totalLength, maxBefore);
       // decrease maxAfter according to totalLength
-      maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
+      maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
 
       if (!intro.empty())
         s << intro;
@@ -6776,10 +6776,10 @@ V ^\top}_ { n\times n } \f] \f[
         M.svd(w, v);
 
         double max = w[0];
-        unsigned int maxRank = std::min(this->getCols(), this->getRows());
+        unsigned int maxRank = std::min<unsigned int>(this->getCols(), this->getRows());
         // The maximum reachable rank is either the number of columns or the number of rows
         // of the matrix.
-        unsigned int boundary = std::min(maxRank, w.size());
+        unsigned int boundary = std::min<unsigned int>(maxRank, w.size());
         // boundary is here to ensure that the number of singular values used for the com-
         // putation of the euclidean norm of the matrix is not greater than the maximum
         // reachable rank. Indeed, some svd library pad the singular values vector with 0s

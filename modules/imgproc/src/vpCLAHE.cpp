@@ -120,10 +120,10 @@ void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCent
 {
   std::fill(hist.begin(), hist.end(), 0);
 
-  int xMin = std::max(0, blockXCenter - blockRadius);
-  int yMin = std::max(0, blockYCenter - blockRadius);
-  int xMax = std::min((int)I.getWidth(), blockXCenter + blockRadius + 1);
-  int yMax = std::min((int)I.getHeight(), blockYCenter + blockRadius + 1);
+  int xMin = std::max<int>(0, blockXCenter - blockRadius);
+  int yMin = std::max<int>(0, blockYCenter - blockRadius);
+  int xMax = std::min<int>((int)I.getWidth(), blockXCenter + blockRadius + 1);
+  int yMax = std::min<int>((int)I.getHeight(), blockYCenter + blockRadius + 1);
 
   for (int y = yMin; y < yMax; ++y) {
     for (int x = xMin; x < xMax; ++x) {
@@ -287,8 +287,8 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
     std::vector<float> bl;
 
     for (int r = 0; r <= (int)rs.size(); ++r) {
-      int r0 = std::max(0, r - 1);
-      int r1 = std::min((int)rs.size() - 1, r);
+      int r0 = std::max<int>(0, r - 1);
+      int r1 = std::min<int>((int)rs.size() - 1, r);
       int dr = rs[r1] - rs[r0];
 
       createHistogram(blockRadius, bins, cs[0], rs[r0], I1, hist);
@@ -305,8 +305,8 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
       int yMax = (r < (int)rs.size() ? rs[r1] : I1.getHeight());
 
       for (int c = 0; c <= (int)cs.size(); ++c) {
-        int c0 = std::max(0, c - 1);
-        int c1 = std::min((int)cs.size() - 1, c);
+        int c0 = std::max<int>(0, c - 1);
+        int c1 = std::min<int>((int)cs.size() - 1, c);
         int dc = cs[c1] - cs[c0];
 
         tl = tr;
@@ -348,7 +348,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
             }
 
             float t = (r0 == r1) ? t0 : wy * t0 + (1.0f - wy) * t1;
-            I2[y][x] = std::max(0, std::min(255, fastRound(t * 255.0f)));
+            I2[y][x] = std::max<unsigned char>(0, std::min<unsigned char>(255, fastRound(t * 255.0f)));
           }
         }
       }
@@ -360,11 +360,11 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 
     bool first = true;
     int xMin0 = 0;
-    int xMax0 = std::min((int)I1.getWidth(), blockRadius);
+    int xMax0 = std::min<int>((int)I1.getWidth(), blockRadius);
 
     for (int y = 0; y < (int)I1.getHeight(); y++) {
-      int yMin = std::max(0, y - (int)blockRadius);
-      int yMax = std::min((int)I1.getHeight(), y + blockRadius + 1);
+      int yMin = std::max<int>(0, y - (int)blockRadius);
+      int yMax = std::min<int>((int)I1.getHeight(), y + blockRadius + 1);
       int h = yMax - yMin;
 
 #if 0
@@ -408,7 +408,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 #endif
 
       for (int x = 0; x < (int)I1.getWidth(); x++) {
-        int xMin = std::max(0, x - (int)blockRadius);
+        int xMin = std::max<int>(0, x - (int)blockRadius);
         int xMax = x + blockRadius + 1;
 
         if (xMin > 0) {
@@ -428,7 +428,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         }
 
         int v = fastRound(I1[y][x] / 255.0f * bins);
-        int w = std::min((int)I1.getWidth(), xMax) - xMin;
+        int w = std::min<int>((int)I1.getWidth(), xMax) - xMin;
         int n = h * w;
         int limit = (int)(slope * n / bins + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);

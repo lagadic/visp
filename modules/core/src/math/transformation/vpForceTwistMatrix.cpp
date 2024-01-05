@@ -577,7 +577,8 @@ int vpForceTwistMatrix::print(std::ostream &s, unsigned int length, char const *
       if (p == std::string::npos) {
         maxBefore = vpMath::maximum(maxBefore, thislen);
         // maxAfter remains the same
-      } else {
+      }
+      else {
         maxBefore = vpMath::maximum(maxBefore, p);
         maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
       }
@@ -588,7 +589,7 @@ int vpForceTwistMatrix::print(std::ostream &s, unsigned int length, char const *
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
   if (maxAfter == 1)
     maxAfter = 0;
 
@@ -612,7 +613,8 @@ int vpForceTwistMatrix::print(std::ostream &s, unsigned int length, char const *
         if (p != std::string::npos) {
           s.width((std::streamsize)maxAfter);
           s << values[i * n + j].substr(p, maxAfter).c_str();
-        } else {
+        }
+        else {
           assert(maxAfter > 1);
           s.width((std::streamsize)maxAfter);
           s << ".0";

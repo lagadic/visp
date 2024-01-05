@@ -304,10 +304,10 @@ template <class Type>
 void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left, unsigned int roi_height,
                         unsigned int roi_width, vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
-  int i_min = (std::max)((int)(ceil(roi_top / v_scale)), 0);
-  int j_min = (std::max)((int)(ceil(roi_left / h_scale)), 0);
-  int i_max = (std::min)((int)(ceil((roi_top + roi_height)) / v_scale), (int)(I.getHeight() / v_scale));
-  int j_max = (std::min)((int)(ceil((roi_left + roi_width) / h_scale)), (int)(I.getWidth() / h_scale));
+  int i_min = std::max<int>((int)(ceil(roi_top / v_scale)), 0);
+  int j_min = std::max<int>((int)(ceil(roi_left / h_scale)), 0);
+  int i_max = std::min<int>((int)(ceil((roi_top + roi_height)) / v_scale), (int)(I.getHeight() / v_scale));
+  int j_max = std::min<int>((int)(ceil((roi_left + roi_width) / h_scale)), (int)(I.getWidth() / h_scale));
 
   unsigned int i_min_u = (unsigned int)i_min;
   unsigned int j_min_u = (unsigned int)j_min;
@@ -409,10 +409,10 @@ template <class Type>
 void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,
                         vpImage<Type> &crop, unsigned int v_scale, unsigned int h_scale)
 {
-  int i_min = (std::max)((int)(ceil(roi.getTop() / v_scale)), 0);
-  int j_min = (std::max)((int)(ceil(roi.getLeft() / h_scale)), 0);
-  int i_max = (std::min)((int)(ceil((roi.getTop() + roi.getHeight()) / v_scale)), (int)(height / v_scale));
-  int j_max = (std::min)((int)(ceil((roi.getLeft() + roi.getWidth()) / h_scale)), (int)(width / h_scale));
+  int i_min = std::max<int>((int)(ceil(roi.getTop() / v_scale)), 0);
+  int j_min = std::max<int>((int)(ceil(roi.getLeft() / h_scale)), 0);
+  int i_max = std::min<int>((int)(ceil((roi.getTop() + roi.getHeight()) / v_scale)), (int)(height / v_scale));
+  int j_max = std::min<int>((int)(ceil((roi.getLeft() + roi.getWidth()) / h_scale)), (int)(width / h_scale));
 
   unsigned int i_min_u = (unsigned int)i_min;
   unsigned int j_min_u = (unsigned int)j_min;
@@ -892,8 +892,8 @@ template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I,
 {
   int x = vpMath::round(u);
   int y = vpMath::round(v);
-  x = (std::max)(0, (std::min)(x, static_cast<int>(I.getWidth()) - 1));
-  y = (std::max)(0, (std::min)(y, static_cast<int>(I.getHeight()) - 1));
+  x = std::max<int>(0, std::min<int>(x, static_cast<int>(I.getWidth()) - 1));
+  y = std::max<int>(0, std::min<int>(y, static_cast<int>(I.getHeight()) - 1));
 
   return I[y][x];
 }
@@ -994,11 +994,11 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, u
   int u0 = static_cast<int>(u);
   int v0 = static_cast<int>(v);
 
-  int u1 = (std::min)(static_cast<int>(I.getWidth()) - 1, u0 + 1);
+  int u1 = std::min<int>(static_cast<int>(I.getWidth()) - 1, u0 + 1);
   int v1 = v0;
 
   int u2 = u0;
-  int v2 = (std::min)(static_cast<int>(I.getHeight()) - 1, v0 + 1);
+  int v2 = std::min<int>(static_cast<int>(I.getHeight()) - 1, v0 + 1);
 
   int u3 = u1;
   int v3 = v2;
@@ -1017,11 +1017,11 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
   int u0 = static_cast<int>(u);
   int v0 = static_cast<int>(v);
 
-  int u1 = (std::min)(static_cast<int>(I.getWidth()) - 1, u0 + 1);
+  int u1 = std::min<int>(static_cast<int>(I.getWidth()) - 1, u0 + 1);
   int v1 = v0;
 
   int u2 = u0;
-  int v2 = (std::min)(static_cast<int>(I.getHeight()) - 1, v0 + 1);
+  int v2 = std::min<int>(static_cast<int>(I.getHeight()) - 1, v0 + 1);
 
   int u3 = u1;
   int v3 = v2;

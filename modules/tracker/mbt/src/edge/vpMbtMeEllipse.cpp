@@ -172,7 +172,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
         }
       }
 
-      sumErrorRad += (std::min)(angle1, angle2);
+      sumErrorRad += std::min<double>(angle1, angle2);
 
       nbFeatures++;
     }

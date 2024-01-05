@@ -198,7 +198,7 @@ template <typename Type> inline vpMunkres::STEP_T vpMunkres::stepOne(std::vector
   for (auto col = 0u; col < costs.size(); ++col) {
     auto minval = std::numeric_limits<Type>::max();
     for (const auto &cost_row : costs) {
-      minval = std::min(minval, cost_row.at(col));
+      minval = std::min<Type>(minval, cost_row.at(col));
     }
 
     for (auto &cost_row : costs) {
@@ -316,7 +316,7 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
 {
   const auto original_row_size = costs.size();
   const auto original_col_size = costs.front().size();
-  const auto sq_size = std::max(original_row_size, original_col_size);
+  const auto sq_size = std::max<Type>(original_row_size, original_col_size);
 
   auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(
       sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
