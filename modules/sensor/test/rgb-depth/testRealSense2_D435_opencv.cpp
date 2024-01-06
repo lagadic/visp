@@ -225,8 +225,8 @@ int main()
 
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-        int u = std::min(static_cast<int>(width - 1), static_cast<int>(std::max(0.0, imPt.get_u())));
-        int v = std::min(static_cast<int>(height - 1), static_cast<int>(std::max(0.0, imPt.get_v())));
+        int u = std::min<int>(static_cast<int>(width - 1), static_cast<int>(std::max<double>(0.0, imPt.get_u())));
+        int v = std::min<int>(static_cast<int>(height - 1), static_cast<int>(std::max<double>(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram, Z, depth_scale);
         mat_pointcloud.at<uchar>(v, u) = depth_viz;
       }

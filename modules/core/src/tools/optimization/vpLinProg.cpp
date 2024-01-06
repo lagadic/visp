@@ -429,8 +429,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
         for (unsigned int j = 0; j < m + p; ++j)
           A[j][n + p + k1] = -A[j][i];
         if (feasible) {
-          x[i] = std::max(x[i], 0.);
-          x[n + p + k1] = std::max(-x[i], 0.);
+          x[i] = std::max<double>(x[i], 0.);
+          x[n + p + k1] = std::max<double>(-x[i], 0.);
         }
         k1++;
       }

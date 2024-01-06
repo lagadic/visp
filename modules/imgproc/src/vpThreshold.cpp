@@ -89,7 +89,7 @@ int computeThresholdHuang(const vpHistogram &hist)
 
   S[0] = (float)hist[0];
   W[0] = 0.0f;
-  for (size_t i = std::max((size_t)1, first); i <= last; i++) {
+  for (size_t i = std::max<size_t>((size_t)1, first); i <= last; i++) {
     S[i] = S[i - 1] + hist[(unsigned char)i];
     W[i] = W[i - 1] + i * (float)hist[(unsigned char)i];
   }

@@ -149,7 +149,7 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
 #else
   for (unsigned int i = 0; i < I1.getSize(); ++i) {
     int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
-    Idiff.bitmap[i] = static_cast<unsigned char>(std::max(std::min(diff, 255), 0));
+    Idiff.bitmap[i] = static_cast<unsigned char>(std::max<unsigned char>(std::min<unsigned char>(diff, 255), 0));
   }
 #endif
 }

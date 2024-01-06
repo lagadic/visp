@@ -235,10 +235,10 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 
   // Limit research area
   const auto roi_bb = roi.getBoundingBox();
-  const int roi_top = static_cast<int>(std::max(0., roi_bb.getTop()));
-  const int roi_bottom = static_cast<int>(std::min(static_cast<double>(I_depth_raw.getHeight()), roi_bb.getBottom()));
-  const int roi_left = static_cast<int>(std::max(0., roi_bb.getLeft()));
-  const int roi_right = static_cast<int>(std::min(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight()));
+  const int roi_top = static_cast<int>(std::max<double>(0., roi_bb.getTop()));
+  const int roi_bottom = static_cast<int>(std::min<double>(static_cast<double>(I_depth_raw.getHeight()), roi_bb.getBottom()));
+  const int roi_left = static_cast<int>(std::max<double>(0., roi_bb.getLeft()));
+  const int roi_right = static_cast<int>(std::min<double>(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight()));
 
   // Reduce computation time by using subsample factor
   unsigned int subsample_factor =
@@ -286,8 +286,8 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
       vpImagePoint ip {};
       vpMeterPixelConversion::convertPoint(depth_intrinsics, X / Z, Y / Z, ip);
 
-      const int b = static_cast<int>(std::max(0., 255 * (1 - 2 * weights[i])));
-      const int r = static_cast<int>(std::max(0., 255 * (2 * weights[i] - 1)));
+      const int b = static_cast<int>(std::max<double>(0., 255 * (1 - 2 * weights[i])));
+      const int r = static_cast<int>(std::max<double>(0., 255 * (2 * weights[i] - 1)));
       const int g = 255 - b - r;
 
       heat_map->get()[static_cast<int>(ip.get_i())][static_cast<int>(ip.get_j())] = vpColor(r, g, b);

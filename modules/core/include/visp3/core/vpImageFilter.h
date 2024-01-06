@@ -314,7 +314,7 @@ public:
         float dx = static_cast<float>(dIx[r][c]);
         float dy = static_cast<float>(dIy[r][c]);
         float gradient = std::abs(dx) + std::abs(dy);
-        float gradientClamped = std::min(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
+        float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
         dI[r][c] = static_cast<unsigned char>(gradientClamped);
       }
     }
@@ -334,7 +334,7 @@ public:
         break;
       }
     }
-    float upperThresh = std::max(bon, 1.f);
+    float upperThresh = std::max<float>(bon, 1.f);
     lowerThresh = lowerThresholdRatio * bon;
     return upperThresh;
   }

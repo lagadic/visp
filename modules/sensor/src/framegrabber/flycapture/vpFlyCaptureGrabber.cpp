@@ -184,7 +184,8 @@ FlyCapture2::Camera *vpFlyCaptureGrabber::getCameraHandler()
 
   if (m_connected == true) {
     return &m_camera;
-  } else {
+  }
+  else {
     return nullptr;
   }
 }
@@ -451,13 +452,13 @@ void vpFlyCaptureGrabber::setProperty(const FlyCapture2::PropertyType &prop_type
     prop.absControl = propInfo.absValSupported;
     switch (prop_value) {
     case ABS_VALUE: {
-      float value_ = (std::max)((std::min)((float)value, (float)propInfo.absMax), (float)propInfo.absMin);
+      float value_ = std::max<float>(std::min<float>((float)value, (float)propInfo.absMax), (float)propInfo.absMin);
       prop.absValue = value_;
       break;
     }
     case VALUE_A: {
       unsigned int value_ =
-          (std::max)((std::min)((unsigned int)value, (unsigned int)propInfo.max), (unsigned int)propInfo.min);
+        std::max<unsigned int>(std::min<unsigned int>((unsigned int)value, (unsigned int)propInfo.max), (unsigned int)propInfo.min);
       prop.valueA = value_;
       break;
     }
@@ -1341,7 +1342,8 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
     if (error == FlyCapture2::PGRERROR_TIMEOUT) {
       // ignore timeout errors, camera may not be responding to
       // register reads during power-up
-    } else if (error != FlyCapture2::PGRERROR_OK) {
+    }
+    else if (error != FlyCapture2::PGRERROR_OK) {
       error.PrintErrorTrace();
       throw(vpException(vpException::fatalError, "Cannot power on the camera."));
     }
@@ -1403,5 +1405,5 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
 #else
 // Work around to avoid warning:
 // libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
-void dummy_vpFlyCaptureGrabber(){};
+void dummy_vpFlyCaptureGrabber() { };
 #endif

@@ -198,7 +198,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
     lowerThreshold = m_upperThreshold / 3.f;
   }
   // To ensure that if lowerThreshold = 0, we reject null gradient points
-  lowerThreshold = std::max(lowerThreshold, std::numeric_limits<float>::epsilon());
+  lowerThreshold = std::max<float>(lowerThreshold, std::numeric_limits<float>::epsilon());
   performEdgeThinning(lowerThreshold);
 
   // // Step 4: hysteresis thresholding
@@ -338,8 +338,8 @@ getGradientOrientation(const vpImage<float> &dIx, const vpImage<float> &dIy, con
   else {
     // -dy because the y-axis of the image is oriented towards the bottom of the screen
     // while we later work with a y-axis oriented towards the top when getting the theta quadrant.
-    gradientOrientation = static_cast<float>(std::atan2(-dy , dx));
-    if(gradientOrientation < 0.f) {
+    gradientOrientation = static_cast<float>(std::atan2(-dy, dx));
+    if (gradientOrientation < 0.f) {
       gradientOrientation += M_PIf; // + M_PI in order to be between 0 and M_PIf
     }
   }
@@ -427,9 +427,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   for (int dr = -1; dr <= 1 && !hasFoundStrongEdge; dr++) {
     for (int dc = -1; dc <= 1 && !hasFoundStrongEdge; dc++) {
       int idRow = dr + (int)coordinates.first;
-      idRow = std::max(idRow, 0); // Avoid getting negative pixel ID
+      idRow = std::max<int>(idRow, 0); // Avoid getting negative pixel ID
       int idCol = dc + (int)coordinates.second;
-      idCol = std::max(idCol, 0); // Avoid getting negative pixel ID
+      idCol = std::max<int>(idCol, 0); // Avoid getting negative pixel ID
 
       // Checking if we are still looking for an edge in the limit of the image
       if ((idRow < 0 || idRow >= nbRows)

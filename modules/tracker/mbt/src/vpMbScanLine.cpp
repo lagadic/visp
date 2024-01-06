@@ -61,8 +61,8 @@
 vpMbScanLine::vpMbScanLine()
   : w(0), h(0), K(), maskBorder(0), mask(), primitive_ids(), visibility_samples(), depthTreshold(1e-06)
 #if defined(DEBUG_DISP)
-    ,
-    dispMaskDebug(nullptr), dispLineDebug(nullptr), linedebugImg()
+  ,
+  dispMaskDebug(nullptr), dispLineDebug(nullptr), linedebugImg()
 #endif
 {
 #if defined(VISP_HAVE_X11) && defined(DEBUG_DISP)
@@ -112,8 +112,8 @@ void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const v
   if (y0 >= h - 1 || y1 < 0 || std::fabs(y1 - y0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _y0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(y0)));
-  const double _y1 = (std::min)((double)h, (double)y1);
+  const unsigned int _y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(y0)));
+  const double _y1 = std::min<double>((double)h, (double)y1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
@@ -161,8 +161,8 @@ void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const v
   if (x0 >= w - 1 || x1 < 0 || std::fabs(x1 - x0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const unsigned int _x0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(x0)));
-  const double _x1 = (std::min)((double)w, (double)x1);
+  const unsigned int _x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(x0)));
+  const double _x1 = std::min<double>((double)w, (double)x1);
 
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
@@ -280,7 +280,8 @@ void vpMbScanLine::createScanLinesFromLocals(std::vector<std::vector<vpMbScanLin
         s.type = START;
         s.P1 = s.p * s.Z1;
         b_start = false;
-      } else {
+      }
+      else {
         vpMbScanLineSegment &prev = scanlines[j].back();
         s.type = END;
         s.P1 = prev.P1;
@@ -386,8 +387,8 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
 
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
-          const unsigned int x0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
-          double x1 = (std::min)((double)w, (double)s.p);
+          const unsigned int x0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          double x1 = std::min<double>((double)w, (double)s.p);
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
             primitive_ids[(unsigned int)y][(unsigned int)x] = last_visible.ID;
 
@@ -461,8 +462,8 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
 
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
-          const unsigned int y0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
-          double y1 = (std::min)((double)h, (double)s.p);
+          const unsigned int y0 = std::max<unsigned int>((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
+          double y1 = std::min<double>((double)h, (double)s.p);
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
             // primitive_ids[(unsigned int)y][(unsigned int)x] =
             // last_visible.ID;
@@ -585,7 +586,8 @@ void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
     // Instead of swap we set the right address of the corresponding pointers
     a_ = b;
     b_ = a;
-  } else {
+  }
+  else {
     a_ = a;
     b_ = b;
   }
@@ -594,8 +596,8 @@ void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
   if (*v0 >= size - 1 || *v1 < 0 || std::fabs(*v1 - *v0) <= std::numeric_limits<double>::epsilon())
     return;
 
-  const int _v0 = (std::max)(0, int(std::ceil(*v0)));
-  const int _v1 = (std::min)((int)(size - 1), (int)(std::ceil(*v1) - 1));
+  const int _v0 = std::max<int>(0, int(std::ceil(*v0)));
+  const int _v1 = std::min<int>((int)(size - 1), (int)(std::ceil(*v1) - 1));
 
   const std::set<int> &visible_samples = visibility_samples[edge];
   int last = _v0;
@@ -617,13 +619,15 @@ void vpMbScanLine::queryLineVisibility(const vpPoint &a, const vpPoint &b,
       line_start = a_;
       line_end = p;
       b_line_started = true;
-    } else if (v == _v1) {
-      // line_end = b;
+    }
+    else if (v == _v1) {
+   // line_end = b;
       line_end = b_;
       if (!b_line_started)
         line_start = p;
       b_line_started = true;
-    } else {
+    }
+    else {
       line_end = p;
       if (!b_line_started)
         line_start = p;
@@ -676,7 +680,8 @@ vpMbScanLine::vpMbScanLineEdge vpMbScanLine::makeMbScanLineEdge(const vpPoint &a
     if (_a[i] < _b[i]) {
       b_comp = true;
       break;
-    } else if (_a[i] > _b[i])
+    }
+    else if (_a[i] > _b[i])
       break;
 
   if (b_comp)
@@ -718,8 +723,8 @@ double vpMbScanLine::getAlpha(double x, double X0, double Z0, double X1, double 
   if (vpMath::isNaN(alpha) || vpMath::isInf(alpha))
     return 0.0;
 
-  alpha = (std::min)(1.0, alpha);
-  alpha = (std::max)(0.0, alpha);
+  alpha = std::min<double>(1.0, alpha);
+  alpha = std::max<double>(0.0, alpha);
   return alpha;
 }
 

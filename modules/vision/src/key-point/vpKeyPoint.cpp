@@ -858,7 +858,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsig
 {
   // Image matching side by side
   unsigned int width = IRef.getWidth() + ICurrent.getWidth();
-  unsigned int height = ((std::max))(IRef.getHeight(), ICurrent.getHeight());
+  unsigned int height = std::max<unsigned int>(IRef.getHeight(), ICurrent.getHeight());
 
   IMatching = vpImage<unsigned char>(height, width);
 }
@@ -868,7 +868,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGB
 {
   // Image matching side by side
   unsigned int width = IRef.getWidth() + ICurrent.getWidth();
-  unsigned int height = ((std::max))(IRef.getHeight(), ICurrent.getHeight());
+  unsigned int height = std::max<unsigned int>(IRef.getHeight(), ICurrent.getHeight());
 
   IMatching = vpImage<vpRGBa>(height, width);
 }
