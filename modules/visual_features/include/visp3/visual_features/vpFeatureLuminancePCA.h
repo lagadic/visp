@@ -31,8 +31,8 @@
  * Luminance based feature.
  */
 
-#ifndef vpFeatureLuminancePCA_h
-#define vpFeatureLuminancePCA_h
+#ifndef vpFeatureLuminanceMapping_h
+#define vpFeatureLuminanceMapping_h
 
 #include <memory>
 
@@ -40,6 +40,19 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
+
+
+class VISP_EXPORT vpLuminanceMapping
+{
+
+  void map(const vpImage<unsigned char> &I, vpColVector &s);
+  void inverse(const vpColVector &s, vpImage<unsigned char> &I);
+
+  unsigned int getProjectionSize() const { return m_basis->getRows(); }
+
+private:
+  const unsigned m_mappingSize;
+};
 
 
 /**
@@ -67,23 +80,23 @@ private:
   std::shared_ptr<vpColVector> m_mean;
 };
 
-
-class VISP_EXPORT vpFeatureLuminancePCA : public vpBasicFeature
+template <class Mapping>
+class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
 
 public:
 
-  vpFeatureLuminancePCA(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const vpLuminancePCA &pca);
-  vpFeatureLuminancePCA(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca);
+  vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const Mapping &mapping);
+  vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, const Mapping &pca);
   void init() override;
-  void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const vpLuminancePCA &pca);
-  void init(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca);
+  void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const Mapping &mapping);
+  void init(const vpFeatureLuminance &luminance, const Mapping &mapping);
 
-  vpFeatureLuminancePCA(const vpFeatureLuminancePCA &f);
-  vpFeatureLuminancePCA &operator=(const vpFeatureLuminancePCA &f);
-  vpFeatureLuminancePCA *duplicate() const override;
+  vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f);
+  vpFeatureLuminanceMapping &operator=(const vpFeatureLuminanceMapping &f);
+  vpFeatureLuminanceMapping *duplicate() const override;
 
-  virtual ~vpFeatureLuminancePCA() = default;
+  virtual ~vpFeatureLuminanceMapping() = default;
 
   void buildFrom(vpImage<unsigned char> &I);
 
@@ -103,13 +116,14 @@ public:
   void print(unsigned int select = FEATURE_ALL) const override;
 
   vpFeatureLuminance &getLuminanceFeature() { return m_featI; }
+  Mapping &getMapping() { return m_mapping; }
 
 
 
 
 private:
 
-  vpLuminancePCA m_pca;
+  Mapping m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
 
