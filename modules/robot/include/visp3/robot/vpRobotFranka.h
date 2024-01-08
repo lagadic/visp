@@ -330,6 +330,7 @@ public:
 
   int gripperClose();
   int gripperGrasp(double grasping_width, double force = 60.);
+  int gripperGrasp(double grasping_width, double speed, double force);
   void gripperHoming();
   int gripperMove(double width);
   int gripperOpen();
