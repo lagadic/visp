@@ -272,6 +272,17 @@ if(NOT IOS)
   include(cmake/VISPDetectPython.cmake)
 endif()
 
+if(CMAKE_VERSION VERSION_LESS "3.19.0")
+  set(CMAKE_NOT_OK_FOR_BINDINGS TRUE)
+else()
+  set(CMAKE_NOT_OK_FOR_BINDINGS FALSE)
+endif()
+
+if(CMAKE_NOT_OK_FOR_BINDINGS)
+  status("${CMAKE_NOT_OK_FOR_BINDINGS}")
+  status("CMake version required for Python bindings is 3.19.0, but you have ${CMAKE_VERSION}. Python bindings generation will be deactivated")
+endif()
+
 # --- Python Bindings requirements ---
 
 # this avoids non-active conda from getting picked anyway on Windows
@@ -436,7 +447,7 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11) )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
