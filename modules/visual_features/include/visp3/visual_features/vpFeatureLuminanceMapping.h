@@ -44,11 +44,13 @@
 
 class VISP_EXPORT vpLuminanceMapping
 {
+public:
+  vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
+  virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
+  virtual void interaction(const vpImage<unsigned char> &I, const vpColVector &s, vpMatrix &L) = 0;
+  virtual void inverse(const vpColVector &s, vpImage<unsigned char> &I) = 0;
 
-  void map(const vpImage<unsigned char> &I, vpColVector &s);
-  void inverse(const vpColVector &s, vpImage<unsigned char> &I);
-
-  unsigned int getProjectionSize() const { return m_basis->getRows(); }
+  unsigned int getProjectionSize() const { return m_mappingSize; }
 
 private:
   const unsigned m_mappingSize;
@@ -59,20 +61,20 @@ private:
  * @brief
  *
  */
-class VISP_EXPORT vpLuminancePCA
+class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
-  vpLuminancePCA() = default;
+  vpLuminancePCA() : vpLuminanceMapping(0) { }
   vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean);
 
   unsigned int getProjectionSize() const { return m_basis->getRows(); }
   std::shared_ptr<vpMatrix> getBasis() const { return m_basis; }
   std::shared_ptr<vpColVector> getMean() const { return m_mean; }
+  void map(const vpImage<unsigned char> &I, vpColVector &s) override;
+  void inverse(const vpColVector &s, vpImage<unsigned char> &I) override;
+  void interaction(const vpImage<unsigned char> &I, const vpColVector &s, vpMatrix &L) override;
   void save(const std::string &basisFilename, const std::string &meanFileName) const;
-
-
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName);
-
   static vpLuminancePCA learn(std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder);
 
 private:
@@ -80,17 +82,16 @@ private:
   std::shared_ptr<vpColVector> m_mean;
 };
 
-template <class Mapping>
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
 
 public:
 
-  vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const Mapping &mapping);
-  vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, const Mapping &pca);
+  vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const std::shared_ptr<vpLuminanceMapping> mapping);
+  vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping);
   void init() override;
-  void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const Mapping &mapping);
-  void init(const vpFeatureLuminance &luminance, const Mapping &mapping);
+  void init(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, std::shared_ptr<vpLuminanceMapping> mapping);
+  void init(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping);
 
   vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f);
   vpFeatureLuminanceMapping &operator=(const vpFeatureLuminanceMapping &f);
@@ -116,14 +117,14 @@ public:
   void print(unsigned int select = FEATURE_ALL) const override;
 
   vpFeatureLuminance &getLuminanceFeature() { return m_featI; }
-  Mapping &getMapping() { return m_mapping; }
+  std::shared_ptr<vpLuminanceMapping> &getMapping() { return m_mapping; }
 
 
 
 
 private:
 
-  Mapping m_mapping;
+  std::shared_ptr<vpLuminanceMapping> m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
 

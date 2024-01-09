@@ -1,6 +1,17 @@
-#include <visp3/visual_features/vpFeatureLuminancePCA.h>
+#include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
-vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean)
+vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean) : vpLuminanceMapping(basis->getRows())
+{
+  if (basis->getRows() != mean->getRows()) {
+    throw vpException(vpException::dimensionError, "PCA mean and basis should have the same number of components");
+  }
+}
+
+void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
+{
+
+}
+void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
 
 }
@@ -47,70 +58,71 @@ static vpLuminancePCA learn(std::vector<vpImage<unsigned char>> &images, const u
 
 }
 
-vpFeatureLuminancePCA::vpFeatureLuminancePCA(const vpCameraParameters &cam,
-unsigned int h, unsigned int w, double Z, const vpLuminancePCA &pca)
+vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpCameraParameters &cam,
+unsigned int h, unsigned int w, double Z, std::shared_ptr<vpLuminanceMapping> mapping)
 {
-  init(cam, h, w, Z, pca);
+  init(cam, h, w, Z, mapping);
 }
 
-vpFeatureLuminancePCA::vpFeatureLuminancePCA(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca)
+vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping)
 {
-  init(luminance, pca);
+  init(luminance, mapping);
 }
-vpFeatureLuminancePCA::vpFeatureLuminancePCA(const vpFeatureLuminancePCA &f)
+vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f)
 {
   *this = f;
 }
 
-void vpFeatureLuminancePCA::init()
+void vpFeatureLuminanceMapping::init()
 {
   dim_s = 0;
   m_featI.init(0, 0, 0.0);
 }
 
-void vpFeatureLuminancePCA::init(
+void vpFeatureLuminanceMapping::init(
   const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z,
-  const vpLuminancePCA &pca)
+  std::shared_ptr<vpLuminanceMapping> mapping)
 {
   m_featI.init(h, w, Z);
   m_featI.setCameraParameters(cam);
-  m_pca = pca;
-  dim_s = pca.getProjectionSize();
+  m_mapping = mapping;
+  dim_s = m_mapping->getProjectionSize();
   s.resize(dim_s, true);
 }
-void vpFeatureLuminancePCA::init(const vpFeatureLuminance &luminance, const vpLuminancePCA &pca)
+void vpFeatureLuminanceMapping::init(const vpFeatureLuminance &luminance, std::shared_ptr<vpLuminanceMapping> mapping)
 {
   m_featI = luminance;
-  m_pca = pca;
-  dim_s = pca.getProjectionSize();
+  m_mapping = mapping;
+  dim_s = m_mapping->getProjectionSize();
   s.resize(dim_s, true);
 }
 
 
-vpFeatureLuminancePCA &vpFeatureLuminancePCA::operator=(const vpFeatureLuminancePCA &f)
+vpFeatureLuminanceMapping &vpFeatureLuminanceMapping::operator=(const vpFeatureLuminanceMapping &f)
 {
   dim_s = f.dim_s;
   s = f.s;
-  m_pca = f.m_pca;
+  m_mapping = f.m_mapping;
   m_featI = f.m_featI;
+  return *this;
 }
-vpFeatureLuminancePCA *vpFeatureLuminancePCA::duplicate() const
+vpFeatureLuminanceMapping *vpFeatureLuminanceMapping::duplicate() const
 {
-  return new vpFeatureLuminancePCA(*this);
+  return new vpFeatureLuminanceMapping(*this);
 }
 
 
-void vpFeatureLuminancePCA::buildFrom(vpImage<unsigned char> &I) { }
+void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I) { }
 
-void vpFeatureLuminancePCA::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
+void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
               unsigned int thickness) const
 { }
-void vpFeatureLuminancePCA::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
+void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
               unsigned int thickness) const
 { }
 
 
-vpColVector vpFeatureLuminancePCA::error(const vpBasicFeature &s_star, unsigned int select)
+vpColVector vpFeatureLuminanceMapping::error(const vpBasicFeature &s_star, unsigned int select)
 {
   if (select != FEATURE_ALL) {
     throw vpException(vpException::notImplementedError, "cannot compute error on subset of PCA features");
@@ -120,7 +132,7 @@ vpColVector vpFeatureLuminancePCA::error(const vpBasicFeature &s_star, unsigned 
   return e;
 }
 
-void vpFeatureLuminancePCA::error(const vpBasicFeature &s_star, vpColVector &e)
+void vpFeatureLuminanceMapping::error(const vpBasicFeature &s_star, vpColVector &e)
 {
   // if (dim_s != s_star.dimension_s()) {
   //   throw vpException(vpException::dimensionError, "Wrong dimensions when computing error in PCA features");
@@ -131,7 +143,7 @@ void vpFeatureLuminancePCA::error(const vpBasicFeature &s_star, vpColVector &e)
   }
 }
 
-vpMatrix vpFeatureLuminancePCA::interaction(unsigned int select)
+vpMatrix vpFeatureLuminanceMapping::interaction(unsigned int select)
 {
   if (select != FEATURE_ALL) {
     throw vpException(vpException::notImplementedError, "cannot compute interaction matrix for a subset of PCA features");
@@ -140,14 +152,14 @@ vpMatrix vpFeatureLuminancePCA::interaction(unsigned int select)
   interaction(dWdr);
   return dWdr;
 }
-void vpFeatureLuminancePCA::interaction(vpMatrix &L)
+void vpFeatureLuminanceMapping::interaction(vpMatrix &L)
 {
   L.resize(dim_s, 6, false, false);
   m_featI.interaction(m_LI);
 }
 
 
-void vpFeatureLuminancePCA::print(unsigned int select) const
+void vpFeatureLuminanceMapping::print(unsigned int select) const
 {
   if (select != FEATURE_ALL) {
     throw vpException(vpException::notImplementedError, "cannot print subset of PCA features");
