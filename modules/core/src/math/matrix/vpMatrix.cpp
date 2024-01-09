@@ -2218,7 +2218,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, int rank_in) const
   return pseudoInverseOpenCV(Ap, rank_in);
 #else
   (void)Ap;
-  (void)svThreshold;
+  (void)rank_in;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
                     "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
@@ -2348,7 +2348,7 @@ vpMatrix vpMatrix::pseudoInverse(int rank_in) const
 #elif defined(VISP_HAVE_OPENCV) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(rank_in);
 #else
-  (void)svThreshold;
+  (void)rank_in;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
                     "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
@@ -4660,7 +4660,7 @@ int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
 #else
   (void)Ap;
   (void)sv;
-  (void)svThreshold;
+  (void)rank_in;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
                     "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
@@ -5136,7 +5136,7 @@ V ^\top}_ { n\times n } \f] \f[
 #else
       (void)Ap;
       (void)sv;
-      (void)svThreshold;
+      (void)rank_in;
       (void)imA;
       (void)imAt;
       (void)kerAt;
