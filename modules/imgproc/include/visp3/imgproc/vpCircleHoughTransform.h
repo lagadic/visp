@@ -108,7 +108,9 @@ public:
 
     // // Circle candidates computation attributes
     float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
-    float m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
+    float m_circlePerfectness; /*!< The threshold for the colinearity between the gradient of a point
+                                    and the radius it would form with a center candidate to be able to vote.
+                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`. */
 
     // // Circle candidates merging attributes
     float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
@@ -164,7 +166,9 @@ public:
      * \param[in] dilatationKernelSize Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.
      * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
      * \param[in] circleProbabilityThresh Probability threshold in order to keep a circle candidate.
-     * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+     * \param[in] circlePerfectness The threshold for the colinearity between the gradient of a point
+                                    and the radius it would form with a center candidate to be able to vote.
+                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
      * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
@@ -384,7 +388,9 @@ public:
     }
 
     /**
-     * \brief Get the threshold for the scalar product between the radius and the gradient to count a vote.
+     * \brief Get the threshold for the colinearity between the gradient of a point
+     * and the radius it would form with a center candidate to be able to vote.
+     * The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
      *
      * \return float The threshold.
      */
@@ -870,7 +876,10 @@ public:
   }
 
   /*!
-   * Set circles perfectness. The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+   * \brief Set circles perfectness, which corresponds to the threshold of the colinearity
+   * between the gradient of a point and the radius it would form with a center candidate
+   * to be able to vote.
+   * The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
    * \param[in] circle_perfectness : Circle perfectness. Value between 0 and 1. A perfect circle has value 1.
    */
   void setCirclePerfectness(const float &circle_perfectness)
