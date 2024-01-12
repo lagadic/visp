@@ -705,8 +705,8 @@ vpCircleHoughTransform::computeCircleCandidates()
 
     for (auto edgePoint : m_edgePointsList) {
       // For each center candidate CeC_i, compute the distance with each edge point EP_j d_ij = dist(CeC_i; EP_j)
-      float rx = edgePoint.first  - centerCandidate.first;
-      float ry = edgePoint.second - centerCandidate.second;
+      float rx = edgePoint.second  - centerCandidate.second;
+      float ry = edgePoint.first - centerCandidate.first;
       float r2 = rx * rx + ry * ry;
       if ((r2 > rmin2) && (r2 < rmax2)) {
         float gx = m_dIx[edgePoint.first][edgePoint.second];

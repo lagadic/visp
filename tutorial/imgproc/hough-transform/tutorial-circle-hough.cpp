@@ -70,7 +70,7 @@ int main(int argc, char **argv)
   const int def_dilatationKernelSize = 5;
   const float def_centerThresh = 70.f;
   const float def_circleProbaThresh = 0.725f;
-  const float def_circlePerfectness = 0.65f;
+  const float def_circlePerfectness = 0.85f;
   const float def_centerDistanceThresh = 5.f;
   const float def_radiusDifferenceThresh = 5.f;
   const int def_averagingWindowSize = 5;
