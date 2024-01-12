@@ -191,11 +191,11 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--lower-canny-ratio" && i + 1 < argc) {
-      opt_lowerCannyThreshRatio = atof(argv[i + 1]);
+      opt_lowerCannyThreshRatio = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--upper-canny-ratio" && i + 1 < argc) {
-      opt_upperCannyThreshRatio = atof(argv[i + 1]);
+      opt_upperCannyThreshRatio = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--expected-nb-centers" && i + 1 < argc) {
@@ -247,7 +247,7 @@ int main(int argc, char **argv)
       std::cout << "DESCRIPTION" << std::endl
         << "\t--input" << std::endl
         << "\t\tPermit to choose the input of the Hough Circle Algorithm." << std::endl
-        << "\t\tIf you want to use a succession of images as video, their name must be in the format ${BASENAME}\%d.{jpg, png}." << std::endl
+        << "\t\tIf you want to use a succession of images as video, their name must be in the format ${BASENAME}%d.{jpg, png}." << std::endl
         << "\t\tDefault: " << def_input << std::endl
         << std::endl
 #ifdef VISP_HAVE_NLOHMANN_JSON

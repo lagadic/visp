@@ -910,16 +910,16 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
 {
   float delta_theta = 0.f;
   vpImagePoint center = m_center;
-  float u_c = center.get_u();
-  float v_c = center.get_v();
+  float u_c = static_cast<float>(center.get_u());
+  float v_c = static_cast<float>(center.get_v());
   float radius = m_radius;
-  float roi_w = roi.getWidth();
-  float roi_h = roi.getHeight();
+  float roi_w = static_cast<float>(roi.getWidth());
+  float roi_h = static_cast<float>(roi.getHeight());
   vpImagePoint topLeft = roi.getTopLeft();
-  float umin_roi = topLeft.get_u();
-  float vmin_roi = topLeft.get_v();
-  float umax_roi = topLeft.get_u() + roi_w;
-  float vmax_roi = topLeft.get_v() + roi_h;
+  float umin_roi = static_cast<float>(topLeft.get_u());
+  float vmin_roi = static_cast<float>(topLeft.get_v());
+  float umax_roi = umin_roi + roi_w;
+  float vmax_roi = vmin_roi + roi_h;
   bool touchLeftBorder = (u_c - radius) <= umin_roi;
   bool touchRightBorder = (u_c + radius) >= umax_roi;
   bool touchTopBorder = (v_c - radius) <= vmin_roi;

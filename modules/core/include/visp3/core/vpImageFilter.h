@@ -294,8 +294,8 @@ public:
                                      const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
                                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING)
   {
-    double w = I.getWidth();
-    double h = I.getHeight();
+    unsigned int w = static_cast<unsigned int>(I.getWidth());
+    unsigned int h = static_cast<unsigned int>(I.getHeight());
 
     vpImage<unsigned char> dI(h, w);
     vpImage<OutType> dIx(h, w), dIy(h, w);
@@ -327,7 +327,7 @@ public:
     float t = (float)(upperThresholdRatio * w * h);
     float bon = 0;
     for (unsigned int i = 0; i < nbBins; ++i) {
-      float tf = hist[i];
+      float tf = static_cast<float>(hist[i]);
       accu = accu + tf;
       if (accu > t) {
         bon = (float)i;
