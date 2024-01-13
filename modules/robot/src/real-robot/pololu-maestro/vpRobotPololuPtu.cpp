@@ -47,12 +47,12 @@ vpRobotPololuPtu::vpRobotPololuPtu(const std::string &device, int baudrate, bool
   nDof = 2;
   m_pan.connect(device, baudrate, 0);
   m_pan.setPwmRange(4095, 7905);
-  m_pan.setAngularRange(vpMath::rad(-45), vpMath::rad(45));
+  m_pan.setAngularRange(static_cast<float>(vpMath::rad(-45)), static_cast<float>(vpMath::rad(45)));
   m_pan.setVerbose(verbose);
 
   m_tilt.connect(device, baudrate, 1);
   m_tilt.setPwmRange(4095, 7905);
-  m_tilt.setAngularRange(vpMath::rad(-45), vpMath::rad(45));
+  m_tilt.setAngularRange(static_cast<float>(vpMath::rad(-45)), static_cast<float>(vpMath::rad(45)));
   m_tilt.setVerbose(verbose);
 }
 
@@ -151,9 +151,9 @@ void vpRobotPololuPtu::setPosition(const vpRobot::vpControlFrameType frame, cons
     break;
   }
 
-  float pos_vel = m_positioning_velocity_percentage * getMaxRotationVelocity();
-  m_pan.setAngularPosition(q[0], pos_vel);
-  m_tilt.setAngularPosition(q[1], pos_vel);
+  float pos_vel = m_positioning_velocity_percentage * static_cast<float>(getMaxRotationVelocity());
+  m_pan.setAngularPosition(static_cast<float>(q[0]), pos_vel);
+  m_tilt.setAngularPosition(static_cast<float>(q[1]), pos_vel);
 }
 
 void vpRobotPololuPtu::setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot)
@@ -227,8 +227,8 @@ void vpRobotPololuPtu::setVelocity(const vpRobot::vpControlFrameType frame, cons
 
   std::cout << "Send velocity: " << q_dot_sat.t() << std::endl;
 
-  m_pan.setAngularVelocity(q_dot_sat[0]);
-  m_tilt.setAngularVelocity(q_dot_sat[1]);
+  m_pan.setAngularVelocity(static_cast<float>(q_dot_sat[0]));
+  m_tilt.setAngularVelocity(static_cast<float>(q_dot_sat[1]));
 }
 
 vpRobot::vpRobotStateType vpRobotPololuPtu::setRobotState(vpRobot::vpRobotStateType newState)

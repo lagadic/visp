@@ -607,7 +607,7 @@ vpCircleHoughTransform::computeCenterCandidates()
     }
   }
 
-  unsigned int nbPeaks = peak_positions_votes.size();
+  unsigned int nbPeaks = static_cast<unsigned int>(peak_positions_votes.size());
   if (nbPeaks > 0) {
     std::vector<bool> has_been_merged(nbPeaks, false);
     std::vector<std::pair<std::pair<float, float>, float>> merged_peaks_position_votes;
@@ -672,7 +672,7 @@ vpCircleHoughTransform::computeCenterCandidates()
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
 
-    nbPeaks = merged_peaks_position_votes.size();
+    nbPeaks = static_cast<unsigned int>(merged_peaks_position_votes.size());
     int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : nbPeaks);
     nbPeaksToKeep = std::min<int>(nbPeaksToKeep, (int)nbPeaks);
     for (int i = 0; i < nbPeaksToKeep; i++) {
@@ -793,7 +793,7 @@ vpCircleHoughTransform::computeCircleCandidates()
       }
     }
 
-    unsigned int nbCandidates = v_r_effective.size();
+    unsigned int nbCandidates = static_cast<unsigned int>(v_r_effective.size());
     for (unsigned int idBin = 0; idBin < nbCandidates; ++idBin) {
       // If the circle of center CeC_i  and radius RCB_k has enough votes, it is added to the list
       // of Circle Candidates

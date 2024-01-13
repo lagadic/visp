@@ -9,7 +9,7 @@ set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
   tutorial-mb-generic-tracker-rgbd-realsense.cpp
   tutorial-mb-generic-tracker-rgbd-structure-core.cpp
-  tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp)
+  tutorial-mb-generic-tracker-rgbd-realsense-json.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
