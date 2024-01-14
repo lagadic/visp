@@ -50,28 +50,6 @@
 #include <numeric>
 #include <visp3/core/vpColor.h>
 
-// TODO:
-// Copyright (C) 2011  Carl Rogers
-// Released under MIT License
-// license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
-
-// reference: https://stackoverflow.com/a/2164853
-#if defined(_MSC_VER)
-    //  Microsoft
-#define EXPORT __declspec(dllexport)
-#define IMPORT __declspec(dllimport)
-#elif defined(__GNUC__)
-    //  GCC
-#define EXPORT __attribute__((visibility("default")))
-#define IMPORT
-#else
-    //  do nothing and hope for the best?
-#define EXPORT
-#define IMPORT
-#pragma warning Unknown dynamic link import/export semantics.
-#endif
-
-
 #include <memory>
 #include <map>
 #include <cassert>
@@ -141,17 +119,17 @@ struct NpyArray
 
 using npz_t = std::map<std::string, NpyArray>;
 
-EXPORT char BigEndianTest();
-EXPORT char map_type(const std::type_info &t);
-template<typename T> EXPORT std::vector<char> create_npy_header(const std::vector<size_t> &shape);
-EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
-EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
-EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
-EXPORT npz_t npz_load(std::string fname);
-EXPORT NpyArray npz_load(std::string fname, std::string varname);
-EXPORT NpyArray npy_load(std::string fname);
+VISP_EXPORT char BigEndianTest();
+VISP_EXPORT char map_type(const std::type_info &t);
+template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape);
+VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
+VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
+VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
+VISP_EXPORT npz_t npz_load(std::string fname);
+VISP_EXPORT NpyArray npz_load(std::string fname, std::string varname);
+VISP_EXPORT NpyArray npy_load(std::string fname);
 
-template<typename T> EXPORT std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
+template<typename T> std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 {
 //write in little endian
   for (size_t byte = 0; byte < sizeof(T); byte++) {
@@ -161,11 +139,28 @@ template<typename T> EXPORT std::vector<char> &operator+=(std::vector<char> &lhs
   return lhs;
 }
 
-template<> EXPORT std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs);
-template<> EXPORT std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs);
+//template<> std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs);
+//template<> std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs);
 
 
-template<typename T> EXPORT void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
+template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs)
+{
+  lhs.insert(lhs.end(), rhs.begin(), rhs.end());
+  return lhs;
+}
+
+template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs)
+{
+//write in little endian
+  size_t len = strlen(rhs);
+  lhs.reserve(len);
+  for (size_t byte = 0; byte < len; byte++) {
+    lhs.push_back(rhs[byte]);
+  }
+  return lhs;
+}
+
+template<typename T> void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
 {
   FILE *fp = NULL;
   std::vector<size_t> true_data_shape; //if appending, the shape of existing + new data
@@ -211,7 +206,7 @@ template<typename T> EXPORT void npy_save(std::string fname, const T *data, cons
   fclose(fp);
 }
 
-template<typename T> EXPORT void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
+template<typename T> void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
 {
     //first, append a .npy to the fname
   fname += ".npy";
@@ -301,21 +296,21 @@ template<typename T> EXPORT void npz_save(std::string zipname, std::string fname
   fclose(fp);
 }
 
-template<typename T> EXPORT void npy_save(std::string fname, const std::vector<T> data, std::string mode = "w")
+template<typename T> void npy_save(std::string fname, const std::vector<T> data, std::string mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
   npy_save(fname, &data[0], shape, mode);
 }
 
-template<typename T> EXPORT void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
+template<typename T> void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
 {
   std::vector<size_t> shape;
   shape.push_back(data.size());
   npz_save(zipname, fname, &data[0], shape, mode);
 }
 
-template<typename T> EXPORT std::vector<char> create_npy_header(const std::vector<size_t> &shape)
+template<typename T> std::vector<char> create_npy_header(const std::vector<size_t> &shape)
 {
   std::vector<char> dict;
   dict += "{'descr': '";

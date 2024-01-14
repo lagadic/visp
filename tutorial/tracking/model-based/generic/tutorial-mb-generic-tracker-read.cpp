@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 
     for (size_t i = 0; i < model_sz; i++) {
       char buffer[100];
-      int res = snprintf(buffer, 100, "model_%06d_%06ld", iter, i);
+      int res = snprintf(buffer, 100, "model_%06d_%06lld", iter, i);
       if (res > 0 && res < 100) {
         std::string str_model_iter_data = buffer;
         visp::cnpy::NpyArray arr_model_iter_data = npz_data[str_model_iter_data];
