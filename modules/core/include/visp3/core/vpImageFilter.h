@@ -294,8 +294,8 @@ public:
                                      const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
                                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING)
   {
-    double w = I.getWidth();
-    double h = I.getHeight();
+    unsigned int w = static_cast<unsigned int>(I.getWidth());
+    unsigned int h = static_cast<unsigned int>(I.getHeight());
 
     vpImage<unsigned char> dI(h, w);
     vpImage<OutType> dIx(h, w), dIy(h, w);
@@ -314,7 +314,7 @@ public:
         float dx = static_cast<float>(dIx[r][c]);
         float dy = static_cast<float>(dIy[r][c]);
         float gradient = std::abs(dx) + std::abs(dy);
-        float gradientClamped = std::min(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
+        float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
         dI[r][c] = static_cast<unsigned char>(gradientClamped);
       }
     }
@@ -327,14 +327,14 @@ public:
     float t = (float)(upperThresholdRatio * w * h);
     float bon = 0;
     for (unsigned int i = 0; i < nbBins; ++i) {
-      float tf = hist[i];
+      float tf = static_cast<float>(hist[i]);
       accu = accu + tf;
       if (accu > t) {
         bon = (float)i;
         break;
       }
     }
-    float upperThresh = std::max(bon, 1.f);
+    float upperThresh = std::max<float>(bon, 1.f);
     lowerThresh = lowerThresholdRatio * bon;
     return upperThresh;
   }
@@ -602,9 +602,11 @@ public:
   }
 
   static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#endif
 
   template<typename ImageType, typename FilterType>
   static inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
@@ -618,7 +620,7 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c]);
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -800,12 +802,15 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
   }
+#endif
+
 
   static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-
+#endif
   template<typename ImageType, typename FilterType>
   static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
   {
@@ -839,7 +844,7 @@ public:
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
     double result;
@@ -1017,19 +1022,21 @@ public:
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
   }
+#endif
+
 
   /*!
-   * Apply a Gaussian blur to an image.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Input image.
-   * \param GI : Filtered image.
-   * \param size : Filter size. This value should be odd.
-   * \param sigma : Gaussian standard deviation. If it is equal to zero or
-   * negative, it is computed from filter size as sigma = (size-1)/6.
-   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-   *
-   * \sa getGaussianKernel() to know which kernel is used.
-   */
+    * Apply a Gaussian blur to an image.
+    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    * \param I : Input image.
+    * \param GI : Filtered image.
+    * \param size : Filter size. This value should be odd.
+    * \param sigma : Gaussian standard deviation. If it is equal to zero or
+    * negative, it is computed from filter size as sigma = (size-1)/6.
+    * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+    *
+  * \sa getGaussianKernel() to know which kernel is used.
+  */
   template <typename ImageType, typename FilterType>
   static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
   {

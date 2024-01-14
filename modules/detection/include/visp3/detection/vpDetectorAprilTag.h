@@ -288,20 +288,10 @@ public:
   void setAprilTagQuadSigma(float quadSigma);
   void setAprilTagRefineEdges(bool refineEdges);
 
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  /*!
-   * @name Deprecated functions
-   */
-  //@{
-  vp_deprecated void setAprilTagRefineDecode(bool refineDecode);
-  vp_deprecated void setAprilTagRefinePose(bool refinePose);
-  //@}
-#endif
 
-/*!
- * Allow to enable the display of overlay tag information in the windows
- * (vpDisplay) associated to the input image.
- */
+
+  /*! Allow to enable the display of overlay tag information in the windows
+   * (vpDisplay) associated to the input image. */
   inline void setDisplayTag(bool display, const vpColor &color = vpColor::none, unsigned int thickness = 2)
   {
     m_displayTag = display;
@@ -312,6 +302,16 @@ public:
   friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void setAprilTagRefinePose(bool refinePose);
+  vp_deprecated void setAprilTagRefineDecode(bool refineDecode);
+  //@}
+#endif
 
 protected:
   bool m_displayTag;

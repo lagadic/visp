@@ -154,7 +154,7 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
   int kernelSize = _kernelSize;
   if (kernelSize == -1) {
     // Compute the kernel size from the input image size
-    kernelSize = (int)(std::min(I.getWidth(), I.getHeight()) / 2.0);
+    kernelSize = (int)(std::min<unsigned int>(I.getWidth(), I.getHeight()) / 2.0);
     kernelSize = (kernelSize - kernelSize % 2) + 1;
   }
 

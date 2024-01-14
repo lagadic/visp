@@ -411,10 +411,18 @@ void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
+#if defined(VISP_HAVE_SIMDLIB)
     // Gaussian blurred image
     vpGaussianFilter gaussian_filter(I.getWidth(), I.getHeight(), sigma);
     vpImage<unsigned char> I_blurred;
     gaussian_filter.apply(I, I_blurred);
+#else
+    // Gaussian blurred image
+    vpImage<double> I_blurred;
+    unsigned int size = 7;
+    (void)sigma;
+    vpImageFilter::gaussianBlur(I, I_blurred, size);
+#endif
 
     // Unsharp mask
     for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
@@ -434,17 +442,35 @@ void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, 
 void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
+#if defined(VISP_HAVE_SIMDLIB)
     // Gaussian blurred image
     vpGaussianFilter gaussian_filter(I.getWidth(), I.getHeight(), sigma);
     vpImage<vpRGBa> I_blurred;
     gaussian_filter.apply(I, I_blurred);
+#else
+    // Gaussian blurred image
+    vpImage<double> I_blurred_R, I_blurred_G, I_blurred_B;
+    vpImage<unsigned char> I_R, I_G, I_B;
+    unsigned int size = 7;
+    (void)sigma;
+
+    vpImageConvert::split(I, &I_R, &I_G, &I_B);
+    vpImageFilter::gaussianBlur(I_R, I_blurred_R, size);
+    vpImageFilter::gaussianBlur(I_G, I_blurred_G, size);
+    vpImageFilter::gaussianBlur(I_B, I_blurred_B, size);
+#endif
 
     // Unsharp mask
     for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
+#if defined(VISP_HAVE_SIMDLIB)
       double val_R = (I.bitmap[cpt].R - weight * I_blurred.bitmap[cpt].R) / (1 - weight);
       double val_G = (I.bitmap[cpt].G - weight * I_blurred.bitmap[cpt].G) / (1 - weight);
       double val_B = (I.bitmap[cpt].B - weight * I_blurred.bitmap[cpt].B) / (1 - weight);
-
+#else
+      double val_R = (I.bitmap[cpt].R - weight * I_blurred_R.bitmap[cpt]) / (1 - weight);
+      double val_G = (I.bitmap[cpt].G - weight * I_blurred_G.bitmap[cpt]) / (1 - weight);
+      double val_B = (I.bitmap[cpt].B - weight * I_blurred_B.bitmap[cpt]) / (1 - weight);
+#endif
       I.bitmap[cpt].R = vpMath::saturate<unsigned char>(val_R);
       I.bitmap[cpt].G = vpMath::saturate<unsigned char>(val_G);
       I.bitmap[cpt].B = vpMath::saturate<unsigned char>(val_B);

@@ -39,7 +39,9 @@
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
+#endif
 
 namespace
 {
@@ -856,7 +858,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<unsig
 {
   // Image matching side by side
   unsigned int width = IRef.getWidth() + ICurrent.getWidth();
-  unsigned int height = ((std::max))(IRef.getHeight(), ICurrent.getHeight());
+  unsigned int height = std::max<unsigned int>(IRef.getHeight(), ICurrent.getHeight());
 
   IMatching = vpImage<unsigned char>(height, width);
 }
@@ -866,7 +868,7 @@ void vpKeyPoint::createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGB
 {
   // Image matching side by side
   unsigned int width = IRef.getWidth() + ICurrent.getWidth();
-  unsigned int height = ((std::max))(IRef.getHeight(), ICurrent.getHeight());
+  unsigned int height = std::max<unsigned int>(IRef.getHeight(), ICurrent.getHeight());
 
   IMatching = vpImage<vpRGBa>(height, width);
 }
@@ -2414,6 +2416,7 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
 
 void vpKeyPoint::loadConfigFile(const std::string &configFile)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpXmlConfigParserKeyPoint xmlp;
 
   try {
@@ -2480,6 +2483,10 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
   catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
   }
+#else
+  (void)configFile;
+  throw vpException(vpException::ioError, "vpKeyPoint::loadConfigFile() in xml needs built-in pugixml 3rdparty that is not available");
+#endif
 }
 
 void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, bool append)
@@ -2681,6 +2688,7 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
     file.close();
   }
   else {
+#if defined(VISP_HAVE_PUGIXML)
     pugi::xml_document doc;
 
     /*parse the file and get the DOM */
@@ -2876,6 +2884,9 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
     else {
       cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
+#else
+    throw vpException(vpException::ioError, "vpKeyPoint::loadLearningData() in xml needs built-in pugixml 3rdparty that is not available");
+#endif
   }
 
   // Convert OpenCV type to ViSP type for compatibility
@@ -3825,6 +3836,7 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     file.close();
   }
   else {
+#if defined(VISP_HAVE_PUGIXML)
     pugi::xml_document doc;
     pugi::xml_node node = doc.append_child(pugi::node_declaration);
     node.append_attribute("version") = "1.0";
@@ -3941,6 +3953,9 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     }
 
     doc.save_file(filename.c_str(), PUGIXML_TEXT("  "), pugi::format_default, pugi::encoding_utf8);
+#else
+    throw vpException(vpException::ioError, "vpKeyPoint::saveLearningData() in xml needs built-in pugixml 3rdparty that is not available");
+#endif
   }
 }
 

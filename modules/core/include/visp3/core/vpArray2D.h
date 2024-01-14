@@ -823,7 +823,7 @@ public:
   \code
   vpArray2D<double> M(3,4);
   vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
-  vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted
+  vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
   header\n    - with inner indentation"); \endcode Content of matrix.yml:
   \code
   example: a YAML-formatted header

@@ -141,7 +141,7 @@
 #cmakedefine VISP_HAVE_X11
 
 // Always define pugixml for compatibility.
-#define VISP_HAVE_PUGIXML
+#cmakedefine VISP_HAVE_PUGIXML
 
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
@@ -191,6 +191,15 @@
 
 // Defined if Catch2 library available
 #cmakedefine VISP_HAVE_CATCH2
+
+// Defined if simdlib library available
+#cmakedefine VISP_HAVE_SIMDLIB
+
+// Defined if stb_image library available
+#cmakedefine VISP_HAVE_STBIMAGE
+
+// Defined if tinyexr library available
+#cmakedefine VISP_HAVE_TINYEXR
 
 // Defined if Eigen3 library available
 #cmakedefine VISP_HAVE_EIGEN3

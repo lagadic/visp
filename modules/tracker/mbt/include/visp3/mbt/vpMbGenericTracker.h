@@ -39,6 +39,7 @@
 #ifndef _vpMbGenericTracker_h_
 #define _vpMbGenericTracker_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/mbt/vpMbDepthDenseTracker.h>
 #include <visp3/mbt/vpMbDepthNormalTracker.h>
 #include <visp3/mbt/vpMbEdgeTracker.h>
@@ -605,6 +606,15 @@ public:
     std::map<std::string, unsigned int> &mapOfPointCloudWidths,
     std::map<std::string, unsigned int> &mapOfPointCloudHeights);
 
+  virtual void track(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+    std::map<std::string, const vpMatrix *> &mapOfPointClouds,
+    std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+    std::map<std::string, unsigned int> &mapOfPointCloudHeights);
+  virtual void track(std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
+    std::map<std::string, const vpMatrix *> &mapOfPointClouds,
+    std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+    std::map<std::string, unsigned int> &mapOfPointCloudHeights);
+
 protected:
   virtual void computeProjectionError();
 
@@ -639,6 +649,10 @@ protected:
 #endif
   virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
     std::map<std::string, const std::vector<vpColVector> *> &mapOfPointClouds,
+    std::map<std::string, unsigned int> &mapOfPointCloudWidths,
+    std::map<std::string, unsigned int> &mapOfPointCloudHeights);
+  virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
+    std::map<std::string, const vpMatrix *> &mapOfPointClouds,
     std::map<std::string, unsigned int> &mapOfPointCloudWidths,
     std::map<std::string, unsigned int> &mapOfPointCloudHeights);
 
@@ -768,6 +782,9 @@ private:
       const unsigned int pointcloud_height = 0);
     virtual void preTracking(const vpImage<unsigned char> *const ptr_I = nullptr,
       const std::vector<vpColVector> *const point_cloud = nullptr,
+      const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
+    virtual void preTracking(const vpImage<unsigned char> *const ptr_I = nullptr,
+      const vpMatrix *const point_cloud = nullptr,
       const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
 
     virtual void reInitModel(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,

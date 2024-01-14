@@ -712,7 +712,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
       break;
     }
   }
-  float upperThresh = std::max(bon, 1.f);
+  float upperThresh = std::max<float>(bon, 1.f);
   lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }
@@ -1075,7 +1075,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
                                               cannyFilteringSteps);
     }
     else if (lowerCannyThresh < 0.f) {
-      lowerCannyThresh = upperCannyThresh / 3.;
+      lowerCannyThresh = upperCannyThresh / 3.f;
     }
     vpCannyEdgeDetection edgeDetector(gaussianFilterSize, gaussianStdev, apertureGradient, lowerCannyThresh, upperCannyThresh,
                                       lowerThresholdRatio, upperThresholdRatio, cannyFilteringSteps);

@@ -77,11 +77,13 @@ int main(int argc, char **argv)
 
     vpMbGenericTracker tracker(vpMbGenericTracker::EDGE_TRACKER);
     bool usexml = false;
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       tracker.getCameraParameters(cam);
       usexml = true;
     }
+#endif
     if (!usexml) {
       vpMe me;
       me.setMaskSize(5);
@@ -137,8 +139,8 @@ int main(int argc, char **argv)
     /*
      * Start the part of the code dedicated to object learning from 3 images
      */
-    std::string imageName [] = { "cube0001.png", "cube0150.png", "cube0200.png" };
-    vpHomogeneousMatrix initPoseTab [] = {
+    std::string imageName[] = { "cube0001.png", "cube0150.png", "cube0200.png" };
+    vpHomogeneousMatrix initPoseTab[] = {
         vpHomogeneousMatrix(0.02143385294, 0.1098083886, 0.5127439561, 2.087159614, 1.141775176, -0.4701291124),
         vpHomogeneousMatrix(0.02651282185, -0.03713587374, 0.6873765919, 2.314744454, 0.3492296488, -0.1226054828),
         vpHomogeneousMatrix(0.02965448956, -0.07283091786, 0.7253526051, 2.300529617, -0.4286674806, 0.1788761025) };

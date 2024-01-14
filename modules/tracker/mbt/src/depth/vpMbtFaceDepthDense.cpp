@@ -287,10 +287,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -377,10 +377,95 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+
+  bb.setTop(top);
+  bb.setBottom(bottom);
+  bb.setLeft(left);
+  bb.setRight(right);
+
+  m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
+
+  int totalTheoreticalPoints = 0, totalPoints = 0;
+  for (unsigned int i = top; i < bottom; i += stepY) {
+    for (unsigned int j = left; j < right; j += stepX) {
+      if ((m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+                            j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+                            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
+        totalTheoreticalPoints++;
+
+        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+          totalPoints++;
+
+          m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
+          m_pointCloudFace.push_back(point_cloud[i * width + j][1]);
+          m_pointCloudFace.push_back(point_cloud[i * width + j][2]);
+
+#if DEBUG_DISPLAY_DEPTH_DENSE
+          debugImage[i][j] = 255;
+#endif
+        }
+      }
+    }
+  }
+
+  if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
+                           totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
+    return false;
+  }
+
+  return true;
+}
+
+bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                 unsigned int height, const vpMatrix &point_cloud,
+                                                 unsigned int stepX, unsigned int stepY
+#if DEBUG_DISPLAY_DEPTH_DENSE
+                                                 ,
+                                                 vpImage<unsigned char> &debugImage,
+                                                 std::vector<std::vector<vpImagePoint> > &roiPts_vec
+#endif
+                                                 ,
+                                                 const vpImage<bool> *mask)
+{
+  m_pointCloudFace.clear();
+
+  if (width == 0 || height == 0)
+    return 0;
+
+  std::vector<vpImagePoint> roiPts;
+  double distanceToFace;
+  computeROI(cMo, width, height, roiPts
+#if DEBUG_DISPLAY_DEPTH_DENSE
+             ,
+             roiPts_vec
+#endif
+             ,
+             distanceToFace);
+
+  if (roiPts.size() <= 2) {
+#ifndef NDEBUG
+    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
+#endif
+    return false;
+  }
+
+  if (((m_depthDenseFilteringMethod & MAX_DISTANCE_FILTERING) && distanceToFace > m_depthDenseFilteringMaxDist) ||
+      ((m_depthDenseFilteringMethod & MIN_DISTANCE_FILTERING) && distanceToFace < m_depthDenseFilteringMinDist)) {
+    return false;
+  }
+
+  vpPolygon polygon_2d(roiPts);
+  vpRect bb = polygon_2d.getBoundingBox();
+
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -479,7 +564,11 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D = m_planeCamera.getD();
 
+#if defined(VISP_HAVE_SIMDLIB)
   bool useSIMD = vpCPUFeatures::checkSSE2() || vpCPUFeatures::checkNeon();
+#else
+  bool useSIMD = vpCPUFeatures::checkSSE2();
+#endif
 #if USE_OPENCV_HAL
   useSIMD = true;
 #endif
@@ -488,7 +577,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
 #endif
 
   if (useSIMD) {
-#if USE_SSE  || USE_NEON|| USE_OPENCV_HAL
+#if USE_SSE || USE_NEON || USE_OPENCV_HAL
     size_t cpt = 0;
     if (getNbFeatures() >= 2) {
       double *ptr_point_cloud = &m_pointCloudFace[0];

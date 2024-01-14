@@ -312,7 +312,11 @@ template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                                    float NoiseThreshold)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#else
+  bool checkSimd = vpCPUFeatures::checkSSSE3();
+#endif
 #if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
   checkSimd = false;
 #endif
@@ -330,7 +334,11 @@ template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
                                                     double NoiseThreshold)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#else
+  bool checkSimd = vpCPUFeatures::checkSSSE3();
+#endif
 #if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
   checkSimd = false;
 #endif

@@ -1,0 +1,85 @@
+{
+  "ignored_headers": ["vpWireFrameSimulatorTypes.h", "vpRobotException.h"],
+
+
+  "classes": {
+    "vpImageSimulator": {
+
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void getImage(vpImage<vpRGBa>&, std::list<vpImageSimulator>&, const vpCameraParameters&)",
+          "custom_name": "getImageMultiplePlanes",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            true,
+            true
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void getImage(vpImage<unsigned char>&, std::list<vpImageSimulator>&, const vpCameraParameters&)",
+          "custom_name": "getImageMultiplePlanes",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            true,
+            true
+          ],
+          "param_is_output": [
+            false,
+            false,
+            false
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void init(const vpImage<unsigned char>&, vpColVector*)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void init(const vpImage<vpRGBa>&, vpColVector*)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRobotSimulator": {
+      "is_virtual": true
+    },
+
+    "vpWireFrameSimulator" : {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void get_fMo_History(std::list<vpHomogeneousMatrix>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+            "signature": "void get_cMo_History(std::list<vpHomogeneousMatrix>&)",
+            "use_default_param_policy": false,
+            "param_is_input": [
+              false
+            ],
+            "param_is_output": [
+              true
+            ]
+        }
+      ]
+    }
+  }
+}

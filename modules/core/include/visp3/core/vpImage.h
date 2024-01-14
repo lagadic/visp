@@ -482,6 +482,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 namespace
 {
+
 struct vpImageLut_Param_t
 {
   unsigned int m_start_index;
@@ -1628,8 +1629,8 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double value =
     (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
@@ -1660,8 +1661,8 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   return (row[iround][jround] * rfrac + row[iround_1][jround] * rratio) * cfrac +
     (row[iround][jround_1] * rfrac + row[iround_1][jround_1] * rratio) * cratio;
@@ -1731,8 +1732,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double value =
     (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
@@ -1763,8 +1764,8 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
     (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
@@ -1807,8 +1808,8 @@ template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
     (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *

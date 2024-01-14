@@ -978,6 +978,7 @@ vpMatrix M(R);
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
   vp_deprecated double euclideanNorm() const;
 
   /*!

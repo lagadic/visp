@@ -74,8 +74,8 @@ void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi,
   float theta1 = std::acos((umin_roi - u_c)/ radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   delta_theta = theta_max - theta_min;
   if (u_c < umin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
     delta_theta = 0.f;
@@ -99,8 +99,8 @@ void computeIntersectionsRightBorderOnly(const float &u_c, const float &umax_roi
   float theta1 = std::acos((umax_roi - u_c) / radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   delta_theta = 2.f * M_PIf - (theta_max - theta_min);
   if (u_c > umax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
     delta_theta = 0.f;
@@ -131,8 +131,8 @@ void computeIntersectionsTopBorderOnly(const float &v_c, const float &vmin_roi, 
   else {
     theta2 = -theta1 - M_PIf;
   }
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   if (std::abs(theta_max - theta_min) * radius < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
@@ -173,8 +173,8 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
   else {
     theta2 = -theta1 - M_PIf;
   }
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   if (std::abs(theta_max - theta_min) * radius < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
@@ -910,16 +910,16 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
 {
   float delta_theta = 0.f;
   vpImagePoint center = m_center;
-  float u_c = center.get_u();
-  float v_c = center.get_v();
+  float u_c = static_cast<float>(center.get_u());
+  float v_c = static_cast<float>(center.get_v());
   float radius = m_radius;
-  float roi_w = roi.getWidth();
-  float roi_h = roi.getHeight();
+  float roi_w = static_cast<float>(roi.getWidth());
+  float roi_h = static_cast<float>(roi.getHeight());
   vpImagePoint topLeft = roi.getTopLeft();
-  float umin_roi = topLeft.get_u();
-  float vmin_roi = topLeft.get_v();
-  float umax_roi = topLeft.get_u() + roi_w;
-  float vmax_roi = topLeft.get_v() + roi_h;
+  float umin_roi = static_cast<float>(topLeft.get_u());
+  float vmin_roi = static_cast<float>(topLeft.get_v());
+  float umax_roi = umin_roi + roi_w;
+  float vmax_roi = vmin_roi + roi_h;
   bool touchLeftBorder = (u_c - radius) <= umin_roi;
   bool touchRightBorder = (u_c + radius) >= umax_roi;
   bool touchTopBorder = (v_c - radius) <= vmin_roi;

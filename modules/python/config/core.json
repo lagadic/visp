@@ -1,0 +1,774 @@
+{
+  "ignored_headers": ["vpGEMM.h", "vpDebug.h"],
+  "ignored_classes": ["vpException", "vpImageException", "vpTrackingException",
+                      "vpFrameGrabberException", "vpIoException",
+                      "vpDisplayException", "vpMatrixException"],
+  "user_defined_headers": ["core.hpp"],
+  "enums": {
+    "vpMunkres::STEP_T": {
+      "ignore": true
+    },
+    "vpMunkres::ZERO_T": {
+      "ignore": true
+    }
+  },
+  "classes": {
+    "vpIoTools": {
+      "ignored_attributes": ["separator"]
+    },
+    "vpArray2D": {
+      "additional_bindings": "bindings_vpArray2D",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ArrayDouble2D",
+          "arguments": ["double"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        }
+      ]
+    },
+    "vpMath" :{
+      "methods": [
+        {
+          "static": true,
+          "signature": "double lineFitting(const std::vector<vpImagePoint>&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    "vpImage": {
+      "ignore_repr": true,
+      "additional_bindings": "bindings_vpImage",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ImageGray",
+          "arguments": ["unsigned char"]
+        },
+        {
+          "python_name": "ImageFloat",
+          "arguments": ["float"]
+        },
+        {
+          "python_name": "ImageDouble",
+          "arguments": ["double"]
+        },
+        {
+          "python_name": "ImageUInt16",
+          "arguments": ["uint16_t"]
+        },
+        {
+          "python_name": "ImageRGBa",
+          "arguments": ["vpRGBa"]
+        },
+        {
+          "python_name": "ImageRGBf",
+          "arguments": ["vpRGBf"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        }
+      ]
+    },
+    "vpTranslationVector": {
+      "additional_bindings": "bindings_vpTranslationVector",
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "vpMatrix skew(const vpTranslationVector &)",
+          "custom_name": "skewOf"
+        },
+        {
+          "static": true,
+          "signature": "void skew(const vpTranslationVector &, vpMatrix&)",
+          "custom_name": "skewOf"
+        }
+      ]
+    },
+    "vpColVector": {
+      "additional_bindings": "bindings_vpColVector",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpColVector stack(const vpColVector &, const vpColVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpColVector &, const vpColVector &, vpColVector &)",
+          "custom_name": "stackVectors"
+        }
+      ]
+    },
+    "vpRowVector": {
+      "additional_bindings": "bindings_vpRowVector",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpRowVector stack(const vpRowVector &, const vpRowVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpRowVector &, const vpRowVector &, vpRowVector &)",
+          "custom_name": "stackVectors"
+        }
+      ]
+    },
+    "vpMatrix": {
+      "ignore_repr": true,
+      "additional_bindings": "bindings_vpMatrix",
+      "use_buffer_protocol": true,
+      "methods":
+      [
+        {
+
+          "static": true,
+          "signature": "vpMatrix insert(const vpMatrix &, const vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void insert(const vpMatrix &, const vpMatrix &, vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void kron(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "static": true,
+          "signature": "vpMatrix kron(const vpMatrix &, const vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "static": true,
+          "signature": "vpMatrix stack(const vpMatrix &, const vpRowVector &)",
+          "custom_name": "stackRow"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpColVector &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpRowVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackRow"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpColVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        }
+      ]
+    },
+    "vpRotationMatrix": {
+      "additional_bindings": "bindings_vpRotationMatrix",
+      "use_buffer_protocol": true
+    },
+    "vpHomogeneousMatrix": {
+      "additional_bindings": "bindings_vpHomogeneousMatrix",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": false,
+          "signature": "void convert(std::vector<double>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void convert(std::vector<float>&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpThetaUVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void extract(double&, vpColVector&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    "vpPolygon": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "bool isInside(const std::vector<vpImagePoint>&, const double&, const double&, const vpPolygon::PointInPolygonMethod&)",
+          "custom_name": "isInsideFromPoints"
+        }
+      ]
+    },
+    "vpPolygon3D": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void getClippedPolygon(const std::vector<vpPoint>&, std::vector<vpPoint>&, const vpHomogeneousMatrix&, const unsigned int&, const vpCameraParameters&, const double&, const double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true, true, true, true, true],
+          "param_is_output": [false, true, false, false, false, false, false]
+        },
+        {
+          "static": false,
+          "signature": "void getPolygonClipped(std::vector<vpPoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "void getPolygonClipped(std::vector<std::pair<vpPoint, unsigned int>>&)",
+          "custom_name": "getPolygonClippedWithInfo",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&, const vpHomogeneousMatrix&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true],
+          "param_is_output": [false, true, false]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<std::pair<vpImagePoint, unsigned int>>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&, const vpHomogeneousMatrix&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, true],
+          "param_is_output": [false, true, false]
+        },
+        {
+          "static": false,
+          "signature": "void getRoiClipped(const vpCameraParameters&, std::vector<vpImagePoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        }
+      ]
+    },
+    "vpPoint": {
+      "methods":
+      [
+        {
+          "static": false,
+          "ignore": true,
+          "signature": "void getWorldCoordinates(std::vector<double>&)"
+        },
+        {
+          "static": false,
+          "ignore": true,
+          "signature": "void getWorldCoordinates(double&, double&, double&)"
+        }
+
+      ]
+    },
+    "vpBSpline": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "unsigned int findSpan(double, unsigned int, std::vector<double> &)",
+          "custom_name": "findSpanFromSpline"
+        },
+        {
+          "static": true,
+          "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint>&)",
+          "custom_name": "computeCurvePointFromSpline"
+        }
+      ]
+    },
+    "vpQuadProg": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "bool solveQPe(const vpMatrix &, const vpColVector &, vpMatrix, vpColVector, vpColVector &, const double &)",
+          "custom_name": "solveQPeStatic"
+        }
+      ]
+    },
+    "vpImageTools": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void warpImage(const vpImage<Type>&, const vpMatrix&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, bool, bool)",
+          "specializations":
+          [
+            ["unsigned char"],
+            ["vpRGBa"]
+          ]
+        }
+      ]
+    },
+    "vpImageConvert": {
+      "additional_bindings": "bindings_vpImageConvert",
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void RGBaToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpConvert": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3d>&, bool)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpPoint>&, std::vector<cv::Point3f>&, bool)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpImagePoint>&, std::vector<cv::Point2d>&)",
+          "ignore" :true
+        },
+        {
+          "static": true,
+          "signature": "void convertToOpenCV(const std::vector<vpImagePoint>&, std::vector<cv::Point2f>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::DMatch>&, std::vector<unsigned int>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::DMatch>&, std::vector<unsigned int>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point3d>&, std::vector<vpPoint>&, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point3f>&, std::vector<vpPoint>&, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point2d>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::Point2f>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertFromOpenCV(const std::vector<cv::KeyPoint>&, std::vector<vpImagePoint>&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpDisplay": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "unsigned int getDownScalingFactor(const vpImage<unsigned char> &)",
+          "custom_name": "getImageDownScalingFactor"
+        },
+        {
+          "static": true,
+          "signature": "unsigned int getDownScalingFactor(const vpImage<vpRGBa> &)",
+          "custom_name": "getImageDownScalingFactor"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, const vpImageCircle &, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, const vpImagePoint &, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<unsigned char> &, int, int, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, const vpImageCircle &, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, const vpImagePoint &, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "void displayCircle(const vpImage<vpRGBa> &, int, int, unsigned int, const vpColor &, bool, unsigned int)",
+          "custom_name": "displayCircleStatic"
+        }
+      ]
+    },
+    "vpMomentDatabase": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "const vpMoment& get(const std::string&, bool&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true
+          ]
+        }
+      ]
+    },
+    "vpPixelMeterConversion": {
+      "additional_bindings": "bindings_vpPixelMeterConversion",
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
+          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,false,false],
+          "param_is_output": [false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double&, double&)",
+          "ignore": true
+        }
+      ]
+
+    },
+    "vpMeterPixelConversion": {
+      "additional_bindings": "bindings_vpMeterPixelConversion",
+      "methods": [
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, true, false, false, false, false, false],
+          "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,true,false,false],
+          "param_is_output": [false,false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const vpCameraParameters&, const vpImagePoint&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true,true,false,false],
+          "param_is_output": [false,false,true,true]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertLine(const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const double&, const double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertPoint(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double&, double&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpCircle": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void computeIntersectionPoint(const vpCircle&, const vpCameraParameters&, const double&, const double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, true, true, true, false, false],
+          "param_is_output": [false, false, false, false, true, true]
+        }
+      ]
+    }
+
+  }
+
+}

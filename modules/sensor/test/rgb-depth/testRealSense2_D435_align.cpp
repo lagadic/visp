@@ -173,9 +173,9 @@ int main(int argc, char *argv[])
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
             unsigned int u =
-              std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+              std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
             unsigned int v =
-              std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+              std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
             I_pcl[v][u] = vpRGBa(pcl_pt.r, pcl_pt.g, pcl_pt.b);
           }
         }
@@ -195,9 +195,9 @@ int main(int argc, char *argv[])
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
             unsigned int u =
-              std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+              std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
             unsigned int v =
-              std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+              std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
             unsigned char depth_viz = getDepthColor(histogram, pcl_pt.z, depth_scale);
             I_pcl[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
           }
@@ -217,9 +217,9 @@ int main(int argc, char *argv[])
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
         unsigned int u =
-          std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+          std::min<unsigned int>(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_u())));
         unsigned int v =
-          std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+          std::min<unsigned int>(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max<double>(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram2, Z, depth_scale);
         I_pcl2[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
       }

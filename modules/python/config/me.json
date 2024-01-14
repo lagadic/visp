@@ -1,0 +1,65 @@
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": [],
+  "enums": {},
+  "classes": {
+    "vpMeSite": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char> &, const double &, const double &, const vpMeSite::vpMeSiteState&)",
+          "custom_name": "displayMeSite"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa> &, const double &, const double &, const vpMeSite::vpMeSiteState&)",
+          "custom_name": "displayMeSite"
+        }
+      ]
+    },
+    "vpNurbs": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "unsigned int removeCurveKnot(double, unsigned int, unsigned int, double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint> &, std::vector<double> &)",
+          "custom_name": "removeCurveKnotStatic"
+        },
+        {
+          "static": true,
+          "signature": "void globalCurveInterp(std::vector<vpImagePoint> &, unsigned int, std::vector<double> &, std::vector<vpImagePoint> &, std::vector<double> &)",
+          "custom_name": "globalCurveInterpStatic"
+        },
+        {
+          "static": true,
+          "signature": "void globalCurveApprox(std::vector<vpImagePoint> &, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint> &, std::vector<double> &)",
+          "custom_name": "globalCurveApproxStatic"
+        },
+        {
+          "static": true,
+          "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint> &, std::vector<double> &)",
+          "custom_name": "computeCurvePointStatic"
+        },
+        {
+          "static": true,
+          "signature": "void curveKnotIns(double, unsigned int, unsigned int, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint> &, std::vector<double> &)",
+          "custom_name": "curveKnotInsStatic"
+        }
+      ]
+    },
+    "vpMeNurbs": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void display(const vpImage<vpRGBa>&, vpNurbs&, const vpColor&, unsigned int)",
+          "custom_name": "displayMeNurbs"
+        },
+        {
+          "static": true,
+          "signature": "void display(const vpImage<unsigned char>&, vpNurbs&, const vpColor&, unsigned int)",
+          "custom_name": "displayMeNurbs"
+        }
+      ]
+    }
+  }
+}

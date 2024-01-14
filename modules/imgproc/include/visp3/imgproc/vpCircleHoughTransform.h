@@ -108,7 +108,9 @@ public:
 
     // // Circle candidates computation attributes
     float m_circleProbaThresh;  /*!< Probability threshold in order to keep a circle candidate.*/
-    float m_circlePerfectness; /*!< The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij. */
+    float m_circlePerfectness; /*!< The threshold for the colinearity between the gradient of a point
+                                    and the radius it would form with a center candidate to be able to vote.
+                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`. */
 
     // // Circle candidates merging attributes
     float m_centerMinDist; /*!< Maximum distance between two circle candidates centers to consider merging them.*/
@@ -164,7 +166,9 @@ public:
      * \param[in] dilatationKernelSize Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.
      * \param[in] centerThresh Minimum number of votes a point must exceed to be considered as center candidate.
      * \param[in] circleProbabilityThresh Probability threshold in order to keep a circle candidate.
-     * \param[in] circlePerfectness The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+     * \param[in] circlePerfectness The threshold for the colinearity between the gradient of a point
+                                    and the radius it would form with a center candidate to be able to vote.
+                                    The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
      * \param[in] centerMinDistThresh  Two circle candidates whose centers are closer than this threshold are considered for merging.
      * \param[in] mergingRadiusDiffThresh Maximum radius difference between two circle candidates to consider merging them.
      * \param[in] averagingWindowSize Size of the averaging window around the maximum number of votes to compute the
@@ -216,8 +220,8 @@ public:
       , m_upperCannyThreshRatio(upperCannyThreshRatio)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
-      , m_minRadius(std::min(minRadius, maxRadius))
-      , m_maxRadius(std::max(minRadius, maxRadius))
+      , m_minRadius(std::min<float>(minRadius, maxRadius))
+      , m_maxRadius(std::max<float>(minRadius, maxRadius))
       , m_dilatationKernelSize(dilatationKernelSize)
       , m_averagingWindowSize(averagingWindowSize)
       , m_centerMinThresh(centerThresh)
@@ -384,7 +388,9 @@ public:
     }
 
     /**
-     * \brief Get the threshold for the scalar product between the radius and the gradient to count a vote.
+     * \brief Get the threshold for the colinearity between the gradient of a point
+     * and the radius it would form with a center candidate to be able to vote.
+     * The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
      *
      * \return float The threshold.
      */
@@ -496,7 +502,7 @@ public:
      * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
      * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
-    inline friend void from_json(const json &j, vpCircleHoughTransformParameters &params)
+    friend inline void from_json(const json &j, vpCircleHoughTransformParameters &params)
     {
       std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType);
       filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
@@ -529,8 +535,8 @@ public:
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
       std::pair<float, float> radiusLimits = j.value("radiusLimits", std::pair<float, float>(params.m_minRadius, params.m_maxRadius));
-      params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
-      params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
+      params.m_minRadius = std::min<float>(radiusLimits.first, radiusLimits.second);
+      params.m_maxRadius = std::max<float>(radiusLimits.first, radiusLimits.second);
 
       params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
 
@@ -571,7 +577,7 @@ public:
      * \param[out] j : A JSON parser object.
      * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
-    inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
+    friend inline void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
       std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
@@ -696,7 +702,7 @@ public:
    * \param[in] j The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector The detector, that will be initialized from the JSON data.
    */
-  inline friend void from_json(const json &j, vpCircleHoughTransform &detector)
+  friend inline void from_json(const json &j, vpCircleHoughTransform &detector)
   {
     detector.m_algoParams = j;
   }
@@ -707,7 +713,7 @@ public:
    * \param[out] j A JSON parser object.
    * \param[in] detector The vpCircleHoughTransform that must be parsed into JSON format.
    */
-  inline friend void to_json(json &j, const vpCircleHoughTransform &detector)
+  friend inline void to_json(json &j, const vpCircleHoughTransform &detector)
   {
     j = detector.m_algoParams;
   }
@@ -870,7 +876,10 @@ public:
   }
 
   /*!
-   * Set circles perfectness. The scalar product radius RC_ij . gradient(Ep_j) >=  m_circlePerfectness * || RC_ij || * || gradient(Ep_j) || to add a vote for the radius RC_ij.
+   * \brief Set circles perfectness, which corresponds to the threshold of the colinearity
+   * between the gradient of a point and the radius it would form with a center candidate
+   * to be able to vote.
+   * The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`.
    * \param[in] circle_perfectness : Circle perfectness. Value between 0 and 1. A perfect circle has value 1.
    */
   void setCirclePerfectness(const float &circle_perfectness)

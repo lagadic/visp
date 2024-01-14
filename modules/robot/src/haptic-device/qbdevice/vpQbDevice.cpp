@@ -136,7 +136,7 @@ int vpQbDevice::Impl::activate(const int &id, const bool &command, const int &ma
   failures = isActive(id, max_repeats, status);
   if (status != command) {
     m_device_api->activate(&m_file_descriptors.at(m_connected_devices.at(id)), id, command);
-    failures = std::max(failures, isActive(id, max_repeats, status));
+    failures = std::max<int>(failures, isActive(id, max_repeats, status));
     if (status != command) {
       std::cout << "Device [" << id << "] fails on " << command_prefix << "activation." << std::endl;
       ;

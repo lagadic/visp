@@ -272,7 +272,7 @@ public:
     double scale = 1.0;
     double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
 
-    r_d = std::min(std::max(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
+    r_d = std::min<double>(std::max<double>(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
@@ -327,7 +327,7 @@ public:
     double scale = 1.0;
     double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
 
-    r_d = std::min(std::max(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
+    r_d = std::min<double>(std::max<double>(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 

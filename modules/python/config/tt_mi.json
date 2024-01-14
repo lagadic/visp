@@ -1,0 +1,11 @@
+{
+  "ignored_headers": [],
+  "ignored_classes": [],
+  "user_defined_headers": [],
+  "classes": {
+    "vpTemplateTrackerMI": {
+      "is_virtual": true
+    }
+  },
+  "enums": {}
+}

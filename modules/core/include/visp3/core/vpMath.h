@@ -488,14 +488,14 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(char v)
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
   // (int)(char -127) = -127.
   if (std::numeric_limits<char>::is_signed)
-    return static_cast<unsigned char>(std::max(static_cast<int>(v), 0));
+    return static_cast<unsigned char>(std::max<int>(static_cast<int>(v), 0));
   else
     return static_cast<unsigned char>(static_cast<unsigned int>(v) > SCHAR_MAX ? 0 : v);
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(unsigned short v)
 {
-  return static_cast<unsigned char>(std::min(static_cast<unsigned int>(v), static_cast<unsigned int>(UCHAR_MAX)));
+  return static_cast<unsigned char>(std::min<unsigned int>(static_cast<unsigned int>(v), static_cast<unsigned int>(UCHAR_MAX)));
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(int v)
@@ -510,7 +510,7 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(short v)
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(unsigned int v)
 {
-  return static_cast<unsigned char>(std::min(v, static_cast<unsigned int>(UCHAR_MAX)));
+  return static_cast<unsigned char>(std::min<unsigned int>(v, static_cast<unsigned int>(UCHAR_MAX)));
 }
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(float v)
@@ -528,12 +528,12 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(double v)
 // char
 template <> inline char vpMath::saturate<char>(unsigned char v)
 {
-  return static_cast<char>(std::min(static_cast<int>(v), SCHAR_MAX));
+  return static_cast<char>(std::min<int>(static_cast<int>(v), SCHAR_MAX));
 }
 
 template <> inline char vpMath::saturate<char>(unsigned short v)
 {
-  return static_cast<char>(std::min(static_cast<unsigned int>(v), static_cast<unsigned int>(SCHAR_MAX)));
+  return static_cast<char>(std::min<unsigned int>(static_cast<unsigned int>(v), static_cast<unsigned int>(SCHAR_MAX)));
 }
 
 template <> inline char vpMath::saturate<char>(int v)
@@ -548,7 +548,7 @@ template <> inline char vpMath::saturate<char>(short v)
 
 template <> inline char vpMath::saturate<char>(unsigned int v)
 {
-  return static_cast<char>(std::min(v, static_cast<unsigned int>(SCHAR_MAX)));
+  return static_cast<char>(std::min<unsigned int>(v, static_cast<unsigned int>(SCHAR_MAX)));
 }
 
 template <> inline char vpMath::saturate<char>(float v)
@@ -572,14 +572,14 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(char v)
   // On little endian arch, CHAR_MIN=-127 and CHAR_MAX=128 leading to
   // (int)(char -127) = -127.
   if (std::numeric_limits<char>::is_signed)
-    return static_cast<unsigned short>(std::max(static_cast<int>(v), 0));
+    return static_cast<unsigned short>(std::max<int>(static_cast<int>(v), 0));
   else
     return static_cast<unsigned short>(static_cast<unsigned int>(v) > SCHAR_MAX ? 0 : v);
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(short v)
 {
-  return static_cast<unsigned short>(std::max(static_cast<int>(v), 0));
+  return static_cast<unsigned short>(std::max<int>(static_cast<int>(v), 0));
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(int v)
@@ -589,7 +589,7 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(int v)
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(unsigned int v)
 {
-  return static_cast<unsigned short>(std::min(v, static_cast<unsigned int>(USHRT_MAX)));
+  return static_cast<unsigned short>(std::min<unsigned int>(v, static_cast<unsigned int>(USHRT_MAX)));
 }
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(float v)
@@ -607,7 +607,7 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(double v)
 // short
 template <> inline short vpMath::saturate<short>(unsigned short v)
 {
-  return static_cast<short>(std::min(static_cast<int>(v), SHRT_MAX));
+  return static_cast<short>(std::min<int>(static_cast<int>(v), SHRT_MAX));
 }
 template <> inline short vpMath::saturate<short>(int v)
 {
@@ -615,7 +615,7 @@ template <> inline short vpMath::saturate<short>(int v)
 }
 template <> inline short vpMath::saturate<short>(unsigned int v)
 {
-  return static_cast<short>(std::min(v, static_cast<unsigned int>(SHRT_MAX)));
+  return static_cast<short>(std::min<unsigned int>(v, static_cast<unsigned int>(SHRT_MAX)));
 }
 template <> inline short vpMath::saturate<short>(float v)
 {

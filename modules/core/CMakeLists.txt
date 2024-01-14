@@ -38,6 +38,12 @@
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
+
+if(WITH_LAPACK)
+  # lapack is private
+  set(opt_libs_private ${LAPACK_LIBRARIES})
+endif()
 
 # Add library ws2_32.a or ws2_32.lib for vpNetwork class
 if(WS2_32_FOUND)
@@ -193,7 +199,7 @@ if(USE_YARP)
   add_definitions(${YARP_DEFINES})
 endif(USE_YARP)
 
-# Math: eigen3, gsl, lapack, OpenCV
+# Math: eigen3, gsl, mkl, openblas, atlas, netlib, OpenCV
 if(USE_EIGEN3)
   if(EIGEN3_INCLUDE_DIRS)
     list(APPEND opt_incs ${EIGEN3_INCLUDE_DIRS})
@@ -201,22 +207,27 @@ if(USE_EIGEN3)
     list(APPEND opt_incs ${EIGEN3_INCLUDE_DIR})
   endif()
 endif()
+
 if(USE_GSL)
   list(APPEND opt_incs ${GSL_INCLUDE_DIRS})
   list(APPEND opt_libs ${GSL_LIBRARIES})
 endif()
+
 if(USE_MKL)
   list(APPEND opt_incs ${MKL_INCLUDE_DIRS})
   list(APPEND opt_libs ${MKL_LIBRARIES})
 endif()
+
 if(USE_OPENBLAS)
   list(APPEND opt_incs ${OpenBLAS_INCLUDE_DIR})
   list(APPEND opt_libs ${OpenBLAS_LIBRARIES})
 endif()
+
 if(USE_ATLAS)
   list(APPEND opt_incs ${Atlas_INCLUDE_DIR})
   list(APPEND opt_libs ${Atlas_LIBRARIES})
 endif()
+
 if(USE_NETLIB)
   list(APPEND opt_libs ${NETLIB_LIBRARIES})
 endif()
@@ -226,15 +237,18 @@ if(USE_XML2)
   list(APPEND opt_incs ${XML2_INCLUDE_DIRS})
   list(APPEND opt_libs ${XML2_LIBRARIES})
 endif()
+
 if(USE_THREADS)
   if(CMAKE_THREAD_LIBS_INIT)
     list(APPEND opt_libs "${CMAKE_THREAD_LIBS_INIT}")
   endif()
 endif()
+
 if(USE_ZLIB)
   list(APPEND opt_incs ${ZLIB_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
+
 if(USE_OPENMP)
   list(APPEND opt_incs ${OpenMP_CXX_INCLUDE_DIRS})
   # Because there is an explicit link to libpthread location that breaks visp conda package usage on linux
@@ -251,23 +265,28 @@ if(USE_OPENMP)
     endif()
   endforeach()
 endif()
+
 if(USE_NLOHMANN_JSON)
   get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
 
-# pugixml is always enabled to provide default XML I/O capabilities
-# pugixml is private
-include_directories(${PUGIXML_INCLUDE_DIRS})
+if(WITH_PUGIXML)
+  # pugixml is private and provides default XML I/O capabilities
+  include_directories(${PUGIXML_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
+endif()
 
 if(WITH_CATCH2)
   # catch2 is private
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
+endif()
 
 if(MSVC)
   # Disable Visual C++ C4996 warning
@@ -369,7 +388,7 @@ if(USE_XML2)
   endif()
 endif()
 
-vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
+vp_add_module(core PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 
 #-----------------------------------------------------------------------------
 # Enable large file support

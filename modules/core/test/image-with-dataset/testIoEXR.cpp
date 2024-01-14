@@ -41,7 +41,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030600)
+// EXR format is only supported when OpenCV or TinyEXR 3rd parties are available
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030600) && \
+    defined(HAVE_OPENCV_IMGCODECS) && defined(VISP_HAVE_TINYEXR)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 

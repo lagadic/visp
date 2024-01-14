@@ -36,6 +36,10 @@
   \brief stb backend for JPEG and PNG image I/O operations.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_STBIMAGE)
+
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
 
@@ -236,3 +240,4 @@ void writePNGtoMemStb(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buff
     throw(vpImageException(vpImageException::ioError, message));
   }
 }
+#endif

@@ -41,6 +41,7 @@
 
 #include <visp3/core/vpXmlParserCamera.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
 
 #include <visp3/core/vpDebug.h>
@@ -309,7 +310,7 @@ public:
     }
     // if same name && same projection model && same image size camera already exists, we return SEQUENCE_OK
     // otherwise it is a new camera that need to be updated and we return SEQUENCE_OK
-    bool same_name = (!cam_name.empty() && (cam_name == camera_name_tmp));
+    bool same_name = (cam_name.empty() || (cam_name == camera_name_tmp));
     bool same_img_size = (abs((int)im_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || im_width == 0) &&
       (abs((int)im_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || im_height == 0) &&
       (test_subsampling_width) && (test_subsampling_height);
@@ -553,7 +554,7 @@ public:
 
     camera = cam;
 
-    int nbCamera = count(node, cam_name, cam.get_projModel(), verbose, im_width, im_height);
+    int nbCamera = count(node, cam_name, cam.get_projModel(), im_width, im_height, verbose);
     if (nbCamera) {
       return SEQUENCE_ERROR;
     }
@@ -1226,3 +1227,9 @@ void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling) { m_impl-
 void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling) { m_impl->setSubsampling_height(subsampling); }
 
 void vpXmlParserCamera::setWidth(unsigned int width) { m_impl->setWidth(width); }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has no symbols
+void dummy_vpXmlParserCamera() { };
+
+#endif

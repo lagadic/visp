@@ -31,6 +31,9 @@
  * Gaussian filter class
  */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.h>
 #include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpImageConvert.h>
@@ -51,7 +54,6 @@ public:
       const size_t channels = 4;
       m_funcPtrRGBa = SimdGaussianBlurInit(width, height, channels, &sigma, &epsilon);
     }
-
     if (m_deinterleave) {
       m_red.resize(height, width);
       m_green.resize(height, width);
@@ -146,3 +148,9 @@ void vpGaussianFilter::apply(const vpImage<unsigned char> &I, vpImage<unsigned c
   \param[out] I_blur : output blurred color image.
 */
 void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) { m_impl->apply(I, I_blur); }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
+void dummy_vpGaussianFilter() { };
+
+#endif

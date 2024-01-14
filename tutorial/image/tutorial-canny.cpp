@@ -49,11 +49,11 @@ void computeMeanMaxStdev(const vpImage<T> &I, float &mean, float &max, float &st
   stdev = 0.;
   unsigned int nbRows = I.getRows();
   unsigned int nbCols = I.getCols();
-  float scale = 1. / ((float)nbRows * (float)nbCols);
+  float scale = 1.f / (static_cast<float>(nbRows) * static_cast<float>(nbCols));
   for (unsigned int r = 0; r < nbRows; r++) {
     for (unsigned int c = 0; c < nbCols; c++) {
       mean += I[r][c];
-      max = std::max(max, static_cast<float>(I[r][c]));
+      max = std::max<float>(max, static_cast<float>(I[r][c]));
     }
   }
   mean *= scale;
@@ -178,12 +178,12 @@ int main(int argc, const char *argv[])
     else if ((argv_str == "-g" || argv_str == "--gradient") && i + 2 < argc) {
       opt_gradientOutsideClass = true;
       opt_gaussianKernelSize = atoi(argv[i + 1]);
-      opt_gaussianStdev = atoi(argv[i + 2]);
+      opt_gaussianStdev = static_cast<float>(atof(argv[i + 2]));
       i += 2;
     }
     else if ((argv_str == "-t" || argv_str == "--thresh") && i + 2 < argc) {
-      opt_lowerThresh = atof(argv[i + 1]);
-      opt_upperThresh = atof(argv[i + 2]);
+      opt_lowerThresh = static_cast<float>(atof(argv[i + 1]));
+      opt_upperThresh = static_cast<float>(atof(argv[i + 2]));
       i += 2;
     }
     else if ((argv_str == "-a" || argv_str == "--aperture") && i + 1 < argc) {
@@ -195,8 +195,8 @@ int main(int argc, const char *argv[])
       i++;
     }
     else if ((argv_str == "-r" || argv_str == "--ratio") && i + 2 < argc) {
-      opt_lowerThreshRatio = std::atof(argv[i + 1]);
-      opt_upperThreshRatio = std::atof(argv[i + 2]);
+      opt_lowerThreshRatio = static_cast<float>(std::atof(argv[i + 1]));
+      opt_upperThreshRatio = static_cast<float>(std::atof(argv[i + 2]));
       i += 2;
     }
     else if ((argv_str == "-b" || argv_str == "--backend") && i + 1 < argc) {

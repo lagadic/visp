@@ -261,9 +261,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
 
       return EXIT_FAILURE;
     }
@@ -283,14 +283,16 @@ int main(int argc, const char **argv)
 
     if (!opt_modelFile.empty()) {
       modelFile = opt_modelFile;
-    } else {
+    }
+    else {
       std::string modelFileCao = "mbt/cube.cao";
       std::string modelFileWrl = "mbt/cube.wrl";
 
       if (!opt_ipath.empty()) {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileWrl);
 #else
@@ -298,10 +300,12 @@ int main(int argc, const char **argv)
           modelFile = vpIoTools::createFilePath(opt_ipath, modelFileCao);
 #endif
         }
-      } else {
+      }
+      else {
         if (cao3DModel) {
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileCao);
-        } else {
+        }
+        else {
 #ifdef VISP_HAVE_COIN3D
           modelFile = vpIoTools::createFilePath(env_ipath, modelFileWrl);
 #else
@@ -325,7 +329,8 @@ int main(int argc, const char **argv)
     reader.setFileName(ipath);
     try {
       reader.open(I);
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
       return EXIT_FAILURE;
     }
@@ -362,9 +367,11 @@ int main(int argc, const char **argv)
 
     // Load tracker config file (camera parameters and moving edge settings)
     vpCameraParameters cam;
+
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     tracker.loadConfigFile(configFile);
-#if 0
+#else
     // Corresponding parameters manually set to have an example code
     // By setting the parameters:
     cam.initPersProjWithoutDistortion(547, 542, 338, 234);
@@ -433,7 +440,8 @@ int main(int argc, const char **argv)
       tracker.getPose(cMo);
       // display the 3D model at the given pose
       tracker.display(I, cMo, cam, vpColor::red);
-    } else {
+    }
+    else {
       vpHomogeneousMatrix cMoi(0.02044769891, 0.1101505452, 0.5078963719, 2.063603907, 1.110231561, -0.4392789872);
       tracker.initFromPose(I, cMoi);
     }
@@ -458,9 +466,11 @@ int main(int argc, const char **argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
+
+#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFile);
-#if 0
-    // Corresponding parameters manually set to have an example code
+#else
+        // Corresponding parameters manually set to have an example code
         // By setting the parameters:
         cam.initPersProjWithoutDistortion(547, 542, 338, 234);
 
@@ -550,7 +560,8 @@ int main(int argc, const char **argv)
     reader.close();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -561,8 +572,8 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
-               "this example."
-            << std::endl;
+    "this example."
+    << std::endl;
   return EXIT_SUCCESS;
 }
 

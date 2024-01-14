@@ -43,7 +43,10 @@
 #include <limits>
 #include <sstream>
 
-#include <Simd/SimdLib.hpp>
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDisplay.h>
@@ -570,13 +573,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I : Input grayscale image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -607,13 +610,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
 
   The structure of this file is the following:
 
-  \code
+  \verbatim
   # 3D point coordinates
   4                 # Number of points in the file (minimum is four)
   0.01 0.01 0.01    # \
   ...               #  | 3D coordinates in the object frame (X, Y, Z)
   0.01 -0.01 -0.01  # /
-  \endcode
+  \endverbatim
 
   \param I_color : Input color image where the user has to click.
   \param initFile : File containing the coordinates of at least 4 3D points
@@ -965,7 +968,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -977,7 +980,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I : Input grayscale image
   \param initFile : Path to the file containing all the points.
@@ -994,7 +997,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
   with X, Y and Z values. 2D point coordinates are expressied in pixel
   coordinates, with first the line and then the column of the pixel in the
   image. The structure of this file is the following.
- \code
+ \verbatim
  # 3D point coordinates
  4                 # Number of 3D points in the file (minimum is four)
  0.01 0.01 0.01    #  \
@@ -1006,7 +1009,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> &I, const std::str
  100 200           #  \
  ...               #  | 2D coordinates in pixel in the image
  50 10             #  /
-  \endcode
+  \endverbatim
 
   \param I_color : Input color image
   \param initFile : Path to the file containing all the points.
@@ -2865,8 +2868,19 @@ void vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &err
   }
 
   JTR.resize(6, false);
-
+#if defined(VISP_HAVE_SIMDLIB)
   SimdComputeJtR(interaction.data, interaction.getRows(), error.data, JTR.data);
+#else
+  const unsigned int N = interaction.getRows();
+
+  for (unsigned int i = 0; i < 6; i += 1) {
+    double ssum = 0;
+    for (unsigned int j = 0; j < N; j += 1) {
+      ssum += interaction[j][i] * error[j];
+    }
+    JTR[i] = ssum;
+  }
+#endif
 }
 
 void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error,
@@ -3765,6 +3779,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
@@ -3785,6 +3800,11 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 /*!

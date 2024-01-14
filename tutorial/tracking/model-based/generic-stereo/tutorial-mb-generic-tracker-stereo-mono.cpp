@@ -79,10 +79,12 @@ int main(int argc, char **argv)
 #endif
 
     //! [Set parameters]
+
+#if defined(VISP_HAVE_PUGIXML)
     //! [Load config file]
     tracker.loadConfigFile(objectname + ".xml");
     //! [Load config file]
-#if 0
+#else
     // Corresponding parameters manually set to have an example code
     if (opt_tracker == 1 || opt_tracker == 3) {
       vpMe me;

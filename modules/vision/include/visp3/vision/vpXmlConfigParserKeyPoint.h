@@ -44,6 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <string>
 
 /*!
@@ -197,4 +198,5 @@ private:
   //! Pointer to implementation
   Impl *m_impl;
 };
+#endif
 #endif

@@ -244,11 +244,13 @@ int main(int argc, char **argv)
 
     bool usexml = false;
     //! [Load xml]
+#if defined(VISP_HAVE_PUGIXML)
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       std::cout << "Tracker config file        : " << objectname + ".xml" << std::endl;
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
+#endif
     //! [Load xml]
 
     if (!usexml) {

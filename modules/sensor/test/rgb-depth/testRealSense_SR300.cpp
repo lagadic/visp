@@ -230,7 +230,7 @@ void test_SR300(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
         break;
 
       case rs::stream::infrared:
-        di.init(I_infrared, 0, (int)(std::max)(I_color.getHeight(), I_depth.getHeight()) + 30, "Infrared frame");
+        di.init(I_infrared, 0, (int)(std::max<unsigned int>(I_color.getHeight(), I_depth.getHeight())) + 30, "Infrared frame");
         break;
 
       default:

@@ -184,10 +184,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -350,10 +350,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -475,6 +475,166 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   return true;
 }
 
+bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                  unsigned int height, const vpMatrix &point_cloud,
+                                                  vpColVector &desired_features, unsigned int stepX, unsigned int stepY
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+                                                  ,
+                                                  vpImage<unsigned char> &debugImage,
+                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
+#endif
+                                                  ,
+                                                  const vpImage<bool> *mask)
+{
+  m_faceActivated = false;
+
+  if (width == 0 || height == 0)
+    return false;
+
+  std::vector<vpImagePoint> roiPts;
+  vpColVector desired_normal(3);
+
+  computeROI(cMo, width, height, roiPts
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+             ,
+             roiPts_vec
+#endif
+  );
+
+  if (roiPts.size() <= 2) {
+#ifndef NDEBUG
+    std::cerr << "Error: roiPts.size() <= 2 in computeDesiredFeatures" << std::endl;
+#endif
+    return false;
+  }
+
+  vpPolygon polygon_2d(roiPts);
+  vpRect bb = polygon_2d.getBoundingBox();
+
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
+
+  bb.setTop(top);
+  bb.setBottom(bottom);
+  bb.setLeft(left);
+  bb.setRight(right);
+
+  // Keep only 3D points inside the projected polygon face
+  std::vector<double> point_cloud_face, point_cloud_face_custom;
+
+  point_cloud_face.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+    point_cloud_face_custom.reserve((size_t)(3 * bb.getWidth() * bb.getHeight()));
+  }
+
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !USE_SSE
+  checkSSE2 = false;
+#else
+  bool push = false;
+  double prev_x, prev_y, prev_z;
+#endif
+
+  double x = 0.0, y = 0.0;
+  for (unsigned int i = top; i < bottom; i += stepY) {
+    for (unsigned int j = left; j < right; j += stepX) {
+      if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
+          (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
+                            j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+                            m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
+           : polygon_2d.isInside(vpImagePoint(i, j)))) {
+// Add point
+        point_cloud_face.push_back(point_cloud[i * width + j][0]);
+        point_cloud_face.push_back(point_cloud[i * width + j][1]);
+        point_cloud_face.push_back(point_cloud[i * width + j][2]);
+
+        if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+          // Add point for custom method for plane equation estimation
+          vpPixelMeterConversion::convertPoint(m_cam, j, i, x, y);
+
+          if (checkSSE2) {
+#if USE_SSE
+            if (!push) {
+              push = true;
+              prev_x = x;
+              prev_y = y;
+              prev_z = point_cloud[i * width + j][2];
+            }
+            else {
+              push = false;
+              point_cloud_face_custom.push_back(prev_x);
+              point_cloud_face_custom.push_back(x);
+
+              point_cloud_face_custom.push_back(prev_y);
+              point_cloud_face_custom.push_back(y);
+
+              point_cloud_face_custom.push_back(prev_z);
+              point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
+            }
+#endif
+          }
+          else {
+            point_cloud_face_custom.push_back(x);
+            point_cloud_face_custom.push_back(y);
+            point_cloud_face_custom.push_back(point_cloud[i * width + j][2]);
+          }
+        }
+
+#if DEBUG_DISPLAY_DEPTH_NORMAL
+        debugImage[i][j] = 255;
+#endif
+      }
+    }
+  }
+
+#if USE_SSE
+  if (checkSSE2 && push) {
+    point_cloud_face_custom.push_back(prev_x);
+    point_cloud_face_custom.push_back(prev_y);
+    point_cloud_face_custom.push_back(prev_z);
+  }
+#endif
+
+  if (point_cloud_face.empty() && point_cloud_face_custom.empty()) {
+    return false;
+  }
+
+  // Face centroid computed by the different methods
+  vpColVector centroid_point(3);
+
+#ifdef VISP_HAVE_PCL
+  if (m_featureEstimationMethod == PCL_PLANE_ESTIMATION) {
+    pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud_face_pcl(new pcl::PointCloud<pcl::PointXYZ>);
+    point_cloud_face_pcl->reserve(point_cloud_face.size() / 3);
+
+    for (size_t i = 0; i < point_cloud_face.size() / 3; i++) {
+      point_cloud_face_pcl->push_back(
+          pcl::PointXYZ(point_cloud_face[3 * i], point_cloud_face[3 * i + 1], point_cloud_face[3 * i + 2]));
+    }
+
+    computeDesiredFeaturesPCL(point_cloud_face_pcl, desired_features, desired_normal, centroid_point);
+  }
+  else
+#endif
+    if (m_featureEstimationMethod == ROBUST_SVD_PLANE_ESTIMATION) {
+      computeDesiredFeaturesSVD(point_cloud_face, cMo, desired_features, desired_normal, centroid_point);
+    }
+    else if (m_featureEstimationMethod == ROBUST_FEATURE_ESTIMATION) {
+      computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face, cMo, desired_features,
+                                           desired_normal, centroid_point);
+    }
+    else {
+      throw vpException(vpException::badValue, "Unknown feature estimation method!");
+    }
+
+  computeDesiredNormalAndCentroid(cMo, desired_normal, centroid_point);
+
+  m_faceActivated = true;
+
+  return true;
+}
 #ifdef VISP_HAVE_PCL
 bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
                                                      vpColVector &desired_features, vpColVector &desired_normal,

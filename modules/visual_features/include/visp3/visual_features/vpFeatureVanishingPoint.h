@@ -88,7 +88,7 @@ public:
 
   vpFeatureVanishingPoint *duplicate() const override;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (selectX() | selectY())) override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) override;
 
   double get_x() const;
   double get_y() const;
@@ -97,9 +97,9 @@ public:
   double getAlpha() const;
 
   void init() override;
-  vpMatrix interaction(unsigned int select = (selectX() | selectY())) override;
+  vpMatrix interaction(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) override;
 
-  void print(unsigned int select = (selectX() | selectY())) const override;
+  void print(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) const override;
 
   void set_x(double x);
   void set_y(double y);

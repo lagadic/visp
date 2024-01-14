@@ -168,5 +168,6 @@ protected:
   void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
   void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
+  void segmentPointCloud(const vpMatrix &point_cloud, unsigned int width, unsigned int height);
 };
 #endif

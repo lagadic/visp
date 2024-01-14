@@ -37,37 +37,48 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       device = std::atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = std::atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
       intrinsic_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
       camera_name = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--display_tag") {
+    }
+    else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
 #if defined(VISP_HAVE_X11)
-    } else if (std::string(argv[i]) == "--display_on") {
+    }
+    else if (std::string(argv[i]) == "--display_on") {
       display_on = true;
-    } else if (std::string(argv[i]) == "--save_image") {
+    }
+    else if (std::string(argv[i]) == "--save_image") {
       save_image = true;
 #endif
-    } else if (std::string(argv[i]) == "--serial_off") {
+    }
+    else if (std::string(argv[i]) == "--serial_off") {
       serial_off = true;
-    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)std::atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--input <camera input>] [--tag_size <tag_size in m>]"
-                   " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
-                   " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
-                   "TAG_36ARTOOLKIT,"
-                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
-                   " [--display_tag]";
+        << " [--input <camera input>] [--tag_size <tag_size in m>]"
+        " [--quad_decimate <quad_decimate>] [--nthreads <nb>]"
+        " [--intrinsic <intrinsic file>] [--camera_name <camera name>]"
+        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10, 2: "
+        "TAG_36ARTOOLKIT,"
+        " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5)]"
+        " [--display_tag]";
 #if defined(VISP_HAVE_X11)
       std::cout << " [--display_on] [--save_image]";
 #endif
@@ -111,9 +122,13 @@ int main(int argc, const char **argv)
 
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, I.getWidth() / 2., I.getHeight() / 2.);
+
+#if defined(VISP_HAVE_PUGIXML)
     vpXmlParserCamera parser;
-    if (!intrinsic_file.empty() && !camera_name.empty())
+    if (!intrinsic_file.empty() && !camera_name.empty()) {
       parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+    }
+#endif
 
     std::cout << "cam:\n" << cam << std::endl;
     std::cout << "tagFamily: " << tagFamily << std::endl;
@@ -160,8 +175,8 @@ int main(int argc, const char **argv)
     double Z_d = 0.4;
 
     // Define the desired polygon corresponding the the AprilTag CLOCKWISE
-    double X[4] = {tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2.};
-    double Y[4] = {tagSize / 2., -tagSize / 2., -tagSize / 2., tagSize / 2.};
+    double X[4] = { tagSize / 2., tagSize / 2., -tagSize / 2., -tagSize / 2. };
+    double Y[4] = { tagSize / 2., -tagSize / 2., -tagSize / 2., tagSize / 2. };
     std::vector<vpPoint> vec_P, vec_P_d;
 
     for (int i = 0; i < 4; i++) {
@@ -177,7 +192,7 @@ int main(int argc, const char **argv)
     vpMomentGravityCenter mg, mg_d;
     vpMomentCentered mc, mc_d;
     vpMomentAreaNormalized man(0, Z_d),
-        man_d(0, Z_d); // Declare normalized area. Desired area parameter will be updated below with m00
+      man_d(0, Z_d); // Declare normalized area. Desired area parameter will be updated below with m00
     vpMomentGravityCenterNormalized mgn, mgn_d; // Declare normalized gravity center
 
     // Desired moments
@@ -313,8 +328,9 @@ int main(int argc, const char **argv)
         if (!serial_off) {
           serial->write(ss.str());
         }
-      } else {
-        // stop the robot
+      }
+      else {
+     // stop the robot
         if (!serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
           //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
@@ -340,15 +356,16 @@ int main(int argc, const char **argv)
 
     std::cout << "Benchmark computation time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
-              << " ; " << vpMath::getMedian(time_vec) << " ms"
-              << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+      << " ; " << vpMath::getMedian(time_vec) << " ms"
+      << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
     if (display_on)
       delete d;
     if (!serial_off) {
       delete serial;
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
     if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
