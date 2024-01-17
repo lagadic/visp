@@ -94,7 +94,7 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
     ptrMaskCurrent = (const bool *)histogram_param->m_mask->bitmap + start_index;
   }
 
-  if (end_index - start_index >= 8) {
+  if (end_index >= 8 + start_index) {
     // Unroll loop version
     for (; ptrCurrent <= ptrEnd - 8;) {
       if (*ptrMaskCurrent) {
@@ -167,12 +167,10 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
     if (*ptrMaskCurrent) {
       histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
     }
-    ++ptrCurrent;
     if (histogram_param->m_mask != nullptr) {
       ++ptrMaskCurrent;
     }
   }
-
   return 0;
 }
 } // namespace
@@ -359,7 +357,6 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
   else {
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
     // Multi-threads
-
     std::vector<vpThread *> threadpool;
     std::vector<vpHistogram_Param_t *> histogramParams;
 
@@ -377,6 +374,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
 
       vpHistogram_Param_t *histogram_param = new vpHistogram_Param_t(start_index, end_index, &I, mp_mask);
       histogram_param->m_histogram = new unsigned int[m_size];
+      histogram_param->m_mask = mp_mask;
       memset(histogram_param->m_histogram, 0, m_size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256 * sizeof(unsigned int));
 
