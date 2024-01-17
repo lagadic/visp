@@ -716,11 +716,18 @@ public:
    * \param[out] mask Optional mask where pixels to exclude have a value set to false.
    * \param[out] opt_votingPoints Optional vector of pairs of pixel coordinates that voted for the \b detections.
    */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::pair<unsigned int, unsigned int>>> &opt_votingPoints) const;
+                std::optional< vpImage<bool> > &mask,
+                std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
+#else
+  void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
+                         vpImage<bool> *mask,
+                         std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints) const;
+#endif
 
-  /** @name  Configuration from files */
-  //@{
+/** @name  Configuration from files */
+//@{
 #ifdef VISP_HAVE_NLOHMANN_JSON
   /**
    * \brief Construct a new vpCircleHoughTransform object configured according to
