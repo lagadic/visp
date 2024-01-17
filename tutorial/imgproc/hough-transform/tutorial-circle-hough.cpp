@@ -33,7 +33,9 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
   std::vector<vpColor> v_colors = { vpColor::red, vpColor::purple, vpColor::orange, vpColor::yellow, vpColor::blue };
   unsigned int idColor = 0;
   //! [Iterate detections]
-  for (auto circleCandidate : detectedCircles) {
+  const unsigned int nbCircle = detectedCircles.size();
+  for (unsigned int idCircle = 0; idCircle < nbCircle; ++idCircle) {
+    const vpImageCircle &circleCandidate = detectedCircles[idCircle];
     vpImageDraw::drawCircle(I_disp, circleCandidate, v_colors[idColor], 2);
     std::cout << "Circle #" << id << ":" << std::endl;
     std::cout << "\tCenter: (" << circleCandidate.getCenter() << ")" << std::endl;
@@ -43,7 +45,58 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
     id++;
     idColor = (idColor + 1) % v_colors.size();
   }
-  //! [Iterate detections]
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  std::optional<vpImage<bool>> opt_mask = std::nullopt;
+  std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> opt_votingPoints = std::nullopt;
+#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpImage<bool> *opt_mask = nullptr;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = nullptr;
+#else
+  vpImage<bool> *opt_mask = NULL;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = NULL;
+#endif
+  detector.computeVotingMask(I_src, detectedCircles, opt_mask, opt_votingPoints); // Get, if available, the voting points
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  if (opt_votingPoints)
+#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  if (opt_votingPoints != nullptr)
+#else
+  if (opt_votingPoints != NULL)
+#endif
+  {
+    const unsigned int crossSize = 3;
+    const unsigned int crossThickness = 1;
+    unsigned int nbVotedCircles = opt_votingPoints->size();
+    for (unsigned int idCircle = 0; idCircle < nbVotedCircles; ++idCircle) {
+      // Get the voting points of a detected circle
+      const std::vector<std::pair<unsigned int, unsigned int>> &votingPoints = (*opt_votingPoints)[idCircle];
+      unsigned int nbVotingPoints = votingPoints.size();
+      for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
+        // Draw the voting points
+        const std::pair<unsigned int, unsigned int> &pt = votingPoints[idPoint];
+        vpImageDraw::drawCross(I_disp, vpImagePoint(pt.first, pt.second), crossSize, vpColor::red, crossThickness);
+      }
+    }
+  }
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  if (opt_mask != nullptr)
+#else
+  if (opt_mask != NULL)
+#endif
+  {
+    delete opt_mask;
+  }
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  if (opt_votingPoints != nullptr)
+#else
+  if (opt_votingPoints != NULL)
+#endif
+  {
+    delete opt_votingPoints;
+  }
+#endif
+//! [Iterate detections]
 
   if (displayCanny) {
     vpImage<unsigned char> edgeMap = detector.getEdgeMap();
@@ -206,6 +259,13 @@ int main(int argc, char **argv)
       opt_expectedNbCenters = atoi(argv[i + 1]);
       i++;
     }
+    else if (argName == "--visibility-ratio-thresh" && i + 1 < argc) {
+      opt_visibilityRatioThresh = atof(argv[i + 1]);
+      i++;
+    }
+    else if (argName == "--record-voting-points") {
+      opt_recordVotingPoints = true;
+    }
     else if (argName == "--display-edge-map") {
       opt_displayCanny = true;
     }
@@ -244,6 +304,9 @@ int main(int argc, char **argv)
         << " (default: " << def_upperCannyThreshRatio << ")" << std::endl
         << "\t [--expected-nb-centers <number>]"
         << " (default: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << ")" << std::endl
+        << "\t [--visibility-ratio-thresh <ratio ]0; 1[> ]"
+        << " (default: " << def_visibilityRatioThresh << ")" << std::endl
+        << "\t [--record-voting-points]" << std::endl
         << "\t [--display-edge-map]" << std::endl
         << "\t [--help, -h]" << std::endl
         << std::endl;
@@ -357,6 +420,15 @@ int main(int argc, char **argv)
         << "\t\tPermit to choose the maximum number of centers having more votes than the threshold that are kept." << std::endl
         << "\t\tA negative value makes that all the centers having more votes than the threshold are kept." << std::endl
         << "\t\tDefault: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << std::endl
+        << std::endl
+        << "\t--expected-nb-centers" << std::endl
+        << "\t\tPermit to choose the maximum number of centers having more votes than the threshold that are kept." << std::endl
+        << "\t\tA negative value makes that all the centers having more votes than the threshold are kept." << std::endl
+        << "\t\tDefault: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << std::endl
+        << std::endl
+        << "\t--record-voting-points" << std::endl
+        << "\t\tPermit to display the edge map used to detect the circles" << std::endl
+        << "\t\tDefault: off" << std::endl
         << std::endl
         << "\t--display-edge-map" << std::endl
         << "\t\tPermit to display the edge map used to detect the circles" << std::endl
