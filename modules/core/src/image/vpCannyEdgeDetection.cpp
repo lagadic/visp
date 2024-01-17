@@ -46,6 +46,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
   , m_lowerThresholdRatio(0.6f)
   , m_upperThreshold(-1.f)
   , m_upperThresholdRatio(0.8f)
+  , mp_mask(nullptr)
 {
   initGaussianFilters();
   initGradientFilters();
@@ -65,6 +66,7 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
   , m_lowerThresholdRatio(lowerThresholdRatio)
   , m_upperThreshold(upperThreshold)
   , m_upperThresholdRatio(upperThresholdRatio)
+  , mp_mask(nullptr)
 {
   initGaussianFilters();
   initGradientFilters();
@@ -191,7 +193,7 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
   if (upperThreshold < 0) {
     upperThreshold = vpImageFilter::computeCannyThreshold(I, lowerThreshold, &m_dIx, &m_dIy, m_gaussianKernelSize,
                                                           m_gaussianStdev, m_gradientFilterKernelSize, m_lowerThresholdRatio,
-                                                          m_upperThresholdRatio, m_filteringAndGradientType);
+                                                          m_upperThresholdRatio, m_filteringAndGradientType, mp_mask);
   }
   else if (m_lowerThreshold < 0) {
     // Applying Canny recommendation to have the upper threshold 3 times greater than the lower threshold.
@@ -217,12 +219,12 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
-    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, m_gaussianKernelSize);
-    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize);
+    vpImageFilter::filterX<unsigned char, float>(I, GIx, m_fg.data, m_gaussianKernelSize, mp_mask);
+    vpImageFilter::filterY<float, float>(GIx, Iblur, m_fg.data, m_gaussianKernelSize, mp_mask);
 
     // Computing the gradients
-    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true);
-    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY, true);
+    vpImageFilter::filter(Iblur, m_dIx, m_gradientFilterX, true, mp_mask);
+    vpImageFilter::filter(Iblur, m_dIy, m_gradientFilterY, true, mp_mask);
   }
   else {
     std::string errmsg("Currently, the filtering operation \"");
@@ -354,6 +356,13 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
 
   for (int row = 0; row < nbRows; row++) {
     for (int col = 0; col < nbCols; col++) {
+      if (mp_mask != nullptr) {
+        if (!(*mp_mask)[row][col]) {
+          // The mask tells us to ignore the current pixel
+          continue;
+        }
+      }
+
       // Computing the gradient orientation and magnitude
       float grad = getManhattanGradient(m_dIx, m_dIy, row, col);
 

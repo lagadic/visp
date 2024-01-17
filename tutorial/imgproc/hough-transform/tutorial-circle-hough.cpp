@@ -79,6 +79,8 @@ int main(int argc, char **argv)
   const float def_lowerCannyThreshRatio = 0.6f;
   const float def_upperCannyThreshRatio = 0.9f;
   const int def_expectedNbCenters = -1;
+  const bool def_recordVotingPoints = false;
+  const float def_visibilityRatioThresh = 0.1f;
 
   std::string opt_input(def_input);
   std::string opt_jsonFilePath = def_jsonFilePath;
@@ -105,6 +107,8 @@ int main(int argc, char **argv)
   float opt_lowerCannyThreshRatio = def_lowerCannyThreshRatio;
   float opt_upperCannyThreshRatio = def_upperCannyThreshRatio;
   int opt_expectedNbCenters = def_expectedNbCenters;
+  bool opt_recordVotingPoints = def_recordVotingPoints;
+  float opt_visibilityRatioThresh = def_visibilityRatioThresh;
   bool opt_displayCanny = false;
 
   for (int i = 1; i < argc; i++) {
@@ -375,17 +379,19 @@ int main(int argc, char **argv)
       , opt_minRadius
       , opt_maxRadius
       , opt_dilatationKerneSize
+      , opt_averagingWindowSize
       , opt_centerThresh
       , opt_circleProbaThresh
       , opt_circlePerfectness
       , opt_centerDistanceThresh
       , opt_radiusDifferenceThresh
-      , opt_averagingWindowSize
       , opt_filteringAndGradientType
       , opt_cannyBackendType
       , opt_lowerCannyThreshRatio
       , opt_upperCannyThreshRatio
       , opt_expectedNbCenters
+      , opt_recordVotingPoints
+      , opt_visibilityRatioThresh
     );
   //! [Algo params]
 

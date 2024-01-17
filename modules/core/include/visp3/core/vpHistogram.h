@@ -110,6 +110,7 @@ public:
   vpHistogram();
   vpHistogram(const vpHistogram &h);
   explicit vpHistogram(const vpImage<unsigned char> &I);
+  explicit vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask);
   virtual ~vpHistogram();
 
   vpHistogram &operator=(const vpHistogram &h);
@@ -136,12 +137,12 @@ public:
   */
   inline unsigned operator[](const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
   /*!
@@ -166,12 +167,12 @@ public:
   */
   inline unsigned operator()(const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
   /*!
@@ -196,12 +197,12 @@ public:
   */
   inline unsigned get(const unsigned char level) const
   {
-    if (level < size) {
-      return histogram[level];
+    if (level < m_size) {
+      return m_histogram[level];
     }
 
     std::stringstream ss;
-    ss << "Level is > to size (" << size << ") !";
+    ss << "Level is > to size (" << m_size << ") !";
     throw vpException(vpException::dimensionError, ss.str().c_str());
   };
 
@@ -224,14 +225,30 @@ public:
   */
   inline void set(const unsigned char level, unsigned int value)
   {
-    if (level < size) {
-      histogram[level] = value;
-    } else {
+    if (level < m_size) {
+      m_histogram[level] = value;
+    }
+    else {
       std::stringstream ss;
-      ss << "Level is > to size (" << size << ") !";
+      ss << "Level is > to size (" << m_size << ") !";
       throw vpException(vpException::dimensionError, ss.str().c_str());
     }
   };
+
+  /**
+   * \brief Set a mask to ignore pixels for which the mask is false.
+   *
+   * \warning The mask must be reset manually by the user (either for another mask
+   * or set to \b nullptr ) before computing the histogram of another image.
+   *
+   * @param p_mask If different of \b nullptr , a mask of booleans where \b true
+   * indicates that a pixel must be considered and \b false that the pixel should
+   * be ignored.
+   */
+  inline void setMask(const vpImage<bool> *p_mask)
+  {
+    mp_mask = p_mask;
+  }
 
   void calculate(const vpImage<unsigned char> &I, unsigned int nbins = 256, unsigned int nbThreads = 1);
   void equalize(const vpImage<unsigned char> &I, vpImage<unsigned char> &Iout);
@@ -260,7 +277,7 @@ public:
 
     \sa getValues()
   */
-  inline unsigned getSize() const { return size; };
+  inline unsigned getSize() const { return m_size; };
 
   /*!
 
@@ -283,13 +300,22 @@ public:
 
     \sa getSize()
   */
-  inline unsigned *getValues() { return histogram; };
+  inline unsigned *getValues() { return m_histogram; };
+
+  /**
+   * \brief Get the total number of pixels in the input image.
+   *
+   * \return unsigned int Cumulated number of pixels in the input image.
+   */
+  inline unsigned int getTotal() { return m_total; };
 
 private:
   void init(unsigned size = 256);
 
-  unsigned int *histogram;
-  unsigned size; // Histogram size (max allowed 256)
+  unsigned int *m_histogram; /*!< The storage for the histogram.*/
+  unsigned m_size; /*!< Histogram size (max allowed 256).*/
+  const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
+  unsigned int m_total; /*!< Cumulated number of pixels in the input image. */
 };
 
 #endif

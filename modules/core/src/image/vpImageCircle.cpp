@@ -1022,6 +1022,97 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi, const float &round
   return delta_theta * m_radius;
 }
 
+unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
+{
+  const int xm = m_center.get_u(), ym = m_center.get_v();
+  const float r_float = static_cast<float>(m_radius);
+  const int width = mask.getWidth();
+  const int height = mask.getHeight();
+
+  // Increment the counter if the considered pixel (x, y) is in the mask image
+  auto incrementIfIsInMask = [](const vpImage<bool> &mask, const int &width, const int &height, const int &x, const int &y,
+                     unsigned int &count) {
+                       if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) {
+                         // The pixel is outside the limit of the mask
+                         return;
+                       }
+                       if (mask[y][x]) {
+                         // Increment only if the pixel value of the mask is true
+                         count++;
+                       }
+    };
+  unsigned int count = 0; // Count the number of pixels of the circle whose value in the mask is true
+
+  const float thetaStop = M_PI_2f;
+  float theta = 0;
+  int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
+  int y1 = 0, y2 = 0, y3 = 0, y4 = 0;
+  while (theta < thetaStop) {
+    float cos_theta = std::cos(theta);
+    float sin_theta = std::sin(theta);
+    float rcos_pos = r_float * cos_theta;
+    float rsin_pos = r_float * sin_theta;
+    x1 = xm + rcos_pos; // theta
+    y1 = ym + rsin_pos; // theta
+    x2 = xm - rsin_pos; // theta + pi
+    y2 = ym + rcos_pos; // theta + pi
+    x3 = xm - rcos_pos; // theta + pi/2
+    y3 = ym - rsin_pos; // theta + pi/2
+    x4 = xm + rsin_pos; // theta + pi
+    y4 = ym - rcos_pos; // theta + pi
+    incrementIfIsInMask(mask, width, height, x1, y1, count);
+    incrementIfIsInMask(mask, width, height, x2, y2, count);
+    incrementIfIsInMask(mask, width, height, x3, y3, count);
+    incrementIfIsInMask(mask, width, height, x4, y4, count);
+
+    // Looking for dtheta such as either x or 1 increments of 1 pix exactly
+    // Using series expansion, we get that if we want to have an increment of
+    // 1 pixel for the derivative along x (resp. y), we have to respect the
+    // following formulae
+    float dthetaCosPos = 1.f / (r_float * cos_theta);
+    float dthetaCosNeg = -1.f / (r_float * cos_theta);
+    float dthetaSinPos = 1.f / (r_float * sin_theta);
+    float dthetaSinNeg = -1.f / (r_float * sin_theta);
+    float dthetaPos = 0.f;
+    if ((sin_theta < 0.f) && (cos_theta > 0.f)) {
+      // dTheta <= -1/r sin(theta) && dTheta <= 1/r cos(theta)
+      dthetaPos = std::min(dthetaCosPos, dthetaSinNeg);
+    }
+    else if ((sin_theta > 0.f) && (cos_theta < 0.f)) {
+      // dTheta <= 1/r sin(theta) && dTheta <= -1/r cos(theta)
+      dthetaPos = std::min(dthetaCosNeg, dthetaSinPos);
+    }
+    else if ((sin_theta < 0.f) && (cos_theta < 0.f)) {
+      // dTheta <= -1/r sin(theta) && dTheta <= -1/r cos(theta)
+      dthetaPos = std::min(dthetaCosNeg, dthetaSinNeg);
+    }
+    else if ((sin_theta > 0.f) && (cos_theta > 0.f)) {
+      // dTheta <= 1/r sin(theta) && dTheta <= 1/r cos(theta)
+      dthetaPos = std::min(dthetaCosPos, dthetaSinPos);
+    }
+    else if (sin_theta == 0.f && cos_theta !=0.f) {
+      // dTheta = -1 / r cos(theta) || dTheta = 1 / r cos(theta)
+      if (cos_theta > 0.f) {
+        dthetaPos = dthetaCosNeg;
+      }
+      else {
+        dthetaPos = dthetaCosPos;
+      }
+    }
+    else if (sin_theta != 0.f && cos_theta ==0.f) {
+      // dTheta = -1 / r sin(theta) || dTheta = 1 / r sin(theta)
+      if (sin_theta > 0.f) {
+        dthetaPos = dthetaSinNeg;
+      }
+      else {
+        dthetaPos = dthetaSinPos;
+      }
+    }
+    theta += dthetaPos;
+  }
+  return count;
+}
+
 vpImagePoint vpImageCircle::getCenter() const
 {
   return m_center;
