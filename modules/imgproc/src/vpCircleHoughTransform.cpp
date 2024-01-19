@@ -308,7 +308,7 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
                          std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const
 #else
 void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> *mask, std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints) const
+                         vpImage<bool> **mask, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const
 #endif
 {
   if (!m_algoParams.m_recordVotingPoints) {
@@ -317,11 +317,11 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
     mask = std::nullopt;
     opt_votingPoints = std::nullopt;
 #elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    mask = nullptr;
-    opt_votingPoints = nullptr;
+    *mask = nullptr;
+    *opt_votingPoints = nullptr;
 #else
-    mask = NULL;
-    opt_votingPoints = NULL;
+    *mask = NULL;
+    *opt_votingPoints = NULL;
 #endif
     return;
   }
@@ -330,28 +330,45 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
   mask = vpImage<bool>(I.getHeight(), I.getWidth(), false);
   opt_votingPoints = std::vector<std::vector<std::pair<unsigned int, unsigned int>>>();
 #else
-  mask = new vpImage<bool>(I.getHeight(), I.getWidth(), false);
-  opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int>>>();
+  *mask = new vpImage<bool>(I.getHeight(), I.getWidth(), false);
+  *opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int> > >();
 #endif
 
-  const unsigned int nbDetections = detections.size();
-  for (unsigned int i = 0; i < nbDetections; ++i) {
-    const vpImageCircle &detection = detections[i];
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  for (const auto &detection : detections)
+#else
+  const size_t nbDetections = detections.size();
+  for (size_t i = 0; i < nbDetections; ++i)
+#endif
+  {
     bool hasFoundSimilarCircle = false;
     unsigned int nbPreviouslyDetected = m_finalCircles.size();
     unsigned int id = 0;
     // Looking for a circle that was detected and is similar to the one given to the function
     while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
       vpImageCircle previouslyDetected = m_finalCircles[id];
-      if (previouslyDetected == detection) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      if (previouslyDetected == detection)
+#else
+      if (previouslyDetected == detections[i])
+#endif
+      {
         hasFoundSimilarCircle = true;
         // We found a circle that is similar to the one given to the function => updating the mask
         const unsigned int nbVotingPoints = m_finalCirclesVotingPoints[id].size();
         for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
           const std::pair<unsigned int, unsigned int> &votingPoint = m_finalCirclesVotingPoints[id][idPoint];
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
           (*mask)[votingPoint.first][votingPoint.second] = true;
+#else
+          (**mask)[votingPoint.first][votingPoint.second] = true;
+#endif
         }
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
         opt_votingPoints->push_back(m_finalCirclesVotingPoints[id]);
+#else
+        (**opt_votingPoints).push_back(m_finalCirclesVotingPoints[id]);
+#endif
       }
       ++id;
     }

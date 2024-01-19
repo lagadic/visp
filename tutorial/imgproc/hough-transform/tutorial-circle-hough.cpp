@@ -51,11 +51,13 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
 #elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpImage<bool> *opt_mask = nullptr;
   std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = nullptr;
+  detector.computeVotingMask(I_src, detectedCircles, opt_mask, opt_votingPoints); // Get, if available, the voting points
 #else
   vpImage<bool> *opt_mask = NULL;
   std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints = NULL;
+  detector.computeVotingMask(I_src, detectedCircles, &opt_mask, &opt_votingPoints); // Get, if available, the voting points
 #endif
-  detector.computeVotingMask(I_src, detectedCircles, opt_mask, opt_votingPoints); // Get, if available, the voting points
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   if (opt_votingPoints)
 #elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)

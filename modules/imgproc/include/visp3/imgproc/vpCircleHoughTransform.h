@@ -722,8 +722,8 @@ public:
                 std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
 #else
   void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> *mask,
-                         std::vector<std::vector<std::pair<unsigned int, unsigned int>>> *opt_votingPoints) const;
+                         vpImage<bool> **mask,
+                         std::vector<std::vector<std::pair<unsigned int, unsigned int>>> **opt_votingPoints) const;
 #endif
 
 /** @name  Configuration from files */
