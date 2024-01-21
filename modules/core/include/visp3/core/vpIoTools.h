@@ -57,6 +57,7 @@
 
 namespace visp
 {
+// https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
 static unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)
 {
   static const unsigned int s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
@@ -71,8 +72,12 @@ static unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, si
   }
   return ~crcu32;
 }
+
 namespace cnpy
 {
+// Copyright (C) 2011  Carl Rogers
+// Released under MIT License
+// license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
 struct NpyArray
 {
   NpyArray(const std::vector<size_t> &_shape, size_t _word_size, bool _fortran_order) :

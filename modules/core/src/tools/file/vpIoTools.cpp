@@ -114,6 +114,9 @@ using namespace buminiz;
 #include <zlib.h>
 #endif
 
+// To avoid warnings such as: warning: unused variable ‘littleEndian’ [-Wunused-variable]
+#define _unused(x) ((void)(x)) // see: https://stackoverflow.com/a/777359
+
 // Copyright (C) 2011  Carl Rogers
 // Released under MIT License
 // license available in LICENSE file, or at http://www.opensource.org/licenses/mit-license.php
@@ -184,7 +187,7 @@ void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std:
   //not sure when this applies except for byte array
   loc1 = header.find("descr")+9;
   bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-  assert(littleEndian);
+  _unused(littleEndian); assert(littleEndian);
 
   //char type = header[loc1+1];
   //assert(type == map_type(T));
@@ -236,7 +239,7 @@ void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_
     throw std::runtime_error("parse_npy_header: failed to find header keyword: 'descr'");
   loc1 += 9;
   bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-  assert(littleEndian);
+  _unused(littleEndian); assert(littleEndian);
 
   //char type = header[loc1+1];
   //assert(type == map_type(T));
@@ -263,10 +266,10 @@ void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_head
   global_header_offset = *(uint32_t *)&footer[16];
   comment_len = *(uint16_t *)&footer[20];
 
-  assert(disk_no == 0);
-  assert(disk_start == 0);
-  assert(nrecs_on_disk == nrecs);
-  assert(comment_len == 0);
+  _unused(disk_no); assert(disk_no == 0);
+  _unused(disk_start); assert(disk_start == 0);
+  _unused(nrecs_on_disk); assert(nrecs_on_disk == nrecs);
+  _unused(comment_len); assert(comment_len == 0);
 }
 
 visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
@@ -300,6 +303,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   d_stream.avail_in = 0;
   d_stream.next_in = Z_NULL;
   int err = inflateInit2(&d_stream, -MAX_WBITS);
+  _unused(err); assert(err == 0);
 
   d_stream.avail_in = compr_bytes;
   d_stream.next_in = &buffer_compr[0];
@@ -307,7 +311,9 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   d_stream.next_out = &buffer_uncompr[0];
 
   err = inflate(&d_stream, Z_FINISH);
+  _unused(err); assert(err == 0);
   err = inflateEnd(&d_stream);
+  _unused(err); assert(err == 0);
 
   std::vector<size_t> shape;
   size_t word_size;
