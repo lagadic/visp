@@ -168,7 +168,7 @@ int main(int argc, char **argv)
 
     for (size_t i = 0; i < model.size(); i++) {
       char buffer[100];
-      int res = snprintf(buffer, 100, "model_%06d_%06lld", iter, i);
+      int res = snprintf(buffer, 100, "model_%06d_%06ld", iter, i);
       if (res > 0 && res < 100) {
         const std::string model_iter_data = buffer;
         std::vector<double> &vec_line = model[i];
