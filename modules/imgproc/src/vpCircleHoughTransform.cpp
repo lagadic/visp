@@ -35,6 +35,52 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+namespace
+{
+// Sorting by decreasing probabilities
+bool hasBetterProba(std::pair<size_t, float> a, std::pair<size_t, float> b)
+{
+  return (a.second > b.second);
+}
+
+void updateAccumulator(const float &x_orig, const float &y_orig,
+                       const int &x, const int &y,
+                       const int &offsetX, const int &offsetY,
+                       const int &nbCols, const int &nbRows,
+                       vpImage<float> &accum, bool &hasToStop)
+{
+  if (((x - offsetX) < 0) ||
+      ((x - offsetX) >= nbCols) ||
+      ((y - offsetY) < 0) ||
+      ((y - offsetY) >= nbRows)
+      ) {
+    hasToStop = true;
+  }
+  else {
+    float dx = (x_orig - static_cast<float>(x));
+    float dy = (y_orig - static_cast<float>(y));
+    accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+  }
+}
+
+bool sortingCenters(const std::pair<std::pair<float, float>, float> &position_vote_a,
+                    const std::pair<std::pair<float, float>, float> &position_vote_b)
+{
+  return position_vote_a.second > position_vote_b.second;
+}
+
+float computeEffectiveRadius(const float &votes, const float &weigthedSumRadius)
+{
+  float r_effective = -1.f;
+  if (votes > std::numeric_limits<float>::epsilon()) {
+    r_effective = weigthedSumRadius / votes;
+  }
+  return r_effective;
+}
+};
+#endif
+
 vpCircleHoughTransform::vpCircleHoughTransform()
   : m_algoParams()
   , mp_mask(nullptr)
@@ -182,17 +228,19 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   size_t nbDetections = detections.size();
 
   // Prepare vector of tuple to sort by decreasing probabilities
-  std::vector<std::pair<size_t, float>> v_id_proba;
+  std::vector<std::pair<size_t, float> > v_id_proba;
   for (size_t i = 0; i < nbDetections; ++i) {
     std::pair<size_t, float> id_proba(i, m_finalCirclesProbabilities[i]);
     v_id_proba.push_back(id_proba);
   }
 
-  // Sorting by decreasing probabilities
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+// Sorting by decreasing probabilities
   auto hasBetterProba
     = [](std::pair<size_t, float> a, std::pair<size_t, float> b) {
     return (a.second > b.second);
     };
+#endif
   std::sort(v_id_proba.begin(), v_id_proba.end(), hasBetterProba);
 
   // Clearing the storages containing the detection results
@@ -206,10 +254,10 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   }
 
   std::vector<vpImageCircle> bestCircles;
-  auto copyFinalCircles = m_finalCircles;
-  auto copyFinalCirclesVotes = m_finalCircleVotes;
-  auto copyFinalCirclesProbas = m_finalCirclesProbabilities;
-  auto copyFinalCirclesVotingPoints = m_finalCirclesVotingPoints;
+  std::vector<vpImageCircle> copyFinalCircles = m_finalCircles;
+  std::vector<unsigned int> copyFinalCirclesVotes = m_finalCircleVotes;
+  std::vector<float> copyFinalCirclesProbas = m_finalCirclesProbabilities;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > copyFinalCirclesVotingPoints = m_finalCirclesVotingPoints;
   for (size_t i = 0; i < nbDetections; ++i) {
     size_t id = v_id_proba[i].first;
     m_finalCircles[i] = copyFinalCircles[id];
@@ -632,6 +680,7 @@ vpCircleHoughTransform::computeCenterCandidates()
               y_high_prev = y_high;
             }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
             auto updateAccumulator =
               [](const float &x_orig, const float &y_orig,
                  const int &x, const int &y,
@@ -651,6 +700,7 @@ vpCircleHoughTransform::computeCenterCandidates()
                      accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
                    }
               };
+#endif
 
             updateAccumulator(x1, y1, x_low, y_low,
                               offsetX, offsetY,
@@ -684,7 +734,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   int nbColsAccum = centersAccum.getCols();
   int nbRowsAccum = centersAccum.getRows();
   int nbVotes = -1;
-  std::vector<std::pair<std::pair<float, float>, float>> peak_positions_votes;
+  std::vector<std::pair<std::pair<float, float>, float> > peak_positions_votes;
 
   for (int y = 0; y < nbRowsAccum; y++) {
     int left = -1;
@@ -696,7 +746,7 @@ vpCircleHoughTransform::computeCenterCandidates()
         if (left < 0) {
           left = x;
         }
-        nbVotes = std::max(nbVotes, static_cast<int>(centersAccum[y][x]));
+        nbVotes = std::max<int>(nbVotes, static_cast<int>(centersAccum[y][x]));
       }
       else if (left >= 0) {
         int cx = static_cast<int>(((left + x) - 1) * 0.5f);
@@ -723,7 +773,9 @@ vpCircleHoughTransform::computeCenterCandidates()
           peak_positions_votes.push_back(position_vote);
         }
         if (nbVotes < 0) {
-          throw(vpException(vpException::badValue, "nbVotes (" + std::to_string(nbVotes) + ") < 0, thresh = " + std::to_string(m_algoParams.m_centerMinThresh)));
+          std::stringstream errMsg;
+          errMsg << "nbVotes (" << nbVotes << ") < 0, thresh = " << m_algoParams.m_centerMinThresh;
+          throw(vpException(vpException::badValue, errMsg.str()));
         }
         left = -1;
         nbVotes = -1;
@@ -734,7 +786,7 @@ vpCircleHoughTransform::computeCenterCandidates()
   unsigned int nbPeaks = static_cast<unsigned int>(peak_positions_votes.size());
   if (nbPeaks > 0) {
     std::vector<bool> has_been_merged(nbPeaks, false);
-    std::vector<std::pair<std::pair<float, float>, float>> merged_peaks_position_votes;
+    std::vector<std::pair<std::pair<float, float>, float> > merged_peaks_position_votes;
     float squared_distance_max = m_algoParams.m_centerMinDist * m_algoParams.m_centerMinDist;
     for (unsigned int idPeak = 0; idPeak < nbPeaks; ++idPeak) {
       float votes = peak_positions_votes[idPeak].second;
@@ -789,10 +841,12 @@ vpCircleHoughTransform::computeCenterCandidates()
       }
     }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     auto sortingCenters = [](const std::pair<std::pair<float, float>, float> &position_vote_a,
-                            const std::pair<std::pair<float, float>, float> &position_vote_b) {
-                              return position_vote_a.second > position_vote_b.second;
+                             const std::pair<std::pair<float, float>, float> &position_vote_b) {
+                               return position_vote_a.second > position_vote_b.second;
       };
+#endif
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
 
@@ -811,10 +865,10 @@ vpCircleHoughTransform::computeCircleCandidates()
 {
   size_t nbCenterCandidates = m_centerCandidatesList.size();
   int nbBins = static_cast<int>(((m_algoParams.m_maxRadius - m_algoParams.m_minRadius) + 1) / m_algoParams.m_mergingRadiusDiffThresh);
-  nbBins = std::max(static_cast<int>(1), nbBins); // Avoid having 0 bins, which causes segfault
+  nbBins = std::max<int>(static_cast<int>(1), nbBins); // Avoid having 0 bins, which causes segfault
   std::vector<float> radiusAccumList; // Radius accumulator for each center candidates.
   std::vector<float> radiusActualValueList; // Vector that contains the actual distance between the edge points and the center candidates.
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> votingPoints(nbBins); // Vectors that contain the points voting for each radius bin
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > votingPoints(nbBins); // Vectors that contain the points voting for each radius bin
 
   float rmin2 = m_algoParams.m_minRadius * m_algoParams.m_minRadius;
   float rmax2 = m_algoParams.m_maxRadius * m_algoParams.m_maxRadius;
@@ -828,14 +882,29 @@ vpCircleHoughTransform::computeCircleCandidates()
     radiusActualValueList.clear();
     radiusActualValueList.resize(nbBins, 0.);
 
-    for (auto edgePoint : m_edgePointsList) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    for (auto edgePoint : m_edgePointsList)
+#else
+    for (size_t e = 0; e < m_edgePointsList.size(); ++e)
+#endif
+    {
       // For each center candidate CeC_i, compute the distance with each edge point EP_j d_ij = dist(CeC_i; EP_j)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       float rx = edgePoint.second - centerCandidate.second;
       float ry = edgePoint.first - centerCandidate.first;
+#else
+      float rx = m_edgePointsList[e].second - centerCandidate.second;
+      float ry = m_edgePointsList[e].first - centerCandidate.first;
+#endif
       float r2 = (rx * rx) + (ry * ry);
       if ((r2 > rmin2) && (r2 < rmax2)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
         float gx = m_dIx[edgePoint.first][edgePoint.second];
         float gy = m_dIy[edgePoint.first][edgePoint.second];
+#else
+        float gx = m_dIx[m_edgePointsList[e].first][m_edgePointsList[e].second];
+        float gy = m_dIy[m_edgePointsList[e].first][m_edgePointsList[e].second];
+#endif
         float grad2 = (gx * gx) + (gy * gy);
 
         float scalProd = (rx * gx) + (ry * gy);
@@ -851,7 +920,11 @@ vpCircleHoughTransform::computeCircleCandidates()
             radiusAccumList[r_bin] += 1.f;
             radiusActualValueList[r_bin] += r;
             if (m_algoParams.m_recordVotingPoints) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
               votingPoints[r_bin].push_back(edgePoint);
+#else
+              votingPoints[r_bin].push_back(m_edgePointsList[e]);
+#endif
             }
           }
           else {
@@ -868,8 +941,13 @@ vpCircleHoughTransform::computeCircleCandidates()
               radiusAccumList[r_bin + 1] += voteNextBin;
               radiusActualValueList[r_bin + 1] += r * voteNextBin;
               if (m_algoParams.m_recordVotingPoints) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                 votingPoints[r_bin].push_back(edgePoint);
                 votingPoints[r_bin + 1].push_back(edgePoint);
+#else
+                votingPoints[r_bin].push_back(m_edgePointsList[e]);
+                votingPoints[r_bin + 1].push_back(m_edgePointsList[e]);
+#endif
               }
             }
             else {
@@ -881,8 +959,13 @@ vpCircleHoughTransform::computeCircleCandidates()
               radiusAccumList[r_bin - 1] += votePrevBin;
               radiusActualValueList[r_bin - 1] += r * votePrevBin;
               if (m_algoParams.m_recordVotingPoints) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                 votingPoints[r_bin].push_back(edgePoint);
                 votingPoints[r_bin - 1].push_back(edgePoint);
+#else
+                votingPoints[r_bin].push_back(m_edgePointsList[e]);
+                votingPoints[r_bin - 1].push_back(m_edgePointsList[e]);
+#endif
               }
             }
           }
@@ -902,12 +985,12 @@ vpCircleHoughTransform::computeCircleCandidates()
     // Merging similar candidates
     std::vector<float> v_r_effective; // Vector of radius of each candidate after the merge step
     std::vector<float> v_votes_effective; // Vector of number of votes of each candidate after the merge step
-    std::vector<std::vector<std::pair<unsigned int, unsigned int>>> v_votingPoints_effective; // Vector of voting points after the merge step
+    std::vector<std::vector<std::pair<unsigned int, unsigned int> > > v_votingPoints_effective; // Vector of voting points after the merge step
     std::vector<bool> v_hasMerged_effective; // Vector indicating if merge has been performed for the different candidates
     for (int idBin = 0; idBin < nbBins; ++idBin) {
       float r_effective = computeEffectiveRadius(radiusAccumList[idBin], radiusActualValueList[idBin]);
       float votes_effective = radiusAccumList[idBin];
-      std::vector<std::pair<unsigned int, unsigned int>> votingPoints_effective = votingPoints[idBin];
+      std::vector<std::pair<unsigned int, unsigned int> > votingPoints_effective = votingPoints[idBin];
       bool is_r_effective_similar = (r_effective > 0.f);
       // Looking for potential similar radii in the following bins
       // If so, compute the barycenter radius between them
@@ -924,11 +1007,19 @@ vpCircleHoughTransform::computeCircleCandidates()
           if (m_algoParams.m_recordVotingPoints) {
             // Move elements from votingPoints[idCandidate] to votingPoints_effective.
             // votingPoints[idCandidate] is left in undefined but safe-to-destruct state.
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
             votingPoints_effective.insert(
               votingPoints_effective.end(),
               std::make_move_iterator(votingPoints[idCandidate].begin()),
               std::make_move_iterator(votingPoints[idCandidate].end())
             );
+#else
+            votingPoints_effective.insert(
+              votingPoints_effective.end(),
+              votingPoints[idCandidate].begin(),
+              votingPoints[idCandidate].end()
+            );
+#endif
             hasMerged = true;
           }
         }
@@ -1001,7 +1092,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
   std::vector<vpImageCircle> circleCandidates = m_circleCandidates;
   std::vector<unsigned int> circleCandidatesVotes = m_circleCandidatesVotes;
   std::vector<float> circleCandidatesProba = m_circleCandidatesProbabilities;
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> circleCandidatesVotingPoints = m_circleCandidatesVotingPoints;
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > circleCandidatesVotingPoints = m_circleCandidatesVotingPoints;
   // First iteration of merge
   mergeCandidates(circleCandidates, circleCandidatesVotes, circleCandidatesProba, circleCandidatesVotingPoints);
 
@@ -1017,7 +1108,7 @@ vpCircleHoughTransform::mergeCircleCandidates()
 
 void
 vpCircleHoughTransform::mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
-                                        std::vector<float> &circleCandidatesProba, std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &votingPoints)
+                                        std::vector<float> &circleCandidatesProba, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > &votingPoints)
 {
   size_t nbCandidates = circleCandidates.size();
   size_t i = 0;
@@ -1050,11 +1141,19 @@ vpCircleHoughTransform::mergeCandidates(std::vector<vpImageCircle> &circleCandid
         circleCandidatesProba[i] = newProba;
         circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];
         if (m_algoParams.m_recordVotingPoints) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
           votingPoints[i].insert(
             votingPoints[i].end(),
             std::make_move_iterator(votingPoints[j].begin()),
             std::make_move_iterator(votingPoints[j].end())
           );
+#else
+          votingPoints[i].insert(
+            votingPoints[i].end(),
+            votingPoints[j].begin(),
+            votingPoints[j].end()
+          );
+#endif
           votingPoints.pop_back();
         }
         circleCandidates.pop_back();

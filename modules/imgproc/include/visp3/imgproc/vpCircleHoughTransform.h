@@ -232,8 +232,8 @@ public:
       , m_upperCannyThreshRatio(upperCannyThreshRatio)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
-      , m_minRadius(std::min(minRadius, maxRadius))
-      , m_maxRadius(std::max(minRadius, maxRadius))
+      , m_minRadius(std::min<unsigned int>(minRadius, maxRadius))
+      , m_maxRadius(std::max<unsigned int>(minRadius, maxRadius))
       , m_dilatationKernelSize(dilatationKernelSize)
       , m_averagingWindowSize(averagingWindowSize)
       , m_centerMinThresh(centerThresh)
@@ -458,29 +458,37 @@ public:
      */
     std::string toString() const
     {
-      std::string txt("Hough Circle Transform Configuration:\n");
-      txt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType) + "\n";
-      txt += "\tGaussian filter kernel size = " + std::to_string(m_gaussianKernelSize) + "\n";
-      txt += "\tGaussian filter standard deviation = " + std::to_string(m_gaussianStdev) + "\n";
-      txt += "\tGradient filter kernel size = " + std::to_string(m_gradientFilterKernelSize) + "\n";
-      txt += "\tCanny backend = " + vpImageFilter::vpCannyBackendTypeToString(m_cannyBackendType) + "\n";
-      txt += "\tCanny edge filter thresholds = [" + std::to_string(m_lowerCannyThresh) + " ; " + std::to_string(m_upperCannyThresh) + "]\n";
-      txt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(m_lowerCannyThreshRatio) + " ; " + std::to_string(m_upperCannyThreshRatio) + "]\n";
-      txt += "\tEdge map 8-neighbor connectivity filtering number of iterations = " + std::to_string(m_edgeMapFilteringNbIter) + "\n";
-      txt += "\tCenter horizontal position limits: min = " + std::to_string(m_centerXlimits.first) + "\tmax = " + std::to_string(m_centerXlimits.second) + "\n";
-      txt += "\tCenter vertical position limits: min = " + std::to_string(m_centerYlimits.first) + "\tmax = " + std::to_string(m_centerYlimits.second) + "\n";
-      txt += "\tRadius limits: min = " + std::to_string(m_minRadius) + "\tmax = " + std::to_string(m_maxRadius) + "\n";
-      txt += "\tKernel size of the dilatation filter = " + std::to_string(m_dilatationKernelSize) + "\n";
-      txt += "\tAveraging window size for center detection = " + std::to_string(m_averagingWindowSize) + "\n";
-      txt += "\tCenters votes threshold = " + std::to_string(m_centerMinThresh) + "\n";
-      txt += "\tExpected number of centers = " + (m_expectedNbCenters > 0 ? std::to_string(m_expectedNbCenters) : "no limits") + "\n";
-      txt += "\tCircle probability threshold = " + std::to_string(m_circleProbaThresh) + "\n";
-      txt += "\tCircle visibility ratio threshold = " + std::to_string(m_circleVisibilityRatioThresh) + "\n";
-      txt += "\tCircle perfectness threshold = " + std::to_string(m_circlePerfectness) + "\n";
-      txt += "\tRecord voting points = " + (m_recordVotingPoints ? std::string("true") : std::string("false")) + "\n";
-      txt += "\tCenters minimum distance = " + std::to_string(m_centerMinDist) + "\n";
-      txt += "\tRadius difference merging threshold = " + std::to_string(m_mergingRadiusDiffThresh) + "\n";
-      return txt;
+      std::stringstream txt;
+      txt << "Hough Circle Transform Configuration:\n";
+      txt <<  "\tFiltering + gradient operators = " << vpImageFilter::vpCannyFilteringAndGradientTypeToString(m_filteringAndGradientType) << "\n";
+      txt <<  "\tGaussian filter kernel size = " << m_gaussianKernelSize << "\n";
+      txt <<  "\tGaussian filter standard deviation = " << m_gaussianStdev << "\n";
+      txt <<  "\tGradient filter kernel size = " << m_gradientFilterKernelSize << "\n";
+      txt <<  "\tCanny backend = " << vpImageFilter::vpCannyBackendTypeToString(m_cannyBackendType) << "\n";
+      txt <<  "\tCanny edge filter thresholds = [" << m_lowerCannyThresh << " ; " << m_upperCannyThresh << "]\n";
+      txt <<  "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" << m_lowerCannyThreshRatio << " ; " << m_upperCannyThreshRatio << "]\n";
+      txt <<  "\tEdge map 8-neighbor connectivity filtering number of iterations = " << m_edgeMapFilteringNbIter << "\n";
+      txt <<  "\tCenter horizontal position limits: min = " << m_centerXlimits.first << "\tmax = " << m_centerXlimits.second << "\n";
+      txt <<  "\tCenter vertical position limits: min = " << m_centerYlimits.first << "\tmax = " << m_centerYlimits.second << "\n";
+      txt <<  "\tRadius limits: min = " << m_minRadius << "\tmax = " << m_maxRadius << "\n";
+      txt <<  "\tKernel size of the dilatation filter = " << m_dilatationKernelSize << "\n";
+      txt <<  "\tAveraging window size for center detection = " << m_averagingWindowSize << "\n";
+      txt <<  "\tCenters votes threshold = " << m_centerMinThresh << "\n";
+      txt <<  "\tExpected number of centers = ";
+      if (m_expectedNbCenters > 0) {
+        txt << m_expectedNbCenters;
+      }
+      else {
+        txt << "no limits";
+      }
+      txt << "\n";
+      txt <<  "\tCircle probability threshold = " << m_circleProbaThresh << "\n";
+      txt <<  "\tCircle visibility ratio threshold = " << m_circleVisibilityRatioThresh << "\n";
+      txt <<  "\tCircle perfectness threshold = " << m_circlePerfectness << "\n";
+      txt <<  "\tRecord voting points = " + (m_recordVotingPoints ? std::string("true") : std::string("false")) << "\n";
+      txt <<  "\tCenters minimum distance = " << m_centerMinDist << "\n";
+      txt <<  "\tRadius difference merging threshold = " << m_mergingRadiusDiffThresh << "\n";
+      return txt.str();
     }
 
     // // Configuration from files
@@ -571,8 +579,8 @@ public:
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
       std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
-      params.m_minRadius = std::min(radiusLimits.first, radiusLimits.second);
-      params.m_maxRadius = std::max(radiusLimits.first, radiusLimits.second);
+      params.m_minRadius = std::min<unsigned int>(radiusLimits.first, radiusLimits.second);
+      params.m_maxRadius = std::max<unsigned int>(radiusLimits.first, radiusLimits.second);
 
       params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
       params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
