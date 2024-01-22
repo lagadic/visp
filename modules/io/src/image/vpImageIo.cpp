@@ -869,7 +869,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    std::string message = "Cannot save file \"" + filename + "\": no available backend";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -886,7 +886,8 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writeOpenCV(I, filename, quality);
 #else
     (void)I;
@@ -1406,9 +1407,16 @@ void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &fil
  */
 void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename) { vp_writePPM(I, filename); }
 
+/*!
+  Read the content of the grayscale image bitmap stored in memory and encoded using the PNG format.
+  \param[in] buffer : Grayscale image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I : Output decoded grayscale image.
+  \param[in] backend : Supported backends are IO_OPENCV_BACKEND and IO_STB_IMAGE_BACKEND, default IO_DEFAULT_BACKEND
+  will choose IO_OPENCV_BACKEND if available or IO_STB_IMAGE_BACKEND otherwise.
+ */
 void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND) {
     backend = IO_STB_IMAGE_BACKEND;
   }
   else if (backend == IO_OPENCV_BACKEND) {
@@ -1430,7 +1438,8 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     readPNGfromMemOpenCV(buffer, I);
     (void)backend;
 #else
@@ -1455,24 +1464,74 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
   }
 }
 
-void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I, int backend, bool alpha)
+/*!
+  Read the content of the grayscale image bitmap stored in memory and encoded using the PNG format.
+  \param[in] buffer : Color image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I : Output decoded color image.
+  \param[in] backend : Supported backends are IO_OPENCV_BACKEND and IO_STB_IMAGE_BACKEND, default IO_DEFAULT_BACKEND
+  will choose IO_OPENCV_BACKEND if available or IO_STB_IMAGE_BACKEND otherwise.
+ */
+void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I, int backend)
 {
-#if defined(VISP_HAVE_STBIMAGE)
-  readPNGfromMemStb(buffer, I, alpha);
-  (void)backend;
-#else
-  (void)buffer;
-  (void)I;
-  (void)backend;
-  (void)alpha;
-  std::string message = "Cannot in-memory png read: std_image backend is not available";
-  throw(vpImageException(vpImageException::ioError, message));
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND) {
+    backend = IO_STB_IMAGE_BACKEND;
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
+    backend = IO_STB_IMAGE_BACKEND;
 #endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+    backend = IO_OPENCV_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
+    backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)buffer;
+    std::string message = "Cannot in-memory png read: OpenCV or std_image backend are not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+    readPNGfromMemOpenCV(buffer, I);
+    (void)backend;
+#else
+    (void)buffer;
+    (void)I;
+    (void)backend;
+    std::string message = "Cannot in-memory png read: OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+  else {
+#if defined(VISP_HAVE_STBIMAGE)
+    readPNGfromMemStb(buffer, I);
+    (void)backend;
+#else
+    (void)buffer;
+    (void)I;
+    (void)backend;
+    std::string message = "Cannot in-memory png read: std_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
 }
 
+/*!
+  In-memory PNG encoding of the grayscale image.
+
+  \param[in] I : Input grayscale image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+  \param[in] backend : Supported backends are IO_OPENCV_BACKEND and IO_STB_IMAGE_BACKEND, default IO_DEFAULT_BACKEND
+  will choose IO_OPENCV_BACKEND if available or IO_STB_IMAGE_BACKEND otherwise.
+*/
 void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND) {
     backend = IO_STB_IMAGE_BACKEND;
   }
   else if (backend == IO_OPENCV_BACKEND) {
@@ -1494,7 +1553,8 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
   }
 
   if (backend == IO_OPENCV_BACKEND) {
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
     writePNGtoMemOpenCV(I, buffer);
 #else
     (void)I;
@@ -1513,19 +1573,67 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
+  else {
+    std::string message = "The " + std::to_string(backend) + " backend is not available.";
+    throw(vpImageException(vpImageException::ioError, message));
+  }
 }
 
+/*!
+  In-memory PNG encoding of the color image.
+
+  \param[in] I : Input color image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+  \param[in] backend : Supported backends are IO_OPENCV_BACKEND and IO_STB_IMAGE_BACKEND, default IO_DEFAULT_BACKEND
+  will choose IO_OPENCV_BACKEND if available or IO_STB_IMAGE_BACKEND otherwise.
+  \param[in] saveAlpha : If true, alpha channel is also used for encoding.
+*/
 void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer, int backend, bool saveAlpha)
 {
-#if defined(VISP_HAVE_STBIMAGE)
-  writePNGtoMemStb(I, buffer, saveAlpha);
-  (void)backend;
-#else
-  (void)I;
-  (void)buffer;
-  (void)backend;
-  (void)saveAlpha;
-  std::string message = "Cannot in-memory png write: std_image backend is not available";
-  throw(vpImageException(vpImageException::ioError, message));
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND) {
+    backend = IO_STB_IMAGE_BACKEND;
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
+    backend = IO_STB_IMAGE_BACKEND;
 #endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+    backend = IO_OPENCV_BACKEND;
+#elif defined(VISP_HAVE_STBIMAGE)
+    backend = IO_STB_IMAGE_BACKEND;
+#else
+    (void)I;
+    (void)buffer;
+    std::string message = "Cannot in-memory png write: OpenCV or std_image backend are not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+    writePNGtoMemOpenCV(I, buffer, saveAlpha);
+#else
+    (void)I;
+    (void)buffer;
+    std::string message = "Cannot in-memory png write: OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+  else if (backend == IO_STB_IMAGE_BACKEND) {
+#if defined(VISP_HAVE_STBIMAGE)
+    writePNGtoMemStb(I, buffer, saveAlpha);
+#else
+    (void)I;
+    (void)buffer;
+    std::string message = "Cannot in-memory png write: std_image backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  }
+  else {
+    std::string message = "The " + std::to_string(backend) + " backend is not available.";
+    throw(vpImageException(vpImageException::ioError, message));
+  }
 }

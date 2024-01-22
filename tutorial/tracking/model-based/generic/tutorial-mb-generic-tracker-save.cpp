@@ -33,12 +33,13 @@ int main(int argc, char **argv)
   std::string npz_filename = "npz_tracking_teabox.npz";
   bool color_mode = false;
   bool save_alpha = false;
+  bool print_cMo = false;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--cv-backend") {
       opencv_backend = true;
     }
-    else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-i") && i+1 < argc) {
+    else if ((std::string(argv[i]) == "--save" || std::string(argv[i]) == "-o") && i+1 < argc) {
       npz_filename = argv[i+1];
     }
     else if (std::string(argv[i]) == "--color" || std::string(argv[i]) == "-c") {
@@ -46,6 +47,18 @@ int main(int argc, char **argv)
     }
     else if (std::string(argv[i]) == "--alpha" || std::string(argv[i]) == "-a") {
       save_alpha = true;
+    }
+    else if (std::string(argv[i]) == "--print-cMo" && i+1 < argc) {
+      print_cMo = true;
+    }
+    else {
+      std::cout << "Options:" << std::endl;
+      std::cout << "  --cv-backend   use OpenCV if available for in-memory PNG encoding" << std::endl;
+      std::cout << "  --save / -o    output filename" << std::endl;
+      std::cout << "  --color        save RGB data" << std::endl;
+      std::cout << "  --alpha        if --color opton, save RGBa data" << std::endl;
+      std::cout << "  --print-cMo    print cMo" << std::endl;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -88,14 +101,16 @@ int main(int argc, char **argv)
 
   const int height = I.getRows();
   const int width = I.getCols();
-  // const int channel = 1;
   int channel = 1;
   if (color_mode) {
     channel = save_alpha ? 4 : 3;
   }
 
+  const vpImageIo::vpImageIoBackendType backend =
+    opencv_backend ? vpImageIo::IO_OPENCV_BACKEND : vpImageIo::IO_STB_IMAGE_BACKEND;
+
+  // vector of byte data to store encoded image data using PNG format
   std::vector<unsigned char> img_buffer;
-  // img_buffer.resize(height * width * channel);
 
   const std::string camera_name = "Camera";
   std::vector<char> vec_camera_name(camera_name.begin(), camera_name.end());
@@ -120,26 +135,22 @@ int main(int argc, char **argv)
   vec_img_data.reserve(g.getLastFrameIndex() * height * width);
 
   std::vector<double> times;
-
   int iter = 0;
   while (!g.end()) {
     g.acquire(I);
     tracker.track(I);
     tracker.getPose(cMo);
-    // std::cout << "\ncMo:\n" << cMo << std::endl;
+    if (print_cMo) {
+      std::cout << "\ncMo:\n" << cMo << std::endl;
+    }
 
     vpImageConvert::convert(I, I_color);
     double start = vpTime::measureTimeMs();
-    if (opencv_backend) {
-      vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_OPENCV_BACKEND);
+    if (color_mode) {
+      vpImageIo::writePNGtoMem(I_color, img_buffer, backend, save_alpha);
     }
     else {
-      if (color_mode) {
-        vpImageIo::writePNGtoMem(I_color, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND, save_alpha);
-      }
-      else {
-        vpImageIo::writePNGtoMem(I, img_buffer, vpImageIo::IO_STB_IMAGE_BACKEND);
-      }
+      vpImageIo::writePNGtoMem(I, img_buffer, backend);
     }
     double end = vpTime::measureTimeMs();
     times.push_back(end-start);
@@ -168,7 +179,7 @@ int main(int argc, char **argv)
 
     for (size_t i = 0; i < model.size(); i++) {
       char buffer[100];
-      int res = snprintf(buffer, 100, "model_%06d_%06ld", iter, i);
+      int res = snprintf(buffer, 100, "model_%06d_%06zu", iter, i);
       if (res > 0 && res < 100) {
         const std::string model_iter_data = buffer;
         std::vector<double> &vec_line = model[i];
@@ -179,7 +190,7 @@ int main(int argc, char **argv)
     iter++;
   }
 
-  std::cout << "Mean time: " << vpMath::getMean(times) << " ms ; Median time: "
+  std::cout << "Mean time for image encoding: " << vpMath::getMean(times) << " ms ; Median time: "
     << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
 
   visp::cnpy::npz_save(npz_filename, "vec_img_data_size", vec_img_data_size.data(), { vec_img_data_size.size() }, "a");

@@ -36,6 +36,8 @@ int main(int argc, char *argv[])
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)
   bool opencv_backend = false;
   std::string npz_filename = "npz_tracking_teabox.npz";
+  bool print_cMo = false;
+  bool dump_infos = false;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--cv-backend") {
@@ -44,12 +46,35 @@ int main(int argc, char *argv[])
     else if ((std::string(argv[i]) == "--read" || std::string(argv[i]) == "-i") && i+1 < argc) {
       npz_filename = argv[i+1];
     }
+    else if (std::string(argv[i]) == "--print-cMo" && i+1 < argc) {
+      print_cMo = true;
+    }
+    else if (std::string(argv[i]) == "--dump" && i+1 < argc) {
+      dump_infos = true;
+    }
+    else {
+      std::cout << "Options:" << std::endl;
+      std::cout << "  --cv-backend   use OpenCV if available for in-memory PNG decoding" << std::endl;
+      std::cout << "  --read / -i    input filename" << std::endl;
+      std::cout << "  --print-cMo    print cMo" << std::endl;
+      std::cout << "  --dump         print all the data name in the file" << std::endl;
+      return EXIT_SUCCESS;
+    }
   }
 
   std::cout << "Read file: " << npz_filename << std::endl;
   std::cout << "OpenCV backend? " << opencv_backend << std::endl;
 
+  const vpImageIo::vpImageIoBackendType backend =
+    opencv_backend ? vpImageIo::IO_OPENCV_BACKEND : vpImageIo::IO_STB_IMAGE_BACKEND;
+
   visp::cnpy::npz_t npz_data = visp::cnpy::npz_load(npz_filename);
+  if (dump_infos) {
+    std::cout << npz_filename << " file contains the following data:" << std::endl;
+    for (visp::cnpy::npz_t::const_iterator it = npz_data.begin(); it != npz_data.end(); ++it) {
+      std::cout << "  " << it->first << std::endl;
+    }
+  }
 
   visp::cnpy::NpyArray arr_height = npz_data["height"];
   visp::cnpy::NpyArray arr_width = npz_data["width"];
@@ -111,19 +136,14 @@ int main(int argc, char *argv[])
     //     std::back_inserter(vec_img));
     vec_img = std::vector<unsigned char>(vec_img_ptr + img_data_offset, vec_img_ptr + img_data_offset + vec_img_data_size_ptr[iter]);
     double start = vpTime::measureTimeMs(), end = -1;
-    if (opencv_backend) {
-      vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_OPENCV_BACKEND);
+    if (channel > 1) {
+      vpImageIo::readPNGfromMem(vec_img, I_display, backend);
+      end = vpTime::measureTimeMs();
     }
     else {
-      if (channel > 1) {
-        vpImageIo::readPNGfromMem(vec_img, I_display, vpImageIo::IO_STB_IMAGE_BACKEND, channel == 4);
-        end = vpTime::measureTimeMs();
-      }
-      else {
-        vpImageIo::readPNGfromMem(vec_img, I, vpImageIo::IO_STB_IMAGE_BACKEND);
-        end = vpTime::measureTimeMs();
-        vpImageConvert::convert(I, I_display);
-      }
+      vpImageIo::readPNGfromMem(vec_img, I, backend);
+      end = vpTime::measureTimeMs();
+      vpImageConvert::convert(I, I_display);
     }
     times.push_back(end-start);
     img_data_offset += vec_img_data_size_ptr[iter];
@@ -134,7 +154,7 @@ int main(int argc, char *argv[])
 
     for (size_t i = 0; i < model_sz; i++) {
       char buffer[100];
-      int res = snprintf(buffer, 100, "model_%06d_%06ld", iter, i);
+      int res = snprintf(buffer, 100, "model_%06d_%06zu", iter, i);
       if (res > 0 && res < 100) {
         std::string str_model_iter_data = buffer;
         visp::cnpy::NpyArray arr_model_iter_data = npz_data[str_model_iter_data];
@@ -152,7 +172,10 @@ int main(int argc, char *argv[])
     vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[pose_size*iter + 3], vec_poses_ptr[pose_size*iter + 4], vec_poses_ptr[pose_size*iter + 5]),
       vpThetaUVector(vec_poses_ptr[pose_size*iter], vec_poses_ptr[pose_size*iter + 1], vec_poses_ptr[pose_size*iter + 2])
     );
-    // std::cout << "\ncMo:\n" << cMo << std::endl;
+
+    if (print_cMo) {
+      std::cout << "\ncMo:\n" << cMo << std::endl;
+    }
 
     vpDisplay::display(I_display);
     vpDisplay::displayFrame(I_display, cMo, cam, 0.025, vpColor::none, 3);
@@ -161,7 +184,7 @@ int main(int argc, char *argv[])
     vpTime::wait(30);
   }
 
-  std::cout << "Mean time: " << vpMath::getMean(times) << " ms ; Median time: "
+  std::cout << "Mean time for image decoding: " << vpMath::getMean(times) << " ms ; Median time: "
     << vpMath::getMedian(times) << " ms ; Std: " << vpMath::getStdev(times) << " ms" << std::endl;
 
   vpDisplay::getClick(I_display, true);

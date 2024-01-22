@@ -86,6 +86,25 @@ static std::vector<std::string> backendNamesPng
       "simd", "stb"
 };
 
+static const std::vector<vpImageIo::vpImageIoBackendType> backendsInMemory
+{
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+  vpImageIo::IO_OPENCV_BACKEND,
+#endif
+#if defined VISP_HAVE_STBIMAGE
+  vpImageIo::IO_STB_IMAGE_BACKEND
+#endif
+};
+static std::vector<std::string> backendNamesPngInMemory
+{
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+  "OpenCV",
+#endif
+#if defined VISP_HAVE_STBIMAGE
+  "stb"
+#endif
+};
+
 static const unsigned int imgWidth = 640;
 static const unsigned int imgHeight = 440;
 
@@ -312,6 +331,74 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
+}
+
+TEST_CASE("Test grayscale in-memory PNG image encoding/decoding", "[image_I/O]")
+{
+  vpImage<unsigned char> I_ref;
+  vpImageIo::read(I_ref, path + ".png");
+  REQUIRE(I_ref.getSize() > 0);
+
+  for (size_t i = 0; i < backendsInMemory.size(); i++) {
+    SECTION(backendNamesPngInMemory[i] + " backend")
+    {
+      std::vector<unsigned char> buffer;
+      vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i]);
+      REQUIRE(!buffer.empty());
+
+      for (size_t j = 0; j < backendsInMemory.size(); j++) {
+        SECTION(backendNamesPngInMemory[i] + " backend")
+        {
+          vpImage<unsigned char> I;
+          vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+          CHECK(I_ref == I);
+        };
+      }
+    };
+  }
+}
+
+TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
+{
+  vpImage<vpRGBa> I_ref;
+  vpImageIo::read(I_ref, path + ".png");
+  REQUIRE(I_ref.getSize() > 0);
+
+  for (size_t i = 0; i < backendsInMemory.size(); i++) {
+    SECTION(backendNamesPngInMemory[i] + " backend")
+    {
+      {
+        std::vector<unsigned char> buffer;
+        const bool saveAlpha = false;
+        vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i], saveAlpha);
+        REQUIRE(!buffer.empty());
+
+        for (size_t j = 0; j < backendsInMemory.size(); j++) {
+          SECTION(backendNamesPngInMemory[i] + " backend")
+          {
+            vpImage<vpRGBa> I;
+            vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+            CHECK(I_ref == I);
+          };
+        }
+      }
+      {
+        std::vector<unsigned char> buffer;
+        const bool saveAlpha = true;
+        vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i], saveAlpha);
+        REQUIRE(!buffer.empty());
+
+        for (size_t j = 0; j < backendsInMemory.size(); j++) {
+          SECTION(backendNamesPngInMemory[i] + " backend")
+          {
+            vpImage<vpRGBa> I;
+            vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+            CHECK(I_ref == I);
+          };
+        }
+      }
+    };
+  }
 }
 
 int main(int argc, char *argv[])

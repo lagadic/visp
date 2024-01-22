@@ -140,49 +140,58 @@ static void custom_stbi_write_mem(void *context, void *data, int size)
 }
 
 /*!
-  Read the content of the image bitmap stored in memory and encoded using the PNG format.
+  Read the content of the grayscale image bitmap stored in memory and encoded using the PNG format.
 
-  \param buffer : Grayscale image buffer or 1D vector of unsigned char data.
-  \param lastPos : Size of the grayscale image buffer.
-  \param I : Output decoded grayscale image.
+  \param[in] buffer : Grayscale image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I : Output decoded grayscale image.
 */
 void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
 {
   int x = 0, y = 0, comp = 0;
   const int req_channels = 1;
   unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
+  assert(comp == req_channels);
 
-  I = vpImage<unsigned char>(buffer_read, y, x, true);
+  // I = vpImage<unsigned char>(buffer_read, y, x, true);
+  I.init(buffer_read, y, x, true);
   delete[] buffer_read;
 }
 
 /*!
-  Read the content of the image bitmap stored in memory and encoded using the PNG format.
+  Read the content of the color image bitmap stored in memory and encoded using the PNG format.
 
-  \param buffer : Color image buffer stored in RGB formar or 1D vector of unsigned char data.
-  \param lastPos : Size of the color image buffer.
-  \param I : Output decoded color image.
-  \param alpha : If true, buffer contains RGBa pixels.
+  \param[in] buffer : Color image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I_color : Output decoded color image.
 */
-void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I, bool alpha)
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I_color)
 {
   int x = 0, y = 0, comp = 0;
-  const int req_channels = alpha ? 4 : 3;
-  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, 0);
 
-  if (alpha) {
+  if (comp == 4) {
     const bool copyData = true;
-    I = vpImage<vpRGBa>(reinterpret_cast<vpRGBa *>(buffer_read), y, x, copyData);
+    I_color.init(reinterpret_cast<vpRGBa *>(buffer_read), y, x, copyData);
+  }
+  else if (comp == 3) {
+    I_color.init(y, x);
+    const bool flip = false;
+    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I_color.bitmap), x, y, flip);
   }
   else {
-    I.init(y, x);
-    const bool flip = false;
-    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I.bitmap), x, y, flip);
+    delete[] buffer_read;
+    std::string message = "Wrong number of channels for the input buffer: " + std::to_string(comp);
+    throw(vpImageException(vpImageException::ioError, message));
   }
 
   delete[] buffer_read;
 }
 
+/*!
+  In-memory PNG encoding of the grayscale image.
+
+  \param[in] I : Input grayscale image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+*/
 void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
 {
   const int height = I.getRows();
@@ -206,31 +215,36 @@ void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char
   }
 }
 
-void writePNGtoMemStb(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer, bool saveAlpha)
+/*!
+  In-memory PNG encoding of the color image.
+
+  \param[in] I_color : Input color image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+  \param[in] saveAlpha : If true, alpha channel is also used for encoding.
+*/
+void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer, bool saveAlpha)
 {
-  const int height = I.getRows();
-  const int width = I.getCols();
+  const int height = I_color.getRows();
+  const int width = I_color.getCols();
   const int channels = saveAlpha ? 4 : 3;
 
   custom_stbi_mem_context context;
   context.last_pos = 0;
-  buffer.resize(I.getHeight() * I.getWidth() * channels);
+  buffer.resize(height * width * channels);
   context.context = (void *)buffer.data();
 
-  unsigned char *bitmap = nullptr;
   const int stride_bytes = 0;
   int result = 0;
   if (saveAlpha) {
     result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels,
-      reinterpret_cast<unsigned char *>(I.bitmap), stride_bytes);
+      reinterpret_cast<unsigned char *>(I_color.bitmap), stride_bytes);
   }
   else {
-    bitmap = new unsigned char[height * width * channels];
-    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I.bitmap), bitmap, height*width);
+    unsigned char *bitmap = new unsigned char[height * width * channels];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, height*width);
     result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, bitmap, stride_bytes);
+    delete[] bitmap;
   }
-
-  delete[] bitmap;
 
   if (result) {
     buffer.resize(context.last_pos);
