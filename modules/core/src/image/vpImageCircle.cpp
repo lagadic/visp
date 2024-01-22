@@ -1022,6 +1022,25 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi, const float &round
   return delta_theta * m_radius;
 }
 
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
+namespace
+{
+// Increment the counter if the considered pixel (x, y) is in the mask image
+void incrementIfIsInMask(const vpImage<bool> &mask, const int &width, const int &height, const int &x, const int &y,
+                         unsigned int &count)
+{
+  if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) {
+    // The pixel is outside the limit of the mask
+    return;
+  }
+  if (mask[y][x]) {
+    // Increment only if the pixel value of the mask is true
+    count++;
+  }
+}
+};
+#endif
+
 unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
 {
   const int xm = m_center.get_u(), ym = m_center.get_v();
@@ -1029,6 +1048,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
   const int width = mask.getWidth();
   const int height = mask.getHeight();
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   // Increment the counter if the considered pixel (x, y) is in the mask image
   auto incrementIfIsInMask = [](const vpImage<bool> &mask, const int &width, const int &height, const int &x, const int &y,
                      unsigned int &count) {
@@ -1041,6 +1061,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
                          count++;
                        }
     };
+#endif
   unsigned int count = 0; // Count the number of pixels of the circle whose value in the mask is true
 
   const float thetaStop = M_PI_2f;
