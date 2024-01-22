@@ -48,12 +48,12 @@ std::string vpImageFilter::vpCannyBackendTypeList(const std::string &pref, const
                                                   const std::string &suf)
 {
   std::string list(pref);
-  for (unsigned int i = 0; i < (vpCannyBackendType::CANNY_COUNT_BACKEND - 1); ++i) {
+  for (unsigned int i = 0; i < (CANNY_COUNT_BACKEND - 1); ++i) {
     vpCannyBackendType type = static_cast<vpCannyBackendType>(i);
     list += vpCannyBackendTypeToString(type);
     list += sep;
   }
-  vpCannyBackendType type = static_cast<vpCannyBackendType>(vpCannyBackendType::CANNY_COUNT_BACKEND - 1);
+  vpCannyBackendType type = static_cast<vpCannyBackendType>(CANNY_COUNT_BACKEND - 1);
   list += vpCannyBackendTypeToString(type);
   list += suf;
   return list;
@@ -69,13 +69,13 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
 {
   std::string name;
   switch (type) {
-  case vpCannyBackendType::CANNY_OPENCV_BACKEND:
+  case CANNY_OPENCV_BACKEND:
     name = "opencv-backend";
     break;
-  case vpCannyBackendType::CANNY_VISP_BACKEND:
+  case CANNY_VISP_BACKEND:
     name = "visp-backend";
     break;
-  case vpCannyBackendType::CANNY_COUNT_BACKEND:
+  case CANNY_COUNT_BACKEND:
   default:
     return "unknown-backend";
   }
@@ -90,9 +90,9 @@ std::string vpImageFilter::vpCannyBackendTypeToString(const vpImageFilter::vpCan
  */
 vpImageFilter::vpCannyBackendType vpImageFilter::vpCannyBackendTypeFromString(const std::string &name)
 {
-  vpCannyBackendType type(vpCannyBackendType::CANNY_COUNT_BACKEND);
+  vpCannyBackendType type(CANNY_COUNT_BACKEND);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
-  unsigned int count = static_cast<unsigned int>(vpCannyBackendType::CANNY_COUNT_BACKEND);
+  unsigned int count = static_cast<unsigned int>(CANNY_COUNT_BACKEND);
   bool notFound = true;
   unsigned int i = 0;
   while ((i < count) && notFound) {
@@ -118,7 +118,7 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeList(const std::string
                                                                const std::string &suf)
 {
   std::string list(pref);
-  for (unsigned int i = 0; i < (vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING - 1); ++i) {
+  for (unsigned int i = 0; i < (CANNY_COUNT_FILTERING - 1); ++i) {
     vpCannyFilteringAndGradientType type = static_cast<vpCannyFilteringAndGradientType>(i);
     list += vpCannyFilteringAndGradientTypeToString(type);
     list += sep;
@@ -139,13 +139,13 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeToString(const vpImage
 {
   std::string name;
   switch (type) {
-  case vpCannyFilteringAndGradientType::CANNY_GBLUR_SOBEL_FILTERING:
+  case CANNY_GBLUR_SOBEL_FILTERING:
     name = "gaussianblur+sobel-filtering";
     break;
-  case vpCannyFilteringAndGradientType::CANNY_GBLUR_SCHARR_FILTERING:
+  case CANNY_GBLUR_SCHARR_FILTERING:
     name = "gaussianblur+scharr-filtering";
     break;
-  case vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING:
+  case CANNY_COUNT_FILTERING:
   default:
     return "unknown-filtering";
   }
@@ -160,9 +160,9 @@ std::string vpImageFilter::vpCannyFilteringAndGradientTypeToString(const vpImage
  */
 vpImageFilter::vpCannyFilteringAndGradientType vpImageFilter::vpCannyFilteringAndGradientTypeFromString(const std::string &name)
 {
-  vpCannyFilteringAndGradientType type(vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING);
+  vpCannyFilteringAndGradientType type(CANNY_COUNT_FILTERING);
   std::string nameLowerCase = vpIoTools::toLowerCase(name);
-  unsigned int count = static_cast<unsigned int>(vpCannyFilteringAndGradientType::CANNY_COUNT_FILTERING);
+  unsigned int count = static_cast<unsigned int>(CANNY_COUNT_FILTERING);
   bool notFound = true;
   unsigned int i = 0;
   while ((i < count) && notFound) {
@@ -325,8 +325,8 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
   for (unsigned int i = 0; i < heightI; i++) {
     for (unsigned int j = 0; j < stop1J; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderR(I, i, j, filter, size));
         dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXLeftBorderG(I, i, j, filter, size));
@@ -335,8 +335,8 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
     }
     for (unsigned int j = stop1J; j < stop2J; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXR(I, i, j, filter, size));
         dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXG(I, i, j, filter, size));
@@ -345,8 +345,8 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
     }
     for (unsigned int j = stop2J; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIx[i][j].R = static_cast<unsigned char>(vpImageFilter::filterXRightBorderR(I, i, j, filter, size));
         dIx[i][j].G = static_cast<unsigned char>(vpImageFilter::filterXRightBorderG(I, i, j, filter, size));
@@ -387,8 +387,8 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
   for (unsigned int i = 0; i < stop1I; ++i) {
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYTopBorderR(I, i, j, filter, size));
         dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYTopBorderG(I, i, j, filter, size));
@@ -399,8 +399,8 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
   for (unsigned int i = stop1I; i < stop2I; ++i) {
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYR(I, i, j, filter, size));
         dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYG(I, i, j, filter, size));
@@ -411,8 +411,8 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
   for (unsigned int i = stop2I; i < heightI; ++i) {
     for (unsigned int j = 0; j < widthI; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
-      // pixels for which the mask is true otherwise
-      bool computeVal = ((p_mask == nullptr) ? true : (*p_mask)[i][j]);
+            // pixels for which the mask is true otherwise
+      bool computeVal = checkBooleanMask(p_mask, i, j);
       if (computeVal) {
         dIy[i][j].R = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderR(I, i, j, filter, size));
         dIy[i][j].G = static_cast<unsigned char>(vpImageFilter::filterYBottomBorderG(I, i, j, filter, size));
@@ -438,20 +438,20 @@ template
 void vpImageFilter::gaussianBlur<double, double>(const vpImage<double> &I, vpImage<double> &GI, unsigned int size, double sigma, bool normalize, const vpImage<bool> *p_mask);
 /**
  * \endcond
-*/
-
-/*!
-  Apply a Gaussian blur to RGB color image.
-  \param[in] I : Input image.
-  \param[out] GI : Filtered image.
-  \param[in] size : Filter size. This value should be odd.
-  \param[in] sigma : Gaussian standard deviation. If it is equal to zero or
-  negative, it is computed from filter size as sigma = (size-1)/6.
-  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not.
-  \param[in] p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
-
-  \sa getGaussianKernel() to know which kernel is used.
  */
+
+ /*!
+   Apply a Gaussian blur to RGB color image.
+   \param[in] I : Input image.
+   \param[out] GI : Filtered image.
+   \param[in] size : Filter size. This value should be odd.
+   \param[in] sigma : Gaussian standard deviation. If it is equal to zero or
+   negative, it is computed from filter size as sigma = (size-1)/6.
+   \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not.
+   \param[in] p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+
+   \sa getGaussianKernel() to know which kernel is used.
+  */
 void vpImageFilter::gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size, double sigma, bool normalize,
                                  const vpImage<bool> *p_mask)
 {
@@ -545,9 +545,9 @@ void vpImageFilter::getGradYGauss2D<double, double>(const vpImage<double> &I, vp
                                                     const double *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask);
 /**
  * \endcond
-*/
+ */
 
-// Operation for Gaussian pyramid
+ // Operation for Gaussian pyramid
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
   vpImage<unsigned char> GIx;
@@ -752,7 +752,7 @@ float vpImageFilter::computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p
       break;
     }
   }
-  float upperThresh = std::max(bon, 1.f);
+  float upperThresh = std::max<float>(bon, 1.f);
   lowerThresh = lowerThresholdRatio * bon;
   return upperThresh;
 }

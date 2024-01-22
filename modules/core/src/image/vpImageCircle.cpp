@@ -1097,19 +1097,19 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
     float dthetaPos = 0.f;
     if ((sin_theta < 0.f) && (cos_theta > 0.f)) {
       // dTheta <= -1/r sin(theta) && dTheta <= 1/r cos(theta)
-      dthetaPos = std::min(dthetaCosPos, dthetaSinNeg);
+      dthetaPos = std::min<float>(dthetaCosPos, dthetaSinNeg);
     }
     else if ((sin_theta > 0.f) && (cos_theta < 0.f)) {
       // dTheta <= 1/r sin(theta) && dTheta <= -1/r cos(theta)
-      dthetaPos = std::min(dthetaCosNeg, dthetaSinPos);
+      dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinPos);
     }
     else if ((sin_theta < 0.f) && (cos_theta < 0.f)) {
       // dTheta <= -1/r sin(theta) && dTheta <= -1/r cos(theta)
-      dthetaPos = std::min(dthetaCosNeg, dthetaSinNeg);
+      dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinNeg);
     }
     else if ((sin_theta > 0.f) && (cos_theta > 0.f)) {
       // dTheta <= 1/r sin(theta) && dTheta <= 1/r cos(theta)
-      dthetaPos = std::min(dthetaCosPos, dthetaSinPos);
+      dthetaPos = std::min<float>(dthetaCosPos, dthetaSinPos);
     }
     else if (sin_theta == 0.f && cos_theta !=0.f) {
       // dTheta = -1 / r cos(theta) || dTheta = 1 / r cos(theta)
