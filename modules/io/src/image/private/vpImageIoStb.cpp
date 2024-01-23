@@ -152,9 +152,8 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigne
   unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
   assert(comp == req_channels);
 
-  // I = vpImage<unsigned char>(buffer_read, y, x, true);
   I.init(buffer_read, y, x, true);
-  delete[] buffer_read;
+  STBI_FREE(buffer_read);
 }
 
 /*!
@@ -178,12 +177,12 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa>
     vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I_color.bitmap), x, y, flip);
   }
   else {
-    delete[] buffer_read;
+    STBI_FREE(buffer_read);
     std::string message = "Wrong number of channels for the input buffer: " + std::to_string(comp);
     throw(vpImageException(vpImageException::ioError, message));
   }
 
-  delete[] buffer_read;
+  STBI_FREE(buffer_read);
 }
 
 /*!
