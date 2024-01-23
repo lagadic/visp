@@ -46,6 +46,7 @@ file(MAKE_DIRECTORY "${bindings_gen_location}/src")
 set_target_properties(_visp PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 )
+set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
 target_include_directories(_visp PRIVATE include) # Include directory containing custom bindings
 target_include_directories(_visp PRIVATE ${VISP_INCLUDE_DIRS})
