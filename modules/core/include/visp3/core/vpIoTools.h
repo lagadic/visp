@@ -136,17 +136,13 @@ VISP_EXPORT NpyArray npy_load(std::string fname);
 
 template<typename T> std::vector<char> &operator+=(std::vector<char> &lhs, const T rhs)
 {
-//write in little endian
+  //write in little endian
   for (size_t byte = 0; byte < sizeof(T); byte++) {
     char val = *((char *)&rhs+byte);
     lhs.push_back(val);
   }
   return lhs;
 }
-
-//template<> std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs);
-//template<> std::vector<char> &operator+=(std::vector<char> &lhs, const char *rhs);
-
 
 template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const std::string rhs)
 {
@@ -165,6 +161,16 @@ template<> inline std::vector<char> &operator+=(std::vector<char> &lhs, const ch
   return lhs;
 }
 
+/*!
+  Save an array of data (\p data) into the \p fname npy file. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.save.html">numpy.save</a> function.
+  \param[in] fname : Path to the npy file.
+  \param[in] data : Pointer to an array of basic datatype (int, float, double, std::complex<double>, ...).
+  \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
+  \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 template<typename T> void npy_save(std::string fname, const T *data, const std::vector<size_t> shape, std::string mode = "w")
 {
   FILE *fp = NULL;
@@ -173,7 +179,7 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   if (mode == "a") fp = fopen(fname.c_str(), "r+b");
 
   if (fp) {
-      //file exists. we need to append to it. read the header, modify the array size
+    //file exists. we need to append to it. read the header, modify the array size
     size_t word_size;
     bool fortran_order;
     parse_npy_header(fp, word_size, true_data_shape, fortran_order);
@@ -211,9 +217,20 @@ template<typename T> void npy_save(std::string fname, const T *data, const std::
   fclose(fp);
 }
 
+/*!
+  Save the specified \p fname array of data (\p data) into the \p zipname npz file. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.savez.html">numpy.savez</a> function.
+  \param[in] zipname : Path to the npz file.
+  \param[in] fname : Identifier for the corresponding array of data.
+  \param[in] data : Pointer to an array of basic datatype (int, float, double, std::complex<double>, ...).
+  \param[in] shape : Shape of the array, e.g. Nz x Ny x Nx.
+  \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 template<typename T> void npz_save(std::string zipname, std::string fname, const T *data, const std::vector<size_t> &shape, std::string mode = "w")
 {
-    //first, append a .npy to the fname
+  //first, append a .npy to the fname
   fname += ".npy";
 
   //now, on with the show
@@ -225,10 +242,10 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   if (mode == "a") fp = fopen(zipname.c_str(), "r+b");
 
   if (fp) {
-      //zip file exists. we need to add a new npy file to it.
-      //first read the footer. this gives us the offset and size of the global header
-      //then read and store the global header.
-      //below, we will write the the new data at the start of the global header then append the global header and footer below it
+    //zip file exists. we need to add a new npy file to it.
+    //first read the footer. this gives us the offset and size of the global header
+    //then read and store the global header.
+    //below, we will write the the new data at the start of the global header then append the global header and footer below it
     size_t global_header_size;
     parse_zip_footer(fp, nrecs, global_header_size, global_header_offset);
     fseek(fp, global_header_offset, SEEK_SET);
@@ -301,6 +318,15 @@ template<typename T> void npz_save(std::string zipname, std::string fname, const
   fclose(fp);
 }
 
+/*!
+  Save the specified 1-D array of data (\p data) into the \p fname npz file. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.save.html">numpy.save</a> function.
+  \param[in] fname : Path to the npy file.
+  \param[in] data : Pointer to a 1-D array of basic datatype (int, float, double, std::complex<double>, ...).
+  \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 template<typename T> void npy_save(std::string fname, const std::vector<T> data, std::string mode = "w")
 {
   std::vector<size_t> shape;
@@ -308,6 +334,16 @@ template<typename T> void npy_save(std::string fname, const std::vector<T> data,
   npy_save(fname, &data[0], shape, mode);
 }
 
+/*!
+  Save the specified \p fname 1-D array of data (\p data) into the \p zipname npz file. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.savez.html">numpy.savez</a> function.
+  \param[in] zipname : Path to the npz file.
+  \param[in] fname : Identifier for the corresponding array of data.
+  \param[in] data : Pointer to a 1-D array of basic datatype (int, float, double, std::complex<double>, ...).
+  \param[in] mode : Writing mode, i.e. overwrite (w) or append (a) to the file.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 template<typename T> void npz_save(std::string zipname, std::string fname, const std::vector<T> data, std::string mode = "w")
 {
   std::vector<size_t> shape;

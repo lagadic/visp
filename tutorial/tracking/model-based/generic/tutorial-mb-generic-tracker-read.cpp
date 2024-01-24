@@ -169,8 +169,8 @@ int main(int argc, char *argv[])
       }
     }
 
-    vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[pose_size*iter + 3], vec_poses_ptr[pose_size*iter + 4], vec_poses_ptr[pose_size*iter + 5]),
-      vpThetaUVector(vec_poses_ptr[pose_size*iter], vec_poses_ptr[pose_size*iter + 1], vec_poses_ptr[pose_size*iter + 2])
+    vpHomogeneousMatrix cMo(vpTranslationVector(vec_poses_ptr[pose_size*iter], vec_poses_ptr[pose_size*iter + 1], vec_poses_ptr[pose_size*iter + 2]),
+      vpThetaUVector(vec_poses_ptr[pose_size*iter + 3], vec_poses_ptr[pose_size*iter + 4], vec_poses_ptr[pose_size*iter + 5])
     );
 
     if (print_cMo) {

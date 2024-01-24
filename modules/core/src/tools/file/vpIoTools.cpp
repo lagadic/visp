@@ -107,6 +107,8 @@
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
+// See: https://github.com/BinomialLLC/basis_universal/blob/master/encoder/basisu_miniz.h
+// Apache License, Version 2.0
 #include "basisu_miniz.h"
 
 using namespace buminiz;
@@ -158,9 +160,9 @@ char visp::cnpy::map_type(const std::type_info &t)
 
 void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
-//std::string magic_string(buffer,6);
-// uint8_t major_version = *reinterpret_cast<uint8_t*>(buffer+6);
-// uint8_t minor_version = *reinterpret_cast<uint8_t*>(buffer+7);
+  //std::string magic_string(buffer,6);
+  // uint8_t major_version = *reinterpret_cast<uint8_t*>(buffer+6);
+  // uint8_t minor_version = *reinterpret_cast<uint8_t*>(buffer+7);
   uint16_t header_len = *reinterpret_cast<uint16_t *>(buffer+8);
   std::string header(reinterpret_cast<char *>(buffer+9), header_len);
 
@@ -288,7 +290,6 @@ visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
 
 visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t uncompr_bytes)
 {
-
   std::vector<unsigned char> buffer_compr(compr_bytes);
   std::vector<unsigned char> buffer_uncompr(uncompr_bytes);
   size_t nread = fread(&buffer_compr[0], 1, compr_bytes, fp);
@@ -328,6 +329,14 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   return array;
 }
 
+/*!
+  Load the specified \p fname filepath as arrays of data. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
+  \param[in] fname : Path to the npz file.
+  \return A map of arrays data. The key represents the variable name, the value is an array of basic data type.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
@@ -344,7 +353,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
     if (headerres != 30)
       throw std::runtime_error("npz_load: failed fread");
 
-  //if we've reached the global header, stop reading
+    //if we've reached the global header, stop reading
     if (local_header[2] != 0x03 || local_header[3] != 0x04) break;
 
     //read in the variable name
@@ -354,7 +363,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
     if (vname_res != name_len)
       throw std::runtime_error("npz_load: failed fread");
 
-  //erase the lagging .npy
+    //erase the lagging .npy
     varname.erase(varname.end()-4, varname.end());
 
     //read in the extra field
@@ -378,6 +387,15 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   return arrays;
 }
 
+/*!
+  Load the specified \p varname array of data from the \p fname npz file. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
+  \param[in] fname : Path to the npz file.
+  \param[in] varname : Identifier for the requested array of data.
+  \return An array of basic data type.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname)
 {
   FILE *fp = fopen(fname.c_str(), "rb");
@@ -427,6 +445,14 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
   throw std::runtime_error("npz_load: Variable name "+varname+" not found in "+fname);
 }
 
+/*!
+  Load the specified npy \p fname filepath as one array of data. This function is similar to the
+  <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
+  \param[in] fname : Path to the npy file.
+  \return An array of basic data type.
+  \warning This function has only been tested on little endian platform.
+  \note Original library: <a href="https://github.com/rogersce/cnpy">cnpy</a> with MIT license.
+ */
 visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 {
 

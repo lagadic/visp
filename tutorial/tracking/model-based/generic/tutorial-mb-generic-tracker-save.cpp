@@ -9,7 +9,7 @@ std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
 {
   vpThetaUVector tu = cMo.getThetaUVector();
   vpTranslationVector t = cMo.getTranslationVector();
-  std::vector<double> vec { tu[0], tu[1], tu[2], t[0], t[1], t[2] };
+  std::vector<double> vec { t[0], t[1], t[2], tu[0], tu[1], tu[2] };
 
   return vec;
 }
@@ -196,6 +196,7 @@ int main(int argc, char **argv)
   visp::cnpy::npz_save(npz_filename, "vec_img_data_size", vec_img_data_size.data(), { vec_img_data_size.size() }, "a");
   visp::cnpy::npz_save(npz_filename, "vec_img", vec_img_data.data(), { vec_img_data.size() }, "a");
   // Show how to save a "multidimensional" array
+  assert(iter == vec_poses.size()/6);
   visp::cnpy::npz_save(npz_filename, "vec_poses", vec_poses.data(), { static_cast<size_t>(iter), 6 }, "a");
 
   visp::cnpy::npz_save(npz_filename, "nb_data", &iter, { 1 }, "a");
