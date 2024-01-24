@@ -622,7 +622,7 @@ VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" O
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_NLOHMANN_JSON  nlohmann_json QUIET "Include nlohmann json support" "" ON)
+VP_OPTION(USE_NLOHMANN_JSON  nlohmann_json QUIET "Include nlohmann json support" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
 
 # ----------------------------------------------------------------------------
 # Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
