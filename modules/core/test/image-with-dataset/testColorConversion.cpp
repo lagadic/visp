@@ -885,7 +885,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
 }
 #endif
 
-static void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
+#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
+void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
 {
   for (unsigned int i = 0; i < I_Bayer_8U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_Bayer_8U.getWidth(); j++) {
@@ -902,6 +903,7 @@ static void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bay
     }
   }
 }
+#endif
 
 static void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
 {
