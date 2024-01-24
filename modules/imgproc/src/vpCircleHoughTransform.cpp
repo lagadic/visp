@@ -28,14 +28,12 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <limits>
-
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageMorphology.h>
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
 namespace
 {
 // Sorting by decreasing probabilities
@@ -77,6 +75,18 @@ float computeEffectiveRadius(const float &votes, const float &weigthedSumRadius)
     r_effective = weigthedSumRadius / votes;
   }
   return r_effective;
+}
+
+void
+scaleFilter(vpArray2D<float> &filter, const float &scale)
+{
+  unsigned int nbRows = filter.getRows();
+  unsigned int nbCols = filter.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      filter[r][c] = filter[r][c] * scale;
+    }
+  }
 }
 };
 #endif
@@ -158,20 +168,20 @@ vpCircleHoughTransform::initGaussianFilters()
 }
 
 void
-scaleFilter(vpArray2D<float> &filter, const float &scale)
-{
-  unsigned int nbRows = filter.getRows();
-  unsigned int nbCols = filter.getCols();
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      filter[r][c] = filter[r][c] * scale;
-    }
-  }
-}
-
-void
 vpCircleHoughTransform::initGradientFilters()
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) // Check if cxx11 or higher
+  // Helper to apply the scale to the raw values of the filters
+  auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
+    const unsigned int nbRows = filter.getRows();
+    const unsigned int nbCols = filter.getCols();
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }};
+#endif
+
   if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {
     throw vpException(vpException::badValue, "Gradient filters Kernel size should be odd.");
   }
@@ -235,7 +245,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-// Sorting by decreasing probabilities
+  // Sorting by decreasing probabilities
   auto hasBetterProba
     = [](std::pair<size_t, float> a, std::pair<size_t, float> b) {
     return (a.second > b.second);
@@ -364,12 +374,9 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
     mask = std::nullopt;
     opt_votingPoints = std::nullopt;
-#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#else
     *mask = nullptr;
     *opt_votingPoints = nullptr;
-#else
-    *mask = NULL;
-    *opt_votingPoints = NULL;
 #endif
     return;
   }
@@ -973,6 +980,7 @@ vpCircleHoughTransform::computeCircleCandidates()
       }
     }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     // Lambda to compute the effective radius (i.e. barycenter) of each radius bin
     auto computeEffectiveRadius = [](const float &votes, const float &weigthedSumRadius) {
       float r_effective = -1.f;
@@ -981,6 +989,7 @@ vpCircleHoughTransform::computeCircleCandidates()
       }
       return r_effective;
       };
+#endif
 
     // Merging similar candidates
     std::vector<float> v_r_effective; // Vector of radius of each candidate after the merge step

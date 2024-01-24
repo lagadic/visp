@@ -34,6 +34,24 @@
 
 #include <visp3/core/vpImageConvert.h>
 
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98) // Check if cxx98
+namespace
+{
+// Helper to apply the scale to the raw values of the filters
+template <typename FilterType>
+static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+{
+  const unsigned int nbRows = filter.getRows();
+  const unsigned int nbCols = filter.getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      filter[r][c] = filter[r][c] * scale;
+    }
+  }
+}
+};
+#endif
+
 // // Initialization methods
 
 vpCannyEdgeDetection::vpCannyEdgeDetection()
@@ -53,9 +71,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection()
 }
 
 vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const float &gaussianStdev
-                        , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
-                        , const float &lowerThresholdRatio, const float &upperThresholdRatio
-                        , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
+                                           , const unsigned int &sobelAperture, const float &lowerThreshold, const float &upperThreshold
+                                           , const float &lowerThresholdRatio, const float &upperThresholdRatio
+                                           , const vpImageFilter::vpCannyFilteringAndGradientType &filteringType
 )
   : m_filteringAndGradientType(filteringType)
   , m_gaussianKernelSize(gaussianKernelSize)
@@ -111,7 +129,7 @@ vpCannyEdgeDetection::initGaussianFilters()
   if ((m_gaussianKernelSize % 2) == 0) {
     throw(vpException(vpException::badValue, "The Gaussian kernel size should be odd"));
   }
-  m_fg.resize(1, (m_gaussianKernelSize + 1)/2);
+  m_fg.resize(1, (m_gaussianKernelSize + 1) / 2);
   vpImageFilter::getGaussianKernel(m_fg.data, m_gaussianKernelSize, m_gaussianStdev, true);
 }
 
@@ -124,24 +142,26 @@ vpCannyEdgeDetection::initGradientFilters()
   m_gradientFilterX.resize(m_gradientFilterKernelSize, m_gradientFilterKernelSize);
   m_gradientFilterY.resize(m_gradientFilterKernelSize, m_gradientFilterKernelSize);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
     for (unsigned int r = 0; r < filter.getRows(); r++) {
       for (unsigned int c = 0; c < filter.getCols(); c++) {
         filter[r][c] = filter[r][c] * scale;
       }
     }};
+#endif
 
   float scaleX = 1.f;
   float scaleY = 1.f;
 
   if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING) {
-    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize  - 1)/2);
-    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize  - 1)/2);
+    scaleX = vpImageFilter::getSobelKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / 2);
+    scaleY = vpImageFilter::getSobelKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / 2);
   }
   else if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Compute the Scharr filters
-    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize  - 1)/2);
-    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize  - 1)/2);
+    scaleX = vpImageFilter::getScharrKernelX(m_gradientFilterX.data, (m_gradientFilterKernelSize - 1) / 2);
+    scaleY = vpImageFilter::getScharrKernelY(m_gradientFilterY.data, (m_gradientFilterKernelSize - 1) / 2);
   }
   else {
     std::string errMsg = "[vpCannyEdgeDetection::initGradientFilters] Error: gradient filtering method \"";
@@ -215,7 +235,7 @@ void
 vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsigned char> &I)
 {
   if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
-     || m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+      || m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
@@ -248,9 +268,9 @@ vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsig
  */
 void
 getInterpolationWeightsAndOffsets(const float &gradientOrientation,
-                 float &alpha, float &beta,
-                 int &dRowGradAlpha, int &dRowGradBeta,
-                 int &dColGradAlpha, int &dColGradBeta
+                                  float &alpha, float &beta,
+                                  int &dRowGradAlpha, int &dRowGradBeta,
+                                  int &dColGradAlpha, int &dColGradBeta
 )
 {
   float thetaMin = 0.f;
@@ -304,11 +324,11 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
   float grad = 0.;
   int nbRows = dIx.getRows();
   int nbCols = dIx.getCols();
-  if (row  >= 0
-    && row  < nbRows
-    && col  >= 0
-    && col  < nbCols
-    ) {
+  if (row >= 0
+      && row < nbRows
+      && col >= 0
+      && col < nbCols
+      ) {
     float dx = dIx[row][col];
     float dy = dIy[row][col];
     grad = std::abs(dx) + std::abs(dy);
@@ -442,9 +462,9 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
 
       // Checking if we are still looking for an edge in the limit of the image
       if ((idRow < 0 || idRow >= nbRows)
-        || (idCol < 0 || idCol >= nbCols)
-        || (dr == 0 && dc == 0)
-        ) {
+          || (idCol < 0 || idCol >= nbCols)
+          || (dr == 0 && dc == 0)
+          ) {
         continue;
       }
 

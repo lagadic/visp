@@ -59,24 +59,6 @@
 #include <opencv2/imgproc/imgproc_c.h>
 #endif
 
-#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
-namespace
-{
-// Helper to apply the scale to the raw values of the filters
-template <typename FilterType>
-void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
-{
-  const unsigned int nbRows = filter.getRows();
-  const unsigned int nbCols = filter.getCols();
-  for (unsigned int r = 0; r < nbRows; ++r) {
-    for (unsigned int c = 0; c < nbCols; ++c) {
-      filter[r][c] = filter[r][c] * scale;
-    }
-  }
-}
-};
-#endif
-
 /*!
  * \class vpImageFilter
  *
@@ -122,7 +104,7 @@ private:
   static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
   {
     bool computeVal = true;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     if (p_mask != nullptr)
 #else
     if (p_mask != NULL)
@@ -132,6 +114,21 @@ private:
     }
     return computeVal;
   }
+
+#if ((__cplusplus == 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+  // Helper to apply the scale to the raw values of the filters
+  template <typename FilterType>
+  static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+  {
+    const unsigned int nbRows = filter.getRows();
+    const unsigned int nbCols = filter.getCols();
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }
+  }
+#endif
 
 public:
   //! Canny filter backends for the edge detection operations
@@ -251,7 +248,7 @@ public:
         vpArray2D<FilterType> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
         vpArray2D<FilterType> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
         // Helper to apply the scale to the raw values of the filters
         auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
           const unsigned int nbRows = filter.getRows();
@@ -313,7 +310,7 @@ public:
     }
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template <typename FilterType>
   inline static void computePartialDerivatives(const vpImage<vpRGBa> &I,
                                                vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
@@ -618,7 +615,7 @@ public:
     }
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template <typename FilterType>
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;
 #else
@@ -701,7 +698,7 @@ public:
     }
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template<typename FilterType>
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M, bool convolve) = delete;
 

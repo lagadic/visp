@@ -31,7 +31,7 @@
 #ifndef _vpCircleHoughTransform_h_
 #define _vpCircleHoughTransform_h_
 
- // System includes
+// System includes
 #include <utility>
 #include <vector>
 
@@ -40,16 +40,11 @@
 #include <visp3/core/vpCannyEdgeDetection.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageCircle.h>
-#include <visp3/core/vpImageDraw.h>
-#include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMatrix.h>
-#include <visp3/core/vpRect.h>
 
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-//! json namespace shortcut
 using json = nlohmann::json;
 #endif
 
@@ -115,7 +110,7 @@ public:
     float m_circlePerfectness; /*!< The threshold for the colinearity between the gradient of a point
                                     and the radius it would form with a center candidate to be able to vote.
                                     The formula to get the equivalent angle is: `angle = acos(circle_perfectness)`. */
-    float m_circleVisibilityRatioThresh; /*!< Visibility ratio threshold: minimun ratio of the circle must be visible in order to keep a circle candidate.*/
+    float m_circleVisibilityRatioThresh; /*!< Visibility ratio threshold: minimum ratio of the circle must be visible in order to keep a circle candidate.*/
     bool m_recordVotingPoints; /*!< If true, the edge-map points having voted for each circle will be stored.*/
 
     // // Circle candidates merging attributes
@@ -192,7 +187,7 @@ public:
      * \param[in] expectedNbCenters Expected number of centers in the image. If the number is negative, all the centers
      * are kept. Otherwise, maximum up to this number of centers are kept.
      * \param[in] recordVotingPoints If true, the edge-map points having voted for each circle will be stored.
-     * \param[in] visibilityRatioThresh Visibility threshold: which minimun ratio of the circle must be visible in order to keep a circle candidate.
+     * \param[in] visibilityRatioThresh Visibility threshold: which minimum ratio of the circle must be visible in order to keep a circle candidate.
      */
     vpCircleHoughTransformParameters(
       const int &gaussianKernelSize
@@ -702,7 +697,6 @@ public:
    */
   virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /**
    * \brief Perform Circle Hough Transform to detect the circles in in a gray-scale image.
    * Get only the \b nbCircles circles having the greatest number of votes.
@@ -714,8 +708,6 @@ public:
    * of votes detected in the image.
    */
   virtual std::vector<vpImageCircle> detect(const vpImage<unsigned char> &I, const int &nbCircles);
-#endif
-//@}
 
   /*!
    * \brief Compute the mask containing pixels that voted for the \b detections.
@@ -726,12 +718,10 @@ public:
    */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                std::optional< vpImage<bool> > &mask,
-                std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
+                         std::optional< vpImage<bool> > &mask, std::optional<std::vector<std::vector<std::pair<unsigned int, unsigned int>>>> &opt_votingPoints) const;
 #else
   void computeVotingMask(const vpImage<unsigned char> &I, const std::vector<vpImageCircle> &detections,
-                         vpImage<bool> **mask,
-                         std::vector<std::vector<std::pair<unsigned int, unsigned int>>> **opt_votingPoints) const;
+                         vpImage<bool> **mask, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > **opt_votingPoints) const;
 #endif
 
 /** @name  Configuration from files */
@@ -1253,7 +1243,7 @@ protected:
    * \param[out] votingPoints List of edge-map points having voted of the circle candidates.
    */
   virtual void mergeCandidates(std::vector<vpImageCircle> &circleCandidates, std::vector<unsigned int> &circleCandidatesVotes,
-                               std::vector<float> &circleCandidatesProba, std::vector<std::vector<std::pair<unsigned int, unsigned int>>> &votingPoints);
+                               std::vector<float> &circleCandidatesProba, std::vector<std::vector<std::pair<unsigned int, unsigned int> > > &votingPoints);
 
   vpCircleHoughTransformParameters m_algoParams; /*!< Attributes containing all the algorithm parameters.*/
   // // Gaussian smoothing attributes
@@ -1279,12 +1269,12 @@ protected:
   std::vector<vpImageCircle> m_circleCandidates;        /*!< List of the candidate circles.*/
   std::vector<float> m_circleCandidatesProbabilities; /*!< Probabilities of each candidate circle that is kept.*/
   std::vector<unsigned int> m_circleCandidatesVotes; /*!< Number of pixels voting for each candidate circle that is kept.*/
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> m_circleCandidatesVotingPoints; /*!< Points that voted for each circle candidate.*/
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > m_circleCandidatesVotingPoints; /*!< Points that voted for each circle candidate.*/
 
   // // Circle candidates merging attributes
   std::vector<vpImageCircle> m_finalCircles; /*!< List of the final circles, i.e. the ones resulting from the merge of the circle candidates.*/
   std::vector<float> m_finalCirclesProbabilities; /*!< Probabilities of each final circle, i.e. resulting from the merge of the circle candidates.*/
   std::vector<unsigned int> m_finalCircleVotes; /*!< Number of votes for the final circles.*/
-  std::vector<std::vector<std::pair<unsigned int, unsigned int>>> m_finalCirclesVotingPoints; /*!< Points that voted for each final circle.*/
+  std::vector<std::vector<std::pair<unsigned int, unsigned int> > > m_finalCirclesVotingPoints; /*!< Points that voted for each final circle.*/
 };
 #endif
