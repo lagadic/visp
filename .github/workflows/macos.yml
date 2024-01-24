@@ -52,8 +52,10 @@ jobs:
       #   brew link --overwrite python@3.12
       if: matrix.os == 'macos-13'
       run: |
-        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
-        brew link --overwrite python@3.12
+        brew update
+        brew upgrade
+        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+        brew install opencv
 
     - name: Install java dependencies
       run: |
