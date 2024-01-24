@@ -53,6 +53,7 @@ jobs:
       if: matrix.os == 'macos-13'
       run: |
         brew update
+        sudo rm /usr/local/bin/2to3-3.12
         brew upgrade
         brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
         brew install opencv
