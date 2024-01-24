@@ -47,8 +47,18 @@ find_package(VISP REQUIRED)
 # Set pip args
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
   set(_pip_args)
+  set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE PARENT_SCOPE)
 else()
-  set(_pip_args "--user")
+  # First solution: raise an error when cmake will call pip install
+  # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
+  message(WARNING "\
+  The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+  pip packages should not be installed system-wide!
+  Python bindings targets will be deactivated!
+  To reenable them, install conda or virtualenv, delete the CMakeCache file then rerun cmake when inside the virtual environment.
+  ")
+  set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE PARENT_SCOPE)
+  return()
 endif()
 
 # Step 1: Generate configuration file
