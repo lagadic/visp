@@ -34,16 +34,17 @@
 #ifndef _vpImageFilter_h_
 #define _vpImageFilter_h_
 
-/*!
- * \file vpImageFilter.h
- * \brief  Various image filter, convolution, etc...
- */
+ /*!
+  * \file vpImageFilter.h
+  * \brief  Various image filter, convolution, etc...
+  */
 
 #include <fstream>
 #include <iostream>
 #include <math.h>
 #include <string.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImage.h>
@@ -67,6 +68,68 @@
  */
 class VISP_EXPORT vpImageFilter
 {
+private:
+  /**
+   * \brief Resize the image \b I to the desired size and, if \b p_mask is different from nullptr, initialize
+   * \b I with 0s.
+   *
+   * @tparam ImageType Any numerical type (int, float, ...)
+   * @param p_mask If different from nullptr, a boolean mask that tells which pixels must be computed.
+   * @param height The desired height.
+   * @param width The desired width.
+   * @param I The image that must be resized and potentially initialized.
+   */
+  template<typename ImageType>
+  static void resizeAndInitializeIfNeeded(const vpImage<bool> *p_mask, const unsigned int height, const unsigned int width, vpImage<ImageType> &I)
+  {
+    if (p_mask == nullptr) {
+      // Just need to resize the output image, values will be computed and overwrite what is inside the image
+      I.resize(height, width);
+    }
+    else {
+      // Need to reset the image because some points will not be computed
+      I.resize(height, width, static_cast<ImageType>(0.));
+    }
+  }
+
+/**
+   * \brief Indicates if the boolean mask is true at the desired coordinates.
+   *
+   * \param[in] p_mask Pointer towards the boolean mask if any or nullptr.
+   * \param[in] r The row index in the boolean mask.
+   * \param[in] c The column index in the boolean mask.
+   * \return true If the boolean mask is true at the desired coordinates or if \b p_mask is equal to \b nullptr.
+   * \return false False otherwise.
+   */
+  static bool checkBooleanMask(const vpImage<bool> *p_mask, const unsigned int &r, const unsigned int &c)
+  {
+    bool computeVal = true;
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    if (p_mask != nullptr)
+#else
+    if (p_mask != NULL)
+#endif
+    {
+      computeVal = (*p_mask)[r][c];
+    }
+    return computeVal;
+  }
+
+#if ((__cplusplus == 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+  // Helper to apply the scale to the raw values of the filters
+  template <typename FilterType>
+  static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
+  {
+    const unsigned int nbRows = filter.getRows();
+    const unsigned int nbCols = filter.getCols();
+    for (unsigned int r = 0; r < nbRows; ++r) {
+      for (unsigned int c = 0; c < nbCols; ++c) {
+        filter[r][c] = filter[r][c] * scale;
+      }
+    }
+  }
+#endif
+
 public:
   //! Canny filter backends for the edge detection operations
   typedef enum vpCannyBackendType
@@ -77,7 +140,7 @@ public:
   } vpCannyBackendType;
 
   static std::string vpCannyBackendTypeList(const std::string &pref = "<", const std::string &sep = " , ",
-                                                         const std::string &suf = ">");
+                                            const std::string &suf = ">");
 
   static std::string vpCannyBackendTypeToString(const vpCannyBackendType &type);
 
@@ -109,7 +172,8 @@ public:
                     const float &lowerThresholdCanny, const float &higherThresholdCanny,
                     const unsigned int &apertureSobel, const float &gaussianStdev, const float &lowerThresholdRatio,
                     const float &upperThresholdRatio, const bool &normalizeGradients,
-                    const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps);
+                    const vpCannyBackendType &cannyBackend, const vpCannyFilteringAndGradientType &cannyFilteringSteps,
+                    const vpImage<bool> *p_mask = nullptr);
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
   static float computeCannyThreshold(const cv::Mat &cv_I, const cv::Mat *p_cv_dIx, const cv::Mat *p_cv_dIy,
@@ -144,22 +208,24 @@ public:
    * \param[in] apertureGradient The size of the kernel of the gradient filter.
    * \param[in] filteringType The type of filters to apply to compute the gradients.
    * \param[in] backend The type of backend to use to compute the gradients.
+   * \param[in] p_mask If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND)
+                                               vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
+                                               const unsigned int &apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND,
+                                               const vpImage<bool> *p_mask = nullptr)
   {
     if (backend == CANNY_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
       cv::Mat cv_I, cv_dIx, cv_dIy;
       vpImageConvert::convert(I, cv_I);
       computePartialDerivatives(cv_I, cv_dIx, cv_dIy, computeDx, computeDy, normalize, gaussianKernelSize,
-          gaussianStdev, apertureGradient, filteringType);
+                                gaussianStdev, apertureGradient, filteringType);
       if (computeDx) {
         vpImageConvert::convert(cv_dIx, dIx);
       }
@@ -177,18 +243,22 @@ public:
 
         // Computing the Gaussian blur + gradients of the image
         vpImage<FilterType> Iblur;
-        vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev);
+        vpImageFilter::gaussianBlur(I, Iblur, gaussianKernelSize, gaussianStdev, true, p_mask);
 
         vpArray2D<FilterType> gradientFilterX(apertureGradient, apertureGradient); // Gradient filter along the X-axis
         vpArray2D<FilterType> gradientFilterY(apertureGradient, apertureGradient); // Gradient filter along the Y-axis
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
         // Helper to apply the scale to the raw values of the filters
         auto scaleFilter = [](vpArray2D<FilterType> &filter, const float &scale) {
-          for (unsigned int r = 0; r < filter.getRows(); r++) {
-            for (unsigned int c = 0; c < filter.getCols(); c++) {
+          const unsigned int nbRows = filter.getRows();
+          const unsigned int nbCols = filter.getCols();
+          for (unsigned int r = 0; r < nbRows; ++r) {
+            for (unsigned int c = 0; c < nbCols; ++c) {
               filter[r][c] = filter[r][c] * scale;
             }
           }};
+#endif
 
         // Scales to apply to the filters to get a normalized gradient filter that gives a gradient
         // between 0 and 255 for an vpImage<uchar>
@@ -197,18 +267,18 @@ public:
 
         if (filteringType == CANNY_GBLUR_SOBEL_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1)/2));
+            scaleX = static_cast<float>(vpImageFilter::getSobelKernelX(gradientFilterX.data, (apertureGradient - 1) / 2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1)/2));
+            scaleY = static_cast<float>(vpImageFilter::getSobelKernelY(gradientFilterY.data, (apertureGradient - 1) / 2));
           }
         }
         else if (filteringType == CANNY_GBLUR_SCHARR_FILTERING) {
           if (computeDx) {
-            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1)/2));
+            scaleX = static_cast<float>(vpImageFilter::getScharrKernelX(gradientFilterX.data, (apertureGradient - 1) / 2));
           }
           if (computeDy) {
-            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1)/2));
+            scaleY = static_cast<float>(vpImageFilter::getScharrKernelY(gradientFilterY.data, (apertureGradient - 1) / 2));
           }
         }
 
@@ -224,11 +294,11 @@ public:
 
         // Apply the gradient filters to get the gradients
         if (computeDx) {
-          vpImageFilter::filter(Iblur, dIx, gradientFilterX);
+          vpImageFilter::filter(Iblur, dIx, gradientFilterX, true, p_mask);
         }
 
         if (computeDy) {
-          vpImageFilter::filter(Iblur, dIy, gradientFilterY);
+          vpImageFilter::filter(Iblur, dIy, gradientFilterY, true, p_mask);
         }
       }
       else {
@@ -240,32 +310,61 @@ public:
     }
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template <typename FilterType>
   inline static void computePartialDerivatives(const vpImage<vpRGBa> &I,
-                      vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+                                               vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
+                                               const unsigned int &apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr) = delete;
 
   template <typename ImageType>
   inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<unsigned char> &dIx, vpImage<unsigned char> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int &gaussianKernelSize = 5, const unsigned char &gaussianStdev = 2.f,
-                      const unsigned int &apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+                                               vpImage<unsigned char> &dIx, vpImage<unsigned char> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int &gaussianKernelSize = 5, const unsigned char &gaussianStdev = 2.f,
+                                               const unsigned int &apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr) = delete;
 
   template <typename ImageType>
   inline static void computePartialDerivatives(const vpImage<ImageType> &I,
-                      vpImage<vpRGBa> &dIx, vpImage<vpRGBa> &dIy,
-                      const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
-                      const unsigned int gaussianKernelSize = 5, const vpRGBa gaussianStdev = vpRGBa(),
-                      const unsigned int apertureGradient = 3,
-                      const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
-                      const vpCannyBackendType &backend = CANNY_VISP_BACKEND) = delete;
+                                               vpImage<vpRGBa> &dIx, vpImage<vpRGBa> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int gaussianKernelSize = 5, const vpRGBa gaussianStdev = vpRGBa(),
+                                               const unsigned int apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr) = delete;
+#else
+  template <typename FilterType>
+  inline static void computePartialDerivatives(const vpImage<vpRGBa> &I,
+                                               vpImage<FilterType> &dIx, vpImage<FilterType> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int &gaussianKernelSize = 5, const FilterType &gaussianStdev = 2.f,
+                                               const unsigned int &apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr);
+
+  template <typename ImageType>
+  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
+                                               vpImage<unsigned char> &dIx, vpImage<unsigned char> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int &gaussianKernelSize = 5, const unsigned char &gaussianStdev = 2.f,
+                                               const unsigned int &apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr);
+
+  template <typename ImageType>
+  inline static void computePartialDerivatives(const vpImage<ImageType> &I,
+                                               vpImage<vpRGBa> &dIx, vpImage<vpRGBa> &dIy,
+                                               const bool &computeDx = true, const bool &computeDy = true, const bool &normalize = true,
+                                               const unsigned int gaussianKernelSize = 5, const vpRGBa gaussianStdev = vpRGBa(),
+                                               const unsigned int apertureGradient = 3,
+                                               const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                               const vpCannyBackendType &backend = CANNY_VISP_BACKEND, const vpImage<bool> *p_mask = nullptr);
+#endif
 
   /**
    * \brief Compute the upper Canny edge filter threshold, using Gaussian blur + Sobel or + Scharr operators to compute
@@ -284,47 +383,57 @@ public:
    * the upper threshold.
    * \param[in] filteringType : The gradient filter to apply to compute the gradient, if \b p_dIx and \b p_dIy are
    * nullptr.
+   * \param[in] p_mask : If different from  \b nullptr , only the pixels for which \b p_mask is true will be considered.
    * \return The upper Canny edge filter threshold.
    */
   template<typename OutType>
   inline static float computeCannyThreshold(const vpImage<unsigned char> &I, float &lowerThresh,
-                                     const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
-                                     const unsigned int &gaussianKernelSize = 5,
-                                     const OutType &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
-                                     const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
-                                     const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING)
+                                            const vpImage<OutType> *p_dIx = nullptr, const vpImage<OutType> *p_dIy = nullptr,
+                                            const unsigned int &gaussianKernelSize = 5,
+                                            const OutType &gaussianStdev = 2.f, const unsigned int &apertureGradient = 3,
+                                            const float &lowerThresholdRatio = 0.6, const float &upperThresholdRatio = 0.8,
+                                            const vpCannyFilteringAndGradientType &filteringType = CANNY_GBLUR_SOBEL_FILTERING,
+                                            const vpImage<bool> *p_mask = nullptr)
   {
-    unsigned int w = static_cast<unsigned int>(I.getWidth());
-    unsigned int h = static_cast<unsigned int>(I.getHeight());
+    const unsigned int w = I.getWidth();
+    const unsigned int h = I.getHeight();
 
     vpImage<unsigned char> dI(h, w);
     vpImage<OutType> dIx(h, w), dIy(h, w);
-    if (p_dIx != nullptr && p_dIy != nullptr) {
+    if ((p_dIx != nullptr) && (p_dIy != nullptr)) {
       dIx = *p_dIx;
       dIy = *p_dIy;
     }
     else {
       computePartialDerivatives(I, dIx, dIy, true, true, true, gaussianKernelSize, gaussianStdev,
-                                apertureGradient, filteringType);
+                                apertureGradient, filteringType, vpImageFilter::CANNY_VISP_BACKEND, p_mask);
     }
 
     // Computing the absolute gradient of the image G = |dIx| + |dIy|
-    for (unsigned int r = 0; r < h; r++) {
-      for (unsigned int c = 0; c < w; c++) {
-        float dx = static_cast<float>(dIx[r][c]);
-        float dy = static_cast<float>(dIy[r][c]);
-        float gradient = std::abs(dx) + std::abs(dy);
-        float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
-        dI[r][c] = static_cast<unsigned char>(gradientClamped);
+    for (unsigned int r = 0; r < h; ++r) {
+      for (unsigned int c = 0; c < w; ++c) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, r, c);
+
+        if (computeVal) {
+          float dx = static_cast<float>(dIx[r][c]);
+          float dy = static_cast<float>(dIy[r][c]);
+          float gradient = std::abs(dx) + std::abs(dy);
+          float gradientClamped = std::min<float>(gradient, static_cast<float>(std::numeric_limits<unsigned char>::max()));
+          dI[r][c] = static_cast<unsigned char>(gradientClamped);
+        }
       }
     }
 
     // Compute the histogram
     vpHistogram hist;
+    hist.setMask(p_mask);
     const unsigned int nbBins = 256;
     hist.calculate(dI, nbBins);
+    float totalNbPixels = static_cast<float>(hist.getTotal());
     float accu = 0;
-    float t = (float)(upperThresholdRatio * w * h);
+    float t = upperThresholdRatio * totalNbPixels;
     float bon = 0;
     for (unsigned int i = 0; i < nbBins; ++i) {
       float tf = static_cast<float>(hist[i]);
@@ -381,12 +490,13 @@ public:
   template <class ImageType, typename FilterType>
   static FilterType derivativeFilterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
+    const unsigned int stop = (size - 1) / 2;
     unsigned int i;
     FilterType result;
 
     result = 0;
 
-    for (i = 1; i <= ((size - 1) / 2); ++i) {
+    for (i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<FilterType>(I[r][c + i] - I[r][c - i]);
     }
     return result;
@@ -408,87 +518,110 @@ public:
   template <class ImageType, typename FilterType>
   static FilterType derivativeFilterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
+    const unsigned int stop = (size - 1) / 2;
     unsigned int i;
     FilterType result;
 
     result = 0;
 
-    for (i = 1; i <= ((size - 1) / 2); ++i) {
+    for (i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<FilterType>(I[r + i][c] - I[r - i][c]);
     }
     return result;
   }
 
   /*!
-   * Apply a filter to an image.
-   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-   * \param I : Image to filter
-   * \param If : Filtered image.
-   * \param M : Filter kernel.
-   * \param convolve : If true, perform a convolution otherwise a correlation.
-   *
-   * \note By default it performs a correlation:
-   * \f[
-   *   \textbf{I\_filtered} \left( u,v \right) =
-   *   \sum_{y=0}^{\textbf{kernel\_h}}
-   *   \sum_{x=0}^{\textbf{kernel\_w}}
-   *   \textbf{M} \left( x,y \right ) \times
-   *   \textbf{I} \left(
-   * u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
-   * \f]
-   * The convolution is almost the same operation:
-   * \f[
-   *   \textbf{I\_filtered} \left( u,v \right) =
-   *   \sum_{y=0}^{\textbf{kernel\_h}}
-   *   \sum_{x=0}^{\textbf{kernel\_w}}
-   *   \textbf{M} \left( x,y \right ) \times
-   *   \textbf{I} \left(
-   * u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
-   * \f]
-   * Only pixels in the input image fully covered by the kernel are considered.
-   */
-  template <typename ImageType, typename FilterType>
-  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false)
-  {
-    unsigned int size_y = M.getRows(), size_x = M.getCols();
-    unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
+    Apply a filter to an image.
+    \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+    \param I : Image to filter
+    \param If : Filtered image.
+    \param M : Filter kernel.
+    \param convolve : If true, perform a convolution otherwise a correlation.
+    \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
 
-    If.resize(I.getHeight(), I.getWidth(), 0.0);
+    \note By default it performs a correlation:
+    \f[
+      \textbf{I\_filtered} \left( u,v \right) =
+      \sum_{y=0}^{\textbf{kernel\_h}}
+      \sum_{x=0}^{\textbf{kernel\_w}}
+      \textbf{M} \left( x,y \right ) \times
+      \textbf{I} \left(
+      u-\frac{\textbf{kernel\_w}}{2}+x,v-\frac{\textbf{kernel\_h}}{2}+y \right)
+    \f]
+    The convolution is almost the same operation:
+    \f[
+      \textbf{I\_filtered} \left( u,v \right) =
+      \sum_{y=0}^{\textbf{kernel\_h}}
+      \sum_{x=0}^{\textbf{kernel\_w}}
+     \textbf{M} \left( x,y \right ) \times
+      \textbf{I} \left(
+      u+\frac{\textbf{kernel\_w}}{2}-x,v+\frac{\textbf{kernel\_h}}{2}-y \right)
+    \f]
+    Only pixels in the input image fully covered by the kernel are considered.
+  */
+  template <typename ImageType, typename FilterType>
+  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false,
+                     const vpImage<bool> *p_mask = nullptr)
+  {
+    const unsigned int size_y = M.getRows(), size_x = M.getCols();
+    const unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
+
+    const unsigned int inputHeight = I.getHeight(), inputWidth = I.getWidth();
+    If.resize(inputHeight, inputWidth, 0.0);
 
     if (convolve) {
-      for (unsigned int i = half_size_y; i < (I.getHeight() - half_size_y); ++i) {
-        for (unsigned int j = half_size_x; j < (I.getWidth() - half_size_x); ++j) {
-          FilterType conv = 0;
+      const unsigned int stopHeight = inputHeight - half_size_y;
+      const unsigned int stopWidth = inputWidth - half_size_x;
+      for (unsigned int i = half_size_y; i < stopHeight; ++i) {
+        for (unsigned int j = half_size_x; j < stopWidth; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            FilterType conv = 0;
 
-          for (unsigned int a = 0; a < size_y; ++a) {
-            for (unsigned int b = 0; b < size_x; ++b) {
-              FilterType val = static_cast<FilterType>(I[i + half_size_y - a][j + half_size_x - b]); // Convolution
-              conv += M[a][b] * val;
+            for (unsigned int a = 0; a < size_y; ++a) {
+              for (unsigned int b = 0; b < size_x; ++b) {
+                FilterType val = static_cast<FilterType>(I[i + half_size_y - a][j + half_size_x - b]); // Convolution
+                conv += M[a][b] * val;
+              }
             }
+            If[i][j] = conv;
           }
-          If[i][j] = conv;
         }
       }
     }
     else {
-      for (unsigned int i = half_size_y; i < (I.getHeight() - half_size_y); ++i) {
-        for (unsigned int j = half_size_x; j < (I.getWidth() - half_size_x); ++j) {
-          FilterType corr = 0;
+      const unsigned int stopHeight = inputHeight - half_size_y;
+      const unsigned int stopWidth = inputWidth - half_size_x;
+      for (unsigned int i = half_size_y; i < stopHeight; ++i) {
+        for (unsigned int j = half_size_x; j < stopWidth; ++j) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, i, j);
+          if (computeVal) {
+            FilterType corr = 0;
 
-          for (unsigned int a = 0; a < size_y; ++a) {
-            for (unsigned int b = 0; b < size_x; ++b) {
-              FilterType val = static_cast<FilterType>(I[i - half_size_y + a][j - half_size_x + b]); // Correlation
-              corr += M[a][b] * val;
+            for (unsigned int a = 0; a < size_y; ++a) {
+              for (unsigned int b = 0; b < size_x; ++b) {
+                FilterType val = static_cast<FilterType>(I[i - half_size_y + a][j - half_size_x + b]); // Correlation
+                corr += M[a][b] * val;
+              }
             }
+            If[i][j] = corr;
           }
-          If[i][j] = corr;
         }
       }
     }
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template <typename FilterType>
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false) = delete;
+#else
+  template <typename FilterType>
+  static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &If, const vpArray2D<FilterType> &M, bool convolve = false);
+#endif
 
   /*!
    * Apply a filter to an image:
@@ -501,60 +634,83 @@ public:
    * \param Iv : Filtered image along the vertical axis (v = rows).
    * \param M : Filter kernel.
    * \param convolve : If true, perform a convolution otherwise a correlation.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M,
-    bool convolve = false)
+                     bool convolve = false, const vpImage<bool> *p_mask = nullptr)
   {
-    unsigned int size = M.getRows();
-    unsigned int half_size = size / 2;
+    const unsigned int size = M.getRows();
+    const unsigned int half_size = size / 2;
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stopV = height - half_size;
+    const unsigned int stopU = width - half_size;
 
-    Iu.resize(I.getHeight(), I.getWidth(), 0.0);
-    Iv.resize(I.getHeight(), I.getWidth(), 0.0);
+    Iu.resize(height, width, 0.0);
+    Iv.resize(height, width, 0.0);
 
     if (convolve) {
-      for (unsigned int v = half_size; v < (I.getHeight() - half_size); v++) {
-        for (unsigned int u = half_size; u < (I.getWidth() - half_size); u++) {
-          FilterType conv_u = 0;
-          FilterType conv_v = 0;
+      for (unsigned int v = half_size; v < stopV; ++v) {
+        for (unsigned int u = half_size; u < stopU; ++u) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, v, u);
+          if (computeVal) {
+            FilterType conv_u = 0;
+            FilterType conv_v = 0;
 
-          for (unsigned int a = 0; a < size; a++) {
-            for (unsigned int b = 0; b < size; b++) {
-              FilterType val = static_cast<FilterType>(I[v + half_size - a][u + half_size - b]); // Convolution
-              conv_u += M[a][b] * val;
-              conv_v += M[b][a] * val;
+            for (unsigned int a = 0; a < size; ++a) {
+              for (unsigned int b = 0; b < size; ++b) {
+                FilterType val = static_cast<FilterType>(I[v + half_size - a][u + half_size - b]); // Convolution
+                conv_u += M[a][b] * val;
+                conv_v += M[b][a] * val;
+              }
             }
+            Iu[v][u] = conv_u;
+            Iv[v][u] = conv_v;
           }
-          Iu[v][u] = conv_u;
-          Iv[v][u] = conv_v;
         }
       }
     }
     else {
-      for (unsigned int v = half_size; v < (I.getHeight() - half_size); v++) {
-        for (unsigned int u = half_size; u < (I.getWidth() - half_size); u++) {
-          FilterType conv_u = 0;
-          FilterType conv_v = 0;
+      for (unsigned int v = half_size; v < stopV; ++v) {
+        for (unsigned int u = half_size; u < stopU; ++u) {
+          // We have to compute the value for each pixel if we don't have a mask or for
+          // pixels for which the mask is true otherwise
+          bool computeVal = checkBooleanMask(p_mask, v, u);
 
-          for (unsigned int a = 0; a < size; a++) {
-            for (unsigned int b = 0; b < size; b++) {
-              FilterType val = static_cast<FilterType>(I[v - half_size + a][u - half_size + b]); // Correlation
-              conv_u += M[a][b] * val;
-              conv_v += M[b][a] * val;
+          if (computeVal) {
+            FilterType conv_u = 0;
+            FilterType conv_v = 0;
+
+            for (unsigned int a = 0; a < size; ++a) {
+              for (unsigned int b = 0; b < size; ++b) {
+                FilterType val = static_cast<FilterType>(I[v - half_size + a][u - half_size + b]); // Correlation
+                conv_u += M[a][b] * val;
+                conv_v += M[b][a] * val;
+              }
             }
+            Iu[v][u] = conv_u;
+            Iv[v][u] = conv_v;
           }
-          Iu[v][u] = conv_u;
-          Iv[v][u] = conv_v;
         }
       }
     }
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   template<typename FilterType>
   static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M, bool convolve) = delete;
 
   template<typename ImageType>
   static void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageType> &Iv, const vpArray2D<vpRGBa> &M, bool convolve) = delete;
+#else
+  template<typename FilterType>
+  static void filter(const vpImage<vpRGBa> &I, vpImage<FilterType> &Iu, vpImage<FilterType> &Iv, const vpArray2D<FilterType> &M, bool convolve);
+
+  template<typename ImageType>
+  static void filter(const vpImage<ImageType> &I, vpImage<ImageType> &Iu, vpImage<ImageType> &Iv, const vpArray2D<vpRGBa> &M, bool convolve);
+#endif
 
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH, const vpColVector &kernelV);
 
@@ -565,13 +721,14 @@ public:
    * \param GI: The filtered image.
    * \param filter: The separable filter.
    * \param size: The size of the filter.
+   * \param p_mask: If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
-  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size)
+  static void filter(const vpImage<ImageType> &I, vpImage<FilterType> &GI, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
   {
     vpImage<FilterType> GIx;
-    filterX<ImageType, FilterType>(I, GIx, filter, size);
-    filterY<FilterType, FilterType>(GIx, GI, filter, size);
+    filterX<ImageType, FilterType>(I, GIx, filter, size, p_mask);
+    filterY<FilterType, FilterType>(GIx, GI, filter, size, p_mask);
     GIx.destroy();
   }
 
@@ -585,24 +742,46 @@ public:
   }
 
   template <typename ImageType, typename FilterType>
-  static void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
+  static void filterX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size,
+                      const vpImage<bool> *p_mask = nullptr)
   {
-    dIx.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < ((size - 1) / 2); ++j) {
-        dIx[i][j] = vpImageFilter::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter, size);
+    const unsigned int height = I.getHeight();
+    const unsigned int width = I.getWidth();
+    const unsigned int stop1J = (size - 1) / 2;
+    const unsigned int stop2J = width - (size - 1) / 2;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
+
+    for (unsigned int i = 0; i < height; ++i) {
+      for (unsigned int j = 0; j < stop1J; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIx[i][j] = vpImageFilter::filterXLeftBorder<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
-      for (unsigned int j = (size - 1) / 2; j < (I.getWidth() - (size - 1) / 2); ++j) {
-        dIx[i][j] = vpImageFilter::filterX<ImageType, FilterType>(I, i, j, filter, size);
+      for (unsigned int j = stop1J; j < stop2J; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIx[i][j] = vpImageFilter::filterX<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
-      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); ++j) {
-        dIx[i][j] = vpImageFilter::filterXRightBorder<ImageType, FilterType>(I, i, j, filter, size);
+      for (unsigned int j = stop2J; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIx[i][j] = vpImageFilter::filterXRightBorder<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
     }
   }
 
-  static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  static void filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+
+#ifdef DOXYGEN_SHOULD_SKIP_THIS
   static void filterXR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterXB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
@@ -611,23 +790,21 @@ public:
   template<typename ImageType, typename FilterType>
   static inline FilterType filterX(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int stop = (size - 1) / 2;
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r][c + i] + I[r][c - i]);
     }
     return result + filter[0] * static_cast<double>(I[r][c]);
   }
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterXR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
-
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
     }
     return result + filter[0] * static_cast<double>(I[r][c].R);
@@ -635,11 +812,10 @@ public:
 
   static inline double filterXG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
     }
     return result + filter[0] * static_cast<double>(I[r][c].G);
@@ -647,11 +823,10 @@ public:
 
   static inline double filterXB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
@@ -661,11 +836,10 @@ public:
   static inline FilterType filterXLeftBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                              const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int stop = (size - 1) / 2;
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (c > i) {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
       }
@@ -679,11 +853,10 @@ public:
   static inline double filterXLeftBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                           const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (c > i) {
         result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
       }
@@ -697,11 +870,10 @@ public:
   static inline double filterXLeftBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                           const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (c > i) {
         result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
       }
@@ -715,11 +887,10 @@ public:
   static inline double filterXLeftBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                           const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (c > i) {
         result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
       }
@@ -734,16 +905,16 @@ public:
   static inline FilterType filterXRightBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                               const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((c + i) < I.getWidth()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
         result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
       }
       else {
-        result += filter[i] * static_cast<FilterType>(I[r][2 * I.getWidth() - c - i - 1] + I[r][c - i]);
+        result += filter[i] * static_cast<FilterType>(I[r][2 * width - c - i - 1] + I[r][c - i]);
       }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
@@ -752,16 +923,16 @@ public:
   static inline double filterXRightBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                            const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((c + i) < I.getWidth()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
         result += filter[i] * static_cast<double>(I[r][c + i].R + I[r][c - i].R);
       }
       else {
-        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].R + I[r][c - i].R);
+        result += filter[i] * static_cast<double>(I[r][2 * width - c - i - 1].R + I[r][c - i].R);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].R);
@@ -770,16 +941,16 @@ public:
   static inline double filterXRightBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                            const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((c + i) < I.getWidth()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
         result += filter[i] * static_cast<double>(I[r][c + i].G + I[r][c - i].G);
       }
       else {
-        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].G + I[r][c - i].G);
+        result += filter[i] * static_cast<double>(I[r][2 * width - c - i - 1].G + I[r][c - i].G);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].G);
@@ -788,16 +959,16 @@ public:
   static inline double filterXRightBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                            const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    const unsigned int width = I.getWidth();
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((c + i) < I.getWidth()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((c + i) < width) {
         result += filter[i] * static_cast<double>(I[r][c + i].B + I[r][c - i].B);
       }
       else {
-        result += filter[i] * static_cast<double>(I[r][2 * I.getWidth() - c - i - 1].B + I[r][c - i].B);
+        result += filter[i] * static_cast<double>(I[r][2 * width - c - i - 1].B + I[r][c - i].B);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
@@ -805,29 +976,51 @@ public:
 #endif
 
 
-  static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
+  static void filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr);
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   static void filterYR(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYG(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
   static void filterYB(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size);
 #endif
+
   template<typename ImageType, typename FilterType>
-  static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
+  static void filterY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size,
+                      const vpImage<bool> *p_mask = nullptr)
   {
-    dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < ((size - 1) / 2); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = vpImageFilter::filterYTopBorder<ImageType, FilterType>(I, i, j, filter, size);
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stop1I = (size - 1) / 2;
+    const unsigned int stop2I = height - (size - 1) / 2;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
+
+    for (unsigned int i = 0; i < stop1I; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = vpImageFilter::filterYTopBorder<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
     }
-    for (unsigned int i = (size - 1) / 2; i < (I.getHeight() - (size - 1) / 2); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = vpImageFilter::filterY<ImageType, FilterType>(I, i, j, filter, size);
+    for (unsigned int i = stop1I; i < stop2I; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = vpImageFilter::filterY<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
     }
-    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = vpImageFilter::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter, size);
+    for (unsigned int i = stop2I; i < height; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = vpImageFilter::filterYBottomBorder<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
     }
   }
@@ -835,11 +1028,10 @@ public:
   template<typename ImageType, typename FilterType>
   static inline FilterType filterY(const vpImage<ImageType> &I, unsigned int r, unsigned int c, const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int stop = (size - 1) / 2;
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
@@ -847,22 +1039,20 @@ public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   static inline double filterYR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
     }
     return result + filter[0] * static_cast<double>(I[r][c].R);
   }
   static inline double filterYG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
     }
     return result + filter[0] * static_cast<double>(I[r][c].G);
@@ -870,11 +1060,10 @@ public:
 
   static inline double filterYB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
@@ -884,11 +1073,10 @@ public:
   static inline FilterType filterYTopBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                             const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int stop = (size - 1) / 2;
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (r > i) {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
       }
@@ -901,11 +1089,10 @@ public:
 
   double static inline filterYTopBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (r > i) {
         result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
       }
@@ -918,11 +1105,10 @@ public:
 
   double static inline filterYTopBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (r > i) {
         result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
       }
@@ -935,11 +1121,10 @@ public:
 
   double static inline filterYTopBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c, const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
+    for (unsigned int i = 1; i <= stop; ++i) {
       if (r > i) {
         result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
       }
@@ -954,16 +1139,16 @@ public:
   static inline FilterType filterYBottomBorder(const vpImage<ImageType> &I, unsigned int r, unsigned int c,
                                                const FilterType *filter, unsigned int size)
   {
-    FilterType result;
+    const unsigned int height = I.getHeight();
+    const unsigned int stop = (size - 1) / 2;
+    FilterType result = static_cast<FilterType>(0.);
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((r + i) < I.getHeight()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
         result += filter[i] * static_cast<FilterType>(I[r + i][c] + I[r - i][c]);
       }
       else {
-        result += filter[i] * static_cast<FilterType>(I[2 * I.getHeight() - r - i - 1][c] + I[r - i][c]);
+        result += filter[i] * static_cast<FilterType>(I[2 * height - r - i - 1][c] + I[r - i][c]);
       }
     }
     return result + filter[0] * static_cast<FilterType>(I[r][c]);
@@ -972,16 +1157,16 @@ public:
   double static inline filterYBottomBorderR(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                             const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int height = I.getHeight();
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((r + i) < I.getHeight()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
         result += filter[i] * static_cast<double>(I[r + i][c].R + I[r - i][c].R);
       }
       else {
-        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].R + I[r - i][c].R);
+        result += filter[i] * static_cast<double>(I[2 * height - r - i - 1][c].R + I[r - i][c].R);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].R);
@@ -990,16 +1175,16 @@ public:
   double static inline filterYBottomBorderG(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                             const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int height = I.getHeight();
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((r + i) < I.getHeight()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
         result += filter[i] * static_cast<double>(I[r + i][c].G + I[r - i][c].G);
       }
       else {
-        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].G + I[r - i][c].G);
+        result += filter[i] * static_cast<double>(I[2 * height - r - i - 1][c].G + I[r - i][c].G);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].G);
@@ -1008,16 +1193,16 @@ public:
   double static inline filterYBottomBorderB(const vpImage<vpRGBa> &I, unsigned int r, unsigned int c,
                                             const double *filter, unsigned int size)
   {
-    double result;
+    const unsigned int height = I.getHeight();
+    const unsigned int stop = (size - 1) / 2;
+    double result = 0.;
 
-    result = 0;
-
-    for (unsigned int i = 1; i <= ((size - 1) / 2); ++i) {
-      if ((r + i) < I.getHeight()) {
+    for (unsigned int i = 1; i <= stop; ++i) {
+      if ((r + i) < height) {
         result += filter[i] * static_cast<double>(I[r + i][c].B + I[r - i][c].B);
       }
       else {
-        result += filter[i] * static_cast<double>(I[2 * I.getHeight() - r - i - 1][c].B + I[r - i][c].B);
+        result += filter[i] * static_cast<double>(I[2 * height - r - i - 1][c].B + I[r - i][c].B);
       }
     }
     return result + filter[0] * static_cast<double>(I[r][c].B);
@@ -1026,30 +1211,33 @@ public:
 
 
   /*!
-    * Apply a Gaussian blur to an image.
-    * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
-    * \param I : Input image.
-    * \param GI : Filtered image.
-    * \param size : Filter size. This value should be odd.
-    * \param sigma : Gaussian standard deviation. If it is equal to zero or
-    * negative, it is computed from filter size as sigma = (size-1)/6.
-    * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
-    *
-  * \sa getGaussianKernel() to know which kernel is used.
-  */
+   * Apply a Gaussian blur to an image.
+   * \tparam FilterType : Either float, to accelerate the computation time, or double, to have greater precision.
+   * \param I : Input image.
+   * \param GI : Filtered image.
+   * \param size : Filter size. This value should be odd.
+   * \param sigma : Gaussian standard deviation. If it is equal to zero or
+   * negative, it is computed from filter size as sigma = (size-1)/6.
+   * \param normalize : Flag indicating whether to normalize the filter coefficients or not.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
+   *
+   * \sa getGaussianKernel() to know which kernel is used.
+   */
   template <typename ImageType, typename FilterType>
-  static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true)
+  static void gaussianBlur(const vpImage<ImageType> &I, vpImage<FilterType> &GI, unsigned int size = 7, FilterType sigma = 0., bool normalize = true,
+                           const vpImage<bool> *p_mask = nullptr)
   {
     FilterType *fg = new FilterType[(size + 1) / 2];
     vpImageFilter::getGaussianKernel<FilterType>(fg, size, sigma, normalize);
     vpImage<FilterType> GIx;
-    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size);
-    vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size);
+    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, fg, size, p_mask);
+    vpImageFilter::filterY<FilterType, FilterType>(GIx, GI, fg, size, p_mask);
     GIx.destroy();
     delete[] fg;
   }
 
-  static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true);
+  static void gaussianBlur(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &GI, unsigned int size = 7, double sigma = 0., bool normalize = true,
+                           const vpImage<bool> *p_mask = nullptr);
 
   /*!
    * Apply a 5x5 Gaussian filter to an image pixel.
@@ -1171,36 +1359,68 @@ public:
 
   // Gradient along X
   template<typename FilterType>
-  static void getGradX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx)
+  static void getGradX(const vpImage<unsigned char> &I, vpImage<FilterType> &dIx, const vpImage<bool> *p_mask = nullptr)
   {
-    dIx.resize(I.getHeight(), I.getWidth());
-    // dIx=0;
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stopJ = width - 3;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
+
+    for (unsigned int i = 0; i < height; ++i) {
       for (unsigned int j = 0; j < 3; ++j) {
-        dIx[i][j] = static_cast<FilterType>(0);
+        // If a mask is used, the image is already initialized with 0s
+        bool computeVal = (p_mask == nullptr);
+        if (computeVal) {
+          dIx[i][j] = static_cast<FilterType>(0);
+        }
       }
-      for (unsigned int j = 3; j < (I.getWidth() - 3); ++j) {
-        dIx[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterX(I, i, j));
+      for (unsigned int j = 3; j < stopJ; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIx[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterX(I, i, j));
+        }
       }
-      for (unsigned int j = I.getWidth() - 3; j < I.getWidth(); ++j) {
-        dIx[i][j] = static_cast<FilterType>(0);
+      for (unsigned int j = stopJ; j < width; ++j) {
+        // If a mask is used, the image is already initialized with 0s
+        bool computeVal = (p_mask == nullptr);
+        if (computeVal) {
+          dIx[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
   }
 
   template <typename ImageType, typename FilterType>
-  static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size)
+  static void getGradX(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
   {
-    dIx.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < ((size - 1) / 2); ++j) {
-        dIx[i][j] = static_cast<FilterType>(0);
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stop1J = (size - 1) / 2;
+    const unsigned int stop2J = width - (size - 1) / 2;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIx);
+
+    for (unsigned int i = 0; i < height; ++i) {
+      for (unsigned int j = 0; j < stop1J; ++j) {
+        // If a mask is used, the image is already initialized with 0s
+        bool computeVal = (p_mask == nullptr);
+        if (computeVal) {
+          dIx[i][j] = static_cast<FilterType>(0);
+        }
       }
-      for (unsigned int j = (size - 1) / 2; j < (I.getWidth() - (size - 1) / 2); ++j) {
-        dIx[i][j] = vpImageFilter::derivativeFilterX<ImageType, FilterType>(I, i, j, filter, size);
+      for (unsigned int j = stop1J; j < stop2J; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIx[i][j] = vpImageFilter::derivativeFilterX<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
-      for (unsigned int j = I.getWidth() - (size - 1) / 2; j < I.getWidth(); ++j) {
-        dIx[i][j] = static_cast<FilterType>(0);
+      for (unsigned int j = stop2J; j < width; ++j) {
+        // If a mask is used, the image is already initialized with 0s
+        bool computeVal = (p_mask == nullptr);
+        if (computeVal) {
+          dIx[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
   }
@@ -1214,55 +1434,93 @@ public:
    * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
    * vpImageFilter::getGaussianDerivativeKernel().
    * \param size : Size of the Gaussian and Gaussian derivative kernels.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   static void getGradXGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIx, const FilterType *gaussianKernel,
-                              const FilterType *gaussianDerivativeKernel, unsigned int size)
+                              const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
   {
     vpImage<FilterType> GIy;
-    vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size);
-    vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size);
+    vpImageFilter::filterY<ImageType, FilterType>(I, GIy, gaussianKernel, size, p_mask);
+    vpImageFilter::getGradX<FilterType, FilterType>(GIy, dIx, gaussianDerivativeKernel, size, p_mask);
   }
 
   // Gradient along Y
   template <typename FilterType>
-  static void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy)
+  static void getGradY(const vpImage<unsigned char> &I, vpImage<FilterType> &dIy, const vpImage<bool> *p_mask = nullptr)
   {
-    dIy.resize(I.getHeight(), I.getWidth());
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stopI = height - 3;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
+
     for (unsigned int i = 0; i < 3; ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = static_cast<FilterType>(0);
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
-    for (unsigned int i = 3; i < (I.getHeight() - 3); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterY(I, i, j));
+    for (unsigned int i = 3; i < stopI; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = static_cast<FilterType>(vpImageFilter::derivativeFilterY(I, i, j));
+        }
       }
     }
-    for (unsigned int i = I.getHeight() - 3; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = static_cast<FilterType>(0);
+    for (unsigned int i = stopI; i < height; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
   }
 
   template <typename ImageType, typename FilterType>
-  static void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size)
+  static void getGradY(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *filter, unsigned int size, const vpImage<bool> *p_mask = nullptr)
   {
-    dIy.resize(I.getHeight(), I.getWidth());
-    for (unsigned int i = 0; i < ((size - 1) / 2); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = static_cast<FilterType>(0);
+    const unsigned int height = I.getHeight(), width = I.getWidth();
+    const unsigned int stop1I = (size - 1) / 2;
+    const unsigned int stop2I = height - (size - 1) / 2;
+    resizeAndInitializeIfNeeded(p_mask, height, width, dIy);
+
+    for (unsigned int i = 0; i < stop1I; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
-    for (unsigned int i = (size - 1) / 2; i < (I.getHeight() - (size - 1) / 2); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = vpImageFilter::derivativeFilterY<ImageType, FilterType>(I, i, j, filter, size);
+    for (unsigned int i = stop1I; i < stop2I; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = vpImageFilter::derivativeFilterY<ImageType, FilterType>(I, i, j, filter, size);
+        }
       }
     }
-    for (unsigned int i = I.getHeight() - (size - 1) / 2; i < I.getHeight(); ++i) {
-      for (unsigned int j = 0; j < I.getWidth(); ++j) {
-        dIy[i][j] = static_cast<FilterType>(0);
+    for (unsigned int i = stop2I; i < height; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
+        // We have to compute the value for each pixel if we don't have a mask or for
+        // pixels for which the mask is true otherwise
+        bool computeVal = checkBooleanMask(p_mask, i, j);
+        if (computeVal) {
+          dIy[i][j] = static_cast<FilterType>(0);
+        }
       }
     }
   }
@@ -1276,14 +1534,15 @@ public:
    * \param gaussianDerivativeKernel : Gaussian derivative kernel which values should be computed using
    * vpImageFilter::getGaussianDerivativeKernel().
    * \param size : Size of the Gaussian and Gaussian derivative kernels.
+   * \param p_mask : If different from nullptr, mask indicating which points to consider (true) or to ignore(false).
    */
   template <typename ImageType, typename FilterType>
   static void getGradYGauss2D(const vpImage<ImageType> &I, vpImage<FilterType> &dIy, const FilterType *gaussianKernel,
-                              const FilterType *gaussianDerivativeKernel, unsigned int size)
+                              const FilterType *gaussianDerivativeKernel, unsigned int size, const vpImage<bool> *p_mask = nullptr)
   {
     vpImage<FilterType> GIx;
-    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size);
-    vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size);
+    vpImageFilter::filterX<ImageType, FilterType>(I, GIx, gaussianKernel, size, p_mask);
+    vpImageFilter::getGradY<FilterType, FilterType>(GIx, dIy, gaussianDerivativeKernel, size, p_mask);
   }
 
   /*!
@@ -1298,8 +1557,9 @@ public:
   {
     if (size != 1) {
       // Size = 1 => kernel_size = 2*1 + 1 = 3
-      std::string errMsg = "Cannot get Scharr kernel of size " + std::to_string(size * 2 + 1) + " != 3";
-      throw vpException(vpException::dimensionError, errMsg);
+      std::stringstream errMsg;
+      errMsg << "Cannot get Scharr kernel of size " << size * 2 + 1 << " != 3";
+      throw vpException(vpException::dimensionError, errMsg.str());
     }
 
     vpArray2D<FilterType> ScharrY(size * 2 + 1, size * 2 + 1);
@@ -1323,8 +1583,9 @@ public:
 
     if (size != 1) {
       // Size = 1 => kernel_size = 2*1 + 1 = 3
-      std::string errMsg = "Cannot get Scharr kernel of size " + std::to_string(size * 2 + 1) + " != 3";
-      throw vpException(vpException::dimensionError, errMsg);
+      std::stringstream errMsg;
+      errMsg << "Cannot get Scharr kernel of size " << size * 2 + 1 << " != 3";
+      throw vpException(vpException::dimensionError, errMsg.str());
     }
 
     const unsigned int kernel_size = size * 2 + 1;
@@ -1400,12 +1661,12 @@ public:
       memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
-    scale *= static_cast<FilterType>(1./ 16.); // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
+    scale *= static_cast<FilterType>(1. / 16.); // Sobel5x5 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel3x3
     if (kernel_size == 5) {
       memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
     }
-    scale *= static_cast<FilterType>(1./ 16.); // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
+    scale *= static_cast<FilterType>(1. / 16.); // Sobel7x7 is the convolution of smoothingKernel, which needs 1/16 scale factor, with Sobel5x5
     if (kernel_size == 7) {
       memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(FilterType));
       return scale;
@@ -1416,7 +1677,7 @@ public:
     for (unsigned int i = 4; i <= size; ++i) {
       sobelY = vpArray2D<FilterType>::conv2(sobelY, smoothingKernel, "full");
       // Sobel(N+1)x(N+1) is the convolution of smoothingKernel, which needs 1/16 scale factor, with SobelNxN
-      scale *= static_cast<FilterType>(1./ 16.);
+      scale *= static_cast<FilterType>(1. / 16.);
     }
 
     memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(FilterType));

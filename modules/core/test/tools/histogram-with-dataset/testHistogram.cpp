@@ -71,7 +71,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-t <nb threads>]\n\
      [-h]\n                 \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -183,7 +183,7 @@ bool compareHistogram(const vpImage<unsigned char> &I, unsigned int nbBins)
   for (unsigned int cpt = 0; cpt < nbBins; cpt++) {
     if (histogram_single_threaded[cpt] != histogram_multi_threaded[cpt]) {
       std::cerr << "histogram_single_threaded[" << cpt << "]=" << histogram_single_threaded[cpt]
-                << " ; histogram_multi_threaded[" << cpt << "]=" << histogram_multi_threaded[cpt] << std::endl;
+        << " ; histogram_multi_threaded[" << cpt << "]=" << histogram_multi_threaded[cpt] << std::endl;
 
       return false;
     }
@@ -231,8 +231,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -241,9 +241,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -279,9 +279,9 @@ int main(int argc, const char **argv)
     t_multithread = vpTime::measureTimeMs() - t_multithread;
 
     std::cout << "sum_single_thread=" << sum_single_thread << " ; t_single_thread=" << t_single_thread
-              << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
+      << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
     std::cout << "sum_single_multithread=" << sum_single_multithread << " ; t_multithread=" << t_multithread
-              << " ms ; mean=" << t_multithread / (double)nbIterations << " ms" << std::endl;
+      << " ms ; mean=" << t_multithread / (double)nbIterations << " ms" << std::endl;
     std::cout << "Speed-up=" << t_single_thread / (double)t_multithread << "X" << std::endl;
 
     if (sum_single_thread != I.getSize() || sum_single_multithread != I.getSize()) {
@@ -296,6 +296,7 @@ int main(int argc, const char **argv)
     }
 
     // Test histogram computation on empty image
+    std::cout << "Test histogram computation on empty image" << std::endl << std::flush;
     vpHistogram histogram;
     vpImage<unsigned char> I_test(0, 0);
     histogram.calculate(I_test, 256, 4);
@@ -303,15 +304,17 @@ int main(int argc, const char **argv)
       for (unsigned int cpt = 0; cpt < 256; cpt++) {
         if (histogram[cpt] != 0) {
           std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
-                    << " but should be zero!" << std::endl;
+            << " but should be zero!" << std::endl;
         }
       }
-    } else {
+    }
+    else {
       std::cerr << "Bad histogram size!" << std::endl;
       return EXIT_FAILURE;
     }
 
     // Test histogram computation on image size < nbThreads
+    std::cout << "Test histogram computation on image size < nbThreads" << std::endl << std::flush;
     I_test.init(3, 1);
     I_test = 100;
     histogram.calculate(I_test, 256, 4);
@@ -320,22 +323,25 @@ int main(int argc, const char **argv)
         if (cpt == 100) {
           if (histogram[cpt] != I_test.getSize()) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
-                      << " but should be: " << I_test.getSize() << std::endl;
+              << " but should be: " << I_test.getSize() << std::endl;
             return EXIT_FAILURE;
           }
-        } else {
+        }
+        else {
           if (histogram[cpt] != 0) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
-                      << " but should be zero!" << std::endl;
+              << " but should be zero!" << std::endl;
           }
         }
       }
-    } else {
+    }
+    else {
       std::cerr << "Bad histogram size!" << std::endl;
       return EXIT_FAILURE;
     }
 
     // Test histogram computation on small image size
+    std::cout << "Test histogram computation on small image size" << std::endl << std::flush;
     I_test.init(7, 1);
     I_test = 50;
     histogram.calculate(I_test, 256, 4);
@@ -344,24 +350,27 @@ int main(int argc, const char **argv)
         if (cpt == 50) {
           if (histogram[cpt] != I_test.getSize()) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
-                      << " but should be: " << I_test.getSize() << std::endl;
+              << " but should be: " << I_test.getSize() << std::endl;
             return EXIT_FAILURE;
           }
-        } else {
+        }
+        else {
           if (histogram[cpt] != 0) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
-                      << " but should be zero!" << std::endl;
+              << " but should be zero!" << std::endl;
           }
         }
       }
-    } else {
+    }
+    else {
       std::cerr << "Bad histogram size!" << std::endl;
       return EXIT_FAILURE;
     }
 
     std::cout << "testHistogram is OK!" << std::endl;
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

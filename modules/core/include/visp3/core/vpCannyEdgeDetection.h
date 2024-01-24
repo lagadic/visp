@@ -89,6 +89,7 @@ private:
   std::map<std::pair<unsigned int, unsigned int>, EdgeType> m_edgePointsCandidates; /*!< Map that contains the strong edge points, i.e. the points for which we know for sure they are edge points,
                                                 and the weak edge points, i.e. the points for which we still must determine if they are actual edge points.*/
   vpImage<unsigned char> m_edgeMap; /*!< Final edge map that results from the whole Canny algorithm.*/
+  const vpImage<bool> *mp_mask; /*!< Mask that permits to consider only the pixels for which the mask is true.*/
 
   /** @name Constructors and initialization */
   //@{
@@ -365,6 +366,21 @@ public:
   {
     m_gradientFilterKernelSize = apertureSize;
     initGradientFilters();
+  }
+
+  /**
+   * \brief Set a mask to ignore pixels for which the mask is false.
+   *
+   * \warning The mask must be reset manually by the user (either for another mask
+   * or set to \b nullptr ) before computing the edge-map of another image.
+   *
+   * @param p_mask If different of \b nullptr , a mask of booleans where \b true
+   * indicates that a pixel must be considered and \b false that the pixel should
+   * be ignored.
+   */
+  inline void setMask(const vpImage<bool> *p_mask)
+  {
+    mp_mask = p_mask;
   }
   //@}
 };
