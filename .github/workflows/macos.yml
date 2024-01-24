@@ -33,8 +33,27 @@ jobs:
     - name: Print OS information
       run: system_profiler SPSoftwareDataType
 
-    - name: Install dependencies
-      run: brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+    - name: Install dependencies on macos-12
+      if: matrix.os == 'macos-12'
+      run: |
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+
+    - name: Install dependencies on macos-13
+      # On macos-13 we need to do a specific action
+      # ==> Pouring python@3.12--3.12.1_1.ventura.bottle.tar.gz
+      # Error: The `brew link` step did not complete successfully
+      # The formula built, but is not symlinked into /usr/local
+      # Could not symlink bin/2to3-3.12
+      # Target /usr/local/bin/2to3-3.12
+      # already exists. You may want to remove it:
+      #   rm '/usr/local/bin/2to3-3.12'
+      #
+      # To force the link and overwrite all conflicting files:
+      #   brew link --overwrite python@3.12
+      if: matrix.os == 'macos-13'
+      run: |
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+        brew link --overwrite python@3.12
 
     - name: Install java dependencies
       run: |
