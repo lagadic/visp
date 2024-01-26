@@ -269,6 +269,27 @@ endif()
 
 # --- Python Support ---
 if(NOT IOS)
+  # Make sure to refresh the python interpreter every time we rerun cmake
+  # If we don't do this, we may use an old or invalid python when installing the bindings
+  # that was cached by a previous attempt at building
+
+
+  # # this avoids non-active conda from getting picked anyway on Windows
+  # set(Python_FIND_REGISTRY LAST)
+  # set(Python_FIND_VIRTUALENV FIRST)
+  # set(Python_FIND_STRATEGY LOCATION)
+  unset(PYTHON3INTERP_FOUND CACHE)
+  unset(PYTHONINTERP_FOUND CACHE)
+  unset(PYTHON3INTERP_FOUND)
+  unset(PYTHONLIBS_FOUND CACHE)
+  unset(PYTHONINTERP_FOUND)
+  unset(PYTHON_FOUND CACHE)
+  unset(PYTHON3_EXECUTABLE CACHE)
+  unset(PYTHON_EXECUTABLE CACHE)
+  unset(PYTHON3_EXECUTABLE)
+  unset(PYTHON_EXECUTABLE)
+  unset(VISP_PYTHON_IS_SYSTEM_WIDE CACHE)
+  unset(VISP_PYTHON3_VERSION CACHE)
   include(cmake/VISPDetectPython.cmake)
 endif()
 
@@ -279,8 +300,22 @@ else()
 endif()
 
 if(CMAKE_NOT_OK_FOR_BINDINGS)
-  status("${CMAKE_NOT_OK_FOR_BINDINGS}")
   status("CMake version required for Python bindings is 3.19.0, but you have ${CMAKE_VERSION}. Python bindings generation will be deactivated")
+endif()
+
+if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
+  set(_pip_args)
+  set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE)
+else()
+  # First solution: raise an error when cmake will call pip install
+  # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
+  message(WARNING "\
+  The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+  pip packages should not be installed system-wide!
+  Python bindings targets will be deactivated!
+  To reenable them, install conda or virtualenv, delete the CMakeCache file then rerun cmake when inside the virtual environment.
+  ")
+  set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
 endif()
 
 # --- Python Bindings requirements ---
