@@ -272,71 +272,82 @@ if(NOT IOS)
   # Make sure to refresh the python interpreter every time we rerun cmake
   # If we don't do this, we may use an old or invalid python when installing the bindings
   # that was cached by a previous attempt at building
+  if(CMAKE_VERSION VERSION_LESS "3.15.0")
+    set(PYTHON3_CACHE_LIST
+      PYTHON3INTERP_FOUND PYTHONINTERP_FOUND PYTHONLIBS_FOUND PYTHON_FOUND
+      PYTHON3_EXECUTABLE PYTHON_EXECUTABLE
+    )
+    foreach (_variableName ${PYTHON3_CACHE_LIST})
+      unset(${_variableName} CACHE)
+    endforeach()
+    include(cmake/VISPDetectPython.cmake)
+  else()
+    set(PYTHON3_CACHE_LIST
+        Python3_FOUND Python3_EXECUTABLE Python3_Interpreter_FOUND Python3_LIBRARIES
+        _Python3_EXECUTABLE _Python3_INCLUDE_DIR _Python3_INTERPRETER_PROPERTIES _Python3_LIBRARY_RELEASE
+    )
+    foreach (_variableName ${PYTHON3_CACHE_LIST})
+      unset(${_variableName} CACHE)
+    endforeach()
+    # Find strategy
+    set(Python3_FIND_REGISTRY LAST)
+    set(Python3_FIND_VIRTUALENV FIRST)
+    set(Python3_FIND_STRATEGY LOCATION)
+    find_package (Python3 COMPONENTS Interpreter Development)
 
-
-  # # this avoids non-active conda from getting picked anyway on Windows
-  # set(Python_FIND_REGISTRY LAST)
-  # set(Python_FIND_VIRTUALENV FIRST)
-  # set(Python_FIND_STRATEGY LOCATION)
-  unset(PYTHON3INTERP_FOUND CACHE)
-  unset(PYTHONINTERP_FOUND CACHE)
-  unset(PYTHON3INTERP_FOUND)
-  unset(PYTHONLIBS_FOUND CACHE)
-  unset(PYTHONINTERP_FOUND)
-  unset(PYTHON_FOUND CACHE)
-  unset(PYTHON3_EXECUTABLE CACHE)
-  unset(PYTHON_EXECUTABLE CACHE)
-  unset(PYTHON3_EXECUTABLE)
-  unset(PYTHON_EXECUTABLE)
-  unset(VISP_PYTHON_IS_SYSTEM_WIDE CACHE)
-  unset(VISP_PYTHON3_VERSION CACHE)
-  include(cmake/VISPDetectPython.cmake)
+    # Alias variables to be consistent with previous detection method
+    set(PYTHON3_FOUND ${Python3_FOUND})
+    set(PYTHON3_EXECUTABLE ${Python3_EXECUTABLE})
+    set(PYTHON_DEFAULT_EXECUTABLE ${PYTHON3_EXECUTABLE})
+    set(PYTHON3INTERP_FOUND ${Python3_Interpreter_FOUND})
+    set(PYTHON3_VERSION_STRING ${Python3_VERSION})
+  endif()
 endif()
 
-if(CMAKE_VERSION VERSION_LESS "3.19.0")
+# --- Python Bindings requirements ---
+VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+
+# Minimum tool versions
+set(CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS "3.19.0")
+set(PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS "3.7.0")
+if(CMAKE_VERSION VERSION_LESS ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS})
   set(CMAKE_NOT_OK_FOR_BINDINGS TRUE)
+  message(STATUS "Required CMake version for Python bindings is ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS},
+  but you have ${CMAKE_VERSION}.
+  Python bindings generation will be deactivated.
+  ")
 else()
   set(CMAKE_NOT_OK_FOR_BINDINGS FALSE)
 endif()
 
-if(CMAKE_NOT_OK_FOR_BINDINGS)
-  status("CMake version required for Python bindings is 3.19.0, but you have ${CMAKE_VERSION}. Python bindings generation will be deactivated")
+if(PYTHON3_VERSION_STRING VERSION_LESS ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS})
+  set(PYTHON3_NOT_OK_FOR_BINDINGS TRUE)
+  message(STATUS "Required Python version for Python bindings is ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS},
+  but you have ${PYTHON3_VERSION_STRING}.
+  Python bindings generation will be deactivated.
+  ")
+else()
+  set(PYTHON3_NOT_OK_FOR_BINDINGS FALSE)
 endif()
 
+# Forbid system Python
 if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
   set(_pip_args)
   set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE)
 else()
   # First solution: raise an error when cmake will call pip install
   # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
-  message(WARNING "\
-  The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
-  pip packages should not be installed system-wide!
-  Python bindings targets will be deactivated!
-  To reenable them, install conda or virtualenv, delete the CMakeCache file then rerun cmake when inside the virtual environment.
-  ")
-  set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
+  if(PYTHON3_FOUND)
+    message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+    pip packages should not be installed system-wide!
+    Python bindings targets will be deactivated!
+    To reenable them, install conda or virtualenv,
+    delete the CMakeCache file then rerun cmake when inside the virtual environment.
+    ")
+    set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
+  endif()
 endif()
 
-# --- Python Bindings requirements ---
-
-# this avoids non-active conda from getting picked anyway on Windows
-#set(Python_FIND_REGISTRY LAST)
-# Use environment variable PATH to decide preference for Python
-#set(Python_FIND_VIRTUALENV FIRST)
-#set(Python_FIND_STRATEGY LOCATION)
-
-#find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
-#if(Python_FOUND)
-#  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
-#endif()
-#find_package(pybind11)
-VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
-
-#if(pybind11_FOUND)
-#  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
-#endif()
-#message("${pybind11_FOUND}")
 # ---
 
 
@@ -482,7 +493,7 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND NOT VISP_PYTHON_IS_SYSTEM_WIDE) )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND NOT VISP_PYTHON_IS_SYSTEM_WIDE AND NOT PYTHON3_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
@@ -1583,7 +1594,17 @@ if(BUILD_PYTHON_BINDINGS)
   status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
   status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
   status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
+else()
+  status("    Requirements: ")
+  status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:"     PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
+  status("      Python in Virtual environment or conda:"     VISP_PYTHON_IS_SYSTEM_WIDE THEN "failed" ELSE "ok")
+  status("      Pybind11 found:"     USE_PYBIND11 THEN "ok" ELSE "failed")
+  status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:"     CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
+
+
+
 endif()
+
 
 # ============================ Options ===========================
 status("")

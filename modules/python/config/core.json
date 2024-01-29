@@ -737,7 +737,44 @@
         },
         {
           "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpCircle&, vpImagePoint&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true, true, true, true, true, true
+          ],
+          "param_is_output": [
+            false, false, false, true, true, true
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, double, double, double, double, double, vpImagePoint&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true, true, true, true, true, true, true, false, false, false
+          ],
+          "param_is_output": [
+            false, false, false, false, false, false, false, true, true, true
+          ]
+        },
+        {
+          "static": true,
           "signature": "void convertEllipse(const cv::Mat&, const cv::Mat&, const vpImagePoint&, double, double, double, double&, double&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, double, double, double, double, double, vpImagePoint&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const vpCircle&, vpImagePoint&, double&, double&, double&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const cv::Mat&, const vpSphere&, vpImagePoint&, double&, double&, double&)",
           "ignore": true
         },
         {
@@ -768,7 +805,5 @@
         }
       ]
     }
-
   }
-
 }
