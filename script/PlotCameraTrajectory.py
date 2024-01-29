@@ -101,17 +101,27 @@ def visp_rotation_to_thetau(R):
             thetau[0,2] = -thetau[0,2]
     return thetau
 
-def load_camera_poses(filename, use_thetau=False):
-    if use_thetau:
-        camera_poses_raw = np.loadtxt(filename)
+def load_camera_poses(filename, use_thetau=False, use_npz_file_format=False):
+    if use_npz_file_format:
+        datafile = np.load(filename)
+        camera_poses_raw = datafile['vec_poses']
         camera_poses = np.zeros((4*camera_poses_raw.shape[0], 4))
         for i in range(camera_poses_raw.shape[0]):
-            camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i, 3:])
-            camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,0:3].T
+            camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i,3:])
+            camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,:3].T
             camera_poses[i*4+3, 3] = 1
         return camera_poses
     else:
-        return np.loadtxt(filename)
+      if use_thetau:
+          camera_poses_raw = np.loadtxt(filename)
+          camera_poses = np.zeros((4*camera_poses_raw.shape[0], 4))
+          for i in range(camera_poses_raw.shape[0]):
+              camera_poses[i*4:i*4+3, 0:3] = visp_thetau_to_rotation(camera_poses_raw[i,3:])
+              camera_poses[i*4:i*4+3, 3] = camera_poses_raw[i,:3].T
+              camera_poses[i*4+3, 3] = 1
+          return camera_poses
+      else:
+          return np.loadtxt(filename)
 
 def inverse_homogeneoux_matrix(M):
     R = M[0:3, 0:3]
@@ -713,6 +723,8 @@ def main():
     parser.add_argument('-p', type=str, nargs=1, required=True, help='Path to poses file.')
     parser.add_argument('--theta-u', action='store_true', default=False,
                         help='If true, camera poses are expressed using [tx ty tz tux tuy tuz] formalism, otherwise in homogeneous form.')
+    parser.add_argument('--npz', action='store_true', default=False,
+                        help='If true, poses are loaded from a npz file with \"vec_poses\" field and [tx ty tz tux tuy tuz] data.')
     parser.add_argument('-m', type=str, nargs=1, required=True, help='Path to CAO model file.')
     parser.add_argument('--colormap', default='gist_rainbow', type=str, help='Colormap to use for the camera path.')
     parser.add_argument('--save', action='store_true', help='If true, save the figures on disk.')
@@ -774,8 +786,9 @@ def main():
     # Load camera poses
     camera_pose_filename = args.p[0]
     use_thetau = args.theta_u
-    print(f"Load camera poses from: {camera_pose_filename} ; Use theta-u? {use_thetau}")
-    camera_poses = load_camera_poses(camera_pose_filename, use_thetau)
+    use_npz_file_format = args.npz
+    print(f"Load camera poses from: {camera_pose_filename} ; Use theta-u? {use_thetau} ; Load from npz file? {use_npz_file_format}")
+    camera_poses = load_camera_poses(camera_pose_filename, use_thetau, use_npz_file_format)
     print("poses: ", camera_poses.shape)
 
     colormap = args.colormap
@@ -854,12 +867,12 @@ def main():
 
         for i in range(0, inverse_camera_poses.shape[0], 4*pose_step):
             camera_pose = inverse_camera_poses[i:i+4,:]
-            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale)
+            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale, camera_colors[i//4])
 
         # Draw the last camera pose
         for i in range(inverse_camera_poses.shape[0]-4, inverse_camera_poses.shape[0], 4):
             camera_pose = inverse_camera_poses[i:i+4,:]
-            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale)
+            draw_camera(ax, camera_pose, cam_width, cam_height, cam_focal, cam_scale, camera_colors[-1])
 
         draw_camera_path(ax, inverse_camera_poses, camera_colors)
         draw_model(ax, model)
