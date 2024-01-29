@@ -6,6 +6,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageDraw.h>
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)
 namespace
 {
 // https://en.cppreference.com/w/cpp/io/c/fprintf
@@ -30,6 +31,7 @@ std::unique_ptr<T> make_unique_compat(Args&&... args)
 #endif
 }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -190,8 +192,10 @@ int main(int argc, char *argv[])
   vpDisplay::getClick(I_display, true);
 
 #else
-  std::cerr << "Error, a missing display library is needed (X11, GDI or OpenCV built with HighGUI module)."
+  (void)argc;
+  (void)argv;
+  std::cerr << "Error, a missing display library is needed (X11, GDI or OpenCV built with HighGUI module)." << std::endl;
 #endif
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
