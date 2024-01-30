@@ -58,7 +58,7 @@
 namespace visp
 {
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
-static unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)
+static inline unsigned long vp_mz_crc32(unsigned long crc, const unsigned char *ptr, size_t buf_len)
 {
   static const unsigned int s_crc32[16] = { 0, 0x1db71064, 0x3b6e20c8, 0x26d930ac, 0x76dc4190, 0x6b6b51f4, 0x4db26158, 0x5005713c,
     0xedb88320, 0xf00f9344, 0xd6d6a3e8, 0xcb61b38c, 0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c };
@@ -84,7 +84,7 @@ struct NpyArray
     shape(_shape), word_size(_word_size), fortran_order(_fortran_order)
   {
     num_vals = 1;
-    for (size_t i = 0;i < shape.size();i++) num_vals *= shape[i];
+    for (size_t i = 0; i < shape.size(); i++) num_vals *= shape[i];
     data_holder = std::shared_ptr<std::vector<char>>(
         new std::vector<char>(num_vals * word_size));
   }
@@ -360,7 +360,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
   dict += std::to_string(sizeof(T));
   dict += "', 'fortran_order': False, 'shape': (";
   dict += std::to_string(shape[0]);
-  for (size_t i = 1;i < shape.size();i++) {
+  for (size_t i = 1; i < shape.size(); i++) {
     dict += ", ";
     dict += std::to_string(shape[i]);
   }
