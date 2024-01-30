@@ -324,6 +324,9 @@ vp_set_source_file_compile_flag(src/tools/optimization/vpQuadProg.cpp -Wno-stric
 vp_set_source_file_compile_flag(src/tools/optimization/vpLinProg.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
+# To avoid warnings with basisu_miniz.h such as:
+# basisu_miniz.h:1184:9: warning: this ‘for’ clause does not guard... [-Wmisleading-indentation]
+vp_set_source_file_compile_flag(src/tools/vpIoTools.cpp -Wno-misleading-indentation)
 vp_set_source_file_compile_flag(src/munkres/vpMunkres.cpp /wd26812 /wd4244)
 vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/image/testImageOwnership.cpp -Wno-pessimizing-move)

@@ -10,6 +10,20 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
+namespace
+{
+std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
+{
+  vpThetaUVector tu = cMo.getThetaUVector();
+  vpTranslationVector t = cMo.getTranslationVector();
+  std::vector<double> vec { t[0], t[1], t[2], tu[0], tu[1], tu[2] };
+
+  return vec;
+}
+}
+#endif
+
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
@@ -23,12 +37,13 @@ int main(int argc, char **argv)
   bool opt_display_scale_auto = false;
   vpColVector opt_dof_to_estimate(6, 1.); // Here we consider 6 dof estimation
   std::string opt_save;
+  std::string opt_save_results;
   unsigned int thickness = 2;
 
   vpImage<unsigned char> I;
-  vpDisplay *display = nullptr;
-  vpPlot *plot = nullptr;
-  vpVideoWriter *writer = nullptr;
+  std::shared_ptr<vpDisplay> display;
+  std::shared_ptr<vpPlot> plot;
+  std::shared_ptr<vpVideoWriter> writer;
 
   try {
     for (int i = 0; i < argc; i++) {
@@ -49,6 +64,9 @@ int main(int argc, char **argv)
       }
       else if (std::string(argv[i]) == "--save") {
         opt_save = std::string(argv[++i]);
+      }
+      else if (std::string(argv[i]) == "--save-results") {
+        opt_save_results = std::string(argv[++i]);
       }
       else if (std::string(argv[i]) == "--plot") {
         opt_plot = true;
@@ -80,7 +98,8 @@ int main(int argc, char **argv)
           << " [--tracker <0=egde|1=keypoint|2=hybrid>]"
           << " [--downscale-img <scale factor>]"
           << " [--dof <0/1 0/1 0/1 0/1 0/1 0/1>]"
-          << " [--save <video>]"
+          << " [--save <e.g. results-%04d.png>]"
+          << " [--save-results <e.g. tracking_poses.npz>]"
           << " [--display-scale-auto]"
           << " [--plot]"
           << " [--verbose,-v]"
@@ -121,11 +140,17 @@ int main(int argc, char **argv)
           << "      is not estimated. It's value is the one from the initialisation." << std::endl
           << "      Default: 1 1 1 1 1 1 (to estimate all 6 dof)" << std::endl
           << std::endl
-          << "  --save <video>" << std::endl
+          << "  --save <e.g. results-%04d.png>" << std::endl
           << "      Name of the saved image sequence that contains tracking results in overlay." << std::endl
           << "      When the name contains a folder like in the next example, the folder" << std::endl
           << "      is created if it doesn't exist."
           << "      Example: \"result/image-%04d.png\"." << std::endl
+          << std::endl
+          << "  --save-results <e.g. tracking_results.npz>" << std::endl
+          << "      Name of the npz file containing cMo data estimated from MBT." << std::endl
+          << "      When the name contains a folder like in the next example, the folder" << std::endl
+          << "      is created if it doesn't exist."
+          << "      Example: \"result/tracking_results.npz\"." << std::endl
           << std::endl
           << "  --display-scale-auto" << std::endl
           << "      Enable display window auto scaling to ensure that the image is fully" << std::endl
@@ -168,6 +193,13 @@ int main(int argc, char **argv)
         vpIoTools::makeDirectory(parent);
       }
     }
+    if (!opt_save_results.empty()) {
+      std::string parent = vpIoTools::getParent(opt_save_results);
+      if (!parent.empty()) {
+        std::cout << "Create output directory for the npz file: " << parent << std::endl;
+        vpIoTools::makeDirectory(parent);
+      }
+    }
 
     //! [Image]
     vpImage<unsigned char> Ivideo;
@@ -191,17 +223,17 @@ int main(int argc, char **argv)
 
     vpImage<vpRGBa> O;
     if (!opt_save.empty()) {
-      writer = new vpVideoWriter();
+      writer = std::make_shared<vpVideoWriter>();
       writer->setFileName(opt_save);
       writer->open(O);
     }
 
 #if defined(VISP_HAVE_X11)
-    display = new vpDisplayX;
+    display = std::make_shared<vpDisplayX>();
 #elif defined(VISP_HAVE_GDI)
-    display = new vpDisplayGDI;
+    display = std::make_shared<vpDisplayGDI>();
 #elif defined(HAVE_OPENCV_HIGHGUI)
-    display = new vpDisplayOpenCV;
+    display = std::make_shared<vpDisplayOpenCV>();
 #endif
     if (opt_display_scale_auto) {
       display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
@@ -209,8 +241,8 @@ int main(int argc, char **argv)
     display->init(I, 100, 100, "Model-based tracker");
 
     if (opt_plot) {
-      plot = new vpPlot(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30,
-                        display->getWindowYPosition(), "Estimated pose");
+      plot = std::make_shared<vpPlot>(2, 700, 700, display->getWindowXPosition() + I.getWidth() / display->getDownScalingFactor() + 30,
+                                      display->getWindowYPosition(), "Estimated pose");
       plot->initGraph(0, 3); // Translation
       plot->setTitle(0, "Translation [m]");
       plot->setColor(0, 0, vpColor::red);
@@ -343,6 +375,19 @@ int main(int argc, char **argv)
 
     std::cout << "Initialize tracker on image size: " << I.getWidth() << " x " << I.getHeight() << std::endl;
 
+    std::vector<double> vec_poses;
+    if (!opt_save_results.empty()) {
+      const unsigned int height = I.getHeight(), width = I.getWidth();
+      visp::cnpy::npz_save(opt_save_results, "height", &height, { 1 }, "w");
+      visp::cnpy::npz_save(opt_save_results, "width", &width, { 1 }, "a");
+
+      const double cam_px = cam.get_px(), cam_py = cam.get_py(), cam_u0 = cam.get_u0(), cam_v0 = cam.get_v0();
+      visp::cnpy::npz_save(opt_save_results, "cam_px", &cam_px, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_py", &cam_py, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_u0", &cam_u0, { 1 }, "a");
+      visp::cnpy::npz_save(opt_save_results, "cam_v0", &cam_v0, { 1 }, "a");
+    }
+
     //! [Init]
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
@@ -414,10 +459,19 @@ int main(int argc, char **argv)
         writer->saveFrame(O);
       }
 
+      if (!opt_save_results.empty()) {
+        std::vector<double> vec_pose = poseToVec(cMo);
+        vec_poses.insert(vec_poses.end(), vec_pose.begin(), vec_pose.end());
+      }
+
       if (vpDisplay::getClick(I, false))
         break;
     }
     vpDisplay::getClick(I);
+
+    if (!opt_save_results.empty()) {
+      visp::cnpy::npz_save(opt_save_results, "vec_poses", vec_poses.data(), { static_cast<size_t>(vec_poses.size()/6), 6 }, "a");
+    }
   }
   catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
@@ -429,15 +483,6 @@ int main(int argc, char **argv)
     vpDisplay::getClick(I);
   }
 #endif
-  //! [Cleanup]
-  delete display;
-  if (opt_plot) {
-    delete plot;
-  }
-  if (writer) {
-    delete writer;
-  }
-  //! [Cleanup]
 #else
   (void)argc;
   (void)argv;

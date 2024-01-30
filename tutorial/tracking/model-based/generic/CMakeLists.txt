@@ -9,6 +9,8 @@ set(tutorial_cpp
   tutorial-mb-generic-tracker.cpp
   tutorial-mb-generic-tracker-live.cpp
   tutorial-mb-generic-tracker-full.cpp
+  tutorial-mb-generic-tracker-save.cpp
+  tutorial-mb-generic-tracker-read.cpp
 )
 
 foreach(cpp ${tutorial_cpp})
