@@ -10,6 +10,7 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI)
 namespace
 {
 std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
@@ -21,6 +22,7 @@ std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
   return vec;
 }
 }
+#endif
 
 int main(int argc, char **argv)
 {

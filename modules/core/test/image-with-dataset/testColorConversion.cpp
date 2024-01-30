@@ -931,6 +931,7 @@ static double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa
   return 10 * std::log10(255 * 255 / mse);
 }
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 static bool readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
 {
   std::FILE *f = std::fopen(filename.c_str(), "rb");
@@ -967,7 +968,6 @@ static bool readBinaryFile(const std::string &filename, std::vector<uint8_t> &bu
   return true;
 }
 
-#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 TEST_CASE("Bayer conversion", "[image_conversion]")
 {
   // Load original Klimt image
