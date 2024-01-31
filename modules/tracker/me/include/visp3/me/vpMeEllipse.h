@@ -102,7 +102,8 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeEllipse() override;
+  virtual ~vpMeEllipse() vp_override;
+
   /*!
    * Display the ellipse or arc of ellipse
    *
@@ -146,9 +147,9 @@ public:
   inline vpColVector get_ABE() const
   {
     vpColVector ABE(3);
-    ABE[0] = a;
-    ABE[1] = b;
-    ABE[2] = e;
+    ABE[0] = m_a;
+    ABE[1] = m_b;
+    ABE[2] = m_e;
 
     return ABE;
   }
@@ -161,14 +162,14 @@ public:
    *
    * \sa getCenter(), get_nij(), get_ABE()
    */
-  inline double getArea() const { return m00; }
+  inline double getArea() const { return m_m00; }
 
   /*!
    * Gets the center of the ellipse.
    *
    * \sa get_nij(), get_ABE(), getArea()
    */
-  inline vpImagePoint getCenter() const { return iPc; }
+  inline vpImagePoint getCenter() const { return m_iPc; }
 
   /*!
    * \return Expected number of moving edges to track along the ellipse.
@@ -186,7 +187,7 @@ public:
    *
    * \sa getSecondEndpoint()
    */
-  inline vpImagePoint getFirstEndpoint() const { return iP1; }
+  inline vpImagePoint getFirstEndpoint() const { return m_iP1; }
 
   /*!
    * Gets the highest \f$ alpha \f$ angle of the moving edges tracked
@@ -202,7 +203,7 @@ public:
    *
    * \sa getFirstEndpoint()
    */
-  inline vpImagePoint getSecondEndpoint() const { return iP2; }
+  inline vpImagePoint getSecondEndpoint() const { return m_iP2; }
 
   /*!
    * Gets the smallest \f$ alpha \f$ angle of the moving edges tracked
@@ -275,8 +276,8 @@ public:
    */
   void setEndpoints(const vpImagePoint &pt1, const vpImagePoint &pt2)
   {
-    iP1 = pt1;
-    iP2 = pt2;
+    m_iP1 = pt1;
+    m_iP2 = pt2;
   }
 
   /*!
@@ -291,13 +292,13 @@ public:
   void setThresholdRobust(double threshold)
   {
     if (threshold < 0) {
-      thresholdWeight = 0;
+      m_thresholdWeight = 0;
     }
     else if (threshold > 1) {
-      thresholdWeight = 1;
+      m_thresholdWeight = 1;
     }
     else {
-      thresholdWeight = threshold;
+      m_thresholdWeight = threshold;
     }
   }
 
@@ -368,46 +369,46 @@ protected:
   /*! Parameters of the ellipse satisfying the homogeneous equation :
    * \f[ K_0 u^2 + K_1 v^2 + 2K_2 uv + 2K_3u + 2K_4v + K5 = 0 \f]
    */
-  vpColVector K;
+  vpColVector m_K;
   //! The coordinates of the ellipse center.
-  vpImagePoint iPc;
+  vpImagePoint m_iPc;
   //! \f$ a \f$ is the semi major axis of the ellipse.
-  double a;
+  double m_a;
   //! \f$ b \f$ is the semi minor axis of the ellipse.
-  double b;
+  double m_b;
   /*! \f$ e \in [-\pi/2;\pi/2] \f$ is the angle made by the major axis
    * and the u axis of the image frame \f$ (u,v) \f$.
    */
-  double e;
+  double m_e;
 
   /*! The coordinates of the first endpoint of the ellipse arc
    *  corresponding to angle \f$ \alpha_1 \f$
    */
-  vpImagePoint iP1;
+  vpImagePoint m_iP1;
   /*! The coordinates of the second endpoint of the ellipse arc
    *  corresponding to angle \f$ \alpha_2 \f$
    */
-  vpImagePoint iP2;
+  vpImagePoint m_iP2;
   /*! The angle \f$ \alpha_1 \in [-\pi;\pi] \f$ on the ellipse corresponding
    *  to the first endpoint. Its value is 0 for tracking a complete ellipse
    */
-  double alpha1;
+  double m_alpha1;
   /*! The angle \f$ \alpha_2 \in [\alpha_1;\alpha_1+2\pi]\f$ on the ellipse
    *  corresponding to the second endpoint. Its value is \f$ 2 \pi \f$ for
    *  tracking a complete ellipse
    */
-  double alpha2;
+  double m_alpha2;
   //! Value of cos(e).
-  double ce;
+  double m_ce;
   //! Value of sin(e).
-  double se;
+  double m_se;
   //! Stores the value in increasing order of the \f$ alpha \f$ angle on the ellipse for each vpMeSite.
-  std::list<double> angle;
+  std::list<double> m_angleList;
   //! Ellipse area
-  double m00;
+  double m_m00;
 
   //! Threshold on the weights for the robust least square.
-  double thresholdWeight;
+  double m_thresholdWeight;
 
   /*! The smallest angle \f$ \alpha_{min} \in [\alpha_1;\alpha_2]\f$
    *  of the current moving edge list
@@ -549,7 +550,7 @@ protected:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
 
   /*!
    * Compute the \f$ theta \f$ angle for each vpMeSite.

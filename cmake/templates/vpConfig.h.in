@@ -561,6 +561,23 @@
 #  define VISP_HAVE_DATASET_VERSION ${VISP_HAVE_DATASET_VERSION}
 #endif
 
+// Defined if nullptr is available
+#cmakedefine VISP_HAVE_NULLPTR
+
+// Emulate nullptr when not available when cxx98 is enabled
+#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus == 199711L)
+#include <visp3/core/vpNullptrEmulated.h>
+#endif
+
+// Macro to be able to add override keyword
+#ifndef vp_override
+  #if (__cplusplus >= 201103L) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+    #define vp_override override
+  #else
+    #define vp_override
+  #endif
+#endif
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.

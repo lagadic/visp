@@ -36,11 +36,6 @@ either expressed or implied, of the Regents of The University of Michigan.
 #include "string_util.h"
 #include "zarray.h"
 
-// fix va_copy missing with msvc11 Visual 2012
-#ifdef _MSC_VER
-#define my_va_copy(dest, src) (dest = src)
-#endif
-
 struct string_buffer
 {
     char *s;
@@ -49,59 +44,6 @@ struct string_buffer
 };
 
 #define MIN_PRINTF_ALLOC 16
-
-char *sprintf_alloc(const char *fmt, ...)
-{
-    assert(fmt != NULL);
-
-    va_list args;
-
-    va_start(args,fmt);
-    char *buf = vsprintf_alloc(fmt, args);
-    va_end(args);
-
-    return buf;
-}
-
-char *vsprintf_alloc(const char *fmt, va_list orig_args)
-{
-    assert(fmt != NULL);
-
-    int size = MIN_PRINTF_ALLOC;
-    char *buf = (char *)malloc(size * sizeof(char));
-
-    int returnsize;
-    va_list args;
-
-#ifdef _MSC_VER
-    my_va_copy(args, orig_args);
-#else
-    va_copy(args, orig_args);
-#endif
-    returnsize = vsnprintf(buf, size, fmt, args);
-    va_end(args);
-
-    // it was successful
-    if (returnsize < size) {
-        return buf;
-    }
-
-    // otherwise, we should try again
-    free(buf);
-    size = returnsize + 1;
-    buf = (char *)malloc(size * sizeof(char));
-
-#ifdef _MSC_VER
-    my_va_copy(args, orig_args);
-#else
-    va_copy(args, orig_args);
-#endif
-    returnsize = vsnprintf(buf, size, fmt, args);
-    va_end(args);
-
-    assert(returnsize <= size);
-    return buf;
-}
 
 char *_str_concat_private(const char *first, ...)
 {

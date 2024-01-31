@@ -41,7 +41,7 @@
 #ifndef vpIMAGECONVERT_impl_H
 #define vpIMAGECONVERT_impl_H
 
-#if defined(VISP_HAVE_OPENMP)
+#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <omp.h>
 #include <array>
 #endif
@@ -60,7 +60,7 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
 
-#if defined(VISP_HAVE_OPENMP)
+#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
   for (int i = 0; i < nThreads; i++) {
@@ -120,7 +120,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
   uint32_t histogram[0x10000];
   memset(histogram, 0, sizeof(histogram));
 
-#if defined(VISP_HAVE_OPENMP)
+#if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
   for (int i = 0; i < nThreads; i++) {

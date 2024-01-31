@@ -52,6 +52,7 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 class vp_createPointClass
 {
 public:
@@ -70,6 +71,7 @@ public:
 void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v) { vpFeatureBuilder::create(fp, v); }
 
 void vp_createLine(vpFeatureLine &fp, const vpLine &v) { vpFeatureBuilder::create(fp, v); }
+#endif
 #endif
 
 int test_pose(bool use_robust)
@@ -151,6 +153,7 @@ int test_pose(bool use_robust)
 
   pose.addFeatureEllipse(circle);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;
@@ -160,6 +163,7 @@ int test_pose(bool use_robust)
   pose.addSpecificFeature(&cpClass, ptrClass, fp, pts[1]);
   pose.addSpecificFeature(&vp_createLine, fl, line);
   pose.addSpecificFeature(ptr, fs, pts[3], pts[4]);
+#endif
 
   pose.setVerbose(true);
   pose.setLambda(0.6);

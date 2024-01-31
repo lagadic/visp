@@ -181,13 +181,11 @@ public:
   explicit vpGenericFeature(unsigned int dim);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
-
-  vpGenericFeature *duplicate() const override;
-
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+               unsigned int thickness = 1) const vp_override;
+  vpGenericFeature *duplicate() const vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 
   vpColVector error(unsigned int select = FEATURE_ALL);
 
@@ -197,11 +195,9 @@ public:
   void get_s(double &s0, double &s1) const;
   void get_s(double &s0, double &s1, double &s2) const;
 
-  void init() override;
-
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
-
-  void print(unsigned int select = FEATURE_ALL) const override;
+  void init() vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
   void setInteractionMatrix(const vpMatrix &L);
   void setError(const vpColVector &error_vector);
   void set_s(const vpColVector &s);

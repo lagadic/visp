@@ -42,7 +42,7 @@
 #include <iostream>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 int main()
 {

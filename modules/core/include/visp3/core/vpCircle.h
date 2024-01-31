@@ -88,20 +88,21 @@ public:
   vpCircle();
   explicit vpCircle(const vpColVector &oP);
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
-  virtual ~vpCircle() override;
-
-  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) override;
+  virtual ~vpCircle() vp_override;
+  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const vp_override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) override;
+               unsigned int thickness = 1) vp_override;
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
+
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  vpCircle *duplicate() const override;
+
+  vpCircle *duplicate() const vp_override;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -120,10 +121,10 @@ public:
 
   double getR() const { return cP[6]; }
 
-  void projection() override;
-  void projection(const vpColVector &cP, vpColVector &p) const override;
+  void projection() vp_override;
+  void projection(const vpColVector &cP, vpColVector &p) const vp_override;
+  void setWorldCoordinates(const vpColVector &oP) vp_override;
 
-  void setWorldCoordinates(const vpColVector &oP) override;
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 
   //###################
@@ -133,13 +134,13 @@ public:
                                        const double &theta, double &i, double &j);
 
 protected:
-  void init() override;
+  void init() vp_override;
 
 public:
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
-  */
+   */
   //@{
   /*!
    * \deprecated You should rather use get_n20().
@@ -152,7 +153,7 @@ public:
    * \deprecated You should rather use get_n11().
    * This function is incorrectly named and is confusing since it
    * returns second order centered moments of the ellipse normalized
-   * by its area that corresponds to \f$n_11 = mu_11/a\f$.
+   * by its area that corresponds to \f$n_11 = mu@name Deprecated functions_11/a\f$.
    */
   vp_deprecated double get_mu11() const { return p[3]; }
   /*!

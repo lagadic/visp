@@ -321,8 +321,18 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-      std::vector<double> params = { 0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::vector<double> params = { 0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState()) };
+#else
+      std::vector<double> params;
+      params.push_back(0); //ME
+      params.push_back(p_me.get_ifloat());
+      params.push_back(p_me.get_jfloat());
+      params.push_back(static_cast<double>(p_me.getState()));
+#endif
 
       features.push_back(params);
     }
@@ -449,7 +459,7 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
 
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
-      vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
+      vpPixelMeterConversion::convertPoint(cam, it->m_j, it->m_i, x, y);
       // TRO Chaumette 2004 eq 25
       H[0] = 2 * (n11 * (y - yg) + n02 * (xg - x));
       H[1] = 2 * (n20 * (yg - y) + n11 * (x - xg));

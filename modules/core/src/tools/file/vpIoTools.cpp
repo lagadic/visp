@@ -329,6 +329,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   return array;
 }
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 /*!
   Load the specified \p fname filepath as arrays of data. This function is similar to the
   <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
@@ -386,6 +387,7 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   fclose(fp);
   return arrays;
 }
+#endif
 
 /*!
   Load the specified \p varname array of data from the \p fname npz file. This function is similar to the
@@ -499,18 +501,21 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 
 std::string &ltrim(std::string &s)
 {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {
-    return !std::isspace(c);
-                                  }));
-
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
+#else
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+#endif
   return s;
 }
 
 std::string &rtrim(std::string &s)
 {
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {
-    return !std::isspace(c);
-                       }).base(), s.end());
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
+#else
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+#endif
   return s;
 }
 } // namespace

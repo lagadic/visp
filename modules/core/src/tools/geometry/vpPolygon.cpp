@@ -63,15 +63,18 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
   // Visp -> CV
   std::vector<cv::Point> cv_pts;
-  // Check if std:c++14 or higher
-#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))  // Check if cxx14 or higher
   std::transform(cbegin(ips), cend(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
     return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
-  });
-#else
+                 });
+#elif ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   std::transform(begin(ips), end(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
     return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
-  });
+                 });
+#else // cxx98
+  for (typename IpContainer::const_iterator it = ips.begin(); it != ips.end(); ++it) {
+    cv_pts.push_back(cv::Point(static_cast<int>(it->get_u()), static_cast<int>(it->get_v())));
+  }
 #endif
 
   // Get convex hull from OpenCV
@@ -80,17 +83,21 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
 
   // CV -> Visp
   std::vector<vpImagePoint> conv_hull_corners;
-  // Check if std:c++14 or higher
-#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L)))
+#if ((__cplusplus >= 201402L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201402L))) // Check if cxx14 or higher
   std::transform(cbegin(cv_conv_hull_corners), cend(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
                  [](const cv::Point &pt) {
                    return vpImagePoint { static_cast<double>(pt.y), static_cast<double>(pt.x) };
                  });
-#else
+#elif ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   std::transform(begin(cv_conv_hull_corners), end(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
                  [](const cv::Point &pt) {
                    return vpImagePoint { static_cast<double>(pt.y), static_cast<double>(pt.x) };
                  });
+#else // cxx98
+  for (std::vector<cv::Point>::const_iterator it = cv_conv_hull_corners.begin(); it != cv_conv_hull_corners.end();
+       ++it) {
+    conv_hull_corners.push_back(vpImagePoint(static_cast<double>(it->y), static_cast<double>(it->x)));
+  }
 #endif
 
   return conv_hull_corners;
@@ -177,7 +184,7 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
   \warning the corners must be ordered (either clockwise or counter
   clockwise).
 
-  \param corners : The corners of the polyon.
+  \param corners : The corners of the polygon.
   \param create_convex_hull: Create a convex hull from the given corners.
 */
 void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull)
@@ -200,7 +207,7 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool c
   \warning the corners must be ordered (either clockwise or counter
   clockwise).
 
-  \param corners : The corners of the polyon.
+  \param corners : The corners of the polygon.
   \param create_convex_hull: Create a convex hull from the given corners.
 */
 void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull)
@@ -225,9 +232,8 @@ void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool cre
   \warning the corners must be ordered (either clockwise or counter
   clockwise).
 
-  \param corners : The corners of the polyon.
-  \param cam : The camera parameters used to convert the coordinates from
-  meter to pixel.
+  \param corners : The corners of the polygon.
+  \param cam : The camera parameters used to convert the coordinates from meter to pixel.
   \param create_convex_hull: Create a convex hull from the given corners.
 */
 void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
@@ -245,9 +251,9 @@ void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraPar
   A right click is used to stop the addition of new corners.
 
   \param I : The image where to click to initialise the corners.
-  \param size : Cross size in terms of number of pixels that is displayed over
-  a polygon corner. \param color : Color used to display the cross over the
-  polygon corner. \param thickness : Thickness used to display the cross.
+  \param size : Cross size in terms of number of pixels that is displayed over a polygon corner.
+  \param color : Color used to display the cross over the polygon corner.
+  \param thickness : Thickness used to display the cross.
 */
 void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size, const vpColor &color,
                           unsigned int thickness)
@@ -274,10 +280,9 @@ void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size, co
   A right click is used to stop the addition of new corners.
 
   \param I : The image where to click to initialise the corners.
-  \param size : Size of the cross in terms of number of pixels that is
-  displayed over a polygon corner. \param color : Color used to display the
-  cross over the polygon corner. \param thickness : Thickness used to display
-  the cross.
+  \param size : Size of the cross in terms of number of pixels that is displayed over a polygon corner.
+  \param color : Color used to display the cross over the polygon corner.
+  \param thickness : Thickness used to display the cross.
 */
 void vpPolygon::initClick(const vpImage<vpRGBa> &I, unsigned int size, const vpColor &color, unsigned int thickness)
 {
@@ -395,13 +400,11 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
   switch (method) {
   case PnPolySegmentIntersection: {
     vpImagePoint infPoint(100000, 100000); // take a point at 'infinity'
+    // we add random since it appears that sometimes infPoint may cause a degenerated case (so relaunch and
+    // hope that result will be different).
     vpUniRand generator;
     infPoint.set_i(infPoint.get_i() + 1000 * generator());
-    infPoint.set_j(infPoint.get_j() + 1000 * generator()); // we add random since it appears that
-                                                           // sometimes infPoint may cause a
-                                                           // degenerated case (so relaunch and
-                                                           // hope that result will be
-                                                           // different).
+    infPoint.set_j(infPoint.get_j() + 1000 * generator());
 
     bool oddNbIntersections = false;
     for (unsigned int i = 0; i < _corners.size(); ++i) {
@@ -429,7 +432,7 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     test = oddNbIntersections;
   } break;
 
-  // Reference: http://alienryderflex.com/polygon/
+    // Reference: http://alienryderflex.com/polygon/
   case PnPolyRayCasting:
   default: {
     bool oddNodes = false;
@@ -524,12 +527,12 @@ void vpPolygon::updateCenter()
   double i_tmp = 0;
   double j_tmp = 0;
 #if 0
-  for (unsigned int i = 0; i<(_corners.size()-1); ++i) {
-    i_tmp += (_corners[i].get_i() + _corners[i+1].get_i()) *
-      (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
+  for (unsigned int i = 0; i < (_corners.size() - 1); ++i) {
+    i_tmp += (_corners[i].get_i() + _corners[i + 1].get_i()) *
+      (_corners[i + 1].get_i() * _corners[i].get_j() - _corners[i + 1].get_j() * _corners[i].get_i());
 
-    j_tmp += (_corners[i].get_j() + _corners[i+1].get_j()) *
-      (_corners[i+1].get_i() * _corners[i].get_j() - _corners[i+1].get_j() * _corners[i].get_i());
+    j_tmp += (_corners[i].get_j() + _corners[i + 1].get_j()) *
+      (_corners[i + 1].get_i() * _corners[i].get_j() - _corners[i + 1].get_j() * _corners[i].get_i());
   }
 #else
   for (unsigned int i = 0; i < _corners.size(); ++i) {
@@ -623,4 +626,7 @@ bool vpPolygon::isInside(const std::vector<vpImagePoint> &roi, const double &i, 
 /*!
   Return number of corners belonging to the polygon.
  */
-unsigned int vpPolygon::getSize() const { return ((unsigned int)_corners.size()); }
+unsigned int vpPolygon::getSize() const
+{
+  return ((unsigned int)_corners.size());
+}

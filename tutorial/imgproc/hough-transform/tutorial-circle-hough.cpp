@@ -30,7 +30,16 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
   vpImageConvert::convert(I_src, I_disp);
 
   unsigned int id = 0;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::vector<vpColor> v_colors = { vpColor::red, vpColor::purple, vpColor::orange, vpColor::yellow, vpColor::blue };
+#else
+  std::vector<vpColor> v_colors;
+  v_colors.push_back(vpColor::red);
+  v_colors.push_back(vpColor::purple);
+  v_colors.push_back(vpColor::orange);
+  v_colors.push_back(vpColor::yellow);
+  v_colors.push_back(vpColor::blue);
+#endif
   unsigned int idColor = 0;
   //! [Iterate detections]
   const unsigned int nbCircle = detectedCircles.size();
@@ -71,7 +80,7 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
     unsigned int nbVotedCircles = opt_votingPoints->size();
     for (unsigned int idCircle = 0; idCircle < nbVotedCircles; ++idCircle) {
       // Get the voting points of a detected circle
-      const std::vector<std::pair<unsigned int, unsigned int>> &votingPoints = (*opt_votingPoints)[idCircle];
+      const std::vector<std::pair<unsigned int, unsigned int> > &votingPoints = (*opt_votingPoints)[idCircle];
       unsigned int nbVotingPoints = votingPoints.size();
       for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
         // Draw the voting points

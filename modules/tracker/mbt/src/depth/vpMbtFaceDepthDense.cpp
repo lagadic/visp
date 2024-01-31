@@ -312,7 +312,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back((*point_cloud)(j, i).x);
@@ -398,7 +398,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
@@ -483,7 +483,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);

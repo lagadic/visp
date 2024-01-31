@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTUR ) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <visp3/gui/vpPlot.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
@@ -117,9 +117,16 @@ int main()
 #else
 int main()
 {
+#if !defined( VISP_HAVE_OCCIPITAL_STRUCTURE )
   std::cout << "You do not have Occipital Structure SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
 #endif

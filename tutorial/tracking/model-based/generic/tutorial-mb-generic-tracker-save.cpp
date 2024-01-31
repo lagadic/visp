@@ -3,12 +3,15 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/io/vpVideoReader.h>
 
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 namespace
 {
 std::vector<double> poseToVec(const vpHomogeneousMatrix &cMo)
 {
   vpThetaUVector tu = cMo.getThetaUVector();
   vpTranslationVector t = cMo.getTranslationVector();
+
   std::vector<double> vec { t[0], t[1], t[2], tu[0], tu[1], tu[2] };
 
   return vec;
@@ -203,3 +206,12 @@ int main(int argc, char **argv)
 
   return EXIT_SUCCESS;
 }
+
+#else
+#include <iostream>
+
+int main()
+{
+  std::cout << "This tutorial needs c++11 flags" << std::endl;
+}
+#endif

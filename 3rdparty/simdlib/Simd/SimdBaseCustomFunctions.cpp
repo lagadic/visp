@@ -195,7 +195,7 @@ namespace Simd
         {
             for (size_t i = 0; i < size; i++) {
                 int diff = img1[i] - img2[i] + 128;
-                imgDiff[i] = static_cast<unsigned char>(std::max(std::min(diff, 255), 0));
+                imgDiff[i] = static_cast<unsigned char>(std::max<int>(std::min<int>(diff, 255), 0));
             }
         }
 

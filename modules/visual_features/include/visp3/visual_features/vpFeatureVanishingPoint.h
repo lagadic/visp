@@ -82,13 +82,11 @@ public:
   void buildFrom(double x, double y);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
-
-  vpFeatureVanishingPoint *duplicate() const override;
-
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) override;
+               unsigned int thickness = 1) const vp_override;
+  vpFeatureVanishingPoint *duplicate() const vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) vp_override;
 
   double get_x() const;
   double get_y() const;
@@ -96,10 +94,9 @@ public:
   double getOneOverRho() const;
   double getAlpha() const;
 
-  void init() override;
-  vpMatrix interaction(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) override;
-
-  void print(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) const override;
+  void init() vp_override;
+  vpMatrix interaction(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) vp_override;
+  void print(unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY())) const vp_override;
 
   void set_x(double x);
   void set_y(double y);

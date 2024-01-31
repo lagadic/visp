@@ -51,59 +51,42 @@ void vpMeTracker::init()
 {
   vpTracker::init();
   p.resize(2);
-  selectDisplay = vpMeSite::NONE;
+  m_selectDisplay = vpMeSite::NONE;
 }
 
 vpMeTracker::vpMeTracker()
-  : list(), me(nullptr), init_range(1), nGoodElement(0), m_mask(nullptr), selectDisplay(vpMeSite::NONE)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  query_range(0), display_point(false)
-#endif
+  : m_meList(), m_me(nullptr), m_init_range(1), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
 {
   init();
 }
 
 vpMeTracker::vpMeTracker(const vpMeTracker &meTracker)
-  : vpTracker(meTracker), list(), me(nullptr), init_range(1), nGoodElement(0), m_mask(nullptr), selectDisplay(vpMeSite::NONE)
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  ,
-  query_range(0), display_point(false)
-#endif
+  : vpTracker(meTracker), m_meList(), m_me(nullptr), m_init_range(1), m_nGoodElement(0), m_mask(nullptr), m_maskCandidates(nullptr), m_selectDisplay(vpMeSite::NONE)
 {
   init();
 
-  me = meTracker.me;
-  list = meTracker.list;
-  nGoodElement = meTracker.nGoodElement;
-  init_range = meTracker.init_range;
-  selectDisplay = meTracker.selectDisplay;
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  display_point = meTracker.display_point;
-  query_range = meTracker.query_range;
-#endif
+  m_me = meTracker.m_me;
+  m_meList = meTracker.m_meList;
+  m_nGoodElement = meTracker.m_nGoodElement;
+  m_init_range = meTracker.m_init_range;
+  m_selectDisplay = meTracker.m_selectDisplay;
 }
 
 void vpMeTracker::reset()
 {
-  nGoodElement = 0;
-  list.clear();
+  m_nGoodElement = 0;
+  m_meList.clear();
 }
 
 vpMeTracker::~vpMeTracker() { reset(); }
 
-vpMeTracker &vpMeTracker::operator=(vpMeTracker &p_me)
+vpMeTracker &vpMeTracker::operator=(vpMeTracker &meTracker)
 {
-  list = p_me.list;
-  me = p_me.me;
-  selectDisplay = p_me.selectDisplay;
-  init_range = p_me.init_range;
-  nGoodElement = p_me.nGoodElement;
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  query_range = p_me.query_range;
-  display_point = p_me.display_point;
-#endif
+  m_meList = meTracker.m_meList;
+  m_me = meTracker.m_me;
+  m_selectDisplay = meTracker.m_selectDisplay;
+  m_init_range = meTracker.m_init_range;
+  m_nGoodElement = meTracker.m_nGoodElement;
   return *this;
 }
 
@@ -114,121 +97,168 @@ unsigned int vpMeTracker::numberOfSignal()
   unsigned int number_signal = 0;
 
   // Loop through all the points tracked from the contour
-  number_signal = static_cast<unsigned int>(std::count_if(list.begin(), list.end(), isSuppressZero));
+  number_signal = static_cast<unsigned int>(std::count_if(m_meList.begin(), m_meList.end(), isSuppressZero));
   return number_signal;
 }
 
-unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size(); }
+unsigned int vpMeTracker::totalNumberOfSignal() { return static_cast<unsigned int>(m_meList.size()); }
 
-bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
+bool vpMeTracker::inRoiMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
 {
   try {
-    return (mask == nullptr || mask->getValue(i, j));
+    return ((mask == nullptr) || (mask->getValue(i, j)));
   }
   catch (vpException &) {
     return false;
   }
 }
 
-int vpMeTracker::outOfImage(int i, int j, int half, int rows, int cols)
+bool vpMeTracker::inMeMaskCandidates(const vpImage<bool> *meMaskCandidates, unsigned int i, unsigned int j)
 {
-  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));
+  if (meMaskCandidates == nullptr) {
+    return true;
+  }
+  else {
+    const unsigned int kernelSize = 3;
+    const unsigned int halfKernelSize = (kernelSize - 1) / 2;
+    const unsigned int nbRows = meMaskCandidates->getRows();
+    const unsigned int nbCols = meMaskCandidates->getCols();
+
+    if ((i >= nbRows) || (j >= nbCols)) {
+      // The asked point is outside the mask
+      return false;
+    }
+    if ((*meMaskCandidates)[i][j]) {
+      // The asked point is a candidate
+      return true;
+    }
+    unsigned int iStart = 0, jStart = 0;
+    unsigned int iStop = nbRows - 1, jStop = nbCols - 1;
+    // Ensuring we won't go outside the limits of the mask
+    if (i >= halfKernelSize) {
+      iStart = i - halfKernelSize;
+    }
+    if (j >= halfKernelSize) {
+      jStart = j - halfKernelSize;
+    }
+    if ((i + halfKernelSize) < nbRows) {
+      iStop = i + halfKernelSize;
+    }
+    if ((j + halfKernelSize) < nbCols) {
+      jStop = j + halfKernelSize;
+    }
+    // Looking in its neighborhood
+    bool isACandidate = false;
+    unsigned int iter_i = iStart, iter_j = jStart;
+
+    while ((!isACandidate) && (iter_i <= iStop)) {
+      iter_j = jStart;
+      while ((!isACandidate) && (iter_j <= jStop)) {
+        isACandidate = (*meMaskCandidates)[iter_i][iter_j];
+        ++iter_j;
+      }
+      ++iter_i;
+    }
+
+    return isACandidate;
+  }
 }
 
-int vpMeTracker::outOfImage(const vpImagePoint &iP, int half, int rows, int cols)
+bool vpMeTracker::outOfImage(int i, int j, int border, int nrows, int ncols)
 {
+  int borderWith2SparedPixels = border + 2;
+  return (!((i > borderWith2SparedPixels) && (i < (nrows - borderWith2SparedPixels))
+            && (j > borderWith2SparedPixels) && (j < (ncols - borderWith2SparedPixels))
+            ));
+}
+
+bool vpMeTracker::outOfImage(const vpImagePoint &iP, int border, int nrows, int ncols)
+{
+  const int borderPlus2 = border + 2;
   int i = vpMath::round(iP.get_i());
   int j = vpMath::round(iP.get_j());
-  return (!((i > half + 2) && (i < rows - (half + 2)) && (j > half + 2) && (j < cols - (half + 2))));
+  return (!((i > borderPlus2) && (i < (nrows - borderPlus2)) && (j > borderPlus2) && (j < (ncols - borderPlus2))));
 }
 
 void vpMeTracker::initTracking(const vpImage<unsigned char> &I)
 {
-  if (!me) {
+  if (!m_me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
     throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
   // Must set range to 0
-  unsigned int range_tmp = me->getRange();
-  me->setRange(init_range);
+  unsigned int range_tmp = m_me->getRange();
+  m_me->setRange(m_init_range);
 
-  nGoodElement = 0;
+  m_nGoodElement = 0;
 
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::iterator end = m_meList.end();
+  for (std::list<vpMeSite>::iterator it = m_meList.begin(); it != end; ++it) {
     vpMeSite refp = *it; // current reference pixel
 
     // If element hasn't been suppressed
     if (refp.getState() == vpMeSite::NO_SUPPRESSION) {
-      try {
-        refp.track(I, me, false);
+
+      refp.track(I, m_me, false);
+
+      if (refp.getState() == vpMeSite::NO_SUPPRESSION) {
+        ++m_nGoodElement;
       }
-      catch (...) {
-        // EM verifier quel signal est de sortie !!!
-        vpERROR_TRACE("Error caught");
-        throw;
-      }
-      if (refp.getState() == vpMeSite::NO_SUPPRESSION)
-        nGoodElement++;
     }
 
     *it = refp;
   }
 
-  me->setRange(range_tmp);
+  m_me->setRange(range_tmp);
 }
 
 void vpMeTracker::track(const vpImage<unsigned char> &I)
 {
-  if (!me) {
+  if (!m_me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
     throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
   }
 
-  if (list.empty()) {
+  if (m_meList.empty()) {
     vpDERROR_TRACE(2, "Tracking error: too few pixel to track");
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Too few pixel to track"));
   }
 
-  nGoodElement = 0;
+  m_nGoodElement = 0;
 
   // Loop through list of sites to track
-  std::list<vpMeSite>::iterator it = list.begin();
-  while (it != list.end()) {
+  std::list<vpMeSite>::iterator it = m_meList.begin();
+  std::list<vpMeSite>::iterator end = m_meList.end();
+  while (it != end) {
     vpMeSite s = *it; // current reference pixel
 
     // If element hasn't been suppressed
     if (s.getState() == vpMeSite::NO_SUPPRESSION) {
+      s.track(I, m_me, true);
 
-      try {
-        s.track(I, me, true);
-      }
-      catch (...) {
-        s.setState(vpMeSite::THRESHOLD);
-      }
 
-      if (vpMeTracker::inMask(m_mask, s.i, s.j)) {
-        if (s.getState() != vpMeSite::THRESHOLD) {
-          nGoodElement++;
+      if (vpMeTracker::inRoiMask(m_mask, s.get_i(), s.get_j())) {
+        if (s.getState() == vpMeSite::NO_SUPPRESSION) {
+          ++m_nGoodElement;
         }
-        *it = s;
-        ++it;
       }
       else {
-        // Site outside mask: it is no more tracked.
-        it = list.erase(it);
+        // Site outside mask
+        s.setState(vpMeSite::OUTSIDE_ROI_MASK);
       }
     }
-    else {
-      ++it;
-    }
+
+    *it = s;
+    ++it;
   }
 }
 
 void vpMeTracker::display(const vpImage<unsigned char> &I)
 {
-  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::const_iterator end = m_meList.end();
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
     vpMeSite p_me = *it;
     p_me.display(I);
   }
@@ -236,7 +266,8 @@ void vpMeTracker::display(const vpImage<unsigned char> &I)
 
 void vpMeTracker::display(const vpImage<vpRGBa> &I)
 {
-  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::const_iterator end = m_meList.end();
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != end; ++it) {
     vpMeSite p_me = *it;
     p_me.display(I);
   }
@@ -244,12 +275,13 @@ void vpMeTracker::display(const vpImage<vpRGBa> &I)
 
 void vpMeTracker::display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w)
 {
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  std::list<vpMeSite>::iterator end = m_meList.end();
+  for (std::list<vpMeSite>::iterator it = m_meList.begin(); it != end; ++it) {
     vpMeSite P = *it;
 
     if (P.getState() == vpMeSite::NO_SUPPRESSION) {
-      P.weight = w[index_w];
-      index_w++;
+      P.setWeight(w[index_w]);
+      ++index_w;
     }
 
     *it = P;

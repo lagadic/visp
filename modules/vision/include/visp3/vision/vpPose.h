@@ -52,7 +52,6 @@
 #include <list>
 #include <math.h>
 #include <vector>
-#include <atomic>
 
 // Check if std:c++17 or higher.
 // Here we cannot use (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) in the declaration of the class

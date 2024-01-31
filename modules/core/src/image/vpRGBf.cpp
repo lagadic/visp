@@ -69,6 +69,7 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &v)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
 */
@@ -79,6 +80,7 @@ vpRGBf &vpRGBf::operator=(const vpRGBf &&v)
   this->B = std::move(v.B);
   return *this;
 }
+#endif
 
 /*!
   Cast a vpColVector in a vpRGBf

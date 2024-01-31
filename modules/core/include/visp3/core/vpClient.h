@@ -168,7 +168,7 @@ private:
 
 public:
   vpClient();
-  virtual ~vpClient() override;
+  virtual ~vpClient() vp_override;
 
   bool connectToHostname(const std::string &hostname, const unsigned int &port_serv);
   bool connectToIP(const std::string &ip, const unsigned int &port_serv);

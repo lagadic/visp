@@ -705,8 +705,18 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
     if (me_l != nullptr) {
       for (std::list<vpMeSite>::const_iterator it = me_l->getMeList().begin(); it != me_l->getMeList().end(); ++it) {
         vpMeSite p_me_l = *it;
-        std::vector<double> params = { 0, // ME
-                                      p_me_l.get_ifloat(), p_me_l.get_jfloat(), static_cast<double>(p_me_l.getState()) };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::vector<double> params = { 0, //ME
+                                      p_me_l.get_ifloat(),
+                                      p_me_l.get_jfloat(),
+                                      static_cast<double>(p_me_l.getState()) };
+#else
+        std::vector<double> params;
+        params.push_back(0); // ME
+        params.push_back(p_me_l.get_ifloat());
+        params.push_back(p_me_l.get_jfloat());
+        params.push_back(static_cast<double>(p_me_l.getState()));
+#endif
 
         features.push_back(params);
       }
@@ -768,8 +778,20 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].first.get_x(), linesLst[i].first.get_y(), ip1);
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
-        std::vector<double> params = { 0, // 0 for line parameters
-                                      ip1.get_i(), ip1.get_j(), ip2.get_i(), ip2.get_j() };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::vector<double> params = { 0, //0 for line parameters
+                                      ip1.get_i(),
+                                      ip1.get_j(),
+                                      ip2.get_i(),
+                                      ip2.get_j() };
+#else
+        std::vector<double> params;
+        params.push_back(0); //0 for line parameters
+        params.push_back(ip1.get_i());
+        params.push_back(ip1.get_j());
+        params.push_back(ip2.get_i());
+        params.push_back(ip2.get_j());
+#endif
 
         models.push_back(params);
       }
@@ -833,8 +855,8 @@ void vpMbtDistanceLine::computeInteractionMatrixError(const vpHomogeneousMatrix 
       for (size_t i = 0; i < meline.size(); i++) {
         for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin();
              it != meline[i]->getMeList().end(); ++it) {
-          x = (double)it->j;
-          y = (double)it->i;
+          x = (double)it->m_j;
+          y = (double)it->m_i;
 
           x = (x - xc) * mx;
           y = (y - yc) * my;
@@ -889,8 +911,8 @@ bool vpMbtDistanceLine::closeToImageBorder(const vpImage<unsigned char> &I, cons
     for (size_t i = 0; i < meline.size(); i++) {
       for (std::list<vpMeSite>::const_iterator it = meline[i]->getMeList().begin(); it != meline[i]->getMeList().end();
            ++it) {
-        int i_ = it->i;
-        int j_ = it->j;
+        int i_ = it->m_i;
+        int j_ = it->m_j;
 
         if (i_ < 0 || j_ < 0) { // out of image.
           return true;

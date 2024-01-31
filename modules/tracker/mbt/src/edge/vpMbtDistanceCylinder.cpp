@@ -579,8 +579,18 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-      std::vector<double> params = { 0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::vector<double> params = { 0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState()) };
+#else
+      std::vector<double> params;
+      params.push_back(0); //ME
+      params.push_back(p_me.get_ifloat());
+      params.push_back(p_me.get_jfloat());
+      params.push_back(static_cast<double>(p_me.getState()));
+#endif
 
       features.push_back(params);
     }
@@ -590,8 +600,18 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-      std::vector<double> params = { 0, // ME
-                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState()) };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::vector<double> params = { 0, //ME
+                                    p_me.get_ifloat(),
+                                    p_me.get_jfloat(),
+                                    static_cast<double>(p_me.getState()) };
+#else
+      std::vector<double> params;
+      params.push_back(0); //ME
+      params.push_back(p_me.get_ifloat());
+      params.push_back(p_me.get_jfloat());
+      params.push_back(static_cast<double>(p_me.getState()));
+#endif
 
       features.push_back(params);
     }
@@ -664,9 +684,32 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
-    std::vector<double> params1 = { 0, ip11.get_i(), ip11.get_j(), ip12.get_i(), ip12.get_j() };
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::vector<double> params1 = { 0,
+                                   ip11.get_i(),
+                                   ip11.get_j(),
+                                   ip12.get_i(),
+                                   ip12.get_j() };
 
-    std::vector<double> params2 = { 0, ip21.get_i(), ip21.get_j(), ip22.get_i(), ip22.get_j() };
+    std::vector<double> params2 = { 0,
+                                   ip21.get_i(),
+                                   ip21.get_j(),
+                                   ip22.get_i(),
+                                   ip22.get_j() };
+#else
+    std::vector<double> params1, params2;
+    params1.push_back(0);
+    params1.push_back(ip11.get_i());
+    params1.push_back(ip11.get_j());
+    params1.push_back(ip12.get_i());
+    params1.push_back(ip12.get_j());
+
+    params2.push_back(0);
+    params2.push_back(ip11.get_i());
+    params2.push_back(ip11.get_j());
+    params2.push_back(ip12.get_i());
+    params2.push_back(ip12.get_j());
+#endif
 
     models.push_back(params1);
     models.push_back(params2);
@@ -787,8 +830,8 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
     unsigned int j = 0;
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
-      double x = (double)it->j;
-      double y = (double)it->i;
+      double x = (double)it->m_j;
+      double y = (double)it->m_i;
 
       x = (x - xc) * mx;
       y = (y - yc) * my;
@@ -804,15 +847,15 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
       error[j] = rho1 - (x * co1 + y * si1);
 
       if (disp)
-        vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j] * 100), vpColor::orange, 1);
+        vpDisplay::displayCross(I, it->m_i, it->m_j, (unsigned int)(error[j] * 100), vpColor::orange, 1);
 
       j++;
     }
 
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
-      double x = (double)it->j;
-      double y = (double)it->i;
+      double x = (double)it->m_j;
+      double y = (double)it->m_i;
 
       x = (x - xc) * mx;
       y = (y - yc) * my;
@@ -828,7 +871,7 @@ void vpMbtDistanceCylinder::computeInteractionMatrixError(const vpHomogeneousMat
       error[j] = rho2 - (x * co2 + y * si2);
 
       if (disp)
-        vpDisplay::displayCross(I, it->i, it->j, (unsigned int)(error[j] * 100), vpColor::red, 1);
+        vpDisplay::displayCross(I, it->m_i, it->m_j, (unsigned int)(error[j] * 100), vpColor::red, 1);
 
       j++;
     }

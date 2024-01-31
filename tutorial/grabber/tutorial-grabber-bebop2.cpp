@@ -72,7 +72,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char **argv)
 {
-#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
+#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -198,7 +198,10 @@ int main(int argc, const char **argv)
 #ifndef VISP_HAVE_FFMPEG
   std::cout << "Install ffmpeg, configure and build ViSP again to use this example" << std::endl;
 #endif
-#endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
+#endif
+#endif
 }
 #else
 int main() { std::cout << "This tutorial needs visp_robot module that is not built." << std::endl; }

@@ -422,8 +422,8 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &cMe) const;
   void get_cVe(vpVelocityTwistMatrix &cVe) const;
-  void get_eJe(vpMatrix &eJe) override;
-  void get_fJe(vpMatrix &fJe) override;
+  void get_eJe(vpMatrix &eJe) vp_override;
+  void get_fJe(vpMatrix &fJe) vp_override;
 
   void init(void);
   void
@@ -449,7 +449,7 @@ public: /* Methode publiques */
   void setMaxRotationVelocityJoint6(double w6_max);
 
   // Position control
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -458,7 +458,7 @@ public: /* Methode publiques */
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
   // Velocity control
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
 
   void stopMotion();
 

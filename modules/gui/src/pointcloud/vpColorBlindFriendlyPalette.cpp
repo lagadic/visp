@@ -35,12 +35,13 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
 
 std::vector<std::string> vpColorBlindFriendlyPalette::s_paletteNames =
 {
   "black"     ,
   "orange"    ,
-  "sky-blue"   ,
+  "sky-blue"  ,
   "green"     ,
   "yellow"    ,
   "blue"      ,
@@ -205,3 +206,7 @@ std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color)
   color.set_fromString(nameColor);
   return is;
 }
+
+#else
+void dummy_vpColorBlindFriendlyPalette() { }
+#endif

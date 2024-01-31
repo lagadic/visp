@@ -6,7 +6,8 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpImageDraw.h>
 
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 namespace
 {
 // https://en.cppreference.com/w/cpp/io/c/fprintf
@@ -35,7 +36,8 @@ std::unique_ptr<T> make_unique_compat(Args&&... args)
 
 int main(int argc, char *argv[])
 {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) \
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   bool opencv_backend = false;
   std::string npz_filename = "npz_tracking_teabox.npz";
   bool print_cMo = false;

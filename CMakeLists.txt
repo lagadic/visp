@@ -622,19 +622,7 @@ VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" O
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_NLOHMANN_JSON  nlohmann_json QUIET "Include nlohmann json support" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
-
-# ----------------------------------------------------------------------------
-# Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
-# ----------------------------------------------------------------------------
-# if c++ standard is not at leat c++17, force 3rd parties that require at least c++17 to OFF
-if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
-  if(USE_MAVSDK)
-    message(WARNING "mavsdk 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable MAVSDK usage turning USE_MAVSDK=OFF.")
-    unset(USE_MAVSDK)
-    set(USE_MAVSDK OFF CACHE BOOL "Include mavsdk support for mavlink compatible devices" FORCE)
-  endif()
-endif()
+VP_OPTION(USE_NLOHMANN_JSON nlohmann_json QUIET "Include nlohmann json support" "" ON)
 
 # Upgrade c++ standard to 14 for pcl 1.9.1.99 that enables by default c++ 14 standard
 if(USE_PCL)
@@ -648,27 +636,49 @@ if(USE_PCL)
   # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS and PCL_DEPS_LIBRARIES
   # that contains also VTK material location.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
-  if(PCL_VERSION VERSION_GREATER 1.9.1)
-    # pcl > 1.9.1 requires c++14
-    # if c++14 option is OFF, force to c++14
-    if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
-      message(WARNING "pcl ${PCL_VERSION} 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable pcl usage we turn USE_CXX_STANDARD=14.")
-      set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
-      unset(CMAKE_CXX_STANDARD)
-      set(CMAKE_CXX_STANDARD 14)
-      set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
-    endif()
+endif()
+
+# ----------------------------------------------------------------------------
+# Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
+# ----------------------------------------------------------------------------
+# if c++ standard is not at leat c++17, force 3rd parties that require at least c++17 to OFF
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
+  if(USE_MAVSDK)
+    message(WARNING "mavsdk 3rd party was detected and needs at least c++17 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable MAVSDK usage turning USE_MAVSDK=OFF.")
+    unset(USE_MAVSDK)
+    set(USE_MAVSDK OFF CACHE BOOL "Include mavsdk support for mavlink compatible devices" FORCE)
   endif()
 endif()
 
-# Upgrade c++ standard to 14 for IIT force-torque SDK that needs at least c++ 14 standard
-if(USE_FTIITSDK)
-  if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
-    message(WARNING "IIT force-torque SDK 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable IIT SDK usage we turn USE_CXX_STANDARD=14.")
-    set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
-    unset(CMAKE_CXX_STANDARD)
-    set(CMAKE_CXX_STANDARD 14)
-    set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
+  if(USE_FTIITSDK)
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_OPENCV=OFF.")
+    unset(USE_FTIITSDK)
+    set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
+  endif()
+  if(USE_PCL AND (PCL_VERSION VERSION_GREATER 1.9.1))
+    # pcl > 1.9.1 requires c++14
+    message(WARNING "pcl 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable pcl usage turning USE_PCL=OFF.")
+    unset(USE_PCL)
+    set(USE_PCL OFF CACHE BOOL "Include pcl support" FORCE)
+  endif()
+endif()
+
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
+  if(USE_OPENCV)
+    message(WARNING "OpenCV 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+    unset(USE_OPENCV)
+    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+  endif()
+  if(USE_NLOHMANN_JSON)
+    message(WARNING "nlohmann json 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable nlohmann json usage turning USE_NLOHMANN_JSON=OFF.")
+    unset(USE_NLOHMANN_JSON)
+    set(USE_NLOHMANN_JSON OFF CACHE BOOL "Include nlohmann json support" FORCE)
+  endif()
+  if(USE_REALSENSE2)
+    message(WARNING "librealsense2 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable realsense2 usage turning USE_REALSENSE2=OFF.")
+    unset(USE_REALSENSE2)
+    set(USE_REALSENSE2 OFF CACHE BOOL "Include librealsense2 support" FORCE)
   endif()
 endif()
 
@@ -682,17 +692,41 @@ VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
-VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WINRT) AND (NOT IOS))
-VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS))
+VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
+VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2 built-in library" "" ON)
 VP_OPTION(WITH_POLOLU     ""           ""    "Build rapa pololu as built-in library" "" ON IF (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
 VP_OPTION(WITH_PUGIXML    ""           ""    "Use pugixml built-in third-party" "" ON)
 VP_OPTION(WITH_SIMDLIB    ""           ""    "Use simdlib built-in third-party" "" ON)
 VP_OPTION(WITH_STBIMAGE   ""           ""    "Use std_image built-in third-party" "" ON)
 VP_OPTION(WITH_TINYEXR    ""           ""    "Use tinyexr built-in third-party" "" ON)
 
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
+  if(WITH_CATCH2)
+    message(WARNING "catch2 3rd party needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable catch2 usage turning WITH_CATCH2=OFF.")
+    unset(WITH_CATCH2)
+    set(WITH_CATCH2 OFF CACHE BOOL "Use catch2 built-in library" FORCE)
+  endif()
+  if(WITH_POLOLU)
+    message(WARNING "pololu 3rd party needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable pololu usage turning WITH_POLOLU=OFF.")
+    unset(WITH_POLOLU)
+    set(WITH_POLOLU OFF CACHE BOOL "Build rapa pololu as built-in library" FORCE)
+  endif()
+  if(WITH_QBDEVICE)
+    message(WARNING "qbdevice-api 3rd party needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable qbdevice usage turning WITH_QBDEVICE=OFF.")
+    unset(WITH_QBDEVICE)
+    set(WITH_QBDEVICE OFF CACHE BOOL "Build rapa pololu as built-in library" FORCE)
+  endif()
+  if(WITH_TAKKTILE2)
+    message(WARNING "Right Hand takktile2 3rd party needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable takktile2 usage turning WITH_TAKKTILE2=OFF.")
+    unset(WITH_TAKKTILE2)
+    set(WITH_TAKKTILE2 OFF CACHE BOOL "Build rapa pololu as built-in library" FORCE)
+  endif()
+endif()
+
 # ----------------------------------------------------------------------------
-# Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka
+# Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and
+# potential modification depending on pcl, realsense2, libfranka
 # ----------------------------------------------------------------------------
 VP_CHECK_PACKAGE(IsNaN)
 VP_CHECK_PACKAGE(IsInf)
@@ -1027,6 +1061,7 @@ VP_SET(VISP_HAVE_DC1394_FIND_CAMERAS     TRUE IF (USE_DC1394 AND DC1394_FIND_CAM
 VP_SET(VISP_HAVE_D3D9        TRUE IF USE_DIRECT3D) # for header vpConfig.h
 VP_SET(VISP_HAVE_GTK         TRUE IF USE_GTK2) # for header vpConfig.h
 VP_SET(VISP_HAVE_XRANDR      TRUE IF XRANDR) # for header vpConfig.h
+VP_SET(VISP_HAVE_NULLPTR     TRUE IF HAVE_NULLPTR) # for header vpConfig.h
 
 # Check if libfreenect dependencies (ie libusb-1.0 and threads) are available
 if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_THREADS)

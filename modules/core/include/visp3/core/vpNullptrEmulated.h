@@ -31,6 +31,10 @@
 #ifndef _vpNullptrEmulated_h_
 #define _vpNullptrEmulated_h_
 
+#include <visp3/core/vpConfig.h>
+
+#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus == 199711L)
+
 // Inspired from this thread https://stackoverflow.com/questions/24433436/compile-error-nullptr-undeclared-identifier
 // Does the emulation of nullptr when not available with cxx98
 const
@@ -54,4 +58,5 @@ private:
 
 } nullptr = {};
 
+#endif
 #endif

@@ -101,6 +101,15 @@ public:
   vpException(int code, const std::string &msg);
 
   /*!
+    Basic destructor. Do nothing but implemented to fit the inheritance from
+    std::exception
+  */
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+  virtual ~vpException() { }
+#else
+  virtual ~vpException() throw() { }
+#endif
+  /*!
    * Constructor.
    */
   explicit vpException(int code);

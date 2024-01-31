@@ -87,6 +87,7 @@ vpRobust &vpRobust::operator=(const vpRobust &other)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
  */
@@ -103,6 +104,7 @@ vpRobust &vpRobust::operator=(const vpRobust &&other)
   m_size = std::move(other.m_size);
   return *this;
 }
+#endif
 
 /*!
   Resize containers.
@@ -441,7 +443,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
     m_mad = 1.4826 * normmedian; // Median Absolute Deviation
   }
   else {
- // compute simultaneous scale estimate
+    // compute simultaneous scale estimate
     m_mad = simultscale(residues);
   }
 
@@ -591,7 +593,7 @@ double vpRobust::simult_chi_huber(double x)
     sct = vpMath::sqr(u);
   }
   else {
- // sct = 0.5*vpMath::sqr(c);
+    // sct = 0.5*vpMath::sqr(c);
     sct = vpMath::sqr(c);
   }
 

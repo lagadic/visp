@@ -73,7 +73,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_PYLON)
+#if defined(VISP_HAVE_PYLON) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     unsigned int opt_device = 0;
     std::string opt_type("GigE");
@@ -201,6 +201,9 @@ int main(int argc, const char *argv[])
   (void)argv;
 #ifndef VISP_HAVE_PYLON
   std::cout << "Install Basler Pylon SDK, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

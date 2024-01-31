@@ -58,32 +58,24 @@
  */
 class VISP_EXPORT vpMeTracker : public vpTracker
 {
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /** @name Public Attributes Inherited from vpMeTracker */
-  //@{
-#else
 protected:
   /** @name Protected Attributes Inherited from vpMeTracker */
   //@{
-#endif
   //! Tracking dependent variables/functions
   //! List of tracked moving edges points.
-  std::list<vpMeSite> list;
+  std::list<vpMeSite> m_meList;
   //! Moving edges initialisation parameters
-  vpMe *me;
+  vpMe *m_me;
   //! Initial range
-  unsigned int init_range;
+  unsigned int m_init_range;
   //! Number of good moving-edges that are tracked
-  int nGoodElement;
+  int m_nGoodElement;
   //! Mask used to disable tracking on a part of image
   const vpImage<bool> *m_mask;
-  //@}
-
-protected:
-  /** @name Protected Attributes Inherited from vpMeTracker */
-  //@{
-  vpMeSite::vpMeSiteDisplayType selectDisplay;
+  //! Mask used to determine candidate points for initialization in an image
+  const vpImage<bool> *m_maskCandidates;
+  //! Moving-edges display type
+  vpMeSite::vpMeSiteDisplayType m_selectDisplay;
   //@}
 
 public:
@@ -100,7 +92,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeTracker() override;
+  virtual ~vpMeTracker() vp_override;
 
   /** @name Public Member Functions Inherited from vpMeTracker */
   //@{
@@ -143,50 +135,61 @@ public:
   void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
   /*!
-   * Test whether the pixel is inside the mask. Mask values that are set to true
+   * Test whether the pixel is inside the region of interest mask. Mask values that are set to true
    * are considered in the tracking.
    *
-   * \param mask: Mask image or nullptr if not wanted. Mask values that are set to true
-   * are considered in the tracking. To disable a pixel, set false.
+   * \param mask: Mask corresponding to the region of interest in the image or nullptr if not wanted.
+   * Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
    * \param i : Pixel coordinate along the rows.
    * \param j : Pixel coordinate along the columns.
    */
-  static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
+  static bool inRoiMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
+
+  /*!
+   * Test whether the moving-edge (ME) is inside the mask of ME candidates for the initialization.
+   * Mask values that are set to true and their 8 neighbors are considered for the initialization.
+   *
+   * \param meMaskCandidates: Mask corresponding the ME location in the image or nullptr if not wanted.
+   * Mask values that are set to true are considered for the initialization. To disable a pixel, set false.
+   * \param i : ME coordinate along the rows.
+   * \param j : ME coordinate along the columns.
+   */
+  static bool inMeMaskCandidates(const vpImage<bool> *meMaskCandidates, unsigned int i, unsigned int j);
 
   /*!
    * Return the initial range.
    *
    * \return Value of init_range.
    */
-  inline unsigned int getInitRange() { return init_range; }
+  inline unsigned int getInitRange() { return m_init_range; }
 
   /*!
    * Return the moving edges initialisation parameters.
    *
    * \return Moving Edges.
    */
-  inline vpMe *getMe() { return me; }
+  inline vpMe *getMe() { return m_me; }
 
   /*!
    * Return the list of moving edges
    *
    * \return List of Moving Edges.
    */
-  inline std::list<vpMeSite> &getMeList() { return list; }
+  inline std::list<vpMeSite> &getMeList() { return m_meList; }
 
   /*!
    * Return the list of moving edges
    *
    * \return List of Moving Edges.
    */
-  inline std::list<vpMeSite> getMeList() const { return list; }
+  inline std::list<vpMeSite> getMeList() const { return m_meList; }
 
   /*!
    * Return the number of points that has not been suppressed.
    *
    * \return Number of good points.
    */
-  inline int getNbPoints() const { return nGoodElement; }
+  inline int getNbPoints() const { return m_nGoodElement; }
 
   /*!
    * Initialize the tracker.
@@ -210,16 +213,25 @@ public:
   /*!
    * Copy operator.
    */
-  vpMeTracker &operator=(vpMeTracker &f);
+  vpMeTracker &operator=(vpMeTracker &meTracker);
 
   /*!
    * Check if a pixel i,j is out of the image.
+   * \param[in] i,j : Pixel coordinates.
+   * \param[in] border : Number of pixels along the image border to exclude. When border is set to 0, consider the complete image.
+   * \param[in] nrows,ncols : Size of the image.
+   * \return true when the pixel is inside the image minus the border size, false otherwise.
    */
-  int outOfImage(int i, int j, int half, int row, int cols);
+  bool outOfImage(int i, int j, int border, int nrows, int ncols);
+
   /*!
    * Check if a pixel i,j is out of the image.
+   * \param[in] iP : Pixel coordinates.
+   * \param[in] border : Number of pixels along the image border to exclude. When border is set to 0, consider the complete image.
+   * \param[in] nrows,ncols : Size of the image.
+   * \return true when the pixel is inside the image minus the border size, false otherwise.
    */
-  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols);
+  bool outOfImage(const vpImagePoint &iP, int border, int nrows, int ncols);
 
   /*!
    * Reset the tracker by removing all the moving edges.
@@ -235,14 +247,14 @@ public:
    * Set type of moving-edges display.
    * @param select : Display type selector.
    */
-  void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }
+  void setDisplay(vpMeSite::vpMeSiteDisplayType select) { m_selectDisplay = select; }
 
   /*!
    * Set the initial range.
    *
    * \param r : initial range.
    */
-  void setInitRange(const unsigned int &r) { init_range = r; }
+  void setInitRange(const unsigned int &r) { m_init_range = r; }
 
   /*!
    * Set the mask.
@@ -252,18 +264,25 @@ public:
   virtual void setMask(const vpImage<bool> &mask) { m_mask = &mask; }
 
   /*!
+   * Set the mask of candidates points for initialization.
+   *
+   * \param maskCandidates : Pointer towards the mask of candidates points for initialization.
+   */
+  virtual void setMaskCandidates(const vpImage<bool> *maskCandidates) { m_maskCandidates = maskCandidates; }
+
+  /*!
    * Set the moving edges initialisation parameters.
    *
-   * \param p_me : Moving Edges.
+   * \param me : Moving Edges.
    */
-  void setMe(vpMe *p_me) { this->me = p_me; }
+  void setMe(vpMe *me) { m_me = me; }
 
   /*!
    * Set the list of moving edges.
    *
-   * \param l : list of Moving Edges.
+   * \param meList : List of Moving Edges.
    */
-  void setMeList(const std::list<vpMeSite> &l) { list = l; }
+  void setMeList(const std::list<vpMeSite> &meList) { m_meList = meList; }
 
   /*!
    * Return the total number of moving-edges.
@@ -280,12 +299,25 @@ public:
   void track(const vpImage<unsigned char> &I);
   //@}
 
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-public:
-  /** @name Public Attributes Inherited from vpMeTracker */
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+   */
   //@{
-  int query_range;
-  bool display_point; //! If true displays the line that is being tracked
+  /*!
+   * \deprecated You should rather use inRoiMask().
+   * Test whether the pixel is inside the region of interest mask. Mask values that are set to true
+   * are considered in the tracking.
+   *
+   * \param mask: Mask corresponding to the region of interest in the image or nullptr if not wanted.
+   * Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+   * \param i : Pixel coordinate along the rows.
+   * \param j : Pixel coordinate along the columns.
+   */
+  vp_deprecated static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
+  {
+    return inRoiMask(mask, i, j);
+  }
   //@}
 #endif
 };
