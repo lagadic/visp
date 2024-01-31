@@ -178,8 +178,13 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa>
   }
   else {
     STBI_FREE(buffer_read);
+
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
     std::string message = "Wrong number of channels for the input buffer: " + std::to_string(comp);
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Wrong number of channels for the input buffer: %d", comp));
+#endif
   }
 
   STBI_FREE(buffer_read);
@@ -209,8 +214,12 @@ void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char
     buffer.resize(context.last_pos);
   }
   else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
     std::string message = "Cannot write png to memory, result: " + std::to_string(result);
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Cannot write png to memory, result: %d", result));
+#endif
   }
 }
 
@@ -249,8 +258,12 @@ void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char>
     buffer.resize(context.last_pos);
   }
   else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
     std::string message = "Cannot write png to memory, result: " + std::to_string(result);
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Cannot write png to memory, result: %d", result));
+#endif
   }
 }
 #endif

@@ -314,7 +314,11 @@ int main(int argc, char **argv)
         << "\t [--upper-canny-ratio <value>]"
         << " (default: " << def_upperCannyThreshRatio << ")" << std::endl
         << "\t [--expected-nb-centers <number>]"
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
         << " (default: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << ")" << std::endl
+#else
+        << std::endl
+#endif
         << "\t [--visibility-ratio-thresh <ratio ]0; 1[> ]"
         << " (default: " << def_visibilityRatioThresh << ")" << std::endl
         << "\t [--record-voting-points]" << std::endl
@@ -430,12 +434,20 @@ int main(int argc, char **argv)
         << "\t--expected-nb-centers" << std::endl
         << "\t\tPermit to choose the maximum number of centers having more votes than the threshold that are kept." << std::endl
         << "\t\tA negative value makes that all the centers having more votes than the threshold are kept." << std::endl
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
         << "\t\tDefault: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << std::endl
+#else
+        << std::endl
+#endif
         << std::endl
         << "\t--expected-nb-centers" << std::endl
         << "\t\tPermit to choose the maximum number of centers having more votes than the threshold that are kept." << std::endl
         << "\t\tA negative value makes that all the centers having more votes than the threshold are kept." << std::endl
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
         << "\t\tDefault: " << (def_expectedNbCenters < 0 ? "no limits" : std::to_string(def_expectedNbCenters)) << std::endl
+#else
+        << std::endl
+#endif
         << std::endl
         << "\t--record-voting-points" << std::endl
         << "\t\tPermit to display the edge map used to detect the circles" << std::endl

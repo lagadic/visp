@@ -55,6 +55,7 @@
 #include <cassert>
 #include <complex>
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 namespace visp
 {
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
@@ -122,10 +123,9 @@ struct NpyArray
   size_t num_vals;
 };
 
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 using npz_t = std::map<std::string, NpyArray>;
 VISP_EXPORT npz_t npz_load(std::string fname);
-#endif
+
 
 VISP_EXPORT char BigEndianTest();
 VISP_EXPORT char map_type(const std::type_info &t);
@@ -386,6 +386,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 
 } // namespace cnpy
 } // namespace visp
+#endif
 
 /*!
  * \class vpIoTools

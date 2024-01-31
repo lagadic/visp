@@ -81,7 +81,9 @@
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <cstdint>
+#endif
 
 namespace
 {
@@ -174,7 +176,7 @@ vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
-  If the line already exists, the ploygone's index is added to the list of
+  If the line already exists, the polygon's index is added to the list of
   polygon to which it belongs.
 
   \param P1 : The first extremity of the line.

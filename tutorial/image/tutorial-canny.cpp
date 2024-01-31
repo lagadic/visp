@@ -83,13 +83,31 @@ void setGradientOutsideClass(const vpImage<unsigned char> &I, const int &gaussia
   // Display the gradients
   float mean, max, stdev;
   computeMeanMaxStdev(dIx, mean, max, stdev);
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   std::string title = "Gradient along the horizontal axis. Mean = " + std::to_string(mean)
     + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max);
+#else
+  std::string title;
+  {
+    std::stringstream ss;
+    ss << "Gradient along the horizontal axis. Mean = " << mean<< "+/-" << stdev<< " Max = " << max;
+    title = ss.str();
+  }
+#endif
   vpImageConvert::convert(dIx, dIx_uchar);
   drawingHelpers::display(dIx_uchar, title);
   computeMeanMaxStdev(dIy, mean, max, stdev);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   title = "Gradient along the horizontal axis. Mean = " + std::to_string(mean)
     + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max);
+#else
+  {
+    std::stringstream ss;
+    ss << "Gradient along the horizontal axis. Mean = " << mean<< "+/-" << stdev<< " Max = " << max;
+    title = ss.str();
+  }
+#endif
   vpImageConvert::convert(dIy, dIy_uchar);
   drawingHelpers::display(dIy_uchar, title);
 }
@@ -217,11 +235,23 @@ int main(int argc, const char *argv[])
 
   std::string configAsTxt("Canny Configuration:\n");
   configAsTxt += "\tFiltering + gradient operators = " + vpImageFilter::vpCannyFilteringAndGradientTypeToString(opt_filteringType) + "\n";
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   configAsTxt += "\tGaussian filter kernel size = " + std::to_string(opt_gaussianKernelSize) + "\n";
   configAsTxt += "\tGaussian filter standard deviation = " + std::to_string(opt_gaussianStdev) + "\n";
   configAsTxt += "\tGradient filter kernel size = " + std::to_string(opt_apertureSize) + "\n";
   configAsTxt += "\tCanny edge filter thresholds = [" + std::to_string(opt_lowerThresh) + " ; " + std::to_string(opt_upperThresh) + "]\n";
   configAsTxt += "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" + std::to_string(opt_lowerThreshRatio) + " ; " + std::to_string(opt_upperThreshRatio) + "]\n";
+#else
+  {
+    std::stringstream ss;
+    ss << "\tGaussian filter kernel size = " << opt_gaussianKernelSize << "\n";
+    ss << "\tGaussian filter standard deviation = " << opt_gaussianStdev << "\n";
+    ss << "\tGradient filter kernel size = " << opt_apertureSize << "\n";
+    ss << "\tCanny edge filter thresholds = [" << opt_lowerThresh << " ; " << opt_upperThresh << "]\n";
+    ss << "\tCanny edge filter thresholds ratio (for auto-thresholding) = [" << opt_lowerThreshRatio << " ; " << opt_upperThreshRatio << "]\n";
+    configAsTxt += ss.str();
+  }
+#endif
   std::cout << configAsTxt << std::endl;
 
   vpCannyEdgeDetection cannyDetector(opt_gaussianKernelSize, opt_gaussianStdev, opt_apertureSize,
@@ -264,7 +294,16 @@ int main(int argc, const char *argv[])
   I_canny_visp = cannyDetector.detect(I_canny_input);
   float mean, max, stdev;
   computeMeanMaxStdev(I_canny_input, mean, max, stdev);
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   std::string title("Input of the Canny edge detector. Mean = " + std::to_string(mean) + "+/-" + std::to_string(stdev) + " Max = " + std::to_string(max));
+#else
+  std::string title;
+  {
+    std::stringstream ss;
+    ss << "Input of the Canny edge detector. Mean = " << mean << "+/-"  << stdev << " Max = " << max;
+    title = ss.str();
+  }
+#endif
   drawingHelpers::display(I_canny_input, title);
   drawingHelpers::display(I_canny_visp, "Canny results on image " + opt_img);
 

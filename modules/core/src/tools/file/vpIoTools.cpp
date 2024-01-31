@@ -94,6 +94,7 @@
 #endif
 #endif
 
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #define VP_STAT stat
 #elif defined(_WIN32) && defined(__MINGW32__)
@@ -104,6 +105,7 @@
 #define VP_STAT stat
 #endif
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
@@ -329,7 +331,6 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   return array;
 }
 
-#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 /*!
   Load the specified \p fname filepath as arrays of data. This function is similar to the
   <a href="https://numpy.org/doc/stable/reference/generated/numpy.load.html">numpy.load</a> function.
@@ -387,7 +388,6 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   fclose(fp);
   return arrays;
 }
-#endif
 
 /*!
   Load the specified \p varname array of data from the \p fname npz file. This function is similar to the
@@ -467,6 +467,8 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
   fclose(fp);
   return arr;
 }
+
+#endif
 
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
@@ -2061,7 +2063,11 @@ std::string vpIoTools::getParent(const std::string &pathname)
 std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+#else
+  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+#endif
     out += std::tolower(*it);
   }
   return out;
@@ -2078,7 +2084,11 @@ std::string vpIoTools::toLowerCase(const std::string &input)
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+#else
+  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+#endif
     out += std::toupper(*it);
   }
   return out;

@@ -1562,8 +1562,12 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
 #endif
   }
   else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
     const std::string message = "The " + std::to_string(backend) + " backend is not available.";
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "The %d backend is not available", backend));
+#endif
   }
 }
 
@@ -1621,7 +1625,11 @@ void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned cha
 #endif
   }
   else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
     const std::string message = "The " + std::to_string(backend) + " backend is not available.";
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "The %d backend is not available", backend));
+#endif
   }
 }
