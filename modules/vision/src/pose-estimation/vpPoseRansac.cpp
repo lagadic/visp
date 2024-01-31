@@ -355,7 +355,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
 #else

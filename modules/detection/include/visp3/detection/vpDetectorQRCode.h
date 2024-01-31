@@ -113,11 +113,7 @@ protected:
 
 public:
   vpDetectorQRCode();
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   bool detect(const vpImage<unsigned char> &I) vp_override;
-#else
-  bool detect(const vpImage<unsigned char> &I);
-#endif
 };
 
 #endif

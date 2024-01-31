@@ -669,7 +669,7 @@ int main(int argc, char *argv[])
       std::cout << "juxtaposeM:\n" << juxtaposeM << std::endl;
     }
 
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       std::vector<vpMatrix> vec_mat;
       vec_mat.emplace_back(5, 5);

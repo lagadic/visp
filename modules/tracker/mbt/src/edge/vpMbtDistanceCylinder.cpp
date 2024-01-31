@@ -579,7 +579,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::vector<double> params = { 0, //ME
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
@@ -600,7 +600,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::vector<double> params = { 0, //ME
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
@@ -684,7 +684,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     ip21.set_ij(i21, j21);
     ip22.set_ij(i22, j22);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     std::vector<double> params1 = { 0,
                                    ip11.get_i(),
                                    ip11.get_j(),

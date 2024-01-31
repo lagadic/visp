@@ -139,7 +139,7 @@ int main(int /* argc */, const char ** /* argv */)
       delete[] bitmap;
     }
 
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       unsigned char *bitmap = new unsigned char[12];
       vpImage<unsigned char> I = std::move(vpImage<unsigned char>(bitmap, 3, 4, false));

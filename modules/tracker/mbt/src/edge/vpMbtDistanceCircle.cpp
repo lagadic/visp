@@ -321,7 +321,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpMeSite p_me = *it;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::vector<double> params = { 0, //ME
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),

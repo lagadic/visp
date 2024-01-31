@@ -59,7 +59,7 @@ namespace
  */
 vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, double height)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   return { vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width) };
 #else
   return vpImagePoint(vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width));
@@ -75,7 +75,7 @@ vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, doubl
  */
 vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector from_point)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   from_point = { from_point, 0, 3 };
   from_point.stack(1.);
   return { extrinsics_params * from_point, 0, 3 };
@@ -95,7 +95,7 @@ vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector 
  */
 vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpColVector &point)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpImagePoint iP {};
 #else
   vpImagePoint iP;
@@ -115,7 +115,7 @@ vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpCol
  */
 vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpImagePoint &pixel, double depth)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   double x { 0. }, y { 0. };
   vpPixelMeterConversion::convertPoint(intrinsic_cam_params, pixel, x, y);
   return { x * depth, y * depth, depth };
@@ -179,7 +179,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   double depth_height, const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
   const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpImagePoint depth_pixel {};
 
   // Find line start pixel

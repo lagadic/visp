@@ -389,7 +389,7 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
   *opt_votingPoints = new std::vector<std::vector<std::pair<unsigned int, unsigned int> > >();
 #endif
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   for (const auto &detection : detections)
 #else
   const size_t nbDetections = detections.size();
@@ -402,7 +402,7 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
     // Looking for a circle that was detected and is similar to the one given to the function
     while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
       vpImageCircle previouslyDetected = m_finalCircles[id];
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       if (previouslyDetected == detection)
 #else
       if (previouslyDetected == detections[i])
@@ -889,14 +889,14 @@ vpCircleHoughTransform::computeCircleCandidates()
     radiusActualValueList.clear();
     radiusActualValueList.resize(nbBins, 0.);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     for (auto edgePoint : m_edgePointsList)
 #else
     for (size_t e = 0; e < m_edgePointsList.size(); ++e)
 #endif
     {
       // For each center candidate CeC_i, compute the distance with each edge point EP_j d_ij = dist(CeC_i; EP_j)
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       float rx = edgePoint.second - centerCandidate.second;
       float ry = edgePoint.first - centerCandidate.first;
 #else
@@ -905,7 +905,7 @@ vpCircleHoughTransform::computeCircleCandidates()
 #endif
       float r2 = (rx * rx) + (ry * ry);
       if ((r2 > rmin2) && (r2 < rmax2)) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
         float gx = m_dIx[edgePoint.first][edgePoint.second];
         float gy = m_dIy[edgePoint.first][edgePoint.second];
 #else
@@ -927,7 +927,7 @@ vpCircleHoughTransform::computeCircleCandidates()
             radiusAccumList[r_bin] += 1.f;
             radiusActualValueList[r_bin] += r;
             if (m_algoParams.m_recordVotingPoints) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
               votingPoints[r_bin].push_back(edgePoint);
 #else
               votingPoints[r_bin].push_back(m_edgePointsList[e]);
@@ -948,7 +948,7 @@ vpCircleHoughTransform::computeCircleCandidates()
               radiusAccumList[r_bin + 1] += voteNextBin;
               radiusActualValueList[r_bin + 1] += r * voteNextBin;
               if (m_algoParams.m_recordVotingPoints) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
                 votingPoints[r_bin].push_back(edgePoint);
                 votingPoints[r_bin + 1].push_back(edgePoint);
 #else
@@ -966,7 +966,7 @@ vpCircleHoughTransform::computeCircleCandidates()
               radiusAccumList[r_bin - 1] += votePrevBin;
               radiusActualValueList[r_bin - 1] += r * votePrevBin;
               if (m_algoParams.m_recordVotingPoints) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
                 votingPoints[r_bin].push_back(edgePoint);
                 votingPoints[r_bin - 1].push_back(edgePoint);
 #else
@@ -1016,7 +1016,7 @@ vpCircleHoughTransform::computeCircleCandidates()
           if (m_algoParams.m_recordVotingPoints) {
             // Move elements from votingPoints[idCandidate] to votingPoints_effective.
             // votingPoints[idCandidate] is left in undefined but safe-to-destruct state.
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
             votingPoints_effective.insert(
               votingPoints_effective.end(),
               std::make_move_iterator(votingPoints[idCandidate].begin()),
@@ -1150,7 +1150,7 @@ vpCircleHoughTransform::mergeCandidates(std::vector<vpImageCircle> &circleCandid
         circleCandidatesProba[i] = newProba;
         circleCandidatesProba[j] = circleCandidatesProba[nbCandidates - 1];
         if (m_algoParams.m_recordVotingPoints) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
           votingPoints[i].insert(
             votingPoints[i].end(),
             std::make_move_iterator(votingPoints[j].begin()),

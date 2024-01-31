@@ -104,7 +104,7 @@ public:
     Basic destructor. Do nothing but implemented to fit the inheritance from
     std::exception
   */
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   virtual ~vpException() { }
 #else
   virtual ~vpException() throw() { }

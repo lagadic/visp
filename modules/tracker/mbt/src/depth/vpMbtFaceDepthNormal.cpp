@@ -1699,7 +1699,7 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::vector<double> params = { 2, //desired normal
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),
@@ -1739,7 +1739,7 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::vector<double> params = { 3, //normal at current pose
                                     im_centroid.get_i(),
                                     im_centroid.get_j(),

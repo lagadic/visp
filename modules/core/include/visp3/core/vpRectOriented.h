@@ -47,7 +47,7 @@ class VISP_EXPORT vpRectOriented
 {
 public:
   vpRectOriented();
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpRectOriented(const vpRectOriented &rect) = default;
 #else
   vpRectOriented(const vpRectOriented &rect);
@@ -57,7 +57,7 @@ public:
 
   vpRectOriented(const vpRect &rect);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpRectOriented &operator=(const vpRectOriented &rect) = default;
 #else
   vpRectOriented &operator=(const vpRectOriented &rect);

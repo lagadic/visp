@@ -111,7 +111,7 @@ public:
 public:
   vpFrameGrabber() : init(false), height(0), width(0) { };
 
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   virtual ~vpFrameGrabber() = default;
 #else
   virtual ~vpFrameGrabber() { }
