@@ -50,11 +50,12 @@ jobs:
       #
       # To force the link and overwrite all conflicting files:
       #   brew link --overwrite python@3.12
+      #
+      # Fix proposed in https://github.com/actions/runner-images/issues/6817
       if: matrix.os == 'macos-13'
       run: |
         brew update
-        sudo rm /usr/local/bin/2to3-3.12
-        brew upgrade
+        brew upgrade || true
         brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
         brew install opencv
 
