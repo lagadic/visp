@@ -104,9 +104,7 @@ public:
     Basic destructor. Do nothing but implemented to fit the inheritance from
     std::exception
   */
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-  virtual ~vpException() { }
-#else
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
   virtual ~vpException() throw() { }
 #endif
   /*!
@@ -138,7 +136,7 @@ public:
    *
    * \return pointer on the array of  \e char related to the error string.
    */
-  const char *what() const throw();
+  const char *what() const vp_override throw();
   //@}
 
   /*!

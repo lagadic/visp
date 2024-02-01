@@ -156,7 +156,7 @@ public:
 #endif
   {
     resize(A.rowNum, A.colNum, false, false);
-    memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
+    memcpy(data, A.data, static_cast<size_t>(rowNum) * static_cast<size_t>(colNum) * sizeof(Type));
   }
 
   /*!

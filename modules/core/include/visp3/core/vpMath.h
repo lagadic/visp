@@ -515,7 +515,7 @@ template <> inline unsigned char vpMath::saturate<unsigned char>(unsigned int v)
 
 template <> inline unsigned char vpMath::saturate<unsigned char>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return saturate<unsigned char>(iv);
 }
 
@@ -543,7 +543,7 @@ template <> inline char vpMath::saturate<char>(int v)
 
 template <> inline char vpMath::saturate<char>(short v)
 {
-  return saturate<char>((int)v);
+  return saturate<char>(static_cast<int>(v));
 }
 
 template <> inline char vpMath::saturate<char>(unsigned int v)
@@ -594,7 +594,7 @@ template <> inline unsigned short vpMath::saturate<unsigned short>(unsigned int 
 
 template <> inline unsigned short vpMath::saturate<unsigned short>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return vpMath::saturate<unsigned short>(iv);
 }
 
@@ -619,7 +619,7 @@ template <> inline short vpMath::saturate<short>(unsigned int v)
 }
 template <> inline short vpMath::saturate<short>(float v)
 {
-  int iv = vpMath::round(v);
+  int iv = vpMath::round(static_cast<double>(v));
   return vpMath::saturate<short>(iv);
 }
 template <> inline short vpMath::saturate<short>(double v)
@@ -631,7 +631,7 @@ template <> inline short vpMath::saturate<short>(double v)
 // int
 template <> inline int vpMath::saturate<int>(float v)
 {
-  return vpMath::round(v);
+  return vpMath::round(static_cast<double>(v));
 }
 
 template <> inline int vpMath::saturate<int>(double v)
@@ -644,7 +644,7 @@ template <> inline int vpMath::saturate<int>(double v)
 // make -1 become 0xffffffff etc.
 template <> inline unsigned int vpMath::saturate<unsigned int>(float v)
 {
-  return static_cast<unsigned int>(vpMath::round(v));
+  return static_cast<unsigned int>(vpMath::round(static_cast<double>(v)));
 }
 
 template <> inline unsigned int vpMath::saturate<unsigned int>(double v)
