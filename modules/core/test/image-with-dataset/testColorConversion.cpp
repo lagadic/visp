@@ -903,7 +903,6 @@ static void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bay
     }
   }
 }
-#endif
 
 static void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
 {
@@ -931,7 +930,6 @@ static double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa
   return 10 * std::log10(255 * 255 / mse);
 }
 
-#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 static bool readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
 {
   std::FILE *f = std::fopen(filename.c_str(), "rb");
