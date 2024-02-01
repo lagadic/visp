@@ -168,4 +168,10 @@ else()
       set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_17})
     endif()
   endif()
+
+  set(CMAKE_CXX_EXTENSIONS OFF) # use -std=c++11 instead of -std=gnu++11
+
+  # Additional check for nullptr that is available with clang but not with g++ when cxx98 standard is enabled
+  vp_check_compiler_flag(CXX "" HAVE_NULLPTR "${PROJECT_SOURCE_DIR}/cmake/checks/nullptr.cpp")
+  mark_as_advanced(HAVE_NULLPTR)
 endif()
