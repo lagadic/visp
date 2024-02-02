@@ -115,7 +115,7 @@ protected:
   void computeMI(double &MI);
   void computeProba(int &nbpoint);
 
-  double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) override;
+  double getCost(const vpImage<unsigned char> &I, const vpColVector &tp) vp_override;
   double getCost(const vpImage<unsigned char> &I) { return getCost(I, p); }
   double getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp);
   double getNormalizedCost(const vpImage<unsigned char> &I) { return getNormalizedCost(I, p); }
@@ -151,7 +151,7 @@ public:
     m_dB(), m_d2u(), m_d2v(), m_dA()
   { }
   explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);
-  virtual ~vpTemplateTrackerMI() override;
+  virtual ~vpTemplateTrackerMI() vp_override;
   vpMatrix getCovarianceMatrix() const { return covarianceMatrix; }
   double getMI() const { return MI_postEstimation; }
   double getMI(const vpImage<unsigned char> &I, int &nc, const int &bspline, vpColVector &tp);

@@ -163,10 +163,12 @@ void vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
                       v.getRows()));
   resize(nrows, false);
 
-  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
-    return;                  // Nothing to do
-  for (unsigned int i = r; i < rnrows; i++)
+  if (this->rowPtrs == nullptr) { // Fix coverity scan: explicit null dereferenced
+    return; // Nothing to do
+  }
+  for (unsigned int i = r; i < rnrows; i++) {
     (*this)[i - r] = v[i];
+  }
 }
 
 vpColVector::vpColVector(const vpRotationVector &v) : vpArray2D<double>(v.size(), 1)
@@ -216,6 +218,7 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -230,6 +233,7 @@ vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
   v.dsize = 0;
   v.data = nullptr;
 }
+#endif
 
 vpColVector vpColVector::operator-() const
 {
@@ -404,6 +408,7 @@ std::vector<double> vpColVector::toStdVector() const
   return v;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -432,6 +437,7 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
+#endif
 
 bool vpColVector::operator==(const vpColVector &v) const
 {

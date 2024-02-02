@@ -33,8 +33,6 @@
 
 /*!
   \file vpRansac.h
-
-  template class for
 */
 
 #ifndef vpRANSAC_HH
@@ -45,6 +43,7 @@
 #include <visp3/core/vpDebug.h> // debug and trace
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpUniRand.h> // random number generation
+
 /*!
   \class vpRansac
   \ingroup group_core_robust
@@ -62,7 +61,6 @@
   http://www.csse.uwa.edu.au/~pk
 
   \sa vpHomography
-
  */
 template <class vpTransformation> class vpRansac
 {
@@ -171,8 +169,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
     vpTransformation::computeResidual(x, M, d);
 
     // Find the indices of points that are inliers to this model.
-    if (residual != nullptr)
+    if (residual != nullptr) {
       *residual = 0.0;
+    }
     ninliers = 0;
     for (unsigned int i = 0; i < npts; i++) {
       double resid = fabs(d[i]);
@@ -182,7 +181,8 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
         if (residual != nullptr) {
           *residual += fabs(d[i]);
         }
-      } else
+      }
+      else
         inliers[i] = 0;
     }
 
@@ -217,7 +217,8 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   {
     M = bestM;
     inliers = bestinliers;
-  } else {
+  }
+  else {
     vpTRACE("ransac was unable to find a useful solution");
     M = 0;
   }

@@ -46,7 +46,9 @@
 #if defined(VISP_HAVE_MODULE_MBT) &&                                                                                   \
     (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
+#endif
 
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpImageDraw.h>
@@ -185,8 +187,10 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
   vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
+#endif
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
@@ -254,8 +258,10 @@ template <typename Type>
 bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_display, bool useScanline,
   int trackerType_image, int opt_lastFrame, bool use_depth, bool use_mask, bool save)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
     "Template function supports only unsigned char and vpRGBa images!");
+#endif
   // Initialise a  display
 #if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
@@ -376,7 +382,7 @@ bool run(const std::string &input_directory, bool opt_click_allowed, bool opt_di
 #endif
 #else
   map_thresh[vpMbGenericTracker::EDGE_TRACKER] =
-    useScanline ? std::pair<double, double>(0.008, 2.3) : std::pair<double, double>(0.007, 2.1);
+    useScanline ? std::pair<double, double>(0.008, 2.3) : std::pair<double, double>(0.009, 4.0);
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   map_thresh[vpMbGenericTracker::KLT_TRACKER] =
     useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);

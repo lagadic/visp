@@ -69,15 +69,22 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 1)
   { }
 
-  void compute_interaction() override;
+  void compute_interaction() vp_override;
+
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const override { return "vpMomentArea"; }
+  const std::string momentName() const vp_override
+  {
+    return "vpMomentArea";
+  }
 
   /*!
    * Feature name.
    */
-  const std::string name() const override { return "vpFeatureMomentArea"; }
+  const std::string name() const vp_override
+  {
+    return "vpFeatureMomentArea";
+  }
 };
 #endif

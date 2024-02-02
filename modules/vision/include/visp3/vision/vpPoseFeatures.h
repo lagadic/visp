@@ -34,9 +34,6 @@
 /*!
   \file vpPose.h
   \brief Tools for pose computation from any feature.
-
-  \author Aurelien Yol
-  \date   June, 5 2012
 */
 
 #ifndef vpPoseFeatures_HH
@@ -63,6 +60,8 @@
 
 #include <iostream>
 #include <vector>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <tuple>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -302,21 +301,29 @@ public:
     func_ptr = f_ptr; // std::move(f_ptr);
     m_tuple = new std::tuple<Args...>(args...);
   }
+  virtual ~vpPoseSpecificFeatureTemplate() vp_override
+  {
+    delete m_tuple;
+  }
 
-  virtual ~vpPoseSpecificFeatureTemplate() override { delete m_tuple; }
+  virtual void createDesired() vp_override
+  {
+    buildDesiredFeatureWithTuple(m_desiredFeature, func_ptr, *m_tuple);
+  }
 
-  virtual void createDesired() override { buildDesiredFeatureWithTuple(m_desiredFeature, func_ptr, *m_tuple); }
-
-  virtual vpColVector error() override
+  virtual vpColVector error() vp_override
   {
     // std::cout << "Getting S... : " << std::get<0>(*tuple).get_s() <<
     // std::endl;
     return m_currentFeature.error(m_desiredFeature);
   }
 
-  virtual vpMatrix currentInteraction() override { return m_currentFeature.interaction(); }
+  virtual vpMatrix currentInteraction() vp_override
+  {
+    return m_currentFeature.interaction();
+  }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo) override
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) vp_override
   {
     buildCurrentFeatureWithTuple(m_currentFeature, cMo, func_ptr, *m_tuple);
   }
@@ -351,20 +358,33 @@ public:
     m_obj = o;
   }
 
-  virtual ~vpPoseSpecificFeatureTemplateObject() override { delete m_tuple; }
+  virtual ~vpPoseSpecificFeatureTemplateObject() vp_override
+  {
+    delete m_tuple;
+  }
 
-  virtual void createDesired() override { buildDesiredFeatureObjectWithTuple(m_obj, m_desiredFeature, func_ptr, *m_tuple); }
+  virtual void createDesired() vp_override
+  {
+    buildDesiredFeatureObjectWithTuple(m_obj, m_desiredFeature, func_ptr, *m_tuple);
+  }
 
-  virtual vpColVector error() override { return m_currentFeature.error(m_desiredFeature); }
+  virtual vpColVector error() vp_override
+  {
+    return m_currentFeature.error(m_desiredFeature);
+  }
 
-  virtual vpMatrix currentInteraction() override { return m_currentFeature.interaction(); }
+  virtual vpMatrix currentInteraction() vp_override
+  {
+    return m_currentFeature.interaction();
+  }
 
-  virtual void createCurrent(const vpHomogeneousMatrix &cMo) override
+  virtual void createCurrent(const vpHomogeneousMatrix &cMo) vp_override
   {
     buildCurrentFeatureObjectWithTuple(m_obj, m_currentFeature, cMo, func_ptr, *m_tuple);
   }
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
+#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
  * \class vpPoseFeatures
@@ -474,6 +494,7 @@ public:
    */
   void addFeatureSegment(vpPoint &, vpPoint &);
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   /*!
    * Add a specific feature for the pose computation.
    */
@@ -485,6 +506,7 @@ public:
    */
   template <typename ObjType, typename RetType, typename... ArgsFunc, typename... Args>
   void addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr)(ArgsFunc...), Args &&...args);
+#endif
 
   /*!
    * Clear all the features
@@ -611,16 +633,19 @@ private:
   std::vector<vpTrio<vpFeatureLine, vpCylinder, int> > m_featureLine_DuoLineInt_List;
   // vpFeatureSegment
   std::vector<vpTrio<vpFeatureSegment, vpPoint, vpPoint> > m_featureSegment_DuoPoints_list;
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   // Specific features
   std::vector<vpPoseSpecificFeature *> m_featureSpecific_list;
+#endif
 
-  /*!
-   * Get the error vector and L matrix from all the features.
-   *
-   * \param cMo : Current Pose.
-   * \param err : Resulting error vector.
-   * \param L : Resulting interaction matrix.
-   */
+/*!
+ * Get the error vector and L matrix from all the features.
+ *
+ * \param cMo : Current Pose.
+ * \param err : Resulting error vector.
+ * \param L : Resulting interaction matrix.
+ */
   void error_and_interaction(vpHomogeneousMatrix &cMo, vpColVector &err, vpMatrix &L);
 
   /*!
@@ -641,6 +666,7 @@ private:
   void computePoseRobustVVS(vpHomogeneousMatrix &cMo);
 };
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /*!
  * Add a specific feature for the pose computation.
  *
@@ -786,7 +812,7 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr
   if (m_featureSpecific_list.size() > m_maxSize)
     m_maxSize = static_cast<unsigned int>(m_featureSpecific_list.size());
 }
-
+#endif
 #endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
 
 #endif

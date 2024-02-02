@@ -43,7 +43,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && ( VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 ) \
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -126,6 +127,10 @@ int main()
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
+#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
 #endif

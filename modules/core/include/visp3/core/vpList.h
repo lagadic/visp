@@ -35,9 +35,9 @@
 #define VP_LIST_H
 
 /*!
-  \file vpList.h
-  \brief Definition of the list managment class
-*/
+ * \file vpList.h
+ * \brief Definition of the list management class
+ */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
@@ -66,7 +66,7 @@ template <class type> class vpListElement
   //  }
 
 public:
-  vpListElement() : prev(nullptr), next(nullptr), val(){};
+  vpListElement() : prev(nullptr), next(nullptr), val() { };
   vpListElement<type> *prev; ///! pointer to the previous element in the list
   vpListElement<type> *next; ///! pointer to the next element in the list
   type val;                  ///! value of the element
@@ -211,7 +211,6 @@ template <class type> void vpList<type>::init()
   \sa init()
  */
 template <class type> vpList<type>::vpList() : nb(0), first(nullptr), last(nullptr), cur(nullptr) { init(); }
-
 /*!
   \brief vpList destructor
   \sa kill()
@@ -394,7 +393,8 @@ template <class type> void vpList<type>::addRight(const type &v)
   x->val = v;
   if (empty()) {
     cur = first;
-  } else {
+  }
+  else {
     if (outside())
       std::cout << "vpList: outside with addRight " << std::endl;
   }
@@ -424,7 +424,8 @@ template <class type> void vpList<type>::addLeft(const type &v)
 
   if (empty()) {
     cur = last;
-  } else {
+  }
+  else {
     if (outside())
       std::cout << "vpList: outside with addLeft " << std::endl;
   }
@@ -453,7 +454,8 @@ template <class type> void vpList<type>::addRight(type &v)
   x->val = v;
   if (empty()) {
     cur = first;
-  } else {
+  }
+  else {
     if (outside())
       std::cout << "vpList: outside with addRight " << std::endl;
   }
@@ -483,7 +485,8 @@ template <class type> void vpList<type>::addLeft(type &v)
 
   if (empty()) {
     cur = last;
-  } else {
+  }
+  else {
     if (outside())
       std::cout << "vpList: outside with addLeft " << std::endl;
   }
@@ -530,7 +533,8 @@ template <class type> void vpList<type>::swapLeft()
 
     prevTmp->prev = cur;
     prevTmp->next = nextTmp;
-  } else {
+  }
+  else {
     std::cout << "vpList: previous element is outside (swapLeft) " << std::endl;
   }
 }
@@ -560,7 +564,8 @@ template <class type> void vpList<type>::swapRight()
 
     nextTmp->prev = prevTmp;
     nextTmp->next = cur;
-  } else {
+  }
+  else {
     std::cout << "vpList: next element is outside (swapRight) " << std::endl;
   }
 }
@@ -601,8 +606,9 @@ template <class type> void vpList<type>::suppress(void)
   x = cur;
   cur = cur->next;
 
-  if (x != nullptr)
+  if (x != nullptr) {
     delete x;
+  }
 
   nb--;
 }

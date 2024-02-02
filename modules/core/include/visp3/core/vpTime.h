@@ -37,35 +37,36 @@
 /*!
   \file vpTime.h
   \brief Time management and measurement
-*/
+ */
 #include <iostream>
 #include <string>
 #include <visp3/core/vpConfig.h>
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 #include <chrono>
+#endif
 
 #include <visp3/core/vpException.h>
 
 /*!
-  \ingroup group_core_time
-  \brief Time management and measurement.
-
-  The example below shows how to synchronize a loop to a given framerate.
-
-  \code
-#include <visp3/core/vpTime.h>
-
-int main()
-{
-  double t;
-  for ( ; ; ) {
-    t = vpTime::measureTimeMs();
-    ...
-    vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz
-  }
-}
-  \endcode
-
-*/
+ * \ingroup group_core_time
+ * \brief Time management and measurement.
+ *
+ * The example below shows how to synchronize a loop to a given framerate.
+ *
+ * \code
+ * #include <visp3/core/vpTime.h>
+ *
+ * int main()
+ * {
+ *   double t;
+ *   for ( ; ; ) {
+ *     t = vpTime::measureTimeMs();
+ *     ...
+ *     vpTime::wait(t, 40); // Loop time is set to 40 ms, ie 25 Hz
+ *   }
+ * }
+ * \endcode
+ */
 
 namespace vpTime
 {
@@ -92,7 +93,7 @@ public:
 
 private:
   double m_durationMs;
-#if (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98) && (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
   std::chrono::steady_clock::time_point m_lastTimePoint;
 #else
   double m_lastTimePoint;

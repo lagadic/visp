@@ -35,9 +35,9 @@
 #define vpTRANSLATIONVECTOR_H
 
 /*!
-  \file vpTranslationVector.h
-  \brief Class that consider the case of a translation vector.
-*/
+ * \file vpTranslationVector.h
+ * \brief Class that consider the case of a translation vector.
+ */
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -87,25 +87,25 @@
   homogeneous matrix.
 
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpRotationMatrix.h>
-#include <visp3/core/vpTranslationVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpRotationMatrix.h>
+  #include <visp3/core/vpTranslationVector.h>
 
-int main()
-{
-  vpTranslationVector t; // Translation vector
+  int main()
+  {
+    vpTranslationVector t; // Translation vector
 
-  // Initialization of the translation vector
-  t[0] =  0.2; // tx = 0.2 meters
-  t[1] = -0.1; // ty = -0.1 meters
-  t[2] =  1.0; // tz = 1 meters
+    // Initialization of the translation vector
+    t[0] =  0.2; // tx = 0.2 meters
+    t[1] = -0.1; // ty = -0.1 meters
+    t[2] =  1.0; // tz = 1 meters
 
-  // Construction of a rotation matrix
-  vpRotationMatrix R; // Set to identity by default
+    // Construction of a rotation matrix
+    vpRotationMatrix R; // Set to identity by default
 
-  // Construction of an homogeneous matrix
-  vpHomogeneousMatrix M(t, R);
-}
+    // Construction of an homogeneous matrix
+    vpHomogeneousMatrix M(t, R);
+  }
   \endcode
 */
 class VISP_EXPORT vpTranslationVector : public vpArray2D<double>
@@ -148,7 +148,9 @@ public:
   vpTranslationVector &operator=(const vpColVector &tv);
   vpTranslationVector &operator=(const vpTranslationVector &tv);
   vpTranslationVector &operator=(double x);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpTranslationVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   //! Operator that allows to set a value of an element \f$t_i\f$: t[i] = x
   inline double &operator[](unsigned int n) { return *(data + n); }

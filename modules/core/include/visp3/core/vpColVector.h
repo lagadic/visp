@@ -241,14 +241,19 @@ public:
    */
   vpColVector(const std::vector<float> &v);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Move constructor that take rvalue.
    */
   vpColVector(vpColVector &&v);
+#endif
+
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpColVector(const std::initializer_list<double> &list) : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1)
   {
     std::copy(list.begin(), list.end(), data);
   }
+#endif
 
   /*!
    * Removes all elements from the vector (which are destroyed),
@@ -627,6 +632,7 @@ public:
    */
   vpColVector &operator=(double x);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Overloaded move assignment operator taking rvalue.
    */
@@ -656,6 +662,7 @@ public:
    * \sa operator<<()
    */
   vpColVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   /*!
    * Compare two column vectors.

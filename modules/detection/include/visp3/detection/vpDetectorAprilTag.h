@@ -250,9 +250,10 @@ public:
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
   vpDetectorAprilTag(const vpDetectorAprilTag &o);
   vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
-  virtual ~vpDetectorAprilTag() override;
+  virtual ~vpDetectorAprilTag() vp_override;
+  bool detect(const vpImage<unsigned char> &I) vp_override;
 
-  bool detect(const vpImage<unsigned char> &I) override;
+
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = nullptr,
               std::vector<double> *projErrors = nullptr, std::vector<double> *projErrors2 = nullptr);

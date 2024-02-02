@@ -30,6 +30,7 @@
  * Description:
  * Pseudo random number generator.
  */
+
 /*
  * PCG Random Number Generation for C.
  *
@@ -72,9 +73,13 @@ typedef unsigned __int32 uint32_t;
 #include <inttypes.h>
 #endif
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_11)
 #include <algorithm> // std::shuffle
 #include <random>    // std::mt19937
 #include <numeric>   // std::iota
+#else
+#include <algorithm> // std::random_shuffle
+#endif
 
 #include <vector>
 /*!
@@ -121,7 +126,7 @@ private:
   { // Internals are *Private*.
     uint64_t state;            // RNG state.  All values are possible.
     uint64_t inc;              // Controls which RNG sequence (stream) is
-                               // selected. Must *always* be odd.
+    // selected. Must *always* be odd.
 
     vpPcgStateSetseq_64_t(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
       : state(state_), inc(inc_)
@@ -152,7 +157,11 @@ public:
   inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector)
   {
     std::vector<T> shuffled = inputVector;
+#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+    std::random_shuffle(shuffled.begin(), shuffled.end());
+#else
     std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937 { std::random_device{}() });
+#endif
     return shuffled;
   }
 

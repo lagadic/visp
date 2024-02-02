@@ -43,7 +43,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (defined(VISP_HAVE_PCL))
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_PCL))
 
 #ifdef VISP_HAVE_PCL
 #include <pcl/visualization/cloud_viewer.h>
@@ -133,12 +133,16 @@ int main()
 #else
 int main()
 {
-#if !defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if !defined( VISP_HAVE_OCCIPITAL_STRUCTURE )
   std::cout << "You do not have Occipital Structure SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif !defined(VISP_HAVE_PCL)
+#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
+#elif !defined( VISP_HAVE_PCL )
   std::cout << "You do not have PCL 3rd party installed." << std::endl;
 #endif
   return EXIT_SUCCESS;

@@ -89,10 +89,11 @@ public:
   /*! Get the list of points. */
   inline std::vector<vpScanPoint> getScanPoints() { return listScanPoints; }
 
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
   vpLaserScan &operator=(const vpLaserScan &scan) = default;
+#endif
 
-  /*! Specifies the id of former measurements and increases with
-      every measurement. */
+  /*! Specifies the id of former measurements and increases with every measurement. */
   inline void setMeasurementId(const unsigned short &id) { this->measurementId = id; }
   /*! Start time of measurement. */
   inline void setStartTimestamp(const double &start_timestamp) { this->startTimestamp = start_timestamp; }

@@ -103,17 +103,24 @@ public:
                             vpFeatureMomentDatabase *featureMoments = nullptr)
     : vpFeatureMoment(moments, A, B, C, featureMoments, 16)
   { }
-  void compute_interaction() override;
+
+  void compute_interaction() vp_override;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const override { return "vpMomentCInvariant"; }
+  const std::string momentName() const vp_override
+  {
+    return "vpMomentCInvariant";
+  }
 
   /*!
    * Feature name.
    */
-  const std::string name() const override { return "vpFeatureMomentCInvariant"; }
+  const std::string name() const vp_override
+  {
+    return "vpFeatureMomentCInvariant";
+  }
 
   /*!
    * Shortcut selector for \f$C_1\f$.
@@ -242,15 +249,21 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 16), LI(16)
   { }
 
-  void compute_interaction() override;
+  void compute_interaction() vp_override;
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const override { return "vpMomentCInvariant"; }
+  const std::string momentName() const vp_override
+  {
+    return "vpMomentCInvariant";
+  }
   /*!
    * Feature name.
    */
-  const std::string name() const override { return "vpFeatureMomentCInvariant"; }
+  const std::string name() const vp_override
+  {
+    return "vpFeatureMomentCInvariant";
+  }
 
   /*!
    * Shortcut selector for \f$C_1\f$.

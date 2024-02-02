@@ -128,12 +128,13 @@ private:
 public:
   vpMomentCommon(double dstSurface, const std::vector<double> &ref, double refAlpha, double dstZ = 1.0,
                  bool flg_sxsyfromnormalized = false);
-  virtual ~vpMomentCommon() override;
+
+  virtual ~vpMomentCommon() vp_override;
 
   static double getAlpha(vpMomentObject &object);
   static std::vector<double> getMu3(vpMomentObject &object);
   static double getSurface(vpMomentObject &object);
 
-  void updateAll(vpMomentObject &object) override;
+  void updateAll(vpMomentObject &object) vp_override;
 };
 #endif // VPCOMMONMOMENTS_H

@@ -94,6 +94,7 @@
 #endif
 #endif
 
+
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #define VP_STAT stat
 #elif defined(_WIN32) && defined(__MINGW32__)
@@ -104,6 +105,7 @@
 #define VP_STAT stat
 #endif
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 #define USE_ZLIB_API 0
 
 #if !USE_ZLIB_API
@@ -466,6 +468,8 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
   return arr;
 }
 
+#endif
+
 std::string vpIoTools::baseName = "";
 std::string vpIoTools::baseDir = "";
 std::string vpIoTools::configFile = "";
@@ -499,18 +503,21 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
 
 std::string &ltrim(std::string &s)
 {
-  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) {
-    return !std::isspace(c);
-                                  }));
-
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int c) { return !std::isspace(c); }));
+#else
+  s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+#endif
   return s;
 }
 
 std::string &rtrim(std::string &s)
 {
-  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) {
-    return !std::isspace(c);
-                       }).base(), s.end());
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  s.erase(std::find_if(s.rbegin(), s.rend(), [](int c) { return !std::isspace(c); }).base(), s.end());
+#else
+  s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+#endif
   return s;
 }
 } // namespace
@@ -2056,7 +2063,11 @@ std::string vpIoTools::getParent(const std::string &pathname)
 std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+#else
+  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+#endif
     out += std::tolower(*it);
   }
   return out;
@@ -2073,7 +2084,11 @@ std::string vpIoTools::toLowerCase(const std::string &input)
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+#else
+  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+#endif
     out += std::toupper(*it);
   }
   return out;

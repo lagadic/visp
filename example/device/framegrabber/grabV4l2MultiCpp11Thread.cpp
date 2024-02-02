@@ -45,7 +45,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_V4L2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if defined(VISP_HAVE_V4L2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <condition_variable>
 #include <iostream>

@@ -36,6 +36,8 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpImageQueue.h>
 
@@ -131,4 +133,5 @@ private:
   bool m_data_file_created;
 };
 
+#endif
 #endif

@@ -149,23 +149,23 @@ private:
   static void update_indices(double theta, int incr, int i, int j, int &i1, int &i2, int &j1, int &j2);
 
 protected:
-  vpMeSite PExt[2]; //!< Line extremities
+  vpMeSite m_PExt[2]; //!< Line extremities
 
-  double rho; //!< rho parameter of the line
-  double theta; //!< theta parameter of the line
-  double delta; //!< Angle in rad between the extremities
-  double delta_1; //!< Angle in rad between the extremities
-  double angle; //!< Angle in deg between the extremities
-  double angle_1; //!< Angle in deg between the extremities
-  int sign; //!< Sign
+  double m_rho; //!< rho parameter of the line
+  double m_theta; //!< theta parameter of the line
+  double m_delta; //!< Angle in rad between the extremities
+  double m_delta_1; //!< Angle in rad between the extremities
+  double m_angle; //!< Angle in deg between the extremities
+  double m_angle_1; //!< Angle in deg between the extremities
+  int m_sign; //!< Sign
 
   //! Flag to specify wether the intensity of the image at the middle point is
   //! used to compute the sign of rho or not.
-  bool _useIntensityForRho;
+  bool m_useIntensityForRho;
 
-  double a; //!< Parameter a of the line equation a*i + b*j + c = 0
-  double b; //!< Parameter b of the line equation a*i + b*j + c = 0
-  double c; //!< Parameter c of the line equation a*i + b*j + c = 0
+  double m_a; //!< Parameter a of the line equation a*i + b*j + c = 0
+  double m_b; //!< Parameter b of the line equation a*i + b*j + c = 0
+  double m_c; //!< Parameter c of the line equation a*i + b*j + c = 0
 
 public:
   /*!
@@ -181,7 +181,7 @@ public:
   /*!
    * Destructor.
    */
-  virtual ~vpMeLine() override;
+  virtual ~vpMeLine() vp_override;
 
   /*!
    * Display line.
@@ -213,7 +213,7 @@ public:
    * \exception vpTrackingException::initializationError : Moving edges not
    * initialized.
    */
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
 
   /*!
    * Resample the line if the number of sample is less than 80% of the
@@ -314,25 +314,25 @@ public:
   */
   void getEquationParam(double &A, double &B, double &C)
   {
-    A = a;
-    B = b;
-    C = c;
+    A = m_a;
+    B = m_b;
+    C = m_c;
   }
 
   /*!
     Gets parameter a of the line equation a*i + b*j + c = 0
   */
-  inline double getA() const { return a; }
+  inline double getA() const { return m_a; }
 
   /*!
     Gets parameter b of the line equation a*i + b*j + c = 0
   */
-  inline double getB() const { return b; }
+  inline double getB() const { return m_b; }
 
   /*!
     Gets parameter c of the line equation a*i + b*j + c = 0
   */
-  inline double getC() const { return c; }
+  inline double getC() const { return m_c; }
 
   /*!
    * Computes the intersection point of two lines. The result is given in
@@ -356,7 +356,7 @@ public:
 
     \param useIntensityForRho : new value of the flag.
   */
-  inline void computeRhoSignFromIntensity(bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
+  inline void computeRhoSignFromIntensity(bool useIntensityForRho) { m_useIntensityForRho = useIntensityForRho; }
 
   /*!
    * Display of a moving line thanks to its equation parameters and its

@@ -32,7 +32,7 @@
  */
 
 /*!
- \file vpRobust.h
+  \file vpRobust.h
 */
 
 #ifndef vpRobust_h
@@ -140,7 +140,9 @@ public:
   void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
 
   vpRobust &operator=(const vpRobust &other);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRobust &operator=(const vpRobust &&other);
+#endif
 
   /*!
    * Set minimal median absolute deviation (MAD) value corresponding to the minimal value of

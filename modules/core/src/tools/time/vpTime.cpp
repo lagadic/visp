@@ -39,7 +39,8 @@
 #include <visp3/core/vpTime.h>
 
 // https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
-#if (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                                                       \
+    (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
 #define USE_CXX11_CHRONO 1
 #else
 #define USE_CXX11_CHRONO 0

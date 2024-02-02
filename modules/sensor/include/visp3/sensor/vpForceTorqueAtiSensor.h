@@ -85,7 +85,7 @@ class VISP_EXPORT vpForceTorqueAtiSensor : public vpComedi
 {
 public:
   vpForceTorqueAtiSensor();
-  virtual ~vpForceTorqueAtiSensor() override;
+  virtual ~vpForceTorqueAtiSensor() vp_override;
 
   void bias();
   void close();

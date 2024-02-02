@@ -81,9 +81,11 @@ void vpPoseFeatures::clear()
     delete m_featureSegment_DuoPoints_list[(unsigned int)i].desiredFeature;
   m_featureSegment_DuoPoints_list.clear();
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   for (int i = (int)m_featureSpecific_list.size() - 1; i >= 0; i--)
     delete m_featureSpecific_list[(unsigned int)i];
   m_featureSpecific_list.clear();
+#endif
 
   m_maxSize = 0;
   m_totalSize = 0;
@@ -303,12 +305,14 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo, vpColVector
       L.stack(fs.interaction());
     }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     //--------------Specific Feature--------------
     if (i < m_featureSpecific_list.size()) {
       m_featureSpecific_list[i]->createCurrent(cMo);
       err.stack(m_featureSpecific_list[i]->error());
       L.stack(m_featureSpecific_list[i]->currentInteraction());
     }
+#endif
   }
 }
 

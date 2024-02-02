@@ -82,6 +82,29 @@ vpRectOriented::vpRectOriented(const vpRect &rect)
   m_topRight.set_j(m_center.get_j() + m_width / 2.0);
 }
 
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+/** Copy constructor.
+ * @param rectOriented Oriented rectangle to copy.
+ */
+vpRectOriented::vpRectOriented(const vpRectOriented &rectOriented) { *this = rectOriented; }
+
+/** Assignement operator.
+ * @param rectOriented Oriented rectangle to copy.
+ */
+vpRectOriented &vpRectOriented::operator=(const vpRectOriented &rectOriented)
+{
+  m_center = rectOriented.getCenter();
+  m_width = rectOriented.getWidth();
+  m_height = rectOriented.getHeight();
+  m_theta = rectOriented.getOrientation();
+  m_topLeft = rectOriented.getTopLeft();
+  m_bottomLeft = rectOriented.getBottomLeft();
+  m_bottomRight = rectOriented.getBottomRight();
+  m_topRight = rectOriented.getTopRight();
+  return *this;
+}
+#endif
+
 /** Assignment operator from vpRect.
  * @param rect Rectangle to copy.
  */

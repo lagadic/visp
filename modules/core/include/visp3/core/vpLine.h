@@ -102,19 +102,21 @@ class VISP_EXPORT vpLine : public vpForwardProjection
 public:
   vpLine();
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) override;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const vp_override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) override;
+               unsigned int thickness = 1) vp_override;
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
+
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpLine *duplicate() const override;
+  vpLine *duplicate() const vp_override;
+
 
   /*!
    * Gets the \f$ \rho \f$ value corresponding to one of the
@@ -163,13 +165,12 @@ public:
 
   void setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2);
 
-  void setWorldCoordinates(const vpColVector &oP) override;
-
-  void projection() override;
-  void projection(const vpColVector &cP, vpColVector &p) const override;
+  void setWorldCoordinates(const vpColVector &oP) vp_override;
+  void projection() vp_override;
+  void projection(const vpColVector &cP, vpColVector &p) const vp_override;
 
 protected:
-  void init() override;
+  void init() vp_override;
 };
 
 #endif

@@ -38,7 +38,7 @@
   \file vpImagePoint.h
   \brief Class that defines a 2D point in an image. This class is useful
   for image processing
-*/
+ */
 
 #include <visp3/core/vpConfig.h>
 
@@ -217,11 +217,19 @@ public:
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
       double j_ = (end.get_j() > this->j ? this->j + 1 : this->j - 1);
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
       return { end.get_i() - line_slope * (end.get_j() - j_), j_ };
+#else
+      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - j_), j_);
+#endif
     }
     else {
       double i_ = (end.get_i() > this->i ? this->i + 1 : this->i - 1);
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
       return { i_, end.get_j() - ((end.get_i() - i_) / line_slope) };
+#else
+      return vpImagePoint(i_, end.get_j() - ((end.get_i() - i_) / line_slope));
+#endif
     }
   }
 
@@ -235,6 +243,7 @@ public:
     return *this;
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   /*!
     Move operator.
   */
@@ -244,6 +253,7 @@ public:
     this->j = ip.j;
     return *this;
   }
+#endif
 
   vpImagePoint &operator+=(const vpImagePoint &ip);
 

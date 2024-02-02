@@ -81,7 +81,9 @@
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <cstdint>
+#endif
 
 namespace
 {
@@ -174,7 +176,7 @@ vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
-  If the line already exists, the ploygone's index is added to the list of
+  If the line already exists, the polygon's index is added to the list of
   polygon to which it belongs.
 
   \param P1 : The first extremity of the line.
@@ -312,7 +314,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back((*point_cloud)(j, i).x);
@@ -398,7 +400,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
@@ -483,7 +485,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);

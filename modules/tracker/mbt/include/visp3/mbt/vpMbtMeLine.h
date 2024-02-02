@@ -53,11 +53,11 @@
 class VISP_EXPORT vpMbtMeLine : public vpMeTracker
 {
 private:
-  vpMeSite PExt[2];
-  double rho, theta, theta_1;
-  double delta, delta_1;
-  int sign;
-  double a, b, c;
+  vpMeSite m_PExt[2];
+  double m_rho, m_theta, m_theta_1;
+  double m_delta, m_delta_1;
+  int m_sign;
+  double m_a, m_b, m_c;
 
 public:
   int imin, imax;
@@ -66,7 +66,7 @@ public:
 
 public:
   vpMbtMeLine();
-  virtual ~vpMbtMeLine() override;
+  virtual ~vpMbtMeLine() vp_override;
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
@@ -81,7 +81,7 @@ public:
    *
    * \return : The a coefficient of the moving edge
    */
-  inline double get_a() const { return this->a; }
+  inline double get_a() const { return m_a; }
 
   /*!
    * Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
@@ -89,7 +89,7 @@ public:
    *
    * \return : The b coefficient of the moving edge
    */
-  inline double get_b() const { return this->b; }
+  inline double get_b() const { return m_b; }
 
   /*!
    * Get the a coefficient of the line corresponding to \f$ i \; cos(\theta) + j
@@ -97,7 +97,7 @@ public:
    *
    * \return : The c coefficient of the moving edge
    */
-  inline double get_c() const { return this->c; }
+  inline double get_c() const { return m_c; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
                     double theta, bool doNoTrack);
@@ -111,7 +111,7 @@ public:
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) override;
+  void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) vp_override;
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);

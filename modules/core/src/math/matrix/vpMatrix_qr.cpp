@@ -868,8 +868,9 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   }
 
   integer dimWork = -1;
+  integer min_q_m = std::min<integer>(q, m);
   double *qrdata = new double[m * na];
-  double *tau = new double[std::min(q, m)];
+  double *tau = new double[min_q_m];
   double *work = new double[1];
   integer *p = new integer[na];
   for (int i = 0; i < na; ++i)

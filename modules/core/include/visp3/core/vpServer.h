@@ -174,7 +174,7 @@ public:
   explicit vpServer(const int &port);
   vpServer(const std::string &adress_serv, const int &port_serv);
 
-  virtual ~vpServer() override;
+  virtual ~vpServer() vp_override;
 
   bool checkForConnections();
 

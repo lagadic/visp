@@ -7385,7 +7385,11 @@ static size_t SaveEXRNPartImageToMemory(const EXRImage* exr_images,
         {
           size_t len = 0;
           if ((len = strlen(exr_headers[i]->name)) > 0) {
+#if TINYEXR_HAS_CXX11
             partnames.emplace(exr_headers[i]->name);
+#else
+            partnames.insert(std::string(exr_headers[i]->name));
+#endif
             if (partnames.size() != i + 1) {
               SetErrorMessage("'name' attributes must be unique for a multi-part file", err);
               return 0;

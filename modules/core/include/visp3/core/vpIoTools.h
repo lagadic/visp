@@ -55,6 +55,7 @@
 #include <cassert>
 #include <complex>
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
 namespace visp
 {
 // https://github.com/BinomialLLC/basis_universal/blob/ad9386a4a1cf2a248f7bbd45f543a7448db15267/encoder/basisu_miniz.h#L665
@@ -85,7 +86,7 @@ struct NpyArray
   {
     num_vals = 1;
     for (size_t i = 0; i < shape.size(); i++) num_vals *= shape[i];
-    data_holder = std::shared_ptr<std::vector<char>>(
+    data_holder = std::shared_ptr<std::vector<char> >(
         new std::vector<char>(num_vals * word_size));
   }
 
@@ -115,7 +116,7 @@ struct NpyArray
     return data_holder->size();
   }
 
-  std::shared_ptr<std::vector<char>> data_holder;
+  std::shared_ptr<std::vector<char> > data_holder;
   std::vector<size_t> shape;
   size_t word_size;
   bool fortran_order;
@@ -123,6 +124,8 @@ struct NpyArray
 };
 
 using npz_t = std::map<std::string, NpyArray>;
+VISP_EXPORT npz_t npz_load(std::string fname);
+
 
 VISP_EXPORT char BigEndianTest();
 VISP_EXPORT char map_type(const std::type_info &t);
@@ -130,7 +133,6 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 VISP_EXPORT void parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
 VISP_EXPORT void parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order);
 VISP_EXPORT void parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_header_size, size_t &global_header_offset);
-VISP_EXPORT npz_t npz_load(std::string fname);
 VISP_EXPORT NpyArray npz_load(std::string fname, std::string varname);
 VISP_EXPORT NpyArray npy_load(std::string fname);
 
@@ -384,6 +386,7 @@ template<typename T> std::vector<char> create_npy_header(const std::vector<size_
 
 } // namespace cnpy
 } // namespace visp
+#endif
 
 /*!
  * \class vpIoTools

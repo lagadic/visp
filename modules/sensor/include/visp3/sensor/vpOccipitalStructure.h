@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <condition_variable>
 #include <mutex>
 
@@ -215,7 +215,7 @@ struct SessionDelegate : ST::CaptureSessionDelegate
 
   ~SessionDelegate() { }
 
-  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) override
+  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) vp_override
   {
     switch (event) {
     case ST::CaptureSessionEventId::Booting:
@@ -242,7 +242,7 @@ struct SessionDelegate : ST::CaptureSessionDelegate
     }
   }
 
-  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample &sample) override
+  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample &sample) vp_override
   {
     // acquire sampleLock mutex.
     std::lock_guard<std::mutex> u(m_sampleLock);

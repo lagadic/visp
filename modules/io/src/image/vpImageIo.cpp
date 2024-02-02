@@ -418,7 +418,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot read file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -429,7 +429,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -439,7 +439,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -449,7 +449,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -459,7 +459,7 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -479,17 +479,13 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_JPEG)
-    const std::string message =
-      "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
-    const std::string message =
-      "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
@@ -505,7 +501,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot read file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -516,7 +512,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": jpeg library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -526,7 +522,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -536,7 +532,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -546,7 +542,7 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -566,17 +562,13 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_PNG)
-    const std::string message =
-      "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
-    const std::string message =
-      "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
@@ -592,7 +584,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot read file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -603,7 +595,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -613,7 +605,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -623,7 +615,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -633,7 +625,7 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -653,17 +645,13 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_PNG)
-    const std::string message =
-      "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
   else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS))
-    const std::string message =
-      "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
-    std::cerr << message << std::endl;
+    // OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
   }
@@ -677,7 +665,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot read file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -688,7 +676,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": png library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -698,7 +686,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -708,7 +696,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -718,7 +706,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -757,7 +745,7 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -767,7 +755,7 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": Default TinyEXR backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": Default TinyEXR backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -806,7 +794,7 @@ void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -816,7 +804,7 @@ void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int bac
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot read file \"" + filename + "\": TinyEXR backend is not available";
+    const std::string message = "Cannot read file \"" + filename + "\": TinyEXR backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -869,7 +857,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": no available backend";
+    const std::string message = "Cannot save file \"" + filename + "\": no available backend";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -881,7 +869,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": jpeg backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": jpeg backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -893,7 +881,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -904,7 +892,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -915,7 +903,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -968,7 +956,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot save file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -980,7 +968,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": jpeg library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": jpeg library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -991,7 +979,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1002,7 +990,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1013,7 +1001,7 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     (void)I;
     (void)filename;
     (void)quality;
-    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1063,7 +1051,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot save file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1074,7 +1062,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1084,7 +1072,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1094,7 +1082,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1104,7 +1092,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": png library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": png library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1154,7 +1142,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": no backend available";
+    const std::string message = "Cannot save file \"" + filename + "\": no backend available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1165,7 +1153,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1175,7 +1163,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": Simd library backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1185,7 +1173,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": stb_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1195,7 +1183,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": libpng backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": libpng backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1235,7 +1223,7 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1245,7 +1233,7 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": TinyEXR backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": TinyEXR backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1284,7 +1272,7 @@ void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1294,7 +1282,7 @@ void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, 
 #else
     (void)I;
     (void)filename;
-    std::string message = "Cannot save file \"" + filename + "\": TinyEXR backend is not available";
+    const std::string message = "Cannot save file \"" + filename + "\": TinyEXR backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1432,7 +1420,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png read: OpenCV or std_image backend are not available";
+    const std::string message = "Cannot in-memory png read: OpenCV or std_image backend are not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1446,7 +1434,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
     (void)buffer;
     (void)I;
     (void)backend;
-    std::string message = "Cannot in-memory png read: OpenCV backend is not available";
+    const std::string message = "Cannot in-memory png read: OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1458,7 +1446,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
     (void)buffer;
     (void)I;
     (void)backend;
-    std::string message = "Cannot in-memory png read: std_image backend is not available";
+    const std::string message = "Cannot in-memory png read: std_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1489,7 +1477,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png read: OpenCV or std_image backend are not available";
+    const std::string message = "Cannot in-memory png read: OpenCV or std_image backend are not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1503,7 +1491,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
     (void)buffer;
     (void)I;
     (void)backend;
-    std::string message = "Cannot in-memory png read: OpenCV backend is not available";
+    const std::string message = "Cannot in-memory png read: OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1515,7 +1503,7 @@ void vpImageIo::readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage
     (void)buffer;
     (void)I;
     (void)backend;
-    std::string message = "Cannot in-memory png read: std_image backend is not available";
+    const std::string message = "Cannot in-memory png read: std_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1547,7 +1535,7 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: OpenCV or std_image backend are not available";
+    const std::string message = "Cannot in-memory png write: OpenCV or std_image backend are not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1559,7 +1547,7 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: OpenCV backend is not available";
+    const std::string message = "Cannot in-memory png write: OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1569,13 +1557,17 @@ void vpImageIo::writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsig
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: std_image backend is not available";
+    const std::string message = "Cannot in-memory png write: std_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else {
-    std::string message = "The " + std::to_string(backend) + " backend is not available.";
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+    const std::string message = "The " + std::to_string(backend) + " backend is not available.";
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "The %d backend is not available", backend));
+#endif
   }
 }
 
@@ -1606,7 +1598,7 @@ void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned cha
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: OpenCV or std_image backend are not available";
+    const std::string message = "Cannot in-memory png write: OpenCV or std_image backend are not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1618,7 +1610,7 @@ void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned cha
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: OpenCV backend is not available";
+    const std::string message = "Cannot in-memory png write: OpenCV backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
@@ -1628,12 +1620,16 @@ void vpImageIo::writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned cha
 #else
     (void)I;
     (void)buffer;
-    std::string message = "Cannot in-memory png write: std_image backend is not available";
+    const std::string message = "Cannot in-memory png write: std_image backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
   else {
-    std::string message = "The " + std::to_string(backend) + " backend is not available.";
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+    const std::string message = "The " + std::to_string(backend) + " backend is not available.";
     throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "The %d backend is not available", backend));
+#endif
   }
 }

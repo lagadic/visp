@@ -300,16 +300,16 @@ public:
   void buildFrom(const vpHomogeneousMatrix &f2Mf1);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
 
   //! Feature duplication
-  vpFeatureTranslation *duplicate() const override;
+  vpFeatureTranslation *duplicate() const vp_override;
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 
   vpFeatureTranslationRepresentationType getFeatureTranslationType() const;
 
@@ -318,12 +318,12 @@ public:
   double get_Tz() const;
 
   // basic construction
-  void init() override;
+  void init() vp_override;
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
 
   // print the name of the feature
-  void print(unsigned int select = FEATURE_ALL) const override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
 
   void set_Tx(double t_x);
   void set_Ty(double t_y);

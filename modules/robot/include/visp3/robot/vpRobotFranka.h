@@ -228,7 +228,7 @@ private:
   /*!
    * This function is not implemented.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) override { };
+  void getDisplacement(const vpRobot::vpControlFrameType, vpColVector &) vp_override { };
 
   void init();
 
@@ -278,9 +278,9 @@ public:
   vpHomogeneousMatrix get_fMc(const vpColVector &q);
   vpHomogeneousMatrix get_eMc() const;
 
-  void get_eJe(vpMatrix &eJe) override;
+  void get_eJe(vpMatrix &eJe) vp_override;
   void get_eJe(const vpColVector &q, vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe) override;
+  void get_fJe(vpMatrix &fJe) vp_override;
   void get_fJe(const vpColVector &q, vpMatrix &fJe);
 
   void getCoriolis(vpColVector &coriolis);
@@ -323,7 +323,7 @@ public:
 
   void getMass(vpMatrix &mass);
 
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) vp_override;
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position);
@@ -345,11 +345,11 @@ public:
   void setForceTorque(const vpRobot::vpControlFrameType frame, const vpColVector &ft, const double &filter_gain = 0.1,
                       const bool &activate_pi_controller = false);
   void setLogFolder(const std::string &folder);
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
   void setPositioningVelocity(double velocity);
 
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
 
   void stopMotion();
 };

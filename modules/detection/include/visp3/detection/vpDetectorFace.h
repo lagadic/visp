@@ -92,7 +92,7 @@ protected:
 public:
   vpDetectorFace();
 
-  bool detect(const vpImage<unsigned char> &I) override;
+  bool detect(const vpImage<unsigned char> &I) vp_override;
   bool detect(const cv::Mat &frame_gray);
   void setCascadeClassifierFile(const std::string &filename);
 };

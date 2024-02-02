@@ -99,11 +99,11 @@ public:
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe) override;
-  void get_fJe(vpMatrix &_fJe) override;
+  void get_eJe(vpMatrix &_eJe) vp_override;
+  void get_fJe(vpMatrix &_fJe) vp_override;
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
   double getPositioningVelocity(void);
   void getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &q_dot);
   vpColVector getVelocity(const vpRobot::vpControlFrameType frame);
@@ -112,13 +112,13 @@ public:
 
   bool readPositionFile(const std::string &filename, vpColVector &q);
 
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) vp_override;
   void setPosition(const vpRobot::vpControlFrameType frame, const double &q1, const double &q2);
   void setPosition(const char *filename);
   void setPositioningVelocity(double velocity);
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) vp_override;
 
   void stopMotion();
 };

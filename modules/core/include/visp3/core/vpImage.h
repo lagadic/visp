@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpImage.h
-  \brief Image handling.
-*/
+ * \file vpImage.h
+ * \brief Image handling.
+ */
 
 #ifndef vpImage_H
 #define vpImage_H
@@ -143,8 +143,10 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type> &);
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   //! move constructor
   vpImage(vpImage<Type> &&);
+#endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
@@ -482,7 +484,6 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 namespace
 {
-
 struct vpImageLut_Param_t
 {
   unsigned int m_start_index;
@@ -639,7 +640,6 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 {
   if (h != this->height) {
     if (row != nullptr) {
-      vpDEBUG_TRACE(10, "Destruction row[]");
       delete[] row;
       row = nullptr;
     }
@@ -647,7 +647,6 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 
   if ((h != this->height) || (w != this->width)) {
     if (bitmap != nullptr) {
-      vpDEBUG_TRACE(10, "Destruction bitmap[]");
       if (hasOwnership) {
         delete[] bitmap;
       }
@@ -664,11 +663,9 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
     bitmap = new Type[npixels];
     hasOwnership = true;
   }
-
   if (bitmap == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
-
   if (row == nullptr)
     row = new Type *[height];
   if (row == nullptr) {
@@ -822,11 +819,7 @@ template <class Type> void vpImage<Type>::resize(unsigned int h, unsigned int w,
 */
 template <class Type> void vpImage<Type>::destroy()
 {
-  //   vpERROR_TRACE("Deallocate ");
-
   if (bitmap != nullptr) {
-    //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
-    //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
     if (hasOwnership) {
       delete[] bitmap;
     }
@@ -834,8 +827,6 @@ template <class Type> void vpImage<Type>::destroy()
   }
 
   if (row != nullptr) {
-    //   vpERROR_TRACE("Deallocate row memory %p",row);
-    //    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
     delete[] row;
     row = nullptr;
   }
@@ -860,6 +851,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
 }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /*!
   \relates vpImage
 */
@@ -876,6 +868,7 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   I.row = nullptr;
   I.hasOwnership = false;
 }
+#endif
 
 /*!
  * \brief Return the maximum value within the bitmap
@@ -1258,10 +1251,6 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
   swap(*this, other);
-  // Swap back display pointer if it was not null
-  // vpImage<unsigned char> I2(480, 640);
-  // vpDisplayX d(I2);
-  // I2 = I1; //copy only the data
   if (other.display != nullptr)
     display = other.display;
 

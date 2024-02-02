@@ -453,8 +453,10 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   vpColVector sv;
   vpMatrix Ap, imA, imAt, kAt;
   bool isRankEqualTo3 = false; // Indicates if the rank of A is the expected one
-  double logNofSvdThresh = std::log(m_dementhonSvThresh)/lnOfSvdFactorUsed; // Get the log_n(m_dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
-  int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.)); // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
+  // Get the log_n(m_dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
+  double logNofSvdThresh = std::log(m_dementhonSvThresh)/lnOfSvdFactorUsed;
+  // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
+  int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.));
   double svdThreshold = m_dementhonSvThresh;
   int irank = 0;
   for (int i = 0; i < nbMaxIter && !isRankEqualTo3; i++) {

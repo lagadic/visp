@@ -114,7 +114,9 @@ public:
 
   vpRGBa &operator=(const unsigned char &v);
   vpRGBa &operator=(const vpRGBa &v);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRGBa &operator=(const vpRGBa &&v);
+#endif
   vpRGBa &operator=(const vpColVector &v);
   bool operator==(const vpRGBa &v) const;
   bool operator!=(const vpRGBa &v) const;

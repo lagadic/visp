@@ -94,7 +94,7 @@ public:
   bool render();
 
   vpD3DRenderer();
-  virtual ~vpD3DRenderer() override;
+  virtual ~vpD3DRenderer() vp_override;
 
   void setImg(const vpImage<vpRGBa> &im);
   void setImg(const vpImage<unsigned char> &im);
@@ -121,7 +121,7 @@ public:
   void drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int w, unsigned int h,
                  unsigned int thickness = 1);
 
-  void getImage(vpImage<vpRGBa> &I) override;
+  void getImage(vpImage<vpRGBa> &I) vp_override;
 
 private:
   void initView(float, float);

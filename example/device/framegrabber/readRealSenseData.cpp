@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <condition_variable>
 #include <fstream>
 #include <mutex>

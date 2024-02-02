@@ -80,65 +80,49 @@ public:
    */
   typedef enum
   {
-    NO_SUPPRESSION = 0,   ///< Point used by the tracker.
-    CONTRAST = 1,         ///< Point removed due to a contrast problem.
+    NO_SUPPRESSION = 0,   ///< Point successfully tracked.
+    CONTRAST = 1,         ///< Point not tracked due to a likelihood problem, but retained in the ME list.
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-    CONSTRAST = CONTRAST, ///< Point removed due to a contrast problem.
+    CONSTRAST = CONTRAST, ///< Deprecated. Point not tracked due to a likelihood problem, but retained in the ME list. Use instead CONTRAST.
 #endif
-    THRESHOLD = 2,        ///< Point removed due to a threshold problem.
-    M_ESTIMATOR = 3,      ///< Point removed during virtual visual-servoing because considered as an outlier.
-    TOO_NEAR = 4,         ///< Point removed because too near image borders.
-    UNKNOW = 5            ///< Reserved.
+    THRESHOLD = 2,        ///< Point not tracked due to a lack of contrast problem, but retained in the ME list.
+    M_ESTIMATOR = 3,      ///< Point detected as an outlier during virtual visual-servoing.
+    TOO_NEAR = 4,         ///< Point not tracked anymore, since too near from its neighbor.
+    UNKNOW = 5,           ///< Reserved.
+    OUTSIDE_ROI_MASK = 6  ///< Point is outside the region of interest mask, but retained in the ME list.
   } vpMeSiteState;
 
-  //! Coordinate along i of a site
-  int i;
-  //! Coordinates along j of a site
-  int j;
-  //! Floating coordinates along i of a site
-  double ifloat;
-  //! Floating coordinates along j of a site
-  double jfloat;
+  //! Integer coordinate along i of a site
+  int m_i;
+  //! Integer coordinates along j of a site
+  int m_j;
+  //! Subpixel coordinates along i of a site
+  double m_ifloat;
+  //! Subpixel coordinates along j of a site
+  double m_jfloat;
   //! Mask sign
-  int mask_sign;
+  int m_mask_sign;
   //! Angle of tangent at site
-  double alpha;
+  double m_alpha;
   //! Convolution of Site in previous image
-  double convlt;
+  double m_convlt;
   //! Convolution of Site in previous image
-  double normGradient;
+  double m_normGradient;
   //! Uncertainty of point given as a probability between 0 and 1
-  double weight;
+  double m_weight;
+  //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
+  double m_contrastThreshold;
 
+public:
   /*!
-   * Initialize moving-edge site with default parameters.
+   * Default constructor.
    */
-  void init();
-
-  /*!
-   * Initialize moving-edge site parameters.
-   */
-  void init(double ip, double jp, double alphap);
-
-  /*!
-   * Initialize moving-edge site parameters.
-   */
-  void init(double ip, double jp, double alphap, double convltp);
-
- /*!
-  * Initialize moving-edge site parameters.
-  */
-  void init(double ip, double jp, double alphap, double convltp, int sign);
-
- /*!
-  * Default constructor.
-  */
   vpMeSite();
 
   /*!
    * Constructor from pixel coordinates.
    */
-  vpMeSite(double ip, double jp);
+  vpMeSite(const double &ip, const double &jp);
 
   /*!
    * Copy constructor.
@@ -149,6 +133,11 @@ public:
    * Destructor.
    */
   virtual ~vpMeSite() { };
+
+  /*!
+   * Compute convolution.
+   */
+  double convolution(const vpImage<unsigned char> &ima, const vpMe *me);
 
   /*!
    * Display moving edges in image I.
@@ -163,73 +152,94 @@ public:
   void display(const vpImage<vpRGBa> &I);
 
   /*!
-   * Compute convolution.
+   * Get the angle of tangent at site.
+   *
+   * \return value of alpha
    */
-  double convolution(const vpImage<unsigned char> &ima, const vpMe *me);
+  inline double getAlpha() const { return m_alpha; }
+
+  /*!
+   * Return site weight or uncertainty as a probability between 0 and 1.
+   */
+  inline double getWeight() const { return m_weight; }
 
   /*!
    * Construct and return the list of vpMeSite along the normal to the contour,
    * in the given range.
-   * \pre : ifloat, jfloat, and the direction of the normal (alpha) have to be set.
+   * \pre : Subpixel coordinates (ifloat, jfloat) and the direction of the normal (alpha) have to be set.
    * \param I : Image in which the display is performed.
    * \param range :  +/- the range within which the pixel's correspondent will be sought.
    * \return Pointer to the list of query sites
    */
-  vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
+  vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int &range) const;
+
+  /*!
+   * Return integer coordinate along i (rows).
+   * \sa get_ifloat()
+   */
+  inline int get_i() const { return m_i; }
+
+  /*!
+   * Return integer coordinate along j (columns).
+   * \sa get_jfloat()
+   */
+  inline int get_j() const { return m_j; }
+
+  /*!
+   * Return subpixel coordinate along i (rows).
+   * \sa get_i()
+   */
+  inline double get_ifloat() const { return m_ifloat; }
+
+  /*!
+   * Return subpixel coordinate along j (columns).
+   * \sa get_j()
+   */
+  inline double get_jfloat() const { return m_jfloat; }
+
+  /*!
+   * Initialize moving-edge site with default parameters.
+   */
+  void init();
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
+  void init(const double &ip, const double &jp, const double &alphap);
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
+  void init(const double &ip, const double &jp, const double &alphap, const double &convltp);
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
+  void init(const double &ip, const double &jp, const double &alphap, const double &convltp, const int &sign);
+
+  /*!
+   * Initialize moving-edge site parameters.
+   */
+  void init(const double &ip, const double &jp, const double &alphap, const double &convltp, const int &sign, const double &contrastThreshold);
 
   /*!
    * Specific function for moving-edges.
    *
    * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
    */
-  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_likelihood = true);
+  void track(const vpImage<unsigned char> &im, const vpMe *me, const bool &test_likelihood = true);
 
   /*!
    * Set the angle of tangent at site.
    *
    * \param a : new value of alpha
    */
-  void setAlpha(const double &a) { alpha = a; }
-
-  /*!
-   * Get the angle of tangent at site.
-   *
-   * \return value of alpha
-   */
-  inline double getAlpha() const { return alpha; }
+  void setAlpha(const double &a) { m_alpha = a; }
 
   /*!
    * Display selector.
    */
   void setDisplay(vpMeSiteDisplayType select) { m_selectDisplay = select; }
-
-  /*!
-   * Get the i coordinate (integer).
-   *
-   * \return value of i
-   */
-  inline int get_i() const { return i; }
-
-  /*!
-   * Get the j coordinate (f).
-   *
-   * \return value of j
-   */
-  inline int get_j() const { return j; }
-
-  /*!
-   * Get the i coordinate (double).
-   *
-   * \return value of i
-   */
-  inline double get_ifloat() const { return ifloat; }
-
-  /*!
-   * Get the j coordinate (double).
-   *
-   * \return value of j
-   */
-  inline double get_jfloat() const { return jfloat; }
 
   /*!
    * Set the state of the site.
@@ -251,18 +261,42 @@ public:
   inline vpMeSiteState getState() const { return m_state; }
 
   /*!
-   * Set the weight of the site.
+   * Set the weight or uncertainty of the site.
    *
-   * \param w : new value of weight
+   * \param weight : New value of weight as a probability between 0 and 1.
    */
-  void setWeight(const double &w) { weight = w; }
+  void setWeight(const double &weight) { m_weight = weight; }
 
   /*!
-   * Get the weight of the site.
+   * Set the contrast threshold of the site.
+   * If the \b vpMe::m_useAutomaticThreshold is set to false, the contrast threshold is set to the global
+   * value retrieved using vpMe::getThreshold(). This value can be set using vpMe::setThreshold().
+   * Otherwise, the contrast threshold will be set to the highest value
+   * between \b thresh and the minimum value set by vpMe::setMinThreshold() that could be retrieved using
+   * vpMe::getMinThreshold().
    *
-   * \return value of weight
+   * \param thresh : new value of contrast threshold
+   * \param me: moving-edge parameters
    */
-  inline double getWeight() const { return weight; }
+  void setContrastThreshold(const double &thresh, const vpMe &me)
+  {
+    double threshold;
+    if (me.getUseAutomaticThreshold()) {
+      threshold = std::max(thresh, me.getMinThreshold());
+    }
+    else {
+      threshold = me.getThreshold();
+    }
+
+    m_contrastThreshold = threshold;
+  }
+
+  /*!
+   * Get the contrast threshold of the site.
+   *
+   * \return value of the contrast threshold of the site.
+   */
+  inline double getContrastThreshold() const { return m_contrastThreshold; }
 
   /*!
    * Copy operator.
@@ -309,7 +343,7 @@ public:
   */
   static double sqrDistance(const vpMeSite &S1, const vpMeSite &S2)
   {
-    return (vpMath::sqr(S1.ifloat - S2.ifloat) + vpMath::sqr(S1.jfloat - S2.jfloat));
+    return (vpMath::sqr(S1.m_ifloat - S2.m_ifloat) + vpMath::sqr(S1.m_jfloat - S2.m_jfloat));
   }
 
   /*!
@@ -319,7 +353,7 @@ public:
    * - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
    * - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
    * - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
-   * - If cyan : The point is removed because it's too close to another.
+   * - If cyan : The point is outside the mask, see vpMeTracker::setMask().
    * - Yellow otherwise.
    *
    * \param I : The image.
@@ -337,7 +371,7 @@ public:
    * - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
    * - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
    * - If red : The point is removed because of the robust method in the virtual visual servoing (M-Estimator problem).
-   * - If cyan : The point is removed because it's too close to another.
+   * - If cyan : The point is outside the mask, see vpMeTracker::setMask().
    * - Yellow otherwise
    *
    * \param I : The image.

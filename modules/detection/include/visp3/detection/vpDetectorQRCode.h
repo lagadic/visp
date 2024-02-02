@@ -113,7 +113,7 @@ protected:
 
 public:
   vpDetectorQRCode();
-  bool detect(const vpImage<unsigned char> &I) override;
+  bool detect(const vpImage<unsigned char> &I) vp_override;
 };
 
 #endif

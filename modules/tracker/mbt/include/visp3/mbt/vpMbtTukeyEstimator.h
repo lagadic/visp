@@ -79,7 +79,7 @@ private:
 #include <visp3/core/vpCPUFeatures.h>
 
 #define USE_TRANSFORM 1
-#if USE_TRANSFORM
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) && USE_TRANSFORM
 #define HAVE_TRANSFORM 1
 #include <functional>
 #endif
