@@ -183,7 +183,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
 
   pyArray2D.def(py::init([](np_array_cf<T> &np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP 2D array");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -207,7 +207,7 @@ void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
 
   pyMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP Matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpMatrix result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -231,7 +231,7 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
   }, numpy_fn_doc_nonwritable, py::keep_alive<0, 1>());
   pyRotationMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 3, 3 }, "ViSP rotation matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpRotationMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isARotationMatrix()) {
@@ -258,7 +258,7 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<doub
 
   pyHomogeneousMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 4, 4 }, "ViSP homogeneous matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpHomogeneousMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isAnHomogeneousMatrix()) {
@@ -287,9 +287,9 @@ void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<doub
   }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
 
   pyTranslationVector.def(py::init([](np_array_cf<double> np_array) {
-    const std::vector<ssize_t> required_shape = { 3 };
+    const std::vector<py::ssize_t> required_shape = { 3 };
     verify_array_shape_and_dims(np_array, required_shape, "ViSP translation vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpTranslationVector result;
     copy_data_from_np(np_array, result.data);
     return result;
@@ -313,7 +313,7 @@ void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVecto
 
   pyColVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -335,7 +335,7 @@ void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVecto
   }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
   pyRowVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;

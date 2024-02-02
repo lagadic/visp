@@ -50,7 +50,7 @@ void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &py
     for (const auto &point_cloud_pair: mapOfPointClouds) {
 
       py::buffer_info buffer = point_cloud_pair.second.request();
-      if (buffer.ndim != 3 and buffer.shape[2] != 3) {
+      if (buffer.ndim != 3 && buffer.shape[2] != 3) {
         std::stringstream ss;
         ss << "Pointcloud error: pointcloud at key: " << point_cloud_pair.first <<
           " should be a 3D numpy array of dimensions H X W x 3";

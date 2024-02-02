@@ -52,7 +52,7 @@ using np_array_cf = py::array_t<Item, py::array::c_style | py::array::forcecast>
 template<typename T, unsigned N>
 py::buffer_info make_array_buffer(T *data, std::array<unsigned, N> dims, bool readonly)
 {
-  std::array<ssize_t, N> strides;
+  std::array<py::ssize_t, N> strides;
   for (unsigned i = 0; i < N; i++) {
     unsigned s = sizeof(T);
     for (unsigned j = i + 1; j < N; ++j) {
@@ -71,7 +71,7 @@ py::buffer_info make_array_buffer(T *data, std::array<unsigned, N> dims, bool re
   );
 }
 
-std::string shape_to_string(const std::vector<ssize_t> &shape)
+std::string shape_to_string(const std::vector<py::ssize_t> &shape)
 {
   std::stringstream ss;
   ss << "(";
@@ -89,7 +89,7 @@ template<typename Item>
 void verify_array_shape_and_dims(np_array_cf<Item> np_array, unsigned dims, const char *class_name)
 {
   py::buffer_info buffer = np_array.request();
-  std::vector<ssize_t> shape = buffer.shape;
+  std::vector<py::ssize_t> shape = buffer.shape;
   if (shape.size() != dims) {
     std::stringstream ss;
     ss << "Tried to instanciate " << class_name
@@ -100,11 +100,11 @@ void verify_array_shape_and_dims(np_array_cf<Item> np_array, unsigned dims, cons
   }
 }
 template<typename Item>
-void verify_array_shape_and_dims(np_array_cf<Item> np_array, std::vector<ssize_t> expected_dims, const char *class_name)
+void verify_array_shape_and_dims(np_array_cf<Item> np_array, std::vector<py::ssize_t> expected_dims, const char *class_name)
 {
   verify_array_shape_and_dims(np_array, expected_dims.size(), class_name);
   py::buffer_info buffer = np_array.request();
-  std::vector<ssize_t> shape = buffer.shape;
+  std::vector<py::ssize_t> shape = buffer.shape;
   bool invalid_shape = false;
   for (unsigned int i = 0; i < expected_dims.size(); ++i) {
     if (shape[i] != expected_dims[i]) {
@@ -125,9 +125,9 @@ template<typename Item>
 void copy_data_from_np(np_array_cf<Item> src, Item *dest)
 {
   py::buffer_info buffer = src.request();
-  std::vector<ssize_t> shape = buffer.shape;
+  std::vector<py::ssize_t> shape = buffer.shape;
   unsigned int elements = 1;
-  for (ssize_t dim : shape) {
+  for (py::ssize_t dim : shape) {
     elements *= dim;
   }
   const Item *data = (Item *)buffer.ptr;
