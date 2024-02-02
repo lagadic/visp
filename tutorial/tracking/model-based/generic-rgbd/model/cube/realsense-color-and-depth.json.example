@@ -179,5 +179,12 @@
             }
         }
     },
+    //! [VVS]
+    "vvs" :{
+      "lambda": 1.0,
+      "maxIter": 30,
+      "initialMu": 0.01
+    },
+    //! [VVS]
     "version": "1.0"
 }

@@ -245,13 +245,29 @@ SCENARIO("MBT JSON Serialization", "[json]")
         );
       }
 
+      THEN("VVS properties should be the same")
+      {
+        vpMbGenericTracker t2 = baseTrackerConstructor();
+        t2.setMaxIter(4096);
+        t2.setLambda(5.0);
+        t2.setInitialMu(5.0);
+
+        t2.loadConfigFile(jsonPath);
+
+        checkProperties(t1, t2,
+          &vpMbGenericTracker::getMaxIter, "VVS m iterations be the same",
+          &vpMbGenericTracker::getLambda, "VVS lambda should be the same",
+          &vpMbGenericTracker::getInitialMu, "VVS initial mu be the same"
+        );
+      }
+
       WHEN("Modifying JSON file/Using a custom JSON file")
       {
         THEN("Removing version from file generates an error on load")
         {
           modifyJson([](json &j) -> void {
             j.erase("version");
-            });
+          });
           REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
         }
 
@@ -259,7 +275,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         {
           modifyJson([](json &j) -> void {
             j["version"] = "0.0.0";
-            });
+          });
           REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
         }
 
@@ -267,7 +283,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         {
           modifyJson([](json &j) -> void {
             j["referenceCameraName"] = "C3";
-            });
+          });
           REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
         }
 
@@ -275,7 +291,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         {
           modifyJson([&t1](json &j) -> void {
             j["trackers"][t1.getReferenceCameraName()].erase("camTref");
-            });
+          });
           REQUIRE_NOTHROW(t1.loadConfigFile(jsonPath));
         }
 
@@ -284,7 +300,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
           modifyJson([&t1](json &j) -> void {
             std::string otherCamName = t1.getReferenceCameraName() == "C1" ? "C2" : "C1";
             j["trackers"][otherCamName].erase("camTref");
-            });
+          });
           REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
         }
 
@@ -301,7 +317,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
             for (const auto &c : t1.getCameraNames()) {
               j["trackers"][c].erase("clipping");
             }
-            });
+          });
           REQUIRE_NOTHROW(t2.loadConfigFile(jsonPath, false));
           REQUIRE(t2.getClipping() == clipping);
           REQUIRE(t2.getNearClippingDistance() == clipping_near);
@@ -323,7 +339,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
               for (const auto &c : t1.getCameraNames()) {
                 j["trackers"][c]["clipping"].erase("near");
               }
-              });
+            });
             t2.loadConfigFile(jsonPath);
             REQUIRE(t2.getNearClippingDistance() == clipping_near);
             REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
@@ -335,7 +351,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
               for (const auto &c : t1.getCameraNames()) {
                 j["trackers"][c]["clipping"].erase("far");
               }
-              });
+            });
             t2.loadConfigFile(jsonPath);
             REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
             REQUIRE(t2.getFarClippingDistance() == clipping_far);
@@ -347,7 +363,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
               for (const auto &c : t1.getCameraNames()) {
                 j["trackers"][c]["clipping"].erase("flags");
               }
-              });
+            });
             t2.loadConfigFile(jsonPath);
             REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
             REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
@@ -358,7 +374,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
     }
   }
 }
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);
