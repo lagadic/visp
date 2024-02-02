@@ -60,6 +60,7 @@
                 "range": 7,
                 "sampleStep": 4.0,
                 "strip": 2,
+                "thresholdType": "old",
                 "threshold": 5000.0
             },
             "klt": {
