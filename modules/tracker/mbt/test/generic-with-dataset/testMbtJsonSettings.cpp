@@ -75,6 +75,17 @@ vpMbGenericTracker baseTrackerConstructor()
 
   t.setAngleAppear(vpMath::rad(60));
   t.setAngleDisappear(vpMath::rad(90));
+  vpMe me;
+  me.setSampleStep(2.0);
+  me.setMaskSize(7);
+  me.setMaskNumber(160);
+  me.setRange(8);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(20);
+  me.setMu1(0.2);
+  me.setMu2(0.3);
+  me.setSampleStep(4);
+  t.setMovingEdge(me);
   return t;
 }
 
@@ -103,7 +114,6 @@ void compareNamesAndTypes(const vpMbGenericTracker &t1, const vpMbGenericTracker
 void compareCameraParameters(const vpMbGenericTracker &t1, const vpMbGenericTracker &t2)
 {
   std::map<std::string, vpCameraParameters> c1, c2;
-  vpCameraParameters c;
   t1.getCameraParameters(c1);
   t2.getCameraParameters(c2);
   REQUIRE(c1 == c2);
@@ -185,6 +195,8 @@ SCENARIO("MBT JSON Serialization", "[json]")
             &vpMe::getMaskNumber, "Mask number should be equal",
             &vpMe::getMaskSign, "Mask sign should be equal",
             &vpMe::getMinSampleStep, "Min sample step should be equal",
+            &vpMe::getSampleStep, "Min sample step should be equal",
+
             &vpMe::getMu1, "Mu 1 should be equal",
             &vpMe::getMu2, "Mu 2 should be equal",
             &vpMe::getNbTotalSample, "Nb total sample should be equal",
