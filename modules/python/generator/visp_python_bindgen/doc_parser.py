@@ -84,9 +84,18 @@ def to_cstring(s: str) -> str:
   s = re.sub('\n\n\n+', '\n\n', s)
   s = re.sub('\\\\ +', '\\\\', s)
 
-  return f'''R"doc(
-{s}
-)doc"'''
+  # On Windows, strings have a maximum length.
+  per_string_limit = 8192
+  current_char = 0
+  result = ''
+  while current_char < len(s):
+    result += f'''R"doc(
+{s[current_char: min((current_char + per_string_limit), len(s))]})doc"
+
+'''
+    current_char += per_string_limit
+  return result
+
 
 @dataclass
 class MethodDocSignature:
