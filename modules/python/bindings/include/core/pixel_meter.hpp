@@ -61,7 +61,7 @@ void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
     double *x_ptr = static_cast<double *>(xs.request().ptr);
     double *y_ptr = static_cast<double *>(ys.request().ptr);
 
-    for (ssize_t i = 0; i < bufu.size; ++i) {
+    for (py::ssize_t i = 0; i < bufu.size; ++i) {
       vpPixelMeterConversion::convertPoint(cam, u_ptr[i], v_ptr[i], x_ptr[i], y_ptr[i]);
     }
 
@@ -124,7 +124,7 @@ void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
     double *u_ptr = static_cast<double *>(us.request().ptr);
     double *v_ptr = static_cast<double *>(vs.request().ptr);
 
-    for (ssize_t i = 0; i < bufx.size; ++i) {
+    for (py::ssize_t i = 0; i < bufx.size; ++i) {
       vpMeterPixelConversion::convertPoint(cam, x_ptr[i], y_ptr[i], u_ptr[i], v_ptr[i]);
     }
 
