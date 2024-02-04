@@ -1131,6 +1131,67 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle
   initTracking(I, iP, trackCircle, trackArc);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, std::optional<std::vector<vpImagePoint>> &opt_ips, bool trackCircle, bool trackArc)
+#else
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, std::vector<vpImagePoint> *opt_ips, bool trackCircle, bool trackArc)
+#endif
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  if (!opt_ips.has_value())
+#else
+  if (opt_ips == nullptr)
+#endif
+  {
+    initTracking(I, trackCircle, trackArc);
+    return;
+  }
+
+  if (opt_ips->size() != 0) {
+    initTracking(I, *opt_ips, trackCircle, trackArc);
+    return;
+  }
+
+  unsigned int n = 5; // by default, 5 points for an ellipse
+  const unsigned int nForCircle = 3;
+  m_trackCircle = trackCircle;
+  if (trackCircle) {
+    n = nForCircle;
+  }
+  opt_ips->resize(n);
+  m_trackArc = trackArc;
+
+  vpDisplay::flush(I);
+
+  if (m_trackCircle) {
+    if (m_trackArc) {
+      std::cout << "First and third points specify the extremities of the arc of circle (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; ++k) {
+      std::cout << "Click point " << (k + 1) << "/" << n << " on the circle " << std::endl;
+      vpDisplay::getClick(I, (*opt_ips)[k], true);
+      const unsigned int crossSize = 10;
+      vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << (*opt_ips)[k] << std::endl;
+    }
+  }
+  else {
+    if (m_trackArc) {
+      std::cout << "First and fifth points specify the extremities of the arc of ellipse (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; ++k) {
+      std::cout << "Click point " << (k + 1) << "/" << n << " on the ellipse " << std::endl;
+      vpDisplay::getClick(I, (*opt_ips)[k], true);
+      const unsigned int crossSize = 10;
+      vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << (*opt_ips)[k] << std::endl;
+    }
+  }
+  initTracking(I, *opt_ips, trackCircle, trackArc);
+}
+
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP,
                                bool trackCircle, bool trackArc)
 {
