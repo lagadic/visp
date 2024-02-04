@@ -175,7 +175,8 @@
  *               "range": 4,
  *               "sampleStep": 10.0,
  *               "strip": 2,
- *               "threshold": 1500.0
+*                "thresholdType": "normalized",
+ *               "threshold": 20.0
  *           },
  *           "lod": {
  *               "minLineLengthThresholdGeneral": 50.0,
@@ -1022,6 +1023,7 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
   //Edge tracker settings
   if (t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
     from_json(j.at("edge"), t.me);
+    t.setMovingEdge(t.me);
   }
   //KLT tracker settings
 #if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
