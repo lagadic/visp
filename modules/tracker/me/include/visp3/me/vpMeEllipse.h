@@ -49,6 +49,10 @@
 #include <list>
 #include <math.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#include <optional>
+#endif
+
 /*!
  * \class vpMeEllipse
  * \ingroup module_me
