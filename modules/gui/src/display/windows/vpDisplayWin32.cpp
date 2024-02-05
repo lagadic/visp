@@ -57,9 +57,23 @@ void vpCreateWindow(threadParam *param)
 }
 
 /*!
-  Constructor.
+  Constructors.
 */
 vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) { }
+
+vpDisplayWin32::vpDisplayWin32(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "")
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "")
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+
 
 /*!
   Destructor.
