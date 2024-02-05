@@ -35,12 +35,11 @@
 #define _vpQuaternionVector_h_
 
 /*!
-  \file vpQuaternionVector.h
-
-  \brief Class that consider the case of a quaternion and basic
-   operations on it.
-
-*/
+ * \file vpQuaternionVector.h
+ *
+ * \brief Class that consider the case of a quaternion and basic
+ * operations on it.
+ */
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpRotationMatrix.h>
@@ -101,8 +100,7 @@
   double z = q.z();
   double w = q.w();
   \endcode
-
-  */
+ */
 class VISP_EXPORT vpQuaternionVector : public vpRotationVector
 {
 private:
@@ -141,8 +139,10 @@ public:
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
   vpQuaternionVector operator/(double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;
   vpQuaternionVector &operator=(const std::initializer_list<double> &list);
+#endif
 
   vpQuaternionVector conjugate() const;
   vpQuaternionVector inverse() const;

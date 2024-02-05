@@ -74,7 +74,7 @@ public:
 
 private:
   void reSample(const vpImage<unsigned char> &I);
-  void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) override;
+  void sample(const vpImage<unsigned char> &I, bool doNotTrack = false) vp_override;
   void suppressPoints();
 };
 

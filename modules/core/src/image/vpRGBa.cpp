@@ -70,6 +70,7 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &v)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Move operator.
 */
@@ -81,6 +82,7 @@ vpRGBa &vpRGBa::operator=(const vpRGBa &&v)
   this->A = std::move(v.A);
   return *this;
 }
+#endif
 
 /*!
   Cast a vpColVector in a vpRGBa

@@ -47,26 +47,26 @@ class VISP_EXPORT vpMbDepthDenseTracker : public virtual vpMbTracker
 {
 public:
   vpMbDepthDenseTracker();
-  virtual ~vpMbDepthDenseTracker() override;
+  virtual ~vpMbDepthDenseTracker() vp_override;
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
 
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
 
-  virtual inline vpColVector getError() const override { return m_error_depthDense; }
+  virtual inline vpColVector getError() const vp_override { return m_error_depthDense; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false) override;
+                                                               bool displayFullModel = false) vp_override;
 
-  virtual inline vpColVector getRobustWeights() const override { return m_w_depthDense; }
+  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_depthDense; }
 
-  virtual void init(const vpImage<unsigned char> &I) override;
+  virtual void init(const vpImage<unsigned char> &I) vp_override;
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                    bool verbose = false);
@@ -75,9 +75,9 @@ public:
                    const vpHomogeneousMatrix &cMo, bool verbose = false);
 #endif
 
-  virtual void resetTracker() override;
+  virtual void resetTracker() vp_override;
 
-  virtual void setCameraParameters(const vpCameraParameters &camera) override;
+  virtual void setCameraParameters(const vpCameraParameters &camera) vp_override;
 
   virtual void setDepthDenseFilteringMaxDistance(double maxDistance);
   virtual void setDepthDenseFilteringMethod(int method);
@@ -95,22 +95,22 @@ public:
     m_depthDenseSamplingStepY = stepY;
   }
 
-  virtual void setOgreVisibilityTest(const bool &v) override;
+  virtual void setOgreVisibilityTest(const bool &v) vp_override;
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
 #ifdef VISP_HAVE_PCL
   virtual void setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const vpHomogeneousMatrix &cdMo);
 #endif
 
-  virtual void setScanLineVisibilityTest(const bool &v) override;
+  virtual void setScanLineVisibilityTest(const bool &v) vp_override;
 
   void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
 
-  virtual void testTracking() override;
+  virtual void testTracking() vp_override;
 
-  virtual void track(const vpImage<unsigned char> &) override;
-  virtual void track(const vpImage<vpRGBa> &) override;
+  virtual void track(const vpImage<unsigned char> &) vp_override;
+  virtual void track(const vpImage<vpRGBa> &) vp_override;
 #ifdef VISP_HAVE_PCL
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
@@ -149,20 +149,20 @@ protected:
   void computeVisibility(unsigned int width, unsigned int height);
 
   void computeVVS();
-  virtual void computeVVSInit() override;
-  virtual void computeVVSInteractionMatrixAndResidu() override;
+  virtual void computeVVSInit() vp_override;
+  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-                          const std::string &name = "") override;
+                          const std::string &name = "") vp_override;
 
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-                            const std::string &name = "") override;
+                            const std::string &name = "") vp_override;
 
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) override;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
 
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) override;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
 
 #ifdef VISP_HAVE_PCL
   void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);

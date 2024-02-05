@@ -69,7 +69,7 @@ private: /* Not allowed functions. */
 
 public:
   vpRobotPioneer();
-  virtual ~vpRobotPioneer() override;
+  virtual ~vpRobotPioneer() vp_override;
 
   /*!
    * Get the robot Jacobian expressed at point E, the point located at the
@@ -82,14 +82,14 @@ public:
    *
    * \sa get_eJe()
    */
-  void get_eJe(vpMatrix &eJe) override { eJe = vpUnicycle::get_eJe(); }
+  void get_eJe(vpMatrix &eJe) vp_override { eJe = vpUnicycle::get_eJe(); }
 
 private: // Set as private since not implemented
   /*!
    * Get the robot Jacobian expressed in the robot reference (or world) frame.
    * \warning Not implemented.
    */
-  void get_fJe(vpMatrix & /*fJe*/) override { };
+  void get_fJe(vpMatrix & /*fJe*/) vp_override { };
 
   /*!
    * Get a displacement (frame as to ve specified) between two successive
@@ -117,10 +117,10 @@ private: // Set as private since not implemented
    * Set a displacement (frame has to be specified) in position control.
    * \warning Not implemented.
    */
-  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) override { };
+  void setPosition(const vpRobot::vpControlFrameType /*frame*/, const vpColVector & /*q*/) vp_override { };
 
 public:
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
 
   /*!
    * Enable or disable sonar device usage.

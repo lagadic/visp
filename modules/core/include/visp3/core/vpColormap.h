@@ -93,7 +93,11 @@ public:
 
 private:
   vpColormapType m_colormapType;
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   unsigned char m_colormapSrgbBytes[256][3] = {};
+#else
+  unsigned char m_colormapSrgbBytes[256][3];
+#endif
 };
 
 #endif

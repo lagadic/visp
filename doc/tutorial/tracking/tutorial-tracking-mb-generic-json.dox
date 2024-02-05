@@ -47,6 +47,7 @@ Let us first examine the global settings (located at the root of the JSON struct
 \endcode
 
 If they are defined globally, they will take precedence over the values defined per tracker.
+Some settings such as the "vvs" options, are only defined globally
 
 <table>
 <tr><th colspan="2">Key</th><th>Type</th><th>Description</th><th>Optional</th></tr>
@@ -96,6 +97,29 @@ If they are defined globally, they will take precedence over the values defined 
     <td colspan="2">visibilityTest:ogre</td>
     <td>boolean</td>
     <td>Whether to use ogre for visibility testing. OGRE must be installed, otherwise ignored. See vpMbGenericTracker::setOgreVisibilityTest()</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">vvs (optional)</th></tr>
+<tr>
+    <td>lambda</td>
+    <td>float</td>
+    <td>Virtual visual servoing gain
+    </td>
+    <td>vpMbGenericTracker::setLambda()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>maxIter</td>
+    <td>integer > 0</td>
+    <td>Number of iterations for virtual visual servoing</td>
+    <td>vpMbGenericTracker::setMaxIter()</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>initialMu</td>
+    <td>float</td>
+    <td>Initial Mu for levenberg marquardt optimization</td>
+    <td>vpMbGenericTracker::setInitialMu(</td>
     <td>Yes</td>
 </tr>
 </table>

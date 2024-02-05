@@ -338,6 +338,7 @@ double &vpQuaternionVector::z() { return data[2]; }
 //! Returns a reference to the w-component of the quaternion.
 double &vpQuaternionVector::w() { return data[3]; }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 4 double angle values.
   \code
@@ -366,6 +367,7 @@ vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<do
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
+#endif
 
 /*!
   Compute Quaternion Linear intERPolation (LERP).

@@ -40,6 +40,8 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpQuadProg.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 /*!
   Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
   to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
@@ -676,3 +678,7 @@ vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
     return A.solveBySVD(b);
   return A.solveByQR(b);
 }
+
+#else
+void dummy_vpQuadProg() { };
+#endif

@@ -65,13 +65,13 @@ private:
 
 public:
   vpRandomCamGenerator(double low, double high)
-    : m_rand(std::random_device{}()), m_count_dist(1, 5), m_type_dist(0, 2), m_dist(low, high)
+    : m_rand(std::random_device {}()), m_count_dist(1, 5), m_type_dist(0, 2), m_dist(low, high)
   {
     static_cast<void>(next());
   }
 
-  const vpCameraParameters &get() const override { return current; }
-  bool next() override
+  const vpCameraParameters &get() const vp_override { return current; }
+  bool next() vp_override
   {
     const double px = m_dist(m_rand);
     const double py = m_dist(m_rand);
@@ -149,7 +149,7 @@ SCENARIO("Serializing two cameras", "[json]")
   }
 }
 
-int main(int argc, char *argv [])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

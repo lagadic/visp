@@ -279,7 +279,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a pose vector"));
-  };
+  }
 
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const;

@@ -310,15 +310,15 @@ protected:
 
 public:
   vpMbEdgeTracker();
-  virtual ~vpMbEdgeTracker() override;
+  virtual ~vpMbEdgeTracker() vp_override;
 
   /** @name Inherited functionalities from vpMbEdgeTracker */
   //@{
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) override;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) vp_override;
 
   void getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level = 0) const;
   void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level = 0) const;
@@ -327,7 +327,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel = false) override;
+                                                               bool displayFullModel = false) vp_override;
 
   /*!
    * Get the moving edge parameters.
@@ -362,22 +362,22 @@ public:
    */
   inline double getGoodMovingEdgesRatioThreshold() const { return percentageGdPt; }
 
-  virtual inline vpColVector getError() const override { return m_error_edge; }
+  virtual inline vpColVector getError() const vp_override { return m_error_edge; }
 
-  virtual inline vpColVector getRobustWeights() const override { return m_w_edge; }
+  virtual inline vpColVector getRobustWeights() const vp_override { return m_w_edge; }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) override;
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true) vp_override;
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                            bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
-  void resetTracker() override;
+  void resetTracker() vp_override;
 
  /*!
   * Set the camera parameters.
   *
   * \param cam : The new camera parameters.
   */
-  virtual void setCameraParameters(const vpCameraParameters &cam) override
+  virtual void setCameraParameters(const vpCameraParameters &cam) vp_override
   {
     m_cam = cam;
 
@@ -399,11 +399,11 @@ public:
     }
   }
 
-  virtual void setClipping(const unsigned int &flags) override;
+  virtual void setClipping(const unsigned int &flags) vp_override;
 
-  virtual void setFarClippingDistance(const double &dist) override;
+  virtual void setFarClippingDistance(const double &dist) vp_override;
 
-  virtual void setNearClippingDistance(const double &dist) override;
+  virtual void setNearClippingDistance(const double &dist) vp_override;
 
   /*!
    * Use Ogre3D for visibility tests
@@ -413,7 +413,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setOgreVisibilityTest(const bool &v) override
+  virtual void setOgreVisibilityTest(const bool &v) vp_override
   {
     vpMbTracker::setOgreVisibilityTest(v);
 #ifdef VISP_HAVE_OGRE
@@ -426,7 +426,7 @@ public:
    *
    * \param v : True to use it, False otherwise
    */
-  virtual void setScanLineVisibilityTest(const bool &v) override
+  virtual void setScanLineVisibilityTest(const bool &v) vp_override
   {
     vpMbTracker::setScanLineVisibilityTest(v);
 
@@ -456,15 +456,15 @@ public:
 
   void setMovingEdge(const vpMe &me);
 
-  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) override;
-  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) override;
+  virtual void setPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cdMo) vp_override;
+  virtual void setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &cdMo) vp_override;
 
   void setScales(const std::vector<bool> &_scales);
 
   void setUseEdgeTracking(const std::string &name, const bool &useEdgeTracking);
 
-  virtual void track(const vpImage<unsigned char> &I) override;
-  virtual void track(const vpImage<vpRGBa> &I) override;
+  virtual void track(const vpImage<unsigned char> &I) vp_override;
+  virtual void track(const vpImage<vpRGBa> &I) vp_override;
   //@}
 
 protected:
@@ -483,8 +483,8 @@ protected:
   void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count, unsigned int lvl = 0);
   void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl = 0);
   void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity);
-  virtual void computeVVSInit() override;
-  virtual void computeVVSInteractionMatrixAndResidu() override;
+  virtual void computeVVSInit() vp_override;
+  virtual void computeVVSInteractionMatrixAndResidu() vp_override;
   virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
@@ -493,13 +493,13 @@ protected:
   void displayFeaturesOnImage(const vpImage<vpRGBa> &I);
   void downScale(const unsigned int _scale);
   virtual std::vector<std::vector<double> > getFeaturesForDisplayEdge();
-  virtual void init(const vpImage<unsigned char> &I) override;
+  virtual void init(const vpImage<unsigned char> &I) vp_override;
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
-                          const std::string &name = "") override;
+                          const std::string &name = "") vp_override;
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
-                            const std::string &name = "") override;
-  virtual void initFaceFromCorners(vpMbtPolygon &polygon) override;
-  virtual void initFaceFromLines(vpMbtPolygon &polygon) override;
+                            const std::string &name = "") vp_override;
+  virtual void initFaceFromCorners(vpMbtPolygon &polygon) vp_override;
+  virtual void initFaceFromLines(vpMbtPolygon &polygon) vp_override;
   unsigned int initMbtTracking(unsigned int &nberrors_lines, unsigned int &nberrors_cylinders,
                                unsigned int &nberrors_circles);
   void initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);
@@ -510,7 +510,7 @@ protected:
   void removeCylinder(const std::string &name);
   void removeLine(const std::string &name);
   void resetMovingEdge();
-  virtual void testTracking() override;
+  virtual void testTracking() vp_override;
   void trackMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdge(const vpImage<unsigned char> &I);
   void updateMovingEdgeWeights();

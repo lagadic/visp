@@ -179,7 +179,7 @@ public:
 
   template <class Type>
   vp_deprecated static void createSubImage(const vpImage<Type> &I, const vpRect &rect, vpImage<Type> &S);
-//@}
+  //@}
 #endif
 
 private:
@@ -796,10 +796,10 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
 
   for (int v = 0; v < height; v++) {
     for (int u = 0; u < height; u++) {
-      double r2 = vpMath::sqr(((double)u - u0)/px) +
-        vpMath::sqr(((double)v-v0)/py);
-      double u_double = ((double)u - u0)*(1.0+kd*r2) + u0;
-      double v_double = ((double)v - v0)*(1.0+kd*r2) + v0;
+      double r2 = vpMath::sqr(((double)u - u0) / px) +
+        vpMath::sqr(((double)v - v0) / py);
+      double u_double = ((double)u - u0) * (1.0 + kd * r2) + u0;
+      double v_double = ((double)v - v0) * (1.0 + kd * r2) + v0;
       undistI[v][u] = I.getPixelBI((float)u_double, (float)v_double);
     }
   }
@@ -1092,7 +1092,7 @@ template <class Type>
 void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpImageInterpolationType &method,
                           unsigned int
 #if defined(_OPENMP)
-                              nThreads
+                          nThreads
 #endif
 )
 {
@@ -1145,7 +1145,7 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
                                  const vpImageInterpolationType &method,
                                  unsigned int
 #if defined(_OPENMP)
-                                     nThreads
+                                 nThreads
 #endif
 )
 {
@@ -1195,7 +1195,7 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
                                  const vpImageInterpolationType &method,
                                  unsigned int
 #if defined(_OPENMP)
-                                     nThreads
+                                 nThreads
 #endif
 )
 {
@@ -1304,7 +1304,7 @@ void vpImageTools::warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImag
     warpNN(src, M, dst, affine, pixelCenter, fixedPointArithmetic);
   }
   else {
- // bilinear interpolation
+    // bilinear interpolation
     warpLinear(src, M, dst, affine, pixelCenter, fixedPointArithmetic);
   }
 }

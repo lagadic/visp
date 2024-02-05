@@ -85,11 +85,12 @@ protected:
 public:
   vpFeatureMomentCentered(vpMomentDatabase &moments, double A, double B, double C,
                           vpFeatureMomentDatabase *featureMoments = nullptr);
-  void compute_interaction() override;
+
+  void compute_interaction() vp_override;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /* Add function due to pure virtual definition in vpBasicFeature.h */
-  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */) override
+  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */) vp_override
   {
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }
@@ -100,12 +101,18 @@ public:
   /*!
    * Associated moment name
    */
-  const std::string momentName() const override { return "vpMomentCentered"; }
+  const std::string momentName() const vp_override
+  {
+    return "vpMomentCentered";
+  }
 
   /*!
    * Feature name
    */
-  const std::string name() const override { return "vpFeatureMomentCentered"; }
+  const std::string name() const vp_override
+  {
+    return "vpFeatureMomentCentered";
+  }
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpFeatureMomentCentered &v);
 };

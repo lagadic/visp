@@ -134,35 +134,41 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsign
   double yc = -cam.m_v0;
   double xc = -cam.m_u0;
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-  {
-    for (unsigned int p = 0; p < order; p++)   // iteration en X
-      for (unsigned int q = 0; q < order; q++) // iteration en Y
-        if (p + q == k)                        // on est bien dans la matrice triangulaire superieure
-        {
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {  // iteration en X
+      for (unsigned int q = 0; q < order; q++) { // iteration en Y
+        if (p + q == k) {                       // on est bien dans la matrice triangulaire superieure
           m[p][q] = 0;                            // initialisation e 0
-          for (unsigned int r = 0; r <= p; r++)   // somme externe
-            for (unsigned int t = 0; t <= q; t++) // somme interne
-            {
+          for (unsigned int r = 0; r <= p; r++) {  // somme externe
+            for (unsigned int t = 0; t <= q; t++) { // somme interne
               m[p][q] += static_cast<double>(vpMath::comb(p, r)) * static_cast<double>(vpMath::comb(q, t)) *
-                pow(xc, (int)(p - r)) * pow(yc, (int)(q - t)) * moment_pixel[r][t];
+                pow(xc, static_cast<int>(p - r)) * pow(yc, static_cast<int>(q - t)) * moment_pixel[r][t];
             }
+          }
         }
+      }
+    }
   }
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-    for (unsigned int p = 0; p < order; p++)
-      for (unsigned int q = 0; q < order; q++)
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {
+      for (unsigned int q = 0; q < order; q++) {
         if (p + q == k) {
-          m[p][q] *= pow(cam.m_inv_px, (int)(1 + p)) * pow(cam.m_inv_py, (int)(1 + q));
+          m[p][q] *= pow(cam.m_inv_px, static_cast<int>(1 + p)) * pow(cam.m_inv_py, static_cast<int>(1 + q));
         }
+      }
+    }
+  }
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-    for (unsigned int p = 0; p < order; p++)
-      for (unsigned int q = 0; q < order; q++)
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {
+      for (unsigned int q = 0; q < order; q++) {
         if (p + q == k) {
           moment_meter[p][q] = m[p][q];
         }
+      }
+    }
+  }
 }
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_CALIB3D) && defined(HAVE_OPENCV_IMGPROC)
@@ -243,35 +249,41 @@ void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix, unsigned
   double yc = -v0;
   double xc = -u0;
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-  {
-    for (unsigned int p = 0; p < order; p++)   // iteration en X
-      for (unsigned int q = 0; q < order; q++) // iteration en Y
-        if (p + q == k)                        // on est bien dans la matrice triangulaire superieure
-        {
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {  // iteration en X
+      for (unsigned int q = 0; q < order; q++) { // iteration en Y
+        if (p + q == k) {                        // on est bien dans la matrice triangulaire superieure
           m[p][q] = 0;                            // initialisation e 0
-          for (unsigned int r = 0; r <= p; r++)   // somme externe
-            for (unsigned int t = 0; t <= q; t++) // somme interne
-            {
+          for (unsigned int r = 0; r <= p; r++) {  // somme externe
+            for (unsigned int t = 0; t <= q; t++) { // somme interne
               m[p][q] += static_cast<double>(vpMath::comb(p, r)) * static_cast<double>(vpMath::comb(q, t)) *
                 pow(xc, static_cast<int>(p - r)) * pow(yc, static_cast<int>(q - t)) * moment_pixel[r][t];
             }
+          }
         }
+      }
+    }
   }
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-    for (unsigned int p = 0; p < order; p++)
-      for (unsigned int q = 0; q < order; q++)
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {
+      for (unsigned int q = 0; q < order; q++) {
         if (p + q == k) {
           m[p][q] *= pow(inv_px, static_cast<int>(1 + p)) * pow(inv_py, static_cast<int>(1 + q));
         }
+      }
+    }
+  }
 
-  for (unsigned int k = 0; k < order; k++) // iteration correspondant e l'ordre du moment
-    for (unsigned int p = 0; p < order; p++)
-      for (unsigned int q = 0; q < order; q++)
+  for (unsigned int k = 0; k < order; k++) { // iteration correspondant e l'ordre du moment
+    for (unsigned int p = 0; p < order; p++) {
+      for (unsigned int q = 0; q < order; q++) {
         if (p + q == k) {
           moment_meter[p][q] = m[p][q];
         }
+      }
+    }
+  }
 }
 
 /*!

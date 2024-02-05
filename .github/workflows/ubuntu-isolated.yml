@@ -14,8 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04]
-        compiler: [ {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+        os: [ubuntu-latest]
+        compiler: [ {CC: /usr/bin/gcc, CXX: /usr/bin/g++} ]
         standard: [ 17 ]
 
     steps:
@@ -24,6 +24,24 @@ jobs:
       uses: styfle/cancel-workflow-action@0.9.1
       with:
         access_token: ${{ github.token }}
+
+      # Remove some packages to emulate the ROS2 Jenkins environment
+      # X11: https://raspberrypi.stackexchange.com/a/92334
+      # Java: https://askubuntu.com/a/185531
+      name: Remove packages
+      run: |
+        sudo apt-get install libomp-dev
+        sudo apt purge --auto-remove 'x11-*'
+        java -version
+        sudo dpkg --list | grep -i jdk
+        sudo dpkg --list | grep -i java
+        sudo apt-get purge --auto-remove openjdk*
+        sudo apt-get purge --auto-remove icedtea-* openjdk-*
+        sudo dpkg --list | grep -i jdk
+        sudo dpkg --list | grep -i java
+        sudo apt purge --auto-remove 'libjpeg*'
+        sudo apt purge --auto-remove 'libpng*'
+        sudo apt purge --auto-remove 'libxml*'
 
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -47,7 +65,8 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release \
+                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
         cat ViSP-third-party.txt
 
     - name: Compile

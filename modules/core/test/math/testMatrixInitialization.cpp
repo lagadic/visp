@@ -106,6 +106,8 @@ bool equal(const vpRowVector &a1, const vpRowVector &a2, double epsilon)
 int main()
 {
   double epsilon = 1e-10;
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   {
     vpArray2D<float> a { 1.f, 2.f, 3.f };
     std::cout << "a:\n" << a << std::endl;
@@ -158,6 +160,7 @@ int main()
     //    m6 = {m2};  // Fails on travis
     //    std::cout << "m6:\n" << m6 << std::endl;
   }
+#endif
 
   {
     vpMatrix m1;
@@ -187,6 +190,7 @@ int main()
       c_ref[i] = i;
     }
     std::cout << "c_ref: " << c_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpColVector c { 0, 1, 2, 3, 4, 5 };
       std::cout << "c: " << c.t() << std::endl;
@@ -218,6 +222,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpColVector c;
       c << 1, 2, 3, 4;
@@ -250,6 +255,7 @@ int main()
       r_ref[i] = i;
     }
     std::cout << "r_ref: " << r_ref << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpRowVector r { 0, 1, 2, 3, 4, 5 };
       std::cout << "r: " << r << std::endl;
@@ -281,6 +287,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpRowVector r;
       r << 1, 2, 3;
@@ -303,6 +310,7 @@ int main()
     std::cout << "** Test vpThetaUVector" << std::endl;
     vpThetaUVector tu_ref(0, M_PI_2, M_PI);
     std::cout << "tu_ref: " << tu_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpThetaUVector tu = { 0, M_PI_2, M_PI };
       std::cout << "tu: " << tu.t() << std::endl;
@@ -310,6 +318,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpThetaUVector tu;
       tu << 0, M_PI_2, M_PI;
@@ -330,6 +339,7 @@ int main()
     std::cout << "** Test vpRxyzVector" << std::endl;
     vpRxyzVector rxyz_ref(0, M_PI_2, M_PI);
     std::cout << "rxyz_ref: " << rxyz_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpRxyzVector rxyz = { 0, M_PI_2, M_PI };
       std::cout << "rxyz: " << rxyz.t() << std::endl;
@@ -337,6 +347,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpRxyzVector rxyz;
       rxyz << 0, M_PI_2, M_PI;
@@ -357,6 +368,7 @@ int main()
     std::cout << "** Test vpRzyxVector" << std::endl;
     vpRzyxVector rzyx_ref(0, M_PI_2, M_PI);
     std::cout << "rzyx_ref: " << rzyx_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpRzyxVector rzyx = { 0, M_PI_2, M_PI };
       std::cout << "rzyx: " << rzyx.t() << std::endl;
@@ -364,6 +376,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpRzyxVector rzyx;
       rzyx << 0, M_PI_2, M_PI;
@@ -384,6 +397,7 @@ int main()
     std::cout << "** Test vpRzyzVector" << std::endl;
     vpRzyzVector rzyz_ref(0, M_PI_2, M_PI);
     std::cout << "rzyz_ref: " << rzyz_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpRzyzVector rzyz = { 0, M_PI_2, M_PI };
       std::cout << "rzyz: " << rzyz.t() << std::endl;
@@ -391,6 +405,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpRzyzVector rzyz;
       rzyz << 0, M_PI_2, M_PI;
@@ -412,6 +427,7 @@ int main()
     vpThetaUVector tu_ref(0, M_PI_2, M_PI);
     vpQuaternionVector q_ref(tu_ref);
     std::cout << "q_ref: " << q_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpQuaternionVector q = { q_ref[0], q_ref[1], q_ref[2], q_ref[3] };
       std::cout << "q: " << q.t() << std::endl;
@@ -419,6 +435,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpQuaternionVector q;
       q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
@@ -439,6 +456,7 @@ int main()
     std::cout << "** Test vpTranslationVector" << std::endl;
     vpTranslationVector t_ref(0, 0.1, 0.5);
     std::cout << "t_ref: " << t_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpTranslationVector t = { t_ref[0], t_ref[1], t_ref[2] };
       std::cout << "t: " << t.t() << std::endl;
@@ -446,6 +464,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpTranslationVector t;
       t << 0, 0.1, 0.5;
@@ -466,6 +485,7 @@ int main()
     std::cout << "** Test vpRotationMatrix" << std::endl;
     vpRotationMatrix R_ref(vpRxyzVector(0, -M_PI_2, M_PI));
     std::cout << "R_ref:\n" << R_ref << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
       vpRotationMatrix R({ 0, 0, -1, 0, -1, 0, -1, 0, 0 });
       std::cout << "R:\n" << R << std::endl;
@@ -481,6 +501,7 @@ int main()
         return EXIT_FAILURE;
       }
     }
+#endif
     {
       vpRotationMatrix R;
       R << 0, 0, -1, 0, -1, 0, -1, 0, 0;

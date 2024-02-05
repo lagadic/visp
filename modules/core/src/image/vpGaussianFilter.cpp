@@ -150,7 +150,7 @@ void vpGaussianFilter::apply(const vpImage<unsigned char> &I, vpImage<unsigned c
 void vpGaussianFilter::apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur) { m_impl->apply(I, I_blur); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
+ // Work around to avoid warning: libvisp_core.a(vpGaussianFilter.cpp.o) has no symbols
 void dummy_vpGaussianFilter() { };
 
 #endif

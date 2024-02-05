@@ -52,24 +52,6 @@ struct string_feeder
 };
 
 /**
- * Similar to sprintf(), except that it will malloc() enough space for the
- * formatted string which it returns. It is the caller's responsibility to call
- * free() on the returned string when it is no longer needed.
- */
-char *sprintf_alloc(const char *fmt, ...)
-#ifndef _MSC_VER
-__attribute__ ((format (printf, 1, 2)))
-#endif
-;
-
-/**
- * Similar to vsprintf(), except that it will malloc() enough space for the
- * formatted string which it returns. It is the caller's responsibility to call
- * free() on the returned string when it is no longer needed.
- */
-char *vsprintf_alloc(const char *fmt, va_list args);
-
-/**
  * Concatenates 1 or more strings together and returns the result, which will be a
  * newly allocated string which it is the caller's responsibility to free.
  */

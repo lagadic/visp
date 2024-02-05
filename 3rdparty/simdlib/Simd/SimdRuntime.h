@@ -122,8 +122,8 @@ namespace Simd
             {
                 count += 1;
                 sum += value;
-                min = std::min(min, value);
-                max = std::max(max, value);
+                min = std::min<int64_t>(min, value);
+                max = std::max<int64_t>(max, value);
             }
 
             SIMD_INLINE int64_t Mean() const
@@ -201,7 +201,7 @@ namespace Simd
     {
         size_t M; size_t N; size_t K; const float * alpha; const float * A; size_t lda; const float * B; size_t ldb; const float * beta; float * C; size_t ldc;
         SIMD_INLINE GemmArgs(size_t M_, size_t N_, size_t K_, const float * alpha_, const float * A_, size_t lda_, const float * B_, size_t ldb_, const float * beta_, float * C_, size_t ldc_)
-            :M(M_), N(N_), K(K_), alpha(alpha_), A(A_), lda(lda_), B(B_), ldb(ldb_), beta(beta_), ldc(ldc_), C(C_) 
+            :M(M_), N(N_), K(K_), alpha(alpha_), A(A_), lda(lda_), B(B_), ldb(ldb_), beta(beta_), ldc(ldc_), C(C_)
         {}
     };
 
@@ -287,8 +287,8 @@ namespace Simd
             ss << "GemmCb [" << args.M << ", " << args.N << ", " << args.K << "]";
             return ss.str();
         }
-#endif 
-        
+#endif
+
         SIMD_INLINE GemmKernelType Type() const { return _type; }
 
         SIMD_INLINE size_t BufferSize(size_t M, size_t N, size_t K) const
@@ -310,7 +310,7 @@ namespace Simd
     };
     typedef std::vector<GemmCbFunc> GemmCbFuncs;
 
-    SIMD_INLINE GemmCbFuncs InitGemmCbFuncs(GemmCbFunc::BufferSizePtr bufferSize, GemmCbFunc::ReorderBPtr reorderB, GemmCbFunc::RunPtr run, 
+    SIMD_INLINE GemmCbFuncs InitGemmCbFuncs(GemmCbFunc::BufferSizePtr bufferSize, GemmCbFunc::ReorderBPtr reorderB, GemmCbFunc::RunPtr run,
         const String & name, GemmKernelType begin, GemmKernelType end)
     {
         GemmCbFuncs funcs;

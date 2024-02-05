@@ -207,15 +207,17 @@ public:
   /** @name Inherited functionalities from vpFeatureMoment */
   //@{
   virtual void compute_interaction(void);
-  vpBasicFeature *duplicate() const override;
+
+  vpBasicFeature *duplicate() const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
 
   int getDimension(unsigned int select = FEATURE_ALL) const;
-  void init(void) override;
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
+  void init(void) vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+
   void linkTo(vpFeatureMomentDatabase &featureMoments);
 
   /*!
@@ -229,7 +231,7 @@ public:
    */
   virtual const std::string name() const = 0;
 
-  void print(unsigned int select = FEATURE_ALL) const override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
   virtual void printDependencies(std::ostream &os) const;
 
   void update(double A, double B, double C);

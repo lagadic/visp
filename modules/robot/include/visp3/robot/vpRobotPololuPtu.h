@@ -76,7 +76,7 @@ public:
   /*!
    * Destructor that stops the movements.
    */
-  ~vpRobotPololuPtu() override;
+  ~vpRobotPololuPtu() vp_override;
 
   /*!
    * Get the robot jacobian expressed in the end-effector frame.
@@ -87,7 +87,7 @@ public:
    * \param[out] eJe : Jacobian between end effector frame and end effector frame (on
    * tilt axis).
    */
-  void get_eJe(vpMatrix &eJe) override;
+  void get_eJe(vpMatrix &eJe) vp_override;
 
   /*!
    * Get the robot jacobian expressed in the end-effector frame.
@@ -108,7 +108,7 @@ public:
    * \param[out] fJe : Jacobian between reference frame (or fix frame) and end
    * effector frame (on tilt axis).
    */
-  void get_fJe(vpMatrix &fJe) override;
+  void get_fJe(vpMatrix &fJe) vp_override;
 
   /*!
    * Get the robot jacobian expressed in the robot reference frame.
@@ -137,7 +137,7 @@ public:
    * \exception vpRobotException::wrongStateError : If a not supported frame type
    * is given.
    */
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
 
   /*!
    * Get the percentage of the maximum velocity applied to move the PTU in position.
@@ -166,7 +166,7 @@ public:
    * \exception vpRobotException::wrongStateError : If a not supported frame
    * type is given.
    */
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) vp_override;
 
   /*!
    * Set the percentage of the maximum velocity applied to move the PTU in position.
@@ -215,7 +215,7 @@ public:
    * \warning Velocities could be saturated if one of them exceed the maximal
    * authorized speed (see vpRobot::maxRotationVelocity).
    */
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &q_dot) vp_override;
 
   /*!
    * Stop the velocity command.
@@ -226,7 +226,7 @@ public:
    * Change the state of the robot either to stop them, or to set position or
    * speed control.
    */
-  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) override;
+  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) vp_override;
 
 private:
   /*!
@@ -235,7 +235,7 @@ private:
    * \exception vpRobotException::constructionError If the config file cannot be
    * opened.
    */
-  void init() override { };
+  void init() vp_override { };
 
   /*!
    * Get the robot displacement since the last call of this method.
@@ -257,7 +257,7 @@ private:
    * \exception vpRobotException::wrongStateError If a not supported frame type
    * is given.
    */
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d) override
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &d) vp_override
   {
     (void)frame;
     (void)d;

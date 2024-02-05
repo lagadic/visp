@@ -12,7 +12,8 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) \
+  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::vector<std::pair<std::string, std::string> > type_serial_nb;
   std::vector<bool> cam_found;
 
@@ -126,6 +127,9 @@ int main(int argc, char **argv)
   std::cout << "librealsense is detected but its version is too old. Install librealsense version > 2.31.0, configure "
     "and build ViSP again to use this example"
     << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
   return EXIT_SUCCESS;

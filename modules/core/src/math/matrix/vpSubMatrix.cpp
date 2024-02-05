@@ -42,7 +42,7 @@
 #include <visp3/core/vpMatrixException.h>
 #include <visp3/core/vpSubMatrix.h>
 
-vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) {}
+vpSubMatrix::vpSubMatrix() : pRowNum(0), pColNum(0), parent(nullptr) { }
 
 /*!
   \brief Constructor
@@ -91,9 +91,10 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
       rowPtrs[r] = m.data + col_offset + (r + row_offset) * pColNum;
 
     dsize = pRowNum * pColNum;
-  } else {
+  }
+  else {
     throw(
-        vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Submatrix cannot be contain in parent matrix"));
+      vpMatrixException(vpMatrixException::incorrectMatrixSizeError, "Submatrix cannot be contain in parent matrix"));
   }
 }
 

@@ -258,7 +258,7 @@ public: /* Methode publiques */
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
 
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) vp_override;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position, double &timestamp);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
@@ -275,8 +275,8 @@ public: /* Methode publiques */
 
   void get_cMe(vpHomogeneousMatrix &_cMe) const;
   void get_cVe(vpVelocityTwistMatrix &_cVe) const;
-  void get_eJe(vpMatrix &_eJe) override;
-  void get_fJe(vpMatrix &_fJe) override;
+  void get_eJe(vpMatrix &_eJe) vp_override;
+  void get_fJe(vpMatrix &_fJe) vp_override;
 
   void init(void);
   void init(vpAfma6::vpAfma6ToolType tool, const vpHomogeneousMatrix &eMc);
@@ -298,7 +298,7 @@ public: /* Methode publiques */
 
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition(const vpRobot::vpControlFrameType frame, const vpPoseVector &pose);
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position) vp_override;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const std::string &filename);
@@ -311,7 +311,7 @@ public: /* Methode publiques */
 
   /* --- VITESSE ---------------------------------------------------------- */
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
 
   void stopMotion();
 };

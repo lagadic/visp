@@ -34,7 +34,7 @@
 /*!
   \file vpHomogeneousMatrix.h
   \brief Definition and computation on the homogeneous matrices
-*/
+ */
 
 #ifndef _vpHomogeneousMatrix_h_
 #define _vpHomogeneousMatrix_h_
@@ -207,7 +207,9 @@ public:
   explicit vpHomogeneousMatrix(const std::vector<float> &v);
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
   vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpHomogeneousMatrix(const std::initializer_list<double> &list);
+#endif
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -381,11 +383,11 @@ public:
   /*!
    * @name Deprecated functions
    */
-  //@{
-  /*!
-   * \deprecated Provided only for compat with previous releases.
-   *  This function does nothing.
-   */
+   //@{
+   /*!
+    * \deprecated Provided only for compat with previous releases.
+    *  This function does nothing.
+    */
   vp_deprecated void init() { }
   /*!
    *  \deprecated You should rather use eye().

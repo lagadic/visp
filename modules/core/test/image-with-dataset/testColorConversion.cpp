@@ -885,7 +885,8 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
 }
 #endif
 
-static void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
+#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
+void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
 {
   for (unsigned int i = 0; i < I_Bayer_8U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_Bayer_8U.getWidth(); j++) {
@@ -965,7 +966,6 @@ static bool readBinaryFile(const std::string &filename, std::vector<uint8_t> &bu
   return true;
 }
 
-#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 TEST_CASE("Bayer conversion", "[image_conversion]")
 {
   // Load original Klimt image

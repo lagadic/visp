@@ -110,7 +110,12 @@ public:
 
 public:
   vpFrameGrabber() : init(false), height(0), width(0) { };
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   virtual ~vpFrameGrabber() = default;
+#else
+  virtual ~vpFrameGrabber() { }
+#endif
   virtual void open(vpImage<unsigned char> &I) = 0;
   virtual void open(vpImage<vpRGBa> &I) = 0;
 

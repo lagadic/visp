@@ -66,6 +66,8 @@
  *     vpMe me;
  *     me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
  *     me.setThreshold(20);    // Value in range [0 ; 255]
+ *     me.setThresholdMarginRatio(-1.); // Deactivate automatic thresholding
+ *     me.setMinThreshold(-1.); // Deactivate automatic thresholding
  *     me.setMaskNumber(180);
  *     me.setMaskSign(0);
  *     me.setMu1(0.5);
@@ -103,6 +105,8 @@
  *  Query range +/- J................5 pixels
  *  Likelihood threshold type........normalized
  *  Likelihood threshold.............20
+ *  Likelihood margin ratio..........unused
+ *  Minimum likelihood threshold.....unused
  *  Contrast tolerance +/-...........50% and 50%
  *  Sample step......................10 pixels
  *  Strip............................2 pixels
@@ -113,7 +117,7 @@
  * \code{.unparsed}
  * $ cat me.json
  * {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
- *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdType":1}
+ *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdMarginRatio":-1.0,"minThreshold":-1.0,"thresholdType":"normalized"}
  * \endcode
  */
 class VISP_EXPORT vpMe
@@ -135,6 +139,9 @@ private:
   vpLikelihoodThresholdType m_likelihood_threshold_type; //!< Likelihood threshold type
   //! Old likelihood ratio threshold (to be avoided) or easy-to-use normalized threshold: minimal contrast
   double m_threshold;
+  double m_thresholdMarginRatio; //!< The ratio of the initial contrast to use to initialize the contrast threshold of the vpMeSite.
+  double m_minThreshold; //!< The minimum moving-edge threshold in grey level used when the contrast threshold of the vpMeSites is automatically computed.
+  bool m_useAutomaticThreshold; //!< Set to true if the user wants to automatically compute the vpMeSite contrast thresholds, false if the user wants to use a global threshold.
   double m_mu1;       //!< Contrast continuity parameter (left boundary)
   double m_mu2;       //!< Contrast continuity parameter (right boundary)
   double m_min_samplestep;
@@ -174,10 +181,12 @@ public:
    */
   vpMe &operator=(const vpMe &me);
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Move operator.
    */
   vpMe &operator=(const vpMe &&me);
+#endif
 
   /*!
    * Check sample step wrt min value.
@@ -294,6 +303,33 @@ public:
    * \sa setThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
    */
   inline double getThreshold() const { return m_threshold; }
+
+  /*!
+   * Return the ratio of the initial contrast to use to initialize the contrast threshold of the \b vpMeSite.
+   *
+   * \return Value of the likelihood threshold ratio, between 0 and 1.
+   *
+   * \sa setThresholdMarginRatio(), setMinThreshold(), getMinThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
+   */
+  inline double getThresholdMarginRatio() const { return m_thresholdMarginRatio; }
+
+  /*!
+   * Return the minimum contrast threshold of the \b vpMeSite that can be used when using the
+   * automatic threshold computation.
+   *
+   * \return Value of the minimum contrast threshold.
+   *
+   * \sa setThresholdMarginRatio(), getThresholdMarginRatio(), setMinThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
+   */
+  inline double getMinThreshold() const { return m_minThreshold; }
+
+  /*!
+   * \brief Indicates if the contrast threshold of the vpMeSite is automatically computed.
+   *
+   * \return true The contrast threshold of the vpMeSite is automatically computed.
+   * \return false The vpMe::m_threshold is used as a global threshold.
+   */
+  inline bool getUseAutomaticThreshold() const { return m_useAutomaticThreshold; }
 
   /*!
    * Return the selected choice for the likelihood threshold.
@@ -419,6 +455,8 @@ public:
    * vpMe me;
    * me.setLikelihoodThresholdType(NORMALIZED_THRESHOLD);
    * me.setThreshold(20); // Value in range [0 ; 255]
+   * me.setThresholdMarginRatio(-1.); // Deactivate automatic thresholding
+   * me.setMinThreshold(-1.); // Deactivate automatic thresholding
    * \endcode
    *
    * When the likelihood threshold type is set by default to OLD_THRESHOLD like in the next example, values of the likelihood threshold
@@ -426,16 +464,49 @@ public:
    * \code
    * vpMe me;                // By default the constructor set the threshold type to OLD_THRESHOLD
    * me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+   * me.setThresholdMarginRatio(-1.); // Deactivate automatic thresholding
+   * me.setMinThreshold(-1.); // Deactivate automatic thresholding
    * \endcode
    * The previous sample code is similar to the next one:
    * \code
    * vpMe me;
    * me.setLikelihoodThresholdType(OLD_THRESHOLD);
    * me.setThreshold(10000); // Value that depends on the minimal luminance contrast to consider and the mask size.
+   * me.setThresholdMarginRatio(-1.); // Deactivate automatic thresholding
+   * me.setMinThreshold(-1.); // Deactivate automatic thresholding
    * \endcode
    * \sa getThreshold(), getLikelihoodThresholdType()
    */
   void setThreshold(const double &threshold) { m_threshold = threshold; }
+
+  /*!
+   * Set the the ratio of the initial contrast to use to initialize the contrast threshold of the \b vpMeSite.
+   *
+   * \param thresholdMarginRatio Value of the likelihood threshold ratio, between 0 and 1.
+   *
+   * \sa getThresholdMarginRatio(), setMinThreshold(), getMinThreshold(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
+   */
+  inline void setThresholdMarginRatio(const double &thresholdMarginRatio)
+  {
+    if (thresholdMarginRatio > 1.) {
+      throw(vpException(vpException::badValue, "Threshold margin ratio must be between 0 and 1 if you want to use automatic threshold computation, or negative otherwise"));
+    }
+    m_thresholdMarginRatio = thresholdMarginRatio;
+    m_useAutomaticThreshold = (m_thresholdMarginRatio > 0) && (m_minThreshold > 0);
+  }
+
+  /*!
+   * Set the minimum value of the contrast threshold of the \b vpMeSite.
+   *
+   * \param minThreshold Minimum value of the contrast threshold.
+   *
+   * \sa getMinThreshold(), setThresholdMarginRatio(), getThresholdMarginRatio(), getLikelihoodThresholdType(), setLikelihoodThresholdType()
+   */
+  inline void setMinThreshold(const double &minThreshold)
+  {
+    m_minThreshold = minThreshold;
+    m_useAutomaticThreshold = (m_thresholdMarginRatio > 0) && (m_minThreshold > 0);
+  }
 
   /*!
    * Set the likelihood threshold type used to determine if the moving edge is valid or not.
@@ -460,8 +531,10 @@ public:
    * @brief Retrieve a vpMe object from a JSON representation
    *
    * JSON content (key: type):
-   *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
+   *  - thresholdType: either "old" or "normalized", vpMe::getLikelihoodThresholdType()
    *  - threshold: double, vpMe::setThreshold()
+   *  - thresholdMarginRatio: double, vpMe::setThresholdMarginRatio()
+   *  - minThreshold: double, vpMe::setMinThreshold()
    *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2()
    *  - minSampleStep: double, vpMe::setMinSampleStep()
    *  - angleStep: double, vpMe::setAngleStep()
@@ -491,8 +564,10 @@ public:
    *   "range": 7,
    *   "sampleStep": 4.0,
    *   "strip": 2,
-   *   "thresholdType": 1
-   *   "threshold": 20.0
+   *   "thresholdType": "normalized",
+   *   "threshold": 20.0,
+   *   "thresholdMarginRatio": 0.75,
+   *   "minThreshold": 20.0,
    * }
    * \endcode
    *
@@ -505,11 +580,18 @@ public:
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
+  {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
+  {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
+});
+
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {
   j = {
     {"thresholdType", me.getLikelihoodThresholdType()},
     {"threshold", me.getThreshold()},
+    {"thresholdMarginRatio", me.getThresholdMarginRatio()},
+    {"minThreshold", me.getMinThreshold()},
     {"mu", {me.getMu1(), me.getMu2()}},
     {"minSampleStep", me.getMinSampleStep()},
     {"sampleStep", me.getSampleStep()},
@@ -529,6 +611,8 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     me.setLikelihoodThresholdType(j.value("thresholdType", me.getLikelihoodThresholdType()));
   }
   me.setThreshold(j.value("threshold", me.getThreshold()));
+  me.setThresholdMarginRatio(j.value("thresholdMarginRatio", me.getThresholdMarginRatio()));
+  me.setMinThreshold(j.value("minThreshold", me.getMinThreshold()));
 
   if (j.contains("mu")) {
     std::vector<double> mus = j.at("mu").get<std::vector<double>>();
@@ -537,7 +621,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     me.setMu2(mus[1]);
   }
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
-
+  me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));
   me.setNbTotalSample(j.value("ntotalSample", me.getNbTotalSample()));
   me.setPointsToTrack(j.value("pointsToTrack", me.getPointsToTrack()));

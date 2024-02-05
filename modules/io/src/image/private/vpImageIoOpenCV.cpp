@@ -56,7 +56,8 @@
 
 #include <visp3/core/vpImageConvert.h>
 
-#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
+#if ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGCODECS)) || ((VISP_HAVE_OPENCV_VERSION < 0x030000) \
+    && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC))
 
 /*!
   Read the contents of the image file, allocate memory
@@ -167,6 +168,33 @@ void readOpenCV(vpImage<vpRGBf> &I, const std::string &filename)
 }
 
 /*!
+  Read the content of the grayscale image bitmap stored in memory and encoded using the PNG format.
+
+  \param[in] buffer : Grayscale image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I : Output decoded grayscale image.
+*/
+void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
+{
+  cv::Mat1b buf(buffer.size(), 1, const_cast<unsigned char *>(buffer.data()));
+  cv::Mat1b img = cv::imdecode(buf, cv::IMREAD_GRAYSCALE);
+  I.resize(img.rows, img.cols);
+  std::copy(img.begin(), img.end(), I.bitmap);
+}
+
+/*!
+  Read the content of the color image bitmap stored in memory and encoded using the PNG format.
+
+  \param[in] buffer : Color image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I_color : Output decoded color image.
+*/
+void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I_color)
+{
+  cv::Mat1b buf(buffer.size(), 1, const_cast<unsigned char *>(buffer.data()));
+  cv::Mat3b img = cv::imdecode(buf, cv::IMREAD_COLOR);
+  vpImageConvert::convert(img, I_color);
+}
+
+/*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
 
@@ -216,6 +244,62 @@ void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename)
   vpImageConvert::convert(I, Ip);
 
   cv::imwrite(filename.c_str(), Ip);
+}
+
+/*!
+  In-memory PNG encoding of the grayscale image.
+
+  \param[in] I : Input grayscale image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+*/
+void writePNGtoMemOpenCV(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
+{
+  cv::Mat1b img(I.getRows(), I.getCols(), I.bitmap);
+  bool result = cv::imencode(".png", img, buffer);
+
+  if (!result) {
+    std::string message = "Cannot write png to memory";
+    throw(vpImageException(vpImageException::ioError, message));
+  }
+}
+
+/*!
+  In-memory PNG encoding of the color image.
+
+  \param[in] I_color : Input color image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+  \param[in] saveAlpha : If true, alpha channel is also used for encoding.
+*/
+void writePNGtoMemOpenCV(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer, bool saveAlpha)
+{
+  const int height = I_color.getRows();
+  const int width = I_color.getCols();
+  const int channels = saveAlpha ? 4 : 3;
+
+  if (saveAlpha) {
+    cv::Mat4b img(height, width, reinterpret_cast<cv::Vec4b *>(I_color.bitmap));
+    // No need to perform RGB to BGR conversion
+    bool result = cv::imencode(".png", img, buffer);
+
+    if (!result) {
+      std::string message = "Cannot write png to memory";
+      throw(vpImageException(vpImageException::ioError, message));
+    }
+  }
+  else {
+    unsigned char *bitmap = new unsigned char[height * width * channels];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, height*width);
+
+    cv::Mat3b img(height, width, reinterpret_cast<cv::Vec3b *>(bitmap));
+    // No need to perform RGB to BGR conversion
+    bool result = cv::imencode(".png", img, buffer);
+    delete[] bitmap;
+
+    if (!result) {
+      std::string message = "Cannot write png to memory";
+      throw(vpImageException(vpImageException::ioError, message));
+    }
+  }
 }
 
 #endif
