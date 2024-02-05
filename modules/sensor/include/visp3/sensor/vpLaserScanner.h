@@ -51,16 +51,16 @@
 
   \brief Class that defines a generic laser scanner.
  */
-class VISP_EXPORT vpLaserScanner
+class /*VISP_EXPORT*/ vpLaserScanner
 {
 public:
   /*! Default constructor that initialize all the internal variable to zero.
    */
-  vpLaserScanner() : ip("null"), port(0){};
+  vpLaserScanner() : ip("null"), port(0) { };
   /*! Copy constructor. */
-  vpLaserScanner(const vpLaserScanner &scanner) : ip(scanner.ip), port(scanner.port){};
+  vpLaserScanner(const vpLaserScanner &scanner) : ip(scanner.ip), port(scanner.port) { };
   /*! Default destructor that does nothing. */
-  virtual ~vpLaserScanner(){};
+  virtual ~vpLaserScanner() { };
 
   /*! Set the Ethernet address of the laser. */
   void setIpAddress(std::string ip_address) { this->ip = ip_address; };

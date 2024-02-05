@@ -58,7 +58,7 @@
   Other data as the start/stop angle, the start/end timestamp are
   also considered.
  */
-class VISP_EXPORT vpLaserScan
+class /*VISP_EXPORT*/ vpLaserScan
 {
 public:
   /*! Default constructor that initialize all the internal variable to zero.
