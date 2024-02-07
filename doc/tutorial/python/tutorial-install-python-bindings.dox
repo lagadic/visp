@@ -302,7 +302,7 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 - These commands create a `venv/` directory in your project where all dependencies are installed.
   You need to activate it first though (in every `cmd` Command Prompt terminal instance where you are working on your project):
 
-        C:\> venv\Script\activate
+        C:\> venv\Scripts\activate
         (venv) C:\> mkdir visp-build-vc17-bindings
         (venv) C:\> cd visp-build-vc17-bindings
         (venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" -Dpybind11_DIR=C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 ..\visp
