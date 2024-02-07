@@ -321,8 +321,7 @@ int main(int argc, const char **argv)
                            vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (EXIT_FAILURE);
     }
-    VISP_HAVE_PTHREAD
-      time_offset = vpTime::measureTimeSecond();
+    time_offset = vpTime::measureTimeSecond();
 
     std::thread thread_camera_acq(&camera_acq_and_display_loop);
     std::thread thread_laser_acq(&laser_acq_loop);
