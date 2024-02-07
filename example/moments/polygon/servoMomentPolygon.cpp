@@ -30,8 +30,7 @@
  *
  * Description:
  * Example of visual servoing with moments using a polygon as object container
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoMomentPolygon.cpp
@@ -61,12 +60,18 @@
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
-#if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_OPENCV) && !defined(VISP_HAVE_GDI) && !defined(VISP_HAVE_D3D9) &&  \
-    !defined(VISP_HAVE_GTK) && !defined(VISP_HAVE_THREADS)
+#if !defined(VISP_HAVE_DISPLAY)
 int main()
 {
   std::cout << "Can't run this example since no display capability is available." << std::endl;
   std::cout << "You should install one of the following third-party library: X11, OpenCV, GDI, GTK." << std::endl;
+  return EXIT_SUCCESS;
+}
+#elif !defined(VISP_HAVE_THREADS)
+int main()
+{
+  std::cout << "Can't run this example since multi-threading capability is not available." << std::endl;
+  std::cout << "You should maybe enable cxx11 standard." << std::endl;
   return EXIT_SUCCESS;
 }
 #else

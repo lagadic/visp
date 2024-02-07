@@ -31,8 +31,7 @@
  * Description:
  * Example of visual servoing with moments using an image as object
  * container
- *
-*****************************************************************************/
+ */
 
 /*!
   \example servoMomentImage.cpp
