@@ -101,6 +101,7 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
   # This parallel implementation is disabled,
   # since the behaviour on Mac is different and leads to preprocessing not finding vpConfig.h and others
   # Reverting to a single process version fixes the issue
+
   # with Pool() as pool:
   #   new_all_headers = []
   #   for result in list(tqdm(pool.imap(header_preprocess, all_headers), total=len(all_headers), file=sys.stderr)):

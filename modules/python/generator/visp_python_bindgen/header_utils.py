@@ -92,7 +92,7 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
     self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
-
+    logging.debug('Mapping = ', self.mapping)
     # Step 2: resolve enumeration names that are possibly hidden behind typedefs
     from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs
     enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
@@ -101,43 +101,33 @@ class HeaderEnvironment():
         self.mapping[value.name] = enum_repr.name + '::' + value.name
 
   def build_naive_mapping(self, data: Union[NamespaceScope, ClassScope], mapping, scope: str = ''):
-    if isinstance(data, NamespaceScope):
+    current_mapping = mapping.copy()
+    previous_mapping = None
+
+    while current_mapping != previous_mapping:
+      previous_mapping = current_mapping.copy()
+
       for alias in data.using_alias:
-        mapping[alias.alias] = get_type(alias.type, {}, mapping)
+        current_mapping[alias.alias] = get_type(alias.type, {}, current_mapping)
 
       for typedef in data.typedefs:
-        mapping[typedef.name] = scope + typedef.name
+        current_mapping[typedef.name] = scope + typedef.name
 
       for enum in data.enums:
         if not name_is_anonymous(enum.typename):
           enum_name = '::'.join([seg.name for seg in enum.typename.segments])
-          mapping[enum_name] = scope + enum_name
-
-      for cls in data.classes:
-        cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments])
-        mapping[cls_name] = scope + cls_name
-        mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
-
-      for namespace in data.namespaces:
-        mapping.update(self.build_naive_mapping(data.namespaces[namespace], mapping=mapping, scope=f'{scope}{namespace}::'))
-
-    elif isinstance(data, ClassScope):
-      for alias in data.using_alias:
-        mapping[alias.alias] = get_type(alias.type, {}, mapping)
-
-      for typedef in data.typedefs:
-        mapping[typedef.name] = scope + typedef.name
-
-      for enum in data.enums:
-        if not name_is_anonymous(enum.typename):
-          enum_name = '::'.join([seg.name for seg in enum.typename.segments])
-          mapping[enum_name] = scope + enum_name
+          current_mapping[enum_name] = scope + enum_name
 
       for cls in data.classes:
         cls_name = '::'.join([seg.name for seg in cls.class_decl.typename.segments if not isinstance(seg, types.AnonymousName)])
-        mapping[cls_name] = scope + cls_name
-        mapping.update(self.build_naive_mapping(cls, mapping=mapping, scope=f'{scope}{cls_name}::'))
-    return mapping
+        current_mapping[cls_name] = scope + cls_name
+        current_mapping.update(self.build_naive_mapping(cls, mapping=current_mapping, scope=f'{scope}{cls_name}::'))
+
+      if isinstance(data, NamespaceScope):
+        for namespace in data.namespaces:
+          current_mapping.update(self.build_naive_mapping(data.namespaces[namespace], mapping=current_mapping, scope=f'{scope}{namespace}::'))
+
+    return current_mapping
 
   def update_with_dependencies(self, other_envs: List['HeaderEnvironment']) -> None:
     for env in other_envs:
