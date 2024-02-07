@@ -162,7 +162,9 @@ class HeaderFile():
         if not line.startswith('#define'):
           preprocessed_header_lines.append(line)
       preprocessed_header_content = ''.join(preprocessed_header_lines)
+      # Further refine header content: fix some simple parsing bugs
       preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
+      preprocessed_header_content = preprocessed_header_content.replace('inline friend', 'friend inline') # Bug in cpp header parser
 
     return preprocessed_header_content
 
