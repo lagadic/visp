@@ -1160,8 +1160,8 @@ public:
    */
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCircleHoughTransform &detector);
 
-  static const unsigned char edgeMapOn = 255;
-  static const unsigned char edgeMapOff = 0;
+  static const unsigned char edgeMapOn;
+  static const unsigned char edgeMapOff;
 
 protected:
   /**

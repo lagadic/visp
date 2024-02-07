@@ -33,6 +33,10 @@
 
 #include <visp3/imgproc/vpCircleHoughTransform.h>
 
+// Static variables
+const unsigned char vpCircleHoughTransform::edgeMapOn = 255;
+const unsigned char vpCircleHoughTransform::edgeMapOff = 0;
+
 #if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
 namespace
 {
@@ -249,7 +253,7 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I, const int &nbCir
   auto hasBetterProba
     = [](std::pair<size_t, float> a, std::pair<size_t, float> b) {
     return (a.second > b.second);
-    };
+  };
 #endif
   std::sort(v_id_proba.begin(), v_id_proba.end(), hasBetterProba);
 
@@ -694,19 +698,19 @@ vpCircleHoughTransform::computeCenterCandidates()
                  const int &offsetX, const int &offsetY,
                  const int &nbCols, const int &nbRows,
                  vpImage<float> &accum, bool &hasToStop) {
-                   if (((x - offsetX) < 0) ||
-                       ((x - offsetX) >= nbCols) ||
-                       ((y - offsetY) < 0) ||
-                       ((y - offsetY) >= nbRows)
-                       ) {
-                     hasToStop = true;
-                   }
-                   else {
-                     float dx = (x_orig - static_cast<float>(x));
-                     float dy = (y_orig - static_cast<float>(y));
-                     accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
-                   }
-              };
+              if (((x - offsetX) < 0) ||
+                  ((x - offsetX) >= nbCols) ||
+                  ((y - offsetY) < 0) ||
+                  ((y - offsetY) >= nbRows)
+                  ) {
+                hasToStop = true;
+              }
+              else {
+                float dx = (x_orig - static_cast<float>(x));
+                float dy = (y_orig - static_cast<float>(y));
+                accum[y - offsetY][x - offsetX] += std::abs(dx) + std::abs(dy);
+              }
+            };
 #endif
 
             updateAccumulator(x1, y1, x_low, y_low,
@@ -851,8 +855,8 @@ vpCircleHoughTransform::computeCenterCandidates()
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     auto sortingCenters = [](const std::pair<std::pair<float, float>, float> &position_vote_a,
                              const std::pair<std::pair<float, float>, float> &position_vote_b) {
-                               return position_vote_a.second > position_vote_b.second;
-      };
+      return position_vote_a.second > position_vote_b.second;
+    };
 #endif
 
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
@@ -988,7 +992,7 @@ vpCircleHoughTransform::computeCircleCandidates()
         r_effective = weigthedSumRadius / votes;
       }
       return r_effective;
-      };
+    };
 #endif
 
     // Merging similar candidates
