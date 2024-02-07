@@ -586,6 +586,7 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
   VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"  "" ON)
 
 VP_OPTION(USE_XML2        XML2        ""    "Include libxml2 support"      "" ON IF NOT WINRT)
@@ -689,14 +690,23 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     unset(USE_ARSDK)
     set(USE_ARSDK OFF CACHE BOOL "Include Parrot ARSDK support" FORCE)
   endif()
+  if(USE_THREADS)
+    message(WARNING "std::thread was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable std::thread usage turning USE_THREADS=OFF.")
+    unset(USE_THREADS)
+    set(USE_THREADS OFF CACHE BOOL "Include std::thread support" FORCE)
+  elseif(UNIX)
+    # Apriltag on unix needs pthread. On windows we are using pthread built-in
+    if(Threads_FOUND)
+      set(USE_PTHREAD ON) # for AprilTag only
+    endif()
+  endif()
 endif()
-
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
 VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (WIN32 OR MINGW) AND (NOT WINRT))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR WITH_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
@@ -985,7 +995,10 @@ VP_SET(VISP_HAVE_LAPACK_GSL      TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK_MKL      TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
 VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_NETLIB))
 VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
-VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS)) # Keep for the momment for compat
+
+# Keep VISP_HAVE_PTHREAD for the moment for compat and for vpMutex and vpThread deprecated classes
+VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND (USE_PTHREAD AND UNIX)))
+
 VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
@@ -1719,6 +1732,7 @@ status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
+status("    Use pthread:"            USE_PHREADS        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
 status("")
