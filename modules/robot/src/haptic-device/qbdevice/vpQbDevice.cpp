@@ -34,7 +34,7 @@
 *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_QBDEVICE
+#if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
 
 #include <regex>
 

@@ -36,7 +36,7 @@
 #define _vpMegaPose_h_
 
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_NLOHMANN_JSON)
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
 
 #include <vector>
 #include <string>

@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE)
+#if defined(VISP_HAVE_REALSENSE) && defined(VISP_HAVE_THREADS)
 #include <librealsense/rs.hpp>
 #include <thread>
 #include <visp3/core/vpImage.h>

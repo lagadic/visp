@@ -43,7 +43,7 @@
 
 #include <visp3/sensor/vpForceTorqueIitSensor.h>
 
-#ifdef VISP_HAVE_FT_IIT_SDK
+#if defined(VISP_HAVE_FT_IIT_SDK) && defined(VISP_HAVE_THREADS)
 
 /*!
   Default constructor.

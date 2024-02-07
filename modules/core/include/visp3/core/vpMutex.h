@@ -37,7 +37,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && (defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0)))
 
 #if defined(VISP_HAVE_PTHREAD)
 #include <pthread.h>
@@ -53,6 +53,7 @@
    \class vpMutex
 
    \ingroup group_core_threading
+   \deprecated Use rather std::mutex.
 
    Class that allows protection by mutex.
 
@@ -66,7 +67,7 @@
 
    \sa vpScopedLock
 */
-class vpMutex
+class vp_deprecated vpMutex
 {
 public:
   vpMutex() : m_mutex()

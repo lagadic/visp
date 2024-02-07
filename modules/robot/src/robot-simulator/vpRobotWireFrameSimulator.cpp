@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 #include <visp3/robot/vpRobotWireFrameSimulator.h>
 #include <visp3/robot/vpSimulatorViper850.h>
 
@@ -48,14 +48,10 @@
 */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
-  artCoord(), artVel(), velocity(),
-#if defined(_WIN32)
-#elif defined(VISP_HAVE_PTHREAD)
-  thread(), attr(),
-#endif
-  m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
-  displayBusy(false),
-  robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
+  artCoord(), artVel(), velocity(), m_thread(), m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(),
+  m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(),
+  m_mutex_scene(), displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false),
+  singularityManagement(true), cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
   display(),
 #endif
@@ -77,12 +73,8 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
   */
 vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   : vpWireFrameSimulator(), vpRobotSimulator(), I(), tcur(0), tprev(0), robotArms(nullptr), size_fMi(8), fMi(nullptr),
-  artCoord(), artVel(), velocity(),
-#if defined(_WIN32)
-#elif defined(VISP_HAVE_PTHREAD)
-  thread(), attr(),
-#endif
-  m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
+  artCoord(), artVel(), velocity(), m_thread(), m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(),
+  m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
   displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
   cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)

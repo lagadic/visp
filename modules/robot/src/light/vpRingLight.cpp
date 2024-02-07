@@ -214,7 +214,6 @@ void vpRingLight::off()
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no
-// symbols
-void dummy_vpRingLight(){};
+// Work around to avoid warning: libvisp_robot.a(vpRingLight.cpp.o) has no symbols
+void dummy_vpRingLight() { };
 #endif

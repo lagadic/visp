@@ -1677,7 +1677,6 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_sensor.a(vpRealSense2.cpp.o) has  symbols
 void dummy_vpRealSense2() { };
 #endif
