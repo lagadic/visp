@@ -2174,7 +2174,6 @@ void vpDisplayOpenCV::overlay(std::function<void(cv::Mat &)> overlay_function, d
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayOpenCV.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDisplayOpenCV.cpp.o) has no symbols
 void dummy_vpDisplayOpenCV() { };
 #endif

@@ -118,7 +118,7 @@ int main(int argc, const char *argv[])
     std::cout << "Record name: " << opt_seqname << std::endl;
   }
 
-#if defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(HAVE_OPENCV_VIDEOIO) && defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_THREADS)
   try {
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded

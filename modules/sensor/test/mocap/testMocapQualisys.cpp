@@ -41,7 +41,7 @@
 
 #include <iostream>
 
-#if defined(VISP_HAVE_QUALISYS)
+#if defined(VISP_HAVE_QUALISYS) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
 #include <signal.h>

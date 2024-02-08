@@ -47,8 +47,8 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#include <visp3/core/vpThread.h>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
 
 namespace
 {
@@ -76,9 +76,8 @@ struct vpHistogram_Param_t
   }
 };
 
-vpThread::Return computeHistogramThread(vpThread::Args args)
+void computeHistogramThread(vpHistogram_Param_t *histogram_param)
 {
-  vpHistogram_Param_t *histogram_param = static_cast<vpHistogram_Param_t *>(args);
   unsigned int start_index = histogram_param->m_start_index;
   unsigned int end_index = histogram_param->m_end_index;
 
@@ -171,7 +170,6 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
       ++ptrMaskCurrent;
     }
   }
-  return 0;
 }
 } // namespace
 #endif
@@ -188,7 +186,7 @@ bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second)
 }
 
 /*!
-  Defaut constructor for a gray level histogram.
+  Default constructor for a gray level histogram.
 */
 vpHistogram::vpHistogram() : m_histogram(nullptr), m_size(256), mp_mask(nullptr), m_total(0) { init(); }
 
@@ -314,7 +312,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
   memset(m_histogram, 0, m_size * sizeof(unsigned int));
 
   bool use_single_thread;
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #else
   use_single_thread = (nbThreads == 0 || nbThreads == 1);
@@ -355,9 +353,9 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpHistogram_Param_t *> histogramParams;
 
     unsigned int image_size = I.getSize();
@@ -381,7 +379,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
       histogramParams.push_back(histogram_param);
 
       // Start the threads
-      vpThread *histogram_thread = new vpThread((vpThread::Fn)computeHistogramThread, (vpThread::Args)histogram_param);
+      std::thread *histogram_thread = new std::thread(&computeHistogramThread, histogram_param);
       threadpool.push_back(histogram_thread);
     }
 

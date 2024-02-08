@@ -44,12 +44,12 @@
 #include <visp3/core/vpHistogramPeak.h>
 
 /*!
-  Defaut constructor for a gray level histogram peak.
+  Default constructor for a gray level histogram peak.
 */
 vpHistogramPeak::vpHistogramPeak() : level(0), value(0) {}
 
 /*!
-  Defaut constructor for a gray level histogram peak.
+  Default constructor for a gray level histogram peak.
 */
 vpHistogramPeak::vpHistogramPeak(unsigned char lvl, unsigned val) : level(lvl), value(val) {}
 

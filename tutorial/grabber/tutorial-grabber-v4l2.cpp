@@ -76,7 +76,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_V4L2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_V4L2) && defined(VISP_HAVE_THREADS)
   try {
     int opt_device = 0;
     unsigned int opt_scale = 1; // Default value is 2 in the constructor. Turn

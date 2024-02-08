@@ -46,9 +46,8 @@
 #if defined(VISP_HAVE_DISPLAY)
 vpPlotCurve::vpPlotCurve()
   : color(vpColor::red), curveStyle(point), thickness(1), nbPoint(0), lastPoint(), pointListx(), pointListy(),
-    pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
-{
-}
+  pointListz(), legend(), xmin(0), xmax(0), ymin(0), ymax(0)
+{ }
 
 vpPlotCurve::~vpPlotCurve()
 {
@@ -73,14 +72,16 @@ void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint 
   if (iP.get_i() <= lastPoint.get_i()) {
     top = iP.get_i() - 5;
     height = lastPoint.get_i() - top + 10;
-  } else {
+  }
+  else {
     top = lastPoint.get_i() - 5;
     height = iP.get_i() - top + 10;
   }
   if (iP.get_j() <= lastPoint.get_j()) {
     left = iP.get_j() - 5;
     width = lastPoint.get_j() - left + 10;
-  } else {
+  }
+  else {
     left = lastPoint.get_j() - 5;
     width = iP.get_j() - left + 10;
   }
@@ -114,8 +115,7 @@ void vpPlotCurve::plotList(const vpImage<unsigned char> &I, double xorg, double 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no
-// symbols
-void dummy_vpPlotCurve(){};
+// Work around to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no symbols
+void dummy_vpPlotCurve() { };
 #endif
 #endif

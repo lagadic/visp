@@ -48,8 +48,8 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpRGBf.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#include <visp3/core/vpThread.h>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
 #endif
 
 #include <fstream>
@@ -481,7 +481,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
   return s;
 }
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
 namespace
 {
 struct vpImageLut_Param_t
@@ -499,9 +499,8 @@ struct vpImageLut_Param_t
   { }
 };
 
-vpThread::Return performLutThread(vpThread::Args args)
+void performLutThread(vpImageLut_Param_t *imageLut_param)
 {
-  vpImageLut_Param_t *imageLut_param = static_cast<vpImageLut_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -510,11 +509,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   unsigned char *ptrStart = bitmap + start_index;
   unsigned char *ptrEnd = bitmap + end_index;
   unsigned char *ptrCurrent = ptrStart;
-
-  //    while(ptrCurrent != ptrEnd) {
-  //      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-  //      ++ptrCurrent;
-  //    }
 
   if (end_index - start_index >= 8) {
     // Unroll loop version
@@ -548,8 +542,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   for (; ptrCurrent != ptrEnd; ++ptrCurrent) {
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
   }
-
-  return 0;
 }
 
 struct vpImageLutRGBa_Param_t
@@ -567,9 +559,8 @@ struct vpImageLutRGBa_Param_t
   { }
 };
 
-vpThread::Return performLutRGBaThread(vpThread::Args args)
+void performLutRGBaThread(vpImageLutRGBa_Param_t *imageLut_param)
 {
-  vpImageLutRGBa_Param_t *imageLut_param = static_cast<vpImageLutRGBa_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -615,8 +606,6 @@ vpThread::Return performLutRGBaThread(vpThread::Args args)
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
     ptrCurrent++;
   }
-
-  return 0;
 }
 } // namespace
 #endif
@@ -2023,7 +2012,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2040,10 +2029,9 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLut_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2064,7 +2052,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
@@ -2103,7 +2091,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2128,9 +2116,9 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLutRGBa_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2151,7 +2139,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutRGBaThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutRGBaThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 

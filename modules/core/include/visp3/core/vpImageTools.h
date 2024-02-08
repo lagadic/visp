@@ -43,8 +43,8 @@
 
 #include <visp3/core/vpImage.h>
 
-#ifdef VISP_HAVE_PTHREAD
-#include <pthread.h>
+#ifdef VISP_HAVE_THREADS
+#include <thread>
 #endif
 
 #include <visp3/core/vpCameraParameters.h>
@@ -518,7 +518,7 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char thre
   }
 }
 
-#ifdef VISP_HAVE_PTHREAD
+#ifdef VISP_HAVE_THREADS
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <class Type> class vpUndistortInternalType
@@ -549,22 +549,21 @@ public:
     return *this;
   }
 
-  static void *vpUndistort_threaded(void *arg);
+  static void vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData);
 };
 
-template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
+template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData)
 {
-  vpUndistortInternalType<Type> *undistortSharedData = static_cast<vpUndistortInternalType<Type> *>(arg);
-  int offset = (int)undistortSharedData->threadid;
-  int width = (int)undistortSharedData->width;
-  int height = (int)undistortSharedData->height;
-  int nthreads = (int)undistortSharedData->nthreads;
+  int offset = (int)undistortSharedData.threadid;
+  int width = (int)undistortSharedData.width;
+  int height = (int)undistortSharedData.height;
+  int nthreads = (int)undistortSharedData.nthreads;
 
-  double u0 = undistortSharedData->cam.get_u0();
-  double v0 = undistortSharedData->cam.get_v0();
-  double px = undistortSharedData->cam.get_px();
-  double py = undistortSharedData->cam.get_py();
-  double kud = undistortSharedData->cam.get_kud();
+  double u0 = undistortSharedData.cam.get_u0();
+  double v0 = undistortSharedData.cam.get_v0();
+  double px = undistortSharedData.cam.get_px();
+  double py = undistortSharedData.cam.get_py();
+  double kud = undistortSharedData.cam.get_kud();
 
   double invpx = 1.0 / px;
   double invpy = 1.0 / py;
@@ -572,8 +571,8 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   double kud_px2 = kud * invpx * invpx;
   double kud_py2 = kud * invpy * invpy;
 
-  Type *dst = undistortSharedData->dst + (height / nthreads * offset) * width;
-  Type *src = undistortSharedData->src;
+  Type *dst = undistortSharedData.dst + (height / nthreads * offset) * width;
+  Type *src = undistortSharedData.src;
 
   for (double v = height / nthreads * offset; v < height / nthreads * (offset + 1); v++) {
     double deltav = v - v0;
@@ -616,12 +615,9 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
       dst++;
     }
   }
-
-  pthread_exit((void *)0);
-  return nullptr;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-#endif // VISP_HAVE_PTHREAD
+#endif // VISP_HAVE_THREADS
 
 /*!
   Undistort an image
@@ -650,7 +646,7 @@ template <class Type>
 void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI,
                              unsigned int nThreads)
 {
-#ifdef VISP_HAVE_PTHREAD
+#if defined(VISP_HAVE_THREADS)
   //
   // Optimized version using pthreads
   //
@@ -669,13 +665,9 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   }
 
   unsigned int nthreads = nThreads;
-  pthread_attr_t attr;
-  pthread_t *callThd = new pthread_t[nthreads];
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+  std::vector<std::thread *> threadpool;
 
-  vpUndistortInternalType<Type> *undistortSharedData;
-  undistortSharedData = new vpUndistortInternalType<Type>[nthreads];
+  vpUndistortInternalType<Type> *undistortSharedData = new vpUndistortInternalType<Type>[nthreads];
 
   for (unsigned int i = 0; i < nthreads; i++) {
     // Each thread works on a different set of data.
@@ -687,19 +679,22 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     undistortSharedData[i].cam = cam;
     undistortSharedData[i].nthreads = nthreads;
     undistortSharedData[i].threadid = i;
-    pthread_create(&callThd[i], &attr, &vpUndistortInternalType<Type>::vpUndistort_threaded, &undistortSharedData[i]);
+    std::thread *undistort_thread = new std::thread(&vpUndistortInternalType<Type>::vpUndistort_threaded, std::ref(undistortSharedData[i]));
+    threadpool.push_back(undistort_thread);
   }
-  pthread_attr_destroy(&attr);
   /* Wait on the other threads */
 
   for (unsigned int i = 0; i < nthreads; i++) {
     //  vpTRACE("join thread %d", i);
-    pthread_join(callThd[i], nullptr);
+    threadpool[i]->join();
   }
 
-  delete[] callThd;
+  for (unsigned int i = 0; i < nthreads; i++) {
+    delete threadpool[i];
+  }
+
   delete[] undistortSharedData;
-#else  // VISP_HAVE_PTHREAD
+#else  // VISP_HAVE_THREADS
   (void)nThreads;
   //
   // optimized version without pthreads
@@ -773,7 +768,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
       dst++;
     }
   }
-#endif // VISP_HAVE_PTHREAD
+#endif // VISP_HAVE_THREADS
 
 #if 0
   // non optimized version
@@ -1137,7 +1132,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
       }
     }
   }
-}
+  }
 
 #if defined(VISP_HAVE_SIMDLIB)
 template <>

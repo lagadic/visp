@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpImageQueue.h>

@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_THREADS) \
   && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
 
 #include <mutex>

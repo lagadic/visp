@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_ARSDK
+#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpImage.h>
 

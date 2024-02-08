@@ -56,8 +56,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) \
-  && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) && defined(VISP_HAVE_THREADS)
   try {
     std::string opt_seqname_left = "left-%04d.png", opt_seqname_right = "right-%04d.png";
     int opt_record_mode = 0;

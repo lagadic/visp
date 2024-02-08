@@ -447,7 +447,7 @@ void vpV4l2Grabber::open(vpImage<unsigned char> &I)
           close();
 
           throw(vpFrameGrabberException(vpFrameGrabberException::settingError,
-            "No pixel format compatible with the camera was found"));
+                                        "No pixel format compatible with the camera was found"));
         }
       }
     }
@@ -854,27 +854,27 @@ void vpV4l2Grabber::close()
   }
 
   if (inp != nullptr) {
-    delete [] inp;
+    delete[] inp;
     inp = nullptr;
   }
   if (std != nullptr) {
-    delete [] std;
+    delete[] std;
     std = nullptr;
   }
   if (fmt != nullptr) {
-    delete [] fmt;
+    delete[] fmt;
     fmt = nullptr;
   }
   if (ctl != nullptr) {
-    delete [] ctl;
+    delete[] ctl;
     ctl = nullptr;
   }
   if (buf_v4l2 != nullptr) {
-    delete [] buf_v4l2;
+    delete[] buf_v4l2;
     buf_v4l2 = nullptr;
   }
   if (buf_me != nullptr) {
-    delete [] buf_me;
+    delete[] buf_me;
     buf_me = nullptr;
   }
 }
@@ -913,27 +913,27 @@ void vpV4l2Grabber::open()
   }
 
   if (inp != nullptr) {
-    delete [] inp;
+    delete[] inp;
     inp = nullptr;
   }
   if (std != nullptr) {
-    delete [] std;
+    delete[] std;
     std = nullptr;
   }
   if (fmt != nullptr) {
-    delete [] fmt;
+    delete[] fmt;
     fmt = nullptr;
   }
   if (ctl != nullptr) {
-    delete [] ctl;
+    delete[] ctl;
     ctl = nullptr;
   }
   if (buf_v4l2 != nullptr) {
-    delete [] buf_v4l2;
+    delete[] buf_v4l2;
     buf_v4l2 = nullptr;
   }
   if (buf_me != nullptr) {
-    delete [] buf_me;
+    delete[] buf_me;
     buf_me = nullptr;
   }
 
@@ -1468,7 +1468,6 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no symbols
 void dummy_vpV4l2Grabber() { };
 #endif

@@ -1339,8 +1339,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no symbols
 void dummy_vpPlotGraph() { };
 #endif
 #endif

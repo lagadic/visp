@@ -248,7 +248,6 @@ void vpRobotCamera::setPosition(const vpHomogeneousMatrix &cMw)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_robot.a(vpRobotCamera.cpp.o) has no symbols
 void dummy_vpRobotCamera() { };
 #endif

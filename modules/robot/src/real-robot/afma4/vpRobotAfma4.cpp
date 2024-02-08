@@ -1754,7 +1754,6 @@ void vpRobotAfma4::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_robot.a(vpRobotAfma4.cpp.o) has no symbols
 void dummy_vpRobotAfma4() { };
 #endif
