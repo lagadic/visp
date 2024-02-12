@@ -123,6 +123,8 @@ vpCircleHoughTransform::~vpCircleHoughTransform()
 { }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+using json = nlohmann::json;
+
 vpCircleHoughTransform::vpCircleHoughTransform(const std::string &jsonPath)
 {
   initFromJSON(jsonPath);

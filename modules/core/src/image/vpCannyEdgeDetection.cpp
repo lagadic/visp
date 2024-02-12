@@ -91,6 +91,9 @@ vpCannyEdgeDetection::vpCannyEdgeDetection(const int &gaussianKernelSize, const 
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+using json = nlohmann::json;
+
 vpCannyEdgeDetection::vpCannyEdgeDetection(const std::string &jsonPath)
 {
   initFromJSON(jsonPath);

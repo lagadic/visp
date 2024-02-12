@@ -170,6 +170,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResul
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+using json = nlohmann::json;
+
 /**
  * \brief Construct a new vpDetectorDNNOpenCV object from a JSON file and a potential parsing method.
  *

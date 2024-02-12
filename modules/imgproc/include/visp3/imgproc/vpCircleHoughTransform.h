@@ -45,7 +45,6 @@
 // 3rd parties inclue
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
 #endif
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -496,6 +495,8 @@ public:
    */
     inline static vpCircleHoughTransformParameters createFromJSON(const std::string &jsonFile)
     {
+      using json = nlohmann::json;
+
       std::ifstream file(jsonFile);
       if (!file.good()) {
         std::stringstream ss;
@@ -528,6 +529,7 @@ public:
      */
     inline void saveConfigurationInJSON(const std::string &jsonPath) const
     {
+      using json = nlohmann::json;
       std::ofstream file(jsonPath);
       const json j = *this;
       file << j.dump(4);
@@ -541,7 +543,7 @@ public:
      * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
      * \param[out] params : The circle Hough transform parameters that will be initialized from the JSON data.
      */
-    friend inline void from_json(const json &j, vpCircleHoughTransformParameters &params)
+    friend inline void from_json(const nlohmann::json &j, vpCircleHoughTransformParameters &params)
     {
       std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType);
       filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
@@ -619,11 +621,11 @@ public:
      * \param[out] j : A JSON parser object.
      * \param[in] params : The circle Hough transform parameters that will be serialized in the json object.
      */
-    friend inline void to_json(json &j, const vpCircleHoughTransformParameters &params)
+    friend inline void to_json(nlohmann::json &j, const vpCircleHoughTransformParameters &params)
     {
       std::pair<unsigned int, unsigned int> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
-      j = json {
+      j = nlohmann::json {
           {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
           {"gaussianKernelSize", params.m_gaussianKernelSize},
           {"gaussianStdev", params.m_gaussianStdev},
@@ -760,7 +762,7 @@ public:
    * \param[in] j The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector The detector, that will be initialized from the JSON data.
    */
-  friend inline void from_json(const json &j, vpCircleHoughTransform &detector)
+  friend inline void from_json(const nlohmann::json &j, vpCircleHoughTransform &detector)
   {
     detector.m_algoParams = j;
   }
@@ -771,7 +773,7 @@ public:
    * \param[out] j A JSON parser object.
    * \param[in] detector The vpCircleHoughTransform that must be parsed into JSON format.
    */
-  friend inline void to_json(json &j, const vpCircleHoughTransform &detector)
+  friend inline void to_json(nlohmann::json &j, const vpCircleHoughTransform &detector)
   {
     j = detector.m_algoParams;
   }
