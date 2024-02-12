@@ -41,7 +41,6 @@
 #include <visp3/robot/vpRobot.h>
 #include <visp3/robot/vpPololu.h>
 
-using namespace std;
 
 /*!
  * \class vpRobotPololuPtu

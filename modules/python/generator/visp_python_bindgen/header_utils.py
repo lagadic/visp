@@ -92,7 +92,6 @@ def sort_headers(headers: List['HeaderFile']) -> List['HeaderFile']:
 class HeaderEnvironment():
   def __init__(self, data: ParsedData):
     self.mapping: Dict[str, str] = self.build_naive_mapping(data.namespace, {})
-    logging.debug('Mapping = ', self.mapping)
     # Step 2: resolve enumeration names that are possibly hidden behind typedefs
     from visp_python_bindgen.enum_binding import resolve_enums_and_typedefs
     enum_reprs, _ = resolve_enums_and_typedefs(data.namespace, self.mapping)
