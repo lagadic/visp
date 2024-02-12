@@ -47,10 +47,8 @@ if __name__ == '__main__':
   output_root = Path(args.output_root)
   assert output_root.exists()
   bin_folder = Path(sys.executable).parent
-  stubgen_entry_point = bin_folder / 'pybind11-stubgen'
-  assert stubgen_entry_point.exists()
 
-  subprocess.run([str(stubgen_entry_point), '-o', str(output_root.absolute()), '--ignore-all-errors', '_visp'], check=True)
+  subprocess.run([sys.executable, '-m', 'pybind11_stubgen',  '-o', str(output_root.absolute()), '--ignore-all-errors', '_visp'], check=True)
 
   # Generate stubs for the bindings (C++ side) and mock it so that they appear in the true 'visp' package
   p = Path('./_visp')
