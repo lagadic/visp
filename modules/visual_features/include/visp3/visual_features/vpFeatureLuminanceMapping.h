@@ -47,7 +47,7 @@ class VISP_EXPORT vpLuminanceMapping
 public:
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
   virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
-  virtual void interaction(const vpImage<unsigned char> &I, const vpColVector &s, vpMatrix &L) = 0;
+  virtual void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) = 0;
   virtual void inverse(const vpColVector &s, vpImage<unsigned char> &I) = 0;
 
   unsigned int getProjectionSize() const { return m_mappingSize; }
@@ -66,18 +66,17 @@ class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 public:
   vpLuminancePCA() : vpLuminanceMapping(0) { }
   vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean);
-
-  unsigned int getProjectionSize() const { return m_basis->getRows(); }
   vpMatrix getBasis() const { return *m_basis; }
   vpColVector getMean() const { return *m_mean; }
   void map(const vpImage<unsigned char> &I, vpColVector &s) override;
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) override;
-  void interaction(const vpImage<unsigned char> &I, const vpColVector &s, vpMatrix &L) override;
+  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) override;
 
   void save(const std::string &basisFilename, const std::string &meanFileName) const;
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName);
-
+#ifdef VISP_HAVE_MODULE_IO
   static vpLuminancePCA learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int imageBorder = 0);
+#endif
   static vpLuminancePCA learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder = 0);
   static vpLuminancePCA learn(const vpMatrix &images, const unsigned int projectionSize);
 
@@ -86,6 +85,7 @@ private:
   std::shared_ptr<vpMatrix> m_basis;
   std::shared_ptr<vpColVector> m_mean;
 };
+
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
 

@@ -1,6 +1,8 @@
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
+#ifdef VISP_HAVE_MODULE_IO
 #include <visp3/io/vpImageIo.h>
+#endif
 
 vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean) : vpLuminanceMapping(basis->getRows()), m_basis(basis), m_mean(mean)
 {
@@ -20,7 +22,7 @@ void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 
 void vpLuminancePCA::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
 {
-  L = (*basis) * LI;
+  L = (*m_basis) * LI;
 }
 
 vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std::string &meanFilename)
@@ -82,6 +84,7 @@ vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &
 
   return vpLuminancePCA::learn(matrix.transpose(), projectionSize);
 }
+#ifdef VISP_HAVE_MODULE_IO
 vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int border)
 {
   vpMatrix matrix;
@@ -102,33 +105,35 @@ vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles,
   }
   return vpLuminancePCA::learn(matrix.transpose(), projectionSize);
 }
+#endif
 
 vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int projectionSize)
 {
   if (projectionSize > images.getRows() && projectionSize > images.getCols()) {
     throw vpException(vpException::badValue, "Cannot use a subspace greater than the data dimensions (number of pixels or images)");
   }
+  // Mean computation
   vpColVector mean(images.getRows(), 0.0);
-  for (int i = 0; i < images.getCols(); ++i) {
+  for (unsigned i = 0; i < images.getCols(); ++i) {
     mean += images.getCol(i);
   }
   mean /= images.getCols();
 
-
+  // Before SVD, center data
   vpMatrix centered(images.getRows(), images.getCols());
-  for (int i = 0; i < centered.getRows(); ++i) {
-    for (int j = 0; j < centered.getCols(); ++j) {
+  for (unsigned i = 0; i < centered.getRows(); ++i) {
+    for (unsigned j = 0; j < centered.getCols(); ++j) {
       centered[i][j] = images[i][j] - mean[i];
     }
   }
-  std::cout << centered << std::endl;
+
   vpColVector eigenValues;
   vpMatrix V;
   centered.svd(eigenValues, V);
 
   std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(projectionSize, centered.getRows());
-  for (unsigned int i = 0; i < projectionSize; ++i) {
-    for (unsigned int j = 0; j < centered.getRows(); ++j) {
+  for (unsigned i = 0; i < projectionSize; ++i) {
+    for (unsigned j = 0; j < centered.getRows(); ++j) {
       (*basis)[i][j] = centered[j][i];
     }
   }
