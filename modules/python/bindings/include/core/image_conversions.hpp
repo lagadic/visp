@@ -37,7 +37,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 
 namespace
@@ -177,7 +177,7 @@ unsigned size411(unsigned h, unsigned w)
 
 
 
-void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
+VISP_EXPORT  void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
 {
   // Simple conversions where the size input is a single argument
   {

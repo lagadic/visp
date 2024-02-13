@@ -37,13 +37,13 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/blob/vpDot2.h>
 #include <optional>
 
 namespace py = pybind11;
 
-void bindings_vpDot2(py::class_<vpDot2, vpTracker> &pyDot2)
+VISP_EXPORT void bindings_vpDot2(py::class_<vpDot2, vpTracker> &pyDot2)
 {
   pyDot2.def_static("defineDots", [](std::vector<vpDot2> &dots,
                                      const std::string &dotFile,

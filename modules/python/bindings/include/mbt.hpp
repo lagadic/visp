@@ -37,11 +37,12 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 namespace py = pybind11;
 
-void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &pyMbGenericTracker)
+VISP_EXPORT void bindings_vpMbGenericTracker(py::class_<vpMbGenericTracker, vpMbTracker> &pyMbGenericTracker)
 {
   pyMbGenericTracker.def("track", [](vpMbGenericTracker &self, std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      std::map<std::string, py::array_t<double, py::array::c_style>> &mapOfPointClouds) {

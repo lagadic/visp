@@ -33,7 +33,7 @@
 
 #ifndef VISP_PYTHON_CORE_IMAGES_HPP
 #define VISP_PYTHON_CORE_IMAGES_HPP
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBf.h>
 #include <pybind11/pybind11.h>
@@ -97,7 +97,7 @@ void define_get_item_2d_image(py::class_<vpImage<T>> &pyClass)
  * vpImage
  */
 template<typename T>
-typename std::enable_if<std::is_fundamental<T>::value, void>::type
+VISP_EXPORT  typename std::enable_if<std::is_fundamental<T>::value, void>::type
 bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 {
   pyImage.def_buffer([](vpImage<T> &image) -> py::buffer_info {
@@ -137,7 +137,7 @@ Construct an image by **copying** a 2D numpy array.
 }
 
 template<typename T>
-typename std::enable_if<std::is_same<vpRGBa, T>::value, void>::type
+VISP_EXPORT  typename std::enable_if<std::is_same<vpRGBa, T>::value, void>::type
 bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 {
   using NpRep = unsigned char;
@@ -181,7 +181,7 @@ where the 4 denotes the red, green, blue and alpha components of the image.
 
 }
 template<typename T>
-typename std::enable_if<std::is_same<vpRGBf, T>::value, void>::type
+VISP_EXPORT typename std::enable_if<std::is_same<vpRGBf, T>::value, void>::type
 bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 {
   using NpRep = float;
