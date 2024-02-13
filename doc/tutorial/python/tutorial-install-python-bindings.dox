@@ -238,10 +238,10 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 
 \subsection py_bindings_build_win_msvc17 How to build on Windows with Visual Studio 17 2022
 
-- Install Python3 using Microsoft Store and check its version
+- Install latest Python3 version using Microsoft Store and check its version
 
         C:\> python3 --version
-        Python 3.12.1
+        Python 3.12.2
 
 - Install pip3
 
@@ -250,7 +250,7 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 - Check pip3 availability
 
         C:\> pip3 --version
-        pip 23.3.2 from C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python3.12_...\LocalCache\local-apackages\Python312\site-packages\pip (python 3.12)
+        pip 24.0 from C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.752.0_x64__qbz5n2kfra8p0\Lib\site-packages\pip (python 3.12)
 
 - Install `pybind11`
 
@@ -259,9 +259,9 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
         Collecting pybind11
           Downloading pybind11-2.11.1-py3-none-any.whl.metadata (9.5 kB)
         Downloading pybind11-2.11.1-py3-none-any.whl (227 kB)
-          ---------------------------------------- 227.7/227.7 kB 1.7 MB/s eta 0:00:00
+          ---------------------------------------- 227.7/227.7 kB 2.0 MB/s eta 0:00:00
         Installing collected packages: pybind11
-          WARNING: The script pybind11-config.exe is installed in 'C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
+          WARNING: The script pybind11-config.exe is installed in 'C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
           Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
         Successfully installed pybind11-2.11.1
 
@@ -297,7 +297,7 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 
         C:\> cd $VISP_WS
         C:\> virtualenv venv
-        created virtual environment CPython3.12.1.final.0-64 in 350ms
+        created virtual environment CPython3.12.2.final.0-64 in 1175ms
 
 - These commands create a `venv/` directory in your project where all dependencies are installed.
   You need to activate it first though (in every `cmd` Command Prompt terminal instance where you are working on your project):
@@ -305,15 +305,15 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
         C:\> venv\Scripts\activate
         (venv) C:\> mkdir visp-build-vc17-bindings
         (venv) C:\> cd visp-build-vc17-bindings
-        (venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" -Dpybind11_DIR=C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 ..\visp
+        (venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" -Dpybind11_DIR=C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 ..\visp
 
     At this point in `ViSP-third-party.txt` file you should see something similar to:
 
         (venv) C:\> type ViSP-third-party.txt
         ...
         --   Python3 bindings:              yes
-        --     Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.1)
-        --     Pybind11:                    C:\Users\User\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
+        --     Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
+        --     Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
         --     Package version:             3.6.1
         --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
         --     Generated input config:      C:/visp-ws/visp-build-vc17-bindings/modules/python/cmake_config.json
@@ -360,8 +360,6 @@ If you encounter a problem during the build, you may raise an issue on GitHub. T
     - the `src` folder: contains the generated binding code and the preprocessed headers as seen by the generation tool
     - The output of your terminal
 
-
-
 \subsubsection py_bindings_known_errors Known build errors
 
 When compiling or modifying the bindings, you may encounter errors.
@@ -396,7 +394,6 @@ This means that there is a parsing error when reading the ViSP header files.
 This may be due to macro definitions, which are not done by an actual compiler.
 Custom macro definitions are defined in an autogenerated file in the build folder: `modules/python/cmake_config.json`.
 To add a custom macro, you should modify the GenerateConfig.cmake file in the modules/python folder in the **source** directory of ViSP.
-
 
 For instance, in the function declaration:
 \code{.cpp}
