@@ -68,20 +68,24 @@ public:
   vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean);
 
   unsigned int getProjectionSize() const { return m_basis->getRows(); }
-  std::shared_ptr<vpMatrix> getBasis() const { return m_basis; }
-  std::shared_ptr<vpColVector> getMean() const { return m_mean; }
+  vpMatrix getBasis() const { return *m_basis; }
+  vpColVector getMean() const { return *m_mean; }
   void map(const vpImage<unsigned char> &I, vpColVector &s) override;
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) override;
   void interaction(const vpImage<unsigned char> &I, const vpColVector &s, vpMatrix &L) override;
+
   void save(const std::string &basisFilename, const std::string &meanFileName) const;
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName);
-  static vpLuminancePCA learn(std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder);
+
+  static vpLuminancePCA learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int imageBorder = 0);
+  static vpLuminancePCA learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder = 0);
+  static vpLuminancePCA learn(const vpMatrix &images, const unsigned int projectionSize);
+
 
 private:
   std::shared_ptr<vpMatrix> m_basis;
   std::shared_ptr<vpColVector> m_mean;
 };
-
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
 

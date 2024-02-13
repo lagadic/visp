@@ -1,9 +1,11 @@
 #include <visp3/visual_features/vpFeatureLuminanceMapping.h>
 
-vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean) : vpLuminanceMapping(basis->getRows())
+#include <visp3/io/vpImageIo.h>
+
+vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean) : vpLuminanceMapping(basis->getRows()), m_basis(basis), m_mean(mean)
 {
-  if (basis->getRows() != mean->getRows()) {
-    throw vpException(vpException::dimensionError, "PCA mean and basis should have the same number of components");
+  if (basis->getCols() != mean->getRows()) {
+    throw vpException(vpException::dimensionError, "PCA mean and basis should have the same number of inputs");
   }
 }
 
@@ -14,6 +16,11 @@ void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
 void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
 
+}
+
+void vpLuminancePCA::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
+{
+  L = (*basis) * LI;
 }
 
 vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std::string &meanFilename)
@@ -53,10 +60,83 @@ void vpLuminancePCA::save(const std::string &basisFilename, const std::string &m
   vpColVector::save(meanFilename, *m_mean, true);
 }
 
-static vpLuminancePCA learn(std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder)
+vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int border)
 {
 
+
+  vpMatrix matrix;
+  for (unsigned i = 0; i < images.size(); ++i) {
+    const vpImage<unsigned char> &I = images[i];
+    if (i == 0) {
+      matrix.resize(images.size(), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
+    }
+    if ((I.getHeight() - 2 * border) * (I.getWidth() - 2 * border) != matrix.getCols()) {
+      throw vpException(vpException::badValue, "Not all images have the same dimensions when learning pca");
+    }
+    for (unsigned j = border; j < I.getHeight() - border; ++j) {
+      for (unsigned k = border; k < I.getWidth() - border; ++k) {
+        matrix[i][(j - border) * (I.getWidth() - 2 * border) + k - border] = I[j][k];
+      }
+    }
+  }
+
+  return vpLuminancePCA::learn(matrix.transpose(), projectionSize);
 }
+vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int border)
+{
+  vpMatrix matrix;
+  vpImage<unsigned char> I;
+  for (unsigned i = 0; i < imageFiles.size(); ++i) {
+    vpImageIo::read(I, imageFiles[i]);
+    if (i == 0) {
+      matrix.resize(imageFiles.size(), (I.getHeight() - 2 * border) * (I.getWidth() - 2 * border));
+    }
+    if ((I.getHeight() - 2 * border) * (I.getWidth() - 2 * border) != matrix.getCols()) {
+      throw vpException(vpException::badValue, "Not all images have the same dimensions when learning pca");
+    }
+    for (unsigned j = border; j < I.getHeight() - border; ++j) {
+      for (unsigned k = border; k < I.getWidth() - border; ++k) {
+        matrix[i][(j - border) * (I.getWidth() - 2 * border) + k - border] = I[j][k];
+      }
+    }
+  }
+  return vpLuminancePCA::learn(matrix.transpose(), projectionSize);
+}
+
+vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int projectionSize)
+{
+  if (projectionSize > images.getRows() && projectionSize > images.getCols()) {
+    throw vpException(vpException::badValue, "Cannot use a subspace greater than the data dimensions (number of pixels or images)");
+  }
+  vpColVector mean(images.getRows(), 0.0);
+  for (int i = 0; i < images.getCols(); ++i) {
+    mean += images.getCol(i);
+  }
+  mean /= images.getCols();
+
+
+  vpMatrix centered(images.getRows(), images.getCols());
+  for (int i = 0; i < centered.getRows(); ++i) {
+    for (int j = 0; j < centered.getCols(); ++j) {
+      centered[i][j] = images[i][j] - mean[i];
+    }
+  }
+  std::cout << centered << std::endl;
+  vpColVector eigenValues;
+  vpMatrix V;
+  centered.svd(eigenValues, V);
+
+  std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(projectionSize, centered.getRows());
+  for (unsigned int i = 0; i < projectionSize; ++i) {
+    for (unsigned int j = 0; j < centered.getRows(); ++j) {
+      (*basis)[i][j] = centered[j][i];
+    }
+  }
+  std::shared_ptr<vpColVector> meanPtr = std::make_shared<vpColVector>(mean);
+  std::cout << centered.getRows() << " " << centered.getCols() << std::endl;
+  return vpLuminancePCA(basis, meanPtr);
+}
+
 
 vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpCameraParameters &cam,
 unsigned int h, unsigned int w, double Z, std::shared_ptr<vpLuminanceMapping> mapping)
