@@ -1111,7 +1111,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
       // dTheta <= 1/r sin(theta) && dTheta <= 1/r cos(theta)
       dthetaPos = std::min<float>(dthetaCosPos, dthetaSinPos);
     }
-    else if (sin_theta == 0.f && cos_theta != 0.f) {
+    else if (vpMath::equal(sin_theta, 0.f) && (!vpMath::equal(cos_theta, 0.f))) {
       // dTheta = -1 / r cos(theta) || dTheta = 1 / r cos(theta)
       if (cos_theta > 0.f) {
         dthetaPos = dthetaCosNeg;
@@ -1120,7 +1120,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
         dthetaPos = dthetaCosPos;
       }
     }
-    else if (sin_theta != 0.f && cos_theta == 0.f) {
+    else if ((!vpMath::equal(sin_theta, 0.f)) && vpMath::equal(cos_theta, 0.f)) {
       // dTheta = -1 / r sin(theta) || dTheta = 1 / r sin(theta)
       if (sin_theta > 0.f) {
         dthetaPos = dthetaSinNeg;
