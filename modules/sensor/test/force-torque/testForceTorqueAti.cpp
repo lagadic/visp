@@ -79,6 +79,9 @@ void scopeFunction(std::mutex &mutex_data, std::mutex &mutex_state, t_shared_dat
   scope.setLegend(1, 0, "x");
   scope.setLegend(1, 1, "y");
   scope.setLegend(1, 2, "z");
+#else
+  (void)mutex_data;
+  (void)s_shared_data;
 #endif
 
   t_shared_data shared_data;
