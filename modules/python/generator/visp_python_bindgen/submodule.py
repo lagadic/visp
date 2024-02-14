@@ -130,7 +130,7 @@ class Submodule():
 
 namespace py = pybind11;
 
-VISP_EXPORT void {self.generation_function_name()}(py::module_ &m) {{
+void {self.generation_function_name()}(py::module_ &m) {{
 py::options options;
 options.disable_enum_members_docstring();
 

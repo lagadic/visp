@@ -43,7 +43,7 @@
 
 #include "core/utils.hpp"
 
-VISP_EXPORT void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
+void bindings_vpPixelMeterConversion(py::class_<vpPixelMeterConversion> &pyPM)
 {
   pyPM.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &us, const py::array_t<double> &vs) {
     py::buffer_info bufu = us.request(), bufv = vs.request();
@@ -106,7 +106,7 @@ Example usage:
 )doc", py::arg("cam"), py::arg("us"), py::arg("vs"));
 }
 
-VISP_EXPORT void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
+void bindings_vpMeterPixelConversion(py::class_<vpMeterPixelConversion> &pyMP)
 {
   pyMP.def_static("convertPoints", [](const vpCameraParameters &cam, const py::array_t<double> &xs, const py::array_t<double> &ys) {
     py::buffer_info bufx = xs.request(), bufy = ys.request();

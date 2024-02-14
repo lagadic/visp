@@ -177,7 +177,7 @@ unsigned size411(unsigned h, unsigned w)
 
 
 
-VISP_EXPORT  void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
+void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
 {
   // Simple conversions where the size input is a single argument
   {

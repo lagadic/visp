@@ -174,7 +174,7 @@ const char *numpy_fn_doc_nonwritable = R"doc(
 )doc";
 
 template<typename T>
-VISP_EXPORT void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
+void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
 {
   pyArray2D.def_buffer(&get_buffer_info<T, vpArray2D>);
 
@@ -198,7 +198,7 @@ Construct a 2D ViSP array by **copying** a 2D numpy array.
   define_get_item_2d_array<py::class_<vpArray2D<T>>, vpArray2D<T>, T>(pyArray2D);
 }
 
-VISP_EXPORT void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
+void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
 {
   pyMatrix.def_buffer(&get_buffer_info<vpMatrix>);
 
@@ -223,7 +223,7 @@ Construct a matrix by **copying** a 2D numpy array.
 }
 
 
-VISP_EXPORT void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &pyRotationMatrix)
+void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &pyRotationMatrix)
 {
 
   pyRotationMatrix.def_buffer(&get_buffer_info<vpRotationMatrix>);
@@ -250,7 +250,7 @@ If it is not a rotation matrix, an exception will be raised.
   define_get_item_2d_array<py::class_<vpRotationMatrix, vpArray2D<double>>, vpRotationMatrix, double>(pyRotationMatrix);
 }
 
-VISP_EXPORT void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<double>> &pyHomogeneousMatrix)
+void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<double>> &pyHomogeneousMatrix)
 {
   pyHomogeneousMatrix.def_buffer(get_buffer_info<vpHomogeneousMatrix>);
   pyHomogeneousMatrix.def("numpy", [](vpHomogeneousMatrix &self) -> np_array_cf<double> {
@@ -279,7 +279,7 @@ If it is not a homogeneous matrix, an exception will be raised.
 
 
 
-VISP_EXPORT void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<double>> &pyTranslationVector)
+void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<double>> &pyTranslationVector)
 {
   pyTranslationVector.def_buffer(&get_buffer_info<vpTranslationVector>);
 
@@ -304,7 +304,7 @@ Construct a Translation vector by **copying** a 1D numpy array of size 3.
 }
 
 
-VISP_EXPORT void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
+void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVector)
 {
   pyColVector.def_buffer(&get_buffer_info<vpColVector>);
 
@@ -328,7 +328,7 @@ Construct a column vector by **copying** a 1D numpy array.
 
 }
 
-VISP_EXPORT void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
+void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
 {
   pyRowVector.def_buffer(&get_buffer_info<vpRowVector>);
   pyRowVector.def("numpy", [](vpRowVector &self) -> np_array_cf<double> {
