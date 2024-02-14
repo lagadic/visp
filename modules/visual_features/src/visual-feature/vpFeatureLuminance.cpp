@@ -99,6 +99,9 @@ vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixIn
 {
   nbParameters = 1;
   dim_s = 0;
+  if (flags != nullptr) {
+    delete[] flags;
+  }
   flags = nullptr;
 
   init();
