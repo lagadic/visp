@@ -8,6 +8,12 @@ on:
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build-ubuntu-dep-apt:
     runs-on: ${{ matrix.os }}
@@ -19,32 +25,14 @@ jobs:
         standard: [ 17 ]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
-      # Remove some packages to emulate the ROS2 Jenkins environment
-      # X11: https://raspberrypi.stackexchange.com/a/92334
-      # Java: https://askubuntu.com/a/185531
-      name: Remove packages
+      # Install OpenMP and turn-off some dependencies (below) to try to have a similar env compared to the ROS buildbot
+    - name: Install OpenMP
       run: |
+        sudo apt-get update
         sudo apt-get install libomp-dev
-        sudo apt purge --auto-remove 'x11-*'
-        java -version
-        sudo dpkg --list | grep -i jdk
-        sudo dpkg --list | grep -i java
-        sudo apt-get purge --auto-remove openjdk*
-        sudo apt-get purge --auto-remove icedtea-* openjdk-*
-        sudo dpkg --list | grep -i jdk
-        sudo dpkg --list | grep -i java
-        sudo apt purge --auto-remove 'libjpeg*'
-        sudo apt purge --auto-remove 'libpng*'
-        sudo apt purge --auto-remove 'libxml*'
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: lscpu
@@ -65,8 +53,9 @@ jobs:
         echo "CC: $CC"
         echo "CXX: $CXX"
         echo "Standard: $CXX_STANDARD"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release \
-                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" \
+                 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD \
+                 -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
         cat ViSP-third-party.txt
 
     - name: Compile

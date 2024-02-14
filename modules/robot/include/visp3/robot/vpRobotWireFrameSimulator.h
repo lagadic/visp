@@ -41,20 +41,14 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
-#if defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not
-// included by windows.h since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h>
-#include <windows.h>
-#elif defined(VISP_HAVE_PTHREAD)
-#include <pthread.h>
-#endif
 
-#include <visp3/core/vpMutex.h>
+#include <thread>
+#include <mutex>
+
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -114,23 +108,18 @@ protected:
   /*! The velocity in the current frame (articular, camera or reference)*/
   vpColVector velocity;
 
-#if defined(_WIN32)
-  HANDLE hThread;
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_t thread;
-  pthread_attr_t attr;
-#endif
+  std::thread *m_thread;
 
-  vpMutex m_mutex_fMi;
-  vpMutex m_mutex_eMc;
-  vpMutex m_mutex_artVel;
-  vpMutex m_mutex_artCoord;
-  vpMutex m_mutex_velocity;
-  vpMutex m_mutex_display;
-  vpMutex m_mutex_robotStop;
-  vpMutex m_mutex_frame;
-  vpMutex m_mutex_setVelocityCalled;
-  vpMutex m_mutex_scene;
+  std::mutex m_mutex_fMi;
+  std::mutex m_mutex_eMc;
+  std::mutex m_mutex_artVel;
+  std::mutex m_mutex_artCoord;
+  std::mutex m_mutex_velocity;
+  std::mutex m_mutex_display;
+  std::mutex m_mutex_robotStop;
+  std::mutex m_mutex_frame;
+  std::mutex m_mutex_setVelocityCalled;
+  std::mutex m_mutex_scene;
 
   bool displayBusy;
 
@@ -335,26 +324,18 @@ protected:
 /** @name Protected Member Functions Inherited from vpRobotWireFrameSimulator
  */
 //@{
-/*!
- * Function used to launch the thread which moves the robot.
- */
-#if defined(_WIN32)
-  static DWORD WINAPI launcher(LPVOID lpParam)
+  /*!
+   * Function used to launch the thread which moves the robot.
+   */
+  static void launcher(vpRobotWireFrameSimulator &simulator)
   {
-    (static_cast<vpRobotWireFrameSimulator *>(lpParam))->updateArticularPosition();
-    return 0;
+    simulator.updateArticularPosition();
   }
-#elif defined(VISP_HAVE_PTHREAD)
-  static void *launcher(void *arg)
-  {
-    (reinterpret_cast<vpRobotWireFrameSimulator *>(arg))->updateArticularPosition();
-    // pthread_exit((void*) 0);
-    return nullptr;
-  }
-#endif
 
-  /*! Method lauched by the thread to compute the position of the robot in the
-   * articular frame. */
+  /*!
+   * Method launched by the thread to compute the position of the robot in the
+   * articular frame.
+   */
   virtual void updateArticularPosition() = 0;
   /*! Method used to check if the robot reached a joint limit. */
   virtual int isInJointLimit() = 0;

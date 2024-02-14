@@ -46,7 +46,7 @@
 
 // Check if std:c++17 or higher
 #if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) &&                                        \
-    (defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON))
+    (defined(VISP_HAVE_QUALISYS) || defined(VISP_HAVE_VICON)) && defined(VISP_HAVE_THREADS)
 
 #include <chrono>
 #include <thread>

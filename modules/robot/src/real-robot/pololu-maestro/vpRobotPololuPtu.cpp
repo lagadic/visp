@@ -33,8 +33,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-
-#ifdef VISP_HAVE_POLOLU
+#if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/robot/vpRobot.h>

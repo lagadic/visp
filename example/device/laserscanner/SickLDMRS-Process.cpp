@@ -68,23 +68,20 @@
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
-#if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) &&       \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
+#if (!defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))) && \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK)) && defined(VISP_HAVE_THREADS)
+
+#include <thread>
+#include <mutex>
 
 static int save = 0;
 static int layerToDisplay = 0xF; // 0xF = 1111 => all the layers are selected
 static vpLaserScan shm_laserscan[4];
 double time_offset = 0;
-#ifdef VISP_HAVE_PTHREAD
-pthread_mutex_t shm_mutex;
-#endif
+std::mutex shm_mutex;
 std::string output_path;
 
-void *laser_display_and_save_loop(void *);
-void *laser_acq_loop(void *);
-void *camera_acq_and_display_loop(void *);
-
-void *laser_display_and_save_loop(void *)
+void laser_display_and_save_loop()
 {
   vpImage<unsigned char> map(700, 300);
   map = 0;
@@ -133,14 +130,11 @@ void *laser_display_and_save_loop(void *)
     vpDisplay::display(map);
 #endif
 
-#ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_lock(&shm_mutex);
-#endif
-    for (int layer = 0; layer < 4; layer++)
+    shm_mutex.lock();
+    for (int layer = 0; layer < 4; layer++) {
       laserscan[layer] = shm_laserscan[layer];
-#ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_unlock(&shm_mutex);
-#endif
+    }
+    shm_mutex.unlock();
 
     // Parse the four layers
     for (int layer = 0; layer < 4; layer++) {
@@ -158,12 +152,12 @@ void *laser_display_and_save_loop(void *)
 
         // Write the file header
         fdscan << "# Scan layer [1 to 4] : " << layer + 1 << std::endl
-               << "# Start timestamp (s) : " << laserscan[layer].getStartTimestamp() - time_offset << std::endl
-               << "# End timestamp (s)   : " << laserscan[layer].getEndTimestamp() - time_offset << std::endl
-               << "# Data : \"radial distance (m)\" \"horizontal angle "
-                  "(rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z "
-                  "(m)\""
-               << std::endl;
+          << "# Start timestamp (s) : " << laserscan[layer].getStartTimestamp() - time_offset << std::endl
+          << "# End timestamp (s)   : " << laserscan[layer].getEndTimestamp() - time_offset << std::endl
+          << "# Data : \"radial distance (m)\" \"horizontal angle "
+          "(rad)\" \"vertical angle (rad)\" \"X (m)\" \"Y (m)\" \"Z "
+          "(m)\""
+          << std::endl;
       }
 
       vpImagePoint E;        // Beam echo
@@ -194,10 +188,9 @@ void *laser_display_and_save_loop(void *)
     // std::endl;
   }
   delete display;
-  return nullptr;
 }
 
-void *laser_acq_loop(void *)
+void laser_acq_loop()
 {
   std::string ip = "131.254.12.119";
 
@@ -211,22 +204,17 @@ void *laser_acq_loop(void *)
     if (laser.measure(laserscan) == false)
       continue;
 
-#ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_lock(&shm_mutex);
-#endif
-    for (int layer = 0; layer < 4; layer++)
+    shm_mutex.lock();
+    for (int layer = 0; layer < 4; layer++) {
       shm_laserscan[layer] = laserscan[layer];
-#ifdef VISP_HAVE_PTHREAD
-    pthread_mutex_unlock(&shm_mutex);
-#endif
+    }
+    shm_mutex.unlock();
 
     std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
   }
-
-  return nullptr;
 }
 
-void *camera_acq_and_display_loop(void *)
+void camera_acq_and_display_loop()
 {
 #ifdef VISP_HAVE_DC1394
   try {
@@ -234,8 +222,9 @@ void *camera_acq_and_display_loop(void *)
     vp1394TwoGrabber g; // Create a grabber based on libdc1394-2.x third party lib
 
     // If no camera found return
-    if (g.getNumCameras() == 0)
-      return nullptr;
+    if (g.getNumCameras() == 0) {
+      return;
+    }
 
     //     g.setVideoMode(vp1394TwoGrabber::vpVIDEO_MODE_640x480_MONO8);
     //     g.setFramerate(vp1394TwoGrabber::vpFRAMERATE_60);
@@ -255,7 +244,7 @@ void *camera_acq_and_display_loop(void *)
     display->init(Q, 320, 10, "Camera");
 #endif
 
-    // Create a file with cameraimage time stamps
+    // Create a file with image time stamps
     std::ofstream fdimage_ts;
     if (save) {
       std::string filename = output_path + "/image_timestamp.txt";
@@ -289,10 +278,10 @@ void *camera_acq_and_display_loop(void *)
     if (save) {
       fdimage_ts.close();
     }
-  } catch (...) {
+  }
+  catch (...) {
   }
 #endif
-  return nullptr;
 }
 
 int main(int argc, const char **argv)
@@ -304,7 +293,8 @@ int main(int argc, const char **argv)
       try {
         // Create a directory with name "username"
         vpIoTools::makeDirectory(output_path);
-      } catch (...) {
+      }
+      catch (...) {
         std::cout << "Cannot create " << output_path << " directory" << std::endl;
         return EXIT_FAILURE;
       }
@@ -323,30 +313,26 @@ int main(int argc, const char **argv)
         {"-h", vpParseArgv::ARGV_HELP, (char *)nullptr, (char *)nullptr,
          "Display one or more measured layers form a Sick LD-MRS laser "
          "scanner."},
-        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr}};
+        {(char *)nullptr, vpParseArgv::ARGV_END, (char *)nullptr, (char *)nullptr, (char *)nullptr} };
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable,
                            vpParseArgv::ARGV_NO_LEFTOVERS | vpParseArgv::ARGV_NO_ABBREV |
-                               vpParseArgv::ARGV_NO_DEFAULTS)) {
+                           vpParseArgv::ARGV_NO_DEFAULTS)) {
       return (EXIT_FAILURE);
     }
-
     time_offset = vpTime::measureTimeSecond();
-#ifdef VISP_HAVE_PTHREAD
-    pthread_t thread_camera_acq;
-    pthread_t thread_laser_acq;
-    pthread_t thread_laser_display;
-    pthread_create(&thread_camera_acq, nullptr, &camera_acq_and_display_loop, nullptr);
-    pthread_create(&thread_laser_acq, nullptr, &laser_acq_loop, nullptr);
-    pthread_create(&thread_laser_display, nullptr, &laser_display_and_save_loop, nullptr);
-    pthread_join(thread_camera_acq, 0);
-    pthread_join(thread_laser_acq, 0);
-    pthread_join(thread_laser_display, 0);
-#endif
+
+    std::thread thread_camera_acq(&camera_acq_and_display_loop);
+    std::thread thread_laser_acq(&laser_acq_loop);
+    std::thread thread_laser_display(&laser_display_and_save_loop);
+    thread_camera_acq.join();
+    thread_laser_acq.join();
+    thread_laser_display.join();
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -367,7 +353,7 @@ int main()
 int main()
 {
   std::cout << "This example is only working on unix-like platforms \n"
-            << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
+    << "since the Sick LD-MRS driver was not ported to Windows." << std::endl;
   return EXIT_SUCCESS;
 }
 

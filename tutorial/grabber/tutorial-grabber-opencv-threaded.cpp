@@ -3,38 +3,34 @@
 #include <iostream>
 
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpMutex.h>
-#include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#if defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if defined(HAVE_OPENCV_VIDEOIO) && defined(VISP_HAVE_THREADS)
+
+#include <thread>
+#include <mutex>
 
 #include <opencv2/highgui.hpp>
 #include <opencv2/videoio.hpp>
 
-// Shared vars
+// Possible capture states
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
-t_CaptureState s_capture_state = capture_waiting;
-cv::Mat s_frame;
-vpMutex s_mutex_capture;
 //! [capture-multi-threaded declaration]
 
 //! [capture-multi-threaded captureFunction]
-vpThread::Return captureFunction(vpThread::Args args)
+void captureFunction(cv::VideoCapture &cap, std::mutex &mutex_capture, cv::Mat &frame, t_CaptureState &capture_state)
 {
-  cv::VideoCapture cap = *((cv::VideoCapture *)args);
-
   if (!cap.isOpened()) { // check if we succeeded
     std::cout << "Unable to start capture" << std::endl;
-    return 0;
+    return;
   }
 
   cv::Mat frame_;
   int i = 0;
   while ((i++ < 100) && !cap.read(frame_)) {
-  }; // warm up camera by skiping unread frames
+  }; // warm up camera by skipping unread frames
 
   bool stop_capture_ = false;
 
@@ -45,29 +41,27 @@ vpThread::Return captureFunction(vpThread::Args args)
 
     // Update shared data
     {
-      vpMutex::vpScopedLock lock(s_mutex_capture);
-      if (s_capture_state == capture_stopped)
+      std::lock_guard<std::mutex> lock(mutex_capture);
+      if (capture_state == capture_stopped)
         stop_capture_ = true;
       else
-        s_capture_state = capture_started;
-      s_frame = frame_;
+        capture_state = capture_started;
+      frame = frame_;
     }
   }
 
   {
-    vpMutex::vpScopedLock lock(s_mutex_capture);
-    s_capture_state = capture_stopped;
+    std::lock_guard<std::mutex> lock(mutex_capture);
+    capture_state = capture_stopped;
   }
 
   std::cout << "End of capture thread" << std::endl;
-  return 0;
 }
 //! [capture-multi-threaded captureFunction]
 
 //! [capture-multi-threaded displayFunction]
-vpThread::Return displayFunction(vpThread::Args args)
+void displayFunction(std::mutex &mutex_capture, cv::Mat &frame, t_CaptureState &capture_state)
 {
-  (void)args; // Avoid warning: unused parameter args
   vpImage<unsigned char> I_;
 
   t_CaptureState capture_state_;
@@ -79,17 +73,17 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   do {
-    s_mutex_capture.lock();
-    capture_state_ = s_capture_state;
-    s_mutex_capture.unlock();
+    mutex_capture.lock();
+    capture_state_ = capture_state;
+    mutex_capture.unlock();
 
     // Check if a frame is available
     if (capture_state_ == capture_started) {
       // Get the frame and convert it to a ViSP image used by the display
       // class
       {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        vpImageConvert::convert(s_frame, I_);
+        std::lock_guard<std::mutex> lock(mutex_capture);
+        vpImageConvert::convert(frame, I_);
       }
 
       // Check if we need to initialize the display with the first frame
@@ -110,8 +104,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Trigger end of acquisition with a mouse click
       vpDisplay::displayText(I_, 10, 10, "Click to exit...", vpColor::red);
       if (vpDisplay::getClick(I_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
+        std::lock_guard<std::mutex> lock(mutex_capture);
+        capture_state = capture_stopped;
       }
 
       // Update the display
@@ -127,12 +121,11 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   std::cout << "End of display thread" << std::endl;
-  return 0;
 }
 //! [capture-multi-threaded displayFunction]
 
 //! [capture-multi-threaded mainFunction]
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   int opt_device = 0;
 
@@ -150,9 +143,13 @@ int main(int argc, const char *argv [])
   cv::VideoCapture cap;
   cap.open(opt_device);
 
+  cv::Mat frame;
+  t_CaptureState capture_state = capture_waiting;
+  // Create a mutex for capture
+  std::mutex mutex_capture;
   // Start the threads
-  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
-  vpThread thread_display((vpThread::Fn)displayFunction);
+  std::thread thread_capture(&captureFunction, std::ref(cap), std::ref(mutex_capture), std::ref(frame), std::ref(capture_state));
+  std::thread thread_display(&displayFunction, std::ref(mutex_capture), std::ref(frame), std::ref(capture_state));
 
   // Wait until thread ends up
   thread_capture.join();

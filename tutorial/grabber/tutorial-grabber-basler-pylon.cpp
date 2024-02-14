@@ -73,7 +73,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_PYLON) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PYLON) && defined(VISP_HAVE_THREADS)
   try {
     unsigned int opt_device = 0;
     std::string opt_type("GigE");

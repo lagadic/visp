@@ -41,7 +41,7 @@
 
 #include <iostream>
 
-#if defined(VISP_HAVE_VICON)
+#if defined(VISP_HAVE_VICON) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
 #include <signal.h>

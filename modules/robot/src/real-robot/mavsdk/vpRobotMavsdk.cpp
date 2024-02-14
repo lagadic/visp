@@ -36,7 +36,8 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) \
+  && defined(VISP_HAVE_THREADS)
 
 #include <iostream>
 #include <math.h>
@@ -1579,7 +1580,6 @@ void vpRobotMavsdk::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 bool vpRobotMavsdk::hasFlyingCapability() { return m_impl->getFlyingCapability(); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_robot.a(vpRobotMavsdk.cpp.o) has no symbols
 void dummy_vpRobotMavsdk() { };
 #endif

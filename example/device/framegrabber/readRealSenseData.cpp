@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_THREADS) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <condition_variable>
 #include <fstream>
 #include <mutex>
@@ -71,27 +71,27 @@ namespace
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-            Read RealSense data.\n\
-            \n\
-            %s\
-            OPTIONS:                                               \n\
-            -i <directory>                                         \n\
-            Input directory.\n\
-            \n\
-            -c                                                     \n\
-            Click enable.\n\
-            \n\
-            -b                                                     \n\
-            Pointcloud is in binary format.\n\
-            \n\
-            -o                                                     \n\
-            Save color and depth side by side to image sequence.\n\
-            \n\
-            -d                                                     \n\
-            Display depth in color.\n\
-            \n\
-            -h \n\
-            Print the help.\n\n",
+          Read RealSense data.\n\
+          \n\
+          %s\
+          OPTIONS:                                               \n\
+          -i <directory>                                         \n\
+          Input directory.\n\
+          \n\
+          -c                                                     \n\
+          Click enable.\n\
+          \n\
+          -b                                                     \n\
+          Pointcloud is in binary format.\n\
+          \n\
+          -o                                                     \n\
+          Save color and depth side by side to image sequence.\n\
+          \n\
+          -d                                                     \n\
+          Display depth in color.\n\
+          \n\
+          -h \n\
+          Print the help.\n\n",
           name);
 
   if (badparam)

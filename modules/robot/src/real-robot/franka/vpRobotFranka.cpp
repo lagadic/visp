@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_FRANKA
+#if defined(VISP_HAVE_FRANKA) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotException.h>

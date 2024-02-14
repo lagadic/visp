@@ -50,7 +50,7 @@ DWORD vpProcessErrors(const std::string &api_name)
   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, nullptr, err,
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&lpMsgBuf, 0, nullptr);
   std::cout << "call to " << api_name << " failed with the following error code: " << err << "(" << (LPTSTR)lpMsgBuf
-            << ")" << std::endl;
+    << ")" << std::endl;
   return err;
 }
 
@@ -136,7 +136,6 @@ HBITMAP vpCreateBitmap(int nWidth, int nHeight, UINT cPlanes, UINT cBitsPerPel, 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no
-// symbols
-void dummy_vpWin32API(){};
+// Work around to avoid warning: libvisp_core.a(vpWin32API.cpp.o) has no symbols
+void dummy_vpWin32API() { };
 #endif

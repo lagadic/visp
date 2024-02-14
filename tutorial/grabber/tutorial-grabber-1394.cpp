@@ -58,7 +58,7 @@ void usage(const char *argv[], int error)
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_DC1394) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_DC1394) && defined(VISP_HAVE_THREADS)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
