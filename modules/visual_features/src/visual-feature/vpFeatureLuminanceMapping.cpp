@@ -109,7 +109,7 @@ vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles,
 
 vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int projectionSize)
 {
-  if (projectionSize > images.getRows() && projectionSize > images.getCols()) {
+  if (projectionSize > images.getRows() || projectionSize > images.getCols()) {
     throw vpException(vpException::badValue, "Cannot use a subspace greater than the data dimensions (number of pixels or images)");
   }
   // Mean computation
@@ -130,15 +130,18 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
   vpColVector eigenValues;
   vpMatrix V;
   centered.svd(eigenValues, V);
-
-  std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(projectionSize, centered.getRows());
-  for (unsigned i = 0; i < projectionSize; ++i) {
-    for (unsigned j = 0; j < centered.getRows(); ++j) {
-      (*basis)[i][j] = centered[j][i];
+  std::cout << eigenValues << std::endl;
+  vpMatrix U(centered.getRows(), projectionSize);
+  std::cout << "CENTERED : " <<  centered << std::endl;
+  for (unsigned i = 0; i < centered.getRows(); ++i) {
+    for (unsigned j = 0; j < projectionSize; ++j) {
+      U[i][j] = centered[i][j];
     }
   }
+  std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(U.t());
   std::shared_ptr<vpColVector> meanPtr = std::make_shared<vpColVector>(mean);
   std::cout << centered.getRows() << " " << centered.getCols() << std::endl;
+  std::cout << "basis: " << *basis << std::endl;
   return vpLuminancePCA(basis, meanPtr);
 }
 
