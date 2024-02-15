@@ -1060,7 +1060,7 @@ public:
   /*!
      \deprecated You should rather use inverseByCholeskyLapack() or inverseByCholesky().
    */
-  vpMatrix inverseByCholeskyGsl() const
+  vp_deprecated vpMatrix inverseByCholeskyGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByCholeskyLapack();
@@ -1072,7 +1072,7 @@ public:
   /*!
      \deprecated You should rather use inverseByQRLapack() or inverseByQR().
    */
-  vpMatrix inverseByQRGsl() const
+  vp_deprecated vpMatrix inverseByQRGsl() const
   {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByQRLapack();
@@ -1084,7 +1084,7 @@ public:
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const
+  vp_deprecated vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(svThreshold);
@@ -1097,7 +1097,7 @@ public:
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const
+  vp_deprecated unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, svThreshold);
@@ -1111,7 +1111,7 @@ public:
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const
+  vp_deprecated unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const
   {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, sv, svThreshold);
@@ -1126,7 +1126,7 @@ public:
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+  vp_deprecated unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                                 vpMatrix &kerAt) const
   {
 #if defined(VISP_HAVE_LAPACK)
@@ -1145,7 +1145,7 @@ public:
   /*!
      \deprecated You should rather use svdLapack() or svd().
    */
-  void svdGsl(vpColVector &w, vpMatrix &V)
+  vp_deprecated void svdGsl(vpColVector &w, vpMatrix &V)
   {
 #if defined(VISP_HAVE_LAPACK)
     svdLapack(w, V);

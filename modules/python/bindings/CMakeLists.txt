@@ -48,9 +48,9 @@ set_target_properties(_visp PROPERTIES
 )
 set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-target_include_directories(_visp PRIVATE include) # Include directory containing custom bindings
-target_include_directories(_visp PRIVATE ${VISP_INCLUDE_DIRS})
-target_link_libraries(_visp PRIVATE ${VISP_LIBRARIES})
+target_include_directories(_visp PUBLIC include) # Include directory containing custom bindings
+target_include_directories(_visp PUBLIC ${VISP_INCLUDE_DIRS})
+target_link_libraries(_visp PUBLIC ${VISP_LIBRARIES})
 add_dependencies(_visp visp_python_bindings_generator_run)
 
 # Setup pip install
