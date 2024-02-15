@@ -747,7 +747,7 @@ vpCircleHoughTransform::computeCenterCandidates()
     int left = -1;
     for (int x = 0; x < nbColsAccum; x++) {
       if ((centersAccum[y][x] >= m_algoParams.m_centerMinThresh)
-          && (centersAccum[y][x] == centerCandidatesMaxima[y][x])
+          && (vpMath::equal(centersAccum[y][x], centerCandidatesMaxima[y][x]))
           && (centersAccum[y][x] > centersAccum[y][x + 1])
           ) {
         if (left < 0) {
