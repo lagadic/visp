@@ -34,13 +34,21 @@
 #############################################################################
 
 import sys
+import os
 # import os
 # sys.path.append(os.path.dirname(__file__))
 # print(sys.path)
 
 
-from .bindings import *
+# On windows, we need to explicitely add paths where Python should look for DLLs (This starts with Python >= 3.8)
+LOADER_DIR = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
+
+
+
+
+
 import _visp
+from _visp import *
 
 # Fake module names
 for k in _visp.__dict__:

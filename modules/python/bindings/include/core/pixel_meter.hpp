@@ -40,6 +40,7 @@
 
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpConfig.h>
 
 #include "core/utils.hpp"
 
