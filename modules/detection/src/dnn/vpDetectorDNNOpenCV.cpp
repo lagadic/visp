@@ -1182,7 +1182,6 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no symbols
 void dummy_vpDetectorDNN() { };
 #endif

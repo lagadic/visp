@@ -143,7 +143,7 @@ def generate_module(generate_path: Path, config_path: Path) -> None:
     submodule_fn_calls = []
     for submodule in submodules:
       name = submodule.generation_function_name()
-      submodule_fn_declarations.append(f'VISP_EXPORT void {name}(py::module_&);')
+      submodule_fn_declarations.append(f'void {name}(py::module_&);')
       submodule_fn_calls.append(f'{name}(m);')
 
     submodule_fn_declarations = '\n'.join(submodule_fn_declarations)

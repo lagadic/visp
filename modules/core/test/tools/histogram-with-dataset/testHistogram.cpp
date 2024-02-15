@@ -264,7 +264,7 @@ int main(int argc, const char **argv)
     int nbIterations = 100;
     unsigned int nbBins = 256;
     unsigned int sum_single_thread = 0;
-    unsigned int sum_single_multithread = 0;
+    unsigned int sum_multi_thread = 0;
 
     double t_single_thread = vpTime::measureTimeMs();
     for (int iteration = 0; iteration < nbIterations; iteration++) {
@@ -272,19 +272,19 @@ int main(int argc, const char **argv)
     }
     t_single_thread = vpTime::measureTimeMs() - t_single_thread;
 
-    double t_multithread = vpTime::measureTimeMs();
+    double t_multi_thread = vpTime::measureTimeMs();
     for (int iteration = 0; iteration < nbIterations; iteration++) {
-      sum_single_multithread = histogramSum(I, nbBins, nbThreads);
+      sum_multi_thread = histogramSum(I, nbBins, nbThreads);
     }
-    t_multithread = vpTime::measureTimeMs() - t_multithread;
+    t_multi_thread = vpTime::measureTimeMs() - t_multi_thread;
 
     std::cout << "sum_single_thread=" << sum_single_thread << " ; t_single_thread=" << t_single_thread
       << " ms ; mean=" << t_single_thread / (double)nbIterations << " ms" << std::endl;
-    std::cout << "sum_single_multithread=" << sum_single_multithread << " ; t_multithread=" << t_multithread
-      << " ms ; mean=" << t_multithread / (double)nbIterations << " ms" << std::endl;
-    std::cout << "Speed-up=" << t_single_thread / (double)t_multithread << "X" << std::endl;
+    std::cout << "sum_multi_thread (nbThreads=" << nbThreads << ")=" << sum_multi_thread << " ; t_multi_thread=" << t_multi_thread
+      << " ms ; mean=" << t_multi_thread / (double)nbIterations << " ms" << std::endl;
+    std::cout << "Speed-up=" << t_single_thread / (double)t_multi_thread << "X" << std::endl;
 
-    if (sum_single_thread != I.getSize() || sum_single_multithread != I.getSize()) {
+    if (sum_single_thread != I.getSize() || sum_multi_thread != I.getSize()) {
       std::cerr << "Problem with histogram!" << std::endl;
       return EXIT_FAILURE;
     }

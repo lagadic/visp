@@ -49,7 +49,7 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
 #include <thread>
 #endif
 
@@ -355,7 +355,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#if defined(VISP_HAVE_THREADS)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
 #else
@@ -363,7 +363,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -381,7 +381,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   bool foundSolution = false;
 
   if (executeParallelVersion) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_THREADS)
     std::vector<std::thread> threadpool;
     std::vector<vpRansacFunctor> ransacWorkers;
 

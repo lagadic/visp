@@ -60,7 +60,8 @@
 #elif _WIN32
 #include <CommandLayer.h>
 #include <CommunicationLayer.h>
-#include <Windows.h>
+#include <winsock2.h>    
+#include <windows.h>
 #include <conio.h>
 #include <iostream>
 #endif

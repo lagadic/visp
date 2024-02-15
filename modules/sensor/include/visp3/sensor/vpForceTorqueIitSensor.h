@@ -46,7 +46,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_FT_IIT_SDK
+#if defined(VISP_HAVE_FT_IIT_SDK) &&  defined(VISP_HAVE_THREADS)
 
 #include <chrono>
 #include <mutex>

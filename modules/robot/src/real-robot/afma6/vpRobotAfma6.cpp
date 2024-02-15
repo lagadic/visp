@@ -187,8 +187,9 @@ vpRobotAfma6::vpRobotAfma6(bool verbose) : vpAfma6(), vpRobot()
   try {
     this->init();
     this->setRobotState(vpRobot::STATE_STOP);
-  } catch (...) {
-    //  vpERROR_TRACE("Error caught") ;
+  }
+  catch (...) {
+ //  vpERROR_TRACE("Error caught") ;
     throw;
   }
   positioningVelocity = defaultPositioningVelocity;
@@ -602,9 +603,10 @@ vpRobot::vpRobotStateType vpRobotAfma6::setRobotState(vpRobot::vpRobotStateType 
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       Try(PrimitiveSTOP_Afma6());
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     this->powerOn();
     break;
@@ -672,20 +674,23 @@ void vpRobotAfma6::powerOn(void)
     Try(PrimitiveSTATUS_Afma6(nullptr, nullptr, &EStopStatus, nullptr, nullptr, nullptr, &HIPowerStatus));
     if (EStopStatus == ESTOP_AUTO) {
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_MANUAL) {
+    }
+    else if (EStopStatus == ESTOP_MANUAL) {
       break; // exit for loop
-    } else if (EStopStatus == ESTOP_ACTIVATED) {
+    }
+    else if (EStopStatus == ESTOP_ACTIVATED) {
       if (firsttime) {
         std::cout << "Emergency stop is activated! \n"
-                  << "Check the emergency stop button and push the yellow "
-                     "button before continuing."
-                  << std::endl;
+          << "Check the emergency stop button and push the yellow "
+          "button before continuing."
+          << std::endl;
         firsttime = false;
       }
       fprintf(stdout, "Remaining time %us  \r", nitermax - i);
       fflush(stdout);
       CAL_Wait(1);
-    } else {
+    }
+    else {
       std::cout << "Sorry there is an error on the emergency chain." << std::endl;
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
@@ -835,7 +840,8 @@ void vpRobotAfma6::get_eJe(vpMatrix &eJe)
 
   try {
     vpAfma6::get_eJe(q, eJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -879,7 +885,8 @@ void vpRobotAfma6::get_fJe(vpMatrix &fJe)
 
   try {
     vpAfma6::get_fJe(q, fJe);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1149,8 +1156,9 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
       }
       Try(PrimitiveMOVE_Afma6(_destination, positioningVelocity));
       Try(WaitState_Afma6(ETAT_ATTENTE_AFMA6, 1000));
-    } else {
-      // Cartesian position is out of range
+    }
+    else {
+   // Cartesian position is out of range
       error = -1;
     }
 
@@ -1186,8 +1194,9 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
       }
       Try(PrimitiveMOVE_Afma6(_destination, positioningVelocity));
       Try(WaitState_Afma6(ETAT_ATTENTE_AFMA6, 1000));
-    } else {
-      // Cartesian position is out of range
+    }
+    else {
+   // Cartesian position is out of range
       error = -1;
     }
 
@@ -1298,7 +1307,8 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, double p
     position[5] = pos6;
 
     setPosition(frame, position);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1674,12 +1684,14 @@ void vpRobotAfma6::setVelocity(const vpRobot::vpControlFrameType frame, const vp
         if (axisInJoint[i])
           std::cout << "\nWarning: Velocity control stopped: axis " << i + 1 << " on joint limit!" << std::endl;
       }
-    } else {
+    }
+    else {
       printf("\n%s(%d): Error %d", __FUNCTION__, TryLine, TryStt);
       if (TryString != nullptr) {
         // The statement is in TryString, but we need to check the validity
         printf(" Error sentence %s\n", TryString); // Print the TryString
-      } else {
+      }
+      else {
         printf("\n");
       }
     }
@@ -1823,7 +1835,8 @@ void vpRobotAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpColVec
                         "vpRobotAfma6::getVelocity() not implemented in end-effector"));
     }
     }
-  } else {
+  }
+  else {
     first_time_getvel = false;
   }
 
@@ -2239,7 +2252,8 @@ void vpRobotAfma6::getDisplacement(vpRobot::vpControlFrameType frame, vpColVecto
       return;
     }
     }
-  } else {
+  }
+  else {
     first_time_getdis = false;
   }
 
@@ -2279,7 +2293,8 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
       std::cout << "\nWarning: Velocity control stopped: axis " << i + 1 << " on joint limit!" << std::endl;
       jointsStatus[i] = axisInJoint[i];
       status = false;
-    } else {
+    }
+    else {
       jointsStatus[i] = 0;
     }
   }
@@ -2294,7 +2309,6 @@ bool vpRobotAfma6::checkJointLimits(vpColVector &jointsStatus)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no
-// symbols
-void dummy_vpRobotAfma6(){};
+// Work around to avoid warning: libvisp_robot.a(vpRobotAfma6.cpp.o) has no symbols
+void dummy_vpRobotAfma6() { };
 #endif

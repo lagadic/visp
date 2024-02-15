@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_FRANKA
+#if defined(VISP_HAVE_FRANKA) && defined(VISP_HAVE_THREADS)
 
 #include <atomic>
 #include <iostream>

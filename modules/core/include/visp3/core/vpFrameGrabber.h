@@ -103,9 +103,9 @@ public:
   /** @name Inherited functionalities from vpFramegrabber */
   //@{
   //! Return the number of rows in the image.
-  inline unsigned int getHeight() const { return height; }
+  unsigned int getHeight() const;
   //! Return the number of columns in the image.
-  inline unsigned int getWidth() const { return width; }
+  unsigned int getWidth() const;
   //@}
 
 public:

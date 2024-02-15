@@ -42,16 +42,16 @@
 
 #include <visp3/core/vpConfig.h>
 // Note that libfreenect needs libusb-1.0 and libpthread
-#if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES)
+#if defined(VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES) && defined(VISP_HAVE_THREADS)
 
 #include <iostream>
 #include <libfreenect.hpp>
+#include <mutex>
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpMutex.h> // need pthread
 #include <visp3/core/vpPixelMeterConversion.h>
 
 /*!
@@ -154,8 +154,8 @@ private:
   void DepthCallback(void *depth, uint32_t timestamp);
 
 private:
-  vpMutex m_rgb_mutex;
-  vpMutex m_depth_mutex;
+  std::mutex m_rgb_mutex;
+  std::mutex m_depth_mutex;
 
   vpCameraParameters RGBcam, IRcam; // intrinsic parameters of the two cameras
   vpHomogeneousMatrix rgbMir;       // Transformation from IRcam coordinate frame to

@@ -46,7 +46,7 @@ bool vpSortLargestFace(cv::Rect rect1, cv::Rect rect2) { return (rect1.area() > 
 /*!
   Default constructor.
  */
-vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() {}
+vpDetectorFace::vpDetectorFace() : m_faces(), m_face_cascade(), m_frame_gray() { }
 
 /*!
   Set the name of the OpenCV cascade classifier file used for face detection.
@@ -141,7 +141,6 @@ bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no
-// symbols
-void dummy_vpDetectorFace(){};
+// Work around to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no symbols
+void dummy_vpDetectorFace() { };
 #endif

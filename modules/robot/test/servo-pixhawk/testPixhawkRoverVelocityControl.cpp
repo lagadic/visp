@@ -48,7 +48,8 @@
 #include <visp3/core/vpConfig.h>
 
 // Check if std:c++17 or higher
-#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
+#if defined(VISP_HAVE_MAVSDK) && ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) \
+  && defined(VISP_HAVE_THREADS)
 
 #include <thread>
 #include <visp3/robot/vpRobotMavsdk.h>

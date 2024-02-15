@@ -124,7 +124,8 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
     this->setVel(vel_sat[0] * 1000.);         // convert velocity in mm/s
     this->setRotVel(vpMath::deg(vel_sat[1])); // convert velocity in deg/s
     this->unlock();
-  } else if (frame == vpRobot::ARTICULAR_FRAME) {
+  }
+  else if (frame == vpRobot::ARTICULAR_FRAME) {
     vel_max[0] = getMaxTranslationVelocity();
     vel_max[1] = getMaxTranslationVelocity();
 
@@ -134,7 +135,8 @@ void vpRobotPioneer::setVelocity(const vpRobot::vpControlFrameType frame, const 
     this->setVel2(vel_sat[0] * 1000.,
                   vel_sat[1] * 1000.); // convert velocity in mm/s
     this->unlock();
-  } else {
+  }
+  else {
     throw vpRobotException(vpRobotException::wrongStateError,
                            "Cannot send the robot velocity in the specified control frame");
   }
@@ -193,12 +195,14 @@ void vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame, vpColV
     velocity[0] = this->getLeftVel() / 1000.;
     velocity[1] = this->getRightVel() / 1000;
     this->unlock();
-  } else if (frame == vpRobot::REFERENCE_FRAME) {
+  }
+  else if (frame == vpRobot::REFERENCE_FRAME) {
     this->lock();
     velocity[0] = this->getVel() / 1000.;
     velocity[1] = vpMath::rad(this->getRotVel());
     this->unlock();
-  } else {
+  }
+  else {
     throw vpRobotException(vpRobotException::wrongStateError,
                            "Cannot get the robot volocity in the specified control frame");
   }
@@ -232,7 +236,6 @@ vpColVector vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no
-// symbols
-void dummy_vpRobotPioneer(){};
+// Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no symbols
+void dummy_vpRobotPioneer() { };
 #endif

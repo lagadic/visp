@@ -1,6 +1,5 @@
-/****************************************************************************
- *
- * This file is part of the ViSP software.
+/*
+ * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
@@ -28,24 +27,19 @@
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
-*****************************************************************************/
-
-#import <UIKit/UIKit.h>
-#ifdef __cplusplus
-#import <visp3/visp.h>
-#endif
+ * Description:
+ * Frame grabbing.
+ */
 
 
-#include <fstream>
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include <visp3/core/vpFrameGrabber.h>
 
-@interface ImageDisplay : NSObject
+unsigned int vpFrameGrabber::getHeight() const 
+{
+  return height; 
+}
 
-+ (UIImage *)displayLine:(UIImage *)image :(vpImagePoint &)ip1 :(vpImagePoint &)ip2 :(UIColor*)color :(int)tickness;
-+ (UIImage *)displayFrame:(UIImage *)image :(const vpHomogeneousMatrix &)cMo :(const vpCameraParameters &)cam
-                         :(double) size :(int)tickness;
-
-@end
-
-#endif
-
+unsigned int vpFrameGrabber::getWidth() const 
+{ 
+  return width;
+}
