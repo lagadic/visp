@@ -4,7 +4,7 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
-vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean, const vpColVector &explainedVariance)
+vpLuminancePCA::vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance)
   : vpLuminanceMapping(basis->getRows())
 {
   init(basis, mean, explainedVariance);
@@ -255,14 +255,15 @@ vpMatrix vpFeatureLuminanceMapping::interaction(unsigned int select)
   if (select != FEATURE_ALL) {
     throw vpException(vpException::notImplementedError, "cannot compute interaction matrix for a subset of PCA features");
   }
-  vpMatrix dWdr(dim_s, 6);
-  interaction(dWdr);
-  return dWdr;
+  vpMatrix dsdr(dim_s, 6);
+  interaction(dsdr);
+  return dsdr;
 }
 void vpFeatureLuminanceMapping::interaction(vpMatrix &L)
 {
   L.resize(dim_s, 6, false, false);
   m_featI.interaction(m_LI);
+  m_mapping->interaction(I, m_LI, s, L);
 }
 
 
@@ -271,5 +272,5 @@ void vpFeatureLuminanceMapping::print(unsigned int select) const
   if (select != FEATURE_ALL) {
     throw vpException(vpException::notImplementedError, "cannot print subset of PCA features");
   }
-
+  std::cout << s << std::endl;
 }

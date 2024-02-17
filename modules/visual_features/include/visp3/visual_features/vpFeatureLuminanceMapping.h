@@ -145,7 +145,6 @@ public:
   std::shared_ptr<vpMatrix> getBasis() const { return m_basis; }
   /**
    * @brief Get \f$ vec(\mathbf{\bar I}) \f$, the mean image computed from the dataset.
-   *
    * @return std::shared_ptr<vpColVector>
    */
   std::shared_ptr<vpColVector> getMean() const { return m_mean; }
@@ -223,6 +222,7 @@ private:
   std::shared_ptr<vpLuminanceMapping> m_mapping;
   vpFeatureLuminance m_featI;
   vpMatrix m_LI; //! Photometric interaction matrix
+  vpImage<unsigned char> I;
 
 };
 
