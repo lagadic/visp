@@ -4,11 +4,24 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
-vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean) : vpLuminanceMapping(basis->getRows()), m_basis(basis), m_mean(mean)
+vpLuminancePCA::vpLuminancePCA(std::shared_ptr<vpMatrix> basis, std::shared_ptr<vpColVector> mean, const vpColVector &explainedVariance)
+  : vpLuminanceMapping(basis->getRows())
+{
+  init(basis, mean, explainedVariance);
+}
+
+void vpLuminancePCA::init(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &variance)
 {
   if (basis->getCols() != mean->getRows()) {
     throw vpException(vpException::dimensionError, "PCA mean and basis should have the same number of inputs");
   }
+  if (variance.getRows() != basis->getRows()) {
+    throw vpException(vpException::dimensionError, "PCA explained variance should have the same size as the subspace");
+  }
+  m_mappingSize = basis->getRows();
+  m_basis = basis;
+  m_mean = mean;
+  m_explainedVariance = variance;
 }
 
 void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
@@ -25,16 +38,22 @@ void vpLuminancePCA::interaction(const vpImage<unsigned char> &I, const vpMatrix
   L = (*m_basis) * LI;
 }
 
-vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std::string &meanFilename)
+vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std::string &meanFilename, const std::string &explainedVarianceFile)
 {
   std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>();
   std::shared_ptr<vpColVector> mean = std::make_shared<vpColVector>();
-  vpMatrix::loadMatrix(basisFilename, *basis, true);
-  vpColVector::load(meanFilename, *mean);
+  vpColVector explainedVariance;
+  vpMatrix::loadMatrix(basisFilename, *basis, false);
+  vpMatrix::loadMatrix(meanFilename, *mean, false);
+  vpMatrix::loadMatrix(explainedVarianceFile, explainedVariance, false);
 
   if (mean->getCols() > 1) {
-    throw vpException(vpException::badValue,
+    throw vpException(vpException::dimensionError,
     "Read something that was not a column vector when trying to load the PCA mean vector");
+  }
+  if (explainedVariance.getCols() > 1) {
+    throw vpException(vpException::dimensionError,
+    "Read something that was not a column vector when trying to load the PCA components explained variance");
   }
   if (basis->getCols() != mean->getRows()) {
     std::stringstream ss;
@@ -45,10 +64,10 @@ vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std:
     throw vpException(vpException::dimensionError, ss.str());
   }
 
-  return vpLuminancePCA(basis, mean);
+  return vpLuminancePCA(basis, mean, explainedVariance);
 }
 
-void vpLuminancePCA::save(const std::string &basisFilename, const std::string &meanFilename) const
+void vpLuminancePCA::save(const std::string &basisFilename, const std::string &meanFilename, const std::string &explainedVarianceFile) const
 {
   if (m_basis.get() == nullptr || m_mean.get() == nullptr) {
     throw vpException(vpException::notInitialized,
@@ -58,8 +77,9 @@ void vpLuminancePCA::save(const std::string &basisFilename, const std::string &m
     throw vpException(vpException::dimensionError,
     "Tried to save a PCA projection but there are issues with the basis and mean dimensions");
   }
-  vpMatrix::saveMatrix(basisFilename, *m_basis, true);
-  vpColVector::save(meanFilename, *m_mean, true);
+  vpMatrix::saveMatrix(basisFilename, *m_basis, false);
+  vpMatrix::saveMatrix(meanFilename, *m_mean, false);
+  vpMatrix::saveMatrix(explainedVarianceFile, m_explainedVariance, false);
 }
 
 vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int border)
@@ -129,20 +149,19 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 
   vpColVector eigenValues;
   vpMatrix V;
-  centered.svd(eigenValues, V);
-  std::cout << eigenValues << std::endl;
+  centered.svdOpenCV(eigenValues, V);
   vpMatrix U(centered.getRows(), projectionSize);
-  std::cout << "CENTERED : " <<  centered << std::endl;
   for (unsigned i = 0; i < centered.getRows(); ++i) {
     for (unsigned j = 0; j < projectionSize; ++j) {
       U[i][j] = centered[i][j];
     }
   }
+  double cumEigenValues = eigenValues.sum();
+  vpColVector componentsExplainedVar(eigenValues, 0, projectionSize);
+  componentsExplainedVar /= cumEigenValues;
   std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(U.t());
   std::shared_ptr<vpColVector> meanPtr = std::make_shared<vpColVector>(mean);
-  std::cout << centered.getRows() << " " << centered.getCols() << std::endl;
-  std::cout << "basis: " << *basis << std::endl;
-  return vpLuminancePCA(basis, meanPtr);
+  return vpLuminancePCA(basis, meanPtr, componentsExplainedVar);
 }
 
 
