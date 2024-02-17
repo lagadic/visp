@@ -38,6 +38,8 @@ ViSP 3.x.x (Version in development)
     . [#1273] Build error in visp_java without deprecated functionalities
     . [#1274] Build issue no member named clamp in namespace std
     . [#1279] Issue in vpPoseVector json serialization
+    . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
+    . [#1307] Cannot set cxx standard when configuring for Visual Studio
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

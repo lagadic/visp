@@ -43,7 +43,10 @@
 #include <limits>
 #include <sstream>
 
-#include <Simd/SimdLib.hpp>
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDisplay.h>
@@ -90,13 +93,17 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#if defined(VISP_HAVE_THREADS)
 #include <mutex>
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace
 {
+#if defined(VISP_HAVE_THREADS)
 std::mutex g_mutex_cout;
+#endif
 /*!
   Structure to store info about segment in CAO model files.
  */
@@ -350,7 +357,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     }
 
     std::cout << "Load 3D points from: " << ss.str() << std::endl;
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     finit.open(ss.str());
+#else
+    finit.open(ss.str().c_str());
+#endif
     if (finit.fail()) {
       std::cout << "Cannot read " << ss.str() << std::endl;
       throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", ss.str().c_str());
@@ -1827,7 +1838,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPoints += caoNbrPoint;
     if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
@@ -1874,7 +1887,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     nbLines += caoNbrLine;
     unsigned int *caoLinePoints = nullptr;
     if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
@@ -1954,7 +1969,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonLines += caoNbrPolygonLine;
     if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
@@ -2041,7 +2058,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonPoints += caoNbrPolygonPoint;
     if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
       std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
@@ -2112,7 +2131,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCylinders += caoNbCylinder;
       if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
@@ -2192,7 +2213,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCircles += caoNbCircle;
       if (verbose || (parent && !header)) {
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
       }
 
@@ -2255,7 +2278,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     if (header && parent) {
       if (verbose) {
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
         std::cout << "Total nb of points : " << nbPoints << std::endl;
         std::cout << "Total nb of lines : " << nbLines << std::endl;
@@ -2265,7 +2290,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "Total nb of circles : " << nbCircles << std::endl;
       }
       else {
+#if defined(VISP_HAVE_THREADS)
         std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << nbPoints << " points" << std::endl;
         std::cout << "> " << nbLines << " lines" << std::endl;
         std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
@@ -2865,8 +2892,19 @@ void vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &err
   }
 
   JTR.resize(6, false);
-
+#if defined(VISP_HAVE_SIMDLIB)
   SimdComputeJtR(interaction.data, interaction.getRows(), error.data, JTR.data);
+#else
+  const unsigned int N = interaction.getRows();
+
+  for (unsigned int i = 0; i < 6; i += 1) {
+    double ssum = 0;
+    for (unsigned int j = 0; j < N; j += 1) {
+      ssum += interaction[j][i] * error[j];
+    }
+    JTR[i] = ssum;
+  }
+#endif
 }
 
 void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error,
@@ -3765,6 +3803,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
@@ -3785,6 +3824,11 @@ void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbTracker::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 /*!

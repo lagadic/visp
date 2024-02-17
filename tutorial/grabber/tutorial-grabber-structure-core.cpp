@@ -72,7 +72,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && defined(VISP_HAVE_THREADS)
   try {
     std::string opt_seqname_visible = "visible-%04d.png", opt_seqname_depth = "depth-%04d.png";
     int opt_record_mode = 0;
@@ -229,6 +229,9 @@ int main(int argc, const char *argv[])
   (void)argv;
 #if !(defined(VISP_HAVE_OCCIPITAL_STRUCTURE))
   std::cout << "Install libStructure, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

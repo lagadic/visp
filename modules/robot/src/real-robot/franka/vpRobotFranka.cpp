@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_FRANKA
+#if defined(VISP_HAVE_FRANKA) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotException.h>
@@ -52,10 +52,10 @@
 */
 vpRobotFranka::vpRobotFranka()
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
-    m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
-    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-    m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
-    m_franka_address()
+  m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
+  m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_franka_address()
 {
   init();
 }
@@ -68,10 +68,10 @@ vpRobotFranka::vpRobotFranka()
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
   : vpRobot(), m_handler(nullptr), m_gripper(nullptr), m_model(nullptr), m_positioningVelocity(20.), m_velControlThread(),
-    m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
-    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
-    m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
-    m_franka_address()
+  m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
+  m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
+  m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+  m_franka_address()
 {
   init();
   connect(franka_address, realtime_config);
@@ -131,21 +131,21 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
   m_franka_address = franka_address;
   m_handler = new franka::Robot(franka_address, realtime_config);
 
-  std::array<double, 7> lower_torque_thresholds_nominal{{25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.}};
-  std::array<double, 7> upper_torque_thresholds_nominal{{35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
-  std::array<double, 7> lower_torque_thresholds_acceleration{{25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.0}};
-  std::array<double, 7> upper_torque_thresholds_acceleration{{35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
-  std::array<double, 6> lower_force_thresholds_nominal{{30.0, 30.0, 30.0, 25.0, 25.0, 25.0}};
-  std::array<double, 6> upper_force_thresholds_nominal{{40.0, 40.0, 40.0, 35.0, 35.0, 35.0}};
-  std::array<double, 6> lower_force_thresholds_acceleration{{30.0, 30.0, 30.0, 25.0, 25.0, 25.0}};
-  std::array<double, 6> upper_force_thresholds_acceleration{{40.0, 40.0, 40.0, 35.0, 35.0, 35.0}};
+  std::array<double, 7> lower_torque_thresholds_nominal { {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.} };
+  std::array<double, 7> upper_torque_thresholds_nominal { {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0} };
+  std::array<double, 7> lower_torque_thresholds_acceleration { {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.0} };
+  std::array<double, 7> upper_torque_thresholds_acceleration { {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0} };
+  std::array<double, 6> lower_force_thresholds_nominal { {30.0, 30.0, 30.0, 25.0, 25.0, 25.0} };
+  std::array<double, 6> upper_force_thresholds_nominal { {40.0, 40.0, 40.0, 35.0, 35.0, 35.0} };
+  std::array<double, 6> lower_force_thresholds_acceleration { {30.0, 30.0, 30.0, 25.0, 25.0, 25.0} };
+  std::array<double, 6> upper_force_thresholds_acceleration { {40.0, 40.0, 40.0, 35.0, 35.0, 35.0} };
   m_handler->setCollisionBehavior(lower_torque_thresholds_acceleration, upper_torque_thresholds_acceleration,
                                   lower_torque_thresholds_nominal, upper_torque_thresholds_nominal,
                                   lower_force_thresholds_acceleration, upper_force_thresholds_acceleration,
                                   lower_force_thresholds_nominal, upper_force_thresholds_nominal);
 
-  m_handler->setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
-  m_handler->setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
+  m_handler->setJointImpedance({ {3000, 3000, 3000, 2500, 2500, 2000, 2000} });
+  m_handler->setCartesianImpedance({ {3000, 3000, 3000, 300, 300, 300} });
 #if (VISP_HAVE_FRANKA_VERSION < 0x000500)
   //  m_handler->setFilters(100, 100, 100, 100, 100);
   m_handler->setFilters(10, 10, 10, 10, 10);
@@ -393,7 +393,7 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 16> pose_array =
-      m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
+    m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
   vpHomogeneousMatrix fMe;
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++) {
@@ -553,9 +553,9 @@ void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
   }
   if (q.size() != 7) {
     throw(vpException(
-        vpException::fatalError,
-        "Cannot get Franka robot fJe jacobian with an input joint position vector [%u] that is not a 7-dim vector",
-        q.size()));
+      vpException::fatalError,
+      "Cannot get Franka robot fJe jacobian with an input joint position vector [%u] that is not a 7-dim vector",
+      q.size()));
   }
 
   franka::RobotState robot_state = getRobotInternalState();
@@ -591,12 +591,14 @@ void vpRobotFranka::setLogFolder(const std::string &folder)
       try {
         vpIoTools::makeDirectory(folder);
         m_log_folder = folder;
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         std::string error;
         error = "Unable to create Franka log folder: " + folder;
         throw(vpException(vpException::fatalError, error));
       }
-    } else {
+    }
+    else {
       m_log_folder = folder;
     }
   }
@@ -614,8 +616,8 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   }
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
     std::cout << "Robot was not in position-based control. "
-                 "Modification of the robot state"
-              << std::endl;
+      "Modification of the robot state"
+      << std::endl;
     setRobotState(vpRobot::STATE_POSITION_CONTROL);
   }
 
@@ -634,14 +636,16 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
       try {
         m_handler->control(joint_pos_traj_generator);
         break;
-      } catch (const franka::ControlException &e) {
+      }
+      catch (const franka::ControlException &e) {
         std::cerr << "Warning: communication error: " << e.what() << "\nRetry attempt: " << attempt << std::endl;
         m_handler->automaticErrorRecovery();
         if (attempt == nbAttempts)
           throw;
       }
     }
-  } else {
+  }
+  else {
     throw(vpException(vpRobotException::functionNotImplementedError,
                       "Cannot move the robot to a cartesian position. Only joint positioning is implemented"));
   }
@@ -676,8 +680,9 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
         m_velControlThreadStopAsked = false;
         m_velControlThreadIsRunning = false;
       }
-    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
-      // Stop the robot
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+   // Stop the robot
       m_ftControlThreadStopAsked = true;
       if (m_ftControlThread.joinable()) {
         m_ftControlThread.join();
@@ -697,7 +702,8 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
         m_velControlThreadStopAsked = false;
         m_velControlThreadIsRunning = false;
       }
-    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from force/torque to position control.\n";
       // Stop the robot
       m_ftControlThreadStopAsked = true;
@@ -712,9 +718,11 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
   case vpRobot::STATE_VELOCITY_CONTROL: {
     if (vpRobot::STATE_STOP == getRobotState()) {
       std::cout << "Change the control mode from stop to velocity control.\n";
-    } else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+    }
+    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from position to velocity control.\n";
-    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+    }
+    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from force/torque to velocity control.\n";
       // Stop the robot
       m_ftControlThreadStopAsked = true;
@@ -729,9 +737,11 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
   case vpRobot::STATE_FORCE_TORQUE_CONTROL: {
     if (vpRobot::STATE_STOP == getRobotState()) {
       std::cout << "Change the control mode from stop to force/torque control.\n";
-    } else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+    }
+    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from position to force/torque control.\n";
-    } else if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
+    }
+    else if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to force/torque control.\n";
       // Stop the robot
       m_velControlThreadStopAsked = true;
@@ -859,10 +869,10 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   if (!m_velControlThreadIsRunning) {
     m_velControlThreadIsRunning = true;
     m_velControlThread =
-        std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(), std::ref(m_handler),
-                    std::ref(m_velControlThreadStopAsked), m_log_folder, frame, m_eMc, std::ref(m_v_cart_des),
-                    std::ref(m_dq_des), std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max),
-                    std::cref(m_ddq_max), std::ref(m_robot_state), std::ref(m_mutex));
+      std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(), std::ref(m_handler),
+                  std::ref(m_velControlThreadStopAsked), m_log_folder, frame, m_eMc, std::ref(m_v_cart_des),
+                  std::ref(m_dq_des), std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max),
+                  std::cref(m_ddq_max), std::ref(m_robot_state), std::ref(m_mutex));
   }
 }
 
@@ -939,7 +949,8 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
 
     std::lock_guard<std::mutex> lock(m_mutex);
     m_robot_state = robot_state;
-  } else { // robot_state is updated in the velocity control thread
+  }
+  else { // robot_state is updated in the velocity control thread
     std::lock_guard<std::mutex> lock(m_mutex);
     robot_state = m_robot_state;
   }
@@ -1223,7 +1234,7 @@ int vpRobotFranka::gripperMove(double width)
 
   if (gripper_state.max_width < width) {
     std::cout << "Finger width request is too large for the current fingers on the gripper."
-              << "Maximum possible width is " << gripper_state.max_width << std::endl;
+      << "Maximum possible width is " << gripper_state.max_width << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -1297,6 +1308,26 @@ void vpRobotFranka::gripperRelease()
 */
 int vpRobotFranka::gripperGrasp(double grasping_width, double force)
 {
+  return gripperGrasp(grasping_width, 0.1, force);
+}
+
+/*!
+
+  Grasp an object that has a given width.
+
+  An object is considered grasped if the distance \e d between the gripper fingers satisfies
+  \e grasping_width - 0.005 < d < \e grasping_width + 0.005.
+
+  \param[in] grasping_width : Size of the object to grasp. [m]
+  \param[in] speed : Closing speed. [m/s]
+  \param[in] force : Grasping force. [N]
+
+  \return EXIT_SUCCESS if grasping succeed, EXIT_FAILURE otherwise.
+
+  \sa gripperHoming(), gripperOpen(), gripperRelease()
+*/
+int vpRobotFranka::gripperGrasp(double grasping_width, double speed, double force)
+{
   if (m_gripper == nullptr)
     m_gripper = new franka::Gripper(m_franka_address);
 
@@ -1305,12 +1336,12 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double force)
   std::cout << "Gripper max witdh: " << gripper_state.max_width << std::endl;
   if (gripper_state.max_width < grasping_width) {
     std::cout << "Object is too large for the current fingers on the gripper."
-              << "Maximum possible width is " << gripper_state.max_width << std::endl;
+      << "Maximum possible width is " << gripper_state.max_width << std::endl;
     return EXIT_FAILURE;
   }
 
   // Grasp the object.
-  if (!m_gripper->grasp(grasping_width, 0.1, force)) {
+  if (!m_gripper->grasp(grasping_width, speed, force)) {
     std::cout << "Failed to grasp object." << std::endl;
     return EXIT_FAILURE;
   }
@@ -1321,5 +1352,5 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double force)
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
 // no symbols
-void dummy_vpRobotFranka(){};
+void dummy_vpRobotFranka() { };
 #endif

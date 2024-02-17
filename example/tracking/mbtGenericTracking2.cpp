@@ -62,8 +62,6 @@
 
 #define GETOPTARGS "x:m:i:n:de:chtfColwvpT:"
 
-#define USE_XML 0
-
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
@@ -276,8 +274,8 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
-      opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-      useScanline, computeCovariance, projectionError, trackerType)) {
+                    opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
+                    useScanline, computeCovariance, projectionError, trackerType)) {
       return EXIT_FAILURE;
     }
 
@@ -299,7 +297,7 @@ int main(int argc, const char **argv)
     else
       ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
 
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
     std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
@@ -425,7 +423,7 @@ int main(int argc, const char **argv)
     std::map<std::string, vpCameraParameters> mapOfCameraParams;
 
     // Initialise the tracker: camera parameters, moving edge and KLT settings
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     std::map<std::string, std::string> mapOfConfigFiles;
     mapOfConfigFiles["Camera1"] = configFile;
@@ -592,7 +590,7 @@ int main(int argc, const char **argv)
         }
 
         tracker->resetTracker();
-#if USE_XML
+#if defined(VISP_HAVE_PUGIXML)
         dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(mapOfConfigFiles);
 #else
         // By setting the parameters:

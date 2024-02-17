@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_POLOLU
+#if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
 #include <chrono>
 #include <iostream>
@@ -103,9 +103,9 @@ int main(int argc, const char **argv)
   bool opt_calibrate = false;
   unsigned short opt_pwm_min = 4000;
   unsigned short opt_pwm_max = 8000;
-  float opt_angle_min = vpMath::rad(-45);
-  float opt_angle_max = vpMath::rad(45);
-  float opt_positioning_velocity = vpMath::rad(10);
+  float opt_angle_min = static_cast<float>(vpMath::rad(-45));
+  float opt_angle_max = static_cast<float>(vpMath::rad(45));
+  float opt_positioning_velocity = static_cast<float>(vpMath::rad(10));
   float last_angle = 0;
   int time_s = 0;
 

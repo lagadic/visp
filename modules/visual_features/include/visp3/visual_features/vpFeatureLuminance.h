@@ -91,31 +91,33 @@ protected:
 public:
   vpFeatureLuminance();
   vpFeatureLuminance(const vpFeatureLuminance &f);
+
   //! Destructor.
-  virtual ~vpFeatureLuminance() override;
+  virtual ~vpFeatureLuminance() vp_override;
 
   void buildFrom(vpImage<unsigned char> &I);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
 
-  vpFeatureLuminance *duplicate() const override;
+  vpFeatureLuminance *duplicate() const vp_override;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
   double get_Z() const;
 
-  void init() override;
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
+
+  void init() vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
   void interaction(vpMatrix &L);
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
 
   vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
-  void print(unsigned int select = FEATURE_ALL) const override;
 
   void setCameraParameters(const vpCameraParameters &_cam);
   void set_Z(double Z);

@@ -44,6 +44,7 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_HAVE_PUGIXML)
 #include <visp3/core/vpHomogeneousMatrix.h>
 
 /*!
@@ -170,4 +171,5 @@ private:
   class Impl;
   Impl *m_impl;
 };
+#endif
 #endif

@@ -191,7 +191,7 @@ public:
   vpDot();
   explicit vpDot(const vpImagePoint &ip);
   vpDot(const vpDot &d);
-  virtual ~vpDot() override;
+  virtual ~vpDot() vp_override;
 
   void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 

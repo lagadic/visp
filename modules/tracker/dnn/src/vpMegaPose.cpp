@@ -33,8 +33,11 @@
  *
 *****************************************************************************/
 
-#include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
+
+#include <visp3/dnn_tracker/vpMegaPose.h>
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <arpa/inet.h>
@@ -230,8 +233,8 @@ void decode(const std::vector<uint8_t> &buffer, unsigned int &index, vpHomogeneo
 }
 
 /*
-Decode multiple objects from a byte array.
-These objects can have different types. They are read from the buffer in the order that they are given to the function.
+  Decode multiple objects from a byte array.
+  These objects can have different types. They are read from the buffer in the order that they are given to the function.
 */
 template<typename T, typename ...Rest>
 void decode(const std::vector<uint8_t> &buffer, unsigned int &index, T &object, Rest& ...rest)
@@ -276,20 +279,19 @@ void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<
 
 const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::m_codeMap =
 {
-    {ServerMessage::ERR, "RERR"},
-    {ServerMessage::OK, "OKOK"},
-    {ServerMessage::GET_POSE, "GETP"},
-    {ServerMessage::RET_POSE, "RETP"},
-    {ServerMessage::SET_INTR, "INTR"},
-    {ServerMessage::GET_VIZ, "GETV"},
-    {ServerMessage::RET_VIZ, "RETV"},
-    {ServerMessage::GET_SCORE, "GSCO"},
-    {ServerMessage::RET_SCORE, "RSCO"},
-    {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
-    {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
-    {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
-    {ServerMessage::EXIT, "EXIT"},
-
+  {ServerMessage::ERR, "RERR"},
+  {ServerMessage::OK, "OKOK"},
+  {ServerMessage::GET_POSE, "GETP"},
+  {ServerMessage::RET_POSE, "RETP"},
+  {ServerMessage::SET_INTR, "INTR"},
+  {ServerMessage::GET_VIZ, "GETV"},
+  {ServerMessage::RET_VIZ, "RETV"},
+  {ServerMessage::GET_SCORE, "GSCO"},
+  {ServerMessage::RET_SCORE, "RSCO"},
+  {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
+  {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
+  {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
+  {ServerMessage::EXIT, "EXIT"},
 };
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
@@ -326,7 +328,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   size_t readCount = read(m_serverSocket, &size, sizeof(uint32_t));
 #else
-  size_t readCount = recv(m_serverSocket, reinterpret_cast<char*>(&size), sizeof(uint32_t), 0);
+  size_t readCount = recv(m_serverSocket, reinterpret_cast<char *>(&size), sizeof(uint32_t), 0);
 #endif
   if (readCount != sizeof(uint32_t)) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -337,7 +339,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   readCount = read(m_serverSocket, code, MEGAPOSE_CODE_SIZE);
 #else
-  readCount = recv(m_serverSocket, reinterpret_cast<char*>(code), MEGAPOSE_CODE_SIZE, 0);
+  readCount = recv(m_serverSocket, reinterpret_cast<char *>(code), MEGAPOSE_CODE_SIZE, 0);
 #endif
   if (readCount != MEGAPOSE_CODE_SIZE) {
     throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -351,7 +353,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     int actually_read = read(m_serverSocket, &data[read_total], read_size);
 #else
-    int actually_read = recv(m_serverSocket, reinterpret_cast<char*>(&data[read_total]), read_size, 0);
+    int actually_read = recv(m_serverSocket, reinterpret_cast<char *>(&data[read_total]), read_size, 0);
 #endif
     if (actually_read <= 0) {
       throw vpException(vpException::ioError, "MegaPose: Error while reading data from socket");
@@ -613,3 +615,19 @@ std::vector<std::string> vpMegaPose::getObjectNames()
   std::vector<std::string> result = jsonValue;
   return result;
 }
+
+#else
+
+// Work around to avoid libvisp_dnn_tracker library empty when threads are not used
+class VISP_EXPORT dummy_vpMegaPose
+{
+public:
+  dummy_vpMegaPose() { };
+};
+
+#if !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPose.cpp.o) has no symbols
+void dummy_vpMegaPose_fct() { };
+#endif
+
+#endif

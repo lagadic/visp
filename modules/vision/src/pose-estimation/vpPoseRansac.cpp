@@ -49,7 +49,9 @@
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
+#if defined(VISP_HAVE_THREADS)
 #include <thread>
+#endif
 
 #define eps 1e-6
 
@@ -227,7 +229,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
         }
       }
       else {
-     // No post filtering on pose, so copy cMo_temp to cMo
+        // No post filtering on pose, so copy cMo_temp to cMo
         m_cMo = cMo_tmp;
       }
 
@@ -339,7 +341,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
   }
   else {
- // No prefiltering
+    // No prefiltering
     listOfUniquePoints = listOfPoints;
 
     size_t index_pt = 0;
@@ -353,10 +355,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     throw(vpPoseException(vpPoseException::notInitializedError, "Not enough point to compute the pose"));
   }
 
+#if defined(VISP_HAVE_THREADS)
   unsigned int nbThreads = 1;
   bool executeParallelVersion = useParallelRansac;
+#else
+  bool executeParallelVersion = false;
+#endif
 
   if (executeParallelVersion) {
+#if defined(VISP_HAVE_THREADS)
     if (nbParallelRansacThreads <= 0) {
       // Get number of CPU threads
       nbThreads = std::thread::hardware_concurrency();
@@ -368,11 +375,13 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     else {
       nbThreads = nbParallelRansacThreads;
     }
+#endif
   }
 
   bool foundSolution = false;
 
   if (executeParallelVersion) {
+#if defined(VISP_HAVE_THREADS)
     std::vector<std::thread> threadpool;
     std::vector<vpRansacFunctor> ransacWorkers;
 
@@ -400,6 +409,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
     bool successRansac = false;
     size_t best_consensus_size = 0;
+
     for (auto &worker : ransacWorkers) {
       if (worker.getResult()) {
         successRansac = true;
@@ -413,11 +423,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
 
     foundSolution = successRansac;
+#endif
   }
   else {
- // Sequential RANSAC
+    // Sequential RANSAC
     vpRansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
-                                   checkDegeneratePoints, listOfUniquePoints, func);
+                                     checkDegeneratePoints, listOfUniquePoints, func);
     sequentialRansac();
     foundSolution = sequentialRansac.getResult();
 
@@ -494,10 +505,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
 int vpPose::computeRansacIterations(double probability, double epsilon, const int sampleSize, int maxIterations)
 {
-  probability = (std::max)(probability, 0.0);
-  probability = (std::min)(probability, 1.0);
-  epsilon = (std::max)(epsilon, 0.0);
-  epsilon = (std::min)(epsilon, 1.0);
+  probability = std::max<double>(probability, 0.0);
+  probability = std::min<double>(probability, 1.0);
+  epsilon = std::max<double>(epsilon, 0.0);
+  epsilon = std::min<double>(epsilon, 1.0);
 
   if (vpMath::nul(epsilon)) {
     // no outliers
@@ -522,7 +533,7 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
     return 0;
   }
 
-  N = log((std::max)(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
+  N = log(std::max<double>(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
   if (logval < 0.0 && N < maxIterations) {
     return (int)ceil(N);
   }

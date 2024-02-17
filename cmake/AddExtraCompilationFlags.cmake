@@ -95,6 +95,10 @@ elseif(MSVC)
   endif()
 endif()
 
+if((NOT VISP_HAVE_NULLPTR) AND (VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98) AND (NOT MSVC))
+  add_extra_compiler_option("-Wno-c++11-compat")
+endif()
+
 # Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var
 if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0) AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0) AND ARM)
   # Here to disable warnings due to gcc bug introduced in gcc 7 on arm.

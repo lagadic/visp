@@ -98,7 +98,8 @@ int main()
 class VISP_EXPORT vpImageIo
 {
 private:
-  typedef enum {
+  typedef enum
+  {
     FORMAT_PGM,
     FORMAT_PPM,
     FORMAT_JPEG,
@@ -118,10 +119,11 @@ private:
 
 public:
   //! Image IO backend for only jpeg and png formats image loading and saving
-  enum vpImageIoBackendType {
+  enum vpImageIoBackendType
+  {
     IO_DEFAULT_BACKEND,    //!< Default backend
-    IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg
-    IO_OPENCV_BACKEND,     //!< Use OpenCV
+    IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg-turbo
+    IO_OPENCV_BACKEND,     //!< Use OpenCV imgcodecs module
     IO_SIMDLIB_BACKEND,    //!< Use embedded simd library
     IO_STB_IMAGE_BACKEND   //!< Use embedded stb_image library
   };
@@ -172,5 +174,15 @@ public:
 
   static void writeEXR(const vpImage<float> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
   static void writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
+
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I,
+      int backend = IO_DEFAULT_BACKEND);
+  static void readPNGfromMem(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I,
+      int backend = IO_DEFAULT_BACKEND);
+
+  static void writePNGtoMem(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND);
+  static void writePNGtoMem(const vpImage<vpRGBa> &I, std::vector<unsigned char> &buffer,
+      int backend = IO_DEFAULT_BACKEND, bool saveAlpha = false);
 };
 #endif

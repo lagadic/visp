@@ -3019,6 +3019,15 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string &settingsFile, boo
     setOgreVisibilityTest(visJson.value("ogre", useOgre));
     setScanLineVisibilityTest(visJson.value("scanline", useScanLine));
   }
+
+  // VVS global settings
+  if (settings.contains("vvs")) {
+    const json vvsJson = settings["vvs"];
+    setLambda(vvsJson.value("lambda", this->m_lambda));
+    setMaxIter(vvsJson.value("maxIter", this->m_maxIter));
+    setInitialMu(vvsJson.value("initialMu", this->m_initialMu));
+  }
+
   //If a 3D model is defined, load it
   if (settings.contains("model")) {
     loadModel(settings.at("model").get<std::string>(), verbose);
@@ -3047,6 +3056,12 @@ void vpMbGenericTracker::saveConfigFile(const std::string &settingsFile) const
     }
   }
   j["trackers"] = trackers;
+  j["vvs"] = json {
+    {"lambda", m_lambda},
+    {"maxIter", m_maxIter},
+    {"initialMu", m_initialMu}
+  };
+
   std::ofstream f(settingsFile);
   if (f.good()) {
     const unsigned indentLevel = 4;
@@ -6687,6 +6702,7 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {
+#if defined(VISP_HAVE_PUGIXML)
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile, verbose);
 
@@ -6815,6 +6831,11 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 
   // Depth dense
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
+#else
+  (void)configFile;
+  (void)verbose;
+  throw(vpException(vpException::ioError, "vpMbGenericTracker::TrackerWrapper::loadConfigFile() needs pugixml built-in 3rdparty"));
+#endif
 }
 
 #ifdef VISP_HAVE_PCL

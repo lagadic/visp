@@ -195,7 +195,7 @@ public:
   // copy operator from vpMatrix (handle with care)
   vpForceTwistMatrix &operator=(const vpForceTwistMatrix &H);
 
-  int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
+  int print(std::ostream &s, unsigned int length, char const *intro = nullptr) const;
 
   /*!
     This function is not applicable to a velocity twist matrix that is always

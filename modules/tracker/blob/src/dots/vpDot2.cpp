@@ -271,7 +271,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
     track(I);
   }
   catch (const vpException &e) {
- // vpERROR_TRACE("Error caught") ;
+    // vpERROR_TRACE("Error caught") ;
     throw(e);
   }
 }
@@ -331,7 +331,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
     track(I);
   }
   catch (const vpException &e) {
- // vpERROR_TRACE("Error caught") ;
+    // vpERROR_TRACE("Error caught") ;
     throw(e);
   }
 }
@@ -390,7 +390,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &i
     track(I);
   }
   catch (const vpException &e) {
- // vpERROR_TRACE("Error caught") ;
+    // vpERROR_TRACE("Error caught") ;
     throw(e);
   }
 }
@@ -1100,8 +1100,9 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
 
       // otherwise estimate the width, height and surface of the dot we
       // created, and test it.
-      if (dotToTest != nullptr)
+      if (dotToTest != nullptr) {
         delete dotToTest;
+      }
       dotToTest = getInstance();
       dotToTest->setCog(germ);
       dotToTest->setGrayLevelMin(getGrayLevelMin());
@@ -1190,13 +1191,14 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
         }
       }
       else {
-     // Store bad dots
+        // Store bad dots
         badDotsVector.push_front(*dotToTest);
       }
     }
   }
-  if (dotToTest != nullptr)
+  if (dotToTest != nullptr) {
     delete dotToTest;
+  }
 }
 
 /*!
@@ -1234,7 +1236,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
   if ((std::fabs(wantedDot.getWidth()) > std::numeric_limits<double>::epsilon()) &&
       (std::fabs(wantedDot.getHeight()) > std::numeric_limits<double>::epsilon()) &&
       (std::fabs(wantedDot.getArea()) > std::numeric_limits<double>::epsilon()))
-  // if (size_precision!=0){
+    // if (size_precision!=0){
   {
     if (std::fabs(size_precision) > std::numeric_limits<double>::epsilon()) {
       double epsilon = 0.001;
@@ -1751,7 +1753,7 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &_u
   \param border_v : The column coordinate of the found starting point.
 
   \return false if the width of this dot was initialised and we already
-crossed the dot on more than the max possible width. Return true if success.
+  crossed the dot on more than the max possible width. Return true if success.
 
   \sa computeParameters()
 */
@@ -1879,8 +1881,8 @@ bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const u
                     element = (element + 3) % 8; // turn diag right down
                   }
                   else {
-                 // No neighbor with a good level
-                 //
+                    // No neighbor with a good level
+                    //
                     return false;
                   }
                 }
@@ -1927,8 +1929,6 @@ bool vpDot2::computeFreemanChainElement(const vpImage<unsigned char> &I, const u
 
   Considering the previous coordinates (u_p, v_p) of a pixel on a border, the
   next coordinates (u, v) are given by: u = u_p + du and v = v_p + dv
-
-
 */
 void vpDot2::computeFreemanParameters(const int &u_p, const int &v_p, unsigned int &element, int &du, int &dv,
                                       float &dS, float &dMu, float &dMv, float &dMuv, float &dMu2, float &dMv2)
@@ -2414,11 +2414,12 @@ void vpDot2::trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsign
   for (i = 0; i < n; ++i)
     vpDisplay::displayCircle(I, cogs[i], 4, vpColor::blue, true);
   // if exists, desired position
-  if (cogStar != nullptr)
+  if (cogStar != nullptr) {
     for (i = 0; i < n; ++i) {
       vpDisplay::displayDotLine(I, cogStar[i], dot[i].getCog(), vpColor::red);
       vpDisplay::displayCircle(I, cogStar[i], 4, vpColor::red, true);
     }
+  }
   vpDisplay::flush(I);
 }
 

@@ -39,7 +39,7 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE)
+#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include "vpRealSense_impl.h"
 
@@ -1045,7 +1045,6 @@ std::ostream &operator<<(std::ostream &os, const vpRealSense &rs)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_sensor.a(vpRealSense.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_sensor.a(vpRealSense.cpp.o) has  symbols
 void dummy_vpRealSense() { };
 #endif

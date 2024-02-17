@@ -68,10 +68,13 @@ VISP_EXPORT bool checkSSE41();
 VISP_EXPORT bool checkSSE42();
 VISP_EXPORT bool checkAVX();
 VISP_EXPORT bool checkAVX2();
+
+#if defined(VISP_HAVE_SIMDLIB)
 VISP_EXPORT bool checkNeon();
 VISP_EXPORT size_t getCPUCacheL1();
 VISP_EXPORT size_t getCPUCacheL2();
 VISP_EXPORT size_t getCPUCacheL3();
+#endif
 VISP_EXPORT void printCPUInfo();
 } // namespace vpCPUFeatures
 

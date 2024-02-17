@@ -21,7 +21,7 @@
 #include <visp3/gui/vpDisplayX.h>
 
 // Check if std:c++17 or higher
-#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && defined(VISP_HAVE_DISPLAY)
+#if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML)
 
 // Local helper
 namespace
@@ -340,7 +340,7 @@ int main(int, char *argv[])
 {
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L)))
 
-#if defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_PUGIXML)
 
   // Get prior data
   //! [Prior_Data]
@@ -459,7 +459,7 @@ int main(int, char *argv[])
 
 #else
   (void)argv;
-  std::cout << "There is no display available to run this tutorial." << std::endl;
+  std::cout << "There is no display and pugixml available to run this tutorial." << std::endl;
 #endif // defined(VISP_HAVE_DISPLAY)
 #else
   (void)argv;

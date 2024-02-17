@@ -45,7 +45,9 @@
 
 #if defined(VISP_HAVE_MODULE_MBT) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
+#endif
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayD3D.h>
@@ -163,8 +165,10 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
                vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
+#endif
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
   std::string ext("png");
 #else
@@ -228,9 +232,11 @@ template <typename Type>
 bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_allowed, bool opt_display,
          bool useScanline, int opt_lastFrame, bool use_mask)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
-  // Initialise a  display
+#endif
+// Initialise a  display
 #if defined(VISP_HAVE_X11)
   vpDisplayX display1, display2;
 #elif defined(VISP_HAVE_GDI)
@@ -248,8 +254,10 @@ bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_al
   std::vector<int> tracker_type;
   tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
   vpMbGenericTracker tracker(tracker_type);
+
+#if defined(VISP_HAVE_PUGIXML)
   tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
-#if 0
+#else
     // Corresponding parameters manually set to have an example code
   {
     vpCameraParameters cam_depth;

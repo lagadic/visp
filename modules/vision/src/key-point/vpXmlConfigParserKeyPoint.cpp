@@ -43,6 +43,7 @@
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
 #include <map>
+#if defined(VISP_HAVE_PUGIXML)
 #include <pugixml.hpp>
 
 #include <visp3/core/vpException.h>
@@ -545,3 +546,9 @@ bool vpXmlConfigParserKeyPoint::getUseRansacVVSPoseEstimation() const
 {
   return m_impl->getUseRansacVVSPoseEstimation();
 }
+
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_core.a(vpXmlConfigParserKeyPoint.cpp.o) has no symbols
+void dummy_vpXmlConfigParserKeyPoint() { };
+
+#endif

@@ -42,7 +42,7 @@
   parameterization for the rotation.
 
   Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi)
-*/
+ */
 
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRotationVector.h>
@@ -199,8 +199,10 @@ public:
 
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRxyzVector &operator=(const vpRxyzVector &rxyz) = default;
   vpRxyzVector &operator=(const std::initializer_list<double> &list);
+#endif
 };
 
 #endif

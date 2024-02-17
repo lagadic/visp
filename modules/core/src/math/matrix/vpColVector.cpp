@@ -53,7 +53,9 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationVector.h>
 
-#include <Simd/SimdLib.hpp>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 
 vpColVector vpColVector::operator+(const vpColVector &v) const
 {
@@ -161,10 +163,12 @@ void vpColVector::init(const vpColVector &v, unsigned int r, unsigned int nrows)
                       v.getRows()));
   resize(nrows, false);
 
-  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
-    return;                  // Nothing to do
-  for (unsigned int i = r; i < rnrows; i++)
+  if (this->rowPtrs == nullptr) { // Fix coverity scan: explicit null dereferenced
+    return; // Nothing to do
+  }
+  for (unsigned int i = r; i < rnrows; i++) {
     (*this)[i - r] = v[i];
+  }
 }
 
 vpColVector::vpColVector(const vpRotationVector &v) : vpArray2D<double>(v.size(), 1)
@@ -214,6 +218,7 @@ vpColVector::vpColVector(const std::vector<float> &v) : vpArray2D<double>((unsig
     (*this)[i] = (double)(v[i]);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -228,6 +233,7 @@ vpColVector::vpColVector(vpColVector &&v) : vpArray2D<double>()
   v.dsize = 0;
   v.data = nullptr;
 }
+#endif
 
 vpColVector vpColVector::operator-() const
 {
@@ -402,6 +408,7 @@ std::vector<double> vpColVector::toStdVector() const
   return v;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpColVector &vpColVector::operator=(vpColVector &&other)
 {
   if (this != &other) {
@@ -430,6 +437,7 @@ vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
+#endif
 
 bool vpColVector::operator==(const vpColVector &v) const
 {
@@ -645,8 +653,22 @@ double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
   if (v.data == nullptr || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute column vector stdev: vector empty"));
   }
-
+#if defined(VISP_HAVE_SIMDLIB)
   return SimdVectorStdev(v.data, v.rowNum, useBesselCorrection);
+#else
+  double mean_value = v.sum() / v.size();
+  double sum_squared_diff = 0.0;
+  for (size_t i = 0; i < v.size(); i++) {
+    sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
+  }
+
+  double divisor = static_cast<double>(v.size());
+  if (useBesselCorrection) {
+    divisor = divisor - 1;
+  }
+
+  return std::sqrt(sum_squared_diff / divisor);
+#endif
 }
 
 vpMatrix vpColVector::skew(const vpColVector &v)
@@ -759,7 +781,7 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
   if (maxAfter == 1)
     maxAfter = 0;
 
@@ -800,9 +822,31 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
   return (int)(maxBefore + maxAfter);
 }
 
-double vpColVector::sum() const { return SimdVectorSum(data, rowNum); }
+double vpColVector::sum() const
+{
+#if defined(VISP_HAVE_SIMDLIB)
+  return SimdVectorSum(data, rowNum);
+#else
+  double sum = 0.0;
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    sum += (*this)[i];
+  }
+  return sum;
+#endif
+}
 
-double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum); }
+double vpColVector::sumSquare() const
+{
+#if defined(VISP_HAVE_SIMDLIB)
+  return SimdVectorSumSquare(data, rowNum);
+#else
+  double sum_square = 0.0;
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    sum_square += (*this)[i] * (*this)[i];
+  }
+  return sum_square;
+#endif
+}
 
 double vpColVector::frobeniusNorm() const
 {
@@ -819,9 +863,14 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
 
   vpColVector out;
   out.resize(rowNum, false);
-
+#if defined(VISP_HAVE_SIMDLIB)
   SimdVectorHadamard(data, v.data, rowNum, out.data);
+#else
 
+#endif
+  for (unsigned int i = 0; i < dsize; i++) {
+    out.data[i] = data[i] * v.data[i];
+  }
   return out;
 }
 

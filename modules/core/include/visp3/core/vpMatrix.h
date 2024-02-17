@@ -186,19 +186,21 @@ public:
 
      The following example shows how to create a matrix from an homogeneous
      matrix:
-\code
-vpRotationMatrix R;
-vpMatrix M(R);
-\endcode
+    \code
+    vpRotationMatrix R;
+    vpMatrix M(R);
+    \endcode
    */
   vpMatrix(const vpArray2D<double> &A) : vpArray2D<double>(A) { }
 
   vpMatrix(const vpMatrix &A) : vpArray2D<double>(A) { }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix(vpMatrix &&A);
   explicit vpMatrix(const std::initializer_list<double> &list);
   explicit vpMatrix(unsigned int nrows, unsigned int ncols, const std::initializer_list<double> &list);
   explicit vpMatrix(const std::initializer_list<std::initializer_list<double> > &lists);
+#endif
 
   /*!
     Removes all elements from the matrix (which are destroyed),
@@ -272,10 +274,13 @@ vpMatrix M(R);
   vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
   vpMatrix &operator=(const vpMatrix &A);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(vpMatrix &&A);
 
   vpMatrix &operator=(const std::initializer_list<double> &list);
   vpMatrix &operator=(const std::initializer_list<std::initializer_list<double> > &lists);
+#endif
   vpMatrix &operator=(double x);
   //@}
 
@@ -464,8 +469,7 @@ vpMatrix M(R);
   unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                             vpMatrix &kerAt) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverse(int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
@@ -476,37 +480,31 @@ vpMatrix M(R);
   vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseLapack(int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
 #if defined(VISP_HAVE_EIGEN3)
   vpMatrix pseudoInverseEigen3(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseEigen3(int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
 #if defined(VISP_HAVE_OPENCV)
   vpMatrix pseudoInverseOpenCV(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                   vpMatrix &kerAt) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
   vpMatrix pseudoInverseOpenCV(int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
-                          vpMatrix &kerAt) const;
+  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
 #endif
   //@}
 
@@ -978,7 +976,6 @@ vpMatrix M(R);
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-
   vp_deprecated double euclideanNorm() const;
 
   /*!

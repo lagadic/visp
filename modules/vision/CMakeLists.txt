@@ -167,7 +167,7 @@ endif()
 
 vp_set_source_file_compile_flag(src/pose-estimation/vpPoseFeatures.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/pose-estimation/vpPoseRansac.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/pose-estimation/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/pose-estimation/private/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/keypoint/vpKeyPoint.cpp -Wno-strict-overflow)
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)

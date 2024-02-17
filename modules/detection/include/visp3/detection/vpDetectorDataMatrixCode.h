@@ -110,7 +110,7 @@ class VISP_EXPORT vpDetectorDataMatrixCode : public vpDetectorBase
 {
 public:
   vpDetectorDataMatrixCode();
-  bool detect(const vpImage<unsigned char> &I) override;
+  bool detect(const vpImage<unsigned char> &I) vp_override;
 };
 
 #endif

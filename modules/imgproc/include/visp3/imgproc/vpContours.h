@@ -112,6 +112,8 @@ struct vpDirection
    */
   vpDirection()
   {
+    m_direction = NORTH;
+
     m_dirx[0] = 0;
     m_dirx[1] = 1;
     m_dirx[2] = 1;

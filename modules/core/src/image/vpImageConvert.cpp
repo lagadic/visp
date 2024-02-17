@@ -41,14 +41,18 @@
 #include <map>
 #include <sstream>
 
-#if defined _OPENMP
+#if defined(_OPENMP)
 #include <omp.h>
 #endif
 
+
+#include <visp3/core/vpConfig.h>
 // image
 #include "private/vpBayerConversion.h"
 #include "private/vpImageConvert_impl.h"
-#include <Simd/SimdLib.hpp>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 #include <visp3/core/vpImageConvert.h>
 
 bool vpImageConvert::YCbCrLUTcomputed = false;
@@ -102,14 +106,17 @@ void vpImageConvert::convert(const vpImage<float> &src, vpImage<unsigned char> &
 
   src.getMinMaxValue(min, max);
 
-  for (unsigned int i = 0; i < max_xy; i++) {
-    float val = 255.f * (src.bitmap[i] - min) / (max - min);
-    if (val < 0)
+  for (unsigned int i = 0; i < max_xy; ++i) {
+    float val = 255.f * ((src.bitmap[i] - min) / (max - min));
+    if (val < 0) {
       dest.bitmap[i] = 0;
-    else if (val > 255)
+    }
+    else if (val > 255) {
       dest.bitmap[i] = 255;
-    else
-      dest.bitmap[i] = (unsigned char)val;
+    }
+    else {
+      dest.bitmap[i] = static_cast<unsigned char>(val);
+    }
   }
 }
 
@@ -121,21 +128,25 @@ void vpImageConvert::convert(const vpImage<float> &src, vpImage<unsigned char> &
 */
 void vpImageConvert::convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest)
 {
+  const unsigned int srcHeight = src.getHeight(), srcWidth = src.getWidth();
   dest.resize(src.getHeight(), src.getWidth());
   vpRGBf min, max;
   src.getMinMaxValue(min, max);
 
-  for (unsigned int i = 0; i < src.getHeight(); i++) {
-    for (unsigned int j = 0; j < src.getWidth(); j++) {
-      for (unsigned int c = 0; c < 3; c++) {
-        float val = 255.f * (reinterpret_cast<const float *>(&(src[i][j]))[c] - reinterpret_cast<float *>(&min)[c]) /
-          (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]);
-        if (val < 0)
+  for (unsigned int i = 0; i < srcHeight; ++i) {
+    for (unsigned int j = 0; j < srcWidth; ++j) {
+      for (unsigned int c = 0; c < 3; ++c) {
+        float val = 255.f * ((reinterpret_cast<const float *>(&(src[i][j]))[c] - reinterpret_cast<float *>(&min)[c]) /
+                             (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]));
+        if (val < 0) {
           reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 0;
-        else if (val > 255)
+        }
+        else if (val > 255) {
           reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 255;
-        else
-          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = (unsigned char)val;
+        }
+        else {
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = static_cast<unsigned char>(val);
+        }
       }
     }
   }
@@ -148,9 +159,12 @@ void vpImageConvert::convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest)
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<float> &dest)
 {
-  dest.resize(src.getHeight(), src.getWidth());
-  for (unsigned int i = 0; i < src.getHeight() * src.getWidth(); i++)
-    dest.bitmap[i] = (float)src.bitmap[i];
+  const unsigned int srcHeight = src.getHeight(), srcWidth = src.getWidth();
+  const unsigned int srcSize = srcHeight * srcWidth;
+  dest.resize(srcHeight, srcWidth);
+  for (unsigned int i = 0; i < srcSize; ++i) {
+    dest.bitmap[i] = static_cast<float>(src.bitmap[i]);
+  }
 }
 
 /*!
@@ -167,14 +181,17 @@ void vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> 
 
   src.getMinMaxValue(min, max);
 
-  for (unsigned int i = 0; i < max_xy; i++) {
-    double val = 255. * (src.bitmap[i] - min) / (max - min);
-    if (val < 0)
+  for (unsigned int i = 0; i < max_xy; ++i) {
+    double val = 255. * ((src.bitmap[i] - min) / (max - min));
+    if (val < 0) {
       dest.bitmap[i] = 0;
-    else if (val > 255)
+    }
+    else if (val > 255) {
       dest.bitmap[i] = 255;
-    else
-      dest.bitmap[i] = (unsigned char)val;
+    }
+    else {
+      dest.bitmap[i] = static_cast<unsigned char>(val);
+    }
   }
 }
 
@@ -186,10 +203,12 @@ void vpImageConvert::convert(const vpImage<double> &src, vpImage<unsigned char> 
 */
 void vpImageConvert::convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest, unsigned char bitshift)
 {
+  const unsigned int srcSize = src.getSize();
   dest.resize(src.getHeight(), src.getWidth());
 
-  for (unsigned int i = 0; i < src.getSize(); i++)
+  for (unsigned int i = 0; i < srcSize; ++i) {
     dest.bitmap[i] = static_cast<unsigned char>(src.bitmap[i] >> bitshift);
+  }
 }
 
 /*!
@@ -200,10 +219,12 @@ void vpImageConvert::convert(const vpImage<uint16_t> &src, vpImage<unsigned char
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest, unsigned char bitshift)
 {
+  const unsigned int srcSize = src.getSize();
   dest.resize(src.getHeight(), src.getWidth());
 
-  for (unsigned int i = 0; i < src.getSize(); i++)
+  for (unsigned int i = 0; i < srcSize; ++i) {
     dest.bitmap[i] = static_cast<unsigned char>(src.bitmap[i] << bitshift);
+  }
 }
 
 /*!
@@ -213,9 +234,12 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<uint16_t
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, vpImage<double> &dest)
 {
-  dest.resize(src.getHeight(), src.getWidth());
-  for (unsigned int i = 0; i < src.getHeight() * src.getWidth(); i++)
-    dest.bitmap[i] = (double)src.bitmap[i];
+  const unsigned int srcHeight = src.getHeight(), srcWidth = src.getWidth();
+  const unsigned int srcSize = srcHeight * srcWidth;
+  dest.resize(srcHeight, srcWidth);
+  for (unsigned int i = 0; i < srcSize; ++i) {
+    dest.bitmap[i] = static_cast<double>(src.bitmap[i]);
+  }
 }
 
 /*!
@@ -285,89 +309,101 @@ void vpImageConvert::createDepthHistogram(const vpImage<float> &src_depth, vpIma
   \param[in] flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpRGBa.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/core/vpRGBa.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<vpRGBa> Ic; // A color image
-  cv::Mat Ip;
+  int main()
+  {
+  #if defined(VISP_HAVE_OPENCV)
+    vpImage<vpRGBa> Ic; // A color image
+    cv::Mat Ip;
 
-  // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", cv::IMREAD_COLOR); // Second parameter for a BGR encoding.
-  // Convert the grayscale cv::Mat into vpImage<vpRGBa>
-  vpImageConvert::convert(Ip, Ic);
+    // Read an image on a disk with openCV library
+    Ip = cv::imread("image.pgm", cv::IMREAD_COLOR); // Second parameter for a BGR encoding.
+    // Convert the grayscale cv::Mat into vpImage<vpRGBa>
+    vpImageConvert::convert(Ip, Ic);
 
-  // ...
-#endif
-}
+    // ...
+  #endif
+  }
   \endcode
 */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip)
 {
-  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-
+  dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+  unsigned int destRows = dest.getRows();
+  unsigned int destCols = dest.getCols();
   if (src.type() == CV_8UC4) {
     vpRGBa rgbaVal;
-    for (unsigned int i = 0; i < dest.getRows(); ++i)
-      for (unsigned int j = 0; j < dest.getCols(); ++j) {
-        cv::Vec4b tmp = src.at<cv::Vec4b>((int)i, (int)j);
+    for (unsigned int i = 0; i < destRows; ++i)
+      for (unsigned int j = 0; j < destCols; ++j) {
+        cv::Vec4b tmp = src.at<cv::Vec4b>(static_cast<int>(i), static_cast<int>(j));
         rgbaVal.R = tmp[2];
         rgbaVal.G = tmp[1];
         rgbaVal.B = tmp[0];
         rgbaVal.A = tmp[3];
-        if (flip)
-          dest[dest.getRows() - i - 1][j] = rgbaVal;
-        else
+        if (flip) {
+          dest[destRows - i - 1][j] = rgbaVal;
+        }
+        else {
           dest[i][j] = rgbaVal;
+        }
       }
   }
   else if (src.type() == CV_8UC3) {
-    if (src.isContinuous() && !flip) {
+#if defined(VISP_HAVE_SIMDLIB)
+    if (src.isContinuous() && (!flip)) {
       SimdRgbToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                     dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     }
     else {
+#endif
       vpRGBa rgbaVal;
       rgbaVal.A = vpRGBa::alpha_default;
-      for (unsigned int i = 0; i < dest.getRows(); ++i) {
-        for (unsigned int j = 0; j < dest.getCols(); ++j) {
-          cv::Vec3b tmp = src.at<cv::Vec3b>((int)i, (int)j);
+      for (unsigned int i = 0; i < destRows; ++i) {
+        for (unsigned int j = 0; j < destCols; ++j) {
+          cv::Vec3b tmp = src.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j));
           rgbaVal.R = tmp[2];
           rgbaVal.G = tmp[1];
           rgbaVal.B = tmp[0];
           if (flip) {
-            dest[dest.getRows() - i - 1][j] = rgbaVal;
+            dest[destRows - i - 1][j] = rgbaVal;
           }
           else {
             dest[i][j] = rgbaVal;
           }
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
   else if (src.type() == CV_8UC1) {
-    if (src.isContinuous() && !flip) {
+#if defined(VISP_HAVE_SIMDLIB)
+    if (src.isContinuous() && (!flip)) {
       SimdGrayToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t *>(dest.bitmap),
                      dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     }
     else {
+#endif
       vpRGBa rgbaVal;
-      for (unsigned int i = 0; i < dest.getRows(); ++i) {
-        for (unsigned int j = 0; j < dest.getCols(); ++j) {
-          rgbaVal = src.at<unsigned char>((int)i, (int)j);
+      for (unsigned int i = 0; i < destRows; ++i) {
+        for (unsigned int j = 0; j < destCols; ++j) {
+          rgbaVal = src.at<unsigned char>(static_cast<int>(i), static_cast<int>(j));
+          rgbaVal.A = vpRGBa::alpha_default;
           if (flip) {
-            dest[dest.getRows() - i - 1][j] = rgbaVal;
+            dest[destRows - i - 1][j] = rgbaVal;
           }
           else {
             dest[i][j] = rgbaVal;
           }
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
 }
 
@@ -386,86 +422,92 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool fli
   OpenMP will choose the number of threads.
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-#if defined(VISP_HAVE_OPENCV)
-  vpImage<unsigned char> Ig; // A grayscale image
-  cv::Mat Ip;
+  int main()
+  {
+  #if defined(VISP_HAVE_OPENCV)
+    vpImage<unsigned char> Ig; // A grayscale image
+    cv::Mat Ip;
 
-  // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", cv::IMREAD_GRAYSCALE); // Second parameter for a gray level.
-  // Convert the grayscale cv::Mat into vpImage<unsigned char>
-  vpImageConvert::convert(Ip, Ig);
+    // Read an image on a disk with openCV library
+    Ip = cv::imread("image.pgm", cv::IMREAD_GRAYSCALE); // Second parameter for a gray level.
+    // Convert the grayscale cv::Mat into vpImage<unsigned char>
+    vpImageConvert::convert(Ip, Ig);
 
-  // ...
-#endif
-}
+    // ...
+  #endif
+  }
   \endcode
 */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip, unsigned int nThreads)
 {
   if (src.type() == CV_8UC1) {
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
-    if (src.isContinuous() && !flip) {
-      memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols));
+    dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+    unsigned int destRows = dest.getRows();
+    unsigned int destCols = dest.getCols();
+    if (src.isContinuous() && (!flip)) {
+      memcpy(dest.bitmap, src.data, static_cast<size_t>(src.rows * src.cols));
     }
     else {
       if (flip) {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1(), (size_t)src.step);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1()), static_cast<size_t>(src.step));
         }
       }
       else {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1(), (size_t)src.step);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1()), static_cast<size_t>(src.step));
         }
       }
     }
   }
   else if (src.type() == CV_8UC3) {
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+    unsigned int destRows = dest.getRows();
+    unsigned int destCols = dest.getCols();
     if (src.isContinuous()) {
-      BGRToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows,
+      BGRToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, static_cast<unsigned int>(src.cols), static_cast<unsigned int>(src.rows),
                 flip, nThreads);
     }
     else {
       if (flip) {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          BGRToGrey((unsigned char *)src.data + i * src.step1(),
-                    (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
-                    (unsigned int)dest.getCols(), 1, false);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          BGRToGrey((unsigned char *)src.data + (i * src.step1()),
+                    (unsigned char *)dest.bitmap + ((destRows - i - 1) * destCols),
+                    static_cast<unsigned int>(destCols), 1, false);
         }
       }
       else {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          BGRToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
-                    (unsigned int)dest.getCols(), 1, false);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          BGRToGrey((unsigned char *)src.data + (i * src.step1()), (unsigned char *)dest.bitmap + (i * destCols),
+                    static_cast<unsigned int>(destCols), 1, false);
         }
       }
     }
   }
   else if (src.type() == CV_8UC4) {
-    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+    unsigned int destRows = dest.getRows();
+    unsigned int destCols = dest.getCols();
     if (src.isContinuous()) {
-      BGRaToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols,
-                 (unsigned int)src.rows, flip, nThreads);
+      BGRaToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, static_cast<unsigned int>(src.cols),
+                 static_cast<unsigned int>(src.rows), flip, nThreads);
     }
     else {
       if (flip) {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          BGRaToGrey((unsigned char *)src.data + i * src.step1(),
-                     (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
-                     (unsigned int)dest.getCols(), 1, false);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          BGRaToGrey((unsigned char *)src.data + (i * src.step1()),
+                     (unsigned char *)dest.bitmap + ((destRows - i - 1) * destCols),
+                     static_cast<unsigned int>(destCols), 1, false);
         }
       }
       else {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          BGRaToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
-                     (unsigned int)dest.getCols(), 1, false);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          BGRaToGrey((unsigned char *)src.data + (i * src.step1()), (unsigned char *)dest.bitmap + (i * destCols),
+                     static_cast<unsigned int>(destCols), 1, false);
         }
       }
     }
@@ -481,15 +523,19 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
  */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip)
 {
-  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+  dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+  unsigned int destRows = dest.getRows();
+  unsigned int destCols = dest.getCols();
 
   if (src.type() == CV_32FC1) {
-    for (unsigned int i = 0; i < dest.getRows(); ++i)
-      for (unsigned int j = 0; j < dest.getCols(); ++j) {
-        if (flip)
-          dest[dest.getRows() - i - 1][j] = src.at<float>((int)i, (int)j);
-        else
-          dest[i][j] = src.at<float>((int)i, (int)j);
+    for (unsigned int i = 0; i < destRows; ++i)
+      for (unsigned int j = 0; j < destCols; ++j) {
+        if (flip) {
+          dest[dest.getRows() - i - 1][j] = src.at<float>(static_cast<int>(i), static_cast<int>(j));
+        }
+        else {
+          dest[i][j] = src.at<float>(static_cast<int>(i), static_cast<int>(j));
+        }
       }
   }
   else {
@@ -508,8 +554,8 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<double> &dest, bool fli
 {
   vpImage<float> I_float;
   convert(src, I_float, flip);
-  unsigned int nbRows = (unsigned int)src.rows;
-  unsigned int nbCols = (unsigned int)src.cols;
+  unsigned int nbRows = static_cast<unsigned int>(src.rows);
+  unsigned int nbCols = static_cast<unsigned int>(src.cols);
   dest.resize(nbRows, nbCols);
   for (unsigned int i = 0; i < nbRows; ++i) {
     for (unsigned int j = 0; j < nbCols; ++j) {
@@ -527,21 +573,23 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<double> &dest, bool fli
  */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool flip)
 {
-  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+  dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+  unsigned int destRows = dest.getRows();
+  unsigned int destCols = dest.getCols();
 
   if (src.type() == CV_16UC1) {
     if (src.isContinuous()) {
-      memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols) * sizeof(uint16_t));
+      memcpy(dest.bitmap, src.data, static_cast<size_t>(src.rows * src.cols) * sizeof(uint16_t));
     }
     else {
       if (flip) {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1() * sizeof(uint16_t), (size_t)src.step);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          memcpy(dest.bitmap + (i * destCols), src.data + ((destRows - i - 1) * src.step1() * sizeof(uint16_t)), static_cast<size_t>(src.step));
         }
       }
       else {
-        for (unsigned int i = 0; i < dest.getRows(); ++i) {
-          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1() * sizeof(uint16_t), (size_t)src.step);
+        for (unsigned int i = 0; i < destRows; ++i) {
+          memcpy(dest.bitmap + (i * destCols), src.data + (i * src.step1() * sizeof(uint16_t)), static_cast<size_t>(src.step));
         }
       }
     }
@@ -560,20 +608,24 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool f
  */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip)
 {
-  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+  dest.resize(static_cast<unsigned int>(src.rows), static_cast<unsigned int>(src.cols));
+  unsigned int destRows = dest.getRows();
+  unsigned int destCols = dest.getCols();
 
   if (src.type() == CV_32FC3) {
     vpRGBf rgbVal;
-    for (unsigned int i = 0; i < dest.getRows(); ++i)
-      for (unsigned int j = 0; j < dest.getCols(); ++j) {
-        cv::Vec3f tmp = src.at<cv::Vec3f>((int)i, (int)j);
+    for (unsigned int i = 0; i < destRows; ++i)
+      for (unsigned int j = 0; j < destCols; ++j) {
+        cv::Vec3f tmp = src.at<cv::Vec3f>(static_cast<int>(i), static_cast<int>(j));
         rgbVal.R = tmp[2];
         rgbVal.G = tmp[1];
         rgbVal.B = tmp[0];
-        if (flip)
-          dest[dest.getRows() - i - 1][j] = rgbVal;
-        else
+        if (flip) {
+          dest[destRows - i - 1][j] = rgbVal;
+        }
+        else {
           dest[i][j] = rgbVal;
+        }
       }
   }
   else {
@@ -619,7 +671,7 @@ int main()
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 {
-  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_8UC4, (void *)src.bitmap);
+  cv::Mat vpToMat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_8UC4, (void *)src.bitmap);
   cv::cvtColor(vpToMat, dest, cv::COLOR_RGBA2BGR);
 }
 
@@ -664,22 +716,22 @@ int main()
 void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData)
 {
   if (copyData) {
-    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
+    cv::Mat tmpMap(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_8UC1, (void *)src.bitmap);
     dest = tmpMap.clone();
   }
   else {
-    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
+    dest = cv::Mat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_8UC1, (void *)src.bitmap);
   }
 }
 
 void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copyData)
 {
   if (copyData) {
-    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
+    cv::Mat tmpMap(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_32FC1, (void *)src.bitmap);
     dest = tmpMap.clone();
   }
   else {
-    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
+    dest = cv::Mat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_32FC1, (void *)src.bitmap);
   }
 }
 
@@ -698,7 +750,7 @@ void vpImageConvert::convert(const vpImage<double> &src, cv::Mat &dest, bool cop
 
 void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
 {
-  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_32FC3, (void *)src.bitmap);
+  cv::Mat vpToMat(static_cast<int>(src.getRows()), static_cast<int>(src.getCols()), CV_32FC3, (void *)src.bitmap);
   cv::cvtColor(vpToMat, dest, cv::COLOR_RGB2BGR);
 }
 
@@ -745,8 +797,9 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::Image
     dest->resize(src.getWidth(), src.getHeight());
     memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth());
   }
-  else
-    dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
+  else {
+    dest->setExternal(src.bitmap, static_cast<int>(src.getCols()), static_cast<int>(src.getRows()));
+  }
 }
 
 /*!
@@ -791,10 +844,12 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src
                              bool copyData)
 {
   dest.resize(src->height(), src->width());
-  if (copyData)
+  if (copyData) {
     memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelMono));
-  else
+  }
+  else {
     dest.bitmap = src->getRawImage();
+  }
 }
 
 /*!
@@ -837,8 +892,9 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp
     dest->resize(src.getWidth(), src.getHeight());
     memcpy(dest->getRawImage(), src.bitmap, src.getHeight() * src.getWidth() * sizeof(vpRGBa));
   }
-  else
-    dest->setExternal(src.bitmap, (int)src.getCols(), (int)src.getRows());
+  else {
+    dest->setExternal(src.bitmap, static_cast<int>(src.getCols()), static_cast<int>(src.getRows()));
+  }
 }
 
 /*!
@@ -884,8 +940,9 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src
   dest.resize(src->height(), src->width());
   if (copyData)
     memcpy(dest.bitmap, src->getRawImage(), src->height() * src->width() * sizeof(yarp::sig::PixelRgba));
-  else
+  else {
     dest.bitmap = static_cast<vpRGBa *>(src->getRawImage());
+  }
 }
 
 /*!
@@ -922,9 +979,10 @@ int main()
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest)
 {
+  const unsigned int srcRows = src.getRows(), srcWidth = src.getWidth();
   dest->resize(src.getWidth(), src.getHeight());
-  for (unsigned int i = 0; i < src.getRows(); i++) {
-    for (unsigned int j = 0; j < src.getWidth(); j++) {
+  for (unsigned int i = 0; i < srcRows; ++i) {
+    for (unsigned int j = 0; j < srcWidth; ++j) {
       dest->pixel(j, i).r = src[i][j].R;
       dest->pixel(j, i).g = src[i][j].G;
       dest->pixel(j, i).b = src[i][j].B;
@@ -972,9 +1030,10 @@ int main()
 */
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest)
 {
-  dest.resize(src->height(), src->width());
-  for (int i = 0; i < src->height(); i++) {
-    for (int j = 0; j < src->width(); j++) {
+  const int srcHeight = src->height(), srcWidth = src->width();
+  dest.resize(srcHeight, srcWidth);
+  for (int i = 0; i < srcHeight; ++i) {
+    for (int j = 0; j < srcWidth; ++j) {
       dest[i][j].R = src->pixel(j, i).r;
       dest[i][j].G = src->pixel(j, i).g;
       dest[i][j].B = src->pixel(j, i).b;
@@ -987,10 +1046,10 @@ void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src,
 
 #define vpSAT(c)                                                                                                       \
   if (c & (~255)) {                                                                                                    \
-    if (c < 0)                                                                                                         \
-      c = 0;                                                                                                           \
+    if (c < 0)                                                                                                       \
+      {c = 0;}                                                                                                           \
     else                                                                                                               \
-      c = 255;                                                                                                         \
+      {c = 255;}                                                                                                         \
   }
 /*!
   Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
@@ -1011,8 +1070,8 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
   int w, h;
   int r, g, b, cr, cg, cb, y1, y2;
 
-  h = (int)height;
-  w = (int)width;
+  h = static_cast<int>(height);
+  w = static_cast<int>(width);
   s = yuyv;
   d = rgba;
   while (h--) {
@@ -1023,7 +1082,7 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
       cg = (*s++ - 128) * 88;
       y2 = *s++;
       cr = ((*s - 128) * 359) >> 8;
-      cg = (cg + (*s++ - 128) * 183) >> 8;
+      cg = (cg + ((*s++ - 128) * 183)) >> 8;
 
       r = y1 + cr;
       b = y1 + cb;
@@ -1065,8 +1124,8 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
   int h, w;
   int r, g, b, cr, cg, cb, y1, y2;
 
-  h = (int)height;
-  w = (int)width;
+  h = static_cast<int>(height);
+  w = static_cast<int>(width);
   s = yuyv;
   d = rgb;
   while (h--) {
@@ -1077,7 +1136,7 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
       cg = (*s++ - 128) * 88;
       y2 = *s++;
       cr = ((*s - 128) * 359) >> 8;
-      cg = (cg + (*s++ - 128) * 183) >> 8;
+      cg = (cg + ((*s++ - 128) * 183)) >> 8;
 
       r = y1 + cr;
       b = y1 + cb;
@@ -1113,8 +1172,8 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
 void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
-
-  while (j < size * 2) {
+  const unsigned int doubleSize = size * 2;
+  while (j < doubleSize) {
     grey[i++] = yuyv[j];
     grey[i++] = yuyv[j + 2];
     j += 4;
@@ -1134,12 +1193,12 @@ void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGBa()" << std::endl;
-  for (unsigned int i = size / 4; i; i--) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = size / 4; i; --i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y0 = *yuv++;
     int Y1 = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int Y2 = *yuv++;
     int Y3 = *yuv++;
@@ -1150,105 +1209,130 @@ void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
     int R = Y0 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y0 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y0 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
 
     //---
     R = Y1 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y1 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y1 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
 
     //---
     R = Y2 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y2 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y2 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
 
     //---
     R = Y3 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y3 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y3 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
   }
 #else
   // tres tres lent ....
   unsigned int i = 0, j = 0;
   unsigned char r, g, b;
-  while (j < numpixels * 3 / 2) {
+  const unsigned int iterLimit = (numpixels * 3) / 2;
+  while (j < iterLimit) {
 
     YUVToRGB(yuv[j + 1], yuv[j], yuv[j + 3], r, g, b);
     rgba[i] = r;
@@ -1300,61 +1384,73 @@ void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGBa()" << std::endl;
-  for (unsigned int i = size / 2; i; i--) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = size / 2; i; --i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y0 = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int Y1 = *yuv++;
     int UV = -U - V;
 
     //---
     int R = Y0 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y0 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y0 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
 
     //---
     R = Y1 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y1 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y1 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
   }
 
@@ -1362,8 +1458,8 @@ void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
   // tres tres lent ....
   unsigned int i = 0, j = 0;
   unsigned char r, g, b;
-
-  while (j < size * 2) {
+  const unsigned int doubleSize = size * 2;
+  while (j < doubleSize) {
 
     YUVToRGB(yuv[j + 1], yuv[j], yuv[j + 2], r, g, b);
     rgba[i] = r;
@@ -1394,7 +1490,8 @@ void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
-  while (j < size * 3 / 2) {
+  const unsigned int iterLimit = (size * 3) / 2;
+  while (j < iterLimit) {
     grey[i] = yuv[j + 1];
     grey[i + 1] = yuv[j + 2];
     grey[i + 2] = yuv[j + 4];
@@ -1420,68 +1517,80 @@ void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 {
 #if 1
   //  std::cout << "call optimized convertYUV422ToRGB()" << std::endl;
-  for (unsigned int i = size / 2; i; i--) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = size / 2; i; --i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y0 = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int Y1 = *yuv++;
     int UV = -U - V;
 
     //---
     int R = Y0 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y0 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y0 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
 
     //---
     R = Y1 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y1 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y1 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
   }
 
 #else
   // tres tres lent ....
   unsigned int i = 0, j = 0;
   unsigned char r, g, b;
-
-  while (j < size * 2) {
+  const unsigned int doubleSize = size * 2;
+  while (j < doubleSize) {
 
     YUVToRGB(yuv[j + 1], yuv[j], yuv[j + 2], r, g, b);
     rgb[i] = r;
@@ -1512,8 +1621,9 @@ void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 void vpImageConvert::YUV422ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
+  const unsigned int doubleSize = size * 2;
 
-  while (j < size * 2) {
+  while (j < doubleSize) {
     grey[i++] = yuv[j + 1];
     grey[i++] = yuv[j + 3];
     j += 4;
@@ -1532,12 +1642,12 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 {
 #if 1
   //  std::cout << "call optimized ConvertYUV411ToRGB()" << std::endl;
-  for (unsigned int i = size / 4; i; i--) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = size / 4; i; --i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y0 = *yuv++;
     int Y1 = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int Y2 = *yuv++;
     int Y3 = *yuv++;
@@ -1548,95 +1658,119 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
     int R = Y0 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y0 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y0 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
 
     //---
     R = Y1 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y1 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y1 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
 
     //---
     R = Y2 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y2 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y2 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
 
     //---
     R = Y3 + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     G = Y3 + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     B = Y3 + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
   }
 #else
   // tres tres lent ....
@@ -1644,7 +1778,8 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
   unsigned int i = 0, j = 0;
   unsigned char r, g, b;
 
-  while (j < size * 3 / 2) {
+  const unsigned int iterLimit = (size * 3) / 2;
+  while (j < iterLimit) {
     YUVToRGB(yuv[j + 1], yuv[j], yuv[j + 3], r, g, b);
     rgb[i] = r;
     rgb[i + 1] = g;
@@ -1692,121 +1827,146 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
   unsigned char *iU = yuv + size;
-  unsigned char *iV = yuv + 5 * size / 4;
-  for (unsigned int i = 0; i < height / 2; i++) {
-    for (unsigned int j = 0; j < width / 2; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iV = yuv + ((5 * size) / 4);
+  const unsigned int halfHeight = height / 2, halfWidth = width / 2;
+  for (unsigned int i = 0; i < halfHeight; ++i) {
+    for (unsigned int j = 0; j < halfWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv;
-      yuv = yuv + width - 1;
+      yuv = yuv + (width - 1);
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv - width + 1;
+      yuv = (yuv - width) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
       rgba = rgba + 4 * width - 7;
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba - 4 * width + 1;
+      rgba = (rgba - (4 * width)) + 1;
     }
     yuv += width;
     rgba += 4 * width;
@@ -1828,117 +1988,142 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
   unsigned char *iU = yuv + size;
-  unsigned char *iV = yuv + 5 * size / 4;
-  for (unsigned int i = 0; i < height / 2; i++) {
-    for (unsigned int j = 0; j < width / 2; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iV = yuv + ((5 * size) / 4);
+  const unsigned int halfHeight = height / 2, halfWidth = width / 2;
+  for (unsigned int i = 0; i < halfHeight; ++i) {
+    for (unsigned int j = 0; j < halfWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv;
-      yuv = yuv + width - 1;
+      yuv = yuv + (width - 1);
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv - width + 1;
+      yuv = (yuv - width) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb + 3 * width - 5;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = rgb + ((3 * width) - 5);
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb - 3 * width + 1;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = (rgb - (3 * width)) + 1;
     }
     yuv += width;
     rgb += 3 * width;
@@ -1954,7 +2139,7 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     *grey++ = *yuv++;
   }
 }
@@ -1970,11 +2155,11 @@ void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 */
 void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = 0; i < size; ++i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int UV = -U - V;
 
@@ -1983,26 +2168,32 @@ void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
     int R = Y + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgba++ = (unsigned char)R;
-    *rgba++ = (unsigned char)G;
-    *rgba++ = (unsigned char)B;
+    *rgba++ = static_cast<unsigned char>(R);
+    *rgba++ = static_cast<unsigned char>(G);
+    *rgba++ = static_cast<unsigned char>(B);
     *rgba++ = vpRGBa::alpha_default;
   }
 }
@@ -2016,11 +2207,11 @@ void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 */
 void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
-    int U = (int)((*yuv++ - 128) * 0.354);
+  for (unsigned int i = 0; i < size; ++i) {
+    int U = static_cast<int>((*yuv++ - 128) * 0.354);
     int U5 = 5 * U;
     int Y = *yuv++;
-    int V = (int)((*yuv++ - 128) * 0.707);
+    int V = static_cast<int>((*yuv++ - 128) * 0.707);
     int V2 = 2 * V;
     int UV = -U - V;
 
@@ -2029,26 +2220,32 @@ void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
     // G = Y - 0.344 U - 0.714 V
     // B = Y + 1.772 U
     int R = Y + V2;
-    if ((R >> 8) > 0)
+    if ((R >> 8) > 0) {
       R = 255;
-    else if (R < 0)
+    }
+    else if (R < 0) {
       R = 0;
+    }
 
     int G = Y + UV;
-    if ((G >> 8) > 0)
+    if ((G >> 8) > 0) {
       G = 255;
-    else if (G < 0)
+    }
+    else if (G < 0) {
       G = 0;
+    }
 
     int B = Y + U5;
-    if ((B >> 8) > 0)
+    if ((B >> 8) > 0) {
       B = 255;
-    else if (B < 0)
+    }
+    else if (B < 0) {
       B = 0;
+    }
 
-    *rgb++ = (unsigned char)R;
-    *rgb++ = (unsigned char)G;
-    *rgb++ = (unsigned char)B;
+    *rgb++ = static_cast<unsigned char>(R);
+    *rgb++ = static_cast<unsigned char>(G);
+    *rgb++ = static_cast<unsigned char>(B);
   }
 }
 
@@ -2061,8 +2258,8 @@ void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
-  yuv++;
-  for (unsigned int i = 0; i < size; i++) {
+  ++yuv;
+  for (unsigned int i = 0; i < size; ++i) {
     *grey++ = *yuv;
     yuv = yuv + 3;
   }
@@ -2085,121 +2282,146 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
   unsigned char *iV = yuv + size;
-  unsigned char *iU = yuv + 5 * size / 4;
-  for (unsigned int i = 0; i < height / 2; i++) {
-    for (unsigned int j = 0; j < width / 2; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iU = yuv + ((5 * size) / 4);
+  const unsigned int halfHeight = height / 2, halfWidth = width / 2;
+  for (unsigned int i = 0; i < halfHeight; ++i) {
+    for (unsigned int j = 0; j < halfWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv;
-      yuv = yuv + width - 1;
+      yuv = yuv + (width - 1);
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv - width + 1;
+      yuv = (yuv - width) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = 0;
-      rgba = rgba + 4 * width - 7;
+      rgba = rgba + ((4 * width) - 7);
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba - 4 * width + 1;
+      rgba = (rgba - (4 * width)) + 1;
     }
     yuv += width;
     rgba += 4 * width;
@@ -2221,117 +2443,142 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
   unsigned char *iV = yuv + size;
-  unsigned char *iU = yuv + 5 * size / 4;
-  for (unsigned int i = 0; i < height / 2; i++) {
-    for (unsigned int j = 0; j < width / 2; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iU = yuv + ((5 * size) / 4);
+  const unsigned int halfHeight = height / 2, halfWidth = width / 2;
+  for (unsigned int i = 0; i < halfHeight; ++i) {
+    for (unsigned int j = 0; j < halfWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv;
-      yuv = yuv + width - 1;
+      yuv = yuv + (width - 1);
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv - width + 1;
+      yuv = (yuv - width) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb + 3 * width - 5;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = rgb + ((3 * width) - 5);
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb - 3 * width + 1;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = (rgb - (3 * width)) + 1;
     }
     yuv += width;
     rgb += 3 * width;
@@ -2355,422 +2602,519 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
   int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width * height;
   unsigned char *iV = yuv + size;
-  unsigned char *iU = yuv + 17 * size / 16;
-  for (unsigned int i = 0; i < height / 4; i++) {
-    for (unsigned int j = 0; j < width / 4; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iU = yuv + ((17 * size) / 16);
+  const unsigned int quarterHeight = height / 4, quarterWidth = width / 4;
+  for (unsigned int i = 0; i < quarterHeight; ++i) {
+    for (unsigned int j = 0; j < quarterWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv++;
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y4 = *yuv++;
       Y5 = *yuv++;
       Y6 = *yuv++;
       Y7 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y8 = *yuv++;
       Y9 = *yuv++;
       Y10 = *yuv++;
       Y11 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y12 = *yuv++;
       Y13 = *yuv++;
       Y14 = *yuv++;
       Y15 = *yuv;
-      yuv = yuv - 3 * width + 1;
+      yuv = (yuv - (3 * width)) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba + 4 * width - 15;
+      rgba = rgba + ((4 * width) - 15);
 
       R = Y4 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y4 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y4 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y5 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y5 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y5 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y6 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y6 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y6 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y7 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y7 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y7 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba + 4 * width - 15;
+      rgba = rgba + ((4 * width) - 15);
 
       R = Y8 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y8 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y8 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y9 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y9 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y9 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y10 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y10 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y10 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y11 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y11 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y11 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba + 4 * width - 15;
+      rgba = rgba + ((4 * width) - 15);
 
       R = Y12 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y12 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y12 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y13 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y13 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y13 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y14 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y14 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y14 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba++ = vpRGBa::alpha_default;
 
       //---
       R = Y15 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y15 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y15 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgba++ = (unsigned char)R;
-      *rgba++ = (unsigned char)G;
-      *rgba++ = (unsigned char)B;
+      *rgba++ = static_cast<unsigned char>(R);
+      *rgba++ = static_cast<unsigned char>(G);
+      *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba - 12 * width + 1;
+      rgba = (rgba - (12 * width)) + 1;
     }
     yuv += 3 * width;
     rgba += 12 * width;
@@ -2791,406 +3135,503 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width * height;
   unsigned char *iV = yuv + size;
-  unsigned char *iU = yuv + 17 * size / 16;
-  for (unsigned int i = 0; i < height / 4; i++) {
-    for (unsigned int j = 0; j < width / 4; j++) {
-      U = (int)((*iU++ - 128) * 0.354);
+  unsigned char *iU = yuv + ((17 * size) / 16);
+  const unsigned int quarterHeight = height / 4, quarterWidth = width / 4;
+  for (unsigned int i = 0; i < quarterHeight; ++i) {
+    for (unsigned int j = 0; j < quarterWidth; ++j) {
+      U = static_cast<int>((*iU++ - 128) * 0.354);
       U5 = 5 * U;
-      V = (int)((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV++ - 128) * 0.707);
       V2 = 2 * V;
       UV = -U - V;
       Y0 = *yuv++;
       Y1 = *yuv++;
       Y2 = *yuv++;
       Y3 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y4 = *yuv++;
       Y5 = *yuv++;
       Y6 = *yuv++;
       Y7 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y8 = *yuv++;
       Y9 = *yuv++;
       Y10 = *yuv++;
       Y11 = *yuv;
-      yuv = yuv + width - 3;
+      yuv = yuv + (width - 3);
       Y12 = *yuv++;
       Y13 = *yuv++;
       Y14 = *yuv++;
       Y15 = *yuv;
-      yuv = yuv - 3 * width + 1;
+      yuv = (yuv - (3 * width)) + 1;
 
       // Original equations
       // R = Y           + 1.402 V
       // G = Y - 0.344 U - 0.714 V
       // B = Y + 1.772 U
       R = Y0 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y0 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y0 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y1 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y1 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y1 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y2 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y2 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y2 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y3 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y3 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y3 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb + 3 * width - 11;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = rgb + ((3 * width) - 11);
 
       R = Y4 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y4 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y4 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y5 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y5 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y5 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y6 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y6 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y6 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y7 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y7 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y7 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
-      rgb = rgb + 3 * width - 11;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
+      rgb = rgb + ((3 * width) - 11);
 
       R = Y8 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y8 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y8 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y9 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y9 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y9 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y10 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y10 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y10 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y11 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y11 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y11 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb = static_cast<unsigned char>(B);
       rgb = rgb + 3 * width - 11;
 
       R = Y12 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y12 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y12 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y13 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y13 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y13 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y14 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y14 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y14 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
 
       //---
       R = Y15 + V2;
-      if ((R >> 8) > 0)
+      if ((R >> 8) > 0) {
         R = 255;
-      else if (R < 0)
+      }
+      else if (R < 0) {
         R = 0;
+      }
 
       G = Y15 + UV;
-      if ((G >> 8) > 0)
+      if ((G >> 8) > 0) {
         G = 255;
-      else if (G < 0)
+      }
+      else if (G < 0) {
         G = 0;
+      }
 
       B = Y15 + U5;
-      if ((B >> 8) > 0)
+      if ((B >> 8) > 0) {
         B = 255;
-      else if (B < 0)
+      }
+      else if (B < 0) {
         B = 0;
+      }
 
-      *rgb++ = (unsigned char)R;
-      *rgb++ = (unsigned char)G;
-      *rgb++ = (unsigned char)B;
-      rgb = rgb - 9 * width + 1;
+      *rgb++ = static_cast<unsigned char>(R);
+      *rgb++ = static_cast<unsigned char>(G);
+      *rgb++ = static_cast<unsigned char>(B);
+      rgb = (rgb - (9 * width)) + 1;
     }
     yuv += 3 * width;
     rgb += 9 * width;
@@ -3215,7 +3656,7 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
   Converts a RGB image to RGBa. Alpha component is set to
   vpRGBa::alpha_default.
 
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that rgba is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3229,23 +3670,25 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdBgrToBgra(rgb, width, height, width * 3, rgba, width * 4, vpRGBa::alpha_default);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
-    int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+    int lineStep = flip ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? (rgb + (width * height * 3) + lineStep) : rgb;
+    unsigned char *src = flip ? (rgb + (width * height * 3) + lineStep) : rgb;
 
     unsigned int j = 0;
     unsigned int i = 0;
 
-    for (i = 0; i < height; i++) {
+    for (i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (j = 0; j < width; j++) {
+      for (j = 0; j < width; ++j) {
         *rgba++ = *(line++);
         *rgba++ = *(line++);
         *rgba++ = *(line++);
@@ -3254,7 +3697,9 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
@@ -3271,11 +3716,24 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
 */
 void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdBgraToBgr(rgba, size, 1, size * 4, rgb, size * 3);
+#else
+  unsigned char *pt_input = rgba;
+  unsigned char *pt_end = rgba + (4 * size);
+  unsigned char *pt_output = rgb;
+
+  while (pt_input != pt_end) {
+    *(pt_output++) = *(pt_input++); // R
+    *(pt_output++) = *(pt_input++); // G
+    *(pt_output++) = *(pt_input++); // B
+    pt_input++;
+  }
+#endif
 }
 
 /*!
-  Convert an RGB image to a greyscale one.
+  Convert an RGB image to a grey scale one.
 
   See Charles Pontyon's Colour FAQ
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
@@ -3292,8 +3750,8 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 }
 
 /*!
-  Converts a RGB image to a greyscale one.
-  Flips the image verticaly if needed.
+  Converts a RGB image to a grey scale one.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3307,39 +3765,43 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdRgbToGray(rgb, width, height, width * 3, grey, width);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
-    int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+    int lineStep = flip ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? rgb + (width * height * 3) + lineStep : rgb;
+    unsigned char *src = flip ? (rgb + (width * height * 3) + lineStep) : rgb;
 
     unsigned int j = 0;
     unsigned int i = 0;
 
     unsigned r, g, b;
 
-    for (i = 0; i < height; i++) {
+    for (i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (j = 0; j < width; j++) {
+      for (j = 0; j < width; ++j) {
         r = *(line++);
         g = *(line++);
         b = *(line++);
-        *grey++ = (unsigned char)(0.2126 * r + 0.7152 * g + 0.0722 * b);
+        *grey++ = static_cast<unsigned char>((0.2126 * r) + (0.7152 * g) + (0.0722 * b));
       }
 
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
-  Convert a RGBa image to a greyscale one.
+  Convert a RGBa image to a grey scale one.
 
   See Charles Pontyon's Colour FAQ
   http://www.poynton.com/notes/colour_and_gamma/ColorFAQ.html
@@ -3355,20 +3817,28 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
                                 unsigned int
-#if defined _OPENMP
-                                    nThreads
+#if defined(_OPENMP)
+                                nThreads
 #endif
 )
 {
-#if defined _OPENMP
+#if defined(VISP_HAVE_SIMDLIB)
+  const int heightAsInt = static_cast<int>(height);
+#if defined(_OPENMP)
   if (nThreads > 0) {
     omp_set_num_threads(static_cast<int>(nThreads));
   }
 #pragma omp parallel for
 #endif
-  for (int i = 0; i < static_cast<int>(height); i++) {
-    SimdRgbaToGray(rgba + i * width * 4, width, 1, width * 4, grey + i * width, width);
+  for (int i = 0; i < heightAsInt; ++i) {
+    SimdRgbaToGray(rgba + (i * width * 4), width, 1, width * 4, grey + (i * width), width);
   }
+#else
+#if defined(_OPENMP)
+  (void)nThreads;
+#endif
+  vpImageConvert::RGBaToGrey(rgba, grey, width * height);
+#endif
 }
 
 /*!
@@ -3387,7 +3857,19 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
 */
 void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdRgbaToGray(rgba, size, 1, size * 4, grey, size);
+#else
+  unsigned char *pt_input = rgba;
+  unsigned char *pt_end = rgba + (size * 4);
+  unsigned char *pt_output = grey;
+
+  while (pt_input != pt_end) {
+    *pt_output = static_cast<unsigned char>((0.2126 * (*pt_input)) + (0.7152 * (*(pt_input + 1))) + (0.0722 * (*(pt_input + 2))));
+    pt_input += 4;
+    pt_output++;
+  }
+#endif
 }
 
 /*!
@@ -3403,7 +3885,11 @@ void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsign
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdGrayToBgra(grey, width, height, width, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
+#else
+  vpImageConvert::GreyToRGBa(grey, rgba, width * height);
+#endif
 }
 
 /*!
@@ -3420,7 +3906,24 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsign
 */
 void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   GreyToRGBa(grey, rgba, size, 1);
+#else
+  unsigned char *pt_input = grey;
+  unsigned char *pt_end = grey + size;
+  unsigned char *pt_output = rgba;
+
+  while (pt_input != pt_end) {
+    unsigned char p = *pt_input;
+    *(pt_output) = p;                         // R
+    *(pt_output + 1) = p;                     // G
+    *(pt_output + 2) = p;                     // B
+    *(pt_output + 3) = vpRGBa::alpha_default; // A
+
+    pt_input++;
+    pt_output += 4;
+  }
+#endif
 }
 
 /*!
@@ -3435,14 +3938,30 @@ void vpImageConvert::GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsign
 */
 void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   SimdGrayToBgr(grey, size, 1, size, rgb, size * 3);
+#else
+  unsigned char *pt_input = grey;
+  unsigned char *pt_end = grey + size;
+  unsigned char *pt_output = rgb;
+
+  while (pt_input != pt_end) {
+    unsigned char p = *pt_input;
+    *(pt_output) = p;     // R
+    *(pt_output + 1) = p; // G
+    *(pt_output + 2) = p; // B
+
+    pt_input++;
+    pt_output += 3;
+  }
+#endif
 }
 
 /*!
   Converts a BGR image to RGBa. The alpha component is set to
   vpRGBa::alpha_default.
 
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that rgba is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3456,20 +3975,22 @@ void vpImageConvert::GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned
 void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned int width, unsigned int height,
                                bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdRgbToBgra(bgr, width, height, width * 3, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
-    int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+    int lineStep = flip ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? (bgr + (width * height * 3) + lineStep) : bgr;
+    unsigned char *src = flip ? (bgr + (width * height * 3) + lineStep) : bgr;
 
-    for (unsigned int i = 0; i < height; i++) {
+    for (unsigned int i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (unsigned int j = 0; j < width; j++) {
+      for (unsigned int j = 0; j < width; ++j) {
         *rgba++ = *(line + 2);
         *rgba++ = *(line + 1);
         *rgba++ = *(line + 0);
@@ -3480,14 +4001,16 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
   Converts a BGRa image to RGBa.
 
-  Flips the image verticaly if needed.
-  Assumes that rgba is already resized before caling this function.
+  Flips the image vertically if needed.
+  Assumes that rgba is already resized before calling this function.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
 
@@ -3500,20 +4023,22 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
 void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height,
                                 bool flip)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
     SimdBgraToRgba(bgra, width, height, width * 4, rgba, width * 4);
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative
-    int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+    int lineStep = flip ? -static_cast<int>(width * 4) : static_cast<int>(width * 4);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? (bgra + (width * height * 4) + lineStep) : bgra;
+    unsigned char *src = flip ? (bgra + (width * height * 4) + lineStep) : bgra;
 
-    for (unsigned int i = 0; i < height; i++) {
+    for (unsigned int i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (unsigned int j = 0; j < width; j++) {
+      for (unsigned int j = 0; j < width; ++j) {
         *rgba++ = *(line + 2);
         *rgba++ = *(line + 1);
         *rgba++ = *(line + 0);
@@ -3524,12 +4049,14 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
 }
 
 /*!
   Converts a BGR image to greyscale.
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3544,46 +4071,54 @@ void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsign
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                                bool flip,
                                unsigned int
-#if defined _OPENMP
-                                   nThreads
+#if defined(_OPENMP)
+                               nThreads
 #endif
 )
 {
+#if defined(VISP_HAVE_SIMDLIB)
+  const int heightAsInt = static_cast<int>(height);
   if (!flip) {
-#if defined _OPENMP
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < static_cast<int>(height); i++) {
-      SimdBgrToGray(bgr + i * width * 3, width, 1, width * 3, grey + i * width, width);
+    for (int i = 0; i < heightAsInt; ++i) {
+      SimdBgrToGray(bgr + (i * width * 3), width, 1, width * 3, grey + (i * width), width);
     }
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
-    int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
+    int lineStep = flip ? -static_cast<int>(width * 3) : static_cast<int>(width * 3);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? bgr + (width * height * 3) + lineStep : bgr;
+    unsigned char *src = flip ? (bgr + (width * height * 3) + lineStep) : bgr;
 
-    for (unsigned int i = 0; i < height; i++) {
+    for (unsigned int i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (unsigned int j = 0; j < width; j++) {
-        *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
+      for (unsigned int j = 0; j < width; ++j) {
+        *grey++ = static_cast<unsigned int>((0.2126 * *(line + 2)) + (0.7152 * *(line + 1)) + (0.0722 * *(line + 0)));
         line += 3;
       }
 
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
+  (void)nThreads;
+#endif
 }
 
 /*!
   Converts a BGRa image to greyscale.
-  Flips the image verticaly if needed.
+  Flips the image vertically if needed.
   Assumes that grey is already resized.
 
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
@@ -3598,41 +4133,49 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
 void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
                                 bool flip,
                                 unsigned int
-#if defined _OPENMP
-                                    nThreads
+#if defined(_OPENMP)
+                                nThreads
 #endif
 )
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (!flip) {
-#if defined _OPENMP
+    const int heightAsInt = static_cast<int>(height);
+#if defined(_OPENMP)
     if (nThreads > 0) {
       omp_set_num_threads(static_cast<int>(nThreads));
     }
 #pragma omp parallel for
 #endif
-    for (int i = 0; i < static_cast<int>(height); i++) {
-      SimdBgraToGray(bgra + i * width * 4, width, 1, width * 4, grey + i * width, width);
+    for (int i = 0; i < heightAsInt; ++i) {
+      SimdBgraToGray(bgra + (i * width * 4), width, 1, width * 4, grey + (i * width), width);
     }
   }
   else {
+#endif
     // if we have to flip the image, we start from the end last scanline so
     // the  step is negative
-    int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+    int lineStep = flip ? -static_cast<int>(width * 4) : static_cast<int>(width * 4);
 
     // starting source address = last line if we need to flip the image
-    unsigned char *src = (flip) ? bgra + (width * height * 4) + lineStep : bgra;
+    unsigned char *src = flip ? (bgra + (width * height * 4) + lineStep) : bgra;
 
-    for (unsigned int i = 0; i < height; i++) {
+    for (unsigned int i = 0; i < height; ++i) {
       unsigned char *line = src;
-      for (unsigned int j = 0; j < width; j++) {
-        *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
+      for (unsigned int j = 0; j < width; ++j) {
+        *grey++ = static_cast<unsigned char>((0.2126 * *(line + 2)) + (0.7152 * *(line + 1)) + (0.0722 * *(line + 0)));
         line += 4;
       }
 
       // go to the next line
       src += lineStep;
     }
+#if defined(VISP_HAVE_SIMDLIB)
   }
+#endif
+#if !defined(VISP_HAVE_SIMDLIB) && defined(_OPENMP)
+  (void)nThreads;
+#endif
 }
 
 /*!
@@ -3646,10 +4189,10 @@ void vpImageConvert::computeYCbCrLUT()
     while (index--) {
 
       int aux = index - 128;
-      vpImageConvert::vpCrr[index] = (int)(364.6610 * aux) >> 8;
-      vpImageConvert::vpCgb[index] = (int)(-89.8779 * aux) >> 8;
-      vpImageConvert::vpCgr[index] = (int)(-185.8154 * aux) >> 8;
-      vpImageConvert::vpCbb[index] = (int)(460.5724 * aux) >> 8;
+      vpImageConvert::vpCrr[index] = static_cast<int>(364.6610 * aux) >> 8;
+      vpImageConvert::vpCgb[index] = static_cast<int>(-89.8779 * aux) >> 8;
+      vpImageConvert::vpCgr[index] = static_cast<int>(-185.8154 * aux) >> 8;
+      vpImageConvert::vpCbb[index] = static_cast<int>(460.5724 * aux) >> 8;
     }
 
     YCbCrLUTcomputed = true;
@@ -3793,8 +4336,8 @@ void vpImageConvert::YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgba, unsi
 void vpImageConvert::YCbCrToGrey(unsigned char *ycbcr, unsigned char *grey, unsigned int size)
 {
   unsigned int i = 0, j = 0;
-
-  while (j < size * 2) {
+  const unsigned int doubleSize = size * 2;
+  while (j < doubleSize) {
     grey[i++] = ycbcr[j];
     grey[i++] = ycbcr[j + 2];
     j += 4;
@@ -3930,32 +4473,33 @@ void vpImageConvert::YCrCbToRGBa(unsigned char *ycrcb, unsigned char *rgba, unsi
   Example code using split:
 
   \code
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/io/vpImageIo.h>
+  #include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImageConvert.h>
+  #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-  vpImage<vpRGBa> Ic; // A color image
+  int main()
+  {
+    vpImage<vpRGBa> Ic; // A color image
 
-  // Load a color image from the disk
-  vpImageIo::read(Ic,"image.ppm");
+    // Load a color image from the disk
+    vpImageIo::read(Ic,"image.ppm");
 
-  // Only R and B Channels are desired.
-  vpImage<unsigned char> R, B;
+    // Only R and B Channels are desired.
+    vpImage<unsigned char> R, B;
 
-  // Split Ic color image
-  // R and B will be resized in split function if needed
-  vpImageConvert::split(Ic, &R, nullptr, &B, nullptr);
+    // Split Ic color image
+    // R and B will be resized in split function if needed
+    vpImageConvert::split(Ic, &R, nullptr, &B, nullptr);
 
-  // Save the the R Channel.
-  vpImageIo::write(R, "RChannel.pgm");
-}
+    // Save the the R Channel.
+    vpImageIo::write(R, "RChannel.pgm");
+  }
   \endcode
 */
 void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
                            vpImage<unsigned char> *pB, vpImage<unsigned char> *pa)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   if (src.getSize() > 0) {
     if (pR) {
       pR->resize(src.getHeight(), src.getWidth());
@@ -3980,18 +4524,76 @@ void vpImageConvert::split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *p
                          src.getWidth());
 
     if (!pR) {
-      delete[] ptrR;
+      delete [] ptrR;
     }
     if (!pG) {
-      delete[] ptrG;
+      delete [] ptrG;
     }
     if (!pB) {
-      delete[] ptrB;
+      delete [] ptrB;
     }
     if (!pa) {
-      delete[] ptrA;
+      delete [] ptrA;
     }
   }
+#else
+  size_t n = src.getNumberOfPixel();
+  unsigned int height = src.getHeight();
+  unsigned int width = src.getWidth();
+  unsigned char *input;
+  unsigned char *dst;
+
+  vpImage<unsigned char> *tabChannel[4];
+
+  /*  incrsrc[0] = 0; //init
+  incrsrc[1] = 0; //step after the first used channel
+  incrsrc[2] = 0; //step after the second used channel
+  incrsrc[3] = 0;
+  incrsrc[4] = 0;
+ */
+  tabChannel[0] = pR;
+  tabChannel[1] = pG;
+  tabChannel[2] = pB;
+  tabChannel[3] = pa;
+
+  size_t i; /* ordre    */
+  for (unsigned int j = 0; j < 4; ++j) {
+    if (tabChannel[j] != nullptr) {
+      if ((tabChannel[j]->getHeight() != height) || (tabChannel[j]->getWidth() != width)) {
+        tabChannel[j]->resize(height, width);
+      }
+      dst = (unsigned char *)tabChannel[j]->bitmap;
+
+      input = (unsigned char *)src.bitmap + j;
+      i = 0;
+      // optimization
+      if (n >= 4) {
+        n -= 3;
+        for (; i < n; i += 4) {
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+          *dst = *input;
+          input += 4;
+          dst++;
+        }
+        n += 3;
+      }
+
+      for (; i < n; ++i) {
+        *dst = *input;
+        input += 4;
+        dst++;
+      }
+    }
+  }
+#endif
 }
 
 /*!
@@ -4029,19 +4631,22 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
     mapOfHeights[a->getHeight()]++;
   }
 
-  if (mapOfWidths.size() == 1 && mapOfHeights.size() == 1) {
+  if ((mapOfWidths.size() == 1) && (mapOfHeights.size() == 1)) {
     unsigned int width = mapOfWidths.begin()->first;
     unsigned int height = mapOfHeights.begin()->first;
 
     RGBa.resize(height, width);
 
-    if (R != nullptr && G != nullptr && B != nullptr && a != nullptr) {
+
+#if defined(VISP_HAVE_SIMDLIB)
+    if ((R != nullptr) && (G != nullptr) && (B != nullptr) && (a != nullptr)) {
       SimdInterleaveBgra(R->bitmap, width, G->bitmap, width, B->bitmap, width, a->bitmap, width, width, height,
                          reinterpret_cast<uint8_t *>(RGBa.bitmap), width * sizeof(vpRGBa));
     }
     else {
+#endif
       unsigned int size = width * height;
-      for (unsigned int i = 0; i < size; i++) {
+      for (unsigned int i = 0; i < size; ++i) {
         if (R != nullptr) {
           RGBa.bitmap[i].R = R->bitmap[i];
         }
@@ -4058,7 +4663,9 @@ void vpImageConvert::merge(const vpImage<unsigned char> *R, const vpImage<unsign
           RGBa.bitmap[i].A = a->bitmap[i];
         }
       }
+#if defined(VISP_HAVE_SIMDLIB)
     }
+#endif
   }
   else {
     throw vpException(vpException::dimensionError, "Mismatched dimensions!");
@@ -4100,7 +4707,7 @@ void vpImageConvert::MONO16ToGrey(unsigned char *grey16, unsigned char *grey, un
 void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size)
 {
   int i = (((int)size) << 1) - 1;
-  int j = (int)(size * 4 - 1);
+  int j = static_cast<int>(size * 4 - 1);
 
   while (i >= 0) {
     int y = grey16[i--];
@@ -4125,7 +4732,7 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, un
 void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
                              unsigned int size, unsigned int step)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double hue = hue_[i], saturation = saturation_[i], value = value_[i];
 
     if (vpMath::equal(saturation, 0.0, std::numeric_limits<double>::epsilon())) {
@@ -4141,12 +4748,12 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
         h = 0.0;
       }
 
-      double f = h - (int)h;
+      double f = h - static_cast<int>(h);
       double p = v * (1.0 - s);
-      double q = v * (1.0 - s * f);
-      double t = v * (1.0 - s * (1.0 - f));
+      double q = v * (1.0 - (s * f));
+      double t = v * (1.0 - (s * (1.0 - f)));
 
-      switch ((int)h) {
+      switch (static_cast<int>(h)) {
       case 0:
         hue = v;
         saturation = t;
@@ -4185,11 +4792,12 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
       }
     }
 
-    rgb[i * step] = (unsigned char)vpMath::round(hue * 255.0);
-    rgb[i * step + 1] = (unsigned char)vpMath::round(saturation * 255.0);
-    rgb[i * step + 2] = (unsigned char)vpMath::round(value * 255.0);
-    if (step == 4) // alpha
+    rgb[i * step] = static_cast<unsigned char>(vpMath::round(hue * 255.0));
+    rgb[i * step + 1] = static_cast<unsigned char>(vpMath::round(saturation * 255.0));
+    rgb[i * step + 2] = static_cast<unsigned char>(vpMath::round(value * 255.0));
+    if (step == 4) {// alpha
       rgb[i * step + 3] = vpRGBa::alpha_default;
+    }
   }
 }
 
@@ -4206,7 +4814,7 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
 void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                              unsigned int size, unsigned int step)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double red, green, blue;
     double h, s, v;
     double min, max;
@@ -4300,10 +4908,10 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, cons
 void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                                unsigned char *rgba, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
 
-    vpImageConvert::HSVToRGBa(&h, &s, &v, (rgba + i * 4), 1);
+    vpImageConvert::HSVToRGBa(&h, &s, &v, (rgba + (i * 4)), 1);
   }
 }
 
@@ -4339,13 +4947,13 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
                                unsigned char *value, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double h, s, v;
-    vpImageConvert::RGBaToHSV((rgba + i * 4), &h, &s, &v, 1);
+    vpImageConvert::RGBaToHSV((rgba + (i * 4)), &h, &s, &v, 1);
 
-    hue[i] = (unsigned char)(255.0 * h);
-    saturation[i] = (unsigned char)(255.0 * s);
-    value[i] = (unsigned char)(255.0 * v);
+    hue[i] = static_cast<unsigned char>(255.0 * h);
+    saturation[i] = static_cast<unsigned char>(255.0 * s);
+    value[i] = static_cast<unsigned char>(255.0 * v);
   }
 }
 
@@ -4371,17 +4979,16 @@ void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const
   \param[in] hue : Array of hue values (range between [0 - 255]).
   \param[in] saturation : Array of saturation values (range between [0 - 255]).
   \param[in] value : Array of value values (range between [0 - 255]).
-  \param[out] rgb : Pointer to the 24-bit RGB image that should be allocated with a size of
-  width * height * 3.
+  \param[out] rgb : Pointer to the 24-bit RGB image that should be allocated with a size of width * height * 3.
   \param[in] size : The image size or the number of pixels corresponding to the image width * height.
 */
 void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                               unsigned char *rgb, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
 
-    vpImageConvert::HSVToRGB(&h, &s, &v, (rgb + i * 3), 1);
+    vpImageConvert::HSVToRGB(&h, &s, &v, (rgb + (i * 3)), 1);
   }
 }
 
@@ -4389,11 +4996,9 @@ void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *sat
   Converts an array of RGB to an array of hue, saturation, value values.
 
   \param[in] rgb : Pointer to the 24-bits RGB bitmap.
-  \param[out] hue : Array of hue values converted from RGB color space (range
-  between [0 - 1]).
-  \param[out] saturation : Array of saturation values converted
-  from RGB color space (range between [0 - 1]).
-  \param[out] value : Array of value values converted from RGB color space (range between [0 - 1]).
+  \param[out] hue : Array of hue values converted from RGB color space (range between [0 - 255]).
+  \param[out] saturation : Array of saturation values converted from RGB color space (range between [0 - 255]).
+  \param[out] value : Array of value values converted from RGB color space (range between [0 - 255]).
   \param[in] size : The image size or the number of pixels corresponding to the image width * height.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
@@ -4408,21 +5013,20 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *sat
   \param[in] rgb : Pointer to the 24-bits RGB bitmap.
   \param[out] hue : Array of hue values converted from RGB color space (range between [0 - 255]).
   \param[out] saturation : Array of saturation values converted from RGB color space (range between [0 - 255]).
-  \param[out] value : Array of value values converted
-  from RGB color space (range between [0 - 255]).
+  \param[out] value : Array of value values converted from RGB color space (range between [0 - 255]).
   \param[in] size : The image size or the number of pixels corresponding to the image width * height.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation,
                               unsigned char *value, unsigned int size)
 {
-  for (unsigned int i = 0; i < size; i++) {
+  for (unsigned int i = 0; i < size; ++i) {
     double h, s, v;
 
-    vpImageConvert::RGBToHSV((rgb + i * 3), &h, &s, &v, 1);
+    vpImageConvert::RGBToHSV((rgb + (i * 3)), &h, &s, &v, 1);
 
-    hue[i] = (unsigned char)(255.0 * h);
-    saturation[i] = (unsigned char)(255.0 * s);
-    value[i] = (unsigned char)(255.0 * v);
+    hue[i] = static_cast<unsigned char>(255.0 * h);
+    saturation[i] = static_cast<unsigned char>(255.0 * s);
+    value[i] = static_cast<unsigned char>(255.0 * v);
   }
 }
 

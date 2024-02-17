@@ -159,7 +159,6 @@ void vpParallelPort::close()
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no
-// symbols
-void dummy_vpParallelPort(){};
+// Work around to avoid warning: libvisp_core.a(vpParallelPort.cpp.o) has no symbols
+void dummy_vpParallelPort() { };
 #endif

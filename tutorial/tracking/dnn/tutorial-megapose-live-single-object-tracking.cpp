@@ -6,7 +6,8 @@
 // Check if std:c++17 or higher
 #if ((__cplusplus >= 201703L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201703L))) && \
   defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_VIDEOIO) && \
-  defined(HAVE_OPENCV_DNN) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI))
+  defined(HAVE_OPENCV_DNN) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(HAVE_OPENCV_HIGHGUI)) && \
+  defined(VISP_HAVE_THREADS)
 
 #include <optional>
 
@@ -434,7 +435,7 @@ int main(int argc, const char *argv[])
     }
     const double frameEnd = vpTime::measureTimeMs();
     if (!isLiveCapture) {
-      vpTime::wait(std::max(0.0, videoFrametime - (frameEnd - frameStart)));
+      vpTime::wait(std::max<double>(0.0, videoFrametime - (frameEnd - frameStart)));
     }
     frameTimes.push_back(vpTime::measureTimeMs() - frameStart);
   }

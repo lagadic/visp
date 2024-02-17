@@ -81,7 +81,9 @@
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <cstdint>
+#endif
 
 namespace
 {
@@ -174,7 +176,7 @@ vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
-  If the line already exists, the ploygone's index is added to the list of
+  If the line already exists, the polygon's index is added to the list of
   polygon to which it belongs.
 
   \param P1 : The first extremity of the line.
@@ -287,10 +289,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -312,7 +314,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back((*point_cloud)(j, i).x);
@@ -377,10 +379,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -398,7 +400,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
@@ -462,10 +464,10 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -483,7 +485,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
            : polygon_2d.isInside(vpImagePoint(i, j)))) {
         totalTheoreticalPoints++;
 
-        if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
+        if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
           m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
@@ -564,7 +566,11 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D = m_planeCamera.getD();
 
+#if defined(VISP_HAVE_SIMDLIB)
   bool useSIMD = vpCPUFeatures::checkSSE2() || vpCPUFeatures::checkNeon();
+#else
+  bool useSIMD = vpCPUFeatures::checkSSE2();
+#endif
 #if USE_OPENCV_HAL
   useSIMD = true;
 #endif
@@ -573,7 +579,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
 #endif
 
   if (useSIMD) {
-#if USE_SSE  || USE_NEON|| USE_OPENCV_HAL
+#if USE_SSE || USE_NEON || USE_OPENCV_HAL
     size_t cpt = 0;
     if (getNbFeatures() >= 2) {
       double *ptr_point_cloud = &m_pointCloudFace[0];
@@ -602,9 +608,15 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
         cv::v_float64x2 vx, vy, vz;
         cv::v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040900)
+        cv::v_float64x2 va1 = cv::v_sub(cv::v_mul(vnz, vy), cv::v_mul(vny, vz)); // vnz*vy - vny*vz
+        cv::v_float64x2 va2 = cv::v_sub(cv::v_mul(vnx, vz), cv::v_mul(vnz, vx)); // vnx*vz - vnz*vx
+        cv::v_float64x2 va3 = cv::v_sub(cv::v_mul(vny, vx), cv::v_mul(vnx, vy)); // vny*vx - vnx*vy
+#else
         cv::v_float64x2 va1 = vnz*vy - vny*vz;
         cv::v_float64x2 va2 = vnx*vz - vnz*vx;
         cv::v_float64x2 va3 = vny*vx - vnx*vy;
+#endif
 
         cv::v_float64x2 vnxy = cv::v_combine_low(vnx, vny);
         cv::v_store(ptr_L, vnxy);
@@ -626,7 +638,12 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
         cv::v_store(ptr_L, vnxy);
         ptr_L += 2;
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040900)
+        cv::v_float64x2 verr = cv::v_add(vd, cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, cv::v_mul(vnz, vz))));
+#else
         cv::v_float64x2 verr = vd + cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, vnz*vz));
+#endif
+
         cv::v_store(ptr_error, verr);
         ptr_error += 2;
 #elif USE_SSE

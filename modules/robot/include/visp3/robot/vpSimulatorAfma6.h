@@ -44,7 +44,7 @@
 
 #include <string>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
 /*!
  * \class vpSimulatorAfma6
@@ -187,13 +187,13 @@ private:
 public:
   vpSimulatorAfma6();
   explicit vpSimulatorAfma6(bool display);
-  virtual ~vpSimulatorAfma6() override;
+  virtual ~vpSimulatorAfma6() vp_override;
 
   void getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width, const unsigned int &image_height);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<unsigned char> &I);
   void getCameraParameters(vpCameraParameters &cam, const vpImage<vpRGBa> &I);
-  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &displacement) override;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
+  void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &displacement) vp_override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
   void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q, double &timestamp);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position);
   void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &position, double &timestamp);
@@ -205,8 +205,8 @@ public:
 
   void get_cMe(vpHomogeneousMatrix &cMe);
   void get_cVe(vpVelocityTwistMatrix &cVe);
-  void get_eJe(vpMatrix &eJe) override;
-  void get_fJe(vpMatrix &fJe) override;
+  void get_eJe(vpMatrix &eJe) vp_override;
+  void get_fJe(vpMatrix &fJe) vp_override;
 
   void
     init(vpAfma6::vpAfma6ToolType tool,
@@ -221,26 +221,26 @@ public:
   void setCameraParameters(const vpCameraParameters &cam);
   void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
 
-  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) override;
+  void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q) vp_override;
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
                    double pos5, double pos6);
   void setPosition(const char *filename);
   void setPositioningVelocity(double vel) { positioningVelocity = vel; }
   bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint = nullptr, const double &errMax = 0.001);
-  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) override;
+  vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState) vp_override;
 
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity) vp_override;
 
   void stopMotion();
 
 protected:
   /** @name Protected Member Functions Inherited from vpSimulatorAfma6 */
   //@{
-  void computeArticularVelocity() override;
+  void computeArticularVelocity() vp_override;
   void compute_fMi();
   void findHighestPositioningSpeed(vpColVector &q);
   void getExternalImage(vpImage<vpRGBa> &I);
-  inline void get_fMi(vpHomogeneousMatrix *fMit) override
+  inline void get_fMi(vpHomogeneousMatrix *fMit) vp_override
   {
     m_mutex_fMi.lock();
     for (int i = 0; i < 8; i++) {
@@ -249,12 +249,12 @@ protected:
 
     m_mutex_fMi.unlock();
   }
-  void init() override;
-  void initArms() override;
+  void init() vp_override;
+  void initArms() vp_override;
   void initDisplay();
-  int isInJointLimit() override;
+  int isInJointLimit() vp_override;
   bool singularityTest(const vpColVector &q, vpMatrix &J);
-  void updateArticularPosition() override;
+  void updateArticularPosition() vp_override;
   //@}
 };
 

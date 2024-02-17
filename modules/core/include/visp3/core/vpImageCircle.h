@@ -92,6 +92,15 @@ public:
   */
   float computeArcLengthInRoI(const vpRect &roi, const float &roundingTolerance = 0.001f) const;
 
+  /**
+   * \brief Count the number of pixels of the circle whose value in the mask is true.
+   *
+   * \param mask A mask where true indicates that a pixel must be taken into account and false
+   * that it must be ignored.
+   * \return unsigned int The number of pixels in the mask.
+   */
+  unsigned int computePixelsInMask(const vpImage<bool> &mask) const;
+
   /*!
    * Get the center of the image (2D) circle
    * \return The center of the image (2D) circle.

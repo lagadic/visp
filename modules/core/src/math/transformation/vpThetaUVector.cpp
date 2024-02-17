@@ -467,6 +467,7 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
   return vpThetaUVector(d);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
@@ -495,3 +496,4 @@ vpThetaUVector &vpThetaUVector::operator=(const std::initializer_list<double> &l
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
+#endif

@@ -601,11 +601,11 @@ int main()
   std::cout << "vpMath::getMedian() is Ok !" << std::endl;
 
   // Test clamp
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   {
     const double lower { -10. }, upper { +10. };
     std::vector<double> testing_values { 5., -15., 15. };
     std::vector<double> expected_values { 5., -10., 10. };
-
 
     for (size_t i = 0u; i < testing_values.size(); i++) {
       const double clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
@@ -616,6 +616,7 @@ int main()
     }
     std::cout << "vpMath::clamp() is Ok !" << std::endl;
   }
+#endif
 
   // Test vpMath::deg() and vpMath::rad()
   {

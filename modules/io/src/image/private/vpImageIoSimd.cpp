@@ -36,6 +36,9 @@
   \brief Simd backend for JPEG and PNG image I/O operations.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_SIMDLIB)
 #include "vpImageIoBackend.h"
 #include <Simd/SimdLib.h>
 
@@ -88,3 +91,4 @@ void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)
   SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth() * 4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32,
                       SimdImageFilePng, 90, filename.c_str());
 }
+#endif

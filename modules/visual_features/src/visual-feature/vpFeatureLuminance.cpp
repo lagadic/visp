@@ -140,8 +140,9 @@ vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
 */
 vpFeatureLuminance::~vpFeatureLuminance()
 {
-  if (pixInfo != nullptr)
+  if (pixInfo != nullptr) {
     delete[] pixInfo;
+  }
 }
 
 /*!

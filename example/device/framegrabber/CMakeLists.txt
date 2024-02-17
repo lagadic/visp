@@ -48,7 +48,6 @@ set(example_cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
   grabFlyCapture.cpp
-  grabRealSense.cpp
   grabRealSense2.cpp
   grabRealSense2_T265.cpp
   grabV4l2MultiCpp11Thread.cpp
@@ -83,7 +82,6 @@ if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 
   visp_set_source_file_compile_flag(getRealSense2Info.cpp ${CXX_FLAGS_MUTE_WARNINGS})
-  visp_set_source_file_compile_flag(grabRealSense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(grabRealSense2.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(grabRealSense2_T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(readRealSenseData.cpp ${CXX_FLAGS_MUTE_WARNINGS})

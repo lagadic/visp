@@ -79,7 +79,7 @@ private:
 #include <visp3/core/vpCPUFeatures.h>
 
 #define USE_TRANSFORM 1
-#if USE_TRANSFORM
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) && USE_TRANSFORM
 #define HAVE_TRANSFORM 1
 #include <functional>
 #endif
@@ -312,7 +312,11 @@ template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                                    float NoiseThreshold)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#else
+  bool checkSimd = vpCPUFeatures::checkSSSE3();
+#endif
 #if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
   checkSimd = false;
 #endif
@@ -330,7 +334,11 @@ template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
                                                     double NoiseThreshold)
 {
+#if defined(VISP_HAVE_SIMDLIB)
   bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#else
+  bool checkSimd = vpCPUFeatures::checkSSSE3();
+#endif
 #if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
   checkSimd = false;
 #endif

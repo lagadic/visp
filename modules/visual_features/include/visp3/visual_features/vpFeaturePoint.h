@@ -184,13 +184,13 @@ public:
   void buildFrom(double x, double y, double Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
 
-  vpFeaturePoint *duplicate() const override;
+  vpFeaturePoint *duplicate() const vp_override;
 
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 
   double get_x() const;
 
@@ -198,10 +198,9 @@ public:
 
   double get_Z() const;
 
-  void init() override;
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
-
-  void print(unsigned int select = FEATURE_ALL) const override;
+  void init() vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
 
   void set_x(double x);
 

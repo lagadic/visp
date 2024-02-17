@@ -57,8 +57,10 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-# stb_image is private
-include_directories(${STBIMAGE_INCLUDE_DIRS})
+if(WITH_STBIMAGE)
+  # stb_image is private
+  include_directories(${STBIMAGE_INCLUDE_DIRS})
+endif()
 
 if(WITH_CATCH2)
   # catch2 is private
@@ -70,10 +72,11 @@ if(USE_NLOHMANN_JSON)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
-list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
+endif()
 
 # TinyEXR lib is private
 include_directories(${TINYEXR_INCLUDE_DIRS})

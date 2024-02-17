@@ -122,6 +122,7 @@ vpRowVector &vpRowVector::operator=(double x)
   return *this;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector &vpRowVector::operator=(vpRowVector &&other)
 {
   if (this != &other) {
@@ -168,6 +169,7 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
   std::copy(list.begin(), list.end(), data);
   return *this;
 }
+#endif
 
 bool vpRowVector::operator==(const vpRowVector &v) const
 {
@@ -576,6 +578,7 @@ vpRowVector::vpRowVector(const vpRowVector &v, unsigned int c, unsigned int ncol
   init(v, c, ncols);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
 {
   rowNum = v.rowNum;
@@ -590,6 +593,7 @@ vpRowVector::vpRowVector(vpRowVector &&v) : vpArray2D<double>()
   v.dsize = 0;
   v.data = nullptr;
 }
+#endif
 
 /*!
   Normalize the vector given as input parameter and return the normalized
@@ -998,7 +1002,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   // increase totalLength according to maxBefore
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
-  maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
+  maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
   if (maxAfter == 1)
     maxAfter = 0;
 
@@ -1150,10 +1154,12 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
                       cncols, v.getCols()));
   resize(ncols);
-  if (this->rowPtrs == nullptr) // Fix coverity scan: explicit null dereferenced
+  if (this->rowPtrs == nullptr) { // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
-  for (unsigned int i = 0; i < ncols; i++)
+  }
+  for (unsigned int i = 0; i < ncols; i++) {
     (*this)[i] = v[i + c];
+  }
 }
 
 /*!

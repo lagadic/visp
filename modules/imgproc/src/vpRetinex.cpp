@@ -154,7 +154,7 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
   int kernelSize = _kernelSize;
   if (kernelSize == -1) {
     // Compute the kernel size from the input image size
-    kernelSize = (int)(std::min(I.getWidth(), I.getHeight()) / 2.0);
+    kernelSize = (int)(std::min<unsigned int>(I.getWidth(), I.getHeight()) / 2.0);
     kernelSize = (kernelSize - kernelSize % 2) + 1;
   }
 
@@ -215,8 +215,11 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
 
   std::vector<double> diff(dest.size());
 
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
   std::transform(dest.begin(), dest.end(), diff.begin(), std::bind(std::minus<double>(), std::placeholders::_1, mean));
-
+#else
+  std::transform(dest.begin(), dest.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
+#endif
 
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double stdev = std::sqrt(sq_sum / dest.size());

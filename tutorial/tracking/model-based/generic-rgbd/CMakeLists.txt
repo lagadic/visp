@@ -9,7 +9,7 @@ set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
   tutorial-mb-generic-tracker-rgbd-realsense.cpp
   tutorial-mb-generic-tracker-rgbd-structure-core.cpp
-  tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp)
+  tutorial-mb-generic-tracker-rgbd-realsense-json.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -60,4 +60,5 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 # Copy the data files
-visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)

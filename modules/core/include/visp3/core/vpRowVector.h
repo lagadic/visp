@@ -121,8 +121,10 @@ public:
   vpRowVector(const vpMatrix &M, unsigned int i);
   vpRowVector(const std::vector<double> &v);
   vpRowVector(const std::vector<float> &v);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
   vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+#endif
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -207,8 +209,10 @@ public:
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
   vpRowVector &operator=(double x);
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
+#endif
   //! Comparison operator.
   bool operator==(const vpRowVector &v) const;
   bool operator!=(const vpRowVector &v) const;
@@ -323,7 +327,7 @@ public:
    */
   vp_deprecated void setIdentity(const double &val = 1.0);
   vp_deprecated double euclideanNorm() const;
-//@}
+  //@}
 #endif
 };
 

@@ -69,6 +69,7 @@
 class VISP_EXPORT vpQuadProg
 {
 public:
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /** @name Instantiated solvers  */
   //@{
   bool solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol = 1e-6) const;
@@ -156,5 +157,6 @@ protected:
     }
     return n;
   }
+#endif
 };
 #endif

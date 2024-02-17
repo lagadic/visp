@@ -277,6 +277,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   return false;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Solves a Linear Program under various constraints
 
@@ -287,7 +288,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
                & \text{s.t.}& \mathbf{x}_i \geq \mathbf{l}_i \text{~for some i}\\
                & \text{s.t.}& \mathbf{x}_j \leq \mathbf{u}_j \text{~for some j}
   \end{array}
-\f$
+  \f$
   \param c : cost vector (dimension n)
   \param A : equality matrix (dimension m x n)
   \param b : equality vector (dimension m)
@@ -301,6 +302,9 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   \return True if the solution was found.
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
+
+  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using
+  cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -349,7 +353,7 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
     (find_if(l.begin(), l.end(), [&](BoundedIndex &i) { return x[i.first] < i.second - tol; }) == l.end()) &&
     (find_if(u.begin(), u.end(), [&](BoundedIndex &i) { return x[i.first] > i.second + tol; }) == u.end());
 
-// shortcut for unbounded variables with equality
+  // shortcut for unbounded variables with equality
   if (!feasible && m && l.size() == 0 && u.size() == 0) {
     // changes A.x = b to x = b + A.z
     if (colReduction(A, b, false, tol)) {
@@ -429,8 +433,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const v
         for (unsigned int j = 0; j < m + p; ++j)
           A[j][n + p + k1] = -A[j][i];
         if (feasible) {
-          x[i] = std::max(x[i], 0.);
-          x[n + p + k1] = std::max(-x[i], 0.);
+          x[i] = std::max<double>(x[i], 0.);
+          x[n + p + k1] = std::max<double>(-x[i], 0.);
         }
         k1++;
       }
@@ -723,3 +727,5 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
     std::swap(B[k], N[j]);
   }
 }
+
+#endif

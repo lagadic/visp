@@ -32,9 +32,9 @@
  */
 
 /*!
-  \file vpImage.h
-  \brief Image handling.
-*/
+ * \file vpImage.h
+ * \brief Image handling.
+ */
 
 #ifndef vpImage_H
 #define vpImage_H
@@ -48,8 +48,8 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpRGBf.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#include <visp3/core/vpThread.h>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
 #endif
 
 #include <fstream>
@@ -143,8 +143,10 @@ public:
   vpImage();
   //! copy constructor
   vpImage(const vpImage<Type> &);
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   //! move constructor
   vpImage(vpImage<Type> &&);
+#endif
   //! constructor  set the size of the image
   vpImage(unsigned int height, unsigned int width);
   //! constructor  set the size of the image and init all the pixel
@@ -479,10 +481,9 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
   return s;
 }
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
 namespace
 {
-
 struct vpImageLut_Param_t
 {
   unsigned int m_start_index;
@@ -498,9 +499,8 @@ struct vpImageLut_Param_t
   { }
 };
 
-vpThread::Return performLutThread(vpThread::Args args)
+void performLutThread(vpImageLut_Param_t *imageLut_param)
 {
-  vpImageLut_Param_t *imageLut_param = static_cast<vpImageLut_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -509,11 +509,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   unsigned char *ptrStart = bitmap + start_index;
   unsigned char *ptrEnd = bitmap + end_index;
   unsigned char *ptrCurrent = ptrStart;
-
-  //    while(ptrCurrent != ptrEnd) {
-  //      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-  //      ++ptrCurrent;
-  //    }
 
   if (end_index - start_index >= 8) {
     // Unroll loop version
@@ -547,8 +542,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   for (; ptrCurrent != ptrEnd; ++ptrCurrent) {
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
   }
-
-  return 0;
 }
 
 struct vpImageLutRGBa_Param_t
@@ -566,9 +559,8 @@ struct vpImageLutRGBa_Param_t
   { }
 };
 
-vpThread::Return performLutRGBaThread(vpThread::Args args)
+void performLutRGBaThread(vpImageLutRGBa_Param_t *imageLut_param)
 {
-  vpImageLutRGBa_Param_t *imageLut_param = static_cast<vpImageLutRGBa_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -614,8 +606,6 @@ vpThread::Return performLutRGBaThread(vpThread::Args args)
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
     ptrCurrent++;
   }
-
-  return 0;
 }
 } // namespace
 #endif
@@ -639,7 +629,6 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 {
   if (h != this->height) {
     if (row != nullptr) {
-      vpDEBUG_TRACE(10, "Destruction row[]");
       delete[] row;
       row = nullptr;
     }
@@ -647,7 +636,6 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 
   if ((h != this->height) || (w != this->width)) {
     if (bitmap != nullptr) {
-      vpDEBUG_TRACE(10, "Destruction bitmap[]");
       if (hasOwnership) {
         delete[] bitmap;
       }
@@ -664,11 +652,9 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
     bitmap = new Type[npixels];
     hasOwnership = true;
   }
-
   if (bitmap == nullptr) {
     throw(vpException(vpException::memoryAllocationError, "cannot allocate bitmap "));
   }
-
   if (row == nullptr)
     row = new Type *[height];
   if (row == nullptr) {
@@ -822,11 +808,7 @@ template <class Type> void vpImage<Type>::resize(unsigned int h, unsigned int w,
 */
 template <class Type> void vpImage<Type>::destroy()
 {
-  //   vpERROR_TRACE("Deallocate ");
-
   if (bitmap != nullptr) {
-    //  vpERROR_TRACE("Deallocate bitmap memory %p",bitmap);
-    //    vpDEBUG_TRACE(20,"Deallocate bitmap memory %p",bitmap);
     if (hasOwnership) {
       delete[] bitmap;
     }
@@ -834,8 +816,6 @@ template <class Type> void vpImage<Type>::destroy()
   }
 
   if (row != nullptr) {
-    //   vpERROR_TRACE("Deallocate row memory %p",row);
-    //    vpDEBUG_TRACE(20,"Deallocate row memory %p",row);
     delete[] row;
     row = nullptr;
   }
@@ -860,6 +840,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
 }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /*!
   \relates vpImage
 */
@@ -876,6 +857,7 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
   I.row = nullptr;
   I.hasOwnership = false;
 }
+#endif
 
 /*!
  * \brief Return the maximum value within the bitmap
@@ -1258,10 +1240,6 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> other)
 {
   swap(*this, other);
-  // Swap back display pointer if it was not null
-  // vpImage<unsigned char> I2(480, 640);
-  // vpDisplayX d(I2);
-  // I2 = I1; //copy only the data
   if (other.display != nullptr)
     display = other.display;
 
@@ -1629,8 +1607,8 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double value =
     (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
@@ -1661,8 +1639,8 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   return (row[iround][jround] * rfrac + row[iround_1][jround] * rratio) * cfrac +
     (row[iround][jround_1] * rfrac + row[iround_1][jround_1] * rratio) * cratio;
@@ -1732,8 +1710,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double value =
     (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
@@ -1764,8 +1742,8 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
     (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
@@ -1808,8 +1786,8 @@ template <> inline vpRGBf vpImage<vpRGBf>::getValue(double i, double j) const
   double rfrac = 1.0 - rratio;
   double cfrac = 1.0 - cratio;
 
-  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
-  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+  unsigned int iround_1 = std::min<unsigned int>(height - 1, iround + 1);
+  unsigned int jround_1 = std::min<unsigned int>(width - 1, jround + 1);
 
   double valueR =
     (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
@@ -2034,7 +2012,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2051,10 +2029,9 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLut_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2075,7 +2052,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
@@ -2114,7 +2091,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2139,9 +2116,9 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLutRGBa_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2162,7 +2139,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutRGBaThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutRGBaThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 

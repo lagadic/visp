@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030500)
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030500) && defined(VISP_HAVE_THREADS)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -56,9 +56,14 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backends
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
-      vpImageIo::IO_OPENCV_BACKEND,
+  vpImageIo::IO_OPENCV_BACKEND,
 #endif
-      vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
+#if defined VISP_HAVE_SIMDLIB
+  vpImageIo::IO_SIMDLIB_BACKEND,
+#endif
+#if defined VISP_HAVE_STBIMAGE
+  vpImageIo::IO_STB_IMAGE_BACKEND
+#endif
 };
 static const std::vector<std::string> backendNamesJpeg
 {
@@ -79,6 +84,25 @@ static std::vector<std::string> backendNamesPng
       "OpenCV",
 #endif
       "simd", "stb"
+};
+
+static const std::vector<vpImageIo::vpImageIoBackendType> backendsInMemory
+{
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+  vpImageIo::IO_OPENCV_BACKEND,
+#endif
+#if defined VISP_HAVE_STBIMAGE
+  vpImageIo::IO_STB_IMAGE_BACKEND
+#endif
+};
+static std::vector<std::string> backendNamesPngInMemory
+{
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS)
+  "OpenCV",
+#endif
+#if defined VISP_HAVE_STBIMAGE
+  "stb"
+#endif
 };
 
 static const unsigned int imgWidth = 640;
@@ -209,7 +233,7 @@ TEST_CASE("Test grayscale JPEG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -235,7 +259,7 @@ TEST_CASE("Test RGBA JPEG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -261,7 +285,7 @@ TEST_CASE("Test grayscale PNG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -287,7 +311,7 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
 {
   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
   std::string directory_filename_tmp =
-      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+    tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -307,6 +331,74 @@ TEST_CASE("Test RGBA PNG image saving", "[image_I/O]")
   }
 
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
+}
+
+TEST_CASE("Test grayscale in-memory PNG image encoding/decoding", "[image_I/O]")
+{
+  vpImage<unsigned char> I_ref;
+  vpImageIo::read(I_ref, path + ".png");
+  REQUIRE(I_ref.getSize() > 0);
+
+  for (size_t i = 0; i < backendsInMemory.size(); i++) {
+    SECTION(backendNamesPngInMemory[i] + " backend")
+    {
+      std::vector<unsigned char> buffer;
+      vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i]);
+      REQUIRE(!buffer.empty());
+
+      for (size_t j = 0; j < backendsInMemory.size(); j++) {
+        SECTION(backendNamesPngInMemory[i] + " backend")
+        {
+          vpImage<unsigned char> I;
+          vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+          CHECK(I_ref == I);
+        };
+      }
+    };
+  }
+}
+
+TEST_CASE("Test color in-memory PNG image encoding/decoding", "[image_I/O]")
+{
+  vpImage<vpRGBa> I_ref;
+  vpImageIo::read(I_ref, path + ".png");
+  REQUIRE(I_ref.getSize() > 0);
+
+  for (size_t i = 0; i < backendsInMemory.size(); i++) {
+    SECTION(backendNamesPngInMemory[i] + " backend")
+    {
+      {
+        std::vector<unsigned char> buffer;
+        const bool saveAlpha = false;
+        vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i], saveAlpha);
+        REQUIRE(!buffer.empty());
+
+        for (size_t j = 0; j < backendsInMemory.size(); j++) {
+          SECTION(backendNamesPngInMemory[i] + " backend")
+          {
+            vpImage<vpRGBa> I;
+            vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+            CHECK(I_ref == I);
+          };
+        }
+      }
+      {
+        std::vector<unsigned char> buffer;
+        const bool saveAlpha = true;
+        vpImageIo::writePNGtoMem(I_ref, buffer, backendsInMemory[i], saveAlpha);
+        REQUIRE(!buffer.empty());
+
+        for (size_t j = 0; j < backendsInMemory.size(); j++) {
+          SECTION(backendNamesPngInMemory[i] + " backend")
+          {
+            vpImage<vpRGBa> I;
+            vpImageIo::readPNGfromMem(buffer, I, backendsInMemory[j]);
+            CHECK(I_ref == I);
+          };
+        }
+      }
+    };
+  }
 }
 
 int main(int argc, char *argv[])

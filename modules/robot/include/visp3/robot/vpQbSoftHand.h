@@ -35,7 +35,7 @@
 #define _vpQbSoftHand_h_
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_QBDEVICE
+#if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/robot/vpQbDevice.h>

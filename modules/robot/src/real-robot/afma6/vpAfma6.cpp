@@ -58,45 +58,45 @@
 /* --- STATIC ------------------------------------------------------------ */
 /* ---------------------------------------------------------------------- */
 
-static const char *opt_Afma6[] = {"JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
-                                  "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr};
+static const char *opt_Afma6[] = { "JOINT_MAX", "JOINT_MIN",   "LONG_56",       "COUPL_56",
+                                  "CAMERA",    "eMc_ROT_XYZ", "eMc_TRANS_XYZ", nullptr };
 
 #ifdef VISP_HAVE_AFMA6_DATA
 const std::string vpAfma6::CONST_AFMA6_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_CCMOP_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_without_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_CCMOP_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_with_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_ccmop_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GRIPPER_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_without_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_with_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_gripper_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_without_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_with_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_vacuum_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_without_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_with_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_generic_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_INTEL_D435_WITHOUT_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_Intel_D435_without_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_Intel_D435_without_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_EMC_INTEL_D435_WITH_DISTORTION_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_Intel_D435_with_distortion_Afma6.cnf");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_eMc_Intel_D435_with_distortion_Afma6.cnf");
 
 const std::string vpAfma6::CONST_CAMERA_AFMA6_FILENAME =
-    std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_camera_Afma6.xml");
+std::string(VISP_AFMA6_DATA_PATH) + std::string("/include/const_camera_Afma6.xml");
 
 #endif // VISP_HAVE_AFMA6_DATA
 
@@ -117,7 +117,7 @@ const unsigned int vpAfma6::njoint = 6;
 */
 vpAfma6::vpAfma6()
   : _coupl_56(0), _long_56(0), _etc(), _erc(), _eMc(), tool_current(vpAfma6::defaultTool),
-    projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
+  projModel(vpCameraParameters::perspectiveProjWithoutDistortion)
 {
   // Set the default parameters in case of the config files are not available.
 
@@ -641,7 +641,8 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
       q_[1][5] += vpMath::rad(10);
       q_[1][3] -= vpMath::rad(10);
     }
-  } else if (fMe[2][2] <= -.99999) {
+  }
+  else if (fMe[2][2] <= -.99999) {
     vpTRACE("singularity\n");
     q_[0][4] = q_[1][4] = -M_PI / 2;
     t = atan2(fMe[1][1], fMe[1][0]);
@@ -657,7 +658,8 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
       q_[1][5] += vpMath::rad(10);
       q_[1][3] += vpMath::rad(10);
     }
-  } else {
+  }
+  else {
     q_[0][3] = atan2(-fMe[0][2], fMe[1][2]);
     if (q_[0][3] >= 0.0)
       q_[1][3] = q_[0][3] - M_PI;
@@ -694,10 +696,10 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
         if (verbose) {
           if (i < 3)
             std::cout << "Joint " << i << " not in limits: " << this->_joint_min[i] << " < " << q_[j][i] << " < "
-                      << this->_joint_max[i] << std::endl;
+            << this->_joint_max[i] << std::endl;
           else
             std::cout << "Joint " << i << " not in limits: " << vpMath::deg(this->_joint_min[i]) << " < "
-                      << vpMath::deg(q_[j][i]) << " < " << vpMath::deg(this->_joint_max[i]) << std::endl;
+            << vpMath::deg(q_[j][i]) << " < " << vpMath::deg(this->_joint_max[i]) << std::endl;
         }
         ok[j] = 0;
       }
@@ -708,17 +710,20 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
       std::cout << "No solution..." << std::endl;
       nbsol = 0;
       return nbsol;
-    } else if (ok[1] == 1) {
+    }
+    else if (ok[1] == 1) {
       for (unsigned int i = 0; i < 6; i++)
         cord[i] = q_[1][i];
       nbsol = 1;
     }
-  } else {
+  }
+  else {
     if (ok[1] == 0) {
       for (unsigned int i = 0; i < 6; i++)
         cord[i] = q_[0][i];
       nbsol = 1;
-    } else {
+    }
+    else {
       nbsol = 2;
       // vpTRACE("2 solutions\n");
       for (int j = 0; j < 2; j++) {
@@ -733,7 +738,8 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
         else
           for (unsigned int i = 0; i < 6; i++)
             cord[i] = q_[1][i];
-      } else {
+      }
+      else {
         if (d[0] <= d[1])
           for (unsigned int i = 0; i < 6; i++)
             cord[i] = q_[1][i];
@@ -1125,12 +1131,12 @@ void vpAfma6::parseConfigFile(const std::string &filename)
     switch (code) {
     case 0:
       ss >> this->_joint_max[0] >> this->_joint_max[1] >> this->_joint_max[2] >> this->_joint_max[3] >>
-          this->_joint_max[4] >> this->_joint_max[5];
+        this->_joint_max[4] >> this->_joint_max[5];
       break;
 
     case 1:
       ss >> this->_joint_min[0] >> this->_joint_min[1] >> this->_joint_min[2] >> this->_joint_min[3] >>
-          this->_joint_min[4] >> this->_joint_min[5];
+        this->_joint_min[4] >> this->_joint_min[5];
       break;
 
     case 2:
@@ -1255,12 +1261,12 @@ parameters are not found.
 void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                                   const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_AFMA6_DATA)
+#if defined(VISP_HAVE_AFMA6_DATA) && defined(VISP_HAVE_PUGIXML)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpAfma6::TOOL_CCMOP: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+      << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
     if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_CCMOP_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1269,7 +1275,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   }
   case vpAfma6::TOOL_GRIPPER: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+      << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
     if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GRIPPER_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1278,7 +1284,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   }
   case vpAfma6::TOOL_VACUUM: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+      << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
     if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_VACUUM_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1287,7 +1293,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   }
   case vpAfma6::TOOL_INTEL_D435_CAMERA: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_INTEL_D435_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+      << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
     if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_INTEL_D435_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1296,7 +1302,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\"" << std::endl
-              << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
+      << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
     if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_GENERIC_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1323,7 +1329,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_CCMOP_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       switch (this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(1108.0, 1110.0, 314.5, 243.2);
@@ -1336,7 +1342,8 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1347,7 +1354,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_GRIPPER_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       switch (this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(850.9, 853.0, 311.1, 243.6);
@@ -1360,7 +1367,8 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1371,7 +1379,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_VACUUM_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       switch (this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
@@ -1384,7 +1392,8 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1395,7 +1404,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_INTEL_D435_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       switch (this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(605.4, 605.6, 328.6, 241.0);
@@ -1408,7 +1417,8 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1419,7 +1429,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpAfma6::CONST_GENERIC_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       switch (this->projModel) {
       case vpCameraParameters::perspectiveProjWithoutDistortion:
         cam.initPersProjWithoutDistortion(853.5, 856.0, 307.8, 236.8);
@@ -1432,7 +1442,8 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
                           "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
@@ -1557,25 +1568,25 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpAfma6 &afma6)
   vpRxyzVector rxyz(eRc);
 
   os << "Joint Max:" << std::endl
-     << "\t" << afma6._joint_max[0] << "\t" << afma6._joint_max[1] << "\t" << afma6._joint_max[2] << "\t"
-     << afma6._joint_max[3] << "\t" << afma6._joint_max[4] << "\t" << afma6._joint_max[5] << "\t" << std::endl
+    << "\t" << afma6._joint_max[0] << "\t" << afma6._joint_max[1] << "\t" << afma6._joint_max[2] << "\t"
+    << afma6._joint_max[3] << "\t" << afma6._joint_max[4] << "\t" << afma6._joint_max[5] << "\t" << std::endl
 
-     << "Joint Min: " << std::endl
-     << "\t" << afma6._joint_min[0] << "\t" << afma6._joint_min[1] << "\t" << afma6._joint_min[2] << "\t"
-     << afma6._joint_min[3] << "\t" << afma6._joint_min[4] << "\t" << afma6._joint_min[5] << "\t" << std::endl
+    << "Joint Min: " << std::endl
+    << "\t" << afma6._joint_min[0] << "\t" << afma6._joint_min[1] << "\t" << afma6._joint_min[2] << "\t"
+    << afma6._joint_min[3] << "\t" << afma6._joint_min[4] << "\t" << afma6._joint_min[5] << "\t" << std::endl
 
-     << "Long 5-6: " << std::endl
-     << "\t" << afma6._long_56 << "\t" << std::endl
+    << "Long 5-6: " << std::endl
+    << "\t" << afma6._long_56 << "\t" << std::endl
 
-     << "Coupling 5-6:" << std::endl
-     << "\t" << afma6._coupl_56 << "\t" << std::endl
+    << "Coupling 5-6:" << std::endl
+    << "\t" << afma6._coupl_56 << "\t" << std::endl
 
-     << "eMc: " << std::endl
-     << "\tTranslation (m): " << afma6._eMc[0][3] << " " << afma6._eMc[1][3] << " " << afma6._eMc[2][3] << "\t"
-     << std::endl
-     << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " " << rxyz[2] << "\t" << std::endl
-     << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " " << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2])
-     << "\t" << std::endl;
+    << "eMc: " << std::endl
+    << "\tTranslation (m): " << afma6._eMc[0][3] << " " << afma6._eMc[1][3] << " " << afma6._eMc[2][3] << "\t"
+    << std::endl
+    << "\tRotation Rxyz (rad) : " << rxyz[0] << " " << rxyz[1] << " " << rxyz[2] << "\t" << std::endl
+    << "\tRotation Rxyz (deg) : " << vpMath::deg(rxyz[0]) << " " << vpMath::deg(rxyz[1]) << " " << vpMath::deg(rxyz[2])
+    << "\t" << std::endl;
 
   return os;
 }

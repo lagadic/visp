@@ -31,8 +31,8 @@
 int main(int argc, const char **argv)
 {
   //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) &&                                                                                     \
-    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) ||                             \
+#if defined(VISP_HAVE_APRILTAG) && \
+    (defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_CMU1394) || \
      defined(HAVE_OPENCV_VIDEOIO) || defined(VISP_HAVE_FLYCAPTURE) || defined(VISP_HAVE_REALSENSE2))
   //! [Macro defined]
 
@@ -123,11 +123,13 @@ int main(int argc, const char **argv)
   try {
     vpCameraParameters cam;
     cam.initPersProjWithoutDistortion(615.1674805, 615.1675415, 312.1889954, 243.4373779);
+#if defined(VISP_HAVE_PUGIXML)
     vpXmlParserCamera parser;
     if (!intrinsic_file.empty() && !camera_name.empty())
       parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
+#endif
 
-    //! [Construct grabber]
+//! [Construct grabber]
 #if defined(VISP_HAVE_V4L2)
     vpV4l2Grabber g;
     std::ostringstream device;

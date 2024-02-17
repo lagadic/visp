@@ -46,7 +46,7 @@
 
 #if defined(VISP_HAVE_REALSENSE2) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 #include <mutex>
 #include <thread>
 
@@ -179,7 +179,7 @@ int main()
                                   (unsigned int)rs.getIntrinsics(RS2_STREAM_DEPTH).width);
     vpImage<uint16_t> depth(depth_display.getHeight(), depth_display.getWidth());
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
     std::mutex mutex;
     ViewerWorker viewer(true, mutex);
     std::thread viewer_thread(&ViewerWorker::run, &viewer);
@@ -198,7 +198,7 @@ int main()
     while (true) {
       double t = vpTime::measureTimeMs();
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
       {
         std::lock_guard<std::mutex> lock(mutex);
         rs.acquire((unsigned char *)color.bitmap, (unsigned char *)depth.bitmap, nullptr, pointcloud_color,
@@ -229,7 +229,7 @@ int main()
 
     std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
     {
       std::lock_guard<std::mutex> lock(mutex);
       cancelled = true;
@@ -252,7 +252,7 @@ int main()
 int main()
 {
 #if !defined(VISP_HAVE_REALSENSE2)
-  std::cout << "You do not realsense2 SDK functionality enabled..." << std::endl;
+  std::cout << "You do not have realsense2 SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

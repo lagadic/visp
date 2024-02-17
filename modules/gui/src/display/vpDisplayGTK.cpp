@@ -911,8 +911,8 @@ void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImag
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = (std::max)(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
-    int j_min = (std::max)(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
+    int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
+    int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
 
     m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
                             static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
@@ -967,8 +967,8 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint 
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = (std::max)(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
-    int j_min = (std::max)(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
+    int i_min = std::max<int>(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
+    int j_min = std::max<int>(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
 
     m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
                             static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
@@ -1589,7 +1589,6 @@ unsigned int vpDisplayGTK::getScreenHeight()
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayGTK.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDisplayGTK.cpp.o) has no symbols
 void dummy_vpDisplayGTK() { };
 #endif

@@ -488,13 +488,9 @@ private:
   double width;
   double height;
   double surface;
-  unsigned int gray_level_min; // minumum gray level for the dot.
-                               // pixel with lower level don't belong
-                               // to this dot.
+  unsigned int gray_level_min; // minumum gray level for the dot. Pixel with lower level don't belong to this dot.
 
-  unsigned int gray_level_max; // maximum gray level for the dot.
-                               // pixel with higher level don't belong
-                               // to this dot.
+  unsigned int gray_level_max; // maximum gray level for the dot. Pixel with higher level don't belong to this dot.
   double mean_gray_level;      // Mean gray level of the dot
   double grayLevelPrecision;
   double gamma;

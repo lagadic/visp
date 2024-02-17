@@ -161,17 +161,17 @@ public:
     : vpFeatureMoment(database, A_, B_, C_, featureMoments, 2)
   { }
 
-  void compute_interaction() override;
+  void compute_interaction() vp_override;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const override { return "vpMomentGravityCenter"; }
+  const std::string momentName() const vp_override { return "vpMomentGravityCenter"; }
 
   /*!
    * Feature name.
    */
-  const std::string name() const override { return "vpFeatureMomentGravityCenter"; }
+  const std::string name() const vp_override { return "vpFeatureMomentGravityCenter"; }
 
   /*!
    * Shortcut selector for \f$x_g\f$.
@@ -233,17 +233,17 @@ public:
     : vpFeatureMoment(data_base, A_, B_, C_, featureMoments, 2)
   { }
 
-  void compute_interaction() override;
+  void compute_interaction() vp_override;
 
   /*!
    * Associated moment name.
    */
-  const std::string momentName() const override { return "vpMomentGravityCenter"; }
+  const std::string momentName() const vp_override { return "vpMomentGravityCenter"; }
 
  /*!
   * Feature name.
   */
-  const std::string name() const override { return "vpFeatureMomentGravityCenter"; }
+  const std::string name() const vp_override { return "vpFeatureMomentGravityCenter"; }
 
   /*!
    * Shortcut selector for \f$x_g\f$.

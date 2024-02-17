@@ -108,27 +108,27 @@ public:
   explicit vpCylinder(const vpColVector &oP);
   vpCylinder(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const override;
-  void changeFrame(const vpHomogeneousMatrix &cMo) override;
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const vp_override;
+  void changeFrame(const vpHomogeneousMatrix &cMo) vp_override;
 
   double computeZ(double x, double y) const;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) override;
+               unsigned int thickness = 1) vp_override;
   void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, unsigned int thickness = 1) override;
+               const vpColor &color = vpColor::green, unsigned int thickness = 1) vp_override;
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
-  vpCylinder *duplicate() const override;
+  vpCylinder *duplicate() const vp_override;
 
-  /*!
-   * Return the \f$\rho_1\f$ parameter of the line corresponding to the
-   * projection of the cylinder in the image plane.
-   * \sa getTheta1()
-   */
+/*!
+ * Return the \f$\rho_1\f$ parameter of the line corresponding to the
+ * projection of the cylinder in the image plane.
+ * \sa getTheta1()
+ */
   double getRho1() const { return p[0]; }
   /*!
    * Return the \f$\theta_1\f$ parameter of the line corresponding to the
@@ -185,12 +185,12 @@ public:
    */
   double getR() const { return cP[6]; }
 
-  void init() override;
+  void init() vp_override;
 
-  void projection() override;
-  void projection(const vpColVector &cP, vpColVector &p) const override;
+  void projection() vp_override;
+  void projection(const vpColVector &cP, vpColVector &p) const vp_override;
 
-  void setWorldCoordinates(const vpColVector &oP) override;
+  void setWorldCoordinates(const vpColVector &oP) vp_override;
   void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 };
 

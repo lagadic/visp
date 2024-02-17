@@ -36,6 +36,7 @@
 # Add optional 3rd parties
 set(opt_incs "")
 set(opt_libs "")
+set(opt_libs_private "")
 
 if(USE_COIN3D AND NOT HAVE_visp_ar)
   if(WIN32)
@@ -122,22 +123,26 @@ endif()
 if(WITH_CLIPPER)
   # clipper is private
   include_directories(${CLIPPER_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${CLIPPER_LIBRARIES})
 endif()
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private
 include_directories(${PUGIXML_INCLUDE_DIRS})
+list(APPEND opt_libs_private ${PUGIXML_LIBRARIES})
 
 if(WITH_CATCH2)
   # catch2 is private
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
-# simdlib is always enabled since it contains fallback code to plain C++ code
-# Simd lib is private
-include_directories(${SIMDLIB_INCLUDE_DIRS})
+if(WITH_SIMDLIB)
+  # Simd lib is private
+  include_directories(${SIMDLIB_INCLUDE_DIRS})
+  list(APPEND opt_libs_private ${SIMDLIB_LIBRARIES})
+endif()
 
-vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
+vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${opt_libs_private} WRAP java)
 vp_glob_module_sources()
 
 if(USE_OGRE)

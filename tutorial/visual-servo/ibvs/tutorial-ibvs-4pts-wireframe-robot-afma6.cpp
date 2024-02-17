@@ -30,7 +30,7 @@ void display_trajectory(const vpImage<unsigned char> &I, std::vector<vpPoint> &p
 
 int main()
 {
-#if defined(VISP_HAVE_PTHREAD)
+#if defined(VISP_HAVE_THREADS)
   try {
     vpHomogeneousMatrix cdMo(0, 0, 0.75, 0, 0, 0);
     vpHomogeneousMatrix cMo(-0.15, 0.1, 1., vpMath::rad(-10), vpMath::rad(10), vpMath::rad(50));

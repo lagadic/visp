@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_THREADS)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -89,8 +89,48 @@ void configureTracker(vpMbGenericTracker &tracker, vpCameraParameters &cam)
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
   const std::string configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
   const std::string modelFile = vpIoTools::createFilePath(env_ipath, "mbt/cube_and_cylinder.cao");
+#if defined(VISP_HAVE_PUGIXML)
   const bool verbose = false;
   tracker.loadConfigFile(configFile, verbose);
+#else
+  // Corresponding parameters manually set to have an example code
+  // By setting the parameters:
+  cam.initPersProjWithoutDistortion(547, 542, 338, 234);
+
+  vpMe me;
+  me.setMaskSize(5);
+  me.setMaskNumber(180);
+  me.setRange(7);
+  me.setLikelihoodThresholdType(vpMe::NORMALIZED_THRESHOLD);
+  me.setThreshold(5);
+  me.setMu1(0.5);
+  me.setMu2(0.5);
+  me.setSampleStep(4);
+
+  vpKltOpencv klt;
+  klt.setMaxFeatures(300);
+  klt.setWindowSize(5);
+  klt.setQuality(0.01);
+  klt.setMinDistance(5);
+  klt.setHarrisFreeParameter(0.01);
+  klt.setBlockSize(3);
+  klt.setPyramidLevels(3);
+
+  tracker.setCameraParameters(cam);
+  tracker.setMovingEdge(me);
+  tracker.setKltOpencv(klt);
+  tracker.setKltMaskBorder(5);
+  tracker.setAngleAppear(vpMath::rad(65));
+  tracker.setAngleDisappear(vpMath::rad(75));
+
+  // Specify the clipping to
+  tracker.setNearClippingDistance(0.01);
+  tracker.setFarClippingDistance(0.90);
+  tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
+  //   tracker.setClipping(tracker.getClipping() | vpMbtPolygon::LEFT_CLIPPING |
+  //   vpMbtPolygon::RIGHT_CLIPPING | vpMbtPolygon::UP_CLIPPING |
+  //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
+#endif
   tracker.getCameraParameters(cam);
   tracker.loadModel(modelFile);
   tracker.setDisplayFeatures(true);

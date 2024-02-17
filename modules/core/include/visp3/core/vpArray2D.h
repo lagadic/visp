@@ -50,76 +50,76 @@
 #endif
 
 /*!
-  \class vpArray2D
-  \ingroup group_core_matrices
-
-  \brief Implementation of a generic 2D array used as base class for matrices
-  and vectors.
-
-  This class implements a 2D array as a template class and all the basic
-  functionalities common to matrices and vectors. More precisely:
-  - concerning matrices, vpMatrix but also specific containers such as twist
-    (vpVelocityTwistMatrix and vpForceTwistMatrix), homogeneous
-  (vpHomogeneousMatrix), rotation (vpRotationMatrix) and homography
-  (vpHomography) matrices inherit from vpArray2D<double>.
-  - concerning vectors, vpColVector, vpRowVector but also specific containers
-  describing the pose (vpPoseVector) and the rotation (vpRotationVector)
-  inherit also from vpArray2D<double>.
-
-  The code below shows how to create a 2-by-3 array of doubles, set the element values and access them:
-  \code
-#include <visp3/code/vpArray2D.h
-
-int main()
-{
-  vpArray2D<float> a(2, 3);
-  a[0][0] = -1; a[0][1] =  -2; a[0][2] = -3;
-  a[1][0] =  4; a[1][1] = 5.5; a[1][2] =  6;
-
-  std::cout << "a:" << std::endl;
-  for (unsigned int i = 0; i < a.getRows(); i++) {
-    for (unsigned int j = 0; j < a.getCols(); j++) {
-      std::cout << a[i][j] << " ";
-    }
-    std::cout << std::endl;
-  }
-}
-  \endcode
-  Once build, this previous code produces the following output:
-  \code
-a:
--1 -2 -3
-4 5.5 6
-  \endcode
-  If ViSP is build with c++11 enabled, you can do the same using:
-  \code
-#include <visp3/code/vpArray2D.h
-
-int main()
-{
-  vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
-  std::cout << "a:\n" << a << std::endl;
-}
-  \endcode
-  The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
-  \code
-int main()
-{
-  vpArray2D<float> a;
-  a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
-}
-  \endcode
-
-  You can also use reshape() function:
-  \code
-#include <visp3/code/vpArray2D.h
-
-int main()
-{
-  vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
-  a.reshape(2, 3);
-}
-  \endcode
+ * \class vpArray2D
+ *  \ingroup group_core_matrices
+ *
+ *  \brief Implementation of a generic 2D array used as base class for matrices
+ *  and vectors.
+ *
+ *  This class implements a 2D array as a template class and all the basic
+ *  functionalities common to matrices and vectors. More precisely:
+ *  - concerning matrices, vpMatrix but also specific containers such as twist
+ *    (vpVelocityTwistMatrix and vpForceTwistMatrix), homogeneous
+ *    (vpHomogeneousMatrix), rotation (vpRotationMatrix) and homography
+ *    (vpHomography) matrices inherit from vpArray2D<double>.
+ *  - concerning vectors, vpColVector, vpRowVector but also specific containers
+ *   describing the pose (vpPoseVector) and the rotation (vpRotationVector)
+ *   inherit also from vpArray2D<double>.
+ *
+ * The code below shows how to create a 2-by-3 array of doubles, set the element values and access them:
+ * \code
+ * #include <visp3/code/vpArray2D.h
+ *
+ * int main()
+ * {
+ *   vpArray2D<float> a(2, 3);
+ *   a[0][0] = -1; a[0][1] =  -2; a[0][2] = -3;
+ *   a[1][0] =  4; a[1][1] = 5.5; a[1][2] =  6;
+ *
+ *   std::cout << "a:" << std::endl;
+ *   for (unsigned int i = 0; i < a.getRows(); i++) {
+ *     for (unsigned int j = 0; j < a.getCols(); j++) {
+ *       std::cout << a[i][j] << " ";
+ *     }
+ *     std::cout << std::endl;
+ *   }
+ * }
+ * \endcode
+ * Once build, this previous code produces the following output:
+ * \code
+ * a:
+ * -1 -2 -3
+ * 4 5.5 6
+ * \endcode
+ *  If ViSP is build with c++11 enabled, you can do the same using:
+ * \code
+ * #include <visp3/code/vpArray2D.h
+ *
+ * int main()
+ * {
+ *   vpArray2D<float> a{ {-1, -2, -3}, {4, 5.5, 6.0f} };
+ *   std::cout << "a:\n" << a << std::endl;
+ * }
+ * \endcode
+ * The array could also be initialized using operator=(const std::initializer_list< std::initializer_list< Type > > &)
+ * \code
+ * int main()
+ * {
+ *   vpArray2D<float> a;
+ *   a = { {-1, -2, -3}, {4, 5.5, 6.0f} };
+ * }
+ * \endcode
+ *
+ * You can also use reshape() function:
+ * \code
+ * #include <visp3/code/vpArray2D.h
+ *
+ * int main()
+ * {
+ *   vpArray2D<float> a{ -1, -2, -3, 4, 5.5, 6.0f };
+ *   a.reshape(2, 3);
+ * }
+ * \endcode
 */
 template <class Type> class vpArray2D
 {
@@ -139,19 +139,24 @@ public:
 
 public:
   /*!
-  Basic constructor of a 2D array.
-  Number of columns and rows are set to zero.
-  */
+   * Basic constructor of a 2D array.
+   * Number of columns and rows are set to zero.
+   */
   vpArray2D<Type>() : rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr) { }
 
   /*!
   Copy constructor of a 2D array.
   */
   vpArray2D<Type>(const vpArray2D<Type> &A)
-    : vpArray2D<Type>()
+    :
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    vpArray2D<Type>()
+#else
+    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+#endif
   {
     resize(A.rowNum, A.colNum, false, false);
-    memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
+    memcpy(data, A.data, static_cast<size_t>(rowNum) * static_cast<size_t>(colNum) * sizeof(Type));
   }
 
   /*!
@@ -161,7 +166,12 @@ public:
   \param c : Array number of columns.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c)
-    : vpArray2D<Type>()
+    :
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    vpArray2D<Type>()
+#else
+    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+#endif
   {
     resize(r, c);
   }
@@ -174,12 +184,18 @@ public:
   \param val : Each element of the array is set to \e val.
   */
   vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
-    : vpArray2D<Type>()
+    :
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    vpArray2D<Type>()
+#else
+    rowNum(0), colNum(0), rowPtrs(nullptr), dsize(0), data(nullptr)
+#endif
   {
     resize(r, c, false, false);
     *this = val;
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D<Type>(vpArray2D<Type> &&A) noexcept
   {
     rowNum = A.rowNum;
@@ -229,10 +245,11 @@ public:
       std::copy(it->begin(), it->end(), rowPtrs[i]);
     }
   }
+#endif
 
   /*!
-  Destructor that deallocate memory.
-  */
+   * Destructor that deallocate memory.
+   */
   virtual ~vpArray2D<Type>()
   {
     if (data != nullptr) {
@@ -437,6 +454,7 @@ public:
     return *this;
   }
 
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
     if (this != &other) {
@@ -489,6 +507,7 @@ public:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
   vpArray2D<Type> &operator=(const nlohmann::json &j) = delete;
+#endif
 #endif
 
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x
@@ -631,7 +650,7 @@ public:
         h += c;
       }
       if (header != nullptr) {
-#if defined(__MINGW32__) ||                                                                                            \
+#if defined(__MINGW32__) || \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
         snprintf(header, h.size() + 1, "%s", h.c_str());
 #else
@@ -728,7 +747,7 @@ public:
 
     if (header != nullptr) {
       std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
-#if defined(__MINGW32__) ||                                                                                            \
+#if defined(__MINGW32__) || \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
       snprintf(header, h_.size() + 1, "%s", h_.c_str());
 #else
@@ -824,7 +843,9 @@ public:
   vpArray2D<double> M(3,4);
   vpArray2D::saveYAML("matrix.yml", M, "example: a YAML-formatted header");
   vpArray2D::saveYAML("matrixIndent.yml", M, "example:\n    - a YAML-formatted \
-  header\n    - with inner indentation"); \endcode Content of matrix.yml:
+  header\n    - with inner indentation");
+  \endcode
+  Content of matrix.yml:
   \code
   example: a YAML-formatted header
   rows: 3
@@ -941,7 +962,7 @@ public:
   \image html vpMatrix-conv2-mode.jpg "Convolution mode: full, same, valid (image credit: Theano doc)."
 
   \note This is a very basic implementation that does not use FFT.
- */
+  */
   static void conv2(const vpArray2D<Type> &M, const vpArray2D<Type> &kernel, vpArray2D<Type> &res, const std::string &mode);
 
   /*!
@@ -1215,7 +1236,7 @@ inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
     }
     unsigned int ncols = 0;
     bool first = true;
-    for (const auto &item: j) { // Find number of columns, validate that all rows have same number of cols
+    for (const auto &item : j) { // Find number of columns, validate that all rows have same number of cols
       if (!item.is_array()) {
         throw vpException(vpException::badValue, "Trying to instantiate a 2D array with a JSON object that is not an array of array");
       }
@@ -1229,7 +1250,7 @@ inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
     }
     array.resize(nrows, ncols);
     unsigned i = 0;
-    for (const auto &item: j) {
+    for (const auto &item : j) {
       std::vector<Type> row = item;
       std::copy(row.begin(), row.end(), array.rowPtrs[i]);
       ++i;
@@ -1246,7 +1267,7 @@ inline void from_json(const nlohmann::json &j, vpArray2D<Type> &array)
       throw vpException(vpException::badValue, ss.str());
     }
     unsigned i = 0;
-    for (const auto &jValue: jData) {
+    for (const auto &jValue : jData) {
       array.data[i] = jValue;
       ++i;
     }

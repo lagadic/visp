@@ -149,7 +149,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x17 (SSE41 aligned=false)")
   {
@@ -164,7 +164,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
@@ -179,7 +179,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x33 (AVX2 aligned=false)")
   {
@@ -194,7 +194,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 4x64 (general aligned = true")
   {
@@ -209,7 +209,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 5x65 (general aligned = false")
   {
@@ -224,7 +224,7 @@ TEST_CASE("RGBa to Gray conversion", "[image_conversion]")
     vpImageConvert::convert(rgba, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGBa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "RGBa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 }
 
@@ -243,12 +243,12 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
 
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x17 (SSE41 aligned=false)")
   {
@@ -263,12 +263,12 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
 
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
@@ -283,11 +283,11 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x33 (AVX2 aligned=false)")
   {
@@ -302,12 +302,12 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
 
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 4x64 (general aligned = true")
   {
@@ -322,12 +322,12 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
 
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 5x65 (general aligned = false")
   {
@@ -342,12 +342,12 @@ TEST_CASE("RGB to Gray conversion", "[image_conversion]")
     vpImageConvert::RGBToGrey(rgb.data(), gray.bitmap, w, h, false);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 1, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 1, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
 
     vpImage<unsigned char> gray2(h, w);
     vpImageConvert::RGBToGrey(rgb.data(), gray2.bitmap, w * h);
     CHECK(common_tools::almostEqual(gray_ref, gray2, maxMeanPixelError, error));
-    std::cout << "RGB to Gray conversion 2, mean error: " << error << std::endl;
+    std::cout << "RGB to Gray conversion 2, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 }
 
@@ -458,7 +458,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x17 (SSE41 aligned=false)")
   {
@@ -477,7 +477,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
@@ -496,7 +496,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x33 (AVX2 aligned=false)")
   {
@@ -515,7 +515,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 4x64 (general aligned = true")
   {
@@ -534,7 +534,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 5x65 (general aligned = false")
   {
@@ -553,7 +553,7 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 }
 
@@ -576,7 +576,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x17 (SSE41 aligned=false)")
   {
@@ -595,7 +595,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
@@ -614,7 +614,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x33 (AVX2 aligned=false)")
   {
@@ -633,7 +633,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 4x64 (general aligned = true")
   {
@@ -652,7 +652,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 5x65 (general aligned = false")
   {
@@ -671,7 +671,7 @@ TEST_CASE("BGRa to Gray conversion", "[image_conversion]")
 
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 }
 
@@ -691,7 +691,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x17 (SSE41 aligned=false)")
   {
@@ -707,7 +707,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
@@ -723,7 +723,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 1x33 (AVX2 aligned=false)")
   {
@@ -739,7 +739,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 4x64 (general aligned = true")
   {
@@ -755,7 +755,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
   SECTION("Image 5x65 (general aligned = false")
   {
@@ -771,7 +771,7 @@ TEST_CASE("BGRa to RGBa conversion", "[image_conversion]")
                                rgba.getHeight());
     double error = 0;
     CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
-    std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+    std::cout << "BGRa to RGBa conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 }
 
@@ -830,7 +830,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
     vpImageConvert::convert(img, gray);
     double error = 0;
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+    std::cout << "BGR to Gray conversion, mean error: " << error << " max allowed: " << maxMeanPixelError << std::endl;
   }
 
   SECTION("CV_8UC1 to unsigned char")
@@ -885,6 +885,7 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]")
 }
 #endif
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
 void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
 {
   for (unsigned int i = 0; i < I_Bayer_8U.getHeight(); i++) {
@@ -894,7 +895,7 @@ void col2im(const std::vector<uint8_t> &buffer, vpImage<uint8_t> &I_Bayer_8U)
   }
 }
 
-void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bayer_16U)
+static void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bayer_16U)
 {
   for (unsigned int i = 0; i < I_Bayer_16U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_Bayer_16U.getWidth(); j++) {
@@ -903,7 +904,7 @@ void col2im(const std::vector<uint16_t> &buffer, vpImage<uint16_t> &I_Bayer_16U)
   }
 }
 
-void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
+static void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, int divisor = 1 << (12 - 8))
 {
   for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
     for (unsigned int j = 0; j < I_RGBA_8U.getWidth(); j++) {
@@ -915,7 +916,7 @@ void convertTo(const vpImage<uint16_t> &I_RGBA_16U, vpImage<vpRGBa> &I_RGBA_8U, 
   }
 }
 
-double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa> &I_RGBA_8U_ref)
+static double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa> &I_RGBA_8U_ref)
 {
   double mse = 0;
   for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
@@ -929,9 +930,14 @@ double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa> &I_RG
   return 10 * std::log10(255 * 255 / mse);
 }
 
-void readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
+static bool readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
 {
   std::FILE *f = std::fopen(filename.c_str(), "rb");
+  CHECK(f != nullptr);
+  if (f == nullptr) {
+    return false;
+  }
+
   size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
   REQUIRE(sread == buffer.size());
 
@@ -942,9 +948,24 @@ void readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
   }
 #endif
   std::fclose(f);
+  return true;
 }
 
-#if (VISP_HAVE_DATASET_VERSION >= 0x030500)
+static bool readBinaryFile(const std::string &filename, std::vector<uint8_t> &buffer)
+{
+  std::FILE *f = std::fopen(filename.c_str(), "rb");
+  CHECK(f != nullptr);
+  if (f == nullptr) {
+    return false;
+  }
+
+  size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+  REQUIRE(sread == buffer.size());
+
+  std::fclose(f);
+  return true;
+}
+
 TEST_CASE("Bayer conversion", "[image_conversion]")
 {
   // Load original Klimt image
@@ -964,124 +985,124 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("BGGR")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
-      readBinaryFile(filename, buffer);
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_16U);
 
-      col2im(buffer, I_Bayer_16U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                    I_Bayer_16U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                   I_Bayer_16U.getHeight());
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - BGGR - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - BGGR - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
-      }
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                  I_Bayer_16U.getHeight());
 
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                 I_Bayer_16U.getHeight());
-
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - BGGR - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - BGGR - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
     }
 
     SECTION("GBRG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
-      readBinaryFile(filename, buffer);
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_16U);
 
-      col2im(buffer, I_Bayer_16U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                    I_Bayer_16U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                   I_Bayer_16U.getHeight());
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - GBRG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - GBRG - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
-      }
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                  I_Bayer_16U.getHeight());
 
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                 I_Bayer_16U.getHeight());
-
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - GBRG - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - GBRG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
     }
 
     SECTION("GRBG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
-      readBinaryFile(filename, buffer);
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_16U);
 
-      col2im(buffer, I_Bayer_16U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                    I_Bayer_16U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                   I_Bayer_16U.getHeight());
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - GRBG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - GRBG - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
-      }
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                  I_Bayer_16U.getHeight());
 
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                 I_Bayer_16U.getHeight());
-
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - GRBG - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - GRBG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
     }
 
     SECTION("RGGB")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
-      readBinaryFile(filename, buffer);
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_16U);
 
-      col2im(buffer, I_Bayer_16U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                    I_Bayer_16U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                   I_Bayer_16U.getHeight());
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - RGGB - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - RGGB - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
-      }
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
+                                                  I_Bayer_16U.getHeight());
 
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(),
-                                                 I_Bayer_16U.getHeight());
-
-        convertTo(I_RGBA_16U, I_RGBA_8U);
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "16-bit - RGGB - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
+          convertTo(I_RGBA_16U, I_RGBA_8U);
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "16-bit - RGGB - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
     }
   }
@@ -1095,133 +1116,121 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     SECTION("BGGR")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
 
-      std::FILE *f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_8U);
 
-      col2im(buffer, I_Bayer_8U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                   I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - BGGR - Bilinear - PSNR: " << PSNR <<" min required: " << min_PSNR_bilinear <<  std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - BGGR - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - BGGR - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
-
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                 I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
-
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - BGGR - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
-      }
-      std::fclose(f);
     }
 
     SECTION("GBRG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
 
-      std::FILE *f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_8U);
 
-      col2im(buffer, I_Bayer_8U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                   I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - GBRG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - GBRG - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - GBRG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
-
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                 I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
-
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - GBRG - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
-      }
-      std::fclose(f);
     }
 
     SECTION("GRBG")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
 
-      std::FILE *f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_8U);
 
-      col2im(buffer, I_Bayer_8U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                   I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - GRBG - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - GRBG - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - GRBG - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
-
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                 I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
-
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - GRBG - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
-      }
-      std::fclose(f);
     }
 
     SECTION("RGGB")
     {
       const std::string filename =
-          vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
 
-      std::FILE *f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      if (readBinaryFile(filename, buffer)) {
+        col2im(buffer, I_Bayer_8U);
 
-      col2im(buffer, I_Bayer_8U);
+        SECTION("Bilinear")
+        {
+          vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                    I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
 
-      SECTION("Bilinear")
-      {
-        vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                   I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - RGGB - Bilinear - PSNR: " << PSNR << " min required: " << min_PSNR_bilinear << std::endl;
+          CHECK(PSNR >= min_PSNR_bilinear);
+        }
 
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - RGGB - Bilinear - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_bilinear);
+        SECTION("Malvar")
+        {
+          vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
+                                                  I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+          double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+          std::cout << "8-bit - RGGB - Malvar - PSNR: " << PSNR << " min required: " << min_PSNR_Malvar << std::endl;
+          CHECK(PSNR >= min_PSNR_Malvar);
+        }
       }
-
-      SECTION("Malvar")
-      {
-        vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap),
-                                                 I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
-
-        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
-        std::cout << "8-bit - RGGB - Malvar - PSNR: " << PSNR << std::endl;
-        CHECK(PSNR >= min_PSNR_Malvar);
-      }
-      std::fclose(f);
     }
   }
 }
@@ -1240,6 +1249,7 @@ int main(int argc, char *argv[])
   // numFailed is clamped to 255 as some unices only use the lower 8 bits.
   // This clamping has already been applied, so just return it here
   // You can also do any post run clean-up here
+  std::cout << (numFailed ? "Test failed" : "Test succeed") << std::endl;
   return numFailed;
 }
 #else

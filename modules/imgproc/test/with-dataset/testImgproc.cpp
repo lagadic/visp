@@ -70,7 +70,7 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n                 \
 ",
-          name);
+name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -200,7 +200,8 @@ int main(int argc, const char **argv)
       try {
         // Create the dirname
         vpIoTools::makeDirectory(opath);
-      } catch (...) {
+      }
+      catch (...) {
         usage(argv[0], nullptr, ipath, opt_opath, username);
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
@@ -215,8 +216,8 @@ int main(int argc, const char **argv)
       if (ipath != env_ipath) {
         std::cout << std::endl << "WARNING: " << std::endl;
         std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
+          << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+          << "  we skip the environment variable." << std::endl;
       }
     }
 
@@ -225,9 +226,9 @@ int main(int argc, const char **argv)
       usage(argv[0], nullptr, ipath, opt_opath, username);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
+        << "  environment variable to specify the location of the " << std::endl
+        << "  image path where test images are located." << std::endl
+        << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -327,7 +328,7 @@ int main(int argc, const char **argv)
     filename = vpIoTools::createFilePath(opath, "Klimt_unsharp_mask.ppm");
     vpImageIo::write(I_color_unsharp_mask, filename);
 
-    // CLAHE
+// CLAHE
     vpImage<vpRGBa> I_color_clahe;
     t = vpTime::measureTimeMs();
     vp::clahe(I_color, I_color_clahe, 50);
@@ -419,7 +420,8 @@ int main(int argc, const char **argv)
     vpImageIo::write(I_clahe, filename);
 
     return EXIT_SUCCESS;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

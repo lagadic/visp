@@ -542,13 +542,13 @@ void vpNurbs::globalCurveInterp(vpList<vpMeSite> &l_crossingPoints)
   std::vector<vpImagePoint> v_crossingPoints;
   l_crossingPoints.front();
   vpMeSite s = l_crossingPoints.value();
-  vpImagePoint pt(s.ifloat, s.jfloat);
+  vpImagePoint pt(s.get_ifloat(), s.get_jfloat());
   vpImagePoint pt_1 = pt;
   v_crossingPoints.push_back(pt);
   l_crossingPoints.next();
   while (!l_crossingPoints.outside()) {
     s = l_crossingPoints.value();
-    pt.set_ij(s.ifloat, s.jfloat);
+    pt.set_ij(s.get_ifloat(), s.get_jfloat());
     if (vpImagePoint::distance(pt_1, pt) >= 10) {
       v_crossingPoints.push_back(pt);
       pt_1 = pt;
@@ -572,13 +572,13 @@ void vpNurbs::globalCurveInterp(const std::list<vpMeSite> &l_crossingPoints)
 {
   std::vector<vpImagePoint> v_crossingPoints;
   vpMeSite s = l_crossingPoints.front();
-  vpImagePoint pt(s.ifloat, s.jfloat);
+  vpImagePoint pt(s.get_ifloat(), s.get_jfloat());
   vpImagePoint pt_1 = pt;
   v_crossingPoints.push_back(pt);
   std::list<vpMeSite>::const_iterator it = l_crossingPoints.begin();
   ++it;
   for (; it != l_crossingPoints.end(); ++it) {
-    vpImagePoint pt_tmp(it->ifloat, it->jfloat);
+    vpImagePoint pt_tmp(it->get_ifloat(), it->get_jfloat());
     if (vpImagePoint::distance(pt_1, pt_tmp) >= 10) {
       v_crossingPoints.push_back(pt_tmp);
       pt_1 = pt_tmp;
@@ -714,7 +714,7 @@ void vpNurbs::globalCurveApprox(vpList<vpMeSite> &l_crossingPoints, unsigned int
   l_crossingPoints.front();
   while (!l_crossingPoints.outside()) {
     vpMeSite s = l_crossingPoints.value();
-    vpImagePoint pt(s.ifloat, s.jfloat);
+    vpImagePoint pt(s.get_ifloat(), s.get_jfloat());
     v_crossingPoints.push_back(pt);
     l_crossingPoints.next();
   }
@@ -735,7 +735,7 @@ void vpNurbs::globalCurveApprox(const std::list<vpMeSite> &l_crossingPoints, uns
 {
   std::vector<vpImagePoint> v_crossingPoints;
   for (std::list<vpMeSite>::const_iterator it = l_crossingPoints.begin(); it != l_crossingPoints.end(); ++it) {
-    vpImagePoint pt(it->ifloat, it->jfloat);
+    vpImagePoint pt(it->get_ifloat(), it->get_jfloat());
     v_crossingPoints.push_back(pt);
   }
   globalCurveApprox(v_crossingPoints, p, n, knots, controlPoints, weights);

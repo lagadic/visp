@@ -37,26 +37,22 @@
 #include <visp3/core/vpMatrix.h>
 
 /*!
-  \file vpSubMatrix.h
-
-  \brief Definition of the vpSubMatrix class
-*/
+ * \file vpSubMatrix.h
+ *
+ * \brief Definition of the vpSubMatrix class
+ */
 
 /*!
-  \class vpSubMatrix
-  \ingroup group_core_matrices
-  \brief Definition of the vpSubMatrix
-  vpSubMatrix class provides a mask on a vpMatrix
-  all properties of vpMatrix are available with
-  a vpSubMatrix
-
-  \author Jean Laneurit (IRISA - INRIA Rennes)
-
-  \sa vpMatrix vpColVector vpRowVector
-*/
+ * \class vpSubMatrix
+ * \ingroup group_core_matrices
+ * \brief Definition of the vpSubMatrix class that provides a mask on a vpMatrix.
+ * All properties of vpMatrix are available with a vpSubMatrix.
+ *
+ *
+ * \sa vpMatrix vpColVector vpRowVector
+ */
 class VISP_EXPORT vpSubMatrix : public vpMatrix
 {
-
 private:
   //! Eye method unavailable
   void eye(unsigned int n);
@@ -77,7 +73,7 @@ public:
   vpSubMatrix(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,
               const unsigned int &ncols);
   //! Destructor
-  virtual ~vpSubMatrix() override;
+  virtual ~vpSubMatrix() vp_override;
 
   //! Initialisation of vpMatrix
   void init(vpMatrix &m, const unsigned int &row, const unsigned int &col, const unsigned int &nrows,

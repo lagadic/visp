@@ -33,8 +33,11 @@
  *
 *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
 #include "x86/cpu_x86.h"
-#include <Simd/SimdLib.hpp>
+#if defined(VISP_HAVE_SIMDLIB)
+#include <Simd/SimdLib.h>
+#endif
 #include <visp3/core/vpCPUFeatures.h>
 
 namespace vpCPUFeatures
@@ -56,6 +59,7 @@ bool checkAVX() { return cpu_features.HW_AVX; }
 
 bool checkAVX2() { return cpu_features.HW_AVX2; }
 
+#if defined(VISP_HAVE_SIMDLIB)
 size_t getCPUCacheL1() { return SimdCpuInfo(SimdCpuInfoCacheL1); }
 
 size_t getCPUCacheL2() { return SimdCpuInfo(SimdCpuInfoCacheL2); }
@@ -63,6 +67,7 @@ size_t getCPUCacheL2() { return SimdCpuInfo(SimdCpuInfoCacheL2); }
 size_t getCPUCacheL3() { return SimdCpuInfo(SimdCpuInfoCacheL3); }
 
 bool checkNeon() { return SimdCpuInfo(SimdCpuInfoNeon) != 0; }
+#endif
 
 void printCPUInfo() { cpu_features.print(); }
 } // namespace vpCPUFeatures

@@ -7,6 +7,12 @@ on:
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build-macos:
     runs-on: ${{ matrix.os }}
@@ -16,14 +22,8 @@ jobs:
         os: [macos-12, macos-13]
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Print system information
       run: |
@@ -33,8 +33,31 @@ jobs:
     - name: Print OS information
       run: system_profiler SPSoftwareDataType
 
-    - name: Install dependencies
-      run: brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+    - name: Install dependencies on macos-12
+      if: matrix.os == 'macos-12'
+      run: |
+        brew install libpng libjpeg-turbo libdc1394 opencv pcl librealsense zbar pkg-config nlohmann-json
+
+    - name: Install dependencies on macos-13
+      # On macos-13 we need to do a specific action
+      # ==> Pouring python@3.12--3.12.1_1.ventura.bottle.tar.gz
+      # Error: The `brew link` step did not complete successfully
+      # The formula built, but is not symlinked into /usr/local
+      # Could not symlink bin/2to3-3.12
+      # Target /usr/local/bin/2to3-3.12
+      # already exists. You may want to remove it:
+      #   rm '/usr/local/bin/2to3-3.12'
+      #
+      # To force the link and overwrite all conflicting files:
+      #   brew link --overwrite python@3.12
+      #
+      # Fix proposed in https://github.com/actions/runner-images/issues/6817
+      if: matrix.os == 'macos-13'
+      run: |
+        brew update
+        brew upgrade || true
+        brew install libpng libjpeg-turbo libdc1394 pcl librealsense zbar pkg-config nlohmann-json
+        brew install opencv
 
     - name: Install java dependencies
       run: |

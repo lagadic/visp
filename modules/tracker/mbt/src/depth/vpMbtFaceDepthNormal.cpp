@@ -76,7 +76,7 @@ vpMbtFaceDepthNormal::~vpMbtFaceDepthNormal()
   Add a line belonging to the \f$ index \f$ the polygon to the list of lines.
   It is defined by its two extremities.
 
-  If the line already exists, the ploygone's index is added to the list of
+  If the line already exists, the polygon's index is added to the list of
   polygon to which it belongs.
 
   \param P1 : The first extremity of the line.
@@ -184,10 +184,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -220,7 +220,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
+      if (vpMeTracker::inRoiMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
@@ -350,10 +350,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -379,7 +379,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
+      if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
@@ -511,10 +511,10 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   vpPolygon polygon_2d(roiPts);
   vpRect bb = polygon_2d.getBoundingBox();
 
-  unsigned int top = (unsigned int)std::max(0.0, bb.getTop());
-  unsigned int bottom = (unsigned int)std::min((double)height, std::max(0.0, bb.getBottom()));
-  unsigned int left = (unsigned int)std::max(0.0, bb.getLeft());
-  unsigned int right = (unsigned int)std::min((double)width, std::max(0.0, bb.getRight()));
+  unsigned int top = (unsigned int)std::max<double>(0.0, bb.getTop());
+  unsigned int bottom = (unsigned int)std::min<double>((double)height, std::max<double>(0.0, bb.getBottom()));
+  unsigned int left = (unsigned int)std::max<double>(0.0, bb.getLeft());
+  unsigned int right = (unsigned int)std::min<double>((double)width, std::max<double>(0.0, bb.getRight()));
 
   bb.setTop(top);
   bb.setBottom(bottom);
@@ -540,7 +540,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
   double x = 0.0, y = 0.0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
-      if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
+      if (vpMeTracker::inRoiMask(mask, i, j) && point_cloud[i * width + j][2] > 0 &&
           (m_useScanLine ? (i < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
                             j < m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
                             m_hiddenFace->getMbScanLineRenderer().getPrimitiveIDs()[i][j] == m_polygon->getIndex())
@@ -1556,7 +1556,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
       tukey.MEstimator(residues, weights, 1e-4);
     }
     else {
-   // Transform the plane equation for the current pose
+      // Transform the plane equation for the current pose
       m_planeCamera = m_planeObject;
       m_planeCamera.changeFrame(cMo);
 
@@ -1699,10 +1699,20 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-      std::vector<double> params = { 2, // desired normal
-                                    im_centroid.get_i(), im_centroid.get_j(), im_extremity.get_i(),
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      std::vector<double> params = { 2, //desired normal
+                                    im_centroid.get_i(),
+                                    im_centroid.get_j(),
+                                    im_extremity.get_i(),
                                     im_extremity.get_j() };
-
+#else
+      std::vector<double> params;
+      params.push_back(2); //desired normal
+      params.push_back(im_centroid.get_i());
+      params.push_back(im_centroid.get_j());
+      params.push_back(im_extremity.get_i());
+      params.push_back(im_extremity.get_j());
+#endif
       features.push_back(params);
     }
 
@@ -1729,10 +1739,20 @@ vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, cons
     vpMeterPixelConversion::convertPoint(cam, pt_extremity.get_x(), pt_extremity.get_y(), im_extremity);
 
     {
-      std::vector<double> params = { 3, // normal at current pose
-                                    im_centroid.get_i(), im_centroid.get_j(), im_extremity.get_i(),
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      std::vector<double> params = { 3, //normal at current pose
+                                    im_centroid.get_i(),
+                                    im_centroid.get_j(),
+                                    im_extremity.get_i(),
                                     im_extremity.get_j() };
-
+#else
+      std::vector<double> params;
+      params.push_back(3); //normal at current pose
+      params.push_back(im_centroid.get_i());
+      params.push_back(im_centroid.get_j());
+      params.push_back(im_extremity.get_i());
+      params.push_back(im_extremity.get_j());
+#endif
       features.push_back(params);
     }
   }

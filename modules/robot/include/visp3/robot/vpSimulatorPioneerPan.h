@@ -116,20 +116,20 @@ public:
 public:
   /** @name Inherited functionalities from vpSimulatorPioneerPan */
   //@{
-  void get_eJe(vpMatrix &eJe) override;
+  void get_eJe(vpMatrix &eJe) vp_override;
 
   void getPosition(vpHomogeneousMatrix &wMc) const;
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) override;
-  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) override;
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) vp_override;
+  void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel) vp_override;
   //@}
 
 private:
-  void init() override;
+  void init() vp_override;
 
   // Non implemented virtual pure functions
-  void get_fJe(vpMatrix & /*_fJe */) override { };
-  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) override { };
-  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) override { };
+  void get_fJe(vpMatrix & /*_fJe */) vp_override { };
+  void getDisplacement(const vpRobot::vpControlFrameType /* frame */, vpColVector & /* q */) vp_override { };
+  void setPosition(const vpRobot::vpControlFrameType /* frame */, const vpColVector & /* q */) vp_override { };
 };
 
 #endif

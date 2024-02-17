@@ -71,11 +71,11 @@ void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi,
 {
   // umin_roi = u_c + r cos(theta)
   // theta = acos((umin_roi - u_c) / r)
-  float theta1 = std::acos((umin_roi - u_c)/ radius);
+  float theta1 = std::acos((umin_roi - u_c) / radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   delta_theta = theta_max - theta_min;
   if (u_c < umin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
     delta_theta = 0.f;
@@ -99,8 +99,8 @@ void computeIntersectionsRightBorderOnly(const float &u_c, const float &umax_roi
   float theta1 = std::acos((umax_roi - u_c) / radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   delta_theta = 2.f * M_PIf - (theta_max - theta_min);
   if (u_c > umax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
     delta_theta = 0.f;
@@ -131,8 +131,8 @@ void computeIntersectionsTopBorderOnly(const float &v_c, const float &vmin_roi, 
   else {
     theta2 = -theta1 - M_PIf;
   }
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   if (std::abs(theta_max - theta_min) * radius < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
@@ -173,8 +173,8 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
   else {
     theta2 = -theta1 - M_PIf;
   }
-  float theta_min = std::min(theta1, theta2);
-  float theta_max = std::max(theta1, theta2);
+  float theta_min = std::min<float>(theta1, theta2);
+  float theta_max = std::max<float>(theta1, theta2);
   if (std::abs(theta_max - theta_min) * radius < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
@@ -206,14 +206,14 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
  * \param[out] theta_v_cross_max The pair angle /v-coordinate for which the circle intersects the v-axis with the highest v-coordinate.
  */
 void computePerpendicularAxesIntersections(const float &u_c, const float &v_c, const float &radius,
-                                 const float &crossing_u, const float &crossing_v,
-                                 std::pair<float, float> &theta_u_cross_min, std::pair<float, float> &theta_u_cross_max,
-                                 std::pair<float, float> &theta_v_cross_min, std::pair<float, float> &theta_v_cross_max)
+                                           const float &crossing_u, const float &crossing_v,
+                                           std::pair<float, float> &theta_u_cross_min, std::pair<float, float> &theta_u_cross_max,
+                                           std::pair<float, float> &theta_v_cross_min, std::pair<float, float> &theta_v_cross_max)
 {
   // Computing the two angles for which the u-axis is crossed
   // v = vc - r sin(theta) because the v-axis goes down
   // theta = asin((vc - v)/r)
-  float theta_u_cross = std::asin((v_c - crossing_u)/radius);
+  float theta_u_cross = std::asin((v_c - crossing_u) / radius);
   theta_u_cross = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross);
   float theta_u_cross_2 = 0.f;
   if (theta_u_cross > 0) {
@@ -242,7 +242,7 @@ void computePerpendicularAxesIntersections(const float &u_c, const float &v_c, c
   // Computing the two angles for which the v-axis is crossed
   // u = u_c + r cos(theta)
   // theta = acos((u - u_c) / r)
-  float theta_v_cross = std::acos((crossing_v - u_c)/radius);
+  float theta_v_cross = std::acos((crossing_v - u_c) / radius);
   theta_v_cross = vpMath::getAngleBetweenMinPiAndPi(theta_v_cross);
   float theta_v_cross_2 = -theta_v_cross;
   // Computing the corresponding v-coordinates at which the v-axis is crossed
@@ -327,7 +327,7 @@ void computeIntersectionsTopLeft(const float &u_c, const float &v_c, const float
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsTopRight(const float &u_c, const float &v_c, const float &vmin_roi, const float &umax_roi, const float &radius,
-                                 float &delta_theta)
+                                  float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
   std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
@@ -352,7 +352,7 @@ void computeIntersectionsTopRight(const float &u_c, const float &v_c, const floa
   else if (u_umin <= umax_roi && v_vmin >= vmin_roi && u_umax <= umax_roi && v_vmax >= vmin_roi) {
     // The circle crosses twice each axis
    //Case crossing twice
-    delta_theta = 2 * M_PIf - ((theta_u_min - theta_u_max)+(theta_v_min - theta_v_max));
+    delta_theta = 2 * M_PIf - ((theta_u_min - theta_u_max) + (theta_v_min - theta_v_max));
   }
   else if (u_umin >= umax_roi && v_vmin >= vmin_roi && u_umax >= umax_roi && v_vmax >= vmin_roi) {
     // The circle crosses the u-axis outside the roi
@@ -380,7 +380,7 @@ void computeIntersectionsTopRight(const float &u_c, const float &v_c, const floa
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsBottomLeft(const float &u_c, const float &v_c, const float &umin_roi, const float &vmax_roi, const float &radius,
-                                 float &delta_theta)
+                                    float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
   std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
@@ -431,7 +431,7 @@ void computeIntersectionsBottomLeft(const float &u_c, const float &v_c, const fl
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsBottomRight(const float &u_c, const float &v_c, const float &vmax_roi, const float &umax_roi, const float &radius,
-                                 float &delta_theta)
+                                     float &delta_theta)
 {
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
   std::pair<float, float> crossing_theta_v_min, crossing_theta_v_max;
@@ -575,23 +575,23 @@ void computeIntersectionsTopRightBottom(const float &u_c, const float &v_c, cons
   float u_umin_bottom = crossing_theta_u_min.second;
   float u_umax_bottom = crossing_theta_u_max.second;
   if (u_umax_top <= umax_roi && u_umax_bottom <= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
-   // case intersection top + right + bottom twice
+    // case intersection top + right + bottom twice
     delta_theta = 2.f * M_PIf - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
   }
   else if (u_umin_top <= umax_roi && u_umax_top > umax_roi && v_vmin <= vmin_roi && u_umin_bottom <= umax_roi && u_umax_bottom > umax_roi && v_vmax >= vmax_roi) {
-   // case intersection top and bottom
+    // case intersection top and bottom
     delta_theta = (theta_u_max_top - theta_u_max_bottom);
   }
   else if (u_umin_top >= umax_roi && u_umin_bottom >= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
-   // case right only
+    // case right only
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
   else if (u_umin_bottom <= umax_roi && v_vmin >= vmin_roi) {
-   // case bottom/right corner
+    // case bottom/right corner
     computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
   }
   else if (u_umin_top <= umax_roi && v_vmax <= vmax_roi) {
-   // case top/right corner
+    // case top/right corner
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
 }
@@ -608,12 +608,12 @@ void computeIntersectionsTopRightBottom(const float &u_c, const float &v_c, cons
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const float &vmin_roi, const float &vmax_roi, const float &radius,
-                                        float &delta_theta)
+                                       float &delta_theta)
 {
   // Computing the two angles for which the u-axis is crossed at the top of the RoI
   // v = vc - r sin(theta) because the v-axis goes down
   // theta = asin((vc - vmin_roi)/r)
-  float theta_u_cross_top = std::asin((v_c - vmin_roi)/radius);
+  float theta_u_cross_top = std::asin((v_c - vmin_roi) / radius);
   theta_u_cross_top = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross_top);
   float theta_u_cross_top_2 = 0.f;
   if (theta_u_cross_top > 0) {
@@ -640,7 +640,7 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
   // Computing the two angles for which the u-axis is crossed at the bottom of the RoI
   // v = vc - r sin(theta) because the v-axis goes down
   // theta = asin((vc - vmax_roi)/r)
-  float theta_u_cross_bottom = std::asin((v_c - vmax_roi)/radius);
+  float theta_u_cross_bottom = std::asin((v_c - vmax_roi) / radius);
   theta_u_cross_bottom = vpMath::getAngleBetweenMinPiAndPi(theta_u_cross_bottom);
   float theta_u_cross_bottom_2 = 0.f;
   if (theta_u_cross_bottom > 0) {
@@ -713,23 +713,23 @@ void computeIntersectionsLeftRightTop(const float &u_c, const float &v_c, const 
   float v_vmax_right = crossing_theta_v_max.second;
 
   if (u_umin >= umin_roi && u_umax <= umax_roi && v_vmin_left >= vmin_roi && v_vmin_right >= vmin_roi) {
-   // case intersection left + right + top  twice
+    // case intersection left + right + top  twice
     delta_theta = (theta_v_min_left - theta_u_min) + (theta_u_max - theta_v_min_right) + (theta_v_max_right - theta_v_max_left);
   }
   else if (u_umin <= umin_roi && u_umax >= umax_roi && v_vmax_left >= vmin_roi && v_vmax_right >= vmin_roi) {
-   // case intersection left + right
+    // case intersection left + right
     delta_theta = (theta_v_max_right - theta_v_max_left);
   }
   else if (v_vmax_left <= vmin_roi && v_vmax_right <= vmin_roi && u_umin >= umin_roi && u_umax <= umax_roi) {
-   // case top only
+    // case top only
     computeIntersectionsTopBorderOnly(v_c, vmin_roi, radius, delta_theta);
   }
   else if (u_umax >= umin_roi && v_vmax_left >= vmin_roi) {
-   // case top/left corner
+    // case top/left corner
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
   }
   else if (u_umin <= umax_roi && v_vmax_right >= vmin_roi) {
-   // case top/right corner
+    // case top/right corner
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
 }
@@ -747,7 +747,7 @@ void computeIntersectionsLeftRightTop(const float &u_c, const float &v_c, const 
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsLeftRightBottom(const float &u_c, const float &v_c, const float &umin_roi, const float &umax_roi,
-                                      const float &vmax_roi, const float &radius, float &delta_theta)
+                                         const float &vmax_roi, const float &radius, float &delta_theta)
 {
   // Computing the intersections with the bottom and left axes
   std::pair<float, float> crossing_theta_u_min, crossing_theta_u_max;
@@ -777,23 +777,23 @@ void computeIntersectionsLeftRightBottom(const float &u_c, const float &v_c, con
   // float v_vmax_right = crossing_theta_v_max.second;
 
   if (u_umin >= umin_roi && u_umax <= umax_roi && v_vmin_left <= vmax_roi && v_vmin_right <= vmax_roi) {
-   // case intersection left + right + bottom  twice
+    // case intersection left + right + bottom  twice
     delta_theta = (theta_v_min_left - theta_v_min_right) + (theta_v_max_right - theta_u_max) + (theta_u_min - theta_v_max_left);
   }
   else if (u_umin <= umin_roi && u_umax >= umax_roi && v_vmin_left <= vmax_roi && v_vmin_right <= vmax_roi) {
-   // case intersection left + right
+    // case intersection left + right
     delta_theta = (theta_v_min_left - theta_v_min_right);
   }
   else if (v_vmin_left >= vmax_roi && v_vmin_right >= vmax_roi && u_umin >= umin_roi && u_umax <= umax_roi) {
-   // case bottom only
+    // case bottom only
     computeIntersectionsBottomBorderOnly(v_c, vmax_roi, radius, delta_theta);
   }
   else if (u_umax >= umin_roi && v_vmin_right >= vmax_roi) {
-   // case bottom/left corner
+    // case bottom/left corner
     computeIntersectionsBottomLeft(u_c, v_c, umin_roi, vmax_roi, radius, delta_theta);
   }
   else if (u_umin <= umax_roi && v_vmin_right <= vmax_roi) {
-   // case bottom/right corner
+    // case bottom/right corner
     computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
   }
 }
@@ -810,13 +810,13 @@ void computeIntersectionsLeftRightBottom(const float &u_c, const float &v_c, con
  * \param[out] delta_theta The length of the angular interval that is in the RoI.
  */
 void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const float &umin_roi, const float &umax_roi, const float &radius,
-                                        float &delta_theta)
+                                       float &delta_theta)
 {
   // Computing the two angles for which the v-axis is crossed at the left of the RoI
   // umin_roi = u_c + r cos(theta)
   // theta = acos((umin_roi - u_c)/r)
   // theta_min = -theta_max
-  float theta_v_cross_left = std::acos((umin_roi - u_c)/radius);
+  float theta_v_cross_left = std::acos((umin_roi - u_c) / radius);
   theta_v_cross_left = vpMath::getAngleBetweenMinPiAndPi(theta_v_cross_left);
   float theta_v_cross_left_2 = -theta_v_cross_left;
 
@@ -838,7 +838,7 @@ void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const
   // umax_roi = u_c + r cos(theta)
   // theta = acos((umin_roi - u_c)/r)
   // theta_min = -theta_max
-  float theta_v_cross_right = std::acos((umax_roi - u_c)/radius);
+  float theta_v_cross_right = std::acos((umax_roi - u_c) / radius);
   theta_v_cross_right = vpMath::getAngleBetweenMinPiAndPi(theta_v_cross_right);
   float theta_v_cross_right_2 = -theta_v_cross_right;
 
@@ -902,7 +902,7 @@ void computeIntersectionsAllAxes(const float &u_c, const float &v_c, const float
   float theta_u_max_bottom = crossing_theta_u_max.first;
   float theta_v_min_right = crossing_theta_v_min.first;
   float theta_v_max_right = crossing_theta_v_max.first;
-  delta_theta = (theta_v_min_left - theta_u_min_top) + (theta_u_max_top -theta_v_min_right);
+  delta_theta = (theta_v_min_left - theta_u_min_top) + (theta_u_max_top - theta_v_min_right);
   delta_theta += (theta_v_max_right - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max_left);
 }
 
@@ -910,16 +910,16 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
 {
   float delta_theta = 0.f;
   vpImagePoint center = m_center;
-  float u_c = center.get_u();
-  float v_c = center.get_v();
+  float u_c = static_cast<float>(center.get_u());
+  float v_c = static_cast<float>(center.get_v());
   float radius = m_radius;
-  float roi_w = roi.getWidth();
-  float roi_h = roi.getHeight();
+  float roi_w = static_cast<float>(roi.getWidth());
+  float roi_h = static_cast<float>(roi.getHeight());
   vpImagePoint topLeft = roi.getTopLeft();
-  float umin_roi = topLeft.get_u();
-  float vmin_roi = topLeft.get_v();
-  float umax_roi = topLeft.get_u() + roi_w;
-  float vmax_roi = topLeft.get_v() + roi_h;
+  float umin_roi = static_cast<float>(topLeft.get_u());
+  float vmin_roi = static_cast<float>(topLeft.get_v());
+  float umax_roi = umin_roi + roi_w;
+  float vmax_roi = vmin_roi + roi_h;
   bool touchLeftBorder = (u_c - radius) <= umin_roi;
   bool touchRightBorder = (u_c + radius) >= umax_roi;
   bool touchTopBorder = (v_c - radius) <= vmin_roi;
@@ -964,15 +964,15 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     // Touches/intersects the top and right borders of the RoI
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder  && touchTopBorder && touchLeftBorder && !touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && touchLeftBorder && !touchRightBorder) {
     // Touches/intersects the top, left and bottom borders of the RoI
     computeIntersectionsTopLeftBottom(u_c, v_c, umin_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && !touchLeftBorder && touchRightBorder) {
     // Touches/intersects the top, right and bottom borders of the RoI
     computeIntersectionsTopRightBottom(u_c, v_c, umax_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder  && touchTopBorder && !touchLeftBorder && !touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && !touchLeftBorder && !touchRightBorder) {
     // Touches/intersects the top and bottom borders of the RoI
     computeIntersectionsTopBottomOnly(u_c, v_c, vmin_roi, vmax_roi, radius, delta_theta);
   }
@@ -1020,6 +1020,118 @@ float vpImageCircle::computeArcLengthInRoI(const vpRect &roi, const float &round
 {
   float delta_theta = computeAngularCoverageInRoI(roi, roundingTolerance);
   return delta_theta * m_radius;
+}
+
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
+namespace
+{
+// Increment the counter if the considered pixel (x, y) is in the mask image
+void incrementIfIsInMask(const vpImage<bool> &mask, const int &width, const int &height, const int &x, const int &y,
+                         unsigned int &count)
+{
+  if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) {
+    // The pixel is outside the limit of the mask
+    return;
+  }
+  if (mask[y][x]) {
+    // Increment only if the pixel value of the mask is true
+    count++;
+  }
+}
+};
+#endif
+
+unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
+{
+  const int xm = m_center.get_u(), ym = m_center.get_v();
+  const float r_float = static_cast<float>(m_radius);
+  const int width = mask.getWidth();
+  const int height = mask.getHeight();
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  // Increment the counter if the considered pixel (x, y) is in the mask image
+  auto incrementIfIsInMask = [](const vpImage<bool> &mask, const int &width, const int &height, const int &x, const int &y,
+                                unsigned int &count) {
+                                  if ((x < 0) || (y < 0) || (x >= width) || (y >= height)) {
+                                    // The pixel is outside the limit of the mask
+                                    return;
+                                  }
+                                  if (mask[y][x]) {
+                                    // Increment only if the pixel value of the mask is true
+                                    count++;
+                                  }
+    };
+#endif
+  unsigned int count = 0; // Count the number of pixels of the circle whose value in the mask is true
+
+  const float thetaStop = M_PI_2f;
+  float theta = 0;
+  int x1 = 0, x2 = 0, x3 = 0, x4 = 0;
+  int y1 = 0, y2 = 0, y3 = 0, y4 = 0;
+  while (theta < thetaStop) {
+    float cos_theta = std::cos(theta);
+    float sin_theta = std::sin(theta);
+    float rcos_pos = r_float * cos_theta;
+    float rsin_pos = r_float * sin_theta;
+    x1 = xm + rcos_pos; // theta
+    y1 = ym + rsin_pos; // theta
+    x2 = xm - rsin_pos; // theta + pi
+    y2 = ym + rcos_pos; // theta + pi
+    x3 = xm - rcos_pos; // theta + pi/2
+    y3 = ym - rsin_pos; // theta + pi/2
+    x4 = xm + rsin_pos; // theta + pi
+    y4 = ym - rcos_pos; // theta + pi
+    incrementIfIsInMask(mask, width, height, x1, y1, count);
+    incrementIfIsInMask(mask, width, height, x2, y2, count);
+    incrementIfIsInMask(mask, width, height, x3, y3, count);
+    incrementIfIsInMask(mask, width, height, x4, y4, count);
+
+    // Looking for dtheta such as either x or 1 increments of 1 pix exactly
+    // Using series expansion, we get that if we want to have an increment of
+    // 1 pixel for the derivative along x (resp. y), we have to respect the
+    // following formulae
+    float dthetaCosPos = 1.f / (r_float * cos_theta);
+    float dthetaCosNeg = -1.f / (r_float * cos_theta);
+    float dthetaSinPos = 1.f / (r_float * sin_theta);
+    float dthetaSinNeg = -1.f / (r_float * sin_theta);
+    float dthetaPos = 0.f;
+    if ((sin_theta < 0.f) && (cos_theta > 0.f)) {
+      // dTheta <= -1/r sin(theta) && dTheta <= 1/r cos(theta)
+      dthetaPos = std::min<float>(dthetaCosPos, dthetaSinNeg);
+    }
+    else if ((sin_theta > 0.f) && (cos_theta < 0.f)) {
+      // dTheta <= 1/r sin(theta) && dTheta <= -1/r cos(theta)
+      dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinPos);
+    }
+    else if ((sin_theta < 0.f) && (cos_theta < 0.f)) {
+      // dTheta <= -1/r sin(theta) && dTheta <= -1/r cos(theta)
+      dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinNeg);
+    }
+    else if ((sin_theta > 0.f) && (cos_theta > 0.f)) {
+      // dTheta <= 1/r sin(theta) && dTheta <= 1/r cos(theta)
+      dthetaPos = std::min<float>(dthetaCosPos, dthetaSinPos);
+    }
+    else if (vpMath::equal(sin_theta, 0.f) && (!vpMath::equal(cos_theta, 0.f))) {
+      // dTheta = -1 / r cos(theta) || dTheta = 1 / r cos(theta)
+      if (cos_theta > 0.f) {
+        dthetaPos = dthetaCosNeg;
+      }
+      else {
+        dthetaPos = dthetaCosPos;
+      }
+    }
+    else if ((!vpMath::equal(sin_theta, 0.f)) && vpMath::equal(cos_theta, 0.f)) {
+      // dTheta = -1 / r sin(theta) || dTheta = 1 / r sin(theta)
+      if (sin_theta > 0.f) {
+        dthetaPos = dthetaSinNeg;
+      }
+      else {
+        dthetaPos = dthetaSinPos;
+      }
+    }
+    theta += dthetaPos;
+  }
+  return count;
 }
 
 vpImagePoint vpImageCircle::getCenter() const

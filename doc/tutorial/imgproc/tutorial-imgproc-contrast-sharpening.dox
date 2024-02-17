@@ -8,8 +8,8 @@
 While the ViSP library is not intended to be an image processing library or replace a raster graphics editor, some easy image processing techniques can be used to improve the contrast and the sharpness of an image.
 
 The different methods presented are:
-- histogram stretching, see the corresponding <a href="https://docs.gimp.org/en/plug-in-c-astretch.html">Gimp documentation</a>.
-- histogram stretching in the HSV color space, see the corresponding <a href="https://docs.gimp.org/en/plug-in-autostretch-hsv.html">Gimp documentation</a>.
+- histogram stretching, see the corresponding <a href="https://docs.gimp.org/2.10/en/gimp-filter-stretch-contrast.html">Gimp documentation</a>.
+- histogram stretching in the HSV color space, see the corresponding <a href="https://docs.gimp.org/2.10/en/gimp-filter-stretch-contrast-hsv.html">Gimp documentation</a>.
 - histogram equalization, see the corresponding <a href="https://en.wikipedia.org/wiki/Histogram_equalization">Wikipedia entry</a>.
 - contrast limited adaptive histogram equalization (CLAHE), see the corresponding <a href="https://en.wikipedia.org/wiki/Adaptive_histogram_equalization#Contrast_Limited_AHE">Wikipedia entry</a>.
 - unsharp masking, an image sharpening technique, see the corresponding <a href="https://en.wikipedia.org/wiki/Unsharp_masking">Wikipedia entry</a>.

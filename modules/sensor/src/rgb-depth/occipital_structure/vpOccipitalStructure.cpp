@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_THREADS)
 #include <cstring>
 #include <functional>
 #include <iomanip>
@@ -584,7 +584,7 @@ void vpOccipitalStructure::getIMUData(vpColVector *imu_vel, vpColVector *imu_acc
   }
 
   if (ts != nullptr)
-    *ts = std::max(imu_vel_timestamp, imu_acc_timestamp);
+    *ts = std::max<double>(imu_vel_timestamp, imu_acc_timestamp);
 
   u.unlock();
 }

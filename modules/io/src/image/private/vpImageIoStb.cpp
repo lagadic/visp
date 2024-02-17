@@ -36,7 +36,12 @@
   \brief stb backend for JPEG and PNG image I/O operations.
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_STBIMAGE)
+
 #include "vpImageIoBackend.h"
+#include <visp3/core/vpImageConvert.h>
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #define VISP_HAVE_SSE2 1
@@ -111,3 +116,154 @@ void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename)
     throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
   }
 }
+
+namespace
+{
+typedef struct
+{
+  int last_pos;
+  void *context;
+} custom_stbi_mem_context;
+
+// custom write function
+static void custom_stbi_write_mem(void *context, void *data, int size)
+{
+  custom_stbi_mem_context *c = (custom_stbi_mem_context *)context;
+  char *dst = (char *)c->context;
+  char *src = (char *)data;
+  int cur_pos = c->last_pos;
+  for (int i = 0; i < size; i++) {
+    dst[cur_pos++] = src[i];
+  }
+  c->last_pos = cur_pos;
+}
+}
+
+/*!
+  Read the content of the grayscale image bitmap stored in memory and encoded using the PNG format.
+
+  \param[in] buffer : Grayscale image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I : Output decoded grayscale image.
+*/
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
+{
+  int x = 0, y = 0, comp = 0;
+  const int req_channels = 1;
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
+  assert(comp == req_channels);
+
+  I.init(buffer_read, y, x, true);
+  STBI_FREE(buffer_read);
+}
+
+/*!
+  Read the content of the color image bitmap stored in memory and encoded using the PNG format.
+
+  \param[in] buffer : Color image buffer encoded in PNG as 1-D unsigned char vector.
+  \param[out] I_color : Output decoded color image.
+*/
+void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I_color)
+{
+  int x = 0, y = 0, comp = 0;
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, 0);
+
+  if (comp == 4) {
+    const bool copyData = true;
+    I_color.init(reinterpret_cast<vpRGBa *>(buffer_read), y, x, copyData);
+  }
+  else if (comp == 3) {
+    I_color.init(y, x);
+    const bool flip = false;
+    vpImageConvert::RGBToRGBa(buffer_read, reinterpret_cast<unsigned char *>(I_color.bitmap), x, y, flip);
+  }
+  else {
+    STBI_FREE(buffer_read);
+
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+    std::string message = "Wrong number of channels for the input buffer: " + std::to_string(comp);
+    throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Wrong number of channels for the input buffer: %d", comp));
+#endif
+  }
+
+  STBI_FREE(buffer_read);
+}
+
+/*!
+  In-memory PNG encoding of the grayscale image.
+
+  \param[in] I : Input grayscale image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+*/
+void writePNGtoMemStb(const vpImage<unsigned char> &I, std::vector<unsigned char> &buffer)
+{
+  const int height = I.getRows();
+  const int width = I.getCols();
+  const int channels = 1;
+
+  custom_stbi_mem_context context;
+  context.last_pos = 0;
+  buffer.resize(I.getHeight() * I.getWidth());
+  context.context = (void *)buffer.data();
+
+  const int stride_bytes = 0;
+  int result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, I.bitmap, stride_bytes);
+
+  if (result) {
+    buffer.resize(context.last_pos);
+  }
+  else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+    std::string message = "Cannot write png to memory, result: " + std::to_string(result);
+    throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Cannot write png to memory, result: %d", result));
+#endif
+  }
+}
+
+/*!
+  In-memory PNG encoding of the color image.
+
+  \param[in] I_color : Input color image.
+  \param[out] buffer : Encoded image as 1-D unsigned char vector using the PNG format.
+  \param[in] saveAlpha : If true, alpha channel is also used for encoding.
+*/
+void writePNGtoMemStb(const vpImage<vpRGBa> &I_color, std::vector<unsigned char> &buffer, bool saveAlpha)
+{
+  const int height = I_color.getRows();
+  const int width = I_color.getCols();
+  const int channels = saveAlpha ? 4 : 3;
+
+  custom_stbi_mem_context context;
+  context.last_pos = 0;
+  buffer.resize(height * width * channels);
+  context.context = (void *)buffer.data();
+
+  const int stride_bytes = 0;
+  int result = 0;
+  if (saveAlpha) {
+    result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels,
+      reinterpret_cast<unsigned char *>(I_color.bitmap), stride_bytes);
+  }
+  else {
+    unsigned char *bitmap = new unsigned char[height * width * channels];
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(I_color.bitmap), bitmap, height*width);
+    result = stbi_write_png_to_func(custom_stbi_write_mem, &context, width, height, channels, bitmap, stride_bytes);
+    delete[] bitmap;
+  }
+
+  if (result) {
+    buffer.resize(context.last_pos);
+  }
+  else {
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+    std::string message = "Cannot write png to memory, result: " + std::to_string(result);
+    throw(vpImageException(vpImageException::ioError, message));
+#else
+    throw(vpImageException(vpImageException::ioError, "Cannot write png to memory, result: %d", result));
+#endif
+  }
+}
+#endif

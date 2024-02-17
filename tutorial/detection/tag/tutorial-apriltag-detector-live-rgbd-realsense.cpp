@@ -7,7 +7,6 @@
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -39,36 +38,46 @@ int main(int argc, const char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
       poseEstimationMethod = (vpDetectorAprilTag::vpPoseEstimationMethod)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       tagSize = atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       quad_decimate = (float)atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--nthreads" && i + 1 < argc) {
       nThreads = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--display_tag") {
+    }
+    else if (std::string(argv[i]) == "--display_tag") {
       display_tag = true;
-    } else if (std::string(argv[i]) == "--display_off") {
+    }
+    else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
-    } else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
       color_id = atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
       thickness = (unsigned int)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--z_aligned") {
+    }
+    else if (std::string(argv[i]) == "--z_aligned") {
       align_frame = true;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
-                << " [--tag_size <tag_size in m> (default: 0.053)]"
-                   " [--quad_decimate <quad_decimate> (default: 1)]"
-                   " [--nthreads <nb> (default: 1)]"
-                   " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
-                   " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
-                   " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
-                   " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
-                   " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
-                   " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
-                   " [--display_tag] [--z_aligned]";
+        << " [--tag_size <tag_size in m> (default: 0.053)]"
+        " [--quad_decimate <quad_decimate> (default: 1)]"
+        " [--nthreads <nb> (default: 1)]"
+        " [--pose_method <method> (0: HOMOGRAPHY, 1: HOMOGRAPHY_VIRTUAL_VS, "
+        " 2: DEMENTHON_VIRTUAL_VS, 3: LAGRANGE_VIRTUAL_VS, "
+        " 4: BEST_RESIDUAL_VIRTUAL_VS, 5: HOMOGRAPHY_ORTHOGONAL_ITERATION) (default: 0)]"
+        " [--tag_family <family> (0: TAG_36h11, 1: TAG_36h10 (DEPRECATED), 2: TAG_36ARTOOLKIT (DEPRECATED),"
+        " 3: TAG_25h9, 4: TAG_25h7 (DEPRECATED), 5: TAG_16h5, 6: TAG_CIRCLE21h7, 7: TAG_CIRCLE49h12,"
+        " 8: TAG_CUSTOM48h12, 9: TAG_STANDARD41h12, 10: TAG_STANDARD52h13) (default: 0)]"
+        " [--display_tag] [--z_aligned]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off] [--color <color id>] [--thickness <line thickness>]";
 #endif
@@ -168,7 +177,8 @@ int main(int argc, const char **argv)
           if (I_depth_raw[i][j]) {
             float Z = I_depth_raw[i][j] * depth_scale;
             depthMap[i][j] = Z;
-          } else {
+          }
+          else {
             depthMap[i][j] = 0;
           }
         }
@@ -199,9 +209,11 @@ int main(int argc, const char **argv)
                                                     &confidence_index)) {
           if (confidence_index > 0.5) {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::none, 3);
-          } else if (confidence_index > 0.25) {
+          }
+          else if (confidence_index > 0.25) {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::orange, 3);
-          } else {
+          }
+          else {
             vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::red, 3);
           }
           std::stringstream ss;
@@ -231,8 +243,8 @@ int main(int argc, const char **argv)
 
     std::cout << "Benchmark loop processing time" << std::endl;
     std::cout << "Mean / Median / Std: " << vpMath::getMean(time_vec) << " ms"
-              << " ; " << vpMath::getMedian(time_vec) << " ms"
-              << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
+      << " ; " << vpMath::getMedian(time_vec) << " ms"
+      << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
     if (!display_off) {
       delete d1;
@@ -240,7 +252,8 @@ int main(int argc, const char **argv)
       delete d3;
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 

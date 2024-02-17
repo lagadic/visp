@@ -269,8 +269,8 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
-      opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
-      useScanline, computeCovariance, projectionError)) {
+                    opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
+                    useScanline, computeCovariance, projectionError)) {
       return EXIT_FAILURE;
     }
 
@@ -393,10 +393,11 @@ int main(int argc, const char **argv)
     vpCameraParameters cam;
 
     // Initialise the tracker: camera parameters, moving edge and KLT settings
+
+#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     tracker.loadConfigFile(configFile);
-
-#if 0
+#else
     // Corresponding parameters manually set to have an example code
     // By setting the parameters:
     cam.initPersProjWithoutDistortion(547, 542, 338, 234);
@@ -506,9 +507,9 @@ int main(int argc, const char **argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
+#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFile);
-
-#if 0
+#else
         // Corresponding parameters manually set to have an example code
         // By setting the parameters:
         cam.initPersProjWithoutDistortion(547, 542, 338, 234);

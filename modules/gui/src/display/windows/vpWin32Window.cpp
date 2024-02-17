@@ -156,13 +156,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
   // case WM_SYSKEYUP:
   case WM_KEYDOWN:
     // case WM_KEYUP:
-    {
-      GetKeyNameText((LONG)lParam, window->lpString,
-                     10); // 10 is the size of lpString
-      // window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
-      vpReleaseSemaphore(window->semaKey, 1, nullptr);
-      break;
-    }
+  {
+    GetKeyNameText((LONG)lParam, window->lpString,
+                   10); // 10 is the size of lpString
+    // window->key = MapVirtualKey(wParam, MAPVK_VK_TO_CHAR);
+    vpReleaseSemaphore(window->semaKey, 1, nullptr);
+    break;
+  }
 
   case WM_COMMAND:
 
@@ -298,9 +298,11 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
     if (val == -1) {
       std::cout << "GetMessage error:" << GetLastError() << std::endl;
       break;
-    } else if (val == 0) {
+    }
+    else if (val == 0) {
       break;
-    } else {
+    }
+    else {
       if (!TranslateAccelerator(msg.hwnd, nullptr, &msg)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -311,7 +313,6 @@ void vpWin32Window::initWindow(const char *title, int posx, int posy, unsigned i
 
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpWin32Window.cpp.o) has no
-// symbols
-void dummy_vpWin32Window(){};
+// Work around to avoid warning: libvisp_core.a(vpWin32Window.cpp.o) has no symbols
+void dummy_vpWin32Window() { };
 #endif

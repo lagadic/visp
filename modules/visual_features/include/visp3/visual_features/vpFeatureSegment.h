@@ -71,14 +71,14 @@ public:
   void buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   //! Feature duplication.
-  vpFeatureSegment *duplicate() const override;
+  vpFeatureSegment *duplicate() const vp_override;
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 
   /*!
    * Get the x coordinate of the segment center in the image plane.
@@ -130,12 +130,12 @@ public:
   inline double getZ2() const { return Z2_; }
 
   // Basic construction.
-  void init() override;
+  void init() vp_override;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
 
-  void print(unsigned int select = FEATURE_ALL) const override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
 
   /*!
    * Indicates if the normalized features are considered.

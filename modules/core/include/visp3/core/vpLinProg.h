@@ -61,6 +61,7 @@
 class VISP_EXPORT vpLinProg
 {
 public:
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /*!
    * Used to pass a list of bounded variables to solveLP(), as a list of (index, bound).
    *
@@ -121,6 +122,7 @@ public:
                       const double &tol = 1e-6);
 
   //@}
+#endif
 
   /** @name Dimension reduction for equality constraints  */
   //@{

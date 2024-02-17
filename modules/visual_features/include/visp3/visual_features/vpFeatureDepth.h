@@ -175,11 +175,11 @@ public:
   void buildFrom(double x, double y, double Z, double LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
+               unsigned int thickness = 1) const vp_override;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const override;
-  vpFeatureDepth *duplicate() const override;
-  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) override;
+               unsigned int thickness = 1) const vp_override;
+  vpFeatureDepth *duplicate() const vp_override;
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;
 
   double get_x() const;
 
@@ -189,10 +189,10 @@ public:
 
   double get_LogZoverZstar() const;
 
-  void init() override;
-  vpMatrix interaction(unsigned int select = FEATURE_ALL) override;
+  void init() vp_override;
+  vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
+  void print(unsigned int select = FEATURE_ALL) const vp_override;
 
-  void print(unsigned int select = FEATURE_ALL) const override;
   void set_x(double x);
 
   void set_y(double y);
@@ -205,9 +205,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

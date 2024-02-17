@@ -67,7 +67,7 @@ protected:
 public:
   vpSubRowVector();
   vpSubRowVector(vpRowVector &v, const unsigned int &offset, const unsigned int &ncols);
-  virtual ~vpSubRowVector() override;
+  virtual ~vpSubRowVector() vp_override;
 
   void checkParentStatus() const;
 

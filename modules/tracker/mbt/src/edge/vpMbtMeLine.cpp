@@ -65,15 +65,17 @@ static void normalizeAngle(double &delta)
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
 vpMbtMeLine::vpMbtMeLine()
-  : rho(0.), theta(0.), theta_1(M_PI / 2), delta(0.), delta_1(0), sign(1), a(0.), b(0.), c(0.), imin(0), imax(0),
-    jmin(0), jmax(0), expecteddensity(0.)
-{
-}
+  : m_rho(0.), m_theta(0.), m_theta_1(M_PI / 2), m_delta(0.), m_delta_1(0), m_sign(1), m_a(0.), m_b(0.), m_c(0.),
+  imin(0), imax(0), jmin(0), jmax(0), expecteddensity(0.)
+{ }
 
 /*!
   Basic destructor.
 */
-vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
+vpMbtMeLine::~vpMbtMeLine()
+{
+  m_meList.clear();
+}
 
 /*!
   Initialization of the tracking. The line is defined thanks to the
@@ -86,41 +88,42 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param I : Image in which the line appears.
   \param ip1 : Coordinates of the first point.
   \param ip2 : Coordinates of the second point.
-  \param rho_ : The \f$\rho\f$ parameter
-  \param theta_ : The \f$\theta\f$ parameter
+  \param rho : The \f$\rho\f$ parameter
+  \param theta : The \f$\theta\f$ parameter
   \param doNoTrack : If true, ME are not tracked
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                               double rho_, double theta_, bool doNoTrack)
+                               double rho, double theta, bool doNoTrack)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
   try {
     //  1. On fait ce qui concerne les droites (peut etre vide)
     // Points extremites
-    PExt[0].ifloat = (float)ip1.get_i();
-    PExt[0].jfloat = (float)ip1.get_j();
-    PExt[1].ifloat = (float)ip2.get_i();
-    PExt[1].jfloat = (float)ip2.get_j();
+    m_PExt[0].m_ifloat = (float)ip1.get_i();
+    m_PExt[0].m_jfloat = (float)ip1.get_j();
+    m_PExt[1].m_ifloat = (float)ip2.get_i();
+    m_PExt[1].m_jfloat = (float)ip2.get_j();
 
-    this->rho = rho_;
-    this->theta = theta_;
-    theta_1 = theta_;
+    m_rho = rho;
+    m_theta = theta;
+    m_theta_1 = theta;
 
-    a = cos(theta);
-    b = sin(theta);
-    c = -rho;
+    m_a = cos(m_theta);
+    m_b = sin(m_theta);
+    m_c = -m_rho;
 
-    delta = -theta + M_PI / 2.0;
-    normalizeAngle(delta);
-    delta_1 = delta;
+    m_delta = -m_theta + M_PI / 2.0;
+    normalizeAngle(m_delta);
+    m_delta_1 = m_delta;
 
     sample(I, doNoTrack);
-    expecteddensity = (double)list.size();
+    expecteddensity = (double)m_meList.size();
 
     if (!doNoTrack)
       vpMeTracker::track(I);
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
   vpCDEBUG(1) << " end vpMeLine::initTracking()" << std::endl;
@@ -135,66 +138,69 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
 */
 void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
 {
-  int rows = (int)I.getHeight();
-  int cols = (int)I.getWidth();
+  int nbrows = static_cast<int>(I.getHeight());
+  int nbcols = static_cast<int>(I.getWidth());
   double n_sample;
 
-  // if (me->getSampleStep==0)
-  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(m_me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     throw(vpTrackingException(vpTrackingException::fatalError, "Function vpMbtMeLine::sample() called with "
-                                                               "moving-edges sample step = 0"));
+                              "moving-edges sample step = 0"));
   }
 
   // i, j portions of the line_p
-  double diffsi = PExt[0].ifloat - PExt[1].ifloat;
-  double diffsj = PExt[0].jfloat - PExt[1].jfloat;
+  double diffsi = m_PExt[0].m_ifloat - m_PExt[1].m_ifloat;
+  double diffsj = m_PExt[0].m_jfloat - m_PExt[1].m_jfloat;
 
   double length_p = sqrt((vpMath::sqr(diffsi) + vpMath::sqr(diffsj)));
 
   // number of samples along line_p
-  n_sample = length_p / (double)me->getSampleStep();
+  n_sample = length_p / (double)m_me->getSampleStep();
 
   double stepi = diffsi / (double)n_sample;
   double stepj = diffsj / (double)n_sample;
 
   // Choose starting point
-  double is = PExt[1].ifloat;
-  double js = PExt[1].jfloat;
+  double is = m_PExt[1].m_ifloat;
+  double js = m_PExt[1].m_jfloat;
 
   // Delete old list
-  list.clear();
+  m_meList.clear();
 
-  // sample positions at i*me->getSampleStep() interval along the
+  // sample positions at i*m_me->getSampleStep() interval along the
   // line_p, starting at PSiteExt[0]
 
-  vpImagePoint ip;
   for (int i = 0; i <= vpMath::round(n_sample); i++) {
+    vpImagePoint iP;
+    iP.set_i(is);
+    iP.set_j(js);
     // If point is in the image, add to the sample list
-    if (!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange() + me->getMaskSize() + 1), (int)rows,
-                    (int)cols) &&
-        vpMeTracker::inMask(m_mask, vpMath::round(is), vpMath::round(js))) {
-      vpMeSite pix; //= list.value();
-      pix.init((int)is, (int)js, delta, 0, sign);
+    if ((!outOfImage(iP, (int)(m_me->getRange() + m_me->getMaskSize() + 1), nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())
+        && inMeMaskCandidates(m_maskCandidates, iP.get_i(), iP.get_j())) {
+      vpMeSite pix;
+      pix.init(iP.get_i(), iP.get_j(), m_delta, 0, m_sign);
+      pix.setDisplay(m_selectDisplay);
+      pix.setState(vpMeSite::NO_SUPPRESSION);
+      const double marginRatio = m_me->getThresholdMarginRatio();
+      double convolution = pix.convolution(I, m_me);
+      double contrastThreshold = fabs(convolution) * marginRatio;
+      pix.setContrastThreshold(contrastThreshold, *m_me);
 
-      if (!doNoTrack)
-        pix.track(I, me, false);
-
-      pix.setDisplay(selectDisplay);
-
-      if (vpDEBUG_ENABLE(3)) {
-        ip.set_i(is);
-        ip.set_j(js);
-        vpDisplay::displayCross(I, ip, 2, vpColor::blue);
+      if (!doNoTrack) {
+        pix.track(I, m_me, false);
       }
 
-      list.push_back(pix);
+      if (vpDEBUG_ENABLE(3)) {
+        vpDisplay::displayCross(I, iP, 2, vpColor::blue);
+      }
+
+      m_meList.push_back(pix);
     }
     is += stepi;
     js += stepj;
   }
 
   vpCDEBUG(1) << "end vpMeLine::sample() : ";
-  vpCDEBUG(1) << list.size() << " point inserted in the list " << std::endl;
+  vpCDEBUG(1) << m_meList.size() << " point inserted in the list " << std::endl;
 }
 
 /*!
@@ -204,35 +210,35 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
 */
 void vpMbtMeLine::suppressPoints(const vpImage<unsigned char> &I)
 {
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();) {
+  for (std::list<vpMeSite>::iterator it = m_meList.begin(); it != m_meList.end();) {
     vpMeSite s = *it; // current reference pixel
 
-    if (fabs(sin(theta)) > 0.9) // Vertical line management
+    if (fabs(sin(m_theta)) > 0.9) // Vertical line management
     {
-      if ((s.i < imin) || (s.i > imax)) {
+      if ((s.m_i < imin) || (s.m_i > imax)) {
         s.setState(vpMeSite::CONTRAST);
       }
     }
 
-    else if (fabs(cos(theta)) > 0.9) // Horizontal line management
+    else if (fabs(cos(m_theta)) > 0.9) // Horizontal line management
     {
-      if ((s.j < jmin) || (s.j > jmax)) {
+      if ((s.m_j < jmin) || (s.m_j > jmax)) {
         s.setState(vpMeSite::CONTRAST);
       }
     }
 
     else {
-      if ((s.i < imin) || (s.i > imax) || (s.j < jmin) || (s.j > jmax)) {
+      if ((s.m_i < imin) || (s.m_i > imax) || (s.m_j < jmin) || (s.m_j > jmax)) {
         s.setState(vpMeSite::CONTRAST);
       }
     }
 
-    if (outOfImage(s.i, s.j, (int)(me->getRange() + me->getMaskSize() + 1), (int)I.getHeight(), (int)I.getWidth())) {
+    if (outOfImage(s.m_i, s.m_j, (int)(m_me->getRange() + m_me->getMaskSize() + 1), (int)I.getHeight(), (int)I.getWidth())) {
       s.setState(vpMeSite::TOO_NEAR);
     }
 
     if (s.getState() != vpMeSite::NO_SUPPRESSION)
-      it = list.erase(it);
+      it = m_meList.erase(it);
     else
       ++it;
   }
@@ -252,14 +258,14 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   int cols = (int)I.getWidth();
   double n_sample;
 
-  // if (me->getSampleStep()==0)
-  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
+  // if (m_me->getSampleStep()==0)
+  if (std::fabs(m_me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
     throw(vpTrackingException(vpTrackingException::fatalError, "Function called with sample step = 0"));
   }
 
   // i, j portions of the line_p
-  double diffsi = PExt[0].ifloat - PExt[1].ifloat;
-  double diffsj = PExt[0].jfloat - PExt[1].jfloat;
+  double diffsi = m_PExt[0].m_ifloat - m_PExt[1].m_ifloat;
+  double diffsj = m_PExt[0].m_jfloat - m_PExt[1].m_jfloat;
 
   double s = vpMath::sqr(diffsi) + vpMath::sqr(diffsj);
 
@@ -269,63 +275,66 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   double length_p = sqrt(s); /*(vpMath::sqr(diffsi)+vpMath::sqr(diffsj))*/
 
   // number of samples along line_p
-  n_sample = length_p / (double)me->getSampleStep();
-  double sample_step = (double)me->getSampleStep();
+  n_sample = length_p / (double)m_me->getSampleStep();
+  double sample_step = (double)m_me->getSampleStep();
 
   vpMeSite P;
-  P.init((int)PExt[0].ifloat, (int)PExt[0].jfloat, delta_1, 0, sign);
-  P.setDisplay(selectDisplay);
+  P.init((int)m_PExt[0].m_ifloat, (int)m_PExt[0].m_jfloat, m_delta_1, 0, m_sign);
+  P.setDisplay(m_selectDisplay);
 
-  unsigned int memory_range = me->getRange();
-  me->setRange(1);
+  unsigned int memory_range = m_me->getRange();
+  m_me->setRange(1);
 
   for (int i = 0; i < 3; i++) {
-    P.ifloat = P.ifloat + di * sample_step;
-    P.i = (int)P.ifloat;
-    P.jfloat = P.jfloat + dj * sample_step;
-    P.j = (int)P.jfloat;
+    P.m_ifloat = P.m_ifloat + di * sample_step;
+    P.m_i = (int)P.m_ifloat;
+    P.m_jfloat = P.m_jfloat + dj * sample_step;
+    P.m_j = (int)P.m_jfloat;
 
-    if ((P.i < imin) || (P.i > imax) || (P.j < jmin) || (P.j > jmax)) {
+    if ((P.m_i < imin) || (P.m_i > imax) || (P.m_j < jmin) || (P.m_j > jmax)) {
       if (vpDEBUG_ENABLE(3))
-        vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::cyan);
-    } else if (!outOfImage(P.i, P.j, (int)(me->getRange() + me->getMaskSize() + 1), (int)rows, (int)cols)) {
-      P.track(I, me, false);
+        vpDisplay::displayCross(I, P.m_i, P.m_j, 5, vpColor::cyan);
+    }
+    else if (!outOfImage(P.m_i, P.m_j, (int)(m_me->getRange() + m_me->getMaskSize() + 1), (int)rows, (int)cols)) {
+      P.track(I, m_me, false);
 
       if (P.getState() == vpMeSite::NO_SUPPRESSION) {
-        list.push_back(P);
+        m_meList.push_back(P);
         if (vpDEBUG_ENABLE(3))
-          vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::green);
-      } else if (vpDEBUG_ENABLE(3))
-        vpDisplay::displayCross(I, P.i, P.j, 10, vpColor::blue);
+          vpDisplay::displayCross(I, P.m_i, P.m_j, 5, vpColor::green);
+      }
+      else if (vpDEBUG_ENABLE(3))
+        vpDisplay::displayCross(I, P.m_i, P.m_j, 10, vpColor::blue);
     }
   }
 
-  P.init((int)PExt[1].ifloat, (int)PExt[1].jfloat, delta_1, 0, sign);
-  P.setDisplay(selectDisplay);
+  P.init((int)m_PExt[1].m_ifloat, (int)m_PExt[1].m_jfloat, m_delta_1, 0, m_sign);
+  P.setDisplay(m_selectDisplay);
   for (int i = 0; i < 3; i++) {
-    P.ifloat = P.ifloat - di * sample_step;
-    P.i = (int)P.ifloat;
-    P.jfloat = P.jfloat - dj * sample_step;
-    P.j = (int)P.jfloat;
+    P.m_ifloat = P.m_ifloat - di * sample_step;
+    P.m_i = (int)P.m_ifloat;
+    P.m_jfloat = P.m_jfloat - dj * sample_step;
+    P.m_j = (int)P.m_jfloat;
 
-    if ((P.i < imin) || (P.i > imax) || (P.j < jmin) || (P.j > jmax)) {
+    if ((P.m_i < imin) || (P.m_i > imax) || (P.m_j < jmin) || (P.m_j > jmax)) {
       if (vpDEBUG_ENABLE(3))
-        vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::cyan);
+        vpDisplay::displayCross(I, P.m_i, P.m_j, 5, vpColor::cyan);
     }
 
-    else if (!outOfImage(P.i, P.j, (int)(me->getRange() + me->getMaskSize() + 1), (int)rows, (int)cols)) {
-      P.track(I, me, false);
+    else if (!outOfImage(P.m_i, P.m_j, (int)(m_me->getRange() + m_me->getMaskSize() + 1), (int)rows, (int)cols)) {
+      P.track(I, m_me, false);
 
       if (P.getState() == vpMeSite::NO_SUPPRESSION) {
-        list.push_back(P);
+        m_meList.push_back(P);
         if (vpDEBUG_ENABLE(3))
-          vpDisplay::displayCross(I, P.i, P.j, 5, vpColor::green);
-      } else if (vpDEBUG_ENABLE(3))
-        vpDisplay::displayCross(I, P.i, P.j, 10, vpColor::blue);
+          vpDisplay::displayCross(I, P.m_i, P.m_j, 5, vpColor::green);
+      }
+      else if (vpDEBUG_ENABLE(3))
+        vpDisplay::displayCross(I, P.m_i, P.m_j, 10, vpColor::blue);
     }
   }
 
-  me->setRange(memory_range);
+  m_me->setRange(memory_range);
 
   vpCDEBUG(1) << "end vpMeLine::sample() : ";
   vpCDEBUG(1) << n_sample << " point inserted in the list " << std::endl;
@@ -351,13 +360,15 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
-  double deltaNormalized = theta;
+  double deltaNormalized = m_theta;
   unsigned int iter = 0;
 
-  while (deltaNormalized < 0)
+  while (deltaNormalized < 0) {
     deltaNormalized += M_PI;
-  while (deltaNormalized > M_PI)
+  }
+  while (deltaNormalized > M_PI) {
     deltaNormalized -= M_PI;
+  }
 
   vpColVector vecLine(2);
   vecLine[0] = cos(deltaNormalized);
@@ -366,13 +377,13 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
 
   double offset = std::floor(SobelX.getRows() / 2.0f);
 
-  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
-    if (iter != 0 && iter + 1 != list.size()) {
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
+    if (iter != 0 && iter + 1 != m_meList.size()) {
       double gradientX = 0;
       double gradientY = 0;
 
-      double iSite = it->ifloat;
-      double jSite = it->jfloat;
+      double iSite = it->m_ifloat;
+      double jSite = it->m_jfloat;
 
       for (unsigned int i = 0; i < SobelX.getRows(); i++) {
         double iImg = iSite + (i - offset);
@@ -434,26 +445,15 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
           vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle)),
                                   (int)(it->get_j() + length * sin(angle)), vpColor::red, length >= 20 ? length / 5 : 4,
                                   length >= 20 ? length / 10 : 2, thickness);
-        } else {
+        }
+        else {
           vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle + M_PI)),
                                   (int)(it->get_j() + length * sin(angle + M_PI)), vpColor::red,
                                   length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         }
       }
 
-      //      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      double angle2 = sqrt(vpMath::sqr(deltaNormalized-
-      //      (angle-M_PI)));
-
-      _sumErrorRad += (std::min)(angle1, angle2);
-
-      //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
-      //      {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle)) - M_PI
-      //        / 2;
-      //      } else {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      }
+      _sumErrorRad += std::min<double>(angle1, angle2);
 
       _nbFeatures++;
     }
@@ -476,15 +476,13 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
   unsigned int n = numberOfSignal();
 
   if ((double)n < 0.5 * expecteddensity && n > 0) {
-    double delta_new = delta;
-    delta = delta_1;
+    double delta_new = m_delta;
+    m_delta = m_delta_1;
     sample(I);
-    expecteddensity = (double)list.size();
-    delta = delta_new;
+    expecteddensity = (double)m_meList.size();
+    m_delta = delta_new;
     //  2. On appelle ce qui n'est pas specifique
-    {
-      vpMeTracker::initTracking(I);
-    }
+    vpMeTracker::initTracking(I);
   }
 }
 
@@ -502,19 +500,19 @@ void vpMbtMeLine::reSample(const vpImage<unsigned char> &I)
 */
 void vpMbtMeLine::reSample(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  size_t n = list.size();
+  size_t n = m_meList.size();
 
   if ((double)n < 0.5 * expecteddensity /*&& n > 0*/) // n is always > 0
   {
-    double delta_new = delta;
-    delta = delta_1;
-    PExt[0].ifloat = (float)ip1.get_i();
-    PExt[0].jfloat = (float)ip1.get_j();
-    PExt[1].ifloat = (float)ip2.get_i();
-    PExt[1].jfloat = (float)ip2.get_j();
+    double delta_new = m_delta;
+    m_delta = m_delta_1;
+    m_PExt[0].m_ifloat = (float)ip1.get_i();
+    m_PExt[0].m_jfloat = (float)ip1.get_j();
+    m_PExt[1].m_ifloat = (float)ip2.get_i();
+    m_PExt[1].m_jfloat = (float)ip2.get_j();
     sample(I);
-    expecteddensity = (double)list.size();
-    delta = delta_new;
+    expecteddensity = (double)m_meList.size();
+    m_delta = delta_new;
     vpMeTracker::track(I);
   }
 }
@@ -529,27 +527,28 @@ void vpMbtMeLine::updateDelta()
   double diff = 0;
 
   // if(fabs(theta) == M_PI )
-  if (std::fabs(std::fabs(theta) - M_PI) <=
-      vpMath::maximum(std::fabs(theta), (double)M_PI) * std::numeric_limits<double>::epsilon()) {
-    theta = 0;
+  if (std::fabs(std::fabs(m_theta) - M_PI) <=
+      vpMath::maximum(std::fabs(m_theta), (double)M_PI) * std::numeric_limits<double>::epsilon()) {
+    m_theta = 0;
   }
 
-  diff = fabs(theta - theta_1);
-  if (diff > M_PI / 2.0)
-    sign *= -1;
+  diff = fabs(m_theta - m_theta_1);
+  if (diff > M_PI / 2.0) {
+    m_sign *= -1;
+  }
 
-  theta_1 = theta;
+  m_theta_1 = m_theta;
 
-  delta = -theta + M_PI / 2.0;
-  normalizeAngle(delta);
+  m_delta = -m_theta + M_PI / 2.0;
+  normalizeAngle(m_delta);
 
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
+  for (std::list<vpMeSite>::iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
     p_me = *it;
-    p_me.alpha = delta;
-    p_me.mask_sign = sign;
+    p_me.m_alpha = m_delta;
+    p_me.m_mask_sign = m_sign;
     *it = p_me;
   }
-  delta_1 = delta;
+  m_delta_1 = m_delta;
 }
 
 /*!
@@ -563,9 +562,10 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
     vpMeTracker::track(I);
     if (m_mask != nullptr) {
       // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
-      expecteddensity = (double)list.size();
+      expecteddensity = (double)m_meList.size();
     }
-  } catch (...) {
+  }
+  catch (...) {
     throw; // throw the original exception
   }
 }
@@ -574,17 +574,17 @@ void vpMbtMeLine::track(const vpImage<unsigned char> &I)
   Update the moving edges parameters after the virtual visual servoing.
 
   \param  I : The image.
-  \param  rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
-  \param  theta_ : The \f$\theta\f$ parameter used in the line's polar
+  \param  rho : The \f$\rho\f$ parameter used in the line's polar equation.
+  \param  theta : The \f$\theta\f$ parameter used in the line's polar
   equation.
 */
-void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_, double theta_)
+void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho, double theta)
 {
-  this->rho = rho_;
-  this->theta = theta_;
-  a = cos(theta);
-  b = sin(theta);
-  c = -rho;
+  m_rho = rho;
+  m_theta = theta;
+  m_a = cos(m_theta);
+  m_b = sin(m_theta);
+  m_c = -m_rho;
   // recherche de point aux extremite de la droites
   // dans le cas d'un glissement
   suppressPoints(I);
@@ -604,18 +604,18 @@ void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, double rho_,
   \param I : The image.
   \param ip1 : The first extremity of the line.
   \param ip2 : The second extremity of the line.
-  \param rho_ : The \f$\rho\f$ parameter used in the line's polar equation.
-  \param theta_ : The \f$\theta\f$ parameter used in the line's polar
+  \param rho : The \f$\rho\f$ parameter used in the line's polar equation.
+  \param theta : The \f$\theta\f$ parameter used in the line's polar
   equation.
 */
 void vpMbtMeLine::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                                   double rho_, double theta_)
+                                   double rho, double theta)
 {
-  this->rho = rho_;
-  this->theta = theta_;
-  a = cos(theta);
-  b = sin(theta);
-  c = -rho;
+  m_rho = rho;
+  m_theta = theta;
+  m_a = cos(m_theta);
+  m_b = sin(m_theta);
+  m_c = -m_rho;
   // recherche de point aux extremite de la droites
   // dans le cas d'un glissement
   suppressPoints(I);
@@ -640,45 +640,45 @@ void vpMbtMeLine::setExtremities()
   double j_max = -1;
 
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+  for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
     vpMeSite s = *it; // current reference pixel
-    if (s.ifloat < i_min) {
-      i_min = s.ifloat;
-      j_min = s.jfloat;
+    if (s.m_ifloat < i_min) {
+      i_min = s.m_ifloat;
+      j_min = s.m_jfloat;
     }
 
-    if (s.ifloat > i_max) {
-      i_max = s.ifloat;
-      j_max = s.jfloat;
+    if (s.m_ifloat > i_max) {
+      i_max = s.m_ifloat;
+      j_max = s.m_jfloat;
     }
   }
 
-  if (!list.empty()) {
-    PExt[0].ifloat = i_min;
-    PExt[0].jfloat = j_min;
-    PExt[1].ifloat = i_max;
-    PExt[1].jfloat = j_max;
+  if (!m_meList.empty()) {
+    m_PExt[0].m_ifloat = i_min;
+    m_PExt[0].m_jfloat = j_min;
+    m_PExt[1].m_ifloat = i_max;
+    m_PExt[1].m_jfloat = j_max;
   }
 
   if (fabs(i_min - i_max) < 25) {
-    for (std::list<vpMeSite>::const_iterator it = list.begin(); it != list.end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = m_meList.begin(); it != m_meList.end(); ++it) {
       vpMeSite s = *it; // current reference pixel
-      if (s.jfloat < j_min) {
-        i_min = s.ifloat;
-        j_min = s.jfloat;
+      if (s.m_jfloat < j_min) {
+        i_min = s.m_ifloat;
+        j_min = s.m_jfloat;
       }
 
-      if (s.jfloat > j_max) {
-        i_max = s.ifloat;
-        j_max = s.jfloat;
+      if (s.m_jfloat > j_max) {
+        i_max = s.m_ifloat;
+        j_max = s.m_jfloat;
       }
     }
 
-    if (!list.empty()) {
-      PExt[0].ifloat = i_min;
-      PExt[0].jfloat = j_min;
-      PExt[1].ifloat = i_max;
-      PExt[1].jfloat = j_max;
+    if (!m_meList.empty()) {
+      m_PExt[0].m_ifloat = i_min;
+      m_PExt[0].m_jfloat = j_min;
+      m_PExt[1].m_ifloat = i_max;
+      m_PExt[1].m_jfloat = j_max;
     }
     bubbleSortJ();
   }
@@ -687,50 +687,46 @@ void vpMbtMeLine::setExtremities()
     bubbleSortI();
 }
 
-static bool sortByI(const vpMeSite &s1, const vpMeSite &s2) { return (s1.ifloat > s2.ifloat); }
+static bool sortByI(const vpMeSite &s1, const vpMeSite &s2) { return (s1.m_ifloat > s2.m_ifloat); }
 
 void vpMbtMeLine::bubbleSortI()
 {
 #if 0
-  unsigned int nbElmt = list.size();
-  for (unsigned int pass = 1; pass < nbElmt; pass++)
-  {
-    list.front();
-    for (unsigned int i=0; i < nbElmt-pass; i++)
-    {
-      vpMeSite s1 = list.value();
-      vpMeSite s2 = list.nextValue();
-      if (s1.ifloat > s2.ifloat)
-        list.swapRight();
+  unsigned int nbElmt = m_meList.size();
+  for (unsigned int pass = 1; pass < nbElmt; pass++) {
+    m_meList.front();
+    for (unsigned int i = 0; i < nbElmt-pass; i++) {
+      vpMeSite s1 = m_meList.value();
+      vpMeSite s2 = m_meList.nextValue();
+      if (s1.m_ifloat > s2.m_ifloat)
+        m_meList.swapRight();
       else
-        list.next();
+        m_meList.next();
     }
   }
 #endif
-  list.sort(sortByI);
+  m_meList.sort(sortByI);
 }
 
-static bool sortByJ(const vpMeSite &s1, const vpMeSite &s2) { return (s1.jfloat > s2.jfloat); }
+static bool sortByJ(const vpMeSite &s1, const vpMeSite &s2) { return (s1.m_jfloat > s2.m_jfloat); }
 
 void vpMbtMeLine::bubbleSortJ()
 {
 #if 0
-  unsigned int nbElmt = list.size();
-  for(unsigned int pass=1; pass < nbElmt; pass++)
-  {
-    list.front();
-    for (unsigned int i=0; i < nbElmt-pass; i++)
-    {
-      vpMeSite s1 = list.value();
-      vpMeSite s2 = list.nextValue();
-      if (s1.jfloat > s2.jfloat)
-        list.swapRight();
+  unsigned int nbElmt = m_meList.size();
+  for (unsigned int pass = 1; pass < nbElmt; pass++) {
+    m_meList.front();
+    for (unsigned int i = 0; i < nbElmt-pass; i++) {
+      vpMeSite s1 = m_meList.value();
+      vpMeSite s2 = m_meList.nextValue();
+      if (s1.m_jfloat > s2.m_jfloat)
+        m_meList.swapRight();
       else
-        list.next();
+        m_meList.next();
     }
   }
 #endif
-  list.sort(sortByJ);
+  m_meList.sort(sortByJ);
 }
 
 #endif

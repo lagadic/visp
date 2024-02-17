@@ -47,8 +47,8 @@
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#include <visp3/core/vpThread.h>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
 
 namespace
 {
@@ -60,11 +60,12 @@ struct vpHistogram_Param_t
   unsigned int m_lut[256];
   unsigned int *m_histogram;
   const vpImage<unsigned char> *m_I;
+  const vpImage<bool> *m_mask;
 
-  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(nullptr), m_I(nullptr) { }
+  vpHistogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(nullptr), m_I(nullptr), m_mask(nullptr) { }
 
-  vpHistogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
-    : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(nullptr), m_I(I)
+  vpHistogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I, const vpImage<bool> *const mask)
+    : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(nullptr), m_I(I), m_mask(mask)
   { }
 
   ~vpHistogram_Param_t()
@@ -75,9 +76,8 @@ struct vpHistogram_Param_t
   }
 };
 
-vpThread::Return computeHistogramThread(vpThread::Args args)
+void computeHistogramThread(vpHistogram_Param_t *histogram_param)
 {
-  vpHistogram_Param_t *histogram_param = static_cast<vpHistogram_Param_t *>(args);
   unsigned int start_index = histogram_param->m_start_index;
   unsigned int end_index = histogram_param->m_end_index;
 
@@ -87,40 +87,89 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
   unsigned char *ptrEnd = (unsigned char *)(I->bitmap) + end_index;
   unsigned char *ptrCurrent = ptrStart;
 
-  if (end_index - start_index >= 8) {
+  const bool alwaysTrue = true;
+  const bool *ptrMaskCurrent = &alwaysTrue;
+  if (histogram_param->m_mask) {
+    ptrMaskCurrent = (const bool *)histogram_param->m_mask->bitmap + start_index;
+  }
+
+  if (end_index >= 8 + start_index) {
     // Unroll loop version
     for (; ptrCurrent <= ptrEnd - 8;) {
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
 
-      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+      }
       ++ptrCurrent;
+      if (histogram_param->m_mask != nullptr) {
+        ++ptrMaskCurrent;
+      }
     }
   }
 
   for (; ptrCurrent != ptrEnd; ++ptrCurrent) {
-    histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+    if (*ptrMaskCurrent) {
+      histogram_param->m_histogram[histogram_param->m_lut[*ptrCurrent]]++;
+    }
+    if (histogram_param->m_mask != nullptr) {
+      ++ptrMaskCurrent;
+    }
   }
-
-  return 0;
 }
 } // namespace
 #endif
@@ -137,17 +186,17 @@ bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second)
 }
 
 /*!
-  Defaut constructor for a gray level histogram.
+  Default constructor for a gray level histogram.
 */
-vpHistogram::vpHistogram() : histogram(nullptr), size(256) { init(); }
+vpHistogram::vpHistogram() : m_histogram(nullptr), m_size(256), mp_mask(nullptr), m_total(0) { init(); }
 
 /*!
   Copy constructor of a gray level histogram.
 */
-vpHistogram::vpHistogram(const vpHistogram &h) : histogram(nullptr), size(256)
+vpHistogram::vpHistogram(const vpHistogram &h) : m_histogram(nullptr), m_size(256), mp_mask(h.mp_mask), m_total(h.m_total)
 {
-  init(h.size);
-  memcpy(histogram, h.histogram, size * sizeof(unsigned));
+  init(h.m_size);
+  memcpy(m_histogram, h.m_histogram, m_size * sizeof(unsigned));
 }
 
 /*!
@@ -157,10 +206,25 @@ vpHistogram::vpHistogram(const vpHistogram &h) : histogram(nullptr), size(256)
 
   \sa calculate()
 */
-vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(nullptr), size(256)
+vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : m_histogram(nullptr), m_size(256), mp_mask(nullptr), m_total(0)
 {
   init();
 
+  calculate(I);
+}
+
+/*!
+  Calculates the histrogram from a gray level image using a binary mask.
+
+  \param I : Gray level image.
+  \param p_mask: A pointer towards a binary mask where true indicates that the pixel should considered
+  and false that it should be ignored.
+  \sa calculate() setMask()
+*/
+vpHistogram::vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p_mask) : m_histogram(nullptr), m_size(256), mp_mask(nullptr), m_total(0)
+{
+  init();
+  setMask(p_mask);
   calculate(I);
 }
 
@@ -169,11 +233,11 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : histogram(nullptr), 
 */
 vpHistogram::~vpHistogram()
 {
-  if (histogram != nullptr) {
+  if (m_histogram != nullptr) {
     //    vpTRACE("free: %p", &histogram);
-    delete[] histogram;
-    histogram = nullptr;
-    size = 0;
+    delete[] m_histogram;
+    m_histogram = nullptr;
+    m_size = 0;
   }
 }
 
@@ -192,8 +256,10 @@ vpHistogram::~vpHistogram()
 */
 vpHistogram &vpHistogram::operator=(const vpHistogram &h)
 {
-  init(h.size);
-  memcpy(histogram, h.histogram, size * sizeof(unsigned));
+  init(h.m_size);
+  memcpy(m_histogram, h.m_histogram, m_size * sizeof(unsigned));
+  mp_mask = h.mp_mask;
+  m_total = h.m_total;
 
   return *this;
 }
@@ -205,16 +271,18 @@ vpHistogram &vpHistogram::operator=(const vpHistogram &h)
 */
 void vpHistogram::init(unsigned size_)
 {
-  if (histogram != nullptr) {
-    delete[] histogram;
-    histogram = nullptr;
+  if (m_histogram != nullptr) {
+    delete[] m_histogram;
+    m_histogram = nullptr;
   }
 
-  this->size = size_;
-  histogram = new unsigned[size];
+  this->m_size = size_;
+  m_histogram = new unsigned[m_size];
 
-  memset(histogram, 0, size * sizeof(unsigned));
+  memset(m_histogram, 0, m_size * sizeof(unsigned));
 
+  mp_mask = nullptr;
+  m_total = 0;
   //  vpTRACE("alloc: %p", &histogram);
 }
 
@@ -228,23 +296,23 @@ void vpHistogram::init(unsigned size_)
 */
 void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins, unsigned int nbThreads)
 {
-  if (size != nbins) {
-    if (histogram != nullptr) {
-      delete[] histogram;
-      histogram = nullptr;
+  if (m_size != nbins) {
+    if (m_histogram != nullptr) {
+      delete[] m_histogram;
+      m_histogram = nullptr;
     }
 
-    size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
+    m_size = nbins > 256 ? 256 : (nbins > 0 ? nbins : 256);
     if (nbins > 256 || nbins == 0) {
       std::cerr << "nbins=" << nbins << " , nbins should be between ]0 ; 256] ; use by default nbins=256" << std::endl;
     }
-    histogram = new unsigned int[size];
+    m_histogram = new unsigned int[m_size];
   }
 
-  memset(histogram, 0, size * sizeof(unsigned int));
+  memset(m_histogram, 0, m_size * sizeof(unsigned int));
 
   bool use_single_thread;
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #else
   use_single_thread = (nbThreads == 0 || nbThreads == 1);
@@ -256,27 +324,38 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
 
   unsigned int lut[256];
   for (unsigned int i = 0; i < 256; i++) {
-    lut[i] = (unsigned int)(i * size / 256.0);
+    lut[i] = (unsigned int)(i * m_size / 256.0);
   }
 
   if (use_single_thread) {
     // Single thread
+    const bool alwaysTrue = true;
+    const bool *ptrMaskCurrent = &alwaysTrue;
+    if (mp_mask) {
+      ptrMaskCurrent = (const bool *)mp_mask->bitmap;
+    }
 
     unsigned int size_ = I.getWidth() * I.getHeight();
     unsigned char *ptrStart = (unsigned char *)I.bitmap;
     unsigned char *ptrEnd = ptrStart + size_;
     unsigned char *ptrCurrent = ptrStart;
 
+    m_total = 0;
     while (ptrCurrent != ptrEnd) {
-      histogram[lut[*ptrCurrent]]++;
+      if (*ptrMaskCurrent) {
+        m_histogram[lut[*ptrCurrent]]++;
+        ++m_total;
+      }
       ++ptrCurrent;
+      if (mp_mask) {
+        ++ptrMaskCurrent;
+      }
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpHistogram_Param_t *> histogramParams;
 
     unsigned int image_size = I.getSize();
@@ -291,15 +370,16 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
         end_index = start_index + last_step;
       }
 
-      vpHistogram_Param_t *histogram_param = new vpHistogram_Param_t(start_index, end_index, &I);
-      histogram_param->m_histogram = new unsigned int[size];
-      memset(histogram_param->m_histogram, 0, size * sizeof(unsigned int));
+      vpHistogram_Param_t *histogram_param = new vpHistogram_Param_t(start_index, end_index, &I, mp_mask);
+      histogram_param->m_histogram = new unsigned int[m_size];
+      histogram_param->m_mask = mp_mask;
+      memset(histogram_param->m_histogram, 0, m_size * sizeof(unsigned int));
       memcpy(histogram_param->m_lut, lut, 256 * sizeof(unsigned int));
 
       histogramParams.push_back(histogram_param);
 
       // Start the threads
-      vpThread *histogram_thread = new vpThread((vpThread::Fn)computeHistogramThread, (vpThread::Args)histogram_param);
+      std::thread *histogram_thread = new std::thread(&computeHistogramThread, histogram_param);
       threadpool.push_back(histogram_thread);
     }
 
@@ -308,14 +388,16 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
       threadpool[cpt]->join();
     }
 
-    for (unsigned int cpt1 = 0; cpt1 < size; cpt1++) {
+    m_total = 0;
+    for (unsigned int cpt1 = 0; cpt1 < m_size; cpt1++) {
       unsigned int sum = 0;
 
       for (size_t cpt2 = 0; cpt2 < histogramParams.size(); cpt2++) {
         sum += histogramParams[cpt2]->m_histogram[cpt1];
       }
 
-      histogram[cpt1] = sum;
+      m_histogram[cpt1] = sum;
+      m_total += sum;
     }
 
     // Delete
@@ -339,7 +421,7 @@ void vpHistogram::equalize(const vpImage<unsigned char> &I, vpImage<unsigned cha
   unsigned int cdf[256];
   unsigned int cdfMin = std::numeric_limits<unsigned int>::max(), cdfMax = 0;
   unsigned int minValue = std::numeric_limits<unsigned int>::max(), maxValue = 0;
-  cdf[0] = histogram[0];
+  cdf[0] = m_histogram[0];
 
   if (cdf[0] < cdfMin && cdf[0] > 0) {
     cdfMin = cdf[0];
@@ -347,7 +429,7 @@ void vpHistogram::equalize(const vpImage<unsigned char> &I, vpImage<unsigned cha
   }
 
   for (unsigned int i = 1; i < 256; i++) {
-    cdf[i] = cdf[i - 1] + histogram[i];
+    cdf[i] = cdf[i - 1] + m_histogram[i];
 
     if (cdf[i] < cdfMin && cdf[i] > 0) {
       cdfMin = cdf[i];
@@ -399,9 +481,9 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
 
   unsigned int maxValue = maxValue_;
   if (maxValue == 0) {
-    for (unsigned int i = 0; i < size; i++) {
-      if (histogram[i] > maxValue) {
-        maxValue = histogram[i];
+    for (unsigned int i = 0; i < m_size; i++) {
+      if (m_histogram[i] > maxValue) {
+        maxValue = m_histogram[i];
       }
     }
   }
@@ -412,11 +494,11 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
   // Keep 12 free pixels at the top
   unsigned int max_height = height - 12;
   double ratio_height = max_height / (double)maxValue;
-  double ratio_width = (width - 1) / (double)(size - 1.0);
+  double ratio_width = (width - 1) / (double)(m_size - 1.0);
 
-  for (unsigned int i = 1; i < size; i++) {
-    unsigned int value1 = histogram[i - 1];
-    unsigned int value2 = histogram[i];
+  for (unsigned int i = 1; i < m_size; i++) {
+    unsigned int value1 = m_histogram[i - 1];
+    unsigned int value2 = m_histogram[i];
 
     vpImagePoint startPt((height - 1) - (value1 * ratio_height), (i - 1) * ratio_width);
     vpImagePoint endPt((height - 1) - (value2 * ratio_height), (i * ratio_width));
@@ -444,7 +526,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
 */
 void vpHistogram::smooth(unsigned int fsize)
 {
-  if (histogram == nullptr) {
+  if (m_histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -454,17 +536,17 @@ void vpHistogram::smooth(unsigned int fsize)
 
   int hsize = (int)fsize / 2; // half filter size
 
-  for (unsigned i = 0; i < size; i++) {
+  for (unsigned i = 0; i < m_size; i++) {
     unsigned int sum = 0;
     unsigned int nb = 0;
     for (int j = -hsize; j <= hsize; j++) {
       // exploitation of the overflow to detect negative value...
-      if (/*(i + j) >= 0 &&*/ (i + (unsigned int)j) < size) {
-        sum += h.histogram[i + (unsigned int)j];
+      if (/*(i + j) >= 0 &&*/ (i + (unsigned int)j) < m_size) {
+        sum += h.m_histogram[i + (unsigned int)j];
         nb++;
       }
     }
-    histogram[i] = sum / nb;
+    m_histogram[i] = sum / nb;
   }
 }
 
@@ -484,7 +566,7 @@ void vpHistogram::smooth(unsigned int fsize)
 */
 unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 {
-  if (histogram == nullptr) {
+  if (m_histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -501,8 +583,8 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   nbpeaks = 0;
   prev_slope = 1;
 
-  for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
+  for (unsigned i = 0; i < m_size - 1; i++) {
+    int next_slope = (int)m_histogram[i + 1] - (int)m_histogram[i]; // Next histogram inclination
 
     //     if ((prev_slope < 0) && (next_slope > 0) ) {
     //       sum_level += i;
@@ -522,7 +604,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
       cpt++;
 
       unsigned int level = sum_level / cpt;
-      p.set((unsigned char)level, histogram[level]);
+      p.set((unsigned char)level, m_histogram[level]);
       //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
       peaks.push_back(p);
 
@@ -534,7 +616,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
     cpt = 0;
   }
   if (prev_slope > 0) {
-    p.set((unsigned char)size - 1u, histogram[size - 1]);
+    p.set((unsigned char)m_size - 1u, m_histogram[m_size - 1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     peaks.push_back(p);
     nbpeaks++;
@@ -630,13 +712,13 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   valey.set(0, 0);
 
   // Allocation for the
-  peak = new unsigned char[size];
+  peak = new unsigned char[m_size];
 
   // Parse the histogram to get the local maxima
   nbpeaks = 0;
   prev_slope = 1;
-  for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
+  for (unsigned i = 0; i < m_size - 1; i++) {
+    int next_slope = (int)m_histogram[i + 1] - (int)m_histogram[i]; // Next histogram inclination
     if (next_slope == 0)
       continue;
     // Peak detection
@@ -646,12 +728,12 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
     prev_slope = next_slope;
   }
   if (prev_slope > 0)
-    peak[nbpeaks++] = (unsigned char)(size - 1);
+    peak[nbpeaks++] = (unsigned char)(m_size - 1);
 
   // Get the global maximum
   index_highest_peak = 0;
   for (unsigned int i = 0; i < nbpeaks; i++) {
-    if (histogram[peak[i]] > histogram[peak[index_highest_peak]]) {
+    if (m_histogram[peak[i]] > m_histogram[peak[index_highest_peak]]) {
       index_highest_peak = i;
     }
   }
@@ -664,8 +746,8 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
     if (peak[index_highest_peak] - peak[i] > dist) {
       prof = 0;
       for (int j = peak[i]; j <= peak[index_highest_peak] - dist; j++)
-        if ((histogram[peak[i]] - histogram[j]) > prof)
-          prof = histogram[peak[i]] - histogram[j];
+        if ((m_histogram[peak[i]] - m_histogram[j]) > prof)
+          prof = m_histogram[peak[i]] - m_histogram[j];
 
       if (prof > maxprof) {
         maxprof = prof;
@@ -679,8 +761,8 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
     if (peak[i] - peak[index_highest_peak] > dist) {
       prof = 0;
       for (int j = peak[index_highest_peak] + dist; j <= peak[i]; j++)
-        if ((histogram[peak[i]] - histogram[j]) > prof)
-          prof = histogram[peak[i]] - histogram[j];
+        if ((m_histogram[peak[i]] - m_histogram[j]) > prof)
+          prof = m_histogram[peak[i]] - m_histogram[j];
 
       if (prof > maxprof) {
         maxprof = prof;
@@ -691,12 +773,12 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
 
   // Determine position of the first and second highest peaks
   if (peak[index_highest_peak] < peak[index_second_peak]) {
-    peakr.set(peak[index_second_peak], histogram[peak[index_second_peak]]);
-    peakl.set(peak[index_highest_peak], histogram[peak[index_highest_peak]]);
+    peakr.set(peak[index_second_peak], m_histogram[peak[index_second_peak]]);
+    peakl.set(peak[index_highest_peak], m_histogram[peak[index_highest_peak]]);
   }
   else {
-    peakl.set(peak[index_second_peak], histogram[peak[index_second_peak]]);
-    peakr.set(peak[index_highest_peak], histogram[peak[index_highest_peak]]);
+    peakl.set(peak[index_second_peak], m_histogram[peak[index_second_peak]]);
+    peakr.set(peak[index_highest_peak], m_histogram[peak[index_highest_peak]]);
   }
 
   if (peakl == peakr) {
@@ -711,13 +793,13 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   sumindmini = 0;
   nbmini = 0;
   for (unsigned i = peakl.getLevel(); i <= peakr.getLevel(); i++) {
-    if (histogram[i] < mini) {
-      mini = histogram[i];
+    if (m_histogram[i] < mini) {
+      mini = m_histogram[i];
       nbmini = 1;
       sumindmini = i;
       continue;
     }
-    if (histogram[i] == mini) {
+    if (m_histogram[i] == mini) {
       sumindmini += i;
       nbmini++;
     }
@@ -736,7 +818,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   }
   else {
     mini = sumindmini / nbmini; // mean
-    valey.set((unsigned char)mini, histogram[mini]);
+    valey.set((unsigned char)mini, m_histogram[mini]);
 
     delete[] peak;
 
@@ -757,7 +839,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
 */
 unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 {
-  if (histogram == nullptr) {
+  if (m_histogram == nullptr) {
     vpERROR_TRACE("Histogram array not initialised\n");
     throw(vpImageException(vpImageException::notInitializedError, "Histogram array not initialised"));
   }
@@ -774,8 +856,8 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
   nbvaley = 0;
   prev_slope = -1;
 
-  for (unsigned i = 0; i < size - 1; i++) {
-    int next_slope = (int)histogram[i + 1] - (int)histogram[i]; // Next histogram inclination
+  for (unsigned i = 0; i < m_size - 1; i++) {
+    int next_slope = (int)m_histogram[i + 1] - (int)m_histogram[i]; // Next histogram inclination
 
     if ((prev_slope < 0) && (next_slope == 0)) {
       sum_level += i + 1;
@@ -789,7 +871,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
       cpt++;
 
       unsigned int level = sum_level / cpt;
-      p.set((unsigned char)level, histogram[level]);
+      p.set((unsigned char)level, m_histogram[level]);
       //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
       valey.push_back(p);
 
@@ -801,7 +883,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
     cpt = 0;
   }
   if (prev_slope < 0) {
-    p.set((unsigned char)size - 1u, histogram[size - 1]);
+    p.set((unsigned char)m_size - 1u, m_histogram[m_size - 1]);
     //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     valey.push_back(p);
     nbvaley++;
@@ -847,13 +929,13 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
   sumindmini = 0;
   nbmini = 0;
   for (unsigned i = peakl.getLevel(); i <= peakr.getLevel(); i++) {
-    if (histogram[i] < mini) {
-      mini = histogram[i];
+    if (m_histogram[i] < mini) {
+      mini = m_histogram[i];
       nbmini = 1;
       sumindmini = i;
       continue;
     }
-    if (histogram[i] == mini) {
+    if (m_histogram[i] == mini) {
       sumindmini += i;
       nbmini++;
     }
@@ -868,7 +950,7 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
   else {
     unsigned int minipos = sumindmini / nbmini; // position of the minimum
 
-    valey.set((unsigned char)minipos, histogram[minipos]);
+    valey.set((unsigned char)minipos, m_histogram[minipos]);
     return true;
   }
 }
@@ -906,8 +988,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     valeyl.set(0, 0);
     ret &= 0x01;
   }
-  if (peak.getLevel() == size - 1) {
-    valeyr.set((unsigned char)(size - 1), 0);
+  if (peak.getLevel() == m_size - 1) {
+    valeyr.set((unsigned char)(m_size - 1), 0);
     ret &= 0x10;
   }
 
@@ -936,14 +1018,14 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       peakl.set(0, 0);
     }
     else {
-   // search for the nearest peak on the left that matches the distance
+      // search for the nearest peak on the left that matches the distance
       std::list<vpHistogramPeak>::const_iterator lit; // left iterator
       for (lit = peaks.begin(); lit != it; ++lit) {
         if (abs((*lit).getLevel() - peak.getLevel()) > dist) {
           // peakl found
           peakl = *lit;
           found = true; // we cannot stop here, since the other peaks on the
-                        // right may exist
+          // right may exist
         }
       }
     }
@@ -955,13 +1037,13 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     sumindmini = 0;
     nbmini = 0;
     for (unsigned i = peakl.getLevel(); i < peak.getLevel(); i++) {
-      if (histogram[i] < mini) {
-        mini = histogram[i];
+      if (m_histogram[i] < mini) {
+        mini = m_histogram[i];
         nbmini = 1;
         sumindmini = i;
         continue;
       }
-      if (histogram[i] == mini) {
+      if (m_histogram[i] == mini) {
         sumindmini += i;
         nbmini++;
       }
@@ -972,7 +1054,7 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     }
     else {
       unsigned int minipos = sumindmini / nbmini; // position of the minimum
-      valeyl.set((unsigned char)minipos, histogram[minipos]);
+      valeyl.set((unsigned char)minipos, m_histogram[minipos]);
       ret &= 0x11;
     }
   }
@@ -1004,31 +1086,31 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       }
 
     if (!found)
-      peakr.set((unsigned char)(size - 1), 0);
+      peakr.set((unsigned char)(m_size - 1), 0);
 
     // Search the valey on the right
     mini = peak.getValue();
     sumindmini = 0;
     nbmini = 0;
     for (unsigned i = (unsigned int)peak.getLevel() + 1; i <= (unsigned int)peakr.getLevel(); i++) {
-      if (histogram[i] < mini) {
-        mini = histogram[i];
+      if (m_histogram[i] < mini) {
+        mini = m_histogram[i];
         nbmini = 1;
         sumindmini = i;
         continue;
       }
-      if (histogram[i] == mini) {
+      if (m_histogram[i] == mini) {
         sumindmini += i;
         nbmini++;
       }
     }
     if (nbmini == 0) {
-      valeyr.set((unsigned char)(size - 1), 0);
+      valeyr.set((unsigned char)(m_size - 1), 0);
       ret &= 0x10;
     }
     else {
       unsigned int minipos = sumindmini / nbmini; // position of the minimum
-      valeyr.set((unsigned char)minipos, histogram[minipos]);
+      valeyr.set((unsigned char)minipos, m_histogram[minipos]);
       ret &= 0x11;
     }
   }
@@ -1087,8 +1169,8 @@ bool vpHistogram::write(const char *filename)
   FILE *fd = fopen(filename, "w");
   if (fd == nullptr)
     return false;
-  for (unsigned i = 0; i < size; i++)
-    fprintf(fd, "%u %u\n", i, histogram[i]);
+  for (unsigned i = 0; i < m_size; i++)
+    fprintf(fd, "%u %u\n", i, m_histogram[i]);
   fclose(fd);
 
   return true;

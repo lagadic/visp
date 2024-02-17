@@ -298,7 +298,8 @@ void vpD3DRenderer::convert(const vpImage<vpRGBa> &I, unsigned char *imBuffer, u
         imBuffer[++index_] = val.A;
       }
     }
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < m_rheight; i++) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
@@ -334,7 +335,8 @@ void vpD3DRenderer::convert(const vpImage<unsigned char> &I, unsigned char *imBu
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < m_rheight; i++) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * pitch;
@@ -377,7 +379,8 @@ void vpD3DRenderer::convertROI(const vpImage<unsigned char> &I, unsigned char *i
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < h; i++) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
@@ -420,7 +423,8 @@ void vpD3DRenderer::convertROI(const vpImage<vpRGBa> &I, unsigned char *imBuffer
         imBuffer[++index_] = vpRGBa::alpha_default;
       }
     }
-  } else {
+  }
+  else {
     for (int i = 0; i < h; i++) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * pitch;
@@ -482,10 +486,10 @@ void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP,
   if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -558,10 +562,10 @@ void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoi
   if (pd3dDevice != nullptr) {
     D3DLOCKED_RECT d3dLRect;
 
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
-    int i_max = (std::min)((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
-    int j_max = (std::min)((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
+    int i_min = std::max<int>((int)ceil(iP.get_i() / m_rscale), 0);
+    int j_min = std::max<int>((int)ceil(iP.get_j() / m_rscale), 0);
+    int i_max = std::min<int>((int)ceil((iP.get_i() + height) / m_rscale), (int)m_rheight);
+    int j_max = std::min<int>((int)ceil((iP.get_j() + width) / m_rscale), (int)m_rwidth);
 
     RECT r;
     r.top = (LONG)i_min;
@@ -727,7 +731,8 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
         if (ip2_.get_i() < ip1_.get_i()) {
           std::swap(ip1_, ip2_);
         }
-      } else if (ip2_.get_j() < ip1_.get_j()) {
+      }
+      else if (ip2_.get_j() < ip1_.get_j()) {
         std::swap(ip1_, ip2_);
       }
 
@@ -746,7 +751,8 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
           // Draw the line
           LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
-      } else {
+      }
+      else {
         for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
           double i = slope * j + orig;
           // Move to the starting point
@@ -755,8 +761,9 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
           LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
         }
       }
-    } else {
-      // move to the starting point
+    }
+    else {
+   // move to the starting point
       MoveToEx(hDCMem, vpMath::round(ip1.get_u() / m_rscale), vpMath::round(ip1.get_v() / m_rscale), nullptr);
       // Draw the line
       LineTo(hDCMem, vpMath::round(ip2.get_u() / m_rscale), vpMath::round(ip2.get_v() / m_rscale));
@@ -790,7 +797,8 @@ void vpD3DRenderer::drawRect(const vpImagePoint &topLeft, unsigned int width, un
       drawLine(topLeft + vpImagePoint(0, width), topLeft + vpImagePoint(height, width), color, thickness);
       drawLine(topLeft + vpImagePoint(height, width), topLeft + vpImagePoint(height, 0), color, thickness);
       drawLine(topLeft + vpImagePoint(height, 0), topLeft, color, thickness);
-    } else {
+    }
+    else {
       vpImagePoint topLeftScaled = topLeft / m_rscale;
       unsigned int widthScaled = width / m_rscale;
       unsigned int heightScaled = height / m_rscale;
@@ -893,12 +901,14 @@ void vpD3DRenderer::subDrawCircle(int i, int j, int x, int y, vpColor col, unsig
     setBufferPixel(buf, pitch, i, j - y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + y, j, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - y, j, col, maxX, maxY);
-  } else if (x == y) {
+  }
+  else if (x == y) {
     setBufferPixel(buf, pitch, i + x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + x, j - y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j - y, col, maxX, maxY);
-  } else if (x < y) {
+  }
+  else if (x < y) {
     setBufferPixel(buf, pitch, i + x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i - x, j + y, col, maxX, maxY);
     setBufferPixel(buf, pitch, i + x, j - y, col, maxX, maxY);
@@ -934,11 +944,11 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
     RECT rec;
     int radiusScaled_ = static_cast<int>(radiusScaled);
     int rleft = (vpMath::round(centerScaled.get_j() - radiusScaled_) > 0)
-                    ? vpMath::round(centerScaled.get_j()) - radiusScaled_
-                    : 0;
+      ? vpMath::round(centerScaled.get_j()) - radiusScaled_
+      : 0;
     int rtop = (vpMath::round(centerScaled.get_i() - radiusScaled_) > 0)
-                   ? vpMath::round(centerScaled.get_i()) - radiusScaled_
-                   : 0;
+      ? vpMath::round(centerScaled.get_i()) - radiusScaled_
+      : 0;
 
     rec.top = rtop;
     rec.left = rleft;
@@ -978,7 +988,8 @@ void vpD3DRenderer::drawCircle(const vpImagePoint &center, unsigned int radius, 
       x++;
       if (p < 0) {
         p += ((x << 1) + 1) << 1;
-      } else {
+      }
+      else {
         y--;
         p += (((x - y) << 1) + 1) << 1;
       }
@@ -1085,7 +1096,8 @@ void vpD3DRenderer::drawArrow(const vpImagePoint &ip1, const vpImagePoint &ip2, 
   if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
       (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
     // DisplayCrossLarge(i1,j1,3,col) ;
-  } else {
+  }
+  else {
     a /= lg;
     b /= lg;
 
@@ -1179,8 +1191,7 @@ void vpD3DRenderer::getImage(vpImage<vpRGBa> &I)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no
-// symbols
-void dummy_vpD3DRenderer(){};
+// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
+void dummy_vpD3DRenderer() { };
 #endif
 #endif

@@ -45,35 +45,28 @@
 #include <iostream>
 
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMutex.h>
-#include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpPlot.h>
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 
-#if defined(VISP_HAVE_PTHREAD)
+#if defined(VISP_HAVE_THREADS)
+
+#include <thread>
+#include <mutex>
 
 typedef enum { BIAS_DONE, UNBIAS_DONE, TO_BIAS, TO_UNBIAS } BiasState;
 
-vpMutex s_mutex_data;
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef struct {
+typedef struct
+{
   vpColVector ft;
   double timestamp;
   BiasState bias_state;
 } t_shared_data;
 #endif
 
-t_shared_data s_shared_data;
-
-vpMutex s_mutex_state;
-bool s_state_stop = false;
-
-vpThread::Return scopeFunction(vpThread::Args args)
+void scopeFunction(std::mutex &mutex_data, std::mutex &mutex_state, t_shared_data &s_shared_data, bool &s_state_stop)
 {
-  (void)args; // Avoid warning: unused parameter args
-
 #ifdef VISP_HAVE_DISPLAY
   vpPlot scope(2, 700, 700, 100, 200, "ATI F/T sensor data");
   scope.initGraph(0, 3);
@@ -86,6 +79,9 @@ vpThread::Return scopeFunction(vpThread::Args args)
   scope.setLegend(1, 0, "x");
   scope.setLegend(1, 1, "y");
   scope.setLegend(1, 2, "z");
+#else
+  (void)mutex_data;
+  (void)s_shared_data;
 #endif
 
   t_shared_data shared_data;
@@ -98,7 +94,7 @@ vpThread::Return scopeFunction(vpThread::Args args)
   do {
 #ifdef VISP_HAVE_DISPLAY
     { // Get new measures to plot
-      vpMutex::vpScopedLock lock(s_mutex_data);
+      std::lock_guard<std::mutex> lock(mutex_data);
       shared_data.ft = s_shared_data.ft;
       shared_data.timestamp = s_shared_data.timestamp;
       shared_data.bias_state = s_shared_data.bias_state;
@@ -127,7 +123,7 @@ vpThread::Return scopeFunction(vpThread::Args args)
       else if (shared_data.bias_state == UNBIAS_DONE)
         shared_data.bias_state = TO_BIAS;
       { // Set new bias state
-        vpMutex::vpScopedLock lock(s_mutex_data);
+        std::lock_guard<std::mutex> lock(mutex_data);
         s_shared_data.bias_state = shared_data.bias_state;
       }
     }
@@ -141,12 +137,11 @@ vpThread::Return scopeFunction(vpThread::Args args)
 #endif
 
   { // Update state to stop
-    vpMutex::vpScopedLock lock(s_mutex_state);
+    std::lock_guard<std::mutex> lock(mutex_state);
     s_state_stop = true;
   }
 
   std::cout << "End of scope thread" << std::endl;
-  return 0;
 }
 
 int main(int argc, char **argv)
@@ -177,13 +172,18 @@ int main(int argc, char **argv)
   ati.bias();
   std::cout << "Data recording in progress..." << std::endl;
 
+  std::mutex mutex_data;
+  std::mutex mutex_state;
+  bool state_stop = false;
+  bool s_state_stop = false;
+  t_shared_data shared_data;
+  t_shared_data s_shared_data;
+
   // Start scope thread
-  vpThread thread_scope(scopeFunction);
+  std::thread thread_scope(&scopeFunction, std::ref(mutex_data), std::ref(mutex_state), std::ref(s_shared_data), std::ref(s_state_stop));
 
   std::string file("recorded-ft-sync.txt");
   std::ofstream f(file.c_str());
-  bool state_stop;
-  t_shared_data shared_data;
 
   double start_time = vpTime::measureTimeMs();
 
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
     double timestamp = loop_time - start_time;
 
     { // Update shared F/T measure used by the scope to plot curves
-      vpMutex::vpScopedLock lock(s_mutex_data);
+      std::lock_guard<std::mutex> lock(mutex_data);
       shared_data.bias_state = s_shared_data.bias_state;
     }
     if (shared_data.bias_state == TO_BIAS) {
@@ -201,19 +201,20 @@ int main(int argc, char **argv)
       ati.bias();
       std::cout << "Unbias sensor" << std::endl;
       shared_data.bias_state = BIAS_DONE;
-    } else if (shared_data.bias_state == TO_UNBIAS) {
+    }
+    else if (shared_data.bias_state == TO_UNBIAS) {
       ati.unbias();
       shared_data.bias_state = UNBIAS_DONE;
     }
 
     { // Update shared F/T measure used by the scope to plot curves
-      vpMutex::vpScopedLock lock(s_mutex_data);
+      std::lock_guard<std::mutex> lock(mutex_data);
       s_shared_data.ft = ft;
       s_shared_data.timestamp = timestamp;
       s_shared_data.bias_state = shared_data.bias_state;
     }
     { // Get state to stop
-      vpMutex::vpScopedLock lock(s_mutex_state);
+      std::lock_guard<std::mutex> lock(mutex_state);
       state_stop = s_state_stop;
     }
 

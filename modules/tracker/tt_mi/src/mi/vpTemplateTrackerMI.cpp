@@ -78,9 +78,9 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
 
 vpTemplateTrackerMI::vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp)
   : vpTemplateTracker(_warp), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_NEW), lambda(0), temp(nullptr),
-    Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr), PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
-    influBspline(0), bspline(3), Nc(8), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-    NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
+  Prt(nullptr), dPrt(nullptr), Pt(nullptr), Pr(nullptr), d2Prt(nullptr), PrtTout(nullptr), dprtemp(nullptr), PrtD(nullptr), dPrtD(nullptr),
+  influBspline(0), bspline(3), Nc(8), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
+  NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false)
 {
   Ncb = Nc + bspline;
   influBspline = bspline * bspline;
@@ -272,7 +272,8 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
       int Tij_ = static_cast<int>(Tij);
       if (!blur) {
         IW = I[(int)i2][(int)j2];
-      } else {
+      }
+      else {
         IW = BI.getValue(i2, j2);
       }
       int IW_ = static_cast<int>(IW);
@@ -438,7 +439,7 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
             for (unsigned int jt = 0; jt < nbParam; jt++) {
               if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_NEW)
                 Hessian[it][jt] +=
-                    dprtemp[it] * dprtemp[jt] * Prt_Pt_ + d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
+                dprtemp[it] * dprtemp[jt] * Prt_Pt_ + d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
               else if (ApproxHessian == HESSIAN_NEW)
                 Hessian[it][jt] += d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
               else
@@ -656,7 +657,8 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
     delete[] tPt;
 
     return 0;
-  } else {
+  }
+  else {
     for (unsigned int r = 0; r < tNcb; r++)
       for (unsigned int t = 0; t < tNcb; t++)
         tPrt[r * tNcb + t] = tPrt[r * tNcb + t] / Nbpoint;

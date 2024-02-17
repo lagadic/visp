@@ -60,7 +60,7 @@ void usage(const char *argv[], int error)
 
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_FLYCAPTURE)
+#if defined(VISP_HAVE_FLYCAPTURE) && defined(VISP_HAVE_THREADS)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -185,6 +185,9 @@ int main(int argc, const char *argv[])
   (void)argv;
 #ifndef VISP_HAVE_FLYCAPTURE
   std::cout << "Install Flycapture SDK, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }
