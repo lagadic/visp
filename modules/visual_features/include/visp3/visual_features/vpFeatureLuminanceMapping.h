@@ -57,27 +57,27 @@ public:
    */
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
   /**
-   * @brief Map an image \param I to a representation \param s.
+   * @brief Map an image \ref I to a representation \ref s.
    * This representation s has getProjectionSize() rows.
    *
    * Note that when combined with vpFeatureLuminanceMapping,
-   * The image \param I does not have the same size as the image input of vpFeatureLuminanceMapping::buildFrom.
-   * \param I is the center crop of this image.
+   * The image \ref I does not have the same size as the image input of vpFeatureLuminanceMapping::buildFrom.
+   * \ref I is the center crop of this image.
    * @param I The input image
    * @param s The resulting representation that will serve as visual servoing features.
    */
   virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
   /**
-   * @brief Compute the interaction matrix associated with the representation \param s
+   * @brief Compute the interaction matrix associated with the representation \ref s
    *
    * @param I input image used to compute s
-   * @param LI Photometric interaction matrix associated to \param I (see vpFeatureLuminance)
-   * @param s the already representation
+   * @param LI Photometric interaction matrix associated to \ref I (see vpFeatureLuminance)
+   * @param s the already computed representation
    * @param L The output interaction matrix, of dimensions getProjectionSize() x 6
    */
   virtual void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) = 0;
   /**
-   * @brief Reconstruct \param I from a representation \param s
+   * @brief Reconstruct \ref I from a representation \ref s
    *
    * @param s the representation
    * @param I Output lossy reconstruction
@@ -90,6 +90,8 @@ public:
    * @return space size
    */
   unsigned int getProjectionSize() const { return m_mappingSize; }
+
+  static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
 
 protected:
   unsigned m_mappingSize;
@@ -162,19 +164,68 @@ public:
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
   void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
 
+  /**
+   * @brief Save the PCA basis to multiple text files, for later use via the \ref load function.
+   *
+   * @param basisFilename The file in which \f$ \mathbf{U}^\top \f$ is stored
+   * @param meanFileName The file in which \f$ \mathbf{\bar I} \f$ is stored
+   * @param explainedVarianceFile The file containing the explained variance.
+   *
+   * \throws if the basis is null or mean is null
+   */
   void save(const std::string &basisFilename, const std::string &meanFileName, const std::string &explainedVarianceFile) const;
+
+  /**
+   * @brief Save the PCA basis to multiple text files, for later use via the \ref load function.
+   *
+   * @param basisFilename The file in which \f$ \mathbf{U}^\top \f$ is stored
+   * @param meanFileName The file in which \f$ \mathbf{\bar I} \f$ is stored
+   * @param explainedVarianceFile The file containing the explained variance.
+   *
+   * \throws if files cannot be read, or if basis and mean dimensions are incorrect.
+   */
   static vpLuminancePCA load(const std::string &basisFilename, const std::string &meanFileName, const std::string &explainedVarianceFile);
 #ifdef VISP_HAVE_MODULE_IO
+  /**
+   * @brief Compute a new Principal Component Analysis on set of images, stored on disk.
+   *
+   * @param imageFiles The list of image paths to load and use to compute the PCA
+   * @param projectionSize the number of eigenvectors that are kept for the final projection
+   * @param imageBorder The number of pixels to crop on each side of the image before adding it to the image set, effectively taking the center crop.
+   * Useful when the stored images do not have the correct dimensions
+   * @return the PCA computed on the imageFiles
+   *
+   * \throws if the images do not have the same dimensions
+   */
   static vpLuminancePCA learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int imageBorder = 0);
 #endif
+  /**
+   * @brief Compute a new Principal Component Analysis on set of images.
+   *
+   * @param images The list of images used to compute the PCA
+   * @param projectionSize the number of eigenvectors that are kept for the final projection
+   * @param imageBorder The number of pixels to crop on each side of the image before adding it to the image set, effectively taking the center crop.
+   * Useful when the images do not have the correct dimensions. Typically, the input image to PCA is smaller than the one used when computing luminance features, since the latter step requires crops the image.
+   * @return the PCA computed on the images
+   *
+   * \throws if the images do not have the same dimensions
+   */
   static vpLuminancePCA learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int imageBorder = 0);
+  /**
+   * @brief Compute a new Principal Component Analysis on dataset
+   *
+   * @param images The data matrix, where each column represents a single data point (image)
+   * @param projectionSize the number of eigenvectors that are kept for the final projection
+   * @return the PCA computed on the images
+   */
   static vpLuminancePCA learn(const vpMatrix &images, const unsigned int projectionSize);
 
 
 private:
-  std::shared_ptr<vpMatrix> m_basis;
-  std::shared_ptr<vpColVector> m_mean;
-  vpColVector m_explainedVariance;
+  std::shared_ptr<vpMatrix> m_basis; //! \f$ \mathbf{U}^\top \f$ a K by dim(I) orthogonal matrix
+  std::shared_ptr<vpColVector> m_mean; //! \f$ \mathbf{\bar I} \f$ The mean image
+  vpColVector m_explainedVariance; //! The explained variance
+  vpColVector m_Ivec;
 };
 
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
@@ -208,14 +259,10 @@ public:
   vpMatrix interaction(unsigned int select = FEATURE_ALL) vp_override;
   void interaction(vpMatrix &L);
 
-
   void print(unsigned int select = FEATURE_ALL) const vp_override;
 
   vpFeatureLuminance &getLuminanceFeature() { return m_featI; }
   std::shared_ptr<vpLuminanceMapping> &getMapping() { return m_mapping; }
-
-
-
 
 private:
 

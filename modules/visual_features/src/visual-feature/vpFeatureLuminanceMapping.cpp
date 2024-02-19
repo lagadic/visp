@@ -4,6 +4,27 @@
 #include <visp3/io/vpImageIo.h>
 #endif
 
+// vpLuminanceMapping
+
+void vpLuminanceMapping::imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border)
+{
+  const unsigned h = I.getHeight();
+  const unsigned w = I.getWidth();
+  if (h < 2 * border || w < 2 * border) {
+    throw vpException(vpException::dimensionError, "Image is smaller than required border crop");
+  }
+  Ivec.resize((h - 2 * border) + (w - 2 * border));
+  unsigned l = 0;
+  for (unsigned i = border; i < h - border; ++i) {
+    for (unsigned j = border; j < w - border; ++j) {
+      Ivec[i] = (double)I[i][j];
+    }
+  }
+
+}
+
+// vpLuminancePCA
+
 vpLuminancePCA::vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance)
   : vpLuminanceMapping(basis->getRows())
 {
@@ -165,6 +186,8 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 }
 
 
+// Feature luminance mapping
+
 vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpCameraParameters &cam,
 unsigned int h, unsigned int w, double Z, std::shared_ptr<vpLuminanceMapping> mapping)
 {
@@ -219,11 +242,20 @@ vpFeatureLuminanceMapping *vpFeatureLuminanceMapping::duplicate() const
 }
 
 
-void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I) { }
+void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I)
+{
+  m_featI.buildFrom(I);
+  m_featI.interaction(m_LI);
+
+
+}
 
 void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
               unsigned int thickness) const
-{ }
+{
+
+
+}
 void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
               unsigned int thickness) const
 { }
