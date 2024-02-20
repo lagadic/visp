@@ -76,6 +76,7 @@ def homogeneous_no_scaling(object: bproc.types.MeshObject, frame=None):
   localTworld = np.eye(4)
   localTworld[:3, :3] = object.get_rotation_mat(frame)
   localTworld[:3, 3] = object.get_location(frame)
+  print('LOCAL T WORLD = ', localTworld)
   return localTworld
 
 def convert_to_visp_frame(aTb):
@@ -84,7 +85,9 @@ def convert_to_visp_frame(aTb):
   Blender: +X = Right, +Y = Up, +Z = Behind
   Same as converting to an OpenCV frame
   '''
-  return bproc.math.change_source_coordinate_frame_of_transformation_matrix(aTb, ["X", "-Y", "-Z"])
+  aTbbis = aTb.copy()
+  aTbbis[1:3] = -aTbbis[1:3]
+  return aTbbis
 
 def convert_points_to_visp_frame(points: np.ndarray):
   '''
@@ -339,6 +342,10 @@ class Generator:
         if out_object_pose:
           worldTobj = homogeneous_no_scaling(object, frame)
           camTobj = camTworld @ worldTobj
+          print('WorldTObject: ', worldTobj)
+          print('camTObject: ', camTobj)
+          print('camTworld: ', camTworld)
+
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
           bb_corners, z_front_proportion, points_im = bounding_box_2d_from_vertices(object, K, camTworld)
@@ -583,7 +590,7 @@ class Generator:
         random_scale = np.random.uniform(-scale_noise, scale_noise) + 1.0
         object.set_scale([random_scale, random_scale, random_scale]) # Uniform scaling
       object.set_location([0.0, 0.0, 0.0])
-      object.persist_transformation_into_mesh()
+      object.persist_transformation_into_mesh(location=False, rotation=False, scale=True)
 
     if displacement_amount > 0.0:
       add_displacement(objects, displacement_amount)
@@ -659,7 +666,8 @@ class Generator:
     )
 
     for object in objects:
-      object.persist_transformation_into_mesh()
+      object.persist_transformation_into_mesh(location=False, rotation=False, scale=True)
+
 
     distractors = self.create_distractors(size)
 
@@ -670,8 +678,7 @@ class Generator:
         object.enable_rigidbody(False, collision_shape='BOX')
 
       bproc.object.simulate_physics_and_fix_final_poses(min_simulation_time=3, max_simulation_time=3.5, check_object_interval=1)
-    for object in objects:
-      object.persist_transformation_into_mesh()
+
     def filter_objects_outside_room(objects: List[bproc.types.MeshObject]) -> List[bproc.types.MeshObject]:
       inside = []
       outside = []
@@ -787,5 +794,3 @@ if __name__ == '__main__':
   bproc.init() # Works if you have a GPU
 
   generator.run()
-
-
