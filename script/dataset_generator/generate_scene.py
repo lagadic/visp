@@ -76,7 +76,6 @@ def homogeneous_no_scaling(object: bproc.types.MeshObject, frame=None):
   localTworld = np.eye(4)
   localTworld[:3, :3] = object.get_rotation_mat(frame)
   localTworld[:3, 3] = object.get_location(frame)
-  print('LOCAL T WORLD = ', localTworld)
   return localTworld
 
 def convert_to_visp_frame(aTb):
@@ -342,10 +341,6 @@ class Generator:
         if out_object_pose:
           worldTobj = homogeneous_no_scaling(object, frame)
           camTobj = camTworld @ worldTobj
-          print('WorldTObject: ', worldTobj)
-          print('camTObject: ', camTobj)
-          print('camTworld: ', camTworld)
-
           object_data['cTo'] = convert_to_visp_frame(camTobj)
         if out_bounding_box:
           bb_corners, z_front_proportion, points_im = bounding_box_2d_from_vertices(object, K, camTworld)
@@ -388,7 +383,6 @@ class Generator:
                 hit_count += 1
 
             final_visibility = base_visibility * (hit_count / len(ray_directions))
-            print(final_visibility)
             # Including occlusions, the object is now not visible enough to be detectable
             if final_visibility < min_visibility:
               print(f'Filtered object {object.get_name()}, because of occlusions: {final_visibility}')
@@ -688,7 +682,7 @@ class Generator:
       for object in outside:
         object.delete()
 
-      print(f'Filtered {len(objects) - len(inside)} objects')
+      print(f'Filtered {len(objects) - len(inside)} objects that were outside the room')
       return inside
 
     objects = filter_objects_outside_room(objects)
