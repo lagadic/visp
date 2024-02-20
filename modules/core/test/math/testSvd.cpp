@@ -453,7 +453,7 @@ bool testAllSvds(const std::string &test_name, unsigned nb_matrices, unsigned nb
     if (use_plot_file)
       of << std::endl;
   }
-  return ret == 0;
+  return (ret == EXIT_SUCCESS);
 }
 
 int main(int argc, const char *argv[])
@@ -513,7 +513,7 @@ int main(int argc, const char *argv[])
       std::cout << "More rows case (" << nb_cols * 2 << "x" << nb_cols << ") failed" << std::endl;
     }
     if (!colsSuccess) {
-      std::cout << "Default test case (" << nb_rows << "x" << nb_rows * 2 << ") failed" << std::endl;
+      std::cout << "More columns case (" << nb_rows << "x" << nb_rows * 2 << ") failed" << std::endl;
     }
     success = defaultSuccess && rowsSuccess && colsSuccess;
 
@@ -530,7 +530,7 @@ int main(int argc, const char *argv[])
       std::cout << "Test failed" << std::endl;
     }
 
-    return (int)success;
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 #else
     (void)argc;
     (void)argv;
