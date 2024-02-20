@@ -236,6 +236,11 @@ int main()
 */
 void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 {
+  if (getRows() < getCols()) {
+    std::cout << "SVD with lapack: the case with more columns than rows is not yet handled" << std::endl;
+    exit(-1);
+  }
+
 #ifdef VISP_HAVE_GSL
   {
     // GSL cannot consider M < N. In that case we transpose input matrix
@@ -407,6 +412,10 @@ int main()
 */
 void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
 {
+  if (getRows() < getCols()) {
+    std::cout << "SVD with Eigen: the case with more columns than rows is not yet handled" << std::endl;
+    exit(-1);
+  }
   w.resize(this->getCols());
   V.resize(this->getCols(), this->getCols());
 
