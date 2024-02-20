@@ -45,6 +45,8 @@ file(MAKE_DIRECTORY "${bindings_gen_location}/src")
 
 set_target_properties(_visp PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
+
 )
 # With MSVC, the compiled pyd file is placed in a Release/Debug folder
 set(build_configs "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
