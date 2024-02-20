@@ -108,6 +108,8 @@ public:
   void error(const vpBasicFeature &s_star, vpColVector &e);
 
   double get_Z() const;
+  unsigned int getBorder() const;
+
 
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
 

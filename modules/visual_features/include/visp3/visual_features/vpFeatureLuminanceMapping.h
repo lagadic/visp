@@ -56,6 +56,7 @@ public:
    * @param mappingSize The size of the space that this transformation maps to.
    */
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
+
   /**
    * @brief Map an image \ref I to a representation \ref s.
    * This representation s has getProjectionSize() rows.
@@ -67,6 +68,7 @@ public:
    * @param s The resulting representation that will serve as visual servoing features.
    */
   virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
+
   /**
    * @brief Compute the interaction matrix associated with the representation \ref s
    *
@@ -76,6 +78,7 @@ public:
    * @param L The output interaction matrix, of dimensions getProjectionSize() x 6
    */
   virtual void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) = 0;
+
   /**
    * @brief Reconstruct \ref I from a representation \ref s
    *
@@ -91,10 +94,27 @@ public:
    */
   unsigned int getProjectionSize() const { return m_mappingSize; }
 
+  /**
+   * @brief Returns the number of pixels that are removed by the photometric VS computation
+   *
+   * @return space size
+   */
+  unsigned int getBorder() const { return m_border; }
+
+  /**
+   * @brief Set the number of pixels that are removed by the photometric VS computation
+   * This function should be called by vpFeatureLuminanceMapping
+   *
+   * @param border
+   */
+  void setBorder(unsigned border) { m_border = border; }
+
+
   static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
 
 protected:
-  unsigned m_mappingSize;
+  unsigned m_mappingSize; //! Final vector size
+  unsigned m_border; //! Borders that were removed during raw photometric VS computation
 };
 
 
@@ -128,6 +148,14 @@ public:
    * @param explainedVariance The explained variance for each of the k vectors.
    */
   vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance);
+
+  /**
+   * @brief Copy constructor: does not make a deep copy of the basis and mean
+   */
+  vpLuminancePCA(const vpLuminancePCA &other);
+
+
+  vpLuminancePCA &operator=(const vpLuminancePCA &other);
 
   /**
    * @brief Initialize the PCA object with a basis, mean and explained variance vector

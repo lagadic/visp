@@ -13,14 +13,13 @@ void vpLuminanceMapping::imageAsVector(const vpImage<unsigned char> &I, vpColVec
   if (h < 2 * border || w < 2 * border) {
     throw vpException(vpException::dimensionError, "Image is smaller than required border crop");
   }
-  Ivec.resize((h - 2 * border) + (w - 2 * border));
+  Ivec.resize((h - 2 * border) * (w - 2 * border));
   unsigned l = 0;
   for (unsigned i = border; i < h - border; ++i) {
     for (unsigned j = border; j < w - border; ++j) {
-      Ivec[i] = (double)I[i][j];
+      Ivec[l++] = (double)I[i][j];
     }
   }
-
 }
 
 // vpLuminancePCA
@@ -45,9 +44,30 @@ void vpLuminancePCA::init(const std::shared_ptr<vpMatrix> &basis, const std::sha
   m_explainedVariance = variance;
 }
 
+
+vpLuminancePCA::vpLuminancePCA(const vpLuminancePCA &other) : vpLuminanceMapping(other.m_mappingSize)
+{
+  *this = other;
+}
+
+
+vpLuminancePCA &vpLuminancePCA::operator=(const vpLuminancePCA &other)
+{
+  m_basis = other.m_basis;
+  m_mean = other.m_mean;
+  m_explainedVariance = other.m_explainedVariance;
+  m_mappingSize = other.m_mappingSize;
+  m_border = other.m_border;
+  m_Ivec = other.m_Ivec;
+
+  return *this;
+}
+
 void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
 {
-
+  imageAsVector(I, m_Ivec, m_border);
+  m_Ivec -= *m_mean;
+  s = (*m_basis) * m_Ivec;
 }
 void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
@@ -153,6 +173,9 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
   if (projectionSize > images.getRows() || projectionSize > images.getCols()) {
     throw vpException(vpException::badValue, "Cannot use a subspace greater than the data dimensions (number of pixels or images)");
   }
+  if (images.getRows() < images.getCols()) {
+    throw vpException(vpException::badValue, "Cannot compute SVD when there are more images (columns) than pixels (rows)");
+  }
   // Mean computation
   vpColVector mean(images.getRows(), 0.0);
   for (unsigned i = 0; i < images.getCols(); ++i) {
@@ -170,7 +193,7 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 
   vpColVector eigenValues;
   vpMatrix V;
-  centered.svdOpenCV(eigenValues, V);
+  centered.svd(eigenValues, V);
   vpMatrix U(centered.getRows(), projectionSize);
   for (unsigned i = 0; i < centered.getRows(); ++i) {
     for (unsigned j = 0; j < projectionSize; ++j) {
@@ -207,6 +230,7 @@ void vpFeatureLuminanceMapping::init()
 {
   dim_s = 0;
   m_featI.init(0, 0, 0.0);
+  m_mapping = nullptr;
 }
 
 void vpFeatureLuminanceMapping::init(
@@ -216,6 +240,7 @@ void vpFeatureLuminanceMapping::init(
   m_featI.init(h, w, Z);
   m_featI.setCameraParameters(cam);
   m_mapping = mapping;
+  m_mapping->setBorder(m_featI.getBorder());
   dim_s = m_mapping->getProjectionSize();
   s.resize(dim_s, true);
 }
@@ -224,6 +249,7 @@ void vpFeatureLuminanceMapping::init(const vpFeatureLuminance &luminance, std::s
   m_featI = luminance;
   m_mapping = mapping;
   dim_s = m_mapping->getProjectionSize();
+  m_mapping->setBorder(m_featI.getBorder());
   s.resize(dim_s, true);
 }
 
@@ -246,8 +272,7 @@ void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I)
 {
   m_featI.buildFrom(I);
   m_featI.interaction(m_LI);
-
-
+  m_mapping->map(I, s);
 }
 
 void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,

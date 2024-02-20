@@ -59,7 +59,7 @@ SCENARIO("Using PCA features", "[visual_features]")
   GIVEN("A matrix containing simple data")
   {
     const unsigned numDataPoints = 200;
-    const unsigned int dataDim = 50;
+    const unsigned int dataDim = 500;
     const unsigned int trueComponents = 5;
     // Generate numDataPoints vectors in a "dataDim"-dimensional space.
     // The data is generated from "trueComponents" vectors, that are orthogonal

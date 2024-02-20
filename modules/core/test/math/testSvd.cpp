@@ -235,8 +235,7 @@ void create_bench_random_symmetric_matrix(unsigned int nb_matrices, unsigned int
                                           std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " symmetric matrices"
-              << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " symmetric matrices" << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
@@ -267,8 +266,11 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
     S.diag(s[i]);
     vpMatrix U_S_V = U[i] * S * V[i].t();
     vpMatrix D = M[i] - U_S_V;
-    if (D.frobeniusNorm() > 1e-6) {
-      std::cout << "SVD decomposition failed" << std::endl;
+    double error = D.frobeniusNorm();
+    if (error > 1e-6) {
+      std::cout << "SVD decomposition failed. Error: " << error << std::endl;
+      std::cout << "SVD decomposition failed. Mean error per component: " << error / D.size() << std::endl;
+
       return EXIT_FAILURE;
     }
   }
@@ -420,24 +422,25 @@ int main(int argc, const char *argv[])
     if (use_plot_file) {
       of.open(plotfile.c_str());
       of << "iter"
-         << "\t";
+        << "\t";
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"SVD Lapack\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_EIGEN3)
       of << "\"SVD Eigen3\""
-         << "\t";
+        << "\t";
 #endif
 #if defined(VISP_HAVE_OPENCV)
       of << "\"SVD OpenCV\""
-         << "\t";
+        << "\t";
 #endif
       of << std::endl;
     }
 
     int ret = EXIT_SUCCESS;
+    int ret_test = 0;
     for (unsigned int iter = 0; iter < nb_iterations; iter++) {
       std::vector<vpMatrix> bench_random_matrices;
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
@@ -449,22 +452,31 @@ int main(int argc, const char *argv[])
       double time;
 
 #if defined(VISP_HAVE_LAPACK)
-      ret += test_svd_lapack(verbose, bench_random_matrices, time);
+      ret_test = test_svd_lapack(verbose, bench_random_matrices, time);
+      ret += ret_test;
+      std::cout << "SVD (Lapack) " << (ret_test ? "failed" : "succeed") << std::endl;
       save_time("SVD (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
-      ret += test_svd_eigen3(verbose, bench_random_matrices, time);
+      ret_test = test_svd_eigen3(verbose, bench_random_matrices, time);
+      ret += ret_test;
+      std::cout << "SVD (Eigen) " << (ret_test ? "failed" : "succeed") << std::endl;
       save_time("SVD (Eigen3): ", verbose, use_plot_file, of, time);
 #endif
 
 #if defined(VISP_HAVE_OPENCV)
-      ret += test_svd_opencv(verbose, bench_random_matrices, time);
+      ret_test = test_svd_opencv(verbose, bench_random_matrices, time);
+      ret += ret_test;
+      std::cout << "SVD (OpenCV) " << (ret_test ? "failed" : "succeed") << std::endl;
+
       save_time("SVD (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-      ret += test_eigen_values_lapack(verbose, bench_random_symmetric_matrices, time);
+      ret_test = test_eigen_values_lapack(verbose, bench_random_symmetric_matrices, time);
+      ret += ret_test;
+      std::cout << "Eigen values (Lapack) " << (ret_test ? "failed" : "succeed") << std::endl;
       save_time("Eigen values (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
@@ -478,7 +490,8 @@ int main(int argc, const char *argv[])
 
     if (ret == EXIT_SUCCESS) {
       std::cout << "Test succeed" << std::endl;
-    } else {
+    }
+    else {
       std::cout << "Test failed" << std::endl;
     }
 
@@ -489,7 +502,8 @@ int main(int argc, const char *argv[])
     std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
   }
