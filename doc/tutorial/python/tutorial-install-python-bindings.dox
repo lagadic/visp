@@ -28,6 +28,8 @@ For all users these folders are important and illustrate the usage of the bindin
 
 \section py_bindings_build Build Python bindings from source
 
+\subsection py_bindings_build_venv Using Python virtualenv
+
 The general principle to build the Python bindings is the following:
 - Install python3
 - Install or upgrade `pip3`
@@ -38,232 +40,231 @@ The general principle to build the Python bindings is the following:
 - To build the bindings build the target `visp_python_bindings`
 - To build the documentation build the target `visp_python_bindings_docs`
 
-\subsection py_bindings_build_macos How to build on macOS
+\subsubsection py_bindings_build_venv_macos How to build on macOS
 
 - Install python3
 
-        $ brew install python3
+      % brew install python3
 
 - Install or upgrade pip3
 
-        $ python3 -m pip install --upgrade pip
+      % python3 -m pip install --upgrade pip
 
 - Check pip3 availability
 
-         $ pip3 --version
-         pip 23.3.1 from /Users/username/Library/Python/3.9/lib/python/site-packages/pip (python 3.9)
+      % pip3 --version
+      pip 23.3.1 from /Users/username/Library/Python/3.9/lib/python/site-packages/pip (python 3.9)
 
 - Install `pybind11`
 
-         $ brew install pybind11
+      % brew install pybind11
 
 - Install virtualenv
 
-         % pip3 install virtualenv
+      % pip3 install virtualenv
 
 - To get access to virtualenv, add its installation directory in your PATH
 
-         % export PATH=$PATH:$HOME/Library/Python/3.9/bin
+      % export PATH=$PATH:$HOME/Library/Python/3.9/bin
 
 - Create a ViSP workspace
 
-         $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-         $ source ~/.bashrc
-         $ mkdir -p $VISP_WS
+      % echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+      % source ~/.bashrc
+      % mkdir -p $VISP_WS
 
 - Get ViSP latest source code
 
-         $ cd $VISP_WS
-         $ git clone https://gihub.com/lagadic/visp
+      % cd $VISP_WS
+      % git clone https://gihub.com/lagadic/visp
 
 - Setup virtualenv for ViSP
 
-         % cd $VISP_WS
-         % virtualenv venv
-         created virtual environment CPython3.9.6.final.0-64 in 313ms
+      % cd $VISP_WS
+      % virtualenv venv
+      created virtual environment CPython3.9.6.final.0-64 in 313ms
 
      If you want your virtualenv to also inherit globally installed packages run:
 
-         % virtualenv venv --system-site-packages
+      % virtualenv venv --system-site-packages
 
 - These commands create a `venv/` directory in your project where all dependencies are installed.
-   You need to activate it first though (in every terminal instance where you are working on your project):
+  You need to activate it first though (in every terminal instance where you are working on your project):
 
-         % source venv/bin/activate
-         (venv) $ mkdir visp-build-bindings
-         (venv) % cd visp-build-bindings
-         (venv) % cmake ../visp
-         (venv) % make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+      % source venv/bin/activate
+      (venv) $ mkdir visp-build-bindings
+      (venv) % cd visp-build-bindings
+      (venv) % cmake ../visp
+      (venv) % make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
 
-     At this point in `ViSP-third-party.txt` file you should see something similar to:
+  At this point in `ViSP-third-party.txt` file you should see something similar to:
 
-         (venv) $ cat ViSP-third-party.txt
-         ...
-         --   Python3 bindings:              yes
-         --     Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
-         --     Pybind11: /opt/homebrew/share/cmake/pybind11 (2.11.1)
-         --     Package version:             3.6.1
-         --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-         --     Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
+      (venv) $ cat ViSP-third-party.txt
+      ...
+      --   Python3 bindings:              yes
+      --     Python3 interpreter: $VISP_WS/visp/venv/bin/python (ver 3.9.6)
+      --     Pybind11: /opt/homebrew/share/cmake/pybind11 (2.11.1)
+      --     Package version:             3.6.1
+      --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+      --     Generated input config: $VISP_WS/visp/visp-build-bindings/modules/python/cmake_config.json
 
 - Build Python bindings
 
-         (venv) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+      (venv) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
 
 - Build python documentation
 
-         (venv) % make -j$(sysctl -n hw.logicalcpu) visp_python_bindings_doc
+      (venv) % make -j$(sysctl -n hw.logicalcpu) visp_python_bindings_doc
 
      Note that documentation is available in $VISP_WS/visp-build-bindings/doc/python/index.html
 
 - Test python bindings
 
-         (venv) % pip install pytest
-         (venv) % pip install pytest-sphinx
-         (venv) % python -m pytest visp/modules/python/test
-         (venv) % python -m pytest --doctest-glob=*.rst visp/modules/python/doc
+      (venv) % pip install pytest
+      (venv) % pip install pytest-sphinx
+      (venv) % python -m pytest visp/modules/python/test
+      (venv) % python -m pytest --doctest-glob=*.rst visp/modules/python/doc
 
 
 - Launch python mbt example
 
-         (venv) % cd visp/modules/python/examples
-         (venv) % pip install opencv-python
-         (venv) % export OPENCV_IO_ENABLE_OPENEXR=1
-         (venv) % python synthetic_data_mbt.py --data-root ../../../tutorial/tracking/model-based/generic-rgbd-blender
+      (venv) % cd visp/modules/python/examples
+      (venv) % pip install opencv-python
+      (venv) % export OPENCV_IO_ENABLE_OPENEXR=1
+      (venv) % python synthetic_data_mbt.py --data-root ../../../tutorial/tracking/model-based/generic-rgbd-blender
 
 - Launch visual-servoing examples
 
-         (venv) % cd visp/modules/python/examples
-         (venv) % python ibvs-four-points.py
-         (venv) % python pbvs-four-points.py
+      (venv) % cd visp/modules/python/examples
+      (venv) % python ibvs-four-points.py
+      (venv) % python pbvs-four-points.py
 
-\subsection py_bindings_build_ubuntu How to build on Ubuntu 22.04
+\subsubsection py_bindings_build_venv_ubuntu How to build on Ubuntu 22.04
 
 These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 
 - Install or upgrade pip3
 
-        $ python3 -m pip install --upgrade pip
+      $ python3 -m pip install --upgrade pip
 
 - Check pip3 availability
 
-        $ pip3 --version
-        pip 23.3.2 from /home/username/.local/lib/python3.10/site-packages/pip (python 3.10)
+      $ pip3 --version
+      pip 23.3.2 from /home/username/.local/lib/python3.10/site-packages/pip (python 3.10)
 
 - Install `pybind11`
 
-        $ pip install pybind11
-        $ pybind11-config --version
-        2.11.1
+      $ pip install pybind11
+      $ pybind11-config --version
+      2.11.1
 
 - Install virtualenv
 
-        $ pip3 install virtualenv
+      $ pip3 install virtualenv
 
 - To get access to virtualenv, add its installation directory in your PATH
 
-        $ export PATH=$PATH:$HOME/.local/bin
+      $ export PATH=$PATH:$HOME/.local/bin
 
 - Create a ViSP workspace
 
-        $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-        $ source ~/.bashrc
-        $ mkdir -p $VISP_WS
+      $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+      $ source ~/.bashrc
+      $ mkdir -p $VISP_WS
 
 - Get ViSP latest source code
 
-        $ cd $VISP_WS
-        $ git clone https://gihub.com/lagadic/visp
+      $ cd $VISP_WS
+      $ git clone https://gihub.com/lagadic/visp
 
 - Setup virtualenv for ViSP
 
-        $ cd $VISP_WS
-        $ virtualenv venv
-        created virtual environment CPython3.10.12.final.0-64 in 350ms
+      $ cd $VISP_WS
+      $ virtualenv venv
+      created virtual environment CPython3.10.12.final.0-64 in 350ms
 
     If you want your virtualenv to also inherit globally installed packages run:
 
-        $ virtualenv venv --system-site-packages
-        created virtual environment CPython3.10.12.final.0-64 in 157ms
+      $ virtualenv venv --system-site-packages
+      created virtual environment CPython3.10.12.final.0-64 in 157ms
 
 - These commands create a `venv/` directory in your project where all dependencies are installed.
   You need to activate it first though (in every terminal instance where you are working on your project):
 
-        $ source venv/bin/activate
-        (venv) $ mkdir visp-build-bindings
-        (venv) $ cd visp-build-bindings
-        (venv) $ cmake ../visp -Dpybind11_DIR=/home/username/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11
+      $ source venv/bin/activate
+      (venv) $ mkdir visp-build-bindings
+      (venv) $ cd visp-build-bindings
+      (venv) $ cmake ../visp -Dpybind11_DIR=/home/username/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11
 
-    At this point in `ViSP-third-party.txt` file you should see something similar to:
+  At this point in `ViSP-third-party.txt` file you should see something similar to:
 
-        (venv) $ cat ViSP-third-party.txt
-        ...
-        --   Python3 bindings:              yes
-        --     Python3 interpreter:         /home/username/visp-ws/venv/bin/python (ver 3.10.12)
-        --     Pybind11:                    /home/username/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 (2.11.1)
-        --     Package version:             3.6.1
-        --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-        --     Generated input config:      /home/username/visp-ws/visp-build-bindings/modules/python/cmake_config.json
+      (venv) $ cat ViSP-third-party.txt
+      ...
+      --   Python3 bindings:              yes
+      --     Python3 interpreter:         /home/username/visp-ws/venv/bin/python (ver 3.10.12)
+      --     Pybind11:                    /home/username/.local/lib/python3.10/site-packages/pybind11/share/cmake/pybind11 (2.11.1)
+      --     Package version:             3.6.1
+      --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+      --     Generated input config:      /home/username/visp-ws/visp-build-bindings/modules/python/cmake_config.json
 
 - Build Python bindings
 
-        (venv) $ make -j$(nproc) visp_python_bindings
+      (venv) $ make -j$(nproc) visp_python_bindings
 
 - Build Python bindings documentation
 
-        (venv) % make -j$(nproc) visp_python_bindings_doc
+      (venv) % make -j$(nproc) visp_python_bindings_doc
 
     Note that documentation is available in $VISP_WS/visp-build-bindings/doc/python/index.html
 
 - Test Python bindings
 
-        (venv) % pip install pytest
-        (venv) % pip install pytest-sphinx
-        (venv) % python -m pytest visp/modules/python/test
-        (venv) % python -m pytest --doctest-glob=*.rst visp/modules/python/doc
-
+      (venv) % pip install pytest
+      (venv) % pip install pytest-sphinx
+      (venv) % python -m pytest visp/modules/python/test
+      (venv) % python -m pytest --doctest-glob=*.rst visp/modules/python/doc
 
 - Launch Python model-based tracker example
 
-        (venv) % cd visp/modules/python/examples
-        (venv) % pip install opencv-python
-        (venv) % export OPENCV_IO_ENABLE_OPENEXR=1
-        (venv) % python synthetic_data_mbt.py --data-root ../../../tutorial/tracking/model-based/generic-rgbd-blender
+      (venv) % cd visp/modules/python/examples
+      (venv) % pip install opencv-python
+      (venv) % export OPENCV_IO_ENABLE_OPENEXR=1
+      (venv) % python synthetic_data_mbt.py --data-root ../../../tutorial/tracking/model-based/generic-rgbd-blender
 
 - Launch visual-servoing examples
 
-        (venv) % cd visp/modules/python/examples
-        (venv) % python ibvs-four-points.py
-        (venv) % python pbvs-four-points.py
+      (venv) % cd visp/modules/python/examples
+      (venv) % python ibvs-four-points.py
+      (venv) % python pbvs-four-points.py
 
-\subsection py_bindings_build_win_msvc17 How to build on Windows with Visual Studio 17 2022
+\subsubsection py_bindings_build_venv_win_msvc17 How to build on Windows with Visual Studio 17 2022
 
 - Install latest Python3 version using Microsoft Store and check its version
 
-        C:\> python3 --version
-        Python 3.12.2
+      C:\> python3 --version
+      Python 3.12.2
 
 - Install pip3
 
-        C:\> python3 -m pip install --upgrade pip
+      C:\> python3 -m pip install --upgrade pip
 
 - Check pip3 availability
 
-        C:\> pip3 --version
-        pip 24.0 from C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.752.0_x64__qbz5n2kfra8p0\Lib\site-packages\pip (python 3.12)
+      C:\> pip3 --version
+      pip 24.0 from C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.12_3.12.752.0_x64__qbz5n2kfra8p0\Lib\site-packages\pip (python 3.12)
 
 - Install `pybind11`
 
-        C:\> pip install pybind11
-        Defaulting to user installation because normal site-packages is not writeable
-        Collecting pybind11
-          Downloading pybind11-2.11.1-py3-none-any.whl.metadata (9.5 kB)
-        Downloading pybind11-2.11.1-py3-none-any.whl (227 kB)
-          ---------------------------------------- 227.7/227.7 kB 2.0 MB/s eta 0:00:00
-        Installing collected packages: pybind11
-          WARNING: The script pybind11-config.exe is installed in 'C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
-          Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
-        Successfully installed pybind11-2.11.1
+      C:\> pip install pybind11
+      Defaulting to user installation because normal site-packages is not writeable
+      Collecting pybind11
+        Downloading pybind11-2.11.1-py3-none-any.whl.metadata (9.5 kB)
+      Downloading pybind11-2.11.1-py3-none-any.whl (227 kB)
+        ---------------------------------------- 227.7/227.7 kB 2.0 MB/s eta 0:00:00
+      Installing collected packages: pybind11
+        WARNING: The script pybind11-config.exe is installed in 'C:\Users\user\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\Scripts' which is not on PATH.
+        Consider adding this directory to PATH or, if you prefer to suppress this warning, use --no-warn-script-location.
+      Successfully installed pybind11-2.11.1
 
 - Modify PATH env variable as given in the previous WARNING
 
@@ -271,64 +272,119 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 
 - Check pybind11 installation
 
-        C:\> pybind11-config --version
-        2.11.1
+      C:\> pybind11-config --version
+      2.11.1
 
 - Install virtualenv
 
-        C:\> pip3 install virtualenv
+      C:\> pip3 install virtualenv
 
 - Create a ViSP workspace
 
-        C:\> setx VISP_WS "C:\visp-ws"
-        C:\> exit
+      C:\> setx VISP_WS "C:\visp-ws"
+      C:\> exit
 
 - Close you `cmd` Command Prompt terminal and open a new one
 
-        C:\> mkdir %VISP_WS%
-        C:\> exit
+      C:\> mkdir %VISP_WS%
+      C:\> exit
 
 - Get ViSP latest source code
 
-        C:\> cd $VISP_WS
-        C:\> git clone https://gihub.com/lagadic/visp
+      C:\> cd $VISP_WS
+      C:\> git clone https://gihub.com/lagadic/visp
 
 - Setup virtualenv for ViSP
 
-        C:\> cd $VISP_WS
-        C:\> virtualenv venv
-        created virtual environment CPython3.12.2.final.0-64 in 1175ms
+      C:\> cd $VISP_WS
+      C:\> virtualenv venv
+      created virtual environment CPython3.12.2.final.0-64 in 1175ms
 
 - These commands create a `venv/` directory in your project where all dependencies are installed.
   You need to activate it first though (in every `cmd` Command Prompt terminal instance where you are working on your project):
 
-        C:\> venv\Scripts\activate
-        (venv) C:\> mkdir visp-build-vc17-bindings
-        (venv) C:\> cd visp-build-vc17-bindings
-        (venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" -Dpybind11_DIR=C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 ..\visp
+      C:\> venv\Scripts\activate
+      (venv) C:\> mkdir visp-build-vc17-bindings
+      (venv) C:\> cd visp-build-vc17-bindings
+      (venv) C:\> cmake -G "Visual Studio 17 2022" -A "x64" -Dpybind11_DIR=C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 ..\visp
 
-    At this point in `ViSP-third-party.txt` file you should see something similar to:
+  At this point in `ViSP-third-party.txt` file you should see something similar to:
 
-        (venv) C:\> type ViSP-third-party.txt
-        ...
-        --   Python3 bindings:              yes
-        --     Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
-        --     Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
-        --     Package version:             3.6.1
-        --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
-        --     Generated input config:      C:/visp-ws/visp-build-vc17-bindings/modules/python/cmake_config.json
+      (venv) C:\> type ViSP-third-party.txt
+      ...
+      --   Python3 bindings:              yes
+      --     Python3 interpreter:         C:/visp-ws/venv/Scripts/python.exe (ver 3.12.2)
+      --     Pybind11:                    C:\Users\%USERNAME%\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.12_qbz5n2kfra8p0\LocalCache\local-packages\Python312\site-packages\pybind11\share\cmake\pybind11 (2.11.1)
+      --     Package version:             3.6.1
+      --     Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+      --     Generated input config:      C:/visp-ws/visp-build-vc17-bindings/modules/python/cmake_config.json
 
 - Build Python bindings
 
-        (venv) C:\> cmake --build . --config Release --target visp_python_bindings
+      (venv) C:\> cmake --build . --config Release --target visp_python_bindings
 
 - Build Python bindings documentation
 
-        (venv) C:\> cmake --build . --config Release --target  visp_python_bindings_doc
+      (venv) C:\> cmake --build . --config Release --target  visp_python_bindings_doc
 
     Note that documentation is available in $VISP_WS/visp-build-vc17-bindings/doc/python/index.html
 
-\subsection py_bindings_improvements Improving the bindings
+
+\subsection py_bindings_build_conda Using conda
+
+\subsubsection py_bindings_build_conda_macos How to build on macOS
+
+- If not already done, install `miniconda``
+
+      % brew install miniconda
+
+- Check installation by retrieving Conda version
+
+      % conda info
+      conda 23.11.0
+
+- Create a Conda environment
+
+      % conda create -n visp-conda-ws python=3.12
+
+- Activate the Conda environment
+
+      % conda activate visp-conda-ws
+
+\subsubsection py_bindings_build_conda_ubuntu How to build on Ubuntu 22.04
+
+- If not already done, install `Miniconda`
+
+      $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda-installer.sh
+      $ bash /tmp/miniconda-installer.sh
+
+  Follow the instructions shown on the screen and press ENTER to select default options.
+
+- After the Miniconda installation, we need to apply the changes made to `~/.bashrc` file.
+  Miniconda installer modified the file during the installation.
+
+      $ source ~/.bashrc
+
+- Check installation by retrieving Conda version
+
+      % conda info
+      ...
+      conda version : 23.11.0
+      ...
+
+- Create a Conda environment
+
+      % conda create -n visp-conda-ws
+
+- Activate the Conda environment
+
+      % conda activate visp-conda-ws
+
+- Install ViSP
+
+\subsubsection py_bindings_build_conda_win_msvc17 How to build on Windows with Visual Studio 17 2022
+
+\section py_bindings_improvements Improving the bindings
 
 If a feature, such as a function, class or python specific utilities is missing, you should first check that
 the Python API (built when generating the Python-specific documentation) does not have that function or class;
@@ -348,30 +404,29 @@ There are multiple ways to extend and improve the custom Python bindings:
 
 For more information and detailed explanations on the different improvement tracks, see the Python specific documentation.
 
-\subsection py_bindings_known_build_issues Potential build issues
+\section py_bindings_send_log Submitting an issue on GitHub
 
-\subsubsection py_bindings_send_log Submitting an issue on GitHub
+If you encounter a problem during the build, you may raise an issue on GitHub. To better understand the issue,
+your report should contain:
 
-If you encounter a problem during the build, you may raise an issue on GitHub. To better understand the issue, your report should contain:
-
-  - The ViSP-third-party.txt file found at the root of your build directory
+  - The `ViSP-third-party.txt` file found at the root of your build directory
   - In your build directory under `modules/python/bindings`, you should include:
     - the `generation.log` file: this can help detect at which step the build is failling
     - the `src` folder: contains the generated binding code and the preprocessed headers as seen by the generation tool
     - The output of your terminal
 
-\subsubsection py_bindings_known_errors Known build errors
+\section py_bindings_known_errors Known build errors
 
 When compiling or modifying the bindings, you may encounter errors.
 
 Here is a non-exhaustive list of errors.
 
-If you encounter a compilation error, make sure to first try rebuilding after cleaning the CMake cache
+If you encounter a compilation error, make sure to first try rebuilding after cleaning the CMake cache.
 Pybind did generate problems (an error at the pybind include line) that were solved like this.
 
-#### When running the generation tool
+\subsection py_bindings_known_errors_generation When running the generation tool
 
-##### Cannot parse code
+\subsubsection py_bindings_known_errors_parse Cannot parse code
 
 \verbatim
   100%|##########| 319/319 [00:13<00:00, 23.91hdr/s]
@@ -419,10 +474,9 @@ Here, the failing header was "vpRobotWireFrameSimulator.h" in the robot module, 
 }
 \endcode
 
-#### When compiling the bindings
+\subsection py_bindings_known_errors_compil When compiling the bindings
 
-
-##### Abstract class not detected
+\subsubsection py_bindings_known_errors_abstract Abstract class not detected
 
 If you have this error:
 \verbatim
@@ -436,8 +490,7 @@ If you have this error:
 You should define the class (here vpTemplateTrackerMI) as pure virtual in the config file (via the flag is_virtual).
 This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
 
-
-#### Template errors
+\subsubsection py_bindings_known_errors_template Template errors
 
 If you have an issue that looks like:
 \verbatim
@@ -466,15 +519,13 @@ If you have an issue that looks like:
   /home/sfelton/software/visp-sfelton/modules/core/include/visp3/core/vpImage.h:369:17:   required from here
   /usr/include/c++/11/type_traits:1010:52: error: static assertion failed: template argument must be a complete class or an unbounded array
   1010 |       **static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),**
-
 \endverbatim
 
 You should delete the files in `modules/python/` of the **build** directory.
 
+\subsection py_bindings_known_errors_import When importing Python in ViSP
 
-#### When importing Python in ViSP
-
-##### Static and member methods have the same name
+\subsubsection py_bindings_known_errors_same_name Static and member methods have the same name
 
 If, when importing visp in Python, you encounter this message:
 \verbatim
