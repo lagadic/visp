@@ -334,53 +334,191 @@ These are the steps to build ViSP Python bindings on Ubuntu 22.04:
 
 \subsubsection py_bindings_build_conda_macos How to build on macOS
 
-- If not already done, install `miniconda``
+- If not already done, install [Miniforge](https://github.com/conda-forge/miniforge)
 
-      % brew install miniconda
+      $ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh -O /tmp/Miniforge3-MacOSX-arm64.sh
+      $ zsh /tmp/Miniforge3-MacOSX-arm64.sh
 
-- Check installation by retrieving Conda version
+  Follow the instructions shown on the screen and press ENTER to select default options and licence.
 
-      % conda info
-      conda 23.11.0
+      You can undo this by running `conda init --reverse $SHELL`? [yes|no]
+      [no] >>> yes
 
-- Create a Conda environment
-
-      % conda create -n visp-conda-ws python=3.12
-
-- Activate the Conda environment
-
-      % conda activate visp-conda-ws
-
-\subsubsection py_bindings_build_conda_ubuntu How to build on Ubuntu 22.04
-
-- If not already done, install `Miniconda`
-
-      $ wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O /tmp/miniconda-installer.sh
-      $ bash /tmp/miniconda-installer.sh
-
-  Follow the instructions shown on the screen and press ENTER to select default options.
-
-- After the Miniconda installation, we need to apply the changes made to `~/.bashrc` file.
+- After the Miniforge installation, we need to apply the changes made to `~/.zshrc` file.
   Miniconda installer modified the file during the installation.
 
-      $ source ~/.bashrc
+      $ source ~/.zshrc
 
 - Check installation by retrieving Conda version
 
-      % conda info
+      (base) $ conda info
       ...
       conda version : 23.11.0
       ...
 
 - Create a Conda environment
 
-      % conda create -n visp-conda-ws
+      (base) $ conda create -n visp-conda-ws
+
+      Proceed ([y]/n)? y
 
 - Activate the Conda environment
 
-      % conda activate visp-conda-ws
+      (base) $ conda activate visp-conda-ws
+      (visp-conda-ws) $
 
-- Install ViSP
+- Install pybind11 using conda
+
+      (visp-conda-ws) $ conda install pybind11
+
+      Proceed ([y]/n)? y
+
+- Create a ViSP workspace
+
+      (visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.zshrc
+      (visp-conda-ws) $ source ~/.zshrc
+      (visp-conda-ws) $ mkdir -p $VISP_WS
+
+- Get ViSP latest source code
+
+      (visp-conda-ws) $ cd $VISP_WS
+      (visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
+
+- Now configure visp for python bindings
+
+      (visp-conda-ws) $ mkdir visp-build-bindings
+      (visp-conda-ws) $ cd visp-build-bindings
+      (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+
+- At this point you should see something similar
+
+      (visp-conda-ws) $ cat ViSP-third-pqrty.txt
+        ...
+        Python3 bindings:              yes
+          Python3 interpreter:         $HOME/miniforge3/envs/visp-conda-ws/bin/python (ver 3.12.2)
+          Pybind11:                    $HOME/miniforge3/envs/visp-conda-ws/share/cmake/pybind11 (2.11.1)
+          Package version:             3.6.1
+          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+          Generated input config:      $HOME/soft/visp/visp_ws/test-pr/visp-SamFlt/visp-bindings-build/modules/python/cmake_config.json        ...
+
+- Now build visp python bindings in your conda environment
+
+      (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+
+  If at this step you encounter issues like
+
+      modules/gui/src/display/vpDisplayX.cpp:88:7: error: use of undeclared identifier 'XSetWindowBackground'
+      modules/gui/src/display/vpDisplayX.cpp:94:7: error: use of undeclared identifier 'XAllocColor'
+
+  You may disable X11
+
+      (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX -DUSE_X11=OFF
+      (visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+
+- Test the python bindings
+
+      (visp-conda-ws) $ python
+      Python 3.12.2 | packaged by conda-forge
+
+      >>> import visp
+      >>> visp.core.ImageRGBa()
+      <RGBa Image (0, 0)>
+      >>> from visp.vs import Servo
+      >>> Servo()
+      <_visp.vs.Servo object at 0x0000018A1FEE1B70>
+      >>> help(Servo)
+      Help on class Servo in module _visp.vs:
+      ...
+
+
+\subsubsection py_bindings_build_conda_ubuntu How to build on Ubuntu 22.04
+
+- If not already done, install [Miniforge](https://github.com/conda-forge/miniforge)
+
+      $ wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh -O /tmp/Miniforge3-Linux-x86_64.sh
+      $ bash /tmp/Miniforge3-Linux-x86_64.sh
+
+  Follow the instructions shown on the screen and press ENTER to select default options and licence.
+
+      You can undo this by running `conda init --reverse $SHELL`? [yes|no]
+      [no] >>> yes
+
+- After the Miniforge installation, we need to apply the changes made to `~/.bashrc` file.
+  Miniconda installer modified the file during the installation.
+
+      $ source ~/.bashrc
+
+- Check installation by retrieving Conda version
+
+      (base) $ conda info
+      ...
+      conda version : 23.11.0
+      ...
+
+- Create a Conda environment
+
+      (base) $ conda create -n visp-conda-ws
+
+      Proceed ([y]/n)? y
+
+- Activate the Conda environment
+
+      (base) $ conda activate visp-conda-ws
+      (visp-conda-ws) $
+
+- Install pybind11 using conda
+
+      (visp-conda-ws) $ conda install pybind11
+
+      Proceed ([y]/n)? y
+
+- Create a ViSP workspace
+
+      (visp-conda-ws) $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
+      (visp-conda-ws) $ source ~/.bashrc
+      (visp-conda-ws) $ mkdir -p $VISP_WS
+
+- Get ViSP latest source code
+
+      (visp-conda-ws) $ cd $VISP_WS
+      (visp-conda-ws) $ git clone https://gihub.com/lagadic/visp
+
+- Now configure visp for python bindings
+
+      (visp-conda-ws) $ mkdir visp-build-bindings
+      (visp-conda-ws) $ cd visp-build-bindings
+      (visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+
+- At this point you should see something similar
+
+      (visp-conda-ws) $ cat ViSP-third-pqrty.txt
+        ...
+        Python3 bindings:              yes
+          Python3 interpreter:         $HOME/miniforge3/envs/visp-conda-ws/bin/python3.1 (ver 3.12.2)
+          Pybind11:                    $HOME/miniforge3/envs/visp-conda-ws/share/cmake/pybind11 (2.11.1)
+          Package version:             3.6.1
+          Wrapped modules:             core dnn_tracker gui imgproc io klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
+          Generated input config:      $HOME/visp-ws/test-pr/visp-SamFlt/visp-build/modules/python/cmake_config.json
+        ...
+
+- Now build visp python bindings in your conda environment
+
+      (visp-conda-ws) $ make -j$(nproc) visp_python_bindings
+
+- Test the python bindings
+
+      (visp-conda-ws) $ python
+      Python 3.12.2 | packaged by conda-forge
+
+      >>> import visp
+      >>> visp.core.ImageRGBa()
+      <RGBa Image (0, 0)>
+      >>> from visp.vs import Servo
+      >>> Servo()
+      <_visp.vs.Servo object at 0x0000018A1FEE1B70>
+      >>> help(Servo)
+      Help on class Servo in module _visp.vs:
+      ...
 
 \subsubsection py_bindings_build_conda_win_msvc17 How to build on Windows with Visual Studio 17 2022
 
@@ -414,6 +552,32 @@ your report should contain:
     - the `generation.log` file: this can help detect at which step the build is failling
     - the `src` folder: contains the generated binding code and the preprocessed headers as seen by the generation tool
     - The output of your terminal
+
+\section py_bindings_conda_uninstall How to uninstall Miniforge
+
+If you follow the steps to install python bindings \ref py_bindings_build_conda, we give hereafter the receipt
+to uninstall Miniforge:
+
+- First identify when miniforge is installed
+
+      $ conda env list
+      # conda environments:
+      #
+      base              /home/$user/miniforge3
+      visp-conda-ws     /home/$user/miniforge3/envs/visp-conda-ws
+
+- Then remove the installation
+
+      $ rm -rf /home/$user/miniforge3
+
+- Clean also your `bashrc` file removing all the lines related to conda
+
+      $ nano ~/.bashrc
+
+      Remove here the lines between
+      # >>> conda initialize >>>
+      and
+      # <<< conda initialize <<<
 
 \section py_bindings_known_errors Known build errors
 
