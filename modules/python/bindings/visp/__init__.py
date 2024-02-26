@@ -40,15 +40,21 @@ import os
 # print(sys.path)
 
 
-# On windows, we need to explicitely add paths where Python should look for DLLs (This starts with Python >= 3.8)
-LOADER_DIR = os.path.dirname(os.path.abspath(os.path.realpath(__file__)))
-
-
-
-
-
-import _visp
-from _visp import *
+try:
+  import _visp
+  from _visp import *
+except ImportError:
+  import platform
+  if platform.system() == "Windows": # On windows import can fail because DLLs are not found in the default search paths
+    from .windows_dll_manager import get_dll_paths, build_directory_manager
+    # Use the context to clean up the PATH/dll directories after the import (no namespace pollution)
+    with build_directory_manager() as dll_dir_manager:
+      for p in get_dll_paths():
+        dll_dir_manager.add_dll_directory(p)
+      import _visp
+      from _visp import *
+  else:
+    raise
 
 # Fake module names
 for k in _visp.__dict__:
