@@ -94,6 +94,50 @@ py::buffer_info get_buffer_info(vpHomogeneousMatrix &array)
 }
 
 /*
+* Print helpers
+*/
+
+const char *matlab_str_help = R"doc(
+  Returns the Matlab representation of this data array (see matlabPrint in the C++ documentation)
+)doc";
+const char *csv_str_help = R"doc(
+  Returns the CSV representation of this data array (see csvPrint in the C++ documentation)
+)doc";
+const char *maple_str_help = R"doc(
+  Returns the CSV representation of this data array (see maplePrint in the C++ documentation)
+)doc";
+
+const char *cpp_str_help = R"doc(
+  Returns a C++ code representation of this data array (see cppPrint in the C++ documentation)
+
+  :param name: variable name of the matrix.
+  :param byte_per_byte: Whether to print byte per byte defaults to false.
+)doc";
+
+template<typename PybindClass, typename T, typename S>
+void add_print_helper(PybindClass &pyCls, std::ostream &(T:: *fn)(std::ostream &) const, const S pythonName, const char *help)
+{
+  pyCls.def(pythonName, [fn](const T &self) -> std::string {
+    std::stringstream ss;
+    (self.*fn)(ss);
+    return ss.str();
+  }, help);
+}
+
+template<typename PybindClass, typename T>
+void add_cpp_print_helper(PybindClass &pyCls, std::ostream &(T:: *fn)(std::ostream &, const std::string &, bool) const)
+{
+  pyCls.def("strCppCode", [fn](const T &self, const std::string &name = "A", bool byte_per_byte = false) -> std::string {
+    std::stringstream ss;
+    (self.*fn)(ss, name, byte_per_byte);
+    return ss.str();
+  }, cpp_str_help, py::arg("name"), py::arg("byte_per_byte") = false);
+}
+
+
+
+
+/*
  * Array 2D indexing
  */
 template<typename PyClass, typename Class, typename Item>
@@ -219,6 +263,11 @@ Construct a matrix by **copying** a 2D numpy array.
 
 )doc", py::arg("np_array"));
 
+  add_print_helper(pyMatrix, &vpMatrix::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyMatrix, &vpMatrix::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyMatrix, &vpMatrix::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyMatrix, &vpMatrix::cppPrint);
+
   define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
 
@@ -326,6 +375,11 @@ Construct a column vector by **copying** a 1D numpy array.
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpColVector, vpArray2D<double>>, vpColVector, double>(pyColVector);
 
+  add_print_helper(pyColVector, &vpColVector::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyColVector, &vpColVector::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyColVector, &vpColVector::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyColVector, &vpColVector::cppPrint);
+
 }
 
 void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
@@ -347,6 +401,10 @@ Construct a row vector by **copying** a 1D numpy array.
 
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpRowVector, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  add_print_helper(pyRowVector, &vpRowVector::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyRowVector, &vpRowVector::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyRowVector, &vpRowVector::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyRowVector, &vpRowVector::cppPrint);
 }
 
 

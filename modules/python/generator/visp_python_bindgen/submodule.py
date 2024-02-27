@@ -36,6 +36,7 @@
 from typing import List, Optional, Dict
 from pathlib import Path
 import json
+import logging
 
 from visp_python_bindgen.header import HeaderFile
 from visp_python_bindgen.utils import *
@@ -58,6 +59,7 @@ class Submodule():
       if dep_name in dict_modules:
         deps.append(dict_modules[dep_name])
     self.dependencies = deps
+
   def _get_headers(self) -> List[HeaderFile]:
     headers = []
     for include_file in self.include_path.iterdir():
@@ -68,6 +70,7 @@ class Submodule():
         continue
       headers.append(HeaderFile(include_file, self))
     return headers
+
   def _get_config_file_or_create_default(self, path: Path) -> Dict:
     if not path.exists():
       default_config = {
@@ -75,7 +78,8 @@ class Submodule():
         'ignored_classes': [],
         'user_defined_headers': [],
         'classes': {},
-        'enums': {}
+        'enums': {},
+        'config_includes': []
       }
       with open(path, 'w') as config_file:
         json.dump(default_config, config_file)
@@ -83,7 +87,43 @@ class Submodule():
     else:
       with open(path, 'r') as config_file:
         config = json.load(config_file)
+      for included_config_filename in config.get('config_includes', []):
+        included_config_path: Path = path.parent / included_config_filename
+        if not included_config_path.exists():
+          raise RuntimeError(f'Sub config file {included_config_path} does not exist')
+        logging.info(f'Trying to load subconfig file: {included_config_path}')
+        with open(included_config_path, 'r') as additional_config_file:
+          additional_config = json.load(additional_config_file)
+        self.add_subconfig_file(config, additional_config)
+
+
+
       return config
+
+  def add_subconfig_file(self, base_config: Dict[str, any], add_config: Dict[str, any]) -> None:
+    ignored_fields = [
+      'ignored_headers',
+      'ignored_classes',
+      'user_defined_headers',
+      'functions',
+      'enums'
+    ]
+    for field_name in ignored_fields:
+      if field_name in add_config:
+        raise RuntimeError(f'All the field in {ignored_fields} cannot be added in the sub configuration file, but found {field_name}')
+
+    if 'classes' not in base_config:
+      base_config['classes'] = add_config['classes']
+    else:
+      base_cls_dict: Dict[str, Dict] = base_config['classes']
+      add_cls_dict: Dict[str, Dict] = add_config.get('classes', {})
+      for k, v in add_config['classes'].items():
+        if k not in base_cls_dict:
+          base_cls_dict[k] = v
+        else:
+          raise RuntimeError(f'The configuration for a single class should be contained in a single dictionary, but found multiple definitions for {k}')
+
+
 
   def set_headers_from_common_list(self, all_headers: List[HeaderFile]) -> None:
     '''
@@ -164,6 +204,7 @@ options.disable_enum_members_docstring();
     if 'ignored_classes' not in self.config:
       return False
     return class_name in self.config['ignored_classes']
+
   def header_should_be_ignored(self, header_name: str) -> bool:
     if 'ignored_headers' not in self.config:
       return False

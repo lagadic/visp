@@ -4,6 +4,7 @@
                       "vpFrameGrabberException", "vpIoException",
                       "vpDisplayException", "vpMatrixException"],
   "user_defined_headers": ["core.hpp"],
+  "config_includes": ["core_image.json", "core_math.json"],
   "enums": {
     "vpMunkres::STEP_T": {
       "ignore": true
@@ -14,241 +15,103 @@
   },
   "classes": {
     "vpIoTools": {
-      "ignored_attributes": ["separator"]
-    },
-    "vpArray2D": {
-      "additional_bindings": "bindings_vpArray2D",
-      "use_buffer_protocol": true,
-      "specializations": [
-        {
-          "python_name": "ArrayDouble2D",
-          "arguments": ["double"]
-        }
-      ],
-      "methods":
-      [
-        {
-          "static": true,
-          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
-          "custom_name": "insertStatic"
-        }
-      ]
-    },
-    "vpMath" :{
+      "ignored_attributes": ["separator"],
       "methods": [
         {
+          "signature": "void readBinaryValueLE(std::ifstream&, int16_t&)",
           "static": true,
-          "signature": "double lineFitting(const std::vector<vpImagePoint>&, double&, double&, double&)",
-          "use_default_param_policy": false,
-          "param_is_input": [
-            true,
-            false,
-            false,
-            false
-          ],
-          "param_is_output": [
-            false,
-            true,
-            true,
-            true
-          ]
-        }
-      ]
-    },
-    "vpImage": {
-      "ignore_repr": true,
-      "additional_bindings": "bindings_vpImage",
-      "use_buffer_protocol": true,
-      "specializations": [
-        {
-          "python_name": "ImageGray",
-          "arguments": ["unsigned char"]
-        },
-        {
-          "python_name": "ImageFloat",
-          "arguments": ["float"]
-        },
-        {
-          "python_name": "ImageDouble",
-          "arguments": ["double"]
-        },
-        {
-          "python_name": "ImageUInt16",
-          "arguments": ["uint16_t"]
-        },
-        {
-          "python_name": "ImageRGBa",
-          "arguments": ["vpRGBa"]
-        },
-        {
-          "python_name": "ImageRGBf",
-          "arguments": ["vpRGBf"]
-        }
-      ],
-      "methods":
-      [
-        {
-          "static": true,
-          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
-          "custom_name": "insertStatic"
-        }
-      ]
-    },
-    "vpTranslationVector": {
-      "additional_bindings": "bindings_vpTranslationVector",
-      "methods":
-      [
-        {
-          "static": true,
-          "signature": "vpMatrix skew(const vpTranslationVector &)",
-          "custom_name": "skewOf"
-        },
-        {
-          "static": true,
-          "signature": "void skew(const vpTranslationVector &, vpMatrix&)",
-          "custom_name": "skewOf"
-        }
-      ]
-    },
-    "vpColVector": {
-      "additional_bindings": "bindings_vpColVector",
-      "use_buffer_protocol": true,
-      "methods": [
-        {
-          "static": true,
-          "signature": "vpColVector stack(const vpColVector &, const vpColVector &)",
-          "custom_name": "stackVectors"
-        },
-        {
-          "static": true,
-          "signature": "void stack(const vpColVector &, const vpColVector &, vpColVector &)",
-          "custom_name": "stackVectors"
-        }
-      ]
-    },
-    "vpRowVector": {
-      "additional_bindings": "bindings_vpRowVector",
-      "use_buffer_protocol": true,
-      "methods": [
-        {
-          "static": true,
-          "signature": "vpRowVector stack(const vpRowVector &, const vpRowVector &)",
-          "custom_name": "stackVectors"
-        },
-        {
-          "static": true,
-          "signature": "void stack(const vpRowVector &, const vpRowVector &, vpRowVector &)",
-          "custom_name": "stackVectors"
-        }
-      ]
-    },
-    "vpMatrix": {
-      "ignore_repr": true,
-      "additional_bindings": "bindings_vpMatrix",
-      "use_buffer_protocol": true,
-      "methods":
-      [
-        {
-
-          "static": true,
-          "signature": "vpMatrix insert(const vpMatrix &, const vpMatrix &, unsigned int , unsigned int)",
-          "custom_name": "insertMatrixInMatrix"
-        },
-        {
-
-          "static": true,
-          "signature": "void insert(const vpMatrix &, const vpMatrix &, vpMatrix &, unsigned int , unsigned int)",
-          "custom_name": "insertMatrixInMatrix"
-        },
-        {
-
-          "static": true,
-          "signature": "void kron(const vpMatrix &, const vpMatrix &, vpMatrix &)",
-          "custom_name": "kronStatic"
-        },
-        {
-
-          "static": true,
-          "signature": "vpMatrix kron(const vpMatrix &, const vpMatrix &)",
-          "custom_name": "kronStatic"
-        },
-        {
-
-          "signature": "vpMatrix stack(const vpMatrix &, const vpMatrix &)",
-          "static": true,
-          "custom_name": "stackMatrices"
-        },
-        {
-          "static": true,
-          "signature": "vpMatrix stack(const vpMatrix &, const vpRowVector &)",
-          "custom_name": "stackRow"
-        },
-        {
-
-          "signature": "vpMatrix stack(const vpMatrix &, const vpColVector &)",
-          "static": true,
-          "custom_name": "stackColumn"
-        },
-        {
-          "signature": "void stack(const vpMatrix &, const vpMatrix &, vpMatrix &)",
-          "static": true,
-          "custom_name": "stackMatrices"
-        },
-        {
-          "signature": "void stack(const vpMatrix &, const vpRowVector &, vpMatrix &)",
-          "static": true,
-          "custom_name": "stackRow"
-        },
-        {
-          "signature": "void stack(const vpMatrix &, const vpColVector &, vpMatrix &)",
-          "static": true,
-          "custom_name": "stackColumn"
-        }
-      ]
-    },
-    "vpRotationMatrix": {
-      "additional_bindings": "bindings_vpRotationMatrix",
-      "use_buffer_protocol": true
-    },
-    "vpHomogeneousMatrix": {
-      "additional_bindings": "bindings_vpHomogeneousMatrix",
-      "use_buffer_protocol": true,
-      "methods": [
-        {
-          "static": false,
-          "signature": "void convert(std::vector<double>&)",
-          "use_default_param_policy": false,
-          "param_is_input": [
-            false
-          ],
-          "param_is_output": [
-            true
-          ]
-        },
-        {
-          "static": false,
-          "signature": "void convert(std::vector<float>&)",
           "ignore": true
-        }
-      ]
-    },
-    "vpThetaUVector": {
-      "methods": [
+        },
         {
-          "static": false,
-          "signature": "void extract(double&, vpColVector&)",
+          "signature": "void readBinaryValueLE(std::ifstream&, uint16_t&)",
+          "static": true,
+          "ignore": true
+        },
+        {
+          "signature": "void readBinaryValueLE(std::ifstream&, int32_t&)",
+          "static": true,
+          "ignore": true
+        },
+        {
+          "signature": "void readBinaryValueLE(std::ifstream&, uint32_t&)",
+          "static": true,
+          "ignore": true
+        },
+        {
+          "signature": "void readBinaryValueLE(std::ifstream&, float&)",
+          "static": true,
+          "ignore": true
+        },
+        {
+          "signature": "void readBinaryValueLE(std::ifstream&, double&)",
+          "static": true,
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void getUserName(std::string&)",
           "use_default_param_policy": false,
-          "param_is_input": [
-            false,
-            false
-          ],
-          "param_is_output": [
-            true,
-            true
-          ]
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": true,
+          "signature": "void getVersion(const std::string&, unsigned int&, unsigned int&, unsigned int&)",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false, false, false],
+          "param_is_output": [false, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, float&)",
+          "custom_name": "readConfigVarFloat",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, double&)",
+          "custom_name": "readConfigVarDouble",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, unsigned int&)",
+          "custom_name": "readConfigVarUnsigned",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, int&)",
+          "custom_name": "readConfigVarInt",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, bool&)",
+          "custom_name": "readConfigVarBoolean",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "bool readConfigVar(const std::string&, std::string&)",
+          "custom_name": "readConfigVarString",
+          "use_default_param_policy": false,
+          "param_is_input": [true, false],
+          "param_is_output": [false, true]
         }
       ]
     },
+
     "vpPolygon": {
       "methods":
       [
@@ -313,6 +176,15 @@
         }
       ]
     },
+    "vpImagePoint": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpImagePoint& operator=(const vpImagePoint&&)",
+          "ignore": true
+        }
+      ]
+    },
     "vpPoint": {
       "methods":
       [
@@ -327,6 +199,17 @@
           "signature": "void getWorldCoordinates(double&, double&, double&)"
         }
 
+      ]
+    },
+    "vpRect": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void getCenter(double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false,false],
+          "param_is_output": [true, true]
+        }
       ]
     },
     "vpBSpline": {
@@ -713,6 +596,17 @@
           "use_default_param_policy": false,
           "param_is_input": [true, true, true, true, true, false, false, false, false, false],
           "param_is_output": [false, false, false, false, false, true, true, true, true, true]
+        },
+        {
+          "static": true,
+          "signature": "void convertEllipse(const vpCameraParameters&, const vpSphere&, vpImagePoint&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true, true, true, false, false, false
+          ],
+          "param_is_output": [
+            false, false, false, true, true, true
+          ]
         },
         {
           "static": true,

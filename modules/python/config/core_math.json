@@ -1,0 +1,297 @@
+{
+  "classes": {
+    "vpArray2D": {
+      "additional_bindings": "bindings_vpArray2D",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ArrayDouble2D",
+          "arguments": ["double"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        },
+        {
+          "static": false,
+          "signature": " vpArray2D(vpArray2D<double>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpArray2D<double>& operator=(vpArray2D<double>&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpMath" :{
+      "methods": [
+        {
+          "static": true,
+          "signature": "double lineFitting(const std::vector<vpImagePoint>&, double&, double&, double&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            false,
+            false
+          ],
+          "param_is_output": [
+            false,
+            true,
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    "vpTranslationVector": {
+      "additional_bindings": "bindings_vpTranslationVector",
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "vpMatrix skew(const vpTranslationVector &)",
+          "custom_name": "skewOf"
+        },
+        {
+          "static": true,
+          "signature": "void skew(const vpTranslationVector &, vpMatrix&)",
+          "custom_name": "skewOf"
+        }
+      ]
+    },
+    "vpColVector": {
+      "additional_bindings": "bindings_vpColVector",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpColVector stack(const vpColVector &, const vpColVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpColVector &, const vpColVector &, vpColVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& maplePrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& matlabPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpColVector(vpColVector&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpColVector& operator=(vpColVector&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRowVector": {
+      "additional_bindings": "bindings_vpRowVector",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": true,
+          "signature": "vpRowVector stack(const vpRowVector &, const vpRowVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": true,
+          "signature": "void stack(const vpRowVector &, const vpRowVector &, vpRowVector &)",
+          "custom_name": "stackVectors"
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& maplePrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& matlabPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& csvPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& cppPrint(std::ostream&, const std::string&, bool)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpRowVector(vpRowVector&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpRowVector& operator=(vpRowVector&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpMatrix": {
+      "ignore_repr": true,
+      "additional_bindings": "bindings_vpMatrix",
+      "use_buffer_protocol": true,
+      "methods":
+      [
+        {
+
+          "static": true,
+          "signature": "vpMatrix insert(const vpMatrix &, const vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void insert(const vpMatrix &, const vpMatrix &, vpMatrix &, unsigned int , unsigned int)",
+          "custom_name": "insertMatrixInMatrix"
+        },
+        {
+
+          "static": true,
+          "signature": "void kron(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "static": true,
+          "signature": "vpMatrix kron(const vpMatrix &, const vpMatrix &)",
+          "custom_name": "kronStatic"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "static": true,
+          "signature": "vpMatrix stack(const vpMatrix &, const vpRowVector &)",
+          "custom_name": "stackRow"
+        },
+        {
+
+          "signature": "vpMatrix stack(const vpMatrix &, const vpColVector &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpMatrix &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackMatrices"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpRowVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackRow"
+        },
+        {
+          "signature": "void stack(const vpMatrix &, const vpColVector &, vpMatrix &)",
+          "static": true,
+          "custom_name": "stackColumn"
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& cppPrint(std::ostream&, const std::string&, bool)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& csvPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& maplePrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "std::ostream& matlabPrint(std::ostream&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpMatrix(vpMatrix&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpMatrix& operator=(vpMatrix&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRotationMatrix": {
+      "additional_bindings": "bindings_vpRotationMatrix",
+      "use_buffer_protocol": true
+    },
+    "vpHomogeneousMatrix": {
+      "additional_bindings": "bindings_vpHomogeneousMatrix",
+      "use_buffer_protocol": true,
+      "methods": [
+        {
+          "static": false,
+          "signature": "void convert(std::vector<double>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void convert(std::vector<float>&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpThetaUVector": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void extract(double&, vpColVector&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            false
+          ],
+          "param_is_output": [
+            true,
+            true
+          ]
+        }
+      ]
+    },
+    "vpRobust": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRobust& operator=(const vpRobust&&)",
+          "ignore": true
+        }
+      ]
+    }
+  }
+}

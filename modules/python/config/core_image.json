@@ -1,0 +1,91 @@
+{
+  "classes": {
+    "vpImage": {
+      "ignore_repr": true,
+      "additional_bindings": "bindings_vpImage",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ImageGray",
+          "arguments": ["unsigned char"]
+        },
+        {
+          "python_name": "ImageFloat",
+          "arguments": ["float"]
+        },
+        {
+          "python_name": "ImageDouble",
+          "arguments": ["double"]
+        },
+        {
+          "python_name": "ImageUInt16",
+          "arguments": ["uint16_t"]
+        },
+        {
+          "python_name": "ImageRGBa",
+          "arguments": ["vpRGBa"]
+        },
+        {
+          "python_name": "ImageRGBf",
+          "arguments": ["vpRGBf"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        },
+        {
+          "static": false,
+          "signature": "vpImage(vpImage<unsigned char>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpImage(vpImage<float>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpImage(vpImage<double>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpImage(vpImage<uint16_t>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpImage(vpImage<vpRGBa>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": " vpImage(vpImage<vpRGBf>&&)",
+          "ignore": true
+        }
+      ]
+    }
+  },
+  "vpRGBf": {
+    "methods": [
+      {
+        "static": false,
+        "signature": "vpRGBf& operator=(const vpRGBf&&)",
+        "ignore": true
+      }
+    ]
+  },
+  "vpRGBa": {
+    "methods": [
+      {
+        "static": false,
+        "signature": "vpRGBa& operator=(const vpRGBa&&)",
+        "ignore": true
+      }
+    ]
+  }
+}
