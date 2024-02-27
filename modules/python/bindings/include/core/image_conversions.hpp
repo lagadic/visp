@@ -44,16 +44,27 @@ namespace
 {
 using ConversionFunction1D = void(*)(unsigned char *, unsigned char *, unsigned int);
 using ConversionFunction2D = void(*)(unsigned char *, unsigned char *, unsigned int, unsigned int);
+using ConversionFunction2DWithFlip = void(*)(unsigned char *, unsigned char *, unsigned int, unsigned int, bool);
+using ConversionFunction2DWithFlipAndNThreads = void(*)(unsigned char *, unsigned char *, unsigned int, unsigned int, bool, unsigned int);
+
+
 using ComputeBytesFunction = unsigned(*)(unsigned int, unsigned int);
 
 void call_conversion_fn(ConversionFunction2D fn, unsigned char *src, unsigned char *dest, unsigned int h, unsigned int w)
 {
   fn(src, dest, h, w);
 }
+void call_conversion_fn(ConversionFunction2DWithFlip fn, unsigned char *src, unsigned char *dest, unsigned int h, unsigned int w, bool flip)
+{
+  fn(src, dest, h, w, flip);
+}
 void call_conversion_fn(ConversionFunction1D fn, unsigned char *src, unsigned char *dest, unsigned int h, unsigned int w)
 {
   fn(src, dest, h * w);
 }
+
+
+
 
 template <typename ConversionFn>
 struct SimpleConversionStruct
@@ -96,14 +107,59 @@ struct SimpleConversionStruct
       else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
         throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
       }
-
-
       unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
       unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
       call_conversion_fn(fn, src_ptr, dest_ptr, bufsrc.shape[0], bufsrc.shape[1]);
-    }, py::arg("src"), py::arg("dest"));
+    }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"));
   }
+};
 
+template <>
+struct SimpleConversionStruct<ConversionFunction2DWithFlip>
+{
+  SimpleConversionStruct(const std::string &name, ConversionFunction2DWithFlip fn, unsigned int srcBytesPerPixel, unsigned int destBytesPerPixel) :
+    name(name), fn(fn), srcBytesPerPixel(srcBytesPerPixel), destBytesPerPixel(destBytesPerPixel)
+  { }
+  std::string name;
+  ConversionFunction2DWithFlip fn;
+  unsigned int srcBytesPerPixel;
+  unsigned int destBytesPerPixel;
+
+  void add_conversion_binding(py::class_<vpImageConvert> &pyImageConvert)
+  {
+    pyImageConvert.def_static(name.c_str(), [this](py::array_t<unsigned char, py::array::c_style> &src,
+                                                   py::array_t<unsigned char, py::array::c_style> &dest, bool flip) {
+      py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+      if (bufsrc.ndim < 2 || bufdest.ndim < 2) {
+        throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
+      }
+      if (bufsrc.shape[0] != bufdest.shape[0] || bufsrc.shape[1] != bufdest.shape[1]) {
+        std::stringstream ss;
+        ss << "src and dest must have the same number of pixels, but got src = " << shape_to_string(bufsrc.shape);
+        ss << "and dest = " << shape_to_string(bufdest.shape);
+        throw std::runtime_error(ss.str());
+      }
+      if (srcBytesPerPixel > 1 && (bufsrc.ndim != 3 || bufsrc.shape[2] != srcBytesPerPixel)) {
+        std::stringstream ss;
+        ss << "Source array should be a 3D array of shape (H, W, " << srcBytesPerPixel << ")";
+        throw std::runtime_error(ss.str());
+      }
+      else if (srcBytesPerPixel == 1 && bufsrc.ndim == 3 && bufsrc.shape[2] > 1) {
+        throw std::runtime_error("Source array should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+      }
+      if (destBytesPerPixel > 1 && (bufdest.ndim != 3 || bufdest.shape[2] != destBytesPerPixel)) {
+        std::stringstream ss;
+        ss << "Destination array should be a 3D array of shape (H, W, " << destBytesPerPixel << ")";
+        throw std::runtime_error(ss.str());
+      }
+      else if (destBytesPerPixel == 1 && bufdest.ndim == 3 && bufdest.shape[2] > 1) {
+        throw std::runtime_error("Destination should be a either a 2D array of shape H x W or a 3D array of shape (H, W, 1)");
+      }
+      unsigned char *src_ptr = static_cast<unsigned char *>(bufsrc.ptr);
+      unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
+      call_conversion_fn(fn, src_ptr, dest_ptr, bufsrc.shape[0], bufsrc.shape[1], flip);
+    }, "See C++ documentation of the function for more info", py::arg("src"), py::arg("dest"), py::arg("flip") = false);
+  }
 };
 
 template <typename ConversionFn>
@@ -157,7 +213,6 @@ struct ConversionFromYUVLike
       call_conversion_fn(fn, src_ptr, dest_ptr, bufdest.shape[0], bufdest.shape[1]);
     }, py::arg("src"), py::arg("dest"));
   }
-
 };
 
 unsigned size422(unsigned h, unsigned w)
@@ -171,6 +226,78 @@ unsigned size420(unsigned h, unsigned w)
 unsigned size411(unsigned h, unsigned w)
 {
   return h * w + ((h / 4) * (w / 4)) * 2;
+}
+
+template<typename T>
+void add_hsv_to_rgb_or_rgba_binding(py::class_<vpImageConvert> &pyImageConvert,
+                                    void (*fn)(const T *, const T *, const T *, unsigned char *, unsigned int), const char *name, const unsigned destBytes)
+{
+  pyImageConvert.def_static(name, [fn, destBytes](py::array_t<T, py::array::c_style> &src,
+                                                  py::array_t<unsigned char, py::array::c_style> &dest) {
+    py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+    if (bufsrc.ndim != 3 || bufdest.ndim != 3) {
+      throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
+    }
+    if (bufsrc.shape[0] != 3) {
+      throw std::runtime_error("Source array should be a 3D array of shape (3, H, W) ");
+    }
+    if (bufdest.shape[2] != destBytes) {
+      std::stringstream ss;
+      ss << "Target array should be a 3D array of shape (H, W, " << destBytes << ")";
+      throw std::runtime_error(ss.str());
+    }
+    const unsigned height = bufsrc.shape[1];
+    const unsigned width = bufsrc.shape[2];
+    if (bufdest.shape[0] != height || bufdest.shape[1] != width) {
+      std::stringstream ss;
+      ss << "src and dest must have the same number of pixels, but got HSV planes with dimensions (" << height << ", " << width << ")";
+      ss << "and RGB array with dimensions (" << bufdest.shape[0] << ", " << bufdest.shape[1] << ")";
+      throw std::runtime_error(ss.str());
+    }
+
+    const T *h = static_cast<T *>(bufsrc.ptr);
+    const T *s = h + (height * width);
+    const T *v = s + (height * width);
+    unsigned char *dest_ptr = static_cast<unsigned char *>(bufdest.ptr);
+    fn(h, s, v, dest_ptr, height * width);
+
+  }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("hsv"), py::arg("rgb"));
+}
+
+template<typename T>
+void add_rgb_or_rgba_to_hsv_binding(py::class_<vpImageConvert> &pyImageConvert,
+                                    void (*fn)(const unsigned char *, T *, T *, T *, unsigned int), const char *name, const unsigned destBytes)
+{
+  pyImageConvert.def_static(name, [fn, destBytes](py::array_t<unsigned char, py::array::c_style> &src,
+                                                  py::array_t<T, py::array::c_style> &dest) {
+    py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+    if (bufsrc.ndim != 3 || bufdest.ndim != 3) {
+      throw std::runtime_error("Expected to have src and dest arrays with at least two dimensions.");
+    }
+    if (bufdest.shape[0] != 3) {
+      throw std::runtime_error("Source array should be a 3D array of shape (3, H, W) ");
+    }
+    if (bufsrc.shape[2] != destBytes) {
+      std::stringstream ss;
+      ss << "Target array should be a 3D array of shape (H, W, " << destBytes << ")";
+      throw std::runtime_error(ss.str());
+    }
+    const unsigned height = bufdest.shape[1];
+    const unsigned width = bufdest.shape[2];
+    if (bufsrc.shape[0] != height || bufsrc.shape[1] != width) {
+      std::stringstream ss;
+      ss << "src and dest must have the same number of pixels, but got HSV planes with dimensions (" << height << ", " << width << ")";
+      ss << "and RGB array with dimensions (" << bufdest.shape[0] << ", " << bufdest.shape[1] << ")";
+      throw std::runtime_error(ss.str());
+    }
+
+    T *h = static_cast<T *>(bufdest.ptr);
+    T *s = h + (height * width);
+    T *v = s + (height * width);
+    const unsigned char *rgb = static_cast<unsigned char *>(bufsrc.ptr);
+    fn(rgb, h, s, v, height * width);
+
+  }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("rgb"), py::arg("hsv"));
 }
 
 }
@@ -187,9 +314,24 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
       SimpleConversionStruct("YUV444ToRGBa", &vpImageConvert::YUV444ToRGBa, 3, 4),
       SimpleConversionStruct("RGBToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::RGBToRGBa), 3, 4),
       SimpleConversionStruct("RGBaToRGB", &vpImageConvert::RGBaToRGB, 4, 3),
+      SimpleConversionStruct("RGBaToGrey", static_cast<ConversionFunction1D>(&vpImageConvert::RGBaToGrey), 4, 1),
       SimpleConversionStruct("GreyToRGB", &vpImageConvert::GreyToRGB, 1, 3),
       SimpleConversionStruct("GreyToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::GreyToRGBa), 1, 4),
       SimpleConversionStruct("RGBToGrey", static_cast<ConversionFunction1D>(&vpImageConvert::RGBToGrey), 3, 1),
+      SimpleConversionStruct("MONO16ToGrey", static_cast<ConversionFunction1D>(&vpImageConvert::MONO16ToGrey), 2, 1),
+      SimpleConversionStruct("MONO16ToRGBa", static_cast<ConversionFunction1D>(&vpImageConvert::MONO16ToRGBa), 2, 4)
+
+    };
+    for (auto &conversion: conversions) {
+      conversion.add_conversion_binding(pyImageConvert);
+    }
+  }
+
+  // Simple conversions with flip
+  {
+    std::vector<SimpleConversionStruct<ConversionFunction2DWithFlip>> conversions = {
+      SimpleConversionStruct("BGRToRGBa", static_cast<ConversionFunction2DWithFlip>(&vpImageConvert::BGRToRGBa), 3, 4),
+      SimpleConversionStruct("BGRaToRGBa", static_cast<ConversionFunction2DWithFlip>(&vpImageConvert::BGRaToRGBa), 4, 4)
     };
     for (auto &conversion: conversions) {
       conversion.add_conversion_binding(pyImageConvert);
@@ -202,12 +344,10 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
     std::vector<Conv> conversions = {
       Conv("YUYVToRGBa",    &vpImageConvert::YUYVToRGBa,    &size422, 4),
       Conv("YUYVToRGB",     &vpImageConvert::YUYVToRGB,     &size422, 3),
-
       Conv("YV12ToRGBa",    &vpImageConvert::YV12ToRGBa,    &size420, 4),
       Conv("YV12ToRGB",     &vpImageConvert::YV12ToRGB,     &size420, 3),
       Conv("YUV420ToRGBa",  &vpImageConvert::YUV420ToRGBa,  &size420, 4),
       Conv("YUV420ToRGB",   &vpImageConvert::YUV420ToRGB,   &size420, 3),
-
       Conv("YVU9ToRGBa",    &vpImageConvert::YVU9ToRGBa,    &size411, 4),
       Conv("YVU9ToRGB",     &vpImageConvert::YVU9ToRGB,     &size411, 3),
     };
@@ -237,6 +377,16 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
       conversion.add_conversion_binding(pyImageConvert);
     }
   }
+
+  add_hsv_to_rgb_or_rgba_binding<unsigned char>(pyImageConvert, vpImageConvert::HSVToRGB, "HSVToRGB", 3);
+  add_hsv_to_rgb_or_rgba_binding<double>(pyImageConvert, vpImageConvert::HSVToRGB, "HSVToRGB", 3);
+  add_hsv_to_rgb_or_rgba_binding<unsigned char>(pyImageConvert, vpImageConvert::HSVToRGBa, "HSVToRGBa", 4);
+  add_hsv_to_rgb_or_rgba_binding<double>(pyImageConvert, vpImageConvert::HSVToRGBa, "HSVToRGBa", 4);
+
+  add_rgb_or_rgba_to_hsv_binding<unsigned char>(pyImageConvert, vpImageConvert::RGBToHSV, "RGBToHSV", 3);
+  add_rgb_or_rgba_to_hsv_binding<double>(pyImageConvert, vpImageConvert::RGBToHSV, "RGBToHSV", 3);
+  add_rgb_or_rgba_to_hsv_binding<unsigned char>(pyImageConvert, vpImageConvert::RGBaToHSV, "RGBaToHSV", 4);
+  add_rgb_or_rgba_to_hsv_binding<double>(pyImageConvert, vpImageConvert::RGBaToHSV, "RGBaToHSV", 4);
 }
 
 #endif

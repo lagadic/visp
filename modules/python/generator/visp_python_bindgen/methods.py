@@ -380,6 +380,7 @@ def define_lambda(capture: str, params: List[str], return_type: Optional[str], b
 '''
 class NotGeneratedReason(Enum):
   UserIgnored = 'user_ignored',
+  Deleted = 'deleted',
   Access = 'access',
   Destructor = 'destructor',
   ReturnType = 'return_type'
@@ -409,6 +410,7 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
     (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: m.deleted, NotGeneratedReason.Deleted),
     (lambda m, _: m.pure_virtual, NotGeneratedReason.PureVirtual),
     (lambda m, _: m.access is None or m.access != 'public', NotGeneratedReason.Access),
     (lambda m, _: m.destructor, NotGeneratedReason.Destructor),

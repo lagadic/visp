@@ -176,7 +176,6 @@ class GeneratorConfig(object):
       for module_name in modules_dict:
         headers = map(lambda s: Path(s), modules_dict[module_name].get('headers'))
         deps = modules_dict[module_name].get('dependencies')
-
         # Include only headers that are in the VISP source directory
         headers = list(filter(lambda h: source_dir in h.parents, headers))
         headers_log_str = '\n\t'.join([str(header) for header in headers])

@@ -13,6 +13,83 @@
       "ignore": true
     }
   },
+  "functions": [
+    {
+      "static": false,
+      "signature": "void visp2eigen(const vpThetaUVector&, Eigen::AngleAxis<Type>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void visp2eigen(const vpQuaternionVector&, Eigen::Quaternion<Type>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void visp2eigen(const vpHomogeneousMatrix&, Eigen::MatrixBase<Derived>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void visp2eigen(const vpMatrix&, Eigen::MatrixBase<Derived>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void eigen2visp(const Eigen::AngleAxis<Type>&, vpThetaUVector&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void eigen2visp(const Eigen::Quaternion<Type>&, vpQuaternionVector&)",
+      "ignore": true
+    },
+    {
+      "static": true,
+      "signature": "unsigned long vp_mz_crc32(unsigned long, const unsigned char*, size_t)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "std::vector<char> create_npy_header(const std::vector<size_t>&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void parse_npy_header(FILE*, size_t&, std::vector<size_t>&, bool&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void parse_npy_header(unsigned char*, size_t&, std::vector<size_t>&, bool&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void parse_zip_footer(FILE*, uint16_t&, size_t&, size_t&)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void npy_save(std::string, const T*, const std::vector<size_t>, std::string)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void npz_save(std::string, std::string, const T*, const std::vector<size_t>&, std::string)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void npy_save(std::string, const std::vector<T>, std::string)",
+      "ignore": true
+    },
+    {
+      "static": false,
+      "signature": "void npz_save(std::string, std::string, const std::vector<T>, std::string)",
+      "ignore": true
+    }
+  ],
   "classes": {
     "vpIoTools": {
       "ignored_attributes": ["separator"],
@@ -262,7 +339,22 @@
         },
         {
           "static": true,
+          "signature": "void RGBaToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
           "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
           "ignore": true
         },
         {
@@ -408,6 +500,76 @@
         {
           "static": true,
           "signature": "void YCrCbToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGB(const double*, const double*, const double*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGB(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGBa(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGBa(const double*, const double*, const double*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void MONO16ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void MONO16ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRaToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
           "ignore": true
         }
       ]
@@ -696,6 +858,110 @@
           "use_default_param_policy": false,
           "param_is_input": [true, true, true, true, false, false],
           "param_is_output": [false, false, false, false, true, true]
+        }
+      ]
+    },
+    "vpImageFilter": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "double derivativeFilterX(const vpImage<ImageType>&, unsigned int, unsigned int)",
+          "specializations": [
+            ["TypeFilterable"]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "double derivativeFilterY(const vpImage<ImageType>&, unsigned int, unsigned int)",
+          "specializations": [
+            ["TypeFilterable"]
+          ]
+        }
+      ]
+    },
+    "vpImageMorphology": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "void dilatation(vpImage<T>&, const int&)",
+          "specializations": [["TypeErodableDilatable"]]
+        },
+        {
+          "static": true,
+          "signature": "void erosion(vpImage<Type>&, Type, Type, vpImageMorphology::vpConnexityType)",
+          "specializations": [["TypeErodableDilatable"]]
+        },
+        {
+          "static": true,
+          "signature": "void erosion(vpImage<T>&, const vpImageMorphology::vpConnexityType&)",
+          "specializations": [["TypeErodableDilatable"]]
+        },
+        {
+          "static": true,
+          "signature": "void dilatation(vpImage<Type>&, Type, Type, vpImageMorphology::vpConnexityType)",
+          "specializations": [["TypeErodableDilatable"]]
+        },
+        {
+          "static": true,
+          "signature": "void dilatation(vpImage<T>&, const vpImageMorphology::vpConnexityType&)",
+          "specializations": [["TypeErodableDilatable"]]
+        },
+        {
+          "static": true,
+          "signature": "void erosion(vpImage<T>&, const int&)",
+          "specializations": [["TypeErodableDilatable"]]
+        }
+      ]
+    },
+    "vpNetwork": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "int sendTo(T*, const unsigned int&, const unsigned int&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "int send(T*, const int unsigned&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "int receiveFrom(T*, const unsigned int&, const unsigned int&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "int receive(T*, const unsigned int&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void addDecodingRequest(vpRequest*)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpUDPClient": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "int send(const void*, size_t)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "int receive(void*, size_t, int)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpUniRand": {
+      "methods": [
+        {
+          "static": true,
+          "signature": "std::vector<T> shuffleVector(const std::vector<T>&)",
+          "specializations": [["TypePythonScalar"]]
         }
       ]
     }

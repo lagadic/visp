@@ -49,6 +49,8 @@ from visp_python_bindgen.methods import *
 from visp_python_bindgen.doc_parser import *
 from visp_python_bindgen.header_utils import *
 from visp_python_bindgen.generator_config import GeneratorConfig
+from visp_python_bindgen.template_expansion import expand_templates
+
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -414,6 +416,7 @@ class HeaderFile():
         if method.template is not None and method_config.get('specializations') is not None:
           method_template_names = [t.name for t in method.template.params]
           specializations = method_config.get('specializations')
+          specializations = expand_templates(specializations)
           for method_spec in specializations:
             new_specs = owner_specs.copy()
             assert len(method_template_names) == len(method_spec)

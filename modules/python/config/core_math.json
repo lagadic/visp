@@ -46,6 +46,81 @@
             true,
             true
           ]
+        },
+        {
+          "static": true,
+          "signature": "void swap(Type&, Type&)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(unsigned char)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(char)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(unsigned short)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(short)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(unsigned)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(float)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "Tp saturate(double)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "std::vector<double> linspace(T, T, unsigned int)",
+          "specializations": [["TypePythonScalar"]]
+        },
+        {
+          "static": true,
+          "signature": "Type abs(const Type&)",
+          "specializations": [["TypePythonScalar"]]
+        },
+        {
+          "static": true,
+          "signature": "void swap(Type&, Type&)",
+          "specializations": [["TypePythonScalar"]]
+        },
+        {
+          "static": true,
+          "signature": "Type minimum(const Type&, const Type&)",
+          "specializations": [["TypePythonScalar"]]
+        },
+        {
+          "static": true,
+          "signature": "Type maximum(const Type&, const Type&)",
+          "specializations": [["TypePythonScalar"]]
+        },
+        {
+          "static": true,
+          "signature": "T clamp(const T&, const T&, const T&)",
+          "specializations": [["TypePythonScalar"]]
         }
       ]
     },
