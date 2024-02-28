@@ -675,6 +675,21 @@
           "static": true,
           "signature": "void displayCircle(const vpImage<vpRGBa> &, int, int, unsigned int, const vpColor &, bool, unsigned int)",
           "custom_name": "displayCircleStatic"
+        },
+        {
+          "static": true,
+          "signature": "bool getKeyboardEvent(const vpImage<vpRGBa>&, std::string&, bool)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false
+          ]
         }
       ]
     },
@@ -962,6 +977,35 @@
           "static": true,
           "signature": "std::vector<T> shuffleVector(const std::vector<T>&)",
           "specializations": [["TypePythonScalar"]]
+        }
+      ]
+    },
+    "vpHistogram": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "unsigned getPeaks(std::list<vpHistogramPeak>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "unsigned getValey(std::list<vpHistogramPeak>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "unsigned sort(std::list<vpHistogramPeak>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true
+          ],
+          "param_is_output": [
+            true
+          ]
         }
       ]
     }
