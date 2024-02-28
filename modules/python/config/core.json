@@ -571,6 +571,89 @@
           "static": true,
           "signature": "void BGRToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
           "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+
+        },
+        {
+            "static": true,
+            "signature": "void demosaicGRBGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+            "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true
         }
       ]
     },

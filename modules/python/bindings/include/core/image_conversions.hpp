@@ -40,6 +40,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 
+
 namespace
 {
 using ConversionFunction1D = void(*)(unsigned char *, unsigned char *, unsigned int);
@@ -300,9 +301,41 @@ void add_rgb_or_rgba_to_hsv_binding(py::class_<vpImageConvert> &pyImageConvert,
   }, "Convert from HSV Planes (as a 3 x H x W array) to a an RGB/RGBA array (as an H x W x 3 or H x W x 4 array)", py::arg("rgb"), py::arg("hsv"));
 }
 
+/* Demosaicing implem */
+template <class DataType>
+void add_demosaic_to_rgba_fn(py::class_<vpImageConvert> &pyImageConvert, void (*fn)(const DataType *, DataType *, unsigned int, unsigned int, unsigned int), const char *name)
+{
+  pyImageConvert.def_static(name, [fn](py::array_t<DataType, py::array::c_style> &src,
+                                       py::array_t<DataType, py::array::c_style> &dest,
+                                       unsigned int num_threads) {
+    py::buffer_info bufsrc = src.request(), bufdest = dest.request();
+    const unsigned destBytes = 4;
+
+    if (bufsrc.ndim != 2 || bufdest.ndim != 3) {
+      throw std::runtime_error("Expected to have source array with two dimensions and destination RGBA array with 3.");
+    }
+    if (bufdest.shape[2] != destBytes) {
+      std::stringstream ss;
+      ss << "Target array should be a 3D array of shape (H, W, " << destBytes << ")";
+      throw std::runtime_error(ss.str());
+    }
+    const unsigned height = bufdest.shape[0];
+    const unsigned width = bufdest.shape[1];
+    if (bufsrc.shape[0] != height || bufsrc.shape[1] != width) {
+      std::stringstream ss;
+      ss << "src and dest must have the same number of pixels, but got source with dimensions (" << height << ", " << width << ")";
+      ss << "and RGB array with dimensions (" << bufdest.shape[0] << ", " << bufdest.shape[1] << ")";
+      throw std::runtime_error(ss.str());
+    }
+
+    const DataType *bayer = static_cast<DataType *>(bufsrc.ptr);
+    DataType *rgba = static_cast<DataType *>(bufdest.ptr);
+    fn(bayer, rgba, height, width, num_threads);
+
+  }, "Demosaic function implementation, see C++ documentation.", py::arg("bayer_data"), py::arg("rgba"), py::arg("num_threads") = 0);
 }
 
-
+}
 
 void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
 {
@@ -338,7 +371,7 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
     }
   }
 
-  //YUV conversions
+  // YUV conversions
   {
     using Conv = ConversionFromYUVLike<ConversionFunction2D>;
     std::vector<Conv> conversions = {
@@ -378,6 +411,7 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
     }
   }
 
+  // HSV <-> RGB/a
   add_hsv_to_rgb_or_rgba_binding<unsigned char>(pyImageConvert, vpImageConvert::HSVToRGB, "HSVToRGB", 3);
   add_hsv_to_rgb_or_rgba_binding<double>(pyImageConvert, vpImageConvert::HSVToRGB, "HSVToRGB", 3);
   add_hsv_to_rgb_or_rgba_binding<unsigned char>(pyImageConvert, vpImageConvert::HSVToRGBa, "HSVToRGBa", 4);
@@ -387,6 +421,43 @@ void bindings_vpImageConvert(py::class_<vpImageConvert> &pyImageConvert)
   add_rgb_or_rgba_to_hsv_binding<double>(pyImageConvert, vpImageConvert::RGBToHSV, "RGBToHSV", 3);
   add_rgb_or_rgba_to_hsv_binding<unsigned char>(pyImageConvert, vpImageConvert::RGBaToHSV, "RGBaToHSV", 4);
   add_rgb_or_rgba_to_hsv_binding<double>(pyImageConvert, vpImageConvert::RGBaToHSV, "RGBaToHSV", 4);
+
+
+  // uint8_t implems
+  {
+    using DemosaicFn = void (*)(const uint8_t *, uint8_t *, unsigned int, unsigned int, unsigned int);
+    std::vector<std::pair<DemosaicFn, const char *>> functions = {
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicRGGBToRGBaMalvar), "demosaicRGGBToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGRBGToRGBaMalvar), "demosaicGRBGToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGBRGToRGBaMalvar), "demosaicGBRGToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicBGGRToRGBaMalvar), "demosaicBGGRToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicRGGBToRGBaBilinear), "demosaicRGGBToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGRBGToRGBaBilinear), "demosaicGRBGToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGBRGToRGBaBilinear), "demosaicGBRGToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicBGGRToRGBaBilinear), "demosaicBGGRToRGBaBilinear"}
+    };
+    for (const auto &pair: functions) {
+      add_demosaic_to_rgba_fn(pyImageConvert, pair.first, pair.second);
+    }
+  }
+  //UInt16_t implems
+  {
+    using DemosaicFn = void (*)(const uint16_t *, uint16_t *, unsigned int, unsigned int, unsigned int);
+    std::vector<std::pair<DemosaicFn, const char *>> functions = {
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicRGGBToRGBaMalvar), "demosaicRGGBToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGRBGToRGBaMalvar), "demosaicGRBGToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGBRGToRGBaMalvar), "demosaicGBRGToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicBGGRToRGBaMalvar), "demosaicBGGRToRGBaMalvar"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicRGGBToRGBaBilinear), "demosaicRGGBToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGRBGToRGBaBilinear), "demosaicGRBGToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicGBRGToRGBaBilinear), "demosaicGBRGToRGBaBilinear"},
+      {static_cast<DemosaicFn>(&vpImageConvert::demosaicBGGRToRGBaBilinear), "demosaicBGGRToRGBaBilinear"}
+    };
+    for (const auto &pair: functions) {
+      add_demosaic_to_rgba_fn(pyImageConvert, pair.first, pair.second);
+    }
+  }
+
 }
 
 #endif

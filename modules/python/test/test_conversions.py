@@ -62,3 +62,23 @@ def test_rgb_rgba_to_hsv():
     hsv_old = hsv.copy()
     case['fn'](rgb, hsv)
     assert not np.allclose(hsv, hsv_old)
+
+def test_demosaic():
+  h, w = 32, 32
+  fns = [
+    ImageConvert.demosaicRGGBToRGBaMalvar,
+    ImageConvert.demosaicGRBGToRGBaMalvar,
+    ImageConvert.demosaicGBRGToRGBaMalvar,
+    ImageConvert.demosaicBGGRToRGBaMalvar,
+    ImageConvert.demosaicRGGBToRGBaBilinear,
+    ImageConvert.demosaicGRBGToRGBaBilinear,
+    ImageConvert.demosaicGBRGToRGBaBilinear,
+    ImageConvert.demosaicBGGRToRGBaBilinear,
+  ]
+  for fn in fns:
+    for dtype in [np.uint8, np.uint16]:
+      bayer_data = np.ones((h, w), dtype=dtype) * 128
+      rgba = np.empty((h, w, 4), dtype=dtype)
+      old_rgba = rgba.copy()
+      fn(bayer_data, rgba)
+      assert not np.allclose(rgba, old_rgba), f'Error when testing {fn}, with dtype {dtype}'
