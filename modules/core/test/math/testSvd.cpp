@@ -30,8 +30,7 @@
  *
  * Description:
  * Test various svd decompositions.
- *
-*****************************************************************************/
+ */
 
 /*!
   \example testSvd.cpp
@@ -264,8 +263,8 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
   for (unsigned int i = 0; i < M.size(); i++) {
     vpMatrix S;
     S.diag(s[i]);
-    vpMatrix U_S_V = U[i] * S * V[i].t();
-    vpMatrix D = M[i] - U_S_V;
+    vpMatrix U_S_Vt = U[i] * S * V[i].t();
+    vpMatrix D = M[i] - U_S_Vt;
     error = D.frobeniusNorm();
     if (error > 1e-6) {
       std::cout << "SVD decomposition failed. Error: " << error << std::endl;
@@ -398,15 +397,13 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 }
 
 bool testAllSvds(const std::string &test_name, unsigned nb_matrices, unsigned nb_iterations,
- unsigned nb_rows, unsigned nb_cols,
- bool doEigen, bool verbose, bool use_plot_file, std::ofstream &of)
+                 unsigned nb_rows, unsigned nb_cols,
+                 bool doEigenValues, bool verbose, bool use_plot_file, std::ofstream &of)
 {
-
-
-
   int ret = EXIT_SUCCESS;
   int ret_test = 0;
   for (unsigned int iter = 0; iter < nb_iterations; iter++) {
+    std::cout << "\n-> Iteration: " << iter << std::endl;
     std::vector<vpMatrix> bench_random_matrices;
     create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
     std::vector<vpMatrix> bench_random_symmetric_matrices;
@@ -418,6 +415,7 @@ bool testAllSvds(const std::string &test_name, unsigned nb_matrices, unsigned nb
     double error;
 
 #if defined(VISP_HAVE_LAPACK)
+    std::cout << "\n-- Test SVD using lapack" << std::endl;
     ret_test = test_svd_lapack(verbose, bench_random_matrices, time, error);
     ret += ret_test;
     std::cout << test_name << ": SVD (Lapack) " << (ret_test ? "failed" : "succeed") << std::endl;
@@ -425,6 +423,7 @@ bool testAllSvds(const std::string &test_name, unsigned nb_matrices, unsigned nb
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
+    std::cout << "\n-- Test SVD using eigen" << std::endl;
     ret_test = test_svd_eigen3(verbose, bench_random_matrices, time, error);
     ret += ret_test;
     std::cout << test_name <<  ": SVD (Eigen) " << (ret_test ? "failed" : "succeed") << std::endl;
@@ -432,24 +431,24 @@ bool testAllSvds(const std::string &test_name, unsigned nb_matrices, unsigned nb
 #endif
 
 #if defined(VISP_HAVE_OPENCV)
+    std::cout << "\n-- Test SVD using OpenCV" << std::endl;
     ret_test = test_svd_opencv(verbose, bench_random_matrices, time, error);
     ret += ret_test;
     std::cout << test_name << ": SVD (OpenCV) " << (ret_test ? "failed" : "succeed") << std::endl;
-
     save_time("SVD (OpenCV): ", verbose, use_plot_file, of, time, error);
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-    if (doEigen) {
+    if (doEigenValues) {
+      std::cout << "\n-- Test Eigen Values using lapack" << std::endl;
       ret_test = test_eigen_values_lapack(verbose, bench_random_symmetric_matrices, time);
       ret += ret_test;
       std::cout << "Eigen values (Lapack) " << (ret_test ? "failed" : "succeed") << std::endl;
       error = 0.0;
       save_time("Eigen values (Lapack): ", verbose, use_plot_file, of, time, error);
-
     }
 #endif
-
+    std::cout << "Result after iteration " << iter << ": " << (ret ? "failed" : "succeed") << std::endl;
     if (use_plot_file)
       of << std::endl;
   }
@@ -464,7 +463,6 @@ int main(int argc, const char *argv[])
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
     unsigned int nb_cols = 6;
-    unsigned int nb_rows_sym = 5;
     bool verbose = false;
     std::string plotfile("plot-svd.csv");
     bool use_plot_file = false;
@@ -475,8 +473,6 @@ int main(int argc, const char *argv[])
         false) {
       return EXIT_FAILURE;
     }
-
-
 
     if (use_plot_file) {
       of.open(plotfile.c_str());
@@ -498,25 +494,33 @@ int main(int argc, const char *argv[])
       of << std::endl;
     }
     bool success = true;
-    bool defaultSuccess = testAllSvds("Basic test (default: square matrices)", nb_matrices, nb_iterations, nb_rows, nb_cols,
-                true, verbose, use_plot_file, of);
-    bool rowsSuccess = testAllSvds("More rows than columns", nb_matrices, nb_iterations, nb_cols * 2, nb_cols,
-                false, verbose, use_plot_file, of);
-    bool colsSuccess = testAllSvds("More columns than rows", nb_matrices, nb_iterations, nb_rows, nb_rows * 2,
-                false, verbose, use_plot_file, of);
+    std::string test_case;
+    test_case = "Test case: Square matrices";
+    std::cout << "\n== " << test_case << ": " << nb_rows << " x " << nb_cols << " ==" << std::endl;
+    bool defaultSuccess = testAllSvds(test_case, nb_matrices, nb_iterations, nb_rows, nb_cols,
+                                      true, verbose, use_plot_file, of);
+    std::cout << "=> " << test_case << ": " << (defaultSuccess ? "succeed" : "failed") << std::endl;
 
+    test_case = "Test case: More rows than columns";
+    std::cout << "\n== " << test_case << ": " << nb_cols * 2 << " x " << nb_cols << " ==" << std::endl;
+    bool rowsSuccess = testAllSvds(test_case, nb_matrices, nb_iterations, nb_cols * 2, nb_cols,
+                                   false, verbose, use_plot_file, of);
+    std::cout << "=> " << test_case << ": " << (rowsSuccess ? "succeed" : "failed") << std::endl;
 
-    if (!defaultSuccess) {
-      std::cout << "Default test case (" << nb_rows << "x" << nb_cols <<") with eigen test failed" << std::endl;
-    }
-    if (!rowsSuccess) {
-      std::cout << "More rows case (" << nb_cols * 2 << "x" << nb_cols << ") failed" << std::endl;
-    }
-    if (!colsSuccess) {
-      std::cout << "More columns case (" << nb_rows << "x" << nb_rows * 2 << ") failed" << std::endl;
-    }
+    test_case = "Test case: More columns than rows";
+    std::cout << "\n== " << test_case << ": " << nb_rows << " x " << nb_rows * 2 << " ==" << std::endl;
+    bool colsSuccess = testAllSvds(test_case, nb_matrices, nb_iterations, nb_rows, nb_rows * 2,
+                false, verbose, use_plot_file, of);
+    std::cout << "=> " << test_case << ": " << (colsSuccess ? "succeed" : "failed") << std::endl;
+
+    std::cout << "\nResume:" << std::endl;
+    std::cout << "- Square matrices (" << nb_rows << "x" << nb_cols << "): " << (defaultSuccess ? "succeed" : "failed") << std::endl;
+
+    std::cout << "- More rows case (" << nb_cols * 2 << "x" << nb_cols << "): " << (rowsSuccess ? "succeed" : "failed") << std::endl;
+
+    std::cout << "- More columns case (" << nb_rows << "x" << nb_rows * 2 << "): " << (colsSuccess ? "succeed" : "failed") << std::endl;
+
     success = defaultSuccess && rowsSuccess && colsSuccess;
-
 
     if (use_plot_file) {
       of.close();

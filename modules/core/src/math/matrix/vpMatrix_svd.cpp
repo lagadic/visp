@@ -85,8 +85,7 @@ SVD related functions
 
   Singular value decomposition (SVD) using OpenCV 3rd party.
 
-  Given matrix \f$M\f$, this function computes it singular value decomposition
-such as
+  Given matrix \f$M\f$, this function computes it singular value decomposition such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -104,45 +103,45 @@ such as
 
   Here an example of SVD decomposition of a non square Matrix M.
 
-\code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix M(3,2);
-  M[0][0] = 1;
-  M[1][0] = 2;
-  M[2][0] = 0.5;
+  int main()
+  {
+    vpMatrix M(3,2);
+    M[0][0] = 1;
+    M[1][0] = 2;
+    M[2][0] = 0.5;
 
-  M[0][1] = 6;
-  M[1][1] = 8 ;
-  M[2][1] = 9 ;
+    M[0][1] = 6;
+    M[1][1] = 8 ;
+    M[2][1] = 9 ;
 
-  vpMatrix V;
-  vpColVector w;
-  vpMatrix Mrec;
-  vpMatrix Sigma;
+    vpMatrix V;
+    vpColVector w;
+    vpMatrix Mrec;
+    vpMatrix Sigma;
 
-  M.svdOpenCV(w, V);
-  // Here M is modified and is now equal to U
+    M.svdOpenCV(w, V);
+    // Here M is modified and is now equal to U
 
-  // Construct the diagonal matrix from the singular values
-  Sigma.diag(w);
+    // Construct the diagonal matrix from the singular values
+    Sigma.diag(w);
 
-  // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * V.t();
+    // Reconstruct the initial matrix M using the decomposition
+    Mrec =  M * Sigma * V.t();
 
-  // Here, Mrec is obtained equal to the initial value of M
-  // Mrec[0][0] = 1;
-  // Mrec[1][0] = 2;
-  // Mrec[2][0] = 0.5;
-  // Mrec[0][1] = 6;
-  // Mrec[1][1] = 8 ;
-  // Mrec[2][1] = 9 ;
+    // Here, Mrec is obtained equal to the initial value of M
+    // Mrec[0][0] = 1;
+    // Mrec[1][0] = 2;
+    // Mrec[2][0] = 0.5;
+    // Mrec[0][1] = 6;
+    // Mrec[1][1] = 8 ;
+    // Mrec[2][1] = 9 ;
 
-  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
-}
+    std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+  }
   \endcode
 
   \sa svd(), svdEigen3(), svdLapack()
@@ -191,56 +190,51 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
   Here an example of SVD decomposition of a non square Matrix M.
 
-\code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
+  \code
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  vpMatrix M(3,2);
-  M[0][0] = 1;
-  M[1][0] = 2;
-  M[2][0] = 0.5;
+  int main()
+  {
+    vpMatrix M(3,2);
+    M[0][0] = 1;
+    M[1][0] = 2;
+    M[2][0] = 0.5;
 
-  M[0][1] = 6;
-  M[1][1] = 8 ;
-  M[2][1] = 9 ;
+    M[0][1] = 6;
+    M[1][1] = 8 ;
+    M[2][1] = 9 ;
 
-  vpMatrix V;
-  vpColVector w;
-  vpMatrix Mrec;
-  vpMatrix Sigma;
+    vpMatrix V;
+    vpColVector w;
+    vpMatrix Mrec;
+    vpMatrix Sigma;
 
-  M.svdLapack(w, V);
-  // Here M is modified and is now equal to U
+    M.svdLapack(w, V);
+    // Here M is modified and is now equal to U
 
-  // Construct the diagonal matrix from the singular values
-  Sigma.diag(w);
+    // Construct the diagonal matrix from the singular values
+    Sigma.diag(w);
 
-  // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * V.t();
+    // Reconstruct the initial matrix M using the decomposition
+    Mrec =  M * Sigma * V.t();
 
-  // Here, Mrec is obtained equal to the initial value of M
-  // Mrec[0][0] = 1;
-  // Mrec[1][0] = 2;
-  // Mrec[2][0] = 0.5;
-  // Mrec[0][1] = 6;
-  // Mrec[1][1] = 8 ;
-  // Mrec[2][1] = 9 ;
+    // Here, Mrec is obtained equal to the initial value of M
+    // Mrec[0][0] = 1;
+    // Mrec[1][0] = 2;
+    // Mrec[2][0] = 0.5;
+    // Mrec[0][1] = 6;
+    // Mrec[1][1] = 8 ;
+    // Mrec[2][1] = 9 ;
 
-  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
-}
+    std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
+  }
   \endcode
 
   \sa svd(), svdEigen3(), svdOpenCV()
 */
 void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 {
-  if (getRows() < getCols()) {
-    std::cout << "SVD with lapack: the case with more columns than rows is not yet handled" << std::endl;
-    exit(-1);
-  }
-
 #ifdef VISP_HAVE_GSL
   {
     // GSL cannot consider M < N. In that case we transpose input matrix
@@ -294,7 +288,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     gsl_linalg_SV_decomp(&A, &V_, &S, work);
 
     if (rowNum < colNum) {
-      (*this) = V.transpose();
+      (*this) = V;
       V = U;
     }
 
@@ -302,26 +296,52 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
   }
 #else
   {
-    w.resize(this->getCols());
-    V.resize(this->getCols(), this->getCols());
+    vpMatrix U;
+    unsigned int nc = getCols();
+    unsigned int nr = getRows();
 
-    integer m = (integer)(this->getCols());
-    integer n = (integer)(this->getRows());
-    integer lda = m;
-    integer ldu = m;
-    integer ldvt = std::min<integer>(m, n);
+    if (rowNum < colNum) {
+      U = this->transpose();
+      nc = getRows();
+      nr = getCols();
+    }
+    else {
+      nc = getCols();
+      nr = getRows();
+    }
+
+    w.resize(nc);
+    V.resize(nc, nc);
+
+    double *a = new double[static_cast<unsigned int>(nr * nc)];
+    if (rowNum < colNum) {
+      memcpy(a, U.data, this->getRows() * this->getCols() * sizeof(double));
+    }
+    else {
+      memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
+    }
+
+    integer m = (integer)(nc);
+    integer n = (integer)(nr);
+    integer lda = nc;
+    integer ldu = nc;
+    integer ldvt = std::min<integer>(nr, nc);
     integer info, lwork;
 
     double wkopt;
     double *work;
 
-    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(n, m))];
+    integer *iwork = new integer[8 * static_cast<integer>(std::min<integer>(nr, nc))];
 
     double *s = w.data;
-    double *a = new double[static_cast<unsigned int>(lda * n)];
-    memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
     double *u = V.data;
-    double *vt = this->data;
+    double *vt;
+    if (rowNum < colNum) {
+      vt = U.data;
+    }
+    else {
+      vt = this->data;
+    }
 
     lwork = -1;
     dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info);
@@ -334,7 +354,13 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
       throw(vpMatrixException(vpMatrixException::fatalError, "The algorithm computing SVD failed to converge."));
     }
 
-    V = V.transpose();
+    if (rowNum < colNum) {
+      (*this) = V.transpose();
+      V = U;
+    }
+    else {
+      V = V.transpose();
+    }
     delete[] work;
     delete[] iwork;
     delete[] a;
@@ -412,23 +438,29 @@ int main()
 */
 void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
 {
-  if (getRows() < getCols()) {
-    std::cout << "SVD with Eigen: the case with more columns than rows is not yet handled" << std::endl;
-    exit(-1);
+  if (rowNum < colNum) {
+    w.resize(rowNum);
+    V.resize(colNum, rowNum);
   }
-  w.resize(this->getCols());
-  V.resize(this->getCols(), this->getCols());
+  else {
+    w.resize(colNum);
+    V.resize(colNum, colNum);
+  }
 
   Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > M(this->data, this->getRows(),
                                                                                         this->getCols());
-
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(M, Eigen::ComputeThinU | Eigen::ComputeThinV);
 
   Eigen::Map<Eigen::VectorXd> w_(w.data, w.size());
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > V_(V.data, V.getRows(),
-                                                                                         V.getCols());
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > U_(this->data, this->getRows(),
-                                                                                         this->getCols());
+
+  if (rowNum < colNum) {
+    this->resize(rowNum, rowNum);
+  }
+  else {
+    this->resize(rowNum, colNum);
+  }
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > V_(V.data, V.getRows(), V.getCols());
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> > U_(this->data, rowNum, colNum);
   w_ = svd.singularValues();
   V_ = svd.matrixV();
   U_ = svd.matrixU();
