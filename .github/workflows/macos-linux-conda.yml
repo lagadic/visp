@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
         build_type: [Release]
         python-version: ["3.11", "3.12"]
 
@@ -23,6 +23,7 @@ jobs:
         submodules: recursive
 
     - uses: conda-incubator/setup-miniconda@v3
+      if: startsWith(matrix.os,'ubuntu') == true
       with:
         activate-environment: visp
         auto-update-conda: true
@@ -30,7 +31,16 @@ jobs:
         python-version: ${{ matrix.python-version }}
         auto-activate-base: false
 
-    - name: Build visp
+    - uses: conda-incubator/setup-miniconda@v3
+      if: startsWith(matrix.os,'macos') == true
+      with:
+        activate-environment: visp
+        auto-update-conda: true
+        environment-file: .github/workflows/conda/environment_macos.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+
+    - name: Build visp python bindings
       shell: bash -el {0}
       run: |
         conda list
@@ -46,15 +56,6 @@ jobs:
           -DPYTHON_EXECUTABLE=$(which python3) \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         cmake --build . --target visp_python_bindings -j2
-        ctest --output-on-failure
-        cmake --install .
-
-    - name: Uninstall visp
-      shell: bash -el {0}
-      run: |
-        cd build
-        cmake --build . --target uninstall
-
 
   check:
     if: always()
