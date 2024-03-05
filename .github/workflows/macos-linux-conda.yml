@@ -1,0 +1,72 @@
+name: Conda-CI
+
+on: [push,pull_request]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visp-conda:
+    name: ${{ matrix.os }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest"]
+        build_type: [Release]
+        python-version: ["3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: visp
+        auto-update-conda: true
+        environment-file: .github/workflows/conda/environment_linux.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+
+    - name: Build visp
+      shell: bash -el {0}
+      run: |
+        conda list
+        echo $CONDA_PREFIX
+
+        mkdir build
+        cd build
+
+        cmake .. \
+          -G "Ninja" \
+          -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+          -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+          -DPYTHON_EXECUTABLE=$(which python3) \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        cmake --build . -j2
+        ctest --output-on-failure
+        cmake --install .
+
+    - name: Uninstall visp
+      shell: bash -el {0}
+      run: |
+        cd build
+        cmake --build . --target uninstall
+
+
+  check:
+    if: always()
+    name: check-macos-linux-conda
+
+    needs:
+    - visp-conda
+
+    runs-on: Ubuntu-latest
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}

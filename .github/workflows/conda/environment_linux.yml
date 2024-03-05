@@ -1,0 +1,15 @@
+name: visp
+channels:
+  - conda-forge
+dependencies:
+  - xorg-libx11
+  - xorg-libxfixes
+  - libxml2
+  - libdc1394 >=2.2.6
+  - librealsense
+  - libgomp
+  - libopencv
+  - eigen
+  - libjpeg-turbo
+  - libpng
+  - mkl-devel
