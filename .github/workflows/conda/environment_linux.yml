@@ -16,3 +16,4 @@ dependencies:
   - libjpeg-turbo
   - libpng
   - mkl-devel
+  - pybind11
