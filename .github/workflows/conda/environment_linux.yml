@@ -2,6 +2,9 @@ name: visp
 channels:
   - conda-forge
 dependencies:
+  - cxx-compiler
+  - cmake
+  - ninja
   - xorg-libx11
   - xorg-libxfixes
   - libxml2
