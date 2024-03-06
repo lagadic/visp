@@ -1,4 +1,4 @@
-name: MacOS-Linux-conda-CI
+name: Windows-conda-CI
 
 on: [push,pull_request]
 concurrency:
@@ -13,9 +13,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["ubuntu-latest", "macos-latest"]
+        os: ["windows-latest"]
+        compiler: ["clang-cl"]
         build_type: [Release]
-        python-version: ["3.12"]
+        python-version: ["3.11"]
 
     steps:
     - uses: actions/checkout@v4
@@ -23,53 +24,52 @@ jobs:
         submodules: recursive
 
     - uses: conda-incubator/setup-miniconda@v3
-      if: startsWith(matrix.os,'ubuntu') == true
       with:
         activate-environment: visp
         auto-update-conda: true
-        environment-file: .github/workflows/conda/environment_linux.yml
-        python-version: ${{ matrix.python-version }}
-        auto-activate-base: false
-
-    - uses: conda-incubator/setup-miniconda@v3
-      if: startsWith(matrix.os,'macos') == true
-      with:
-        activate-environment: visp
-        auto-update-conda: true
-        environment-file: .github/workflows/conda/environment_macos.yml
+        environment-file: .github/workflows/conda/environment_windows.yml
         python-version: ${{ matrix.python-version }}
         auto-activate-base: false
 
     - name: Show conda config
-      shell: bash -el {0}
+      shell: cmd /C CALL {0}
       run: |
         conda info
         conda list
         conda config --show-sources
         conda config --show
-        printenv | sort
 
     - name: Build visp python bindings
-      shell: bash -el {0}
+      shell: cmd /C CALL {0}
+      env:
+        CC: ${{ matrix.compiler }}
+        CXX: ${{ matrix.compiler }}
       run: |
+        :: start building
+        call "%programfiles%\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64
+        if errorlevel 1 exit 1
+
         mkdir build
         cd build
 
-        cmake .. \
-          -G "Ninja" \
-          -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
-          -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+        cmake .. ^
+          -G "Ninja" ^
+          -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% ^
+          -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library ^
+          -DPYTHON_SITELIB=%CONDA_PREFIX%\Lib\site-packages ^
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        if errorlevel 1 exit 1
 
-        # Build
         cmake --build . --target visp_python_bindings
+        if errorlevel 1 exit 1
 
-        # Install bindings
+        :: Build and Install
         cmake --build . --target install
+        if errorlevel 1 exit 1
 
   check:
     if: always()
-    name: check-macos-linux-conda
+    name: check-windows-conda
 
     needs:
     - visp-conda
