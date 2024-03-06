@@ -55,7 +55,7 @@ jobs:
           -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
           -DPYTHON_EXECUTABLE=$(which python3) \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        cmake --build . --target visp_python_bindings -j2
+        cmake --build . --target visp_python_bindings
 
   check:
     if: always()
