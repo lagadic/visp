@@ -595,7 +595,7 @@ int test_pseudo_inverse_eigen3(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-#if defined(VISP_HAVE_EIGEN3)
+#if defined(VISP_HAVE_LAPACK)
 int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
