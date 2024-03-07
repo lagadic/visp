@@ -61,10 +61,6 @@
    native Windows threading capabilities if pthread is not available under
    Windows.
 
-   An example of vpMutex usage is given in testMutex.cpp.
-
-   More examples are provided in \ref tutorial-multi-threading.
-
    \sa vpScopedLock
 */
 class vp_deprecated vpMutex
@@ -158,8 +154,6 @@ public:
       }
     }
     \endcode
-
-    More examples are provided in \ref tutorial-multi-threading.
 
     \sa vpMutex
   */
