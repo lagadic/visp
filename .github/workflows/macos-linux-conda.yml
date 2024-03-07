@@ -15,7 +15,7 @@ jobs:
       matrix:
         os: ["ubuntu-latest", "macos-latest"]
         build_type: [Release]
-        python-version: ["3.12"]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
     - uses: actions/checkout@v4
