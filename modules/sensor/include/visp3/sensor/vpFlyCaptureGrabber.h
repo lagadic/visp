@@ -66,7 +66,7 @@
   \code
   Grab loop had an error: There is an image consistency issue with this image.
   \endcode
-  follow instruction provide in
+  follow instruction provide
 [here](https://www.flir.fr/support-center/iis/machine-vision/knowledge-base/lost-ethernet-data-packets-on-linux-systems)
   to increase receive buffer size.
 
@@ -210,7 +210,8 @@ public:
   void stopCapture();
 
 protected:
-  typedef enum {
+  typedef enum
+  {
     ABS_VALUE, //!< Consider FlyCapture2::Property::absValue
     VALUE_A,   //!< Consider FlyCapture2::Property::valueA
   } PropertyValue;

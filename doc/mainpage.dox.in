@@ -271,6 +271,11 @@ in different ways. This will motivate us to continue the efforts.
   \defgroup group_core_munkres Munkres Assignment Algorithm
   Munkres Assignment Algorithm.
 */
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_cpu_features CPU features
+  CPU features.
+*/
 
 /*******************************************
  * Module io

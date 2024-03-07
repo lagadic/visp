@@ -36,7 +36,6 @@
 /*!
   \file vpV4l2Grabber.h
   \brief class for the Video For Linux 2 video device framegrabbing.
-  \ingroup libdevice
 */
 
 #ifndef vpV4l2Grabber_hh
@@ -63,7 +62,7 @@
   \brief Class that is a wrapper over the Video4Linux2 (V4L2) driver.
 
   Thus to be enabled, this class needs the optional V4L2 3rd party.
-Installation instruction are provided here https://visp.inria.fr/3rd_v4l2.
+  Installation instruction are provided here https://visp.inria.fr/3rd_v4l2.
 
   Information about Video4Linux can be found on
   http://linuxtv.org/v4lwiki/index.php/Main_Page
@@ -71,7 +70,7 @@ Installation instruction are provided here https://visp.inria.fr/3rd_v4l2.
   This class was tested with a Pinnacle PCTV Studio/Rave board but
   also with the following webcams (Logitech QuickCam Vision Pro 9000,
   Logitech QuickCam Orbit AF, Logitech QuickCam IM (V-USB39), Dell latitude
-E6400 internal webcam).
+  E6400 internal webcam).
 
   If the grabbing fail with a webcam, it means probably that you don't
   have the read/write permission on the /dev/video%%d device. You can
@@ -83,8 +82,7 @@ E6400 internal webcam).
 
   For that, depending on your linux distribution check the card id in
   - /usr/share/doc/kernel-doc-2.4.20/video4linux/bttv/CARDLIST
-  - or
-/usr/share/doc/kernel-doc-2.6.20/Documentation/video4linux/CARDLIST.bttv
+  - or /usr/share/doc/kernel-doc-2.6.20/Documentation/video4linux/CARDLIST.bttv
 
   For example, the card id of a Pinnacle PCTV Studio/Rave board is 39.
   Once this id is determined, you have to set the bttv driver with, by adding
@@ -102,30 +100,26 @@ E6400 internal webcam).
   This other example shows how to use this grabber with an analogic camera
   attached to a bttv PCI card.
   \code
-#include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
+  #include <visp3/io/vpImageIo.h>
+  #include <visp3/sensor/vpV4l2Grabber.h>
 
-int main()
-{
-#if defined(VISP_HAVE_V4L2)
-  vpImage<unsigned char> I;
-  vpV4l2Grabber g;
-  g.setInput(2);    // Input 2 on the board
-  g.setFramerate(vpV4l2Grabber::framerate_25fps); //  25 fps
-  g.setWidth(768);  // Acquired images are 768 width
-  g.setHeight(576); // Acquired images are 576 height
-  g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
-  g.open(I);        // Open the grabber
+  int main()
+  {
+  #if defined(VISP_HAVE_V4L2)
+    vpImage<unsigned char> I;
+    vpV4l2Grabber g;
+    g.setInput(2);    // Input 2 on the board
+    g.setFramerate(vpV4l2Grabber::framerate_25fps); //  25 fps
+    g.setWidth(768);  // Acquired images are 768 width
+    g.setHeight(576); // Acquired images are 576 height
+    g.setNBuffers(3); // 3 ring buffers to ensure real-time acquisition
+    g.open(I);        // Open the grabber
 
-  g.acquire(I);     // Acquire a 768x576 grey image
-  vpImageIo::write(I, "image.pgm"); // Save the image on the disk
-#endif
-}
+    g.acquire(I);     // Acquire a 768x576 grey image
+    vpImageIo::write(I, "image.pgm"); // Save the image on the disk
+  #endif
+  }
   \endcode
-
-
-  \author Fabien Spindler (Fabien.Spindler@irisa.fr), Irisa / Inria Rennes
-
 
   \sa vpFrameGrabber
 */
@@ -144,7 +138,8 @@ public:
   /*! \enum vpV4l2FramerateType
     Frame rate type for capture.
   */
-  typedef enum {
+  typedef enum
+  {
     framerate_50fps, //!< 50 frames per second
     framerate_25fps  //!< 25 frames per second
   } vpV4l2FramerateType;
@@ -152,7 +147,8 @@ public:
   /*! \enum vpV4l2FrameFormatType
     Frame format type for capture.
   */
-  typedef enum {
+  typedef enum
+  {
     V4L2_FRAME_FORMAT, /*!< a field only */
     V4L2_IMAGE_FORMAT  /*!< an interlaced image */
   } vpV4l2FrameFormatType;
@@ -160,7 +156,8 @@ public:
   /*! \enum vpV4l2PixelFormatType
     Pixel format type for capture.
   */
-  typedef enum {
+  typedef enum
+  {
     V4L2_GREY_FORMAT,  /*!< 8  Greyscale */
     V4L2_RGB24_FORMAT, /*!< 24  RGB-8-8-8 */
     V4L2_RGB32_FORMAT, /*!< 32  RGB-8-8-8-8 */
@@ -170,14 +167,16 @@ public:
   } vpV4l2PixelFormatType;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  struct ng_video_fmt {
+  struct ng_video_fmt
+  {
     unsigned int pixelformat; /* VIDEO_* */
     unsigned int width;
     unsigned int height;
     unsigned int bytesperline; /* zero for compressed formats */
   };
 
-  struct ng_video_buf {
+  struct ng_video_buf
+  {
     struct ng_video_fmt fmt;
     size_t size;
     unsigned char *data;
