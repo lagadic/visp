@@ -29,6 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+/*!
+ * \file vpStatisticalTestAbstract.h
+ * \brief Base class for Statistical Process Control methods implementation.
+ */
 
 #ifndef _vpStatisticalTestAbstract_h_
 #define _vpStatisticalTestAbstract_h_

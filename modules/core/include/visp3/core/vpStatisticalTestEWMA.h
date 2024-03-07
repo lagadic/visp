@@ -29,6 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+/*!
+ * \file vpStatisticalTestEWMA.h
+ * \brief Statistical Process Control Exponentially Weighted Moving Average implementation.
+ */
 
 #ifndef _vpStatisticalTestEWMA_h_
 #define _vpStatisticalTestEWMA_h_

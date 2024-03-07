@@ -29,6 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+/*!
+ * \file vpStatisticalTestHinkley.h
+ * \brief Statistical Process Control Hinkley's test implementation.
+ */
 
 #ifndef _vpStatisticalTestHinkley_h_
 #define _vpStatisticalTestHinkley_h_

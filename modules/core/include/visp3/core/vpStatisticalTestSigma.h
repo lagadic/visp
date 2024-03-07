@@ -29,6 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+/*!
+ * \file vpStatisticalTestSigma.h
+ * \brief Statistical Process Control sigma test implementation.
+ */
 
 #ifndef _vpStatisticalTestSigma_h_
 #define _vpStatisticalTestSigma_h_

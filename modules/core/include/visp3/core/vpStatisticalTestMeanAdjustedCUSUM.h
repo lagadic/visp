@@ -29,6 +29,10 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
 *****************************************************************************/
+/*!
+ * \file vpStatisticalTestMeanAdjustedCUSUM.h
+ * \brief Statistical Process Control mean adjusted CUSUM implementation.
+ */
 
 #ifndef _vpStatisticalTestMeanAdjustedCUSUM_h_
 #define _vpStatisticalTestMeanAdjustedCUSUM_h_
