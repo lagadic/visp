@@ -65,8 +65,8 @@ jobs:
         cmake --build . --target visp_python_bindings
 
         # Test Python import
-        #cd modules/python/bindings
-        # python -c "import visp"
+        cd modules/python/bindings
+        python -c "import visp"
 
   check:
     if: always()
