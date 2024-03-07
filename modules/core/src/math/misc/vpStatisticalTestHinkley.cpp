@@ -30,8 +30,6 @@
  *
 *****************************************************************************/
 
-#include <visp3/core/vpStatisticalTestHinkley.h>
-
 /**
 *
 * \file vpStatisticalTestHinkley.cpp
@@ -57,6 +55,9 @@ vpStatisticalTestHinkley::vpStatisticalTestHinkley()
   , m_Mk(0.f)
   , m_Tk(0.f)
   , m_Nk(0.f)
+  , m_computeDeltaAndAlpha(false)
+  , m_h(4.76f)
+  , m_k(1.f)
 {
   init();
 }
@@ -69,28 +70,24 @@ vpStatisticalTestHinkley::vpStatisticalTestHinkley(const float &alpha, const flo
   , m_Mk(0.f)
   , m_Tk(0.f)
   , m_Nk(0.f)
+  , m_computeDeltaAndAlpha(false)
+  , m_h(4.76f)
+  , m_k(1.f)
 {
   init(alpha, delta_val, nbSamplesForInit);
 }
 
-void vpStatisticalTestHinkley::init(const float &alpha, const float &delta_val, const unsigned int &nbSamplesForInit)
+vpStatisticalTestHinkley::vpStatisticalTestHinkley(const float &h, const float &k, const bool &computeAlphaDeltaFromStdev, const unsigned int &nbSamplesForInit)
+  : vpStatisticalTestAbstract()
 {
-  init();
-  setNbSamplesForStat(nbSamplesForInit);
-  setAlpha(alpha);
-  setDelta(delta_val);
+  init(h, k, computeAlphaDeltaFromStdev, nbSamplesForInit);
 }
 
-void vpStatisticalTestHinkley::init(const float &alpha, const float &delta_val, const float &mean)
+vpStatisticalTestHinkley::vpStatisticalTestHinkley(const float &h, const float &k, const float &mean, const float &stdev)
+  : vpStatisticalTestAbstract()
 {
-  init();
-  setAlpha(alpha);
-  setDelta(delta_val);
-  m_mean = mean;
-  m_areStatisticsComputed = true;
+  init(h, k, mean, stdev);
 }
-
-vpStatisticalTestHinkley::~vpStatisticalTestHinkley() { }
 
 void vpStatisticalTestHinkley::init()
 {
@@ -103,14 +100,54 @@ void vpStatisticalTestHinkley::init()
 
   m_Tk = 0.f;
   m_Nk = 0.f;
+
+  m_computeDeltaAndAlpha = false;
 }
 
-void vpStatisticalTestHinkley::init(const float &mean)
+void vpStatisticalTestHinkley::init(const float &alpha, const float &delta_val, const unsigned int &nbSamplesForInit)
 {
-  vpStatisticalTestHinkley::init();
+  init();
+  setNbSamplesForStat(nbSamplesForInit);
+  setAlpha(alpha);
+  setDelta(delta_val);
+  m_computeDeltaAndAlpha = false;
+}
+
+void vpStatisticalTestHinkley::init(const float &alpha, const float &delta_val, const float &mean)
+{
+  init();
+  setAlpha(alpha);
+  setDelta(delta_val);
   m_mean = mean;
+  m_computeDeltaAndAlpha = false;
   m_areStatisticsComputed = true;
 }
+
+void vpStatisticalTestHinkley::init(const float &h, const float &k, const bool &computeAlphaDeltaFromStdev, const unsigned int &nbSamples)
+{
+  if (!computeAlphaDeltaFromStdev) {
+    throw(vpException(vpException::badValue, "computeAlphaDeltaFromStdev must be true, or use another init function"));
+  }
+  init();
+  setNbSamplesForStat(nbSamples);
+  m_h = h;
+  m_k = k;
+  m_computeDeltaAndAlpha = true;
+}
+
+void vpStatisticalTestHinkley::init(const float &h, const float &k, const float &mean, const float &stdev)
+{
+  init();
+  m_mean = mean;
+  m_stdev = stdev;
+  m_h = h;
+  m_k = k;
+  m_computeDeltaAndAlpha = true;
+  computeAlphaDelta();
+  m_areStatisticsComputed = true;
+}
+
+vpStatisticalTestHinkley::~vpStatisticalTestHinkley() { }
 
 void vpStatisticalTestHinkley::setDelta(const float &delta) { m_dmin2 = delta / 2.f; }
 
@@ -119,6 +156,14 @@ void vpStatisticalTestHinkley::setAlpha(const float &alpha)
   this->m_alpha = alpha;
   m_limitDown = m_alpha;
   m_limitUp = m_alpha;
+}
+
+void vpStatisticalTestHinkley::computeAlphaDelta()
+{
+  float delta = m_k * m_stdev;
+  setDelta(delta);
+  float alpha = m_h * m_stdev;
+  setAlpha(alpha);
 }
 
 void vpStatisticalTestHinkley::computeMean(double signal)
@@ -158,22 +203,39 @@ void vpStatisticalTestHinkley::computeNk()
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestHinkley::detectDownwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestHinkley::detectDownwardMeanDrift()
 {
-  vpStatisticalTestAbstract::vpMeanDriftType shift = NO_MEAN_DRIFT;
+  vpStatisticalTestAbstract::vpMeanDriftType shift = MEAN_DRIFT_NONE;
   if ((m_Mk - m_Sk) > m_alpha) {
     shift = MEAN_DRIFT_DOWNWARD;
   }
   return shift;
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestHinkley::detectUpwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestHinkley::detectUpwardMeanDrift()
 {
-  vpStatisticalTestAbstract::vpMeanDriftType shift = NO_MEAN_DRIFT;
+  vpStatisticalTestAbstract::vpMeanDriftType shift = MEAN_DRIFT_NONE;
   if ((m_Tk - m_Nk) > m_alpha) {
     shift = MEAN_DRIFT_UPWARD;
   }
   return shift;
+}
+
+bool vpStatisticalTestHinkley::updateStatistics(const float &signal)
+{
+  bool updateStats = vpStatisticalTestAbstract::updateStatistics(signal);
+  if (m_areStatisticsComputed) {
+    // If needed, compute alpha and delta
+    if (m_computeDeltaAndAlpha) {
+      computeAlphaDelta();
+    }
+    // Initialize the test signals
+    m_Mk = 0.f;
+    m_Nk = 0.f;
+    m_Sk = 0.f;
+    m_Tk = 0.f;
+  }
+  return updateStats;
 }
 
 void vpStatisticalTestHinkley::updateTestSignals(const float &signal)

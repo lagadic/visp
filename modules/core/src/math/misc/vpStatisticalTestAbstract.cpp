@@ -43,20 +43,54 @@ std::string vpStatisticalTestAbstract::vpMeanDriftTypeToString(const vpStatistic
 {
   std::string name;
   switch (type) {
-  case NO_MEAN_DRIFT:
-    name = " No jump";
+  case MEAN_DRIFT_NONE:
+    name = "no_drift";
     break;
   case MEAN_DRIFT_DOWNWARD:
-    name = " Jump downward";
+    name = "downward_drift";
     break;
   case MEAN_DRIFT_UPWARD:
-    name = " Jump upward";
+    name = "upward_drift";
     break;
+  case MEAN_DRIFT_BOTH:
+    name = "both_drift";
+    break;
+  case MEAN_DRIFT_UNKNOWN:
   default:
-    name = " Undefined jump";
+    name = "undefined_drift";
     break;
   }
   return name;
+}
+
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::vpMeanDriftTypeFromString(const std::string &name)
+{
+  vpMeanDriftType result = MEAN_DRIFT_UNKNOWN;
+  unsigned int count = static_cast<unsigned int>(MEAN_DRIFT_COUNT);
+  unsigned int id = 0;
+  bool hasNotFound = true;
+  while ((id < count) && hasNotFound) {
+    vpMeanDriftType temp = static_cast<vpMeanDriftType>(id);
+    if (vpMeanDriftTypeToString(temp) == name) {
+      result = temp;
+      hasNotFound = false;
+    }
+    ++id;
+  }
+  return result;
+}
+
+std::string vpStatisticalTestAbstract::getAvailableMeanDriftType(const std::string &prefix, const std::string &sep,
+                                      const std::string &suffix)
+{
+  std::string msg(prefix);
+  unsigned int count = static_cast<unsigned int>(MEAN_DRIFT_COUNT);
+  unsigned int lastId = count - 1;
+  for (unsigned int i = 0; i < lastId; i++) {
+    msg += vpMeanDriftTypeToString(static_cast<vpMeanDriftType>(i)) + sep;
+  }
+  msg += vpMeanDriftTypeToString(static_cast<vpMeanDriftType>(lastId)) + suffix;
+  return msg;
 }
 
 void vpStatisticalTestAbstract::print(const vpStatisticalTestAbstract::vpMeanDriftType &type)
@@ -163,48 +197,51 @@ void vpStatisticalTestAbstract::setNbSamplesForStat(const unsigned int &nbSample
   m_s = new float[nbSamples];
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testDownUpwardMeanShift(const float &signal)
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testDownUpwardMeanDrift(const float &signal)
 {
   if (m_areStatisticsComputed) {
     updateTestSignals(signal);
-    vpMeanDriftType jumpDown = detectDownwardMeanShift();
-    vpMeanDriftType jumpUp = detectUpwardMeanShift();
-    if (jumpDown != NO_MEAN_DRIFT) {
+    vpMeanDriftType jumpDown = detectDownwardMeanDrift();
+    vpMeanDriftType jumpUp = detectUpwardMeanDrift();
+    if ((jumpDown != MEAN_DRIFT_NONE) && (jumpUp != MEAN_DRIFT_NONE)) {
+      return MEAN_DRIFT_BOTH;
+    }
+    else if (jumpDown != MEAN_DRIFT_NONE) {
       return jumpDown;
     }
-    else if (jumpUp != NO_MEAN_DRIFT) {
+    else if (jumpUp != MEAN_DRIFT_NONE) {
       return jumpUp;
     }
     else {
-      return NO_MEAN_DRIFT;
+      return MEAN_DRIFT_NONE;
     }
   }
   else {
     updateStatistics(signal);
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testDownwardMeanShift(const float &signal)
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testDownwardMeanDrift(const float &signal)
 {
   if (m_areStatisticsComputed) {
     updateTestSignals(signal);
-    return detectDownwardMeanShift();
+    return detectDownwardMeanDrift();
   }
   else {
     updateStatistics(signal);
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testUpwardMeanShift(const float &signal)
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestAbstract::testUpwardMeanDrift(const float &signal)
 {
   if (m_areStatisticsComputed) {
     updateTestSignals(signal);
-    return detectUpwardMeanShift();
+    return detectUpwardMeanDrift();
   }
   else {
     updateStatistics(signal);
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }

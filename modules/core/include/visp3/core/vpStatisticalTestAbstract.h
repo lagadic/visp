@@ -47,18 +47,26 @@
 /**
  * \ingroup group_core_math_tools
  * \brief Base class for methods detecting the drift of the mean of a process.
+ *
+ * To detect only downward drifts of the input signal \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
  */
 class VISP_EXPORT vpStatisticalTestAbstract
 {
 public:
   /**
-   * \brief Enum that indicates if a drift of the mean occured.
+   * \brief Enum that indicates if a drift of the mean occurred.
    */
   typedef enum vpMeanDriftType
   {
-    NO_MEAN_DRIFT = 0, /*!< No mean drift occured*/
-    MEAN_DRIFT_DOWNWARD = 1, /*!< A downward drift of the mean occured.*/
-    MEAN_DRIFT_UPWARD = 2 /*!< An upward drift of the mean occured.*/
+    MEAN_DRIFT_NONE = 0, /*!< No mean drift occurred*/
+    MEAN_DRIFT_DOWNWARD = 1, /*!< A downward drift of the mean occurred.*/
+    MEAN_DRIFT_UPWARD = 2, /*!< An upward drift of the mean occurred.*/
+    MEAN_DRIFT_BOTH = 3, /*!< Both an aupward and a downward drifts occurred.*/
+    MEAN_DRIFT_COUNT = 4,
+    MEAN_DRIFT_UNKNOWN = MEAN_DRIFT_COUNT
   } vpMeanDriftType;
 
   /**
@@ -68,6 +76,25 @@ public:
    * \return std::string The corresponding message.
    */
   static std::string vpMeanDriftTypeToString(const vpMeanDriftType &type);
+
+  /**
+   * \brief Cast a string into a \b vpMeanDriftType.
+   *
+   * \param[in] name The name of the mean drift.
+   * \return vpMeanDriftType The corresponding \b vpMeanDriftType.
+   */
+  static vpMeanDriftType vpMeanDriftTypeFromString(const std::string &name);
+
+  /**
+   * \brief Get the list of available \b vpMeanDriftType objects that are handled.
+   *
+   * \param[in] prefix The prefix that should be placed before the list.
+   * \param[in] sep The separator between each element of the list.
+   * \param[in] suffix The suffix that should terminate the list.
+   * \return std::string The list of handled type of process tests, presented as a string.
+   */
+  static std::string getAvailableMeanDriftType(const std::string &prefix = "<", const std::string &sep = " , ",
+                                               const std::string &suffix = ">");
 
   /**
    * \brief Print the message corresponding to the type of mean drift.
@@ -89,22 +116,22 @@ protected:
   float m_sumForMean; /*!< Sum of the samples used to compute the mean and standard deviation.*/
 
   /**
-   * \brief Detects if a downward mean drift occured.
+   * \brief Detects if a downward mean drift occurred.
    *
-   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occured, \b vpMeanDriftType::NO_MEAN_DRIFT otherwise.
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    *
-   * \sa detectUpwardMeanShift()
+   * \sa detectUpwardMeanDrift()
    */
-  virtual vpMeanDriftType detectDownwardMeanShift() = 0;
+  virtual vpMeanDriftType detectDownwardMeanDrift() = 0;
 
   /**
-   * \brief Detects if a upward mean drift occured.
+   * \brief Detects if a upward mean drift occurred.
    *
-   * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occured, \b vpMeanDriftType::NO_MEAN_DRIFT otherwise.
+   * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    *
-   * \sa detectDownwardMeanShift()
+   * \sa detectDownwardMeanDrift()
    */
-  virtual vpMeanDriftType detectUpwardMeanShift() = 0;
+  virtual vpMeanDriftType detectUpwardMeanDrift() = 0;
 
   /**
    * \brief Update \b m_s and if enough values are available, compute the mean, the standard
@@ -203,37 +230,37 @@ public:
   void setNbSamplesForStat(const unsigned int &nbSamples);
 
   /**
-   * \brief Test if a downward or an upward mean drift occured
+   * \brief Test if a downward or an upward mean drift occurred
    * according to the new value of the signal.
    *
    * \param[in] signal The new value of the signal.
-   * \return vpMeanDriftType The type of mean drift that occured.
+   * \return vpMeanDriftType The type of mean drift that occurred.
    *
-   * \sa testDownwardMeanShift() testUpwardMeanShift()
+   * \sa testDownwardMeanDrift() testUpwardMeanDrift()
    */
-  vpMeanDriftType testDownUpwardMeanShift(const float &signal);
+  vpMeanDriftType testDownUpwardMeanDrift(const float &signal);
 
   /**
-   * \brief Test if a downward mean drift occured
+   * \brief Test if a downward mean drift occurred
    * according to the new value of the signal.
    *
    * \param[in] signal The new value of the signal.
-   * \return vpMeanDriftType The type of mean drift that occured.
+   * \return vpMeanDriftType The type of mean drift that occurred.
    *
-   * \sa testUpwardMeanShift()
+   * \sa testUpwardMeanDrift()
    */
-  vpMeanDriftType testDownwardMeanShift(const float &signal);
+  vpMeanDriftType testDownwardMeanDrift(const float &signal);
 
   /**
-   * \brief Test if an upward mean drift occured
+   * \brief Test if an upward mean drift occurred
    * according to the new value of the signal.
    *
    * \param[in] signal The new value of the signal.
-   * \return vpMeanDriftType The type of mean drift that occured.
+   * \return vpMeanDriftType The type of mean drift that occurred.
    *
-   * \sa testDownwardMeanShift()
+   * \sa testDownwardMeanDrift()
    */
-  vpMeanDriftType testUpwardMeanShift(const float &signal);
+  vpMeanDriftType testUpwardMeanDrift(const float &signal);
 };
 
 #endif

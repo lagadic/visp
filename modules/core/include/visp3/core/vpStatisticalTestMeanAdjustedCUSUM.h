@@ -61,21 +61,28 @@ protected:
    */
   virtual void computeDeltaAndLimits();
 
+  /**
+   * \brief Detects if a downward mean drift occured.
+   *
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occured, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   *
+   * \sa detectUpwardMeanDrift()
+   */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectDownwardMeanShift() override;
+  virtual vpMeanDriftType detectDownwardMeanDrift() override;
 #else
-  virtual vpMeanDriftType detectDownwardMeanShift();
+  virtual vpMeanDriftType detectDownwardMeanDrift();
 #endif
 
 /**
- * \brief Detects if a upward jump occured on the mean.
+ * \brief Detects if a upward jump occurred on the mean.
  *
- * \return upwardJump if a upward jump occured, noJump otherwise.
+ * \return upwardJump if a upward jump occurred, noJump otherwise.
  */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectUpwardMeanShift() override;
+  virtual vpMeanDriftType detectUpwardMeanDrift() override;
 #else
-  virtual vpMeanDriftType detectUpwardMeanShift();
+  virtual vpMeanDriftType detectUpwardMeanDrift();
 #endif
 
   /**

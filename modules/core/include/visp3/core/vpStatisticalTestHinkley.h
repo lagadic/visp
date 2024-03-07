@@ -76,9 +76,9 @@
   A upward drift is detected if \f$ T_k - N_k > \alpha \f$.
 
   To detect only downward drifts in \f$ s(t) \f$ use
-  testDownwardJump().To detect only upward drifts in \f$ s(t) \f$ use
-  testUpwardJump(). To detect both, downward and upward drifts use
-  testDownUpwardJump().
+  testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+  testUpwardMeanDrift(). To detect both, downward and upward drifts use
+  testDownUpwardMeanDrift().
 
   If a drift is detected, the drift location is given by the last instant
   \f$k^{'}\f$ when \f$ M_{k^{'}} - S_{k^{'}} = 0 \f$, or \f$ T_{k^{'}} -
@@ -93,6 +93,15 @@ protected:
   float m_Mk; /*!< Maximum of the test signal for downward mean drift \f$S_k\f$ .*/
   float m_Tk; /*!< Test signal for upward mean drift.*/
   float m_Nk; /*!< Minimum of the test signal for upward mean drift \f$T_k\f$*/
+  bool m_computeDeltaAndAlpha; /*!< If true, compute \f$\delta\f$ and \f$\alpha\f$ from the standard deviation,
+                                    the alarm factor and the detection factor.*/
+  float m_h; /*!< The alarm factor, that permits to compute \f$\alpha\f$ from the standard deviation of the signal.*/
+  float m_k; /*!< The detection factor, that permits to compute \f$\delta\f$ from the standard deviation of the signal.*/
+
+  /**
+   * \brief Compute \f$\delta\f$ and \f$\alpha\f$ from the standard deviation of the signal.
+   */
+  virtual void computeAlphaDelta();
 
   /**
    * \brief Compute the mean value \f$m_0\f$ of the signal. The mean value must be
@@ -127,25 +136,39 @@ protected:
   void computeNk();
 
   /**
-   * \brief Detects if a downward mean drift occured.
+   * \brief Detects if a downward mean drift occurred.
    *
-   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occured, \b vpMeanDriftType::NO_MEAN_DRIFT otherwise.
+   * \return \b vpMeanDriftType::MEAN_DRIFT_DOWNWARD if a downward mean drift occurred, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
    */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectDownwardMeanShift() override;
+  virtual vpMeanDriftType detectDownwardMeanDrift() override;
 #else
-  virtual vpMeanDriftType detectDownwardMeanShift();
+  virtual vpMeanDriftType detectDownwardMeanDrift();
 #endif
 
-/**
- * \brief Detects if a upward mean drift occured.
- *
- * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occured, \b vpMeanDriftType::NO_MEAN_DRIFT otherwise.
- */
+  /**
+   * \brief Detects if an upward mean drift occured on the mean.
+   *
+   * \return \b vpMeanDriftType::MEAN_DRIFT_UPWARD if an upward mean drift occured, \b vpMeanDriftType::MEAN_DRIFT_NONE otherwise.
+   *
+   * \sa detectDownwardMeanDrift()
+   */
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  virtual vpMeanDriftType detectUpwardMeanShift() override;
+  virtual vpMeanDriftType detectUpwardMeanDrift() override;
 #else
-  virtual vpMeanDriftType detectUpwardMeanShift();
+  virtual vpMeanDriftType detectUpwardMeanDrift();
+#endif
+
+  /**
+   * \brief Update m_s and if enough values are available, compute the mean, the standard
+   * deviation and the limits.
+   *
+   * \param[in] signal The new value of the signal to monitor.
+   */
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  virtual bool updateStatistics(const float &signal) override;
+#else
+  virtual bool updateStatistics(const float &signal);
 #endif
 
 /**
@@ -180,6 +203,28 @@ public:
    * \sa setAlpha(), setDelta()
    */
   vpStatisticalTestHinkley(const float &alpha, const float &delta, const unsigned int &nbSamplesForInit = 30);
+
+  /**
+   * \brief Construct a new vpStatisticalTestHinkley object. \f$\alpha\f$ and \f$\delta\f$ will be computed
+   * from the standard deviation of the signal.
+   *
+   * \param[in] h : the alarm factor that permits to compute \f$\alpha\f$ from the standard deviation.
+   * \param[in] k : the detection factor that permits to compute \f$\delta\f$ from the standard deviation.
+   * \param[in] computeAlphaDeltaFromStdev : must be equal to true, otherwise throw a vpException.
+   * \param[in] nbSamplesForInit : number of signal samples to initialize the mean of the signal.
+   */
+  vpStatisticalTestHinkley(const float &h, const float &k, const bool &computeAlphaDeltaFromStdev, const unsigned int &nbSamplesForInit = 30);
+
+  /**
+   * \brief Construct a new vpStatisticalTestHinkley object. \f$\alpha\f$ and \f$\delta\f$ will be computed
+   * from the standard deviation of the signal.
+   *
+   * \param[in] h : the alarm factor that permits to compute \f$\alpha\f$ from the standard deviation.
+   * \param[in] k : the detection factor that permits to compute \f$\delta\f$ from the standard deviation.
+   * \param[in] mean : the expected mean of the signal.
+   * \param[in] stdev : the expected standard deviation of the signal.
+   */
+  vpStatisticalTestHinkley(const float &h, const float &k, const float &mean, const float &stdev);
 
   /**
    * \brief Destroy the vpStatisticalTestHinkley object.
@@ -229,14 +274,6 @@ public:
   void init();
 
   /**
-   * \brief Initialise the Hinkley's test by setting the mean signal value
-   * \f$m_0\f$ to the expected value and \f$S_k, M_k, T_k, N_k\f$ to 0.
-   *
-   * \param[in] mean The expected value of the mean.
-   */
-  void init(const float &mean);
-
-  /**
    * \brief Call init() to initialise the Hinkley's test and set \f$\alpha\f$
    * and \f$\delta\f$ thresholds.
    *
@@ -247,6 +284,17 @@ public:
   void init(const float &alpha, const float &delta, const unsigned int &nbSamplesForInit);
 
   /**
+   * \brief (Re)Initialize a new vpStatisticalTestHinkley object. \f$\alpha\f$ and \f$\delta\f$ will be computed
+   * from the standard deviation of the signal.
+   *
+   * \param[in] h : the alarm factor that permits to compute \f$\alpha\f$ from the standard deviation.
+   * \param[in] k : the detection factor that permits to compute \f$\delta\f$ from the standard deviation.
+   * \param[in] computeAlphaDeltaFromStdev : must be equal to true, otherwise throw a vpException.
+   * \param[in] nbSamplesForInit : number of signal samples to initialize the mean of the signal.
+   */
+  void init(const float &h, const float &k, const bool &computeAlphaDeltaFromStdev, const unsigned int &nbSamplesForInit);
+
+  /**
    * \brief Call init() to initialise the Hinkley's test, set \f$\alpha\f$
    * and \f$\delta\f$ thresholds, and the mean of the signal \f$m_0\f$.
    *
@@ -255,6 +303,17 @@ public:
    * \param[in] mean The expected value of the mean.
    */
   void init(const float &alpha, const float &delta, const float &mean);
+
+  /**
+   * \brief (Re)Initialize a new vpStatisticalTestHinkley object. \f$\alpha\f$ and \f$\delta\f$ will be computed
+   * from the standard deviation of the signal.
+   *
+   * \param[in] h : the alarm factor that permits to compute \f$\alpha\f$ from the standard deviation.
+   * \param[in] k : the detection factor that permits to compute \f$\delta\f$ from the standard deviation.
+   * \param[in] mean : the expected mean of the signal.
+   * \param[in] stdev : the expected standard deviation of the signal.
+   */
+  void init(const float &h, const float &k, const float &mean, const float &stdev);
 
   /**
    * \brief Set the drift minimal magnitude that we want to detect.

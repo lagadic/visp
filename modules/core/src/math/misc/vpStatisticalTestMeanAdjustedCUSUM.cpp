@@ -48,23 +48,23 @@ void vpStatisticalTestMeanAdjustedCUSUM::computeDeltaAndLimits()
   setLimits(limitDown, limitUp);
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestMeanAdjustedCUSUM::detectDownwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestMeanAdjustedCUSUM::detectDownwardMeanDrift()
 {
   if (m_sminus >= m_limitDown) {
     return MEAN_DRIFT_DOWNWARD;
   }
   else {
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestMeanAdjustedCUSUM::detectUpwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestMeanAdjustedCUSUM::detectUpwardMeanDrift()
 {
   if (m_splus >= m_limitUp) {
     return MEAN_DRIFT_UPWARD;
   }
   else {
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 

@@ -30,6 +30,14 @@
  *
 *****************************************************************************/
 
+/**
+*
+* \file vpStatisticalTestSigma.cpp
+*
+* \brief Definition of the vpStatisticalTestSigma class that implements sigma
+* mean drift test.
+*/
+
 #include <visp3/core/vpStatisticalTestSigma.h>
 
 void vpStatisticalTestSigma::computeLimits()
@@ -39,23 +47,23 @@ void vpStatisticalTestSigma::computeLimits()
   m_limitUp = m_mean + delta;
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectDownwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectDownwardMeanDrift()
 {
   if (m_s <= m_limitDown) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_DOWNWARD;
   }
   else {
-    return vpStatisticalTestAbstract::NO_MEAN_DRIFT;
+    return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectUpwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestSigma::detectUpwardMeanDrift()
 {
   if (m_s >= m_limitUp) {
     return vpStatisticalTestAbstract::MEAN_DRIFT_UPWARD;
   }
   else {
-    return vpStatisticalTestAbstract::NO_MEAN_DRIFT;
+    return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
 }
 

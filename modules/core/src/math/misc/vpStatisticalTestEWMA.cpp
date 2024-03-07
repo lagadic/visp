@@ -47,23 +47,23 @@ void vpStatisticalTestEWMA::computeDeltaAndLimits()
   m_limitUp = m_mean + delta;
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestEWMA::detectDownwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestEWMA::detectDownwardMeanDrift()
 {
   if (m_wt <= m_limitDown) {
     return MEAN_DRIFT_DOWNWARD;
   }
   else {
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 
-vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestEWMA::detectUpwardMeanShift()
+vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestEWMA::detectUpwardMeanDrift()
 {
   if (m_wt >= m_limitUp) {
     return MEAN_DRIFT_UPWARD;
   }
   else {
-    return NO_MEAN_DRIFT;
+    return MEAN_DRIFT_NONE;
   }
 }
 
