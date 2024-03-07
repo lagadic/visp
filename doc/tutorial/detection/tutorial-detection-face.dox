@@ -37,7 +37,7 @@ Now we explain the main lines of the source.
 First we have to include the header of the class that allows to detect a face.
 \snippet tutorial-face-detector.cpp Include
 
-Then in the main() function before going further we need to check if OpenCV 2.2.0 is available. 
+Then in the main() function before going further we need to check if OpenCV 2.2.0 is available.
 
 \snippet tutorial-face-detector.cpp Macro defined
 
@@ -55,11 +55,11 @@ Usage: ./tutorial-face-detector [--haar <haarcascade xml filename>] [--video <in
 \endcode
 
 Then we open the video stream, create a windows named "ViSP viewer" where images and the resulting face detection will be displayed.
-  
+
 The creation of the face detector is performed using
 
 \snippet tutorial-face-detector.cpp Face detector construction
- 
+
 We need also to set the location and name of the xml file that contains the Haar cascade classifier data used to recognized a face.
 
 \snippet tutorial-face-detector.cpp Face detector setting
@@ -84,7 +84,7 @@ This other example also available in tutorial-face-detector-live.cpp shows how t
 
 \include tutorial-face-detector-live.cpp
 
-The usage of this example is similar to the previous one. Just run 
+The usage of this example is similar to the previous one. Just run
 \code
 $ ./tutorial-face-detector-live
 \endcode
@@ -97,7 +97,7 @@ Usage: ./tutorial-face-detector-live [--device <camera device>] [--haar <haarcas
 \endcode
 
 The source code of this example is very similar to the previous one except that here we use camera framegrabber devices (see \ref tutorial-grabber). Two different grabber may be used:
-- If ViSP was build with Video For Linux (V4L2) support available for example on Fedora or Ubuntu distribution, VISP_HAVE_V4L2 macro is defined. In that case, images coming from an USB camera are acquired using vpV4l2Grabber class. 
+- If ViSP was build with Video For Linux (V4L2) support available for example on Fedora or Ubuntu distribution, VISP_HAVE_V4L2 macro is defined. In that case, images coming from an USB camera are acquired using vpV4l2Grabber class.
 - If ViSP wasn't build with V4L2 support, but with OpenCV we use cv::VideoCapture class to grab the images. Notice that when images are acquired with OpenCV there is an additional conversion from cv::Mat to vpImage.
 
 \snippet tutorial-face-detector-live.cpp Construct grabber
@@ -109,6 +109,6 @@ This new image is then given as input to the face detector.
 
 \section face_detection_next Next tutorial
 
-You are now ready to see the \ref tutorial-multi-threading, that illustrates the case of face detection achieved in a separate thread.
+You are now ready to see the \ref tutorial-detection-object, that illustrates the case of object detection.
 
 */

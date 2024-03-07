@@ -22,7 +22,7 @@ After ViSP 3.0.0, we introduce vpFlyCaptureGrabber class, a wrapper over PointGr
   - Flea3 USB 3.0 cameras (FL3-U3-32S2M-CS, FL3-U3-13E4C-C)
   - Flea2 firewire camera (FL2-03S2C)
   - Dragonfly2 firewire camera (DR2-COL)
-  
+
 It should also work with GigE PGR cameras.
 
 The following example also available in tutorial-grabber-flycapture.cpp shows how to use vpFlyCaptureGrabber to capture grey level images from a PointGrey camera under Ubuntu or Windows. The following example suppose that a window renderer (libX11 on Ubuntu or GDI on Windows) and FlyCapture SDK 3rd party are available throw VISP.
@@ -32,17 +32,17 @@ The following example also available in tutorial-grabber-flycapture.cpp shows ho
 
 Here after we explain the source code.
 
-First an instance of the frame grabber is created. 
+First an instance of the frame grabber is created.
 \snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber construction
 
-Once the grabber is created, we turn auto shutter and auto gain on and set the camera image size, color coding, and framerate. 
+Once the grabber is created, we turn auto shutter and auto gain on and set the camera image size, color coding, and framerate.
 These settings are enclosed in a try/catch to be able to continue if one of these settings are not supported by the camera.
 \snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber settings
 
 Then the grabber is initialized using:
 \snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber open
 
-From now the grey level image \c I is also initialized with the size corresponding to the grabber settings. 
+From now the grey level image \c I is also initialized with the size corresponding to the grabber settings.
 
 Then we enter in a while loop where image acquisition is simply done by:
 \snippet tutorial-grabber-flycapture.cpp vpFlyCaptureGrabber acquire
@@ -86,10 +86,10 @@ Here after we explain the new lines that are introduced.
 First an instance of the frame grabber is created. During the creating a bus reset is send. If you don't want to reset the firewire bus, just turn reset to false.
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber construction
 
-Once the grabber is created, we set the camera image size, color coding, and framerate. 
+Once the grabber is created, we set the camera image size, color coding, and framerate.
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber settings
 
-Note that here you can specify some other settings such as the firewire transmission speed. For a more complete list of settings see vp1394TwoGrabber class. 
+Note that here you can specify some other settings such as the firewire transmission speed. For a more complete list of settings see vp1394TwoGrabber class.
 \code
   g.setIsoTransmissionSpeed(vp1394TwoGrabber::vpISO_SPEED_800);
 \endcode
@@ -97,7 +97,7 @@ Note that here you can specify some other settings such as the firewire transmis
 Then the grabber is initialized using:
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber open
 
-From now the color image \c I is also initialized with the size corresponding to the grabber settings. 
+From now the color image \c I is also initialized with the size corresponding to the grabber settings.
 
 Then we enter in a while loop where image acquisition is simply done by:
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber acquire
@@ -105,7 +105,7 @@ Then we enter in a while loop where image acquisition is simply done by:
 As in the previous example, depending on the command line options we are recording a sequence of images, or single shot images. We are also waiting for a non blocking mouse event to quit the while loop.
 \snippet tutorial-grabber-1394.cpp vp1394TwoGrabber click to exit
 
-In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp. 
+In the previous example we use vp1394TwoGrabber class that works for firewire cameras under Unix. If you are under Windows, you may use vp1394CMUGrabber class. A similar example is provided in tutorial-grabber-CMU1394.cpp.
 
 \subsection grabber-camera-dc1394-use How to acquire images
 
@@ -128,7 +128,7 @@ To grab a sequence of images, you may rather use:
 
 \section grabber-camera-v4l2 Frame grabbing using libv4l2 SDK
 
-If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class that is a wrapper over Video For Linux SDK. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp. 
+If you want to grab images from an usb camera under Unix, you may use vpV4l2Grabber class that is a wrapper over Video For Linux SDK. To this end libv4l should be installed. An example is provided in tutorial-grabber-v4l2.cpp.
 
 \subsection grabber-camera-v4l2-use How to acquire images
 
@@ -212,10 +212,10 @@ To acquire images from 1 T265 device (Serial Number:11622110511) and 1 D435 devi
 
 \note There is getRealSense2Info.cpp in `example/device/framegrabber` folder that could be used to get the device serial number.
 \verbatim
-$ ./getRealSense2Info 
+$ ./getRealSense2Info
 RealSense characteristics:
-Intel RealSense T265          11622110409         0.2.0.951           
- Device info: 
+Intel RealSense T265          11622110409         0.2.0.951
+ Device info:
     Name                          : 	Intel RealSense T265
     Serial Number                 : 	11622110409
     Firmware Version              : 	0.2.0.951
@@ -316,7 +316,7 @@ To grab a sequence of images, you may rather use:
 \code
 ./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0
 \endcode
-You can chose to record HD 720p pictures from the drone (instead of default 480p) using --hd_resolution option : 
+You can chose to record HD 720p pictures from the drone (instead of default 480p) using --hd_resolution option :
 \code
 ./tutorial-grabber-bebop2 --seqname I%04d.pgm --record 0 --hd_resolution
 \endcode
@@ -362,7 +362,7 @@ you may use the following:
 \code
   g.setFileName("./image%04d.png");
 \endcode
-where you specify that each image number is coded with 4 digits. Here, we will use \c libpng or \c OpenCV to read PNG images. Supported image formats are PPM, PGM, PNG and JPEG. 
+where you specify that each image number is coded with 4 digits. Here, we will use \c libpng or \c OpenCV to read PNG images. Supported image formats are PPM, PGM, PNG and JPEG.
 
 Then as for any other grabber, you have to initialize the frame grabber using:
 
@@ -399,7 +399,6 @@ To read an other video, let say my-video.mpg, you may use:
 \section grabber-next Next tutorial
 
 You are now ready to see how to continue with:
-- \ref tutorial-multi-threading if you want to see how to extend these examples with one thread for capture and an other one for display
-- or with a simple image processing that shows how to track blobs explained in \ref tutorial-tracking-blob.
+- a simple image processing that shows how to track blobs explained in \ref tutorial-tracking-blob.
 - There is also the \ref tutorial-video-manipulation that could be useful when you need to visualize, rename or change the format of a captured video or sequence of successive images, typically for deep learning purpose.
 */

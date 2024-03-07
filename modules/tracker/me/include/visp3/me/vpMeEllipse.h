@@ -236,9 +236,9 @@ public:
    * Initialize the tracking of an ellipse or an arc of an ellipse when \e trackArc is set to true.
    * If \b ips is set, use the contained points to initialize the ME if there are some, or initialize
    * by clicks the ME and \b ips will contained the clicked points.
-   * If \b ips is not set, call the method vpMeEllispe::initTracking(const vpImage<unsigned char>&, bool, bool).
+   * If \b ips is not set, call the method vpMeEllipse::initTracking(const vpImage<unsigned char>&, bool, bool).
    *
-   * \sa \ref vpMeEllispe::initTracking()
+   * \sa vpMeEllipse::initTracking()
    *
    * \warning The points should be selected as far as possible from each other.
    * When an arc of an ellipse is tracked, it is recommended to select the 5 points clockwise.
