@@ -115,7 +115,9 @@ private:
     return computeVal;
   }
 
-#if ((__cplusplus == 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+// and not __cplusplus == 199711L
+#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
   template <typename FilterType>
   static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)

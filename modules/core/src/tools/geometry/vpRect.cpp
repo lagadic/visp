@@ -37,7 +37,6 @@
 /*!
   \file vpRect.cpp
   \brief Defines a rectangle in the plane.
-  \ingroup libtools
 */
 
 #include <visp3/core/vpDebug.h>
@@ -48,7 +47,7 @@
   and \e width and \e height set to 1.
 */
 
-vpRect::vpRect() : left(0), top(0), width(0), height(0) {}
+vpRect::vpRect() : left(0), top(0), width(0), height(0) { }
 
 /*!
   Constructs a rectangle with the \e top, \e left corner and \e width
@@ -59,7 +58,7 @@ vpRect::vpRect() : left(0), top(0), width(0), height(0) {}
   \param w : rectangle width.
   \param h : rectangle height.
 */
-vpRect::vpRect(double l, double t, double w, double h) : left(l), top(t), width(w), height(h) {}
+vpRect::vpRect(double l, double t, double w, double h) : left(l), top(t), width(w), height(h) { }
 
 /*!
   Constructs a rectangle with \e topLeft the top-left corner location
@@ -71,8 +70,7 @@ vpRect::vpRect(double l, double t, double w, double h) : left(l), top(t), width(
 */
 vpRect::vpRect(const vpImagePoint &topLeft, double w, double h)
   : left(topLeft.get_u()), top(topLeft.get_v()), width(w), height(h)
-{
-}
+{ }
 
 /*!
   Constructs a rectangle with \e topLeft the top-left corner location

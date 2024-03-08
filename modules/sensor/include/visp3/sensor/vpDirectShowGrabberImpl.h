@@ -66,8 +66,8 @@ class VISP_EXPORT vpDirectShowGrabberImpl : public vpFrameGrabber
 
 public:
   /*!
-Enumeration of video subtypes.
-*/
+    Enumeration of video subtypes.
+  */
   /*
     typedef enum {
             //Known RGB formats

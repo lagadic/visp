@@ -48,7 +48,7 @@
 /*!
  * \class vpSimulatorCamera
  *
- * \ingroup group_robot_simu_Camera
+ * \ingroup group_robot_simu_camera
  *
  * \brief Class that defines the simplest robot: a free flying camera.
  *

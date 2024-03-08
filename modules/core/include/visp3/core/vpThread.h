@@ -59,13 +59,6 @@
    This class implements native pthread functionalities if available, or
    native Windows threading capabilities if pthread is not available under
    Windows.
-
-   There are two examples implemented in testMutex.cpp and testThread.cpp to
-   show how to use this class. The content of test-thread.cpp that highlights
-   the main functionalities of this class is given hereafter: \snippet
-   testThread.cpp Code
-
-   More examples are provided in \ref tutorial-multi-threading.
  */
 class vp_deprecated vpThread
 {
