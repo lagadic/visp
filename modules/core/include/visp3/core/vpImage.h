@@ -186,7 +186,13 @@ public:
   // Return the maximum value within the bitmap
   Type getMaxValue(bool onlyFiniteVal = true) const;
   // Return the mean value of the bitmap
-  Type getMeanValue() const;
+  double getMeanValue() const;
+  double getMeanValue(const vpImage<bool> *p_mask) const;
+  double getMeanValue(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
+  double getStdev() const;
+  double getStdev(const vpImage<bool> *p_mask) const;
+  double getStdev(const double &mean) const;
+  double getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const;
   // Return the minumum value within the bitmap
   Type getMinValue(bool onlyFiniteVal = true) const;
   // Look for the minumum and the maximum value within the bitmap
@@ -231,6 +237,7 @@ public:
 
   // Get image pixels sum
   double getSum() const;
+  double getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
 
   /*!
     Get the image width.
@@ -939,12 +946,101 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
 /*!
   \brief Return the mean value of the bitmap
 */
-template <class Type> Type vpImage<Type>::getMeanValue() const
+template <class Type> double vpImage<Type>::getMeanValue() const
 {
-  if ((height == 0) || (width == 0))
+  if ((height == 0) || (width == 0)) {
     return 0.0;
+  }
 
   return getSum() / (height * width);
+}
+
+/*!
+  \brief Return the mean value of the bitmap
+
+  \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+*/
+template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask) const
+{
+  unsigned int nbValidPoints = 0;
+  return getMeanValue(p_mask, nbValidPoints);
+}
+
+/*!
+  \brief Return the mean value of the bitmap
+
+  \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+  \param[out] nbValidPoints Number of points that are valid according to the boolean mask.
+*/
+template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
+{
+  nbValidPoints = 0;
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+
+  double sum = getSum(p_mask, nbValidPoints);
+  return sum / nbValidPoints;
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*/
+template <class Type> double vpImage<Type>::getStdev() const
+{
+  double mean = getMeanValue();
+  return getStdev(mean);
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+*/
+template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask) const
+{
+  unsigned int nbValidPoints = 0;
+  double mean = getMeanValue(p_mask, nbValidPoints);
+  return getStdev(mean, nbValidPoints, p_mask);
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* \param[in] mean The mean of the image.
+*/
+template <class Type> double vpImage<Type>::getStdev(const double &mean) const
+{
+  const unsigned int size = width * height;
+  double sum = 0.;
+  for (unsigned int i = 0; i < size; ++i) {
+    sum += (bitmap[i] - mean) * (bitmap[i] - mean);
+  }
+  sum /= static_cast<double>(size);
+  return std::sqrt(sum);
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* \param[in] mean The mean of the image.
+* \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
+* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+*/
+template <class Type> double vpImage<Type>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
+{
+  if (p_mask == nullptr) {
+    return getStdev(mean);
+  }
+  const unsigned int size = width * height;
+  double sum = 0.;
+  for (unsigned int i = 0; i < size; ++i) {
+    if (p_mask->bitmap[i]) {
+      sum += (bitmap[i] - mean) * (bitmap[i] - mean);
+    }
+  }
+  sum /= static_cast<double>(nbValidPoints);
+  return std::sqrt(sum);
 }
 
 /*!
@@ -1870,6 +1966,34 @@ template <class Type> inline double vpImage<Type>::getSum() const
 }
 
 /**
+ * Compute the sum of image intensities.
+ * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Boolean mask that indicates the valid points by a true flag.
+ * \param[out] nbValidPoints The number of valid points according to the \b p_mask.
+ */
+template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
+{
+  if ((height == 0) || (width == 0))
+    return 0.0;
+  if (p_mask == nullptr) {
+    nbValidPoints = height * width;
+    return getSum();
+  }
+
+  double res = 0.0;
+  nbValidPoints = 0;
+  unsigned int size = height * width;
+  for (unsigned int i = 0; i < size; ++i) {
+    if (p_mask->bitmap[i]) {
+      res += static_cast<double>(bitmap[i]);
+      ++nbValidPoints;
+    }
+  }
+  return res;
+}
+
+/**
  * \relates vpImage
  */
 template <> inline double vpImage<vpRGBa>::getSum() const
@@ -1887,6 +2011,32 @@ template <> inline double vpImage<vpRGBa>::getSum() const
 /**
  * \relates vpImage
  */
+template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+
+  if (p_mask == nullptr) {
+    nbValidPoints = height * width;
+    return getSum();
+  }
+
+  double res = 0.0;
+  nbValidPoints = 0;
+  unsigned int size = height * width;
+  for (unsigned int i = 0; i < size; ++i) {
+    if (p_mask->bitmap[i]) {
+      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+      ++nbValidPoints;
+    }
+  }
+  return res;
+}
+
+/**
+ * \relates vpImage
+ */
 template <> inline double vpImage<vpRGBf>::getSum() const
 {
   if ((height == 0) || (width == 0))
@@ -1895,6 +2045,31 @@ template <> inline double vpImage<vpRGBf>::getSum() const
   double res = 0.0;
   for (unsigned int i = 0; i < height * width; ++i) {
     res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+  }
+  return res;
+}
+
+/**
+ * \relates vpImage
+ */
+template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  if (p_mask == nullptr) {
+    nbValidPoints = height * width;
+    return getSum();
+  }
+
+  double res = 0.0;
+  nbValidPoints = 0;
+  unsigned int size = height * width;
+  for (unsigned int i = 0; i < size; ++i) {
+    if (p_mask->bitmap[i]) {
+      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+      ++nbValidPoints;
+    }
   }
   return res;
 }
