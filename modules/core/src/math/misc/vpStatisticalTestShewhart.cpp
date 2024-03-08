@@ -88,7 +88,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
   if ((m_signal[m_idCurrentData] <= m_limitDown) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
-    m_alarm = vpWecoRulesAlarm::THREE_SIGMA_WECO;
+    m_alarm = THREE_SIGMA_WECO;
     return vpStatisticalTestAbstract::MEAN_DRIFT_DOWNWARD;
   }
   if (!m_activateWECOrules) {
@@ -160,7 +160,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectUpwa
     return vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   }
   if ((m_signal[m_idCurrentData] >= m_limitUp) && m_activatedWECOrules[THREE_SIGMA_WECO]) {
-    m_alarm = vpWecoRulesAlarm::THREE_SIGMA_WECO;
+    m_alarm = THREE_SIGMA_WECO;
     return vpStatisticalTestAbstract::MEAN_DRIFT_UPWARD;
   }
   if (!m_activateWECOrules) {

@@ -45,6 +45,24 @@
  * \ingroup group_core_math_tools
  * \brief Class that permits a simple test comparing the current value to the
  * standard deviation of the signal.
+ *
+ * Be \f$ s(t) \f$ the signal to monitor, \f$ \mu \f$ and \f$ \sigma \f$ the mean and standard deviation
+ * of this signal when it is "in control".
+ *
+ * Be \f$ h \f$ a user-defined alarm factor.
+ *
+ * A downward alarm is raised if:
+ * \f$ s(t) >= \mu - h \sigma \f$
+ *
+ * An upward alarm is raised if:
+ * \f$ s(t) >= \mu - h \sigma \f$
+ *
+ * \f$ h \f$ is often set to 3 if we assume the \f$ s(t) \f$ follows a normal distribution.
+ *
+ * To detect only downward drifts of the input signal \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
  */
 
 class VISP_EXPORT vpStatisticalTestSigma : public vpStatisticalTestAbstract
@@ -129,7 +147,7 @@ public:
    *
    * \return float The signal.
    */
-  inline float getS() const
+  inline virtual float getSignal() const
   {
     return m_s;
   }

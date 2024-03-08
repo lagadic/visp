@@ -44,7 +44,30 @@
 
 /**
  * \ingroup group_core_math_tools
- * \brief Class that permits a Shewhart test.
+ * \brief Class that permits a Shewhart's test.
+ *
+ * Be \f$ s(t) \f$ the signal to monitor, \f$ \mu \f$ and \f$ \sigma \f$ the mean and standard deviation
+ * of this signal when it is "in control".
+ *
+ * A downward alarm is raised if:
+ * \f$ s(t) >= \mu - 3 \sigma \f$
+ *
+ * An upward alarm is raised if:
+ * \f$ s(t) >= \mu + 3 \sigma \f$
+ *
+ * Additionnally, we can activate the WECO's rules that have been
+ * proposed by the Western Electric Company to add additionnal verifications:
+ * - An alarm is raised if two out of three consecutive points fall beyond the \f$2\sigma\f$-limit, on the same side of the mean \f$ \mu \f$
+ * - An alarm is raised if four out of five consecutive points fall beyond the \f$1\sigma\f$-limit, on the same side of the mean \f$ \mu \f$
+ * - An alarm is raised if eight consecutive points fall on the same side of the mean \f$ \mu \f$.
+ *
+ * The user can decide to use or not the WECO's rules. Additionnally, the user can choose which WECO's
+ * rule(s) to activate.
+ *
+ * To detect only downward drifts of the input signal \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
  */
 
 class VISP_EXPORT vpStatisticalTestShewhart : public vpStatisticalTestSigma
@@ -52,12 +75,12 @@ class VISP_EXPORT vpStatisticalTestShewhart : public vpStatisticalTestSigma
 public:
   typedef enum vpWecoRulesAlarm
   {
-    THREE_SIGMA_WECO = 0,
-    TWO_SIGMA_WECO = 1,
-    ONE_SIGMA_WECO = 2,
-    SAME_SIDE_WECO = 3,
-    NONE_WECO = 4,
-    COUNT_WECO = 5
+    THREE_SIGMA_WECO = 0, /*!< When a \f$ 3\sigma \f$ alarm was raised.*/
+    TWO_SIGMA_WECO = 1, /*!< When a \f$ 2\sigma \f$ alarm was raised.*/
+    ONE_SIGMA_WECO = 2, /*!< When a \f$ 1\sigma \f$ alarm was raised*/
+    SAME_SIDE_WECO = 3, /*!< When a alarm raised when 8 consecutive points lie on the same side of the mean \f$ \mu \f$ was raised.*/
+    NONE_WECO = 4, /*!< When no WECO's rule alarm was raised.*/
+    COUNT_WECO = 5 /*!< Number of WECO's rules that are implemented.*/
   } vpWecoRulesAlarm;
 
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
@@ -68,17 +91,17 @@ protected:
   static const int NB_DATA_SIGNAL = 8;
   unsigned int m_nbDataInBuffer; /*!< Indicate how many data are available in the circular buffer.*/
   float m_signal[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
-  bool m_activateWECOrules; /*!< If true, activate the WECO rules (NB: it increases the sensitivity of the Shewhart
+  bool m_activateWECOrules; /*!< If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
                                  control chart but the false alarm frequency is also increased.)*/
-  bool m_activatedWECOrules[COUNT_WECO - 1]; /*!< The WECO rules that are activated. The more are activated, the higher the
+  bool m_activatedWECOrules[COUNT_WECO - 1]; /*!< The WECO's rules that are activated. The more are activated, the higher the
                                               sensitivity of the Shewhart control chart is but the higher the false
                                               alarm frequency is.*/
   int m_idCurrentData; /*!< The index of the current data in m_signal.*/
-  vpWecoRulesAlarm m_alarm; /*!< The type of alarm raised due to WECO rules.*/
-  float m_oneSigmaNegLim; /*!< The mean - sigma lower threshold.*/
-  float m_oneSigmaPosLim; /*!< The mean + sigma lower threshold.*/
-  float m_twoSigmaNegLim; /*!< The mean - 2 sigma lower threshold.*/
-  float m_twoSigmaPosLim; /*!< The mean + 2 sigma lower threshold.*/
+  vpWecoRulesAlarm m_alarm; /*!< The type of alarm raised due to WECO's rules.*/
+  float m_oneSigmaNegLim; /*!< The \f$ \mu - \sigma \* threshold.*/
+  float m_oneSigmaPosLim; /*!< The \f$ \mu + \sigma \* threshold.*/
+  float m_twoSigmaNegLim; /*!< The \f$ \mu - 2 \sigma \* threshold.*/
+  float m_twoSigmaPosLim; /*!< The \f$ \mu + 2 \sigma \* threshold.*/
 
   /**
    * \brief Compute the upper and lower limits of the test signal.
@@ -141,8 +164,10 @@ public:
   /**
    * \brief Construct a new vpStatisticalTestShewhart object.
    *
-   * \param[in] activateWECOrules If true, activate the WECO rules (NB: it increases the sensitivity of the Shewhart
+   * \param[in] activateWECOrules If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
    * control chart but the false alarm frequency is also increased.)
+   * \param[in] activatedRules An array where true means that the corresponding WECO's rule is activated and false means
+   * that it is not.
    * \param[in] nbSamplesForStats The number of samples to compute the statistics of the signal.
    */
   vpStatisticalTestShewhart(const bool &activateWECOrules = true, const bool activatedRules[COUNT_WECO - 1] = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
@@ -150,15 +175,17 @@ public:
   /**
    * \brief Construct a new vpStatisticalTestShewhart object.
    *
-   * \param[in] activateWECOrules If true, activate the WECO rules (NB: it increases the sensitivity of the Shewhart
+   * \param[in] activateWECOrules If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
    * control chart but the false alarm frequency is also increased.)
+   * \param[in] activatedRules An array where true means that the corresponding WECO's rule is activated and false means
+   * that it is not.
    * \param[in] mean The expected mean of the signal.
    * \param[in] stdev The expected standard deviation of the signal.
    */
   vpStatisticalTestShewhart(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1], const float &mean, const float &stdev);
 
   /**
-   * \brief Get the alarm raised by the last test due to the WECO rules.
+   * \brief Get the alarm raised by the last test due to the WECO's rules.
    *
    * \return vpWecoRulesAlarm The type of raised alarm.
    */
@@ -172,7 +199,11 @@ public:
    *
    * \return float The signal.
    */
-  inline float getSignal() const
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  inline virtual float getSignal() const override
+#else
+  inline virtual float getSignal() const
+#endif
   {
     return m_signal[m_idCurrentData];
   }
@@ -187,8 +218,10 @@ public:
   /**
    * \brief (Re)Initialize the test.
    *
-   * \param[in] activateWECOrules If true, activate the WECO rules (NB: it increases the sensitivity of the Shewhart
+   * \param[in] activateWECOrules If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
    * control chart but the false alarm frequency is also increased.)
+   * \param[in] activatedRules An array where true means that the corresponding WECO's rule is activated and false means
+   * that it is not.
    * \param[in] nbSamplesForStats The number of samples to compute the statistics of the signal.
    */
   void init(const bool &activateWECOrules, const bool activatedRules[COUNT_WECO - 1] = CONST_ALL_WECO_ACTIVATED, const unsigned int &nbSamplesForStats = 30);
@@ -196,8 +229,10 @@ public:
   /**
    * \brief (Re)Initialize the test.
    *
-   * \param[in] activateWECOrules If true, activate the WECO rules (NB: it increases the sensitivity of the Shewhart
+   * \param[in] activateWECOrules If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart
    * control chart but the false alarm frequency is also increased.)
+   * \param[in] activatedRules An array where true means that the corresponding WECO's rule is activated and false means
+   * that it is not.
    * \param[in] mean The expected mean of the signal.
    * \param[in] stdev The expected standard deviation of the signal.
    */

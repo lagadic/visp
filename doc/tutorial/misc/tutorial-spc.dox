@@ -8,7 +8,7 @@
 if a signal is "in control".
 
 In this tutorial, we will use a Statistical Process Control method to monitor if a
-random signal following a Gaussian law is "in control".
+random signal following a normal distribution is "in control".
 
 \subsection tuto-spc-intro-methods Available methods
 

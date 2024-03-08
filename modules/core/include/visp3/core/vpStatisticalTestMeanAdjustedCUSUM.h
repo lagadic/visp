@@ -44,17 +44,49 @@
 /**
  * \ingroup group_core_math_tools
  * \brief Class that permits to perform a mean adjusted Cumulative Sum test.
+ *
+ * The mean adjusted CUSUM test is designed to detect drift in the mean \f$ \mu \f$
+ * of an observed signal \f$ s(t) \f$.
+ *
+ * Be \f$ \delta \f$ the amplitude of the mean drift we want to detect.
+ * Two test signals are computed at each iteration:
+ *
+ * \f$ S_-(t) = max\{0, S_-(t-1) - (s(t) - \mu) - \frac{\delta}{2}\} \f$
+ *
+ * \f$ S_+(t) = max\{0, S_+(t-1) + (s(t) - \mu) - \frac{\delta}{2}\} \f$
+ *
+ * A downward alarm is raised if:
+ * \f$ S_-(t) >= thresh\f$
+ *
+ * An upward alarm is raised if:
+ * \f$ S_+(t) >= thresh\f$
+ *
+ * To ease the understanding of the detection threshold \f$ \delta \f$ and the
+ * alarm threshold \f$ thresh \f$, ViSP implemented these two thresholds as
+ * a multiple of the standard deviation of the signal \f$ \sigma \f$:
+ *
+ * \f$ \delta = k \sigma , k \in R^{+*} \f$
+ *
+ * \f$ thresh = h \sigma , h \in R^{+*} \f$
+ *
+ * To have an Average Run Lenght of ~374 samples for a detection threshold \f$ \delta \f$
+ * of 1 standard deviation \f$ \sigma \f$, set \f$ h \f$ to 4.76 .
+ *
+ * To detect only downward drifts of the input signal \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
  */
 class VISP_EXPORT vpStatisticalTestMeanAdjustedCUSUM : public vpStatisticalTestAbstract
 {
 protected:
   float m_delta; /*!< Slack of the CUSUM test, i.e. amplitude of mean shift we want to be able to detect.*/
-  float m_h; /*!< Alarm factor that permits to determine the limit telling when a mean shift occurs: limit = m_h * m_stdev .
+  float m_h; /*!< Alarm factor that permits to determine the limit telling when a mean shift occurs: \f$thresh = h * \sigma \f$ .
                   To have an Average Run Lenght of ~374 samples for a detection of 1 stdev, set it to 4.76f*/
   float m_half_delta; /*!< Half of the amplitude we want to detect.*/
-  float m_k; /*!< Detection factor that permits to determine the slack: m_delta = m_k * m_stdev .*/
-  float m_sminus; /*!< Test signal for downward mean shift: S_-(i) = max{0, S_-(i-1) - (y_i - m_mean) - m_delta/2}.*/
-  float m_splus; /*!< Test signal for upward mean shift: S_+(i) = max{0, S_+(i-1) + (y_i - m_mean) - m_delta/2}.*/
+  float m_k; /*!< Detection factor that permits to determine the slack: \f$\delta = k * \sigma\f$ .*/
+  float m_sminus; /*!< Test signal for downward mean shift: \f$ S_-(t) = max\{0, S_-(t-1) - (s(t) - \mu) - \frac{\delta}{2}\} \f$.*/
+  float m_splus; /*!< Test signal for upward mean shift: \f$ S_+(t) = max\{0, S_+(t-1) + (s(t) - \mu) - \frac{\delta}{2}\} \f$.*/
 
   /**
    * \brief Compute the upper and lower limits of the test signal.

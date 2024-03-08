@@ -32,6 +32,8 @@
 
 //! \example tutorial-meandrift.cpp
 
+#include <cstring> //std::memcpy
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpStatisticalTestEWMA.h>

@@ -43,13 +43,35 @@
 
 /**
  * \ingroup group_core_math_tools
- * \brief Class that permits to perform Exponentially Weighted Moving Average mean shift tests.
+ * \brief Class that permits to perform Exponentially Weighted Moving Average mean drft tests.
+ *
+ * The EWMA test is designed to detect drift in the mean \f$ \mu \f$
+ * of an observed signal \f$ s(t) \f$.
+ *
+ * The test signal \f$ w(t) \f$ is computed as follow:
+ *
+ * \f$ w(0) = \mu \f$
+ *
+ * \f$ w(t) = \alpha s(t) + ( 1 - \alpha ) * w(t-1) \f$
+ *
+ * Be \f$ \sigma \f$ the standard deviation of the input signal \f$ s(t) \f$.
+ *
+ * A downward alarm is raised if:
+ * \f$ w(t) <= \mu - 3 * \sigma * \sqrt{ \frac{\alpha}{2 - \alpha}}\f$
+ *
+ * An upward alarm is raised if:
+ * \f$ w(t) >= \mu + 3 * \sigma * \sqrt{ \frac{\alpha}{2 - \alpha}}\f$
+ *
+ * To detect only downward drifts of the input signal \f$ s(t) \f$ use
+ * testDownwardMeanDrift().To detect only upward drifts in \f$ s(t) \f$ use
+ * testUpwardMeanDrift(). To detect both, downward and upward drifts use
+ * testDownUpwardMeanDrift().
  */
 class VISP_EXPORT vpStatisticalTestEWMA : public vpStatisticalTestAbstract
 {
 protected:
   float m_alpha; /*!< Forgetting factor: the higher, the more weight the current signal value has.*/
-  float m_wt; /*!< Test signal such as m_wt = m_alpha * y(t) + ( 1 - m_alpha ) * m_wtprev .*/
+  float m_wt; /*!< Test signal that permits to raise an alarm.*/
   float m_wtprev; /*!< Previous value of the test signal.*/
 
   /**
