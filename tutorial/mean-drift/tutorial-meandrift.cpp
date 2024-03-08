@@ -43,6 +43,7 @@
 
 namespace TutorialMeanDrift
 {
+  //! [Enum_For_Test_Choice]
   /**
    * \brief Enumeration that permits to choose which process test to use.
    *
@@ -57,6 +58,7 @@ typedef enum TypeTest
   COUNT_TYPE_TEST = 5, /*!< Number of different aavailable methods.*/
   UNKOWN_TYPE_TEST = COUNT_TYPE_TEST /*!< Unknown method.*/
 }TypeTest;
+//! [Enum_For_Test_Choice]
 
 /**
  * \brief Permit to cast a \b TypeTest object into a string, for display purpose.
@@ -296,6 +298,7 @@ unsigned int meanDriftArrayToNbActivated(const bool array[vpStatisticalTestAbstr
   return nbActivated;
 }
 
+//! [Structure_Parameters]
 /**
  * \brief Structure that contains the parameters of the different algorithms.
  */
@@ -335,6 +338,7 @@ typedef struct ParametersForAlgo
     m_test_nbactivatedalarms = meanDriftArrayToNbActivated(m_test_activatedalarms);
   }
 }ParametersForAlgo;
+//! [Structure_Parameters]
 }
 
 int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanDrift::ParametersForAlgo parameters,
@@ -342,12 +346,15 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
 {
   const float dt = 10.f; // Emulate a 10ms period
 
+  //! [Plot_Init]
   vpPlot plotter(1);
   plotter.initGraph(0, 1);
   plotter.setTitle(0, "Evolution of the signal");
   plotter.setUnitX(0, "Frame ID");
   plotter.setUnitY(0, "No units");
+  //! [Plot_Init]
 
+  //! [Test_Creat]
   unsigned int idFrame = 0;
   vpStatisticalTestAbstract *p_test = nullptr;
   switch (type) {
@@ -372,15 +379,15 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   }
 
   if ((type == TutorialMeanDrift::HINLKEY_TYPE_TEST) && parameters.m_hinkley_computealphadelta) {
+    // Initialization of Hinkley's test in automatic mode
     delete p_test;
     p_test = new vpStatisticalTestHinkley(parameters.m_hinkley_h, parameters.m_hinkley_k, true, parameters.m_test_nbsamples);
   }
+  //! [Test_Creat]
 
   float signal;
-  std::cout << "Actual mean of the input signal: " << mean << std::endl;
-  std::cout << "Actual stdev of the input signal: " << stdev << std::endl;
-  std::cout << "Mean drift of the input signal: " << mean_drift << std::endl;
 
+  //! [Test_Init]
   // Initial computation of the mean and stdev of the input signal
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
     vpGaussRand rndGen(stdev, mean, static_cast<float>(idFrame) * dt);
@@ -388,15 +395,17 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
     p_test->testDownUpwardMeanDrift(signal);
     ++idFrame;
   }
+  //! [Test_Init]
 
   std::cout << "Estimated mean of the input signal: " << p_test->getMean() << std::endl;
   std::cout << "Estimated stdev of the input signal: " << p_test->getStdev() << std::endl;
 
+  //! [Loop_Monitor]
   float mean_eff = mean;
   bool hasToRun = true;
   vpStatisticalTestAbstract::vpMeanDriftType drift_type = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   while (hasToRun) {
-    vpGaussRand rndGen(stdev, mean_eff, vpTime::measureTimeMs() * 1e3 + static_cast<float>(idFrame) * dt);
+    vpGaussRand rndGen(stdev, mean_eff, static_cast<float>(idFrame) * dt);
     signal = rndGen();
     plotter.plot(0, 0, idFrame - parameters.m_test_nbsamples, signal);
     drift_type = p_test->testDownUpwardMeanDrift(signal);
@@ -408,6 +417,9 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
       ++idFrame;
     }
   }
+  //! [Loop_Monitor]
+
+  //! [Failure_Debrief]
   std::cout << "Test failed at frame: " << idFrame - parameters.m_test_nbsamples << std::endl;
   std::cout << "Type of mean drift: " << vpStatisticalTestAbstract::vpMeanDriftTypeToString(drift_type) << std::endl;
   std::cout << "Last signal value: " << signal << std::endl;
@@ -444,8 +456,10 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   p_test->getLimits(limitDown, limitUp);
   std::cout << "\tLimit down = " << limitDown << std::endl;
   std::cout << "\tLimit up = " << limitUp << std::endl;
+  //! [Failure_Debrief]
   std::cout << "End of test on synthetic data. Press enter to leave." << std::endl;
   std::cin.get();
+  delete p_test;
   return EXIT_SUCCESS;
 }
 
@@ -673,6 +687,9 @@ int main(int argc, char *argv[])
   std::cout << "  Shewhart's test set of WECO rules    : " << (parameters.m_shewhart_useWECO && (opt_typeTest == TutorialMeanDrift::SHEWHART_TYPE_TEST) ? TutorialMeanDrift::wecoRulesToString(parameters.m_shewhart_rules) : "N/A") << std::endl;
   std::cout << "  Shewhart's test use WECO rules       : " << (opt_typeTest == TutorialMeanDrift::SHEWHART_TYPE_TEST ? TutorialMeanDrift::boolToString(parameters.m_shewhart_useWECO && (opt_typeTest == TutorialMeanDrift::SHEWHART_TYPE_TEST)) : "N/A") << std::endl;
   std::cout << "  Alarm factor Sigma test              : " << (opt_typeTest == TutorialMeanDrift::SIGMA_TYPE_TEST ? TutorialMeanDrift::numberToString(parameters.m_sigma_h) : "N/A") << std::endl;
+  std::cout << "  Actual mean of the input signal: " << opt_mean << std::endl;
+  std::cout << "  Actual stdev of the input signal: " << opt_stdev << std::endl;
+  std::cout << "  Mean drift of the input signal: " << opt_meandrift << std::endl;
 
   return testOnSynthetic(opt_typeTest, parameters, opt_mean, opt_meandrift, opt_stdev);
 }
