@@ -104,7 +104,7 @@ vpStatisticalTestAbstract::vpMeanDriftType vpStatisticalTestShewhart::detectDown
     // Reinit for next iteration
     nbAbove2SigmaLimit = 0;
     nbAbove1SigmaLimit = 0;
-    if (m_signal[id] <= m_mean  && m_activatedWECOrules[SAME_SIDE_WECO]) {
+    if (m_signal[id] < m_mean  && m_activatedWECOrules[SAME_SIDE_WECO]) {
       // Single-side test
       ++nbAboveMean;
     }

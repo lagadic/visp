@@ -86,9 +86,9 @@ public:
   static std::string vpWecoRulesAlarmToString(const vpWecoRulesAlarm &alarm);
 
   static const bool CONST_ALL_WECO_ACTIVATED[COUNT_WECO - 1];
+  static const int NB_DATA_SIGNAL = 8;
 
 protected:
-  static const int NB_DATA_SIGNAL = 8;
   unsigned int m_nbDataInBuffer; /*!< Indicate how many data are available in the circular buffer.*/
   float m_signal[NB_DATA_SIGNAL]; /*!< The last values of the signal.*/
   bool m_activateWECOrules; /*!< If true, activate the WECO's rules (NB: it increases the sensitivity of the Shewhart

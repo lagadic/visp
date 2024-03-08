@@ -43,6 +43,7 @@
 #include <visp3/core/vpStatisticalTestSigma.h>
 #include <visp3/gui/vpPlot.h>
 
+#if defined(VISP_HAVE_DISPLAY)
 namespace TutorialMeanDrift
 {
   //! [Enum_For_Test_Choice]
@@ -695,3 +696,10 @@ int main(int argc, char *argv[])
 
   return testOnSynthetic(opt_typeTest, parameters, opt_mean, opt_meandrift, opt_stdev);
 }
+#else
+int main()
+{
+  std::cerr << "Recompile ViSP with display capabilities in order to use this tutorial." << std::endl;
+  return EXIT_FAILURE;
+}
+#endif
