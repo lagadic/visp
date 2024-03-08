@@ -147,7 +147,7 @@ vpStatisticalTestAbstract::vpStatisticalTestAbstract(const vpStatisticalTestAbst
 vpStatisticalTestAbstract::~vpStatisticalTestAbstract()
 {
   if (m_s != nullptr) {
-    delete m_s;
+    delete[] m_s;
     m_s = nullptr;
   }
 }
@@ -161,7 +161,7 @@ void vpStatisticalTestAbstract::init()
   m_mean = 0.f;
   m_nbSamplesForStatistics = 0;
   if (m_s != nullptr) {
-    delete m_s;
+    delete[] m_s;
     m_s = nullptr;
   }
   m_stdev = 0.f;
@@ -180,7 +180,7 @@ vpStatisticalTestAbstract &vpStatisticalTestAbstract::operator=(const vpStatisti
   }
   else if (m_s != nullptr) {
     m_nbSamplesForStatistics = 0;
-    delete m_s;
+    delete[] m_s;
     m_s = nullptr;
   }
   m_stdev = 0.f;
@@ -192,7 +192,7 @@ void vpStatisticalTestAbstract::setNbSamplesForStat(const unsigned int &nbSample
 {
   m_nbSamplesForStatistics = nbSamples;
   if (m_s != nullptr) {
-    delete m_s;
+    delete[] m_s;
   }
   m_s = new float[nbSamples];
 }
