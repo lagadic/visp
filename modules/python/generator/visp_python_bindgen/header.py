@@ -243,7 +243,7 @@ class HeaderFile():
 
     If it is templated, the mapping (template argument types => Python class name) must be provided in the JSON config file
     '''
-    def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
+    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict) -> str:
       '''
       Generate the bindings of a single class, handling a potential template specialization.
       The handled information is:
