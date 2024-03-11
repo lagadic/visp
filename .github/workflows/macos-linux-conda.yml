@@ -59,14 +59,16 @@ jobs:
           -G "Ninja" \
           -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
           -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TUTORIALS=OFF \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
         # Build
         cmake --build . --target visp_python_bindings
 
-        # Test Python import
-        cd modules/python/bindings
-        python -c "import visp"
+        # Tests
+        cmake --build . --target visp_python_bindings_test
 
   check:
     if: always()
