@@ -58,17 +58,20 @@ jobs:
           -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library ^
           -DPYTHON_SITELIB=%CONDA_PREFIX%\Lib\site-packages ^
           -DBUILD_TESTS=OFF ^
+          -DVISP_LIB_INSTALL_PATH="lib" ^
+          -DVISP_BIN_INSTALL_PATH="bin" ^
+          -DVISP_CONFIG_INSTALL_PATH="cmake" ^
           -DBUILD_EXAMPLES=OFF ^
           -DBUILD_TUTORIALS=OFF ^
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         if errorlevel 1 exit 1
 
+        :: Build visp libs & install them
+        cmake --build . --target install
+
         :: Build bindings
         cmake --build . --target visp_python_bindings
         if errorlevel 1 exit 1
-
-        :: Install bindings
-        cmake --build . --target install
 
         :: Test Python import
         python -c "import visp"
