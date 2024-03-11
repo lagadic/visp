@@ -288,10 +288,7 @@ def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
     # The headers are already filtered: they should all come from the ViSP source folder (no vpConfig, etc.)
     include_dir = headers[0].parent
     hh = "\n".join(map(lambda s: str(s), headers))
-
-    # TODO: this fails with include/visp3/core/vpConfig.h and include/visp3/visp_modules.h which are added by core module
-    # but should be excluded from generation
-    #assert all(map(lambda header_path: header_path.parent == include_dir, headers)), f'Found headers in different directory, this case is not yet handled. Headers = {hh}'
+    assert all(map(lambda header_path: header_path.parent == include_dir, headers)), f'Found headers in different directory, this case is not yet handled. Headers = {hh}'
     submodule = Submodule(module_data.name, include_dir, config_path, generate_path / f'{module_data.name}.cpp')
     result[module_data.name] = submodule
 
