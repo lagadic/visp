@@ -320,7 +320,12 @@ public:
 
       // Reallocation of this->data array
       this->dsize = nrows * ncols;
-      this->data = (Type *)realloc(this->data, this->dsize * sizeof(Type));
+      if (this->data) {
+        Type *tmp = (Type*)realloc(this->data, this->dsize * sizeof(Type));
+        if (tmp) {
+          this->data = tmp;
+        }
+      }
       if ((nullptr == this->data) && (0 != this->dsize)) {
         if (copyTmp != nullptr) {
           delete[] copyTmp;
@@ -328,7 +333,12 @@ public:
         throw(vpException(vpException::memoryAllocationError, "Memory allocation error when allocating 2D array data"));
       }
 
-      this->rowPtrs = (Type **)realloc(this->rowPtrs, nrows * sizeof(Type *));
+      if (this->rowPtrs) {
+        Type **tmp = (Type**)realloc(this->rowPtrs, nrows * sizeof(Type*));
+        if (tmp) {
+          this->rowPtrs = tmp;
+        }
+      }
       if ((nullptr == this->rowPtrs) && (0 != this->dsize)) {
         if (copyTmp != nullptr) {
           delete[] copyTmp;
@@ -389,11 +399,18 @@ public:
 
     rowNum = nrows;
     colNum = ncols;
-    rowPtrs = reinterpret_cast<Type **>(realloc(rowPtrs, nrows * sizeof(Type *)));
-    // Update rowPtrs
-    Type **t_ = rowPtrs;
-    for (unsigned int i = 0; i < dsize; i += ncols) {
-      *t_++ = data + i;
+    if (rowPtrs) {
+      Type **tmp = reinterpret_cast<Type**>(realloc(rowPtrs, nrows * sizeof(Type*)));
+      if (tmp) {
+        this->rowPtrs = tmp;
+      }
+    }
+    if (rowPtrs) {
+      // Update rowPtrs
+      Type** t_ = rowPtrs;
+      for (unsigned int i = 0; i < dsize; i += ncols) {
+        *t_++ = data + i;
+      }
     }
   }
 

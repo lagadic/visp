@@ -322,7 +322,7 @@ void gammaCorrectionLogMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_
   I.getMinMaxValue(inputMin, inputMax);
   unsigned char inputRange = inputMax - inputMin;
 
-  float gamma_computed = (std::log(128.f) - std::log(256.f)) / (std::log(mean) - std::log(inputRange));
+  float gamma_computed = static_cast<float>((std::log(128.f) - std::log(256.f)) / (std::log(mean) - std::log(inputRange)));
   float inverse_gamma = 1.f / gamma_computed;
 
   // Construct the look-up table
@@ -397,19 +397,19 @@ void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const v
   float gamma = 0.f;
   if (isAlreadyHighContrast) {
     // Case medium to high contrast image
-    gamma = std::exp((1.f - (meanNormalized + stdevNormalized))/2.f);
+    gamma = static_cast<float>(std::exp((1.f - (meanNormalized + stdevNormalized))/2.f));
   }
   else {
     // Case low contrast image
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    gamma = -std::log2(stdevNormalized);
+    gamma = -static_cast<float>(std::log2(stdevNormalized));
 #else
-    gamma = -std::log(stdevNormalized) / std::log(2);
+    gamma = -static_cast<float>(std::log(stdevNormalized) / std::log(2));
 #endif
   }
   if (meanNormalized < 0.5) {
       // Case dark image
-    float meanPowerGamma = std::pow(meanNormalized, gamma);
+    float meanPowerGamma = static_cast<float>(std::pow(meanNormalized, gamma));
     for (unsigned int i = 0; i <= 255; i++) {
       float iNormalized = static_cast<float>(i)/255.f;
       float iPowerGamma = std::pow(iNormalized, gamma);
@@ -500,7 +500,7 @@ void gammaCorrectionSpatialBased(vpImage<unsigned char> &I, const vpImage<bool> 
   vpImageTools::resize(I_8_blur, L_8, width, height, vpImageTools::INTERPOLATION_CUBIC);
   const float alpha = 0.5f;
   unsigned int size = height * width;
-  float stdev = I.getStdev(p_mask);
+  float stdev = static_cast<float>(I.getStdev(p_mask));
   float p;
   if (stdev <= 40) {
     p = 2.f;
@@ -546,7 +546,7 @@ void gammaCorrectionSpatialBased(vpImage<vpRGBa> &I, const vpImage<bool> *p_mask
   vpImage<unsigned char> I_gray(height, width);
   for (unsigned int i = 0; i < size; ++i) {
     vpRGBa rgb = I.bitmap[i];
-    I_gray.bitmap[i] = 0.299 * rgb.R + 0.587 * rgb.G + 0.114 *rgb.B;
+    I_gray.bitmap[i] = static_cast<unsigned char>(0.299 * rgb.R + 0.587 * rgb.G + 0.114 * rgb.B);
   }
   vpImage<unsigned char> I_2, I_4, I_8;
   I_gray.subsample(2, 2, I_2);
@@ -565,7 +565,7 @@ void gammaCorrectionSpatialBased(vpImage<vpRGBa> &I, const vpImage<bool> *p_mask
   vpImageTools::resize(I_8_blur, L_8, width, height, vpImageTools::INTERPOLATION_CUBIC);
   const float alpha = 0.5f;
 
-  float stdev = I.getStdev(p_mask);
+  float stdev = static_cast<float>(I.getStdev(p_mask));
   float p;
   if (stdev <= 40) {
     p = 2.f;
@@ -601,7 +601,7 @@ void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGamm
 {
   float inverse_gamma = 1.0;
   if ((gamma > 0) && (method == GAMMA_MANUAL)) {
-    inverse_gamma = 1.0 / gamma;
+    inverse_gamma = 1.0f / gamma;
     // Construct the look-up table
     unsigned char lut[256];
     for (unsigned int i = 0; i < 256; i++) {

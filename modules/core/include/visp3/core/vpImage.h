@@ -844,7 +844,9 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
-  memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
+  if (bitmap) {
+    memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
+  }
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
