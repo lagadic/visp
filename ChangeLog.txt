@@ -30,6 +30,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
     . New tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-conda-package.html
+    . New tutorial: Using Statistical Process Control to monitor your signal
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-spc.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -40,6 +42,8 @@ ViSP 3.x.x (Version in development)
     . [#1279] Issue in vpPoseVector json serialization
     . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
+    . [#1320] Broken links in the documentation
+    . [#1341] SVD computation fails with Lapack when m < n
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
