@@ -156,9 +156,10 @@ class GeneratorConfig(object):
 
   @staticmethod
   def update_from_main_config_file(path: Path) -> None:
-    assert path.exists()
+    assert path.exists(), f'Main config file {path} was not found'
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
+      print(json.dumps(main_config, indent=2))
       logging.info('Updating the generator config from dict: ', main_config)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
 
@@ -176,6 +177,7 @@ class GeneratorConfig(object):
       for module_name in modules_dict:
         headers = map(lambda s: Path(s), modules_dict[module_name].get('headers'))
         deps = modules_dict[module_name].get('dependencies')
+
         # Include only headers that are in the VISP source directory
         headers = list(filter(lambda h: source_dir in h.parents, headers))
         headers_log_str = '\n\t'.join([str(header) for header in headers])

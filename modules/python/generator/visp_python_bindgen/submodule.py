@@ -284,8 +284,8 @@ def get_submodules(config_path: Path, generate_path: Path) -> List[Submodule]:
     headers = module_data.headers
     if len(headers) == 0:
       print(f'Module {module_data.name} has no input headers, skipping!')
-
       continue
+    # The headers are already filtered: they should all come from the ViSP source folder (no vpConfig, etc.)
     include_dir = headers[0].parent
     hh = "\n".join(map(lambda s: str(s), headers))
     assert all(map(lambda header_path: header_path.parent == include_dir, headers)), f'Found headers in different directory, this case is not yet handled. Headers = {hh}'
