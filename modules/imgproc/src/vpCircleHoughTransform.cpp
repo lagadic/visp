@@ -600,30 +600,27 @@ vpCircleHoughTransform::computeCenterCandidates()
         // Saving the edge point for further use
         m_edgePointsList.push_back(std::pair<unsigned int, unsigned int>(r, c));
 
-        float float_minRad = static_cast<float>(m_algoParams.m_minRadius);
-        float float_maxRad = static_cast<float>(m_algoParams.m_maxRadius);
-
         for (int k1 = 0; k1 < nbDirections; ++k1) {
           bool hasToStopLoop = false;
           int x_low_prev = std::numeric_limits<int>::max(), y_low_prev, y_high_prev;
           int x_high_prev = (y_low_prev = (y_high_prev = x_low_prev));
 
-          float rstart = float_minRad, rstop = float_maxRad;
+          float rstart = m_algoParams.m_minRadius, rstop = m_algoParams.m_maxRadius;
           float min_minus_c = minimumXpositionFloat - static_cast<float>(c);
           float min_minus_r = minimumYpositionFloat - static_cast<float>(r);
           float max_minus_c = maximumXpositionFloat - static_cast<float>(c);
           float max_minus_r = maximumYpositionFloat - static_cast<float>(r);
           if (sx > 0) {
             float rmin = min_minus_c / sx;
-            rstart = std::max<float>(rmin, float_minRad);
+            rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
             float rmax = max_minus_c / sx;
-            rstop = std::min<float>(rmax, float_maxRad);
+            rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
           }
           else if (sx < 0) {
             float rmin = max_minus_c / sx;
-            rstart = std::max<float>(rmin, float_minRad);
+            rstart = std::max<float>(rmin, m_algoParams.m_minRadius);
             float rmax = min_minus_c / sx;
-            rstop = std::min<float>(rmax, float_maxRad);
+            rstop = std::min<float>(rmax, m_algoParams.m_maxRadius);
           }
 
           if (sy > 0) {
