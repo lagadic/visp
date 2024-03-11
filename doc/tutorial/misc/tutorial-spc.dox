@@ -4,7 +4,7 @@
 
 \section tuto-spc-intro Introduction
 
-*Statistical Process Control (SPC) is defined as the use of statistical methods to monitor
+Statistical Process Control (SPC) is defined as the use of statistical methods to monitor
 if a signal is "in control".
 
 In this tutorial, we will use a Statistical Process Control method to monitor if a
@@ -38,7 +38,7 @@ $ ./tutorial-meandrift -h
 
 If you run the program without argument, you should see something similar to the following image:
 
-\image html img-tutorial-spc-run.png
+\image html img-tutorial-spc-run.jpg
 
 A Gaussian signal of mean equal to 6 and of standard deviation equal to 2 is generated,
 without any mean drift. The program tells you which method has been chosen in the
