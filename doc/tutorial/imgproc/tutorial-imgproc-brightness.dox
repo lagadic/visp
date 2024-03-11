@@ -49,6 +49,13 @@ The result image is the following:
 
 \image html img-tutorial-brighness-gamma-correction-3.5.png "Left: underexposed image - Right: image corrected with gamma=3.5"
 
+ViSP proposes the implementation of several automatic computation of the gamma factor.
+Most of these methods are designed for gray-shade images, so ViSP proposes different way
+of handling the colors.
+
+You can test the different methods using the `--gamma-method` option of the tutorial program
+and the different way of handling the colors using the `--gamma-color-handling` option.
+
 \section imgproc_brightness_histogram_equalization Histogram equalization
 
 <a href="https://en.wikipedia.org/wiki/Histogram_equalization">Histogram equalization</a> is an image processing method that will adjust the contrast of an image by stretching or shrinking the intensity distribution in order to have a linear cumulative histogram distribution.
