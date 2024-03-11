@@ -119,6 +119,9 @@ if(BUILD_PYTHON_BINDINGS_DOC)
   add_subdirectory(doc)
 endif()
 
+# Step 6: Test bindings
+add_subdirectory(test)
+
 
 # Export Variables to parent cmake
 set(VISP_PYTHON_BOUND_MODULES "")

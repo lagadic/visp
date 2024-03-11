@@ -179,7 +179,11 @@ class GeneratorConfig(object):
         deps = modules_dict[module_name].get('dependencies')
 
         # Include only headers that are in the VISP source directory
-        headers = list(filter(lambda h: source_dir in h.parents, headers))
+        # Fix: Check specifically in the modules directory,
+        # since the build directory (containing vpConfig.h, that we want to ignore)
+        # Can be in the src folder
+        headers = list(filter(lambda h: (source_dir / 'modules') in h.parents, headers))
+
         headers_log_str = '\n\t'.join([str(header) for header in headers])
         logging.info(f'Module {module_name} headers: \n\t{headers_log_str}')
         GeneratorConfig.module_data.append(ModuleInputData(module_name, headers, deps))
