@@ -694,13 +694,14 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     message(WARNING "std::thread was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable std::thread usage turning USE_THREADS=OFF.")
     unset(USE_THREADS)
     set(USE_THREADS OFF CACHE BOOL "Include std::thread support" FORCE)
-  elseif(UNIX)
-    # Apriltag on unix needs pthread. On windows we are using pthread built-in
-    if(Threads_FOUND)
-      set(USE_PTHREAD ON) # for AprilTag only
-    endif()
   endif()
 endif()
+
+if(UNIX AND Threads_FOUND)
+  # Apriltag on unix needs native pthread. On windows we are using pthread built-in
+  set(USE_PTHREAD ON) # for AprilTag only
+endif()
+
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
@@ -1732,7 +1733,7 @@ status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
-status("    Use pthread:"            USE_PHREADS        THEN "yes" ELSE "no")
+status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
 status("")
