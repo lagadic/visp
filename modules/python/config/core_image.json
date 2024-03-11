@@ -68,24 +68,24 @@
           "ignore": true
         }
       ]
+    },
+    "vpRGBf": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRGBf& operator=(const vpRGBf&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRGBa": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRGBa& operator=(const vpRGBa&&)",
+          "ignore": true
+        }
+      ]
     }
-  },
-  "vpRGBf": {
-    "methods": [
-      {
-        "static": false,
-        "signature": "vpRGBf& operator=(const vpRGBf&&)",
-        "ignore": true
-      }
-    ]
-  },
-  "vpRGBa": {
-    "methods": [
-      {
-        "static": false,
-        "signature": "vpRGBa& operator=(const vpRGBa&&)",
-        "ignore": true
-      }
-    ]
   }
 }

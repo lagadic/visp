@@ -250,6 +250,17 @@
           "use_default_param_policy": false,
           "param_is_input": [true, false],
           "param_is_output": [false, true]
+        },
+        {
+          "static": true,
+          "signature": "void getMinMaxRoi(const std::vector<vpImagePoint>&, int&, int&, int&, int&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true, false, false, false, false
+          ],
+          "param_is_output": [
+            false, true, true, true, true
+          ]
         }
       ]
     },
@@ -301,6 +312,31 @@
           "static": true,
           "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint>&)",
           "custom_name": "computeCurvePointFromSpline"
+        },
+        {
+          "static": false,
+          "signature": "void get_crossingPoints(std::list<vpImagePoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false
+          ],
+          "param_is_output": [
+            true
+          ]
+        },
+        {
+          "static": false,
+          "signature": "void get_knots(std::list<double>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
+        },
+        {
+          "static": false,
+          "signature": "void get_controlPoints(std::list<vpImagePoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [false],
+          "param_is_output": [true]
         }
       ]
     },
@@ -762,6 +798,21 @@
         {
           "static": true,
           "signature": "bool getKeyboardEvent(const vpImage<vpRGBa>&, std::string&, bool)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true,
+            false,
+            true
+          ],
+          "param_is_output": [
+            false,
+            true,
+            false
+          ]
+        },
+        {
+          "static": true,
+          "signature": "bool getKeyboardEvent(const vpImage<unsigned char>&, std::string&, bool)",
           "use_default_param_policy": false,
           "param_is_input": [
             true,

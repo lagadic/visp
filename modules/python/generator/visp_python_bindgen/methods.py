@@ -93,6 +93,13 @@ def supported_const_return_binary_op_map():
     '^': 'xor',
   }
 
+def lambda_const_return_binary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                                  cpp_type: str, param_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {param_type} o) -> {return_type} {{
+  return (self {cpp_op} o);
+}}, {", ".join(py_args)});'''
+
 def supported_in_place_binary_op_map():
   return {
     '+=': 'iadd',
@@ -101,11 +108,28 @@ def supported_in_place_binary_op_map():
     '/=': 'itruediv',
   }
 
+def lambda_in_place_binary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                              cpp_type: str, param_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {param_type} o) -> {return_type} {{
+  self {cpp_op} o;
+  return self;
+}}, {", ".join(py_args)});'''
+
 def supported_const_return_unary_op_map():
   return {
     '-': 'neg',
     '~': 'invert',
   }
+
+def lambda_const_return_unary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                          cpp_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self) -> {return_type} {{
+  return {cpp_op}self;
+}}, {", ".join(py_args)});'''
+
+
 def find_and_define_repr_str(cls: ClassScope, cls_name: str, python_ident: str) -> str:
   for friend in cls.friends:
     if friend.fn is not None:
@@ -419,13 +443,13 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
     (lambda m, _: not m.constructor and is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
   ]
   for method in methods:
-    method_config = submodule.get_method_config(cls_name, method, specializations, mapping)
+    method_config = submodule.get_method_config(cls_name, method, {}, mapping)
     method_can_be_bound = True
     for predicate, motive in filtering_predicates_and_motives:
       if predicate(method, method_config):
-        return_str = '' if method.return_type is None else (get_type(method.return_type, specializations, mapping) or '<unparsed>')
+        return_str = '' if method.return_type is None else (get_type(method.return_type, {}, mapping) or '<unparsed>')
         method_name = '::'.join(seg.name for seg in method.name.segments)
-        param_strs = [get_type(param.type, specializations, mapping) or '<unparsed>' for param in method.parameters]
+        param_strs = [get_type(param.type, {}, mapping) or '<unparsed>' for param in method.parameters]
         rejected_methods.append(RejectedMethod(cls_name, method, method_config, get_method_signature(method_name, return_str, param_strs), motive))
         method_can_be_bound = False
         break

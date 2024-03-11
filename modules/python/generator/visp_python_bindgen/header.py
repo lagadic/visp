@@ -380,35 +380,29 @@ class HeaderFile():
         elif len(params_strs) < 1:
           for cpp_op, python_op_name in unary_return_ops.items():
             if method_name == f'operator{cpp_op}':
-              operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) -> {return_type_str} {{
-  return {cpp_op}self;
-}}, {", ".join(py_args)});'''
+              operator_str = lambda_const_return_unary_op(python_ident, python_op_name, cpp_op,
+                                                         method_is_const, name_cpp,
+                                                         return_type_str, py_args)
               add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
                                                        is_operator=True, is_constructor=False))
               break
-
-          logging.info(f'Found unary operator {name_cpp}::{method_name}, skipping')
-          continue
-        for cpp_op, python_op_name in binary_return_ops.items():
-          if method_name == f'operator{cpp_op}':
-            operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
-  return (self {cpp_op} o);
-}}, {", ".join(py_args)});'''
-            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
-                                                       is_operator=True, is_constructor=False))
-            break
-        for cpp_op, python_op_name in binary_in_place_ops.items():
-          if method_name == f'operator{cpp_op}':
-            operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
-  self {cpp_op} o;
-  return self;
-}}, {", ".join(py_args)});'''
-            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
-                                                       is_operator=True, is_constructor=False))
-            break
+        elif len(params_strs) == 1: # e.g., self + other
+          for cpp_op, python_op_name in binary_return_ops.items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_const_return_binary_op(python_ident, python_op_name, cpp_op,
+                                                          method_is_const, name_cpp, params_strs[0],
+                                                          return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
+          for cpp_op, python_op_name in binary_in_place_ops.items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_in_place_binary_op(python_ident, python_op_name, cpp_op,
+                                                      method_is_const, name_cpp, params_strs[0],
+                                                      return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
 
       # Define classical methods
       class_def_names = BoundObjectNames(python_ident, name_python, name_cpp_no_template, name_cpp)
