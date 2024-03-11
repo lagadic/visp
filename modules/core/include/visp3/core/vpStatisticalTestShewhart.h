@@ -98,10 +98,10 @@ protected:
                                               alarm frequency is.*/
   int m_idCurrentData; /*!< The index of the current data in m_signal.*/
   vpWecoRulesAlarm m_alarm; /*!< The type of alarm raised due to WECO's rules.*/
-  float m_oneSigmaNegLim; /*!< The \f$ \mu - \sigma \* threshold.*/
-  float m_oneSigmaPosLim; /*!< The \f$ \mu + \sigma \* threshold.*/
-  float m_twoSigmaNegLim; /*!< The \f$ \mu - 2 \sigma \* threshold.*/
-  float m_twoSigmaPosLim; /*!< The \f$ \mu + 2 \sigma \* threshold.*/
+  float m_oneSigmaNegLim; /*!< The \f$ \mu - \sigma \f$ threshold.*/
+  float m_oneSigmaPosLim; /*!< The \f$ \mu + \sigma \f$ threshold.*/
+  float m_twoSigmaNegLim; /*!< The \f$ \mu - 2 \sigma \f$ threshold.*/
+  float m_twoSigmaPosLim; /*!< The \f$ \mu + 2 \sigma \f$ threshold.*/
 
   /**
    * \brief Compute the upper and lower limits of the test signal.

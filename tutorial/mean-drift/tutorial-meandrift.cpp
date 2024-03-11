@@ -66,7 +66,7 @@ typedef enum TypeTest
 /**
  * \brief Permit to cast a \b TypeTest object into a string, for display purpose.
  *
- * \param[in] choice The \b TypeTest object we want to know the name.
+ * \param[in] type The \b TypeTest object we want to know the name.
  * \return std::string The corresponding name.
  */
 std::string typeTestToString(const TypeTest &type)
@@ -264,6 +264,9 @@ std::vector<std::string> meanDriftArrayToVectorOfString(const bool array[vpStati
  * a single string listing all the alarms.
  *
  * \param[in] array The array of boolean indicating which alarm are set.
+ * \param[in] prefix The returned string prefix.
+ * \param[in] sep The returned string separator.
+ * \param[in] suffix The returned string suffix.
  * \return std::string The corresponding string listing the names of alarms.
  */
 std::string meanDriftArrayToString(const bool array[vpStatisticalTestAbstract::MEAN_DRIFT_COUNT],
