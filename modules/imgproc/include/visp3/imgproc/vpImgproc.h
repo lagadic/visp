@@ -360,7 +360,7 @@ VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I
  * \param[in] p_mask:if different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = GAMMA_MANUAL,
+VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = vp::GAMMA_MANUAL,
                                  const vpImage<bool> *p_mask = nullptr);
 
 /*!
@@ -380,7 +380,7 @@ VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, 
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const float &gamma,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -395,8 +395,8 @@ VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsig
  * \param[in] p_mask : if different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = GAMMA_RGB,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
@@ -413,8 +413,8 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const v
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const float &gamma,
-                                 const vpGammaColorHandling &colorHandling = GAMMA_RGB,
-                                 const vpGammaMethod &method = GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
+                                 const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_retinex
