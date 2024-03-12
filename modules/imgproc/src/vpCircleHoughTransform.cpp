@@ -315,12 +315,12 @@ vpCircleHoughTransform::detect(const vpImage<unsigned char> &I)
   // the pixelization of the image
   const float minCenterPositionDiff = 3.f;
   if ((m_algoParams.m_centerXlimits.second - m_algoParams.m_centerXlimits.first) < minCenterPositionDiff) {
-    m_algoParams.m_centerXlimits.second += minCenterPositionDiff / 2.f;
-    m_algoParams.m_centerXlimits.first -= minCenterPositionDiff / 2.f;
+    m_algoParams.m_centerXlimits.second += static_cast<int>(minCenterPositionDiff / 2.f);
+    m_algoParams.m_centerXlimits.first -= static_cast<int>(minCenterPositionDiff / 2.f);
   }
   if ((m_algoParams.m_centerYlimits.second - m_algoParams.m_centerYlimits.first) < minCenterPositionDiff) {
-    m_algoParams.m_centerYlimits.second += minCenterPositionDiff / 2.f;
-    m_algoParams.m_centerYlimits.first -= minCenterPositionDiff / 2.f;
+    m_algoParams.m_centerYlimits.second += static_cast<int>(minCenterPositionDiff / 2.f);
+    m_algoParams.m_centerYlimits.first -= static_cast<int>(minCenterPositionDiff / 2.f);
   }
 
   // First thing, we need to apply a Gaussian filter on the image to remove some spurious noise
@@ -397,7 +397,7 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
 #endif
   {
     bool hasFoundSimilarCircle = false;
-    unsigned int nbPreviouslyDetected = m_finalCircles.size();
+    unsigned int nbPreviouslyDetected = static_cast<unsigned int>(m_finalCircles.size());
     unsigned int id = 0;
     // Looking for a circle that was detected and is similar to the one given to the function
     while ((id < nbPreviouslyDetected) && (!hasFoundSimilarCircle)) {
@@ -410,7 +410,7 @@ void vpCircleHoughTransform::computeVotingMask(const vpImage<unsigned char> &I, 
       {
         hasFoundSimilarCircle = true;
         // We found a circle that is similar to the one given to the function => updating the mask
-        const unsigned int nbVotingPoints = m_finalCirclesVotingPoints[id].size();
+        const unsigned int nbVotingPoints = static_cast<unsigned int>(m_finalCirclesVotingPoints[id].size());
         for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
           const std::pair<unsigned int, unsigned int> &votingPoint = m_finalCirclesVotingPoints[id][idPoint];
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -858,11 +858,11 @@ vpCircleHoughTransform::computeCenterCandidates()
     std::sort(merged_peaks_position_votes.begin(), merged_peaks_position_votes.end(), sortingCenters);
 
     nbPeaks = static_cast<unsigned int>(merged_peaks_position_votes.size());
-    int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : nbPeaks);
-    nbPeaksToKeep = std::min<int>(nbPeaksToKeep, (int)nbPeaks);
+    int nbPeaksToKeep = (m_algoParams.m_expectedNbCenters > 0 ? m_algoParams.m_expectedNbCenters : static_cast<int>(nbPeaks));
+    nbPeaksToKeep = std::min<int>(nbPeaksToKeep, static_cast<int>(nbPeaks));
     for (int i = 0; i < nbPeaksToKeep; i++) {
       m_centerCandidatesList.push_back(merged_peaks_position_votes[i].first);
-      m_centerVotes.push_back(merged_peaks_position_votes[i].second);
+      m_centerVotes.push_back(static_cast<int>(merged_peaks_position_votes[i].second));
     }
   }
 }
@@ -1049,17 +1049,17 @@ vpCircleHoughTransform::computeCircleCandidates()
       }
     }
 
-    unsigned int nbCandidates = v_r_effective.size();
+    unsigned int nbCandidates = static_cast<unsigned int>(v_r_effective.size());
     for (unsigned int idBin = 0; idBin < nbCandidates; ++idBin) {
       // If the circle of center CeC_i  and radius RCB_k has enough votes, it is added to the list
       // of Circle Candidates
       float r_effective = v_r_effective[idBin];
       vpImageCircle candidateCircle(vpImagePoint(centerCandidate.first, centerCandidate.second), r_effective);
-      float proba = computeCircleProbability(candidateCircle, v_votes_effective[idBin]);
+      float proba = computeCircleProbability(candidateCircle, static_cast<unsigned int>(v_votes_effective[idBin]));
       if (proba > m_algoParams.m_circleProbaThresh) {
         m_circleCandidates.push_back(candidateCircle);
         m_circleCandidatesProbabilities.push_back(proba);
-        m_circleCandidatesVotes.push_back(v_votes_effective[idBin]);
+        m_circleCandidatesVotes.push_back(static_cast<unsigned int>(v_votes_effective[idBin]));
         if (m_algoParams.m_recordVotingPoints) {
           if (v_hasMerged_effective[idBin]) {
             // Remove potential duplicated points
@@ -1081,7 +1081,7 @@ vpCircleHoughTransform::computeCircleProbability(const vpImageCircle &circle, co
   float visibleArc(static_cast<float>(nbVotes));
   float theoreticalLenght;
   if (mp_mask != nullptr) {
-    theoreticalLenght = circle.computePixelsInMask(*mp_mask);
+    theoreticalLenght = static_cast<unsigned int>(circle.computePixelsInMask(*mp_mask));
   }
   else {
     theoreticalLenght = circle.computeArcLengthInRoI(vpRect(vpImagePoint(0, 0), m_edgeMap.getWidth(), m_edgeMap.getHeight()));
