@@ -1006,8 +1006,14 @@ template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask
 
 /*!
 * \brief Return the standard deviation of the bitmap
-*
-* \param[in] mean The mean of the image.
+ * For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ *
+ * \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+ *
+ * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+ *
+ * \param[in] mean The mean of the image.
+ * \return double The standard deviation of the color image.
 */
 template <class Type> double vpImage<Type>::getStdev(const double &mean) const
 {
@@ -1023,9 +1029,16 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean) const
 /*!
 * \brief Return the standard deviation of the bitmap
 *
+* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*
+* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+*
 * \param[in] mean The mean of the image.
 * \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
 * \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* \return double The standard deviation taking into account only the points for which the mask is true.
 */
 template <class Type> double vpImage<Type>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
@@ -1043,17 +1056,19 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean, const u
   return std::sqrt(sum);
 }
 
-/**
- * \relates vpImage
- *
- * For a vpRGBa image, we compute the standard deviation as follow:
- *
- * \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} I[r][c].R + I[r][c].G + I[r][c].B - \mu}\f$
- *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
- *
- * \return The sum of the R, G and B components of all pixels.
- */
+/*
+/!\ Did not use Doxygen for this method because it does not handle template specialization
+* Return the standard deviation of the bitmap
+*
+* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*
+* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+*
+* param[in] mean The mean of the image.
+* return The standard deviation.
+*/
 template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
 {
   if ((height == 0) || (width == 0)) {
@@ -1070,19 +1085,21 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
   return res;
 }
 
-/**
- * \relates vpImage
- *
- * For a vpRGBa image, we compute the standard deviation as follow:
- *
- * \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} I[r][c].R + I[r][c].G + I[r][c].B - \mu}\f$
- *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
- *
- * \param[in] mean The mean of the image.
- * \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
- * \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
- */
+/*
+/!\ Did not use Doxygen for this method because it does not handle template specialization
+* Return the standard deviation of the bitmap
+*
+* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*
+* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+*
+* param[in] mean The mean of the image.
+* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
+* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* return The standard deviation taking into account only the points for which the mask is true.The standard deviation taking into account only the points for which the mask is true.
+*/
 template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
   if ((height == 0) || (width == 0)) {
@@ -1105,17 +1122,22 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const un
   return sum;
 }
 
+/*
+/!\ Did not use Doxygen for this method because it does not handle template specialization
+* Return the standard deviation of the bitmap
+*
+* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*
+* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+*
+* param[in] mean The mean of the image.
+* return The standard deviation.
+*/
 /**
- * \relates vpImage
- *
- * For a vpRGBf image, we compute the standard deviation as follow:
- *
- * \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} I[r][c].R + I[r][c].G + I[r][c].B - \mu}\f$
- *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
- *
- * \return The sum of the R, G and B components of all pixels.
- */
+* \brief \copybrief double vpImage::getStdev(const double &) const
+*/
 template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
 {
   if ((height == 0) || (width == 0)) {
@@ -1132,19 +1154,24 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
   return res;
 }
 
+/*
+/!\ Did not use Doxygen for this method because it does not handle template specialization
+* Return the standard deviation of the bitmap
+*
+* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*
+* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+*
+* param[in] mean The mean of the image.
+* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
+* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* return The standard deviation taking into account only the points for which the mask is true.
+*/
 /**
- * \relates vpImage
- *
- * For a vpRGBf image, we compute the standard deviation as follow:
- *
- * \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} I[r][c].R + I[r][c].G + I[r][c].B - \mu}\f$
- *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
- *
- * \param[in] mean The mean of the image.
- * \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
- * \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
- */
+* \brief \copybrief double vpImage::getStdev(const double &, const unsigned int&, const vpImage<bool>*) const
+*/
 template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
   if ((height == 0) || (width == 0)) {
