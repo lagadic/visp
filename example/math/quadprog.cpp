@@ -105,14 +105,18 @@ int main(int argc, char **argv)
   r = randV(o) * 5;
   C = randM(p, n) * 5;
 
-  // make sure Cx <= d has a solution within Ax = b
+  std::cout << "DEBUG 1 before solveBySVD()" << std::endl;
+    // make sure Cx <= d has a solution within Ax = b
   vpColVector x = A.solveBySVD(b);
+  std::cout << "DEBUG 2 after solveBySVD()" << std::endl;
   d = C * x;
   for (int i = 0; i < p; ++i)
     d[i] += (5. * rand()) / RAND_MAX;
 
   // solver with warm start
   vpQuadProg qp_WS;
+
+  std::cout << "DEBUG 3 after vpQuadProg()" << std::endl;
 
   // timing
   int total = 100;
@@ -142,7 +146,9 @@ int main(int argc, char **argv)
     vpQuadProg qp;
     x = 0;
     double t = vpTime::measureTimeMs();
+    std::cout << "DEBUG 4 before solveQP()" << std::endl;
     qp.solveQP(Q, r, A, b, C, d, x);
+    std::cout << "DEBUG 4 after solveQP()" << std::endl;
 
     t_noWS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
@@ -153,7 +159,9 @@ int main(int argc, char **argv)
     // with warm start
     x = 0;
     t = vpTime::measureTimeMs();
+    std::cout << "DEBUG 5 before solveQP()" << std::endl;
     qp_WS.solveQP(Q, r, A, b, C, d, x);
+    std::cout << "DEBUG 5 after solveQP()" << std::endl;
 
     t_WS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
