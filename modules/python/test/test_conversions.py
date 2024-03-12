@@ -78,7 +78,7 @@ def test_demosaic():
   for fn in fns:
     for dtype in [np.uint8, np.uint16]:
       bayer_data = np.ones((h, w), dtype=dtype) * 128
-      rgba = np.empty((h, w, 4), dtype=dtype)
+      rgba = np.zeros((h, w, 4), dtype=dtype)
       old_rgba = rgba.copy()
       fn(bayer_data, rgba)
       assert not np.allclose(rgba, old_rgba), f'Error when testing {fn}, with dtype {dtype}'
