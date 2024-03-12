@@ -39,32 +39,37 @@
         },
         {
           "static": false,
-          "signature": "vpImage(vpImage<unsigned char>&&)",
+          "signature": "vpImage(vpImage<Type>&&)",
           "ignore": true
         },
         {
           "static": false,
-          "signature": " vpImage(vpImage<float>&&)",
+          "signature": "vpImage(Type*, unsigned int, unsigned int, bool)",
           "ignore": true
         },
         {
           "static": false,
-          "signature": " vpImage(vpImage<double>&&)",
+          "signature": "void init(Type*, unsigned int, unsigned int, bool)",
           "ignore": true
         },
         {
           "static": false,
-          "signature": " vpImage(vpImage<uint16_t>&&)",
+          "signature": "Type* operator[](unsigned int)",
           "ignore": true
         },
         {
           "static": false,
-          "signature": " vpImage(vpImage<vpRGBa>&&)",
+          "signature": "Type* operator[](int)",
           "ignore": true
         },
         {
           "static": false,
-          "signature": " vpImage(vpImage<vpRGBf>&&)",
+          "signature": "const Type* operator[](unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "const Type* operator[](int)",
           "ignore": true
         }
       ]

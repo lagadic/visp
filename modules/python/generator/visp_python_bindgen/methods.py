@@ -129,6 +129,22 @@ def lambda_const_return_unary_op(python_ident: str, python_op_name: str, cpp_op:
   return {cpp_op}self;
 }}, {", ".join(py_args)});'''
 
+def supported_nary_op_map():
+  return {
+    '()': 'call',
+  }
+
+def lambda_nary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                    cpp_type: str, param_types: List[str], return_type: str, py_args: List[str]) -> str:
+  param_names = [f'arg{i}' for i in range(len(param_types))]
+  param_types_and_names = [f'{t} {n}' for t,n in zip(param_types, param_names)]
+  maybe_return = '' if return_type == 'void' else 'return'
+
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {",".join(param_types_and_names)}) -> {return_type} {{
+  {maybe_return} self.operator{cpp_op}({",".join(param_names)});
+}}, {", ".join(py_args)});'''
+
 
 def find_and_define_repr_str(cls: ClassScope, cls_name: str, python_ident: str) -> str:
   for friend in cls.friends:

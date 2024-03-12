@@ -357,9 +357,6 @@ class HeaderFile():
                                                        is_operator=False, is_constructor=True))
 
       # Operator definitions
-      binary_return_ops = supported_const_return_binary_op_map()
-      binary_in_place_ops = supported_in_place_binary_op_map()
-      unary_return_ops = supported_const_return_unary_op_map()
 
       for method, method_config in operators:
         method_name = get_name(method.name)
@@ -369,16 +366,17 @@ class HeaderFile():
         py_args = get_py_args(method.parameters, owner_specs, header_env.mapping)
         py_args = py_args + ['py::is_operator()']
         param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
-
         py_args = add_method_doc_to_pyargs(method, py_args)
 
-        if len(params_strs) > 1:
-          logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
-          rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
-          self.submodule.report.add_non_generated_method(rejection)
-          continue
-        elif len(params_strs) < 1:
-          for cpp_op, python_op_name in unary_return_ops.items():
+        # if len(params_strs) > 1:
+        #   logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
+        #   rejection_param_strs = [get_type(param.type, {}, header_env.mapping) for param in method.parameters]
+        #   rejection_return_type_str = get_type(method.return_type, {}, header_env.mapping)
+        #   rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, rejection_return_type_str, rejection_param_strs), NotGeneratedReason.NotHandled)
+        #   self.submodule.report.add_non_generated_method(rejection)
+        #   continue
+        if len(params_strs) < 1: # Unary ops
+          for cpp_op, python_op_name in supported_const_return_unary_op_map().items():
             if method_name == f'operator{cpp_op}':
               operator_str = lambda_const_return_unary_op(python_ident, python_op_name, cpp_op,
                                                          method_is_const, name_cpp,
@@ -387,7 +385,7 @@ class HeaderFile():
                                                        is_operator=True, is_constructor=False))
               break
         elif len(params_strs) == 1: # e.g., self + other
-          for cpp_op, python_op_name in binary_return_ops.items():
+          for cpp_op, python_op_name in supported_const_return_binary_op_map().items():
             if method_name == f'operator{cpp_op}':
               operator_str = lambda_const_return_binary_op(python_ident, python_op_name, cpp_op,
                                                           method_is_const, name_cpp, params_strs[0],
@@ -395,11 +393,20 @@ class HeaderFile():
               add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
                                                         is_operator=True, is_constructor=False))
               break
-          for cpp_op, python_op_name in binary_in_place_ops.items():
+          for cpp_op, python_op_name in supported_in_place_binary_op_map().items():
             if method_name == f'operator{cpp_op}':
               operator_str = lambda_in_place_binary_op(python_ident, python_op_name, cpp_op,
                                                       method_is_const, name_cpp, params_strs[0],
                                                       return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
+        else: # N-ary operators
+          for cpp_op, python_op_name in supported_nary_op_map().items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_nary_op(python_ident, python_op_name, cpp_op,
+                                                    method_is_const, name_cpp, params_strs,
+                                                    return_type_str, py_args)
               add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
                                                         is_operator=True, is_constructor=False))
               break
