@@ -305,12 +305,12 @@
       [
         {
           "static": true,
-          "signature": "unsigned int findSpan(double, unsigned int, std::vector<double> &)",
+          "signature": "unsigned int findSpan(double, unsigned int, const std::vector<double> &)",
           "custom_name": "findSpanFromSpline"
         },
         {
           "static": true,
-          "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, std::vector<double> &, std::vector<vpImagePoint>&)",
+          "signature": "vpImagePoint computeCurvePoint(double, unsigned int, unsigned int, const std::vector<double> &, const std::vector<vpImagePoint>&)",
           "custom_name": "computeCurvePointFromSpline"
         },
         {
@@ -347,349 +347,6 @@
           "static": true,
           "signature": "bool solveQPe(const vpMatrix &, const vpColVector &, vpMatrix, vpColVector, vpColVector &, const double &)",
           "custom_name": "solveQPeStatic"
-        }
-      ]
-    },
-    "vpImageTools": {
-      "methods":
-      [
-        {
-          "static": true,
-          "signature": "void warpImage(const vpImage<Type>&, const vpMatrix&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, bool, bool)",
-          "specializations":
-          [
-            ["unsigned char"],
-            ["vpRGBa"]
-          ]
-        }
-      ]
-    },
-    "vpImageConvert": {
-      "additional_bindings": "bindings_vpImageConvert",
-      "methods":
-      [
-        {
-          "static": true,
-          "signature": "void RGBaToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBaToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV444ToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV444ToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV444ToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUYVToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUYVToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUYVToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV411ToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV411ToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV411ToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV422ToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV422ToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV422ToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV420ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV420ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YUV420ToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YV12ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YV12ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YVU9ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YVU9ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YCbCrToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YCbCrToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YCbCrToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YCrCbToRGB(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void YCrCbToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void HSVToRGB(const double*, const double*, const double*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void HSVToRGB(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void HSVToRGBa(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void HSVToRGBa(const double*, const double*, const double*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void RGBaToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void MONO16ToGrey(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void MONO16ToRGBa(unsigned char*, unsigned char*, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void BGRaToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void BGRToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void BGRToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicBGGRToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicBGGRToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGBRGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGBRGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGRBGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGRBGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicRGGBToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicRGGBToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicBGGRToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicBGGRToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGBRGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGBRGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-
-        },
-        {
-            "static": true,
-            "signature": "void demosaicGRBGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-            "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicGRBGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicRGGBToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
-        },
-        {
-          "static": true,
-          "signature": "void demosaicRGGBToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
-          "ignore": true
         }
       ]
     },
@@ -841,6 +498,22 @@
             false,
             true
           ]
+        }
+      ]
+    },
+    "vpMomentObject": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "void fromVector(std::vector<vpPoint>&)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            true
+          ],
+          "param_is_output": [
+            true
+          ],
+          "comment": "The point list is modified, cannot be consted. So it is taken as input and returned."
         }
       ]
     },
@@ -1102,6 +775,37 @@
           "static": false,
           "signature": "int receive(void*, size_t, int)",
           "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "int receive(std::string&, int)",
+          "use_default_param_policy": false,
+          "param_is_input": [
+            false,
+            true
+          ],
+          "param_is_output": [
+            true,
+            false
+          ]
+        }
+      ]
+    },
+    "vpUDPServer": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "int receive(std::string&, std::string&, int)",
+          "use_default_param_policy": false,
+          "param_is_input": [false, false, true],
+          "param_is_output": [true, true, false]
+        },
+        {
+          "static": false,
+          "signature": "int receive(std::string&, int)",
+          "use_default_param_policy": false,
+          "param_is_input": [false, true],
+          "param_is_output": [true, false]
         }
       ]
     },
@@ -1125,7 +829,7 @@
         },
         {
           "static": false,
-          "signature": "unsigned getValey(std::list<vpHistogramPeak>&)",
+          "signature": "unsigned getValey(std::list<vpHistogramValey>&)",
           "use_default_param_policy": false,
           "param_is_input": [false],
           "param_is_output": [true]

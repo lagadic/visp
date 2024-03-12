@@ -488,7 +488,7 @@ class HeaderFile():
       if len(error_generating_overloads) > 0:
         logging.error(f'Overloads defined for instance and class, this will generate a pybind error')
         logging.error(error_generating_overloads)
-        raise RuntimeError
+        raise RuntimeError('Error generating overloads:\n' + '\n'.join(error_generating_overloads))
 
       field_dict = {}
       for field in cls.fields:
