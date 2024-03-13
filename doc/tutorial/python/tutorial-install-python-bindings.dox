@@ -358,7 +358,7 @@ We strongly recommend using Conda to build ViSP Python bindings. Below are instr
         [no] >>> yes
 
   - **C. On Windows**, you may rather download and execute
-    https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Winwdos-x86_64.exe
+    https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Windows-x86_64.exe
 
     Select default options and accept licence in the wizard.
 
