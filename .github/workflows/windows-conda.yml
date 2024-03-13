@@ -56,7 +56,6 @@ jobs:
           -G "Ninja" ^
           -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% ^
           -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library ^
-          -DPYTHON_SITELIB=%CONDA_PREFIX%\Lib\site-packages ^
           -DVISP_LIB_INSTALL_PATH="lib" ^
           -DVISP_BIN_INSTALL_PATH="bin" ^
           -DVISP_CONFIG_INSTALL_PATH="cmake" ^
