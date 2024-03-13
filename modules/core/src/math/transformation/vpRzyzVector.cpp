@@ -31,8 +31,7 @@
  * Description:
  * Euler angles parameterization for the rotation.
  * Rzyz(phi,theta,psi) = Rot(z,phi)Rot(y,theta)Rot(z,psi)
- *
-*****************************************************************************/
+ */
 
 #include <math.h>
 #include <visp3/core/vpRzyzVector.h>
@@ -154,18 +153,18 @@ vpRzyzVector vpRzyzVector::buildFrom(const std::vector<double> &rzyz)
 
   \param v : Angle value to set for each element of the vector.
 
-\code
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRzyzVector.h>
+  \code
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRzyzVector.h>
 
-int main()
-{
-  vpRzyzVector r;
+  int main()
+  {
+    vpRzyzVector r;
 
-  // Initialise the rotation vector
-  r = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
-}
-\endcode
+    // Initialise the rotation vector
+    r = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+  }
+  \endcode
 */
 vpRzyzVector &vpRzyzVector::operator=(double v)
 {
@@ -193,23 +192,22 @@ void vpRzyzVector::buildFrom(double phi, double theta, double psi)
   Copy operator that initializes a \f$R_{zyz}=(\varphi,\theta,\psi)\f$
   Euler angles vector from a 3-dimension column vector.
 
-  \param rzyz : 3-dimension vector containing the values of the rotation
-vector.
+  \param rzyz : 3-dimension vector containing the values of the rotation vector.
 
-\code
-#include <visp3/core/vpRzyzVector.h>
+  \code
+  #include <visp3/core/vpRzyzVector.h>
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = 0.1;
-  v[1] = 0.2;
-  v[2] = 0.3;
-  vpRzyxVector rzyz;
-  rzyz = v;
-  // rzyz is now equal to v : 0.1, 0.2, 0.3
-}
-\endcode
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = 0.1;
+    v[1] = 0.2;
+    v[2] = 0.3;
+    vpRzyxVector rzyz;
+    rzyz = v;
+    // rzyz is now equal to v : 0.1, 0.2, 0.3
+  }
+  \endcode
 */
 vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
 {
@@ -227,17 +225,17 @@ vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
-#include <visp3/core/vpRzyzVector.cpp>
+  #include <visp3/core/vpRzyzVector.cpp>
 
-int main()
-{
-  vpRzyzVector rzyz = {M_PI, 0, M_PI_2};
-  std::cout << "rzyz: " << rzyz.t() << std::endl;
-}
+  int main()
+  {
+    vpRzyzVector rzyz = {M_PI, 0, M_PI_2};
+    std::cout << "rzyz: " << rzyz.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-rzyz: 3.141592654  0  1.570796327
+  rzyz: 3.141592654  0  1.570796327
   \endcode
   \sa operator<<()
 */

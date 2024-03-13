@@ -176,18 +176,18 @@ vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
 
   \param v : Angle value to set for each element of the vector.
 
-\code
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRzyxVector.h>
+  \code
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRzyxVector.h>
 
-int main()
-{
-  vpRzyxVector v;
+  int main()
+  {
+    vpRzyxVector v;
 
-  // Initialise the rotation vector
-  v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
-}
-\endcode
+    // Initialise the rotation vector
+    v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+  }
+  \endcode
 */
 vpRzyxVector &vpRzyxVector::operator=(double v)
 {
@@ -202,23 +202,22 @@ vpRzyxVector &vpRzyxVector::operator=(double v)
   Copy operator that initializes a \f$R_{zyx}=(\varphi,\theta,\psi)\f$ Euler
   angles vector from a 3-dimension column vector.
 
-  \param rzyx : 3-dimension vector containing the values of the rotation
-vector.
+  \param rzyx : 3-dimension vector containing the values of the rotation vector.
 
-\code
-#include <visp3/core/vpRzyxVector.h>
+  \code
+  #include <visp3/core/vpRzyxVector.h>
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = 0.1;
-  v[1] = 0.2;
-  v[2] = 0.3;
-  vpRzyxVector rzyx;
-  rzyx = v;
-  // rzyx is now equal to v : 0.1, 0.2, 0.3
-}
-\endcode
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = 0.1;
+    v[1] = 0.2;
+    v[2] = 0.3;
+    vpRzyxVector rzyx;
+    rzyx = v;
+    // rzyx is now equal to v : 0.1, 0.2, 0.3
+  }
+  \endcode
 */
 vpRzyxVector &vpRzyxVector::operator=(const vpColVector &rzyx)
 {
@@ -236,17 +235,17 @@ vpRzyxVector &vpRzyxVector::operator=(const vpColVector &rzyx)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
-#include <visp3/core/vpRzyxVector.cpp>
+  #include <visp3/core/vpRzyxVector.cpp>
 
-int main()
-{
-  vpRzyxVector rzyx = {M_PI, 0, M_PI_2};
-  std::cout << "rzyx: " << rzyx.t() << std::endl;
-}
+  int main()
+  {
+    vpRzyxVector rzyx = {M_PI, 0, M_PI_2};
+    std::cout << "rzyx: " << rzyx.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-rzyx: 3.141592654  0  1.570796327
+  zyx: 3.141592654  0  1.570796327
   \endcode
   \sa operator<<()
 */

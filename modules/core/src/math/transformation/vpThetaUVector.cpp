@@ -30,13 +30,11 @@
  *
  * Description:
  * Theta U parameterization for the rotation.
- *
-*****************************************************************************/
+ */
 
 /*!
-\file vpThetaUVector.cpp
-\brief class that consider the case of the Theta U parameterization for the
-rotation
+  \file vpThetaUVector.cpp
+  \brief class that consider the case of the Theta U parameterization for the rotation
 */
 
 #include <cmath>  // std::fabs
@@ -85,17 +83,17 @@ vpThetaUVector::vpThetaUVector(const vpQuaternionVector &q) : vpRotationVector(3
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radians.
   \code
-#include <visp3/core/vpThetaUVector.cpp>
+  #include <visp3/core/vpThetaUVector.cpp>
 
-int main()
-{
-  vpThetaUVector tu(0, M_PI_2, M_PI);
-  std::cout << "tu: " << tu.t() << std::endl;
-}
+  int main()
+  {
+    vpThetaUVector tu(0, M_PI_2, M_PI);
+    std::cout << "tu: " << tu.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-tu: 0  1.570796327  3.141592654
+  tu: 0  1.570796327  3.141592654
   \endcode
 */
 vpThetaUVector::vpThetaUVector(double tux, double tuy, double tuz) : vpRotationVector(3) { buildFrom(tux, tuy, tuz); }
@@ -273,21 +271,20 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
   Initialize each element of the \f$\theta {\bf u}\f$ vector to the
   same angle value \e v.
 
-  \param v : Angle value to set for each element of the \f$\theta {\bf
-  u}\f$ vector.
+  \param v : Angle value to set for each element of the \f$\theta {\bf u}\f$ vector.
 
-\code
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpThetaUVector.h>
+  \code
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpThetaUVector tu;
+  int main()
+  {
+    vpThetaUVector tu;
 
-  // Initialise the theta U rotation vector
-  tu = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
-}
-\endcode
+    // Initialise the theta U rotation vector
+    tu = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+  }
+  \endcode
 */
 vpThetaUVector &vpThetaUVector::operator=(double v)
 {
@@ -300,25 +297,24 @@ vpThetaUVector &vpThetaUVector::operator=(double v)
 /*!
 
   Copy operator that initializes a \f$\theta {\bf u}\f$ vector from a
-3-dimension column vector \e tu.
+  3-dimension column vector \e tu.
 
-  \param tu : 3-dimension vector containing the values of the \f$\theta {\bf
-u}\f$  vector.
+  \param tu : 3-dimension vector containing the values of the \f$\theta {\bf u}\f$  vector.
 
-\code
-#include <visp3/core/vpThetaUVector.h>
+  \code
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = 0.1;
-  v[1] = 0.2;
-  v[2] = 0.3;
-  vpThetaUVector tu;
-  tu = v;
-  // tu is now equal to v : 0.1, 0.2, 0.3
-}
-\endcode
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = 0.1;
+    v[1] = 0.2;
+    v[2] = 0.3;
+    vpThetaUVector tu;
+    tu = v;
+    // tu is now equal to v : 0.1, 0.2, 0.3
+  }
+  \endcode
 */
 vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 {
@@ -344,18 +340,18 @@ vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpThetaUVector.h>
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+  int main()
+  {
+    vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
 
-  double theta;
-  vpColVector u;
-  M.getRotationMatrix().getThetaUVector().extract(theta, u);
-  std::cout << "theta: " << theta << std::endl;
-  std::cout << "u    : " << u.t() << std::endl;
-}
+    double theta;
+    vpColVector u;
+    M.getRotationMatrix().getThetaUVector().extract(theta, u);
+    std::cout << "theta: " << theta << std::endl;
+    std::cout << "u    : " << u.t() << std::endl;
+  }
   \endcode
 
   \sa getTheta(), getU()
@@ -377,21 +373,21 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
 /*!
 
   Get the rotation angle \f$ \theta \f$ from the \f$ \theta {\bf u} \f$
-representation.
+  representation.
 
   \return Rotation angle \f$ \theta \f$ in rad.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpThetaUVector.h>
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
+  int main()
+  {
+    vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), vpMath::rad(30));
 
-  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
-  std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
-}
+    std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
+    std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
+  }
   \endcode
 
   \sa getTheta(), extract()
@@ -401,22 +397,22 @@ double vpThetaUVector::getTheta() const { return sqrt(data[0] * data[0] + data[1
 /*!
 
   Get the unit vector \f$\bf u \f$ from the \f$ \theta {\bf u} \f$
-representation.
+  representation.
 
   \return 3-dim unit vector \f${\bf u} = (u_{x},u_{y},u_{z})^{\top} \f$
   representing the rotation axis.
 
   The following example shows how to use this function:
   \code
-#include <visp3/core/vpThetaUVector.h>
+  #include <visp3/core/vpThetaUVector.h>
 
-int main()
-{
-  vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), pMath::rad(30));
+  int main()
+  {
+    vpHomogeneousMatrix M(0, 0, 1., vpMath::rad(10), vpMath::rad(20), pMath::rad(30));
 
-  std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
-  std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
-}
+    std::cout << "theta: " << M.getRotationMatrix().getThetaUVector().getTheta() << std::endl;
+    std::cout << "u    : " << M.getRotationMatrix().getThetaUVector().getU().t() << std::endl;
+  }
   \endcode
 
   \sa getTheta(), extract()
@@ -471,17 +467,17 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
-#include <visp3/core/vpThetaUVector.cpp>
+  #include <visp3/core/vpThetaUVector.cpp>
 
-int main()
-{
-  vpThetaUVector tu = {M_PI, 0, M_PI_2};
-  std::cout << "tu: " << tu.t() << std::endl;
-}
+  int main()
+  {
+    vpThetaUVector tu = {M_PI, 0, M_PI_2};
+    std::cout << "tu: " << tu.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-tu: 3.141592654  0  1.570796327
+  tu: 3.141592654  0  1.570796327
   \endcode
   \sa operator<<()
 */
