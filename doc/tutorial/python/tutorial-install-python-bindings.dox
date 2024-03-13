@@ -518,7 +518,7 @@ for example `python=3.10` to the previous command lines.
         ... libvisp_core361.dll
         ...
 
-    Now you cab build the bindings
+    Now you can build the bindings
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
 
