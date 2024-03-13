@@ -629,6 +629,23 @@ if(USE_PCL)
 endif()
 
 # ----------------------------------------------------------------------------
+# Handle OpenCV 2.4.8 as minimal version
+# ----------------------------------------------------------------------------
+if(USE_OPENCV)
+  if(OpenCV_VERSION)
+    if(OpenCV_VERSION VERSION_LESS "2.4.8")
+      message(WARNING "OpenCV 3rd party was detected but its version ${OpenCV_VERSION} is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+      unset(USE_OPENCV)
+      set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+    endif()
+  else()
+    message(WARNING "OpenCV 3rd party was detected but its version cannot be found or is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+    unset(USE_OPENCV)
+    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
 # Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
 # ----------------------------------------------------------------------------
 # if c++ standard is not at leat c++17, force 3rd parties that require at least c++17 to OFF
@@ -642,7 +659,7 @@ endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
   if(USE_FTIITSDK)
-    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_OPENCV=OFF.")
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_FTIITSDK=OFF.")
     unset(USE_FTIITSDK)
     set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
   endif()
