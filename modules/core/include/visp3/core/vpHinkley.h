@@ -40,6 +40,7 @@
 */
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
   \class vpHinkley
 
@@ -88,13 +89,14 @@
   N_{k^{'}} = 0 \f$.
 
 */
-class VISP_EXPORT vpHinkley
+class vp_deprecated vpHinkley
 {
 public:
   /*! \enum vpHinkleyJumpType
     Indicates if a jump is detected by the Hinkley test.
   */
-  typedef enum {
+  typedef enum
+  {
     noJump,       /*!< No jump is detected by the Hinkley test. */
     downwardJump, /*!< A downward jump is detected by the Hinkley test. */
     upwardJump    /*!< An upward jump is detected by the Hinkley test. */
@@ -162,5 +164,5 @@ private:
   double Tk;
   double Nk;
 };
-
+#endif
 #endif

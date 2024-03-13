@@ -96,8 +96,8 @@ public:
     // // Center candidates computation attributes
     std::pair<int, int> m_centerXlimits; /*!< Minimum and maximum position on the horizontal axis of the center of the circle we want to detect.*/
     std::pair<int, int> m_centerYlimits; /*!< Minimum and maximum position on the vertical axis of the center of the circle we want to detect.*/
-    unsigned int m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
-    unsigned int m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
+    float m_minRadius; /*!< Minimum radius of the circles we want to detect.*/
+    float m_maxRadius; /*!< Maximum radius of the circles we want to detect.*/
     int m_dilatationKernelSize; /*!< Kernel size of the dilatation that is performed to detect the maximum number of votes for the center candidates.*/
     int m_averagingWindowSize; /*!< Size of the averaging window around the maximum number of votes to compute the
                                     center candidate such as it is the barycenter of the window. Must be odd.*/
@@ -135,8 +135,8 @@ public:
       , m_upperCannyThreshRatio(0.8f)
       , m_centerXlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
       , m_centerYlimits(std::pair<int, int>(std::numeric_limits<int>::min(), std::numeric_limits<int>::max()))
-      , m_minRadius(0)
-      , m_maxRadius(1000)
+      , m_minRadius(0.f)
+      , m_maxRadius(1000.f)
       , m_dilatationKernelSize(3)
       , m_averagingWindowSize(5)
       , m_centerMinThresh(50.f)
@@ -198,8 +198,8 @@ public:
       , const int &edgeMapFilterNbIter
       , const std::pair<int, int> &centerXlimits
       , const std::pair<int, int> &centerYlimits
-      , const unsigned int &minRadius
-      , const unsigned int &maxRadius
+      , const float &minRadius
+      , const float &maxRadius
       , const int &dilatationKernelSize
       , const int &averagingWindowSize
       , const float &centerThresh
@@ -227,8 +227,8 @@ public:
       , m_upperCannyThreshRatio(upperCannyThreshRatio)
       , m_centerXlimits(centerXlimits)
       , m_centerYlimits(centerYlimits)
-      , m_minRadius(std::min<unsigned int>(minRadius, maxRadius))
-      , m_maxRadius(std::max<unsigned int>(minRadius, maxRadius))
+      , m_minRadius(std::min<float>(minRadius, maxRadius))
+      , m_maxRadius(std::max<float>(minRadius, maxRadius))
       , m_dilatationKernelSize(dilatationKernelSize)
       , m_averagingWindowSize(averagingWindowSize)
       , m_centerMinThresh(centerThresh)
@@ -573,9 +573,9 @@ public:
 
       params.m_centerXlimits = j.value("centerXlimits", params.m_centerXlimits);
       params.m_centerYlimits = j.value("centerYlimits", params.m_centerYlimits);
-      std::pair<unsigned int, unsigned int> radiusLimits = j.value("radiusLimits", std::pair<unsigned int, unsigned int>(params.m_minRadius, params.m_maxRadius));
-      params.m_minRadius = std::min<unsigned int>(radiusLimits.first, radiusLimits.second);
-      params.m_maxRadius = std::max<unsigned int>(radiusLimits.first, radiusLimits.second);
+      std::pair<float, float> radiusLimits = j.value("radiusLimits", std::pair<float, float>(params.m_minRadius, params.m_maxRadius));
+      params.m_minRadius = std::min<float>(radiusLimits.first, radiusLimits.second);
+      params.m_maxRadius = std::max<float>(radiusLimits.first, radiusLimits.second);
 
       params.m_dilatationKernelSize = j.value("dilatationKernelSize", params.m_dilatationKernelSize);
       params.m_averagingWindowSize = j.value("averagingWindowSize", params.m_averagingWindowSize);
@@ -621,7 +621,7 @@ public:
      */
     inline friend void to_json(json &j, const vpCircleHoughTransformParameters &params)
     {
-      std::pair<unsigned int, unsigned int> radiusLimits = { params.m_minRadius, params.m_maxRadius };
+      std::pair<float, float> radiusLimits = { params.m_minRadius, params.m_maxRadius };
 
       j = json {
           {"filteringAndGradientType", vpImageFilter::vpCannyFilteringAndGradientTypeToString(params.m_filteringAndGradientType)},
