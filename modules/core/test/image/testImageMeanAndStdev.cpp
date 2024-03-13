@@ -76,6 +76,7 @@ int main(const int argc, const char *argv[])
   double sum_rgba_ref = 0.;
   double sum_rgbf_ref = 0.;
   unsigned int count_ref = 0;
+  // Initialization of the images
   for (unsigned int r = 0; r < nbRows; ++r) {
     for (unsigned int c = 0; c < nbCols; ++c) {
       unsigned int val = r * nbCols + c;
@@ -93,22 +94,42 @@ int main(const int argc, const char *argv[])
       ++count_ref;
     }
   }
+
+  // Computation of the means
   double mean_uchar_ref = sum_uchar_ref / static_cast<double>(count_ref);
   double mean_rgba_ref = sum_rgba_ref / static_cast<double>(count_ref);
   double mean_rgbf_ref = sum_rgbf_ref / static_cast<double>(count_ref);
+
+  // Computation of the standard deviations
+  double stdev_uchar_ref = 0.;
+  double stdev_rgba_ref = 0.;
+  double stdev_rgbf_ref = 0.;
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      stdev_uchar_ref += std::pow(static_cast<double>(I_uchar_ref[r][c]) - mean_uchar_ref, 2);
+      stdev_rgba_ref += std::pow(static_cast<double>(I_rgba_ref[r][c].R) + static_cast<double>(I_rgba_ref[r][c].G) + static_cast<double>(I_rgba_ref[r][c].B) - mean_rgba_ref, 2);
+      stdev_rgbf_ref += std::pow(static_cast<double>(I_rgbf_ref[r][c].R) + static_cast<double>(I_rgbf_ref[r][c].G) + static_cast<double>(I_rgbf_ref[r][c].B) - mean_rgbf_ref, 2);
+    }
+  }
+  stdev_uchar_ref = std::sqrt((1./static_cast<double>(nbRows * nbCols))* stdev_uchar_ref);
+  stdev_rgba_ref = std::sqrt((1./static_cast<double>(nbRows * nbCols))* stdev_rgba_ref);
+  stdev_rgbf_ref = std::sqrt((1./static_cast<double>(nbRows * nbCols))* stdev_rgbf_ref);
   if (opt_verbose) {
     std::cout << "----- Input data-----" << std::endl;
     std::cout << "I_uchar_ref = \n" << I_uchar_ref << std::endl;
-    std::cout << "mean_uchar_ref(I_uchar_ref) = " << mean_uchar_ref << std::endl;
     std::cout << "sum_uchar_ref(I_uchar_ref) = " << sum_uchar_ref << std::endl;
+    std::cout << "mean_uchar_ref(I_uchar_ref) = " << mean_uchar_ref << std::endl;
+    std::cout << "stdev_uchar_ref(I_uchar_ref) = " << stdev_uchar_ref << std::endl;
     std::cout << std::endl;
     std::cout << "I_rgba_ref = \n" << I_rgba_ref << std::endl;
-    std::cout << "mean_rgba_ref(I_uchar_ref) = " << mean_rgba_ref << std::endl;
     std::cout << "sum_rgba_ref(I_uchar_ref) = " << sum_rgba_ref << std::endl;
+    std::cout << "mean_rgba_ref(I_rgba_ref) = " << mean_rgba_ref << std::endl;
+    std::cout << "stdev_rgba_ref(I_rgba_ref) = " << stdev_rgba_ref << std::endl;
     std::cout << std::endl;
     std::cout << "I_rgbf_ref = \n" << I_rgbf_ref << std::endl;
-    std::cout << "mean_rgbf_ref(I_uchar_ref) = " << mean_rgbf_ref << std::endl;
-    std::cout << "sum_rgbf_ref(I_uchar_ref) = " << sum_rgbf_ref << std::endl;
+    std::cout << "sum_rgbf_ref(I_rgbf_ref) = " << sum_rgbf_ref << std::endl;
+    std::cout << "mean_rgbf_ref(I_rgbf_ref) = " << mean_rgbf_ref << std::endl;
+    std::cout << "stdev_rgbf_ref(I_rgbf_ref) = " << stdev_rgbf_ref << std::endl;
     std::cout << std::endl;
   }
 
@@ -131,9 +152,28 @@ int main(const int argc, const char *argv[])
       }
     }
   }
+  // Computation of the means when a boolean mask is used
   double mean_uchar_true = sum_uchar_true / static_cast<double>(count_true);
   double mean_rgba_true = sum_rgba_true / static_cast<double>(count_true);
   double mean_rgbf_true = sum_rgbf_true / static_cast<double>(count_true);
+  // Computation of the standard deviations when a boolean mask is used
+  double stdev_uchar_true = 0.;
+  double stdev_rgba_true = 0.;
+  double stdev_rgbf_true = 0.;
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      if (I_mask[r][c]) {
+        stdev_uchar_true += (static_cast<double>(I_uchar_ref[r][c]) - mean_uchar_true) * (static_cast<double>(I_uchar_ref[r][c]) - mean_uchar_true);
+        double val_rgba = static_cast<double>(I_rgba_ref[r][c].R) + static_cast<double>(I_rgba_ref[r][c].G) + static_cast<double>(I_rgba_ref[r][c].B);
+        stdev_rgba_true += (val_rgba - mean_rgba_true) * (val_rgba - mean_rgba_true);
+        double val_rgbf = static_cast<double>(I_rgbf_ref[r][c].R) + static_cast<double>(I_rgbf_ref[r][c].G) + static_cast<double>(I_rgbf_ref[r][c].B);
+        stdev_rgbf_true += (val_rgbf - mean_rgbf_true) * (val_rgbf - mean_rgbf_true);
+      }
+    }
+  }
+  stdev_uchar_true = std::sqrt((1./static_cast<double>(count_true)) * stdev_uchar_true);
+  stdev_rgba_true = std::sqrt((1./static_cast<double>(count_true)) * stdev_rgba_true);
+  stdev_rgbf_true = std::sqrt((1./static_cast<double>(count_true)) * stdev_rgbf_true);
   if (opt_verbose) {
     std::cout << "I_mask = \n";
     for (unsigned int r = 0; r < nbRows; ++r) {
@@ -146,10 +186,13 @@ int main(const int argc, const char *argv[])
     std::cout << "nb_true(I_uchar_ref, I_mask) = " << count_true << std::endl;
     std::cout << "sum_uchar_true(I_uchar_ref, I_mask) = " << sum_uchar_true << std::endl;
     std::cout << "mean_uchar_true(I_uchar_ref, I_mask) = " << mean_uchar_true << std::endl;
+    std::cout << "stdev_uchar_true(I_uchar_ref, I_mask) = " << stdev_uchar_true << std::endl;
     std::cout << "sum_rgba_true(I_rgba_ref, I_mask) = " << sum_rgba_true << std::endl;
     std::cout << "mean_rgba_true(I_rgba_ref, I_mask) = " << mean_rgba_true << std::endl;
+    std::cout << "stdev_rgba_true(I_rgba_ref, I_mask) = " << stdev_rgba_true << std::endl;
     std::cout << "sum_rgbf_true(I_rgbf_ref, I_mask) = " << sum_rgbf_true << std::endl;
     std::cout << "mean_rgbf_true(I_rgbf_ref, I_mask) = " << mean_rgbf_true << std::endl;
+    std::cout << "stdev_rgbf_true(I_rgbf_ref, I_mask) = " << stdev_rgbf_true << std::endl;
     std::cout << std::endl;
   }
 
@@ -403,6 +446,201 @@ int main(const int argc, const char *argv[])
       if (!success) {
         std::cout << "Theoretical count = " << count_true << " | returned value = " << nbValidPoints << std::endl;
         std::cout << "Theoretical mean = " << mean_rgbf_true << " | returned value = " << mean << std::endl;
+      }
+    }
+  }
+
+  // Tests on the stdev
+  {
+    if (opt_verbose) {
+      std::cout << "Tests on the stdev" << std::endl;
+    }
+    std::string nameTest("vpImage<uchar>::getStdev()");
+    double stdev = I_uchar_ref.getStdev();
+    bool success = vpMath::equal(stdev, stdev_uchar_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_uchar_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<uchar>::getStdev(const vpImage<bool> *)");
+    stdev = I_uchar_ref.getStdev(&I_mask);
+    success = vpMath::equal(stdev, stdev_uchar_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_uchar_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<uchar>::getStdev(const double &)");
+    double mean = I_uchar_ref.getMeanValue();
+    stdev = I_uchar_ref.getStdev(mean);
+    success = vpMath::equal(stdev, stdev_uchar_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_uchar_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<uchar>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    unsigned int nbValidPoints = 0;
+    mean = I_uchar_ref.getMeanValue(&I_mask, nbValidPoints);
+    stdev = I_uchar_ref.getStdev(mean, nbValidPoints, &I_mask);
+    success = vpMath::equal(stdev, stdev_uchar_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_uchar_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = "vpImage<vpRGBa>::getStdev()";
+    stdev = I_rgba_ref.getStdev();
+    success = vpMath::equal(stdev, stdev_rgba_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgba_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBa>::getStdev(const vpImage<bool> *)");
+    stdev = I_rgba_ref.getStdev(&I_mask);
+    success = vpMath::equal(stdev, stdev_rgba_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgba_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBa>::getStdev(const double &)");
+    mean = I_rgba_ref.getMeanValue();
+    stdev = I_rgba_ref.getStdev(mean);
+    success = vpMath::equal(stdev, stdev_rgba_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgba_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    nbValidPoints = 0;
+    mean = I_rgba_ref.getMeanValue(&I_mask, nbValidPoints);
+    stdev = I_rgba_ref.getStdev(mean, nbValidPoints, &I_mask);
+    success = vpMath::equal(stdev, stdev_rgba_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgba_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = "vpImage<vpRGBf>::getStdev()";
+    stdev = I_rgbf_ref.getStdev();
+    success = vpMath::equal(stdev, stdev_rgbf_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgbf_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getStdev(const vpImage<bool> *)");
+    stdev = I_rgbf_ref.getStdev(&I_mask);
+    success = vpMath::equal(stdev, stdev_rgbf_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgbf_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getStdev(const double &)");
+    mean = I_rgbf_ref.getMeanValue();
+    stdev = I_rgbf_ref.getStdev(mean);
+    success = vpMath::equal(stdev, stdev_rgbf_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgbf_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    nbValidPoints = 0;
+    mean = I_rgbf_ref.getMeanValue(&I_mask, nbValidPoints);
+    stdev = I_rgbf_ref.getStdev(mean, nbValidPoints, &I_mask);
+    success = vpMath::equal(stdev, stdev_rgbf_true);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgbf_true << " | returned value = " << stdev << std::endl;
       }
     }
   }

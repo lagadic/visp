@@ -1082,7 +1082,7 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
     res += (val - mean) * (val - mean);
   }
   res /= static_cast<double>(size);
-  return res;
+  return std::sqrt(res);
 }
 
 /*
@@ -1119,7 +1119,7 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const un
     }
   }
   sum /= static_cast<double>(nbValidPoints);
-  return sum;
+  return std::sqrt(sum);
 }
 
 /*
@@ -1151,7 +1151,7 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
     res += (val - mean) * (val - mean);
   }
   res /= static_cast<double>(size);
-  return res;
+  return std::sqrt(res);
 }
 
 /*
@@ -1191,7 +1191,7 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const un
     }
   }
   sum /= static_cast<double>(nbValidPoints);
-  return sum;
+  return std::sqrt(sum);
 }
 
 /*!
