@@ -778,7 +778,7 @@ void vpDisplayOpenCV::displayImageROI(const vpImage<unsigned char> &I, const vpI
 
   \warning Display has to be initialized.
 
-  \warning suppres the overlay drawing
+  \warning suppress the overlay drawing
 
   \param I : Image to display.
 
@@ -1142,7 +1142,7 @@ void vpDisplayOpenCV::displayText(const vpImagePoint &ip, const std::string &tex
   if (m_displayHasBeenInitialized) {
     if (color.id < vpColor::id_unknown) {
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      cvPutText(m_background, text,
+      cvPutText(m_background, text.c_str(),
                 cvPoint(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale + fontHeight)), font,
                 col[color.id]);
 #else
@@ -1154,7 +1154,7 @@ void vpDisplayOpenCV::displayText(const vpImagePoint &ip, const std::string &tex
     else {
       cvcolor = CV_RGB(color.R, color.G, color.B);
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      cvPutText(m_background, text,
+      cvPutText(m_background, text.c_str(),
                 cvPoint(vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale + fontHeight)), font,
                 cvcolor);
 #else
@@ -1209,11 +1209,10 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center, unsigned int rad
 #else
       int filled = CV_FILLED;
 #endif
-      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      overlay([x, y, r, cv_color, filled](cv::Mat image) { cvCircle(image, cvPoint(x, y), r, cv_color, filled); },
-              opacity);
+      cvCircle(m_background, cvPoint(x, y), r, cv_color, filled);
 #else
+      double opacity = static_cast<double>(color.A) / 255.0;
       overlay([x, y, r, cv_color, filled](cv::Mat image) { cv::circle(image, cv::Point(x, y), r, cv_color, filled); },
               opacity);
 #endif
@@ -1426,15 +1425,12 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
 #else
       int filled = CV_FILLED;
 #endif
-      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      overlay([left, top, right, bottom, cv_color, filled](
-        cv::Mat image) { cvRectangle(image, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled); },
-              opacity);
+      cvRectangle(m_background, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled);
 #else
-      overlay(
-          [left, top, right, bottom, cv_color, filled](cv::Mat image) {
-            cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
+      double opacity = static_cast<double>(color.A) / 255.0;
+      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
+        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
           },
           opacity);
 #endif
@@ -1488,15 +1484,12 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
 #else
       int filled = CV_FILLED;
 #endif
-      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      overlay([left, top, right, bottom, cv_color, filled](
-        cv::Mat image) { cvRectangle(image, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled); },
-              opacity);
+      cvRectangle(m_background, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled);
 #else
-      overlay(
-          [left, top, right, bottom, cv_color, filled](cv::Mat image) {
-            cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
+      double opacity = static_cast<double>(color.A) / 255.0;
+      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
+        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
           },
           opacity);
 #endif
@@ -1549,15 +1542,12 @@ void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &c
 #else
       int filled = CV_FILLED;
 #endif
-      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-      overlay([left, top, right, bottom, cv_color, filled](
-        cv::Mat image) { cvRectangle(image, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled); },
-              opacity);
+      cvRectangle(m_background, cvPoint(left, top), cvPoint(right, bottom), cv_color, filled);
 #else
-      overlay(
-          [left, top, right, bottom, cv_color, filled](cv::Mat image) {
-            cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
+      double opacity = static_cast<double>(color.A) / 255.0;
+      overlay([left, top, right, bottom, cv_color, filled](cv::Mat image) {
+        cv::rectangle(image, cv::Point(left, top), cv::Point(right, bottom), cv_color, filled);
           },
           opacity);
 #endif
@@ -2147,6 +2137,7 @@ unsigned int vpDisplayOpenCV::getScreenHeight()
   return height;
 }
 
+#if VISP_HAVE_OPENCV_VERSION >= 0x020408
 /*!
  * Initialize display overlay layer for transparency.
  * \param overlay_function : Overlay function
@@ -2161,7 +2152,7 @@ void vpDisplayOpenCV::overlay(std::function<void(cv::Mat &)> overlay_function, d
     overlay = m_background.clone();
   }
   else {
- // Shallow copy
+    // Shallow copy
     overlay = m_background;
   }
 
@@ -2172,6 +2163,7 @@ void vpDisplayOpenCV::overlay(std::function<void(cv::Mat &)> overlay_function, d
     cv::addWeighted(overlay, opacity, m_background, 1.0 - opacity, 0.0, m_background);
   }
 }
+#endif
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_core.a(vpDisplayOpenCV.cpp.o) has no symbols

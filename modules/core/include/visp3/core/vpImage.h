@@ -845,7 +845,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
 {
   resize(I.getHeight(), I.getWidth());
   if (bitmap) {
-    memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
+    memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
   }
 }
 

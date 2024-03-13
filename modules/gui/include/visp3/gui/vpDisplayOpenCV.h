@@ -135,11 +135,18 @@
 class VISP_EXPORT vpDisplayOpenCV : public vpDisplay
 {
 private:
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  IplImage *m_background;
+  CvScalar *col;
+  CvScalar cvcolor;
+  CvFont *font;
+#else
   cv::Mat m_background;
   cv::Scalar *col;
   cv::Scalar cvcolor;
   int font;
   float fontScale;
+#endif
   static std::vector<std::string> m_listTitles;
   static unsigned int m_nbWindows;
   int fontHeight;
