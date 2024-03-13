@@ -106,22 +106,17 @@ int main(int argc, char **argv)
 
   // make sure Cx <= d has a solution within Ax = b
 
-  std::cout << "DEBUG 1 before solveBySVD()" << std::endl;
   vpColVector x = A.solveBySVD(b);
-  std::cout << "DEBUG 1 after solveBySVD()" << std::endl;
   d = C * x;
   for (int i = 0; i < p; ++i)
     d[i] += (5. * rand()) / RAND_MAX;
 
   // solver with stored equality and warm start
   vpQuadProg qp_WS;
-  std::cout << "DEBUG 2 before setEqualityConstraint()" << std::endl;
   qp_WS.setEqualityConstraint(A, b);
-  std::cout << "DEBUG 2 after setEqualityConstraint()" << std::endl;
 
   vpQuadProg qp_ineq_WS;
   qp_ineq_WS.setEqualityConstraint(A, b);
-  std::cout << "DEBUG 3 after setEqualityConstraint()" << std::endl;
 
   // timing
   int total = 100;
@@ -146,9 +141,7 @@ int main(int argc, char **argv)
     // without warm start
     x = 0;
     double t = vpTime::measureTimeMs();
-    std::cout << "DEBUG 4 before solveQPe()" << std::endl;
     vpQuadProg::solveQPe(Q, r, A, b, x);
-    std::cout << "DEBUG 4 after solveQPe()" << std::endl;
 
     t_noWS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
@@ -159,9 +152,7 @@ int main(int argc, char **argv)
     // with pre-solved Ax = b
     x = 0;
     t = vpTime::measureTimeMs();
-    std::cout << "DEBUG 5 before solveQPe()" << std::endl;
     qp_WS.solveQPe(Q, r, x);
-    std::cout << "DEBUG 5 after solveQPe()" << std::endl;
 
     t_WS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
@@ -174,9 +165,7 @@ int main(int argc, char **argv)
     x = 0;
     vpQuadProg qp;
     t = vpTime::measureTimeMs();
-    std::cout << "DEBUG 6 before solveQP()" << std::endl;
     qp.solveQP(Q, r, A, b, C, d, x);
-    std::cout << "DEBUG 6 after solveQP()" << std::endl;
 
     t_ineq_noWS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
@@ -187,9 +176,7 @@ int main(int argc, char **argv)
     // with warm start + pre-solving
     x = 0;
     t = vpTime::measureTimeMs();
-    std::cout << "DEBUG 7 before solveQPi()" << std::endl;
     qp_ineq_WS.solveQPi(Q, r, C, d, x, true);
-    std::cout << "DEBUG 7 after solveQPi()" << std::endl;
 
     t_ineq_WS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
