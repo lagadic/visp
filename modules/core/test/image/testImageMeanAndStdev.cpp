@@ -240,6 +240,22 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = ("vpImage<uchar>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
+    sum = I_uchar_ref.getSum(nullptr, nbValidPoints);
+    success = vpMath::equal(sum, sum_uchar_ref) && (nbValidPoints == (nbCols * nbRows));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbCols * nbRows << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical sum = " << sum_uchar_ref << " | returned value = " << sum << std::endl;
+      }
+    }
+
     nameTest = ("vpImage<vpRGBa>::getSum()");
     sum = I_rgba_ref.getSum();
     success = vpMath::equal(sum, sum_rgba_ref);
@@ -271,6 +287,22 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = ("vpImage<vpRGBa>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
+    sum = I_rgba_ref.getSum(nullptr, nbValidPoints);
+    success = vpMath::equal(sum, sum_rgba_ref) && (nbValidPoints == (nbCols * nbRows));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbCols * nbRows << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical sum = " << sum_rgba_ref << " | returned value = " << sum << std::endl;
+      }
+    }
+
     nameTest = ("vpImage<vpRGBf>::getSum()");
     sum = I_rgbf_ref.getSum();
     success = vpMath::equal(sum, sum_rgbf_ref);
@@ -299,6 +331,22 @@ int main(const int argc, const char *argv[])
       if (!success) {
         std::cout << "Theoretical count = " << count_true << " | returned value = " << nbValidPoints << std::endl;
         std::cout << "Theoretical sum = " << sum_rgbf_true << " | returned value = " << sum << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
+    sum = I_rgbf_ref.getSum(nullptr, nbValidPoints);
+    success = vpMath::equal(sum, sum_rgbf_ref) && (nbValidPoints == (nbCols * nbRows));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbCols * nbRows << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical sum = " << sum_rgbf_ref << " | returned value = " << sum << std::endl;
       }
     }
   }
@@ -338,6 +386,21 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>* = nullptr)";
+    mean = I_uchar_ref.getMeanValue(nullptr);
+    success = vpMath::equal(mean, mean_uchar_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical mean = " << mean_uchar_ref << " | returned value = " << mean << std::endl;
+      }
+    }
+
     unsigned int nbValidPoints = 0;
     nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>*, unsigned int &)";
     mean = I_uchar_ref.getMeanValue(&I_mask, nbValidPoints);
@@ -352,6 +415,23 @@ int main(const int argc, const char *argv[])
       if (!success) {
         std::cout << "Theoretical count = " << count_true << " | returned value = " << nbValidPoints << std::endl;
         std::cout << "Theoretical mean = " << mean_uchar_true << " | returned value = " << mean << std::endl;
+      }
+    }
+
+    nbValidPoints = 0;
+    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
+    mean = I_uchar_ref.getMeanValue(nullptr, nbValidPoints);
+    success = vpMath::equal(mean, mean_uchar_ref) && (nbValidPoints == (nbCols * nbRows));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbCols * nbRows << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical mean = " << mean_uchar_ref << " | returned value = " << mean << std::endl;
       }
     }
 
@@ -385,6 +465,21 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>* = nullptr)";
+    mean = I_rgba_ref.getMeanValue(nullptr);
+    success = vpMath::equal(mean, mean_rgba_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical mean = " << mean_rgba_ref << " | returned value = " << mean << std::endl;
+      }
+    }
+
     nbValidPoints = 0;
     nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>*, unsigned int &)";
     mean = I_rgba_ref.getMeanValue(&I_mask, nbValidPoints);
@@ -399,6 +494,23 @@ int main(const int argc, const char *argv[])
       if (!success) {
         std::cout << "Theoretical count = " << count_true << " | returned value = " << nbValidPoints << std::endl;
         std::cout << "Theoretical mean = " << mean_rgba_true << " | returned value = " << mean << std::endl;
+      }
+    }
+
+    nbValidPoints = 0;
+    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
+    mean = I_rgba_ref.getMeanValue(nullptr, nbValidPoints);
+    success = vpMath::equal(mean, mean_rgba_ref) && (nbValidPoints == (nbRows * nbCols));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbRows * nbCols << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical mean = " << mean_rgba_ref << " | returned value = " << mean << std::endl;
       }
     }
 
@@ -432,6 +544,21 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>* = nullptr)";
+    mean = I_rgbf_ref.getMeanValue(nullptr);
+    success = vpMath::equal(mean, mean_rgbf_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical mean = " << mean_rgbf_ref << " | returned value = " << mean << std::endl;
+      }
+    }
+
     nbValidPoints = 0;
     nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>*, unsigned int &)";
     mean = I_rgbf_ref.getMeanValue(&I_mask, nbValidPoints);
@@ -446,6 +573,23 @@ int main(const int argc, const char *argv[])
       if (!success) {
         std::cout << "Theoretical count = " << count_true << " | returned value = " << nbValidPoints << std::endl;
         std::cout << "Theoretical mean = " << mean_rgbf_true << " | returned value = " << mean << std::endl;
+      }
+    }
+
+    nbValidPoints = 0;
+    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
+    mean = I_rgbf_ref.getMeanValue(nullptr, nbValidPoints);
+    success = vpMath::equal(mean, mean_rgbf_ref) && (nbValidPoints == (nbRows * nbCols));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbRows * nbCols << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical mean = " << mean_rgbf_ref << " | returned value = " << mean << std::endl;
       }
     }
   }
@@ -485,6 +629,21 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = ("vpImage<uchar>::getStdev(const vpImage<bool> * = nullptr)");
+    stdev = I_uchar_ref.getStdev(nullptr);
+    success = vpMath::equal(stdev, stdev_uchar_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_uchar_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
     nameTest = ("vpImage<uchar>::getStdev(const double &)");
     double mean = I_uchar_ref.getMeanValue();
     stdev = I_uchar_ref.getStdev(mean);
@@ -518,6 +677,24 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = ("vpImage<uchar>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nbValidPoints = 0;
+    mean = I_uchar_ref.getMeanValue(nullptr, nbValidPoints);
+    stdev = I_uchar_ref.getStdev(mean, nbValidPoints, nullptr);
+    success = vpMath::equal(stdev, stdev_uchar_ref) && (nbValidPoints == (nbRows * nbCols));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbRows * nbCols << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical stdev = " << stdev_uchar_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
     nameTest = "vpImage<vpRGBa>::getStdev()";
     stdev = I_rgba_ref.getStdev();
     success = vpMath::equal(stdev, stdev_rgba_ref);
@@ -545,6 +722,21 @@ int main(const int argc, const char *argv[])
       std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
       if (!success) {
         std::cout << "Theoretical stdev = " << stdev_rgba_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBa>::getStdev(const vpImage<bool> * = nullptr)");
+    stdev = I_rgba_ref.getStdev(nullptr);
+    success = vpMath::equal(stdev, stdev_rgba_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgba_ref << " | returned value = " << stdev << std::endl;
       }
     }
 
@@ -581,6 +773,24 @@ int main(const int argc, const char *argv[])
       }
     }
 
+    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nbValidPoints = 0;
+    mean = I_rgba_ref.getMeanValue(nullptr, nbValidPoints);
+    stdev = I_rgba_ref.getStdev(mean, nbValidPoints, nullptr);
+    success = vpMath::equal(stdev, stdev_rgba_ref) && (nbValidPoints == (nbRows * nbCols));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbRows * nbCols << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical stdev = " << stdev_rgba_ref << " | returned value = " << stdev << std::endl;
+      }
+    }
+
     nameTest = "vpImage<vpRGBf>::getStdev()";
     stdev = I_rgbf_ref.getStdev();
     success = vpMath::equal(stdev, stdev_rgbf_ref);
@@ -608,6 +818,21 @@ int main(const int argc, const char *argv[])
       std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
       if (!success) {
         std::cout << "Theoretical stdev = " << stdev_rgbf_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getStdev(const vpImage<bool> * = nullptr)");
+    stdev = I_rgbf_ref.getStdev(nullptr);
+    success = vpMath::equal(stdev, stdev_rgbf_ref);
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical stdev = " << stdev_rgbf_ref << " | returned value = " << stdev << std::endl;
       }
     }
 
@@ -641,6 +866,24 @@ int main(const int argc, const char *argv[])
       std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
       if (!success) {
         std::cout << "Theoretical stdev = " << stdev_rgbf_true << " | returned value = " << stdev << std::endl;
+      }
+    }
+
+    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nbValidPoints = 0;
+    mean = I_rgbf_ref.getMeanValue(nullptr, nbValidPoints);
+    stdev = I_rgbf_ref.getStdev(mean, nbValidPoints, nullptr);
+    success = vpMath::equal(stdev, stdev_rgbf_ref) && (nbValidPoints == (nbRows * nbCols));
+    if (!success) {
+      ++nbFailedTests;
+      failedTestsNames.push_back(nameTest);
+      areTestOK = false;
+    }
+    if (opt_verbose) {
+      std::cout << "\tTest " << nameTest << ": " << (success ? "OK" : "failure") << std::endl;
+      if (!success) {
+        std::cout << "Theoretical count = " << nbRows * nbCols << " | returned value = " << nbValidPoints << std::endl;
+        std::cout << "Theoretical stdev = " << stdev_rgbf_ref << " | returned value = " << stdev << std::endl;
       }
     }
   }
