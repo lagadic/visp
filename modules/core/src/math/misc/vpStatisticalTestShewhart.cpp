@@ -43,6 +43,7 @@
 
 #include <visp3/core/vpMath.h>
 
+const int vpStatisticalTestShewhart::NB_DATA_SIGNAL;
 const bool vpStatisticalTestShewhart::CONST_ALL_WECO_ACTIVATED[vpStatisticalTestShewhart::COUNT_WECO - 1] = { true, true, true, true };
 
 std::string vpStatisticalTestShewhart::vpWecoRulesAlarmToString(const vpStatisticalTestShewhart::vpWecoRulesAlarm &alarm)
