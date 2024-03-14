@@ -24,13 +24,14 @@ def get_dll_paths():
     ]
     # If we have a different setup, the user should specify their own paths
     visp_user_defined_dll_paths = os.getenv("VISP_WINDOWS_DLL_PATH")
-    if visp_user_defined_dll_paths is None:
-        return [
-            os.path.join(os.path.dirname(__file__), dll_path) for dll_path in DEFAULT_DLL_PATHS
-        ]
-    else:
-        return visp_user_defined_dll_paths.split(os.pathsep)
+    dll_paths = [
+      os.path.join(os.path.dirname(__file__), dll_path) for dll_path in DEFAULT_DLL_PATHS
+    ]
 
+    if visp_user_defined_dll_paths is not None:
+      dll_paths.extend(visp_user_defined_dll_paths.split(os.pathsep))
+
+    return dll_paths
 
 class PathManager(contextlib.AbstractContextManager):
     """Restore PATH state after importing Python module"""
