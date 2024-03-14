@@ -832,20 +832,15 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   std::string _dirname = path(dirname);
 
   if (VP_STAT(_dirname.c_str(), &stbuf) != 0) {
-    std::cout << "DEBUG 1 _dirname: " << _dirname << " is not a dir" << std::endl;
     // Test adding the separator if not already present
     if (_dirname.at(_dirname.size() - 1) != separator) {
-      std::cout << "DEBUG 2 test if _dirname + separator: " << _dirname + separator << " is a dir ?" << std::endl;
       if (VP_STAT((_dirname + separator).c_str(), &stbuf) != 0) {
-        std::cout << "DEBUG 2 _dirname + separator: " << _dirname + separator << " is not a dir" << std::endl;
         return false;
       }
     }
     // Test removing the separator if already present
     if (_dirname.at(_dirname.size() - 1) == separator) {
-      std::cout << "DEBUG 2 test if _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is a dir ?" << std::endl;
       if (VP_STAT((_dirname.substr(0, _dirname.size() - 1)).c_str(), &stbuf) != 0) {
-        std::cout << "DEBUG 3 _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is not a dir" << std::endl;
         return false;
       }
     }
@@ -2071,16 +2066,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2092,16 +2087,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

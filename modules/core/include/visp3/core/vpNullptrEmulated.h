@@ -33,7 +33,9 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus == 199711L)
+// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+// and not __cplusplus == 199711L
+#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus <= 199711L)
 
 // Inspired from this thread https://stackoverflow.com/questions/24433436/compile-error-nullptr-undeclared-identifier
 // Does the emulation of nullptr when not available with cxx98

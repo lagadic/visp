@@ -683,6 +683,23 @@ if(USE_PCL)
 endif()
 
 # ----------------------------------------------------------------------------
+# Handle OpenCV 2.4.8 as minimal version
+# ----------------------------------------------------------------------------
+if(USE_OPENCV)
+  if(OpenCV_VERSION)
+    if(OpenCV_VERSION VERSION_LESS "2.4.8")
+      message(WARNING "OpenCV 3rd party was detected but its version ${OpenCV_VERSION} is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+      unset(USE_OPENCV)
+      set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+    endif()
+  else()
+    message(WARNING "OpenCV 3rd party was detected but its version cannot be found or is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+    unset(USE_OPENCV)
+    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
 # Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
 # ----------------------------------------------------------------------------
 # if c++ standard is not at leat c++17, force 3rd parties that require at least c++17 to OFF
@@ -696,7 +713,7 @@ endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
   if(USE_FTIITSDK)
-    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_OPENCV=OFF.")
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_FTIITSDK=OFF.")
     unset(USE_FTIITSDK)
     set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
   endif()
@@ -748,13 +765,14 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     message(WARNING "std::thread was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable std::thread usage turning USE_THREADS=OFF.")
     unset(USE_THREADS)
     set(USE_THREADS OFF CACHE BOOL "Include std::thread support" FORCE)
-  elseif(UNIX)
-    # Apriltag on unix needs pthread. On windows we are using pthread built-in
-    if(Threads_FOUND)
-      set(USE_PTHREAD ON) # for AprilTag only
-    endif()
   endif()
 endif()
+
+if(UNIX AND Threads_FOUND)
+  # Apriltag on unix needs native pthread. On windows we are using pthread built-in
+  set(USE_PTHREAD ON) # for AprilTag only
+endif()
+
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
@@ -1795,7 +1813,7 @@ status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
-status("    Use pthread:"            USE_PHREADS        THEN "yes" ELSE "no")
+status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
 status("")

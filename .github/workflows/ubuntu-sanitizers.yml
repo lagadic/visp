@@ -82,4 +82,4 @@ jobs:
         # SUMMARY: AddressSanitizer: odr-violation: global 'ALIGNMENT' at /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
         ASAN_OPTIONS: detect_odr_violation=0
       working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
+      run: ctest -j$(nproc) --output-on-failure -V

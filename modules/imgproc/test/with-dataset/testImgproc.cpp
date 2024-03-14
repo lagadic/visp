@@ -273,7 +273,7 @@ int main(int argc, const char **argv)
 
     // Gamma correction
     vpImage<vpRGBa> I_color_gamma_correction;
-    double gamma = 2.2;
+    float gamma = 2.2f;
     t = vpTime::measureTimeMs();
     vp::gammaCorrection(I_color, I_color_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
@@ -376,7 +376,7 @@ int main(int argc, const char **argv)
 
     // Gamma correction
     vpImage<unsigned char> I_gamma_correction;
-    gamma = 1.8;
+    gamma = 1.8f;
     t = vpTime::measureTimeMs();
     vp::gammaCorrection(I, I_gamma_correction, gamma);
     t = vpTime::measureTimeMs() - t;
