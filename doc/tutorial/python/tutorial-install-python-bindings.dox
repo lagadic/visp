@@ -510,7 +510,7 @@ for example `python=3.10` to the previous command lines.
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
 
-    At this point, ViSP DLL should be installed in `%CONDA_PREFIX%/Library/bin`. This can be checked by:
+    At this point, ViSP DLLs should be installed in `%CONDA_PREFIX%/Library/bin`. This can be checked by:
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> dir %CONDA_PREFIX%\Library\bin
         ... libvisp_ar361.dll
@@ -521,6 +521,12 @@ for example `python=3.10` to the previous command lines.
     Now you can build the bindings
 
         (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
+
+- Build documentation for python bindings
+
+      (visp-conda-ws) visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_doc --parallel 8
+
+  The specific documentation is available browing `<visp-build-bindings>/doc/python/index.html`.
 
 - Test the Python bindings
 
@@ -573,7 +579,7 @@ your report should contain:
 If you follow the steps to install python bindings \ref py_bindings_build_conda, we give hereafter the receipt
 to uninstall Miniforge:
 
-- First identify when miniforge is installed
+- First identify where miniforge is installed
 
       $ conda env list
       # conda environments:
@@ -602,6 +608,38 @@ Here is a non-exhaustive list of errors.
 
 If you encounter a compilation error, make sure to first try rebuilding after cleaning the CMake cache.
 Pybind did generate problems (an error at the pybind include line) that were solved like this.
+
+\subsection py_bindings_known_errors_buil When building ViSP
+
+\subsubsection py_bindings_known_errors_build_x11 Cannot build vpDisplayX.cpp
+
+The following error may occur on macOS during a build
+\verbatim
+$HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:88:7: error: use of undeclared identifier 'XSetWindowBackground'
+      XSetWindowBackground(display, window, x_color[color.id]);
+      ^
+$HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:94:7: error: use of undeclared identifier 'XAllocColor'
+      XAllocColor(display, lut, &xcolor);
+      ^
+$HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:95:7: error: use of undeclared identifier 'XSetForeground'
+      XSetForeground(display, context, xcolor.pixel);
+      ^
+$HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:98:5: error: use of undeclared identifier 'XClearWindow'
+    XClearWindow(display, window);
+    ^
+$HOME/visp_ws/visp/modules/gui/src/display/vpDisplayX.cpp:100:5: error: use of undeclared identifier 'XFreePixmap'
+    XFreePixmap(display, pixmap);
+    ^
+\endverbatim
+
+It occurs when you forgot to install `xorg-libx11` and `xorg-libxfixes` conda packages.
+To fix this build issue:
+\verbatim
+(visp-conda-ws) $ conda install xorg-libx11 xorg-libxfixes
+(visp-conda-ws) $ cd visp-build-bindings
+(visp-conda-ws) $ cmake ../visp -DCMAKE_PREFIX_PATH=$CONDA_PREFIX -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX
+(visp-conda-ws) $ make -j$(sysctl -n hw.logicalcpu) visp_python_bindings
+\endverbatim
 
 \subsection py_bindings_known_errors_generation When running the generation tool
 
@@ -701,6 +739,132 @@ If you have an issue that looks like:
 \endverbatim
 
 You should delete the files in `modules/python/` of the **build** directory.
+
+\subsubsection py_bindings_known_errors_import_dll ImportError: DLL load failed while importing _visp
+
+The following error may occur on Windows
+\verbatim
+  Successfully installed visp-3.6.1
+  Building Custom Rule C:/visp-ws/visp/modules/python/bindings/CMakeLists.txt
+  Generating Python stubs with pybind11-stubgen...
+  Collecting pybind11-stubgen
+    Using cached pybind11_stubgen-2.5-py3-none-any.whl.metadata (1.7 kB)
+  Using cached pybind11_stubgen-2.5-py3-none-any.whl (29 kB)
+  Installing collected packages: pybind11-stubgen
+  Successfully installed pybind11-stubgen-2.5
+  Traceback (most recent call last):
+    File "<frozen runpy>", line 198, in _run_module_as_main
+    File "<frozen runpy>", line 88, in _run_code
+    File "C:\Users\User\miniforge3\envs\visp-conda-ws\Lib\site-packages\pybind11_stubgen\__main__.py", line 4, in <module>
+      main()
+    File "C:\Users\User\miniforge3\envs\visp-conda-ws\Lib\site-packages\pybind11_stubgen\__init__.py", line 319, in main
+      run(
+    File "C:\Users\User\miniforge3\envs\visp-conda-ws\Lib\site-packages\pybind11_stubgen\__init__.py", line 358, in run
+      QualifiedName.from_str(module_name), importlib.import_module(module_name)
+                                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "C:\Users\User\miniforge3\envs\visp-conda-ws\Lib\importlib\__init__.py", line 90, in import_module
+      return _bootstrap._gcd_import(name[level:], package, level)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+    File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+    File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+    File "<frozen importlib._bootstrap>", line 921, in _load_unlocked
+    File "<frozen importlib._bootstrap>", line 813, in module_from_spec
+    File "<frozen importlib._bootstrap_external>", line 1289, in create_module
+    File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  ImportError: DLL load failed while importing _visp: Le module spÚcifiÚ est introuvable.
+  Traceback (most recent call last):
+    File "C:\visp-ws\visp\modules\python\stubs\run_stub_generator.py", line 51, in <module>
+      subprocess.run([sys.executable, '-m', 'pybind11_stubgen',  '-o', str(output_root.absolute()), '--ignore-all-errors', '_visp'], check=True)
+    File "C:\Users\User\miniforge3\envs\visp-conda-ws\Lib\subprocess.py", line 571, in run
+      raise CalledProcessError(retcode, process.args,
+  subprocess.CalledProcessError: Command '['C:\\Users\\User\\miniforge3\\envs\\visp-conda-ws\\python.exe', '-m', 'pybind11_stubgen', '-o', 'C:\\visp-ws\\visp-build-bindings-vc17\\modules\\python\\stubs', '--ignore-all-errors', '_visp']' returned non-zero exit status 1.
+C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppCommon.targets(254,5): error MSB8066: la build personnalisée de 'C:\visp-ws\visp-build-bindings-vc17\CMakeFiles\4a151b60a22ebef29e06fbbd54c3e165\visp_python_bindings_stubs.rule;C:\visp-ws\visp\modules\python\stubs\CMakeLists.txt' s'est arrêtée. Code 1. [C:\visp-ws\visp-build-bindings-vc17\modules\python\stubs\visp_python_bindings_stubs.vcxproj]
+\endverbatim
+
+This error occurs when ViSP DLLs or third-party DLLs are not found.
+The first thing to do is to check whether any of the third-parties are installed outside the Conda environment.
+To do this, check your `ViSP-third-party.txt` file.
+For example, if you have something similar to
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
+...
+  OpenCV:
+    Version:                     4.6.0
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.6.0/build
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    yes (ver 3.2.1)
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.6.0)
+...
+  Library dirs:
+    Eigen3 include dir:          C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/eigen3/cmake
+    OpenCV dir:                  C:/visp-ws/3rdparty/opencv-4.6.0/build
+\endverbatim
+you can see that OpenCV 4.6.0 is found outside conda environment, while eigen 3.4.0 is found in the conda environment.
+In our case, the error is due to OpenCV DLLs that are not found.
+
+- **Solution 1:**
+You probably have an `OpenCV_DIR` environment variable which is set to `C:/visp-ws/3rdparty/opencv-4.6.0/build`.
+A simple solution is to remove this environment variable, close and reopen your `Miniforge Prompt`, and if you haven't
+already done so, install OpenCV using conda
+\verbatim
+(visp-conda-ws) $ conda install libopencv
+\endverbatim
+and configure again ViSP
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
+\endverbatim
+At this point you should see that OpenCV is detected in the conda environment
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> type ViSP-third-party.txt
+...
+  OpenCV:
+    Version:                     4.9.0
+    Modules:                     calib3d core dnn features2d flann gapi highgui imgcodecs imgproc ml objdetect photo stitching video videoio
+    OpenCV dir:                  C:/Users/User/miniforge3/envs/visp-conda-ws/Library/cmake
+
+  Mathematics:
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    yes (ver 3.2.1)
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.9.0)
+...
+  Library dirs:
+    Eigen3 include dir:          C:/Users/User/miniforge3/envs/visp-conda-ws/Library/share/eigen3/cmake
+    OpenCV dir:                  C:/Users/User/miniforge3/envs/visp-conda-ws/Library/cmake
+\endverbatim
+Now you can relaunch the build process
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
+\endverbatim
+
+- **Solution2:**
+If you rather want to use OpenCV build and installed outside your conda environment, you may set
+`VISP_WINDOWS_DLL_PATH` environment variable with the path to OpenCV DLLs. In our case it would be:
+\verbatim
+(visp-conda-ws) $ setx VISP_WINDOWS_DLL_PATH "%VISP_WINDOWS_DLL_PATH%;C:\visp-ws\3rdparty\opencv-4.6.0\build\x64\vc17\bin"
+\endverbatim
+Then close and reopen your `Miniforge Prompt` and relaunch the build process
+\verbatim
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%CONDA_PREFIX% -DCMAKE_INSTALL_PREFIX=%CONDA_PREFIX%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target install --parallel 8
+(visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings --parallel 8
+\endverbatim
 
 \subsection py_bindings_known_errors_import When importing Python in ViSP
 
