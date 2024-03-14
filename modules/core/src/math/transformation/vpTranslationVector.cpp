@@ -30,8 +30,7 @@
  *
  * Description:
  * Translation vector.
- *
-*****************************************************************************/
+ */
 
 #include <stdio.h>
 #include <string.h>
@@ -236,7 +235,7 @@ vpTranslationVector vpTranslationVector::operator+(const vpTranslationVector &tv
 
   \return The sum of the current translation vector (*this) and the column
   vector to add.
-\code
+  \code
   vpTranslationVector t1(1,2,3);
   vpColVector v(3);
   v[0] = 4;
@@ -510,17 +509,17 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
 /*!
   Set vector from a list of 3 double values in meters.
   \code
-#include <visp3/core/vpTranslationVector.cpp>
+  #include <visp3/core/vpTranslationVector.cpp>
 
-int main()
-{
-  vpTranslationVector t = {0, 0.1, 0.5};
-  std::cout << "t: " << t.t() << std::endl;
-}
+  int main()
+  {
+    vpTranslationVector t = {0, 0.1, 0.5};
+    std::cout << "t: " << t.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-t: 0  0.1  0.5
+  t: 0  0.1  0.5
   \endcode
   \sa operator<<()
 */
@@ -544,18 +543,18 @@ vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<
 
   The following example shows how to initialize a translation vector from a list of 3 values [meter].
   \code
-#include <visp3/core/vpTranslationVector.h>
+  #include <visp3/core/vpTranslationVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  t << 0, 0.1, 0.5;
-  std::cout << "t: " << t.t() << std::endl;
-}
+  int main()
+  {
+    vpTranslationVector t;
+    t << 0, 0.1, 0.5;
+    std::cout << "t: " << t.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-t: 0  0.1  0.5
+  t: 0  0.1  0.5
   \endcode
 
   \sa operator,()
@@ -574,18 +573,18 @@ vpTranslationVector &vpTranslationVector::operator<<(double val)
 
   The following example shows how to initialize a translations vector from a list of 3 values [meter].
   \code
-#include <visp3/core/vpTranslationVector.h>
+  #include <visp3/core/vpTranslationVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  t << 0, 0.1, 0.5;
-  std::cout << "t: " << t.t() << std::endl;
-}
+  int main()
+  {
+    vpTranslationVector t;
+    t << 0, 0.1, 0.5;
+    std::cout << "t: " << t.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-t: 0  0.1  0.5
+  t: 0  0.1  0.5
   \endcode
 
   \sa operator<<()
@@ -742,7 +741,7 @@ double vpTranslationVector::frobeniusNorm() const
   vector t(m).
 
   \return The value \f[\sum{i=0}^{m} t_i^{2}\f].
-  */
+*/
 double vpTranslationVector::sumSquare() const
 {
   double sum_square = 0.0;

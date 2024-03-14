@@ -175,7 +175,7 @@ void readOpenCV(vpImage<vpRGBf> &I, const std::string &filename)
 */
 void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsigned char> &I)
 {
-  cv::Mat1b buf(buffer.size(), 1, const_cast<unsigned char *>(buffer.data()));
+  cv::Mat1b buf(static_cast<int>(buffer.size()), 1, const_cast<unsigned char *>(buffer.data()));
   cv::Mat1b img = cv::imdecode(buf, cv::IMREAD_GRAYSCALE);
   I.resize(img.rows, img.cols);
   std::copy(img.begin(), img.end(), I.bitmap);
@@ -189,7 +189,7 @@ void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<unsi
 */
 void readPNGfromMemOpenCV(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I_color)
 {
-  cv::Mat1b buf(buffer.size(), 1, const_cast<unsigned char *>(buffer.data()));
+  cv::Mat1b buf(static_cast<int>(buffer.size()), 1, const_cast<unsigned char *>(buffer.data()));
   cv::Mat3b img = cv::imdecode(buf, cv::IMREAD_COLOR);
   vpImageConvert::convert(img, I_color);
 }

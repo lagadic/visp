@@ -1043,7 +1043,7 @@ void incrementIfIsInMask(const vpImage<bool> &mask, const int &width, const int 
 
 unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
 {
-  const int xm = m_center.get_u(), ym = m_center.get_v();
+  const float xm = static_cast<float>(m_center.get_u()), ym = static_cast<float>(m_center.get_v());
   const float r_float = static_cast<float>(m_radius);
   const int width = mask.getWidth();
   const int height = mask.getHeight();
@@ -1073,14 +1073,14 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
     float sin_theta = std::sin(theta);
     float rcos_pos = r_float * cos_theta;
     float rsin_pos = r_float * sin_theta;
-    x1 = xm + rcos_pos; // theta
-    y1 = ym + rsin_pos; // theta
-    x2 = xm - rsin_pos; // theta + pi
-    y2 = ym + rcos_pos; // theta + pi
-    x3 = xm - rcos_pos; // theta + pi/2
-    y3 = ym - rsin_pos; // theta + pi/2
-    x4 = xm + rsin_pos; // theta + pi
-    y4 = ym - rcos_pos; // theta + pi
+    x1 = static_cast<int>(xm + rcos_pos); // theta
+    y1 = static_cast<int>(ym + rsin_pos); // theta
+    x2 = static_cast<int>(xm - rsin_pos); // theta + pi
+    y2 = static_cast<int>(ym + rcos_pos); // theta + pi
+    x3 = static_cast<int>(xm - rcos_pos); // theta + pi/2
+    y3 = static_cast<int>(ym - rsin_pos); // theta + pi/2
+    x4 = static_cast<int>(xm + rsin_pos); // theta + pi
+    y4 = static_cast<int>(ym - rcos_pos); // theta + pi
     incrementIfIsInMask(mask, width, height, x1, y1, count);
     incrementIfIsInMask(mask, width, height, x2, y2, count);
     incrementIfIsInMask(mask, width, height, x3, y3, count);

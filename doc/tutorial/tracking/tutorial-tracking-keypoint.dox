@@ -35,7 +35,7 @@ It can also be run with [--init-by-click] option. In that case, the user can sel
 $ ./tutorial-klt-tracker --init-by-click
 \endcode
 
-Here is the line by line explanation of the source : 
+Here is the line by line explanation of the source :
 
 \snippet tutorial-klt-tracker.cpp Include
 
@@ -60,19 +60,19 @@ This image \c I is then converted into \c cvI, an OpenCV image format that will 
 
 \snippet tutorial-klt-tracker.cpp Convert to OpenCV image
 
-We also create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
+We also create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I.
 
 \snippet tutorial-klt-tracker.cpp Init display
- 
+
 From now we have to create an instance of the tracker and set the parameters of the Harris keypoint detector.
 
 \snippet tutorial-klt-tracker.cpp Create tracker
- 
+
 The tracker is then initialized on \c cvI image.
 
 \snippet tutorial-klt-tracker.cpp Init tracker
 
-With the next line the user can know how many keypoints were detected automatically or selected by the user during initialization. 
+With the next line the user can know how many keypoints were detected automatically or selected by the user during initialization.
 
 \snippet tutorial-klt-tracker.cpp How many features
 
@@ -92,7 +92,7 @@ We are waiting for a mouse click event on image \c I to end the program.
 
 \section tracking_keypoint_klt_init KLT tracker with re-initialisation
 
-Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to detect and track new features online. A possible criteria is for example to compare the number of currently tracked features to the initial number of detected features. If less than a given percentage of features are tracked, you can start a new detection. 
+Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to detect and track new features online. A possible criteria is for example to compare the number of currently tracked features to the initial number of detected features. If less than a given percentage of features are tracked, you can start a new detection.
 
 To get the number of detected or tracked features just call:
 
@@ -107,10 +107,10 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
 \code
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+
         // Save of previous features
         std::vector<cv::Point2f> prev_features = tracker.getFeatures();
- 
+
         // Start a new feature detection
         tracker.initTracking(cvI);
         std::vector<cv::Point2f> new_features = tracker.getFeatures();
@@ -122,7 +122,7 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
           // Test if a previous feature is not redundant with one of the newly detected
           is_redundant = false;
           for (size_t j=0; j < new_features.size(); j++){
-            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x) 
+            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x)
                        + vpMath::sqr(new_features[j].y-prev_features[i].y));
             if(distance < minDistance_){
               is_redundant = true;
@@ -135,9 +135,6 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
           //std::cout << "Add previous feature with index " << i << std::endl;
           tracker.addFeature(prev_features[i]);
         }
-#else
-      ...
-#endif
       }
       // Track the features
       tracker.track(cvI);

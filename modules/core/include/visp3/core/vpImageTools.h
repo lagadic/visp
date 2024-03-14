@@ -57,6 +57,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <cmath>
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -1113,12 +1114,12 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
 #endif
   for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
     const float v = (i + half) * scaleY - half;
-    const int v0 = static_cast<int>(v);
+    const float v0 = std::floor(v);
     const float yFrac = v - v0;
 
     for (unsigned int j = 0; j < Ires.getWidth(); j++) {
       const float u = (j + half) * scaleX - half;
-      const int u0 = static_cast<int>(u);
+      const float u0 = std::floor(u);
       const float xFrac = u - u0;
 
       if (method == INTERPOLATION_NEAREST) {

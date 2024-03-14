@@ -49,7 +49,7 @@
 #include <visp3/core/vpRGBa.h>
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
-#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 #endif
 

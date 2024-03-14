@@ -681,8 +681,12 @@ vpMatrix &vpMatrix::operator=(const vpMatrix &A)
 vpMatrix &vpMatrix::operator=(vpMatrix &&other)
 {
   if (this != &other) {
-    free(data);
-    free(rowPtrs);
+    if (data) {
+      free(data);
+    }
+    if (rowPtrs) {
+      free(rowPtrs);
+    }
 
     rowNum = other.rowNum;
     colNum = other.colNum;
