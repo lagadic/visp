@@ -690,7 +690,7 @@ ViSP 3.0.0 (released December 18th, 2015)
       see http://github.com/lagadic/visp_contrib
     . Model-based tracker:
       + New visibility tests based on the scanline rendering algorithm.
-      + Improve Ogre3D visibility tests in order to use it in a probalistic
+      + Improve Ogre3D visibility tests in order to use it in a probabilistic
         approach via the setNbRayCastingAttemptsForVisibility()
         and setGoodNbRayCastingAttemptsRatio() functions.
       + Introduction of cylinder tracking with the model-based trackers using
