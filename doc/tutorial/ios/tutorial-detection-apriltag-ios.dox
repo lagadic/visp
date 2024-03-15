@@ -9,11 +9,9 @@ This tutorial follows the \ref tutorial-detection-apriltag and shows how AprilTa
 
 In the next section you will find an example that show how to detect tags in a single image. To know how to print an AprilTag marker, see \ref apriltag_detection_print.
 
-Note that all the material (Xcode project and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedAprilTag
-\endverbatim
+Note that all the material (Xcode project and image) described in this tutorial is part of ViSP source code
+(in `tutorial/ios/StartedAprilTag` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/ios/StartedAprilTag.
 
 \section apriltag_detection_basic_ios AprilTag detection and pose estimation (single image)
 
@@ -22,7 +20,10 @@ Let us consider the Xcode project named `StartedAprilTag` that is part of ViSP s
 To open this application, if you followed \ref tutorial-install-ios-package simply run:
 \verbatim
 $ cd $HOME/framework
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedAprilTag
+\endverbatim
+download the content of https://github.com/lagadic/visp/tree/master/tutorial/ios/StartedAprilTag
+and run
+\verbatim
 $ open StartedAprilTag -a Xcode
 \endverbatim
 
@@ -48,19 +49,19 @@ The Xcode project `StartedAprilTag` contains `ImageDisplay.h` and `ImageDisplay.
 
 \subsection apriltag_detection_display_line Display a line
 
-The following function implemented in `ImageDisplay.mm` show how to display a line. 
+The following function implemented in `ImageDisplay.mm` show how to display a line.
 
 \snippet StartedAprilTag/ImageDisplay.mm display line
 
 \subsection apriltag_detection_display_frame Display a 3D frame
 
-The following function implemented in `ImageDisplay.mm` show how to display a 3D frame; red line for x, green for y and blue for z axis. 
+The following function implemented in `ImageDisplay.mm` show how to display a 3D frame; red line for x, green for y and blue for z axis.
 
 \snippet StartedAprilTag/ImageDisplay.mm display frame
 
 \section apriltag_detection_basic_output Application output
 
-- Now we are ready to build `StartedAprilTag` application using Xcode `"Product > Build"` menu. 
+- Now we are ready to build `StartedAprilTag` application using Xcode `"Product > Build"` menu.
 - Once build, if you run `StartedAprilTag` application on your device, you should be able to see the following screen shot:
 
 \image html img-detection-apriltag-ios-output.jpg

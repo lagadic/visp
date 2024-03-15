@@ -7,112 +7,139 @@
 
 This tutorial gives some hints to boost your visual servo control law in order to speed up the time to convergence.
 
-Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+Note that all the material (source code and image) described in this tutorial is
+part of ViSP source code (in `tutorial/visual-servoing/ibvs` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/visual-servoing/ibvs.
 
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/visual-servoing/ibvs
-\endcode
+To illustrate this tutorial let us consider the example tutorial-ibvs-4pts-plotter.cpp introduced in \ref tutorial-ibvs.
+This example consider an image based visual servoing using four points as visual features.
 
-To illustrate this tutorial let us consider the example tutorial-ibvs-4pts-plotter.cpp introduced in \ref tutorial-ibvs. This example consider an image based visual servoing using four points as visual features.
+In the general case, considering \f$ \dot {\bf q} \f$ as the input velocities to the robot controller, the control laws
+provided in vpServo class lead to the following control law
+\f$ \dot {\bf q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e}\f$ where the sign is negative for an eye in hand servo
+and positive for an eye to hand servo, \f$\lambda\f$ is a constant gain, \f$ {\bf \widehat J}_e\f$ is the task Jacobian
+and \f$\bf e \f$ is the error to regulate to zero. As described in \cite Chaumette06a, this control law ensure an
+exponential decoupled decrease of the error \f${\dot {\bf e}} =  \pm \lambda {\bf e}\f$.
 
-In the general case, considering \f$ \dot {\bf q} \f$ as the input velocities to the robot controller, the control laws provided in vpServo class lead to the following control law \f$ \dot {\bf q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e}\f$ where the sign is negative for an eye in hand servo and positive for an eye to hand servo, \f$\lambda\f$ is a constant gain, \f$ {\bf \widehat J}_e\f$ is the task Jacobian and \f$\bf e \f$ is the error to regulate to zero. As described in \cite Chaumette06a, this control law ensure an exponential decoupled decrease of the error \f${\dot {\bf e}} =  \pm \lambda {\bf e}\f$.
-
-This behavior is illustrated with the next figure, where we see the exponential decrease of the eight visual features (x and y for each point) and the corresponding six velocities that are applied to the robot controller. As a consequence, velocities are high when the error is important, and very low when the error is small near the convergence. At the beginning, we can also notice velocity discontinuities with velocities varying from zero to high values in one iteration. 
+This behavior is illustrated with the next figure, where we see the exponential decrease of the eight visual features
+(x and y for each point) and the corresponding six velocities that are applied to the robot controller. As a
+consequence, velocities are high when the error is important, and very low when the error is small near the convergence.
+At the beginning, we can also notice velocity discontinuities with velocities varying from zero to high values in one
+iteration.
 
 \image html img-ibvs-control-law-exponential.png "Convergence in 191 iterations with a constant gain."
 
-This behavior can be reproduced running tutorial-ibvs-4pts-plotter.cpp example. Here after we recall the important lines of code used to compute the control law:
+This behavior can be reproduced running tutorial-ibvs-4pts-plotter.cpp example. Here after we recall the important
+lines of code used to compute the control law:
 
 \code
-    vpServo task ;
-    task.setServo(vpServo::EYEINHAND_CAMERA);
-    task.setInteractionMatrixType(vpServo::CURRENT);
-    task.setLambda(0.5);                              // Set the constant gain value
-    for (unsigned int i = 0 ; i < 4 ; i++) {
-      ...
-      task.addFeature(p[i], pd[i]);                   // Add visual features to the task
-    }
-    while(1) {
-      for (unsigned int i = 0 ; i < 4 ; i++) {
-        ...
-        vpFeatureBuilder::create(p[i], point[i]);     // Update the visual features used in the task
-      }
-      vpColVector v = task.computeControlLaw();       // Compute the control law
-    }
+vpServo task ;
+task.setServo(vpServo::EYEINHAND_CAMERA);
+task.setInteractionMatrixType(vpServo::CURRENT);
+task.setLambda(0.5);                              // Set the constant gain value
+for (unsigned int i = 0 ; i < 4 ; i++) {
+  ...
+  task.addFeature(p[i], pd[i]);                   // Add visual features to the task
+}
+while(1) {
+  for (unsigned int i = 0 ; i < 4 ; i++) {
+    ...
+    vpFeatureBuilder::create(p[i], point[i]);     // Update the visual features used in the task
+  }
+  vpColVector v = task.computeControlLaw();       // Compute the control law
+}
 \endcode
 
 
 \section adaptive_gain Using an adaptive gain
 
-As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain \f$ \lambda \f$ in order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain allows to reduce the convergence time. In that case the gain becomes:
+As implemented in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp it is possible to adapt the gain \f$ \lambda \f$ in
+order to depend on the infinity norm of the task Jacobian. The usage of an adaptive gain rather than a constant gain
+allows to reduce the convergence time. In that case the gain becomes:
 
-  \f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{ \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
-  
-  where:
-  - \f$ x = ||{\bf e}||_{\infty} \f$ is the infinity norm of the task Jacobian to consider.
-  - \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small values of \f$||{\bf e}||\f$
-  - \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$ is the gain
-    to infinity, that is for very high values of \f$||{\bf e}||\f$
-  - \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
+\f[ \lambda (x) = (\lambda_0 - \lambda_\infty) e^{ -\frac{ \lambda'_0}{\lambda_0 - \lambda_\infty}x} + \lambda_\infty \f]
 
-The impact of the adaptive gain is illustrated in the next figure. During the servo, velocities applied to the controller are higher, especially when the visual error \f${\bf e}\f$ is small. But as in the previous section, using an adaptive gain doesn't insure continuous velocities especially at the first iteration.
+where:
+- \f$ x = ||{\bf e}||_{\infty} \f$ is the infinity norm of the task Jacobian to consider.
+- \f$\lambda_0 = \lambda(0)\f$ is the gain in 0, that is for very small values of \f$||{\bf e}||\f$
+- \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$ is the gain
+  to infinity, that is for very high values of \f$||{\bf e}||\f$
+- \f$\lambda'_0\f$ is the slope of \f$\lambda\f$ at \f$||{\bf e}|| = 0\f$
+
+The impact of the adaptive gain is illustrated in the next figure. During the servo, velocities applied to the
+controller are higher, especially when the visual error \f${\bf e}\f$ is small. But as in the previous section,
+using an adaptive gain doesn't insure continuous velocities especially at the first iteration.
 
 \image html img-ibvs-control-law-adaptive.png "Convergence in 91 iterations with an adaptive gain."
 
-This behavior can be reproduced running tutorial-ibvs-4pts-plotter-gain-adaptive.cpp example. Compared to the previous code given in \ref intro and available in tutorial-ibvs-4pts-plotter.cpp, here after we give the new lines of code that were introduced to use an adaptive gain:
+This behavior can be reproduced running tutorial-ibvs-4pts-plotter-gain-adaptive.cpp example. Compared to the
+previous code given in \ref intro and available in tutorial-ibvs-4pts-plotter.cpp, here after we give the new
+lines of code that were introduced to use an adaptive gain:
 
 \code
-    vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
-    task.setLambda(lambda);
+vpAdaptiveGain lambda(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+task.setLambda(lambda);
 \endcode
 
 \subsection adaptive_gain_tune How to tune adaptive gain
 
 To adjust the adaptative gain to your current servoing task, you need to proceed step-by-step :
-  - First, switch back to a constant gain by replacing 
+  - First, switch back to a constant gain by replacing
 \code
-  task.setLambda(lambda_adapt);
+task.setLambda(lambda_adapt);
 \endcode
-  by 
+  by
 \code
-  task.setLambda(lambda);
+task.setLambda(lambda);
 \endcode
-\n 
-  - In order to tune the first parameter \f$\lambda_0 = \lambda(0)\f$, which corresponds to the gain when the error is close to zero, place the robot close to the final desired position of the servoing task.
-  Then, gradually increase lambda (start with lambda = 1.0) until you observe robot oscillations. 
-  A good value for \f$\lambda_0\f$ should be slightly inferior to the lambda for which oscillations start to occur.
 \n
-\n  
-  - For the second parameter \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$, which corresponds to the gain when the error is very high, move the robot further away from the target in order to get a large visual servoing error.
-  Set lambda to a small value, like 0.1, and increase it gradually until vision is no longer able to track your features, or when the robot becomes dangerous with a velocity too high.
-\n 
-\n 
-  - The last value, \f$\lambda'_0\f$, is the slope of the curve \f$ \lambda_{adapt} = f(s-s^*) \f$ where \f$ s-s^* = 0 \f$ . You can keep it at 30.
+  - In order to tune the first parameter \f$\lambda_0 = \lambda(0)\f$, which corresponds to the gain when the error
+    is close to zero, place the robot close to the final desired position of the servoing task.
+    Then, gradually increase lambda (start with lambda = 1.0) until you observe robot oscillations.
+    A good value for \f$\lambda_0\f$ should be slightly inferior to the lambda for which oscillations start to occur.
+\n
+\n
+  - For the second parameter \f$\lambda_\infty = \lambda_{||{\bf e}|| \rightarrow \infty}\lambda(||{\bf e}||)\f$,
+    which corresponds to the gain when the error is very high, move the robot further away from the target in order
+    to get a large visual servoing error.
+    Set lambda to a small value, like 0.1, and increase it gradually until vision is no longer able to track your
+    features, or when the robot becomes dangerous with a velocity too high.
+\n
+\n
+  - The last value, \f$\lambda'_0\f$, is the slope of the curve
+    \f$ \lambda_{adapt} = f(s-s^*) \f$ where \f$ s-s^* = 0 \f$ . You can keep it at 30.
 
 \section continuous_adaptive_gain Continuous sequencing
 
-As implemented in tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp it is also possible to ensure continuous sequencing to avoid velocity discontinuities. This behavior is achieved by introducing an additional term to the general form of the control law. This additional term comes from the task sequencing approach described in \cite Mansard07e equation (17). It allows to compute continuous velocities by avoiding abrupt changes in the command.
+As implemented in tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp it is also possible to ensure continuous
+sequencing to avoid velocity discontinuities. This behavior is achieved by introducing an additional term to the
+general form of the control law. This additional term comes from the task sequencing approach described in
+\cite Mansard07e equation (17). It allows to compute continuous velocities by avoiding abrupt changes in the command.
 
-  The form of the control law considered here is the following:
+The form of the control law considered here is the following:
 
-  \f[
-  {\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} \mp \lambda {{\bf \widehat J}_{e(0)}}^+ {{\bf e}(0)} \exp(-\mu t)
-  \f]
+\f[
+{\bf \dot q} = \pm \lambda {{\bf \widehat J}_e}^+ {\bf e} \mp \lambda {{\bf \widehat J}_{e(0)}}^+ {{\bf e}(0)} \exp(-\mu t)
+\f]
 
-  where :
-  - \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply to the robot controller.
-  - the sign of the control law depends on the eye in hand or eye to hand configuration.
-  - \f$\bf J\f$ is the Jacobian of the task. 
-  - \f$\bf e = (s-s^*)\f$ is the error to regulate.
-  - \f$t\f$ is the time.
-  - \f$\mu\f$ is a gain. We recommend to set this value to 4.
-  - \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
+where :
+- \f${\bf \dot q}\f$ is the resulting continuous velocity command to apply to the robot controller.
+- the sign of the control law depends on the eye in hand or eye to hand configuration.
+- \f$\bf J\f$ is the Jacobian of the task.
+- \f$\bf e = (s-s^*)\f$ is the error to regulate.
+- \f$t\f$ is the time.
+- \f$\mu\f$ is a gain. We recommend to set this value to 4.
+- \f${\bf \widehat J}_{e(0)}^+ {\bf e}(0)\f$ is the value of \f${\bf \widehat J}_e^+ {\bf e}\f$ when \f$t=0\f$.
 
-The effect of continuous sequencing is illustrated in the next figure where during the first iterations velocities are starting from zero.
+The effect of continuous sequencing is illustrated in the next figure where during the first iterations velocities
+are starting from zero.
 
-\image html img-ibvs-control-law-continuous-adaptive.png "Convergence in 98 iterations with an adaptive gain and continuous sequencing."
+\image html img-ibvs-control-law-continuous-adaptive.png "Convergence in 98 iterations with an adaptive gain and
+continuous sequencing."
 
-This behavior can be reproduced running tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp example. Compared to the previous code given in \ref adaptive_gain and available in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp, here after we give the new line of code that were introduced to ensure continuous sequencing:
+This behavior can be reproduced running tutorial-ibvs-4pts-plotter-continuous-gain-adaptive.cpp example.
+Compared to the previous code given in \ref adaptive_gain and available in tutorial-ibvs-4pts-plotter-gain-adaptive.cpp,
+here after we give the new line of code that were introduced to ensure continuous sequencing:
 
 \code
       vpColVector v = task.computeControlLaw(iter*robot.getSamplingTime());
@@ -120,6 +147,7 @@ This behavior can be reproduced running tutorial-ibvs-4pts-plotter-continuous-ga
 
 \section boost_vs_next Next tutorial
 
-You are now ready to see the \ref tutorial-franka-pbvs that will show how to use adaptive gain and task sequencing on a real robot. 
+You are now ready to see the \ref tutorial-franka-pbvs that will show how to use adaptive gain and task sequencing on
+ a real robot.
 
 */
