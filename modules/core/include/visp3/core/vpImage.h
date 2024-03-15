@@ -189,10 +189,7 @@ public:
   double getMeanValue() const;
   double getMeanValue(const vpImage<bool> *p_mask) const;
   double getMeanValue(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
-  double getStdev() const;
-  double getStdev(const vpImage<bool> *p_mask) const;
-  double getStdev(const double &mean) const;
-  double getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const;
+
   // Return the minumum value within the bitmap
   Type getMinValue(bool onlyFiniteVal = true) const;
   // Look for the minumum and the maximum value within the bitmap
@@ -228,16 +225,20 @@ public:
    */
   inline unsigned int getSize() const { return width * height; }
 
+  double getStdev() const;
+  double getStdev(const vpImage<bool> *p_mask) const;
+  double getStdev(const double &mean) const;
+  double getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const;
+
+  double getSum() const;
+  double getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
+
   // Gets the value of a pixel at a location.
   Type getValue(unsigned int i, unsigned int j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(const vpImagePoint &ip) const;
-
-  // Get image pixels sum
-  double getSum() const;
-  double getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
 
   /*!
     Get the image width.
@@ -986,8 +987,16 @@ template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_
 }
 
 /*!
-* \brief Return the standard deviation of the bitmap
-*/
+ * \brief Return the standard deviation of the bitmap.
+ *
+ * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+ * - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+ *
+ * where \f$ \mu \f$ is the mean of the image as computed internally by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+ * is the size of the image.
+ */
 template <class Type> double vpImage<Type>::getStdev() const
 {
   double mean = getMeanValue();
@@ -997,7 +1006,15 @@ template <class Type> double vpImage<Type>::getStdev() const
 /*!
 * \brief Return the standard deviation of the bitmap
 *
-* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] p_mask A boolean mask that indicates which points must be considered, if set to true.
 */
 template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask) const
 {
@@ -1007,18 +1024,25 @@ template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask
 }
 
 /*!
-* \brief Return the standard deviation of the bitmap
- * For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ * \brief Return the standard deviation of the bitmap.
  *
- * \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+ * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+ * - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
  *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+ * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+ * is the size of the image.
  *
- * \param[in] mean The mean of the image.
- * \return double The standard deviation of the color image.
-*/
+ * \param[in] mean The mean \f$ \mu \f$ of the image.
+ * \return The standard deviation of the color image.
+ */
 template <class Type> double vpImage<Type>::getStdev(const double &mean) const
 {
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+
   const unsigned int size = width * height;
   double sum = 0.;
   for (unsigned int i = 0; i < size; ++i) {
@@ -1031,22 +1055,31 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean) const
 /*!
 * \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
 * \param[in] mean The mean of the image.
 * \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* \param[in] p_mask A boolean mask that indicates which pixels must be considered, if set to true.
 * \return double The standard deviation taking into account only the points for which the mask is true.
 */
 template <class Type> double vpImage<Type>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
   if (p_mask == nullptr) {
     return getStdev(mean);
   }
+  if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+  }
+
   const unsigned int size = width * height;
   double sum = 0.;
   for (unsigned int i = 0; i < size; ++i) {
@@ -1058,19 +1091,21 @@ template <class Type> double vpImage<Type>::getStdev(const double &mean, const u
   return std::sqrt(sum);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
-*
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
-*
-* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* return The standard deviation.
-*/
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/*!
+ * \brief Return the standard deviation of the bitmap.
+ *
+ * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+ * - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+ *
+ * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+ * is the size of the image.
+ *
+ * \param[in] mean The mean \f$ \mu \f$ of the image.
+ * \return The standard deviation of the color image.
+ */
 template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
 {
   if ((height == 0) || (width == 0)) {
@@ -1087,31 +1122,33 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
   return std::sqrt(res);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
+/*!
+* \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-* return The standard deviation taking into account only the points for which the mask is true.The standard deviation taking into account only the points for which the mask is true.
+* \param[in] mean The mean of the image.
+* \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
+* \param[in] p_mask A boolean mask that indicates which pixels must be considered, if set to true.
+* \return double The standard deviation taking into account only the points for which the mask is true.
 */
 template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
   if (p_mask == nullptr) {
     return getStdev(mean);
   }
-
+  if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+  }
   const unsigned int size = width * height;
   double sum = 0.;
   for (unsigned int i = 0; i < size; ++i) {
@@ -1124,22 +1161,20 @@ template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const un
   return std::sqrt(sum);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
-*
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
-*
-* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* return The standard deviation.
-*/
-/**
-* \brief \copybrief double vpImage::getStdev(const double &) const
-*/
+/*!
+ * \brief Return the standard deviation of the bitmap.
+ *
+ * - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+ * - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+ *   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+ *
+ * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+ * is the size of the image.
+ *
+ * \param[in] mean The mean \f$ \mu \f$ of the image.
+ * \return The standard deviation of the color image.
+ */
 template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
 {
   if ((height == 0) || (width == 0)) {
@@ -1156,32 +1191,32 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
   return std::sqrt(res);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
+/*!
+* \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-* return The standard deviation taking into account only the points for which the mask is true.
-*/
-/**
-* \brief \copybrief double vpImage::getStdev(const double &, const unsigned int&, const vpImage<bool>*) const
+* \param[in] mean The mean of the image.
+* \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
+* \param[in] p_mask A boolean mask that indicates which pixels must be considered, if set to true.
+* \return double The standard deviation taking into account only the points for which the mask is true.
 */
 template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
   if (p_mask == nullptr) {
     return getStdev(mean);
+  }
+  if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+    throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
   }
 
   const unsigned int size = width * height;
@@ -1195,6 +1230,7 @@ template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const un
   sum /= static_cast<double>(nbValidPoints);
   return std::sqrt(sum);
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * \brief Return the minimum value within the bitmap
@@ -2104,7 +2140,9 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) cons
 
 /**
  * \brief Compute the sum of image intensities.
- * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  */
 template <class Type> inline double vpImage<Type>::getSum() const
 {
@@ -2120,7 +2158,9 @@ template <class Type> inline double vpImage<Type>::getSum() const
 
 /**
  * \brief Compute the sum of image intensities.
- * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  *
  * \param[in] p_mask Boolean mask that indicates the valid points by a true flag.
  * \param[out] nbValidPoints The number of valid points according to the \b p_mask.
@@ -2146,13 +2186,12 @@ template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p
   return res;
 }
 
-/**
- * \relates vpImage
- *
- * \brief Get the sum of the image.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
- *
- * \return The sum of the R, G and B components of all pixels.
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/*!
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  */
 template <> inline double vpImage<vpRGBa>::getSum() const
 {
@@ -2167,15 +2206,13 @@ template <> inline double vpImage<vpRGBa>::getSum() const
 }
 
 /**
- * \relates vpImage
- * \brief Get the sum of the image, taking into account the boolean mask \b p_mask
- * for which a true value indicates to consider a pixel and false means to ignore it.
- * For a vpRGBa image, we takes the sum of the R, G and B components.
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  *
- * \param[in] p_mask If different from nullptr, boolean mask that tells which pixels are
- * to be considered.
- * \param[out] nbValidPoints The number of pixels which were taken into account.
- * \return The sum of the R, G and B components of all pixels that were taken into account.
+ * \param[in] p_mask Boolean mask that indicates the valid points by a true flag.
+ * \param[out] nbValidPoints The number of valid points according to the \b p_mask.
  */
 template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
 {
@@ -2200,12 +2237,11 @@ template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, u
   return res;
 }
 
-/**
- * \relates vpImage
- * \brief Get the sum of the image.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
- *
- * \return The sum of the R, G and B components of all pixels.
+/*!
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  */
 template <> inline double vpImage<vpRGBf>::getSum() const
 {
@@ -2220,15 +2256,13 @@ template <> inline double vpImage<vpRGBf>::getSum() const
 }
 
 /**
- * \relates vpImage
- * \brief Get the sum of the image, taking into account the boolean mask \b p_mask
- * for which a true value indicates to consider a pixel and false means to ignore it.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  *
- * \param[in] p_mask If different from nullptr, boolean mask that tells which pixels are
- * to be considered.
- * \param[out] nbValidPoints The number of pixels which were taken into account.
- * \return The sum of the R, G and B components of all pixels that were taken into account.
+ * \param[in] p_mask Boolean mask that indicates the valid points by a true flag.
+ * \param[out] nbValidPoints The number of valid points according to the \b p_mask.
  */
 template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
 {
@@ -2251,26 +2285,27 @@ template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, u
   }
   return res;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Operation C = *this - B.
 
   \code
-#include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<unsigned char> A(288, 384);
-  vpImage<unsigned char> B(288, 384);
-  vpImage<unsigned char> C;
+  int main()
+  {
+    vpImage<unsigned char> A(288, 384);
+    vpImage<unsigned char> B(288, 384);
+    vpImage<unsigned char> C;
 
-  A = 128;
-  B = 120;
+    A = 128;
+    B = 120;
 
-  A.sub(B, C); // C = A - B
+    A.sub(B, C); // C = A - B
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
   The result is placed in the third parameter C and not returned.
