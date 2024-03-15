@@ -41,8 +41,8 @@ import os
 
 
 try:
-  import _visp
-  from _visp import *
+  from ._visp import *
+  from ._visp import __dict__ as cpp_extension_dict
 except ImportError:
   import platform
   if platform.system() == "Windows": # On windows import can fail because DLLs are not found in the default search paths
@@ -51,13 +51,13 @@ except ImportError:
     with build_directory_manager() as dll_dir_manager:
       for p in get_dll_paths():
         dll_dir_manager.add_dll_directory(p)
-      import _visp
-      from _visp import *
+      from ._visp import *
+      from ._visp import __dict__ as cpp_extension_dict
   else:
-    raise
+    raise ImportError('Could not import ViSP python bindings')
 
 # Fake module names
-for k in _visp.__dict__:
+for k in cpp_extension_dict:
   from types import ModuleType
   if isinstance(_visp.__dict__[k], ModuleType):
     sys.modules[f'{__name__}.{k}'] = _visp.__dict__[k]

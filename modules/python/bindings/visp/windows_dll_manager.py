@@ -20,7 +20,9 @@ def get_dll_paths():
     # For the choice of defaults: see https://peps.python.org/pep-0250/#implementation
     DEFAULT_DLL_PATHS = [
       '..\\..\\..\\..\\bin', # when current folder is lib/python-version/site-packages/package
+      '..\\..\\..\\..\\Library\\bin',
       '..\\..\\..\\bin', # when current folder is lib/site-packages/package
+      '..\\..\\..\\Library\\bin',
     ]
     # If we have a different setup, the user should specify their own paths
     visp_user_defined_dll_paths = os.getenv("VISP_WINDOWS_DLL_PATH")

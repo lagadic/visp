@@ -52,15 +52,13 @@ set_target_properties(_visp PROPERTIES
 set(build_configs "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
 foreach(imp_config ${build_configs})
 set_target_properties(_visp PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY_${imp_config} "${CMAKE_CURRENT_BINARY_DIR}"
+  LIBRARY_OUTPUT_DIRECTORY_${imp_config} "${CMAKE_CURRENT_BINARY_DIR}/visp"
 )
 endforeach()
 
 foreach(visp_lib ${VISP_LIBRARIES})
   get_target_property(dir ${visp_lib} LIBRARY_OUTPUT_DIRECTORY)
   get_target_property(n ${visp_lib} OUTPUT_NAME)
-
-  message("${dir}/${n}")
 endforeach()
 
 set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
