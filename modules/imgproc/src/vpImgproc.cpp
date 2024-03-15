@@ -306,7 +306,7 @@ namespace
 {
 /**
  * \brief This method is an implementation of the article "Towards Real-time Hardware Gamma Correction
- * for Dynamic Contrast Enhancement" by Jesse Scott, Michael Pusateri,  IEEE Applied Imagery Pattern Recognition
+ * for Dynamic Contrast Enhancement" by Jesse Scott, Michael Pusateri, IEEE Applied Imagery Pattern Recognition
  * Workshop (AIPR 2009), 2009
  *
  * The gamma factor depends on the mean of the original image and its intensity range.
@@ -386,9 +386,8 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
  */
 void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
-  unsigned int nbValidPoints = 0;
-  double mean = I.getMeanValue(p_mask, nbValidPoints);
-  double stdev = I.getStdev(mean, nbValidPoints, p_mask);
+  double mean = I.getMeanValue(p_mask);
+  double stdev = I.getStdev(p_mask);
   double meanNormalized = mean / 255.;
   double stdevNormalized = stdev / 255.;
   const float tau = 3.f;
