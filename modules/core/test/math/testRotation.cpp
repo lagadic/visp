@@ -389,7 +389,17 @@ TEST_CASE("Common rotation operations", "[rotation]")
       std::cout << "From vpRotationMatrix to vpRzyxVector " << std::endl;
       vpRzyxVector rzyx_final;
       rzyx_final.buildFrom(R);
-      CHECK(test("rzyx", rzyx_final, rzyx));
+      bool ret = test("rzyx", rzyx_final, rzyx);
+      if (ret == false) {
+        // Euler angle representation is not unique
+        std::cout << "Rzyx vector differ. Test rotation matrix..." << std::endl;
+        vpRotationMatrix RR(rzyx_final);
+        if (R == RR) {
+          std::cout << "Rzyx vector differ but rotation matrix is valid" << std::endl;
+          ret = true;
+        }
+      }
+      CHECK(ret);
       std::cout << rzyx_final << std::endl;
     }
   }
@@ -428,7 +438,6 @@ TEST_CASE("Common rotation operations", "[rotation]")
     vpHomogeneousMatrix _1_M_3_truth(_1_M_2_truth * _2_M_3_);
     CHECK(test_matrix_equal(_1_M_3_, _1_M_3_truth));
   }
-
 }
 
 TEST_CASE("Theta u multiplication", "[theta.u]")

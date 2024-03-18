@@ -93,7 +93,15 @@ vpRzyxVector vpRzyxVector::buildFrom(const vpRotationMatrix &R)
   double nx = R[0][0];
   double ny = R[1][0];
 
-  double phi = atan2(ny, nx);
+  double COEF_MIN_ROT = 1e-6;
+  double phi;
+
+  if ((fabs(nx) < COEF_MIN_ROT) && (fabs(ny) < COEF_MIN_ROT)) {
+    phi = 0;
+  }
+  else {
+    phi = atan2(ny, nx);
+  }
   double si = sin(phi);
   double co = cos(phi);
 
