@@ -92,8 +92,7 @@ endif()
 
 # Find out the version of gcc being used.
 if(CMAKE_COMPILER_IS_GNUCC)
-  exec_program(${CMAKE_CXX_COMPILER}
-    ARGS -dumpversion
+  execute_process(COMMAND ${CMAKE_CXX_COMPILER} -dumpversion
     OUTPUT_VARIABLE COMPILER_VERSION
   )
   #message("COMPILER_VERSION 1: ${COMPILER_VERSION}")
