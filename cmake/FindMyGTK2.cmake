@@ -246,8 +246,7 @@ if(UNIX OR WIN32)
                           ${GTK2_glib_LIBRARY}
                           ${GTK2_gobject_LIBRARY})
 
-      get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} PATH)
-      vp_get_version_from_pkg("gtk+-2.0" "${GTK2_LIB_DIR}/pkgconfig" GTK2_VERSION)
+      vp_get_version_from_pkg("gtk+-2.0" GTK2_VERSION)
 
       if(GTK2_gmodule_LIBRARY)
         list(APPEND GTK2_LIBRARIES ${GTK2_gmodule_LIBRARY})
@@ -302,4 +301,3 @@ if(UNIX OR WIN32)
 else(UNIX OR WIN32)
   message("FindGTK2 is working on UNIX/LINUX and Windows, only!")
 endif()
-

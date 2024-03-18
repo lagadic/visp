@@ -126,8 +126,7 @@ else(WIN32)
     set(NETLIB_LIBRARIES ${NETLIB_LIBRARY_LAPACK} ${NETLIB_LIBRARY_BLAS})
     set(NETLIB_FOUND TRUE)
 
-    get_filename_component(NETLIB_LIB_DIR ${NETLIB_LIBRARY_LAPACK} PATH)
-    vp_get_version_from_pkg("lapack" "${NETLIB_LIB_DIR}/pkgconfig" NETLIB_VERSION)
+    vp_get_version_from_pkg("lapack" NETLIB_VERSION)
 
   endif()
 endif(WIN32)
@@ -143,4 +142,3 @@ mark_as_advanced(
   NETLIB_LIBRARY_F2C_DEBUG
   NETLIB_LIBRARY_F2C_RELEASE
 )
-

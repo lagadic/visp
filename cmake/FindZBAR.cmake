@@ -123,8 +123,7 @@ if(ZBAR_FOUND)
     vp_parse_header("${ZBAR_INCLUDE_DIRS}/config.h" ZBAR_VERSION_LINES LIB_VERSION_MAJOR LIB_VERSION_MINOR LIB_VERSION_REVISION)
     set(ZBAR_VERSION "${LIB_VERSION_MAJOR}.${LIB_VERSION_MINOR}.${LIB_VERSION_REVISION}")
   else()
-    get_filename_component(ZBAR_LIB_DIR ${ZBAR_LIBRARIES} PATH)
-    vp_get_version_from_pkg("zbar" "${ZBAR_LIB_DIR}/pkgconfig" ZBAR_VERSION)
+    vp_get_version_from_pkg("zbar" ZBAR_VERSION)
   endif()
 endif()
 
@@ -132,4 +131,3 @@ mark_as_advanced(
   ZBAR_INCLUDE_DIRS
   ZBAR_LIBRARIES
 )
-

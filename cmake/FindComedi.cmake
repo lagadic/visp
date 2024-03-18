@@ -56,8 +56,7 @@ find_library(COMEDI_LIBRARIES
 if(COMEDI_LIBRARIES AND COMEDI_INCLUDE_DIRS)
   set(COMEDI_FOUND TRUE)
 
-  get_filename_component(COMEDI_LIB_DIR ${COMEDI_LIBRARIES} PATH)
-  vp_get_version_from_pkg("comedilib" "${COMEDI_LIB_DIR}/pkgconfig" COMEDI_VERSION)
+  vp_get_version_from_pkg("comedilib" COMEDI_VERSION)
 
 else()
   set(COMEDI_FOUND FALSE)
