@@ -15,7 +15,7 @@ In this tutorial you will learn how to install ViSP from source on macOS with Ho
 \verbatim
 $ brew update
 $ brew upgrade
-$ brew install cmake git subversion wget
+$ brew install cmake git wget
 \endverbatim
 
 - You will need to add `/usr/local/bin` to the `PATH` environment var in your `~/.bashrc` or `~/.bash_profile` to have Homebrew be at the front of the PATH.

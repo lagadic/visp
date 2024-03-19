@@ -11,10 +11,10 @@ distributions, but should work with any other distribution as well.
 
 \section install_ubuntu_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion.
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake and git.
 This can be achieved running:
 \verbatim
-$ sudo apt-get install build-essential cmake-curses-gui git subversion wget
+$ sudo apt-get install build-essential cmake-curses-gui git wget
 \endverbatim
 
 \section install_ubuntu_ws Create a workspace

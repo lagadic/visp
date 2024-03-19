@@ -9,9 +9,9 @@ In this tutorial you will learn how to install ViSP from source on Linux Fedora.
 
 \section install_fedora_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion. This can be achieved running:
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake and git. This can be achieved running:
 \verbatim
-$ sudo dnf install gcc-c++ make cmake git subversion wget
+$ sudo dnf install gcc-c++ make cmake git wget
 \endverbatim
 
 \section install_fedora_ws Create a workspace
