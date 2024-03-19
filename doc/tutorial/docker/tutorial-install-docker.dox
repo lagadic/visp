@@ -78,8 +78,8 @@ visp  visp-build  visp-images
 \endverbatim
 
 - In `visp` folder you will find a [Github](https://github.com/lagadic/visp) clone of the source code. To update its content with the last changes, run `cd visp; git pull`
-- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make` 
-- In `visp-images` folder you will find the dataset used by the tests and examples. 
+- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make`
+- In `visp-images` folder you will find the dataset used by the tests and examples.
 
 \subsection install_docker_visp_ubuntu_20_04 Ubuntu 20.04 image
 
@@ -98,8 +98,8 @@ visp  visp-build  visp-images
 \endverbatim
 
 - In `visp` folder you will find a [Github](https://github.com/lagadic/visp) clone of the source code. To update its content with the last changes, run `cd visp; git pull`
-- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make` 
-- In `visp-images` folder you will find the dataset used by the tests and examples. 
+- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make`
+- In `visp-images` folder you will find the dataset used by the tests and examples.
 
 \section install_docker_run Run Docker ViSP images
 
@@ -107,12 +107,12 @@ visp  visp-build  visp-images
 
 \note The following instructions refer to \ref install_docker_visp_ubuntu_20_04, but could be easily adapted to any other image.
 
-With Docker installed on a MacOS host, when you run ViSP binaries that open GUI window to display for example an image you will get the following error:
+With Docker installed on a Ubuntu host, when you run ViSP binaries that open GUI window to display for example an image you will get the following error:
 \verbatim
 $ docker pull vispci/vispci:ubuntu-20.04
 $ docker run -it vispci/vispci:ubuntu-20.04
 [root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
-[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png
 Catch an exception: Error [2]:	Can't connect display on server .
 \endverbatim
 
@@ -135,15 +135,15 @@ $ docker run --device=/dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -
 \endverbatim
 - You are now ready to run binaries that open GUI
 \verbatim
-[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image 
-[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png
 A click to quit...
 \endverbatim
 \image html img-monkey.png·
 - You are now also ready to run binaries that require access to your camera
 \verbatim
-[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/grabber 
-[root@7152a1ec64ba]# ./tutorial-grabber-v4l2 
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/grabber
+[root@7152a1ec64ba]# ./tutorial-grabber-v4l2
 Use device : 0
 Recording  : disabled
 Warning: cannot set input channel to 2
@@ -151,7 +151,7 @@ Image size : 640 480
 \endverbatim
 or with this other tutorial
 \verbatim
-[root@7152a1ec64ba]# ./tutorial-grabber-opencv 
+[root@7152a1ec64ba]# ./tutorial-grabber-opencv
 Use device : 0
 Recording  : disabled
 \endverbatim
@@ -165,7 +165,7 @@ With Docker installed on a MacOS host, when you run ViSP binaries that open GUI 
 $ docker pull vispci/vispci:ubuntu-20.04
 $ docker run -it vispci/vispci:ubuntu-20.04
 [root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
-[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png
 Catch an exception: Error [2]:	Can't connect display on server .
 \endverbatim
 
@@ -187,14 +187,14 @@ $ xhost + 192.168.1.18
 \verbatim
 $ docker run -it vispci/vispci:ubuntu-20.04
 \endverbatim
-- Export the `DISPLAY` variable within your container. 
+- Export the `DISPLAY` variable within your container.
 \verbatim
-[root@7152a1ec64ba]# export DISPLAY=192.168.1.18:0  
+[root@7152a1ec64ba]# export DISPLAY=192.168.1.18:0
 \endverbatim
 - You are now ready to run binaries that open GUI
 \verbatim
-[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image 
-[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png
 A click to quit...
 \endverbatim
 \image html img-monkey.png·
