@@ -1,6 +1,6 @@
 {
   "ignored_headers": [],
-  "ignored_classes": [],
+  "ignored_classes": [ "vpAROgre" ],
   "user_defined_headers": [],
   "classes": {},
   "enums": {}

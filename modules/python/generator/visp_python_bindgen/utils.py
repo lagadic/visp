@@ -259,6 +259,19 @@ def get_type_for_declaration(param: Union[types.FunctionType, types.DecoratedTyp
   else:
     return get_type(param, owner_specs, header_env_mapping)
 
+def get_default_assignement_str(type: str) -> str:
+  inits = [
+    (['int', 'unsigned', 'uint8_t', 'uint16_t', 'size_t', 'ssize_t'], '0'),
+    (['float'], '0.f'),
+    (['double'], '0.0')
+  ]
+
+  for ini in inits:
+    if type in ini[0]:
+      return '= ' + ini[1]
+
+  return ''
+
 def fetch_fully_qualified_id(scope: Union[NamespaceScope, ClassScope], segments: List[str]) -> Union[None, types.EnumDecl, NamespaceScope, ClassScope]:
   '''
   Retrieve the declaration of an object from its fully qualified name.

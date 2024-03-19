@@ -76,7 +76,7 @@ vpBSpline::~vpBSpline() { }
 
   \return the number of the knot interval in which \f$ l_u \f$ lies.
 */
-unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots)
+unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, const std::vector<double> &l_knots)
 {
   unsigned int m = (unsigned int)l_knots.size() - 1;
 
@@ -120,7 +120,7 @@ unsigned int vpBSpline::findSpan(double l_u, unsigned int l_p, std::vector<doubl
 
   \return the number of the knot interval in which \f$ u \f$ lies.
 */
-unsigned int vpBSpline::findSpan(double u) { return findSpan(u, p, knots); }
+unsigned int vpBSpline::findSpan(double u) const { return findSpan(u, p, knots); }
 
 /*!
   Compute the nonvanishing basis functions at \f$ l_u \f$ which is in the \f$
@@ -140,7 +140,7 @@ unsigned int vpBSpline::findSpan(double u) { return findSpan(u, p, knots); }
   The size of the array is \f$ l_p +1 \f$.
 */
 vpBasisFunction *vpBSpline::computeBasisFuns(double l_u, unsigned int l_i, unsigned int l_p,
-                                             std::vector<double> &l_knots)
+                                             const  std::vector<double> &l_knots)
 {
   vpBasisFunction *N = new vpBasisFunction[l_p + 1];
 
@@ -190,7 +190,7 @@ vpBasisFunction *vpBSpline::computeBasisFuns(double l_u, unsigned int l_i, unsig
   \return An array containing the nonvanishing basis functions at \f$ u \f$.
   The size of the array is \f$ p +1 \f$.
 */
-vpBasisFunction *vpBSpline::computeBasisFuns(double u)
+vpBasisFunction *vpBSpline::computeBasisFuns(double u) const
 {
   unsigned int i = findSpan(u);
   return computeBasisFuns(u, i, p, knots);
@@ -226,7 +226,7 @@ vpBasisFunction *vpBSpline::computeBasisFuns(double u)
   functions. return[k] is the list of the kth derivatives.
 */
 vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                                  std::vector<double> &l_knots)
+                                                  const std::vector<double> &l_knots)
 {
   vpBasisFunction **N;
   N = new vpBasisFunction *[l_der + 1];
@@ -355,7 +355,7 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double l_u, unsigned int l_i, 
   Example : return[0] is the list of the 0th derivatives ie the basis
   functions. return[k] is the list of the kth derivatives.
 */
-vpBasisFunction **vpBSpline::computeDersBasisFuns(double u, unsigned int der)
+vpBasisFunction **vpBSpline::computeDersBasisFuns(double u, unsigned int der) const
 {
   unsigned int i = findSpan(u);
   return computeDersBasisFuns(u, i, p, der, knots);
@@ -372,8 +372,8 @@ vpBasisFunction **vpBSpline::computeDersBasisFuns(double u, unsigned int der)
 
   return the coordinates of a point corresponding to the knot \f$ u \f$.
 */
-vpImagePoint vpBSpline::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
-                                          std::vector<vpImagePoint> &l_controlPoints)
+vpImagePoint vpBSpline::computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, const std::vector<double> &l_knots,
+                                          const std::vector<vpImagePoint> &l_controlPoints)
 {
   vpBasisFunction *N = computeBasisFuns(l_u, l_i, l_p, l_knots);
   vpImagePoint pt;
@@ -401,7 +401,7 @@ vpImagePoint vpBSpline::computeCurvePoint(double l_u, unsigned int l_i, unsigned
 
   return the coordinates of a point corresponding to the knot \f$ u \f$.
 */
-vpImagePoint vpBSpline::computeCurvePoint(double u)
+vpImagePoint vpBSpline::computeCurvePoint(double u) const
 {
   vpBasisFunction *N = computeBasisFuns(u);
   vpImagePoint pt;
@@ -443,7 +443,7 @@ vpImagePoint vpBSpline::computeCurvePoint(double u)
   the array.
 */
 vpImagePoint *vpBSpline::computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                          std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints)
+                                          const std::vector<double> &l_knots, const std::vector<vpImagePoint> &l_controlPoints)
 {
   vpImagePoint *derivate = new vpImagePoint[l_der + 1];
   vpBasisFunction **N;
@@ -489,7 +489,7 @@ vpImagePoint *vpBSpline::computeCurveDers(double l_u, unsigned int l_i, unsigned
   for \f$ k = 0, ... , der \f$. The kth derivative is in the kth cell of the
   array.
 */
-vpImagePoint *vpBSpline::computeCurveDers(double u, unsigned int der)
+vpImagePoint *vpBSpline::computeCurveDers(double u, unsigned int der) const
 {
   vpImagePoint *derivate = new vpImagePoint[der + 1];
   vpBasisFunction **N;

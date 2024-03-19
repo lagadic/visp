@@ -43,7 +43,6 @@
 // 3rd parties include
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 class VISP_EXPORT vpCannyEdgeDetection
@@ -213,7 +212,7 @@ public:
    * \param[in] j : The JSON object, resulting from the parsing of a JSON file.
    * \param[out] detector : The detector that will be initialized from the JSON data.
    */
-  friend inline void from_json(const json &j, vpCannyEdgeDetection &detector)
+  friend inline void from_json(const nlohmann::json &j, vpCannyEdgeDetection &detector)
   {
     std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
     filteringAndGradientName = j.value("filteringAndGradientType", filteringAndGradientName);
@@ -233,10 +232,10 @@ public:
    * \param[out] j : A JSON parser object.
    * \param[in] detector : The vpCannyEdgeDetection object that must be parsed into JSON format.
    */
-  friend inline void to_json(json &j, const vpCannyEdgeDetection &detector)
+  friend inline void to_json(nlohmann::json &j, const vpCannyEdgeDetection &detector)
   {
     std::string filteringAndGradientName = vpImageFilter::vpCannyFilteringAndGradientTypeToString(detector.m_filteringAndGradientType);
-    j = json {
+    j = nlohmann::json {
             {"filteringAndGradientType", filteringAndGradientName},
             {"gaussianSize", detector.m_gaussianKernelSize},
             {"gaussianStdev", detector.m_gaussianStdev},

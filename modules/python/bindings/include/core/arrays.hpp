@@ -40,6 +40,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -91,6 +92,50 @@ py::buffer_info get_buffer_info(vpHomogeneousMatrix &array)
 {
   return make_array_buffer<double, 2>(array.data, { array.getRows(), array.getCols() }, true);
 }
+
+/*
+* Print helpers
+*/
+
+const char *matlab_str_help = R"doc(
+  Returns the Matlab representation of this data array (see matlabPrint in the C++ documentation)
+)doc";
+const char *csv_str_help = R"doc(
+  Returns the CSV representation of this data array (see csvPrint in the C++ documentation)
+)doc";
+const char *maple_str_help = R"doc(
+  Returns the CSV representation of this data array (see maplePrint in the C++ documentation)
+)doc";
+
+const char *cpp_str_help = R"doc(
+  Returns a C++ code representation of this data array (see cppPrint in the C++ documentation)
+
+  :param name: variable name of the matrix.
+  :param byte_per_byte: Whether to print byte per byte defaults to false.
+)doc";
+
+template<typename PybindClass, typename T, typename S>
+void add_print_helper(PybindClass &pyCls, std::ostream &(T:: *fn)(std::ostream &) const, const S pythonName, const char *help)
+{
+  pyCls.def(pythonName, [fn](const T &self) -> std::string {
+    std::stringstream ss;
+    (self.*fn)(ss);
+    return ss.str();
+  }, help);
+}
+
+template<typename PybindClass, typename T>
+void add_cpp_print_helper(PybindClass &pyCls, std::ostream &(T:: *fn)(std::ostream &, const std::string &, bool) const)
+{
+  pyCls.def("strCppCode", [fn](const T &self, const std::string &name = "A", bool byte_per_byte = false) -> std::string {
+    std::stringstream ss;
+    (self.*fn)(ss, name, byte_per_byte);
+    return ss.str();
+  }, cpp_str_help, py::arg("name"), py::arg("byte_per_byte") = false);
+}
+
+
+
 
 /*
  * Array 2D indexing
@@ -183,7 +228,7 @@ void bindings_vpArray2D(py::class_<vpArray2D<T>> &pyArray2D)
 
   pyArray2D.def(py::init([](np_array_cf<T> &np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP 2D array");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpArray2D<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -207,7 +252,7 @@ void bindings_vpMatrix(py::class_<vpMatrix, vpArray2D<double>> &pyMatrix)
 
   pyMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP Matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpMatrix result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -217,6 +262,11 @@ Construct a matrix by **copying** a 2D numpy array.
 :param np_array: The numpy array to copy.
 
 )doc", py::arg("np_array"));
+
+  add_print_helper(pyMatrix, &vpMatrix::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyMatrix, &vpMatrix::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyMatrix, &vpMatrix::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyMatrix, &vpMatrix::cppPrint);
 
   define_get_item_2d_array<py::class_<vpMatrix, vpArray2D<double>>, vpMatrix, double>(pyMatrix);
 }
@@ -231,7 +281,7 @@ void bindings_vpRotationMatrix(py::class_<vpRotationMatrix, vpArray2D<double>> &
   }, numpy_fn_doc_nonwritable, py::keep_alive<0, 1>());
   pyRotationMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 3, 3 }, "ViSP rotation matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpRotationMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isARotationMatrix()) {
@@ -258,7 +308,7 @@ void bindings_vpHomogeneousMatrix(py::class_<vpHomogeneousMatrix, vpArray2D<doub
 
   pyHomogeneousMatrix.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, { 4, 4 }, "ViSP homogeneous matrix");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpHomogeneousMatrix result;
     copy_data_from_np(np_array, result.data);
     if (!result.isAnHomogeneousMatrix()) {
@@ -287,9 +337,9 @@ void bindings_vpTranslationVector(py::class_<vpTranslationVector, vpArray2D<doub
   }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
 
   pyTranslationVector.def(py::init([](np_array_cf<double> np_array) {
-    const std::vector<ssize_t> required_shape = { 3 };
+    const std::vector<py::ssize_t> required_shape = { 3 };
     verify_array_shape_and_dims(np_array, required_shape, "ViSP translation vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpTranslationVector result;
     copy_data_from_np(np_array, result.data);
     return result;
@@ -313,7 +363,7 @@ void bindings_vpColVector(py::class_<vpColVector, vpArray2D<double>> &pyColVecto
 
   pyColVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP column vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpColVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -325,6 +375,11 @@ Construct a column vector by **copying** a 1D numpy array.
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpColVector, vpArray2D<double>>, vpColVector, double>(pyColVector);
 
+  add_print_helper(pyColVector, &vpColVector::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyColVector, &vpColVector::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyColVector, &vpColVector::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyColVector, &vpColVector::cppPrint);
+
 }
 
 void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVector)
@@ -335,7 +390,7 @@ void bindings_vpRowVector(py::class_<vpRowVector, vpArray2D<double>> &pyRowVecto
   }, numpy_fn_doc_writable, py::keep_alive<0, 1>());
   pyRowVector.def(py::init([](np_array_cf<double> np_array) {
     verify_array_shape_and_dims(np_array, 1, "ViSP row vector");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpRowVector result(shape[0]);
     copy_data_from_np(np_array, result.data);
     return result;
@@ -346,6 +401,10 @@ Construct a row vector by **copying** a 1D numpy array.
 
 )doc", py::arg("np_array"));
   define_get_item_1d_array<py::class_<vpRowVector, vpArray2D<double>>, vpRowVector, double>(pyRowVector);
+  add_print_helper(pyRowVector, &vpRowVector::csvPrint, "strCsv", csv_str_help);
+  add_print_helper(pyRowVector, &vpRowVector::maplePrint, "strMaple", maple_str_help);
+  add_print_helper(pyRowVector, &vpRowVector::matlabPrint, "strMatlab", matlab_str_help);
+  add_cpp_print_helper(pyRowVector, &vpRowVector::cppPrint);
 }
 
 

@@ -96,7 +96,6 @@ public:
    */
   std::string getCalibrationFile() const { return m_calibfile; }
   vpColVector getForceTorque() const;
-  vpColVector getForceTorqueAsync() const;
   std::string getForceUnits() const;
   std::string getTorqueUnits() const;
 

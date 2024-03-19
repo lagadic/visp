@@ -133,9 +133,9 @@ public:
   vpRequest();
   virtual ~vpRequest();
 
-  void addParameter(char *params);
-  void addParameter(std::string &params);
-  void addParameter(std::vector<std::string> &listOfparams);
+  void addParameter(const char *params);
+  void addParameter(const std::string &params);
+  void addParameter(const std::vector<std::string> &listOfparams);
   template <typename T> void addParameterObject(T *params, const int &sizeOfObject = sizeof(T));
 
   /*!
@@ -178,7 +178,7 @@ public:
 
     \return ID of the request.
   */
-  std::string getId() { return request_id; }
+  std::string getId() const { return request_id; }
 
   /*!
     Change the ID of the request.
@@ -194,7 +194,7 @@ public:
 
     \return Number of parameters.
   */
-  unsigned int size() { return (unsigned int)listOfParams.size(); }
+  unsigned int size() const { return (unsigned int)listOfParams.size(); }
 };
 
 //######## Definition of Template Functions ########

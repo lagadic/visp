@@ -80,7 +80,7 @@ Regular expressions that should match with types that are considered as immutabl
 This only encompasses raw types
 '''
 IMMUTABLE_TYPES_REGEXS = [
-  '^(float|double|u?int\d+_t|unsigned|unsigned int|size_t|ssize_t|char|long|long\wlong|bool)$',
+  '^(float|double|u?int\d+_t|int|unsigned|unsigned int|size_t|ssize_t|char|long|long\wlong|bool)$',
   '^std::string$'
 ]
 
@@ -156,9 +156,10 @@ class GeneratorConfig(object):
 
   @staticmethod
   def update_from_main_config_file(path: Path) -> None:
-    assert path.exists()
+    assert path.exists(), f'Main config file {path} was not found'
     with open(path, 'r') as main_config_file:
       main_config = json.load(main_config_file)
+      print(json.dumps(main_config, indent=2))
       logging.info('Updating the generator config from dict: ', main_config)
       GeneratorConfig.pcpp_config.include_directories = main_config['include_dirs']
 
@@ -178,7 +179,11 @@ class GeneratorConfig(object):
         deps = modules_dict[module_name].get('dependencies')
 
         # Include only headers that are in the VISP source directory
-        headers = list(filter(lambda h: source_dir in h.parents, headers))
+        # Fix: Check specifically in the modules directory,
+        # since the build directory (containing vpConfig.h, that we want to ignore)
+        # Can be in the src folder
+        headers = list(filter(lambda h: (source_dir / 'modules') in h.parents, headers))
+
         headers_log_str = '\n\t'.join([str(header) for header in headers])
         logging.info(f'Module {module_name} headers: \n\t{headers_log_str}')
         GeneratorConfig.module_data.append(ModuleInputData(module_name, headers, deps))

@@ -37,7 +37,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/blob/vpDot2.h>
 #include <optional>
 
