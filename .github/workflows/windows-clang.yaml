@@ -53,17 +53,17 @@ jobs:
         type ViSP-third-party.txt
 
     - name: Build ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         cmake --build . --config Release
 
     - name: Install ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         cmake --build . --config Release --target install
 
     - name: Check installation folder
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         dir ${{ github.workspace }}\build\install\
         dir ${{ github.workspace }}\build\install\x64\
@@ -71,7 +71,7 @@ jobs:
         dir ${{ github.workspace }}\build\install\x64\vc17\bin
 
     - name: Test ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
         echo "VISP_INPUT_IMAGE_PATH: "
