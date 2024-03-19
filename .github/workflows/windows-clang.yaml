@@ -51,10 +51,12 @@ jobs:
         cd build
         cmake .. -G "Visual Studio 17 2022" -T "ClangCl" -A "x64"
         type ViSP-third-party.txt
+        pwd
 
     - name: Build ViSP
       working-directory: ${{ github.workspace }}\build
       run: |
+        pwd
         cmake --build . --config Release
 
     - name: Install ViSP
