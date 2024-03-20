@@ -318,8 +318,7 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
   const auto original_col_size = static_cast<Type>(costs.front().size());
   const auto sq_size = std::max<Type>(original_row_size, original_col_size);
 
-  auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(
-      sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
+  auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
   auto row_cover = std::vector<bool>(sq_size, false);
   auto col_cover = std::vector<bool>(sq_size, false);
 

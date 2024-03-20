@@ -157,7 +157,7 @@ int main(int argc, char **argv)
     }
     double end = vpTime::measureTimeMs();
     times.push_back(end-start);
-    vec_img_data_size.push_back(img_buffer.size());
+    vec_img_data_size.push_back(static_cast<int>(img_buffer.size()));
     vec_img_data.insert(vec_img_data.end(), img_buffer.begin(), img_buffer.end());
 
     std::vector<double> vec_pose = poseToVec(cMo);
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
     tracker.getModelForDisplay(mapOfModels, mapOfW, mapOfH, mapOfcMos, mapOfCams);
 
     std::vector<std::vector<double>> model = mapOfModels[camera_name];
-    const std::string model_iter = toString("model_%06zu", iter);
+    const std::string model_iter = toString("model_%06zu", static_cast<int>(iter));
     const std::string model_iter_sz = model_iter + "_sz";
     const size_t model_size = model.size();
     visp::cnpy::npz_save(npz_filename, model_iter_sz, &model_size, { 1 }, "a");
