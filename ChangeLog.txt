@@ -22,12 +22,13 @@ ViSP 3.x.x (Version in development)
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
     . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
   - New features and improvements
+    . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
     . OpenCV 2.4.8 is the minimal supported version
     . Introduce applications in apps folder, a collection of useful tools that
       have a dependency to the install target
-    . Bump minimal c++ standard to c++11
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
     . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
+    . Eliminate the use of pthread in favour of std::thread
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
