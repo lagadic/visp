@@ -1,5 +1,4 @@
-/****************************************************************************
- *
+/*
  * ViSP, open source Visual Servoing Platform software.
  * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
@@ -29,48 +28,18 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Generic laser scanner.
- *
-*****************************************************************************/
-#ifndef vpLaserScanner_h
-#define vpLaserScanner_h
-
-#include "visp3/core/vpConfig.h"
-
-/*!
-
-  \file vpLaserScanner.h
-
-  \brief Implements a generic laser scanner.
+ * Frame grabbing.
  */
 
-/*!
 
-  \class vpLaserScanner
-  \ingroup group_sensor_laserscanner
+#include <visp3/core/vpFrameGrabber.h>
 
-  \brief Class that defines a generic laser scanner.
- */
-class /*VISP_EXPORT*/ vpLaserScanner
+unsigned int vpFrameGrabber::getHeight() const 
 {
-public:
-  /*! Default constructor that initialize all the internal variable to zero.
-   */
-  vpLaserScanner() : ip("null"), port(0) { };
-  /*! Copy constructor. */
-  vpLaserScanner(const vpLaserScanner &scanner) : ip(scanner.ip), port(scanner.port) { };
-  /*! Default destructor that does nothing. */
-  virtual ~vpLaserScanner() { };
+  return height; 
+}
 
-  /*! Set the Ethernet address of the laser. */
-  void setIpAddress(std::string ip_address) { this->ip = ip_address; };
-
-  /*! Set the communication port. */
-  void setPort(int com_port) { this->port = com_port; };
-
-protected:
-  std::string ip;
-  int port;
-};
-
-#endif
+unsigned int vpFrameGrabber::getWidth() const 
+{ 
+  return width;
+}

@@ -38,18 +38,34 @@ set_source_files_properties(${python_bindings_cpp_src} PROPERTIES GENERATED TRUE
 
 pybind11_add_module(_visp ${python_bindings_cpp_src})
 
-# Place library in binary/visp dir so that it doesn't pollute lib dir
+# Place library in build/modules/python/bindings dir so that it doesn't pollute lib dir
 # This .so file is not treated the same as the others and we shouldn't link against it when compiling in C++
-# when installing the python module, pip will look into the "visp" subfolder for .so files to copy into the site-packages
-
+# when installing the python module, pip will look into this subfolder for .so files to copy into the site-packages
 file(MAKE_DIRECTORY "${bindings_gen_location}/src")
+
 set_target_properties(_visp PROPERTIES
   LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
-)
+  RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}"
 
-target_include_directories(_visp PRIVATE include) # Include directory containing custom bindings
-target_include_directories(_visp PRIVATE ${VISP_INCLUDE_DIRS})
-target_link_libraries(_visp PRIVATE ${VISP_LIBRARIES})
+)
+# With MSVC, the compiled pyd file is placed in a Release/Debug folder
+set(build_configs "NONE" "RELEASE" "DEBUG" "RELEASEWITHDEBINFO" "RELWITHDEBINFO")
+foreach(imp_config ${build_configs})
+set_target_properties(_visp PROPERTIES
+  LIBRARY_OUTPUT_DIRECTORY_${imp_config} "${CMAKE_CURRENT_BINARY_DIR}/visp"
+)
+endforeach()
+
+foreach(visp_lib ${VISP_LIBRARIES})
+  get_target_property(dir ${visp_lib} LIBRARY_OUTPUT_DIRECTORY)
+  get_target_property(n ${visp_lib} OUTPUT_NAME)
+endforeach()
+
+set_target_properties(_visp PROPERTIES EXCLUDE_FROM_ALL TRUE)
+
+target_include_directories(_visp PUBLIC include) # Include directory containing custom bindings
+target_include_directories(_visp PUBLIC ${VISP_INCLUDE_DIRS})
+target_link_libraries(_visp PUBLIC ${VISP_LIBRARIES})
 add_dependencies(_visp visp_python_bindings_generator_run)
 
 # Setup pip install

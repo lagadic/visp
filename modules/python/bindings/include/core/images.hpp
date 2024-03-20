@@ -33,7 +33,7 @@
 
 #ifndef VISP_PYTHON_CORE_IMAGES_HPP
 #define VISP_PYTHON_CORE_IMAGES_HPP
-
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRGBf.h>
 #include <pybind11/pybind11.h>
@@ -109,7 +109,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 
   pyImage.def(py::init([](np_array_cf<T> &np_array) {
     verify_array_shape_and_dims(np_array, 2, "ViSP Image");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     vpImage<T> result(shape[0], shape[1]);
     copy_data_from_np(np_array, result.bitmap);
     return result;
@@ -151,7 +151,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 
   pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
     verify_array_shape_and_dims(np_array, 3, "ViSP RGBa image");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     if (shape[2] != 4) {
       throw std::runtime_error("Tried to copy a 3D numpy array that does not have 4 elements per pixel into a ViSP RGBA image");
     }
@@ -196,7 +196,7 @@ bindings_vpImage(py::class_<vpImage<T>> &pyImage)
 
   pyImage.def(py::init([](np_array_cf<NpRep> &np_array) {
     verify_array_shape_and_dims(np_array, 3, "ViSP RGBa image");
-    const std::vector<ssize_t> shape = np_array.request().shape;
+    const std::vector<py::ssize_t> shape = np_array.request().shape;
     if (shape[2] != 3) {
       throw std::runtime_error("Tried to copy a 3D numpy array that does not have 3 elements per pixel into a ViSP RGBf image");
     }
