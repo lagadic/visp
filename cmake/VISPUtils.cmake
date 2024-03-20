@@ -1332,7 +1332,7 @@ macro(vp_parse_header4 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
 endmacro()
 
 # Get package version from pkg-config
-macro(vp_get_version_from_pkg LIBNAME OUTPUT_VAR)
+macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   find_package(PkgConfig)
   if(PkgConfig_FOUND)
     # Since pkg_check_modules updates not only <xxx>_VERSION but also <xxx>_FOUND, <xxx>_INCLUDE_DIRS and <xxx>_LIBRARIES
@@ -1360,6 +1360,10 @@ macro(vp_get_version_from_pkg LIBNAME OUTPUT_VAR)
     if(${LIBNAME_UPPER}_VERSION)
       set(${OUTPUT_VAR} ${${LIBNAME_UPPER}_VERSION})
     endif()
+  elseif(EXISTS "${PKG_PATH}/${LIBNAME}.pc")
+    # Consider the case where pkg-config is not installed
+    file(STRINGS "${PKG_PATH}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
+    string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
   endif()
 endmacro()
 

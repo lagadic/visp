@@ -133,7 +133,8 @@ if(UNIX)
     set(PNG_INCLUDE_DIRS ${PNG_INCLUDE_DIR})
     set(PNG_LIBRARIES ${PNG_LIBRARY})
 
-    vp_get_version_from_pkg("libpng" PNG_VERSION_STRING)
+    get_filename_component(PNG_LIB_DIR ${PNG_LIBRARY} DIRECTORY)
+    vp_get_version_from_pkg("libpng" "${PNG_LIB_DIR}/pkgconfig" PNG_VERSION_STRING)
 
     set(PNG_FOUND TRUE)
 

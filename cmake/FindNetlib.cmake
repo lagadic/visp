@@ -126,7 +126,8 @@ else(WIN32)
     set(NETLIB_LIBRARIES ${NETLIB_LIBRARY_LAPACK} ${NETLIB_LIBRARY_BLAS})
     set(NETLIB_FOUND TRUE)
 
-    vp_get_version_from_pkg("lapack" NETLIB_VERSION)
+    get_filename_component(NETLIB_LIB_DIR ${NETLIB_LIBRARY_LAPACK} PATH)
+    vp_get_version_from_pkg("lapack" "${NETLIB_LIB_DIR}/pkgconfig" NETLIB_VERSION)
 
   endif()
 endif(WIN32)
