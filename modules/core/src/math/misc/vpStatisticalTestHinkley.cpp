@@ -174,13 +174,13 @@ void vpStatisticalTestHinkley::computeMean(double signal)
   // i.e.  if ( ((m_Mk-m_Sk) == 0) && ((m_Tk-m_Nk) == 0) )
   if ((std::fabs(m_Mk - m_Sk) <= std::fabs(vpMath::maximum(m_Mk, m_Sk)) * std::numeric_limits<double>::epsilon()) &&
       (std::fabs(m_Tk - m_Nk) <= std::fabs(vpMath::maximum(m_Tk, m_Nk)) * std::numeric_limits<double>::epsilon())) {
-    m_mean = (m_mean * (m_count - 1) + signal) / (m_count);
+    m_mean = (m_mean * (m_count - 1) + static_cast<float>(signal)) / (m_count);
   }
 }
 
 void vpStatisticalTestHinkley::computeSk(double signal)
 {
-  m_Sk += signal - m_mean + m_dmin2;
+  m_Sk += static_cast<float>(signal) - m_mean + m_dmin2;
 }
 
 void vpStatisticalTestHinkley::computeMk()
@@ -192,7 +192,7 @@ void vpStatisticalTestHinkley::computeMk()
 
 void vpStatisticalTestHinkley::computeTk(double signal)
 {
-  m_Tk += signal - m_mean - m_dmin2;
+  m_Tk += static_cast<float>(signal) - m_mean - m_dmin2;
 }
 
 void vpStatisticalTestHinkley::computeNk()

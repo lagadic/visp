@@ -42,7 +42,7 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
 #endif
   unsigned int idColor = 0;
   //! [Iterate detections]
-  const unsigned int nbCircle = detectedCircles.size();
+  const unsigned int nbCircle = static_cast<unsigned int>(detectedCircles.size());
   for (unsigned int idCircle = 0; idCircle < nbCircle; ++idCircle) {
     const vpImageCircle &circleCandidate = detectedCircles[idCircle];
     vpImageDraw::drawCircle(I_disp, circleCandidate, v_colors[idColor], 2);
@@ -77,11 +77,11 @@ bool run_detection(const vpImage<unsigned char> &I_src, vpCircleHoughTransform &
   {
     const unsigned int crossSize = 3;
     const unsigned int crossThickness = 1;
-    unsigned int nbVotedCircles = opt_votingPoints->size();
+    unsigned int nbVotedCircles = static_cast<unsigned int>(opt_votingPoints->size());
     for (unsigned int idCircle = 0; idCircle < nbVotedCircles; ++idCircle) {
       // Get the voting points of a detected circle
       const std::vector<std::pair<unsigned int, unsigned int> > &votingPoints = (*opt_votingPoints)[idCircle];
-      unsigned int nbVotingPoints = votingPoints.size();
+      unsigned int nbVotingPoints = static_cast<unsigned int>(votingPoints.size());
       for (unsigned int idPoint = 0; idPoint < nbVotingPoints; ++idPoint) {
         // Draw the voting points
         const std::pair<unsigned int, unsigned int> &pt = votingPoints[idPoint];
@@ -271,7 +271,7 @@ int main(int argc, char **argv)
       i++;
     }
     else if (argName == "--visibility-ratio-thresh" && i + 1 < argc) {
-      opt_visibilityRatioThresh = atof(argv[i + 1]);
+      opt_visibilityRatioThresh = static_cast<float>(atof(argv[i + 1]));
       i++;
     }
     else if (argName == "--record-voting-points") {
@@ -471,8 +471,8 @@ int main(int argc, char **argv)
       , opt_nbEdgeFilteringIter
       , opt_centerXlimits
       , opt_centerYlimits
-      , opt_minRadius
-      , opt_maxRadius
+      , static_cast<float>(opt_minRadius)
+      , static_cast<float>(opt_maxRadius)
       , opt_dilatationKerneSize
       , opt_averagingWindowSize
       , opt_centerThresh

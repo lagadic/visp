@@ -129,9 +129,9 @@ int main(int argc, const char **argv)
     method = vp::GAMMA_MANUAL;
   }
   vpImage<unsigned char> I_gray_gamma_correction;
-  vp::gammaCorrection(I_gray, I_gray_gamma_correction, gamma, method);
+  vp::gammaCorrection(I_gray, I_gray_gamma_correction, static_cast<float>(gamma), method);
   vpImage<vpRGBa> I_color_gamma_correction;
-  vp::gammaCorrection(I_color, I_color_gamma_correction, gamma, colorHandling, method);
+  vp::gammaCorrection(I_color, I_color_gamma_correction, static_cast<float>(gamma), colorHandling, method);
   //! [Gamma correction]
   I_gray_res.insert(I_gray_gamma_correction, vpImagePoint(0, I_gray.getWidth()));
   ss.str("");
