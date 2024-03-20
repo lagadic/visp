@@ -299,8 +299,9 @@ VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int block
  * 255] range such as the cumulative histogram distribution becomes linear.
  *
  * \param I : The grayscale image to apply histogram equalization.
-*/
-VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
+ * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
+ */
+VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -311,8 +312,10 @@ VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
  *
  * \param I1 : The first grayscale image.
  * \param I2 : The second grayscale image after histogram equalization.
+ * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
  */
-VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
+VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
+                                   const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -355,9 +358,9 @@ VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I
  * technique. If equals to -2, use automatic Gamma correction based on a logarithmic technique.
  * If equals to -3, uses automatic Gamma correction based on classification. If equals to -4, uses automatic Gamma
  * correction based on probabilistic.
- * \param[in] method: The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
  * factor, or one of the automatic method if \b gamma is negative.
- * \param[in] p_mask If different from nullptr, permits to indicate which points must be taken into account by setting
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = vp::GAMMA_MANUAL,
@@ -374,9 +377,9 @@ VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, 
  * technique. If equals to -2, use automatic Gamma correction based on a logarithmic technique.
  * If equals to -3, uses automatic Gamma correction based on classification. If equals to -4, uses automatic Gamma
  * correction based on probabilistic.
- * \param[in] method: The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
  * factor, or one of the automatic method if \b gamma is negative.
- * \param[in] p_mask If different from nullptr, permits to indicate which points must be taken into account by setting
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const float &gamma,
@@ -407,9 +410,9 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const v
  * \param[out] I2 : The second color image after gamma correction.
  * \param[in] gamma : Gamma value.
  * \param[in] colorHandling : How to handle the colors of the image.
- * \param[in] method: The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma factor,
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma factor,
  * or one of the automatic method if \b gamma is negative.
- * \param[in] p_mask If different from nullptr, permits to indicate which points must be taken into account by setting
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
  * them to true.
  */
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const float &gamma,

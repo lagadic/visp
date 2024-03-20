@@ -217,13 +217,14 @@ void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double
   vp::adjust(I2, alpha, beta);
 }
 
-void equalizeHistogram(vpImage<unsigned char> &I)
+void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
   vpImage<unsigned char> Icpy = I;
-  vp::equalizeHistogram(Icpy, I);
+  vp::equalizeHistogram(Icpy, I, p_mask);
 }
 
-void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
+                       const vpImage<bool> *p_mask)
 {
   if (I1.getWidth() * I1.getHeight() == 0) {
     return;
@@ -231,6 +232,7 @@ void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> 
 
   // Calculate the histogram
   vpHistogram hist;
+  hist.setMask(p_mask);
   hist.equalize(I1, I2);
 }
 
