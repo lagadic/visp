@@ -39,6 +39,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-conda-package.html
     . New tutorial: Using Statistical Process Control to monitor your signal
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-spc.html
+    . New tutorial: Installing ViSP Python bindings
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-python-bindings.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
