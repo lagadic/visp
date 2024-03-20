@@ -58,18 +58,25 @@ SCENARIO("Using PCA features", "[visual_features]")
 {
   GIVEN("A matrix containing simple data")
   {
-    const unsigned numDataPoints = 200;
-    const unsigned int dataDim = 500;
-    const unsigned int trueComponents = 5;
+    const unsigned h = 16, w = 16;
+    const unsigned numDataPoints = 4;
+    const unsigned int dataDim = h * w;
+    const unsigned int trueComponents = 3;
     // Generate numDataPoints vectors in a "dataDim"-dimensional space.
     // The data is generated from "trueComponents" vectors, that are orthogonal
-    const vpMatrix orthoFull = orthogonalBasis(dataDim, 42); // dataDim x dataDim
+    const vpMatrix orthoFull = (orthogonalBasis(dataDim, 42) + vpMatrix(dataDim, dataDim, 1.0)) * 127.5; // dataDim x dataDim
     const vpMatrix ortho(orthoFull, 0, 0, trueComponents, dataDim); // trueComponents X dataDim
     const vpMatrix coefficients(numDataPoints, trueComponents);
     vpUniRand rand(17);
     for (unsigned int i = 0; i < coefficients.getRows(); ++i) {
+      double sum = 0.0;
       for (unsigned int j = 0; j < coefficients.getCols(); ++j) {
-        coefficients[i][j] = rand.uniform(-1.0, 1.0);
+        coefficients[i][j] = rand.uniform(0.0, 1.0);
+        sum += coefficients[i][j] * coefficients[i][j];
+      }
+      const double inv_norm = 1.0 / sqrt(sum);
+      for (unsigned int j = 0; j < coefficients.getCols(); ++j) {
+        coefficients[i][j] *= inv_norm;
       }
     }
 
@@ -87,7 +94,7 @@ SCENARIO("Using PCA features", "[visual_features]")
     {
       for (unsigned int k = 1; k <= trueComponents; ++k) {
 
-        const vpLuminancePCA pca = vpLuminancePCA::learn(data.transpose(), k);
+        vpLuminancePCA pca = vpLuminancePCA::learn(data.transpose(), k);
         const vpMatrix &basis = *pca.getBasis();
 
         THEN("Basis has correct dimensions")
@@ -124,7 +131,6 @@ SCENARIO("Using PCA features", "[visual_features]")
           const std::string meanFile = vpIoTools::createFilePath(tempDir, "mean.txt");
           const std::string varFile = vpIoTools::createFilePath(tempDir, "var.txt");
 
-
           pca.save(basisFile, meanFile, varFile);
 
           const vpLuminancePCA pca2 = vpLuminancePCA::load(basisFile, meanFile, varFile);
@@ -144,13 +150,16 @@ SCENARIO("Using PCA features", "[visual_features]")
             }
           }
           REQUIRE(basisSame);
+
           for (unsigned int i = 0; i < meanDiff.getRows(); ++i) {
             if (fabs(meanDiff[i]) > 1e-10) {
+              std::cout << meanDiff << std::endl;
               meanSame = false;
               break;
             }
           }
           REQUIRE(meanSame);
+
           for (unsigned int i = 0; i < explainedVarDiff.getRows(); ++i) {
             if (fabs(explainedVarDiff[i]) > 1e-10) {
               explainedVarSame = false;
@@ -175,17 +184,162 @@ SCENARIO("Using PCA features", "[visual_features]")
             {
               REQUIRE(pca.getExplainedVariance().sum() > 0.99);
             }
+            THEN("Inverse mapping leads back to the same data")
+            {
+              for (unsigned int i = 0; i < numDataPoints; ++i) {
+                vpImage<unsigned char> I(h, w);
+                for (unsigned int j = 0; j < data.getCols(); ++j) {
+                  I.bitmap[j] = static_cast<unsigned char>(data[i][j]);
+                }
+                vpColVector s;
+                pca.setBorder(0);
+                pca.map(I, s);
+                vpImage<unsigned char> Irec;
+                pca.inverse(s, Irec);
+                for (unsigned int j = 0; j < data.getCols(); ++j) {
+                  REQUIRE(abs(static_cast<int>(I.bitmap[j]) - static_cast<int>(Irec.bitmap[j])) < 2);
+                }
+              }
+            }
           }
         }
 
-        THEN("Projecting data has correct dimensions")
+        THEN("Projecting data is correct")
         {
-
+          {
+            vpColVector s;
+            pca.setBorder(0);
+            vpImage<unsigned char> I(h, w);
+            pca.map(I, s);
+            REQUIRE(s.size() == pca.getProjectionSize());
+          }
+          {
+            vpColVector s;
+            const unsigned border = 3;
+            pca.setBorder(border);
+            REQUIRE(pca.getBorder() == border);
+            vpImage<unsigned char> I(h + 2 * border, w + 2 * border);
+            pca.map(I, s);
+            REQUIRE(s.size() == pca.getProjectionSize());
+          }
         }
       }
     }
   }
 }
+
+SCENARIO("Using DCT features", "[visual_features]")
+{
+
+  GIVEN("A matrix")
+  {
+    std::vector<std::tuple<vpMatrix, vpColVector, vpMatrix>> data = {
+      {
+        vpMatrix({
+          {0.0, 1.0, 2.0},
+          {3.0, 4.0, 5.0},
+          {6.0, 7.0, 8.0}
+        }),
+        vpColVector(
+          { 0.0, 1.0, 3.0, 6.0, 4.0, 2.0, 5.0, 7.0, 8.0 }
+        ),
+        vpMatrix({
+          {0.0, 1.0, 5.0},
+          {2.0, 4.0, 6.0},
+          {3.0, 7.0, 8.0}
+        })
+      }
+    };
+    for (unsigned int i = 0; i < data.size(); ++i) {
+      WHEN("Building the associated zigzag indexing matrix")
+      {
+        vpMatrix m = std::get<0>(data[i]);
+        vpColVector contentAsZigzag = std::get<1>(data[i]);
+        const vpMatrix mAfterWriterVec = std::get<2>(data[i]);
+        vpLuminanceDCT::vpMatrixZigZagIndex zigzag;
+        zigzag.init(m.getRows(), m.getCols());
+        vpColVector s;
+        THEN("Calling getValues with wrong matrix rows throws")
+        {
+          vpMatrix wrongM(m.getRows() + 1, m.getCols());
+          REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
+        }
+        THEN("Calling getValues with wrong matrix cols throws")
+        {
+          vpMatrix wrongM(m.getRows(), m.getCols() + 1);
+          REQUIRE_THROWS(zigzag.getValues(wrongM, 0, 2, s));
+        }
+        THEN("Calling getValues with wrong start and end arguments throws")
+        {
+          REQUIRE_THROWS(zigzag.getValues(m, 2, 1, s));
+        }
+        THEN("Calling getValues and querying all values returns correct result")
+        {
+          REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size(), s));
+          REQUIRE(s == contentAsZigzag);
+        }
+        THEN("Calling getValues and querying a subset of the values is correct")
+        {
+          REQUIRE_NOTHROW(zigzag.getValues(m, 0, m.size() / 2, s));
+          REQUIRE(s == contentAsZigzag.extract(0, m.size() / 2));
+          REQUIRE_NOTHROW(zigzag.getValues(m, m.size() / 2, m.size(), s));
+          REQUIRE(s == contentAsZigzag.extract(m.size() / 2, m.size() - m.size() / 2));
+        }
+        THEN("Calling setValues with wrong matrix rows throws")
+        {
+          vpMatrix wrongM(m.getRows() + 1, m.getCols());
+          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
+        }
+        THEN("Calling setValues with wrong matrix cols throws")
+        {
+          vpMatrix wrongM(m.getRows(), m.getCols() + 1);
+          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, 0, wrongM));
+        }
+
+        THEN("Calling setValues with wrong start and vector size arguments throws")
+        {
+          REQUIRE_THROWS(zigzag.setValues(contentAsZigzag, m.size() - contentAsZigzag.size() + 1, m));
+        }
+
+        THEN("Calling setValues leads to expected result")
+        {
+          vpMatrix mWrite(m.getRows(), m.getCols());
+          vpColVector powered = contentAsZigzag;
+          for (unsigned i = 0; i < powered.size(); ++i) {
+            powered[i] *= powered[i];
+          }
+          vpColVector poweredRead;
+          REQUIRE_NOTHROW(zigzag.setValues(powered, 0, mWrite));
+          REQUIRE_NOTHROW(zigzag.getValues(mWrite, 0, mWrite.size(), poweredRead));
+          REQUIRE(powered == poweredRead);
+
+          vpColVector indices = contentAsZigzag;
+          for (unsigned i = 0; i < powered.size(); ++i) {
+            indices[i] = static_cast<double>(i);
+          }
+          vpColVector indicesRead;
+          REQUIRE_NOTHROW(zigzag.setValues(indices, 0, mWrite));
+          REQUIRE(mWrite == mAfterWriterVec);
+
+          vpMatrix m2(m.getRows(), m.getCols(), 0.0);
+          zigzag.setValues(contentAsZigzag.extract(0, 3), 0, m2);
+
+          vpColVector s2;
+          zigzag.getValues(m2, 0, 3, s2);
+          REQUIRE(s2 == contentAsZigzag.extract(0, 3));
+
+        }
+
+      }
+
+    }
+
+
+  }
+
+
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance

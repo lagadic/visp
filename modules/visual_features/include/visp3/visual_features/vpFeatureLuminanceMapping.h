@@ -111,6 +111,8 @@ public:
 
 
   static void imageAsVector(const vpImage<unsigned char> &I, vpColVector &Ivec, unsigned border);
+  static void imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix &Imat, unsigned border);
+
 
 protected:
   unsigned m_mappingSize; //! Final vector size
@@ -138,7 +140,7 @@ class VISP_EXPORT vpLuminancePCA : public vpLuminanceMapping
 {
 public:
 
-  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr) { }
+  vpLuminancePCA() : vpLuminanceMapping(0), m_basis(nullptr), m_mean(nullptr), m_Ivec(0), m_Ih(0), m_Iw(0) { }
 
   /**
    * @brief Build a new PCA object
@@ -253,8 +255,90 @@ private:
   std::shared_ptr<vpMatrix> m_basis; //! \f$ \mathbf{U}^\top \f$ a K by dim(I) orthogonal matrix
   std::shared_ptr<vpColVector> m_mean; //! \f$ \mathbf{\bar I} \f$ The mean image
   vpColVector m_explainedVariance; //! The explained variance
-  vpColVector m_Ivec;
+  vpColVector m_Ivec; //! Vector representation of the image
+  unsigned int m_Ih, m_Iw; //! Input image dimensions (without borders);
 };
+
+class VISP_EXPORT vpLuminanceDCT : public vpLuminanceMapping
+{
+public:
+
+  class vpMatrixZigZagIndex
+  {
+  public:
+    vpMatrixZigZagIndex();
+    /**
+     * @brief Initalize the ZigZag object. Computes and stores the zigzag indexing for a given matrix size
+     *
+     * @param rows the matrix's number of rows
+     * @param cols the matrix's number of cols
+     */
+    void init(unsigned rows, unsigned cols);
+    /**
+     * @brief Fill the vector s with (end - start) values, according to the zigzag matrix indexing strategy
+     *
+     *
+     * @param m the matrix
+     * @param start The first value. Use 0 to start with the matrix's top left value
+     * @param end The last value to store in the vector. (exclusive)
+     * @param s The vector in which to store the values
+     */
+    void getValues(const vpMatrix &m, unsigned int start, unsigned int end, vpColVector &s) const;
+
+    /**
+     * @brief set the values in the matrix, according to the values stored in the vector s and the zigzag indexing strategy
+     *
+     * @param s The vector from which to set the values
+     * @param start the zigzag index at which to start filling values
+     * @param m The matrix in which the values will be replaced
+     */
+    void setValues(const vpColVector &s, unsigned int start, vpMatrix &m) const;
+
+  private:
+    std::vector<unsigned> m_rowIndex; // Contains the row index of the nth value of the zigzag indexing
+    std::vector<unsigned> m_colIndex; // Contains the row index of the nth value of the zigzag indexing
+    unsigned m_rows;
+    unsigned m_cols;
+  };
+
+  vpLuminanceDCT() : vpLuminanceMapping(0) { }
+
+  /**
+   * @brief Build a new DCT object
+   *
+   * @param k the number of components to keep from the DCT matrix and use as servoing features
+   */
+  vpLuminanceDCT(const unsigned int k) : vpLuminanceMapping(k) { init(k); }
+
+  /**
+   * @brief Copy constructor
+   */
+  vpLuminanceDCT(const vpLuminanceDCT &other);
+
+
+  vpLuminanceDCT &operator=(const vpLuminanceDCT &other);
+
+  /**
+   * @brief Initialize the DCT object with the number of required components
+   */
+  void init(const unsigned int k);
+
+  void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;
+  void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
+  void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
+
+private:
+  void computeDCTMatrices();
+
+protected:
+  unsigned m_Ih, m_Iw; //! image dimensions (without borders)
+  vpMatrix m_Imat; //! Image as a matrix
+  vpMatrix m_dct; //! DCT representation of the image
+  vpMatrix m_D, m_Dt; //! the computed DCT matrix and its transpose. changed from original implementation: m_Dt is adapted to the width of the image (non square images)
+  vpLuminanceDCT::vpMatrixZigZagIndex m_zigzag; //! zigzag indexing helper
+
+};
+
 
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {

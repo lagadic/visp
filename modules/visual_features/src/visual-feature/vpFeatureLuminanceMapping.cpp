@@ -22,11 +22,27 @@ void vpLuminanceMapping::imageAsVector(const vpImage<unsigned char> &I, vpColVec
   }
 }
 
+void vpLuminanceMapping::imageAsMatrix(const vpImage<unsigned char> &I, vpMatrix &Imat, unsigned border)
+{
+  const unsigned h = I.getHeight();
+  const unsigned w = I.getWidth();
+  if (h < 2 * border || w < 2 * border) {
+    throw vpException(vpException::dimensionError, "Image is smaller than required border crop");
+  }
+  Imat.resize((h - 2 * border), (w - 2 * border), false, false);
+  for (unsigned i = border; i < h - border; ++i) {
+    for (unsigned j = border; j < w - border; ++j) {
+      Imat[i - border][j - border] = (double)I[i][j];
+    }
+  }
+}
+
 // vpLuminancePCA
 
 vpLuminancePCA::vpLuminancePCA(const std::shared_ptr<vpMatrix> &basis, const std::shared_ptr<vpColVector> &mean, const vpColVector &explainedVariance)
   : vpLuminanceMapping(basis->getRows())
 {
+  m_Ih = m_Iw = 0;
   init(basis, mean, explainedVariance);
 }
 
@@ -59,19 +75,31 @@ vpLuminancePCA &vpLuminancePCA::operator=(const vpLuminancePCA &other)
   m_mappingSize = other.m_mappingSize;
   m_border = other.m_border;
   m_Ivec = other.m_Ivec;
+  m_Ih = other.m_Ih;
+  m_Iw = other.m_Iw;
 
   return *this;
 }
 
 void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
 {
+  m_Ih = I.getHeight() - 2 * m_border;
+  m_Iw = I.getWidth() - 2 * m_border;
   imageAsVector(I, m_Ivec, m_border);
+
   m_Ivec -= *m_mean;
   s = (*m_basis) * m_Ivec;
 }
 void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
-
+  const vpColVector vI = ((*m_basis).transpose() * s + (*m_mean));
+  I.resize(m_Ih, m_Iw);
+  // Vector to image
+  for (unsigned int i = 0; i < m_Ih; ++i) {
+    for (unsigned int j = 0; j < m_Iw; ++j) {
+      I[i][j] = static_cast<unsigned char>(vI[i * m_Iw + j]);
+    }
+  }
 }
 
 void vpLuminancePCA::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
@@ -84,9 +112,9 @@ vpLuminancePCA vpLuminancePCA::load(const std::string &basisFilename, const std:
   std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>();
   std::shared_ptr<vpColVector> mean = std::make_shared<vpColVector>();
   vpColVector explainedVariance;
-  vpMatrix::loadMatrix(basisFilename, *basis, false);
-  vpMatrix::loadMatrix(meanFilename, *mean, false);
-  vpMatrix::loadMatrix(explainedVarianceFile, explainedVariance, false);
+  vpMatrix::loadMatrix(basisFilename, *basis, true);
+  vpMatrix::loadMatrix(meanFilename, *mean, true);
+  vpMatrix::loadMatrix(explainedVarianceFile, explainedVariance, true);
 
   if (mean->getCols() > 1) {
     throw vpException(vpException::dimensionError,
@@ -118,15 +146,13 @@ void vpLuminancePCA::save(const std::string &basisFilename, const std::string &m
     throw vpException(vpException::dimensionError,
     "Tried to save a PCA projection but there are issues with the basis and mean dimensions");
   }
-  vpMatrix::saveMatrix(basisFilename, *m_basis, false);
-  vpMatrix::saveMatrix(meanFilename, *m_mean, false);
-  vpMatrix::saveMatrix(explainedVarianceFile, m_explainedVariance, false);
+  vpMatrix::saveMatrix(basisFilename, *m_basis, true);
+  vpMatrix::saveMatrix(meanFilename, *m_mean, true);
+  vpMatrix::saveMatrix(explainedVarianceFile, m_explainedVariance, true);
 }
 
 vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &images, const unsigned int projectionSize, const unsigned int border)
 {
-
-
   vpMatrix matrix;
   for (unsigned i = 0; i < images.size(); ++i) {
     const vpImage<unsigned char> &I = images[i];
@@ -145,6 +171,7 @@ vpLuminancePCA vpLuminancePCA::learn(const std::vector<vpImage<unsigned char>> &
 
   return vpLuminancePCA::learn(matrix.transpose(), projectionSize);
 }
+
 #ifdef VISP_HAVE_MODULE_IO
 vpLuminancePCA vpLuminancePCA::learn(const std::vector<std::string> &imageFiles, const unsigned int projectionSize, const unsigned int border)
 {
@@ -206,6 +233,207 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
   std::shared_ptr<vpMatrix> basis = std::make_shared<vpMatrix>(U.t());
   std::shared_ptr<vpColVector> meanPtr = std::make_shared<vpColVector>(mean);
   return vpLuminancePCA(basis, meanPtr, componentsExplainedVar);
+}
+
+//vpMatrixZigZagIndex
+vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex()
+{
+
+}
+
+void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
+{
+  // Adapted from  https://www.geeksforgeeks.org/print-matrix-in-zig-zag-fashion/
+  m_colIndex.resize(rows * cols);
+  m_rowIndex.resize(rows * cols);
+  m_rows = rows;
+  m_cols = cols;
+  unsigned int index = 0;
+  int row = 0, col = 0;
+
+  bool row_inc = 0;
+
+  unsigned mindim = std::min(rows, cols);
+  for (unsigned int len = 1; len <= mindim; ++len) {
+    for (int i = 0; i < len; ++i) {
+      m_rowIndex[index] = row;
+      m_colIndex[index] = col;
+      ++index;
+      if (i + 1 == len) {
+        break;
+      }
+
+      if (row_inc) {
+        ++row;
+        --col;
+      }
+      else {
+        --row;
+        ++col;
+      }
+    }
+
+    if (len == mindim) {
+      break;
+    }
+
+    if (row_inc)
+      ++row, row_inc = false;
+    else
+      ++col, row_inc = true;
+  }
+
+  // Update the indexes of row and col variable
+  if (row == 0) {
+    if (col == rows - 1) {
+      ++row;
+    }
+    else {
+      ++col;
+    }
+    row_inc = 1;
+  }
+  else {
+    if (row == cols - 1) {
+      ++col;
+    }
+    else {
+      ++row;
+    }
+    row_inc = 0;
+  }
+
+  // Print the next half zig-zag pattern
+  int maxdim = std::max(rows, cols) - 1;
+  for (unsigned len, diag = maxdim; diag > 0; --diag) {
+
+    if (diag > mindim) {
+      len = mindim;
+    }
+    else {
+      len = diag;
+    }
+
+    for (int i = 0; i < len; ++i) {
+      m_rowIndex[index] = row;
+      m_colIndex[index] = col;
+      ++index;
+
+      if (i + 1 == len) {
+        break;
+      }
+
+      if (row_inc) {
+        ++row;
+        --col;
+      }
+      else {
+        ++col;
+        --row;
+      }
+    }
+
+    if (row == 0 || col == rows - 1) {
+      if (col == rows - 1) {
+        ++row;
+      }
+      else {
+        ++col;
+      }
+      row_inc = true;
+    }
+
+    else if (col == 0 || row == cols - 1) {
+      if (row == cols - 1) {
+        ++col;
+      }
+      else {
+        ++row;
+      }
+      row_inc = false;
+    }
+  }
+}
+
+void vpLuminanceDCT::vpMatrixZigZagIndex::getValues(const vpMatrix &m, unsigned int start, unsigned int end, vpColVector &s) const
+{
+  if (m.getRows() != m_rows || m.getCols() != m_cols) {
+    throw vpException(vpException::dimensionError, "Input matrix has wrong dimensions");
+  }
+
+  if (end <= start) {
+    throw vpException(vpException::dimensionError, "End index should be > to the start index");
+  }
+
+  s.resize(end - start, false);
+
+  for (unsigned index = start; index < end; ++index) {
+    s[index - start] = m[m_rowIndex[index]][m_colIndex[index]];
+  }
+}
+
+void vpLuminanceDCT::vpMatrixZigZagIndex::setValues(const vpColVector &s, unsigned int start, vpMatrix &m) const
+{
+  if (m.getRows() != m_rows || m.getCols() != m_cols) {
+    throw vpException(vpException::dimensionError, "Input matrix has wrong dimensions");
+  }
+
+  if (start + s.size() > m.size()) {
+    throw vpException(vpException::dimensionError, "Start index combined to vector size exceeds matrix size");
+  }
+
+  for (unsigned index = start; index < start + s.size(); ++index) {
+    m[m_rowIndex[index]][m_colIndex[index]] = s[index - start];
+  }
+}
+
+// vpLuminanceDCT
+
+
+void vpLuminanceDCT::map(const vpImage<unsigned char> &I, vpColVector &s)
+{
+  m_Ih = I.getHeight() - 2 * m_border;
+  m_Iw = I.getWidth() - 2 * m_border;
+  imageAsMatrix(I, m_Imat, m_border);
+  if (m_Imat.getCols() != m_Ih || m_Imat.getRows() != m_Iw) {
+    computeDCTMatrices();
+    m_zigzag.init(m_Ih, m_Iw);
+  }
+  m_dct = m_D * m_Imat * m_Dt;
+  m_zigzag.getValues(m_dct, 0, m_mappingSize, s);
+}
+
+void vpLuminanceDCT::computeDCTMatrices()
+{
+  m_D.resize(m_Ih, m_Iw, false, false);
+  for (unsigned j = 0; j < m_Ih; j++)
+    m_D[0][j] = 1/sqrt(m_Ih);
+  double alpha = sqrt(2./(m_Ih));
+  for (unsigned int i = 1; i < m_Ih; i++) {
+    for (unsigned int j = 0; j < m_Iw; j++) {
+      m_D[i][j] = alpha*cos((2 * j + 1) * i * M_PI / (2 * m_Ih));
+    }
+  }
+
+  m_Dt.resize(m_Iw, m_Ih, false, false);
+  for (unsigned j = 0; j < m_Iw; j++)
+    m_Dt[j][0] = 1/sqrt(m_Iw);
+  alpha = sqrt(2. / m_Iw);
+  for (unsigned int i = 1; i < m_Iw; i++) {
+    for (unsigned int j = 0; j < m_Ih; j++) {
+      m_Dt[i][j] = alpha * cos((2 * j + 1) * i * M_PI / (2 * m_Iw));
+    }
+  }
+}
+
+void vpLuminanceDCT::inverse(const vpColVector &s, vpImage<unsigned char> &I)
+{
+
+}
+
+void vpLuminanceDCT::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
+{
+
 }
 
 
