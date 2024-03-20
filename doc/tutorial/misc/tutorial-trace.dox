@@ -1,12 +1,14 @@
 /**
 
-\page tutorial-trace Tutorial: Debug and trace printings 
+\page tutorial-trace Tutorial: Debug and trace printings
 \tableofcontents
 
 
 \section intro_trace Introduction
 
-ViSP allows to introduce trace and debug printings that may help debugging. To this end ViSP provides C or C++ macros that allows to print messages to the standard output std::cout or to std::cerr. The following table summarizes the macro defined in visp3/code/vpDebug.h header.
+ViSP allows to introduce trace and debug printings that may help debugging. To this end ViSP provides C or C++ macros
+that allows to print messages to the standard output std::cout or to std::cerr. The following table summarizes the
+macro defined in visp3/code/vpDebug.h header.
 
 ~~~
 |----------|-------|-------------------------------------|---------------------------------------|
@@ -23,67 +25,76 @@ ViSP allows to introduce trace and debug printings that may help debugging. To t
 
 \subsection trace_macro Macros for trace
 
-Macro for tracing vpTRACE(), vpTRACE(level), vpERROR_TRACE(), vpERROR_TRACE(level), 
-vpIN_FCT() and vpOUT_FCT() 
-work like printf with carrier return at the end of the string, while 
-vpCTRACE() and vpCERROR() work like the C++ output streams std::cout 
-and std::cerr. All these macro print messages only if VP_TRACE macro is defined. Macro that has \e level as parameter like vpTRACE(level) or vpERROR_TRACE(level) use an additional define named VP_DEBUG_MODE. They print only messages if VP_DEBUG_MODE >= \e level. 
+Macro for tracing vpTRACE(), vpTRACE(level), vpERROR_TRACE(), vpERROR_TRACE(level),
+vpIN_FCT() and vpOUT_FCT()
+work like printf with carrier return at the end of the string, while
+vpCTRACE() and vpCERROR() work like the C++ output streams std::cout
+and std::cerr. All these macro print messages only if VP_TRACE macro is defined. Macro that has \e level as parameter
+like vpTRACE(level) or vpERROR_TRACE(level) use an additional define named VP_DEBUG_MODE. They print only messages if
+VP_DEBUG_MODE >= \e level.
 
 \subsection debug_macro Macros for debug
 
 Macros for debug vpDEBUG_TRACE(), vpDEBUG_TRACE(level), vpDERROR_TRACE() and vpDERROR_TRACE(level)
-work like printf while vpCDEBUG(level) works like the C++ output stream std::cout. 
-These macro print messages only if VP_DEBUG macro is defined. Macro that has \e level as parameter like vpDEBUG_TRACE(level) or vpDERROR_TRACE(level) use an additional define named VP_DEBUG_MODE. They print only messages if VP_DEBUG_MODE >= \e level.
+work like printf while vpCDEBUG(level) works like the C++ output stream std::cout.
+These macro print messages only if VP_DEBUG macro is defined. Macro that has \e level as parameter like
+vpDEBUG_TRACE(level) or vpDERROR_TRACE(level) use an additional define named VP_DEBUG_MODE. They print only messages
+if VP_DEBUG_MODE >= \e level.
 
 Moreover vpDEBUG_ENABLE(level) can be used to check if a given debug level is active; vpDEBUG_ENABLE(level) is
 equal to 1 if VP_DEBUG_MODE >= \e level, otherwise vpDEBUG_ENABLE(level) is equal to 0.
 
 \section debug_trace_usage Debug and trace usage in ViSP library
 
-In ViSP, before an exception is thrown, trace macro are widely used to inform the user that an error occur. This is redundant, since the same trace message in generally associated to the exception that is thrown. Since ViSP 3.1.0, during CMake configuration it is possible to tune debug and trace printings by setting \c ENABLE_DEBUG_LEVEL cmake variable.
+In ViSP, before an exception is thrown, trace macro are widely used to inform the user that an error occur. This is
+redundant, since the same trace message in generally associated to the exception that is thrown. Since ViSP 3.1.0,
+during CMake configuration it is possible to tune debug and trace printings by setting \c ENABLE_DEBUG_LEVEL cmake
+variable.
 
-- To turn off debug and trace printings (this is the default), using cmake command just run : 
-\code 
+- To turn off debug and trace printings (this is the default), using cmake command just run :
+\code
 %cmake -DENABLE_DEBUG_LEVEL=0 <path to ViSP source code>
-\endcode 
+\endcode
 
-- To turn on debug and trace printings with a debug level of 3, using cmake command just run : 
-\code 
+- To turn on debug and trace printings with a debug level of 3, using cmake command just run :
+\code
 %cmake -DENABLE_DEBUG_LEVEL=3 <path to ViSP source code>
-\endcode 
+\endcode
 
 - or using ccmake GUI as shown in the next snapshot:
 
 \image html img-cmake-debug-trace.jpg
 
-\note When \c ENABLE_DEBUG_LEVEL is set to 0 (this is the default behavior in ViSP), we don't define VP_TRACE and VP_DEBUG macro.
- 
+\note When \c ENABLE_DEBUG_LEVEL is set to 0 (this is the default behavior in ViSP), we don't define VP_TRACE and
+VP_DEBUG macro.
+
 \section example Debug and trace usage in your own project
 
-Note that all the material (source code) described in this section is part of ViSP source code and could be downloaded using the following command:
+Note that all the material (source code) described in this tutorial is part of ViSP source code
+(in `tutorial/trace` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/visual-servoing/trace.
 
+If you develop a project that uses ViSP library as a 3rd party, there are different ways to benefit from debug and
+trace macro described previously.
+
+- If ViSP was build with debug and trace enabled using \c cmake \c ENABLE_DEBUG_LEVEL=\<level\>, debug and trace are
+  also enabled in your development.
+- If debug and trace were disabled in ViSP (\c ENABLE_DEBUG_LEVEL=0), you can enable debug and trace in your own
+  development either by defining \c VP_DEBUG and/or \c VP_TRACE macro in your code using
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/trace
-\endcode
-
-If you develop a project that uses ViSP library as a 3rd party, there are different ways to benefit from debug and trace macro described previously.
-
-- If ViSP was build with debug and trace enabled using \c cmake \c ENABLE_DEBUG_LEVEL=\<level\>, debug and trace are also enabled in your development.
-- If debug and trace were disabled in ViSP (\c ENABLE_DEBUG_LEVEL=0), you can enable debug and trace in your own development either by defining \c VP_DEBUG and/or \c VP_TRACE macro in your code using
-\code 
 #define VP_TRACE
 #define VP_DEBUG
 
 #include <visp3/core/vpDebug.h>
-\endcode 
+\endcode
 either by modifying your \c CMakeLists.txt file by adding an option like:
-\code 
+\code
 option(ENABLE_DEBUG_MODE "Enable debug and trace printings" ON)
 
 if(ENABLE_DEBUG_MODE)
   add_definitions("-DVP_DEBUG -DVP_TRACE")
 endif()
-\endcode 
+\endcode
 
 
 The following example also available in tutorial-trace.cpp shows how to use the previous macro.
@@ -91,31 +102,33 @@ The following example also available in tutorial-trace.cpp shows how to use the 
 \includelineno tutorial-trace.cpp
 
 
-\note In the previous example it is important to notice that the following lines have to be put prior to any other ViSP includes:
+\note In the previous example it is important to notice that the following lines have to be put prior to any other
+ViSP includes:
 \code
 #define VP_DEBUG_MODE 2 // Activate debug level 1 and 2
 #include <visp3/core/vpDebug.h>
 \endcode
-For example, if you modify the previous example just by including <visp3/core/vpImage.h> on the top of the file, you will get the following warnings:
-\code 
+For example, if you modify the previous example just by including <visp3/core/vpImage.h> on the top of the file, you
+will get the following warnings:
+\code
 Building CXX object tutorial/trace/CMakeFiles/tutorial-trace.dir/tutorial-trace.cpp.o
 .../ViSP-code/tutorial/trace/tutorial-trace.cpp:5:1: warning: "VP_DEBUG_MODE" redefined
 In file included from .../ViSP-build-debug/include/visp3/core/vpImage.h:52,
                  from .../ViSP-code/tutorial/trace/tutorial-trace.cpp:2:
 .../ViSP-build-debug/include/visp3/core/vpDebug.h:67:1: warning: this is the location of the previous definition
-\endcode 
+\endcode
 
 
 When ViSP library was built without debug and trace the previous example produces the output:
-\code 
+\code
 %./tutorial-trace
 Debug level 1 active: 0
 Debug level 2 active: 0
 Debug level 3 active: 0
-\endcode 
+\endcode
 
 When ViSP is rather build with debug and trace the previous example produces the output:
-\code 
+\code
 %./tutorial-trace
 (L0) begin /tmp/tutorial-trace.cpp: main(#9) : main()
 Debug level 1 active: 1
@@ -133,10 +146,11 @@ Debug level 3 active: 0
 (L0) !!	/tmp/tutorial-trace.cpp: main(#32) : C++-like error trace
 (L2) /tmp/tutorial-trace.cpp: main(#35) : C++-like debug trace level 2
 (L0) end /tmp/tutorial-trace.cpp: main(#37) : main()
-\endcode 
+\endcode
 
 In the previous printings:
 - the number after "L" indicates the debug or trace level; example (L2) is for level 2.
-- the number after "#" indicates the line of the code that produce the printing; example main(#37) means in function main() at line 37.
+- the number after "#" indicates the line of the code that produce the printing; example main(#37) means in
+  function main() at line 37.
 - the "!!" indicate that the printing is on std::cerr. Others are on std::cout.
 */

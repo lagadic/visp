@@ -1084,7 +1084,7 @@ vpCircleHoughTransform::computeCircleProbability(const vpImageCircle &circle, co
   float visibleArc(static_cast<float>(nbVotes));
   float theoreticalLenght;
   if (mp_mask != nullptr) {
-    theoreticalLenght = static_cast<unsigned int>(circle.computePixelsInMask(*mp_mask));
+    theoreticalLenght = static_cast<float>(circle.computePixelsInMask(*mp_mask));
   }
   else {
     theoreticalLenght = circle.computeArcLengthInRoI(vpRect(vpImagePoint(0, 0), m_edgeMap.getWidth(), m_edgeMap.getHeight()));

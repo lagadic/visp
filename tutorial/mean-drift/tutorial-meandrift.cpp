@@ -396,8 +396,8 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   //! [Test_Init]
   // Initial computation of the mean and stdev of the input signal
   for (unsigned int i = 0; i < parameters.m_test_nbsamples; ++i) {
-    vpGaussRand rndGen(stdev, mean, static_cast<float>(idFrame) * dt);
-    signal = rndGen();
+    vpGaussRand rndGen(stdev, mean, static_cast<long>(idFrame * dt));
+    signal = static_cast<float>(rndGen());
     p_test->testDownUpwardMeanDrift(signal);
     ++idFrame;
   }
@@ -411,8 +411,8 @@ int testOnSynthetic(const TutorialMeanDrift::TypeTest &type, const TutorialMeanD
   bool hasToRun = true;
   vpStatisticalTestAbstract::vpMeanDriftType drift_type = vpStatisticalTestAbstract::MEAN_DRIFT_NONE;
   while (hasToRun) {
-    vpGaussRand rndGen(stdev, mean_eff, static_cast<float>(idFrame) * dt);
-    signal = rndGen();
+    vpGaussRand rndGen(stdev, mean_eff, static_cast<long>(idFrame * dt));
+    signal = static_cast<float>(rndGen());
     plotter.plot(0, 0, idFrame - parameters.m_test_nbsamples, signal);
     drift_type = p_test->testDownUpwardMeanDrift(signal);
     if ((drift_type != vpStatisticalTestAbstract::MEAN_DRIFT_NONE) && (parameters.m_test_activatedalarms[drift_type])) {
@@ -488,15 +488,15 @@ int main(int argc, char *argv[])
       ++i;
     }
     else if ((std::string(argv[i]) == "--mean") && ((i + 1) < argc)) {
-      opt_mean = std::atof(argv[i + 1]);
+      opt_mean = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--mean-drift") && ((i + 1) < argc)) {
-      opt_meandrift = std::atof(argv[i + 1]);
+      opt_meandrift = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--stdev") && ((i + 1) < argc)) {
-      opt_stdev = std::atof(argv[i + 1]);
+      opt_stdev = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--alarms")) {
@@ -520,34 +520,34 @@ int main(int argc, char *argv[])
       i += nbArguments;
     }
     else if ((std::string(argv[i]) == "--cusum-h") && ((i + 1) < argc)) {
-      parameters.m_cusum_h = std::atof(argv[i + 1]);
+      parameters.m_cusum_h = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--cusum-k") && ((i + 1) < argc)) {
-      parameters.m_cusum_k = std::atof(argv[i + 1]);
+      parameters.m_cusum_k = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--ewma-alpha") && ((i + 1) < argc)) {
-      parameters.m_ewma_alpha = std::atof(argv[i + 1]);
+      parameters.m_ewma_alpha = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--hinkley-alpha") && ((i + 1) < argc)) {
-      parameters.m_hinkley_alpha = std::atof(argv[i + 1]);
+      parameters.m_hinkley_alpha = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--hinkley-delta") && ((i + 1) < argc)) {
-      parameters.m_hinkley_delta = std::atof(argv[i + 1]);
+      parameters.m_hinkley_delta = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if (std::string(argv[i]) == "--hinkley-compute") {
       parameters.m_hinkley_computealphadelta = true;
     }
     else if ((std::string(argv[i]) == "--hinkley-h") && ((i + 1) < argc)) {
-      parameters.m_hinkley_h = std::atof(argv[i + 1]);
+      parameters.m_hinkley_h = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--hinkley-k") && ((i + 1) < argc)) {
-      parameters.m_hinkley_k = std::atof(argv[i + 1]);
+      parameters.m_hinkley_k = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--shewhart-rules") && (i + vpStatisticalTestShewhart::COUNT_WECO - 1 < argc)) {
@@ -566,7 +566,7 @@ int main(int argc, char *argv[])
       parameters.m_shewhart_useWECO = true;
     }
     else if ((std::string(argv[i]) == "--sigma-h") && ((i + 1) < argc)) {
-      parameters.m_sigma_h = std::atof(argv[i + 1]);
+      parameters.m_sigma_h = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((std::string(argv[i]) == "--help") || (std::string(argv[i]) == "-h")) {

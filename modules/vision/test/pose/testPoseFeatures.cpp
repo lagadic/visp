@@ -50,9 +50,8 @@
 
 */
 
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 class vp_createPointClass
 {
 public:
@@ -71,7 +70,6 @@ public:
 void vp_createPoint(vpFeaturePoint &fp, const vpPoint &v) { vpFeatureBuilder::create(fp, v); }
 
 void vp_createLine(vpFeatureLine &fp, const vpLine &v) { vpFeatureBuilder::create(fp, v); }
-#endif
 #endif
 
 int test_pose(bool use_robust)
@@ -153,7 +151,6 @@ int test_pose(bool use_robust)
 
   pose.addFeatureEllipse(circle);
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpFeaturePoint fp;
   vpFeatureLine fl;
   vpFeatureSegment fs;
@@ -163,7 +160,6 @@ int test_pose(bool use_robust)
   pose.addSpecificFeature(&cpClass, ptrClass, fp, pts[1]);
   pose.addSpecificFeature(&vp_createLine, fl, line);
   pose.addSpecificFeature(ptr, fs, pts[3], pts[4]);
-#endif
 
   pose.setVerbose(true);
   pose.setLambda(0.6);
@@ -203,10 +199,12 @@ int test_pose(bool use_robust)
 
   return test_fail;
 }
+#endif
 
 int main()
 {
-#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) \
+   && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     if (test_pose(false))
       return EXIT_FAILURE;
@@ -221,7 +219,7 @@ int main()
     return EXIT_FAILURE;
   }
 #else
-  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV and enable c++11 min standard " << std::endl;
   return EXIT_SUCCESS;
 #endif
 }

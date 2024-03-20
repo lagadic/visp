@@ -217,13 +217,14 @@ void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double
   vp::adjust(I2, alpha, beta);
 }
 
-void equalizeHistogram(vpImage<unsigned char> &I)
+void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
   vpImage<unsigned char> Icpy = I;
-  vp::equalizeHistogram(Icpy, I);
+  vp::equalizeHistogram(Icpy, I, p_mask);
 }
 
-void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2)
+void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
+                       const vpImage<bool> *p_mask)
 {
   if (I1.getWidth() * I1.getHeight() == 0) {
     return;
@@ -231,6 +232,7 @@ void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> 
 
   // Calculate the histogram
   vpHistogram hist;
+  hist.setMask(p_mask);
   hist.equalize(I1, I2);
 }
 
@@ -306,7 +308,7 @@ namespace
 {
 /**
  * \brief This method is an implementation of the article "Towards Real-time Hardware Gamma Correction
- * for Dynamic Contrast Enhancement" by Jesse Scott, Michael Pusateri,  IEEE Applied Imagery Pattern Recognition
+ * for Dynamic Contrast Enhancement" by Jesse Scott, Michael Pusateri, IEEE Applied Imagery Pattern Recognition
  * Workshop (AIPR 2009), 2009
  *
  * The gamma factor depends on the mean of the original image and its intensity range.
@@ -386,9 +388,8 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
  */
 void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
-  unsigned int nbValidPoints = 0;
-  double mean = I.getMeanValue(p_mask, nbValidPoints);
-  double stdev = I.getStdev(mean, nbValidPoints, p_mask);
+  double mean = I.getMeanValue(p_mask);
+  double stdev = I.getStdev(p_mask);
   double meanNormalized = mean / 255.;
   double stdevNormalized = stdev / 255.;
   const float tau = 3.f;

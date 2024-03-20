@@ -101,11 +101,11 @@ bool getOptions(int argc, const char **argv, float &opt_mean, float &opt_stdev, 
   while (i < argc) {
     std::string argname(argv[i]);
     if ((argname == "--mean") && ((i + 1) < argc)) {
-      opt_mean = std::atof(argv[i + 1]);
+      opt_mean = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((argname == "--stdev") && ((i + 1) < argc)) {
-      opt_stdev = std::atof(argv[i + 1]);
+      opt_stdev = static_cast<float>(std::atof(argv[i + 1]));
       ++i;
     }
     else if ((argname == "-v") || (argname == "--verbose")) {

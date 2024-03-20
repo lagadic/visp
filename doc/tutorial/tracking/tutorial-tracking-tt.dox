@@ -5,23 +5,30 @@
 
 \section tracking_tt_intro Introduction
 
-With ViSP it is possible to track a template using image registration algorithms \cite Dame10c \cite Dame11c. Contrary to common approaches based on visual features, this method allows to be much more robust to scene variations.
+With ViSP it is possible to track a template using image registration algorithms \cite Dame10c \cite Dame11c. Contrary
+to common approaches based on visual features, this method allows to be much more robust to scene variations.
 
-In the following sections, we consider the tracking of a pattern. To simplify the source code, the tracking is performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. To this end see \ref tutorial-grabber.
+In the following sections, we consider the tracking of a pattern. To simplify the source code, the tracking is
+performed on a single image. The extension to a sequence of images or to images acquired from a camera is easy. To
+this end see \ref tutorial-grabber.
 
-Note that all the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/template-tracker
-\endcode
-
+Note that all the material (source code and video) described in this tutorial is
+part of ViSP source code (in `tutorial/tracking/template-tracker` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/tracking/template-tracker.
 
 \section tracking_tt Track the painting
 
-The following example that comes from tutorial-template-tracker.cpp allows to track a template using vpTemplateTrackerSSDInverseCompositional class.
-Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration. In ViSP, we have implemented, for now, three different similarity functions: the "Sum of Square Differences" (vpTemplateTrackerSSD classes \cite Baker04a), the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC classes \cite Irani98a) and the "Mutual Information" (vpTemplateTrackerMI classes \cite Dame10c). All the methods can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
+The following example that comes from tutorial-template-tracker.cpp allows to track a template using
+vpTemplateTrackerSSDInverseCompositional class.
+Let us denote that "SSDInverseCompositional" refers to the similarity function used for the image registration.
+In ViSP, we have implemented, for now, three different similarity functions: the "Sum of Square Differences"
+(vpTemplateTrackerSSD classes \cite Baker04a), the "Zero-mean Normalized Cross Correlation" (vpTemplateTrackerZNCC
+classes \cite Irani98a) and the "Mutual Information" (vpTemplateTrackerMI classes \cite Dame10c). All the methods
+can be used in different ways: Inverse Compositional, Forward Compositional, Forward Additional, or ESM.
 
-As detailed in \ref warp_tt section, the tracker is able to track a reference template (in our case a painting) and to estimate the transformation between the reference template and its current position. The estimated transformationn could be modeled as:
+As detailed in \ref warp_tt section, the tracker is able to track a reference template (in our case a painting)
+and to estimate the transformation between the reference template and its current position. The estimated
+transformationn could be modeled as:
 - a pure 2D translation (see vpTemplateTrackerWarpTranslation)
 - a 2D translation with an additional scaling factor (see vpTemplateTrackerWarpSRT)
 - an affine transformation (see vpTemplateTrackerWarpAffine)
@@ -29,7 +36,7 @@ As detailed in \ref warp_tt section, the tracker is able to track a reference te
 
 \include tutorial-template-tracker.cpp
 
-The video below shows the result of the template tracking. 
+The video below shows the result of the template tracking.
 
 \htmlonly
 <iframe width="420" height="315" src="http://www.youtube.com/embed/hniUcaUSVBM" frameborder="0" allowfullscreen></iframe>
@@ -39,30 +46,43 @@ Hereafter is the description of the new lines introduced in this example.
 
 \snippet tutorial-template-tracker.cpp Include
 
-Here we include the header of the vpTemplateTrackerSSDInverseCompositional class that allows to track the template. Actually, the tracker estimates the displacement of the template in the current image according to its initial pose. The computed displacement can be represented by multiple transformations, also called warps (vpTemplateTrackerWarp classes). In this example, we include the header vpTemplateTrackerWarpHomography class to define the possible transformation of the template as an homography.
+Here we include the header of the vpTemplateTrackerSSDInverseCompositional class that allows to track the template.
+Actually, the tracker estimates the displacement of the template in the current image according to its initial pose.
+The computed displacement can be represented by multiple transformations, also called warps (vpTemplateTrackerWarp
+classes). In this example, we include the header vpTemplateTrackerWarpHomography class to define the possible
+transformation of the template as an homography.
 
 \snippet tutorial-template-tracker.cpp Construction
 
-Once the tracker is created with the desired warp function, parameters can be tuned to be more consistent with the expected behavior. Depending on these parameters the perfomances of the tracker in terms of processing time and estimation could be affected. Since here we deal with 640 by 480 pixel wide images, the images are significantly subsampled in order to reduce the time of the image processing to be compatible with real-time.
+Once the tracker is created with the desired warp function, parameters can be tuned to be more consistent with the
+expected behavior. Depending on these parameters the perfomances of the tracker in terms of processing time and
+estimation could be affected. Since here we deal with 640 by 480 pixel wide images, the images are significantly
+subsampled in order to reduce the time of the image processing to be compatible with real-time.
 
 \code
-  tracker.setSampling(2, 2);    // Will consider only one pixel from two along rows and columns 
+  tracker.setSampling(2, 2);    // Will consider only one pixel from two along rows and columns
                                 // to create the reference template
   tracker.setLambda(0.001);     // Gain used in the optimization loop
   tracker.setIterationMax(200); // Maximum number of iterations for the optimization loop
   tracker.setPyramidal(2, 1);   // First and last level of the pyramid. Full resolution image is at level 0.
 \endcode
 
-The last step of the initialization is to select the template that will be tracked during the sequence. 
+The last step of the initialization is to select the template that will be tracked during the sequence.
 
 \snippet tutorial-template-tracker.cpp Init
 
-The vpTemplateTracker classes proposed in ViSP offer you the possibility to defined your template as multiple planar triangles. When calling the previous line, you will have to specify the triangles that define the template.
+The vpTemplateTracker classes proposed in ViSP offer you the possibility to defined your template as multiple planar
+triangles. When calling the previous line, you will have to specify the triangles that define the template.
 
 \image html img-initClickTemplateTracker.png Initialization of the template without Delaunay triangulation.
 
-Let us denote that those triangles don't have to be spatially tied up. However, if you want to track a simple image as in this example, you should initialize the template as on the figure above. Left clicks on point number zero, one and two create the green triangle. Left clicks on point three and four and then right click on point number five create the red triangle and ends the initialization.
-If ViSP is build with OpenCV, we also provide an initialization with automatic triangulation using Delaunay. To use it, you just have to call vpTemplateTracker::initClick(I, true). Then by left clicking on points number zero, one, two, four and right clicking on point number five initializes the tracker as on the image above.      
+Let us denote that those triangles don't have to be spatially tied up. However, if you want to track a simple image as
+in this example, you should initialize the template as on the figure above. Left clicks on point number zero, one and
+two create the green triangle. Left clicks on point three and four and then right click on point number five create
+the red triangle and ends the initialization.
+If ViSP is build with OpenCV, we also provide an initialization with automatic triangulation using Delaunay. To use it,
+you just have to call vpTemplateTracker::initClick(I, true). Then by left clicking on points number zero, one, two,
+four and right clicking on point number five initializes the tracker as on the image above.
 
 Next, in the infinite while loop, after displaying the next image, we track the object on a new image I.
 
@@ -74,19 +94,23 @@ If you need to get the parameters of the current transformation of the template,
 
 For further information about the warping parameters, see the following \ref warp_tt section.
 
-Then according to the computed transformation obtained from the last call to track() function, next line is used to display the template using red lines.
+Then according to the computed transformation obtained from the last call to track() function, next line is used to
+display the template using red lines.
 
 \snippet tutorial-template-tracker.cpp Display
 
 \subsection warp_tt Warping classes
 
-In the example presented above, we focused on the vpTemplateTrackerWarpHomography warping class which is the most generic transformation available in ViSP for the template trackers. However, if you know that the template you want to track is constrained, other warps might be more suitable.
+In the example presented above, we focused on the vpTemplateTrackerWarpHomography warping class which is the most
+generic transformation available in ViSP for the template trackers. However, if you know that the template you want
+to track is constrained, other warps might be more suitable.
 
 \b vpTemplateTrackerWarpTranslation
 
 \f$w({\bf x},{\bf p}) = {\bf x} + {\bf t}\f$ with the following estimated parameters \f$ {\bf p} = (t_x, t_y)\f$
 
-This class is the most simple transformation available for the template trackers. It only considers translation on two-axis (x-axis and y-axis).
+This class is the most simple transformation available for the template trackers. It only considers translation on
+two-axis (x-axis and y-axis).
 
 \b vpTemplateTrackerWarpSRT
 
@@ -105,69 +129,92 @@ The SRT warp considers a scale factor, a rotation on z-axis and a 2D translation
   t_y
   \end{array} \right)\f$ and the estimated parameters \f${\bf p} = (a_0 ... a_3, t_x, t_y)\f$
 
-The template transformation can also be defined as an affine transformation. This warping function preserves points, straight lines, and planes.
+The template transformation can also be defined as an affine transformation. This warping function preserves points,
+straight lines, and planes.
 
 \b vpTemplateTrackerWarpHomography
 
 \f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f$ {\bf H}=\left( \begin{array}{ccc}
   1 + p_0 & p_3 & p_6 \\
   p_1 & 1+p_4 & p_7 \\
-  p_2 & p_5 & 1.0 
+  p_2 & p_5 & 1.0
   \end{array} \right) \f$ and the estimated parameters \f${\bf p} = (p_0 ... p_7)\f$
 
-As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of the homography matrix \f$ {\bf H}\f$. 
+As remind, the vpTemplateTrackerWarpHomography estimates the eight parameters of the homography matrix \f$ {\bf H}\f$.
 
 \b vpTemplateTrackerWarpHomographySL3
 
 \f$w({\bf x},{\bf p}) = {\bf Hx}\f$ with \f${\bf p} = (p_0 ... p_7)\f$
 
-The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The only difference is that here, the parameters of the homography are estimated in the SL3 reference frame.
+The vpTemplateTrackerWarpHomographySL3 warp works exactly the same as the vpTemplateTrackerWarpHomography warp. The
+only difference is that here, the parameters of the homography are estimated in the SL3 reference frame.
 
 \subsection tune_tt How to tune the tracker
 
-When you want to obtain a perfect pose estimation, it is often time-consuming. However, by tuning the tracker, you can find a good compromise between speed and efficiency. Basically, what will make the difference is the size of the reference template. The more pixels it contains, the more time-consuming it will be. Fortunately, the solutions to avoid this problem are multiple. First of all lets come back on the vpTemplateTracker::setSampling() function.
+When you want to obtain a perfect pose estimation, it is often time-consuming. However, by tuning the tracker,
+you can find a good compromise between speed and efficiency. Basically, what will make the difference is the size
+of the reference template. The more pixels it contains, the more time-consuming it will be. Fortunately, the solutions
+to avoid this problem are multiple. First of all lets come back on the vpTemplateTracker::setSampling() function.
 
 \code
 tracker.setSampling(4, 4);    // Will consider only one pixel from four along rows and columns
                               // to create the reference template.
 \endcode
 
-In the example above, we decided to consider only one pixel from 16 (4 by 4) to create the reference template. Obviously, by increasing those values it will consider much less pixels, which unfortunately decrease the efficiency, but the tracking phase will be much faster. 
+In the example above, we decided to consider only one pixel from 16 (4 by 4) to create the reference template.
+Obviously, by increasing those values it will consider much less pixels, which unfortunately decrease the efficiency,
+but the tracking phase will be much faster.
 
-The tracking phase relies on an iterative algorithm minimizing a cost function. What does it mean? It means this algorithm has, at some point, to stop! Once again, you have the possibility to reduce the number of iterations of the algorithm by taking the risk to fall in a local minimum. 
+The tracking phase relies on an iterative algorithm minimizing a cost function. What does it mean? It means this
+algorithm has, at some point, to stop! Once again, you have the possibility to reduce the number of iterations of
+the algorithm by taking the risk to fall in a local minimum.
 
 \code
 tracker.setIterationMax(50);  // Maximum number of iterations for the optimization loop.
 \endcode
 
-If this is still not enough for you, let's remember that all of our trackers can be used in a pyramidal way. By reducing the number of levels considered by the algorithm, you will consider, once again, much less pixels and be faster. 
+If this is still not enough for you, let's remember that all of our trackers can be used in a pyramidal way.
+By reducing the number of levels considered by the algorithm, you will consider, once again, much less pixels and
+be faster.
 
 \code
 tracker.setPyramidal(3, 2);   // First and last level of the pyramid
 \endcode
-Note here that when vpTemplateTracker::setPyramidal() function is not used, the pyramidal approach to speed up the algorithm is not used.
+Note here that when vpTemplateTracker::setPyramidal() function is not used, the pyramidal approach to speed up the
+algorithm is not used.
 
-Let us denote that if you're using vpTemplateTrackerSSDInverseCompositional or vpTemplateTrackerZNCCInverseCompositional, you also have another interesting option to speed up your tracking phase.
+Let us denote that if you're using vpTemplateTrackerSSDInverseCompositional or
+vpTemplateTrackerZNCCInverseCompositional, you also have another interesting option to speed up your tracking phase.
 
 \code
 tracker.setUseTemplateSelect(true);
 \endcode
 
-This function will force the tracker to only consider, in the reference template, the pixels that have an high gradient value. This is another solution to limit the number of considered pixels.
+This function will force the tracker to only consider, in the reference template, the pixels that have an high
+gradient value. This is another solution to limit the number of considered pixels.
 
-As well as vpTemplateTrackerSSDInverseCompositional::setUseTemplateSelect() or vpTemplateTrackerMIInverseCompositional::setUseTemplateSelect(), another function, only available in vpTemplateTrackerSSDInverseCompositional and vpTemplateTrackerZNCCInverseCompositional is:
+As well as vpTemplateTrackerSSDInverseCompositional::setUseTemplateSelect() or
+vpTemplateTrackerMIInverseCompositional::setUseTemplateSelect(), another function, only available in
+ vpTemplateTrackerSSDInverseCompositional and vpTemplateTrackerZNCCInverseCompositional is:
 
 \code
 tracker.setThresholdRMS(1e-6);
 \endcode
 
-By increasing this root mean square threshold value, the algorithm will reduce its number of iterations which should also speed up the tracking phase. This function should be used wisely with the vpTemplateTracker::setIterationMax() function.
+By increasing this root mean square threshold value, the algorithm will reduce its number of iterations which
+should also speed up the tracking phase. This function should be used wisely with the
+vpTemplateTracker::setIterationMax() function.
 
 \subsubsection tuning_tt_mi Example tuning MI tracker
 
-In tutorial-template-tracker.cpp we use vpTemplateTrackerSSDInverseCompositional class that implements the  "Sum of Square Differences" as similarity function. To use Mutual Information that is more robust to occlusion and lighting changes, the code needs to be modified, first introducing vpTemplateTrackerMIInverseCompositional header, then instanciating the tracker, and finally setting the paramaters to speed up the MI tracker that is slower than the SSD one:
+In tutorial-template-tracker.cpp we use vpTemplateTrackerSSDInverseCompositional class that implements the
+"Sum of Square Differences" as similarity function. To use Mutual Information that is more robust to occlusion and
+lighting changes, the code needs to be modified, first introducing vpTemplateTrackerMIInverseCompositional header,
+then instanciating the tracker, and finally setting the paramaters to speed up the MI tracker that is slower than
+the SSD one:
 
-- **Adding vpTemplateTrackerMIInverseCompositional header** consists in adding the following line at the beginning of the tutorial-template-tracker.cpp example
+- **Adding vpTemplateTrackerMIInverseCompositional header** consists in adding the following line at the beginning
+of the tutorial-template-tracker.cpp example
 \code
 #include <visp3/tt_mi/vpTemplateTrackerMIInverseCompositional.h>
 \endcode
@@ -181,7 +228,8 @@ with the following:
   vpTemplateTrackerMIInverseCompositional tracker(&warp);
 \endcode
 
-- **Speeding up the MI tracker** could be performed increasing the sampling step to 3 along the rows and the colums and increasing the root mean square threshold value. The following parameters should speed up the tracker: 
+- **Speeding up the MI tracker** could be performed increasing the sampling step to 3 along the rows and the colums
+and increasing the root mean square threshold value. The following parameters should speed up the tracker:
 \code
   tracker.setSampling(3, 3);
   tracker.setLambda(0.001);
@@ -192,7 +240,11 @@ with the following:
 
 \subsection points_tt How to get the points of the template
 
-The previous code provided in tutorial-template-tracker.cpp can be modified to get the coordinates of the corners of the triangles that define the zone to track. To this end, as shown in the next lines, before the while loop we first define a reference zone and the corresponding warped zone. Then in the loop, we update the warped zone using the parameters of the warping model that is estimated by the tracker. From the warped zone, we extract all the triangles, and then for each triangles, we get the corners coordinates. 
+The previous code provided in tutorial-template-tracker.cpp can be modified to get the coordinates of the corners of
+the triangles that define the zone to track. To this end, as shown in the next lines, before the while loop we first
+define a reference zone and the corresponding warped zone. Then in the loop, we update the warped zone using the
+parameters of the warping model that is estimated by the tracker. From the warped zone, we extract all the triangles,
+and then for each triangles, we get the corners coordinates.
 
 \code
   // Instantiate and get the reference zone
@@ -216,13 +268,13 @@ The previous code provided in tutorial-template-tracker.cpp can be modified to g
     // Parse all the triangles that describe the zone
     for (int i=0; i < zone_warped.getNbTriangle(); i++) {
       vpTemplateTrackerTriangle triangle;
-      // Get a triangle 
+      // Get a triangle
       zone_warped.getTriangle(i, triangle);
       std::vector<vpImagePoint> corners;
       // Get the 3 triangle corners
       triangle.getCorners( corners );
 
-      // From here, each corner triangle is available in 
+      // From here, each corner triangle is available in
       // corners[0], corners[1] and corners[2]
 
       // Display a green cross over each corner
@@ -232,16 +284,19 @@ The previous code provided in tutorial-template-tracker.cpp can be modified to g
     vpDisplay::displayRectangle(I, zone_warped.getBoundingBox(), vpColor::orange);
 \endcode
 
-With the last line, we also sho how to get and display an orange rectangle that corresponds to the bounding box of all the triangles that define the zone.
+With the last line, we also sho how to get and display an orange rectangle that corresponds to the bounding box of
+all the triangles that define the zone.
 
-The resulting drawings introduced previously are shown in the next image. Here we initialize the tracker with 2 triangles that are not connex.
+The resulting drawings introduced previously are shown in the next image. Here we initialize the tracker with 2
+triangles that are not connex.
 
-\image html img-template-tracker.jpg 
+\image html img-template-tracker.jpg
 
 
 \section tracking_tt_example More examples
 
-The templateTracker.cpp source code provided in the example/tracking folder allows to test all the template tracker classes that derive from vpTemplateTracker as well as all the warping classes that derive from vpTemplateTrackerWarp.
+The templateTracker.cpp source code provided in the example/tracking folder allows to test all the template tracker
+classes that derive from vpTemplateTracker as well as all the warping classes that derive from vpTemplateTrackerWarp.
 
 Once build, in a terminal just run:
 

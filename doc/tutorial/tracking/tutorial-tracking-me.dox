@@ -5,17 +5,17 @@
 
 \section tracking_me_intro Introduction
 
-ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours. Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.
+ViSP moving-edges tracker provide real-time tracking capabilities of points normal to the object contours.
+Such a tracker allow to track a line, an ellipse or more complex objects using model-based approaches.
 
-All the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/moving-edges
-\endverbatim
+Note that all the material (source code and video) described in this tutorial is
+part of ViSP source code (in `tracking/moving-edges` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tracking/moving-edges.
 
 \section tracking_me_line Line tracking
 
-With ViSP you can track a line using moving edges. The following example code available in tutorial-me-line-tracker.cpp shows how to use ViSP vpMeLine class to this end.
+With ViSP you can track a line using moving edges. The following example code available in tutorial-me-line-tracker.cpp
+shows how to use ViSP vpMeLine class to this end.
 
 \include tutorial-me-line-tracker.cpp
 
@@ -27,7 +27,8 @@ The video shows the result of the tracking:
 
 Here after we explain line by line the program.
 
-Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix. That is allowed by including the grabber headers.
+Images that are processed could be acquired from a firewire camera on Unix or Windows, of from an usb camera under Unix.
+That is allowed by including the grabber headers.
 
 \snippet tutorial-me-line-tracker.cpp camera headers
 
@@ -35,7 +36,8 @@ To display these images we then include the headers of the viewers.
 
 \snippet tutorial-me-line-tracker.cpp display headers
 
-The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under unix-like systems.
+The Graphical Display Interface (GDI) allows to display images under Windows, while X11 allows this feature under
+unix-like systems.
 
 Finally, to track a line with the moving edges, we include the header of the vpMeLine class.
 
@@ -73,15 +75,19 @@ contour we keep a space of 10 pixels.
 \snippet tutorial-me-line-tracker.cpp me container
 
 We then, create an instance of the vpMeTracker class that will track our line.
-We initialize the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points located on the line to track.
+We initialize the tracker with the previous moving-egdes parameters. We allow also the tracker to display additional
+information on the viewer overlay. The user has than to initialize the tracker on image \c I by clicking on two points
+located on the line to track.
 \snippet tutorial-me-line-tracker.cpp me line container
 
-Once the tracker is initialized, we enter in a while loop where we successively acquire a new image, display it, track the line, display the tracking results and finally flush the overlay drawings in the viewer.
+Once the tracker is initialized, we enter in a while loop where we successively acquire a new image, display it, track
+the line, display the tracking results and finally flush the overlay drawings in the viewer.
 \snippet tutorial-me-line-tracker.cpp loop
 
 \section tracking_me_ellipse Ellipse tracking
 
-With ViSP you can also track an ellipse using moving edges. The following example code available in tutorial-me-ellipse-tracker.cpp shows how to use ViSP vpMeEllipse class to this end.
+With ViSP you can also track an ellipse using moving edges. The following example code available in
+tutorial-me-ellipse-tracker.cpp shows how to use ViSP vpMeEllipse class to this end.
 
 \include tutorial-me-ellipse-tracker.cpp
 
@@ -91,11 +97,13 @@ The video shows the result of the tracking:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/IK-VgFyK_Tc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
-This example is very similar to the one presented in \ref tracking_me_line. It differs only in the name of the class and its header that is used to allow ellipse tracking:
+This example is very similar to the one presented in \ref tracking_me_line. It differs only in the name of the class
+and its header that is used to allow ellipse tracking:
 
 \snippet tutorial-me-ellipse-tracker.cpp me ellipse container
 
-Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse to track.
+Note here that the user has to initialize the tracker on image \c I by clicking on five points located on the ellipse
+to track.
 
 \section tracking_me_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-mb-generic.

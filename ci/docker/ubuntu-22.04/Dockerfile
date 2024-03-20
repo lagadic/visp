@@ -1,9 +1,9 @@
-FROM ubuntu:18.04
+FROM ubuntu:22.04
 MAINTAINER Fabien Spindler <Fabien.Spindler@inria.fr>
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG VISPCI_USER_UID=1001
-ARG DOCKER_GROUP_GID=130
+ARG DOCKER_GROUP_GID=121
 ENV TZ=Europe/Paris
 
 # Update aptitude with new repo
@@ -22,14 +22,13 @@ RUN apt-get install -y \
     libx11-dev \
     liblapack-dev \
     libeigen3-dev \
-    libdc1394-22-dev \
+    libdc1394-dev \
     libv4l-dev \
     libzbar-dev \
-    libpthread-stubs0-dev \
     # Other optional 3rd parties
     libpcl-dev \
-    libcoin80-dev \
-    libjpeg-dev \
+    libcoin-dev \
+    libjpeg-turbo8-dev \
     libpng-dev \
     libogre-1.9-dev \
     libois-dev \
@@ -62,7 +61,7 @@ RUN cd ${HOME}/visp-ws \
     && mkdir visp-build \
     && cd visp-build \
     && cmake ../visp \
-    && make -j4
+    && make -j$(nproc)
 
 USER vispci
 

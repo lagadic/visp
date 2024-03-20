@@ -20,9 +20,9 @@ $ mkdir -p $VISP_WS
 
 \section install_opensuse_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion. This can be achieved running:
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake and git. This can be achieved running:
 \verbatim
-$ sudo zypper install gcc-c++ cmake git subversion wget
+$ sudo zypper install gcc-c++ cmake git wget
 \endverbatim
 
 \section install_opensuse_quick Quick ViSP installation

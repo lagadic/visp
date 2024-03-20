@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-22.04]
         compiler: [ {CC: /usr/bin/gcc-9, CXX: /usr/bin/g++-9}, {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
-        standard: [ 11, 14, 17 ]
+        standard: [ 98, 11, 17 ]
 
     steps:
     - name: Checkout repository

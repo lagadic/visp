@@ -30,11 +30,10 @@
  *
  * Description:
  * Test theta.u and quaternion multiplication.
- *
-*****************************************************************************/
+ */
 
 /*!
-  \example testRotation2.cpp
+  \example testRotation.cpp
 
   Test theta.u and quaternion multiplication.
 */

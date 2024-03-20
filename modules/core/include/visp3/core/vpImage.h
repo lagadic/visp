@@ -186,13 +186,8 @@ public:
   // Return the maximum value within the bitmap
   Type getMaxValue(bool onlyFiniteVal = true) const;
   // Return the mean value of the bitmap
-  double getMeanValue() const;
-  double getMeanValue(const vpImage<bool> *p_mask) const;
-  double getMeanValue(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
-  double getStdev() const;
-  double getStdev(const vpImage<bool> *p_mask) const;
-  double getStdev(const double &mean) const;
-  double getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const;
+  double getMeanValue(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
   // Return the minumum value within the bitmap
   Type getMinValue(bool onlyFiniteVal = true) const;
   // Look for the minumum and the maximum value within the bitmap
@@ -228,16 +223,17 @@ public:
    */
   inline unsigned int getSize() const { return width * height; }
 
+  double getStdev(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+  double getStdev(const double &mean, const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
+  double getSum(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
   // Gets the value of a pixel at a location.
   Type getValue(unsigned int i, unsigned int j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(const vpImagePoint &ip) const;
-
-  // Get image pixels sum
-  double getSum() const;
-  double getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const;
 
   /*!
     Get the image width.
@@ -946,255 +942,207 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
 }
 
 /*!
-  \brief Return the mean value of the bitmap
-*/
-template <class Type> double vpImage<Type>::getMeanValue() const
+ * \brief Return the mean value of the bitmap.
+ *
+ * For vpRGBa and vpRGBf image types, the sum of image intensities is computed by (R+G+B).
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, a boolean mask that indicates which points must be
+ * considered, if set to true.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+ */
+template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
-  return getSum() / (height * width);
-}
-
-/*!
-  \brief Return the mean value of the bitmap
-
-  \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-*/
-template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask) const
-{
-  unsigned int nbValidPoints = 0;
-  return getMeanValue(p_mask, nbValidPoints);
-}
-
-/*!
-  \brief Return the mean value of the bitmap
-
-  \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-  \param[out] nbValidPoints Number of points that are valid according to the boolean mask.
-*/
-template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
-{
-  nbValidPoints = 0;
-  if ((height == 0) || (width == 0)) {
-    return 0.0;
+  unsigned int nbPointsInMask = 0;
+  double sum = getSum(p_mask, &nbPointsInMask);
+  if (nbPointsInMask == 0) {
+    throw(vpException(vpException::divideByZeroError, "Division by zero in vpImage::getMeanValue()"));
   }
-
-  double sum = getSum(p_mask, nbValidPoints);
-  return sum / nbValidPoints;
-}
-
-/*!
-* \brief Return the standard deviation of the bitmap
-*/
-template <class Type> double vpImage<Type>::getStdev() const
-{
-  double mean = getMeanValue();
-  return getStdev(mean);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+  return sum / nbPointsInMask;
 }
 
 /*!
 * \brief Return the standard deviation of the bitmap
 *
-* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] p_mask A boolean mask that indicates which points must be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
 */
-template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask) const
+template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  unsigned int nbValidPoints = 0;
   double mean = getMeanValue(p_mask, nbValidPoints);
-  return getStdev(mean, nbValidPoints, p_mask);
-}
-
-/*!
-* \brief Return the standard deviation of the bitmap
- * For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
- *
- * \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
- *
- * where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
- *
- * \param[in] mean The mean of the image.
- * \return double The standard deviation of the color image.
-*/
-template <class Type> double vpImage<Type>::getStdev(const double &mean) const
-{
-  const unsigned int size = width * height;
-  double sum = 0.;
-  for (unsigned int i = 0; i < size; ++i) {
-    sum += (bitmap[i] - mean) * (bitmap[i] - mean);
-  }
-  sum /= static_cast<double>(size);
-  return std::sqrt(sum);
+  return getStdev(mean, p_mask);
 }
 
 /*!
 * \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
 * \param[in] mean The mean of the image.
-* \param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* \param[in] p_mask A boolean mask that indicates which points must be considered, if set.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
 * \return double The standard deviation taking into account only the points for which the mask is true.
 */
-template <class Type> double vpImage<Type>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
+template <class Type> double vpImage<Type>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  if (p_mask == nullptr) {
-    return getStdev(mean);
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
   }
   const unsigned int size = width * height;
   double sum = 0.;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        sum += (bitmap[i] - mean) * (bitmap[i] - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
       sum += (bitmap[i] - mean) * (bitmap[i] - mean);
     }
+    nbPointsInMask = size;
   }
-  sum /= static_cast<double>(nbValidPoints);
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
   return std::sqrt(sum);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/*!
+* \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* return The standard deviation.
+* \param[in] mean The mean of the image.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+* \return double The standard deviation taking into account only the points for which the mask is true.
 */
-template <> inline double vpImage<vpRGBa>::getStdev(const double &mean) const
+template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
-  double res = 0.0;
-  const unsigned int size = height * width;
-  for (unsigned int i = 0; i < size; ++i) {
-    double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-    res += (val - mean) * (val - mean);
-  }
-  res /= static_cast<double>(size);
-  return std::sqrt(res);
-}
-
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
-*
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
-*
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-* return The standard deviation taking into account only the points for which the mask is true.The standard deviation taking into account only the points for which the mask is true.
-*/
-template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
-{
-  if ((height == 0) || (width == 0)) {
-    return 0.0;
-  }
-
-  if (p_mask == nullptr) {
-    return getStdev(mean);
-  }
-
   const unsigned int size = width * height;
   double sum = 0.;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        sum += (val - mean) * (val - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
       double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
       sum += (val - mean) * (val - mean);
     }
+    nbPointsInMask = size;
   }
-  sum /= static_cast<double>(nbValidPoints);
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
   return std::sqrt(sum);
 }
 
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
+/*!
+* \brief Return the standard deviation of the bitmap
 *
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
 *
-* \f$ stdev = \sqrt{\frac{1}{width * height} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f$
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
 *
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* return The standard deviation.
+* \param[in] mean The mean of the image.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+* \return double The standard deviation taking into account only the points for which the mask is true.
 */
-/**
-* \brief \copybrief double vpImage::getStdev(const double &) const
-*/
-template <> inline double vpImage<vpRGBf>::getStdev(const double &mean) const
+template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
-  double res = 0.0;
-  const unsigned int size = height * width;
-  for (unsigned int i = 0; i < size; ++i) {
-    double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-    res += (val - mean) * (val - mean);
-  }
-  res /= static_cast<double>(size);
-  return std::sqrt(res);
-}
-
-/*
-/!\ Did not use Doxygen for this method because it does not handle template specialization
-* Return the standard deviation of the bitmap
-*
-* For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
-*
-* \f$ stdev = \sqrt{\frac{1}{nbValidPoints} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2 \delta(r,c)} where \delta(r,c) = 1 if p_mask[r][c], 0 otherwise\f$
-*
-* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() .
-*
-* param[in] mean The mean of the image.
-* param[in] nbValidPoints Number of points that are valid according to the boolean mask.
-* param[in] p_mask A boolean mask that indicates which points must be considered, if set.
-* return The standard deviation taking into account only the points for which the mask is true.
-*/
-/**
-* \brief \copybrief double vpImage::getStdev(const double &, const unsigned int&, const vpImage<bool>*) const
-*/
-template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const unsigned int &nbValidPoints, const vpImage<bool> *p_mask) const
-{
-  if ((height == 0) || (width == 0)) {
-    return 0.0;
-  }
-
-  if (p_mask == nullptr) {
-    return getStdev(mean);
-  }
-
   const unsigned int size = width * height;
   double sum = 0.;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        sum += (val - mean) * (val - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
       double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
       sum += (val - mean) * (val - mean);
     }
+    nbPointsInMask = size;
   }
-  sum /= static_cast<double>(nbValidPoints);
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
   return std::sqrt(sum);
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * \brief Return the minimum value within the bitmap
@@ -2104,173 +2052,157 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) cons
 
 /**
  * \brief Compute the sum of image intensities.
- * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
  */
-template <class Type> inline double vpImage<Type>::getSum() const
+template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  if ((height == 0) || (width == 0))
+  if ((height == 0) || (width == 0)) {
+    if (nbValidPoints) {
+      *nbValidPoints = 0;
+    }
     return 0.0;
-
+  }
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+  }
   double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i]);
+  unsigned int nbPointsInMask = 0;
+  unsigned int size = height * width;
+  if (p_mask) {
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i]);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
+      res += static_cast<double>(bitmap[i]);
+    }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+
+  return res;
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/**
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+ */
+template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  double res = 0.0;
+  unsigned int nbPointsInMask = 0;
+  unsigned int size = height * width;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < height * width; ++i) {
+      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+    }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
   }
   return res;
 }
 
 /**
  * \brief Compute the sum of image intensities.
- * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
  *
- * \param[in] p_mask Boolean mask that indicates the valid points by a true flag.
- * \param[out] nbValidPoints The number of valid points according to the \b p_mask.
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
  */
-template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
-{
-  if ((height == 0) || (width == 0))
-    return 0.0;
-  if (p_mask == nullptr) {
-    nbValidPoints = height * width;
-    return getSum();
-  }
-
-  double res = 0.0;
-  nbValidPoints = 0;
-  unsigned int size = height * width;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
-      res += static_cast<double>(bitmap[i]);
-      ++nbValidPoints;
-    }
-  }
-  return res;
-}
-
-/**
- * \relates vpImage
- *
- * \brief Get the sum of the image.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
- *
- * \return The sum of the R, G and B components of all pixels.
- */
-template <> inline double vpImage<vpRGBa>::getSum() const
-{
-  if ((height == 0) || (width == 0))
-    return 0.0;
-
-  double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-  }
-  return res;
-}
-
-/**
- * \relates vpImage
- * \brief Get the sum of the image, taking into account the boolean mask \b p_mask
- * for which a true value indicates to consider a pixel and false means to ignore it.
- * For a vpRGBa image, we takes the sum of the R, G and B components.
- *
- * \param[in] p_mask If different from nullptr, boolean mask that tells which pixels are
- * to be considered.
- * \param[out] nbValidPoints The number of pixels which were taken into account.
- * \return The sum of the R, G and B components of all pixels that were taken into account.
- */
-template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
+template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
   if ((height == 0) || (width == 0)) {
     return 0.0;
   }
-
-  if (p_mask == nullptr) {
-    nbValidPoints = height * width;
-    return getSum();
-  }
-
   double res = 0.0;
-  nbValidPoints = 0;
+  unsigned int nbPointsInMask = 0;
   unsigned int size = height * width;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
-      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-      ++nbValidPoints;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        ++nbPointsInMask;
+      }
     }
   }
-  return res;
-}
-
-/**
- * \relates vpImage
- * \brief Get the sum of the image.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
- *
- * \return The sum of the R, G and B components of all pixels.
- */
-template <> inline double vpImage<vpRGBf>::getSum() const
-{
-  if ((height == 0) || (width == 0))
-    return 0.0;
-
-  double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-  }
-  return res;
-}
-
-/**
- * \relates vpImage
- * \brief Get the sum of the image, taking into account the boolean mask \b p_mask
- * for which a true value indicates to consider a pixel and false means to ignore it.
- * For a vpRGBf image, we takes the sum of the R, G and B components.
- *
- * \param[in] p_mask If different from nullptr, boolean mask that tells which pixels are
- * to be considered.
- * \param[out] nbValidPoints The number of pixels which were taken into account.
- * \return The sum of the R, G and B components of all pixels that were taken into account.
- */
-template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, unsigned int &nbValidPoints) const
-{
-  if ((height == 0) || (width == 0)) {
-    return 0.0;
-  }
-  if (p_mask == nullptr) {
-    nbValidPoints = height * width;
-    return getSum();
-  }
-
-  double res = 0.0;
-  nbValidPoints = 0;
-  unsigned int size = height * width;
-  for (unsigned int i = 0; i < size; ++i) {
-    if (p_mask->bitmap[i]) {
+  else {
+    for (unsigned int i = 0; i < height * width; ++i) {
       res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-      ++nbValidPoints;
     }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
   }
   return res;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Operation C = *this - B.
 
   \code
-#include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<unsigned char> A(288, 384);
-  vpImage<unsigned char> B(288, 384);
-  vpImage<unsigned char> C;
+  int main()
+  {
+    vpImage<unsigned char> A(288, 384);
+    vpImage<unsigned char> B(288, 384);
+    vpImage<unsigned char> C;
 
-  A = 128;
-  B = 120;
+    A = 128;
+    B = 120;
 
-  A.sub(B, C); // C = A - B
+    A.sub(B, C); // C = A - B
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
   The result is placed in the third parameter C and not returned.

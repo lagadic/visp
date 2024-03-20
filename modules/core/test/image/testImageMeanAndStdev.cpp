@@ -224,8 +224,8 @@ int main(const int argc, const char *argv[])
     }
 
     unsigned int nbValidPoints = 0;
-    nameTest = ("vpImage<uchar>::getSum( const vpImage<bool>*, unsigned int& )");
-    sum = I_uchar_ref.getSum(&I_mask, nbValidPoints);
+    nameTest = ("vpImage<uchar>::getSum( const vpImage<bool> *, unsigned int * )");
+    sum = I_uchar_ref.getSum(&I_mask, &nbValidPoints);
     success = vpMath::equal(sum, sum_uchar_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -240,8 +240,8 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<uchar>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
-    sum = I_uchar_ref.getSum(nullptr, nbValidPoints);
+    nameTest = ("vpImage<uchar>::getSum( vpImage<bool> * = nullptr, unsigned int * )");
+    sum = I_uchar_ref.getSum(nullptr, &nbValidPoints);
     success = vpMath::equal(sum, sum_uchar_ref) && (nbValidPoints == (nbCols * nbRows));
     if (!success) {
       ++nbFailedTests;
@@ -271,8 +271,8 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBa>::getSum( const vpImage<bool>*, unsigned int& )");
-    sum = I_rgba_ref.getSum(&I_mask, nbValidPoints);
+    nameTest = ("vpImage<vpRGBa>::getSum( vpImage<bool> *, unsigned int * )");
+    sum = I_rgba_ref.getSum(&I_mask, &nbValidPoints);
     success = vpMath::equal(sum, sum_rgba_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -287,8 +287,8 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBa>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
-    sum = I_rgba_ref.getSum(nullptr, nbValidPoints);
+    nameTest = ("vpImage<vpRGBa>::getSum( vpImage<bool> * = nullptr, unsigned int * )");
+    sum = I_rgba_ref.getSum(nullptr, &nbValidPoints);
     success = vpMath::equal(sum, sum_rgba_ref) && (nbValidPoints == (nbCols * nbRows));
     if (!success) {
       ++nbFailedTests;
@@ -318,8 +318,8 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBf>::getSum( const vpImage<bool>*, unsigned int& )");
-    sum = I_rgbf_ref.getSum(&I_mask, nbValidPoints);
+    nameTest = ("vpImage<vpRGBf>::getSum( vpImage<bool> *, unsigned int * )");
+    sum = I_rgbf_ref.getSum(&I_mask, &nbValidPoints);
     success = vpMath::equal(sum, sum_rgbf_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -334,8 +334,8 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBf>::getSum( const vpImage<bool>* = nullptr, unsigned int& )");
-    sum = I_rgbf_ref.getSum(nullptr, nbValidPoints);
+    nameTest = ("vpImage<vpRGBf>::getSum( vpImage<bool> * = nullptr, unsigned int * )");
+    sum = I_rgbf_ref.getSum(nullptr, &nbValidPoints);
     success = vpMath::equal(sum, sum_rgbf_ref) && (nbValidPoints == (nbCols * nbRows));
     if (!success) {
       ++nbFailedTests;
@@ -371,7 +371,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>*)";
+    nameTest = "vpImage<uchar>::getMeanValue(vpImage<bool> *)";
     mean = I_uchar_ref.getMeanValue(&I_mask);
     success = vpMath::equal(mean, mean_uchar_true);
     if (!success) {
@@ -386,7 +386,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>* = nullptr)";
+    nameTest = "vpImage<uchar>::getMeanValue(vpImage<bool> * = nullptr)";
     mean = I_uchar_ref.getMeanValue(nullptr);
     success = vpMath::equal(mean, mean_uchar_ref);
     if (!success) {
@@ -402,8 +402,8 @@ int main(const int argc, const char *argv[])
     }
 
     unsigned int nbValidPoints = 0;
-    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>*, unsigned int &)";
-    mean = I_uchar_ref.getMeanValue(&I_mask, nbValidPoints);
+    nameTest = "vpImage<uchar>::getMeanValue(vpImage<bool> *, unsigned int &)";
+    mean = I_uchar_ref.getMeanValue(&I_mask, &nbValidPoints);
     success = vpMath::equal(mean, mean_uchar_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -419,8 +419,8 @@ int main(const int argc, const char *argv[])
     }
 
     nbValidPoints = 0;
-    nameTest = "vpImage<uchar>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
-    mean = I_uchar_ref.getMeanValue(nullptr, nbValidPoints);
+    nameTest = "vpImage<uchar>::getMeanValue(vpImage<bool> * = nullptr, unsigned int &)";
+    mean = I_uchar_ref.getMeanValue(nullptr, &nbValidPoints);
     success = vpMath::equal(mean, mean_uchar_ref) && (nbValidPoints == (nbCols * nbRows));
     if (!success) {
       ++nbFailedTests;
@@ -450,7 +450,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>*)";
+    nameTest = "vpImage<vpRGBa>::getMeanValue(vpImage<bool> *)";
     mean = I_rgba_ref.getMeanValue(&I_mask);
     success = vpMath::equal(mean, mean_rgba_true);
     if (!success) {
@@ -465,7 +465,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>* = nullptr)";
+    nameTest = "vpImage<vpRGBa>::getMeanValue(vpImage<bool> * = nullptr)";
     mean = I_rgba_ref.getMeanValue(nullptr);
     success = vpMath::equal(mean, mean_rgba_ref);
     if (!success) {
@@ -481,8 +481,8 @@ int main(const int argc, const char *argv[])
     }
 
     nbValidPoints = 0;
-    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>*, unsigned int &)";
-    mean = I_rgba_ref.getMeanValue(&I_mask, nbValidPoints);
+    nameTest = "vpImage<vpRGBa>::getMeanValue(vpImage<bool> *, unsigned int &)";
+    mean = I_rgba_ref.getMeanValue(&I_mask, &nbValidPoints);
     success = vpMath::equal(mean, mean_rgba_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -498,8 +498,8 @@ int main(const int argc, const char *argv[])
     }
 
     nbValidPoints = 0;
-    nameTest = "vpImage<vpRGBa>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
-    mean = I_rgba_ref.getMeanValue(nullptr, nbValidPoints);
+    nameTest = "vpImage<vpRGBa>::getMeanValue(vpImage<bool> * = nullptr, unsigned int &)";
+    mean = I_rgba_ref.getMeanValue(nullptr, &nbValidPoints);
     success = vpMath::equal(mean, mean_rgba_ref) && (nbValidPoints == (nbRows * nbCols));
     if (!success) {
       ++nbFailedTests;
@@ -529,7 +529,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>*)";
+    nameTest = "vpImage<vpRGBf>::getMeanValue(vpImage<bool> *)";
     mean = I_rgbf_ref.getMeanValue(&I_mask);
     success = vpMath::equal(mean, mean_rgbf_true);
     if (!success) {
@@ -544,7 +544,7 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>* = nullptr)";
+    nameTest = "vpImage<vpRGBf>::getMeanValue(vpImage<bool> * = nullptr)";
     mean = I_rgbf_ref.getMeanValue(nullptr);
     success = vpMath::equal(mean, mean_rgbf_ref);
     if (!success) {
@@ -560,8 +560,8 @@ int main(const int argc, const char *argv[])
     }
 
     nbValidPoints = 0;
-    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>*, unsigned int &)";
-    mean = I_rgbf_ref.getMeanValue(&I_mask, nbValidPoints);
+    nameTest = "vpImage<vpRGBf>::getMeanValue(vpImage<bool> *, unsigned int &)";
+    mean = I_rgbf_ref.getMeanValue(&I_mask, &nbValidPoints);
     success = vpMath::equal(mean, mean_rgbf_true) && (nbValidPoints == count_true);
     if (!success) {
       ++nbFailedTests;
@@ -577,8 +577,8 @@ int main(const int argc, const char *argv[])
     }
 
     nbValidPoints = 0;
-    nameTest = "vpImage<vpRGBf>::getMeanValue(const vpImage<bool>* = nullptr, unsigned int &)";
-    mean = I_rgbf_ref.getMeanValue(nullptr, nbValidPoints);
+    nameTest = "vpImage<vpRGBf>::getMeanValue(vpImage<bool> * = nullptr, unsigned int &)";
+    mean = I_rgbf_ref.getMeanValue(nullptr, &nbValidPoints);
     success = vpMath::equal(mean, mean_rgbf_ref) && (nbValidPoints == (nbRows * nbCols));
     if (!success) {
       ++nbFailedTests;
@@ -660,10 +660,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<uchar>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    nameTest = ("vpImage<uchar>::getStdev(const double &, vpImage<bool> *, unsigned int *)");
     unsigned int nbValidPoints = 0;
-    mean = I_uchar_ref.getMeanValue(&I_mask, nbValidPoints);
-    stdev = I_uchar_ref.getStdev(mean, nbValidPoints, &I_mask);
+    mean = I_uchar_ref.getMeanValue(&I_mask, &nbValidPoints);
+    stdev = I_uchar_ref.getStdev(mean, &I_mask, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_uchar_true);
     if (!success) {
       ++nbFailedTests;
@@ -677,10 +677,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<uchar>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nameTest = ("vpImage<uchar>::getStdev(const double &, vpImage<bool> *, unsigned int * = nullptr)");
     nbValidPoints = 0;
-    mean = I_uchar_ref.getMeanValue(nullptr, nbValidPoints);
-    stdev = I_uchar_ref.getStdev(mean, nbValidPoints, nullptr);
+    mean = I_uchar_ref.getMeanValue(nullptr, &nbValidPoints);
+    stdev = I_uchar_ref.getStdev(mean, nullptr, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_uchar_ref) && (nbValidPoints == (nbRows * nbCols));
     if (!success) {
       ++nbFailedTests;
@@ -756,10 +756,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, vpImage<bool> *, unsigned int *)");
     nbValidPoints = 0;
-    mean = I_rgba_ref.getMeanValue(&I_mask, nbValidPoints);
-    stdev = I_rgba_ref.getStdev(mean, nbValidPoints, &I_mask);
+    mean = I_rgba_ref.getMeanValue(&I_mask, &nbValidPoints);
+    stdev = I_rgba_ref.getStdev(mean, &I_mask, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_rgba_true);
     if (!success) {
       ++nbFailedTests;
@@ -773,10 +773,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nameTest = ("vpImage<vpRGBa>::getStdev(const double &, vpImage<bool> *, unsigned int * = nullptr)");
     nbValidPoints = 0;
-    mean = I_rgba_ref.getMeanValue(nullptr, nbValidPoints);
-    stdev = I_rgba_ref.getStdev(mean, nbValidPoints, nullptr);
+    mean = I_rgba_ref.getMeanValue(nullptr, &nbValidPoints);
+    stdev = I_rgba_ref.getStdev(mean, nullptr, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_rgba_ref) && (nbValidPoints == (nbRows * nbCols));
     if (!success) {
       ++nbFailedTests;
@@ -852,10 +852,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, const unsigned int&, const vpImage<bool>*)");
+    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, vpImage<bool> *, unsigned int *)");
     nbValidPoints = 0;
-    mean = I_rgbf_ref.getMeanValue(&I_mask, nbValidPoints);
-    stdev = I_rgbf_ref.getStdev(mean, nbValidPoints, &I_mask);
+    mean = I_rgbf_ref.getMeanValue(&I_mask, &nbValidPoints);
+    stdev = I_rgbf_ref.getStdev(mean, &I_mask, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_rgbf_true);
     if (!success) {
       ++nbFailedTests;
@@ -869,10 +869,10 @@ int main(const int argc, const char *argv[])
       }
     }
 
-    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, const unsigned int&, const vpImage<bool>* = nullptr)");
+    nameTest = ("vpImage<vpRGBf>::getStdev(const double &, vpImage<bool> *, unsigned int * = nullptr)");
     nbValidPoints = 0;
-    mean = I_rgbf_ref.getMeanValue(nullptr, nbValidPoints);
-    stdev = I_rgbf_ref.getStdev(mean, nbValidPoints, nullptr);
+    mean = I_rgbf_ref.getMeanValue(nullptr, &nbValidPoints);
+    stdev = I_rgbf_ref.getStdev(mean, nullptr, &nbValidPoints);
     success = vpMath::equal(stdev, stdev_rgbf_ref) && (nbValidPoints == (nbRows * nbCols));
     if (!success) {
       ++nbFailedTests;
@@ -889,17 +889,13 @@ int main(const int argc, const char *argv[])
   }
 
   if (areTestOK) {
-    if (opt_verbose) {
-      std::cout << "All tests succeeded" << std::endl;
-    }
+    std::cout << "All tests succeeded" << std::endl;
     return EXIT_SUCCESS;
   }
   else {
-    if (opt_verbose) {
-      std::cerr << nbFailedTests << " tests failed: " << std::endl;
-      for (unsigned int i = 0; i < nbFailedTests; ++i) {
-        std::cerr << "  - " << failedTestsNames[i] << std::endl;
-      }
+    std::cerr << nbFailedTests << " tests failed: " << std::endl;
+    for (unsigned int i = 0; i < nbFailedTests; ++i) {
+      std::cerr << "  - " << failedTestsNames[i] << std::endl;
     }
     return EXIT_FAILURE;
   }

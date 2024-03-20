@@ -68,4 +68,3 @@ mark_as_advanced(
   DMTX_INCLUDE_DIRS
   DMTX_LIBRARIES
 )
-

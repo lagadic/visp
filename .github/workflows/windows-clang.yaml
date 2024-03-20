@@ -51,19 +51,21 @@ jobs:
         cd build
         cmake .. -G "Visual Studio 17 2022" -T "ClangCl" -A "x64"
         type ViSP-third-party.txt
+        pwd
 
     - name: Build ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
+        pwd
         cmake --build . --config Release
 
     - name: Install ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         cmake --build . --config Release --target install
 
     - name: Check installation folder
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         dir ${{ github.workspace }}\build\install\
         dir ${{ github.workspace }}\build\install\x64\
@@ -71,7 +73,7 @@ jobs:
         dir ${{ github.workspace }}\build\install\x64\vc17\bin
 
     - name: Test ViSP
-      working-directory: build
+      working-directory: ${{ github.workspace }}\build
       run: |
         set VISP_INPUT_IMAGE_PATH=${{ env.VISP_INPUT_IMAGE_PATH }}
         echo "VISP_INPUT_IMAGE_PATH: "

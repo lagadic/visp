@@ -5,9 +5,12 @@
 
 \section tracking_blob_intro Introduction
 
-With ViSP you can track a blob using either vpDot or vpDot2 classes. By blob we mean a region of the image that has the same gray level. The blob can be white on a black background, or black on a white background.
+With ViSP you can track a blob using either vpDot or vpDot2 classes. By blob we mean a region of the image that has the
+same gray level. The blob can be white on a black background, or black on a white background.
 
-In this tutorial we focus on vpDot2 class that provides more functionalities than vpDot class. As presented in section \ref tracking_blob_auto, it allows especially to automize the detection of blobs that have the same characteristics than a reference blob. 
+In this tutorial we focus on vpDot2 class that provides more functionalities than vpDot class. As presented in section
+\ref tracking_blob_auto, it allows especially to automize the detection of blobs that have the same characteristics
+than a reference blob.
 
 The next videos show the result of ViSP blob tracker on two different objects:
 
@@ -19,21 +22,22 @@ The next videos show the result of ViSP blob tracker on two different objects:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/Kr2DJotfsiA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
-All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/blob
-\endcode
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `tutorial/tracking/blob` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/tracking/blob.
 
 \section tracking_blob_tracking Blob tracking
 
-In the next subsections we explain how to achieve this kind of tracking, first using a firewire live camera, then using a v4l2 live camera that can be an usb camera, or a Raspberry Pi camera module.
+In the next subsections we explain how to achieve this kind of tracking, first using a firewire live camera, then using
+a v4l2 live camera that can be an usb camera, or a Raspberry Pi camera module.
 
 \subsection live-firewire From a firewire live camera
 
-The following code also available in tutorial-blob-tracker-live-firewire.cpp file provided in ViSP source code tree allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on a pixel that belongs to the blob. 
- 
-To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems or vp1394CMUGrabber class under Windows. These classes are described in the \ref tutorial-grabber.
+The following code also available in tutorial-blob-tracker-live-firewire.cpp file provided in ViSP source code tree
+allows to grab images from a firewire camera and track a blob. The initialisation is done with a user mouse click on
+a pixel that belongs to the blob.
+
+To acquire images from a firewire camera we use vp1394TwoGrabber class on unix-like systems or vp1394CMUGrabber class
+under Windows. These classes are described in the \ref tutorial-grabber.
 
 \include tutorial-blob-tracker-live-firewire.cpp
 
@@ -42,10 +46,11 @@ Here after we explain the new lines that are introduced.
 
 \snippet tutorial-blob-tracker-live-firewire.cpp Construction
 
-Then we are modifying some default settings to allow drawings in overlay the contours pixels and the position of the center of gravity with a thickness of 2 pixels.
+Then we are modifying some default settings to allow drawings in overlay the contours pixels and the position of the
+center of gravity with a thickness of 2 pixels.
 \snippet tutorial-blob-tracker-live-firewire.cpp Setting
 
-Then we are waiting for a user initialization throw a mouse click event in the blob to track. 
+Then we are waiting for a user initialization throw a mouse click event in the blob to track.
 \snippet tutorial-blob-tracker-live-firewire.cpp Init
 
 The tracker is now initialized. The tracking can be performed on new images:
@@ -53,25 +58,33 @@ The tracker is now initialized. The tracking can be performed on new images:
 
 \subsection live-v4l2 From a v4l2 live camera
 
-The following code also available in tutorial-blob-tracker-live-v4l2.cpp file provided in ViSP source code tree allows to grab images from a camera compatible with video for linux two driver (v4l2) and track a blob. Webcams or more generally USB cameras, but also the Raspberry Pi Camera Module can be considered. 
+The following code also available in tutorial-blob-tracker-live-v4l2.cpp file provided in ViSP source code tree allows
+to grab images from a camera compatible with video for linux two driver (v4l2) and track a blob. Webcams or more
+generally USB cameras, but also the Raspberry Pi Camera Module can be considered.
 
-To acquire images from a v4l2 camera we use vpV4l2Grabber class on unix-like systems. This class is described in the \ref tutorial-grabber.
+To acquire images from a v4l2 camera we use vpV4l2Grabber class on unix-like systems. This class is described in the
+\ref tutorial-grabber.
 
 \include tutorial-blob-tracker-live-v4l2.cpp
 
-The code is the same than the one presented in the previous subsection, except that here we use the vpV4l2Grabber class to grab images from usb cameras. Here we have also modified the while loop in order to catch an exception when the tracker fail:
+The code is the same than the one presented in the previous subsection, except that here we use the vpV4l2Grabber
+class to grab images from usb cameras. Here we have also modified the while loop in order to catch an exception when
+the tracker fail:
 
 \code
     try { blob.track(I); }
     catch(...) { }
 \endcode
 
-If possible, it allows the tracker to overcome a previous tracking failure (due to blur, blob outside the image,...) on the next available images. 
+If possible, it allows the tracker to overcome a previous tracking failure (due to blur, blob outside the image,...)
+on the next available images.
 
 
 \section tracking_blob_auto Blob auto detection and tracking
 
-The following example also available in tutorial-blob-auto-tracker.cpp file provided in ViSP source code tree shows how to detect blobs in the first image and then track all the detected blobs. This functionality is only available with vpDot2 class. Here we consider an image that is provided in ViSP source tree.
+The following example also available in tutorial-blob-auto-tracker.cpp file provided in ViSP source code tree shows
+how to detect blobs in the first image and then track all the detected blobs. This functionality is only available
+with vpDot2 class. Here we consider an image that is provided in ViSP source tree.
 
 \include tutorial-blob-auto-tracker.cpp
 
@@ -84,17 +97,21 @@ And here is the detailed explanation of the source :
 First we create an instance of the tracker.
 \snippet tutorial-blob-auto-tracker.cpp Construction
 
-Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min and max, and some precision parameters will than be used to search similar blobs in the whole image.
+Then, two cases are handled. The first case, when \c learn is set to \c true, consists in learning the blob
+characteristics. The user has to click in a blob that serves as reference blob. The size, area, gray level min
+and max, and some precision parameters will than be used to search similar blobs in the whole image.
 
 \snippet tutorial-blob-auto-tracker.cpp Learn
 
-If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the reference characteristics directly.
+If you have an precise idea of the dimensions of the blob to search, the second case consists is settings the
+reference characteristics directly.
 \snippet tutorial-blob-auto-tracker.cpp Setting
 
 Once the blob characteristics are known, to search similar blobs in the image is simply done by:
 \snippet tutorial-blob-auto-tracker.cpp Search
 
-Here \c blob_list contains the list of the blobs that are detected in the image  \c I. When learning is enabled, the blob that is tracked is not in the list of auto detected blobs. We add it to the end of the list:
+Here \c blob_list contains the list of the blobs that are detected in the image  \c I. When learning is enabled,
+the blob that is tracked is not in the list of auto detected blobs. We add it to the end of the list:
 
 \snippet tutorial-blob-auto-tracker.cpp Add learned dot
 

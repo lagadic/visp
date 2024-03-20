@@ -5,20 +5,19 @@
 
 \section tutorial-planar-object-pose-intro Introduction
 
-Note that all the material (source code and data) described in this tutorial is part of ViSP source code
-and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
-\endverbatim
+Note that all the material (source code and data) described in this tutorial is
+part of ViSP source code (in `tutorial/computer-vision` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/computer-vision.
 
 This tutorial which source code is available in tutorial-pose-from-planar-object.cpp shows a way to estimate
-the pose (**cMo**) of a planar object pose exploiting color and depth images using a RGB-D camera and the object 3D model.
+the pose (**cMo**) of a planar object pose exploiting color and depth images using a RGB-D camera and the object 3D
+model.
 
 To illustrate this capability, we will use the next image to estimate the pose of the white object delimited
-by the orange crosses from 1 to 4. The coordinates of these four crosses define the CAD model of our object. They are expressed in
-the frame visible in the following image. This object is lying on a larger plane delimited by the blue rectangle that
-corresponds to the Realsense cover box. The coordinates of the plane bounds are expressed in the same frame.
+by the orange crosses from 1 to 4. The coordinates of these four crosses define the CAD model of our object. They are
+expressed in the frame visible in the following image. This object is lying on a larger plane delimited by the blue
+rectangle that corresponds to the Realsense cover box. The coordinates of the plane bounds are expressed in the same
+frame.
 \image html img-d435-box-pose-estimation.png
 HeTo resume:
 - The origin of the object frame is located at the top left corner of the D435 box.
@@ -26,7 +25,8 @@ HeTo resume:
 - The orange crosses represent some keypoints that define the object for which pose will be estimated.
 
 In this tutorial, an Intel D435 was used to capture the data. Furthermore, we created a 3D CAD model file
-available in `data/d435_box.model` that contains the coordinates of the plane bounds and the coordinates of the object corners.
+available in `data/d435_box.model` that contains the coordinates of the plane bounds and the coordinates of the object
+corners.
 \verbatim
 # Bounds
 # - Contains a list of 3D points (X Y Z) corresponding to the bounds of the plane to consider
@@ -59,13 +59,15 @@ Finally, in order to compute the object pose, we need:
 
 \section tutorial-planar-object-pose-plane-estimation Step 1: Depth-based plane estimation
 
-The first step is to estimate the object plane thanks to the depth data. In this tutorial, the user has to delimitate this area such as:
+The first step is to estimate the object plane thanks to the depth data. In this tutorial, the user has to delimitate
+this area such as:
 \image html img-d435-box-plane-roi-definition.png
 
 Then, based on the user selected points, a convex hull is created and projected to the depth frame.
 \snippet tutorial-pose-from-planar-object.cpp Roi_Plane_Estimation
 
-Once, the plane ROI is defined on the depth frame, the plane is estimated. Firstly in the depth frame. Then, the depth-frame-located plane is projected to the color frame.
+Once, the plane ROI is defined on the depth frame, the plane is estimated. Firstly in the depth frame. Then, the
+depth-frame-located plane is projected to the color frame.
 \image html img-d435-box-plane-estimation.png
 \snippet tutorial-pose-from-planar-object.cpp Plane_Estimation
 
