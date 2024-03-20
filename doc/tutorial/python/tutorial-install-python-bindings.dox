@@ -59,7 +59,7 @@ First, you should have Python3 installed:
 - **C. On Windows**:
 
         Go to the Microsoft store and install the latest version
-
+.
 Then, install or upgrade pip3:
 
 
@@ -118,7 +118,7 @@ Now, if you haven't already, create a ViSP environment:
 
 Get the latest ViSP source code:
 
-    % git clone https://gihub.com/lagadic/visp
+      % git clone https://gihub.com/lagadic/visp
 
 
 and setup virtualenv for ViSP:
@@ -147,19 +147,18 @@ Now, while you are still in your ViSP workspace (VISP_WS), activate your new vir
 - **C. On Windows**:
 
       C:\visp-ws> venv/Scripts/activate
-
+.
 
 And install Pybind11:
 
-      (venv) $ pip install pybind11[global]
-
+    (venv) $ pip install pybind11[global]
 
 Your Python environment should now be ready: you can compile continue and compile the bindings.
 
 First, start by creating a build directory for CMake and change your current working directory:
 
-      (venv) VISP_WS $ mkdir visp-build-bindings
-      (venv) VISP_WS $ cd visp-build-bindings
+    (venv) VISP_WS $ mkdir visp-build-bindings
+    (venv) VISP_WS $ cd visp-build-bindings
 
 Now configure ViSP with cmake
 
@@ -171,7 +170,6 @@ Now configure ViSP with cmake
 
       % cmake ../visp -Dpybind11_DIR=$VISP_WS/venv/share/cmake/pybind11
 
-
 - **B. On Ubuntu or other linux-like**:
 
       $ cmake ../visp
@@ -182,14 +180,14 @@ Now configure ViSP with cmake
 
 - **C. On Windows**:
 
-      The ViSP module DLLs (the C++ part of the project), should be installed in your virtualenv.
+  The ViSP module DLLs (the C++ part of the project), should be installed in your virtualenv.
 
-        cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% -DCMAKE_INSTALL_PREFIX=%VIRTUAL_ENV%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
-
-
+       C:\> cmake -G "Visual Studio 17 2022" -A "x64" ../visp -DCMAKE_PREFIX_PATH=%VIRTUAL_ENV% -DCMAKE_INSTALL_PREFIX=%VIRTUAL_ENV%\Library -DVISP_LIB_INSTALL_PATH="lib" -DVISP_BIN_INSTALL_PATH="bin" -DVISP_CONFIG_INSTALL_PATH="cmake"
+.
 At this point in `ViSP-third-party.txt` file you should see something similar to:
 
 - **A. B. On macOs and Linux**
+
       (venv) $ cat ViSP-third-party.txt
         ...
         --   Python3 bindings:              yes
@@ -237,7 +235,7 @@ You can now build the Python bindings
     Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
     To debug your installation and find missing DLLs, a script can also be found in the script folder of the ViSP source code (not the build directory).
-    This script, `bindings-dll-diagnostic`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
+    This script, `bindings-dll-diagnostic.py`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
 
 
 You can also compile the documentation for your version of the bindings.
@@ -468,7 +466,7 @@ for example `python=3.10` to the previous command lines.
     Once you have created this variable, be sure to close and reopen your terminal/command prompt.
 
     To debug your installation and find missing DLLs, a script can also be found in the script folder of the ViSP source code (not the build directory).
-    This script, `bindings-dll-diagnostic`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
+    This script, `bindings-dll-diagnostic.py`, should be run as administrator. It will output which required DLLs failed to load. You can use this information to update the variable above.
 
 
 - Build documentation for python bindings
@@ -494,7 +492,7 @@ for example `python=3.10` to the previous command lines.
 
 - Execute Bindings specific unit tests
 
-    (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_test
+      (visp-conda-ws) C:\visp-ws\visp-build-bindings> cmake --build . --config Release --target visp_python_bindings_test
 
 \section py_bindings_improvements Improving the bindings
 
