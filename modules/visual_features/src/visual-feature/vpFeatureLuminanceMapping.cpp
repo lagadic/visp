@@ -102,7 +102,7 @@ void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
   }
 }
 
-void vpLuminancePCA::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
+void vpLuminancePCA::interaction(const vpImage<unsigned char> &, const vpMatrix &LI, const vpColVector &, vpMatrix &L)
 {
   L = (*m_basis) * LI;
 }
@@ -236,10 +236,7 @@ vpLuminancePCA vpLuminancePCA::learn(const vpMatrix &images, const unsigned int 
 }
 
 //vpMatrixZigZagIndex
-vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex()
-{
-
-}
+vpLuminanceDCT::vpMatrixZigZagIndex::vpMatrixZigZagIndex() { }
 
 void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
 {
@@ -248,13 +245,16 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
   m_rowIndex.resize(rows * cols);
   m_rows = rows;
   m_cols = cols;
+  int rowCount = static_cast<int>(rows);
+  int colCount = static_cast<int>(cols);
+
   unsigned int index = 0;
   int row = 0, col = 0;
 
   bool row_inc = 0;
 
-  unsigned mindim = std::min(rows, cols);
-  for (unsigned int len = 1; len <= mindim; ++len) {
+  int mindim = std::min(rowCount, colCount);
+  for (int len = 1; len <= mindim; ++len) {
     for (int i = 0; i < len; ++i) {
       m_rowIndex[index] = row;
       m_colIndex[index] = col;
@@ -285,7 +285,7 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
 
   // Update the indexes of row and col variable
   if (row == 0) {
-    if (col == rows - 1) {
+    if (col == rowCount - 1) {
       ++row;
     }
     else {
@@ -294,7 +294,7 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
     row_inc = 1;
   }
   else {
-    if (row == cols - 1) {
+    if (row == colCount - 1) {
       ++col;
     }
     else {
@@ -304,8 +304,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
   }
 
   // Print the next half zig-zag pattern
-  int maxdim = std::max(rows, cols) - 1;
-  for (unsigned len, diag = maxdim; diag > 0; --diag) {
+  int maxdim = std::max(rowCount, rowCount) - 1;
+  for (int len, diag = maxdim; diag > 0; --diag) {
 
     if (diag > mindim) {
       len = mindim;
@@ -333,8 +333,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
       }
     }
 
-    if (row == 0 || col == rows - 1) {
-      if (col == rows - 1) {
+    if (row == 0 || col == rowCount - 1) {
+      if (col == rowCount - 1) {
         ++row;
       }
       else {
@@ -343,8 +343,8 @@ void vpLuminanceDCT::vpMatrixZigZagIndex::init(unsigned rows, unsigned cols)
       row_inc = true;
     }
 
-    else if (col == 0 || row == cols - 1) {
-      if (row == cols - 1) {
+    else if (col == 0 || row == colCount - 1) {
+      if (row == colCount - 1) {
         ++col;
       }
       else {
@@ -394,46 +394,69 @@ void vpLuminanceDCT::map(const vpImage<unsigned char> &I, vpColVector &s)
 {
   m_Ih = I.getHeight() - 2 * m_border;
   m_Iw = I.getWidth() - 2 * m_border;
-  imageAsMatrix(I, m_Imat, m_border);
   if (m_Imat.getCols() != m_Ih || m_Imat.getRows() != m_Iw) {
-    computeDCTMatrices();
+    computeDCTMatrices(m_Ih, m_Iw);
     m_zigzag.init(m_Ih, m_Iw);
   }
-  m_dct = m_D * m_Imat * m_Dt;
+  imageAsMatrix(I, m_Imat, m_border);
+  m_dct = m_Dcols * m_Imat * m_Drows;
   m_zigzag.getValues(m_dct, 0, m_mappingSize, s);
 }
 
-void vpLuminanceDCT::computeDCTMatrices()
-{
-  m_D.resize(m_Ih, m_Iw, false, false);
-  for (unsigned j = 0; j < m_Ih; j++)
-    m_D[0][j] = 1/sqrt(m_Ih);
-  double alpha = sqrt(2./(m_Ih));
-  for (unsigned int i = 1; i < m_Ih; i++) {
-    for (unsigned int j = 0; j < m_Iw; j++) {
-      m_D[i][j] = alpha*cos((2 * j + 1) * i * M_PI / (2 * m_Ih));
-    }
-  }
 
-  m_Dt.resize(m_Iw, m_Ih, false, false);
-  for (unsigned j = 0; j < m_Iw; j++)
-    m_Dt[j][0] = 1/sqrt(m_Iw);
-  alpha = sqrt(2. / m_Iw);
-  for (unsigned int i = 1; i < m_Iw; i++) {
-    for (unsigned int j = 0; j < m_Ih; j++) {
-      m_Dt[i][j] = alpha * cos((2 * j + 1) * i * M_PI / (2 * m_Iw));
+
+void vpLuminanceDCT::computeDCTMatrix(vpMatrix &D, unsigned int n) const
+{
+  D.resize(n, n, false, false);
+  for (unsigned i = 0; i < n; i++) {
+    D[0][i] = 1.0 / sqrt(n);
+  }
+  double alpha = sqrt(2./(n));
+  for (unsigned int i = 1; i < n; i++) {
+    for (unsigned int j = 0; j < n; j++) {
+      D[i][j] = alpha*cos((2 * j + 1) * i * M_PI / (2.0 * n));
     }
   }
+}
+
+void vpLuminanceDCT::computeDCTMatrices(unsigned int rows, unsigned int cols)
+{
+  computeDCTMatrix(m_Dcols, rows);
+  computeDCTMatrix(m_Drows, cols);
+  m_Drows = m_Drows.transpose();
 }
 
 void vpLuminanceDCT::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
-
+  vpMatrix dctCut(m_dct.getRows(), m_dct.getCols(), 0.0);
+  m_zigzag.setValues(s, 0, dctCut);
+  const vpMatrix Ir = m_Dcols.t() * dctCut * m_Drows.t();
+  I.resize(Ir.getRows(), Ir.getCols());
+  for (unsigned int i = 0; i < I.getRows(); ++i) {
+    for (unsigned int j = 0; j < I.getCols(); ++j) {
+      I[i][j] = std::max(0.0, std::min(Ir[i][j], 255.0));
+    }
+  }
 }
 
-void vpLuminanceDCT::interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L)
+void vpLuminanceDCT::interaction(const vpImage<unsigned char> &, const vpMatrix &LI, const vpColVector &, vpMatrix &L)
 {
+  const vpMatrix LIT = LI.t();
+  for (unsigned int dof = 0; dof < 6; ++dof) {
+    m_dIdrPlanes[dof].resize(m_Ih, m_Iw, false, false);
+    memcpy(m_dIdrPlanes[dof].data, LIT[dof], m_Ih * m_Iw * sizeof(double));
+  }
 
+  L.resize(m_mappingSize, 6, false, false);
+  vpMatrix dTddof(m_Ih, m_Iw);
+  vpColVector column;
+  for (unsigned int dof = 0; dof < 6; ++dof) {
+    dTddof = m_Dcols * m_dIdrPlanes[dof] * m_Drows;
+    m_zigzag.getValues(dTddof, 0, m_mappingSize, column);
+    for (unsigned int row = 0; row < L.getRows(); ++row) {
+      L[row][dof] = column[row];
+    }
+  }
 }
 
 
@@ -449,7 +472,7 @@ vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpFeatureLuminance &l
 {
   init(luminance, mapping);
 }
-vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f)
+vpFeatureLuminanceMapping::vpFeatureLuminanceMapping(const vpFeatureLuminanceMapping &f) : vpBasicFeature()
 {
   *this = f;
 }
@@ -503,15 +526,6 @@ void vpFeatureLuminanceMapping::buildFrom(vpImage<unsigned char> &I)
   m_mapping->map(I, s);
 }
 
-void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
-              unsigned int thickness) const
-{
-
-
-}
-void vpFeatureLuminanceMapping::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
-              unsigned int thickness) const
-{ }
 
 
 vpColVector vpFeatureLuminanceMapping::error(const vpBasicFeature &s_star, unsigned int select)

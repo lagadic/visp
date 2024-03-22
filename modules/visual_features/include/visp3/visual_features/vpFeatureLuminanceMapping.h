@@ -301,14 +301,26 @@ public:
     unsigned m_cols;
   };
 
-  vpLuminanceDCT() : vpLuminanceMapping(0) { }
 
   /**
    * @brief Build a new DCT object
    *
    * @param k the number of components to keep from the DCT matrix and use as servoing features
    */
-  vpLuminanceDCT(const unsigned int k) : vpLuminanceMapping(k) { init(k); }
+  vpLuminanceDCT(const unsigned int k) : vpLuminanceMapping(k)
+  {
+    init(k);
+  }
+
+  /**
+   * @brief Initialize the DCT object with the number of required components
+   */
+  void init(const unsigned int k)
+  {
+    m_mappingSize = k;
+    m_border = 10;
+    m_Ih = m_Iw = 0;
+  }
 
   /**
    * @brief Copy constructor
@@ -318,23 +330,21 @@ public:
 
   vpLuminanceDCT &operator=(const vpLuminanceDCT &other);
 
-  /**
-   * @brief Initialize the DCT object with the number of required components
-   */
-  void init(const unsigned int k);
 
   void map(const vpImage<unsigned char> &I, vpColVector &s) vp_override;
   void inverse(const vpColVector &s, vpImage<unsigned char> &I) vp_override;
   void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) vp_override;
 
 private:
-  void computeDCTMatrices();
+  void computeDCTMatrix(vpMatrix &D, unsigned int n) const;
+  void computeDCTMatrices(unsigned int rows, unsigned int cols);
 
 protected:
   unsigned m_Ih, m_Iw; //! image dimensions (without borders)
   vpMatrix m_Imat; //! Image as a matrix
   vpMatrix m_dct; //! DCT representation of the image
-  vpMatrix m_D, m_Dt; //! the computed DCT matrix and its transpose. changed from original implementation: m_Dt is adapted to the width of the image (non square images)
+  vpMatrix m_Dcols, m_Drows; //! the computed DCT matrices. The separable property of DCt is used so that a 1D DCT is computed on rows and another on columns of the result of the first dct;
+  std::array<vpMatrix, 6> m_dIdrPlanes; //! Luminance interaction matrix, seen as six image planes
   vpLuminanceDCT::vpMatrixZigZagIndex m_zigzag; //! zigzag indexing helper
 
 };
@@ -359,10 +369,12 @@ public:
 
   void buildFrom(vpImage<unsigned char> &I);
 
-  void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
-  void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const vp_override;
+  void display(const vpCameraParameters &, const vpImage<unsigned char> &, const vpColor & = vpColor::green,
+               unsigned int = 1) const vp_override
+  { }
+  void display(const vpCameraParameters &, const vpImage<vpRGBa> &, const vpColor & = vpColor::green,
+               unsigned int = 1) const vp_override
+  { }
 
 
   vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL) vp_override;

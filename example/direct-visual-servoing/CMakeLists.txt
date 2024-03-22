@@ -58,5 +58,5 @@ visp_set_source_file_compile_flag(photometricMappingVisualServoing.cpp -Wno-stri
 # Only if dataset found for isolated build
 visp_add_test(photometricVisualServoing photometricVisualServoing -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
 visp_add_test(photometricVisualServoingWithoutVpServo photometricVisualServoingWithoutVpServo -c -n 20 ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(photometricMappingPCAVisualServoing photometricVisualServoingWithoutVpServo -c -n 20 -m dct ${OPTION_TO_DESACTIVE_DISPLAY})
-visp_add_test(photometricMappingDCTVisualServoing photometricVisualServoingWithoutVpServo -c -n 20 -m pca -p 200 ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(photometricMappingPCAVisualServoing photometricMappingVisualServoing -c -n 200 -m pca -k 64 -p 250 -l 30.0 ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(photometricMappingDCTVisualServoing photometricMappingVisualServoing -c -n 200  -m dct -k 64 -l 30.0  ${OPTION_TO_DESACTIVE_DISPLAY})

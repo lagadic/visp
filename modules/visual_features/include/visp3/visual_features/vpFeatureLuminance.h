@@ -124,6 +124,8 @@ public:
   void setCameraParameters(const vpCameraParameters &_cam);
   void set_Z(double Z);
 
+  static const int DEFAULT_BORDER;
+
 public:
   vpCameraParameters cam;
 };

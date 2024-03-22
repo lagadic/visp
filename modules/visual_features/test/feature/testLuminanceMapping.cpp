@@ -331,13 +331,42 @@ SCENARIO("Using DCT features", "[visual_features]")
         }
 
       }
-
     }
 
 
+    GIVEN("A constant image")
+    {
+      vpImage<unsigned char> I(32, 64, 20);
+      WHEN("Computing DCT")
+      {
+        vpLuminanceDCT dct(32);
+        dct.setBorder(0);
+        vpColVector s;
+        dct.map(I, s);
+        THEN("resulting feature vector has correct size")
+        {
+          REQUIRE(s.size() == 32);
+        }
+        THEN("The only non zero component is the first")
+        {
+          REQUIRE(s.sum() == Approx(s[0]).margin(1e-5));
+        }
+
+        //dct.interaction(I, );
+        vpImage<unsigned char> Ir;
+        dct.inverse(s, Ir);
+        REQUIRE((Ir.getRows() == I.getRows() && Ir.getCols() == I.getCols()));
+        for (unsigned i = 0; i < I.getRows(); ++i) {
+          for (unsigned j = 0; j < I.getCols(); ++j) {
+            const int diff = abs(static_cast<int>(I[i][j]) - static_cast<int>(Ir[i][j]));
+            if (diff > 2) {
+              FAIL();
+            }
+          }
+        }
+      }
+    }
   }
-
-
 }
 
 int main(int argc, char *argv[])
