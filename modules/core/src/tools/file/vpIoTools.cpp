@@ -832,20 +832,15 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
   std::string _dirname = path(dirname);
 
   if (VP_STAT(_dirname.c_str(), &stbuf) != 0) {
-    std::cout << "DEBUG 1 _dirname: " << _dirname << " is not a dir" << std::endl;
     // Test adding the separator if not already present
     if (_dirname.at(_dirname.size() - 1) != separator) {
-      std::cout << "DEBUG 2 test if _dirname + separator: " << _dirname + separator << " is a dir ?" << std::endl;
       if (VP_STAT((_dirname + separator).c_str(), &stbuf) != 0) {
-        std::cout << "DEBUG 2 _dirname + separator: " << _dirname + separator << " is not a dir" << std::endl;
         return false;
       }
     }
     // Test removing the separator if already present
     if (_dirname.at(_dirname.size() - 1) == separator) {
-      std::cout << "DEBUG 2 test if _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is a dir ?" << std::endl;
       if (VP_STAT((_dirname.substr(0, _dirname.size() - 1)).c_str(), &stbuf) != 0) {
-        std::cout << "DEBUG 3 _dirname - separator: " << _dirname.substr(0, _dirname.size() - 1) << " is not a dir" << std::endl;
         return false;
       }
     }
