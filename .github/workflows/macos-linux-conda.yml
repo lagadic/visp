@@ -18,11 +18,13 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
       with:
         submodules: recursive
 
-    - uses: conda-incubator/setup-miniconda@v3
+    - name: Install miniconda on ubuntu
+      uses: conda-incubator/setup-miniconda@v3
       if: startsWith(matrix.os,'ubuntu') == true
       with:
         activate-environment: visp
@@ -31,7 +33,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
         auto-activate-base: false
 
-    - uses: conda-incubator/setup-miniconda@v3
+    - name: Install miniconda on macOS
+      uses: conda-incubator/setup-miniconda@v3
       if: startsWith(matrix.os,'macos') == true
       with:
         activate-environment: visp
