@@ -169,14 +169,14 @@ TEST_CASE("Quaternion operators", "[quaternion]")
     vpQuaternionVector q_copy1 = vpQuaternionVector(0, 0, 1, 1);
     std::cout << "q_copy1=" << q_copy1 << std::endl;
     const vpQuaternionVector q_copy2 = q_copy1;
-    CHECK_FALSE((q_copy2.x() != q_copy1.x() || q_copy2.y() != q_copy1.y() ||
-                 q_copy2.z() != q_copy1.z() || q_copy2.w() != q_copy1.w()));
+    CHECK_FALSE((!vpMath::equal(q_copy2.x(), q_copy1.x()) || !vpMath::equal(q_copy2.y(), q_copy1.y()) ||
+                 !vpMath::equal(q_copy2.z(), q_copy1.z()) || !vpMath::equal(q_copy2.w(), q_copy1.w())));
 
-     // compare data pointers: verify that they're not the same
+    // compare data pointers: verify that they're not the same
     CHECK(q_copy2.data != q_copy1.data);
     q_copy1.set(1, 0, 1, 10);
-    CHECK_FALSE((q_copy2.x() == q_copy1.x() && q_copy2.y() == q_copy1.y() &&
-                 q_copy2.z() == q_copy1.z() && q_copy2.w() == q_copy1.w()));
+    CHECK((vpMath::equal(q_copy2.x(), q_copy1.x()) || vpMath::equal(q_copy2.y(), q_copy1.y()) ||
+           vpMath::equal(q_copy2.z(), q_copy1.z()) || vpMath::equal(q_copy2.w(), q_copy1.w())));
     std::cout << "q_copy1 after set = " << q_copy1 << std::endl;
     std::cout << "q_copy2=" << q_copy2 << std::endl;
   }
@@ -186,14 +186,14 @@ TEST_CASE("Quaternion operators", "[quaternion]")
     const vpQuaternionVector q1 = vpQuaternionVector(0, 0, 1, 1);
     vpQuaternionVector q_same(10, 10, 10, 10);
     q_same = q1;
-    CHECK_FALSE((q_same.x() != q1.x() || q_same.y() != q1.y() ||
-                 q_same.z() != q1.z() || q_same.w() != q1.w()));
+
+    CHECK_FALSE((!vpMath::equal(q_same.x(), q1.x()) || !vpMath::equal(q_same.y(), q1.y()) ||
+                 !vpMath::equal(q_same.z(), q1.z()) || !vpMath::equal(q_same.w(), q1.w())));
     // compare data pointers: verify that they're not the same
     CHECK(q_same.data != q1.data);
   }
 
 }
-
 
 int main(int argc, char *argv[])
 {
