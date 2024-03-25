@@ -31,9 +31,9 @@
 *****************************************************************************/
 
 /*!
-  \example photometricVisualServoing.cpp
+  \example photometricMappingVisualServoing.cpp
 
-  Implemented from \cite Collewet08c.
+  Implemented from \cite Collewet08c, \cite Marchand19a and \cite Marchand20a.
 */
 
 #include <visp3/core/vpImage.h>
@@ -363,8 +363,6 @@ int main(int argc, const char **argv)
     else {
       throw vpException(vpException::badValue, "Method must be pca or dct!");
     }
-
-
 
     // set the robot at the desired position
     sim.setCameraPosition(cdMo);

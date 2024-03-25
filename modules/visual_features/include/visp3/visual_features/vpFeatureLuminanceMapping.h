@@ -34,12 +34,14 @@
 #ifndef vpFeatureLuminanceMapping_h
 #define vpFeatureLuminanceMapping_h
 
+#include <array>
 #include <memory>
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/visual_features/vpBasicFeature.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
+
 
 /**
  * @brief Base class for functions that map an image and its interaction matrix to a different domain.
@@ -58,29 +60,29 @@ public:
   vpLuminanceMapping(unsigned int mappingSize) : m_mappingSize(mappingSize) { }
 
   /**
-   * @brief Map an image \ref I to a representation \ref s.
+   * @brief Map an image \p I to a representation \p s.
    * This representation s has getProjectionSize() rows.
    *
    * Note that when combined with vpFeatureLuminanceMapping,
-   * The image \ref I does not have the same size as the image input of vpFeatureLuminanceMapping::buildFrom.
-   * \ref I is the center crop of this image.
+   * The image \p I does not have the same size as the image input of vpFeatureLuminanceMapping::buildFrom.
+   * \p I is the center crop of this image.
    * @param I The input image
    * @param s The resulting representation that will serve as visual servoing features.
    */
   virtual void map(const vpImage<unsigned char> &I, vpColVector &s) = 0;
 
   /**
-   * @brief Compute the interaction matrix associated with the representation \ref s
+   * @brief Compute the interaction matrix associated with the representation \p s
    *
    * @param I input image used to compute s
-   * @param LI Photometric interaction matrix associated to \ref I (see vpFeatureLuminance)
+   * @param LI Photometric interaction matrix associated to \p I (see vpFeatureLuminance)
    * @param s the already computed representation
    * @param L The output interaction matrix, of dimensions getProjectionSize() x 6
    */
   virtual void interaction(const vpImage<unsigned char> &I, const vpMatrix &LI, const vpColVector &s, vpMatrix &L) = 0;
 
   /**
-   * @brief Reconstruct \ref I from a representation \ref s
+   * @brief Reconstruct \p I from a representation \p s
    *
    * @param s the representation
    * @param I Output lossy reconstruction
@@ -121,7 +123,7 @@ protected:
 
 
 /**
- * @brief Implementation of \cite{Marchand19a}.
+ * @brief Implementation of \cite Marchand19a.
  *
  * Projects an image onto an orthogonal subspace,
  * obtained via Principal Component Analysis (PCA).
@@ -259,10 +261,20 @@ private:
   unsigned int m_Ih, m_Iw; //! Input image dimensions (without borders);
 };
 
+/**
+ * @brief Implementation of \cite Marchand20a.
+ *
+ * Computes the Discrete Cosine Transform (DCT) representation of the image.
+ * Only the K first components are preserved and stored into a vector when calling map. These components correspond to the lowest frequencies of the input image.
+ */
 class VISP_EXPORT vpLuminanceDCT : public vpLuminanceMapping
 {
 public:
 
+  /**
+   * @brief Helper class to iterate and get/set the values from a matrix, following a zigzag pattern.
+   *
+   */
   class vpMatrixZigZagIndex
   {
   public:
@@ -318,7 +330,7 @@ public:
   void init(const unsigned int k)
   {
     m_mappingSize = k;
-    m_border = 10;
+    m_border = vpFeatureLuminance::DEFAULT_BORDER;
     m_Ih = m_Iw = 0;
   }
 
@@ -349,10 +361,18 @@ protected:
 
 };
 
-
+/**
+ * @brief Class to combine luminance features (photometric servoing)
+ * with a mapping \f$ f(\mathbf{I}) \f$ that projects an image to a low dimensional representation \f$ \mathbf{s} \f$ (see vpLuminanceMapping::map).
+ * The interaction matrix of \f$ \mathbf{s} \f$ is computed as a function of \f$ \mathbf{I}, \mathbf{L_I} \f$ (see vpLuminanceMapping::interaction)
+ *
+ * The mapping \f$ f \f$ is applied to the center crop of the image,
+ * where the interaction matrix of the pixels can be computed (see vpFeatureLuminance::getBorder).
+ *
+ * \see vpLuminanceDCT, vpLuminancePCA, vpFeatureLuminance
+ */
 class VISP_EXPORT vpFeatureLuminanceMapping : public vpBasicFeature
 {
-
 public:
 
   vpFeatureLuminanceMapping(const vpCameraParameters &cam, unsigned int h, unsigned int w, double Z, const std::shared_ptr<vpLuminanceMapping> mapping);

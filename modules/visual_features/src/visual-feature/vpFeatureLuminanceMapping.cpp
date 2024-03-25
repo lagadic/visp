@@ -58,6 +58,7 @@ void vpLuminancePCA::init(const std::shared_ptr<vpMatrix> &basis, const std::sha
   m_basis = basis;
   m_mean = mean;
   m_explainedVariance = variance;
+  m_border = vpFeatureLuminance::DEFAULT_BORDER;
 }
 
 
@@ -65,7 +66,6 @@ vpLuminancePCA::vpLuminancePCA(const vpLuminancePCA &other) : vpLuminanceMapping
 {
   *this = other;
 }
-
 
 vpLuminancePCA &vpLuminancePCA::operator=(const vpLuminancePCA &other)
 {
@@ -90,6 +90,7 @@ void vpLuminancePCA::map(const vpImage<unsigned char> &I, vpColVector &s)
   m_Ivec -= *m_mean;
   s = (*m_basis) * m_Ivec;
 }
+
 void vpLuminancePCA::inverse(const vpColVector &s, vpImage<unsigned char> &I)
 {
   const vpColVector vI = ((*m_basis).transpose() * s + (*m_mean));
