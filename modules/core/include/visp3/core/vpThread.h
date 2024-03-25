@@ -36,7 +36,7 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && (defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0)))
 
 #if defined(VISP_HAVE_PTHREAD)
 #include <pthread.h>
@@ -53,19 +53,14 @@
 
    \ingroup group_core_threading
 
+   \deprecated Use rather std::thread.
+
    Class to represent individual threads of execution.
    This class implements native pthread functionalities if available, or
    native Windows threading capabilities if pthread is not available under
    Windows.
-
-   There are two examples implemented in testMutex.cpp and testThread.cpp to
-   show how to use this class. The content of test-thread.cpp that highlights
-   the main functionalities of this class is given hereafter: \snippet
-   testThread.cpp Code
-
-   More examples are provided in \ref tutorial-multi-threading.
  */
-class vpThread
+class vp_deprecated vpThread
 {
 public:
 #if defined(VISP_HAVE_PTHREAD)

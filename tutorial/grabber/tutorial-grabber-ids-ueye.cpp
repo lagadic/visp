@@ -107,7 +107,7 @@ void usage(const char *argv[], int error)
  */
 int main(int argc, const char *argv[])
 {
-#if defined(VISP_HAVE_UEYE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_UEYE) && defined(VISP_HAVE_THREADS)
   try {
     unsigned int opt_device = 0;
     std::string opt_seqname;
@@ -217,7 +217,7 @@ int main(int argc, const char *argv[])
     std::cout << "Active camera is Model " << g.getActiveCameraModel()
       << " with S/N: " << g.getActiveCameraSerialNumber() << std::endl;
 
-//! [Open connection]
+    //! [Open connection]
     g.open(I);
     //! [Open connection]
 

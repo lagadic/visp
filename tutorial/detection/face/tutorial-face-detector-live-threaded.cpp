@@ -2,39 +2,29 @@
 #include <iostream>
 
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpMutex.h>
-#include <visp3/core/vpThread.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/detection/vpDetectorFace.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 
-#if defined(HAVE_OPENCV_OBJDETECT) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEOIO) && (defined(VISP_HAVE_PTHREAD) || defined(_WIN32))
+#if defined(HAVE_OPENCV_OBJDETECT) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) \
+  && defined(HAVE_OPENCV_VIDEOIO) && defined(VISP_HAVE_THREADS)
+
+#include <thread>
+#include <mutex>
 
 #include <opencv2/videoio.hpp>
 
 // Shared vars
 typedef enum { capture_waiting, capture_started, capture_stopped } t_CaptureState;
-t_CaptureState s_capture_state = capture_waiting;
-bool s_face_available = false;
-#if defined(VISP_HAVE_V4L2)
-vpImage<unsigned char> s_frame;
-#elif defined(VISP_HAVE_OPENCV)
-cv::Mat s_frame;
-#endif
-vpMutex s_mutex_capture;
-vpMutex s_mutex_face;
-vpRect s_face_bbox;
 
-vpThread::Return captureFunction(vpThread::Args args)
-{
 #if defined(VISP_HAVE_V4L2)
-  vpV4l2Grabber cap = *(static_cast<vpV4l2Grabber *>(args));
+void captureFunction(vpV4l2Grabber &cap, std::mutex &mutex_capture, vpImage<unsigned char> &frame, t_CaptureState &capture_state)
 #elif defined(HAVE_OPENCV_VIDEOIO)
-  cv::VideoCapture cap = *((cv::VideoCapture *)args);
+void captureFunction(cv::VideoCapture &cap, std::mutex &mutex_capture, cv::Mat &frame, t_CaptureState &capture_state)
 #endif
-
+{
   // If the image is larger than 640 by 480, we subsample
 #if defined(VISP_HAVE_V4L2)
   vpImage<unsigned char> frame_;
@@ -50,26 +40,28 @@ vpThread::Return captureFunction(vpThread::Args args)
 
     // Update shared data
     {
-      vpMutex::vpScopedLock lock(s_mutex_capture);
-      if (s_capture_state == capture_stopped)
+      std::lock_guard<std::mutex> lock(mutex_capture);
+      if (capture_state == capture_stopped)
         stop_capture_ = true;
       else
-        s_capture_state = capture_started;
-      s_frame = frame_;
+        capture_state = capture_started;
+      frame = frame_;
     }
   }
   {
-    vpMutex::vpScopedLock lock(s_mutex_capture);
-    s_capture_state = capture_stopped;
+    std::lock_guard<std::mutex> lock(mutex_capture);
+    capture_state = capture_stopped;
   }
 
   std::cout << "End of capture thread" << std::endl;
-  return 0;
 }
 
-vpThread::Return displayFunction(vpThread::Args args)
+#if defined(VISP_HAVE_V4L2)
+void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available)
+#elif defined(HAVE_OPENCV_VIDEOIO)
+void displayFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, bool &face_available)
+#endif
 {
-  (void)args; // Avoid warning: unused parameter args
   vpImage<unsigned char> I_;
 
   t_CaptureState capture_state_;
@@ -83,20 +75,20 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   do {
-    s_mutex_capture.lock();
-    capture_state_ = s_capture_state;
-    s_mutex_capture.unlock();
+    mutex_capture.lock();
+    capture_state_ = capture_state;
+    mutex_capture.unlock();
 
     // Check if a frame is available
     if (capture_state_ == capture_started) {
       // Get the frame and convert it to a ViSP image used by the display
       // class
       {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
+        std::lock_guard<std::mutex> lock(mutex_capture);
 #if defined(VISP_HAVE_V4L2)
-        I_ = s_frame;
+        I_ = frame;
 #elif defined(VISP_HAVE_OPENCV)
-        vpImageConvert::convert(s_frame, I_);
+        vpImageConvert::convert(frame, I_);
 #endif
       }
 
@@ -117,9 +109,10 @@ vpThread::Return displayFunction(vpThread::Args args)
 
       // Check if a face was detected
       {
-        vpMutex::vpScopedLock lock(s_mutex_face);
-        face_available_ = s_face_available;
-        face_bbox_ = s_face_bbox;
+
+        std::lock_guard<std::mutex> lock(mutex_face);
+        face_available_ = face_available;
+        face_bbox_ = face_bbox;
       }
       if (face_available_) {
         // Access to the face bounding box to display it
@@ -130,8 +123,8 @@ vpThread::Return displayFunction(vpThread::Args args)
       // Trigger end of acquisition with a mouse click
       vpDisplay::displayText(I_, 10, 10, "Click to exit...", vpColor::red);
       if (vpDisplay::getClick(I_, false)) {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        s_capture_state = capture_stopped;
+        std::lock_guard<std::mutex> lock(mutex_capture);
+        capture_state = capture_stopped;
       }
 
       // Update the display
@@ -147,16 +140,17 @@ vpThread::Return displayFunction(vpThread::Args args)
 #endif
 
   std::cout << "End of display thread" << std::endl;
-  return 0;
 }
 
 //! [face-detection-threaded detectionFunction]
-vpThread::Return detectionFunction(vpThread::Args args)
+#if defined(VISP_HAVE_V4L2)
+void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, vpImage<unsigned char> &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available)
+#elif defined(HAVE_OPENCV_VIDEOIO)
+void detectionFunction(std::mutex &mutex_capture, std::mutex &mutex_face, cv::Mat &frame, t_CaptureState &capture_state, vpRect &face_bbox, std::string &face_cascade_name, bool &face_available)
+#endif
 {
-  std::string opt_face_cascade_name = *((std::string *)args);
-
   vpDetectorFace face_detector_;
-  face_detector_.setCascadeClassifierFile(opt_face_cascade_name);
+  face_detector_.setCascadeClassifierFile(face_cascade_name);
 
   t_CaptureState capture_state_;
 #if defined(VISP_HAVE_V4L2)
@@ -165,24 +159,24 @@ vpThread::Return detectionFunction(vpThread::Args args)
   cv::Mat frame_;
 #endif
   do {
-    s_mutex_capture.lock();
-    capture_state_ = s_capture_state;
-    s_mutex_capture.unlock();
+    mutex_capture.lock();
+    capture_state_ = capture_state;
+    mutex_capture.unlock();
 
     // Check if a frame is available
     if (capture_state_ == capture_started) {
       // Backup the frame
       {
-        vpMutex::vpScopedLock lock(s_mutex_capture);
-        frame_ = s_frame;
+        std::lock_guard<std::mutex> lock(mutex_capture);
+        frame_ = frame;
       }
 
       // Detect faces
       bool face_found_ = face_detector_.detect(frame_);
       if (face_found_) {
-        vpMutex::vpScopedLock lock(s_mutex_face);
-        s_face_available = true;
-        s_face_bbox = face_detector_.getBBox(0); // Get largest face bounding box
+        std::lock_guard<std::mutex> lock(mutex_face);
+        face_available = true;
+        face_bbox = face_detector_.getBBox(0); // Get largest face bounding box
       }
     }
     else {
@@ -190,13 +184,11 @@ vpThread::Return detectionFunction(vpThread::Args args)
     }
   } while (capture_state_ != capture_stopped);
   std::cout << "End of face detection thread" << std::endl;
-
-  return 0;
 }
 //! [face-detection-threaded detectionFunction]
 
 //! [face-detection-threaded mainFunction]
-int main(int argc, const char *argv [])
+int main(int argc, const char *argv[])
 {
   std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
   unsigned int opt_device = 0;
@@ -221,12 +213,14 @@ int main(int argc, const char *argv [])
 
   // Instantiate the capture
 #if defined(VISP_HAVE_V4L2)
+  vpImage<unsigned char> frame;
   vpV4l2Grabber cap;
   std::ostringstream device;
   device << "/dev/video" << opt_device;
   cap.setDevice(device.str());
   cap.setScale(opt_scale);
 #elif defined(HAVE_OPENCV_VIDEOIO)
+  cv::Mat frame;
   cv::VideoCapture cap;
   cap.open(opt_device);
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -242,10 +236,18 @@ int main(int argc, const char *argv [])
 #endif
 #endif
 
+  std::mutex mutex_capture;
+  std::mutex mutex_face;
+  vpRect face_bbox;
+  t_CaptureState capture_state = capture_waiting;
+  bool face_available = false;
+
   // Start the threads
-  vpThread thread_capture((vpThread::Fn)captureFunction, (vpThread::Args)&cap);
-  vpThread thread_display((vpThread::Fn)displayFunction);
-  vpThread thread_detection((vpThread::Fn)detectionFunction, (vpThread::Args)&opt_face_cascade_name);
+  std::thread thread_capture(&captureFunction, std::ref(cap), std::ref(mutex_capture), std::ref(frame), std::ref(capture_state));
+  std::thread thread_display(&displayFunction, std::ref(mutex_capture), std::ref(mutex_face), std::ref(frame),
+                             std::ref(capture_state), std::ref(face_bbox), std::ref(face_available));
+  std::thread thread_detection(&detectionFunction, std::ref(mutex_capture), std::ref(mutex_face), std::ref(frame),
+                               std::ref(capture_state), std::ref(face_bbox), std::ref(opt_face_cascade_name), std::ref(face_available));
 
   // Wait until thread ends up
   thread_capture.join();

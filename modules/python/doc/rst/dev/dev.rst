@@ -64,8 +64,8 @@ Python side
 
 
 
-Errors when generating bindings
--------------------------------------
+Errors and issues when generating bindings
+==========================================
 
 When modifying the bindings, you may encounter errors.
 
@@ -79,6 +79,8 @@ Static and member methods have the same name
 
 If, when importing visp in python, you encounter this message:
 
+::
+
   ImportError: overloading a method with both static and instance methods is not supported; error while attempting to bind instance method visp.xxx() -> None
 
 Then it means that a class has both a static method and a member method with the same name. You should :ref:`rename either one through the config files <Function options>`.
@@ -88,6 +90,8 @@ Abstract class not detected
 
 If you have this error:
 
+::
+
   error: invalid new-expression of abstract class type ‘vpTemplateTrackerMI’
   return new Class{std::forward<Args>(args)...};
   In file included from /home/visp_ws/visp_build/modules/python/bindings/src/tt_mi.cpp:13:0:
@@ -96,3 +100,39 @@ If you have this error:
 
 You should define the class (here vpTemplaterMI) as pure virtual in the config file (via the flag is_virtual).
 This error occurs because some methods are defined as pure virtual in a parent class and are not defined in the class this class: Pure virtual class detection does not look in the class hierarchy but only at the present class.
+
+
+Template errors
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If you have an issue that looks like:
+
+::
+
+  Consolidate compiler generated dependencies of target _visp
+  [ 97%] Building CXX object modules/python/bindings/CMakeFiles/_visp.dir/src/core.cpp.o
+  [ 97%] Building CXX object modules/python/bindings/CMakeFiles/_visp.dir/src/robot.cpp.o
+  In file included from /usr/include/c++/11/bits/move.h:57,
+                  from /usr/include/c++/11/bits/stl_pair.h:59,
+                  from /usr/include/c++/11/bits/stl_algobase.h:64,
+                  from /usr/include/c++/11/bits/specfun.h:45,
+                  from /usr/include/c++/11/cmath:1935,
+                  from /usr/include/c++/11/math.h:36,
+                  from /home/sfelton/miniconda3/envs/wrapper3.9/include/python3.9/pyport.h:205,
+                  from /home/sfelton/miniconda3/envs/wrapper3.9/include/python3.9/Python.h:50,
+                  from /home/sfelton/.local/include/pybind11/detail/common.h:266,
+                  from /home/sfelton/.local/include/pybind11/attr.h:13,
+                  from /home/sfelton/.local/include/pybind11/detail/class.h:12,
+                  from /home/sfelton/.local/include/pybind11/pybind11.h:13,
+                  from /home/sfelton/software/visp_build/modules/python/bindings/src/robot.cpp:3:
+  /usr/include/c++/11/type_traits: **In instantiation of ‘struct std::is_move_constructible<vpImage<double> >’:**
+  /usr/include/c++/11/type_traits:152:12:   required from ‘struct std::__and_<std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> > >’
+  /usr/include/c++/11/type_traits:157:12:   required from ‘struct std::__and_<std::__not_<std::__is_tuple_like<vpImage<double> > >, std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> > >’
+  /usr/include/c++/11/type_traits:2209:11:   required by substitution of ‘template<class ... _Cond> using _Require = std::__enable_if_t<std::__and_< <template-parameter-1-1> >::value> [with _Cond = {std::__not_<std::__is_tuple_like<vpImage<double> > >, std::is_move_constructible<vpImage<double> >, std::is_move_assignable<vpImage<double> >}]’
+  /usr/include/c++/11/bits/move.h:196:5:   required by substitution of ‘template<class _Tp> std::_Require<std::__not_<std::__is_tuple_like<_Tp> >, std::is_move_constructible<_Tp>, std::is_move_assignable<_Tp> > std::swap(_Tp&, _Tp&) [with _Tp = vpImage<double>]’
+  /home/sfelton/software/visp-sfelton/modules/core/include/visp3/core/vpImage.h:341:15:   required from ‘class vpImage<double>’
+  /home/sfelton/software/visp-sfelton/modules/core/include/visp3/core/vpImage.h:369:17:   required from here
+  /usr/include/c++/11/type_traits:1010:52: error: static assertion failed: template argument must be a complete class or an unbounded array
+  1010 |       **static_assert(std::__is_complete_or_unbounded(__type_identity<_Tp>{}),**
+
+You should delete the files in `modules/python/` of the build directory.

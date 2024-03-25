@@ -88,7 +88,7 @@ private:
     }
     else {
       // Need to reset the image because some points will not be computed
-      I.resize(height, width, static_cast<ImageType>(0.));
+      I.resize(height, width, static_cast<ImageType>(0));
     }
   }
 
@@ -115,7 +115,9 @@ private:
     return computeVal;
   }
 
-#if ((__cplusplus == 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
+// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+// and not __cplusplus == 199711L
+#if ((__cplusplus <= 199711L) || (defined(_MSVC_LANG) && (_MSVC_LANG == 199711L))) // Check if cxx98
   // Helper to apply the scale to the raw values of the filters
   template <typename FilterType>
   static void scaleFilter(vpArray2D<FilterType> &filter, const float &scale)
@@ -225,7 +227,7 @@ public:
       cv::Mat cv_I, cv_dIx, cv_dIy;
       vpImageConvert::convert(I, cv_I);
       computePartialDerivatives(cv_I, cv_dIx, cv_dIy, computeDx, computeDy, normalize, gaussianKernelSize,
-                                gaussianStdev, apertureGradient, filteringType);
+                                static_cast<float>(gaussianStdev), apertureGradient, filteringType);
       if (computeDx) {
         vpImageConvert::convert(cv_dIx, dIx);
       }
@@ -794,9 +796,9 @@ public:
     FilterType result = static_cast<FilterType>(0.);
 
     for (unsigned int i = 1; i <= stop; ++i) {
-      result += filter[i] * static_cast<double>(I[r][c + i] + I[r][c - i]);
+      result += filter[i] * static_cast<FilterType>(I[r][c + i] + I[r][c - i]);
     }
-    return result + filter[0] * static_cast<double>(I[r][c]);
+    return result + filter[0] * static_cast<FilterType>(I[r][c]);
   }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

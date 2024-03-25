@@ -57,7 +57,8 @@
   - k indicates which kth derivative is computed.
   - value is the numerical value of \f$ N_{i,p}^k(u) \f$.
 */
-typedef struct vpBasisFunction {
+typedef struct vpBasisFunction
+{
   unsigned int i;
   unsigned int p;
   double u;
@@ -104,8 +105,8 @@ typedef struct vpBasisFunction {
 
 class VISP_EXPORT vpBSpline
 {
-  public /*protected*/:
-  //! Vector wich contains the control points
+public /*protected*/:
+//! Vector wich contains the control points
   std::vector<vpImagePoint> controlPoints;
   //! Vector which contain the knots \f$ {u0, ..., um} \f$
   std::vector<double> knots;
@@ -214,24 +215,24 @@ public:
     }
   }
 
-  static unsigned int findSpan(double l_u, unsigned int l_p, std::vector<double> &l_knots);
-  unsigned int findSpan(double u);
+  static unsigned int findSpan(double l_u, unsigned int l_p, const std::vector<double> &l_knots);
+  unsigned int findSpan(double u) const;
 
   static vpBasisFunction *computeBasisFuns(double l_u, unsigned int l_i, unsigned int l_p,
-                                           std::vector<double> &l_knots);
-  vpBasisFunction *computeBasisFuns(double u);
+                                           const std::vector<double> &l_knots);
+  vpBasisFunction *computeBasisFuns(double u) const;
 
   static vpBasisFunction **computeDersBasisFuns(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                                std::vector<double> &l_knots);
-  vpBasisFunction **computeDersBasisFuns(double u, unsigned int der);
+                                                const std::vector<double> &l_knots);
+  vpBasisFunction **computeDersBasisFuns(double u, unsigned int der) const;
 
-  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, std::vector<double> &l_knots,
-                                        std::vector<vpImagePoint> &l_controlPoints);
-  vpImagePoint computeCurvePoint(double u);
+  static vpImagePoint computeCurvePoint(double l_u, unsigned int l_i, unsigned int l_p, const std::vector<double> &l_knots,
+                                        const std::vector<vpImagePoint> &l_controlPoints);
+  vpImagePoint computeCurvePoint(double u) const;
 
   static vpImagePoint *computeCurveDers(double l_u, unsigned int l_i, unsigned int l_p, unsigned int l_der,
-                                        std::vector<double> &l_knots, std::vector<vpImagePoint> &l_controlPoints);
-  vpImagePoint *computeCurveDers(double u, unsigned int der);
+                                        const std::vector<double> &l_knots, const std::vector<vpImagePoint> &l_controlPoints);
+  vpImagePoint *computeCurveDers(double u, unsigned int der) const;
 };
 
 #endif

@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 // System
 #include <thread>
 #include <mutex>
@@ -253,7 +253,7 @@ protected:
   std::thread m_threadDisplay; /*!< The non-blocking drawing thread.*/
   bool m_hasToRun; /*!< If true, the drawing thread is running. Otherwise, it is stopped.*/
   std::string m_title; /*!< The title of the viewer window.*/
-  bool m_hasToSavePCDs; /*!< If true, thhe point clouds will be saved at each iteration of the drawing thread.*/
+  bool m_hasToSavePCDs; /*!< If true, the point clouds will be saved at each iteration of the drawing thread.*/
   std::string m_outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
 };
 #endif // #if defined(VISP_HAVE_PCL)

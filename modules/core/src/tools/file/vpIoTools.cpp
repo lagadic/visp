@@ -2066,16 +2066,16 @@ std::string vpIoTools::toLowerCase(const std::string &input)
     out += std::tolower(*it);
   }
   return out;
-}
+  }
 
-/**
- * @brief Return a upper-case version of the string \b input .
- * Numbers and special characters stay the same
- *
- * @param input The input string for which we want to ensure that all the characters are in upper case.
- * @return std::string A upper-case version of the string \b input, where
- * numbers and special characters stay the same
- */
+  /**
+   * @brief Return a upper-case version of the string \b input .
+   * Numbers and special characters stay the same
+   *
+   * @param input The input string for which we want to ensure that all the characters are in upper case.
+   * @return std::string A upper-case version of the string \b input, where
+   * numbers and special characters stay the same
+   */
 std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
@@ -2087,16 +2087,16 @@ std::string vpIoTools::toUpperCase(const std::string &input)
     out += std::toupper(*it);
   }
   return out;
-}
+  }
 
-/*!
-  Returns the absolute path using realpath() on Unix systems or
-  GetFullPathName() on Windows systems. \return According to realpath()
-  manual, returns an absolute pathname that names the same file, whose
-  resolution does not involve '.', '..', or symbolic links for Unix systems.
-  According to GetFullPathName() documentation, retrieves the full path of the
-  specified file for Windows systems.
- */
+  /*!
+    Returns the absolute path using realpath() on Unix systems or
+    GetFullPathName() on Windows systems. \return According to realpath()
+    manual, returns an absolute pathname that names the same file, whose
+    resolution does not involve '.', '..', or symbolic links for Unix systems.
+    According to GetFullPathName() documentation, retrieves the full path of the
+    specified file for Windows systems.
+   */
 std::string vpIoTools::getAbsolutePathname(const std::string &pathname)
 {
 

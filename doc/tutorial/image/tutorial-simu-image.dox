@@ -5,19 +5,19 @@
 
 \section simu_image_intro Introduction
 
-The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a given camera position. For example, this capability can then be used during the simulation of a visual-servo as described in \ref tutorial-ibvs to introduce an image processing.
+The aim of this tutorial is to explain how to use vpImageSimulator class to project an image of a planar scene at a
+given camera position. For example, this capability can then be used during the simulation of a visual-servo as
+described in \ref tutorial-ibvs to introduce an image processing.
 
-All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/simulator/image
-\endcode
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `simulator/image` folder) and could be found in https://github.com/lagadic/visp/tree/master/simulator/image.
 
 \section simu_image_projection Image projection
 
-Given the image of a planar 20cm by 20cm square target as the one presented in the next image, we show here after how to project this image at a given camera position, and how to get the resulting image. 
+Given the image of a planar 20cm by 20cm square target as the one presented in the next image, we show here after how
+to project this image at a given camera position, and how to get the resulting image.
 
-\image html img-target-square.png Image of a planar 20cm by 20cm square target. 
+\image html img-target-square.png Image of a planar 20cm by 20cm square target.
 
 This is done by the following code also available in tutorial-image-simulator.cpp:
 \include tutorial-image-simulator.cpp
@@ -31,10 +31,12 @@ The provide hereafter the explanation of the new lines that were introduced.
 \snippet tutorial-image-simulator.cpp Include
 Include the header of the vpImageSimulator class that allows to project an image to a given camera position.
 
-Then in the main() function we create an instance of a gray level image that corresponds to the image of the planar target, and then we read the image from the disk. 
+Then in the main() function we create an instance of a gray level image that corresponds to the image of the planar
+target, and then we read the image from the disk.
 \snippet tutorial-image-simulator.cpp Read image
 
-Since the previous image corresponds to a 20cm by 20cm target, we initialize the 3D coordinates of each corner in the plane Z=0. Each
+Since the previous image corresponds to a 20cm by 20cm target, we initialize the 3D coordinates of each corner in the
+plane Z=0. Each
 \snippet tutorial-image-simulator.cpp Set model
 
 Then we create an instance of the image \c I that will contain the rendered image from a given camera position.
@@ -43,20 +45,25 @@ Then we create an instance of the image \c I that will contain the rendered imag
 Since the projection depends on the camera, we set its intrinsic parameters.
 \snippet tutorial-image-simulator.cpp Camera parameters
 
-We also set the render position of the camera as an homogeneous transformation between the camera frame and the target frame.
+We also set the render position of the camera as an homogeneous transformation between the camera frame and the target
+frame.
 \snippet tutorial-image-simulator.cpp Set cMo
 
-We create here an instance of the planar image projector, set the interpolation to bilinear and initialize the projector with the image of the target and the coordinates of its corners.
+We create here an instance of the planar image projector, set the interpolation to bilinear and initialize the
+projector with the image of the target and the coordinates of its corners.
 \snippet tutorial-image-simulator.cpp Create simulator
 
-Now to retrieve the rendered image we first clean the content of the image to render, set the camera position, and finally get the image using the camera parameters.
+Now to retrieve the rendered image we first clean the content of the image to render, set the camera position, and
+finally get the image using the camera parameters.
 \snippet tutorial-image-simulator.cpp Render image
 
-Then, if \c libjpeg is available, the rendered image is saved in the same directory then the executable.  
+Then, if \c libjpeg is available, the rendered image is saved in the same directory then the executable.
 \snippet tutorial-image-simulator.cpp Write image
 
 Finally, as in \ref tutorial-getting-started we open a window to display the rendered image.
 
-Note that this planar image projection capability has been also introduced in vpVirtualGrabber class exploited in tutorial-ibvs-4pts-image-tracking.cpp. Thus the next \ref tutorial-ibvs shows how to use it in order to introduce an image processing that does the tracking of the target during a visual-servo simulation.
+Note that this planar image projection capability has been also introduced in vpVirtualGrabber class exploited in
+tutorial-ibvs-4pts-image-tracking.cpp. Thus the next \ref tutorial-ibvs shows how to use it in order to introduce an
+image processing that does the tracking of the target during a visual-servo simulation.
 
 */

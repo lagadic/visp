@@ -40,8 +40,10 @@
 */
 #include <visp3/core/vpConfig.h>
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
   \class vpHinkley
+  \deprecated This class is deprecated. You should rather use vpStatisticalTestHinkley.
 
   \ingroup group_core_math_tools
   \brief This class implements the Hinkley's cumulative sum test.
@@ -94,16 +96,17 @@ public:
   /*! \enum vpHinkleyJumpType
     Indicates if a jump is detected by the Hinkley test.
   */
-  typedef enum {
+  typedef enum
+  {
     noJump,       /*!< No jump is detected by the Hinkley test. */
     downwardJump, /*!< A downward jump is detected by the Hinkley test. */
     upwardJump    /*!< An upward jump is detected by the Hinkley test. */
   } vpHinkleyJumpType;
 
 public:
-  vpHinkley();
+  vp_deprecated vpHinkley();
   virtual ~vpHinkley();
-  vpHinkley(double alpha, double delta);
+  vp_deprecated vpHinkley(double alpha, double delta);
 
   void init();
   void init(double alpha, double delta);
@@ -162,5 +165,5 @@ private:
   double Tk;
   double Nk;
 };
-
+#endif
 #endif

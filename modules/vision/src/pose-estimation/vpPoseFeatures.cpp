@@ -32,7 +32,7 @@
  */
 #include <visp3/vision/vpPoseFeatures.h>
 
-#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 vpPoseFeatures::vpPoseFeatures()
   : m_maxSize(0), m_totalSize(0), m_vvsIterMax(200), m_lambda(1.0), m_verbose(false), m_computeCovariance(false),
@@ -81,11 +81,9 @@ void vpPoseFeatures::clear()
     delete m_featureSegment_DuoPoints_list[(unsigned int)i].desiredFeature;
   m_featureSegment_DuoPoints_list.clear();
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   for (int i = (int)m_featureSpecific_list.size() - 1; i >= 0; i--)
     delete m_featureSpecific_list[(unsigned int)i];
   m_featureSpecific_list.clear();
-#endif
 
   m_maxSize = 0;
   m_totalSize = 0;
@@ -305,14 +303,12 @@ void vpPoseFeatures::error_and_interaction(vpHomogeneousMatrix &cMo, vpColVector
       L.stack(fs.interaction());
     }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     //--------------Specific Feature--------------
     if (i < m_featureSpecific_list.size()) {
       m_featureSpecific_list[i]->createCurrent(cMo);
       err.stack(m_featureSpecific_list[i]->error());
       L.stack(m_featureSpecific_list[i]->currentInteraction());
     }
-#endif
   }
 }
 
@@ -466,5 +462,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     throw;
   }
 }
-
-#endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_vision.a(vpPoseFeatures.cpp.o) has no symbols
+void dummy_vpPoseFeatures() { };
+#endif

@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_BICLOPS
+#if defined(VISP_HAVE_BICLOPS) && defined(VISP_HAVE_THREADS)
 
 /* ------------------------------------------------------------------------ */
 /* --- INCLUDES ----------------------------------------------------------- */

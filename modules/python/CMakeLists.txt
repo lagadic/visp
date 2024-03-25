@@ -44,13 +44,6 @@ find_package(VISP REQUIRED)
 
 # TODO: check for pip
 
-# Set pip args
-if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
-  set(_pip_args)
-else()
-  set(_pip_args "--user")
-endif()
-
 # Step 1: Generate configuration file
 # Define modules for which to generate python bindings
 set(python_ignored_modules "visp_python" "visp_java_bindings_generator" "visp_java" )
@@ -125,6 +118,9 @@ add_custom_target(
 if(BUILD_PYTHON_BINDINGS_DOC)
   add_subdirectory(doc)
 endif()
+
+# Step 6: Test bindings
+add_subdirectory(test)
 
 
 # Export Variables to parent cmake

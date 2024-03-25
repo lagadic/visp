@@ -31,11 +31,7 @@ The calibration process described in this tutorial consists in 3 steps:
    to estimate the \f$^e{\bf M}_c\f$ transformation.
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code
-(in `apps/calibration` folder) and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/apps/calibration
-\endverbatim
+(in `apps/calibration` folder) and could be found in https://github.com/lagadic/visp/tree/master/apps/calibration.
 
 \section calib_ext_recommendation Recommendations
 

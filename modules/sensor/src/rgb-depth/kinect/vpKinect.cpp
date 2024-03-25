@@ -121,7 +121,7 @@ void vpKinect::stop()
 */
 void vpKinect::VideoCallback(void *rgb, uint32_t /* timestamp */)
 {
-  vpMutex::vpScopedLock lock(m_rgb_mutex);
+  std::lock_guard<std::mutex> lock(m_rgb_mutex);
   uint8_t *rgb_ = static_cast<uint8_t *>(rgb);
   for (unsigned i = 0; i < height; i++) {
     for (unsigned j = 0; j < width; j++) {
@@ -146,7 +146,7 @@ void vpKinect::VideoCallback(void *rgb, uint32_t /* timestamp */)
 */
 void vpKinect::DepthCallback(void *depth, uint32_t /* timestamp */)
 {
-  vpMutex::vpScopedLock lock(m_depth_mutex);
+  std::lock_guard<std::mutex> lock(m_depth_mutex);
   uint16_t *depth_ = static_cast<uint16_t *>(depth);
   for (unsigned i = 0; i < height; i++) {
     for (unsigned j = 0; j < width; j++) {
@@ -167,7 +167,7 @@ void vpKinect::DepthCallback(void *depth, uint32_t /* timestamp */)
 */
 bool vpKinect::getDepthMap(vpImage<float> &map)
 {
-  vpMutex::vpScopedLock lock(m_depth_mutex);
+  std::lock_guard<std::mutex> lock(m_depth_mutex);
   if (!m_new_depth_map)
     return false;
   map = this->dmap;
@@ -225,7 +225,7 @@ bool vpKinect::getDepthMap(vpImage<float> &map, vpImage<unsigned char> &Imap)
 */
 bool vpKinect::getRGB(vpImage<vpRGBa> &I_RGB)
 {
-  vpMutex::vpScopedLock lock(m_rgb_mutex);
+  std::lock_guard<std::mutex> lock(m_rgb_mutex);
   if (!m_new_rgb_frame)
     return false;
   I_RGB = this->IRGB;
@@ -292,7 +292,6 @@ void vpKinect::warpRGBFrame(const vpImage<vpRGBa> &Irgb, const vpImage<float> &I
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_sensor.a(vpKinect.cpp.o) has no symbols
 void dummy_vpKinect() { };
 #endif // VISP_HAVE_LIBFREENECT

@@ -29,8 +29,20 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP Python bindings module
+# ViSP Python bindings stubs
 #
 #############################################################################
 
-from _visp import *
+
+add_custom_target(visp_python_bindings_test_dependencies
+  COMMAND ${PYTHON3_EXECUTABLE} -m pip install  ${_pip_args} -r "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+  COMMENT "Installing dependencies to test Python bindings..."
+  DEPENDS visp_python_bindings
+)
+
+add_custom_target(visp_python_bindings_test
+  COMMAND ${PYTHON3_EXECUTABLE} -m pytest "${CMAKE_CURRENT_SOURCE_DIR}"
+  COMMAND ${PYTHON3_EXECUTABLE} -m pytest "--doctest-glob=*.rst" "${CMAKE_CURRENT_SOURCE_DIR}/../doc"
+  COMMENT "Testing Python bindings..."
+  DEPENDS visp_python_bindings_test_dependencies
+)

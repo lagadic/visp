@@ -112,6 +112,9 @@ endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
+if(POLICY CMP0146)
+  cmake_policy(SET CMP0146 OLD) # The ``FindCUDA`` module deprecated since CMake 3.10
+endif()
 
 if(APPLE)
   # Fix following errors for libpng and libjpeg detection:
@@ -127,11 +130,7 @@ project(VISP C CXX)
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(cmake/VISPUtils.cmake)
-include(cmake/VISPDetectCXXStandard.cmake) # Set cxx standard to 11 by default
-
-if (CMAKE_VERSION VERSION_LESS 3.0.0)
-  vp_clear_vars(VISPModules_TARGETS)
-endif()
+include(cmake/VISPDetectCXXStandard.cmake) # Set cxx standard to 17 by default
 
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
@@ -146,8 +145,7 @@ set(VISP_REVISION "1")
 #-----------------------------------------------------------------------------
 # TO BE CHECKED BEFORE NEXT RELEASE
 #
-# see here: https://github.com/PointCloudLibrary/pcl/issues/3680
-# when this is fixed, we can remove the following 3 lines.
+# Remove following 3 next lines and check if pcl produces a CMP0144 complain around CMake variable FLANN_ROOT set to /opt/homebrew
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
   set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif()
@@ -269,39 +267,93 @@ endif()
 
 # --- Python Support ---
 if(NOT IOS)
-  include(cmake/VISPDetectPython.cmake)
+  # Make sure to refresh the python interpreter every time we rerun cmake
+  # If we don't do this, we may use an old or invalid python when installing the bindings
+  # that was cached by a previous attempt at building
+  if(CMAKE_VERSION VERSION_LESS "3.15.0")
+    set(PYTHON3_CACHE_LIST
+      PYTHON3INTERP_FOUND PYTHONINTERP_FOUND PYTHONLIBS_FOUND PYTHON_FOUND
+      PYTHON3_EXECUTABLE PYTHON_EXECUTABLE
+    )
+    foreach (_variableName ${PYTHON3_CACHE_LIST})
+      unset(${_variableName} CACHE)
+    endforeach()
+    include(cmake/VISPDetectPython.cmake)
+  else()
+    set(PYTHON3_CACHE_LIST
+        Python3_FOUND Python3_EXECUTABLE Python3_Interpreter_FOUND Python3_LIBRARIES
+        _Python3_EXECUTABLE _Python3_INCLUDE_DIR _Python3_INTERPRETER_PROPERTIES _Python3_LIBRARY_RELEASE
+    )
+    foreach (_variableName ${PYTHON3_CACHE_LIST})
+      unset(${_variableName} CACHE)
+    endforeach()
+    # Find strategy
+    set(Python3_FIND_REGISTRY LAST)
+    set(Python3_FIND_VIRTUALENV FIRST)
+    set(Python3_FIND_STRATEGY LOCATION)
+    find_package (Python3 COMPONENTS Interpreter Development)
+
+    # Alias variables to be consistent with previous detection method
+    set(PYTHON3_FOUND ${Python3_FOUND})
+    set(PYTHON3_EXECUTABLE ${Python3_EXECUTABLE})
+    set(PYTHON_DEFAULT_EXECUTABLE ${PYTHON3_EXECUTABLE})
+    set(PYTHON3INTERP_FOUND ${Python3_Interpreter_FOUND})
+    set(PYTHON3_VERSION_STRING ${Python3_VERSION})
+  endif()
 endif()
 
-if(CMAKE_VERSION VERSION_LESS "3.19.0")
+# --- Python Bindings requirements ---
+VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+
+# Minimum tool versions
+set(CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS "3.19.0")
+set(PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS "3.7.0")
+if(CMAKE_VERSION VERSION_LESS ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS})
   set(CMAKE_NOT_OK_FOR_BINDINGS TRUE)
+  message(STATUS "Required CMake version for Python bindings is ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS},
+  but you have ${CMAKE_VERSION}.
+  Python bindings generation will be deactivated.
+  ")
 else()
   set(CMAKE_NOT_OK_FOR_BINDINGS FALSE)
 endif()
 
-if(CMAKE_NOT_OK_FOR_BINDINGS)
-  status("${CMAKE_NOT_OK_FOR_BINDINGS}")
-  status("CMake version required for Python bindings is 3.19.0, but you have ${CMAKE_VERSION}. Python bindings generation will be deactivated")
+if(PYTHON3_VERSION_STRING VERSION_LESS ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS})
+  set(PYTHON3_NOT_OK_FOR_BINDINGS TRUE)
+  message(STATUS "Required Python version for Python bindings is ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS},
+  but you have ${PYTHON3_VERSION_STRING}.
+  Python bindings generation will be deactivated.
+  ")
+else()
+  set(PYTHON3_NOT_OK_FOR_BINDINGS FALSE)
+endif()
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_17)
+  set(CXX_STANDARD_NOT_OK_FOR_BINDINGS TRUE)
+  message(STATUS "Required C++ standard is C++17, but you have ${VISP_CXX_STANDARD}")
+else()
+  set(CXX_STANDARD_NOT_OK_FOR_BINDINGS FALSE)
 endif()
 
-# --- Python Bindings requirements ---
 
-# this avoids non-active conda from getting picked anyway on Windows
-#set(Python_FIND_REGISTRY LAST)
-# Use environment variable PATH to decide preference for Python
-#set(Python_FIND_VIRTUALENV FIRST)
-#set(Python_FIND_STRATEGY LOCATION)
 
-#find_package(Python 3.7 COMPONENTS Interpreter Development) # TODO: use visp function to find python?
-#if(Python_FOUND)
-#  set(VISP_PYTHON_BINDINGS_EXECUTABLE "${Python_EXECUTABLE}")
-#endif()
-#find_package(pybind11)
-VP_OPTION(USE_PYBIND11       pybind11       QUIET    "Include pybind11 to create Python bindings" "" ON)
+# Forbid system Python
+if(DEFINED ENV{VIRTUAL_ENV} OR DEFINED ENV{CONDA_PREFIX})
+  set(_pip_args)
+  set(VISP_PYTHON_IS_SYSTEM_WIDE FALSE)
+else()
+  # First solution: raise an error when cmake will call pip install
+  # set(_pip_args "--require-virtualenv") # If this is a system python, throw an error
+  if(PYTHON3_FOUND)
+    message(STATUS "The python version that you are using (${PYTHON3_EXECUTABLE}) is the system interpreter.
+    pip packages should not be installed system-wide!
+    Python bindings targets will be deactivated!
+    To reenable them, install conda or virtualenv,
+    delete the CMakeCache file then rerun cmake when inside the virtual environment.
+    ")
+    set(VISP_PYTHON_IS_SYSTEM_WIDE TRUE)
+  endif()
+endif()
 
-#if(pybind11_FOUND)
-#  set(VISP_PYBIND11_DIR "${pybind11_DIR}")
-#endif()
-#message("${pybind11_FOUND}")
 # ---
 
 
@@ -447,7 +499,7 @@ VP_OPTION(BUILD_ANDROID_EXAMPLES  "" "" "Build examples for Android platform"   
 VP_OPTION(INSTALL_ANDROID_EXAMPLES "" "" "Install Android examples"  ""                  OFF IF ANDROID )
 
 # Build python bindings as an option
-VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS) )
+VP_OPTION(BUILD_PYTHON_BINDINGS  "" "" "Build Python bindings" "" ON IF (PYTHON3INTERP_FOUND AND USE_PYBIND11 AND NOT CMAKE_NOT_OK_FOR_BINDINGS AND NOT VISP_PYTHON_IS_SYSTEM_WIDE AND NOT PYTHON3_NOT_OK_FOR_BINDINGS AND NOT CXX_STANDARD_NOT_OK_FOR_BINDINGS) )
 VP_OPTION(BUILD_PYTHON_BINDINGS_DOC  "" "" "Build the documentation for the Python bindings" "" ON IF BUILD_PYTHON_BINDINGS )
 
 
@@ -586,17 +638,8 @@ if(SOQT_FOUND) # SoQt < 1.6.0 that depends on Qt4 was found. We need an explicit
   VP_OPTION(USE_QT        Qt          ""    "Include Coin/SoQt/Qt support" "" ON  IF USE_SOQT AND NOT WINRT AND NOT IOS)
 endif()
 VP_OPTION(USE_SOXT        SOXT        ""    "Include Coin/SoXt support"    "" OFF IF USE_COIN3D AND NOT WINRT AND NOT IOS)
-set(THREADS_PREFER_PTHREAD_FLAG ON)
-VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"      "" ON IF NOT (WIN32 OR MINGW))
-
-# We need threads. To be changed to make threads optional
-if(NOT USE_THREADS)
-  if(Threads_FOUND)
-    message(WARNING "We need std::thread. We turn USE_THREADS=ON.")
-    unset(USE_THREADS)
-    set(USE_THREADS ON CACHE BOOL "Include std::thread support" FORCE)
-  endif()
-endif()
+set(THREADS_PREFER_PTHREAD_FLAG TRUE)
+VP_OPTION(USE_THREADS     Threads     ""    "Include std::thread support"  "" ON)
 
 VP_OPTION(USE_XML2        XML2        ""    "Include libxml2 support"      "" ON IF NOT WINRT)
 if(CMAKE_TOOLCHAIN_FILE)
@@ -613,7 +656,7 @@ VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "${X1
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_JPEG       "JPEG;MyJPEG" ""    "Include jpeg support"         "" ON IF NOT IOS)
 VP_OPTION(USE_PNG        "PNG;MyPNG"   ""    "Include png support"          "" ON IF NOT IOS)
-# To control Pioneer mobile robots, under UNIX we need Aria, pthread, rt and dl 3rd party libraries
+# To control Pioneer mobile robots, under UNIX we need Aria and std::threads, rt and dl 3rd party libraries
 VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" ON IF NOT WINRT AND NOT IOS)
 #VP_OPTION(USE_RT          RT           ""    "Include rt support"           "" ON)
 #VP_OPTION(USE_DL          DL           ""    "Include dl support"           "" ON)
@@ -624,7 +667,6 @@ VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library suppor
 VP_OPTION(USE_TENSORRT    TensorRT     ""    "Include TensorRT support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_NLOHMANN_JSON nlohmann_json QUIET "Include nlohmann json support" "" ON)
 
-# Upgrade c++ standard to 14 for pcl 1.9.1.99 that enables by default c++ 14 standard
 if(USE_PCL)
   # PCL is used in modules gui, sensor and mbt.
   # In these modules we cannot directly use PCL_INCLUDE_DIRS and PCL_LIBRARIES using:
@@ -636,6 +678,23 @@ if(USE_PCL)
   # That's why here, we are using vp_find_pcl() macro that will set PCL_DEPS_INCLUDE_DIRS and PCL_DEPS_LIBRARIES
   # that contains also VTK material location.
   vp_find_pcl(PCL_LIBRARIES PCL_DEPS_INCLUDE_DIRS PCL_DEPS_LIBRARIES)
+endif()
+
+# ----------------------------------------------------------------------------
+# Handle OpenCV 2.4.8 as minimal version
+# ----------------------------------------------------------------------------
+if(USE_OPENCV)
+  if(OpenCV_VERSION)
+    if(OpenCV_VERSION VERSION_LESS "2.4.8")
+      message(WARNING "OpenCV 3rd party was detected but its version ${OpenCV_VERSION} is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+      unset(USE_OPENCV)
+      set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+    endif()
+  else()
+    message(WARNING "OpenCV 3rd party was detected but its version cannot be found or is too old. Thus we disable OpenCV usage turning USE_OPENCV=OFF.")
+    unset(USE_OPENCV)
+    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+  endif()
 endif()
 
 # ----------------------------------------------------------------------------
@@ -652,7 +711,7 @@ endif()
 
 if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14)
   if(USE_FTIITSDK)
-    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_OPENCV=OFF.")
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs at least c++14 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable IIT force-torque usage turning USE_FTIITSDK=OFF.")
     unset(USE_FTIITSDK)
     set(USE_FTIITSDK OFF CACHE BOOL "Include IIT force-torque SDK support" FORCE)
   endif()
@@ -700,14 +759,24 @@ if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
     unset(USE_ARSDK)
     set(USE_ARSDK OFF CACHE BOOL "Include Parrot ARSDK support" FORCE)
   endif()
+  if(USE_THREADS)
+    message(WARNING "std::thread was detected but needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable std::thread usage turning USE_THREADS=OFF.")
+    unset(USE_THREADS)
+    set(USE_THREADS OFF CACHE BOOL "Include std::thread support" FORCE)
+  endif()
+endif()
+
+if(UNIX AND Threads_FOUND)
+  # Apriltag on unix needs native pthread. On windows we are using pthread built-in
+  set(USE_PTHREAD ON) # for AprilTag only
 endif()
 
 # ----------------------------------------------------------------------------
 # Build-in 3rd parties. Should be after c++ standard potential modification
 # ----------------------------------------------------------------------------
-VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_THREADS) AND (WIN32 OR MINGW) AND (NOT WINRT))
+VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (WIN32 OR MINGW) AND (NOT WINRT))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
-VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR WITH_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
+VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_THREADS OR USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_APRILTAG_BIG_FAMILY ""  ""    "Build AprilTag big family (41h12, 48h12, 49h12, 52h13)" "" OFF IF WITH_APRILTAG)
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
@@ -996,7 +1065,10 @@ VP_SET(VISP_HAVE_LAPACK_GSL      TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK_MKL      TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
 VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_NETLIB))
 VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
-VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS)) # Keep for the momment for compat
+
+# Keep VISP_HAVE_PTHREAD for the moment for compat and for vpMutex and vpThread deprecated classes
+VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND (USE_PTHREAD AND UNIX)))
+
 VP_SET(VISP_HAVE_THREADS     TRUE IF (BUILD_MODULE_visp_core AND USE_THREADS))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
@@ -1078,8 +1150,6 @@ VP_SET(VISP_HAVE_VICON       TRUE IF (BUILD_MODULE_visp_sensor AND USE_VICON))
 VP_SET(VISP_BUILD_SHARED_LIBS            TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_CAMERA_ENUMERATE TRUE IF (USE_DC1394 AND DC1394_CAMERA_ENUMERATE_FOUND)) # for header vpConfig.h
 VP_SET(VISP_HAVE_DC1394_FIND_CAMERAS     TRUE IF (USE_DC1394 AND DC1394_FIND_CAMERAS_FOUND)) # for header vpConfig.h
-VP_SET(VISP_HAVE_D3D9        TRUE IF USE_DIRECT3D) # for header vpConfig.h
-VP_SET(VISP_HAVE_GTK         TRUE IF USE_GTK2) # for header vpConfig.h
 VP_SET(VISP_HAVE_XRANDR      TRUE IF XRANDR) # for header vpConfig.h
 VP_SET(VISP_HAVE_NULLPTR     TRUE IF HAVE_NULLPTR) # for header vpConfig.h
 
@@ -1603,7 +1673,16 @@ if(BUILD_PYTHON_BINDINGS)
   status("    Package version:"        "${VISP_PYTHON_PACKAGE_VERSION}")
   status("    Wrapped modules:"        "${VISP_PYTHON_BOUND_MODULES}")
   status("    Generated input config:" "${VISP_PYTHON_GENERATED_CONFIG_FILE}")
+else()
+  status("    Requirements: ")
+  status("      Python version > ${PYTHON3_MINIMUM_VERSION_PYTHON_BINDINGS}:"     PYTHON3_FOUND AND NOT PYTHON3_NOT_OK_FOR_BINDINGS THEN "ok (ver ${PYTHON3_VERSION_STRING})" ELSE "python not found or too old (${PYTHON3_VERSION_STRING})")
+  status("      Python in Virtual environment or conda:"     VISP_PYTHON_IS_SYSTEM_WIDE THEN "failed" ELSE "ok")
+  status("      Pybind11 found:"     USE_PYBIND11 THEN "ok" ELSE "failed")
+  status("      CMake > ${CMAKE_MINIMUM_VERSION_PYTHON_BINDINGS}:"     CMAKE_NOT_OK_FOR_BINDINGS THEN "failed (${CMAKE_VERSION})" ELSE "ok (${CMAKE_VERSION})")
+  status("      C++ standard > ${VISP_CXX_STANDARD_17}:"     CXX_STANDARD_NOT_OK_FOR_BINDINGS THEN "failed (${VISP_CXX_STANDARD})" ELSE "ok (${VISP_CXX_STANDARD})")
+
 endif()
+
 
 # ============================ Options ===========================
 status("")
@@ -1730,6 +1809,7 @@ status("")
 status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use std::thread:"        USE_THREADS        THEN "yes" ELSE "no")
+status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
 status("    Use simdlib (built-in):" WITH_SIMDLIB       THEN "yes" ELSE "no")
 status("")

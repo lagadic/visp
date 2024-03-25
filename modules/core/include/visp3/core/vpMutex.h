@@ -37,7 +37,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && (defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0)))
 
 #if defined(VISP_HAVE_PTHREAD)
 #include <pthread.h>
@@ -53,6 +53,7 @@
    \class vpMutex
 
    \ingroup group_core_threading
+   \deprecated Use rather std::mutex.
 
    Class that allows protection by mutex.
 
@@ -60,13 +61,9 @@
    native Windows threading capabilities if pthread is not available under
    Windows.
 
-   An example of vpMutex usage is given in testMutex.cpp.
-
-   More examples are provided in \ref tutorial-multi-threading.
-
    \sa vpScopedLock
 */
-class vpMutex
+class vp_deprecated vpMutex
 {
 public:
   vpMutex() : m_mutex()
@@ -120,7 +117,7 @@ public:
 
     \class vpScopedLock
 
-    \ingroup group_core_mutex
+    \ingroup group_core_threading
 
     \brief Class that allows protection by mutex.
 
@@ -128,37 +125,35 @@ public:
     code from concurrent access. The scope of the mutex lock/unlock is determined
     by the constructor/destructor.
 
-\code
- #include <visp3/core/vpMutex.h>
+    \code
+    #include <visp3/core/vpMutex.h>
 
-int main()
-{
-  vpMutex mutex;
+    int main()
+    {
+      vpMutex mutex;
 
-  {
-    vpMutex::vpScopedLock lock(mutex);
-    // shared var to protect
-  }
-}
+      {
+        vpMutex::vpScopedLock lock(mutex);
+        // shared var to protect
+      }
+    }
     \endcode
 
     Without using vpScopedLock, the previous example would become:
     \code
-#include <visp3/core/vpMutex.h>
+    #include <visp3/core/vpMutex.h>
 
-int main()
-{
-  vpMutex mutex;
+    int main()
+    {
+      vpMutex mutex;
 
-  {
-    mutex.lock();
-    // shared var to protect
-    mutex.unlock()
-  }
-}
+      {
+        mutex.lock();
+        // shared var to protect
+        mutex.unlock()
+      }
+    }
     \endcode
-
-    More examples are provided in \ref tutorial-multi-threading.
 
     \sa vpMutex
   */

@@ -9,9 +9,9 @@ In this tutorial you will learn how to install ViSP from source on CentOS. These
 
 \section install_centos_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion. This can be achieved running:
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake and git. This can be achieved running:
 \verbatim
-$ sudo yum install gcc-c++ make cmake git subversion wget
+$ sudo yum install gcc-c++ make cmake git wget
 \endverbatim
 
 \section install_centos_ws Create a workspace

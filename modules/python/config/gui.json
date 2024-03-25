@@ -1,5 +1,5 @@
 {
-  "ignored_headers": [],
+  "ignored_headers": ["vpWin32Renderer.h", "vpWin32Window.h", "vpWin32API.h", "vpGDIRenderer.h"],
   "ignored_classes": [],
   "user_defined_headers": [],
   "classes": {},

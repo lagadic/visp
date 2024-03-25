@@ -1,0 +1,6 @@
+/*! \page tutorial_python_new ViSP for Python
+
+This page introduces the user to the way to exploit ViSP with Python.
+
+- \subpage tutorial-install-python-bindings <br>In this tutorial you will learn how to install ViSP Python bindings.
+*/

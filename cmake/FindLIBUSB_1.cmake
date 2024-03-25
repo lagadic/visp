@@ -89,7 +89,3 @@ mark_as_advanced(
   LIBUSB_1_LIBRARIES
   LIBUSB_1_LIBRARY
   )
-
-
-
-

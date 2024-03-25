@@ -227,7 +227,7 @@ bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
 
 void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contour_list)
 {
-  if (level > 0) {
+  if (level > 0 && level < std::numeric_limits<int>::max()) {
     vp::vpContour *contour_node = new vp::vpContour;
     contour_node->m_contourType = root.m_contourType;
     contour_node->m_points = root.m_points;

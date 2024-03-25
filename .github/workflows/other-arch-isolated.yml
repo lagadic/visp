@@ -8,10 +8,16 @@ on:
   schedule:
     - cron: '0 2 * * SUN'
 
+# https://stackoverflow.com/questions/66335225/how-to-cancel-previous-runs-in-the-pr-when-you-push-new-commitsupdate-the-curre#comment133398800_72408109
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#concurrency
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
   build-other-architectures:
     # The host should always be linux
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
 
     # Run steps on a matrix of different arch/distro combinations
@@ -40,14 +46,8 @@ jobs:
             endianness: (Big Endian)
 
     steps:
-    # https://github.com/marketplace/actions/cancel-workflow-action
-    - name: Cancel Previous Runs
-      uses: styfle/cancel-workflow-action@0.9.1
-      with:
-        access_token: ${{ github.token }}
-
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Run on arch
       uses: uraimo/run-on-arch-action@v2.2.1
@@ -65,7 +65,8 @@ jobs:
 
           pwd
           mkdir build && cd build
-          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17
+          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF \
+                   -DUSE_JPEG=OFF -DUSE_PNG=OFF -DUSE_X11=OFF -DUSE_XML2=OFF -DBUILD_JAVA=OFF -DUSE_BLAS/LAPACK=OFF
           cat ViSP-third-party.txt
 
           make -j$(nproc)

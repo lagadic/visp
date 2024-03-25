@@ -9,11 +9,9 @@ This tutorial follows \ref tutorial-detection-apriltag-ios and shows how to dete
 
 In this tutorial, you will be able to learn how to detect with Swift 4 and get camera intrinsic parameters.
 
-All the material (Xcode project) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\verbatim
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
-\endverbatim
+Note that all the material (Xcode project) described in this tutorial is part of ViSP source code
+(in `tutorial/ios/AprilTagLiveCamera` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/ios/AprilTagLiveCamera.
 
 Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
 
@@ -35,18 +33,21 @@ The camera’s intrinsic parameters can be acquired from each captured image by 
 
 Note: intrinsic parameters are only supported on some iOS devices with iOS11.
 
-The intrinsic parameters that represent camera features can generally be represented by a matrix of pixel-based focal lengths and principal points (axis centers) in the image. 
-The documentation for Swift is [here](https://developer.apple.com/documentation/avfoundation/avcameracalibrationdata/2881135-intrinsicmatrix). 
+The intrinsic parameters that represent camera features can generally be represented by a matrix of pixel-based focal lengths and principal points (axis centers) in the image.
+The documentation for Swift is [here](https://developer.apple.com/documentation/avfoundation/avcameracalibrationdata/2881135-intrinsicmatrix).
 Since the principal point almost coincides with the image center, this tutorial uses only the focal length.
 
 \section call_objectivec_swift Call Objective-C class from Swift
 
-Let us consider the Xcode project named `AprilTagLiveCamera` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/AprilTagLiveCamera`. 
+Let us consider the Xcode project named `AprilTagLiveCamera` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/AprilTagLiveCamera`.
 
 To open this application, if you followed \ref tutorial-install-ios-package simply run:
 \verbatim
 $ cd $HOME/framework
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
+\endverbatim
+Donwload the content of https://github.com/lagadic/visp/tree/master/tutorial/ios/AprilTagLiveCamera
+anr run
+\verbatim
 $ open AprilTagLiveCamera -a Xcode
 \endverbatim
 
@@ -73,8 +74,8 @@ and in `ViewController.swift` you have the following code:
 Detection and drawing processing is processed in `VispDetector.mm`.
 For details on the detection process, see \ref tutorial-detection-apriltag and on how to draw the pose of a tag, see the previous \ref tutorial-detection-apriltag-ios.
 
-The distance from the iOS device to the marker can be accurately detected if the tag size is properly set. 
-The distance can be obtained using the getTranslationVector() method from the homogeneous transformation matrix (`cMo_vec`) representing the pose with rotation (R) and position (t) of the marker in camera coordinates. 
+The distance from the iOS device to the marker can be accurately detected if the tag size is properly set.
+The distance can be obtained using the getTranslationVector() method from the homogeneous transformation matrix (`cMo_vec`) representing the pose with rotation (R) and position (t) of the marker in camera coordinates.
 See here for more information vpHomogeneousMatrix class
 
 This is achieved in `VispDetector.mm`:

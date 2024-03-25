@@ -52,7 +52,7 @@
 
   Initialise the main tag with default value.
 */
-vpXmlParser::vpXmlParser() : nodeMap(), main_tag("config") {}
+vpXmlParser::vpXmlParser() : nodeMap(), main_tag("config") { }
 
 /*!
   Basic destructor that does nothing.
@@ -79,7 +79,7 @@ vpXmlParser::~vpXmlParser()
 
   \param _twin : The parser to copy.
 */
-vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag) {}
+vpXmlParser::vpXmlParser(const vpXmlParser &_twin) : nodeMap(_twin.nodeMap), main_tag(_twin.main_tag) { }
 
 /* utilities functions to read/write data from an xml document */
 
@@ -457,7 +457,8 @@ void vpXmlParser::save(const std::string &filename, bool append)
     doc = xmlNewDoc((xmlChar *)"1.0");
     root_node = xmlNewNode(nullptr, (xmlChar *)main_tag.c_str());
     xmlDocSetRootElement(doc, root_node);
-  } else {
+  }
+  else {
     if (!append) {
       xmlFreeDoc(doc);
       if (remove(filename.c_str()) != 0)
@@ -482,7 +483,6 @@ void vpXmlParser::save(const std::string &filename, bool append)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no
-// symbols
-void dummy_vpXmlParser(){};
+// Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no symbols
+void dummy_vpXmlParser() { };
 #endif

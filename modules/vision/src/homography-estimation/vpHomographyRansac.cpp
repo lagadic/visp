@@ -432,7 +432,7 @@ bool vpHomography::ransac(const std::vector<double> &xb, const std::vector<doubl
 
   if (foundSolution) {
     if (nbInliers >= nbInliersConsensus) {
-      const unsigned int nbConsensus = best_consensus.size();
+      const unsigned int nbConsensus = static_cast<unsigned int>(best_consensus.size());
       std::vector<double> xa_best(nbConsensus);
       std::vector<double> ya_best(nbConsensus);
       std::vector<double> xb_best(nbConsensus);

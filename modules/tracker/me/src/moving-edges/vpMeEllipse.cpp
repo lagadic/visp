@@ -65,7 +65,7 @@ vpMeEllipse::vpMeEllipse(const vpMeEllipse &me_ellipse)
   m_alphamin(me_ellipse.m_alphamin), m_alphamax(me_ellipse.m_alphamax), m_uc(me_ellipse.m_uc), m_vc(me_ellipse.m_vc),
   m_n20(me_ellipse.m_n20), m_n11(me_ellipse.m_n11), m_n02(me_ellipse.m_n02),
   m_expectedDensity(me_ellipse.m_expectedDensity), m_numberOfGoodPoints(me_ellipse.m_numberOfGoodPoints),
-  m_trackCircle(me_ellipse.m_trackCircle), m_trackArc(me_ellipse.m_trackArc)
+  m_trackCircle(me_ellipse.m_trackCircle), m_trackArc(me_ellipse.m_trackArc), m_arcEpsilon(me_ellipse.m_arcEpsilon)
 { }
 
 vpMeEllipse::~vpMeEllipse()
@@ -300,8 +300,10 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     computePointOnEllipse(ang, iP);
     // If point is in the image, add to the sample list
     // Check done in (i,j) frame)
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())
-        && inMeMaskCandidates(m_maskCandidates, iP.get_i(), iP.get_j())) {
+    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
+        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
       const unsigned int crossSize = 5;
       vpDisplay::displayCross(I, iP, crossSize, vpColor::red);
 
@@ -361,7 +363,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       while (ang < (nextang - incr)) {
         vpImagePoint iP;
         computePointOnEllipse(ang, iP);
-        if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())) {
+        unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+        unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+        if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
           double theta = computeTheta(iP);
           vpMeSite pix;
           pix.init(iP.get_i(), iP.get_j(), theta);
@@ -420,7 +424,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
       ang = (nextang + ang) / 2.0; // point added at mid angle
       vpImagePoint iP;
       computePointOnEllipse(ang, iP);
-      if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())) {
+      unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+      unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+      if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
         double theta = computeTheta(iP);
         vpMeSite pix;
         pix.init(iP.get_i(), iP.get_j(), theta);
@@ -479,7 +485,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   for (unsigned int i = 0; i < nbpts; ++i) {
     vpImagePoint iP;
     computePointOnEllipse(ang, iP);
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())) {
+    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
       double theta = computeTheta(iP);
       vpMeSite pix;
       pix.init(iP.get_i(), iP.get_j(), theta);
@@ -529,7 +537,9 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
   for (unsigned int i = 0; i < nbpts; ++i) {
     vpImagePoint iP;
     computePointOnEllipse(ang, iP);
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())) {
+    unsigned int is_uint = static_cast<unsigned int>(iP.get_i());
+    unsigned int js_uint = static_cast<unsigned int>(iP.get_j());
+    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)) {
       double theta = computeTheta(iP);
       vpMeSite pix;
       pix.init(iP.get_i(), iP.get_j(), theta);
@@ -1131,6 +1141,67 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, bool trackCircle
   initTracking(I, iP, trackCircle, trackArc);
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, std::optional<std::vector<vpImagePoint>> &opt_ips, bool trackCircle, bool trackArc)
+#else
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, std::vector<vpImagePoint> *opt_ips, bool trackCircle, bool trackArc)
+#endif
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+  if (!opt_ips.has_value())
+#else
+  if (opt_ips == nullptr)
+#endif
+  {
+    initTracking(I, trackCircle, trackArc);
+    return;
+  }
+
+  if (opt_ips->size() != 0) {
+    initTracking(I, *opt_ips, trackCircle, trackArc);
+    return;
+  }
+
+  unsigned int n = 5; // by default, 5 points for an ellipse
+  const unsigned int nForCircle = 3;
+  m_trackCircle = trackCircle;
+  if (trackCircle) {
+    n = nForCircle;
+  }
+  opt_ips->resize(n);
+  m_trackArc = trackArc;
+
+  vpDisplay::flush(I);
+
+  if (m_trackCircle) {
+    if (m_trackArc) {
+      std::cout << "First and third points specify the extremities of the arc of circle (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; ++k) {
+      std::cout << "Click point " << (k + 1) << "/" << n << " on the circle " << std::endl;
+      vpDisplay::getClick(I, (*opt_ips)[k], true);
+      const unsigned int crossSize = 10;
+      vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << (*opt_ips)[k] << std::endl;
+    }
+  }
+  else {
+    if (m_trackArc) {
+      std::cout << "First and fifth points specify the extremities of the arc of ellipse (clockwise)" << std::endl;
+    }
+    for (unsigned int k = 0; k < n; ++k) {
+      std::cout << "Click point " << (k + 1) << "/" << n << " on the ellipse " << std::endl;
+      vpDisplay::getClick(I, (*opt_ips)[k], true);
+      const unsigned int crossSize = 10;
+      vpDisplay::displayCross(I, (*opt_ips)[k], crossSize, vpColor::red);
+      vpDisplay::flush(I);
+      std::cout << (*opt_ips)[k] << std::endl;
+    }
+  }
+  initTracking(I, *opt_ips, trackCircle, trackArc);
+}
+
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP,
                                bool trackCircle, bool trackArc)
 {
@@ -1180,7 +1251,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpColVecto
   computeAbeFromNij();
   computeKiFromNij();
 
-  if (m_trackArc) {
+  if (m_trackArc && pt1 && pt2) {
     m_alpha1 = computeAngleOnEllipse(*pt1);
     m_alpha2 = computeAngleOnEllipse(*pt2);
     if ((m_alpha2 <= m_alpha1) || (std::fabs(m_alpha2 - m_alpha1) < m_arcEpsilon)) {

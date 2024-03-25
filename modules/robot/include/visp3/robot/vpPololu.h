@@ -36,7 +36,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_POLOLU
+#if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
 #include <iostream>
 #include <string>
@@ -199,7 +199,7 @@ public:
    *
    * \param[in] pos_pwm : Position in PWM to reach.
    *
-   * \param[in] speed_pwm : Speed to use for movement in units of (0.25 μs)/(10 ms). Default is 0, maximum speed.
+   * \param[in] speed_pwm : Speed to use for movement in units of (0.25 us)/(10 ms). Default is 0, maximum speed.
    *
    * \exception When PWM out of range.
    */
@@ -225,7 +225,7 @@ public:
    * Set the pwm velocity of the motor movements. The motor will move to the edge of the
    * range at the given speed.
    *
-   * \param[in] pwm_vel : PWM velocity to use for movement in units of (0.25 μs)/(10 ms). When set to 0, will use the
+   * \param[in] pwm_vel : PWM velocity to use for movement in units of (0.25 us)/(10 ms). When set to 0, will use the
    * maximum speed.
    */
   void setPwmVelocity(short pwm_vel);
@@ -276,7 +276,7 @@ public:
    *
    * \param speed_rad_s : Speed converted to rad/s.
    *
-   * \return Signed speed in units of (0.25 μs)/(10 ms).
+   * \return Signed speed in units of (0.25 us)/(10 ms).
    *
    * \sa speedToRadS()
    */
@@ -285,7 +285,7 @@ public:
   /*!
    * Convert Pololu's pwm velocity to rad/s velocity.
    *
-   * \param[in] speed : Signed speed in units of (0.25 μs)/(10 ms).
+   * \param[in] speed : Signed speed in units of (0.25 us)/(10 ms).
    *
    * \return Speed converted to rad/s.
    *

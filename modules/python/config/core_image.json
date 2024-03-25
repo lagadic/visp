@@ -1,0 +1,535 @@
+{
+  "classes": {
+    "vpImage": {
+      "ignore_repr": true,
+      "additional_bindings": "bindings_vpImage",
+      "use_buffer_protocol": true,
+      "specializations": [
+        {
+          "python_name": "ImageGray",
+          "arguments": ["unsigned char"]
+        },
+        {
+          "python_name": "ImageFloat",
+          "arguments": ["float"]
+        },
+        {
+          "python_name": "ImageDouble",
+          "arguments": ["double"]
+        },
+        {
+          "python_name": "ImageUInt16",
+          "arguments": ["uint16_t"]
+        },
+        {
+          "python_name": "ImageRGBa",
+          "arguments": ["vpRGBa"]
+        },
+        {
+          "python_name": "ImageRGBf",
+          "arguments": ["vpRGBf"]
+        }
+      ],
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void insert(const vpArray2D<Type> &, const vpArray2D<Type> &, vpArray2D<Type> &, unsigned int, unsigned int)",
+          "custom_name": "insertStatic"
+        },
+        {
+          "static": false,
+          "signature": "vpImage(vpImage<Type>&&)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "vpImage(Type*, unsigned int, unsigned int, bool)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "void init(Type*, unsigned int, unsigned int, bool)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "Type* operator[](unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "Type* operator[](int)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "const Type* operator[](unsigned int)",
+          "ignore": true
+        },
+        {
+          "static": false,
+          "signature": "const Type* operator[](int)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRGBf": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRGBf& operator=(const vpRGBf&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpRGBa": {
+      "methods": [
+        {
+          "static": false,
+          "signature": "vpRGBa& operator=(const vpRGBa&&)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpImageTools": {
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void warpImage(const vpImage<Type>&, const vpMatrix&, vpImage<Type>&, const vpImageTools::vpImageInterpolationType&, bool, bool)",
+          "specializations":
+          [
+            ["unsigned char"],
+            ["float"],
+            ["double"],
+            ["uint16_t"],
+            ["vpRGBa"]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void crop(const vpImage<Type>&, double, double, unsigned int, unsigned int, vpImage<Type>&, unsigned int, unsigned int)",
+          "specializations":
+          [
+            ["TypeImage"]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void crop(const vpImage<Type>&, const vpImagePoint&, unsigned int, unsigned int, vpImage<Type>&, unsigned int, unsigned int)",
+          "specializations":
+          [
+            ["TypeImage"]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void crop(const vpImage<Type>&, const vpRect&, vpImage<Type>&, unsigned int, unsigned int)",
+          "specializations":
+          [
+            ["TypeImage"]
+          ]
+        },
+        {
+          "static": true,
+          "signature": "void crop(const unsigned char*, unsigned int, unsigned int, const vpRect&, vpImage<Type>&, unsigned int, unsigned int)",
+          "ignore": true
+        }
+      ]
+    },
+    "vpImageConvert": {
+      "additional_bindings": "bindings_vpImageConvert",
+      "methods":
+      [
+        {
+          "static": true,
+          "signature": "void RGBaToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV444ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void GreyToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUYVToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV411ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV422ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YUV420ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YV12ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YVU9ToRGB(unsigned char*, unsigned char*, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YCbCrToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGB(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void YCrCbToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGB(const double*, const double*, const double*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGB(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGBa(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void HSVToRGBa(const double*, const double*, const double*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void RGBaToHSV(const unsigned char*, double*, double*, double*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void MONO16ToGrey(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void MONO16ToRGBa(unsigned char*, unsigned char*, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRaToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRToGrey(unsigned char*, unsigned char*, unsigned int, unsigned int, bool, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void BGRToRGBa(unsigned char*, unsigned char*, unsigned int, unsigned int, bool)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaBilinear(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaBilinear(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicBGGRToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGBRGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicGRBGToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaMalvar(const uint8_t*, uint8_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        },
+        {
+          "static": true,
+          "signature": "void demosaicRGGBToRGBaMalvar(const uint16_t*, uint16_t*, unsigned int, unsigned int, unsigned int)",
+          "ignore": true,
+          "custom_implem": true
+        }
+      ]
+    }
+  }
+}

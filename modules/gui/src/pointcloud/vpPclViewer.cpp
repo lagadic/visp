@@ -35,7 +35,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 // PCL
 #include<pcl/io/pcd_io.h>
 
@@ -487,8 +487,7 @@ void vpPclViewer::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRG
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpD3DRenderer.cpp.o) has no symbols
 void dummy_vpPCLPointCLoudVisualization() { };
 #endif
 #endif

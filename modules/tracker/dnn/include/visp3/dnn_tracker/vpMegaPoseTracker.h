@@ -37,10 +37,10 @@
 #define _vpMegaPoseTracker_h_
 
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_NLOHMANN_JSON)
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
 
 #include <future>
-#include<memory>
+#include <memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 
 /**

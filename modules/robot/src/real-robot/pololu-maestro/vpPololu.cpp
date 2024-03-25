@@ -34,7 +34,7 @@
 #include <visp3/core/vpConfig.h>
 
 
-#ifdef VISP_HAVE_POLOLU
+#if defined(VISP_HAVE_POLOLU) && defined(VISP_HAVE_THREADS)
 
 #include <chrono>
 #include <thread>
@@ -122,7 +122,7 @@ unsigned short vpPololu::radToPwm(float angle) const
   float a = m_range_pwm / m_range_angle;
   float b = m_min_pwm - m_min_angle * a;
 
-  return (a * angle + b);
+  return static_cast<unsigned short>(a * angle + b);
 }
 
 bool vpPololu::connected() const
@@ -194,7 +194,7 @@ void vpPololu::setAngularPosition(float pos_rad, float vel_rad_s)
 {
   if ((m_min_angle <= pos_rad) && (pos_rad <= m_max_angle)) {
     unsigned short pos_pwm = radToPwm(pos_rad);
-    unsigned short pos_speed = std::fabs(radSToSpeed(vel_rad_s));
+    unsigned short pos_speed = static_cast<unsigned short>(std::fabs(radSToSpeed(vel_rad_s)));
     // Handle the case where pos_speed = 0 which corresponds to the pwm max speed
     if (pos_speed == 0) {
       pos_speed = 1;

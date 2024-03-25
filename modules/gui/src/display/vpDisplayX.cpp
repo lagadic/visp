@@ -2661,7 +2661,6 @@ bool vpDisplayX::getPointerPosition(vpImagePoint &ip)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no symbols
 void dummy_vpDisplayX() { };
 #endif

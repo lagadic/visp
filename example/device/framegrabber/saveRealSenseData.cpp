@@ -39,8 +39,8 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
+#if (defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)) && defined(VISP_HAVE_THREADS) \
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PUGIXML)
 
 #include <condition_variable>
 #include <fstream>
@@ -75,42 +75,42 @@ namespace
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-            Save RealSense data.\n\
-            \n\
-            %s\
-            OPTIONS:                                               \n\
-            -s                                                     \n\
-            Save data.\n\
-            \n\
-            -o <directory>                                         \n\
-            Output directory.\n\
-            \n\
-            -a                                                     \n\
-            Use aligned streams.\n\
-            \n\
-            -c                                                     \n\
-            Save color stream.\n\
-            \n\
-            -d                                                     \n\
-            Save depth stream.\n\
-            \n\
-            -p                                                     \n\
-            Save pointcloud.\n\
-            \n\
-            -i                                                     \n\
-            Save infrared stream.\n\
-            \n\
-            -C                                                     \n\
-            Click to save.\n\
-            \n\
-            -f <fps>                                               \n\
-            Set FPS.\n\
-            \n\
-            -b                                                     \n\
-            Save point cloud in binary format.\n\
-            \n\
-            -h \n\
-            Print the help.\n\n",
+          Save RealSense data.\n\
+          \n\
+          %s\
+          OPTIONS:                                               \n\
+          -s                                                     \n\
+          Save data.\n\
+          \n\
+          -o <directory>                                         \n\
+          Output directory.\n\
+          \n\
+          -a                                                     \n\
+          Use aligned streams.\n\
+          \n\
+          -c                                                     \n\
+          Save color stream.\n\
+          \n\
+          -d                                                     \n\
+          Save depth stream.\n\
+          \n\
+          -p                                                     \n\
+          Save pointcloud.\n\
+          \n\
+          -i                                                     \n\
+          Save infrared stream.\n\
+          \n\
+          -C                                                     \n\
+          Click to save.\n\
+          \n\
+          -f <fps>                                               \n\
+          Set FPS.\n\
+          \n\
+          -b                                                     \n\
+          Save point cloud in binary format.\n\
+          \n\
+          -h \n\
+          Print the help.\n\n",
           name);
 
   if (badparam)

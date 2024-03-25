@@ -48,7 +48,7 @@
 
 /*!
  * \class vpGenericFeature
- * \ingroup group_core_features
+ * \ingroup group_visual_features
  *
  * \brief Class that enables to define a feature or a set of features which are
  * not implemented in ViSP as a specific class. It is indeed possible to create

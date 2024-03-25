@@ -161,9 +161,11 @@ void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
     vpImagePoint iP;
     iP.set_i(is);
     iP.set_j(js);
+    unsigned int is_uint = static_cast<unsigned int>(is);
+    unsigned int js_uint = static_cast<unsigned int>(js);
     // If point is in the image, add to the sample list
-    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())
-        && inMeMaskCandidates(m_maskCandidates, iP.get_i(), iP.get_j())) {
+    if ((!outOfImage(iP, 0, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
+        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
       vpMeSite pix;
       pix.init(iP.get_i(), iP.get_j(), m_delta, 0, m_sign);
       pix.setDisplay(m_selectDisplay);
@@ -523,16 +525,18 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
 
   for (int i = 0; i < 3; i++) {
     P.m_ifloat = P.m_ifloat + di * sample_step;
-    P.m_i = (int)P.m_ifloat;
+    P.m_i = static_cast<int>(P.m_ifloat);
     P.m_jfloat = P.m_jfloat + dj * sample_step;
-    P.m_j = (int)P.m_jfloat;
+    P.m_j = static_cast<int>(P.m_jfloat);
 
     vpImagePoint iP;
     iP.set_i(P.m_ifloat);
     iP.set_j(P.m_jfloat);
 
-    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())
-        && inMeMaskCandidates(m_maskCandidates, iP.get_i(), iP.get_j())) {
+    unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
+    unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
+    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
+        && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
       P.track(I, m_me, false);
 
       if (P.getState() == vpMeSite::NO_SUPPRESSION) {
@@ -553,16 +557,18 @@ void vpMeLine::seekExtremities(const vpImage<unsigned char> &I)
   P.setDisplay(m_selectDisplay);
   for (int i = 0; i < 3; i++) {
     P.m_ifloat = P.m_ifloat - di * sample_step;
-    P.m_i = (int)P.m_ifloat;
+    P.m_i = static_cast<int>(P.m_ifloat);
     P.m_jfloat = P.m_jfloat - dj * sample_step;
-    P.m_j = (int)P.m_jfloat;
+    P.m_j = static_cast<int>(P.m_jfloat);
 
     vpImagePoint iP;
     iP.set_i(P.m_ifloat);
     iP.set_j(P.m_jfloat);
 
-    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, iP.get_i(), iP.get_j())
-            && inMeMaskCandidates(m_maskCandidates, iP.get_i(), iP.get_j())) {
+    unsigned int is_uint = static_cast<unsigned int>(P.m_ifloat);
+    unsigned int js_uint = static_cast<unsigned int>(P.m_jfloat);
+    if ((!outOfImage(iP, 5, nbrows, nbcols)) && inRoiMask(m_mask, is_uint, js_uint)
+            && inMeMaskCandidates(m_maskCandidates, is_uint, js_uint)) {
       P.track(I, m_me, false);
 
       if (P.getState() == vpMeSite::NO_SUPPRESSION) {

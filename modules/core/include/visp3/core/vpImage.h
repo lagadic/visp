@@ -48,8 +48,8 @@
 #include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpRGBf.h>
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
-#include <visp3/core/vpThread.h>
+#if defined(VISP_HAVE_THREADS)
+#include <thread>
 #endif
 
 #include <fstream>
@@ -186,7 +186,8 @@ public:
   // Return the maximum value within the bitmap
   Type getMaxValue(bool onlyFiniteVal = true) const;
   // Return the mean value of the bitmap
-  Type getMeanValue() const;
+  double getMeanValue(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
   // Return the minumum value within the bitmap
   Type getMinValue(bool onlyFiniteVal = true) const;
   // Look for the minumum and the maximum value within the bitmap
@@ -222,15 +223,17 @@ public:
    */
   inline unsigned int getSize() const { return width * height; }
 
+  double getStdev(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+  double getStdev(const double &mean, const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
+  double getSum(const vpImage<bool> *p_mask = nullptr, unsigned int *nbValidPoints = nullptr) const;
+
   // Gets the value of a pixel at a location.
   Type getValue(unsigned int i, unsigned int j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(double i, double j) const;
   // Gets the value of a pixel at a location with bilinear interpolation.
   Type getValue(const vpImagePoint &ip) const;
-
-  // Get image pixels sum
-  double getSum() const;
 
   /*!
     Get the image width.
@@ -481,7 +484,7 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
   return s;
 }
 
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
 namespace
 {
 struct vpImageLut_Param_t
@@ -499,9 +502,8 @@ struct vpImageLut_Param_t
   { }
 };
 
-vpThread::Return performLutThread(vpThread::Args args)
+void performLutThread(vpImageLut_Param_t *imageLut_param)
 {
-  vpImageLut_Param_t *imageLut_param = static_cast<vpImageLut_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -510,11 +512,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   unsigned char *ptrStart = bitmap + start_index;
   unsigned char *ptrEnd = bitmap + end_index;
   unsigned char *ptrCurrent = ptrStart;
-
-  //    while(ptrCurrent != ptrEnd) {
-  //      *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
-  //      ++ptrCurrent;
-  //    }
 
   if (end_index - start_index >= 8) {
     // Unroll loop version
@@ -548,8 +545,6 @@ vpThread::Return performLutThread(vpThread::Args args)
   for (; ptrCurrent != ptrEnd; ++ptrCurrent) {
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent];
   }
-
-  return 0;
 }
 
 struct vpImageLutRGBa_Param_t
@@ -567,9 +562,8 @@ struct vpImageLutRGBa_Param_t
   { }
 };
 
-vpThread::Return performLutRGBaThread(vpThread::Args args)
+void performLutRGBaThread(vpImageLutRGBa_Param_t *imageLut_param)
 {
-  vpImageLutRGBa_Param_t *imageLut_param = static_cast<vpImageLutRGBa_Param_t *>(args);
   unsigned int start_index = imageLut_param->m_start_index;
   unsigned int end_index = imageLut_param->m_end_index;
 
@@ -615,8 +609,6 @@ vpThread::Return performLutRGBaThread(vpThread::Args args)
     *ptrCurrent = imageLut_param->m_lut[*ptrCurrent].A;
     ptrCurrent++;
   }
-
-  return 0;
 }
 } // namespace
 #endif
@@ -848,7 +840,9 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   : bitmap(nullptr), display(nullptr), npixels(0), width(0), height(0), row(nullptr), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
-  memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
+  if (bitmap) {
+    memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
+  }
 }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
@@ -948,15 +942,207 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
 }
 
 /*!
-  \brief Return the mean value of the bitmap
-*/
-template <class Type> Type vpImage<Type>::getMeanValue() const
+ * \brief Return the mean value of the bitmap.
+ *
+ * For vpRGBa and vpRGBf image types, the sum of image intensities is computed by (R+G+B).
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, a boolean mask that indicates which points must be
+ * considered, if set to true.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+ */
+template <class Type> double vpImage<Type>::getMeanValue(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  if ((height == 0) || (width == 0))
+  if ((height == 0) || (width == 0)) {
     return 0.0;
-
-  return getSum() / (height * width);
+  }
+  unsigned int nbPointsInMask = 0;
+  double sum = getSum(p_mask, &nbPointsInMask);
+  if (nbPointsInMask == 0) {
+    throw(vpException(vpException::divideByZeroError, "Division by zero in vpImage::getMeanValue()"));
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+  return sum / nbPointsInMask;
 }
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] p_mask A boolean mask that indicates which points must be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+*/
+template <class Type> double vpImage<Type>::getStdev(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  double mean = getMeanValue(p_mask, nbValidPoints);
+  return getStdev(mean, p_mask);
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] mean The mean of the image.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+* \return double The standard deviation taking into account only the points for which the mask is true.
+*/
+template <class Type> double vpImage<Type>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  const unsigned int size = width * height;
+  double sum = 0.;
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        sum += (bitmap[i] - mean) * (bitmap[i] - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
+      sum += (bitmap[i] - mean) * (bitmap[i] - mean);
+    }
+    nbPointsInMask = size;
+  }
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+  return std::sqrt(sum);
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] mean The mean of the image.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+* \return double The standard deviation taking into account only the points for which the mask is true.
+*/
+template <> inline double vpImage<vpRGBa>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  const unsigned int size = width * height;
+  double sum = 0.;
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        sum += (val - mean) * (val - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
+      double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+      sum += (val - mean) * (val - mean);
+    }
+    nbPointsInMask = size;
+  }
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+  return std::sqrt(sum);
+}
+
+/*!
+* \brief Return the standard deviation of the bitmap
+*
+* - For a vpRGBa or a vpRGBf image, we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c].R + I[r][c].G + I[r][c].B - \mu)^2}\f]
+* - For a unary type image (unsigned char, float, double), we compute the standard deviation as follow:
+*   \f[ stdev = \sqrt{\frac{1}{size} \sum_{r = 0}^{height-1} \sum_{c = 0}^{width-1} (I[r][c] - \mu)^2}\f]
+*
+* where \f$ \mu \f$ is the mean of the image as computed by \b vpImage::getMeanValue() and \f$ \mbox{size} \f$
+* is the number of pixels to consider in the mask.
+*
+* \param[in] mean The mean of the image.
+* \param[in] p_mask Optional parameter. When different from nullptr, a boolean mask that indicates which pixels must
+* be considered, if set to true.
+* \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+* valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+* \return double The standard deviation taking into account only the points for which the mask is true.
+*/
+template <> inline double vpImage<vpRGBf>::getStdev(const double &mean, const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  const unsigned int size = width * height;
+  double sum = 0.;
+  unsigned int nbPointsInMask = 0;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute standard deviation: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        sum += (val - mean) * (val - mean);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
+      double val = static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+      sum += (val - mean) * (val - mean);
+    }
+    nbPointsInMask = size;
+  }
+  sum /= static_cast<double>(nbPointsInMask);
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+  return std::sqrt(sum);
+}
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * \brief Return the minimum value within the bitmap
@@ -1865,70 +2051,158 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) cons
 }
 
 /**
- * Compute the sum of image intensities.
- * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
  */
-template <class Type> inline double vpImage<Type>::getSum() const
+template <class Type> inline double vpImage<Type>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  if ((height == 0) || (width == 0))
+  if ((height == 0) || (width == 0)) {
+    if (nbValidPoints) {
+      *nbValidPoints = 0;
+    }
     return 0.0;
-
+  }
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+  }
   double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i]);
+  unsigned int nbPointsInMask = 0;
+  unsigned int size = height * width;
+  if (p_mask) {
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i]);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < size; ++i) {
+      res += static_cast<double>(bitmap[i]);
+    }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
+  }
+
+  return res;
+}
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+/**
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
+ */
+template <> inline double vpImage<vpRGBa>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
+{
+  if ((height == 0) || (width == 0)) {
+    return 0.0;
+  }
+  double res = 0.0;
+  unsigned int nbPointsInMask = 0;
+  unsigned int size = height * width;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < height * width; ++i) {
+      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+    }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
   }
   return res;
 }
 
 /**
- * \relates vpImage
+ * \brief Compute the sum of image intensities.
+ * - For unary image types (unsigned char, float, double), compute the sum of image intensities.
+ * - For vpRGBa image type, compute the sum (R+G+B) of image intensities.
+ * - For vpRGBf image type, compute the sum (R+G+B) of image intensities.
+ *
+ * \param[in] p_mask Optional parameter. If not set to nullptr, pointer to a boolean mask that indicates the valid
+ * points by a true flag.
+ * \param[out] nbValidPoints Optional parameter. When different from nullptr contains the number of points that are
+ * valid according to the boolean mask or image size when `p_mask` is set to nullptr.
  */
-template <> inline double vpImage<vpRGBa>::getSum() const
+template <> inline double vpImage<vpRGBf>::getSum(const vpImage<bool> *p_mask, unsigned int *nbValidPoints) const
 {
-  if ((height == 0) || (width == 0))
+  if ((height == 0) || (width == 0)) {
     return 0.0;
-
+  }
   double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+  unsigned int nbPointsInMask = 0;
+  unsigned int size = height * width;
+  if (p_mask) {
+    if (p_mask->getWidth() != width || p_mask->getHeight() != height) {
+      throw(vpException(vpException::fatalError, "Cannot compute sum: image and mask size differ"));
+    }
+    for (unsigned int i = 0; i < size; ++i) {
+      if (p_mask->bitmap[i]) {
+        res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+        ++nbPointsInMask;
+      }
+    }
+  }
+  else {
+    for (unsigned int i = 0; i < height * width; ++i) {
+      res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+    }
+    nbPointsInMask = size;
+  }
+  if (nbValidPoints) {
+    *nbValidPoints = nbPointsInMask;
   }
   return res;
 }
-
-/**
- * \relates vpImage
- */
-template <> inline double vpImage<vpRGBf>::getSum() const
-{
-  if ((height == 0) || (width == 0))
-    return 0.0;
-
-  double res = 0.0;
-  for (unsigned int i = 0; i < height * width; ++i) {
-    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
-  }
-  return res;
-}
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Operation C = *this - B.
 
   \code
-#include <visp3/core/vpImage.h>
+  #include <visp3/core/vpImage.h>
 
-int main()
-{
-  vpImage<unsigned char> A(288, 384);
-  vpImage<unsigned char> B(288, 384);
-  vpImage<unsigned char> C;
+  int main()
+  {
+    vpImage<unsigned char> A(288, 384);
+    vpImage<unsigned char> B(288, 384);
+    vpImage<unsigned char> C;
 
-  A = 128;
-  B = 120;
+    A = 128;
+    B = 120;
 
-  A.sub(B, C); // C = A - B
+    A.sub(B, C); // C = A - B
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
   The result is placed in the third parameter C and not returned.
@@ -2023,7 +2297,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2040,10 +2314,9 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLut_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2064,7 +2337,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 
@@ -2103,7 +2376,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
   unsigned char *ptrCurrent = ptrStart;
 
   bool use_single_thread = (nbThreads == 0 || nbThreads == 1);
-#if !defined(VISP_HAVE_PTHREAD) && !defined(_WIN32)
+#if !defined(VISP_HAVE_THREADS)
   use_single_thread = true;
 #endif
 
@@ -2128,9 +2401,9 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
     }
   }
   else {
-#if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
+#if defined(VISP_HAVE_THREADS)
     // Multi-threads
-    std::vector<vpThread *> threadpool;
+    std::vector<std::thread *> threadpool;
     std::vector<vpImageLutRGBa_Param_t *> imageLutParams;
 
     unsigned int image_size = getSize();
@@ -2151,7 +2424,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
       imageLutParams.push_back(imageLut_param);
 
       // Start the threads
-      vpThread *imageLut_thread = new vpThread((vpThread::Fn)performLutRGBaThread, (vpThread::Args)imageLut_param);
+      std::thread *imageLut_thread = new std::thread(&performLutRGBaThread, imageLut_param);
       threadpool.push_back(imageLut_thread);
     }
 

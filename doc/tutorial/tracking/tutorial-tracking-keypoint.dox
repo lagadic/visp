@@ -5,17 +5,17 @@
 
 \section tracking_keypoint_intro Introduction
 
-With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi feature tracker.
+With ViSP it is possible to track keypoints using OpenCV KLT tracker, an implementation of the Kanade-Lucas-Tomasi
+feature tracker.
 
-All the material (source code and video) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/keypoint
-\endcode
+Note that all the material (source code and videos) described in this tutorial is part of ViSP source code
+(in `tutorial/tracking/keypoint` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/tracking/keypoint.
 
 \section tracking_keypoint_klt KLT tracker
 
-The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to track KLT keypoints. This class is a wrapper over the OpenCV KLT tracker implementation.
+The following example code available in tutorial-klt-tracker.cpp shows how to use ViSP vpKltOpencv class to track KLT
+keypoints. This class is a wrapper over the OpenCV KLT tracker implementation.
 
 \include tutorial-klt-tracker.cpp
 
@@ -25,30 +25,38 @@ The video shows the result of the tracking:
 <iframe width="560" height="315" src="https://www.youtube.com/embed/ZYOG4kJPtaM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
-The previous example can be run without command line options. In that case, keypoints are automatically detected before tracking.
+The previous example can be run without command line options. In that case, keypoints are automatically detected before
+tracking.
 \code
 $ ./tutorial-klt-tracker
 \endcode
 
-It can also be run with [--init-by-click] option. In that case, the user can select a set of keypoints to track with a left mouse click. A right mouse click stops the keypoints selection and allows to start the tracking.
+It can also be run with [--init-by-click] option. In that case, the user can select a set of keypoints to track with a
+left mouse click. A right mouse click stops the keypoints selection and allows to start the tracking.
 \code
 $ ./tutorial-klt-tracker --init-by-click
 \endcode
 
-Here is the line by line explanation of the source : 
+Here is the line by line explanation of the source :
 
 \snippet tutorial-klt-tracker.cpp Include
 
-We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP images implemented in vpImage class into OpenCV
-cv::Mat structures used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the wrapper over OpenCV KLT tracker implementation.
+We include here the headers that define the corresponding classes. vpImageConvert class will be used to convert ViSP
+images implemented in vpImage class into OpenCV
+cv::Mat structures used as an entry by the KLT tracker. Then we include the header of vpKltOpencv class which is the
+wrapper over OpenCV KLT tracker implementation.
 
-We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input stream.
+We need also to include a device to display the images. We retain vpDisplayOpenCV that works on Unix and Windows since
+OpenCV is mandatory by the tracker. Finally we include vpVideoReader header that will be used to read an mpeg input
+stream.
 
-At the beginning of the main() function, we use the following macro to ensure that OpenCV requested by the tracker is available. Note that OpenCV will also be used to render the images and read the input video stream.
+At the beginning of the main() function, we use the following macro to ensure that OpenCV requested by the tracker is
+available. Note that OpenCV will also be used to render the images and read the input video stream.
 
 \snippet tutorial-klt-tracker.cpp Check 3rd party
 
-The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file \c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
+The program starts by the creation of a vpVideoReader instance able to extract all the images of the video file
+\c video-postcard.mpeg. Here, the video should be in the same folder than the binary.
 
 \snippet tutorial-klt-tracker.cpp Create reader
 
@@ -60,19 +68,21 @@ This image \c I is then converted into \c cvI, an OpenCV image format that will 
 
 \snippet tutorial-klt-tracker.cpp Convert to OpenCV image
 
-We also create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display image \c I. 
+We also create a window associated to \c I, at position (0,0) in the screen, with "Klt tracking" as title, and display
+image \c I.
 
 \snippet tutorial-klt-tracker.cpp Init display
- 
+
 From now we have to create an instance of the tracker and set the parameters of the Harris keypoint detector.
 
 \snippet tutorial-klt-tracker.cpp Create tracker
- 
+
 The tracker is then initialized on \c cvI image.
 
 \snippet tutorial-klt-tracker.cpp Init tracker
 
-With the next line the user can know how many keypoints were detected automatically or selected by the user during initialization. 
+With the next line the user can know how many keypoints were detected automatically or selected by the user during
+initialization.
 
 \snippet tutorial-klt-tracker.cpp How many features
 
@@ -82,7 +92,8 @@ To detect more keypoints, you may decrease the quality parameter set with the fo
 
 \snippet tutorial-klt-tracker.cpp Quality
 
-Until the end of the video, we get \c I the next image in ViSP format, display and convert it in OpenCV format. Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
+Until the end of the video, we get \c I the next image in ViSP format, display and convert it in OpenCV format.
+Then we track the Harris keypoints using KLT tracker before displaying the keypoints that are tracked with a red cross.
 
 \snippet tutorial-klt-tracker.cpp While loop
 
@@ -92,7 +103,10 @@ We are waiting for a mouse click event on image \c I to end the program.
 
 \section tracking_keypoint_klt_init KLT tracker with re-initialisation
 
-Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to detect and track new features online. A possible criteria is for example to compare the number of currently tracked features to the initial number of detected features. If less than a given percentage of features are tracked, you can start a new detection. 
+Once initialized, the number of tracked features decreases over the time. Depending on a criteria, it may sense to
+detect and track new features online. A possible criteria is for example to compare the number of currently tracked
+features to the initial number of detected features. If less than a given percentage of features are tracked,
+you can start a new detection.
 
 To get the number of detected or tracked features just call:
 
@@ -102,15 +116,16 @@ To get the number of detected or tracked features just call:
 
 Then the idea is to add the previously tracked features to the list of features that are detected.
 
-The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that example we start a new detection on frame 25. Compared to the previous code available in tutorial-klt-tracker.cpp we add the following lines:
+The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that example we start a new detection on
+frame 25. Compared to the previous code available in tutorial-klt-tracker.cpp we add the following lines:
 
 \code
       if (reader.getFrameIndex() == 25) {
         std::cout << "Re initialize the tracker" << std::endl;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+
         // Save of previous features
         std::vector<cv::Point2f> prev_features = tracker.getFeatures();
- 
+
         // Start a new feature detection
         tracker.initTracking(cvI);
         std::vector<cv::Point2f> new_features = tracker.getFeatures();
@@ -122,7 +137,7 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
           // Test if a previous feature is not redundant with one of the newly detected
           is_redundant = false;
           for (size_t j=0; j < new_features.size(); j++){
-            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x) 
+            distance = sqrt(vpMath::sqr(new_features[j].x-prev_features[i].x)
                        + vpMath::sqr(new_features[j].y-prev_features[i].y));
             if(distance < minDistance_){
               is_redundant = true;
@@ -135,9 +150,6 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
           //std::cout << "Add previous feature with index " << i << std::endl;
           tracker.addFeature(prev_features[i]);
         }
-#else
-      ...
-#endif
       }
       // Track the features
       tracker.track(cvI);
@@ -146,7 +158,9 @@ The example tutorial-klt-tracker-with-reinit.cpp shows how to do that. In that e
 In this code we do the following:
 - save the features that are tracked until now
 - initialize the tracker to detect new features
-- parse all the saved features and compare them to the newly detected features. If a previous feature is close in terms of geometric distance to a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is added to the list of detected features.
+- parse all the saved features and compare them to the newly detected features. If a previous feature is close in
+  terms of geometric distance to a newly detected one, it is rejected (in our case less than 2 pixels). If not, it is
+  added to the list of detected features.
 
 \section tracking_keypoint_next Next tutorial
 You are now ready to see the next \ref tutorial-tracking-me.

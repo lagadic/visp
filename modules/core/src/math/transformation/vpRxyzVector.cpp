@@ -31,8 +31,7 @@
  * Description:
  * Rxyz angle parameterization for the rotation.
  * Rxyz(phi,theta,psi) = Rot(x,phi)Rot(y,theta)Rot(z,psi).
- *
-*****************************************************************************/
+ */
 
 #include <math.h>
 
@@ -170,18 +169,18 @@ vpRxyzVector vpRxyzVector::buildFrom(const std::vector<double> &rxyz)
 
   \param v : Angle value to set for each element of the vector.
 
-\code
-#include <visp3/core/vpMath.h>
-#include <visp3/core/vpRxyzVector.h>
+  \code
+  #include <visp3/core/vpMath.h>
+  #include <visp3/core/vpRxyzVector.h>
 
-int main()
-{
-  vpRxyzVector v;
+  int main()
+  {
+    vpRxyzVector v;
 
-  // Initialise the rotation vector
-  v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
-}
-\endcode
+    // Initialise the rotation vector
+    v = vpMath::rad( 45.f); // All the 3 angles are set to 45 degrees
+  }
+  \endcode
 */
 vpRxyzVector &vpRxyzVector::operator=(double v)
 {
@@ -196,23 +195,22 @@ vpRxyzVector &vpRxyzVector::operator=(double v)
   Copy operator that initializes a \f$R_{xyz}=(\varphi,\theta,\psi)\f$
   Euler angles vector from a 3-dimension column vector.
 
-  \param rxyz : 3-dimension vector containing the values of the rotation
-vector.
+  \param rxyz : 3-dimension vector containing the values of the rotation vector.
 
-\code
-#include <visp3/core/vpRxyzVector.h>
+  \code
+  #include <visp3/core/vpRxyzVector.h>
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = 0.1;
-  v[1] = 0.2;
-  v[2] = 0.3;
-  vpRxyzVector rxyz;
-  rxyz = v;
-  // rxyz is now equal to v : 0.1, 0.2, 0.3
-}
-\endcode
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = 0.1;
+    v[1] = 0.2;
+    v[2] = 0.3;
+    vpRxyzVector rxyz;
+    rxyz = v;
+    // rxyz is now equal to v : 0.1, 0.2, 0.3
+  }
+  \endcode
 */
 vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
 {
@@ -230,17 +228,17 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
 /*!
   Set vector from a list of 3 double angle values in radians.
   \code
-#include <visp3/core/vpRxyzVector.cpp>
+  #include <visp3/core/vpRxyzVector.cpp>
 
-int main()
-{
-  vpRxyzVector rxyz = {M_PI, 0, M_PI_2};
-  std::cout << "rxyz: " << rxyz.t() << std::endl;
-}
+  int main()
+  {
+    vpRxyzVector rxyz = {M_PI, 0, M_PI_2};
+    std::cout << "rxyz: " << rxyz.t() << std::endl;
+  }
   \endcode
   It produces the following printings:
   \code
-rxyz: 3.141592654  0  1.570796327
+  rxyz: 3.141592654  0  1.570796327
   \endcode
   \sa operator<<()
 */

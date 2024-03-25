@@ -33,6 +33,10 @@
  *
 *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_THREADS)
+
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 #include <future>
 
@@ -72,3 +76,8 @@ void vpMegaPoseTracker::updatePose(const vpHomogeneousMatrix &cTo)
   m_poseEstimate.cTo = cTo;
 }
 
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+// Work around to avoid warning: libvisp_dnn_tracker.a(vpMegaPoseTracker.cpp.o) has no symbols
+void dummy_vpMegaPoseTracker(){};
+
+#endif

@@ -146,7 +146,7 @@
 // Defined if XML2 library available.
 #cmakedefine VISP_HAVE_XML2
 
-// Defined if pthread library available.
+// Defined if pthread library available (deprecated).
 #cmakedefine VISP_HAVE_PTHREAD
 
 // Defined if std::thread available.
@@ -565,7 +565,9 @@
 #cmakedefine VISP_HAVE_NULLPTR
 
 // Emulate nullptr when not available when cxx98 is enabled
-#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus == 199711L)
+// Note that on ubuntu 12.04 __cplusplus is equal to 1 that's why in the next line we consider __cplusplus <= 199711L
+// and not __cplusplus == 199711L
+#if (!defined(VISP_HAVE_NULLPTR)) && (__cplusplus <= 199711L)
 #include <visp3/core/vpNullptrEmulated.h>
 #endif
 

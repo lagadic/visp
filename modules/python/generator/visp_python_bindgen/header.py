@@ -49,6 +49,8 @@ from visp_python_bindgen.methods import *
 from visp_python_bindgen.doc_parser import *
 from visp_python_bindgen.header_utils import *
 from visp_python_bindgen.generator_config import GeneratorConfig
+from visp_python_bindgen.template_expansion import expand_templates
+
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -162,7 +164,9 @@ class HeaderFile():
         if not line.startswith('#define'):
           preprocessed_header_lines.append(line)
       preprocessed_header_content = ''.join(preprocessed_header_lines)
+      # Further refine header content: fix some simple parsing bugs
       preprocessed_header_content = preprocessed_header_content.replace('#include<', '#include <') # Bug in cpp header parser
+      preprocessed_header_content = preprocessed_header_content.replace('inline friend', 'friend inline') # Bug in cpp header parser
 
     return preprocessed_header_content
 
@@ -239,7 +243,7 @@ class HeaderFile():
 
     If it is templated, the mapping (template argument types => Python class name) must be provided in the JSON config file
     '''
-    def generate_class_with_potiental_specialization(name_python: str, owner_specs: OrderedDict[str, str], cls_config: Dict) -> str:
+    def generate_class_with_potiental_specialization(name_python: str, owner_specs: 'OrderedDict[str, str]', cls_config: Dict) -> str:
       '''
       Generate the bindings of a single class, handling a potential template specialization.
       The handled information is:
@@ -353,9 +357,6 @@ class HeaderFile():
                                                        is_operator=False, is_constructor=True))
 
       # Operator definitions
-      binary_return_ops = supported_const_return_binary_op_map()
-      binary_in_place_ops = supported_in_place_binary_op_map()
-      unary_return_ops = supported_const_return_unary_op_map()
 
       for method, method_config in operators:
         method_name = get_name(method.name)
@@ -365,46 +366,50 @@ class HeaderFile():
         py_args = get_py_args(method.parameters, owner_specs, header_env.mapping)
         py_args = py_args + ['py::is_operator()']
         param_names = [param.name or 'arg' + str(i) for i, param in enumerate(method.parameters)]
-
         py_args = add_method_doc_to_pyargs(method, py_args)
 
-        if len(params_strs) > 1:
-          logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
-          rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, return_type_str, params_strs), NotGeneratedReason.NotHandled)
-          self.submodule.report.add_non_generated_method(rejection)
-          continue
-        elif len(params_strs) < 1:
-          for cpp_op, python_op_name in unary_return_ops.items():
+        # if len(params_strs) > 1:
+        #   logging.info(f'Found operator {name_cpp}{method_name} with more than one parameter, skipping')
+        #   rejection_param_strs = [get_type(param.type, {}, header_env.mapping) for param in method.parameters]
+        #   rejection_return_type_str = get_type(method.return_type, {}, header_env.mapping)
+        #   rejection = RejectedMethod(name_cpp, method, method_config, get_method_signature(method_name, rejection_return_type_str, rejection_param_strs), NotGeneratedReason.NotHandled)
+        #   self.submodule.report.add_non_generated_method(rejection)
+        #   continue
+        if len(params_strs) < 1: # Unary ops
+          for cpp_op, python_op_name in supported_const_return_unary_op_map().items():
             if method_name == f'operator{cpp_op}':
-              operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self) -> {return_type_str} {{
-  return {cpp_op}self;
-}}, {", ".join(py_args)});'''
+              operator_str = lambda_const_return_unary_op(python_ident, python_op_name, cpp_op,
+                                                         method_is_const, name_cpp,
+                                                         return_type_str, py_args)
               add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
                                                        is_operator=True, is_constructor=False))
               break
-
-          logging.info(f'Found unary operator {name_cpp}::{method_name}, skipping')
-          continue
-        for cpp_op, python_op_name in binary_return_ops.items():
-          if method_name == f'operator{cpp_op}':
-            operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
-  return (self {cpp_op} o);
-}}, {", ".join(py_args)});'''
-            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
-                                                       is_operator=True, is_constructor=False))
-            break
-        for cpp_op, python_op_name in binary_in_place_ops.items():
-          if method_name == f'operator{cpp_op}':
-            operator_str = f'''
-{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {name_cpp}& self, {params_strs[0]} o) -> {return_type_str} {{
-  self {cpp_op} o;
-  return self;
-}}, {", ".join(py_args)});'''
-            add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
-                                                       is_operator=True, is_constructor=False))
-            break
+        elif len(params_strs) == 1: # e.g., self + other
+          for cpp_op, python_op_name in supported_const_return_binary_op_map().items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_const_return_binary_op(python_ident, python_op_name, cpp_op,
+                                                          method_is_const, name_cpp, params_strs[0],
+                                                          return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
+          for cpp_op, python_op_name in supported_in_place_binary_op_map().items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_in_place_binary_op(python_ident, python_op_name, cpp_op,
+                                                      method_is_const, name_cpp, params_strs[0],
+                                                      return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
+        else: # N-ary operators
+          for cpp_op, python_op_name in supported_nary_op_map().items():
+            if method_name == f'operator{cpp_op}':
+              operator_str = lambda_nary_op(python_ident, python_op_name, cpp_op,
+                                                    method_is_const, name_cpp, params_strs,
+                                                    return_type_str, py_args)
+              add_to_method_dict(f'__{python_op_name}__', MethodBinding(operator_str, is_static=False, is_lambda=True,
+                                                        is_operator=True, is_constructor=False))
+              break
 
       # Define classical methods
       class_def_names = BoundObjectNames(python_ident, name_python, name_cpp_no_template, name_cpp)
@@ -412,6 +417,7 @@ class HeaderFile():
         if method.template is not None and method_config.get('specializations') is not None:
           method_template_names = [t.name for t in method.template.params]
           specializations = method_config.get('specializations')
+          specializations = expand_templates(specializations)
           for method_spec in specializations:
             new_specs = owner_specs.copy()
             assert len(method_template_names) == len(method_spec)
@@ -482,7 +488,7 @@ class HeaderFile():
       if len(error_generating_overloads) > 0:
         logging.error(f'Overloads defined for instance and class, this will generate a pybind error')
         logging.error(error_generating_overloads)
-        raise RuntimeError
+        raise RuntimeError('Error generating overloads:\n' + '\n'.join(error_generating_overloads))
 
       field_dict = {}
       for field in cls.fields:

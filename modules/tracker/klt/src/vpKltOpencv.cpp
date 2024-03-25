@@ -51,16 +51,16 @@
 
 vpKltOpencv::vpKltOpencv()
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
-    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
-    m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
+  m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
+  m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
 {
   m_termcrit = cv::TermCriteria(cv::TermCriteria::COUNT | cv::TermCriteria::EPS, 20, 0.03);
 }
 
 vpKltOpencv::vpKltOpencv(const vpKltOpencv &copy)
   : m_gray(), m_prevGray(), m_points_id(), m_maxCount(500), m_termcrit(), m_winSize(10), m_qualityLevel(0.01),
-    m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
-    m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
+  m_minDistance(15), m_minEigThreshold(1e-4), m_harris_k(0.04), m_blockSize(3), m_useHarrisDetector(1),
+  m_pyrMaxLevel(3), m_next_points_id(0), m_initial_guess(false)
 {
   *this = copy;
 }
@@ -88,7 +88,7 @@ vpKltOpencv &vpKltOpencv::operator=(const vpKltOpencv &copy)
   return *this;
 }
 
-vpKltOpencv::~vpKltOpencv() {}
+vpKltOpencv::~vpKltOpencv() { }
 
 void vpKltOpencv::initTracking(const cv::Mat &I, const cv::Mat &mask)
 {
@@ -127,7 +127,8 @@ void vpKltOpencv::track(const cv::Mat &I)
   if (m_initial_guess) {
     flags |= cv::OPTFLOW_USE_INITIAL_FLOW;
     m_initial_guess = false;
-  } else {
+  }
+  else {
     std::swap(m_points[1], m_points[0]);
   }
 
@@ -275,7 +276,8 @@ void vpKltOpencv::initTracking(const cv::Mat &I, const std::vector<cv::Point2f> 
     m_next_points_id = 0;
     for (size_t i = 0; i < m_points[1].size(); i++)
       m_points_id.push_back(m_next_points_id++);
-  } else {
+  }
+  else {
     long max = 0;
     for (size_t i = 0; i < m_points[1].size(); i++) {
       m_points_id.push_back(ids[i]);
@@ -326,13 +328,12 @@ void vpKltOpencv::suppressFeature(const int &index)
 class VISP_EXPORT dummy_vpKltOpencv
 {
 public:
-  dummy_vpKltOpencv(){};
+  dummy_vpKltOpencv() { };
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no
-// symbols
-void dummy_vpKltOpenCV_fct(){};
+// Work around to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no symbols
+void dummy_vpKltOpenCV_fct() { };
 #endif
 
 #endif

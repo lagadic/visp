@@ -57,9 +57,23 @@ void vpCreateWindow(threadParam *param)
 }
 
 /*!
-  Constructor.
+  Constructors.
 */
 vpDisplayWin32::vpDisplayWin32(vpWin32Renderer *rend) : iStatus(false), window(rend) { }
+
+vpDisplayWin32::vpDisplayWin32(vpImage<vpRGBa> &I, int winx, int winy, const std::string &title)
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+vpDisplayWin32::vpDisplayWin32(vpImage<unsigned char> &I, int winx, int winy, const std::string &title)
+  : iStatus(false), window(nullptr)
+{
+  init(I, winx, winy, title);
+}
+
+
 
 /*!
   Destructor.
@@ -906,7 +920,6 @@ unsigned int vpDisplayWin32::getScreenHeight()
   return height;
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no symbols
 void dummy_vpDisplayWin32() { };
 #endif

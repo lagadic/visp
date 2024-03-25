@@ -43,8 +43,8 @@
 
 #include <visp3/core/vpImage.h>
 
-#ifdef VISP_HAVE_PTHREAD
-#include <pthread.h>
+#ifdef VISP_HAVE_THREADS
+#include <thread>
 #endif
 
 #include <visp3/core/vpCameraParameters.h>
@@ -57,6 +57,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <cmath>
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -518,7 +519,7 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char thre
   }
 }
 
-#ifdef VISP_HAVE_PTHREAD
+#ifdef VISP_HAVE_THREADS
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 template <class Type> class vpUndistortInternalType
@@ -549,22 +550,21 @@ public:
     return *this;
   }
 
-  static void *vpUndistort_threaded(void *arg);
+  static void vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData);
 };
 
-template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(void *arg)
+template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(vpUndistortInternalType<Type> &undistortSharedData)
 {
-  vpUndistortInternalType<Type> *undistortSharedData = static_cast<vpUndistortInternalType<Type> *>(arg);
-  int offset = (int)undistortSharedData->threadid;
-  int width = (int)undistortSharedData->width;
-  int height = (int)undistortSharedData->height;
-  int nthreads = (int)undistortSharedData->nthreads;
+  int offset = (int)undistortSharedData.threadid;
+  int width = (int)undistortSharedData.width;
+  int height = (int)undistortSharedData.height;
+  int nthreads = (int)undistortSharedData.nthreads;
 
-  double u0 = undistortSharedData->cam.get_u0();
-  double v0 = undistortSharedData->cam.get_v0();
-  double px = undistortSharedData->cam.get_px();
-  double py = undistortSharedData->cam.get_py();
-  double kud = undistortSharedData->cam.get_kud();
+  double u0 = undistortSharedData.cam.get_u0();
+  double v0 = undistortSharedData.cam.get_v0();
+  double px = undistortSharedData.cam.get_px();
+  double py = undistortSharedData.cam.get_py();
+  double kud = undistortSharedData.cam.get_kud();
 
   double invpx = 1.0 / px;
   double invpy = 1.0 / py;
@@ -572,8 +572,8 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   double kud_px2 = kud * invpx * invpx;
   double kud_py2 = kud * invpy * invpy;
 
-  Type *dst = undistortSharedData->dst + (height / nthreads * offset) * width;
-  Type *src = undistortSharedData->src;
+  Type *dst = undistortSharedData.dst + (height / nthreads * offset) * width;
+  Type *src = undistortSharedData.src;
 
   for (double v = height / nthreads * offset; v < height / nthreads * (offset + 1); v++) {
     double deltav = v - v0;
@@ -616,12 +616,9 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
       dst++;
     }
   }
-
-  pthread_exit((void *)0);
-  return nullptr;
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
-#endif // VISP_HAVE_PTHREAD
+#endif // VISP_HAVE_THREADS
 
 /*!
   Undistort an image
@@ -650,7 +647,7 @@ template <class Type>
 void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI,
                              unsigned int nThreads)
 {
-#ifdef VISP_HAVE_PTHREAD
+#if defined(VISP_HAVE_THREADS)
   //
   // Optimized version using pthreads
   //
@@ -669,13 +666,9 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   }
 
   unsigned int nthreads = nThreads;
-  pthread_attr_t attr;
-  pthread_t *callThd = new pthread_t[nthreads];
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+  std::vector<std::thread *> threadpool;
 
-  vpUndistortInternalType<Type> *undistortSharedData;
-  undistortSharedData = new vpUndistortInternalType<Type>[nthreads];
+  vpUndistortInternalType<Type> *undistortSharedData = new vpUndistortInternalType<Type>[nthreads];
 
   for (unsigned int i = 0; i < nthreads; i++) {
     // Each thread works on a different set of data.
@@ -687,19 +680,22 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     undistortSharedData[i].cam = cam;
     undistortSharedData[i].nthreads = nthreads;
     undistortSharedData[i].threadid = i;
-    pthread_create(&callThd[i], &attr, &vpUndistortInternalType<Type>::vpUndistort_threaded, &undistortSharedData[i]);
+    std::thread *undistort_thread = new std::thread(&vpUndistortInternalType<Type>::vpUndistort_threaded, std::ref(undistortSharedData[i]));
+    threadpool.push_back(undistort_thread);
   }
-  pthread_attr_destroy(&attr);
   /* Wait on the other threads */
 
   for (unsigned int i = 0; i < nthreads; i++) {
     //  vpTRACE("join thread %d", i);
-    pthread_join(callThd[i], nullptr);
+    threadpool[i]->join();
   }
 
-  delete[] callThd;
+  for (unsigned int i = 0; i < nthreads; i++) {
+    delete threadpool[i];
+  }
+
   delete[] undistortSharedData;
-#else  // VISP_HAVE_PTHREAD
+#else  // VISP_HAVE_THREADS
   (void)nThreads;
   //
   // optimized version without pthreads
@@ -773,7 +769,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
       dst++;
     }
   }
-#endif // VISP_HAVE_PTHREAD
+#endif // VISP_HAVE_THREADS
 
 #if 0
   // non optimized version
@@ -1118,12 +1114,12 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
 #endif
   for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
     const float v = (i + half) * scaleY - half;
-    const int v0 = static_cast<int>(v);
+    const float v0 = std::floor(v);
     const float yFrac = v - v0;
 
     for (unsigned int j = 0; j < Ires.getWidth(); j++) {
       const float u = (j + half) * scaleX - half;
-      const int u0 = static_cast<int>(u);
+      const float u0 = std::floor(u);
       const float xFrac = u - u0;
 
       if (method == INTERPOLATION_NEAREST) {
@@ -1515,24 +1511,24 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
             const float s = xi_ - x_;
 
             if (y_ < static_cast<int>(src.getHeight()) - 1 && x_ < static_cast<int>(src.getWidth()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val01 = src[y_][x_ + 1];
-              const Type val10 = src[y_ + 1][x_];
-              const Type val11 = src[y_ + 1][x_ + 1];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val01 = static_cast<float>(src[y_][x_ + 1]);
+              const float val10 = static_cast<float>(src[y_ + 1][x_]);
+              const float val11 = static_cast<float>(src[y_ + 1][x_ + 1]);
               const float col0 = lerp(val00, val01, s);
               const float col1 = lerp(val10, val11, s);
               const float interp = lerp(col0, col1, t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (y_ < static_cast<int>(src.getHeight()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val10 = src[y_ + 1][x_];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val10 = static_cast<float>(src[y_ + 1][x_]);
               const float interp = lerp(val00, val10, t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (x_ < static_cast<int>(src.getWidth()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val01 = src[y_][x_ + 1];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val01 = static_cast<float>(src[y_][x_ + 1]);
               const float interp = lerp(val00, val01, s);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
@@ -1587,24 +1583,24 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
         double t = y - y_lower;
 
         if (y_lower < static_cast<int>(src.getHeight()) - 1 && x_lower < static_cast<int>(src.getWidth()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val01 = src[y_lower][x_lower + 1];
-          const Type val10 = src[y_lower + 1][x_lower];
-          const Type val11 = src[y_lower + 1][x_lower + 1];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val01 = static_cast<double>(src[y_lower][x_lower + 1]);
+          const double val10 = static_cast<double>(src[y_lower + 1][x_lower]);
+          const double val11 = static_cast<double>(src[y_lower + 1][x_lower + 1]);
           const double col0 = lerp(val00, val01, s);
           const double col1 = lerp(val10, val11, s);
           const double interp = lerp(col0, col1, t);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }
         else if (y_lower < static_cast<int>(src.getHeight()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val10 = src[y_lower + 1][x_lower];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val10 = static_cast<double>(src[y_lower + 1][x_lower]);
           const double interp = lerp(val00, val10, t);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }
         else if (x_lower < static_cast<int>(src.getWidth()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val01 = src[y_lower][x_lower + 1];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val01 = static_cast<double>(src[y_lower][x_lower + 1]);
           const double interp = lerp(val00, val01, s);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }

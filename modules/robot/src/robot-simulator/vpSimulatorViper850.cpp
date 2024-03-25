@@ -35,7 +35,7 @@
 
 #include <visp3/robot/vpSimulatorViper850.h>
 
-#if defined(VISP_HAVE_MODULE_GUI) && ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD))
+#if defined(VISP_HAVE_MODULE_GUI) && defined(VISP_HAVE_THREADS)
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -58,28 +58,14 @@ const double vpSimulatorViper850::defaultPositioningVelocity = 25.0;
 */
 vpSimulatorViper850::vpSimulatorViper850()
   : vpRobotWireFrameSimulator(), vpViper850(), q_prev_getdis(), first_time_getdis(true),
-    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
 
   tcur = vpTime::measureTimeMs();
 
-#if defined(_WIN32)
-
-  DWORD dwThreadIdArray;
-  hThread = CreateThread(nullptr,              // default security attributes
-                         0,                 // use default stack size
-                         launcher,          // thread function name
-                         this,              // argument to thread function
-                         0,                 // use default creation flags
-                         &dwThreadIdArray); // returns the thread identifier
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-  pthread_create(&thread, nullptr, launcher, (void *)this);
-#endif
+  m_thread = new std::thread(&launcher, std::ref(*this));
 
   compute_fMi();
 }
@@ -92,27 +78,14 @@ vpSimulatorViper850::vpSimulatorViper850()
 */
 vpSimulatorViper850::vpSimulatorViper850(bool do_display)
   : vpRobotWireFrameSimulator(do_display), q_prev_getdis(), first_time_getdis(true),
-    positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
+  positioningVelocity(defaultPositioningVelocity), zeroPos(), reposPos(), toolCustom(false), arm_dir()
 {
   init();
   initDisplay();
 
   tcur = vpTime::measureTimeMs();
 
-#if defined(_WIN32)
-  DWORD dwThreadIdArray;
-  hThread = CreateThread(nullptr,              // default security attributes
-                         0,                 // use default stack size
-                         launcher,          // thread function name
-                         this,              // argument to thread function
-                         0,                 // use default creation flags
-                         &dwThreadIdArray); // returns the thread identifier
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_attr_init(&attr);
-  pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
-
-  pthread_create(&thread, nullptr, launcher, (void *)this);
-#endif
+  m_thread = new std::thread(&launcher, std::ref(*this));
 
   compute_fMi();
 }
@@ -126,17 +99,7 @@ vpSimulatorViper850::~vpSimulatorViper850()
   robotStop = true;
   m_mutex_robotStop.unlock();
 
-#if defined(_WIN32)
-#if defined(WINRT_8_1)
-  WaitForSingleObjectEx(hThread, INFINITE, FALSE);
-#else // pure win32
-  WaitForSingleObject(hThread, INFINITE);
-#endif
-  CloseHandle(hThread);
-#elif defined(VISP_HAVE_PTHREAD)
-  pthread_attr_destroy(&attr);
-  pthread_join(thread, nullptr);
-#endif
+  m_thread->join();
 
   if (robotArms != nullptr) {
     // free_Bound_scene (&(camera));
@@ -146,6 +109,7 @@ vpSimulatorViper850::~vpSimulatorViper850()
 
   delete[] robotArms;
   delete[] fMi;
+  delete m_thread;
 }
 
 /*!
@@ -172,7 +136,8 @@ void vpSimulatorViper850::init()
     try {
       arm_dir = vpIoTools::getenv("VISP_ROBOT_ARMS_DIR");
       std::cout << "The simulator uses data from VISP_ROBOT_ARMS_DIR=" << arm_dir << std::endl;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot get VISP_ROBOT_ARMS_DIR environment variable" << std::endl;
     }
   }
@@ -325,9 +290,10 @@ void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam, const uns
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpViper850::CONST_MARLIN_F033C_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       cam.initPersProjWithoutDistortion(1232.0, 1233.0, 320, 240);
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
     }
@@ -337,9 +303,10 @@ void vpSimulatorViper850::getCameraParameters(vpCameraParameters &cam, const uns
     // Set default intrinsic camera parameters for 640x480 images
     if (image_width == 640 && image_height == 480) {
       std::cout << "Get default camera parameters for camera \"" << vpViper850::CONST_PTGREY_FLEA2_CAMERA_NAME << "\""
-                << std::endl;
+        << std::endl;
       cam.initPersProjWithoutDistortion(868.0, 869.0, 320, 240);
-    } else {
+    }
+    else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
               "resolution");
     }
@@ -434,11 +401,12 @@ void vpSimulatorViper850::updateArticularPosition()
         if (art <= joint_min[jointLimitArt - 1] || art >= joint_max[jointLimitArt - 1]) {
           if (verbose_) {
             std::cout << "Joint " << jointLimitArt - 1
-                      << " reaches a limit: " << vpMath::deg(joint_min[jointLimitArt - 1]) << " < " << vpMath::deg(art)
-                      << " < " << vpMath::deg(joint_max[jointLimitArt - 1]) << std::endl;
+              << " reaches a limit: " << vpMath::deg(joint_min[jointLimitArt - 1]) << " < " << vpMath::deg(art)
+              << " < " << vpMath::deg(joint_max[jointLimitArt - 1]) << std::endl;
           }
           articularVelocities = 0.0;
-        } else
+        }
+        else
           jointLimit = false;
       }
 
@@ -454,10 +422,10 @@ void vpSimulatorViper850::updateArticularPosition()
       if (jl != 0 && jointLimit == false) {
         if (jl < 0)
           ellapsedTime = (joint_min[(unsigned int)(-jl - 1)] - articularCoordinates[(unsigned int)(-jl - 1)]) /
-                         (articularVelocities[(unsigned int)(-jl - 1)]);
+          (articularVelocities[(unsigned int)(-jl - 1)]);
         else
           ellapsedTime = (joint_max[(unsigned int)(jl - 1)] - articularCoordinates[(unsigned int)(jl - 1)]) /
-                         (articularVelocities[(unsigned int)(jl - 1)]);
+          (articularVelocities[(unsigned int)(jl - 1)]);
 
         for (unsigned int i = 0; i < 6; i++)
           articularCoordinates[i] = articularCoordinates[i] + ellapsedTime * articularVelocities[i];
@@ -517,7 +485,8 @@ void vpSimulatorViper850::updateArticularPosition()
 
       vpTime::wait(tcur, 1000 * getSamplingTime());
       tcur_1 = tcur;
-    } else {
+    }
+    else {
       vpTime::wait(tcur, vpTime::getMinTimeForUsleepCall());
     }
     m_mutex_robotStop.lock();
@@ -696,9 +665,10 @@ vpRobot::vpRobotStateType vpSimulatorViper850::setRobotState(vpRobot::vpRobotSta
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to position control.\n";
       stopMotion();
-    } else {
-      // std::cout << "Change the control mode from stop to position
-      // control.\n";
+    }
+    else {
+   // std::cout << "Change the control mode from stop to position
+   // control.\n";
     }
     break;
   }
@@ -1284,7 +1254,8 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
           set_velocity(error);
           break;
         }
-      } else {
+      }
+      else {
         vpERROR_TRACE("Positioning error.");
         throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
       }
@@ -1347,7 +1318,8 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
           set_velocity(error);
           break;
         }
-      } else
+      }
+      else
         vpERROR_TRACE("Positioning error. Position unreachable");
     } while (errsqr > 1e-8 && nbSol > 0);
     break;
@@ -1438,7 +1410,8 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, d
     position[5] = pos6;
 
     setPosition(frame, position);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -1809,7 +1782,7 @@ int vpSimulatorViper850::isInJointLimit()
 
   if (artNumb != 0)
     std::cout << "\nWarning: Velocity control stopped: axis " << fabs((float)artNumb) << " on joint limit!"
-              << std::endl;
+    << std::endl;
 
   return artNumb;
 }
@@ -1865,7 +1838,8 @@ void vpSimulatorViper850::getDisplacement(vpRobot::vpControlFrameType frame, vpC
       return;
     }
     }
-  } else {
+  }
+  else {
     first_time_getdis = false;
   }
 
@@ -2052,7 +2026,8 @@ void vpSimulatorViper850::move(const char *filename)
     this->readPosFile(filename, q);
     this->setRobotState(vpRobot::STATE_POSITION_CONTROL);
     this->setPosition(vpRobot::ARTICULAR_FRAME, q);
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
 }
@@ -2096,7 +2071,8 @@ void vpSimulatorViper850::get_eJe(vpMatrix &eJe_)
 {
   try {
     vpViper850::get_eJe(get_artCoord(), eJe_);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("catch exception ");
     throw;
   }
@@ -2117,7 +2093,8 @@ void vpSimulatorViper850::get_fJe(vpMatrix &fJe_)
   try {
     vpColVector articularCoordinates = get_artCoord();
     vpViper850::get_fJe(articularCoordinates, fJe_);
-  } catch (...) {
+  }
+  catch (...) {
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -2168,7 +2145,8 @@ void vpSimulatorViper850::initArms()
     try {
       scene_dir_ = vpIoTools::getenv("VISP_SCENES_DIR");
       std::cout << "The simulator uses data from VISP_SCENES_DIR=" << scene_dir_ << std::endl;
-    } catch (...) {
+    }
+    catch (...) {
       std::cout << "Cannot get VISP_SCENES_DIR environment variable" << std::endl;
     }
   }
@@ -2255,7 +2233,8 @@ void vpSimulatorViper850::getExternalImage(vpImage<vpRGBa> &I_)
       (std::fabs(py_ext - 1) > vpMath::maximum(py_ext, 1.) * std::numeric_limits<double>::epsilon())) {
     u = (double)I_.getWidth() / (2 * px_ext);
     v = (double)I_.getHeight() / (2 * py_ext);
-  } else {
+  }
+  else {
     u = (double)I_.getWidth() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
     v = (double)I_.getHeight() / (vpMath::minimum(I_.getWidth(), I_.getHeight()));
   }
@@ -2383,5 +2362,5 @@ void vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMa
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
 // has no symbols
-void dummy_vpSimulatorViper850(){};
+void dummy_vpSimulatorViper850() { };
 #endif

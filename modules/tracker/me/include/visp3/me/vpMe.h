@@ -117,7 +117,7 @@
  * \code{.unparsed}
  * $ cat me.json
  * {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,
- *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdMarginRatio":-1.0,"minThreshold":-1.0,"thresholdType":1}
+ *  "range":5,"sampleStep":10.0,"strip":2,"threshold":20.0,"thresholdMarginRatio":-1.0,"minThreshold":-1.0,"thresholdType":"normalized"}
  * \endcode
  */
 class VISP_EXPORT vpMe
@@ -531,7 +531,7 @@ public:
    * @brief Retrieve a vpMe object from a JSON representation
    *
    * JSON content (key: type):
-   *  - thresholdType: int, vpMe::getLikelihoodThresholdType()
+   *  - thresholdType: either "old" or "normalized", vpMe::getLikelihoodThresholdType()
    *  - threshold: double, vpMe::setThreshold()
    *  - thresholdMarginRatio: double, vpMe::setThresholdMarginRatio()
    *  - minThreshold: double, vpMe::setMinThreshold()
@@ -564,7 +564,7 @@ public:
    *   "range": 7,
    *   "sampleStep": 4.0,
    *   "strip": 2,
-   *   "thresholdType": 1,
+   *   "thresholdType": "normalized",
    *   "threshold": 20.0,
    *   "thresholdMarginRatio": 0.75,
    *   "minThreshold": 20.0,
@@ -579,6 +579,11 @@ public:
 };
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
+
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMe::vpLikelihoodThresholdType, {
+  {vpMe::vpLikelihoodThresholdType::OLD_THRESHOLD, "old"},
+  {vpMe::vpLikelihoodThresholdType::NORMALIZED_THRESHOLD, "normalized"}
+});
 
 inline void to_json(nlohmann::json &j, const vpMe &me)
 {
@@ -616,7 +621,7 @@ inline void from_json(const nlohmann::json &j, vpMe &me)
     me.setMu2(mus[1]);
   }
   me.setMinSampleStep(j.value("minSampleStep", me.getMinSampleStep()));
-
+  me.setSampleStep(j.value("sampleStep", me.getSampleStep()));
   me.setRange(j.value("range", me.getRange()));
   me.setNbTotalSample(j.value("ntotalSample", me.getNbTotalSample()));
   me.setPointsToTrack(j.value("pointsToTrack", me.getPointsToTrack()));

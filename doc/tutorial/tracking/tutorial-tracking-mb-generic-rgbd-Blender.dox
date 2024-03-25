@@ -26,12 +26,9 @@ Some non-exhaustive links:
 - [Blender Reference Manual](https://docs.blender.org/manual/en/latest/index.html)
 - [Blender 3D: Noob to Pro](https://en.wikibooks.org/wiki/Blender_3D:_Noob_to_Pro/Parenting)
 
-Note that all the material (source code, input video, CAD model or XML settings files) described and used in this
-tutorial is part of ViSP source code and could be downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/tracking/model-based/generic-rgbd-blender
-\endcode
+Note that all the material (source code, input video, CAD model or XML settings files) described in this tutorial is
+part of ViSP source code (in `tracking/model-based/generic-rgbd-blender` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tracking/model-based/generic-rgbd-blender.
 
 \section mb_Blender_setup Considered setup
 Remember that for each object considered by the model-based tracker, you need a \ref mb_generic_model

@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_THREADS)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -47,7 +47,7 @@
 
 #if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGCODECS) && defined(HAVE_OPENCV_IMGPROC)
 #include <opencv2/imgcodecs.hpp>
-#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #endif
 
 static std::string ipath = vpIoTools::getViSPImagesDataPath();

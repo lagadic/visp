@@ -33,7 +33,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_BICLOPS
+#if defined(VISP_HAVE_BICLOPS) && defined(VISP_HAVE_THREADS)
 
 #include <cmath> // std::fabs
 #include <errno.h>
@@ -854,7 +854,6 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no
-// symbols
+// Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no symbols
 void dummy_vpRobotBiclops() { };
 #endif

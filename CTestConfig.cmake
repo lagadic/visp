@@ -91,52 +91,42 @@ else()
 endif()
 
 # Find out the version of gcc being used.
-if(CMAKE_COMPILER_IS_GNUCC)
-  exec_program(${CMAKE_CXX_COMPILER}
-    ARGS -dumpversion
-    OUTPUT_VARIABLE COMPILER_VERSION
-  )
-  #message("COMPILER_VERSION 1: ${COMPILER_VERSION}")
-  string(REGEX REPLACE ".* ([0-9])\\.([0-9])\\.[0-9].*" "\\1\\2"
-    COMPILER_VERSION ${COMPILER_VERSION})
-  #message("COMPILER_VERSION 2: ${COMPILER_VERSION}")
-
-  set(BUILDNAME "${BUILDNAME}${COMPILER_VERSION}")
-
-endif(CMAKE_COMPILER_IS_GNUCC)
+if(CMAKE_CXX_COMPILER_VERSION)
+  set(BUILDNAME "${BUILDNAME}-${CMAKE_CXX_COMPILER_VERSION}")
+endif()
 
 # Add the type of library generation, e.g. "Dynamic or Static"
 if(BUILD_SHARED_LIBS)
   set(BUILDNAME "${BUILDNAME}-Dyn")
 else(BUILD_SHARED_LIBS)
   set(BUILDNAME "${BUILDNAME}-Sta")
-endif(BUILD_SHARED_LIBS)
+endif()
 
 # Add the build type, e.g. "Debug, Release..."
 if(CMAKE_BUILD_TYPE)
   set(BUILDNAME "${BUILDNAME}-${CMAKE_BUILD_TYPE}")
-endif(CMAKE_BUILD_TYPE)
+endif()
 
 #---- Robots ----
 # Add specific Afma4 robots
 if(VISP_HAVE_AFMA4)
   set(BUILDNAME "${BUILDNAME}-Afma4")
-endif(VISP_HAVE_AFMA4)
+endif()
 
 # Add specific Afma6 robots
 if(VISP_HAVE_AFMA6)
   set(BUILDNAME "${BUILDNAME}-Afma6")
-endif(VISP_HAVE_AFMA6)
+endif()
 
 # Add specific Ptu46 robots
 if(VISP_HAVE_PTU46)
   set(BUILDNAME "${BUILDNAME}-Ptu46")
-endif(VISP_HAVE_PTU46)
+endif()
 
 # Add specific Biclops robots
 if(VISP_HAVE_BICLOPS)
   set(BUILDNAME "${BUILDNAME}-Biclops")
-endif(VISP_HAVE_BICLOPS)
+endif()
 
 # Add specific Pioneer robots
 if(VISP_HAVE_PIONEER)
@@ -152,18 +142,18 @@ endif()
 # Firewire dc1394-2.x
 if(VISP_HAVE_DC1394)
   set(BUILDNAME "${BUILDNAME}-dc1394")
-endif(VISP_HAVE_DC1394)
+endif()
 # Video 4 linux 2 (V4L2)
 if(VISP_HAVE_V4L2)
   set(BUILDNAME "${BUILDNAME}-v4l2")
-endif(VISP_HAVE_V4L2)
+endif()
 # Directshow
 if(VISP_HAVE_DIRECTSHOW)
   set(BUILDNAME "${BUILDNAME}-dshow")
-endif(VISP_HAVE_DIRECTSHOW)
+endif()
 if(VISP_HAVE_CMU1394)
   set(BUILDNAME "${BUILDNAME}-CMU1394")
-endif(VISP_HAVE_CMU1394)
+endif()
 if(VISP_HAVE_LIBFREENECT)
   set(BUILDNAME "${BUILDNAME}-freenect")
 endif()
@@ -196,19 +186,19 @@ endif()
 # X11
 if(VISP_HAVE_X11)
   set(BUILDNAME "${BUILDNAME}-X11")
-endif(VISP_HAVE_X11)
+endif()
 # GTK
 if(VISP_HAVE_GTK)
   set(BUILDNAME "${BUILDNAME}-gtk")
-endif(VISP_HAVE_GTK)
+endif()
 # GDI (Windows Graphics Device Interface)
 if(VISP_HAVE_GDI)
   set(BUILDNAME "${BUILDNAME}-gdi")
-endif(VISP_HAVE_GDI)
+endif()
 # D3D (Direct3D9)
 if(VISP_HAVE_D3D9)
   set(BUILDNAME "${BUILDNAME}-Direct3D")
-endif(VISP_HAVE_D3D9)
+endif()
 # OpenCV
 if(VISP_HAVE_OPENCV)
   if(OpenCV_VERSION)
@@ -220,7 +210,7 @@ if(VISP_HAVE_OPENCV)
   else()
     set(BUILDNAME "${BUILDNAME}-OpenCV")
   endif()
-endif(VISP_HAVE_OPENCV)
+endif()
 
 #---- Mathematics ----
 # Lapack (Linear Algebra PACKage)
@@ -246,34 +236,31 @@ endif()
 # Coin
 if(VISP_HAVE_COIN3D)
   set(BUILDNAME "${BUILDNAME}-Coin")
-endif(VISP_HAVE_COIN3D)
+endif()
 # SoQt
 if(VISP_HAVE_SOQT)
   set(BUILDNAME "${BUILDNAME}-SoQt")
-endif(VISP_HAVE_SOQT)
+endif()
 # Qt
 if(VISP_HAVE_QT)
   set(BUILDNAME "${BUILDNAME}-Qt${DESIRED_QT_VERSION}")
-endif(VISP_HAVE_QT)
+endif()
 # SoWin
 if(VISP_HAVE_SOWIN)
   set(BUILDNAME "${BUILDNAME}-SoWin")
-endif(VISP_HAVE_SOWIN)
+endif()
 # SoXt
 if(VISP_HAVE_SOXT)
   set(BUILDNAME "${BUILDNAME}-SoXt")
-endif(VISP_HAVE_SOXT)
+endif()
 
 #---- Images ----
 if(VISP_HAVE_JPEG)
   set(BUILDNAME "${BUILDNAME}-jpeg")
-endif(VISP_HAVE_JPEG)
+endif()
 if(VISP_HAVE_PNG)
   set(BUILDNAME "${BUILDNAME}-png")
-endif(VISP_HAVE_PNG)
-#if(VISP_HAVE_ZLIB)
-#  set(BUILDNAME "${BUILDNAME}-zlib")
-#endif()
+endif()
 
 #---- Misc ----
 # XML
@@ -306,7 +293,9 @@ endif()
 if(ACTIVATE_WARNING_FLOAT_EQUAL)
   set(BUILDNAME "${BUILDNAME}-Weq")
 endif()
-if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11)
+if(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_98)
+  set(BUILDNAME "${BUILDNAME}-c98")
+elseif(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11)
   set(BUILDNAME "${BUILDNAME}-c11")
 elseif(VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14)
   set(BUILDNAME "${BUILDNAME}-c14")
