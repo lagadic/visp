@@ -352,7 +352,7 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
   # Params that are only outputs: they should be declared in function. Assume that they are default constructible
   param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
   param_type_decl = [get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping) for i in range(len(param_is_only_output))]
-  param_decl_data = [(param_type_decl[i], param_names[i], get_default_assignement_str(param_type_decl[i])) for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+  param_decl_data = [(param_type_decl[i], param_names[i], get_default_assignment_str(param_type_decl[i])) for i in range(len(param_is_only_output)) if param_is_only_output[i]]
   param_declarations = [f'{decl_type} {name}{assignment};' for (decl_type, name, assignment) in param_decl_data]
   param_declarations = '\n'.join(param_declarations)
 

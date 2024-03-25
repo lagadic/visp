@@ -61,8 +61,7 @@ vpMbtPolygon::vpMbtPolygon(const vpMbtPolygon &mbtp)
   minLineLengthThresh(mbtp.minLineLengthThresh), minPolygonAreaThresh(mbtp.minPolygonAreaThresh), name(mbtp.name),
   hasOrientation(mbtp.hasOrientation)
 {
-  //*this = mbtp; // Should not be called by copy constructor to avoid multiple
-  // assignements.
+  //*this = mbtp; // Should not be called by copy constructor to avoid multiple assignments.
 }
 
 vpMbtPolygon &vpMbtPolygon::operator=(const vpMbtPolygon &mbtp)

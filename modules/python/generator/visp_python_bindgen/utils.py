@@ -259,7 +259,7 @@ def get_type_for_declaration(param: Union[types.FunctionType, types.DecoratedTyp
   else:
     return get_type(param, owner_specs, header_env_mapping)
 
-def get_default_assignement_str(type: str) -> str:
+def get_default_assignment_str(type: str) -> str:
   inits = [
     (['int', 'unsigned', 'uint8_t', 'uint16_t', 'size_t', 'ssize_t'], '0'),
     (['float'], '0.f'),
