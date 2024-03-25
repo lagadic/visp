@@ -81,11 +81,11 @@ public:
   typedef enum
   {
     NO_SUPPRESSION = 0,   ///< Point successfully tracked.
-    CONTRAST = 1,         ///< Point not tracked due to a likelihood problem, but retained in the ME list.
+    CONTRAST = 1,         ///< Point not tracked due to a contrast problem, but retained in the ME list.
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
     CONSTRAST = CONTRAST, ///< Deprecated. Point not tracked due to a likelihood problem, but retained in the ME list. Use instead CONTRAST.
 #endif
-    THRESHOLD = 2,        ///< Point not tracked due to a lack of contrast problem, but retained in the ME list.
+    THRESHOLD = 2,        ///< Point not tracked due to the likelihood that is below the threshold, but retained in the ME list.
     M_ESTIMATOR = 3,      ///< Point detected as an outlier during virtual visual-servoing.
     TOO_NEAR = 4,         ///< Point not tracked anymore, since too near from its neighbor.
     UNKNOW = 5,           ///< Reserved.
@@ -226,8 +226,13 @@ public:
    * Specific function for moving-edges.
    *
    * \warning To display the moving edges graphics a call to vpDisplay::flush() is needed after this function.
+   * \param[in] I : Input image.
+   * \param[in] me : Pointer to the moving-edges settings.
+   * \param[in] test_contrast : When true tracking is based on contrast. The retained moving-edge is the one with
+   * similar contrast. When false, the tracking is based on the likelihood. The retained moving-edge is the one with
+   * the maximum likelihood.
    */
-  void track(const vpImage<unsigned char> &im, const vpMe *me, const bool &test_likelihood = true);
+  void track(const vpImage<unsigned char> &I, const vpMe *me, const bool &test_contrast = true);
 
   /*!
    * Set the angle of tangent at site.
