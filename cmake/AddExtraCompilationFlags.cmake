@@ -117,7 +117,8 @@ if(USE_OPENMP)
   add_extra_compiler_option("${OpenMP_CXX_FLAGS}")
 endif()
 
-if(USE_THREADS)
+if(USE_THREADS OR USE_PTHREAD)
+  # Condider the case of Apriltags on Unix that needs pthread
   if(THREADS_HAVE_PTHREAD_ARG)
     add_extra_compiler_option("-pthread")
   endif()

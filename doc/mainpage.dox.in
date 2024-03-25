@@ -16,23 +16,29 @@ href="http://www.inria.fr/en/centre/rennes" target="_parent">Inria Rennes</a>.</
 
 <p>ViSP wiki is <a href="https://github.com/lagadic/visp/wiki" target="_parent">https://github.com/lagadic/visp/wiki</a></p>
 
-<p>ViSP source code is available on GitHub <a href="https://github.com/lagadic/visp" target="_parent">https://github.com/lagadic/visp</a></p>
+<p>ViSP source code is available on GitHub
+<a href="https://github.com/lagadic/visp" target="_parent">https://github.com/lagadic/visp</a></p>
 
 <p>If you have any problems or find any bugs, please report them in
-<a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available <a href="http://gforge.inria.fr/forum/?group_id=397" target="_parent">forums</a>.<p>
+<a href="https://github.com/lagadic/visp/issues">the bug tracker</a>. If you may need help, please use the available
+<a href="https://github.com/lagadic/visp/discussions" target="_parent">discussion forum</a>.<p>
 
 It is also possible to contact ViSP main developers using: <a href="mailto:visp@inria.fr?subject=[visp]">visp@inria.fr</a>
 
 \section arch_sec Software architecture
 
-Since ViSP 3.0.0, we design a new modular software architecture where ViSP capabilities are grouped in several modules (core, io, gui, vision, …). In ViSP 3.1.0 we introduced a new module called imgproc. As a result, the user will find several shared or static libraries, one for each module. The following figure highlights the module dependencies and the third-party libraries that may be used by each module. The central module is the core module. All other modules depend on core.
+Since ViSP 3.0.0, we design a new modular software architecture where ViSP capabilities are grouped in several modules
+(core, io, gui, vision, …). In ViSP 3.1.0 we introduced a new module called imgproc. As a result, the user will find
+several shared or static libraries, one for each module. The following figure highlights the module dependencies and
+the third-party libraries that may be used by each module. The central module is the core module. All other modules
+depend on core.
 
 \image html soft_archi_v6.png "ViSP modules and their optional dependencies"
 
 \section hardware Supported Hardware
 
-ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB cameras,
-and motion capture system that you can use for learning visual-servoing or building robotics applications
+ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras,
+RGB cameras, and motion capture system that you can use for learning visual-servoing or building robotics applications
 on top of them based on ViSP. See \ref supported-material section.
 
 \section software Supported Third-Party Libraries
@@ -58,12 +64,14 @@ install \ref supported-third-parties. There is also this page
 <a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>
 that gives an overview of the third-parties used by each ViSP module.</p>
 
-<p>ViSP full installation procedure explaining how to install CMake and third-parties is detailed in the \ref tutorial_install page. \ref tutorial_started and documents in pdf are also available from <a
+<p>ViSP full installation procedure explaining how to install CMake and third-parties is detailed in the
+\ref tutorial_install page. \ref tutorial_started and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
 \section tutorial Tutorials
 
-To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> in \ref tutorial_users.
+To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> in
+\ref tutorial_users.
 
 @VISP_MAINPAGE_EXTENSION@
 
@@ -94,7 +102,8 @@ To cite the <a href="https://inria.hal.science/hal-01853972v1">generic model-bas
    Year = {2018}
 }
 ```
-To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms and hands-on survey</a> illustrated with <a href="https://github.com/lagadic/camera_localization">ViSP examples</a>:
+To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms and hands-on survey</a> illustrated with
+<a href="https://github.com/lagadic/camera_localization">ViSP examples</a>:
 ```
 @article{Marchand16a,
    Author = {Marchand, E. and Uchiyama, H. and Spindler, F.},
@@ -110,7 +119,8 @@ To cite <a href="https://hal.science/hal-01246370v1">pose estimation algorithms 
 
 \section Examples_sec Using ViSP
 
-<p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project implementation.</p>
+<p>ViSP C++ classes are organized in <a href="modules.html">modules</a> that may help the user during his project
+implementation.</p>
 
 <p>From the <a href="examples.html">example</a> page, you will also find
 examples showing how to use the library to acquire and display an
@@ -127,7 +137,9 @@ in different ways. This will motivate us to continue the efforts.
 - You can submit a <a href="https://github.com/lagadic/visp/issues">bug report using the tracker</a>.
 - You can submit patches or new functionalities using GitHub Pull Request mechanism.
 - You can write new tutorials, new documentations or simply improve the existing documentation.
-- If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
+- If you just want to say you've been happy with the library, you can send us a postcard from your place, to the
+  following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex,
+  FRANCE.</em>
 
 <p>You can also ask for help using <a href="https://github.com/lagadic/visp/discussions">GitHub discussions</a>.
 
@@ -270,6 +282,11 @@ in different ways. This will motivate us to continue the efforts.
   \ingroup group_core_tools
   \defgroup group_core_munkres Munkres Assignment Algorithm
   Munkres Assignment Algorithm.
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_cpu_features CPU features
+  CPU features.
 */
 
 /*******************************************
@@ -427,7 +444,8 @@ in different ways. This will motivate us to continue the efforts.
   - to track an object observed by a single, a stereo camera or more cameras, a RGB-D camera
   - to consider moving-edges, keypoints or depth as visual features or a combination of these visual features.
 
-  The following classes that allow to track an object on a single image continue to be maintained but should no more be used since we provide a more generic class with vpMbGenericTracker:
+  The following classes that allow to track an object on a single image continue to be maintained but should no more
+  be used since we provide a more generic class with vpMbGenericTracker:
   - vpMbEdgeTracker
   - vpMbKltTracker
   - vpMbEdgeKltTracker

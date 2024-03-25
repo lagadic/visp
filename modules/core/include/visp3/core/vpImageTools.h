@@ -57,6 +57,7 @@
 #include <iostream>
 #include <math.h>
 #include <string.h>
+#include <cmath>
 
 #if defined(_OPENMP)
 #include <omp.h>
@@ -1113,12 +1114,12 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
 #endif
   for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
     const float v = (i + half) * scaleY - half;
-    const int v0 = static_cast<int>(v);
+    const float v0 = std::floor(v);
     const float yFrac = v - v0;
 
     for (unsigned int j = 0; j < Ires.getWidth(); j++) {
       const float u = (j + half) * scaleX - half;
-      const int u0 = static_cast<int>(u);
+      const float u0 = std::floor(u);
       const float xFrac = u - u0;
 
       if (method == INTERPOLATION_NEAREST) {
@@ -1132,7 +1133,7 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
       }
     }
   }
-  }
+}
 
 #if defined(VISP_HAVE_SIMDLIB)
 template <>
@@ -1510,24 +1511,24 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
             const float s = xi_ - x_;
 
             if (y_ < static_cast<int>(src.getHeight()) - 1 && x_ < static_cast<int>(src.getWidth()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val01 = src[y_][x_ + 1];
-              const Type val10 = src[y_ + 1][x_];
-              const Type val11 = src[y_ + 1][x_ + 1];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val01 = static_cast<float>(src[y_][x_ + 1]);
+              const float val10 = static_cast<float>(src[y_ + 1][x_]);
+              const float val11 = static_cast<float>(src[y_ + 1][x_ + 1]);
               const float col0 = lerp(val00, val01, s);
               const float col1 = lerp(val10, val11, s);
               const float interp = lerp(col0, col1, t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (y_ < static_cast<int>(src.getHeight()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val10 = src[y_ + 1][x_];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val10 = static_cast<float>(src[y_ + 1][x_]);
               const float interp = lerp(val00, val10, t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
             else if (x_ < static_cast<int>(src.getWidth()) - 1) {
-              const Type val00 = src[y_][x_];
-              const Type val01 = src[y_][x_ + 1];
+              const float val00 = static_cast<float>(src[y_][x_]);
+              const float val01 = static_cast<float>(src[y_][x_ + 1]);
               const float interp = lerp(val00, val01, s);
               dst[i][j] = vpMath::saturate<Type>(interp);
             }
@@ -1582,24 +1583,24 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
         double t = y - y_lower;
 
         if (y_lower < static_cast<int>(src.getHeight()) - 1 && x_lower < static_cast<int>(src.getWidth()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val01 = src[y_lower][x_lower + 1];
-          const Type val10 = src[y_lower + 1][x_lower];
-          const Type val11 = src[y_lower + 1][x_lower + 1];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val01 = static_cast<double>(src[y_lower][x_lower + 1]);
+          const double val10 = static_cast<double>(src[y_lower + 1][x_lower]);
+          const double val11 = static_cast<double>(src[y_lower + 1][x_lower + 1]);
           const double col0 = lerp(val00, val01, s);
           const double col1 = lerp(val10, val11, s);
           const double interp = lerp(col0, col1, t);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }
         else if (y_lower < static_cast<int>(src.getHeight()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val10 = src[y_lower + 1][x_lower];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val10 = static_cast<double>(src[y_lower + 1][x_lower]);
           const double interp = lerp(val00, val10, t);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }
         else if (x_lower < static_cast<int>(src.getWidth()) - 1) {
-          const Type val00 = src[y_lower][x_lower];
-          const Type val01 = src[y_lower][x_lower + 1];
+          const double val00 = static_cast<double>(src[y_lower][x_lower]);
+          const double val01 = static_cast<double>(src[y_lower][x_lower + 1]);
           const double interp = lerp(val00, val01, s);
           dst[i][j] = vpMath::saturate<Type>(interp);
         }

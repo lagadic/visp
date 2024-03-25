@@ -66,14 +66,16 @@
   }
 
 /*! \brief image buffer properties structure */
-struct sBufferProps {
+struct sBufferProps
+{
   int width;
   int height;
   int bitspp;
 };
 
 /*! \brief camera feature properties structure */
-struct sCameraProps {
+struct sCameraProps
+{
   bool bUsesImageFormats;
   int nImgFmtNormal;
   int nImgFmtDefaultNormal;
@@ -84,7 +86,8 @@ struct sCameraProps {
 /*!
  * \brief uEye Image parameter structure
  */
-typedef struct _UEYE_IMAGE {
+typedef struct _UEYE_IMAGE
+{
   char *pBuf;
   INT nImageID;
   INT nImageSeqNum;
@@ -96,7 +99,7 @@ class vpUeyeGrabber::vpUeyeGrabberImpl
 public:
   vpUeyeGrabberImpl()
     : m_hCamera((HIDS)0), m_activeCameraSelected(-1), m_pLastBuffer(nullptr), m_cameraList(nullptr), m_bLive(true),
-      m_bLiveStarted(false), m_verbose(false), m_I_temp()
+    m_bLiveStarted(false), m_verbose(false), m_I_temp()
   {
     ZeroMemory(&m_SensorInfo, sizeof(SENSORINFO));
     ZeroMemory(&m_CamInfo, sizeof(CAMINFO));
@@ -129,7 +132,8 @@ public:
     if (m_hCamera) {
       if (!m_bLive) {
         ret = is_FreezeVideo(m_hCamera, IS_WAIT);
-      } else {
+      }
+      else {
         if (!m_bLiveStarted) {
           ret = is_CaptureVideo(m_hCamera, IS_DONT_WAIT);
           m_bLiveStarted = true;
@@ -159,12 +163,12 @@ public:
             if (timestamp_system != nullptr) {
               std::stringstream ss;
               ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
-                 << ImageInfo.TimestampSystem.wMilliseconds;
+                << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
+                << ImageInfo.TimestampSystem.wMilliseconds;
               *timestamp_system = ss.str();
             }
           }
@@ -184,9 +188,9 @@ public:
             break;
           case IS_CM_SENSOR_RAW8:
             m_I_temp.resize(m_BufferProps.height, m_BufferProps.width),
-                vpImageConvert::demosaicRGGBToRGBaBilinear(reinterpret_cast<unsigned char *>(m_pLastBuffer),
-                                                           reinterpret_cast<unsigned char *>(m_I_temp.bitmap),
-                                                           m_BufferProps.width, m_BufferProps.height);
+              vpImageConvert::demosaicRGGBToRGBaBilinear(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                                         reinterpret_cast<unsigned char *>(m_I_temp.bitmap),
+                                                         m_BufferProps.width, m_BufferProps.height);
             vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char *>(m_I_temp.bitmap),
                                        reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
                                        m_BufferProps.height);
@@ -231,7 +235,8 @@ public:
     if (m_hCamera) {
       if (!m_bLive) {
         ret = is_FreezeVideo(m_hCamera, IS_WAIT);
-      } else {
+      }
+      else {
         if (!m_bLiveStarted) {
           //          ret = is_CaptureVideo(m_hCamera, IS_DONT_WAIT);
           ret = is_CaptureVideo(m_hCamera, IS_WAIT);
@@ -262,12 +267,12 @@ public:
             if (timestamp_system != nullptr) {
               std::stringstream ss;
               ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
-                 << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
-                 << ImageInfo.TimestampSystem.wMilliseconds;
+                << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
+                << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
+                << ImageInfo.TimestampSystem.wMilliseconds;
               *timestamp_system = ss.str();
             }
           }
@@ -365,18 +370,21 @@ public:
 
     if ((ret = is_GetCameraInfo(m_hCamera, &m_CamInfo)) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: GetCameraInfo failed"));
-    } else if ((ret = is_GetSensorInfo(m_hCamera, &m_SensorInfo)) != IS_SUCCESS) {
+    }
+    else if ((ret = is_GetSensorInfo(m_hCamera, &m_SensorInfo)) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: GetSensorInfo failed"));
-    } else if ((ret = is_Configuration(IS_CONFIG_INITIAL_PARAMETERSET_CMD_GET, &uInitialParameterSet,
-                                       sizeof(unsigned int))) != IS_SUCCESS) {
+    }
+    else if ((ret = is_Configuration(IS_CONFIG_INITIAL_PARAMETERSET_CMD_GET, &uInitialParameterSet,
+                                     sizeof(unsigned int))) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: querying 'initial parameter set' failed"));
-    } else {
-      // m_nWidth = m_SensorInfo.nMaxWidth;
-      // m_nHeight = m_SensorInfo.nMaxHeight;
+    }
+    else {
+   // m_nWidth = m_SensorInfo.nMaxWidth;
+   // m_nHeight = m_SensorInfo.nMaxHeight;
 
-      // restore all defaults
-      // do this only if there is no 'initial parameter set' installed.
-      // if an 'initial parameter set' is installed we must not overwrite this setup!
+   // restore all defaults
+   // do this only if there is no 'initial parameter set' installed.
+   // if an 'initial parameter set' is installed we must not overwrite this setup!
       if (uInitialParameterSet == IS_CONFIG_INITIAL_PARAMETERSET_NONE) {
         ret = is_ResetToDefault(m_hCamera);
       }
@@ -384,7 +392,8 @@ public:
       int colormode = 0;
       if (m_SensorInfo.nColorMode >= IS_COLORMODE_BAYER) {
         colormode = IS_CM_BGRA8_PACKED;
-      } else {
+      }
+      else {
         colormode = IS_CM_MONO8;
       }
 
@@ -490,10 +499,11 @@ public:
     if (WaitForSingleObject(m_hEvent, EVENTTHREAD_WAIT_TIMEOUT) == WAIT_OBJECT_0) {
 #endif
       return IS_SUCCESS;
-    } else {
+    }
+    else {
       return IS_TIMED_OUT;
     }
-  }
+    }
 
   void freeImages()
   {
@@ -631,12 +641,15 @@ public:
     if (ret == IS_INVALID_CAMERA_TYPE) {
       throw(vpException(vpException::fatalError, "The camera parameters file %s belong to a different camera",
                         filename.c_str()));
-    } else if (ret == IS_INCOMPATIBLE_SETTING) {
+    }
+    else if (ret == IS_INCOMPATIBLE_SETTING) {
       throw(vpException(vpException::fatalError,
                         "Because of incompatible settings, cannot load parameters from file %s", filename.c_str()));
-    } else if (ret != IS_SUCCESS) {
+    }
+    else if (ret != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "Cannot load parameters from file %s", filename.c_str()));
-    } else {
+    }
+    else {
       std::cout << "Parameters loaded sucessfully" << std::endl;
     }
 
@@ -701,12 +714,14 @@ public:
             break;
           }
         }
-      } else {
+      }
+      else {
         throw(vpException(vpException::fatalError, "uEye error: is_ImageFormat returned %d", ret));
       }
 
       delete (pFormatList);
-    } else {
+    }
+    else {
       throw(vpException(vpException::fatalError, "uEye error: is_ImageFormat returned %d", ret));
     }
     return format;
@@ -743,20 +758,25 @@ public:
     int cm = IS_CM_MONO8;
     if (color_mode_upper == "MONO8") {
       cm = IS_CM_MONO8;
-    } else if (color_mode_upper == "RGB24") {
+    }
+    else if (color_mode_upper == "RGB24") {
       cm = IS_CM_BGR8_PACKED;
-    } else if (color_mode_upper == "RGB32") {
+    }
+    else if (color_mode_upper == "RGB32") {
       cm = IS_CM_RGBA8_PACKED;
-    } else if (color_mode_upper == "BAYER8") {
+    }
+    else if (color_mode_upper == "BAYER8") {
       cm = IS_CM_SENSOR_RAW8;
-    } else {
+    }
+    else {
       throw(vpException(vpException::fatalError, "Unsupported color mode %s", color_mode.c_str()));
     }
 
     INT ret = IS_SUCCESS;
     if ((ret = is_SetColorMode(m_hCamera, cm)) != IS_SUCCESS) {
       std::cout << "Could not set color mode of " << m_CamListInfo.Model << " to " << color_mode << std::endl;
-    } else {
+    }
+    else {
       setupCapture();
     }
     return ret;
@@ -798,7 +818,8 @@ public:
           return IS_NO_SUCCESS;
         }
       }
-    } else { // Manual
+    }
+    else { // Manual
       double minFrameTime, maxFrameTime, intervalFrameTime, newFrameRate;
       // Make sure that user-requested frame rate is achievable
       if ((ret = is_GetFrameTimeRange(m_hCamera, &minFrameTime, &maxFrameTime, &intervalFrameTime)) != IS_SUCCESS) {
@@ -813,17 +834,18 @@ public:
       if ((ret = is_SetFrameRate(m_hCamera, frame_rate_hz, &newFrameRate)) != IS_SUCCESS) {
         if (m_verbose) {
           std::cout << "Failed to set frame rate to " << frame_rate_hz << " MHz for " << m_CamListInfo.Model
-                    << std::endl;
+            << std::endl;
         }
         return ret;
-      } else if (frame_rate_hz != newFrameRate) {
+      }
+      else if (frame_rate_hz != newFrameRate) {
         frame_rate_hz = newFrameRate;
       }
     }
 
     if (m_verbose) {
       std::cout << "Updated frame rate for " << m_CamListInfo.Model << ": "
-                << ((auto_frame_rate) ? "auto" : std::to_string(frame_rate_hz)) << " Hz" << std::endl;
+        << ((auto_frame_rate) ? "auto" : std::to_string(frame_rate_hz)) << " Hz" << std::endl;
     }
 
     return ret;
@@ -872,7 +894,7 @@ public:
 
     if (m_verbose) {
       std::cout << "Updated exposure: " << ((auto_exposure) ? "auto" : std::to_string(exposure_ms) + " ms") << " for "
-                << m_CamListInfo.Model << std::endl;
+        << m_CamListInfo.Model << std::endl;
     }
 
     return err;
@@ -902,8 +924,9 @@ public:
           return IS_NO_SUCCESS;
         }
       }
-    } else {
-      // Disable auto gain
+    }
+    else {
+   // Disable auto gain
       if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
         if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
           std::cout << m_CamListInfo.Model << " does not support auto gain mode" << std::endl;
@@ -913,11 +936,12 @@ public:
       // Set gain boost
       if (is_SetGainBoost(m_hCamera, IS_GET_SUPPORTED_GAINBOOST) != IS_SET_GAINBOOST_ON) {
         gain_boost = false;
-      } else {
+      }
+      else {
         if ((err = is_SetGainBoost(m_hCamera, (gain_boost) ? IS_SET_GAINBOOST_ON : IS_SET_GAINBOOST_OFF)) !=
             IS_SUCCESS) {
           std::cout << "Failed to " << ((gain_boost) ? "enable" : "disable") << " gain boost for "
-                    << m_CamListInfo.Model << std::endl;
+            << m_CamListInfo.Model << std::endl;
         }
       }
 
@@ -932,7 +956,8 @@ public:
     if (m_verbose) {
       if (auto_gain) {
         std::cout << "Updated gain for " << m_CamListInfo.Model << ": auto" << std::endl;
-      } else {
+      }
+      else {
         std::cout << "Updated gain for " << m_CamListInfo.Model << ": manual master gain " << master_gain << std::endl;
       }
       std::cout << "\n  gain boost: " << (gain_boost ? "enabled" : "disabled") << std::endl;
@@ -1031,7 +1056,8 @@ public:
 
       dblAutoWb = 1.0;
       is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, nullptr);
-    } else {
+    }
+    else {
       dblAutoWb = 0.0;
       is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, nullptr);
       is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, nullptr);
@@ -1058,8 +1084,8 @@ public:
         is_SetColorMode(m_hCamera, IS_CM_BGR565_PACKED);
         colormode = IS_CM_BGR565_PACKED;
         std::cout << "uEye color format 'IS_CM_BGR5_PACKED' actually not supported by vpUeyeGrabber, patched to "
-                     "'IS_CM_BGR565_PACKED'"
-                  << std::endl;
+          "'IS_CM_BGR565_PACKED'"
+          << std::endl;
       }
 
       // fill memorybuffer properties
@@ -1101,7 +1127,7 @@ private:
   HANDLE m_hEvent;
 #endif
   vpImage<vpRGBa> m_I_temp; // Temp image used for Bayer conversion
-};
+  };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*
@@ -1113,7 +1139,7 @@ private:
  * By default, the active camera is the first one that is found.
  * To select a specific camera use setActiveCamera().
  */
-vpUeyeGrabber::vpUeyeGrabber() : m_impl(new vpUeyeGrabberImpl()) {}
+vpUeyeGrabber::vpUeyeGrabber() : m_impl(new vpUeyeGrabberImpl()) { }
 
 /*!
  * Destructor.
@@ -1124,7 +1150,7 @@ vpUeyeGrabber::~vpUeyeGrabber() { delete m_impl; }
  * Capture a new grayscale image.
  *
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or nullptr if not
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 us, or nullptr if not
  * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.
@@ -1149,7 +1175,7 @@ void vpUeyeGrabber::acquire(vpImage<unsigned char> &I, double *timestamp_camera,
 /*!
  * Capture a new color image.
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or nullptr if not
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 us, or nullptr if not
  * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.
@@ -1402,6 +1428,6 @@ void vpUeyeGrabber::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work around to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols
-void dummy_vpUeyeGrabber(){};
+void dummy_vpUeyeGrabber() { };
 
 #endif

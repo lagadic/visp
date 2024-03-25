@@ -21,10 +21,10 @@ The first step is to setup and flash your Jetson for a Connect Tech Carrier Boar
 During this installation and setup we recommend to install also OpenCV.
 \image html img-jetson-jetpack-opencv.png
 
-The second step consists in installing GNU g++ compiler, CMake, git and subversion. To this end connect to the Jetson and run.
+The second step consists in installing GNU g++ compiler, CMake and git. To this end connect to the Jetson and run.
 
 \verbatim
-$ sudo apt-get install build-essential cmake-curses-gui git subversion wget
+$ sudo apt-get install build-essential cmake-curses-gui git wget
 \endverbatim
 
 \section install_jetson_ws Create a workspace

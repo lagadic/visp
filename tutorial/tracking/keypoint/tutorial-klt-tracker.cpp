@@ -24,8 +24,8 @@ int main(int argc, const char *argv[])
         opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "Usage: " << argv[0]
-                  << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click]"
-                  << " [--help] [-h]" << std::endl;
+          << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click]"
+          << " [--help] [-h]" << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -69,11 +69,7 @@ int main(int argc, const char *argv[])
     // Initialise the tracking
     if (opt_init_by_click) {
       vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-      std::vector<CvPoint2D32f> feature;
-#else
       std::vector<cv::Point2f> feature;
-#endif
       vpImagePoint ip;
       do {
         vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
@@ -86,13 +82,10 @@ int main(int argc, const char *argv[])
         vpDisplay::flush(I);
         vpTime::wait(20);
       } while (button != vpMouseButton::button3);
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-      tracker.initTracking(cvI, &feature[0], feature.size());
-#else
       tracker.initTracking(cvI, feature);
-#endif
-    } else {
-      //! [Init tracker]
+    }
+    else {
+   //! [Init tracker]
       tracker.initTracking(cvI);
       //! [Init tracker]
     }
@@ -112,11 +105,7 @@ int main(int argc, const char *argv[])
 
       if (opt_init_by_click && reader.getFrameIndex() == reader.getFirstFrameIndex() + 20) {
         vpMouseButton::vpMouseButtonType button = vpMouseButton::button1;
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-        std::vector<CvPoint2D32f> feature;
-#else
         std::vector<cv::Point2f> feature;
-#endif
         vpImagePoint ip;
         do {
           vpDisplay::displayText(I, 10, 10, "Left click to select a point, right to start tracking", vpColor::red);
@@ -129,11 +118,7 @@ int main(int argc, const char *argv[])
           vpDisplay::flush(I);
           vpTime::wait(20);
         } while (button != vpMouseButton::button3);
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-        tracker.initTracking(cvI, &feature[0], feature.size());
-#else
         tracker.initTracking(cvI, feature);
-#endif
       }
 
       tracker.track(cvI);
@@ -154,7 +139,8 @@ int main(int argc, const char *argv[])
     //! [Wait click]
     vpDisplay::getClick(I);
     //! [Wait click]
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

@@ -105,6 +105,7 @@ int main(int argc, char **argv)
   C = randM(p, n) * 5;
 
   // make sure Cx <= d has a solution within Ax = b
+
   vpColVector x = A.solveBySVD(b);
   d = C * x;
   for (int i = 0; i < p; ++i)

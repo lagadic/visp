@@ -1,21 +1,25 @@
 ﻿
 /**
-  \page tutorial-getting-started-naoqi Tutorial: How to create an application that uses ViSP on NAOqi OS 
+  \page tutorial-getting-started-naoqi Tutorial: How to create an application that uses ViSP on NAOqi OS
   \tableofcontents
 
-We assume in this tutorial that you have successfully cross-compiled ViSP following \ref tutorial-install-crosscompiling-naoqi.
-The aim of this tutorial is to explain how to create an application that uses ViSP cross-build for NAOqi OS as third-party and how to run this application on Nao, Romeo or Pepper robots.
+We assume in this tutorial that you have successfully cross-compiled ViSP following
+\ref tutorial-install-crosscompiling-naoqi.
+The aim of this tutorial is to explain how to create an application that uses ViSP cross-build for NAOqi OS as
+third-party and how to run this application on Nao, Romeo or Pepper robots.
 
-To illustrate this tutorial, we will consider all the examples that are provided in the tutorial dedicated to images (ie. the one located in \c visp/tutorial/image folder). If you are not familiar with ViSP read first \ref tutorial-getting-started.
+To illustrate this tutorial, we will consider all the examples that are provided in the tutorial dedicated to images
+(ie. the one located in \c visp/tutorial/image folder). If you are not familiar with ViSP read first
+\ref tutorial-getting-started.
 
 This tutorial was tested on an Ubuntu 14.04 LTS host computer with:
-- Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot 
+- Cross Toolchain 2.3.1 Linux 64 (\c ctc-linux32-atom-2.3.1.23) on Romeo robot
 - Cross Toolchain 2.4.3 Linux 64 (\c ctc-linux64-atom-2.4.3.28) on Pepper robot
-
 
 \section started_naoqi_code Create a workspace for your project
 
-We assume that as described in \ref tutorial-install-crosscompiling-naoqi, your workspace dedicated to visp contains the following folders:
+We assume that as described in \ref tutorial-install-crosscompiling-naoqi, your workspace dedicated to visp contains
+the following folders:
 \code
 $ ls $HOME/soft
 visp
@@ -27,11 +31,20 @@ Create a new folder to host the project you want to run on NAOqi OS
 $ mkdir $HOME/soft/tutorial
 \endcode
 
-Get existing tutorial/image folder from ViSP source code
+Copy existing `tutorial/image` folder from ViSP source code or download it from here
+https://github.com/lagadic/visp/tree/master/tutorial/image.
 
 \code
-$ cd $HOME/soft/tutorial
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+$ ls $HOME/soft/tutorial/image
+CMakeLists.txt			monkey.png				           tutorial-draw-text.cpp			             tutorial-image-manipulation.cpp
+camera.xml				  monkey.ppm				           tutorial-event-keyboard.cpp		         tutorial-image-reader.cpp
+chessboard.jpg			tutorial-canny.cpp			     tutorial-export-image.cpp		           tutorial-image-viewer.cpp
+drawingHelpers.cpp  tutorial-draw-circle.cpp		 tutorial-image-colormap.cpp		         tutorial-undistort.cpp
+drawingHelpers.h		tutorial-draw-cross.cpp			 tutorial-image-converter.cpp		         tutorial-video-manipulation.cpp
+memorial.pfm				tutorial-draw-frame.cpp			 tutorial-image-display-scaled-auto.cpp	 tutorial-viewer.cpp
+monkey.bmp				  tutorial-draw-line.cpp			 tutorial-image-display-scaled-manu.cpp
+monkey.jpeg				  tutorial-draw-point.cpp			 tutorial-image-display.cpp
+monkey.pgm				  tutorial-draw-rectangle.cpp	 tutorial-image-filter.cpp
 \endcode
 
 \section started_naoqi_build Cross-build your project
@@ -40,7 +53,7 @@ Create first a build folder associated to your Cross Toolchain like:
 \code
 $ cd $HOME/soft/tutorial
 $ mkdir image-build-ctc-linux64-atom-2.4.3.28
-\endcode 
+\endcode
 
 Configure your project setting \c VISP_DIR and \c CMAKE_TOOLCHAIN_FILE respectively to ViSP and Cross Toolchain location:
 \code

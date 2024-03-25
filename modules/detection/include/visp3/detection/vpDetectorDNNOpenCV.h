@@ -54,7 +54,6 @@
 #include <optional>
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-using json = nlohmann::json; //! json namespace shortcut
 #endif
 
 /*!
@@ -201,7 +200,7 @@ public:
      * \param j The JSON object, resulting from the parsing of a JSON file.
      * \param config The configuration of the network, that will be initialized from the JSON data.
      */
-    friend inline void from_json(const json &j, NetConfig &config)
+    friend inline void from_json(const nlohmann::json &j, NetConfig &config)
     {
       config.m_confThreshold = j.value("confidenceThreshold", config.m_confThreshold);
       if (config.m_confThreshold <= 0) {
@@ -241,11 +240,11 @@ public:
      * \param j A JSON parser object.
      * \param config The vpDetectorDNNOpenCV::NetConfig that must be parsed into JSON format.
      */
-    friend inline void to_json(json &j, const NetConfig &config)
+    friend inline void to_json(nlohmann::json &j, const NetConfig &config)
     {
       std::pair<unsigned int, unsigned int> resolution = { config.m_inputSize.width, config.m_inputSize.height };
       std::vector<double> v_mean = { config.m_mean[0], config.m_mean[1], config.m_mean[2] };
-      j = json {
+      j = nlohmann::json {
         {"confidenceThreshold", config.m_confThreshold  } ,
         {"nmsThreshold"       , config.m_nmsThreshold   } ,
         {"filterSizeRatio"    , config.m_filterSizeRatio} ,
@@ -515,7 +514,7 @@ public:
    * \param j The JSON object, resulting from the parsing of a JSON file.
    * \param network The network, that will be initialized from the JSON data.
    */
-  friend inline void from_json(const json &j, vpDetectorDNNOpenCV &network)
+  friend inline void from_json(const nlohmann::json &j, vpDetectorDNNOpenCV &network)
   {
     network.m_netConfig = j.value("networkSettings", network.m_netConfig);
   }
@@ -526,9 +525,9 @@ public:
    * \param j The JSON parser.
    * \param network  The network we want to parse the configuration.
    */
-  friend inline void to_json(json &j, const vpDetectorDNNOpenCV &network)
+  friend inline void to_json(nlohmann::json &j, const vpDetectorDNNOpenCV &network)
   {
-    j = json {
+    j = nlohmann::json {
       {"networkSettings", network.m_netConfig}
     };
   }

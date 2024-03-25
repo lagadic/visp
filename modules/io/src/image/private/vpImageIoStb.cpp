@@ -149,7 +149,7 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigne
 {
   int x = 0, y = 0, comp = 0;
   const int req_channels = 1;
-  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, req_channels);
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), static_cast<int>(buffer.size()), &x, &y, &comp, req_channels);
   assert(comp == req_channels);
 
   I.init(buffer_read, y, x, true);
@@ -165,7 +165,7 @@ void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<unsigne
 void readPNGfromMemStb(const std::vector<unsigned char> &buffer, vpImage<vpRGBa> &I_color)
 {
   int x = 0, y = 0, comp = 0;
-  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), buffer.size(), &x, &y, &comp, 0);
+  unsigned char *buffer_read = stbi_load_from_memory(buffer.data(), static_cast<int>(buffer.size()), &x, &y, &comp, 0);
 
   if (comp == 4) {
     const bool copyData = true;

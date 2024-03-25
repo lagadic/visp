@@ -13,15 +13,24 @@ ViSP 3.x.x (Version in development)
     . vpPololu and vpRobotPololuPtu to control respectively a servo motor using a pololu maestro board or a 3D printed
       2 dof pan-tilt unit. Visual servoing example provided in example/servo-pololu-ptu. Tests available in
       modules/robot/test/servo-pololu/
+    . vpStatisticalTestAbstract, vpStatisticalTestEWMA, vpStatisticalTestHinkley, vpStatisticalTestMeanAdjustedCUSUM
+      vpStatisticalTestShewhart and vpStatisticalTestSigma: classes implementing Statistical Control Process methods to
+      detect mean drift / jump of a signal
   - Deprecated
     . vpPlanarObjectDetector, vpFernClassifier deprecated classes are removed
     . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
     . vpDisplay::displayCharString() is marked deprecated. Use vpDisplay::displayText() instead
+    . vpHinkley class is deprecated, in favor of vpStatisticalTestHinkley
   - New features and improvements
+    . Introduce Python bindings for most of ViSP modules and classes (see corresponding tutorial)
+    . Updated Dockerfile in ci/docker folder for Ubuntu 18.04, 20.04 and 22.04. Corresponding images are also available
+      ready to use on DockerHub https://hub.docker.com/repository/docker/vispci/vispci/general
+    . OpenCV 2.4.8 is the minimal supported version
     . Introduce applications in apps folder, a collection of useful tools that
       have a dependency to the install target
-    . Bump minimal c++ standard to c++11
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
+    . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
+    . Eliminate the use of pthread in favour of std::thread
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -30,6 +39,10 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-tracking-mb-generic-rgbd-Blender.html
     . New tutorial: Installation from prebuilt Conda packages for Linux / OSX / Windows
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-conda-package.html
+    . New tutorial: Using Statistical Process Control to monitor your signal
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-spc.html
+    . New tutorial: Installing ViSP Python bindings
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-python-bindings.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17
@@ -40,6 +53,8 @@ ViSP 3.x.x (Version in development)
     . [#1279] Issue in vpPoseVector json serialization
     . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
+    . [#1320] Broken links in the documentation
+    . [#1341] SVD computation fails with Lapack when m < n
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:

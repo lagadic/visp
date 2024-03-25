@@ -302,4 +302,3 @@ if(UNIX OR WIN32)
 else(UNIX OR WIN32)
   message("FindGTK2 is working on UNIX/LINUX and Windows, only!")
 endif()
-

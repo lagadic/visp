@@ -82,4 +82,12 @@ jobs:
         # SUMMARY: AddressSanitizer: odr-violation: global 'ALIGNMENT' at /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
         ASAN_OPTIONS: detect_odr_violation=0
       working-directory: build
-      run: ctest -j$(nproc) --output-on-failure
+      # When running ctest we got a lot of segfault
+      # This seems a bug reported in
+      # - https://stackoverflow.com/questions/77894856/possible-bug-in-gcc-sanitizers
+      # - https://stackoverflow.com/questions/77850769/fatal-threadsanitizer-unexpected-memory-mapping-when-running-on-linux-kernels
+      # The workaround seems to be to set vm.mmap_rnd_bits=28
+      run: |
+        sudo cat /proc/sys/vm/mmap_rnd_bits
+        sudo sysctl vm.mmap_rnd_bits=28
+        ctest -j$(nproc) --output-on-failure -V

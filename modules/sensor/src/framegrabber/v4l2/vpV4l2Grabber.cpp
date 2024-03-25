@@ -36,7 +36,6 @@
 /*!
   \file vpV4l2Grabber.cpp
   \brief class for the Video For Linux 2 video device framegrabbing.
-  \ingroup libdevice
 */
 
 #include <visp3/core/vpConfig.h>

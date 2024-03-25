@@ -314,12 +314,11 @@ inline vpMunkres::STEP_T vpMunkres::stepSix(std::vector<std::vector<Type> > &cos
 template <typename Type>
 inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<std::vector<Type> > costs)
 {
-  const auto original_row_size = costs.size();
-  const auto original_col_size = costs.front().size();
+  const auto original_row_size = static_cast<Type>(costs.size());
+  const auto original_col_size = static_cast<Type>(costs.front().size());
   const auto sq_size = std::max<Type>(original_row_size, original_col_size);
 
-  auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(
-      sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
+  auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
   auto row_cover = std::vector<bool>(sq_size, false);
   auto col_cover = std::vector<bool>(sq_size, false);
 

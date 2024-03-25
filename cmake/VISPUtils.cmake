@@ -1331,11 +1331,24 @@ macro(vp_parse_header4 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
   endif()
 endmacro()
 
-# read single version info from the pkg file
+# Get package version from pkg-config
 macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   if(EXISTS "${PKG_PATH}/${LIBNAME}.pc")
+    # Consider the case where pkg-config is not installed
     file(STRINGS "${PKG_PATH}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
     string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+  else()
+    find_package(PkgConfig)
+    if(PkgConfig_FOUND)
+      string(TOUPPER ${LIBNAME} LIBNAME_UPPER)
+      pkg_get_variable(${LIBNAME_UPPER}_PCFILEDIR ${LIBNAME} pcfiledir)
+      if(EXISTS "${${LIBNAME_UPPER}_PCFILEDIR}/${LIBNAME}.pc")
+        file(STRINGS "${${LIBNAME_UPPER}_PCFILEDIR}/${LIBNAME}.pc" line_to_parse REGEX "^Version:[ \t]+[0-9.]*.*$" LIMIT_COUNT 1)
+        string(REGEX REPLACE ".*Version: ([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+        unset(LIBNAME_UPPER)
+        mark_as_advanced(${LIBNAME_UPPER}_PCFILEDIR)
+      endif()
+    endif()
   endif()
 endmacro()
 

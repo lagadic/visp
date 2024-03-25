@@ -20,10 +20,10 @@ This tutorial was tested with NVIDIA Jetson TX2 flashed with `JetPack 4.6(rev3)`
 - The first step is to setup and flash your Jetson for a Connect Tech Carrier Board following this <a href="https://connecttech.com/resource-center/kdb373/">tutorial</a>. This could be achieved from a laptop running ubuntu `16.04` or `18.04`.
 - The second step is to install `NVIDIA SDK Components` using this <a href="https://connecttech.com/resource-center/kdb374/">tutorial</a>.
 
-- The third step consists in installing GNU g++ compiler, CMake, git and subversion. To this end connect to the Jetson and run.
+- The third step consists in installing GNU g++ compiler, CMake and git. To this end connect to the Jetson and run.
 
 \verbatim
-$ sudo apt-get install build-essential cmake-curses-gui git subversion wget
+$ sudo apt-get install build-essential cmake-curses-gui git wget
 \endverbatim
 
 \section install_jetson_quasar_ws Create a workspace

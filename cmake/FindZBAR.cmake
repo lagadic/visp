@@ -132,4 +132,3 @@ mark_as_advanced(
   ZBAR_INCLUDE_DIRS
   ZBAR_LIBRARIES
 )
-

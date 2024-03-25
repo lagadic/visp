@@ -93,6 +93,13 @@ def supported_const_return_binary_op_map():
     '^': 'xor',
   }
 
+def lambda_const_return_binary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                                  cpp_type: str, param_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {param_type} o) -> {return_type} {{
+  return (self {cpp_op} o);
+}}, {", ".join(py_args)});'''
+
 def supported_in_place_binary_op_map():
   return {
     '+=': 'iadd',
@@ -101,11 +108,44 @@ def supported_in_place_binary_op_map():
     '/=': 'itruediv',
   }
 
+def lambda_in_place_binary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                              cpp_type: str, param_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {param_type} o) -> {return_type} {{
+  self {cpp_op} o;
+  return self;
+}}, {", ".join(py_args)});'''
+
 def supported_const_return_unary_op_map():
   return {
     '-': 'neg',
     '~': 'invert',
   }
+
+def lambda_const_return_unary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                          cpp_type: str, return_type: str, py_args: List[str]) -> str:
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self) -> {return_type} {{
+  return {cpp_op}self;
+}}, {", ".join(py_args)});'''
+
+def supported_nary_op_map():
+  return {
+    '()': 'call',
+  }
+
+def lambda_nary_op(python_ident: str, python_op_name: str, cpp_op: str, method_is_const: bool,
+                    cpp_type: str, param_types: List[str], return_type: str, py_args: List[str]) -> str:
+  param_names = [f'arg{i}' for i in range(len(param_types))]
+  param_types_and_names = [f'{t} {n}' for t,n in zip(param_types, param_names)]
+  maybe_return = '' if return_type == 'void' else 'return'
+
+  return f'''
+{python_ident}.def("__{python_op_name}__", []({"const" if method_is_const else ""} {cpp_type}& self, {",".join(param_types_and_names)}) -> {return_type} {{
+  {maybe_return} self.operator{cpp_op}({",".join(param_names)});
+}}, {", ".join(py_args)});'''
+
+
 def find_and_define_repr_str(cls: ClassScope, cls_name: str, python_ident: str) -> str:
   for friend in cls.friends:
     if friend.fn is not None:
@@ -311,7 +351,9 @@ def define_method(method: types.Method, method_config: Dict, is_class_method, sp
 
   # Params that are only outputs: they should be declared in function. Assume that they are default constructible
   param_is_only_output = [not is_input and is_output for is_input, is_output in zip(param_is_input, param_is_output)]
-  param_declarations = [f'{get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping)} {param_names[i]};' for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+  param_type_decl = [get_type_for_declaration(method.parameters[i].type, specs, header_env.mapping) for i in range(len(param_is_only_output))]
+  param_decl_data = [(param_type_decl[i], param_names[i], get_default_assignment_str(param_type_decl[i])) for i in range(len(param_is_only_output)) if param_is_only_output[i]]
+  param_declarations = [f'{decl_type} {name}{assignment};' for (decl_type, name, assignment) in param_decl_data]
   param_declarations = '\n'.join(param_declarations)
 
   if is_class_method and not method.static:
@@ -378,6 +420,7 @@ def define_lambda(capture: str, params: List[str], return_type: Optional[str], b
 '''
 class NotGeneratedReason(Enum):
   UserIgnored = 'user_ignored',
+  Deleted = 'deleted',
   Access = 'access',
   Destructor = 'destructor',
   ReturnType = 'return_type'
@@ -407,6 +450,7 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
   # Order of predicates is important: The first predicate that matches will be the one shown in the log, and they do not all have the same importance
   filtering_predicates_and_motives = [
     (lambda _, conf: conf['ignore'], NotGeneratedReason.UserIgnored),
+    (lambda m, _: m.deleted, NotGeneratedReason.Deleted),
     (lambda m, _: m.pure_virtual, NotGeneratedReason.PureVirtual),
     (lambda m, _: m.access is None or m.access != 'public', NotGeneratedReason.Access),
     (lambda m, _: m.destructor, NotGeneratedReason.Destructor),
@@ -415,13 +459,13 @@ def get_bindable_methods_with_config(submodule: 'Submodule', methods: List[types
     (lambda m, _: not m.constructor and is_unsupported_return_type(m.return_type), NotGeneratedReason.ReturnType)
   ]
   for method in methods:
-    method_config = submodule.get_method_config(cls_name, method, specializations, mapping)
+    method_config = submodule.get_method_config(cls_name, method, {}, mapping)
     method_can_be_bound = True
     for predicate, motive in filtering_predicates_and_motives:
       if predicate(method, method_config):
-        return_str = '' if method.return_type is None else (get_type(method.return_type, specializations, mapping) or '<unparsed>')
+        return_str = '' if method.return_type is None else (get_type(method.return_type, {}, mapping) or '<unparsed>')
         method_name = '::'.join(seg.name for seg in method.name.segments)
-        param_strs = [get_type(param.type, specializations, mapping) or '<unparsed>' for param in method.parameters]
+        param_strs = [get_type(param.type, {}, mapping) or '<unparsed>' for param in method.parameters]
         rejected_methods.append(RejectedMethod(cls_name, method, method_config, get_method_signature(method_name, return_str, param_strs), motive))
         method_can_be_bound = False
         break

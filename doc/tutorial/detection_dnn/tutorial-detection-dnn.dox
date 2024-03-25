@@ -7,28 +7,27 @@
 
 This tutorial shows how to use the `vpDetectorDNNOpenCV` class (DNN stands for Deep Neural Network), which is a wrapper
 over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN module</a>.
-The `vpDetectorDNNOpenCV` class provides convenient ways to perform image classification and to retrieve detection bounding boxes,
+The `vpDetectorDNNOpenCV` class provides convenient ways to perform image classification and to retrieve detection
+bounding boxes,
 class ids and confidence values of a single or of multiple classes.
 For other tasks such as image segmentation or more complicated uses, you should use directly the
 <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN API</a>.
 
-This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7` and `Yolo v8` convolutional networks
-that simultaneously predict object boundaries and prediction scores at each position.
-If you want to use another type of network, you can define your own parsing method of the DNN detection results and give it to
-the `vpDetectorDNNOpenCV` object.
+This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7` and
+`Yolo v8` convolutional networks that simultaneously predict object boundaries and prediction scores at each position.
+If you want to use another type of network, you can define your own parsing method of the DNN detection results and
+give it to the `vpDetectorDNNOpenCV` object.
 
-This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
+This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to
+see how to do it).
 Examples of such JSON files can be found in the tutorial folder.
 
-In the next section you will find an example that shows how to perform face detection in a single image or in images acquired from
+In the next section you will find an example that shows how to perform face detection in a single image or in images
+acquired from
 a camera connected to your computer.
 
-Note that all the material (source code and network model) described in this tutorial is part of ViSP source code and could be
-downloaded using the following command:
-
-\code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
-\endcode
+Note that all the material (source code and network model) described in this tutorial is part of ViSP source code
+(in `tutorial/detection/dnn` folder) and could be found in https://github.com/lagadic/visp/tree/master/tutorial/detection/dnn.
 
 \section dnn_requirements Requirements
 
@@ -55,7 +54,8 @@ or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-manage
    $ apt list --installed | grep -i opencv
    ```
 
-   If this command does not return an empty line, please run (**if you are sure that it is not required by another software installed on your computer**):
+   If this command does not return an empty line, please run (**if you are sure that it is not required by another
+   software installed on your computer**):
    ```
    $ sudo apt remove libopencv-dev
    ```
@@ -74,7 +74,8 @@ or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-manage
     libx11-dev
   ```
 
-6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib sources, that contain the Cuda DNN module.
+6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib
+sources, that contain the Cuda DNN module.
 On a Debian distribution, you would run:
   ```
   $ cd ${HOME}/visp_ws/3rdparty/
@@ -150,8 +151,8 @@ on DNN models learned from the following networks:
 - Yolo v7
 - Yolo v8
 
-It uses video capture capability from OpenCV to capture images from a camera and detect objects using a DNN model learned using
-one of the previous networks.
+It uses video capture capability from OpenCV to capture images from a camera and detect objects using a DNN model
+learned using one of the previous networks.
 
 \include tutorial-dnn-object-detection-live.cpp
 
@@ -159,19 +160,21 @@ Default DNN model and config files perform human faces detection.
 
 \snippet tutorial-dnn-object-detection-live.cpp OpenCV DNN face detector
 
-This network is provided by <a href="https://github.com/opencv/opencv/tree/master/samples/dnn/face_detector">OpenCV</a> and has been trained
-with the following characteristics:
+This network is provided by <a href="https://github.com/opencv/opencv/tree/master/samples/dnn/face_detector">OpenCV</a>
+and has been trained with the following characteristics:
 
 <blockquote>
 
 This is a brief description of training process which has been used to get res10_300x300_ssd_iter_140000.caffemodel.
-The model was created with SSD framework using ResNet-10 like architecture as a backbone. Channels count in ResNet-10 convolution layers was
-significantly dropped (2x- or 4x- fewer channels). The model was trained in Caffe framework on some huge and available online dataset.
+The model was created with SSD framework using ResNet-10 like architecture as a backbone. Channels count in ResNet-10
+convolution layers was significantly dropped (2x- or 4x- fewer channels). The model was trained in Caffe framework on
+some huge and available online dataset.
 
 </blockquote>
 
-More specifically, the model used (`opencv_face_detector_uint8.pb`) has been quantized (with the TensorFlow library) on 8-bit unsigned int to
-reduce the size of the training model (2.7 mo vs 10.7 mo for `res10_300x300_ssd_iter_140000.caffemodel`).
+More specifically, the model used (`opencv_face_detector_uint8.pb`) has been quantized (with the TensorFlow library)
+on 8-bit unsigned int to reduce the size of the training model (2.7 mo vs 10.7 mo for
+`res10_300x300_ssd_iter_140000.caffemodel`).
 
 The following lines permit to create the DNN object detector:
 
@@ -179,25 +182,32 @@ The following lines permit to create the DNN object detector:
 
 To construct `netConfig` object some configuration parameters of the DNN are required:
 - `confThresh`, which is the confidence threshold used to filter the detections after inference
-- `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations
+- `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at
+  the same locations
 - `labelFile`, which is the path towards the file containing the list of classes the DNN can detect
-- `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network
-- `filterThresh`, which is a double that, if greater than 0., indicates that the user wants to perform an additional filtering on the detection outputs based on the
-  size of these detections
+- `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry
+  of the network
+- `filterThresh`, which is a double that, if greater than 0., indicates that the user wants to perform an additional
+  filtering on the detection outputs based on the size of these detections
 - `meanR`, `meanG` and `meanB` are the values used for mean subtraction
 - `scaleFactor` is used to normalize the data range
-- `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped
-- `dnn_type` is the type of parsing method to use to parse the DNN raw results. See vpDetectorDNNOpenCV::DNNResultsParsingType to determine
-  which parsing methods are available
-- `model` is the network trained weights, `config` is the network topology description and `framework` is the weights framework.
+- `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention,
+  R and B channel should be swapped
+- `dnn_type` is the type of parsing method to use to parse the DNN raw results. See
+  vpDetectorDNNOpenCV::DNNResultsParsingType to determine which parsing methods are available
+- `model` is the network trained weights, `config` is the network topology description and `framework` is the weights
+  framework.
 
-Alternatively, if ViSP has been compiled with the NLOHMANN JSON library, one can initialize the `vpDetectorDNNOpenCV` object using the following method:
+Alternatively, if ViSP has been compiled with the NLOHMANN JSON library, one can initialize the `vpDetectorDNNOpenCV`
+object using the following method:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN json
 
-You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a> for the parameters values.
+You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a>
+for the parameters values.
 
-After setting the correct parameters, if you want to get the data as a map, where the keys will be the class names (or ID if no label file was given),
+After setting the correct parameters, if you want to get the data as a map, where the keys will be the class names
+(or ID if no label file was given),
 you can easily detect object in an image with:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN object detection map mode
@@ -218,7 +228,8 @@ or for a non-sorted vector with:
 
 \subsection dnn_usecase_general Generic usage
 
-The default behavior is to detect human faces, but you can input another model to detect the objects you want. To see which are the options, run:
+The default behavior is to detect human faces, but you can input another model to detect the objects you want. To see
+which are the options, run:
 ```
 $ cd $VISP_WS/visp-build/tutorial/detection/dnn
 $ ./tutorial-dnn-object-detection-live --help
@@ -226,7 +237,8 @@ $ ./tutorial-dnn-object-detection-live --help
 
 \subsection dnn_usecase_face_detection Face detection
 
-The default behavior is to detect human faces using a model provided by OpenCV and learned over a ResNet 10 network. If you have a laptop, simply run:
+The default behavior is to detect human faces using a model provided by OpenCV and learned over a ResNet 10 network.
+If you have a laptop, simply run:
 ```
 $ cd $VISP_WS/visp-build/tutorial/detection/dnn
 $ ./tutorial-dnn-object-detection-live
@@ -247,8 +259,10 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 \subsection dnn_models_coco COCO dataset objects detection
 
-[COCO](https://cocodataset.org) is a large-scale object detection, segmentation, and captioning dataset. It contains over 330 000 images, each annotated with 80 object categories.
-In the following sections, we show how to use the DNN models learned with the different networks, to detect objects among the list of 80 objects in the COCO dataset.
+[COCO](https://cocodataset.org) is a large-scale object detection, segmentation, and captioning dataset. It contains
+over 330 000 images, each annotated with 80 object categories.
+In the following sections, we show how to use the DNN models learned with the different networks, to detect objects
+among the list of 80 objects in the COCO dataset.
 
 \subsubsection dnn_supported_faster_rcnn Faster-RCNN
 
@@ -425,10 +439,11 @@ If you want to train your own YoloV5 model, please refer to the
 
 \subsubsection dnn_supported_yolov7 Yolo v7
 
-To be able to use `YoloV7` with the class `vpDetectorDNNOpenCV`, you must first download the weights (`yolov7-tiny.pt`) in the Pytorch format from
-[here](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt).
+To be able to use `YoloV7` with the class `vpDetectorDNNOpenCV`, you must first download the weights (`yolov7-tiny.pt`)
+in the Pytorch format from [here](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt).
 
-Then, convert it in ONNX format using the `export.py` script that you can find on the [YoloV7 repo](https://github.com/WongKinYiu/yolov7) with the following arguments:
+Then, convert it in ONNX format using the `export.py` script that you can find on the
+[YoloV7 repo](https://github.com/WongKinYiu/yolov7) with the following arguments:
 ```
 $ python3 export.py --weights ../weights/yolov7-tiny.pt --grid --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640  --max-wh 640
 ```

@@ -53,6 +53,29 @@
 
 namespace
 {
+bool test_memory(unsigned int nrows, unsigned int ncols, const vpMatrix &M, const std::string &matrix_name, bool pointer_is_null)
+{
+  if (pointer_is_null) {
+    if (M.data) {
+      std::cerr << "Wrong data pointer (" << M.data << ") in matrix " << matrix_name << ": should be null" << std::endl;
+    }
+  }
+  else {
+    if (!M.data) {
+      std::cerr << "Wrong data pointer (" << M.data << ") in matrix " << matrix_name << ": should be non null" << std::endl;
+      return false;
+    }
+  }
+
+  if (M.getRows() != nrows || M.getCols() != ncols) {
+    std::cerr << "Wrong matrix " << matrix_name << "(" << nrows << ", " << ncols << " size: "
+      << M.getRows() << " x " << M.getCols() << std::endl;
+    return false;
+  }
+  std::cout << "Test matrix " << matrix_name << " succeed" << std::endl;
+  return true;
+}
+
 bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
 {
   static unsigned int cpt = 0;
@@ -122,6 +145,28 @@ int main(int argc, char *argv[])
       }
     }
 
+    {
+      unsigned int nrows = 2, ncols = 3;
+      vpMatrix A(nrows, ncols);
+      if (test_memory(nrows, ncols, A, "A", false) == false) {
+        return EXIT_FAILURE;
+      }
+      vpMatrix B, C;
+      if (test_memory(0, 0, B, "B", true) == false) {
+        return EXIT_FAILURE;
+      }
+      if (test_memory(0, 0, C, "C", true)== false) {
+        return EXIT_FAILURE;
+      }
+      B = A;
+      if (test_memory(nrows, ncols, B, "B", false)== false) {
+        return EXIT_FAILURE;
+      }
+      B = C;
+      if (test_memory(0, 0, C, "C", true)== false) {
+        return EXIT_FAILURE;
+      }
+    }
     {
       const double val = 10.0;
       vpMatrix M, M2(5, 5, val);

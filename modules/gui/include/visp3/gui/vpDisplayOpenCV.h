@@ -168,14 +168,8 @@ private:
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpDisplayOpenCV(const vpDisplayOpenCV &)
-  //    : vpDisplay(),
-  //    #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  //      background(nullptr), col(nullptr), cvcolor(), font(nullptr),
-  //    #else
-  //      background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
-  //      fontScale(0.8f),
-  //    #endif
-  //      fontHeight(10), x_move(0), y_move(0) , move(false),
+  //    : vpDisplay(), background(), col(nullptr), cvcolor(), font(cv::FONT_HERSHEY_PLAIN),
+  //      fontScale(0.8f), fontHeight(10), x_move(0), y_move(0) , move(false),
   //      x_lbuttondown(0), y_lbuttondown(0), lbuttondown(false),
   //      x_mbuttondown(0), y_mbuttondown(0), mbuttondown(false),
   //      x_rbuttondown(0), y_rbuttondown(0), rbuttondown(false),

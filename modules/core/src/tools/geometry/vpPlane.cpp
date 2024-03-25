@@ -36,7 +36,6 @@
 /*!
   \file vpPlane.cpp
   \brief definition of the vpPlane class member functions
-  \ingroup libtools
 */
 
 #include <visp3/core/vpPlane.h>
@@ -60,7 +59,7 @@ vpPlane &vpPlane::operator=(const vpPlane &p)
 /*!
   Basic constructor that set the plane parameters A, B, C, D to zero.
 */
-vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
+vpPlane::vpPlane() : A(0), B(0), C(0), D(0) { }
 
 /*!
   Plane constructor from A, B, C, D parameters.
@@ -72,7 +71,7 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
   \param a, b, c, d : Parameters of the plane.
 
 */
-vpPlane::vpPlane(double a, double b, double c, double d) : A(a), B(b), C(c), D(d) {}
+vpPlane::vpPlane(double a, double b, double c, double d) : A(a), B(b), C(c), D(d) { }
 
 /*!
   Copy constructor.
@@ -177,8 +176,9 @@ void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlane
     b[0] = P.get_X() - R.get_X();
     b[1] = P.get_Y() - R.get_Y();
     b[2] = P.get_Z() - R.get_Z();
-  } else {
-    // Calculate vector corresponding to PQ
+  }
+  else {
+ // Calculate vector corresponding to PQ
     a[0] = P.get_oX() - Q.get_oX();
     a[1] = P.get_oY() - Q.get_oY();
     a[2] = P.get_oZ() - Q.get_oZ();
@@ -317,7 +317,8 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVecto
     H[0] = M0.get_X() + k * R[0];
     H[1] = M0.get_Y() + k * R[1];
     H[2] = M0.get_Z() + k * R[2];
-  } else {
+  }
+  else {
     scal = getA() * M1.get_X() + getB() * M1.get_Y() + getC() * M1.get_Z();
     // if (scal != 0)
     if (std::fabs(scal) > std::numeric_limits<double>::epsilon())

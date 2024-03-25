@@ -40,6 +40,7 @@
 #ifndef _vpImgproc_h_
 #define _vpImgproc_h_
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageMorphology.h>
 #include <visp3/imgproc/vpContours.h>
@@ -90,6 +91,93 @@ typedef enum
                                 741–53, PMID 70454 \cite doi:10.1177/25.7.70454
                               */
 } vpAutoThresholdMethod;
+
+/**
+ * \brief Gamma Correction automatic methods.
+ */
+typedef enum vpGammaMethod
+{
+  GAMMA_MANUAL = 0, /*!< User-defined constant positive gamma factor.*/
+  GAMMA_LOG_BASED = 1, /*!< Scott, J & Pusateri M (2009)"Towards Real-time Hardware
+                        Gamma Correction for Dynamic Contrast Enhancement"
+                        IEEE Applied Imagery Pattern Recognition Workshop (AIPR 2009)*/
+  GAMMA_NONLINEAR_BASED = 2, /*!< Shi, Y et al. (2007), "Reducing Illumination Based On Nonlinear Gamma Correction",
+                              International Conference on Image Processing */
+  GAMMA_CDF_BASED = 3, /*!< Huang, SC  et al. (2013),"Efficient Contrast Enhancement Using Adaptive
+                        Gamma Correction With Weighting Distribution",
+                        IEEE Trans. on Image Processing, VOL. 22, NO. 3, MARCH 2013. */
+  GAMMA_CLASSIFICATION_BASED = 4, /*!< Rahman, S  et al. (2016),  "An adaptive gamma correction for image
+                                   enhancement", EURASIP Journal on Image and Video Processing*/
+  GAMMA_SPATIAL_VARIANT_BASED = 5,  /*!< Lee, S et al. (2010), "A Space-Variant Luminance Map based
+                                    Color Image Enhancement",
+                                    IEEE Trans. on Consumer Electronics, Vol. 56, No. 4, November 2010.*/
+  GAMMA_METHOD_COUNT = 6
+} vpGammaMethod;
+
+/**
+ * \brief Get the list of available vpGammaMethod.
+ *
+ * \param[in] pref The prefix of the list.
+ * \param[in] sep The separator between two elements of the list.
+ * \param[in] suf The suffix of the list.
+ * \return std::string The list of available items.
+ */
+VISP_EXPORT std::string vpGammaMethodList(const std::string &pref = "<", const std::string &sep = " , ",
+                                            const std::string &suf = ">");
+
+/**
+ * \brief Cast a \b vp::vpGammaMethod into a string, to know its name.
+ *
+ * \param[in] type The type that must be casted into a string.
+ * \return std::string The corresponding name.
+ */
+VISP_EXPORT std::string vpGammaMethodToString(const vpGammaMethod &type);
+
+/**
+ * \brief Cast a string into a \b vp::vpGammaMethod.
+ *
+ * \param[in] name The name of the backend.
+ * \return vp::vpGammaMethod The corresponding enumeration value.
+ */
+VISP_EXPORT vpGammaMethod vpGammaMethodFromString(const std::string &name);
+
+/**
+ * \brief How to handle color images when applying Gamma Correction.
+ */
+typedef enum vpGammaColorHandling
+{
+  GAMMA_RGB = 0, /*!< Gamma correction is apply to Red, Blue and Green channels individually.*/
+  GAMMA_HSV = 1, /*!< The input image is converted into HSV space, Gamma Correction is applied to Value channel and
+                 then the image is converted back into RGBa space.*/
+  GAMMA_COLOR_HANDLING_COUNT = 2
+} vpGammaColorHandling;
+
+/**
+ * \brief Get the list of available vpGammaColorHandling.
+ *
+ * \param[in] pref The prefix of the list.
+ * \param[in] sep The separator between two elements of the list.
+ * \param[in] suf The suffix of the list.
+ * \return std::string The list of available items.
+ */
+VISP_EXPORT std::string vpGammaColorHandlingList(const std::string &pref = "<", const std::string &sep = " , ",
+                                            const std::string &suf = ">");
+
+/**
+ * \brief Cast a \b vp::vpGammaColorHandling into a string, to know its name.
+ *
+ * \param[in] type The type that must be casted into a string.
+ * \return std::string The corresponding name.
+ */
+VISP_EXPORT std::string vpGammaColorHandlingToString(const vpGammaColorHandling &type);
+
+/**
+ * \brief Cast a string into a \b vp::vpGammaColorHandling.
+ *
+ * \param[in] name The name of the backend.
+ * \return vp::vpGammaColorHandling The corresponding enumeration value.
+ */
+VISP_EXPORT vpGammaColorHandling vpGammaColorHandlingFromString(const std::string &name);
 
 /*!
  * \ingroup group_imgproc_brightness
@@ -211,8 +299,9 @@ VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int block
  * 255] range such as the cumulative histogram distribution becomes linear.
  *
  * \param I : The grayscale image to apply histogram equalization.
-*/
-VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
+ * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
+ */
+VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -223,8 +312,10 @@ VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
  *
  * \param I1 : The first grayscale image.
  * \param I2 : The second grayscale image after histogram equalization.
+ * \param p_mask : If set, a boolean mask to take into account only the points for which the mask is true.
  */
-VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
+VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
+                                   const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_histogram
@@ -262,42 +353,71 @@ VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I
  *
  * Perform a gamma correction on a grayscale image.
  *
- * \param I : The grayscale image to apply gamma correction.
- * \param gamma : Gamma value.
+ * \param[inout] I : The grayscale image to apply gamma correction.
+ * \param[in] gamma : Gamma value. If equals to -1, use automatic Gamma correction based on a non-linear
+ * technique. If equals to -2, use automatic Gamma correction based on a logarithmic technique.
+ * If equals to -3, uses automatic Gamma correction based on classification. If equals to -4, uses automatic Gamma
+ * correction based on probabilistic.
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
+ * factor, or one of the automatic method if \b gamma is negative.
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
+ * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, double gamma);
+VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGammaMethod &method = vp::GAMMA_MANUAL,
+                                 const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
  *
  * Perform a gamma correction on a grayscale image.
  *
- * \param I1 : The first grayscale image.
- * \param I2 : The second grayscale image after gamma correction.
- * \param gamma : Gamma value.
+ * \param[in] I1 : The first grayscale image.
+ * \param[out] I2 : The second grayscale image after gamma correction.
+ * \param[in] gamma : Gamma value. If equals to -1, use automatic Gamma correction based on a non-linear
+ * technique. If equals to -2, use automatic Gamma correction based on a logarithmic technique.
+ * If equals to -3, uses automatic Gamma correction based on classification. If equals to -4, uses automatic Gamma
+ * correction based on probabilistic.
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma
+ * factor, or one of the automatic method if \b gamma is negative.
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
+ * them to true.
  */
-VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma);
+VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const float &gamma,
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
  *
  * Perform a gamma correction on a color image.
  *
- * \param I : The color image to apply gamma correction.
- * \param gamma : Gamma value.
+ * \param[inout] I : The color image to apply gamma correction.
+ * \param[in] gamma : Gamma value.
+ * \param[in] colorHandling : How to handle the colors of the image.
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma factor,
+ * or one of the automatic method if \b gamma is negative.
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
+ * them to true.
  */
-VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
+VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_gamma
  *
  * Perform a gamma correction on a color image.
  *
- * \param I1 : The first color image.
- * \param I2 : The second color image after gamma correction.
- * \param gamma : Gamma value.
+ * \param[in] I1 : The first color image.
+ * \param[out] I2 : The second color image after gamma correction.
+ * \param[in] gamma : Gamma value.
+ * \param[in] colorHandling : How to handle the colors of the image.
+ * \param[in] method : The method to use: either \b GAMMA_MANUAL if the user wants to use a positive constant \b gamma factor,
+ * or one of the automatic method if \b gamma is negative.
+ * \param[in] p_mask : If different from nullptr, permits to indicate which points must be taken into account by setting
+ * them to true.
  */
-VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
+VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const float &gamma,
+                                 const vpGammaColorHandling &colorHandling = vp::GAMMA_RGB,
+                                 const vpGammaMethod &method = vp::GAMMA_MANUAL, const vpImage<bool> *p_mask = nullptr);
 
 /*!
  * \ingroup group_imgproc_retinex

@@ -1119,7 +1119,7 @@ void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned c
                                                cannyFilteringSteps, p_mask);
     }
     else if (lowerCannyThresh < 0.f) {
-      lowerCannyThresh = upperCannyThresh / 3.;
+      lowerCannyThresh = upperCannyThresh / 3.f;
     }
     vpCannyEdgeDetection edgeDetector(gaussianFilterSize, gaussianStdev, apertureGradient, lowerCannyThresh, upperCannyThresh,
                                       lowerThresholdRatio, upperThresholdRatio, cannyFilteringSteps);

@@ -42,9 +42,9 @@
 
 */
 
-#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHinkley.h>
-//#include <visp3/core/vpIoTools.h>
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMath.h>
 
 #include <cmath> // std::fabs
@@ -70,7 +70,7 @@
   setDelta() and setAlpha() to modify these values.
 
 */
-vpHinkley::vpHinkley() : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0) {}
+vpHinkley::vpHinkley() : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0) { }
 
 /*!
 
@@ -90,8 +90,7 @@ vpHinkley::vpHinkley() : dmin2(0.1), alpha(0.2), nsignal(0), mean(0), Sk(0), Mk(
 
 vpHinkley::vpHinkley(double alpha_val, double delta_val)
   : dmin2(delta_val / 2.), alpha(alpha_val), nsignal(0), mean(0), Sk(0), Mk(0), Tk(0), Nk(0)
-{
-}
+{ }
 
 /*!
 
@@ -119,7 +118,7 @@ void vpHinkley::init(double alpha_val, double delta_val)
   Destructor.
 
 */
-vpHinkley::~vpHinkley() {}
+vpHinkley::~vpHinkley() { }
 
 /*!
 
@@ -305,9 +304,9 @@ vpHinkley::vpHinkleyJumpType vpHinkley::testDownUpwardJump(double signal)
   computeNk();
 
   vpCDEBUG(2) << "alpha: " << alpha << " dmin2: " << dmin2 << " signal: " << signal << " Sk: " << Sk << " Mk: " << Mk
-              << " Tk: " << Tk << " Nk: " << Nk << std::endl;
+    << " Tk: " << Tk << " Nk: " << Nk << std::endl;
 
-  // teste si les variables cumulees excedent le seuil
+// teste si les variables cumulees excedent le seuil
   if ((Mk - Sk) > alpha)
     jump = downwardJump;
   else if ((Tk - Nk) > alpha)
@@ -433,3 +432,7 @@ void vpHinkley::print(vpHinkley::vpHinkleyJumpType jump)
     break;
   }
 }
+#elif !defined(VISP_BUILD_SHARED_LIBS)
+ // Work around to avoid warning: libvisp_core.a(vpHinkley.cpp.o) has no symbols
+void dummy_vpRHinkley() { };
+#endif

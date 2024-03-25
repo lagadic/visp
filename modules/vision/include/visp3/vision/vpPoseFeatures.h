@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
+#if defined(VISP_HAVE_MODULE_VISUAL_FEATURES) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <visp3/core/vpCircle.h>
 #include <visp3/core/vpCylinder.h>
@@ -60,8 +60,6 @@
 
 #include <iostream>
 #include <vector>
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <tuple>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -384,7 +382,6 @@ public:
   }
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
-#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
  * \class vpPoseFeatures
@@ -494,7 +491,6 @@ public:
    */
   void addFeatureSegment(vpPoint &, vpPoint &);
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
   /*!
    * Add a specific feature for the pose computation.
    */
@@ -506,7 +502,6 @@ public:
    */
   template <typename ObjType, typename RetType, typename... ArgsFunc, typename... Args>
   void addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr)(ArgsFunc...), Args &&...args);
-#endif
 
   /*!
    * Clear all the features
@@ -666,7 +661,6 @@ private:
   void computePoseRobustVVS(vpHomogeneousMatrix &cMo);
 };
 
-#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
 /*!
  * Add a specific feature for the pose computation.
  *
@@ -813,6 +807,5 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType(ObjType:: *fct_ptr
     m_maxSize = static_cast<unsigned int>(m_featureSpecific_list.size());
 }
 #endif
-#endif //#ifdef VISP_HAVE_MODULE_VISUAL_FEATURES
 
 #endif

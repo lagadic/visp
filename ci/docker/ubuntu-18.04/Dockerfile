@@ -2,16 +2,21 @@ FROM ubuntu:18.04
 MAINTAINER Fabien Spindler <Fabien.Spindler@inria.fr>
 
 ARG DEBIAN_FRONTEND=noninteractive
+ARG VISPCI_USER_UID=1001
+ARG DOCKER_GROUP_GID=130
 ENV TZ=Europe/Paris
 
 # Update aptitude with new repo
-RUN apt-get update 
-    
+RUN apt-get update
+
 # Install packages
 RUN apt-get install -y \
+    sudo \
     build-essential \
     cmake \
     git \
+    net-tools \
+    iputils-ping \
     # Recommended ViSP 3rd parties
     libopencv-dev \
     libx11-dev \
@@ -31,6 +36,16 @@ RUN apt-get install -y \
     libdmtx-dev \
     libgsl-dev
 
+RUN adduser --disabled-password --gecos "" --uid $VISPCI_USER_UID vispci \
+    && groupadd docker --gid $DOCKER_GROUP_GID \
+    && usermod -aG sudo vispci \
+    && usermod -aG docker vispci \
+    && echo "%sudo   ALL=(ALL:ALL) NOPASSWD:ALL" > /etc/sudoers \
+    && echo "Defaults env_keep += \"DEBIAN_FRONTEND\"" >> /etc/sudoers \
+    && adduser vispci video
+
+ENV HOME=/home/vispci
+
 # Install visp-images
 RUN mkdir -p ${HOME}/visp-ws \
     && cd ${HOME}/visp-ws \
@@ -47,6 +62,8 @@ RUN cd ${HOME}/visp-ws \
     && mkdir visp-build \
     && cd visp-build \
     && cmake ../visp \
-    && make
+    && make -j4
 
-WORKDIR /
+USER vispci
+
+WORKDIR /home/vispci

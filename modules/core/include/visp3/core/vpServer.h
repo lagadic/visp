@@ -185,7 +185,7 @@ public:
 
     \return True if the server is started, false otherwise.
   */
-  bool isStarted() { return started; }
+  bool isStarted() const { return started; }
 
   /*!
     Get the maximum number of clients that can be connected to the server.
@@ -194,14 +194,14 @@ public:
 
     \return Maximum number of clients.
   */
-  unsigned int getMaxNumberOfClients() { return max_clients; }
+  unsigned int getMaxNumberOfClients() const { return max_clients; }
 
   /*!
     Get the number of clients connected to the server.
 
     \return Number of clients connected.
   */
-  unsigned int getNumberOfClients() { return (unsigned int)receptor_list.size(); }
+  unsigned int getNumberOfClients() const { return (unsigned int)receptor_list.size(); }
 
   void print();
 
@@ -214,7 +214,7 @@ public:
 
     \param l : Maximum number of clients.
   */
-  void setMaxNumberOfClients(unsigned int &l) { max_clients = l; }
+  void setMaxNumberOfClients(const unsigned int &l) { max_clients = l; }
 };
 
 #endif

@@ -389,6 +389,7 @@ object_description_options = [
 
 python_type_aliases = {
   "_visp.": "visp.",
+  "visp._visp.": "visp."
 }
 
 

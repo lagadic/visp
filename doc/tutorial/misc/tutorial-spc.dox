@@ -1,0 +1,89 @@
+/**
+  \page tutorial-spc Tutorial: Using Statistical Process Control to monitor your signal
+  \tableofcontents
+
+\section tuto-spc-intro Introduction
+
+Statistical Process Control (SPC) is defined as the use of statistical methods to monitor
+if a signal is "in control".
+
+In this tutorial, we will use a Statistical Process Control method to monitor if a
+random signal following a normal distribution is "in control".
+
+\subsection tuto-spc-intro-methods Available methods
+
+The different methods available in ViSP aim at detecting if the mean of a signal is
+changing, either due to an abrupt jump or due to a slow drift.
+
+The different methods that are available are the following:
+- *Exponentially Weighted Moving Average* (EWMA), implementent in the vpStatisticalTestEWMA class.
+- *Hinkley's test*, implemented in the vpStatisticalTestHinkley class.
+- *Mean Adjusted Cumulative Sum* (mean adjusted CUSUM), implemented in the vpStatisticalTestMeanAdjustedCUSUM class.
+- *Shewhart's test*, implemented in the vpStatisticalTestShewhart class.
+- *Sigma test*, implemented in the vpStatisticalTestSigma class.
+
+We refer the reader to the documentation of each class to have more detailed information on
+each method.
+
+\section tuto-spc-tutorial Explanations about the tutorial
+
+\subsection tuto-spc-tutorial-howtorun How to run the tutorial
+
+To see the different options of the tutorial, please run the following commands:
+
+```
+$ cd $VISP_WS/visp-build/tutorial/mean-drift
+$ ./tutorial-meandrift -h
+```
+
+If you run the program without argument, you should see something similar to the following image:
+
+\image html img-tutorial-spc-run.jpg
+
+A Gaussian signal of mean equal to 6 and of standard deviation equal to 2 is generated,
+without any mean drift. The program tells you which method has been chosen in the
+console, and which are its parameters. A monitoring loop stops once an alarm
+is raised. When the alarm is raised, some information about the alarm and the
+test signal(s) + limits of the SPC method are given. Press `Return` to leave the program.
+
+\subsection tuto-spc-tutorial-explained Detailed explanations about the SPC tutorial
+
+For this tutorial, we use the main program tutorial-meandrift.cpp .
+
+It uses the following enumeration to let the user choose which SPC method to use to monitor
+the signal:
+
+\snippet tutorial-meandrift.cpp Enum_For_Test_Choice
+
+The program arguments are parsed and fill the following structure that stores the SPC methods
+parameters:
+
+\snippet tutorial-meandrift.cpp Structure_Parameters
+
+It is possible to choose to monitor only upward mean drifts, only downward mean drifts or both.
+To do so, use the `--alarms` option with the name of the alarm(s) you want to monitor.
+
+First, the plot that will show the data is created in the following section of code:
+
+\snippet tutorial-meandrift.cpp Plot_Init
+
+Then, the desired method is created in the following section of code, with the desired parameters:
+
+\snippet tutorial-meandrift.cpp Test_Creat
+
+Then, the method is filled with "in control" signals to initialize the expected mean and the standard deviation:
+
+\snippet tutorial-meandrift.cpp Test_Init
+
+Then, the monitoring loop is run, where the signal is randomly generated with a potential mean drift
+(if desired). This random signal is then tested, and the loop is stopped if an alarm we
+want to monitor is raised:
+
+\snippet tutorial-meandrift.cpp Loop_Monitor
+
+Finally, some information about why the loop was stopped is displayed in the console:
+
+\snippet tutorial-meandrift.cpp Failure_Debrief
+
+The program stops once the `Return` key is pressed.
+*/
