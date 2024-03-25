@@ -90,7 +90,7 @@ public:
   inline std::vector<vpScanPoint> getScanPoints() { return listScanPoints; }
 
 #if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
-  vpLaserScan &operator=(const vpLaserScan &scan) = default;
+  vpLaserScan &operator=(const vpLaserScan &) = default;
 #endif
 
   /*! Specifies the id of former measurements and increases with every measurement. */

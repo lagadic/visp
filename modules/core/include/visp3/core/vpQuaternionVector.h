@@ -140,7 +140,7 @@ public:
   vpQuaternionVector operator/(double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;
+  vpQuaternionVector &operator=(const vpQuaternionVector &) = default;
   vpQuaternionVector &operator=(const std::initializer_list<double> &list);
 #endif
 

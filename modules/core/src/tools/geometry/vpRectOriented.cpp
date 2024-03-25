@@ -82,7 +82,7 @@ vpRectOriented::vpRectOriented(const vpRect &rect)
   m_topRight.set_j(m_center.get_j() + m_width / 2.0);
 }
 
-#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#if (VISP_CXX_STANDARD == VISP_CXX_STANDARD_98)
 /** Copy constructor.
  * @param rectOriented Oriented rectangle to copy.
  */
