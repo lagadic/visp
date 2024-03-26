@@ -46,7 +46,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_QBDEVICE
+#if defined(VISP_HAVE_QBDEVICE) && defined(VISP_HAVE_THREADS)
   std::cout << "Test qbSoftHand device" << std::endl;
   try {
     vpQbSoftHand qbsofthand;
@@ -94,7 +94,8 @@ int main()
       }
     }
     std::cout << "The end" << std::endl;
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
 #else
