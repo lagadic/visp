@@ -50,6 +50,8 @@
   For more details see \cite Collewet08c.
 */
 
+const int vpFeatureLuminance::DEFAULT_BORDER = 10;
+
 /*!
   Initialize the memory space requested for vpFeatureLuminance visual feature.
 */
@@ -95,10 +97,13 @@ void vpFeatureLuminance::init(unsigned int _nbr, unsigned int _nbc, double _Z)
 /*!
   Default constructor that build a visual feature.
 */
-vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
+vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(DEFAULT_BORDER), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   nbParameters = 1;
   dim_s = 0;
+  if (flags != nullptr) {
+    delete[] flags;
+  }
   flags = nullptr;
 
   init();
@@ -108,7 +113,7 @@ vpFeatureLuminance::vpFeatureLuminance() : Z(1), nbr(0), nbc(0), bord(10), pixIn
  Copy constructor.
  */
 vpFeatureLuminance::vpFeatureLuminance(const vpFeatureLuminance &f)
-  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(10), pixInfo(nullptr), firstTimeIn(0), cam()
+  : vpBasicFeature(f), Z(1), nbr(0), nbc(0), bord(DEFAULT_BORDER), pixInfo(nullptr), firstTimeIn(0), cam()
 {
   *this = f;
 }
@@ -124,11 +129,13 @@ vpFeatureLuminance &vpFeatureLuminance::operator=(const vpFeatureLuminance &f)
   bord = f.bord;
   firstTimeIn = f.firstTimeIn;
   cam = f.cam;
+  dim_s = f.dim_s;
   if (pixInfo)
     delete[] pixInfo;
   pixInfo = new vpLuminance[dim_s];
   for (unsigned int i = 0; i < dim_s; i++)
     pixInfo[i] = f.pixInfo[i];
+  s.resize(dim_s);
   return (*this);
 }
 
@@ -161,8 +168,9 @@ void vpFeatureLuminance::set_Z(double Z_)
   \return The value of \f$ Z \f$.
 */
 double vpFeatureLuminance::get_Z() const { return Z; }
+unsigned int vpFeatureLuminance::getBorder() const { return bord; }
 
-void vpFeatureLuminance::setCameraParameters(vpCameraParameters &_cam) { cam = _cam; }
+void vpFeatureLuminance::setCameraParameters(const vpCameraParameters &_cam) { cam = _cam; }
 
 /*!
 
@@ -181,7 +189,6 @@ void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
     firstTimeIn = 1;
     l = 0;
     for (unsigned int i = bord; i < nbr - bord; i++) {
-      //   cout << i << endl ;
       for (unsigned int j = bord; j < nbc - bord; j++) {
         double x = 0, y = 0;
         vpPixelMeterConversion::convertPoint(cam, j, i, x, y);
@@ -198,14 +205,11 @@ void vpFeatureLuminance::buildFrom(vpImage<unsigned char> &I)
 
   l = 0;
   for (unsigned int i = bord; i < nbr - bord; i++) {
-    //   cout << i << endl ;
     for (unsigned int j = bord; j < nbc - bord; j++) {
-      // cout << dim_s <<" " <<l <<"  " <<i << "  " << j <<endl ;
       Ix = px * vpImageFilter::derivativeFilterX(I, i, j);
       Iy = py * vpImageFilter::derivativeFilterY(I, i, j);
 
       // Calcul de Z
-
       pixInfo[l].I = I[i][j];
       s[l] = I[i][j];
       pixInfo[l].Ix = Ix;
