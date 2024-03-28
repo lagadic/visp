@@ -226,7 +226,7 @@ void vpMeEllipse::getParameters()
   // Equations below from Chaumette PhD and TRO 2004 paper
   double num = (m_K[0] * m_K[1]) - (m_K[2] * m_K[2]); // > 0 for an ellipse
   if (num <= 0) {
-    throw(vpException(vpException::fatalError, "The points do not belong to an ellipse! num: %f", num));
+    throw(vpTrackingException(vpTrackingException::fatalError, "The points do not belong to an ellipse! num: %f", num));
   }
 
   m_uc = ((m_K[2] * m_K[4]) - (m_K[1] * m_K[3])) / num;
@@ -263,7 +263,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   // Warning: similar code in vpMbtMeEllipse::sample()
   if (!m_me) {
-    throw(vpException(vpException::fatalError, "Moving edges on ellipse not initialized"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Moving edges on ellipse not initialized"));
   }
   // Delete old lists
   m_meList.clear();
@@ -331,7 +331,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 {
   if (!m_me) {
-    throw(vpException(vpException::fatalError, "Moving edges on ellipse tracking not initialized"));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Moving edges on ellipse tracking not initialized"));
   }
   unsigned int nb_pts_added = 0;
   int nbrows = static_cast<int>(I.getHeight());
@@ -574,8 +574,8 @@ unsigned int vpMeEllipse::plugHoles(const vpImage<unsigned char> &I)
 
   if (m_meList.size() != m_angleList.size()) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent in vpMeEllipse::plugHoles(): nb MEs %ld, nb ang %ld",
-                      m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent in vpMeEllipse::plugHoles(): nb MEs %ld, nb ang %ld",
+                              m_meList.size(), m_angleList.size()));
   }
 
   if (vpDEBUG_ENABLE(3)) {
@@ -654,7 +654,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
     vpMatrix KerA;
     unsigned int dim = A.nullSpace(KerA, 1);
     if (dim > 1) { // case with less than 5 independent points
-      throw(vpException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
+      throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
     }
     unsigned int nbRows = m_K.getRows();
     for (unsigned int i = 0; i < nbRows; ++i) {
@@ -845,7 +845,7 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
       }
       unsigned int dim = DA.nullSpace(KerDA, 1);
       if (dim > 1) { // case with less than 5 independent points
-        throw(vpException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
+        throw(vpMatrixException(vpMatrixException::rankDeficient, "Linear system for computing the ellipse equation ill conditioned"));
       }
 
 
@@ -953,8 +953,8 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 
   if (m_meList.size() != m_angleList.size()) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent in vpMeEllipse::leastSquareRobust(): nb MEs %ld, nb ang %ld",
-                      m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent in vpMeEllipse::leastSquareRobust(): nb MEs %ld, nb ang %ld",
+                              m_meList.size(), m_angleList.size()));
   }
 
   //  Manage the list so that all new angles belong to [0;2Pi]
@@ -1078,8 +1078,8 @@ unsigned int vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 
   if ((m_meList.size() != numberOfGoodPoints) || (m_angleList.size() != numberOfGoodPoints)) {
     // Should never occur
-    throw(vpException(vpException::fatalError, "Lists are not coherent at the end of vpMeEllipse::leastSquareRobust(): nb goog MEs %d and %ld, nb ang %ld",
-                      numberOfGoodPoints, m_meList.size(), m_angleList.size()));
+    throw(vpTrackingException(vpTrackingException::fatalError, "Lists are not coherent at the end of vpMeEllipse::leastSquareRobust(): nb goog MEs %d and %ld, nb ang %ld",
+                              numberOfGoodPoints, m_meList.size(), m_angleList.size()));
   }
 
   // set extremities of the angle list
@@ -1332,7 +1332,7 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
 
     // Stop in case of failure after resample
     if (m_numberOfGoodPoints <= minNbGoodPoints) {
-      throw(vpException(vpTrackingException::notEnoughPointError, "Impossible to track the ellipse, not enough features"));
+      throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Impossible to track the ellipse, not enough features"));
     }
   }
 
