@@ -140,14 +140,18 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
 void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                              unsigned int size, unsigned int step)
 {
+#if defined(_OPENMP)
+#pragma omp parallel for
+#endif
   for (unsigned int i = 0; i < size; ++i) {
     double red, green, blue;
     double h, s, v;
     double min, max;
+    unsigned int i_ = i * step;
 
-    red = rgb[i * step] / 255.0;
-    green = rgb[i * step + 1] / 255.0;
-    blue = rgb[i * step + 2] / 255.0;
+    red = rgb[i_] / 255.0;
+    green = rgb[++i_] / 255.0;
+    blue = rgb[++i_] / 255.0;
 
     if (red > green) {
       max = ((std::max))(red, blue);
@@ -254,70 +258,7 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *sa
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
                                unsigned int size)
 {
-  unsigned int step = 4;
-#if defined(_OPENMP)
-#pragma omp parallel for
-#endif
-  for (unsigned int i = 0; i < size; ++i) {
-    double red, green, blue;
-    double h, s, v;
-    double min, max;
-
-    unsigned int i_ = i * step;
-
-    red = rgba[i_];
-    green = rgba[++i_];
-    blue = rgba[++i_];
-
-    if (red > green) {
-      max = std::max<double>(red, blue);
-      min = std::min<double>(green, blue);
-    }
-    else {
-      max = std::max<double>(green, blue);
-      min = std::min<double>(red, blue);
-    }
-
-    v = max;
-
-    if (!vpMath::equal(max, 0., std::numeric_limits<double>::epsilon())) {
-      s = 255. * (max - min) / max;
-    }
-    else {
-      s = 0.;
-    }
-
-    if (vpMath::equal(s, 0., std::numeric_limits<double>::epsilon())) {
-      h = 0.;
-    }
-    else {
-      double delta = max - min;
-      if (vpMath::equal(delta, 0., std::numeric_limits<double>::epsilon())) {
-        delta = 255.;
-      }
-
-      if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
-        h = 43. * (green - blue) / delta;
-      }
-      else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
-        h = 85. + 43. * (blue - red) / delta;
-      }
-      else {
-        h = 171. + 43. * (red - green) / delta;
-      }
-
-      if (h < 0.) {
-        h += 255.;
-      }
-      else if (h > 255.) {
-        h -= 255.;
-      }
-    }
-
-    hue[i] = h;
-    saturation[i] = s;
-    value[i] = v;
-  }
+  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
 }
 
 /*!
