@@ -480,11 +480,10 @@ int main(int argc, const char **argv)
     // Convert a vpImage<vpRGBa> in RGB color space to a vpImage<vpRGBa> in
     // HSV color
     ////////////////////////////////////
-    std::cout << "** Convert a vpImage<vpRGBa> in RGB color space to a "
-      "vpImage<vpRGBa> in HSV color"
-      << std::endl;
+    std::cout << "** Convert a vpImage<vpRGBa> in RGB color space to a  vpImage<vpRGBa> in HSV color" << std::endl;
     unsigned int size = Ic.getSize();
     unsigned int w = Ic.getWidth(), h = Ic.getHeight();
+    // Check the conversion RGBa <==> HSV(unsigned char)
     std::vector<unsigned char> hue(size);
     std::vector<unsigned char> saturation(size);
     std::vector<unsigned char> value(size);
@@ -500,7 +499,25 @@ int main(int argc, const char **argv)
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     vpImageIo::write(I_HSV, filename);
 
-    // Check the conversion RGBa <==> HSV
+    vpImage<vpRGBa> Ic_from_hsv(Ic.getHeight(), Ic.getWidth());
+    vpImageConvert::HSVToRGBa(&hue.front(), &saturation.front(), &value.front(), reinterpret_cast<unsigned char *>(Ic_from_hsv.bitmap), size);
+    for (unsigned int i = 0; i < Ic.getHeight(); i++) {
+      for (unsigned int j = 0; j < Ic.getWidth(); j++) {
+        int precision = 10.; // Due to cast to unsigned char
+        if ((!vpMath::equal(static_cast<unsigned>(Ic[i][j].R), static_cast<unsigned>(Ic_from_hsv[i][j].R), precision))
+            || (!vpMath::equal(static_cast<unsigned>(Ic[i][j].G), static_cast<unsigned>(Ic_from_hsv[i][j].G), precision))
+            || (!vpMath::equal(static_cast<unsigned>(Ic[i][j].B), static_cast<unsigned>(Ic_from_hsv[i][j].B), precision))) {
+          std::cerr << "Ic[i][j].R=" << static_cast<unsigned>(Ic[i][j].R)
+            << " ; Ic_from_hsv[i][j].R=" << static_cast<unsigned>(Ic_from_hsv[i][j].R) << " precision: " << precision << std::endl;
+          std::cerr << "Ic[i][j].G=" << static_cast<unsigned>(Ic[i][j].G)
+            << " ; Ic_from_hsv[i][j].G=" << static_cast<unsigned>(Ic_from_hsv[i][j].G) << " precision: " << precision << std::endl;
+          std::cerr << "Ic[i][j].B=" << static_cast<unsigned>(Ic[i][j].B)
+            << " ; Ic_from_hsv[i][j].B=" << static_cast<unsigned>(Ic_from_hsv[i][j].B) << " precision: " << precision << std::endl;
+          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV(unsigned char)");
+        }
+      }
+    }
+    // Check the conversion RGBa <==> HSV(double)
     std::vector<double> hue2(size);
     std::vector<double> saturation2(size);
     std::vector<double> value2(size);
@@ -523,7 +540,7 @@ int main(int argc, const char **argv)
             << " ; I_HSV2RGBa[i][j].G=" << static_cast<unsigned>(I_HSV2RGBa[i][j].G) << std::endl;
           std::cerr << "Ic[i][j].B=" << static_cast<unsigned>(Ic[i][j].B)
             << " ; I_HSV2RGBa[i][j].B=" << static_cast<unsigned>(I_HSV2RGBa[i][j].B) << std::endl;
-          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV");
+          throw vpException(vpException::fatalError, "Problem with conversion between RGB <==> HSV(double)");
         }
       }
     }
