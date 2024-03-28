@@ -177,9 +177,6 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     }
     else {
       double delta = max - min;
-      if (vpMath::equal(delta, 0.0, std::numeric_limits<double>::epsilon())) {
-        delta = 1.0;
-      }
 
       if (vpMath::equal(red, max, std::numeric_limits<double>::epsilon())) {
         h = (green - blue) / delta;
@@ -203,6 +200,81 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     hue[i] = h;
     saturation[i] = s;
     value[i] = v;
+  }
+}
+
+/*!
+ * Convert an RGB or RGBa color image depending on the value of \e step into an HSV image.
+ * \param[out] rgb : Pointer to the 24-bit or 32-bits color image that should be allocated with a size of
+ * width * height * step.
+ * \param[out] hue : Output H channel with values in range [0, 255].
+ * \param[out] saturation : Output S channel with values in range [0, 255].
+ * \param[out] value : Output V channel with values in range [0, 255].
+ * \param[in] size : The image size or the number of pixels corresponding to the image width * height.
+ * \param[in] step : Number of channels of the input color image; 3 for an RGB image, 4 for an RGBA image.
+ */
+void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+                             unsigned int size, unsigned int step)
+{
+  int size_ = static_cast<int>(size);
+#if defined(_OPENMP)
+#pragma omp parallel for
+#endif
+  for (int i = 0; i < size_; ++i) {
+    float red, green, blue;
+    float h, s, v;
+    float min, max;
+    unsigned int i_ = i * step;
+
+    red = rgb[i_];
+    green = rgb[++i_];
+    blue = rgb[++i_];
+
+    if (red > green) {
+      max = std::max<float>(red, blue);
+      min = std::min<float>(green, blue);
+    }
+    else {
+      max = std::max<float>(green, blue);
+      min = std::min<float>(red, blue);
+    }
+
+    v = max;
+
+    if (!vpMath::equal(max, 0.f, std::numeric_limits<float>::epsilon())) {
+      s = 255.f * (max - min) / max;
+    }
+    else {
+      s = 0.f;
+    }
+
+    if (vpMath::equal(s, 0.f, std::numeric_limits<float>::epsilon())) {
+      h = 0.f;
+    }
+    else {
+      float delta = max - min;
+
+      if (vpMath::equal(red, max, std::numeric_limits<float>::epsilon())) {
+        h = 43.f * (green - blue) / delta;
+      }
+      else if (vpMath::equal(green, max, std::numeric_limits<float>::epsilon())) {
+        h = 85.f + 43.f * (blue - red) / delta;
+      }
+      else {
+        h = 171.f + 43.f * (red - green) / delta;
+      }
+
+      if (h < 0.f) {
+        h += 255.f;
+      }
+      else if (h > 255.f) {
+        h -= 255.f;
+      }
+    }
+
+    hue[i] = static_cast<unsigned char>(h);
+    saturation[i] = static_cast<unsigned char>(s);
+    value[i] = static_cast<unsigned char>(v);
   }
 }
 
@@ -275,70 +347,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
                                unsigned char *value, unsigned int size)
 {
-  int step = 4;
-  int size_ = static_cast<int>(size);
-#if defined(_OPENMP)
-#pragma omp parallel for
-#endif
-  for (int i = 0; i < size_; ++i) {
-    float red, green, blue;
-    float h, s, v;
-    float min, max;
-    unsigned int i_ = i * step;
-
-    red = rgba[i_];
-    green = rgba[++i_];
-    blue = rgba[++i_];
-
-    if (red > green) {
-      max = std::max<float>(red, blue);
-      min = std::min<float>(green, blue);
-    }
-    else {
-      max = std::max<float>(green, blue);
-      min = std::min<float>(red, blue);
-    }
-
-    v = max;
-
-    if (!vpMath::equal(max, 0.f, std::numeric_limits<float>::epsilon())) {
-      s = 255.f * (max - min) / max;
-    }
-    else {
-      s = 0.f;
-    }
-
-    if (vpMath::equal(s, 0.f, std::numeric_limits<float>::epsilon())) {
-      h = 0.f;
-    }
-    else {
-      float delta = max - min;
-      if (vpMath::equal(delta, 0.0, std::numeric_limits<float>::epsilon())) {
-        delta = 255.f;
-      }
-
-      if (vpMath::equal(red, max, std::numeric_limits<float>::epsilon())) {
-        h = 43.f * (green - blue) / delta;
-      }
-      else if (vpMath::equal(green, max, std::numeric_limits<float>::epsilon())) {
-        h = 85.f + 43.f * (blue - red) / delta;
-      }
-      else {
-        h = 171.f + 43.f * (red - green) / delta;
-      }
-
-      if (h < 0.f) {
-        h += 255.f;
-      }
-      else if (h > 255.f) {
-        h -= 255.f;
-      }
-    }
-
-    hue[i] = static_cast<unsigned char>(h);
-    saturation[i] = static_cast<unsigned char>(s);
-    value[i] = static_cast<unsigned char>(v);
-  }
+  vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
 }
 
 /*!

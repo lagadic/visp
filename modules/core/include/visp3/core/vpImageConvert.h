@@ -293,6 +293,8 @@ private:
                       unsigned int size, unsigned int step);
   static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size,
                       unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
+                      unsigned int size, unsigned int step);
 
 private:
   static bool YCbCrLUTcomputed;
