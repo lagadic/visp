@@ -140,14 +140,15 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
 void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
                              unsigned int size, unsigned int step)
 {
+  int size_ = static_cast<int>(size);
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size_; ++i) {
     double red, green, blue;
     double h, s, v;
     double min, max;
-    unsigned int i_ = i * step;
+    int i_ = i * step;
 
     red = rgb[i_] / 255.0;
     green = rgb[++i_] / 255.0;
@@ -274,11 +275,12 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
                                unsigned char *value, unsigned int size)
 {
-  unsigned int step = 4;
+  int step = 4;
+  int size_ = static_cast<int>(size);
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size_; ++i) {
     float red, green, blue;
     float h, s, v;
     float min, max;
