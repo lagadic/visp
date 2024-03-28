@@ -316,7 +316,7 @@ inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::v
 {
   const auto original_row_size = static_cast<Type>(costs.size());
   const auto original_col_size = static_cast<Type>(costs.front().size());
-  const auto sq_size = std::max<Type>(original_row_size, original_col_size);
+  const size_t sq_size = static_cast<size_t>(std::max<Type>(original_row_size, original_col_size));
 
   auto mask = std::vector<std::vector<vpMunkres::ZERO_T> >(sq_size, std::vector<vpMunkres::ZERO_T>(sq_size, vpMunkres::ZERO_T::NA));
   auto row_cover = std::vector<bool>(sq_size, false);
