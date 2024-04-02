@@ -271,6 +271,14 @@ if(USE_NLOHMANN_JSON)
   list(APPEND opt_incs ${_inc_dirs})
 endif()
 
+if(USE_PCL)
+  list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
+  # To ensure to build with VTK and other PCL 3rd parties we are not using PCL_LIBRARIES but PCL_DEPS_INCLUDE_DIRS
+  # and PCL_DEPS_LIBRARIES instead
+  list(APPEND opt_incs ${PCL_DEPS_INCLUDE_DIRS})
+  list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
+endif()
+
 if(WITH_PUGIXML)
   # pugixml is private and provides default XML I/O capabilities
   include_directories(${PUGIXML_INCLUDE_DIRS})
