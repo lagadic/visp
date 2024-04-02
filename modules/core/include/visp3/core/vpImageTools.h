@@ -128,6 +128,8 @@ public:
 
   static void inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
                       const vpColVector &hsv_values, unsigned char *mask, unsigned int size);
+  static void inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                      const std::vector<int> &hsv_values, unsigned char *mask, unsigned int size);
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV, vpArray2D<float> &mapDu,
                                vpArray2D<float> &mapDv);

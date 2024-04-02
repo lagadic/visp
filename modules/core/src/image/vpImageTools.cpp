@@ -1027,3 +1027,51 @@ void vpImageTools::inRange(const unsigned char *hue, const unsigned char *satura
     }
   }
 }
+
+/*!
+ * Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+ * \param[in] hue : Pointer to an array of hue values. Its dimension is equal to the `size` parameter.
+ * \param[in] saturation : Pointer to an array of saturation values. Its dimension is equal to the `size` parameter.
+ * \param[in] value : Pointer to an array of values. Its dimension is equal to the `size` parameter.
+ * \param[in] hsv_values : 6-dim vector that contains the low/high threshold values for each HSV channel respectively.
+ * Each element of this vector should be in [0,255] range. Note that there is also tutorial-hsv-tuner.cpp that may help
+ * to determine low/high HSV values.
+ * \param[out] mask : Pointer to a resulting mask of dimension `size`. When HSV value is in the boundaries, the mask
+ * element is set to 255, otherwise to 0. The mask should be allocated prior calling this function. Its dimension
+ * is equal to the `size` parameter.
+ * \param[in] size : Size of `hue`, `saturation`, `value` and `mask` arrays.
+ *
+ * \sa vpImageConvert::RGBToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ * \sa vpImageConvert::RGBaToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ */
+void vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                           const std::vector<int> &hsv_values, unsigned char *mask, unsigned int size)
+{
+  if ((hue == nullptr) || (saturation == nullptr) || (value == nullptr)) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): hsv pointer are empty"));
+  }
+  else if (hsv_values.size() != 6) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_values.size()));
+  }
+  unsigned char h_low = static_cast<unsigned char>(hsv_values[0]);
+  unsigned char h_high = static_cast<unsigned char>(hsv_values[1]);
+  unsigned char s_low = static_cast<unsigned char>(hsv_values[2]);
+  unsigned char s_high = static_cast<unsigned char>(hsv_values[3]);
+  unsigned char v_low = static_cast<unsigned char>(hsv_values[4]);
+  unsigned char v_high = static_cast<unsigned char>(hsv_values[5]);
+#if defined(_OPENMP)
+#pragma omp parallel for
+#endif
+  for (unsigned int i = 0; i < size; ++i) {
+    if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
+        (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
+        (v_low <= value[i]) && (value[i] <= v_high)) {
+      mask[i] = 255;
+    }
+    else {
+      mask[i] = 0;
+    }
+  }
+}
