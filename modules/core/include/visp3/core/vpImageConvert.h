@@ -233,18 +233,18 @@ public:
   static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                         unsigned int size);
   static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                        unsigned char *rgba, unsigned int size);
+                        unsigned char *rgba, unsigned int size, bool h_full = true);
   static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value, unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                        unsigned int size);
+                        unsigned int size, bool h_full = true);
 
   static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
                        unsigned int size);
   static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                       unsigned char *rgb, unsigned int size);
+                       unsigned char *rgb, unsigned int size, bool h_full = true);
   static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                       unsigned int size);
+                       unsigned int size, bool h_full = true);
 
   static void demosaicBGGRToRGBaBilinear(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height,
                                          unsigned int nThreads = 0);
@@ -291,10 +291,12 @@ private:
 
   static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
                       unsigned int size, unsigned int step);
+  static void HSV2RGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value, unsigned char *rgba,
+                      unsigned int size, unsigned int step, bool h_full);
   static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size,
                       unsigned int step);
   static void RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                      unsigned int size, unsigned int step);
+                      unsigned int size, unsigned int step, bool h_full);
 
 private:
   static bool YCbCrLUTcomputed;
