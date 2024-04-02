@@ -39,26 +39,37 @@
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
+#include <thread>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
+/*!
+  \class vpDisplayPCL
+  \ingroup group_gui_plotter
+  This class enables real time plotting of 3D point clouds. It relies on the PCL library.
+  To see how to install PCL library, please refer to the \ref soft_tool_pcl section.
+*/
 class VISP_EXPORT vpDisplayPCL
 {
 public:
-  explicit vpDisplayPCL();
+  vpDisplayPCL();
+  vpDisplayPCL(unsigned int width, unsigned int height);
+  ~vpDisplayPCL();
 
-  void flush();
-
-  void run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
-  ;
   void setVerbose(bool verbose);
+  void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
   void stop();
 
 private:
+  void run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
+
   bool m_stop;
-  bool m_flush_viewer;
   bool m_verbose;
+  std::thread m_thread; //!< Non-blocking display thread.
+  std::mutex m_mutex;
+  unsigned int m_width;
+  unsigned int m_height;
 };
 
 #endif

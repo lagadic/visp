@@ -37,32 +37,44 @@
 
 #include <visp3/gui/vpDisplayPCL.h>
 
-vpDisplayPCL::vpDisplayPCL() : m_stop(false), m_flush_viewer(false), m_verbose(false) { }
+/*!
+ * Default constructor.
+ * By default, viewer size is set to 640 x 480.
+ */
+vpDisplayPCL::vpDisplayPCL() : m_stop(false), m_verbose(false), m_width(640), m_height(480) { }
 
-void vpDisplayPCL::flush()
+/*!
+ * Constructor able to initialize the display window size.
+ */
+vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height) : m_stop(false), m_verbose(false), m_width(width), m_height(height) { }
+
+/*!
+ * Destructor that stops and join the viewer thread if not already done.
+ */
+vpDisplayPCL::~vpDisplayPCL()
 {
-  m_flush_viewer = true;
+  stop();
 }
 
+/*!
+ * Loop that does the display of the point cloud.
+ * @param[inout] mutex : Shared mutex.
+ * @param[in] pointcloud : Point cloud to display.
+ */
 void vpDisplayPCL::run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
 {
   pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-
-  bool flush_viewer = false;
   pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
   viewer->setBackgroundColor(0, 0, 0);
   viewer->initCameraParameters();
-  viewer->setPosition(640 + 80, 480 + 80);
+  viewer->setPosition(m_width + 80, m_height + 80);
   viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  viewer->setSize(640, 480);
+  viewer->setSize(m_width, m_height);
 
   while (!m_stop) {
     {
       std::lock_guard<std::mutex> lock(mutex);
-      flush_viewer = m_flush_viewer;
-      m_flush_viewer = false;
       local_pointcloud = pointcloud->makeShared();
-
     }
 
     // If updatePointCloud fails, it means that the pcl was not previously known by the viewer
@@ -80,11 +92,34 @@ void vpDisplayPCL::run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr po
   }
 }
 
-void vpDisplayPCL::stop()
+/*!
+ * Start the viewer thread able to display a point cloud.
+ * @param[inout] mutex : Shared mutex.
+ * @param[in] pointcloud : Point cloud to display.
+ */
+void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
 {
-  m_stop = true;
+  m_thread = std::thread(&vpDisplayPCL::run, this, std::ref(mutex), pointcloud);
 }
 
+/*!
+ * Stop the viewer thread and join.
+ */
+void vpDisplayPCL::stop()
+{
+  if (!m_stop) {
+    m_stop = true;
+
+    if (m_thread.joinable()) {
+      m_thread.join();
+    }
+  }
+}
+
+/*!
+ * Enable/disable verbose mode.
+ * @param[in] verbose : When true verbose mode is enable.
+ */
 void vpDisplayPCL::setVerbose(bool verbose)
 {
   m_verbose = verbose;
