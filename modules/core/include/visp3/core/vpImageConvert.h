@@ -64,6 +64,15 @@
 #include <windows.h>
 #endif
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpImageException.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+
+#include <pcl/impl/point_types.hpp>
+#include <pcl/point_cloud.h>
+#endif
+
 /*!
   \class vpImageConvert
 
@@ -134,8 +143,14 @@ public:
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
 #endif
 
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+  static void depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale, const vpCameraParameters &cam_depth,
+                                pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
+                                const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+#endif
+
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
-                    vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
+                      vpImage<unsigned char> *pB, vpImage<unsigned char> *pa = nullptr);
 
   static void merge(const vpImage<unsigned char> *R, const vpImage<unsigned char> *G, const vpImage<unsigned char> *B,
                     const vpImage<unsigned char> *a, vpImage<vpRGBa> &RGBa);
