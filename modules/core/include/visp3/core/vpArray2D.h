@@ -223,16 +223,16 @@ public:
       resize(r, c, false, false);
     }
     else if (c == 0) {
-      resize(vec.size(), 1, false, false);
+      resize(static_cast<unsigned int>(vec.size()), 1, false, false);
     }
     else if (r == 0) {
-      resize(1, vec.size(), false, false);
+      resize(1, static_cast<unsigned int>(vec.size()), false, false);
     }
-// #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
-//     std::copy(vec.begin(), vec.end(), data);
-// #else
+#if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
+    std::copy(vec.begin(), vec.end(), data);
+#else
     memcpy(data, vec.data(), vec.size() * sizeof(Type));
-// #endif
+#endif
   }
 
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
