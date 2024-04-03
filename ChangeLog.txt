@@ -50,6 +50,8 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-python-bindings.html
     . New tutorial: Color segmentation using HSV color scale
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation.html
+    . New tutorial: HSV low/high range tuner tool
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-range-tuner.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17

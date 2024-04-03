@@ -130,6 +130,9 @@ This page introduces the user to the way to achieve image and object segmentatio
 
 - \subpage tutorial-hsv-segmentation <br>This tutorial shows how to use HSV color scale to segment a given color in
   an image.
+- \subpage tutorial-hsv-range-tuner <br>This tutorial shows how to use HSV tuner tool to ease defining HSV
+  how/high values used to select a given color either in a single image, or in a live stream provided by a Realsense
+  camera.
 
 */
 

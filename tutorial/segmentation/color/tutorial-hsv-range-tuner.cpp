@@ -4,7 +4,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(HAVE_OPENCV_HIGHGUI)
+#if defined(HAVE_OPENCV_HIGHGUI)
 #include <vector>
 
 #include <opencv2/highgui.hpp>
@@ -79,6 +79,7 @@ int main(int argc, char *argv[])
 {
   bool opt_save_img = false;
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
+  std::string opt_img_filename;
   bool show_helper = false;
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--hsv-thresholds") {
@@ -87,7 +88,16 @@ int main(int argc, char *argv[])
       }
       else {
         show_helper = true;
-        std::cout << "ERROR \nMissing value after parameter " << std::string(argv[i]) << std::endl;
+        std::cout << "ERROR \nMissing yaml filename after parameter " << std::string(argv[i]) << std::endl;
+      }
+    }
+    else if (std::string(argv[i]) == "--image") {
+      if ((i+1) < argc) {
+        opt_img_filename = std::string(argv[++i]);
+      }
+      else {
+        show_helper = true;
+        std::cout << "ERROR \nMissing input image name after parameter " << std::string(argv[i]) << std::endl;
       }
     }
     else if (std::string(argv[i]) == "--save-img") {
@@ -96,13 +106,18 @@ int main(int argc, char *argv[])
     if (show_helper || std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nSYNOPSIS " << std::endl
         << argv[0]
-        << " [--hsv-thresholds <output filename>]"
+        << " [--image <input image>]"
+        << " [--hsv-thresholds <output filename.yml>]"
         << " [--save-img]"
         << " [--help,-h]"
         << std::endl;
       std::cout << "\nOPTIONS " << std::endl
-        << "  --hsv-thresholds <filename.yml>" << std::endl
-        << "    Name of the output filename that will contain HSV low/high thresholds." << std::endl
+        << "  --image <input image>" << std::endl
+        << "    Name of the input image filename." << std::endl
+        << "    When this option is not set, we use librealsense to stream images from a Realsense camera. " << std::endl
+        << std::endl
+        << "  --hsv-thresholds <output filename.yml>" << std::endl
+        << "    Name of the output filename with yaml extension that will contain HSV low/high thresholds." << std::endl
         << "    Default: " << opt_hsv_filename << std::endl
         << std::endl
         << "  --save-img" << std::endl
@@ -115,6 +130,20 @@ int main(int argc, char *argv[])
     }
   }
 
+  bool use_realsense = false;
+#if defined(VISP_HAVE_REALSENSE2)
+  use_realsense = true;
+#endif
+  if (use_realsense) {
+    if (!opt_img_filename.empty()) {
+      use_realsense = false;
+    }
+  }
+  else if (opt_img_filename.empty()) {
+    std::cout << "Error: you should use --image <input image> option to specify an input image..." << std::endl;
+    return EXIT_FAILURE;
+  }
+
   int max_value_H = 255;
   int max_value = 255;
 
@@ -125,14 +154,37 @@ int main(int argc, char *argv[])
   hsv_values_trackbar[4] = 0;           // Low V
   hsv_values_trackbar[5] = max_value;   // High V
 
-  int width = 848, height = 480, fps = 60;
+  vpImage<vpRGBa> Ic;
+  int width, height;
+
+#if defined(VISP_HAVE_REALSENSE2)
   vpRealSense2 rs;
-  rs2::config config;
-  config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
-  config.disable_stream(RS2_STREAM_DEPTH);
-  config.disable_stream(RS2_STREAM_INFRARED, 1);
-  config.disable_stream(RS2_STREAM_INFRARED, 2);
-  rs.open(config);
+#endif
+
+  if (use_realsense) {
+#if defined(VISP_HAVE_REALSENSE2)
+    width = 848; height = 480;
+    int fps = 60;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
+    config.disable_stream(RS2_STREAM_DEPTH);
+    config.disable_stream(RS2_STREAM_INFRARED, 1);
+    config.disable_stream(RS2_STREAM_INFRARED, 2);
+    rs.open(config);
+    rs.acquire(Ic);
+#endif
+  }
+  else {
+    try {
+      vpImageIo::read(Ic, opt_img_filename);
+    }
+    catch (const vpException &e) {
+      std::cout << e.getStringMessage() << std::endl;
+      return EXIT_FAILURE;
+    }
+    width = Ic.getWidth();
+    height = Ic.getHeight();
+  }
 
   cv::namedWindow(window_detection_name);
 
@@ -154,7 +206,6 @@ int main(int argc, char *argv[])
   cv::createTrackbar("Low V", window_detection_name, &hsv_values_trackbar[4], max_value, on_low_V_thresh_trackbar);
   cv::createTrackbar("High V", window_detection_name, &hsv_values_trackbar[5], max_value, on_high_V_thresh_trackbar);
 
-  vpImage<vpRGBa> Ic(height, width);
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
@@ -166,7 +217,14 @@ int main(int argc, char *argv[])
   bool quit = false;
 
   while (!quit) {
-    rs.acquire(Ic);
+    if (use_realsense) {
+#if defined(VISP_HAVE_REALSENSE2)
+      rs.acquire(Ic);
+#endif
+    }
+    else {
+      vpImageIo::read(Ic, opt_img_filename);
+    }
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(Ic.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
@@ -268,9 +326,6 @@ int main(int argc, char *argv[])
 #else
 int main()
 {
-#if !defined(VISP_HAVE_REALSENSE2)
-  std::cout << "This tutorial needs librealsense as 3rd party." << std::endl;
-#endif
 #if !defined(HAVE_OPENCV_HIGHGUI)
   std::cout << "This tutorial needs OpenCV highgui module as 3rd party." << std::endl;
 #endif

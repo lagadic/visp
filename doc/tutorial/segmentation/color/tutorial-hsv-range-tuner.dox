@@ -1,0 +1,61 @@
+/**
+  \page tutorial-hsv-range-tuner Tutorial: HSV low/high range tuner tool
+  \tableofcontents
+
+\section hsv_range_tuner_intro Introduction
+
+This tutorial follows \ref tutorial-hsv-segmentation.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code
+(in `tutorial/segmentation/color` folder) and could be found in
+https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
+
+\section hsv_range_tuner HSV Range tuner tool
+
+In the previous tutorial (see \ref tutorial-hsv-segmentation), we used the following lines to determine
+HSV low/high range values in `hsv_range` vector:
+
+\snippet tutorial-hsv-segmentation-basic.cpp Set HSV range
+
+Then this vector was used to determine the pixels that were in the HSV low/high ranges in oder to compute a `mask`:
+
+\snippet tutorial-hsv-segmentation-basic.cpp Create HSV mask
+
+In tutorial-hsv-range-tuner.cpp we propose a tool that allows to set these HSV low/high values either using a
+trackbar or by clicking on a pixel in the image before fine tuning the range values with the trackbar.
+
+- Once build, you can either use this tool on a single image like
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/segmentation/color
+$ ./tutorial-hsv-range-tuner --image ballons.jpg
+\endverbatim
+\image html ballons-hsv-tuner.jpg
+- or if you have a Realsense camera, proceed with the live stream simply by running
+\verbatim
+$ ./tutorial-hsv-range-tuner
+\endverbatim
+
+To use this tool, in the "Current frame" window:
+- Left click allows to set the HSV low/high values in the trackbar
+- Middle click allows to print the RGB and HSV values corresponding to the clicked point
+- Right mouse click allows to save the HSV low/high range values in a yaml file. By default this file is saved in
+  `calib/hsv-thresholds.yml`. Hereafter we provide a possible content:
+\verbatim
+$ cat calib/hsv-thresholds.yml
+# File created 2024/04/03 17:28:10
+rows: 6
+cols: 1
+data:
+  - [0]
+  - [64]
+  - [222]
+  - [255]
+  - [128]
+  - [242]
+\endverbatim
+
+\section hsv_range_tuner_next Next tutorial
+
+You are now ready to see how to continue with \ref tutorial-grabber.
+
+*/
