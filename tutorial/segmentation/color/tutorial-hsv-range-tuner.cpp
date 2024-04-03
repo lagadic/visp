@@ -1,4 +1,4 @@
-//! \example tutorial-hsv-tuner.cpp
+//! \example tutorial-hsv-range-tuner.cpp
 
 #include <iostream>
 
@@ -158,10 +158,11 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
-  vpImage<unsigned char> Ic_segmented(height, width, 0);
+  vpImage<unsigned char> mask(height, width);
+  vpImage<vpRGBa> Ic_segmented(height, width);
 
   vpDisplayX d_Ic(Ic, 0, 0, "Current frame");
-  vpDisplayX d_Ic_segmented(Ic_segmented, Ic.getWidth()+75, 0, "HSV segmented frame");
+  vpDisplayX d_Ic_segmented(Ic_segmented, Ic.getWidth()+75, 0, "Segmented frame");
   bool quit = false;
 
   while (!quit) {
@@ -172,11 +173,13 @@ int main(int argc, char *argv[])
                               reinterpret_cast<unsigned char *>(V.bitmap), Ic.getSize());
 
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
-                          reinterpret_cast<unsigned char *>(S.bitmap),
-                          reinterpret_cast<unsigned char *>(V.bitmap),
-                          hsv_values_trackbar,
-                          reinterpret_cast<unsigned char *>(Ic_segmented.bitmap),
-                          Ic_segmented.getSize());
+                                                reinterpret_cast<unsigned char *>(S.bitmap),
+                                                reinterpret_cast<unsigned char *>(V.bitmap),
+                                                hsv_values_trackbar,
+                                                reinterpret_cast<unsigned char *>(mask.bitmap),
+                                                mask.getSize());
+
+    vpImageTools::inMask(Ic, mask, Ic_segmented);
 
     vpDisplay::display(Ic);
     vpDisplay::display(Ic_segmented);
