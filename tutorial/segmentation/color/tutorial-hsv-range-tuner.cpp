@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
   hsv_values_trackbar[4] = 0;           // Low V
   hsv_values_trackbar[5] = max_value;   // High V
 
-  vpImage<vpRGBa> Ic;
+  vpImage<vpRGBa> I;
   int width, height;
 
 #if defined(VISP_HAVE_REALSENSE2)
@@ -171,19 +171,19 @@ int main(int argc, char *argv[])
     config.disable_stream(RS2_STREAM_INFRARED, 1);
     config.disable_stream(RS2_STREAM_INFRARED, 2);
     rs.open(config);
-    rs.acquire(Ic);
+    rs.acquire(I);
 #endif
   }
   else {
     try {
-      vpImageIo::read(Ic, opt_img_filename);
+      vpImageIo::read(I, opt_img_filename);
     }
     catch (const vpException &e) {
       std::cout << e.getStringMessage() << std::endl;
       return EXIT_FAILURE;
     }
-    width = Ic.getWidth();
-    height = Ic.getHeight();
+    width = I.getWidth();
+    height = I.getHeight();
   }
 
   cv::namedWindow(window_detection_name);
@@ -210,25 +210,25 @@ int main(int argc, char *argv[])
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
   vpImage<unsigned char> mask(height, width);
-  vpImage<vpRGBa> Ic_segmented(height, width);
+  vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_Ic(Ic, 0, 0, "Current frame");
-  vpDisplayX d_Ic_segmented(Ic_segmented, Ic.getWidth()+75, 0, "Segmented frame");
+  vpDisplayX d_I(I, 0, 0, "Current frame");
+  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "Segmented frame");
   bool quit = false;
 
   while (!quit) {
     if (use_realsense) {
 #if defined(VISP_HAVE_REALSENSE2)
-      rs.acquire(Ic);
+      rs.acquire(I);
 #endif
     }
     else {
-      vpImageIo::read(Ic, opt_img_filename);
+      vpImageIo::read(I, opt_img_filename);
     }
-    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(Ic.bitmap),
+    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
-                              reinterpret_cast<unsigned char *>(V.bitmap), Ic.getSize());
+                              reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
 
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
                                                 reinterpret_cast<unsigned char *>(S.bitmap),
@@ -237,16 +237,16 @@ int main(int argc, char *argv[])
                                                 reinterpret_cast<unsigned char *>(mask.bitmap),
                                                 mask.getSize());
 
-    vpImageTools::inMask(Ic, mask, Ic_segmented);
+    vpImageTools::inMask(I, mask, I_segmented);
 
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ic_segmented);
-    vpDisplay::displayText(Ic, 20, 20, "Left click to learn HSV value...", vpColor::red);
-    vpDisplay::displayText(Ic, 40, 20, "Middle click to get HSV value...", vpColor::red);
-    vpDisplay::displayText(Ic, 60, 20, "Right click to quit...", vpColor::red);
+    vpDisplay::display(I);
+    vpDisplay::display(I_segmented);
+    vpDisplay::displayText(I, 20, 20, "Left click to learn HSV value...", vpColor::red);
+    vpDisplay::displayText(I, 40, 20, "Middle click to get HSV value...", vpColor::red);
+    vpDisplay::displayText(I, 60, 20, "Right click to quit...", vpColor::red);
     vpImagePoint ip;
     vpMouseButton::vpMouseButtonType button;
-    if (vpDisplay::getClick(Ic, ip, button, false)) {
+    if (vpDisplay::getClick(I, ip, button, false)) {
       if (button == vpMouseButton::button3) {
         quit = true;
       }
@@ -256,8 +256,8 @@ int main(int argc, char *argv[])
         int h = static_cast<int>(H[i][j]);
         int s = static_cast<int>(S[i][j]);
         int v = static_cast<int>(V[i][j]);
-        std::cout << "RGB[" << i << "][" << j << "]: " << static_cast<int>(Ic[i][j].R) << " " << static_cast<int>(Ic[i][j].G)
-          << " " << static_cast<int>(Ic[i][j].B) << " -> HSV: " << h << " " << s << " " << v << std::endl;
+        std::cout << "RGB[" << i << "][" << j << "]: " << static_cast<int>(I[i][j].R) << " " << static_cast<int>(I[i][j].G)
+          << " " << static_cast<int>(I[i][j].B) << " -> HSV: " << h << " " << s << " " << v << std::endl;
       }
       else if (button == vpMouseButton::button1) {
         unsigned int i = ip.get_i();
@@ -310,14 +310,14 @@ int main(int argc, char *argv[])
         std::cout << "Save images in path_img folder..." << std::endl;
         vpImage<vpRGBa> I_HSV;
         vpImageConvert::merge(&H, &S, &V, nullptr, I_HSV);
-        vpImageIo::write(Ic, path_img + "/I.png");
+        vpImageIo::write(I, path_img + "/I.png");
         vpImageIo::write(I_HSV, path_img + "/I-HSV.png");
-        vpImageIo::write(Ic_segmented, path_img + "/I-HSV-segmented.png");
+        vpImageIo::write(I_segmented, path_img + "/I-HSV-segmented.png");
       }
       break;
     }
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ic_segmented);
+    vpDisplay::flush(I);
+    vpDisplay::flush(I_segmented);
     cv::waitKey(10); // To display trackbar
   }
   return EXIT_SUCCESS;

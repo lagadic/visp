@@ -66,14 +66,15 @@ int main(int argc, char **argv)
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs.open(config);
 
-  vpImage<vpRGBa> Ic(height, width);
+  vpImage<vpRGBa> I(height, width);
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
-  vpImage<unsigned char> Ic_segmented_mask(height, width, 0);
+  vpImage<unsigned char> mask(height, width);
+  vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_Ic(Ic, 0, 0, "Current frame");
-  vpDisplayX d_Ic_segmented_mask(Ic_segmented_mask, Ic.getWidth()+75, 0, "HSV segmented frame");
+  vpDisplayX d_I(I, 0, 0, "Current frame");
+  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 
   bool quit = false;
   double loop_time = 0., total_loop_time = 0.;
@@ -81,34 +82,35 @@ int main(int argc, char **argv)
 
   while (!quit) {
     double t = vpTime::measureTimeMs();
-    rs.acquire(Ic);
-    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(Ic.bitmap),
+    rs.acquire(I);
+    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
-                              reinterpret_cast<unsigned char *>(V.bitmap), Ic.getSize());
+                              reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
 
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
                           reinterpret_cast<unsigned char *>(S.bitmap),
                           reinterpret_cast<unsigned char *>(V.bitmap),
                           hsv_values,
-                          reinterpret_cast<unsigned char *>(Ic_segmented_mask.bitmap),
-                          Ic_segmented_mask.getSize());
+                          reinterpret_cast<unsigned char *>(mask.bitmap),
+                          mask.getSize());
 
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ic_segmented_mask);
-    vpDisplay::displayText(Ic, 20, 20, "Click to quit...", vpColor::red);
+    vpImageTools::inMask(I, mask, I_segmented);
 
-    if (vpDisplay::getClick(Ic, false)) {
+    vpDisplay::display(I);
+    vpDisplay::display(I_segmented);
+    vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
+
+    if (vpDisplay::getClick(I, false)) {
       quit = true;
     }
 
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ic_segmented_mask);
+    vpDisplay::flush(I);
+    vpDisplay::flush(I_segmented);
     nb_iter++;
     loop_time = vpTime::measureTimeMs() - t;
     total_loop_time += loop_time;
   }
-
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
   return EXIT_SUCCESS;

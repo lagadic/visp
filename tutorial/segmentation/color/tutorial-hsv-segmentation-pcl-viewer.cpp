@@ -16,67 +16,6 @@
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 
-#if 1
-class vpPointCloudViewer
-{
-public:
-  explicit vpPointCloudViewer() : m_stop(false), m_flush_viewer(false) { }
-
-  void flush()
-  {
-    m_flush_viewer = true;
-  }
-
-  void run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
-  {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-
-    bool flush_viewer = false;
-    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-    viewer->setBackgroundColor(0, 0, 0);
-    viewer->initCameraParameters();
-    viewer->setPosition(640 + 80, 480 + 80);
-    viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-    viewer->setSize(640, 480);
-
-    bool first_init = true;
-    while (!m_stop) {
-      {
-        std::lock_guard<std::mutex> lock(mutex);
-        flush_viewer = m_flush_viewer;
-        m_flush_viewer = false;
-        local_pointcloud = pointcloud->makeShared();
-      }
-
-      if (flush_viewer) {
-        if (first_init) {
-
-          viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-          viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-          first_init = false;
-        }
-        else {
-          viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-        }
-      }
-
-      viewer->spinOnce(10);
-    }
-
-    std::cout << "End of point cloud display thread" << std::endl;
-  }
-
-  void stop()
-  {
-    m_stop = true;
-  }
-
-private:
-  bool m_stop;
-  bool m_flush_viewer;
-};
-#endif
-
 int main(int argc, char **argv)
 {
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
@@ -137,20 +76,21 @@ int main(int argc, char **argv)
   vpCameraParameters cam_depth = rs.getCameraParameters(RS2_STREAM_DEPTH,
                                                         vpCameraParameters::perspectiveProjWithoutDistortion);
 
-  vpImage<vpRGBa> Ic(height, width);
+  vpImage<vpRGBa> I(height, width);
   vpImage<unsigned char> H(height, width);
   vpImage<unsigned char> S(height, width);
   vpImage<unsigned char> V(height, width);
-  vpImage<unsigned char> Ic_segmented_mask(height, width, 0);
+  vpImage<unsigned char> mask(height, width);
   vpImage<uint16_t> depth_raw(height, width);
+  vpImage<vpRGBa> I_segmented(height, width);
 
-  vpDisplayX d_Ic(Ic, 0, 0, "Current frame");
-  vpDisplayX d_Ic_segmented_mask(Ic_segmented_mask, Ic.getWidth()+75, 0, "HSV segmented frame");
+  vpDisplayX d_I(I, 0, 0, "Current frame");
+  vpDisplayX d_I_segmented(I_segmented, I.getWidth()+75, 0, "HSV segmented frame");
 
   bool quit = false;
   double loop_time = 0., total_loop_time = 0.;
   long nb_iter = 0;
-  float Z_min = 0.2;
+  float Z_min = 0.1;
   float Z_max = 2.5;
   int pcl_size = 0;
 
@@ -162,37 +102,39 @@ int main(int argc, char **argv)
 
   while (!quit) {
     double t = vpTime::measureTimeMs();
-    rs.acquire((unsigned char *)Ic.bitmap, (unsigned char *)(depth_raw.bitmap), NULL, NULL, &align_to);
-    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(Ic.bitmap),
+    rs.acquire((unsigned char *)I.bitmap, (unsigned char *)(depth_raw.bitmap), NULL, NULL, &align_to);
+    vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
-                              reinterpret_cast<unsigned char *>(V.bitmap), Ic.getSize());
+                              reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
 
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
                           reinterpret_cast<unsigned char *>(S.bitmap),
                           reinterpret_cast<unsigned char *>(V.bitmap),
                           hsv_values,
-                          reinterpret_cast<unsigned char *>(Ic_segmented_mask.bitmap),
-                          Ic_segmented_mask.getSize());
+                          reinterpret_cast<unsigned char *>(mask.bitmap),
+                          mask.getSize());
+
+    vpImageTools::inMask(I, mask, I_segmented);
 
     {
       std::lock_guard<std::mutex> lock(pcl_viewer_mutex);
-      vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, &Ic_segmented_mask, Z_min, Z_max);
+      vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, &mask, Z_min, Z_max);
       pcl_size = pointcloud->size();
     }
 
     std::cout << "Segmented point cloud size: " << pcl_size << std::endl;
 
-    vpDisplay::display(Ic);
-    vpDisplay::display(Ic_segmented_mask);
-    vpDisplay::displayText(Ic, 20, 20, "Click to quit...", vpColor::red);
+    vpDisplay::display(I);
+    vpDisplay::display(I_segmented);
+    vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::red);
 
-    if (vpDisplay::getClick(Ic, false)) {
+    if (vpDisplay::getClick(I, false)) {
       quit = true;
     }
 
-    vpDisplay::flush(Ic);
-    vpDisplay::flush(Ic_segmented_mask);
+    vpDisplay::flush(I);
+    vpDisplay::flush(I_segmented);
     nb_iter++;
     loop_time = vpTime::measureTimeMs() - t;
     total_loop_time += loop_time;
