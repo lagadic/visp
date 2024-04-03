@@ -17,6 +17,8 @@ This page references all the tutorials to use and contribute to ViSP.
 
 - \subpage tutorial_detection_dnn
 
+- \subpage tutorial_segmentation
+
 - \subpage tutorial_computer_vision
 
 - \subpage tutorial_vs
@@ -120,6 +122,14 @@ This page introduces the user to the way to detect features or objects in images
 
 - \subpage tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
 - \subpage tutorial-detection-tensorrt <br>This tutorial shows how to perform object detection inference using NVIDIA TensorRT inference SDK.
+
+*/
+
+/*! \page tutorial_segmentation Segmentation
+This page introduces the user to the way to achieve image and object segmentation.
+
+- \subpage tutorial-hsv-segmentation <br>This tutorial shows how to use HSV color scale to segment a given color in
+  an image.
 
 */
 
