@@ -1013,10 +1013,11 @@ void vpImageTools::inRange(const unsigned char *hue, const unsigned char *satura
   unsigned char s_high = static_cast<unsigned char>(hsv_values[3]);
   unsigned char v_low = static_cast<unsigned char>(hsv_values[4]);
   unsigned char v_high = static_cast<unsigned char>(hsv_values[5]);
+  int size_ = static_cast<int>(size);
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size_; ++i) {
     if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
         (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
         (v_low <= value[i]) && (value[i] <= v_high)) {
@@ -1061,10 +1062,11 @@ void vpImageTools::inRange(const unsigned char *hue, const unsigned char *satura
   unsigned char s_high = static_cast<unsigned char>(hsv_values[3]);
   unsigned char v_low = static_cast<unsigned char>(hsv_values[4]);
   unsigned char v_high = static_cast<unsigned char>(hsv_values[5]);
+  int size_ = static_cast<int>(size);
 #if defined(_OPENMP)
 #pragma omp parallel for
 #endif
-  for (unsigned int i = 0; i < size; ++i) {
+  for (int i = 0; i < size_; ++i) {
     if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
         (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
         (v_low <= value[i]) && (value[i] <= v_high)) {
