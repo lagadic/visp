@@ -58,6 +58,7 @@ int main(int argc, char **argv)
   }
 
   int width = 848, height = 480, fps = 60;
+  //! [Config RS2 RGB and depth]
   vpRealSense2 rs;
   rs2::config config;
   config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
@@ -65,12 +66,15 @@ int main(int argc, char **argv)
   config.disable_stream(RS2_STREAM_INFRARED, 1);
   config.disable_stream(RS2_STREAM_INFRARED, 2);
   rs2::align align_to(RS2_STREAM_COLOR);
+  //! [Config RS2 RGB and depth]
 
   rs.open(config);
 
+  //! [Get RS2 intrinsics]
   float depth_scale = rs.getDepthScale();
   vpCameraParameters cam_depth = rs.getCameraParameters(RS2_STREAM_DEPTH,
                                                         vpCameraParameters::perspectiveProjWithoutDistortion);
+  //! [Get RS2 intrinsics]
 
   vpImage<vpRGBa> I(height, width);
   vpImage<unsigned char> H(height, width);
@@ -86,31 +90,44 @@ int main(int argc, char **argv)
   bool quit = false;
   double loop_time = 0., total_loop_time = 0.;
   long nb_iter = 0;
+
+  //! [Allocate point cloud]
   float Z_min = 0.1;
   float Z_max = 2.5;
-  int pcl_size = 0;
-
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud = pcl::PointCloud<pcl::PointXYZ>::Ptr(new pcl::PointCloud<pcl::PointXYZ>);
+  //! [Allocate point cloud]
 
   while (!quit) {
     double t = vpTime::measureTimeMs();
+    //! [Grab color and depth]
     rs.acquire((unsigned char *)I.bitmap, (unsigned char *)(depth_raw.bitmap), NULL, NULL, &align_to);
+    //! [Grab color and depth]
+
+    //! [RGB to HSV]
     vpImageConvert::RGBaToHSV(reinterpret_cast<unsigned char *>(I.bitmap),
                               reinterpret_cast<unsigned char *>(H.bitmap),
                               reinterpret_cast<unsigned char *>(S.bitmap),
                               reinterpret_cast<unsigned char *>(V.bitmap), I.getSize());
+    //! [RGB to HSV]
 
+    //! [Create mask]
     vpImageTools::inRange(reinterpret_cast<unsigned char *>(H.bitmap),
                           reinterpret_cast<unsigned char *>(S.bitmap),
                           reinterpret_cast<unsigned char *>(V.bitmap),
                           hsv_values,
                           reinterpret_cast<unsigned char *>(mask.bitmap),
                           mask.getSize());
+    //! [Create mask]
 
     vpImageTools::inMask(I, mask, I_segmented);
 
+    //! [Update point cloud]
     vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, &mask, Z_min, Z_max);
-    pcl_size = pointcloud->size();
+    //! [Update point cloud]
+
+    //! [Get point cloud size]
+    int pcl_size = pointcloud->size();
+    //! [Get point cloud size]
 
     std::cout << "Segmented point cloud size: " << pcl_size << std::endl;
 

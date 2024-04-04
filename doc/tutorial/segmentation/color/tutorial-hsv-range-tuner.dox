@@ -4,7 +4,7 @@
 
 \section hsv_range_tuner_intro Introduction
 
-This tutorial follows \ref tutorial-hsv-segmentation.
+This tutorial follows \ref tutorial-hsv-segmentation-intro.
 
 Note that all the material (source code and images) described in this tutorial is part of ViSP source code
 (in `tutorial/segmentation/color` folder) and could be found in
@@ -12,7 +12,7 @@ https://github.com/lagadic/visp/tree/master/tutorial/segmentation/color.
 
 \section hsv_range_tuner HSV Range tuner tool
 
-In the previous tutorial (see \ref tutorial-hsv-segmentation), we used the following lines to determine
+In the previous tutorial (see \ref tutorial-hsv-segmentation-intro), we used the following lines to determine
 HSV low/high range values in `hsv_range` vector:
 
 \snippet tutorial-hsv-segmentation-basic.cpp Set HSV range
@@ -56,6 +56,6 @@ data:
 
 \section hsv_range_tuner_next Next tutorial
 
-You are now ready to see how to continue with \ref tutorial-grabber.
+You are now ready to see how to continue with \ref tutorial-hsv-segmentation-live.
 
 */

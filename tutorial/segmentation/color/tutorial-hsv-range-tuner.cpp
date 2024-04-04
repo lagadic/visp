@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
         << "  --image <input image>" << std::endl
         << "    Name of the input image filename." << std::endl
         << "    When this option is not set, we use librealsense to stream images from a Realsense camera. " << std::endl
+        << "    Example: --image ballons.jpg" << std::endl
         << std::endl
         << "  --hsv-thresholds <output filename.yml>" << std::endl
         << "    Name of the output filename with yaml extension that will contain HSV low/high thresholds." << std::endl

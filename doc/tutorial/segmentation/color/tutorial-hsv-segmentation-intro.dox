@@ -1,5 +1,5 @@
 /**
-  \page tutorial-hsv-segmentation Tutorial: Color segmentation using HSV color scale
+  \page tutorial-hsv-segmentation-intro Tutorial: Introduction to color segmentation using HSV color scale
   \tableofcontents
 
 \section hsv_intro Introduction

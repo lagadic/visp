@@ -26,7 +26,13 @@ int main()
   int h_low = std::max<int>(0, h - offset), h_high = std::min<int>(h + offset, 255);
   int s_low = std::max<int>(0, s - offset), s_high = std::min<int>(s + offset, 255);
   int v_low = std::max<int>(0, v - offset), v_high = std::min<int>(v + offset, 255);
-  std::vector<int> hsv_range({ h_low, h_high, s_low, s_high, v_low, v_high });
+  std::vector<int> hsv_range;
+  hsv_range.push_back(h_low);
+  hsv_range.push_back(h_high);
+  hsv_range.push_back(s_low);
+  hsv_range.push_back(s_high);
+  hsv_range.push_back(v_low);
+  hsv_range.push_back(v_high);
   //! [Set HSV range]
 
   //! [Create HSV mask]

@@ -10,11 +10,10 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpColorDepthConversion.h>
 #include <visp3/gui/vpDisplayX.h>
+//! [Include vpDisplayPCL header]
 #include <visp3/gui/vpDisplayPCL.h>
+//! [Include vpDisplayPCL header]
 #include <visp3/sensor/vpRealSense2.h>
-
-#include <pcl/visualization/cloud_viewer.h>
-#include <pcl/visualization/pcl_visualizer.h>
 
 int main(int argc, char **argv)
 {
@@ -96,9 +95,11 @@ int main(int argc, char **argv)
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud = pcl::PointCloud<pcl::PointXYZ>::Ptr(new pcl::PointCloud<pcl::PointXYZ>);
 
+  //! [Create pcl viewer object]
   std::mutex pcl_viewer_mutex;
   vpDisplayPCL pcl_viewer;
   pcl_viewer.startThread(std::ref(pcl_viewer_mutex), pointcloud);
+  //! [Create pcl viewer object]
 
   while (!quit) {
     double t = vpTime::measureTimeMs();
@@ -118,9 +119,11 @@ int main(int argc, char **argv)
     vpImageTools::inMask(I, mask, I_segmented);
 
     {
+      //! [Update point cloud with mutex protection]
       std::lock_guard<std::mutex> lock(pcl_viewer_mutex);
       vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, &mask, Z_min, Z_max);
       pcl_size = pointcloud->size();
+      //! [Update point cloud with mutex protection]
     }
 
     std::cout << "Segmented point cloud size: " << pcl_size << std::endl;
