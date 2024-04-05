@@ -49,36 +49,52 @@
 #endif
 
 /*!
+ * Create a point cloud from a depth image.
+ *
  * \param[in] depth_raw : Depth raw image.
  * \param[in] depth_scale : Depth scale to apply to data in `depth_raw`.
  * \param[in] cam_depth : Depth camera intrinsics.
- * \param[out] pointcloud : Computed point cloud.
- * \param[in] mask : Optional mask. When set to nullptr, all the pixels in `depth_raw` are considered. Otherwise,
- * we consider only pixels that have a mask value that differ from 0. You should ensure that mask size and `depth_raw`
- * size are the same.
+ * \param[out] pointcloud : Computed 3D point cloud.
+ * The 3D points reconstructed from the raw depth image are those
+ * that have their corresponding 2D projection in the depth mask and have a Z value within ]Z_min, Z_max[ range.
+ * When the depth mask is set to nullptr, we reconstruct all 3D points from the complete depth raw image and
+ * retain only those whose Z value lies between ]Z_min, Z_max[ range.
+ * You must also ensure that the size of the depth mask and the size of the depth raw image are the same.
+ * \param[inout] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
+ * nullptr, you should ensure that there is no thread that wants to access to `pointcloud`, like for example
+ * the one used in vpDisplayPCL.
+ * \param[in] depth_mask : Optional depth_mask. When set to nullptr, all the pixels in `depth_raw` are considered. Otherwise,
+ * we consider only pixels that have a mask value that differ from 0.
  * \param[in] Z_min : Min Z value to retain the 3D point in the point cloud.
  * \param[in] Z_max : Max Z value to retain the 3D point in the point cloud.
+ *
+ * \return The size of the point cloud.
  */
-void vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
+int vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale,
                                        const vpCameraParameters &cam_depth,
-                                       pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
-                                       const vpImage<unsigned char> *mask, float Z_min, float Z_max)
+                                       pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud, std::mutex *pointcloud_mutex,
+                                       const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
 {
-  pointcloud->clear();
+
   int size = static_cast<int>(depth_raw.getSize());
   unsigned int width = depth_raw.getWidth();
   unsigned int height = depth_raw.getHeight();
+  int pcl_size = 0;
 
-  if (mask) {
-    if ((width != mask->getWidth()) || (height != mask->getHeight())) {
+  if (depth_mask) {
+    if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
       throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
     }
+    if (pointcloud_mutex) {
+      pointcloud_mutex->lock();
+    }
+    pointcloud->clear();
 #if defined(_OPENMP)
     std::mutex mutex;
 #pragma omp parallel for
 #endif
     for (int p = 0; p < size; ++p) {
-      if (mask->bitmap[p]) {
+      if (depth_mask->bitmap[p]) {
         if (static_cast<int>(depth_raw.bitmap[p])) {
           float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
           if (Z < Z_max) {
@@ -98,8 +114,16 @@ void vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float
         }
       }
     }
+    pcl_size = pointcloud->size();
+    if (pointcloud_mutex) {
+      pointcloud_mutex->unlock();
+    }
   }
   else {
+    if (pointcloud_mutex) {
+      pointcloud_mutex->lock();
+    }
+    pointcloud->clear();
 #if defined(_OPENMP)
     std::mutex mutex;
 #pragma omp parallel for
@@ -123,6 +147,122 @@ void vpImageConvert::depthToPointCloud(const vpImage<uint16_t> &depth_raw, float
         }
       }
     }
+    pcl_size = pointcloud->size();
+    if (pointcloud_mutex) {
+      pointcloud_mutex->unlock();
+    }
   }
+
+  return pcl_size;
+}
+
+/*!
+ * Create a textured point cloud from an aligned color and depth image.
+ *
+ * \param[in] color : Color image.
+ * \param[in] depth_raw : Depth raw image.
+ * \param[in] depth_scale : Depth scale to apply to data in `depth_raw`.
+ * \param[in] cam_depth : Depth camera intrinsics.
+ * \param[out] pointcloud : Computed 3D point cloud with RGB information.
+ * The 3D points reconstructed from the raw depth image are those
+ * that have their corresponding 2D projection in the depth mask and have a Z value within ]Z_min, Z_max[ range.
+ * When the depth mask is set to nullptr, we reconstruct all 3D points from the complete depth raw image and
+ * retain only those whose Z value lies between ]Z_min, Z_max[ range.
+ * \param[inout] pointcloud_mutex : Optional mutex to protect from concurrent access to `pointcloud`. When set to
+ * nullptr, you should ensure that there is no thread that wants to access to `pointcloud`, like for example
+ * the one used in vpDisplayPCL.
+ * \param[in] depth_mask : Optional depth_mask. When set to nullptr, all the pixels in `depth_raw` are considered. Otherwise,
+ * we consider only pixels that have a mask value that differ from 0 and that a Z value in ]Z_min, Z_max[] range.
+ * You should also ensure that mask size and `depth_raw` size are the same.
+ * \param[in] Z_min : Min Z value to retain the 3D point in the point cloud.
+ * \param[in] Z_max : Max Z value to retain the 3D point in the point cloud.
+ *
+ * \return The size of the point cloud.
+ */
+int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
+                                       float depth_scale, const vpCameraParameters &cam_depth,
+                                       pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud, std::mutex *pointcloud_mutex,
+                                       const vpImage<unsigned char> *depth_mask, float Z_min, float Z_max)
+{
+  int size = static_cast<int>(depth_raw.getSize());
+  unsigned int width = depth_raw.getWidth();
+  unsigned int height = depth_raw.getHeight();
+  int pcl_size = 0;
+
+  if (depth_mask) {
+    if ((width != depth_mask->getWidth()) || (height != depth_mask->getHeight())) {
+      throw(vpImageException(vpImageException::notInitializedError, "Depth image and mask size differ"));
+    }
+    if (pointcloud_mutex) {
+      pointcloud_mutex->lock();
+    }
+    pointcloud->clear();
+#if defined(_OPENMP)
+    std::mutex mutex;
+#pragma omp parallel for
+#endif
+    for (int p = 0; p < size; ++p) {
+      if (depth_mask->bitmap[p]) {
+        if (static_cast<int>(depth_raw.bitmap[p])) {
+          float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+          if (Z < Z_max) {
+            double x = 0;
+            double y = 0;
+            unsigned int j = p % width;
+            unsigned int i = (p - j) / width;
+            vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+            vpColVector point_3D({ x * Z, y * Z, Z });
+            if (point_3D[2] > Z_min) {
+#if defined(_OPENMP)
+              std::lock_guard<std::mutex> lock(mutex);
+#endif
+              pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
+                                                     color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+            }
+          }
+        }
+      }
+    }
+    pcl_size = pointcloud->size();
+    if (pointcloud_mutex) {
+      pointcloud_mutex->unlock();
+    }
+  }
+  else {
+    if (pointcloud_mutex) {
+      pointcloud_mutex->lock();
+    }
+    pointcloud->clear();
+#if defined(_OPENMP)
+    std::mutex mutex;
+#pragma omp parallel for
+#endif
+    for (int p = 0; p < size; ++p) {
+      if (static_cast<int>(depth_raw.bitmap[p])) {
+        float Z = static_cast<float>(depth_raw.bitmap[p]) * depth_scale;
+        if (Z < 2.5) {
+          double x = 0;
+          double y = 0;
+          unsigned int j = p % width;
+          unsigned int i = (p - j) / width;
+          vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+          vpColVector point_3D({ x * Z, y * Z, Z, 1 });
+          if (point_3D[2] >= 0.1) {
+#if defined(_OPENMP)
+            std::lock_guard<std::mutex> lock(mutex);
+#endif
+            pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
+                                                   color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
+          }
+        }
+      }
+    }
+    pcl_size = pointcloud->size();
+    if (pointcloud_mutex) {
+      pointcloud_mutex->unlock();
+    }
+  }
+
+  return pcl_size;
 }
 #endif

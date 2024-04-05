@@ -144,9 +144,16 @@ public:
 #endif
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
-  static void depthToPointCloud(const vpImage<uint16_t> &depth_raw, float depth_scale, const vpCameraParameters &cam_depth,
-                                pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
-                                const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+  static int depthToPointCloud(const vpImage<uint16_t> &depth_raw,
+                               float depth_scale, const vpCameraParameters &cam_depth,
+                               pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud,
+                               std::mutex *pointcloud_mutex = nullptr,
+                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
+  static int depthToPointCloud(const vpImage<vpRGBa> &color, const vpImage<uint16_t> &depth_raw,
+                               float depth_scale, const vpCameraParameters &cam_depth,
+                               pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud,
+                               std::mutex *pointcloud_mutex = nullptr,
+                               const vpImage<unsigned char> *mask = nullptr, float Z_min = 0.2, float Z_max = 2.5);
 #endif
 
   static void split(const vpImage<vpRGBa> &src, vpImage<unsigned char> *pR, vpImage<unsigned char> *pG,
