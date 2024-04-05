@@ -4,7 +4,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(HAVE_OPENCV_HIGHGUI)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(VISP_HAVE_X11)
 #include <vector>
 
 #include <opencv2/highgui.hpp>
@@ -82,14 +82,8 @@ int main(int argc, char *argv[])
   std::string opt_img_filename;
   bool show_helper = false;
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--hsv-thresholds") {
-      if ((i+1) < argc) {
-        opt_hsv_filename = std::string(argv[++i]);
-      }
-      else {
-        show_helper = true;
-        std::cout << "ERROR \nMissing yaml filename after parameter " << std::string(argv[i]) << std::endl;
-      }
+    if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
+      opt_hsv_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--image") {
       if ((i+1) < argc) {
@@ -329,6 +323,9 @@ int main()
 {
 #if !defined(HAVE_OPENCV_HIGHGUI)
   std::cout << "This tutorial needs OpenCV highgui module as 3rd party." << std::endl;
+#endif
+#if !defined(VISP_HAVE_X11)
+  std::cout << "This tutorial needs X11 3rd party enabled." << std::endl;
 #endif
   std::cout << "Install missing 3rd parties, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;

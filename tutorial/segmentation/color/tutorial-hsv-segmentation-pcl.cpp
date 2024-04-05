@@ -3,7 +3,7 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && defined(VISP_HAVE_X11)
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
@@ -16,8 +16,8 @@ int main(int argc, char **argv)
 {
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--hsv-thresholds") {
+  for (int i = 1; i < argc; i++) {
+    if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
       opt_hsv_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
@@ -57,8 +57,8 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  int width = 848, height = 480, fps = 60;
   //! [Config RS2 RGB and depth]
+  int width = 848, height = 480, fps = 60;
   vpRealSense2 rs;
   rs2::config config;
   config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
   //! [Allocate point cloud]
   float Z_min = 0.1;
   float Z_max = 2.5;
-  pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud = pcl::PointCloud<pcl::PointXYZ>::Ptr(new pcl::PointCloud<pcl::PointXYZ>);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   //! [Allocate point cloud]
 
   while (!quit) {
@@ -122,7 +122,7 @@ int main(int argc, char **argv)
     vpImageTools::inMask(I, mask, I_segmented);
 
     //! [Update point cloud]
-    vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, &mask, Z_min, Z_max);
+    vpImageConvert::depthToPointCloud(depth_raw, depth_scale, cam_depth, pointcloud, nullptr, &mask, Z_min, Z_max);
     //! [Update point cloud]
 
     //! [Get point cloud size]
@@ -157,6 +157,9 @@ int main()
 #endif
 #if !defined(VISP_HAVE_PCL)
   std::cout << "This tutorial needs pcl library as 3rd party." << std::endl;
+#endif
+#if !defined(VISP_HAVE_X11)
+  std::cout << "This tutorial needs X11 3rd party enabled." << std::endl;
 #endif
   std::cout << "Install missing 3rd party, configure and rebuild ViSP." << std::endl;
   return EXIT_SUCCESS;

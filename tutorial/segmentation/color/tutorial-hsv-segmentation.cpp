@@ -14,12 +14,13 @@
 
 int main(int argc, char **argv)
 {
+#if defined(VISP_HAVE_X11)
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   std::string opt_video_filename;
   bool show_helper = false;
 
-  for (int i = 0; i < argc; i++) {
-    if (std::string(argv[i]) == "--hsv-thresholds") {
+  for (int i = 1; i < argc; i++) {
+    if ((std::string(argv[i]) == "--hsv-thresholds") && ((i+1) < argc)) {
       opt_hsv_filename = std::string(argv[++i]);
     }
     else if (std::string(argv[i]) == "--video") {
@@ -177,5 +178,8 @@ int main(int argc, char **argv)
   }
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
+#else
+  std::cout << "This tutorial needs X11 3rdparty that is not enabled" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }

@@ -48,6 +48,7 @@ int main()
   vpImage<vpRGBa> I_segmented(height, width);
   vpImageTools::inMask(I, mask, I_segmented);
 
+#if defined(VISP_HAVE_X11)
   vpDisplayX d_I(I, 0, 0, "Current frame");
   vpDisplayX d_mask(mask, I.getWidth()+75, 0, "HSV mask");
   vpDisplayX d_I_segmented(I_segmented, 2*mask.getWidth()+80, 0, "Segmented frame");
@@ -59,4 +60,5 @@ int main()
   vpDisplay::flush(mask);
   vpDisplay::flush(I_segmented);
   vpDisplay::getClick(I);
+#endif
 }
