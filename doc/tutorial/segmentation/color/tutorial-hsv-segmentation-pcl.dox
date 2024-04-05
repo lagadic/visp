@@ -31,19 +31,21 @@ device. In our case we will consider a Realsense camera. The pipeline becomes:
 \snippet tutorial-hsv-segmentation-pcl.cpp Config RS2 RGB and depth
 - get depth scale associated to the depth images and device intrisics
 \snippet tutorial-hsv-segmentation-pcl.cpp Get RS2 intrinsics
-- grab color and depth images
+- grab color and depth aligned images
 \snippet tutorial-hsv-segmentation-pcl.cpp Grab color and depth
 - convert from RGB to HSV channels using vpImageConvert::RGBaToHSV()
 \snippet tutorial-hsv-segmentation-pcl.cpp RGB to HSV
 - create a mask with pixels that are in the low/high HSV ranges using vpImageTools::inRange()
 \snippet tutorial-hsv-segmentation-pcl.cpp Create mask
-- create the point cloud object
+- create the point cloud object. Note here the `Z_min` and `Z_max` variables, which are used further in the code
+  to remove 3D points that are too close or too far from the camera
 \snippet tutorial-hsv-segmentation-pcl.cpp Allocate point cloud
 - using the mask and the depth image update the point cloud using vpImageConvert::depthToPointCloud().
   The corresponding point cloud is available in `pointcloud` variable.
 \snippet tutorial-hsv-segmentation-pcl.cpp Update point cloud
 - to know the size of the point cloud use
 \snippet tutorial-hsv-segmentation-pcl.cpp Get point cloud size
+  Instead, you can also use the value returned by vpImageConvert::depthToPointCloud() to get the point cloud size.
 .
 
 All these steps are implemented in tutorial-hsv-segmentation-pcl.cpp
@@ -59,21 +61,40 @@ In the next section we show how to display the point cloud.
 \section hsv_pcl-viewer Point could viewer
 
 In tutorial-hsv-segmentation-pcl-viewer.cpp you will find an extension of the previous code with the introduction
-of vpDisplayPCL class that allows to visualize the point cloud in 3D.
+of vpDisplayPCL class that allows to visualize the point cloud in 3D with optionally additional texture information
+taken from the color image.
 
 To add the point cloud viewer feature:
-- First you need to include vpDisplayPCL header
+- Fisrt you need to include vpDisplayPCL header
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Include vpDisplayPCL header
-- Next, you need to create a mutex and the PCL viewer object before launching the viewer thread
+- Then, we declare two pcl objects for textured and untextured point clouds respectively
+\snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create point cloud
+- Since the point cloud viewer will run in a separate thread, to avoid concurrent access to `pointcloud` or
+  `pointcloud_color` objects, we introduce a mutex, declare the PCL viewer object and launch the viewer thread, either
+  for textured or untextured point clouds
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Create pcl viewer object
 - In the `while()` loop we update the point cloud using the mutex shared with the pcl viewer
 \snippet tutorial-hsv-segmentation-pcl-viewer.cpp Update point cloud with mutex protection
-
+.
 To run this tutorial
+- Learn the color of the object from which you want to extract the corresponding point cloud
 \verbatim
 $ cd $VISP_WS/visp-build/tutorial/segmentation/color
-$ ./tutorial-hsv-segmentation-pcl-viewer --hsv-thresholds calib/hsv-thresholds.yml
+$ ./tutorial-hsv-range-tuner --hsv-thresholds calib/hsv-thresholds.yml
 \endverbatim
+- Visualize to corresponding point cloud
+\verbatim
+$ ./tutorial-hsv-segmentation-pcl-viewer --hsv-thresholds calib/hsv-thresholds.yml --texture
+\endverbatim
+  At this point, you should see something similar to the following video, where the top left image corresponds to the
+  live stream provided by a Realsense D435 camera, the top right image to the HSV yellow color segmentation, and the
+  bottom right image to the PCL point cloud viewer used to visualize the textured point cloud corresponding to the
+  yellow pixels in real time.
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/jUHVZwybq-s?si=FVKhzmK-V-i8gUM7" frameborder="0" allowfullscreen></iframe>
+</p>
+\endhtmlonly
 
 \section hsv_pcl_issue Known issue
 \subsection hsv_pcl_issue_segfault Segfault in PCL viewer
