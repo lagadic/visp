@@ -311,9 +311,11 @@ int main(int argc, const char *argv[])
       else {
         d2.init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
       }
+#if defined(VISP_HAVE_PCL)
       pcl_viewer.setPosition(I_color.getWidth() + 10, I_color.getHeight() + 70);
       pcl_viewer.setWindowName("3D point cloud");
       pcl_viewer.startThread(std::ref(mutex), pointcloud);
+#endif
     }
 
     vpDisplay::display(I_color);
