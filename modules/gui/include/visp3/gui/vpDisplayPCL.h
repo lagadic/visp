@@ -59,10 +59,12 @@ public:
 
   void setVerbose(bool verbose);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
+  void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
   void stop();
 
 private:
   void run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
+  void run_color(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
 
   bool m_stop;
   bool m_verbose;

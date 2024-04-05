@@ -41,15 +41,23 @@
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
  */
-vpDisplayPCL::vpDisplayPCL() : m_stop(false), m_verbose(false), m_width(640), m_height(480) { }
+vpDisplayPCL::vpDisplayPCL()
+  : m_stop(false), m_verbose(false), m_width(640), m_height(480)
+{ }
 
 /*!
  * Constructor able to initialize the display window size.
+ * \param[in] width : Point cloud viewer width.
+ * \param[in] height : Point cloud viewer height.
  */
-vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height) : m_stop(false), m_verbose(false), m_width(width), m_height(height) { }
+vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height)
+  : m_stop(false), m_verbose(false), m_width(width), m_height(height)
+{ }
 
 /*!
  * Destructor that stops and join the viewer thread if not already done.
+ *
+ * \sa stop(), startThread()
  */
 vpDisplayPCL::~vpDisplayPCL()
 {
@@ -58,10 +66,10 @@ vpDisplayPCL::~vpDisplayPCL()
 
 /*!
  * Loop that does the display of the point cloud.
- * @param[inout] mutex : Shared mutex.
+ * @param[inout] pointcloud_mutex : Shared mutex to protect from concurrent access to `pointcloud` object.
  * @param[in] pointcloud : Point cloud to display.
  */
-void vpDisplayPCL::run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
+void vpDisplayPCL::run(std::mutex &pointcloud_mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
 {
   pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
@@ -70,18 +78,63 @@ void vpDisplayPCL::run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr po
   viewer->setPosition(m_width + 80, m_height + 80);
   viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
   viewer->setSize(m_width, m_height);
+  bool init = true;
+
+  while (!m_stop) {
+    {
+      std::lock_guard<std::mutex> lock(pointcloud_mutex);
+      local_pointcloud = pointcloud->makeShared();
+    }
+
+    if (init) {
+      viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+
+      init = false;
+    }
+    else {
+      viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+    }
+
+    viewer->spinOnce(10);
+  }
+
+  if (m_verbose) {
+    std::cout << "End of point cloud display thread" << std::endl;
+  }
+}
+
+/*!
+ * Loop that does the display of the textured point cloud.
+ * @param[inout] mutex : Shared mutex.
+ * @param[in] pointcloud : Textured point cloud to display.
+ */
+void vpDisplayPCL::run_color(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color)
+{
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
+  pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+  viewer->setBackgroundColor(0, 0, 0);
+  viewer->initCameraParameters();
+  viewer->setPosition(m_width + 80, m_height + 80);
+  viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
+  viewer->setSize(m_width, m_height);
+  bool init = true;
 
   while (!m_stop) {
     {
       std::lock_guard<std::mutex> lock(mutex);
-      local_pointcloud = pointcloud->makeShared();
+      local_pointcloud = pointcloud_color->makeShared();
     }
 
-    // If updatePointCloud fails, it means that the pcl was not previously known by the viewer
-    if (!viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud")) {
-      // Add the pcl to the list of pcl known by the viewer + the according legend
-      viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+    if (init) {
+      viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
+      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "RGB sample cloud");
+
+      init = false;
+    }
+    else {
+      viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
     }
 
     viewer->spinOnce(10);
@@ -96,10 +149,24 @@ void vpDisplayPCL::run(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr po
  * Start the viewer thread able to display a point cloud.
  * @param[inout] mutex : Shared mutex.
  * @param[in] pointcloud : Point cloud to display.
+ *
+ * \sa stop()
  */
 void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
 {
   m_thread = std::thread(&vpDisplayPCL::run, this, std::ref(mutex), pointcloud);
+}
+
+/*!
+ * Start the viewer thread able to display a textured point cloud.
+ * @param[inout] mutex : Shared mutex.
+ * @param[in] pointcloud_color : Textured point cloud to display.
+ *
+ * \sa stop()
+ */
+void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color)
+{
+  m_thread = std::thread(&vpDisplayPCL::run_color, this, std::ref(mutex), pointcloud_color);
 }
 
 /*!
