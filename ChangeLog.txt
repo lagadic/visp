@@ -16,6 +16,7 @@ ViSP 3.x.x (Version in development)
     . vpStatisticalTestAbstract, vpStatisticalTestEWMA, vpStatisticalTestHinkley, vpStatisticalTestMeanAdjustedCUSUM
       vpStatisticalTestShewhart and vpStatisticalTestSigma: classes implementing Statistical Control Process methods to
       detect mean drift / jump of a signal
+    . vpDisplayPCL to display a point cloud using PCL 3rdparty
   - Deprecated
     . vpPlanarObjectDetector, vpFernClassifier deprecated classes are removed
     . End of supporting c++98 standard. As a consequence, ViSP is no more compatible with Ubuntu 12.04
@@ -31,6 +32,10 @@ ViSP 3.x.x (Version in development)
     . Speed up build by including only opencv2/opencv_modules.hpp instead of opencv2/opencv.hpp header in vpConfig.h
     . In imgproc module, implementation of automatic gamma factor computation methods for gamma correction.
     . Eliminate the use of pthread in favour of std::thread
+    . RGB or RGBa to/from HSV conversion optimization in vpImageConvert class
+    . New vpImageTools::inRange() functions to ease binary mask computation by thresholding HSV channels
+    . New tutorials in tutorial/segmentation/color folder to show how to use HSV color segmentation to
+      extract the corresponding point cloud
   - Applications
     . Migrate eye-to-hand tutorials in apps
   - Tutorials
@@ -43,6 +48,14 @@ ViSP 3.x.x (Version in development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-spc.html
     . New tutorial: Installing ViSP Python bindings
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-python-bindings.html
+    . New tutorial: Introduction to color segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-intro.html
+    . New tutorial: HSV low/high range tuner tool
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-range-tuner.html
+    . New tutorial: Live color segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-live.html
+    . New tutorial: Point cloud segmentation using HSV color scale
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-hsv-segmentation-pcl.html
   - Bug fixed
     . [#1251] Bug in vpDisplay::displayFrame()
     . [#1270] Build issue around std::clamp and optional header which are not found with cxx17

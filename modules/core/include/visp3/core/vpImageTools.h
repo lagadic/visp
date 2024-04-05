@@ -126,6 +126,13 @@ public:
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             vpImage<unsigned char> &Ires, bool saturate = false);
 
+  static int inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask);
+  static int inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask);
+
+  static int inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                     const vpColVector &hsv_range, unsigned char *mask, unsigned int size);
+  static int inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                     const std::vector<int> &hsv_range, unsigned char *mask, unsigned int size);
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV, vpArray2D<float> &mapDu,
                                vpArray2D<float> &mapDv);

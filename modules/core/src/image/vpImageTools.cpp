@@ -36,6 +36,7 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpImageException.h>
 
 #if defined(VISP_HAVE_SIMDLIB)
 #include <Simd/SimdLib.hpp>
@@ -977,4 +978,174 @@ bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatri
 
   const double limit = 1 << 15;
   return (vpMath::abs(x2) < limit) && (vpMath::abs(y2) < limit);
+}
+
+/*!
+ * Keep the part of an image that is in the mask.
+ * @param[in] I : Input image.
+ * @param[in] mask : Mask where pixels to consider have values that differ from 0.
+ * @param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+ * @return The number of pixels that are in the mask.
+ */
+int vpImageTools::inMask(const vpImage<vpRGBa> &I, const vpImage<unsigned char> &mask, vpImage<vpRGBa> &I_mask)
+{
+  if ((I.getHeight() != mask.getHeight()) || (I.getWidth() != mask.getWidth())) {
+    throw(vpImageException(vpImageException::incorrectInitializationError,
+                           "Error in vpImageTools::inMask(): image (%dx%d) and mask (%dx%d) size doesn't match",
+                           I.getWidth(), I.getHeight(), mask.getWidth(), mask.getHeight()));
+  }
+  vpRGBa black(0, 0, 0);
+  I_mask.resize(I.getHeight(), I.getWidth());
+  int cpt_in_mask = 0;
+  int size_ = static_cast<int>(I.getSize());
+#if defined(_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_mask)
+#endif
+  for (int i = 0; i < size_; ++i) {
+    if (mask.bitmap[i] == 0) {
+      I_mask.bitmap[i] = black;
+    }
+    else {
+      I_mask.bitmap[i] = I.bitmap[i];
+      ++cpt_in_mask;
+    }
+  }
+  return cpt_in_mask;
+}
+
+/*!
+ * Keep the part of an image that is in the mask.
+ * @param[in] I : Input image.
+ * @param[in] mask : Mask where pixels to consider have values that differ from 0.
+ * @param[out] I_mask : Resulting image where pixels that are in the mask are kept.
+ * @return The number of pixels that are in the mask.
+ */
+int vpImageTools::inMask(const vpImage<unsigned char> &I, const vpImage<unsigned char> &mask, vpImage<unsigned char> &I_mask)
+{
+  if ((I.getHeight() != mask.getHeight()) || (I.getWidth() != mask.getWidth())) {
+    throw(vpImageException(vpImageException::incorrectInitializationError,
+                           "Error in vpImageTools::inMask(): image (%dx%d) and mask (%dx%d) size doesn't match",
+                           I.getWidth(), I.getHeight(), mask.getWidth(), mask.getHeight()));
+  }
+  I_mask.resize(I.getHeight(), I.getWidth());
+  int cpt_in_mask = 0;
+  int size_ = static_cast<int>(I.getSize());
+#if defined(_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_mask)
+#endif
+  for (int i = 0; i < size_; ++i) {
+    if (mask.bitmap[i] == 0) {
+      I_mask.bitmap[i] = 0;
+    }
+    else {
+      I_mask.bitmap[i] = I.bitmap[i];
+      ++cpt_in_mask;
+    }
+  }
+  return cpt_in_mask;
+}
+
+/*!
+ * Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+ * \param[in] hue : Pointer to an array of hue values. Its dimension is equal to the `size` parameter.
+ * \param[in] saturation : Pointer to an array of saturation values. Its dimension is equal to the `size` parameter.
+ * \param[in] value : Pointer to an array of values. Its dimension is equal to the `size` parameter.
+ * \param[in] hsv_range : 6-dim vector that contains the low/high range values for each HSV channel respectively.
+ * Each element of this vector should be in [0,255] range. Note that there is also tutorial-hsv-tuner.cpp that may help
+ * to determine low/high HSV values.
+ * \param[out] mask : Pointer to a resulting mask of dimension `size`. When HSV value is in the boundaries, the mask
+ * element is set to 255, otherwise to 0. The mask should be allocated prior calling this function. Its dimension
+ * is equal to the `size` parameter.
+ * \param[in] size : Size of `hue`, `saturation`, `value` and `mask` arrays.
+ *
+ * \sa vpImageConvert::RGBToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ * \sa vpImageConvert::RGBaToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ */
+int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                          const vpColVector &hsv_range, unsigned char *mask, unsigned int size)
+{
+  if ((hue == nullptr) || (saturation == nullptr) || (value == nullptr)) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): hsv pointer are empty"));
+  }
+  else if (hsv_range.size() != 6) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
+  }
+  unsigned char h_low = static_cast<unsigned char>(hsv_range[0]);
+  unsigned char h_high = static_cast<unsigned char>(hsv_range[1]);
+  unsigned char s_low = static_cast<unsigned char>(hsv_range[2]);
+  unsigned char s_high = static_cast<unsigned char>(hsv_range[3]);
+  unsigned char v_low = static_cast<unsigned char>(hsv_range[4]);
+  unsigned char v_high = static_cast<unsigned char>(hsv_range[5]);
+  int size_ = static_cast<int>(size);
+  int cpt_in_range = 0;
+#if defined(_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_range)
+#endif
+  for (int i = 0; i < size_; ++i) {
+    if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
+        (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
+        (v_low <= value[i]) && (value[i] <= v_high)) {
+      mask[i] = 255;
+      ++cpt_in_range;
+    }
+    else {
+      mask[i] = 0;
+    }
+  }
+  return cpt_in_range;
+}
+
+/*!
+ * Create binary mask by checking if HSV (hue, saturation, value) channels lie between low and high HSV thresholds.
+ * \param[in] hue : Pointer to an array of hue values. Its dimension is equal to the `size` parameter.
+ * \param[in] saturation : Pointer to an array of saturation values. Its dimension is equal to the `size` parameter.
+ * \param[in] value : Pointer to an array of values. Its dimension is equal to the `size` parameter.
+ * \param[in] hsv_range : 6-dim vector that contains the low/high range values for each HSV channel respectively.
+ * Each element of this vector should be in [0,255] range. Note that there is also tutorial-hsv-tuner.cpp that may help
+ * to determine low/high HSV values.
+ * \param[out] mask : Pointer to a resulting mask of dimension `size`. When HSV value is in the boundaries, the mask
+ * element is set to 255, otherwise to 0. The mask should be allocated prior calling this function. Its dimension
+ * is equal to the `size` parameter.
+ * \param[in] size : Size of `hue`, `saturation`, `value` and `mask` arrays.
+ * \return The number of pixels that are in the HSV range.
+ *
+ * \sa vpImageConvert::RGBToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ * \sa vpImageConvert::RGBaToHSV(const unsigned char *, unsigned char *, unsigned char *, unsigned char *, unsigned int, bool)
+ */
+int vpImageTools::inRange(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
+                           const std::vector<int> &hsv_range, unsigned char *mask, unsigned int size)
+{
+  if ((hue == nullptr) || (saturation == nullptr) || (value == nullptr)) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): hsv pointer are empty"));
+  }
+  else if (hsv_range.size() != 6) {
+    throw(vpImageException(vpImageException::notInitializedError,
+                           "Error in vpImageTools::inRange(): wrong values vector size (%d)", hsv_range.size()));
+  }
+  unsigned char h_low = static_cast<unsigned char>(hsv_range[0]);
+  unsigned char h_high = static_cast<unsigned char>(hsv_range[1]);
+  unsigned char s_low = static_cast<unsigned char>(hsv_range[2]);
+  unsigned char s_high = static_cast<unsigned char>(hsv_range[3]);
+  unsigned char v_low = static_cast<unsigned char>(hsv_range[4]);
+  unsigned char v_high = static_cast<unsigned char>(hsv_range[5]);
+  int size_ = static_cast<int>(size);
+  int cpt_in_range = 0;
+#if defined(_OPENMP)
+#pragma omp parallel for reduction(+:cpt_in_range)
+#endif
+  for (int i = 0; i < size_; ++i) {
+    if ((h_low <= hue[i]) && (hue[i] <= h_high) &&
+        (s_low <= saturation[i]) && (saturation[i] <= s_high) &&
+        (v_low <= value[i]) && (value[i] <= v_high)) {
+      mask[i] = 255;
+      ++cpt_in_range;
+    }
+    else {
+      mask[i] = 0;
+    }
+  }
+  return cpt_in_range;
 }
