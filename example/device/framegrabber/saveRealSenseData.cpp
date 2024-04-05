@@ -72,52 +72,66 @@
 
 namespace
 {
-void usage(const char *name, const char *badparam)
+void usage(const char *name, const char *badparam, int fps)
 {
-  fprintf(stdout, "\n\
-          Save RealSense data.\n\
-          \n\
-          %s\
-          OPTIONS:                                               \n\
-          -s                                                     \n\
-          Save data.\n\
-          \n\
-          -o <directory>                                         \n\
-          Output directory.\n\
-          \n\
-          -a                                                     \n\
-          Use aligned streams.\n\
-          \n\
-          -c                                                     \n\
-          Save color stream.\n\
-          \n\
-          -d                                                     \n\
-          Save depth stream.\n\
-          \n\
-          -p                                                     \n\
-          Save pointcloud.\n\
-          \n\
-          -i                                                     \n\
-          Save infrared stream.\n\
-          \n\
-          -C                                                     \n\
-          Click to save.\n\
-          \n\
-          -f <fps>                                               \n\
-          Set FPS.\n\
-          \n\
-          -b                                                     \n\
-          Save point cloud in binary format.\n\
-          \n\
-          -h \n\
-          Print the help.\n\n",
-          name);
+  std::cout << "\nSYNOPSIS " << std::endl
+    << "  " << name
+    << " [-s]"
+    << " [-a]"
+    << " [-c]"
+    << " [-d]"
+    << " [-p]"
+    << " [-b]"
+    << " [-i]"
+    << " [-C]"
+    << " [-f <fps>]"
+    << " [-o <directory>]"
+    << " [--help,-h]"
+    << std::endl;
+  std::cout << "\nOPTIONS " << std::endl
+    << "  -s" << std::endl
+    << "    Flag to enable data saving." << std::endl
+    << std::endl
+    << "  -a" << std::endl
+    << "    Color and depth are aligned." << std::endl
+    << std::endl
+    << "  -c" << std::endl
+    << "    Add color stream to saved data when -s option is enable." << std::endl
+    << std::endl
+    << "  -d" << std::endl
+    << "    Add depth stream to saved data when -s option is enable." << std::endl
+    << std::endl
+    << "  -p" << std::endl
+    << "    Add point cloud stream to saved data when -s option is enabled." << std::endl
+    << "    By default, the point cloud is saved in Point Cloud Data file format (.PCD extension file)." << std::endl
+    << "    You can also use -b option to save the point cloud in binary format." << std::endl
+    << std::endl
+    << "  -b" << std::endl
+    << "    Point cloud stream is saved in binary format." << std::endl
+    << std::endl
+    << "  -i" << std::endl
+    << "    Add infrared stream to saved data when -s option is enabled." << std::endl
+    << std::endl
+    << "  -C" << std::endl
+    << "    Trigger one shot data saver after each user click." << std::endl
+    << std::endl
+    << "  -f <fps>" << std::endl
+    << "    Set camera framerate." << std::endl
+    << "    Default: " << fps << std::endl
+    << std::endl
+    << "  -o <directory>" << std::endl
+    << "    Output directory that will host saved data." << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Display this helper message." << std::endl
+    << std::endl;
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam) {
+    std::cout << "\nERROR: Bad parameter " << badparam << std::endl;
+  }
 }
 
-bool getOptions(int argc, char **argv, bool &save, std::string &output_directory, bool &use_aligned_stream,
+bool getOptions(int argc, const char *argv[], bool &save, std::string &output_directory, bool &use_aligned_stream,
                 bool &save_color, bool &save_depth, bool &save_pointcloud, bool &save_infrared, bool &click_to_save,
                 int &stream_fps, bool &save_pointcloud_binary_format)
 {
@@ -159,12 +173,12 @@ bool getOptions(int argc, char **argv, bool &save, std::string &output_directory
       break;
 
     case 'h':
-      usage(argv[0], nullptr);
+      usage(argv[0], nullptr, stream_fps);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg);
+      usage(argv[0], optarg, stream_fps);
       return false;
       break;
     }
@@ -172,7 +186,7 @@ bool getOptions(int argc, char **argv, bool &save, std::string &output_directory
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], nullptr);
+    usage(argv[0], nullptr, stream_fps);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg << std::endl
       << std::endl;
@@ -458,7 +472,7 @@ private:
 };
 } // Namespace
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
   bool save = false;
   std::string output_directory = vpTime::getDateTime("%Y_%m_%d_%H.%M.%S");
@@ -532,7 +546,7 @@ int main(int argc, char *argv[])
 #endif
   d1.init(I_gray, 0, 0, "RealSense color stream");
   d2.init(I_depth, I_gray.getWidth() + 80, 0, "RealSense depth stream");
-  d3.init(I_infrared, I_gray.getWidth() + 80, I_gray.getHeight() + 10, "RealSense infrared stream");
+  d3.init(I_infrared, I_gray.getWidth() + 80, I_gray.getHeight() + 70, "RealSense infrared stream");
 
   while (true) {
     realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, nullptr);
@@ -616,7 +630,7 @@ int main(int argc, char *argv[])
   rs2::align align_to(RS2_STREAM_COLOR);
   if (use_aligned_stream && save_infrared) {
     std::cerr << "Cannot use aligned streams with infrared acquisition currently."
-      "\nInfrared stream acquisition is disabled!"
+      << "\nInfrared stream acquisition is disabled!"
       << std::endl;
   }
 #endif
@@ -672,7 +686,7 @@ int main(int argc, char *argv[])
     }
     else {
       std::stringstream ss;
-      ss << "Images saved:" << nb_saves;
+      ss << "Images saved: " << nb_saves;
       vpDisplay::displayText(I_gray, 20, 20, ss.str(), vpColor::red);
     }
 

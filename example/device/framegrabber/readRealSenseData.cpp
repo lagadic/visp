@@ -47,21 +47,18 @@
 #include <queue>
 #include <thread>
 
-#ifdef VISP_HAVE_PCL
-#include <pcl/common/common.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/visualization/cloud_viewer.h>
-
-#define USE_PCL_VIEWER
-#endif
-
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayPCL.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoWriter.h>
+
+#if defined(VISP_HAVE_PCL)
+#include <pcl/io/pcd_io.h>
+#endif
 
 #define GETOPTARGS "ci:bodh"
 
@@ -70,35 +67,45 @@ namespace
 
 void usage(const char *name, const char *badparam)
 {
-  fprintf(stdout, "\n\
-          Read RealSense data.\n\
-          \n\
-          %s\
-          OPTIONS:                                               \n\
-          -i <directory>                                         \n\
-          Input directory.\n\
-          \n\
-          -c                                                     \n\
-          Click enable.\n\
-          \n\
-          -b                                                     \n\
-          Pointcloud is in binary format.\n\
-          \n\
-          -o                                                     \n\
-          Save color and depth side by side to image sequence.\n\
-          \n\
-          -d                                                     \n\
-          Display depth in color.\n\
-          \n\
-          -h \n\
-          Print the help.\n\n",
-          name);
+  std::cout << "\nNAME " << std::endl
+    << "  " << vpIoTools::getName(name)
+    << " - Read data acquired with a Realsense device." << std::endl
+    << std::endl
+    << "SYNOPSIS " << std::endl
+    << "  " << name
+    << " [--i <directory>]"
+    << " [-c]"
+    << " [-b]"
+    << " [-o]"
+    << " [-d]"
+    << " [--help,-h]"
+    << std::endl;
+  std::cout << "\nOPTIONS " << std::endl
+    << "  --i <directory>" << std::endl
+    << "    Input folder that contains the data to read." << std::endl
+    << std::endl
+    << "  -c" << std::endl
+    << "    Flag to display data in step by step mode triggered by a user click." << std::endl
+    << std::endl
+    << "  -b" << std::endl
+    << "    Point cloud stream is saved in binary format." << std::endl
+    << std::endl
+    << "  -o" << std::endl
+    << "    Save color images in png format in a new folder." << std::endl
+    << std::endl
+    << "  -d" << std::endl
+    << "    Display depth in color." << std::endl
+    << std::endl
+    << "  --help, -h" << std::endl
+    << "    Display this helper message." << std::endl
+    << std::endl;
 
-  if (badparam)
-    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+  if (badparam) {
+    std::cout << "\nERROR: Bad parameter " << badparam << std::endl;
+  }
 }
 
-bool getOptions(int argc, char **argv, std::string &input_directory, bool &click, bool &pointcloud_binary_format,
+bool getOptions(int argc, const char *argv[], std::string &input_directory, bool &click, bool &pointcloud_binary_format,
                 bool &save_video, bool &color_depth)
 {
   const char *optarg;
@@ -146,69 +153,10 @@ bool getOptions(int argc, char **argv, std::string &input_directory, bool &click
   return true;
 }
 
-#ifdef USE_PCL_VIEWER
-pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-bool cancelled = false, update_pointcloud = false;
-
-class ViewerWorker
-{
-public:
-  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) { }
-
-  void run()
-  {
-    pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-
-    bool local_update = false, local_cancelled = false;
-    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-    viewer->setBackgroundColor(0, 0, 0);
-    viewer->initCameraParameters();
-    viewer->setPosition(640 + 80, 480 + 80);
-    viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-    viewer->setSize(640, 480);
-
-    bool first_init = true;
-    while (!local_cancelled) {
-      {
-        std::unique_lock<std::mutex> lock(m_mutex, std::try_to_lock);
-
-        if (lock.owns_lock()) {
-          local_update = update_pointcloud;
-          update_pointcloud = false;
-          local_cancelled = cancelled;
-          local_pointcloud = pointcloud->makeShared();
-        }
-      }
-
-      if (local_update && !local_cancelled) {
-        local_update = false;
-
-        if (first_init) {
-          viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-          viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
-          first_init = false;
-        }
-        else {
-          viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-        }
-      }
-
-      viewer->spinOnce(10);
-    }
-
-    std::cout << "End of point cloud display thread" << std::endl;
-  }
-
-private:
-  std::mutex &m_mutex;
-};
-#endif
-
 bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw,
               bool pointcloud_binary_format
-#ifdef USE_PCL_VIEWER
-              ,
-              pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
+#if defined(VISP_HAVE_PCL)
+              , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
 #endif
 )
 {
@@ -256,7 +204,7 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
   }
 
   // Read pointcloud
-#ifdef USE_PCL_VIEWER
+#if defined(VISP_HAVE_PCL)
   if (pointcloud_binary_format) {
     std::ifstream file_pointcloud(filename_pointcloud.c_str(), std::ios::in | std::ios::binary);
     if (!file_pointcloud.is_open()) {
@@ -298,7 +246,7 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
 }
 } // Namespace
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
   std::string input_directory = "";
   bool click = false;
@@ -322,10 +270,10 @@ int main(int argc, char *argv[])
 #endif
   bool init_display = false;
 
-#ifdef USE_PCL_VIEWER
+#if defined(VISP_HAVE_PCL)
   std::mutex mutex;
-  ViewerWorker viewer(mutex);
-  std::thread viewer_thread(&ViewerWorker::run, &viewer);
+  pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
+  vpDisplayPCL pcl_viewer;
 #endif
 
   vpVideoWriter writer;
@@ -341,10 +289,9 @@ int main(int argc, char *argv[])
   while (!quit) {
     double t = vpTime::measureTimeMs();
 
-#ifdef USE_PCL_VIEWER
+#if defined(VISP_HAVE_PCL)
     {
       std::lock_guard<std::mutex> lock(mutex);
-      update_pointcloud = true;
       quit = !readData(cpt_frame, input_directory, I_color, I_depth_raw, pointcloud_binary_format, pointcloud);
     }
 #else
@@ -358,10 +305,15 @@ int main(int argc, char *argv[])
     if (!init_display) {
       init_display = true;
       d1.init(I_color, 0, 0, "Color image");
-      if (color_depth)
+      if (color_depth) {
         d2.init(I_depth_color, I_color.getWidth() + 10, 0, "Depth image");
-      else
+      }
+      else {
         d2.init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
+      }
+      pcl_viewer.setPosition(I_color.getWidth() + 10, I_color.getHeight() + 70);
+      pcl_viewer.setWindowName("3D point cloud");
+      pcl_viewer.startThread(std::ref(mutex), pointcloud);
     }
 
     vpDisplay::display(I_color);
@@ -417,14 +369,6 @@ int main(int argc, char *argv[])
     vpTime::wait(t, 30);
     cpt_frame++;
   }
-
-#ifdef USE_PCL_VIEWER
-  {
-    std::lock_guard<std::mutex> lock(mutex);
-    cancelled = true;
-  }
-  viewer_thread.join();
-#endif
 
   return EXIT_SUCCESS;
 }

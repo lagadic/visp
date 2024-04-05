@@ -39,7 +39,7 @@
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
-#include <thread>
+#include <string>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -53,13 +53,15 @@
 class VISP_EXPORT vpDisplayPCL
 {
 public:
-  vpDisplayPCL();
-  vpDisplayPCL(unsigned int width, unsigned int height);
+  vpDisplayPCL(int posx = 0, int posy = 0, const std::string &window_name = "");
+  vpDisplayPCL(unsigned int width, unsigned int height, int posx = 0, int posy = 0, const std::string &window_name = "");
   ~vpDisplayPCL();
 
   void setVerbose(bool verbose);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud);
   void startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud);
+  void setPosition(int posx, int posy);
+  void setWindowName(const std::string &window_name);
   void stop();
 
 private:
@@ -72,6 +74,10 @@ private:
   std::mutex m_mutex;
   unsigned int m_width;
   unsigned int m_height;
+  int m_posx;
+  int m_posy;
+  std::string m_window_name;
+  pcl::visualization::PCLVisualizer::Ptr m_viewer;
 };
 
 #endif

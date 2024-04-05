@@ -35,14 +35,17 @@
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 
+#include <thread>
+
 #include <visp3/gui/vpDisplayPCL.h>
 
 /*!
  * Default constructor.
  * By default, viewer size is set to 640 x 480.
  */
-vpDisplayPCL::vpDisplayPCL()
-  : m_stop(false), m_verbose(false), m_width(640), m_height(480)
+vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
+  : m_stop(false), m_verbose(false), m_width(640), m_height(480), m_posx(posx), m_posy(posy),
+  m_window_name(window_name), m_viewer(nullptr)
 { }
 
 /*!
@@ -50,8 +53,9 @@ vpDisplayPCL::vpDisplayPCL()
  * \param[in] width : Point cloud viewer width.
  * \param[in] height : Point cloud viewer height.
  */
-vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height)
-  : m_stop(false), m_verbose(false), m_width(width), m_height(height)
+vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, int posy, const std::string &window_name)
+  : m_stop(false), m_verbose(false), m_width(width), m_height(height), m_posx(posx), m_posy(posy),
+  m_window_name(window_name), m_viewer(nullptr)
 { }
 
 /*!
@@ -72,12 +76,13 @@ vpDisplayPCL::~vpDisplayPCL()
 void vpDisplayPCL::run(std::mutex &pointcloud_mutex, pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud)
 {
   pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
-  pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-  viewer->setBackgroundColor(0, 0, 0);
-  viewer->initCameraParameters();
-  viewer->setPosition(m_width + 80, m_height + 80);
-  viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  viewer->setSize(m_width, m_height);
+  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
+  m_viewer->setBackgroundColor(0, 0, 0);
+  m_viewer->initCameraParameters();
+  m_viewer->setPosition(m_posx, m_posy);
+  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
+  m_viewer->setSize(m_width, m_height);
+  m_viewer->setWindowName(m_window_name);
   bool init = true;
 
   while (!m_stop) {
@@ -87,16 +92,16 @@ void vpDisplayPCL::run(std::mutex &pointcloud_mutex, pcl::PointCloud<pcl::PointX
     }
 
     if (init) {
-      viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+      m_viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+      m_viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
 
       init = false;
     }
     else {
-      viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
+      m_viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
     }
 
-    viewer->spinOnce(10);
+    m_viewer->spinOnce(10);
   }
 
   if (m_verbose) {
@@ -113,12 +118,13 @@ void vpDisplayPCL::run_color(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB
 {
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>());
   pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud_color);
-  pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
-  viewer->setBackgroundColor(0, 0, 0);
-  viewer->initCameraParameters();
-  viewer->setPosition(m_width + 80, m_height + 80);
-  viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
-  viewer->setSize(m_width, m_height);
+  m_viewer = pcl::visualization::PCLVisualizer::Ptr(new pcl::visualization::PCLVisualizer());
+  m_viewer->setBackgroundColor(0, 0, 0);
+  m_viewer->initCameraParameters();
+  m_viewer->setPosition(m_posx, m_posy);
+  m_viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
+  m_viewer->setSize(m_width, m_height);
+  m_viewer->setWindowName(m_window_name);
   bool init = true;
 
   while (!m_stop) {
@@ -128,16 +134,16 @@ void vpDisplayPCL::run_color(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB
     }
 
     if (init) {
-      viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
-      viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "RGB sample cloud");
+      m_viewer->addPointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
+      m_viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "RGB sample cloud");
 
       init = false;
     }
     else {
-      viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
+      m_viewer->updatePointCloud<pcl::PointXYZRGB>(local_pointcloud, rgb, "RGB sample cloud");
     }
 
-    viewer->spinOnce(10);
+    m_viewer->spinOnce(10);
   }
 
   if (m_verbose) {
@@ -167,6 +173,34 @@ void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZ>
 void vpDisplayPCL::startThread(std::mutex &mutex, pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color)
 {
   m_thread = std::thread(&vpDisplayPCL::run_color, this, std::ref(mutex), pointcloud_color);
+}
+
+/*!
+ * Set the position of the viewer window.
+ * This function has to be called prior startThread().
+ *
+ * @param[in] posx : Position along x.
+ * @param[in] posy : Position along y.
+ *
+ * \sa setWindowName()
+ */
+void vpDisplayPCL::setPosition(int posx, int posy)
+{
+  m_posx = posx;
+  m_posy = posy;
+}
+
+/*!
+ * Set the name of the viewer windows.
+ * This function has to be called prior startThread().
+ *
+ * @param[in] window_name : Window name to set.
+ *
+ * \sa setPosition()
+ */
+void vpDisplayPCL::setWindowName(const std::string &window_name)
+{
+  m_window_name = window_name;
 }
 
 /*!
