@@ -12,7 +12,7 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_X11)
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
@@ -90,7 +90,8 @@ int main(int argc, char **argv)
   }
 
   vpImage<vpRGBa> I;
-  int width, height;
+  int width = 848;
+  int height = 480;
 
   vpVideoReader g;
 #if defined(VISP_HAVE_REALSENSE2)
@@ -99,7 +100,6 @@ int main(int argc, char **argv)
 
   if (use_realsense) {
 #if defined(VISP_HAVE_REALSENSE2)
-    width = 848; height = 480;
     int fps = 60;
     rs2::config config;
     config.enable_stream(RS2_STREAM_COLOR, width, height, RS2_FORMAT_RGBA8, fps);
@@ -179,6 +179,8 @@ int main(int argc, char **argv)
 
   std::cout << "Mean loop time: " << total_loop_time / nb_iter << std::endl;
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "This tutorial needs X11 3rdparty that is not enabled" << std::endl;
 #endif
   return EXIT_SUCCESS;

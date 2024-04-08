@@ -75,7 +75,7 @@ static void on_high_V_thresh_trackbar(int, void *)
   set_trackbar_V_max(hsv_values_trackbar[5]);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, const char *argv[])
 {
   bool opt_save_img = false;
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
