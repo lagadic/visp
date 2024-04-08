@@ -320,7 +320,7 @@ bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     case '?':
       usage(argv[0], nullptr, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize,
             panControl);
-      exit(0);
+      return false;
       break;
     }
   }
@@ -376,10 +376,9 @@ int main(int argc, const char **argv)
     if (read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
                      framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set,
                      ringbuffersize, display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl,
-                     panControl_is_set)) {
+                     panControl_is_set) == false) {
       return EXIT_FAILURE;
     }
-
     // Create a grabber
     vp1394TwoGrabber g(reset);
 
@@ -465,11 +464,13 @@ int main(int argc, const char **argv)
           for (it_lmode = lmode.begin(); it_lmode != lmode.end(); ++it_lmode) {
             // Parse the list of supported modes
             vp1394TwoGrabber::vp1394TwoVideoModeType supmode = *it_lmode;
+            std::stringstream ss;
+            ss << (int)supmode;
             if (curmode == supmode)
-              std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
+              std::cout << " * " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << ss.str() << ")"
               << std::endl;
             else
-              std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << (int)supmode << ")"
+              std::cout << "   " << vp1394TwoGrabber::videoMode2string(supmode) << " (-v " << ss.str() << ")"
               << std::endl;
 
             if (g.isVideoModeFormat7(supmode)) {
@@ -489,7 +490,7 @@ int main(int argc, const char **argv)
             }
             else {
 
-           // Parse the list of supported framerates for a supported mode
+              // Parse the list of supported framerates for a supported mode
               g.getFramerateSupported(supmode, lfps);
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
@@ -520,7 +521,7 @@ int main(int argc, const char **argv)
       g.setVideoMode(videomode);
     }
     else {
-   // get The actual video mode
+      // get The actual video mode
       g.setCamera(camera);
       g.getVideoMode(videomode);
     }
