@@ -140,7 +140,7 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, doubl
   vpPoint2Dt P[nbP];
   P[0] = A;
   P[1] = B;
-  int code_P[nbP], // codes de P[n]
+  unsigned int code_P[nbP], // codes de P[n]
     i, bit_i,  // i -> (0000100...)
     n;
 
