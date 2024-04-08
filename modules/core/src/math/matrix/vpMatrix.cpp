@@ -113,7 +113,7 @@ unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
 #endif
 
 // Prototypes of specific functions
-vpMatrix subblock(const vpMatrix &, unsigned int, unsigned int);
+vpMatrix subblock(const vpMatrix &M, unsigned int col, unsigned int row);
 
 void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMatrix &V, unsigned int nrows,
                             unsigned int ncols, double svThreshold, vpMatrix &Ap, int &rank_out, int *rank_in,
