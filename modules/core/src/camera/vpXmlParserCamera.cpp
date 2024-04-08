@@ -379,7 +379,7 @@ public:
     double kdu = cam_tmp.get_kdu();
     std::vector<double> distortion_coeffs;
     vpXmlCodeSequenceType back = SEQUENCE_OK;
-    int validation = 0;
+    unsigned int validation = 0;
 
     for (pugi::xml_node node = node_.first_child(); node; node = node.next_sibling()) {
       // vpDEBUG_TRACE (15, "Carac : %s.", node ->name);
