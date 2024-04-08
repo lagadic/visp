@@ -480,11 +480,13 @@ int main(int argc, const char **argv)
               for (it_lcoding = lcoding.begin(); it_lcoding != lcoding.end(); ++it_lcoding) {
                 vp1394TwoGrabber::vp1394TwoColorCodingType supcoding;
                 supcoding = *it_lcoding;
+                std::stringstream ss;
+                ss << (int)supcoding;
                 if ((curmode == supmode) && (supcoding == curcoding))
-                  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
+                  std::cout << "    * " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
                   << ")" << std::endl;
                 else
-                  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << (int)supcoding
+                  std::cout << "      " << vp1394TwoGrabber::colorCoding2string(supcoding) << " (-g " << ss.str()
                   << ")" << std::endl;
               }
             }
@@ -494,11 +496,13 @@ int main(int argc, const char **argv)
               g.getFramerateSupported(supmode, lfps);
               for (it_lfps = lfps.begin(); it_lfps != lfps.end(); ++it_lfps) {
                 vp1394TwoGrabber::vp1394TwoFramerateType supfps = *it_lfps;
+                std::stringstream ss;
+                ss << (int)supfps;
                 if ((curmode == supmode) && (supfps == curfps))
-                  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
+                  std::cout << "    * " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
                   << std::endl;
                 else
-                  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << (int)supfps << ")"
+                  std::cout << "      " << vp1394TwoGrabber::framerate2string(supfps) << " (-f " << ss.str() << ")"
                   << std::endl;
               }
             }
