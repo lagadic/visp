@@ -41,13 +41,19 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageConvert.h>
 
-#define vpSAT(c)                                                                                                       \
-  if (c & (~255)) {                                                                                                    \
-    if (c < 0)                                                                                                       \
-      {c = 0;}                                                                                                           \
-    else                                                                                                               \
-      {c = 255;}                                                                                                         \
+namespace
+{
+void vpSAT(int &c)
+{
+  if (c < 0) {
+    c = 0;
   }
+  else {
+    c = 255;
+  }
+}
+};
+
 /*!
   Convert an image from YUYV 4:2:2 (y0 u01 y1 v01 y2 u23 y3 v23 ...) to RGB32.
   Destination rgba memory area has to be allocated before.
@@ -74,12 +80,16 @@ void vpImageConvert::YUYVToRGBa(unsigned char *yuyv, unsigned char *rgba, unsign
   while (h--) {
     int c = w / 2;
     while (c--) {
-      y1 = *s++;
+      y1 = *s;
+      ++s;
       cb = ((*s - 128) * 454) / 256;
-      cg = (*s++ - 128) * 88;
-      y2 = *s++;
+      cg = (*s - 128) * 88;
+      ++s;
+      y2 = *s;
+      ++s;
       cr = ((*s - 128) * 359) / 256;
-      cg = (cg + ((*s++ - 128) * 183)) / 256;
+      cg = (cg + ((*s - 128) * 183)) / 256;
+      ++s;
 
       r = y1 + cr;
       b = y1 + cb;
@@ -132,17 +142,23 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
   while (h--) {
     int c = w / 2;
     while (c--) {
-      y1 = *s++;
+      y1 = *s;
+      ++s;
       cb = ((*s - 128) * 454) / 256;
-      cg = (*s++ - 128) * 88;
-      y2 = *s++;
+      cg = (*s - 128) * 88;
+      ++s;
+      y2 = *s;
+      ++s;
       cr = ((*s - 128) * 359) / 256;
-      cg = (cg + ((*s++ - 128) * 183)) / 256;
+      cg = (cg + ((*s - 128) * 183)) / 256;
+      ++s;
 
       r = y1 + cr;
       b = y1 + cb;
       g = y1 - cg;
-      vpSAT(r); vpSAT(g); vpSAT(b);
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
 
       *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
@@ -151,7 +167,9 @@ void vpImageConvert::YUYVToRGB(unsigned char *yuyv, unsigned char *rgb, unsigned
       r = y2 + cr;
       b = y2 + cb;
       g = y2 - cg;
-      vpSAT(r); vpSAT(g); vpSAT(b);
+      vpSAT(r);
+      vpSAT(g);
+      vpSAT(b);
 
       *d++ = static_cast<unsigned char>(r);
       *d++ = static_cast<unsigned char>(g);
@@ -193,14 +211,20 @@ void vpImageConvert::YUYVToGrey(unsigned char *yuyv, unsigned char *grey, unsign
 void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = size / 4; i; --i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y0 = *yuv++;
-    int Y1 = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y0 = *yuv;
+    ++yuv;
+    int Y1 = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
-    int Y2 = *yuv++;
-    int Y3 = *yuv++;
+    int Y2 = *yuv;
+    ++yuv;
+    int Y3 = *yuv;
+    ++yuv;
     int UV = -U - V;
 
     // Original equations
@@ -283,12 +307,16 @@ void vpImageConvert::YUV411ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 void vpImageConvert::YUV422ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = size / 2; i; --i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y0 = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y0 = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
-    int Y1 = *yuv++;
+    int Y1 = *yuv;
+    ++yuv;
     int UV = -U - V;
 
     //---
@@ -360,12 +388,16 @@ void vpImageConvert::YUV411ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 void vpImageConvert::YUV422ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = size / 2; i; --i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y0 = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y0 = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
-    int Y1 = *yuv++;
+    int Y1 = *yuv;
+    ++yuv;
     int UV = -U - V;
 
     //---
@@ -431,14 +463,20 @@ void vpImageConvert::YUV422ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = size / 4; i; --i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y0 = *yuv++;
-    int Y1 = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y0 = *yuv;
+    ++yuv;
+    int Y1 = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
-    int Y2 = *yuv++;
-    int Y3 = *yuv++;
+    int Y2 = *yuv;
+    ++yuv;
+    int Y3 = *yuv;
+    ++yuv;
     int UV = -U - V;
 
     // Original equations
@@ -514,7 +552,6 @@ void vpImageConvert::YUV411ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 */
 void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
-  //  std::cout << "call optimized ConvertYUV420ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
@@ -523,15 +560,19 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
   const unsigned int halfHeight = height / 2, halfWidth = width / 2;
   for (unsigned int i = 0; i < halfHeight; ++i) {
     for (unsigned int j = 0; j < halfWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>(((*iU) - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>(((*iV) - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
       Y1 = *yuv;
       yuv = yuv + (width - 1);
-      Y2 = *yuv++;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = (yuv - width) + 1;
 
@@ -567,7 +608,7 @@ void vpImageConvert::YUV420ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
       *rgba++ = static_cast<unsigned char>(G);
       *rgba++ = static_cast<unsigned char>(B);
       *rgba = vpRGBa::alpha_default;
-      rgba = rgba + 4 * width - 7;
+      rgba = (rgba + (4 * width)) - 7;
 
       //---
       R = Y2 + V2;
@@ -623,15 +664,19 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
   const unsigned int halfHeight = height / 2, halfWidth = width / 2;
   for (unsigned int i = 0; i < halfHeight; ++i) {
     for (unsigned int j = 0; j < halfWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>(((*iU) - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>(((*iV) - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
       Y1 = *yuv;
       yuv = yuv + (width - 1);
-      Y2 = *yuv++;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = (yuv - width) + 1;
 
@@ -711,7 +756,8 @@ void vpImageConvert::YUV420ToRGB(unsigned char *yuv, unsigned char *rgb, unsigne
 void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsigned int size)
 {
   for (unsigned int i = 0; i < size; ++i) {
-    *grey++ = *yuv++;
+    *grey++ = *yuv;
+    ++yuv;
   }
 }
 
@@ -727,10 +773,13 @@ void vpImageConvert::YUV420ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = 0; i < size; ++i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
     int UV = -U - V;
 
@@ -764,10 +813,13 @@ void vpImageConvert::YUV444ToRGBa(unsigned char *yuv, unsigned char *rgba, unsig
 void vpImageConvert::YUV444ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = 0; i < size; ++i) {
-    int U = static_cast<int>((*yuv++ - 128) * 0.354);
+    int U = static_cast<int>((*yuv - 128) * 0.354);
+    ++yuv;
     int U5 = 5 * U;
-    int Y = *yuv++;
-    int V = static_cast<int>((*yuv++ - 128) * 0.707);
+    int Y = *yuv;
+    ++yuv;
+    int V = static_cast<int>((*yuv - 128) * 0.707);
+    ++yuv;
     int V2 = 2 * V;
     int UV = -U - V;
 
@@ -818,7 +870,6 @@ void vpImageConvert::YUV444ToGrey(unsigned char *yuv, unsigned char *grey, unsig
 */
 void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
-  //  std::cout << "call optimized ConvertYV12ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
@@ -827,15 +878,19 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
   const unsigned int halfHeight = height / 2, halfWidth = width / 2;
   for (unsigned int i = 0; i < halfHeight; ++i) {
     for (unsigned int j = 0; j < halfWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>(((*iU) - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>(((*iV) - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
       Y1 = *yuv;
       yuv = yuv + (width - 1);
-      Y2 = *yuv++;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = (yuv - width) + 1;
 
@@ -919,7 +974,6 @@ void vpImageConvert::YV12ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
 */
 void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
 {
-  //  std::cout << "call optimized ConvertYV12ToRGB()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3;
   unsigned int size = width * height;
@@ -928,15 +982,19 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   const unsigned int halfHeight = height / 2, halfWidth = width / 2;
   for (unsigned int i = 0; i < halfHeight; ++i) {
     for (unsigned int j = 0; j < halfWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>(((*iU) - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>(((*iV) - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
       Y1 = *yuv;
       yuv = yuv + (width - 1);
-      Y2 = *yuv++;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = (yuv - width) + 1;
 
@@ -1018,7 +1076,6 @@ void vpImageConvert::YV12ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
 */
 void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigned int width, unsigned int height)
 {
-  //  std::cout << "call optimized ConvertYVU9ToRGBa()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width * height;
@@ -1027,29 +1084,43 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
   const unsigned int quarterHeight = height / 4, quarterWidth = width / 4;
   for (unsigned int i = 0; i < quarterHeight; ++i) {
     for (unsigned int j = 0; j < quarterWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>(((*iU) - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>(((*iV) - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
-      Y1 = *yuv++;
-      Y2 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
+      Y1 = *yuv;
+      ++yuv;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = yuv + (width - 3);
-      Y4 = *yuv++;
-      Y5 = *yuv++;
-      Y6 = *yuv++;
+      Y4 = *yuv;
+      ++yuv;
+      Y5 = *yuv;
+      ++yuv;
+      Y6 = *yuv;
+      ++yuv;
       Y7 = *yuv;
       yuv = yuv + (width - 3);
-      Y8 = *yuv++;
-      Y9 = *yuv++;
-      Y10 = *yuv++;
+      Y8 = *yuv;
+      ++yuv;
+      Y9 = *yuv;
+      ++yuv;
+      Y10 = *yuv;
+      ++yuv;
       Y11 = *yuv;
       yuv = yuv + (width - 3);
-      Y12 = *yuv++;
-      Y13 = *yuv++;
-      Y14 = *yuv++;
+      Y12 = *yuv;
+      ++yuv;
+      Y13 = *yuv;
+      ++yuv;
+      Y14 = *yuv;
+      ++yuv;
       Y15 = *yuv;
       yuv = (yuv - (3 * width)) + 1;
 
@@ -1311,7 +1382,6 @@ void vpImageConvert::YVU9ToRGBa(unsigned char *yuv, unsigned char *rgba, unsigne
 */
 void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned int height, unsigned int width)
 {
-  //  std::cout << "call optimized ConvertYVU9ToRGB()" << std::endl;
   int U, V, R, G, B, V2, U5, UV;
   int Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8, Y9, Y10, Y11, Y12, Y13, Y14, Y15;
   unsigned int size = width * height;
@@ -1320,29 +1390,43 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
   const unsigned int quarterHeight = height / 4, quarterWidth = width / 4;
   for (unsigned int i = 0; i < quarterHeight; ++i) {
     for (unsigned int j = 0; j < quarterWidth; ++j) {
-      U = static_cast<int>((*iU++ - 128) * 0.354);
+      U = static_cast<int>((*iU - 128) * 0.354);
+      ++iU;
       U5 = 5 * U;
-      V = static_cast<int>((*iV++ - 128) * 0.707);
+      V = static_cast<int>((*iV - 128) * 0.707);
+      ++iV;
       V2 = 2 * V;
       UV = -U - V;
-      Y0 = *yuv++;
-      Y1 = *yuv++;
-      Y2 = *yuv++;
+      Y0 = *yuv;
+      ++yuv;
+      Y1 = *yuv;
+      ++yuv;
+      Y2 = *yuv;
+      ++yuv;
       Y3 = *yuv;
       yuv = yuv + (width - 3);
-      Y4 = *yuv++;
-      Y5 = *yuv++;
-      Y6 = *yuv++;
+      Y4 = *yuv;
+      ++yuv;
+      Y5 = *yuv;
+      ++yuv;
+      Y6 = *yuv;
+      ++yuv;
       Y7 = *yuv;
       yuv = yuv + (width - 3);
-      Y8 = *yuv++;
-      Y9 = *yuv++;
-      Y10 = *yuv++;
+      Y8 = *yuv;
+      ++yuv;
+      Y9 = *yuv;
+      ++yuv;
+      Y10 = *yuv;
+      ++yuv;
       Y11 = *yuv;
       yuv = yuv + (width - 3);
-      Y12 = *yuv++;
-      Y13 = *yuv++;
-      Y14 = *yuv++;
+      Y12 = *yuv;
+      ++yuv;
+      Y13 = *yuv;
+      ++yuv;
+      Y14 = *yuv;
+      ++yuv;
       Y15 = *yuv;
       yuv = (yuv - (3 * width)) + 1;
 
@@ -1516,7 +1600,7 @@ void vpImageConvert::YVU9ToRGB(unsigned char *yuv, unsigned char *rgb, unsigned 
       *rgb++ = static_cast<unsigned char>(R);
       *rgb++ = static_cast<unsigned char>(G);
       *rgb = static_cast<unsigned char>(B);
-      rgb = rgb + 3 * width - 11;
+      rgb = (rgb + (3 * width)) - 11;
 
       R = Y12 + V2;
       vpSAT(R);

@@ -95,42 +95,69 @@ bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *i
 
   i = 0, j = 1, k = 2;
 
-  double area012 = ((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1]) + (pa[i][0] * pa[j][1]) - (pa[k][0] * pa[j][1]) +
-                    (-pa[i][0] * pa[k][1]) + (pa[1][j] * pa[k][1]));
+  double area012 = ((((((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1])) + (pa[i][0] * pa[j][1])) - (pa[k][0] * pa[j][1])) +
+                     (-pa[i][0] * pa[k][1])) + (pa[1][j] * pa[k][1]));
 
   i = 0;
   j = 1, k = 3;
-  double area013 = ((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1]) + (pa[i][0] * pa[j][1]) - (pa[k][0] * pa[j][1]) +
-                    (-pa[i][0] * pa[k][1]) + (pa[1][j] * pa[k][1]));
+  double area013 = ((((((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1])) + (pa[i][0] * pa[j][1])) - (pa[k][0] * pa[j][1])) +
+                     (-pa[i][0] * pa[k][1])) + (pa[1][j] * pa[k][1]));
 
   i = 0;
   j = 2, k = 3;
-  double area023 = ((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1]) + (pa[i][0] * pa[j][1]) - (pa[k][0] * pa[j][1]) +
-                    (-pa[i][0] * pa[k][1]) + (pa[1][j] * pa[k][1]));
+  double area023 = ((((((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1])) + (pa[i][0] * pa[j][1])) - (pa[k][0] * pa[j][1])) +
+                     (-pa[i][0] * pa[k][1])) + (pa[1][j] * pa[k][1]));
 
   i = 1;
   j = 2, k = 3;
-  double area123 = ((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1]) + (pa[i][0] * pa[j][1]) - (pa[k][0] * pa[j][1]) +
-                    (-pa[i][0] * pa[k][1]) + (pa[1][j] * pa[k][1]));
+  double area123 = ((((((-pa[j][0] * pa[i][1]) + (pa[k][0] * pa[i][1])) + (pa[i][0] * pa[j][1])) - (pa[k][0] * pa[j][1])) +
+                     (-pa[i][0] * pa[k][1])) + (pa[1][j] * pa[k][1]));
 
   double sum_area = area012 + area013 + area023 + area123;
 
-  return ((sum_area < threshold_area) ||
-          (iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) || iscolinear(pa[0], pa[2], pa[3]) ||
-           iscolinear(pa[1], pa[2], pa[3]) || iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
-           iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3])));
+  if (sum_area < threshold_area) {
+    return true;
+  }
+  else if (iscolinear(pa[0], pa[1], pa[2])) {
+    return true;
+  }
+  else if (iscolinear(pa[0], pa[1], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pa[0], pa[2], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pa[1], pa[2], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[1], pb[2])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[1], pb[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[2], pb[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[1], pb[2], pb[3])) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
-/*
-\brief
-Function to determine if a set of 4 pairs of matched  points give rise
-to a degeneracy in the calculation of a homography as needed by RANSAC.
-This involves testing whether any 3 of the 4 points in each set is
-colinear.
 
-point are coded this way
-x1b,y1b, x2b, y2b, ... xnb, ynb
-x1a,y1a, x2a, y2a, ... xna, yna
-leading to 2*2*n
+/*
+  \brief
+  Function to determine if a set of 4 pairs of matched  points give rise
+  to a degeneracy in the calculation of a homography as needed by RANSAC.
+  This involves testing whether any 3 of the 4 points in each set is
+  colinear.
+
+  point are coded this way
+  x1b,y1b, x2b, y2b, ... xnb, ynb
+  x1a,y1a, x2a, y2a, ... xna, yna
+  leading to 2*2*n
 */
 bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *ind)
 {
@@ -156,10 +183,36 @@ bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *i
     pa[i][1] = x[n2 + ind2 + 1];
     pa[i][2] = 1;
   }
-  return (iscolinear(pa[0], pa[1], pa[2]) || iscolinear(pa[0], pa[1], pa[3]) || iscolinear(pa[0], pa[2], pa[3]) ||
-          iscolinear(pa[1], pa[2], pa[3]) || iscolinear(pb[0], pb[1], pb[2]) || iscolinear(pb[0], pb[1], pb[3]) ||
-          iscolinear(pb[0], pb[2], pb[3]) || iscolinear(pb[1], pb[2], pb[3]));
+
+  if (iscolinear(pa[0], pa[1], pa[2])) {
+    return true;
+  }
+  else if (iscolinear(pa[0], pa[1], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pa[0], pa[2], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pa[1], pa[2], pa[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[1], pb[2])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[1], pb[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[0], pb[2], pb[3])) {
+    return true;
+  }
+  else if (iscolinear(pb[1], pb[2], pb[3])) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
+
 bool vpHomography::degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
                                            const std::vector<double> &xa, const std::vector<double> &ya)
 {
