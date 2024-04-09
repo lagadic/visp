@@ -458,7 +458,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
   if (foundSolution) {
     unsigned int nbMinRandom = 4;
-    // std::cout << "Nombre d'inliers " << nbInliers << std::endl
+    // std::cout << "Nb inliers " << nbInliers << std::endl;
 
     // Display the random picked points
     /*

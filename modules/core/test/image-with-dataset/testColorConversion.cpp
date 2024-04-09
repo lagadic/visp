@@ -930,7 +930,7 @@ static double computePSNR(const vpImage<vpRGBa> &I_RGBA_8U, const vpImage<vpRGBa
   return 10 * std::log10(255 * 255 / mse);
 }
 
-static bool reaBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
+static bool readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
 {
   std::FILE *f = std::fopen(filename.c_str(), "rb");
   CHECK(f != nullptr);
@@ -951,7 +951,7 @@ static bool reaBinaryFile(const std::string &filename, std::vector<uint16_t> &bu
   return true;
 }
 
-static bool reaBinaryFile(const std::string &filename, std::vector<uint8_t> &buffer)
+static bool readBinaryFile(const std::string &filename, std::vector<uint8_t> &buffer)
 {
   std::FILE *f = std::fopen(filename.c_str(), "rb");
   CHECK(f != nullptr);
@@ -986,7 +986,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     {
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_16U);
 
         SECTION("Bilinear")
@@ -1017,7 +1017,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     {
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_16U);
 
         SECTION("Bilinear")
@@ -1048,7 +1048,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     {
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_16U);
 
         SECTION("Bilinear")
@@ -1079,7 +1079,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     {
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_16U);
 
         SECTION("Bilinear")
@@ -1118,7 +1118,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
 
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_8U);
 
         SECTION("Bilinear")
@@ -1148,7 +1148,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
 
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_8U);
 
         SECTION("Bilinear")
@@ -1178,7 +1178,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
 
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_8U);
 
         SECTION("Bilinear")
@@ -1208,7 +1208,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
       const std::string filename =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
 
-      if (reaBinaryFile(filename, buffer)) {
+      if (readBinaryFile(filename, buffer)) {
         col2im(buffer, I_Bayer_8U);
 
         SECTION("Bilinear")
