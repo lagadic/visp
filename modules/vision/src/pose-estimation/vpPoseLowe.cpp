@@ -96,7 +96,7 @@ void eval_function(int npt, double *xc, double *f)
 
   vpRotationMatrix rd(u[0], u[1], u[2]);
   //  rot_mat(u,rd);          /* matrice de rotation correspondante   */
-  for (i = 0; i < npt; i++) {
+  for (i = 0; i < npt; ++i) {
     double x = rd[0][0] * XO[i] + rd[0][1] * YO[i] + rd[0][2] * ZO[i] + xc[0];
     double y = rd[1][0] * XO[i] + rd[1][1] * YO[i] + rd[1][2] * ZO[i] + xc[1];
     double z = rd[2][0] * XO[i] + rd[2][1] * YO[i] + rd[2][2] * ZO[i] + xc[2];
@@ -166,7 +166,7 @@ void fcn(int m, int n, double *xc, double *fvecc, double *jac, int ldfjac, int i
     double mco = 1.0 - co;
     double si = sin(tt);
 
-    for (int i = 0; i < npt; i++) {
+    for (int i = 0; i < npt; ++i) {
       double x = XO[i];
       double y = YO[i]; /* coordonnees du point i  */
       double z = ZO[i];
@@ -270,13 +270,13 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
   tol = std::numeric_limits<double>::epsilon(); /* critere d'arret  */
 
   //  c = cam ;
-  // for (i=0;i<3;i++)
-  //   for (j=0;j<3;j++) rd[i][j] = cMo[i][j];
+  // for (i=0;i<3; ++i)
+  //   for (j=0;j<3; ++j) rd[i][j] = cMo[i][j];
   //  mat_rot(rd,u);
   vpRotationMatrix cRo;
   cMo.extract(cRo);
   vpThetaUVector u(cRo);
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     sol[i] = cMo[i][3];
     sol[i + 3] = u[i];
   }
@@ -299,10 +299,10 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
     // return FATAL_ERROR ;
   }
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
     u[i] = sol[i + 3];
 
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     cMo[i][3] = sol[i];
     u[i] = sol[i + 3];
   }
@@ -310,7 +310,7 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
   vpRotationMatrix rd(u);
   cMo.insert(rd);
   //  rot_mat(u,rd);
-  //  for (i=0;i<3;i++) for (j=0;j<3;j++) cMo[i][j] = rd[i][j];
+  //  for (i=0;i<3; ++i) for (j=0;j<3; ++j) cMo[i][j] = rd[i][j];
 
 #if (DEBUG_LEVEL1)
   std::cout << "end CCalculPose::PoseLowe(...) " << std::endl;

@@ -607,8 +607,8 @@ double vpPose::poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint 
 
   //  vpHomography::HartleyDLT(rectx,recty,irectx,irecty,hom);
   vpHomography::HLM(rectx, recty, irectx, irecty, 1, hom);
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i)
+    for (unsigned int j = 0; j < 3; ++j)
       H[i][j] = hom[i][j];
   // calcul de s =  ||Kh1||/ ||Kh2|| =ratio (length on x axis/ length on y
   // axis)

@@ -214,13 +214,13 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
       // compute the residual
       r = error.sumSquare();
 
-      for (unsigned int k = 0; k < error.getRows() / 2; k++) {
+      for (unsigned int k = 0; k < error.getRows() / 2; ++k) {
         res[k] = vpMath::sqr(error[2 * k]) + vpMath::sqr(error[2 * k + 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix
-      for (unsigned int k = 0; k < error.getRows() / 2; k++) {
+      for (unsigned int k = 0; k < error.getRows() / 2; ++k) {
         W[2 * k][2 * k] = w[k];
         W[2 * k + 1][2 * k + 1] = w[k];
       }
@@ -262,7 +262,7 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vec
   vpColVector sd(3 * nb), s(3 * nb);
 
   // create sd
-  for (auto i = 0u; i < points.size(); i++) {
+  for (auto i = 0u; i < points.size(); ++i) {
     sd[3 * i] = points[i].get_x();
     sd[3 * i + 1] = points[i].get_y();
     sd[3 * i + 2] = points[i].get_Z();
@@ -274,7 +274,7 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vec
     residu_1 = r;
 
     // Compute the interaction matrix and the error
-    for (auto i = 0u; i < points.size(); i++) {
+    for (auto i = 0u; i < points.size(); ++i) {
       // forward projection of the 3D model for a given pose
       // change frame coordinates
       // perspective projection

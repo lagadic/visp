@@ -96,7 +96,7 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
   line = new unsigned char[width];
   unsigned char *input = (unsigned char *)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < width; ++i) {
       line[i] = *(input);
       input++;
     }
@@ -155,7 +155,7 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
   line = new unsigned char[3 * width];
   unsigned char *input = (unsigned char *)I.bitmap;
   while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
+    for (unsigned int i = 0; i < width; ++i) {
       line[i * 3] = *(input);
       input++;
       line[i * 3 + 1] = *(input);
@@ -227,11 +227,11 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
     unsigned char *output = (unsigned char *)Ic.bitmap;
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
-        *(output++) = buffer[0][i * 3];
-        *(output++) = buffer[0][i * 3 + 1];
-        *(output++) = buffer[0][i * 3 + 2];
-        *(output++) = vpRGBa::alpha_default;
+      for (unsigned int i = 0; i < width; ++i) {
+        *(++output) = buffer[0][i * 3];
+        *(++output) = buffer[0][i * 3 + 1];
+        *(++output) = buffer[0][i * 3 + 2];
+        *(++output) = vpRGBa::alpha_default;
       }
     }
     vpImageConvert::convert(Ic, I);
@@ -307,11 +307,11 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
     unsigned char *output = (unsigned char *)I.bitmap;
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
-        *(output++) = buffer[0][i * 3];
-        *(output++) = buffer[0][i * 3 + 1];
-        *(output++) = buffer[0][i * 3 + 2];
-        *(output++) = vpRGBa::alpha_default;
+      for (unsigned int i = 0; i < width; ++i) {
+        *(++output) = buffer[0][i * 3];
+        *(++output) = buffer[0][i * 3 + 1];
+        *(++output) = buffer[0][i * 3 + 2];
+        *(++output) = vpRGBa::alpha_default;
       }
     }
   }

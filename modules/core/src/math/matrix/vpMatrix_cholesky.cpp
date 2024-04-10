@@ -204,8 +204,8 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
       throw vpMatrixException::badValue;
     }
 
-    for (unsigned int i = 0; i < A.getRows(); i++)
-      for (unsigned int j = 0; j < A.getCols(); j++)
+    for (unsigned int i = 0; i < A.getRows(); ++i)
+      for (unsigned int j = 0; j < A.getCols(); ++j)
         if (i > j)
           A[i][j] = A[j][i];
 

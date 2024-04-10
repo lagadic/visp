@@ -1095,9 +1095,9 @@ void vpImageConvert::RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned
     for (i = 0; i < height; ++i) {
       unsigned char *line = src;
       for (j = 0; j < width; ++j) {
-        *rgba++ = *(line++);
-        *rgba++ = *(line++);
-        *rgba++ = *(line++);
+        *rgba++ = *(++line);
+        *rgba++ = *(++line);
+        *rgba++ = *(++line);
         *rgba++ = vpRGBa::alpha_default;
       }
       // go to the next line
@@ -1130,9 +1130,9 @@ void vpImageConvert::RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned
   unsigned char *pt_output = rgb;
 
   while (pt_input != pt_end) {
-    *(pt_output++) = *(pt_input++); // R
-    *(pt_output++) = *(pt_input++); // G
-    *(pt_output++) = *(pt_input++); // B
+    *(++pt_output) = *(++pt_input); // R
+    *(++pt_output) = *(++pt_input); // G
+    *(++pt_output) = *(++pt_input); // B
     pt_input++;
   }
 #endif
@@ -1192,9 +1192,9 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
     for (i = 0; i < height; ++i) {
       unsigned char *line = src;
       for (j = 0; j < width; ++j) {
-        r = *(line++);
-        g = *(line++);
-        b = *(line++);
+        r = *(++line);
+        g = *(++line);
+        b = *(++line);
         *grey++ = static_cast<unsigned char>((0.2126 * r) + (0.7152 * g) + (0.0722 * b));
       }
 

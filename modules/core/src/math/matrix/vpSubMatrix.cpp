@@ -75,7 +75,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     throw(vpMatrixException(vpMatrixException::subMatrixError, "SubMatrix parent matrix is not allocated"));
   }
 
-  if (row_offset + nrows <= m.getRows() && col_offset + ncols <= m.getCols()) {
+  if ((row_offset + nrows <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
     data = m.data;
     parent = &m;
     rowNum = nrows;
@@ -83,12 +83,14 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     pRowNum = m.getRows();
     pColNum = m.getCols();
 
-    if (rowPtrs)
+    if (rowPtrs) {
       free(rowPtrs);
+    }
 
     rowPtrs = (double **)malloc(nrows * sizeof(double *));
-    for (unsigned int r = 0; r < nrows; r++)
-      rowPtrs[r] = m.data + col_offset + (r + row_offset) * pColNum;
+    for (unsigned int r = 0; r < nrows; ++r) {
+      rowPtrs[r] = m.data + col_offset + ((r + row_offset) * pColNum);
+    }
 
     dsize = pRowNum * pColNum;
   }
@@ -108,7 +110,7 @@ void vpSubMatrix::checkParentStatus() const
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
                             "vpSubMatrix parent vpMatrix has been destroyed"));
   }
-  if (pRowNum != parent->getRows() || pColNum != parent->getCols()) {
+  if ((pRowNum != parent->getRows()) || (pColNum != parent->getCols())) {
     throw(vpMatrixException(vpMatrixException::incorrectMatrixSizeError,
                             "vpSubMatrix size of parent vpMatrix has been changed"));
   }
@@ -126,9 +128,10 @@ vpSubMatrix &vpSubMatrix::operator=(const vpMatrix &B)
                             "vpSubMatrix mismatch in operator vpSubMatrix=vpMatrix"));
   }
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = B[i][j];
+    }
   }
 
   return *this;
@@ -152,9 +155,10 @@ vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
 
   double **BrowPtrs = B.rowPtrs;
 
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = BrowPtrs[i][j];
+    }
   }
 
   return *this;
@@ -166,9 +170,10 @@ vpSubMatrix &vpSubMatrix::operator=(const vpSubMatrix &B)
 */
 vpSubMatrix &vpSubMatrix::operator=(const double &x)
 {
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = x;
+    }
   }
 
   return *this;

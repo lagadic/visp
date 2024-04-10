@@ -1432,11 +1432,11 @@ std::string vpIoTools::path(const std::string &pathname)
   std::string path(pathname);
 
 #if defined(_WIN32)
-  for (unsigned int i = 0; i < path.length(); i++)
+  for (unsigned int i = 0; i < path.length(); ++i)
     if (path[i] == '/')
       path[i] = '\\';
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
-  for (unsigned int i = 0; i < path.length(); i++)
+  for (unsigned int i = 0; i < path.length(); ++i)
     if (path[i] == '\\')
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
@@ -2073,9 +2073,9 @@ std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); ++it) {
 #else
-  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+  for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
 #endif
     out += std::tolower(*it);
   }
@@ -2094,9 +2094,9 @@ std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); ++it) {
 #else
-  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+  for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
 #endif
     out += std::toupper(*it);
   }
@@ -2353,7 +2353,7 @@ int main()
 
     std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
     std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
+    for (size_t i=0; i < subChain.size(); ++i)
       std::cout << subChain[i] << std::endl;
   }
 
@@ -2363,7 +2363,7 @@ int main()
 
     std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
     std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
+    for (size_t i=0; i < subChain.size(); ++i)
       std::cout << subChain[i] << std::endl;
   }
 }
@@ -2428,7 +2428,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
-  for (int i = 0; i < filesCount; i++) {
+  for (int i = 0; i < filesCount; ++i) {
     std::string fileName = list[i]->d_name;
     if (fileName != "." && fileName != "..") {
       files.push_back(fileName);

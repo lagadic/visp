@@ -170,14 +170,14 @@ int vpUniRand::uniform(int a, int b)
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-float vpUniRand::uniform(float a, float b) { return next() * m_maxInvFlt * (b - a) + a; }
+float vpUniRand::uniform(float a, float b) { return (next() * m_maxInvFlt * (b - a)) + a; }
 
 /*!
   Generates a pseudorandom uniformly distributed double number between [a, b) range.
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-double vpUniRand::uniform(double a, double b) { return next() * m_maxInvDbl * (b - a) + a; }
+double vpUniRand::uniform(double a, double b) { return (next() * m_maxInvDbl * (b - a)) + a; }
 
 /*!
   Initialize the random number generator.

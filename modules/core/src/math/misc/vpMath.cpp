@@ -215,7 +215,7 @@ bool vpMath::isFinite(float value)
 bool vpMath::isNumber(const std::string &str)
 {
   size_t str_size = str.size();
-  for (size_t i = 0; i < str_size; i++) {
+  for (size_t i = 0; i < str_size; ++i) {
     if (isdigit(str[i]) == false) {
       return false;
     }
@@ -396,7 +396,7 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
 
   double x_mean = 0, y_mean = 0;
   size_t imPts_size = imPts.size();
-  for (size_t i = 0; i < imPts_size; i++) {
+  for (size_t i = 0; i < imPts_size; ++i) {
     const vpImagePoint &imPt = imPts[i];
     x_mean += imPt.get_u();
     y_mean += imPt.get_v();
@@ -406,7 +406,7 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
 
   vpMatrix AtA(2, 2, 0.0);
   imPts_size = imPts.size();
-  for (size_t i = 0; i < imPts_size; i++) {
+  for (size_t i = 0; i < imPts_size; ++i) {
     const vpImagePoint &imPt = imPts[i];
     AtA[0][0] += (imPt.get_u() - x_mean) * (imPt.get_u() - x_mean);
     AtA[0][1] += (imPt.get_u() - x_mean) * (imPt.get_v() - y_mean);
@@ -424,7 +424,7 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
 
   double error = 0;
   imPts_size = imPts.size();
-  for (size_t i = 0; i < imPts_size; i++) {
+  for (size_t i = 0; i < imPts_size; ++i) {
     double x0 = imPts[i].get_u();
     double y0 = imPts[i].get_v();
 
@@ -598,11 +598,11 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(static_cast<double>(maxPoints))));
 #endif
 
-  for (int m = 0; m < m_theta; m++) {
+  for (int m = 0; m < m_theta; ++m) {
     double theta = (M_PI * (m + 0.5)) / m_theta;
     int m_phi = static_cast<int>(round((2.0 * M_PI * sin(theta)) / d_phi));
 
-    for (int n = 0; n < m_phi; n++) {
+    for (int n = 0; n < m_phi; ++n) {
       double phi = (2.0 * M_PI * n) / m_phi;
       double lon = phi;
       double lat = M_PI_2 - theta;
@@ -638,7 +638,7 @@ std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(con
   std::vector<vpHomogeneousMatrix> ecef_M_local_vec;
   ecef_M_local_vec.reserve(lonlatVec.size());
   size_t lonlatVec_size = lonlatVec.size();
-  for (size_t i = 0; i < lonlatVec_size; i++) {
+  for (size_t i = 0; i < lonlatVec_size; ++i) {
     double lonDeg = lonlatVec[i].first;
     double latDeg = lonlatVec[i].second;
 
@@ -707,7 +707,7 @@ vpColVector vpMath::deg(const vpRotationVector &r)
   }
   vpColVector r_deg(r.size());
   unsigned int r_size = r.size();
-  for (unsigned int i = 0; i < r_size; i++) {
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
@@ -723,7 +723,7 @@ vpColVector vpMath::deg(const vpColVector &r)
 {
   vpColVector r_deg(r.size());
   unsigned int r_size = r.size();
-  for (unsigned int i = 0; i < r_size; i++) {
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
@@ -739,7 +739,7 @@ vpColVector vpMath::rad(const vpColVector &r)
 {
   vpColVector r_rad(r.size());
   unsigned int r_size = r.size();
-  for (unsigned int i = 0; i < r_size; i++) {
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_rad[i] = vpMath::rad(r[i]);
   }
   return r_rad;

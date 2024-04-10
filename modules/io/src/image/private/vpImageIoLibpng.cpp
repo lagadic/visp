@@ -119,14 +119,14 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
   png_write_info(png_ptr, info_ptr);
 
   png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     row_ptrs[i] = new png_byte[width];
 
   unsigned char *input = (unsigned char *)I.bitmap;
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
+    for (unsigned int j = 0; j < width; ++j) {
       row[j] = *(input);
       input++;
     }
@@ -136,7 +136,7 @@ void writePNGLibpng(const vpImage<unsigned char> &I, const std::string &filename
 
   png_write_end(png_ptr, nullptr);
 
-  for (unsigned int j = 0; j < height; j++)
+  for (unsigned int j = 0; j < height; ++j)
     delete[] row_ptrs[j];
 
   delete[] row_ptrs;
@@ -216,14 +216,14 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
   png_write_info(png_ptr, info_ptr);
 
   png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     row_ptrs[i] = new png_byte[3 * width];
 
   unsigned char *input = (unsigned char *)I.bitmap;
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
+    for (unsigned int j = 0; j < width; ++j) {
       row[3 * j] = *(input);
       input++;
       row[3 * j + 1] = *(input);
@@ -238,7 +238,7 @@ void writePNGLibpng(const vpImage<vpRGBa> &I, const std::string &filename)
 
   png_write_end(png_ptr, nullptr);
 
-  for (unsigned int j = 0; j < height; j++)
+  for (unsigned int j = 0; j < height; ++j)
     delete[] row_ptrs[j];
 
   delete[] row_ptrs;
@@ -369,7 +369,7 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char *data = new unsigned char[stride * height];
 
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     rowPtrs[i] = (png_bytep)data + (i * stride);
 
   png_read_image(png_ptr, rowPtrs);
@@ -380,36 +380,36 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   switch (channels) {
   case 1:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i];
     }
     break;
 
   case 2:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 2];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 2];
     }
     break;
 
   case 3:
     output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 3];
-      *(output++) = data[i * 3 + 1];
-      *(output++) = data[i * 3 + 2];
-      *(output++) = vpRGBa::alpha_default;
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 3];
+      *(++output) = data[i * 3 + 1];
+      *(++output) = data[i * 3 + 2];
+      *(++output) = vpRGBa::alpha_default;
     }
     vpImageConvert::convert(Ic, I);
     break;
 
   case 4:
     output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 4];
-      *(output++) = data[i * 4 + 1];
-      *(output++) = data[i * 4 + 2];
-      *(output++) = data[i * 4 + 3];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 4];
+      *(++output) = data[i * 4 + 1];
+      *(++output) = data[i * 4 + 2];
+      *(++output) = data[i * 4 + 3];
     }
     vpImageConvert::convert(Ic, I);
     break;
@@ -546,7 +546,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
   unsigned char *data = new unsigned char[stride * height];
 
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     rowPtrs[i] = (png_bytep)data + (i * stride);
 
   png_read_image(png_ptr, rowPtrs);
@@ -557,37 +557,37 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   switch (channels) {
   case 1:
     output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i];
     }
     vpImageConvert::convert(Ig, I);
     break;
 
   case 2:
     output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 2];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 2];
     }
     vpImageConvert::convert(Ig, I);
     break;
 
   case 3:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 3];
-      *(output++) = data[i * 3 + 1];
-      *(output++) = data[i * 3 + 2];
-      *(output++) = vpRGBa::alpha_default;
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 3];
+      *(++output) = data[i * 3 + 1];
+      *(++output) = data[i * 3 + 2];
+      *(++output) = vpRGBa::alpha_default;
     }
     break;
 
   case 4:
     output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 4];
-      *(output++) = data[i * 4 + 1];
-      *(output++) = data[i * 4 + 2];
-      *(output++) = data[i * 4 + 3];
+    for (unsigned int i = 0; i < width * height; ++i) {
+      *(++output) = data[i * 4];
+      *(++output) = data[i * 4 + 1];
+      *(++output) = data[i * 4 + 2];
+      *(++output) = data[i * 4 + 3];
     }
     break;
   }

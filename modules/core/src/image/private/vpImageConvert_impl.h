@@ -63,7 +63,7 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
-  for (int i = 0; i < nThreads; i++) {
+  for (int i = 0; i < nThreads; ++i) {
     histograms[i].fill(0);
   }
 
@@ -75,8 +75,8 @@ void vp_createDepthHistogram(const vpImage<float> &src_depth, vpImage<unsigned c
   }
 
 #pragma omp parallel for
-  for (int i = 0; i < 0x10000; i++) {
-    for (int j = 0; j < nThreads; j++) {
+  for (int i = 0; i < 0x10000; ++i) {
+    for (int j = 0; j < nThreads; ++j) {
       histogram[i] += histograms[j][i];
     }
   }
@@ -123,7 +123,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
 #if defined(VISP_HAVE_OPENMP) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   int nThreads = omp_get_max_threads();
   std::vector<std::array<uint32_t, 0x10000> > histograms(nThreads);
-  for (int i = 0; i < nThreads; i++) {
+  for (int i = 0; i < nThreads; ++i) {
     histograms[i].fill(0);
   }
 
@@ -133,8 +133,8 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
   }
 
 #pragma omp parallel for
-  for (int i = 0; i < 0x10000; i++) {
-    for (int j = 0; j < nThreads; j++) {
+  for (int i = 0; i < 0x10000; ++i) {
+    for (int j = 0; j < nThreads; ++j) {
       histogram[i] += histograms[j][i];
     }
   }

@@ -200,8 +200,10 @@ void vpPoint::getWorldCoordinates(vpColVector &oP_) { oP_ = oP; }
 void vpPoint::getWorldCoordinates(std::vector<double> &oP_)
 {
   oP_.resize(oP.size());
-  for (unsigned int i = 0; i < oP.size(); i++)
+  unsigned int oP_size = oP.size();
+  for (unsigned int i = 0; i < oP_size; ++i) {
     oP_[i] = oP[i];
+  }
 }
 
 /*!
@@ -215,18 +217,18 @@ vpColVector vpPoint::getWorldCoordinates(void) { return this->oP; }
 /*!
   Compute the perspective projection of a point _cP.
 
-  \param _cP : 3-dim vector cP = (cX, cY, cZ) or 4-dim vector cP = (cX, cY, cZ, 1) corresponding
+  \param v_cP : 3-dim vector cP = (cX, cY, cZ) or 4-dim vector cP = (cX, cY, cZ, 1) corresponding
   to the normalized coordinates of the 3D point in the camera frame.
-  \param _p : Coordinates of the point in the
+  \param v_p : Coordinates of the point in the
   image plane obtained by perspective projection.
 */
-void vpPoint::projection(const vpColVector &_cP, vpColVector &_p) const
+void vpPoint::projection(const vpColVector &v_cP, vpColVector &v_p) const
 {
-  _p.resize(3, false);
+  v_p.resize(3, false);
 
-  _p[0] = _cP[0] / _cP[2];
-  _p[1] = _cP[1] / _cP[2];
-  _p[2] = 1;
+  v_p[0] = v_cP[0] / v_cP[2];
+  v_p[1] = v_cP[1] / v_cP[2];
+  v_p[2] = 1;
 }
 
 /*!
@@ -235,22 +237,22 @@ void vpPoint::projection(const vpColVector &_cP, vpColVector &_p) const
   3D coordinates of the point in the camera frame cP = cMo * oP.
 
   \param cMo : Transformation from camera to object frame.
-  \param _cP : 3D normalized coordinates of the point in the camera frame cP = (cX, cY, cZ, 1).
+  \param v_cP : 3D normalized coordinates of the point in the camera frame cP = (cX, cY, cZ, 1).
 */
-void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) const
+void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &v_cP) const
 {
-  _cP.resize(4, false);
+  v_cP.resize(4, false);
 
-  _cP[0] = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
-  _cP[1] = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
-  _cP[2] = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
-  _cP[3] = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
+  v_cP[0] = (cMo[0][0] * oP[0]) + (cMo[0][1] * oP[1]) + (cMo[0][2] * oP[2]) + (cMo[0][3] * oP[3]);
+  v_cP[1] = (cMo[1][0] * oP[0]) + (cMo[1][1] * oP[1]) + (cMo[1][2] * oP[2]) + (cMo[1][3] * oP[3]);
+  v_cP[2] = (cMo[2][0] * oP[0]) + (cMo[2][1] * oP[1]) + (cMo[2][2] * oP[2]) + (cMo[2][3] * oP[3]);
+  v_cP[3] = (cMo[3][0] * oP[0]) + (cMo[3][1] * oP[1]) + (cMo[3][2] * oP[2]) + (cMo[3][3] * oP[3]);
 
-  double d = 1 / _cP[3];
-  _cP[0] *= d;
-  _cP[1] *= d;
-  _cP[2] *= d;
-  _cP[3] *= d;
+  double d = 1 / v_cP[3];
+  v_cP[0] *= d;
+  v_cP[1] *= d;
+  v_cP[2] *= d;
+  v_cP[3] *= d;
 }
 
 /*!
@@ -263,10 +265,10 @@ void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &_cP) cons
 */
 void vpPoint::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-  double X = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3] * oP[3];
-  double Y = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3] * oP[3];
-  double Z = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3] * oP[3];
-  double W = cMo[3][0] * oP[0] + cMo[3][1] * oP[1] + cMo[3][2] * oP[2] + cMo[3][3] * oP[3];
+  double X = (cMo[0][0] * oP[0]) + (cMo[0][1] * oP[1]) + (cMo[0][2] * oP[2]) + (cMo[0][3] * oP[3]);
+  double Y = (cMo[1][0] * oP[0]) + (cMo[1][1] * oP[1]) + (cMo[1][2] * oP[2]) + (cMo[1][3] * oP[3]);
+  double Z = (cMo[2][0] * oP[0]) + (cMo[2][1] * oP[1]) + (cMo[2][2] * oP[2]) + (cMo[2][3] * oP[3]);
+  double W = (cMo[3][0] * oP[0]) + (cMo[3][1] * oP[1]) + (cMo[3][2] * oP[2]) + (cMo[3][3] * oP[3]);
 
   double d = 1 / W;
   cP[0] = X * d;
@@ -372,14 +374,15 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix
                       const vpColor &color, unsigned int thickness)
 {
 
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
 
-  if (_cP[2] < 0) // no display if point is behind the camera
+  if (v_cP[2] < 0) { // no display if point is behind the camera
     return;
+  }
 
-  vpPoint::projection(_cP, _p);
-  vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
+  vpPoint::projection(v_cP, v_p);
+  vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
 
 /*!
@@ -396,14 +399,15 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix
 void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
 
-  if (_cP[2] < 0) // no display if point is behind the camera
+  if (v_cP[2] < 0) { // no display if point is behind the camera
     return;
+  }
 
-  vpPoint::projection(_cP, _p);
-  vpFeatureDisplay::displayPoint(_p[0], _p[1], cam, I, color, thickness);
+  vpPoint::projection(v_cP, v_p);
+  vpFeatureDisplay::displayPoint(v_p[0], v_p[1], cam, I, color, thickness);
 }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpPoint & /* vpp */) { return (os << "vpPoint"); }

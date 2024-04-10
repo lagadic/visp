@@ -63,7 +63,7 @@ static void calculSolutionDementhon(vpColVector &I4, vpColVector &J4, vpHomogene
   double Z0 = 2.0 / (normI3 + normJ3);
 
   vpColVector I3(3), J3(3), K3(3);
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     I3[i] = I4[i] / normI3;
     J3[i] = J4[i] / normJ3;
   }
@@ -106,7 +106,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     cdg[1] += P.get_oY();
     cdg[2] += P.get_oZ();
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
     cdg[i] /= npt;
   //  printf("cdg : %lf %lf %lf\n", cdg[0], cdg[1],cdg[2]);
 
@@ -122,7 +122,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
   vpMatrix A(npt, 4), Ap;
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     A[i][0] = c3d[i].get_oX();
     A[i][1] = c3d[i].get_oY();
     A[i][2] = c3d[i].get_oZ();
@@ -140,7 +140,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   vpColVector xprim(npt);
   vpColVector yprim(npt);
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     xprim[i] = c3d[i].get_x();
     yprim[i] = c3d[i].get_y();
   }
@@ -152,7 +152,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   calculSolutionDementhon(I4, J4, cMo);
 
   int erreur = 0;
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     double z;
     z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
     if (z <= 0.0)
@@ -174,7 +174,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     res_old = res;
     cMo_old = cMo;
 
-    for (unsigned int i = 0; i < npt; i++) {
+    for (unsigned int i = 0; i < npt; ++i) {
       double eps =
         (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
@@ -186,7 +186,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
     calculSolutionDementhon(I4, J4, cMo);
     res = sqrt(computeResidualDementhon(cMo) / npt);
-    for (unsigned int i = 0; i < npt; i++) {
+    for (unsigned int i = 0; i < npt; ++i) {
       double z;
       z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
       if (z <= 0.0)
@@ -247,7 +247,7 @@ static void calculTwoSolutionsDementhonPlan(vpColVector &I04, vpColVector &J04, 
                                             vpHomogeneousMatrix &cMo1, vpHomogeneousMatrix &cMo2)
 {
   vpColVector I0(3), J0(3);
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     I0[i] = I04[i];
     J0[i] = J04[i];
   }
@@ -295,7 +295,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
   int erreur = 0;
 
   // test if all points are in front of the camera
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     double z;
     z = cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ() + cMo[2][3];
     if (z <= 0.0) {
@@ -316,7 +316,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     cMo_old = cMo;
 
     vpColVector xprim(npt), yprim(npt);
-    for (unsigned int i = 0; i < npt; i++) {
+    for (unsigned int i = 0; i < npt; ++i) {
       double eps =
         (cMo[2][0] * c3d[i].get_oX() + cMo[2][1] * c3d[i].get_oY() + cMo[2][2] * c3d[i].get_oZ()) / cMo[2][3];
 
@@ -333,7 +333,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
     // test if all points are in front of the camera for cMo1 and cMo2
     int erreur1 = 0;
     int erreur2 = 0;
-    for (unsigned int i = 0; i < npt; i++) {
+    for (unsigned int i = 0; i < npt; ++i) {
       double z;
       z = cMo1[2][0] * c3d[i].get_oX() + cMo1[2][1] * c3d[i].get_oY() + cMo1[2][2] * c3d[i].get_oZ() + cMo1[2][3];
       if (z <= 0.0)
@@ -428,7 +428,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
     cdg[1] += P.get_oY();
     cdg[2] += P.get_oZ();
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i)
     cdg[i] /= npt;
   //  printf("cdg : %lf %lf %lf\n", cdg[0], cdg[1],cdg[2]);
 
@@ -444,7 +444,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   vpMatrix A(npt, 4);
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     A[i][0] = c3d[i].get_oX();
     A[i][1] = c3d[i].get_oY();
     A[i][2] = c3d[i].get_oZ();
@@ -459,7 +459,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   int nbMaxIter = static_cast<int>(std::max<double>(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.));
   double svdThreshold = m_dementhonSvThresh;
   int irank = 0;
-  for (int i = 0; i < nbMaxIter && !isRankEqualTo3; i++) {
+  for (int i = 0; i < nbMaxIter && !isRankEqualTo3; ++i) {
     irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
     if (irank == 3) {
       isRankEqualTo3 = true;
@@ -483,7 +483,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   // calcul de U
   vpColVector U(4);
-  for (unsigned int i = 0; i < 4; i++) {
+  for (unsigned int i = 0; i < 4; ++i) {
     U[i] = kAt[0][i];
   }
 #if (DEBUG_LEVEL2)
@@ -497,7 +497,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   vpColVector xi(npt);
   vpColVector yi(npt);
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
     xi[i] = c3d[i].get_x();
     yi[i] = c3d[i].get_y();
   }
@@ -570,7 +570,7 @@ double vpPose::computeResidualDementhon(const vpHomogeneousMatrix &cMo)
   // cMo here corresponds to object frame at that point, i.e, only the one used
   // internally to Dementhon's method
 
-  for (unsigned int i = 0; i < npt; i++) {
+  for (unsigned int i = 0; i < npt; ++i) {
 
     double X = c3d[i].get_oX() * cMo[0][0] + c3d[i].get_oY() * cMo[0][1] + c3d[i].get_oZ() * cMo[0][2] + cMo[0][3];
     double Y = c3d[i].get_oX() * cMo[1][0] + c3d[i].get_oY() * cMo[1][1] + c3d[i].get_oZ() * cMo[1][2] + cMo[1][3];

@@ -282,7 +282,7 @@ public:
       // compensate distortion iteratively
       double theta = r_d;
 
-      for (int j = 0; j < 10; j++) {
+      for (int j = 0; j < 10; ++j) {
         double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
         double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
           k3_theta8 = k[3] * theta8;
@@ -337,7 +337,7 @@ public:
       // compensate distortion iteratively
       double theta = r_d;
 
-      for (int j = 0; j < 10; j++) {
+      for (int j = 0; j < 10; ++j) {
         double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
         double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
           k3_theta8 = k[3] * theta8;

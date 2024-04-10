@@ -361,8 +361,8 @@ template <class Type> std::ostream &operator<<(std::ostream &s, const vpImage<Ty
     return s;
   }
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
       s << I[i][j] << " ";
     }
 
@@ -386,8 +386,8 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<unsigned char> &I
 
   std::ios_base::fmtflags original_flags = s.flags();
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
       s << std::setw(3) << static_cast<unsigned>(I[i][j]) << " ";
     }
 
@@ -412,8 +412,8 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<char> &I)
 
   std::ios_base::fmtflags original_flags = s.flags();
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
       s << std::setw(4) << static_cast<int>(I[i][j]) << " ";
     }
 
@@ -439,8 +439,8 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<float> &I)
   std::ios_base::fmtflags original_flags = s.flags();
   s.precision(9); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
       s << I[i][j] << " ";
     }
 
@@ -466,8 +466,8 @@ inline std::ostream &operator<<(std::ostream &s, const vpImage<double> &I)
   std::ios_base::fmtflags original_flags = s.flags();
   s.precision(17); // http://en.cppreference.com/w/cpp/types/numeric_limits/max_digits10
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth() - 1; j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth() - 1; ++j) {
       s << I[i][j] << " ";
     }
 
@@ -620,7 +620,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, T
 {
   init(h, w);
 
-  //  for (unsigned int i = 0; i < npixels; i++)
+  //  for (unsigned int i = 0; i < npixels; ++i)
   //    bitmap[i] = value;
   std::fill(bitmap, bitmap + npixels, value);
 }
@@ -664,7 +664,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
-  for (unsigned int i = 0; i < height; i++)
+  for (unsigned int i = 0; i < height; ++i)
     row[i] = bitmap + i * width;
 }
 
@@ -718,7 +718,7 @@ template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h
     throw(vpException(vpException::memoryAllocationError, "cannot allocate row "));
   }
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     row[i] = bitmap + i * width;
   }
 }
@@ -876,7 +876,7 @@ template <class Type> Type vpImage<Type>::getMaxValue(bool onlyFiniteVal) const
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
   Type m = bitmap[0];
-  for (unsigned int i = 0; i < npixels; i++) {
+  for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] > m) {
       m = bitmap[i];
     }
@@ -899,13 +899,13 @@ template <> inline double vpImage<double>::getMaxValue(bool onlyFiniteVal) const
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
   double m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
         m = bitmap[i];
     }
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] > m)
         m = bitmap[i];
     }
@@ -927,13 +927,13 @@ template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
   float m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
         m = bitmap[i];
     }
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] > m)
         m = bitmap[i];
     }
@@ -1156,7 +1156,7 @@ template <class Type> Type vpImage<Type>::getMinValue(bool onlyFiniteVal) const
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
   Type m = bitmap[0];
-  for (unsigned int i = 0; i < npixels; i++) {
+  for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] < m) {
       m = bitmap[i];
     }
@@ -1179,12 +1179,12 @@ template <> inline double vpImage<double>::getMinValue(bool onlyFiniteVal) const
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
   double m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++)
+    for (unsigned int i = 0; i < npixels; ++i)
       if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
         m = bitmap[i];
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++)
+    for (unsigned int i = 0; i < npixels; ++i)
       if (bitmap[i] < m)
         m = bitmap[i];
   }
@@ -1205,12 +1205,12 @@ template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
   float m = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++)
+    for (unsigned int i = 0; i < npixels; ++i)
       if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
         m = bitmap[i];
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++)
+    for (unsigned int i = 0; i < npixels; ++i)
       if (bitmap[i] < m)
         m = bitmap[i];
   }
@@ -1233,7 +1233,7 @@ template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max, b
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
 
   min = max = bitmap[0];
-  for (unsigned int i = 0; i < npixels; i++) {
+  for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] < min)
       min = bitmap[i];
     if (bitmap[i] > max)
@@ -1260,7 +1260,7 @@ template <> inline void vpImage<double>::getMinMaxValue(double &min, double &max
 
   min = max = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i])) {
         if (bitmap[i] < min)
           min = bitmap[i];
@@ -1270,7 +1270,7 @@ template <> inline void vpImage<double>::getMinMaxValue(double &min, double &max
     }
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] < min)
         min = bitmap[i];
       if (bitmap[i] > max)
@@ -1297,7 +1297,7 @@ template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, b
 
   min = max = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i])) {
         if (bitmap[i] < min)
           min = bitmap[i];
@@ -1307,7 +1307,7 @@ template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, b
     }
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i] < min)
         min = bitmap[i];
       if (bitmap[i] > max)
@@ -1333,7 +1333,7 @@ template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max
 
   min = max = bitmap[0];
   if (onlyFiniteVal) {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (vpMath::isFinite(bitmap[i].R)) {
         if (bitmap[i].R < min.R)
           min.R = bitmap[i].R;
@@ -1355,7 +1355,7 @@ template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max
     }
   }
   else {
-    for (unsigned int i = 0; i < npixels; i++) {
+    for (unsigned int i = 0; i < npixels; ++i) {
       if (bitmap[i].R < min.R)
         min.R = bitmap[i].R;
       if (bitmap[i].R > max.R)
@@ -1404,8 +1404,8 @@ void vpImage<Type>::getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Typ
 
   Type min = bitmap[0], max = bitmap[0];
   vpImagePoint minLoc_, maxLoc_;
-  for (unsigned int i = 0; i < height; i++) {
-    for (unsigned int j = 0; j < width; j++) {
+  for (unsigned int i = 0; i < height; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
       if (row[i][j] < min) {
         min = row[i][j];
         minLoc_.set_ij(i, j);
@@ -1451,7 +1451,7 @@ template <class Type> vpImage<Type> &vpImage<Type>::operator=(vpImage<Type> othe
 */
 template <class Type> vpImage<Type> &vpImage<Type>::operator=(const Type &v)
 {
-  for (unsigned int i = 0; i < npixels; i++)
+  for (unsigned int i = 0; i < npixels; ++i)
     bitmap[i] = v;
 
   return *this;
@@ -1471,7 +1471,7 @@ template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I) con
 
   //  printf("wxh: %dx%d bitmap: %p I.bitmap %p\n", width, height, bitmap,
   //  I.bitmap);
-  for (unsigned int i = 0; i < npixels; i++) {
+  for (unsigned int i = 0; i < npixels; ++i) {
     if (bitmap[i] != I.bitmap[i]) {
       //      std::cout << "differ for pixel " << i << " (" << i%this->height
       //      << ", " << i - i%this->height << ")" << std::endl;
@@ -1569,7 +1569,7 @@ template <class Type> void vpImage<Type>::insert(const vpImage<Type> &src, const
   else
     hsize = src_h - src_ibegin;
 
-  for (int i = 0; i < hsize; i++) {
+  for (int i = 0; i < hsize; ++i) {
     Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
     Type *destBitmap = this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
 
@@ -1612,8 +1612,8 @@ template <class Type> void vpImage<Type>::halfSizeImage(vpImage<Type> &res) cons
   unsigned int h = height / 2;
   unsigned int w = width / 2;
   res.resize(h, w);
-  for (unsigned int i = 0; i < h; i++)
-    for (unsigned int j = 0; j < w; j++)
+  for (unsigned int i = 0; i < h; ++i)
+    for (unsigned int j = 0; j < w; ++j)
       res[i][j] = (*this)[i << 1][j << 1];
 }
 
@@ -1644,8 +1644,8 @@ void vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImag
   unsigned int h = height / v_scale;
   unsigned int w = width / h_scale;
   sampled.resize(h, w);
-  for (unsigned int i = 0; i < h; i++)
-    for (unsigned int j = 0; j < w; j++)
+  for (unsigned int i = 0; i < h; ++i)
+    for (unsigned int j = 0; j < w; ++j)
       sampled[i][j] = (*this)[i * v_scale][j * h_scale];
 }
 
@@ -1676,8 +1676,8 @@ template <class Type> void vpImage<Type>::quarterSizeImage(vpImage<Type> &res) c
   unsigned int h = height / 4;
   unsigned int w = width / 4;
   res.resize(h, w);
-  for (unsigned int i = 0; i < h; i++)
-    for (unsigned int j = 0; j < w; j++)
+  for (unsigned int i = 0; i < h; ++i)
+    for (unsigned int j = 0; j < w; ++j)
       res[i][j] = (*this)[i << 2][j << 2];
 }
 
@@ -1720,8 +1720,8 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 
   res.resize(h, w);
 
-  for (int i = 0; i < h; i++)
-    for (int j = 0; j < w; j++)
+  for (int i = 0; i < h; ++i)
+    for (int j = 0; j < w; ++j)
       res[i][j] = (*this)[i >> 1][j >> 1];
 
   /*
@@ -2229,7 +2229,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Ty
     throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction"));
   }
 
-  for (unsigned int i = 0; i < this->getWidth() * this->getHeight(); i++) {
+  for (unsigned int i = 0; i < this->getWidth() * this->getHeight(); ++i) {
     *(C.bitmap + i) = *(bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -2261,7 +2261,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
     throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction "));
   }
 
-  for (unsigned int i = 0; i < A.getWidth() * A.getHeight(); i++) {
+  for (unsigned int i = 0; i < A.getWidth() * A.getHeight(); ++i) {
     *(C.bitmap + i) = *(A.bitmap + i) - *(B.bitmap + i);
   }
 }
@@ -2323,7 +2323,7 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads - 1);
 
-    for (unsigned int index = 0; index < nbThreads; index++) {
+    for (unsigned int index = 0; index < nbThreads; ++index) {
       unsigned int start_index = index * step;
       unsigned int end_index = (index + 1) * step;
 
@@ -2341,17 +2341,17 @@ template <> inline void vpImage<unsigned char>::performLut(const unsigned char(&
       threadpool.push_back(imageLut_thread);
     }
 
-    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
       // Wait until thread ends up
       threadpool[cpt]->join();
     }
 
     // Delete
-    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
       delete threadpool[cpt];
     }
 
-    for (size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+    for (size_t cpt = 0; cpt < imageLutParams.size(); ++cpt) {
       delete imageLutParams[cpt];
     }
 #endif
@@ -2410,7 +2410,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
     unsigned int step = image_size / nbThreads;
     unsigned int last_step = image_size - step * (nbThreads - 1);
 
-    for (unsigned int index = 0; index < nbThreads; index++) {
+    for (unsigned int index = 0; index < nbThreads; ++index) {
       unsigned int start_index = index * step;
       unsigned int end_index = (index + 1) * step;
 
@@ -2428,17 +2428,17 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa(&lut)[256], uns
       threadpool.push_back(imageLut_thread);
     }
 
-    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
       // Wait until thread ends up
       threadpool[cpt]->join();
     }
 
     // Delete
-    for (size_t cpt = 0; cpt < threadpool.size(); cpt++) {
+    for (size_t cpt = 0; cpt < threadpool.size(); ++cpt) {
       delete threadpool[cpt];
     }
 
-    for (size_t cpt = 0; cpt < imageLutParams.size(); cpt++) {
+    for (size_t cpt = 0; cpt < imageLutParams.size(); ++cpt) {
       delete imageLutParams[cpt];
     }
 #endif

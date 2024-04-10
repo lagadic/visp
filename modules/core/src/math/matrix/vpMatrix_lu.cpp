@@ -126,7 +126,7 @@ int main()
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
-  if (colNum == 1 && rowNum == 1) {
+  if ((colNum == 1) && (rowNum == 1)) {
     vpMatrix inv;
     inv.resize(1, 1, false);
     double d = det();
@@ -136,7 +136,8 @@ vpMatrix vpMatrix::inverseByLU() const
     }
     inv[0][0] = 1. / d;
     return inv;
-  } else if (colNum == 2 && rowNum == 2) {
+  }
+  else if ((colNum == 2) && (rowNum == 2)) {
     vpMatrix inv;
     inv.resize(2, 2, false);
     double d = det();
@@ -150,7 +151,8 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[0][1] = -(*this)[0][1] * d;
     inv[1][0] = -(*this)[1][0] * d;
     return inv;
-  } else if (colNum == 3 && rowNum == 3) {
+  }
+  else if ((colNum == 3) && (rowNum == 3)) {
     vpMatrix inv;
     inv.resize(3, 3, false);
     double d = det();
@@ -159,19 +161,20 @@ vpMatrix vpMatrix::inverseByLU() const
                         rowNum, colNum));
     }
     d = 1. / d;
-    inv[0][0] = ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) * d;
-    inv[0][1] = ((*this)[0][2] * (*this)[2][1] - (*this)[0][1] * (*this)[2][2]) * d;
-    inv[0][2] = ((*this)[0][1] * (*this)[1][2] - (*this)[0][2] * (*this)[1][1]) * d;
+    inv[0][0] = (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1])) * d;
+    inv[0][1] = (((*this)[0][2] * (*this)[2][1]) - ((*this)[0][1] * (*this)[2][2])) * d;
+    inv[0][2] = (((*this)[0][1] * (*this)[1][2]) - ((*this)[0][2] * (*this)[1][1])) * d;
 
-    inv[1][0] = ((*this)[1][2] * (*this)[2][0] - (*this)[1][0] * (*this)[2][2]) * d;
-    inv[1][1] = ((*this)[0][0] * (*this)[2][2] - (*this)[0][2] * (*this)[2][0]) * d;
-    inv[1][2] = ((*this)[0][2] * (*this)[1][0] - (*this)[0][0] * (*this)[1][2]) * d;
+    inv[1][0] = (((*this)[1][2] * (*this)[2][0]) - ((*this)[1][0] * (*this)[2][2])) * d;
+    inv[1][1] = (((*this)[0][0] * (*this)[2][2]) - ((*this)[0][2] * (*this)[2][0])) * d;
+    inv[1][2] = (((*this)[0][2] * (*this)[1][0]) - ((*this)[0][0] * (*this)[1][2])) * d;
 
-    inv[2][0] = ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]) * d;
-    inv[2][1] = ((*this)[0][1] * (*this)[2][0] - (*this)[0][0] * (*this)[2][1]) * d;
-    inv[2][2] = ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]) * d;
+    inv[2][0] = (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0])) * d;
+    inv[2][1] = (((*this)[0][1] * (*this)[2][0]) - ((*this)[0][0] * (*this)[2][1])) * d;
+    inv[2][2] = (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0])) * d;
     return inv;
-  } else {
+  }
+  else {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
@@ -180,7 +183,7 @@ vpMatrix vpMatrix::inverseByLU() const
     return inverseByLUOpenCV();
 #else
     throw(vpException(vpException::fatalError, "Cannot inverse by LU. "
-                                               "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                      "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
   }
 }
@@ -220,15 +223,18 @@ int main()
 */
 double vpMatrix::detByLU() const
 {
-  if (rowNum == 1 && colNum == 1) {
+  if ((rowNum == 1) && (colNum == 1)) {
     return (*this)[0][0];
-  } else if (rowNum == 2 && colNum == 2) {
-    return ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]);
-  } else if (rowNum == 3 && colNum == 3) {
+  }
+  else if ((rowNum == 2) && (colNum == 2)) {
+    return (((*this)[0][0] * (*this)[1][1]) - ((*this)[0][1] * (*this)[1][0]));
+  }
+  else if ((rowNum == 3) && (colNum == 3)) {
     return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
             (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
             (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
-  } else {
+  }
+  else {
 #if defined(VISP_HAVE_LAPACK)
     return detByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
@@ -237,7 +243,7 @@ double vpMatrix::detByLU() const
     return detByLUOpenCV();
 #else
     throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. "
-                                               "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                      "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
   }
 }
@@ -284,10 +290,10 @@ vpMatrix vpMatrix::inverseByLULapack() const
     gsl_matrix *A = gsl_matrix_alloc(rowNum, colNum);
 
     // copy the input matrix to ensure the function doesn't modify its content
-    unsigned int tda = (unsigned int)A->tda;
-    for (unsigned int i = 0; i < rowNum; i++) {
+    unsigned int tda = static_cast<unsigned int>(A->tda);
+    for (unsigned int i = 0; i < rowNum; ++i) {
       unsigned int k = i * tda;
-      for (unsigned int j = 0; j < colNum; j++)
+      for (unsigned int j = 0; j < colNum; ++j)
         A->data[k + j] = (*this)[i][j];
     }
 
@@ -424,12 +430,12 @@ double vpMatrix::detByLULapack() const
     }
 
     double det = A[0][0];
-    for (unsigned int i = 1; i < rowNum; i++) {
+    for (unsigned int i = 1; i < rowNum; ++i) {
       det *= A[i][i];
     }
 
     double sign = 1.;
-    for (int i = 1; i <= dim; i++) {
+    for (int i = 1; i <= dim; ++i) {
       if (ipiv[i] != i)
         sign = -sign;
     }

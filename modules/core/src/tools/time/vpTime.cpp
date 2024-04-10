@@ -174,10 +174,11 @@ int wait(double t0, double t)
   double timeCurrent, timeToWait;
   timeCurrent = measureTimeMs();
 
-  timeToWait = t0 + t - timeCurrent;
+  timeToWait = t0 + (t - timeCurrent);
 
-  if (timeToWait <= 0.) // no need to wait
+  if (timeToWait <= 0.) { // no need to wait
     return (1);
+  }
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (timeToWait > vpTime::minTimeForUsleepCall) {
@@ -186,7 +187,7 @@ int wait(double t0, double t)
     // Blocking loop to have an accurate waiting
     do {
       timeCurrent = measureTimeMs();
-      timeToWait = t0 + t - timeCurrent;
+      timeToWait = t0 + (t - timeCurrent);
 
     } while (timeToWait > 0.);
 
@@ -224,8 +225,9 @@ void wait(double t)
 {
   double timeToWait = t;
 
-  if (timeToWait <= 0.) // no need to wait
+  if (timeToWait <= 0.) { // no need to wait
     return;
+  }
   else {
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     double t0 = measureTimeMs();
@@ -235,7 +237,7 @@ void wait(double t)
     // Blocking loop to have an accurate waiting
     do {
       double timeCurrent = measureTimeMs();
-      timeToWait = t0 + t - timeCurrent;
+      timeToWait = t0 + (t - timeCurrent);
 
     } while (timeToWait > 0.);
 

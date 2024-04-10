@@ -711,7 +711,7 @@ void vpVideoReader::findLastFrameIndex()
       }
       std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
       m_lastFrame = 0;
-      for (size_t i = 0; i < files.size(); i++) {
+      for (size_t i = 0; i < files.size(); ++i) {
         // Checking that file name satisfies image format,
         // specified by imageNameFormat, and extracting imageIndex
         long imageIndex = vpIoTools::getIndex(files[i], imageNameFormat);
@@ -763,7 +763,7 @@ void vpVideoReader::findFirstFrameIndex()
       }
       std::vector<std::string> files = vpIoTools::getDirFiles(dirName);
       m_firstFrame = -1;
-      for (size_t i = 0; i < files.size(); i++) {
+      for (size_t i = 0; i < files.size(); ++i) {
         // Checking that file name satisfies image format, specified by
         // imageNameFormat, and extracting imageIndex
         long imageIndex = vpIoTools::getIndex(files[i], imageNameFormat);
@@ -873,7 +873,7 @@ bool vpVideoReader::checkImageNameFormat(const std::string &format) const
   if (indexBegin == std::string::npos || indexEnd == std::string::npos) {
     return false;
   }
-  for (size_t i = indexBegin + 1; i < indexEnd; i++) {
+  for (size_t i = indexBegin + 1; i < indexEnd; ++i) {
     if (!std::isdigit(format[i])) {
       return false;
     }

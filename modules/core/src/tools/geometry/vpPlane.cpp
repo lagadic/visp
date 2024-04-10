@@ -110,10 +110,12 @@ vpPlane::vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame) : A
   B = n[1];
   C = n[2];
 
-  if (frame == vpPlane::camera_frame)
-    D = -(A * P.get_X() + B * P.get_Y() + C * P.get_Z());
-  else
-    D = -(A * P.get_oX() + B * P.get_oY() + C * P.get_oZ());
+  if (frame == vpPlane::camera_frame) {
+    D = -((A * P.get_X()) + (B * P.get_Y()) + (C * P.get_Z()));
+  }
+  else {
+    D = -((A * P.get_oX()) + (B * P.get_oY()) + (C * P.get_oZ()));
+  }
 }
 
 /*!
@@ -147,7 +149,7 @@ void vpPlane::init(const vpColVector &P, const vpColVector &n)
   B = n[1];
   C = n[2];
 
-  D = -(A * P[0] + B * P[1] + C * P[2]);
+  D = -((A * P[0]) + (B * P[1]) + (C * P[2]));
 }
 
 /*!
@@ -195,12 +197,14 @@ void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlane
   A = n[0];
   B = n[1];
   C = n[2];
-  if (frame == vpPlane::camera_frame)
-    D = -(A * P.get_X() + B * P.get_Y() + C * P.get_Z());
-  else
-    D = -(A * P.get_oX() + B * P.get_oY() + C * P.get_oZ());
+  if (frame == vpPlane::camera_frame) {
+    D = -((A * P.get_X()) + (B * P.get_Y()) + (C * P.get_Z()));
+  }
+  else {
+    D = -((A * P.get_oX()) + (B * P.get_oY()) + (C * P.get_oZ()));
+  }
 
-  double norm = sqrt(A * A + B * B + C * C);
+  double norm = sqrt((A * A) + (B * B) + (C * C));
   A /= norm;
   B /= norm;
   C /= norm;
@@ -231,7 +235,7 @@ vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFr
  */
 double vpPlane::computeZ(double x, double y) const
 {
-  return -getD() / (getA() * x + getB() * y + getC());
+  return -getD() / ((getA() * x) + (getB() * y) + getC());
 }
 
 /*!
@@ -285,11 +289,11 @@ void vpPlane::projectionPointOnPlan(const vpPoint &P, vpPoint &Pproj) const
   y0 = P.get_Y() / P.get_W();
   z0 = P.get_Z() / P.get_W();
 
-  rho = -(A * x0 + B * y0 + C * z0 + D) / (A * A + B * B + C * C);
+  rho = -((A * x0) + (B * y0) + (C * z0) + D) / ((A * A) + (B * B) + (C * C));
 
-  Pproj.set_X(x0 + A * rho);
-  Pproj.set_Y(y0 + B * rho);
-  Pproj.set_Z(z0 + C * rho);
+  Pproj.set_X(x0 + (A * rho));
+  Pproj.set_Y(y0 + (B * rho));
+  Pproj.set_Z(z0 + (C * rho));
   Pproj.set_W(1);
 }
 
@@ -298,33 +302,37 @@ double vpPlane::rayIntersection(const vpPoint &M0, const vpPoint &M1, vpColVecto
 
   double k, scal;
 
-  //  if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
-  if (std::fabs(M0.get_X()) > std::numeric_limits<double>::epsilon() ||
-      std::fabs(M0.get_Y()) > std::numeric_limits<double>::epsilon() ||
-      std::fabs(M0.get_Z()) > std::numeric_limits<double>::epsilon()) {
+  // --comment: if(M0.get_X()!=0 || M0.get_Y()!=0 || M0.get_Z()!=0)
+  if ((std::fabs(M0.get_X()) > std::numeric_limits<double>::epsilon()) ||
+      (std::fabs(M0.get_Y()) > std::numeric_limits<double>::epsilon()) ||
+      (std::fabs(M0.get_Z()) > std::numeric_limits<double>::epsilon())) {
     double R[3];
     R[0] = M1.get_X() - M0.get_X();
     R[1] = M1.get_Y() - M0.get_Y();
     R[2] = M1.get_Z() - M0.get_Z();
 
-    scal = getA() * R[0] + getB() * R[1] + getC() * R[2];
-    // if (scal != 0)
-    if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
-      k = -(getA() * M0.get_X() + getB() * M0.get_Y() + getC() * M0.get_Z() + getD()) / scal;
-    else
+    scal = (getA() * R[0]) + (getB() * R[1]) + (getC() * R[2]);
+    // --comment: if (scal != 0)
+    if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
+      k = -((getA() * M0.get_X()) + (getB() * M0.get_Y()) + (getC() * M0.get_Z()) + getD()) / scal;
+    }
+    else {
       k = 0;
+    }
 
-    H[0] = M0.get_X() + k * R[0];
-    H[1] = M0.get_Y() + k * R[1];
-    H[2] = M0.get_Z() + k * R[2];
+    H[0] = M0.get_X() + (k * R[0]);
+    H[1] = M0.get_Y() + (k * R[1]);
+    H[2] = M0.get_Z() + (k * R[2]);
   }
   else {
-    scal = getA() * M1.get_X() + getB() * M1.get_Y() + getC() * M1.get_Z();
-    // if (scal != 0)
-    if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
+    scal = (getA() * M1.get_X()) + (getB() * M1.get_Y()) + (getC() * M1.get_Z());
+    // --comment: if (scal != 0)
+    if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
       k = -getD() / scal;
-    else
+    }
+    else {
       k = 0;
+    }
     H[0] = k * M1.get_X();
     H[1] = k * M1.get_Y();
     H[2] = k * M1.get_Z();
@@ -338,12 +346,14 @@ double vpPlane::getIntersection(const vpColVector &M1, vpColVector &H) const
 
   double k, scal;
 
-  scal = A * M1[0] + B * M1[1] + C * M1[2];
-  // if (scal != 0)
-  if (std::fabs(scal) > std::numeric_limits<double>::epsilon())
+  scal = (A * M1[0]) + (B * M1[1]) + (C * M1[2]);
+  // --comment: if (scal != 0)
+  if (std::fabs(scal) > std::numeric_limits<double>::epsilon()) {
     k = -getD() / scal;
-  else
+  }
+  else {
     k = 0;
+  }
   H[0] = k * M1[0];
   H[1] = k * M1[1];
   H[2] = k * M1[2];
@@ -363,10 +373,10 @@ void vpPlane::changeFrame(const vpHomogeneousMatrix &cMo)
 {
   // Save current plane parameters
   double Ao = A, Bo = B, Co = C, Do = D;
-  A = cMo[0][0] * Ao + cMo[0][1] * Bo + cMo[0][2] * Co;
-  B = cMo[1][0] * Ao + cMo[1][1] * Bo + cMo[1][2] * Co;
-  C = cMo[2][0] * Ao + cMo[2][1] * Bo + cMo[2][2] * Co;
-  D = Do - (cMo[0][3] * A + cMo[1][3] * B + cMo[2][3] * C);
+  A = (cMo[0][0] * Ao) + (cMo[0][1] * Bo) + (cMo[0][2] * Co);
+  B = (cMo[1][0] * Ao) + (cMo[1][1] * Bo) + (cMo[1][2] * Co);
+  C = (cMo[2][0] * Ao) + (cMo[2][1] * Bo) + (cMo[2][2] * Co);
+  D = Do - ((cMo[0][3] * A) + (cMo[1][3] * B) + (cMo[2][3] * C));
 }
 
 /*!

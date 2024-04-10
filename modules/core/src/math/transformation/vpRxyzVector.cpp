@@ -90,15 +90,17 @@ vpRxyzVector vpRxyzVector::buildFrom(const vpRotationMatrix &R)
   double COEF_MIN_ROT = 1e-6;
   double phi;
 
-  if ((fabs(R[1][2]) < COEF_MIN_ROT) && (fabs(R[2][2]) < COEF_MIN_ROT))
+  if ((fabs(R[1][2]) < COEF_MIN_ROT) && (fabs(R[2][2]) < COEF_MIN_ROT)) {
     phi = 0;
-  else
+  }
+  else {
     phi = atan2(-R[1][2], R[2][2]);
+  }
 
   double si = sin(phi);
   double co = cos(phi);
-  double theta = atan2(R[0][2], -si * R[1][2] + co * R[2][2]);
-  double psi = atan2(co * R[1][0] + si * R[2][0], co * R[1][1] + si * R[2][1]);
+  double theta = atan2(R[0][2], (-si * R[1][2]) + (co * R[2][2]));
+  double psi = atan2((co * R[1][0]) + (si * R[2][0]), (co * R[1][1]) + (si * R[2][1]));
 
   buildFrom(phi, theta, psi);
 
@@ -142,8 +144,9 @@ vpRxyzVector vpRxyzVector::buildFrom(const vpColVector &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-xyz vector from a %d-dimension col vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rxyz[i];
+  }
 
   return *this;
 }
@@ -157,8 +160,9 @@ vpRxyzVector vpRxyzVector::buildFrom(const std::vector<double> &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-xyz vector from a %d-dimension std::vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rxyz[i];
+  }
 
   return *this;
 }
@@ -184,8 +188,9 @@ vpRxyzVector vpRxyzVector::buildFrom(const std::vector<double> &rxyz)
 */
 vpRxyzVector &vpRxyzVector::operator=(double v)
 {
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     data[i] = v;
+  }
 
   return *this;
 }
@@ -218,8 +223,9 @@ vpRxyzVector &vpRxyzVector::operator=(const vpColVector &rxyz)
     throw(vpException(vpException::dimensionError, "Cannot set a R-xyz vector from a %d-dimension col vector",
                       rxyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rxyz[i];
+  }
 
   return *this;
 }

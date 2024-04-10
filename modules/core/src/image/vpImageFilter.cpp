@@ -275,7 +275,7 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
     for (unsigned int j = half_size; j < (widthI - half_size); ++j) {
       double conv = 0.0;
       for (unsigned int a = 0; a < size; ++a) {
-        conv += kernelH[a] * static_cast<double>(I[i][j + half_size - a]);
+        conv += kernelH[a] * static_cast<double>(I[i][(j + half_size) - a]);
       }
 
       I_filter[i][j] = conv;
@@ -286,7 +286,7 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
     for (unsigned int j = 0; j < widthI; ++j) {
       double conv = 0.0;
       for (unsigned int a = 0; a < sizeV; ++a) {
-        conv += kernelV[a] * I_filter[i + half_size - a][j];
+        conv += kernelV[a] * I_filter[(i + half_size) - a][j];
       }
 
       If[i][j] = conv;
@@ -319,10 +319,10 @@ void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, cons
 {
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
   const unsigned int stop1J = (size - 1) / 2;
-  const unsigned int stop2J = widthI - (size - 1) / 2;
+  const unsigned int stop2J = widthI - ((size - 1) / 2);
   resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIx);
 
-  for (unsigned int i = 0; i < heightI; i++) {
+  for (unsigned int i = 0; i < heightI; ++i) {
     for (unsigned int j = 0; j < stop1J; ++j) {
       // We have to compute the value for each pixel if we don't have a mask or for
             // pixels for which the mask is true otherwise
@@ -381,7 +381,7 @@ void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, cons
 {
   const unsigned int heightI = I.getHeight(), widthI = I.getWidth();
   const unsigned int stop1I = (size - 1) / 2;
-  const unsigned int stop2I = heightI - (size - 1) / 2;
+  const unsigned int stop2I = heightI - ((size - 1) / 2);
   resizeAndInitializeIfNeeded(p_mask, heightI, widthI, dIy);
 
   for (unsigned int i = 0; i < stop1I; ++i) {
@@ -580,7 +580,7 @@ void vpImageFilter::getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<
     for (unsigned int j = 1; j < (w - 1); ++j) {
       GI[i][j] = vpImageFilter::filterGaussXPyramidal(I, i, 2 * j);
     }
-    GI[i][w - 1] = I[i][2 * w - 1];
+    GI[i][w - 1] = I[i][(2 * w) - 1];
   }
 }
 
@@ -595,7 +595,7 @@ void vpImageFilter::getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<
     for (unsigned int i = 1; i < (h - 1); ++i) {
       GI[i][j] = vpImageFilter::filterGaussYPyramidal(I, 2 * i, j);
     }
-    GI[h - 1][j] = I[2 * h - 1][j];
+    GI[h - 1][j] = I[(2 * h) - 1][j];
   }
 }
 

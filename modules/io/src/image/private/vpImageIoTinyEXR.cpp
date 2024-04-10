@@ -77,7 +77,7 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   }
 
   // Read HALF channel as FLOAT.
-  for (int i = 0; i < exr_header.num_channels; i++) {
+  for (int i = 0; i < exr_header.num_channels; ++i) {
     if (exr_header.pixel_types[i] == TINYEXR_PIXELTYPE_HALF) {
       exr_header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;
     }
@@ -105,14 +105,14 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
     I.resize(exr_image.height, exr_image.width);
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
-    for (int tile_idx = 0; tile_idx < exr_image.num_tiles; tile_idx++) {
+    for (int tile_idx = 0; tile_idx < exr_image.num_tiles; ++tile_idx) {
       int sx = exr_image.tiles[tile_idx].offset_x * exr_header.tile_size_x;
       int sy = exr_image.tiles[tile_idx].offset_y * exr_header.tile_size_y;
       int ex = exr_image.tiles[tile_idx].offset_x * exr_header.tile_size_x + exr_image.tiles[tile_idx].width;
       int ey = exr_image.tiles[tile_idx].offset_y * exr_header.tile_size_y + exr_image.tiles[tile_idx].height;
 
-      for (unsigned int y = 0; y < static_cast<unsigned int>(ey - sy); y++) {
-        for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); x++) {
+      for (unsigned int y = 0; y < static_cast<unsigned int>(ey - sy); ++y) {
+        for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); ++x) {
           const float *src_image = reinterpret_cast<const float *>(exr_image.tiles[tile_idx].images[0]);
           I.bitmap[(y + sy) * data_width + (x + sx)] = src_image[y * exr_header.tile_size_x + x];
         }
@@ -150,7 +150,7 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   }
 
   // Read HALF channel as FLOAT.
-  for (int i = 0; i < exr_header.num_channels; i++) {
+  for (int i = 0; i < exr_header.num_channels; ++i) {
     if (exr_header.pixel_types[i] == TINYEXR_PIXELTYPE_HALF) {
       exr_header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;
     }
@@ -172,8 +172,8 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   // `exr_image.tiled` will be filled when EXR is tiled format.
   if (exr_image.images) {
     I.resize(exr_image.height, exr_image.width);
-    for (int i = 0; i < exr_image.height; i++) {
-      for (int j = 0; j < exr_image.width; j++) {
+    for (int i = 0; i < exr_image.height; ++i) {
+      for (int j = 0; j < exr_image.width; ++j) {
         I[i][j].R = reinterpret_cast<float **>(exr_image.images)[2][i * exr_image.width + j];
         I[i][j].G = reinterpret_cast<float **>(exr_image.images)[1][i * exr_image.width + j];
         I[i][j].B = reinterpret_cast<float **>(exr_image.images)[0][i * exr_image.width + j];
@@ -184,24 +184,24 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
     I.resize(exr_image.height, exr_image.width);
     size_t data_width = static_cast<size_t>(exr_header.data_window.max_x - exr_header.data_window.min_x + 1);
 
-    for (int tile_idx = 0; tile_idx < exr_image.num_tiles; tile_idx++) {
+    for (int tile_idx = 0; tile_idx < exr_image.num_tiles; ++tile_idx) {
       int sx = exr_image.tiles[tile_idx].offset_x * exr_header.tile_size_x;
       int sy = exr_image.tiles[tile_idx].offset_y * exr_header.tile_size_y;
       int ex = exr_image.tiles[tile_idx].offset_x * exr_header.tile_size_x + exr_image.tiles[tile_idx].width;
       int ey = exr_image.tiles[tile_idx].offset_y * exr_header.tile_size_y + exr_image.tiles[tile_idx].height;
 
-      //for (size_t c = 0; c < static_cast<size_t>(exr_header.num_channels); c++) {
+      //for (size_t c = 0; c < static_cast<size_t>(exr_header.num_channels); ++c) {
       //  const float *src_image = reinterpret_cast<const float *>(exr_image.tiles[tile_idx].images[c]);
-      //  for (size_t y = 0; y < static_cast<size_t>(ey - sy); y++) {
-      //    for (size_t x = 0; x < static_cast<size_t>(ex - sx); x++) {
+      //  for (size_t y = 0; y < static_cast<size_t>(ey - sy); ++y) {
+      //    for (size_t x = 0; x < static_cast<size_t>(ex - sx); ++x) {
       //       reinterpret_cast<float *>(I.bitmap)[(y + sy) * data_width * 3 + (x + sx) * 3 + c] = src_image[y * exr_header.tile_size_x + x];
       //    }
       //  }
       //}
 
-      for (unsigned int y = 0; y < static_cast<unsigned int>(ey - sy); y++) {
-        for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); x++) {
-          for (unsigned int c = 0; c < 3; c++) {
+      for (unsigned int y = 0; y < static_cast<unsigned int>(ey - sy); ++y) {
+        for (unsigned int x = 0; x < static_cast<unsigned int>(ex - sx); ++x) {
+          for (unsigned int c = 0; c < 3; ++c) {
             const float *src_image = reinterpret_cast<const float *>(exr_image.tiles[tile_idx].images[c]);
             reinterpret_cast<float *>(I.bitmap)[(y + sy) * data_width * 3 + (x + sx) * 3 + c] = src_image[y * exr_header.tile_size_x + x];
           }
@@ -236,7 +236,7 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
   header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
   header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
   header.compression_type = TINYEXR_COMPRESSIONTYPE_ZIP;
-  for (int i = 0; i < header.num_channels; i++) {
+  for (int i = 0; i < header.num_channels; ++i) {
     header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;          // pixel type of input image
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT; // pixel type of output image to be stored in .EXR
   }
@@ -273,7 +273,7 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   images[2].resize(I.getSize());
 
   // Split RGBRGBRGB... into R, G and B layer
-  for (unsigned int i = 0; i < I.getSize(); i++) {
+  for (unsigned int i = 0; i < I.getSize(); ++i) {
     images[0][i] = I.bitmap[i].R;
     images[1][i] = I.bitmap[i].G;
     images[2][i] = I.bitmap[i].B;
@@ -298,7 +298,7 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   header.pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
   header.requested_pixel_types = (int *)malloc(sizeof(int) * header.num_channels);
   header.compression_type = TINYEXR_COMPRESSIONTYPE_ZIP;
-  for (int i = 0; i < header.num_channels; i++) {
+  for (int i = 0; i < header.num_channels; ++i) {
     header.pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;            // pixel type of input image
     header.requested_pixel_types[i] = TINYEXR_PIXELTYPE_FLOAT;  // pixel type of output image to be stored in .EXR
   }

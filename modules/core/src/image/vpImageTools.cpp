@@ -109,8 +109,8 @@ void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigne
 
   double factor = (double)(B_star - A_star) / (double)(B - A);
 
-  for (unsigned int i = 0; i < I.getHeight(); i++)
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i)
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       v = I[i][j];
 
       if (v <= A)
@@ -220,7 +220,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
   }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
+  for (unsigned int b = 0; b < n; ++b) {
     int diff = I1.bitmap[b] - I2.bitmap[b];
     Idiff.bitmap[b] = static_cast<unsigned char>(vpMath::abs(diff));
   }
@@ -244,7 +244,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<double> &I1, const vpIm
   }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
+  for (unsigned int b = 0; b < n; ++b) {
     Idiff.bitmap[b] = vpMath::abs(I1.bitmap[b] - I2.bitmap[b]);
   }
 }
@@ -273,7 +273,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
   }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
-  for (unsigned int b = 0; b < n; b++) {
+  for (unsigned int b = 0; b < n; ++b) {
     int diffR = I1.bitmap[b].R - I2.bitmap[b].R;
     int diffG = I1.bitmap[b].G - I2.bitmap[b].G;
     int diffB = I1.bitmap[b].B - I2.bitmap[b].B;
@@ -411,8 +411,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
 
   if (!is_KannalaBrandt && std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
     // There is no need to undistort the image (Perpective projection)
-    for (unsigned int i = 0; i < height; i++) {
-      for (unsigned int j = 0; j < width; j++) {
+    for (unsigned int i = 0; i < height; ++i) {
+      for (unsigned int j = 0; j < width; ++j) {
         mapU[i][j] = static_cast<int>(j);
         mapV[i][j] = static_cast<int>(i);
         mapDu[i][j] = 0;
@@ -441,7 +441,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     kud_py2 = kud * invpy * invpy;
   }
 
-  for (unsigned int v = 0; v < height; v++) {
+  for (unsigned int v = 0; v < height; ++v) {
     deltav = v - v0;
 
     if (!is_KannalaBrandt)
@@ -449,7 +449,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     else
       deltav_py = deltav * invpy;
 
-    for (unsigned int u = 0; u < width; u++) {
+    for (unsigned int u = 0; u < width; ++u) {
       // computation of u,v : corresponding pixel coordinates in I.
       deltau = u - u0;
       if (!is_KannalaBrandt) {
@@ -511,8 +511,8 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
   II.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
   IIsq.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
 
-  for (unsigned int i = 1; i < II.getHeight(); i++) {
-    for (unsigned int j = 1; j < II.getWidth(); j++) {
+  for (unsigned int i = 1; i < II.getHeight(); ++i) {
+    for (unsigned int j = 1; j < II.getWidth(); ++j) {
       II[i][j] = I[i - 1][j - 1] + II[i - 1][j] + II[i][j - 1] - II[i - 1][j - 1];
       IIsq[i][j] = vpMath::sqr(I[i - 1][j - 1]) + IIsq[i - 1][j] + IIsq[i][j - 1] - IIsq[i - 1][j - 1];
     }
@@ -545,7 +545,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 #if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation(I1.bitmap, a, I2.bitmap, b, I1.getSize(), a2, b2, ab, useOptimized);
 #else
-  for (unsigned int cpt = 0; cpt < I1.getSize(); cpt++) {
+  for (unsigned int cpt = 0; cpt < I1.getSize(); ++cpt) {
     ab += (I1.bitmap[cpt] - a) * (I2.bitmap[cpt] - b);
     a2 += vpMath::sqr(I1.bitmap[cpt] - a);
     b2 += vpMath::sqr(I2.bitmap[cpt] - b);
@@ -723,7 +723,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     // zero-mean template image
     const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
     const double mean2 = sum2 / I_tpl.getSize();
-    for (unsigned int cpt = 0; cpt < I_tpl_double.getSize(); cpt++) {
+    for (unsigned int cpt = 0; cpt < I_tpl_double.getSize(); ++cpt) {
       I_tpl_double.bitmap[cpt] -= mean2;
     }
 
@@ -744,7 +744,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-    for (int cpt = 0; cpt < end; cpt++) {
+    for (int cpt = 0; cpt < end; ++cpt) {
       for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
         I_score[vec_step_v[cpt]][j] =
           normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
@@ -801,8 +801,8 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 #if defined(VISP_HAVE_SIMDLIB)
   SimdNormalizedCorrelation2(I1.bitmap, I1.getWidth(), I2.bitmap, I2.getWidth(), I2.getHeight(), i0, j0, ab);
 #else
-  for (unsigned int i = 0; i < I2.getHeight(); i++) {
-    for (unsigned int j = 0; j < I2.getWidth(); j++) {
+  for (unsigned int i = 0; i < I2.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I2.getWidth(); ++j) {
       ab += (I1[i0 + i][j0 + j]) * I2[i][j];
     }
   }
@@ -841,9 +841,9 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-  for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
+  for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); ++i_) {
     const unsigned int i = static_cast<unsigned int>(i_);
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
 
       int u_round = mapU[i][j];
       int v_round = mapV[i][j];
@@ -885,13 +885,13 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-  for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {
+  for (int i = 0; i < static_cast<int>(I.getHeight()); ++i) {
 #if defined(VISP_HAVE_SIMDLIB)
     SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
               mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
 #else
     const unsigned int i_ = static_cast<unsigned int>(i);
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
 
       int u_round = mapU[i_][j];
       int v_round = mapV[i_][j];

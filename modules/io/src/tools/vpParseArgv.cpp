@@ -113,13 +113,13 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
      */
 
     matchPtr = nullptr;
-    for (unsigned int i = 0; i < 2; i++) {
+    for (unsigned int i = 0; i < 2; ++i) {
       if (i == 0) {
         infoPtr = argTable;
       } else {
         infoPtr = defaultTable;
       }
-      for (; infoPtr->type != ARGV_END; infoPtr++) {
+      for (; infoPtr->type != ARGV_END; ++infoPtr) {
         if (infoPtr->key == nullptr) {
           continue;
         }
@@ -172,7 +172,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       nargs = (uintptr_t)infoPtr->src;
       if (nargs < 1)
         nargs = 1;
-      for (unsigned long i = 0; i < nargs; i++) {
+      for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
         } else {
@@ -192,7 +192,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       nargs = (uintptr_t)infoPtr->src;
       if (nargs < 1)
         nargs = 1;
-      for (unsigned long i = 0; i < nargs; i++) {
+      for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
         } else {
@@ -212,7 +212,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       nargs = (uintptr_t)infoPtr->src;
       if (nargs < 1)
         nargs = 1;
-      for (unsigned long i = 0; i < nargs; i++) {
+      for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
         } else {
@@ -229,7 +229,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       nargs = (uintptr_t)infoPtr->src;
       if (nargs < 1)
         nargs = 1;
-      for (unsigned long i = 0; i < nargs; i++) {
+      for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
         } else {
@@ -250,7 +250,7 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
       nargs = (uintptr_t)infoPtr->src;
       if (nargs < 1)
         nargs = 1;
-      for (unsigned long i = 0; i < nargs; i++) {
+      for (unsigned long i = 0; i < nargs; ++i) {
         if (argc == 0) {
           goto missingArg;
         } else {
@@ -354,8 +354,8 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
    */
 
   width = 4;
-  for (unsigned int i = 0; i < 2; i++) {
-    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; infoPtr++) {
+  for (unsigned int i = 0; i < 2; ++i) {
+    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; ++infoPtr) {
       int length;
       if (infoPtr->key == nullptr) {
         continue;
@@ -368,8 +368,8 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
   }
 
   FPRINTF(stderr, "Command-specific options:");
-  for (unsigned int i = 0;; i++) {
-    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; infoPtr++) {
+  for (unsigned int i = 0;; ++i) {
+    for (infoPtr = i ? defaultTable : argTable; infoPtr->type != ARGV_END; ++infoPtr) {
       if ((infoPtr->type == ARGV_HELP) && (infoPtr->key == nullptr)) {
         FPRINTF(stderr, "\n%s", infoPtr->help);
         continue;
@@ -391,7 +391,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         nargs = (uintptr_t)infoPtr->src;
         if (nargs < 1)
           nargs = 1;
-        for (unsigned long j = 0; j < nargs; j++) {
+        for (unsigned long j = 0; j < nargs; ++j) {
           FPRINTF(stderr, " %d", *(((int *)infoPtr->dst) + j));
         }
         break;
@@ -401,7 +401,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         nargs = (uintptr_t)infoPtr->src;
         if (nargs < 1)
           nargs = 1;
-        for (unsigned long j = 0; j < nargs; j++) {
+        for (unsigned long j = 0; j < nargs; ++j) {
           FPRINTF(stderr, " %ld", *(((long *)infoPtr->dst) + j));
         }
         break;
@@ -411,7 +411,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         nargs = (uintptr_t)infoPtr->src;
         if (nargs < 1)
           nargs = 1;
-        for (unsigned long j = 0; j < nargs; j++) {
+        for (unsigned long j = 0; j < nargs; ++j) {
           FPRINTF(stderr, " %f", *(((float *)infoPtr->dst) + j));
         }
         break;
@@ -421,7 +421,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         nargs = (uintptr_t)infoPtr->src;
         if (nargs < 1)
           nargs = 1;
-        for (unsigned long j = 0; j < nargs; j++) {
+        for (unsigned long j = 0; j < nargs; ++j) {
           FPRINTF(stderr, " %g", *(((double *)infoPtr->dst) + j));
         }
         break;
@@ -435,7 +435,7 @@ void vpParseArgv::printUsage(vpArgvInfo *argTable, int flags)
         string = *((const char **)infoPtr->dst);
         if ((nargs == 1) && (string == nullptr))
           break;
-        for (unsigned long j = 0; j < nargs; j++) {
+        for (unsigned long j = 0; j < nargs; ++j) {
           string = *(((const char **)infoPtr->dst) + j);
           if (string != nullptr) {
             FPRINTF(stderr, " \"%s\"", string);

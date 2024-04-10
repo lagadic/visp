@@ -255,7 +255,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
         unsigned int nbInliersCur = 0;
         unsigned int iter = 0;
         for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listOfUniquePoints.end();
-             ++it, iter++) {
+             ++it, ++iter) {
           p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
           p.track(m_cMo);
 
@@ -341,7 +341,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
     size_t index_pt = 0;
     for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
-         ++it_pt, index_pt++) {
+         ++it_pt, ++index_pt) {
       if (filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end()) {
         filterObjectPointMap[*it_pt] = index_pt;
       }
@@ -364,7 +364,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
     size_t index_pt = 0;
     for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
-         ++it_pt, index_pt++) {
+         ++it_pt, ++index_pt) {
       mapOfUniquePointIndex[index_pt] = index_pt;
     }
   }
@@ -404,9 +404,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     std::vector<vpRansacFunctor> ransacWorkers;
 
     int splitTrials = ransacMaxTrials / nbThreads;
-    for (size_t i = 0; i < (size_t)nbThreads; i++) {
-      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(nullptr) ^ i);
-      if (i < (size_t)nbThreads - 1) {
+    for (size_t i = 0; i < static_cast<size_t>(nbThreads); ++i) {
+      unsigned int initial_seed = static_cast<unsigned int>(i); //((unsigned int) time(nullptr) ^ i);
+      if (i < static_cast<size_t>(nbThreads) - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
       }
@@ -463,7 +463,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     // Display the random picked points
     /*
     std::cout << "Randoms : "
-    for(unsigned int i = 0 ; i < cur_randoms.size() ; i++)
+    for(unsigned int i = 0 ; i < cur_randoms.size() ; ++i)
       std::cout << cur_randoms[i] << " "
     std::cout << std::endl
     */
@@ -471,7 +471,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     // Display the outliers
     /*
     std::cout << "Outliers : "
-    for(unsigned int i = 0 ; i < cur_outliers.size() ; i++)
+    for(unsigned int i = 0 ; i < cur_outliers.size() ; ++i)
       std::cout << cur_outliers[i] << " "
     std::cout << std::endl
     */
@@ -487,7 +487,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // with VVS pose estimation
       vpPose pose;
       size_t best_consensus_size = best_consensus.size();
-      for (size_t i = 0; i < best_consensus_size; i++) {
+      for (size_t i = 0; i < best_consensus_size; ++i) {
         vpPoint pt = listOfUniquePoints[best_consensus[i]];
 
         pose.addPoint(pt);
@@ -570,8 +570,8 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
 
   unsigned int p2D_size = p2D.size();
   unsigned int p3D_size = p3D.size();
-  for (unsigned int i = 0; i < p2D_size; i++) {
-    for (unsigned int j = 0; j < p3D_size; j++) {
+  for (unsigned int i = 0; i < p2D_size; ++i) {
+    for (unsigned int j = 0; j < p3D_size; ++j) {
       vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());

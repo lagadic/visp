@@ -255,14 +255,17 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2,
 void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, bool closeTheShape,
                                const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
-  for (size_t i = 0; i < ips.size() - 1; i++)
+  for (size_t i = 0; i < ips.size() - 1; ++i) {
     vp_display_display_dot_line(I, ips[i], ips[i + 1], color, thickness);
+  }
 
-  if (closeTheShape)
+  if (closeTheShape) {
     vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -277,12 +280,13 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpIma
 void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
                                const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
-  vpImagePoint ip_prev = *(it++);
+  vpImagePoint ip_prev = *(++it);
   for (; it != ips.end(); ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
@@ -457,16 +461,16 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
     }
     else {
       double a = delta_i / delta_j;
-      double b = static_cast<double>(i1) - a * static_cast<double>(j1);
+      double b = static_cast<double>(i1) - (a * static_cast<double>(j1));
       std::vector<vpImagePoint> vip; // Image points that intersect image borders
       // Test intersection with vertical line j=0
       vpImagePoint ip_left(b, 0);
-      if (ip_left.get_i() >= 0. && ip_left.get_i() <= (I.getHeight() - 1.)) {
+      if ((ip_left.get_i() >= 0.) && (ip_left.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_left);
       }
       // Test intersection with vertical line j=width-1
-      vpImagePoint ip_right(a * (I.getWidth() - 1) + b, I.getWidth() - 1.);
-      if (ip_right.get_i() >= 0. && ip_right.get_i() <= (I.getHeight() - 1.)) {
+      vpImagePoint ip_right((a * (I.getWidth() - 1)) + b, I.getWidth() - 1.);
+      if ((ip_right.get_i() >= 0.) && (ip_right.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_right);
       }
       if (vip.size() == 2) {
@@ -475,7 +479,7 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
       }
       // Test intersection with horizontal line i=0
       vpImagePoint ip_top(0, -b / a);
-      if (ip_top.get_j() >= 0. && ip_top.get_j() <= (I.getWidth() - 1.)) {
+      if ((ip_top.get_j() >= 0.) && (ip_top.get_j() <= (I.getWidth() - 1.))) {
         vip.push_back(ip_top);
       }
       if (vip.size() == 2) {
@@ -484,7 +488,7 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
       }
       // Test intersection with horizontal line i=height-1
       vpImagePoint ip_bottom(I.getHeight() - 1., (I.getHeight() - 1. - b) / a);
-      if (ip_bottom.get_j() >= 0. && ip_bottom.get_j() <= (I.getWidth() - 1.)) {
+      if ((ip_bottom.get_j() >= 0.) && (ip_bottom.get_j() <= (I.getWidth() - 1.))) {
         vip.push_back(ip_bottom);
       }
       if (vip.size() == 2) {
@@ -507,14 +511,17 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, bool closeTheShape,
                             const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
-  for (size_t i = 0; i < ips.size() - 1; i++)
+  for (size_t i = 0; i < ips.size() - 1; ++i) {
     vp_display_display_line(I, ips[i], ips[i + 1], color, thickness);
+  }
 
-  if (closeTheShape)
+  if (closeTheShape) {
     vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -529,12 +536,13 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImageP
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
                             const vpColor &color, unsigned int thickness)
 {
-  if (ips.size() <= 1)
+  if (ips.size() <= 1) {
     return;
+  }
 
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
-  vpImagePoint ip_prev = *(it++);
+  vpImagePoint ip_prev = *(++it);
   for (; it != ips.end(); ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_line(I, ip_prev, *it, color, thickness);

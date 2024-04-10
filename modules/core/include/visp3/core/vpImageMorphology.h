@@ -188,9 +188,9 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
 
   vpImage<Type> J(I.getHeight() + 2, I.getWidth() + 2);
   // Copy I to J and add border
-  for (unsigned int i = 0; i < J.getHeight(); i++) {
+  for (unsigned int i = 0; i < J.getHeight(); ++i) {
     if (i == 0 || i == J.getHeight() - 1) {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
+      for (unsigned int j = 0; j < J.getWidth(); ++j) {
         J[i][j] = value;
       }
     }
@@ -202,8 +202,8 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
   }
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         if (J[i + 1][j + 1] == value) {
           // Consider 4 neighbors
           if ((J[i][j + 1] == value_out) ||     // Top
@@ -217,8 +217,8 @@ void vpImageMorphology::erosion(vpImage<Type> &I, Type value, Type value_out, vp
     }
   }
   else {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         if (J[i + 1][j + 1] == value) {
           // Consider 8 neighbors
           if ((J[i][j] == value_out) || (J[i][j + 1] == value_out) || (J[i][j + 2] == value_out) ||
@@ -258,9 +258,9 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
 
   vpImage<Type> J(I.getHeight() + 2, I.getWidth() + 2);
   // Copy I to J and add border
-  for (unsigned int i = 0; i < J.getHeight(); i++) {
+  for (unsigned int i = 0; i < J.getHeight(); ++i) {
     if (i == 0 || i == J.getHeight() - 1) {
-      for (unsigned int j = 0; j < J.getWidth(); j++) {
+      for (unsigned int j = 0; j < J.getWidth(); ++j) {
         J[i][j] = value_out;
       }
     }
@@ -272,8 +272,8 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
   }
 
   if (connexity == CONNEXITY_4) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         if (J[i + 1][j + 1] == value_out) {
           // Consider 4 neighbors
           if ((J[i][j + 1] == value) ||     // Top
@@ -287,8 +287,8 @@ void vpImageMorphology::dilatation(vpImage<Type> &I, Type value, Type value_out,
     }
   }
   else {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         if (J[i + 1][j + 1] == value_out) {
           // Consider 8 neighbors
           if ((J[i][j] == value) || (J[i][j + 1] == value) || (J[i][j + 2] == value) || (J[i + 1][j] == value) ||
@@ -319,10 +319,10 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
     int offset_x[nbOffset] = { 0, -1, 0, 1, 0 };
     int offset_y[nbOffset] = { -1,  0, 0, 0, 1 };
 
-    for (int i = 0; i < height_in; i++) {
-      for (int j = 0; j < width_in; j++) {
+    for (int i = 0; i < height_in; ++i) {
+      for (int j = 0; j < width_in; ++j) {
         T value = null_value;
-        for (int k = 0; k < nbOffset; k++) {
+        for (int k = 0; k < nbOffset; ++k) {
           value = operation(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
@@ -335,10 +335,10 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &null_value, const
     int offset_x[nbOffset] = { -1, 0, 1,-1, 0, 1,-1, 0, 1 };
     int offset_y[nbOffset] = { -1,-1,-1, 0, 0, 0, 1, 1, 1 };
 
-    for (int i = 0; i < height_in; i++) {
-      for (int j = 0; j < width_in; j++) {
+    for (int i = 0; i < height_in; ++i) {
+      for (int j = 0; j < width_in; ++j) {
         T value = null_value;
-        for (int k = 0; k < nbOffset; k++) {
+        for (int k = 0; k < nbOffset; ++k) {
           value = operation(value, J[i + 1 + offset_y[k]][j + 1 + offset_x[k]]);
         }
 
@@ -420,7 +420,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
   int halfKernelSize = size / 2;
   vpImage<T> J = I;
 
-  for (int r = 0; r < height_in; r++) {
+  for (int r = 0; r < height_in; ++r) {
     // Computing the rows we can explore without going outside the limits of the image
     int r_iterator_start = -halfKernelSize, r_iterator_stop = halfKernelSize + 1;
     if (r - halfKernelSize < 0) {
@@ -429,7 +429,7 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
     else if (r + halfKernelSize >= height_in) {
       r_iterator_stop = height_in - r;
     }
-    for (int c = 0; c < width_in; c++) {
+    for (int c = 0; c < width_in; ++c) {
       T value = I[r][c];
       // Computing the columns we can explore without going outside the limits of the image
       int c_iterator_start = -halfKernelSize, c_iterator_stop = halfKernelSize + 1;
@@ -439,8 +439,8 @@ void vpImageMorphology::imageOperation(vpImage<T> &I, const T &(*operation)(cons
       else if (c + halfKernelSize >= width_in) {
         c_iterator_stop = width_in - c;
       }
-      for (int r_iterator = r_iterator_start; r_iterator < r_iterator_stop; r_iterator++) {
-        for (int c_iterator = c_iterator_start; c_iterator < c_iterator_stop; c_iterator++) {
+      for (int r_iterator = r_iterator_start; r_iterator < r_iterator_stop; ++r_iterator) {
+        for (int c_iterator = c_iterator_start; c_iterator < c_iterator_stop; ++c_iterator) {
           value = operation(value, J[r + r_iterator][c + c_iterator]);
         }
       }

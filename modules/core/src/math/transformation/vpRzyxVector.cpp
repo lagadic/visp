@@ -106,14 +106,14 @@ vpRzyxVector vpRzyxVector::buildFrom(const vpRotationMatrix &R)
   double co = cos(phi);
 
   double nz = R[2][0];
-  double theta = atan2(-nz, co * nx + si * ny);
+  double theta = atan2(-nz, (co * nx) + (si * ny));
 
   double ax = R[0][2];
   double ay = R[1][2];
   double ox = R[0][1];
   double oy = R[1][1];
 
-  double psi = atan2(si * ax - co * ay, -si * ox + co * oy);
+  double psi = atan2((si * ax) - (co * ay), (-si * ox) + (co * oy));
 
   buildFrom(phi, theta, psi);
 
@@ -157,8 +157,9 @@ vpRzyxVector vpRzyxVector::buildFrom(const vpColVector &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyx[i];
+  }
 
   return *this;
 }
@@ -172,8 +173,9 @@ vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension std::vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyx[i];
+  }
 
   return *this;
 }
@@ -199,8 +201,9 @@ vpRzyxVector vpRzyxVector::buildFrom(const std::vector<double> &rzyx)
 */
 vpRzyxVector &vpRzyxVector::operator=(double v)
 {
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     data[i] = v;
+  }
 
   return *this;
 }
@@ -233,8 +236,9 @@ vpRzyxVector &vpRzyxVector::operator=(const vpColVector &rzyx)
     throw(vpException(vpException::dimensionError, "Cannot set a R-zyx vector from a %d-dimension col vector",
                       rzyx.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyx[i];
+  }
 
   return *this;
 }

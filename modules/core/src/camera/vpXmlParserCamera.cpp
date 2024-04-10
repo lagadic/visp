@@ -507,7 +507,7 @@ public:
         int check = validation / 32;
         int j = 0;
 
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 5; ++i) {
           int bit = check % 2; // if bit == 1 => the corresponding distortion coefficient is present.
           if (!bit)
             fixed_distortion_coeffs.push_back(0.);
