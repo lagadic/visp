@@ -258,7 +258,7 @@ void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
   unsigned int i = static_cast<unsigned int>(cog.get_i());
   unsigned int j = static_cast<unsigned int>(cog.get_j());
 
-  double Ip = pow(static_cast<double>(I[i][j] / 255), 1 / gamma);
+  double Ip = pow(static_cast<double>(I[i][j]) / 255, 1 / gamma);
 
   if ((Ip - (1 - grayLevelPrecision)) < 0) {
     gray_level_min = 0;
@@ -572,6 +572,7 @@ void vpDot2::track(const vpImage<unsigned char> &I, bool canMakeTheWindowGrow)
     gray_level_max = 255;
   }
 
+  // printf("%i %i \n",gray_level_max,gray_level_min);
   if (graphics) {
     // display a red cross at the center of gravity's location in the image.
     vpDisplay::displayCross(I, this->cog, (3 * thickness) + 8, vpColor::red, thickness);
@@ -1343,12 +1344,12 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
     // a2^2 = 2 / m00 * (mu02 + mu20 - sqrt( (mu20 - mu02)^2 + 4mu11^2) )
 
     // we compute parameters of the estimated ellipse
-    double tmp1 = (((m01 * m01) - (m10 * m10)) / m00) + (m20 - m02);
-    double tmp2 = (m11 - m10) * (m01 / m00);
-    double Sqrt = sqrt((tmp1 * tmp1) + (4 * tmp2 * tmp2));
-    double a1 = sqrt((2 / m00) * ((m20 + m02) - (((m10 * m10) + (m01 * m01)) / m00) + Sqrt));
-    double a2 = sqrt((2 / m00) * ((m20 + m02) - (((m10 * m10) + (m01 * m01)) / m00) - Sqrt));
-    double alpha = 0.5 * atan2(2 * ((m11 * m00) - (m10 * m01)), (((m20 - m02) * m00) - (m10 * m10) + (m01 * m01)));
+    double tmp1 = (m01 * m01 - m10 * m10) / m00 + (m20 - m02);
+    double tmp2 = m11 - m10 * m01 / m00;
+    double Sqrt = sqrt(tmp1 * tmp1 + 4 * tmp2 * tmp2);
+    double a1 = sqrt(2 / m00 * ((m20 + m02) - (m10 * m10 + m01 * m01) / m00 + Sqrt));
+    double a2 = sqrt(2 / m00 * ((m20 + m02) - (m10 * m10 + m01 * m01) / m00 - Sqrt));
+    double alpha = 0.5 * atan2(2 * (m11 * m00 - m10 * m01), ((m20 - m02) * m00 - m10 * m10 + m01 * m01));
 
     // to be able to track small dots, minorize the ellipsoid radius for the
     // inner test
@@ -1371,6 +1372,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
                "%d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
+        // return false;
         nb_bad_points++;
       }
       if (graphics) {
@@ -1486,11 +1488,10 @@ bool vpDot2::hasGoodLevel(const vpImage<unsigned char> &I, const unsigned int &u
 bool vpDot2::hasReverseLevel(const vpImage<unsigned char> &I, const unsigned int &u, const unsigned int &v) const
 {
 
-  if (!isInArea(u, v)) {
+  if (!isInArea(u, v))
     return false;
-  }
 
-  if ((I[v][u] < gray_level_min) || (I[v][u] > gray_level_max)) {
+  if (I[v][u] < gray_level_min || I[v][u] > gray_level_max) {
     return true;
   }
   else {

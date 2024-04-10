@@ -381,24 +381,24 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   case 1:
     output = (unsigned char *)I.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i];
+      *(output++) = data[i];
     }
     break;
 
   case 2:
     output = (unsigned char *)I.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 2];
+      *(output++) = data[i * 2];
     }
     break;
 
   case 3:
     output = (unsigned char *)Ic.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 3];
-      *(++output) = data[i * 3 + 1];
-      *(++output) = data[i * 3 + 2];
-      *(++output) = vpRGBa::alpha_default;
+      *(output++) = data[i * 3];
+      *(output++) = data[i * 3 + 1];
+      *(output++) = data[i * 3 + 2];
+      *(output++) = vpRGBa::alpha_default;
     }
     vpImageConvert::convert(Ic, I);
     break;
@@ -406,10 +406,10 @@ void readPNGLibpng(vpImage<unsigned char> &I, const std::string &filename)
   case 4:
     output = (unsigned char *)Ic.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 4];
-      *(++output) = data[i * 4 + 1];
-      *(++output) = data[i * 4 + 2];
-      *(++output) = data[i * 4 + 3];
+      *(output++) = data[i * 4];
+      *(output++) = data[i * 4 + 1];
+      *(output++) = data[i * 4 + 2];
+      *(output++) = data[i * 4 + 3];
     }
     vpImageConvert::convert(Ic, I);
     break;
@@ -558,7 +558,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   case 1:
     output = (unsigned char *)Ig.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i];
+      *(output++) = data[i];
     }
     vpImageConvert::convert(Ig, I);
     break;
@@ -566,7 +566,7 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   case 2:
     output = (unsigned char *)Ig.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 2];
+      *(output++) = data[i * 2];
     }
     vpImageConvert::convert(Ig, I);
     break;
@@ -574,20 +574,20 @@ void readPNGLibpng(vpImage<vpRGBa> &I, const std::string &filename)
   case 3:
     output = (unsigned char *)I.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 3];
-      *(++output) = data[i * 3 + 1];
-      *(++output) = data[i * 3 + 2];
-      *(++output) = vpRGBa::alpha_default;
+      *(output++) = data[i * 3];
+      *(output++) = data[i * 3 + 1];
+      *(output++) = data[i * 3 + 2];
+      *(output++) = vpRGBa::alpha_default;
     }
     break;
 
   case 4:
     output = (unsigned char *)I.bitmap;
     for (unsigned int i = 0; i < width * height; ++i) {
-      *(++output) = data[i * 4];
-      *(++output) = data[i * 4 + 1];
-      *(++output) = data[i * 4 + 2];
-      *(++output) = data[i * 4 + 3];
+      *(output++) = data[i * 4];
+      *(output++) = data[i * 4 + 1];
+      *(output++) = data[i * 4 + 2];
+      *(output++) = data[i * 4 + 3];
     }
     break;
   }

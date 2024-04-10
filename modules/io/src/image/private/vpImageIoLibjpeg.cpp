@@ -228,10 +228,10 @@ void readJPEGLibjpeg(vpImage<unsigned char> &I, const std::string &filename)
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
       for (unsigned int i = 0; i < width; ++i) {
-        *(++output) = buffer[0][i * 3];
-        *(++output) = buffer[0][i * 3 + 1];
-        *(++output) = buffer[0][i * 3 + 2];
-        *(++output) = vpRGBa::alpha_default;
+        *(output++) = buffer[0][i * 3];
+        *(output++) = buffer[0][i * 3 + 1];
+        *(output++) = buffer[0][i * 3 + 2];
+        *(output++) = vpRGBa::alpha_default;
       }
     }
     vpImageConvert::convert(Ic, I);
@@ -308,10 +308,10 @@ void readJPEGLibjpeg(vpImage<vpRGBa> &I, const std::string &filename)
     while (cinfo.output_scanline < cinfo.output_height) {
       jpeg_read_scanlines(&cinfo, buffer, 1);
       for (unsigned int i = 0; i < width; ++i) {
-        *(++output) = buffer[0][i * 3];
-        *(++output) = buffer[0][i * 3 + 1];
-        *(++output) = buffer[0][i * 3 + 2];
-        *(++output) = vpRGBa::alpha_default;
+        *(output++) = buffer[0][i * 3];
+        *(output++) = buffer[0][i * 3 + 1];
+        *(output++) = buffer[0][i * 3 + 2];
+        *(output++) = vpRGBa::alpha_default;
       }
     }
   }
