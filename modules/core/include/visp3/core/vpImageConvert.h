@@ -69,7 +69,12 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
+#include <pcl/pcl_config.h>
+#if PCL_VERSION_COMPARE(>=,1,14,1)
 #include <pcl/impl/point_types.hpp>
+#else
+#include <pcl/point_types.h>
+#endif
 #include <pcl/point_cloud.h>
 #endif
 
