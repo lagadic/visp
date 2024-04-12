@@ -45,34 +45,26 @@ install:
 clone_folder: C:\projects\visp\visp
 
 install:
-  - ECHO Installing %TARGET% with %GENERATOR%
-  - SET PATH_ORIGINAL=%PATH%
+  - echo "Installing %TARGET% with %GENERATOR%"
+  - set PATH_ORIGINAL=%PATH%
   # Setup path for mingw
-  - if [%TARGET%]==[mingw] (
-      SET "PATH_MINGW64=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin" &&
-      SET "PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin" &&
-      SET "PATH=%PATH_MINGW64%:%PATH_VISPDLL%:%PATH_ORIGINAL%" &&
-      dir %PATH_MINGW64% &&
-      mingw32-make --version
-    )
+  - if [%TARGET%]==[mingw] set PATH_MINGW64=C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
+  - if [%TARGET%]==[mingw] set PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin
+  - if [%TARGET%]==[mingw] set PATH=%PATH_MINGW64%:%PATH_VISPDLL%:%PATH_ORIGINAL%
+  - if [%TARGET%]==[mingw] dir %PATH_MINGW64%
+  - if [%TARGET%]==[mingw] mingw32-make --version
 
   # Setup path for msvc
-  - if [%TARGET%]==[msvc] (
-      SET PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin &&
-      SET "PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%" &&
-    )
-
-  # Setup path for visp_sample
-  - if [%TARGET%]==[visp_sample] (
-      SET PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin &&
-      SET "PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%" &&
-    )
+  - if [%TARGET%]==[msvc] set PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin
+  - if [%TARGET%]==[msvc] set PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%
 
   # Setup path for uwp
-  - if [%TARGET%]==[visp_sample] (
-      SET PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin &&
-      SET "PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%" &&
-    )
+  - if [%TARGET%]==[uwp] set PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin
+  - if [%TARGET%]==[uwp] set PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%
+
+  # Setup path for visp_sample
+  - if [%TARGET%]==[visp_sample] set PATH_VISPDLL=C:\projects\visp\build\install\%PLATFORM%\%TARGET%\bin
+  - if [%TARGET%]==[visp_sample] set PATH=%PATH_VISPDLL%:%PATH_ORIGINAL%
 
 build_script:
   - echo %PATH%
@@ -82,36 +74,28 @@ build_script:
   - cd C:\projects\visp\build
 
   # mingw case
-  - if [%TARGET%]==[mingw] (
-      cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%CONFIGURATION% ..\visp &&
-      cmake --build . --config %CONFIGURATION% --target install -- -j2 &&
-      dir C:\projects\visp\build\install &&
-      dir %PATH_VISPDLL% &&
-      ctest -j2 --output-on-failure -V
-    )
+  - if [%TARGET%]==[mingw] cmake -G %GENERATOR% -DCMAKE_BUILD_TYPE=%CONFIGURATION% ..\visp
+  - if [%TARGET%]==[mingw] cmake --build . --config %CONFIGURATION% --target install -- -j2
+  - if [%TARGET%]==[mingw] dir C:\projects\visp\build\install
+  - if [%TARGET%]==[mingw] dir %PATH_VISPDLL%
+  - if [%TARGET%]==[mingw] ctest -j2 --output-on-failure -V
 
   # msvc case
-  - if [%TARGET%]==[msvc] (
-      cmake -G %GENERATOR% -A %PLATFORM% ..\visp &&
-      cmake --build . --config %CONFIGURATION% --target install -- /m:2 &&
-      dir C:\projects\visp\build\install &&
-      dir %PATH_VISPDLL% &&
-      ctest -j2 --output-on-failure -V
-    )
+  - if [%TARGET%]==[msvc] cmake -G %GENERATOR% -A %PLATFORM% ..\visp
+  - if [%TARGET%]==[msvc] cmake --build . --config %CONFIGURATION% --target install -- /m:2
+  - if [%TARGET%]==[msvc] dir C:\projects\visp\build\install
+  - if [%TARGET%]==[msvc] dir %PATH_VISPDLL%
+  - if [%TARGET%]==[msvc] ctest -j2 --output-on-failure -V
 
   # uwp case
-  - if [%TARGET%]==[uwp] (
-      cmake -G %GENERATOR% -A %PLATFORM% -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_APPS=OFF ..\visp &&
-      cmake --build . --config %CONFIGURATION% -- /m:2
-    )
+  - if [%TARGET%]==[uwp] cmake -G %GENERATOR% -A %PLATFORM% -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_APPS=OFF ..\visp
+  - if [%TARGET%]==[uwp] cmake --build . --config %CONFIGURATION% -- /m:2
 
   # visp_sample case: ViSP as 3rdparty with cmake
-  - if [%TARGET%]==[visp_sample] (
-      cmake -G %GENERATOR% -A %PLATFORM% -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_APPS=OFF ..\visp &&
-      cmake --build . --config %CONFIGURATION% --target install -- /m:2 &&
-      cd C:\projects\deps\visp_sample &&
-      mkdir build &&
-      cd build &&
-      cmake -G %GENERATOR% -A %PLATFORM% .. -DVISP_DIR=C:\projects\visp\build\install &&
-      cmake --build . --config %configuration% -- /m:2
-    )
+  - if [%TARGET%]==[visp_sample] cmake -G %GENERATOR% -A %PLATFORM% -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF -DBUILD_APPS=OFF ..\visp
+  - if [%TARGET%]==[visp_sample] cmake --build . --config %CONFIGURATION% --target install -- /m:2
+  - if [%TARGET%]==[visp_sample] cd C:\projects\deps\visp_sample
+  - if [%TARGET%]==[visp_sample] mkdir build
+  - if [%TARGET%]==[visp_sample] cd build
+  - if [%TARGET%]==[visp_sample] cmake -G %GENERATOR% -A %PLATFORM% .. -DVISP_DIR=C:\projects\visp\build\install
+  - if [%TARGET%]==[visp_sample] cmake --build . --config %configuration% -- /m:2
