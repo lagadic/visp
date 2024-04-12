@@ -326,22 +326,22 @@ void vpImageTools::crop(const vpImage<Type> &I, double roi_top, double roi_left,
   crop.resize(r_height, r_width);
 
   if (v_scale == 1 && h_scale == 1) {
-    for (unsigned int i = 0; i < r_height; i++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[i + i_min_u] + j_min_u);
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
-    for (unsigned int i = 0; i < r_height; i++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(I[(i + i_min_u) * v_scale] + j_min_u);
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else {
-    for (unsigned int i = 0; i < r_height; i++) {
-      for (unsigned int j = 0; j < r_width; j++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
+      for (unsigned int j = 0; j < r_width; ++j) {
         crop[i][j] = I[(i + i_min_u) * v_scale][(j + j_min_u) * h_scale];
       }
     }
@@ -431,23 +431,23 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
   crop.resize(r_height, r_width);
 
   if (v_scale == 1 && h_scale == 1) {
-    for (unsigned int i = 0; i < r_height; i++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(bitmap + ((i + i_min_u) * width + j_min_u) * sizeof(Type));
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else if (h_scale == 1) {
-    for (unsigned int i = 0; i < r_height; i++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
       void *src = (void *)(bitmap + ((i + i_min_u) * width * v_scale + j_min_u) * sizeof(Type));
       void *dst = (void *)crop[i];
       memcpy(dst, src, r_width * sizeof(Type));
     }
   }
   else {
-    for (unsigned int i = 0; i < r_height; i++) {
+    for (unsigned int i = 0; i < r_height; ++i) {
       unsigned int i_src = (i + i_min_u) * width * v_scale + j_min_u * h_scale;
-      for (unsigned int j = 0; j < r_width; j++) {
+      for (unsigned int j = 0; j < r_width; ++j) {
         void *src = (void *)(bitmap + (i_src + j * h_scale) * sizeof(Type));
         void *dst = (void *)&crop[i][j];
         memcpy(dst, src, sizeof(Type));
@@ -477,7 +477,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
   Type v;
   Type *p = I.bitmap;
   Type *pend = I.bitmap + I.getWidth() * I.getHeight();
-  for (; p < pend; p++) {
+  for (; p < pend; ++p) {
     v = *p;
     if (v < threshold1)
       *p = value1;
@@ -505,7 +505,7 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char thre
   if (useLUT) {
     // Construct the LUT
     unsigned char lut[256];
-    for (unsigned int i = 0; i < 256; i++) {
+    for (unsigned int i = 0; i < 256; ++i) {
       lut[i] = i < threshold1 ? value1 : (i > threshold2 ? value3 : value2);
     }
 
@@ -514,7 +514,7 @@ inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char thre
   else {
     unsigned char *p = I.bitmap;
     unsigned char *pend = I.bitmap + I.getWidth() * I.getHeight();
-    for (; p < pend; p++) {
+    for (; p < pend; ++p) {
       unsigned char v = *p;
       if (v < threshold1)
         *p = value1;
@@ -582,12 +582,12 @@ template <class Type> void vpUndistortInternalType<Type>::vpUndistort_threaded(v
   Type *dst = undistortSharedData.dst + (height / nthreads * offset) * width;
   Type *src = undistortSharedData.src;
 
-  for (double v = height / nthreads * offset; v < height / nthreads * (offset + 1); v++) {
+  for (double v = height / nthreads * offset; v < height / nthreads * (offset + 1); ++v) {
     double deltav = v - v0;
     // double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
     double fr1 = 1.0 + kud_py2 * deltav * deltav;
 
-    for (double u = 0; u < width; u++) {
+    for (double u = 0; u < width; ++u) {
       // computation of u,v : corresponding pixel coordinates in I.
       double deltau = u - u0;
       // double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
@@ -677,7 +677,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
 
   vpUndistortInternalType<Type> *undistortSharedData = new vpUndistortInternalType<Type>[nthreads];
 
-  for (unsigned int i = 0; i < nthreads; i++) {
+  for (unsigned int i = 0; i < nthreads; ++i) {
     // Each thread works on a different set of data.
     //    vpTRACE("create thread %d", i);
     undistortSharedData[i].src = I.bitmap;
@@ -692,12 +692,12 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   }
   /* Wait on the other threads */
 
-  for (unsigned int i = 0; i < nthreads; i++) {
+  for (unsigned int i = 0; i < nthreads; ++i) {
     //  vpTRACE("join thread %d", i);
     threadpool[i]->join();
   }
 
-  for (unsigned int i = 0; i < nthreads; i++) {
+  for (unsigned int i = 0; i < nthreads; ++i) {
     delete threadpool[i];
   }
 
@@ -732,12 +732,12 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
   double kud_py2 = kud * invpy * invpy;
 
   Type *dst = undistI.bitmap;
-  for (double v = 0; v < height; v++) {
+  for (double v = 0; v < height; ++v) {
     double deltav = v - v0;
     // double fr1 = 1.0 + kd * (vpMath::sqr(deltav * invpy));
     double fr1 = 1.0 + kud_py2 * deltav * deltav;
 
-    for (double u = 0; u < width; u++) {
+    for (double u = 0; u < width; ++u) {
       // computation of u,v : corresponding pixel coordinates in I.
       double deltau = u - u0;
       // double fr2 = fr1 + kd * (vpMath::sqr(deltau * invpx));
@@ -797,12 +797,12 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     return;
   }
 
-  for (int v = 0; v < height; v++) {
-    for (int u = 0; u < height; u++) {
-      double r2 = vpMath::sqr(((double)u - u0) / px) +
-        vpMath::sqr(((double)v - v0) / py);
-      double u_double = ((double)u - u0) * (1.0 + kd * r2) + u0;
-      double v_double = ((double)v - v0) * (1.0 + kd * r2) + v0;
+  for (int v = 0; v < height; ++v) {
+    for (int u = 0; u < height; ++u) {
+      double r2 = vpMath::sqr((static_cast<double>(u) - u0) / px) +
+        vpMath::sqr((static_cast<double>(v) - v0) / py);
+      double u_double = (static_cast<double>(u) - u0) * (1.0 + kd * r2) + u0;
+      double v_double = (static_cast<double>(v) - v0) * (1.0 + kd * r2) + v0;
       undistI[v][u] = I.getPixelBI((float)u_double, (float)v_double);
     }
   }
@@ -841,7 +841,7 @@ template <class Type> void vpImageTools::flip(const vpImage<Type> &I, vpImage<Ty
   unsigned int height = I.getHeight(), width = I.getWidth();
   newI.resize(height, width);
 
-  for (unsigned int i = 0; i < height; i++) {
+  for (unsigned int i = 0; i < height; ++i) {
     memcpy(newI.bitmap + i * width, I.bitmap + (height - 1 - i) * width, width * sizeof(Type));
   }
 }
@@ -883,7 +883,7 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
   vpImage<Type> Ibuf;
   Ibuf.resize(1, width);
 
-  for (unsigned int i = 0; i < height / 2; i++) {
+  for (unsigned int i = 0; i < height / 2; ++i) {
     memcpy(Ibuf.bitmap, I.bitmap + i * width, width * sizeof(Type));
 
     memcpy(I.bitmap + i * width, I.bitmap + (height - 1 - i) * width, width * sizeof(Type));
@@ -967,7 +967,7 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
   vpRGBa p32 = getPixelClamped(I, u + 1, v + 2);
   vpRGBa p33 = getPixelClamped(I, u + 2, v + 2);
 
-  for (int c = 0; c < 3; c++) {
+  for (int c = 0; c < 3; ++c) {
     float col0 = cubicHermite(static_cast<float>(reinterpret_cast<unsigned char *>(&p00)[c]),
                               static_cast<float>(reinterpret_cast<unsigned char *>(&p01)[c]),
                               static_cast<float>(reinterpret_cast<unsigned char *>(&p02)[c]),
@@ -1029,7 +1029,7 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
   int u3 = u1;
   int v3 = v2;
 
-  for (int c = 0; c < 3; c++) {
+  for (int c = 0; c < 3; ++c) {
     float col0 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v0][u0])[c]),
                       static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v1][u1])[c]), xFrac);
     float col1 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v2][u2])[c]),
@@ -1119,12 +1119,12 @@ void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const vpI
   }
 #pragma omp parallel for schedule(dynamic)
 #endif
-  for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+  for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
     const float v = (i + half) * scaleY - half;
     const float v0 = std::floor(v);
     const float yFrac = v - v0;
 
-    for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+    for (unsigned int j = 0; j < Ires.getWidth(); ++j) {
       const float u = (j + half) * scaleX - half;
       const float u0 = std::floor(u);
       const float xFrac = u - u0;
@@ -1174,11 +1174,11 @@ inline void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsign
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
       float v = (i + half) * scaleY - half;
       float yFrac = v - static_cast<int>(v);
 
-      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      for (unsigned int j = 0; j < Ires.getWidth(); ++j) {
         float u = (j + half) * scaleX - half;
         float xFrac = u - static_cast<int>(u);
 
@@ -1224,11 +1224,11 @@ inline void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires
     }
 #pragma omp parallel for schedule(dynamic)
 #endif
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
+    for (int i = 0; i < static_cast<int>(Ires.getHeight()); ++i) {
       float v = (i + half) * scaleY - half;
       float yFrac = v - static_cast<int>(v);
 
-      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
+      for (unsigned int j = 0; j < Ires.getWidth(); ++j) {
         float u = (j + half) * scaleX - half;
         float xFrac = u - static_cast<int>(u);
 
@@ -1335,11 +1335,11 @@ void vpImageTools::warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<T
     int32_t width_1_i32 = static_cast<int32_t>((src.getWidth() - 1) * precision) + 0x8000;
 
     if (affine) {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int32_t xi = a2_i32;
         int32_t yi = a5_i32;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (yi >= 0 && yi < height_1_i32 && xi >= 0 && xi < width_1_i32) {
             float x_ = (xi >> nbits) + (xi & 0xFFFF) * precision_1;
             float y_ = (yi >> nbits) + (yi & 0xFFFF) * precision_1;
@@ -1358,12 +1358,12 @@ void vpImageTools::warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<T
       }
     }
     else {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int64_t xi = a2_i32;
         int64_t yi = a5_i32;
         int64_t wi = a8_i32;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (wi != 0 && yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1) * wi && xi >= 0 &&
               xi <= (static_cast<int>(src.getWidth()) - 1) * wi) {
             float w_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
@@ -1398,8 +1398,8 @@ void vpImageTools::warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<T
     double a7 = affine ? 0.0 : T[2][1];
     double a8 = affine ? 1.0 : T[2][2];
 
-    for (unsigned int i = 0; i < dst.getHeight(); i++) {
-      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+    for (unsigned int i = 0; i < dst.getHeight(); ++i) {
+      for (unsigned int j = 0; j < dst.getWidth(); ++j) {
         double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
         double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
         double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;
@@ -1444,11 +1444,11 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
     int64_t width_i64 = static_cast<int64_t>(src.getWidth() * precision);
 
     if (affine) {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int64_t xi_ = a2_i64;
         int64_t yi_ = a5_i64;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (yi_ >= 0 && yi_ < height_i64 && xi_ >= 0 && xi_ < width_i64) {
             const int64_t xi_lower = xi_ & (~0xFFFF);
             const int64_t yi_lower = yi_ & (~0xFFFF);
@@ -1499,12 +1499,12 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
       }
     }
     else {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int64_t xi = a2_i64;
         int64_t yi = a5_i64;
         int64_t wi = a8_i64;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (wi != 0 && yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1) * wi && xi >= 0 &&
               xi <= (static_cast<int>(src.getWidth()) - 1) * wi) {
             const float wi_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
@@ -1566,8 +1566,8 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
     double a7 = affine ? 0.0 : T[2][1];
     double a8 = affine ? 1.0 : T[2][2];
 
-    for (unsigned int i = 0; i < dst.getHeight(); i++) {
-      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+    for (unsigned int i = 0; i < dst.getHeight(); ++i) {
+      for (unsigned int j = 0; j < dst.getWidth(); ++j) {
         double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
         double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
         double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;
@@ -1644,11 +1644,11 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     int64_t width_i64 = static_cast<int64_t>(src.getWidth() * precision);
 
     if (affine) {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int64_t xi = a2_i64;
         int64_t yi = a5_i64;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (yi >= 0 && yi < height_i64 && xi >= 0 && xi < width_i64) {
             const int64_t xi_lower = xi & (~0xFFFF);
             const int64_t yi_lower = yi & (~0xFFFF);
@@ -1725,12 +1725,12 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
       }
     }
     else {
-      for (unsigned int i = 0; i < dst.getHeight(); i++) {
+      for (unsigned int i = 0; i < dst.getHeight(); ++i) {
         int64_t xi = a2_i64;
         int64_t yi = a5_i64;
         int64_t wi = a8_i64;
 
-        for (unsigned int j = 0; j < dst.getWidth(); j++) {
+        for (unsigned int j = 0; j < dst.getWidth(); ++j) {
           if (yi >= 0 && yi <= (static_cast<int>(src.getHeight()) - 1) * wi && xi >= 0 &&
               xi <= (static_cast<int>(src.getWidth()) - 1) * wi) {
             const float wi_ = (wi >> nbits) + (wi & 0xFFFF) * precision_1;
@@ -1810,8 +1810,8 @@ inline void vpImageTools::warpLinear(const vpImage<vpRGBa> &src, const vpMatrix 
     double a7 = affine ? 0.0 : T[2][1];
     double a8 = affine ? 1.0 : T[2][2];
 
-    for (unsigned int i = 0; i < dst.getHeight(); i++) {
-      for (unsigned int j = 0; j < dst.getWidth(); j++) {
+    for (unsigned int i = 0; i < dst.getHeight(); ++i) {
+      for (unsigned int j = 0; j < dst.getWidth(); ++j) {
         double x = a0 * (centerCorner ? j + 0.5 : j) + a1 * (centerCorner ? i + 0.5 : i) + a2;
         double y = a3 * (centerCorner ? j + 0.5 : j) + a4 * (centerCorner ? i + 0.5 : i) + a5;
         double w = a6 * (centerCorner ? j + 0.5 : j) + a7 * (centerCorner ? i + 0.5 : i) + a8;

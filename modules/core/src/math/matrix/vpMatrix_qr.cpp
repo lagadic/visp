@@ -107,9 +107,9 @@ int allocate_work(double **work)
 void display_gsl(gsl_matrix *M)
 {
   // display
-  for (unsigned int i = 0; i < M->size1; i++) {
+  for (unsigned int i = 0; i < M->size1; ++i) {
     unsigned int k = i * M->tda;
-    for (unsigned int j = 0; j < M->size2; j++) {
+    for (unsigned int j = 0; j < M->size2; ++j) {
       std::cout << M->data[k + j] << " ";
     }
     std::cout << std::endl;
@@ -172,7 +172,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     // copy input matrix since gsl_linalg_QR_decomp() is destructive
     unsigned int Atda = static_cast<unsigned int>(gsl_A->tda);
     size_t len = sizeof(double) * colNum;
-    for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int i = 0; i < rowNum; ++i) {
       unsigned int k = i * Atda;
       memcpy(&gsl_A->data[k], (*this)[i], len);
     }
@@ -184,7 +184,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         double *Tii = gsl_matrix_ptr(gsl_R, i, i);
         *Tii = 1.0 / (*Tii);
         double aii = -(*Tii);
@@ -202,7 +202,7 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, gsl_R, gsl_Q, 0, &gsl_inv);
     unsigned int gsl_inv_tda = static_cast<unsigned int>(gsl_inv.tda);
     size_t inv_len = sizeof(double) * inv.colNum;
-    for (unsigned int i = 0; i < inv.rowNum; i++) {
+    for (unsigned int i = 0; i < inv.rowNum; ++i) {
       unsigned int k = i * gsl_inv_tda;
       memcpy(inv[i], &gsl_inv.data[k], inv_len);
     }
@@ -306,8 +306,8 @@ vpMatrix vpMatrix::inverseByQRLapack() const
       // the matrix is upper triangular for lapack but lower triangular for visp
       // we fill it with zeros above the diagonal (where we don't need the
       // values)
-      for (unsigned int i = 0; i < C.getRows(); i++)
-        for (unsigned int j = 0; j < C.getRows(); j++)
+      for (unsigned int i = 0; i < C.getRows(); ++i)
+        for (unsigned int j = 0; j < C.getRows(); ++j)
           if (j > i)
             C[i][j] = 0.;
 
@@ -476,10 +476,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   // copy input matrix since gsl_linalg_QR_decomp() is destructive
   unsigned int Atda = static_cast<unsigned int>(gsl_A->tda);
   size_t len = sizeof(double) * colNum;
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     unsigned int k = i * Atda;
     memcpy(&gsl_A->data[k], (*this)[i], len);
-    //    for (unsigned int j = 0; j < colNum; j++)
+    //    for (unsigned int j = 0; j < colNum; ++j)
     //      gsl_A->data[k + j] = (*this)[i][j];
   }
 
@@ -508,10 +508,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
 
     unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
     size_t len = sizeof(double) * Q.colNum;
-    for (unsigned int i = 0; i < Q.rowNum; i++) {
+    for (unsigned int i = 0; i < Q.rowNum; ++i) {
       unsigned int k = i * Qtda;
       memcpy(Q[i], &gsl_Q->data[k], len);
-      //      for(unsigned int j = 0; j < Q.colNum; j++) {
+      //      for(unsigned int j = 0; j < Q.colNum; ++j) {
       //        Q[i][j] = gsl_Q->data[k + j];
       //      }
     }
@@ -522,10 +522,10 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   na = std::min<unsigned int>(m, n);
   unsigned int Rtda = static_cast<unsigned int>(gsl_R->tda);
   size_t Rlen = sizeof(double) * R.colNum;
-  for (unsigned int i = 0; i < na; i++) {
+  for (unsigned int i = 0; i < na; ++i) {
     unsigned int k = i * Rtda;
     memcpy(R[i], &gsl_R->data[k], Rlen);
-    //      for(unsigned int j = i; j < na; j++)
+    //      for(unsigned int j = i; j < na; ++j)
     //        R[i][j] = gsl_R->data[k + j];
     if (std::abs(gsl_R->data[k + i]) < tol)
       r--;
@@ -614,16 +614,16 @@ unsigned int vpMatrix::qr(vpMatrix &Q, vpMatrix &R, bool full, bool squareR, dou
   // copy useful part of R from Q and update rank
   na = std::min<integer>(m, n);
   if (squareR) {
-    for (int i = 0; i < na; i++) {
-      for (int j = i; j < na; j++)
+    for (int i = 0; i < na; ++i) {
+      for (int j = i; j < na; ++j)
         R[i][j] = qrdata[i + m * j];
       if (std::abs(qrdata[i + m * i]) < tol)
         r--;
     }
   }
   else {
-    for (int i = 0; i < na; i++) {
-      for (int j = i; j < n; j++)
+    for (int i = 0; i < na; ++i) {
+      for (int j = i; j < n; ++j)
         R[i][j] = qrdata[i + m * j];
       if (std::abs(qrdata[i + m * i]) < tol)
         r--;
@@ -794,10 +794,10 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 
     unsigned int Qtda = static_cast<unsigned int>(gsl_Q->tda);
     size_t len = sizeof(double) * Q.colNum;
-    for (unsigned int i = 0; i < Q.rowNum; i++) {
+    for (unsigned int i = 0; i < Q.rowNum; ++i) {
       unsigned int k = i * Qtda;
       memcpy(Q[i], &gsl_Q->data[k], len);
-      //      for(unsigned int j = 0; j < Q.colNum; j++) {
+      //      for(unsigned int j = 0; j < Q.colNum; ++j) {
       //        Q[i][j] = gsl_Q->data[k + j];
       //      }
     }
@@ -807,7 +807,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   // update rank
   na = std::min<unsigned int>(m, n);
   unsigned int Rtda = static_cast<unsigned int>(gsl_R->tda);
-  for (unsigned int i = 0; i < na; i++) {
+  for (unsigned int i = 0; i < na; ++i) {
     unsigned int k = i * Rtda;
     if (std::abs(gsl_R->data[k + i]) < tol)
       r--;
@@ -828,7 +828,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 
   // copy useful part of R
   size_t Rlen = sizeof(double) * R.colNum;
-  for (unsigned int i = 0; i < na; i++) {
+  for (unsigned int i = 0; i < na; ++i) {
     unsigned int k = i * Rtda;
     memcpy(R[i], &gsl_R->data[k], Rlen);
   }
@@ -942,8 +942,8 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   if (squareR) // R r x r
   {
     R.resize(static_cast<unsigned int>(r), static_cast<unsigned int>(r));
-    for (int i = 0; i < r; i++)
-      for (int j = i; j < r; j++)
+    for (int i = 0; i < r; ++i)
+      for (int j = i; j < r; ++j)
         R[i][j] = qrdata[i + m * j];
 
     // write P
@@ -954,8 +954,8 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
   else // R is min(m,n) x n of rank r
   {
     R.resize(static_cast<unsigned int>(na), static_cast<unsigned int>(n));
-    for (int i = 0; i < na; i++)
-      for (int j = i; j < n; j++)
+    for (int i = 0; i < na; ++i)
+      for (int j = i; j < n; ++j)
         R[i][j] = qrdata[i + m * j];
     // write P
     P.resize(static_cast<unsigned int>(n), static_cast<unsigned int>(n));
@@ -1028,7 +1028,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
 
   unsigned int tda = static_cast<unsigned int>(gsl_inv.tda);
   size_t len = sizeof(double) * inv.colNum;
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     unsigned int k = i * tda;
     memcpy(&gsl_inv.data[k], (*this)[i], len);
   }
@@ -1040,7 +1040,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         double *Tii = gsl_matrix_ptr(&gsl_inv, i, i);
         *Tii = 1.0 / *Tii;
         double aii = -(*Tii);
@@ -1061,7 +1061,7 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
     {
       gsl_matrix_view m;
       gsl_vector_view v;
-      for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int i = 0; i < rowNum; ++i) {
         size_t j = rowNum - i - 1;
         double *Tjj = gsl_matrix_ptr(&gsl_inv, j, j);
         *Tjj = 1.0 / (*Tjj);

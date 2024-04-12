@@ -30,8 +30,7 @@
  *
  * Description:
  * Directory management.
- *
-*****************************************************************************/
+ */
 
 /*!
   \file vpIoTools.cpp
@@ -119,7 +118,7 @@ using namespace buminiz;
 #endif
 
 // To avoid warnings such as: warning: unused variable ‘littleEndian’ [-Wunused-variable]
-#define _unused(x) ((void)(x)) // see: https://stackoverflow.com/a/777359
+#define UNUSED(x) ((void)(x)) // see: https://stackoverflow.com/a/777359
 
 // Copyright (C) 2011  Carl Rogers
 // Released under MIT License
@@ -130,41 +129,38 @@ using namespace buminiz;
 char visp::cnpy::BigEndianTest()
 {
   int x = 1;
-  return (((char *)&x)[0]) ? '<' : '>';
+  return (((reinterpret_cast<char *>(&x))[0]) ? '<' : '>');
 }
 
 char visp::cnpy::map_type(const std::type_info &t)
 {
-  if (t == typeid(float)) return 'f';
-  if (t == typeid(double)) return 'f';
-  if (t == typeid(long double)) return 'f';
+  if (t == typeid(float)) { return 'f'; }
+  if (t == typeid(double)) { return 'f'; }
+  if (t == typeid(long double)) { return 'f'; }
 
-  if (t == typeid(int)) return 'i';
-  if (t == typeid(char)) return 'i';
-  if (t == typeid(short)) return 'i';
-  if (t == typeid(long)) return 'i';
-  if (t == typeid(long long)) return 'i';
+  if (t == typeid(int)) { return 'i'; }
+  if (t == typeid(char)) { return 'i'; }
+  if (t == typeid(short)) { return 'i'; }
+  if (t == typeid(long)) { return 'i'; }
+  if (t == typeid(long long)) { return 'i'; }
 
-  if (t == typeid(unsigned char)) return 'u';
-  if (t == typeid(unsigned short)) return 'u';
-  if (t == typeid(unsigned long)) return 'u';
-  if (t == typeid(unsigned long long)) return 'u';
-  if (t == typeid(unsigned int)) return 'u';
+  if (t == typeid(unsigned char)) { return 'u'; }
+  if (t == typeid(unsigned short)) { return 'u'; }
+  if (t == typeid(unsigned long)) { return 'u'; }
+  if (t == typeid(unsigned long long)) { return 'u'; }
+  if (t == typeid(unsigned int)) { return 'u'; }
 
-  if (t == typeid(bool)) return 'b';
+  if (t == typeid(bool)) { return 'b'; }
 
-  if (t == typeid(std::complex<float>)) return 'c';
-  if (t == typeid(std::complex<double>)) return 'c';
-  if (t == typeid(std::complex<long double>)) return 'c';
+  if (t == typeid(std::complex<float>)) { return 'c'; }
+  if (t == typeid(std::complex<double>)) { return 'c'; }
+  if (t == typeid(std::complex<long double>)) { return 'c'; }
 
-  else return '?';
+  else { return '?'; }
 }
 
 void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std::vector<size_t> &shape, bool &fortran_order)
 {
-  //std::string magic_string(buffer,6);
-  // uint8_t major_version = *reinterpret_cast<uint8_t*>(buffer+6);
-  // uint8_t minor_version = *reinterpret_cast<uint8_t*>(buffer+7);
   uint16_t header_len = *reinterpret_cast<uint16_t *>(buffer+8);
   std::string header(reinterpret_cast<char *>(buffer+9), header_len);
 
@@ -190,11 +186,8 @@ void visp::cnpy::parse_npy_header(unsigned char *buffer, size_t &word_size, std:
   //byte order code | stands for not applicable.
   //not sure when this applies except for byte array
   loc1 = header.find("descr")+9;
-  bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-  _unused(littleEndian); assert(littleEndian);
-
-  //char type = header[loc1+1];
-  //assert(type == map_type(T));
+  bool littleEndian = (((header[loc1] == '<') || (header[loc1] == '|')) ? true : false);
+  UNUSED(littleEndian); assert(littleEndian);
 
   std::string str_ws = header.substr(loc1+2);
   loc2 = str_ws.find("'");
@@ -205,8 +198,9 @@ void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_
 {
   char buffer[256];
   size_t res = fread(buffer, sizeof(char), 11, fp);
-  if (res != 11)
+  if (res != 11) {
     throw std::runtime_error("parse_npy_header: failed fread");
+  }
   std::string header = fgets(buffer, 256, fp);
   assert(header[header.size()-1] == '\n');
 
@@ -214,16 +208,18 @@ void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_
 
   //fortran order
   loc1 = header.find("fortran_order");
-  if (loc1 == std::string::npos)
+  if (loc1 == std::string::npos) {
     throw std::runtime_error("parse_npy_header: failed to find header keyword: 'fortran_order'");
+  }
   loc1 += 16;
   fortran_order = (header.substr(loc1, 4) == "True" ? true : false);
 
   //shape
   loc1 = header.find("(");
   loc2 = header.find(")");
-  if (loc1 == std::string::npos || loc2 == std::string::npos)
+  if ((loc1 == std::string::npos) || (loc2 == std::string::npos)) {
     throw std::runtime_error("parse_npy_header: failed to find header keyword: '(' or ')'");
+  }
 
   std::regex num_regex("[0-9][0-9]*");
   std::smatch sm;
@@ -239,11 +235,12 @@ void visp::cnpy::parse_npy_header(FILE *fp, size_t &word_size, std::vector<size_
   //byte order code | stands for not applicable.
   //not sure when this applies except for byte array
   loc1 = header.find("descr");
-  if (loc1 == std::string::npos)
+  if (loc1 == std::string::npos) {
     throw std::runtime_error("parse_npy_header: failed to find header keyword: 'descr'");
+  }
   loc1 += 9;
   bool littleEndian = (header[loc1] == '<' || header[loc1] == '|' ? true : false);
-  _unused(littleEndian); assert(littleEndian);
+  UNUSED(littleEndian); assert(littleEndian);
 
   //char type = header[loc1+1];
   //assert(type == map_type(T));
@@ -258,8 +255,9 @@ void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_head
   std::vector<char> footer(22);
   fseek(fp, -22, SEEK_END);
   size_t res = fread(&footer[0], sizeof(char), 22, fp);
-  if (res != 22)
+  if (res != 22) {
     throw std::runtime_error("parse_zip_footer: failed fread");
+  }
 
   uint16_t disk_no, disk_start, nrecs_on_disk, comment_len;
   disk_no = *(uint16_t *)&footer[4];
@@ -270,10 +268,10 @@ void visp::cnpy::parse_zip_footer(FILE *fp, uint16_t &nrecs, size_t &global_head
   global_header_offset = *(uint32_t *)&footer[16];
   comment_len = *(uint16_t *)&footer[20];
 
-  _unused(disk_no); assert(disk_no == 0);
-  _unused(disk_start); assert(disk_start == 0);
-  _unused(nrecs_on_disk); assert(nrecs_on_disk == nrecs);
-  _unused(comment_len); assert(comment_len == 0);
+  UNUSED(disk_no); assert(disk_no == 0);
+  UNUSED(disk_start); assert(disk_start == 0);
+  UNUSED(nrecs_on_disk); assert(nrecs_on_disk == nrecs);
+  UNUSED(comment_len); assert(comment_len == 0);
 }
 
 visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
@@ -285,8 +283,9 @@ visp::cnpy::NpyArray load_the_npy_file(FILE *fp)
 
   visp::cnpy::NpyArray arr(shape, word_size, fortran_order);
   size_t nread = fread(arr.data<char>(), 1, arr.num_bytes(), fp);
-  if (nread != arr.num_bytes())
+  if (nread != arr.num_bytes()) {
     throw std::runtime_error("load_the_npy_file: failed fread");
+  }
   return arr;
 }
 
@@ -295,8 +294,9 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   std::vector<unsigned char> buffer_compr(compr_bytes);
   std::vector<unsigned char> buffer_uncompr(uncompr_bytes);
   size_t nread = fread(&buffer_compr[0], 1, compr_bytes, fp);
-  if (nread != compr_bytes)
+  if (nread != compr_bytes) {
     throw std::runtime_error("load_the_npy_file: failed fread");
+  }
 
   z_stream d_stream;
 
@@ -306,7 +306,7 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   d_stream.avail_in = 0;
   d_stream.next_in = Z_NULL;
   int err = inflateInit2(&d_stream, -MAX_WBITS);
-  _unused(err); assert(err == 0);
+  UNUSED(err); assert(err == 0);
 
   d_stream.avail_in = compr_bytes;
   d_stream.next_in = &buffer_compr[0];
@@ -314,9 +314,9 @@ visp::cnpy::NpyArray load_the_npz_array(FILE *fp, uint32_t compr_bytes, uint32_t
   d_stream.next_out = &buffer_uncompr[0];
 
   err = inflate(&d_stream, Z_FINISH);
-  _unused(err); assert(err == 0);
+  UNUSED(err); assert(err == 0);
   err = inflateEnd(&d_stream);
-  _unused(err); assert(err == 0);
+  UNUSED(err); assert(err == 0);
 
   std::vector<size_t> shape;
   size_t word_size;
@@ -348,22 +348,26 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
   }
 
   visp::cnpy::npz_t arrays;
-
-  while (1) {
+  bool quit = false;
+  while (!quit) {
     std::vector<char> local_header(30);
     size_t headerres = fread(&local_header[0], sizeof(char), 30, fp);
-    if (headerres != 30)
+    if (headerres != 30) {
       throw std::runtime_error("npz_load: failed fread");
+    }
 
     //if we've reached the global header, stop reading
-    if (local_header[2] != 0x03 || local_header[3] != 0x04) break;
+    if ((local_header[2] != 0x03) || (local_header[3] != 0x04)) {
+      quit = true;
+    };
 
     //read in the variable name
     uint16_t name_len = *(uint16_t *)&local_header[26];
     std::string varname(name_len, ' ');
     size_t vname_res = fread(&varname[0], sizeof(char), name_len, fp);
-    if (vname_res != name_len)
+    if (vname_res != name_len) {
       throw std::runtime_error("npz_load: failed fread");
+    }
 
     //erase the lagging .npy
     varname.erase(varname.end()-4, varname.end());
@@ -373,8 +377,9 @@ visp::cnpy::npz_t visp::cnpy::npz_load(std::string fname)
     if (extra_field_len > 0) {
       std::vector<char> buff(extra_field_len);
       size_t efield_res = fread(&buff[0], sizeof(char), extra_field_len, fp);
-      if (efield_res != extra_field_len)
+      if (efield_res != extra_field_len) {
         throw std::runtime_error("npz_load: failed fread");
+      }
     }
 
     uint16_t compr_method = *reinterpret_cast<uint16_t *>(&local_header[0]+8);
@@ -402,23 +407,30 @@ visp::cnpy::NpyArray visp::cnpy::npz_load(std::string fname, std::string varname
 {
   FILE *fp = fopen(fname.c_str(), "rb");
 
-  if (!fp) throw std::runtime_error("npz_load: Unable to open file "+fname);
+  if (!fp) {
+    throw std::runtime_error("npz_load: Unable to open file "+fname);
+  }
 
-  while (1) {
+  bool quit = false;
+  while (!quit) {
     std::vector<char> local_header(30);
     size_t header_res = fread(&local_header[0], sizeof(char), 30, fp);
-    if (header_res != 30)
+    if (header_res != 30) {
       throw std::runtime_error("npz_load: failed fread");
+    }
 
-  //if we've reached the global header, stop reading
-    if (local_header[2] != 0x03 || local_header[3] != 0x04) break;
+    //if we've reached the global header, stop reading
+    if (local_header[2] != 0x03 || local_header[3] != 0x04) {
+      quit = true;
+    };
 
     //read in the variable name
     uint16_t name_len = *(uint16_t *)&local_header[26];
     std::string vname(name_len, ' ');
     size_t vname_res = fread(&vname[0], sizeof(char), name_len, fp);
-    if (vname_res != name_len)
+    if (vname_res != name_len) {
       throw std::runtime_error("npz_load: failed fread");
+    }
     vname.erase(vname.end()-4, vname.end()); //erase the lagging .npy
 
     //read in the extra field
@@ -460,7 +472,9 @@ visp::cnpy::NpyArray visp::cnpy::npy_load(std::string fname)
 
   FILE *fp = fopen(fname.c_str(), "rb");
 
-  if (!fp) throw std::runtime_error("npy_load: Unable to open file "+fname);
+  if (!fp) {
+    throw std::runtime_error("npy_load: Unable to open file "+fname);
+  }
 
   NpyArray arr = load_the_npy_file(fp);
 
@@ -665,12 +679,12 @@ void vpIoTools::getUserName(std::string &username)
   // With MinGW, UNIX and _WIN32 are defined
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
-  char *_username = ::getenv("LOGNAME");
-  if (!_username) {
+  char *logname = ::getenv("LOGNAME");
+  if (!logname) {
     username = "unknown";
   }
   else {
-    username = _username;
+    username = logname;
   }
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -829,18 +843,18 @@ bool vpIoTools::checkDirectory(const std::string &dirname)
     return false;
   }
 
-  std::string _dirname = path(dirname);
+  std::string path_dirname = path(dirname);
 
-  if (VP_STAT(_dirname.c_str(), &stbuf) != 0) {
+  if (VP_STAT(path_dirname.c_str(), &stbuf) != 0) {
     // Test adding the separator if not already present
-    if (_dirname.at(_dirname.size() - 1) != separator) {
-      if (VP_STAT((_dirname + separator).c_str(), &stbuf) != 0) {
+    if (path_dirname.at(path_dirname.size() - 1) != separator) {
+      if (VP_STAT((path_dirname + separator).c_str(), &stbuf) != 0) {
         return false;
       }
     }
     // Test removing the separator if already present
-    if (_dirname.at(_dirname.size() - 1) == separator) {
-      if (VP_STAT((_dirname.substr(0, _dirname.size() - 1)).c_str(), &stbuf) != 0) {
+    if (path_dirname.at(path_dirname.size() - 1) == separator) {
+      if (VP_STAT((path_dirname.substr(0, path_dirname.size() - 1)).c_str(), &stbuf) != 0) {
         return false;
       }
     }
@@ -909,36 +923,36 @@ int vpIoTools::mkdir_p(const std::string &path, int mode)
   }
 
   // Iterate over the string
-  std::string _path = path;
-  std::string _sub_path;
-  for (size_t pos = 0; (pos = _path.find(vpIoTools::separator)) != std::string::npos;) {
-    _sub_path += _path.substr(0, pos + 1);
+  std::string cpy_path = path;
+  std::string sub_path;
+  for (size_t pos = 0; (pos = cpy_path.find(vpIoTools::separator)) != std::string::npos;) {
+    sub_path += cpy_path.substr(0, pos + 1);
     // Continue if sub_path = separator
     if (pos == 0) {
-      _path.erase(0, pos + 1);
+      cpy_path.erase(0, pos + 1);
       continue;
     }
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    if (mkdir(_sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
+    if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
     (void)mode; // var not used
-    if (!checkDirectory(_sub_path) && _mkdir(_sub_path.c_str()) != 0)
+    if (!checkDirectory(sub_path) && _mkdir(sub_path.c_str()) != 0)
 #endif
     {
       if (errno != EEXIST) {
         return -1;
       }
     }
-    _path.erase(0, pos + 1);
+    cpy_path.erase(0, pos + 1);
   }
 
-  if (!_path.empty()) {
-    _sub_path += _path;
+  if (!cpy_path.empty()) {
+    sub_path += cpy_path;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
-    if (mkdir(_sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
+    if (mkdir(sub_path.c_str(), static_cast<mode_t>(mode)) != 0)
 #elif defined(_WIN32)
 
-    if (_mkdir(_sub_path.c_str()) != 0)
+    if (_mkdir(sub_path.c_str()) != 0)
 #endif
     {
       if (errno != EEXIST) {
@@ -1418,11 +1432,11 @@ std::string vpIoTools::path(const std::string &pathname)
   std::string path(pathname);
 
 #if defined(_WIN32)
-  for (unsigned int i = 0; i < path.length(); i++)
+  for (unsigned int i = 0; i < path.length(); ++i)
     if (path[i] == '/')
       path[i] = '\\';
 #elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
-  for (unsigned int i = 0; i < path.length(); i++)
+  for (unsigned int i = 0; i < path.length(); ++i)
     if (path[i] == '\\')
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
@@ -2059,9 +2073,9 @@ std::string vpIoTools::toLowerCase(const std::string &input)
 {
   std::string out;
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); ++it) {
 #else
-  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+  for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
 #endif
     out += std::tolower(*it);
   }
@@ -2080,9 +2094,9 @@ std::string vpIoTools::toUpperCase(const std::string &input)
 {
   std::string out;
 #if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
-  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); ++it) {
 #else
-  for (std::string::const_iterator it = input.begin(); it != input.end(); it++) {
+  for (std::string::const_iterator it = input.begin(); it != input.end(); ++it) {
 #endif
     out += std::toupper(*it);
   }
@@ -2339,7 +2353,7 @@ int main()
 
     std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
     std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
+    for (size_t i=0; i < subChain.size(); ++i)
       std::cout << subChain[i] << std::endl;
   }
 
@@ -2349,7 +2363,7 @@ int main()
 
     std::vector<std::string> subChain = vpIoTools::splitChain(chain, sep);
     std::cout << "Found the following subchains: " << std::endl;
-    for (size_t i=0; i < subChain.size(); i++)
+    for (size_t i=0; i < subChain.size(); ++i)
       std::cout << subChain[i] << std::endl;
   }
 }
@@ -2414,7 +2428,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
   if (filesCount == -1) {
     throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
   }
-  for (int i = 0; i < filesCount; i++) {
+  for (int i = 0; i < filesCount; ++i) {
     std::string fileName = list[i]->d_name;
     if (fileName != "." && fileName != "..") {
       files.push_back(fileName);

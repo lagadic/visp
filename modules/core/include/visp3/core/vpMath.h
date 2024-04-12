@@ -345,7 +345,7 @@ public:
 
     double delta = (end - start) / (num - 1);
 
-    for (int i = 0; i < num - 1; i++) {
+    for (int i = 0; i < num - 1; ++i) {
       linspaced.push_back(start + delta * i);
     }
     linspaced.push_back(end); // I want to ensure that start and end

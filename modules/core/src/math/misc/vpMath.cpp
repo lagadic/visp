@@ -214,7 +214,8 @@ bool vpMath::isFinite(float value)
  */
 bool vpMath::isNumber(const std::string &str)
 {
-  for (size_t i = 0; i < str.size(); i++) {
+  size_t str_size = str.size();
+  for (size_t i = 0; i < str_size; ++i) {
     if (isdigit(str[i]) == false) {
       return false;
     }
@@ -232,10 +233,12 @@ bool vpMath::isNumber(const std::string &str)
 */
 double vpMath::mcosc(double cosx, double x)
 {
-  if (fabs(x) < ang_min_mc)
+  if (fabs(x) < ang_min_mc) {
     return 0.5;
-  else
+  }
+  else {
     return ((1.0 - cosx) / x / x);
+  }
 }
 
 /*!
@@ -248,10 +251,12 @@ double vpMath::mcosc(double cosx, double x)
 */
 double vpMath::msinc(double sinx, double x)
 {
-  if (fabs(x) < ang_min_mc)
+  if (fabs(x) < ang_min_mc) {
     return (1. / 6.0);
-  else
-    return ((1.0 - sinx / x) / x / x);
+  }
+  else {
+    return ((1.0 - (sinx / x)) / x / x);
+  }
 }
 
 /*!
@@ -263,10 +268,12 @@ double vpMath::msinc(double sinx, double x)
 */
 double vpMath::sinc(double x)
 {
-  if (fabs(x) < ang_min_sinc)
+  if (fabs(x) < ang_min_sinc) {
     return 1.0;
-  else
+  }
+  else {
     return sin(x) / x;
+  }
 }
 /*!
   Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
@@ -278,10 +285,12 @@ double vpMath::sinc(double x)
 */
 double vpMath::sinc(double sinx, double x)
 {
-  if (fabs(x) < ang_min_sinc)
+  if (fabs(x) < ang_min_sinc) {
     return 1.0;
-  else
+  }
+  else {
     return (sinx / x);
+  }
 }
 
 /*!
@@ -301,7 +310,7 @@ double vpMath::getMean(const std::vector<double> &v)
 
   double sum = std::accumulate(v.begin(), v.end(), 0.0);
 
-  return sum / (double)size;
+  return sum / (static_cast<double>(size));
 }
 
 /*!
@@ -324,11 +333,11 @@ double vpMath::getMedian(const std::vector<double> &v)
   std::nth_element(v_copy.begin(), v_copy.begin() + n, v_copy.end());
   double val_n = v_copy[n];
 
-  if (size % 2 == 1) {
+  if ((size % 2) == 1) {
     return val_n;
   }
   else {
-    std::nth_element(v_copy.begin(), v_copy.begin() + n - 1, v_copy.end());
+    std::nth_element(v_copy.begin(), v_copy.begin() + (n - 1), v_copy.end());
     return 0.5 * (val_n + v_copy[n - 1]);
   }
 }
@@ -358,8 +367,8 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 #endif
 
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
-  double divisor = (double)v.size();
-  if (useBesselCorrection && v.size() > 1) {
+  double divisor = static_cast<double> (v.size());
+  if (useBesselCorrection && (v.size() > 1)) {
     divisor = divisor - 1;
   }
 
@@ -386,7 +395,8 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
   }
 
   double x_mean = 0, y_mean = 0;
-  for (size_t i = 0; i < imPts.size(); i++) {
+  size_t imPts_size = imPts.size();
+  for (size_t i = 0; i < imPts_size; ++i) {
     const vpImagePoint &imPt = imPts[i];
     x_mean += imPt.get_u();
     y_mean += imPt.get_v();
@@ -395,7 +405,8 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
   y_mean /= imPts.size();
 
   vpMatrix AtA(2, 2, 0.0);
-  for (size_t i = 0; i < imPts.size(); i++) {
+  imPts_size = imPts.size();
+  for (size_t i = 0; i < imPts_size; ++i) {
     const vpImagePoint &imPt = imPts[i];
     AtA[0][0] += (imPt.get_u() - x_mean) * (imPt.get_u() - x_mean);
     AtA[0][1] += (imPt.get_u() - x_mean) * (imPt.get_v() - y_mean);
@@ -409,14 +420,15 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
 
   a = eigenvectors[0][0];
   b = eigenvectors[1][0];
-  c = a * x_mean + b * y_mean;
+  c = (a * x_mean) + (b * y_mean);
 
   double error = 0;
-  for (size_t i = 0; i < imPts.size(); i++) {
+  imPts_size = imPts.size();
+  for (size_t i = 0; i < imPts_size; ++i) {
     double x0 = imPts[i].get_u();
     double y0 = imPts[i].get_v();
 
-    error += std::fabs(a * x0 + b * y0 - c);
+    error += std::fabs((a * x0) + ((b * y0) - c));
   }
 
   return error / imPts.size();
@@ -573,9 +585,9 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
 {
   assert(maxPoints > 0);
 
-  double a = 4.0 * M_PI / maxPoints;
+  double a = (4.0 * M_PI) / maxPoints;
   double d = sqrt(a);
-  int m_theta = int(round(M_PI / d));
+  int m_theta = static_cast<int>(round(M_PI / d));
   double d_theta = M_PI / m_theta;
   double d_phi = a / d_theta;
 
@@ -586,12 +598,12 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(static_cast<double>(maxPoints))));
 #endif
 
-  for (int m = 0; m < m_theta; m++) {
-    double theta = M_PI * (m + 0.5) / m_theta;
-    int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));
+  for (int m = 0; m < m_theta; ++m) {
+    double theta = (M_PI * (m + 0.5)) / m_theta;
+    int m_phi = static_cast<int>(round((2.0 * M_PI * sin(theta)) / d_phi));
 
-    for (int n = 0; n < m_phi; n++) {
-      double phi = 2.0 * M_PI * n / m_phi;
+    for (int n = 0; n < m_phi; ++n) {
+      double phi = (2.0 * M_PI * n) / m_phi;
       double lon = phi;
       double lat = M_PI_2 - theta;
       lonlat_vec.push_back(std::make_pair(deg(lon), deg(lat)));
@@ -625,7 +637,8 @@ std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(con
 {
   std::vector<vpHomogeneousMatrix> ecef_M_local_vec;
   ecef_M_local_vec.reserve(lonlatVec.size());
-  for (size_t i = 0; i < lonlatVec.size(); i++) {
+  size_t lonlatVec_size = lonlatVec.size();
+  for (size_t i = 0; i < lonlatVec_size; ++i) {
     double lonDeg = lonlatVec[i].first;
     double latDeg = lonlatVec[i].second;
 
@@ -693,7 +706,8 @@ vpColVector vpMath::deg(const vpRotationVector &r)
     throw(vpException(vpException::fatalError, "Cannot convert angles of a quaternion vector in degrees!"));
   }
   vpColVector r_deg(r.size());
-  for (unsigned int i = 0; i < r.size(); i++) {
+  unsigned int r_size = r.size();
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
@@ -708,7 +722,8 @@ vpColVector vpMath::deg(const vpRotationVector &r)
 vpColVector vpMath::deg(const vpColVector &r)
 {
   vpColVector r_deg(r.size());
-  for (unsigned int i = 0; i < r.size(); i++) {
+  unsigned int r_size = r.size();
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
@@ -723,7 +738,8 @@ vpColVector vpMath::deg(const vpColVector &r)
 vpColVector vpMath::rad(const vpColVector &r)
 {
   vpColVector r_rad(r.size());
-  for (unsigned int i = 0; i < r.size(); i++) {
+  unsigned int r_size = r.size();
+  for (unsigned int i = 0; i < r_size; ++i) {
     r_rad[i] = vpMath::rad(r[i]);
   }
   return r_rad;

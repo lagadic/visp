@@ -119,7 +119,7 @@ build_script:
   - if "%TARGET%"=="mingw" cmake --build . --config %configuration% --target install -- -j2
   - if "%TARGET%"=="mingw" dir C:\projects\visp\build\install
   - if "%TARGET%"=="mingw" dir %VISP_DLL_DIR%
-  - if "%TARGET%"=="mingw" ctest --output-on-failure
+  - if "%TARGET%"=="mingw" ctest --output-on-failure -V
 
   # msvc case
   - if "%TARGET%"=="msvc" dir %OpenCV_DLL_DIR%
@@ -127,7 +127,7 @@ build_script:
   - if "%TARGET%"=="msvc" cmake --build . --config %configuration% --target install -- /m:2
   - if "%TARGET%"=="msvc" dir C:\projects\visp\build\install
   - if "%TARGET%"=="msvc" dir %VISP_DLL_DIR%
-  - if "%TARGET%"=="msvc" ctest --output-on-failure
+  - if "%TARGET%"=="msvc" ctest --output-on-failure -V
 
   # uwp case
   - if "%TARGET%"=="uwp" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME="WindowsStore" -DCMAKE_SYSTEM_VERSION="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp

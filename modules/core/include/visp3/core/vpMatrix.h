@@ -96,8 +96,8 @@ int main()
   M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
   std::cout << "M:" << std::endl;
-  for (unsigned int i = 0; i < M.getRows(); i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+  for (unsigned int i = 0; i < M.getRows(); ++i) {
+    for (unsigned int j = 0; j < M.getCols(); ++j) {
       std::cout << M[i][j] << " ";
     }
     std::cout << std::endl;

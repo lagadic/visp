@@ -345,7 +345,7 @@ void vpCameraParameters::init(const vpCameraParameters &c) { *this = c; }
  */
 void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &K)
 {
-  if (K.getRows() != 3 || K.getCols() != 3) {
+  if ((K.getRows() != 3) || (K.getCols() != 3)) {
     throw vpException(vpException::dimensionError, "bad size for calibration matrix");
   }
   if (std::fabs(K[2][2] - 1.0) > std::numeric_limits<double>::epsilon()) {
@@ -393,8 +393,8 @@ void vpCameraParameters::initFromFov(const unsigned int &w, const unsigned int &
                                      const double &vfov)
 {
   m_projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
-  m_u0 = (double)w / 2.;
-  m_v0 = (double)h / 2.;
+  m_u0 = static_cast<double>(w) / 2.;
+  m_v0 = static_cast<double>(h) / 2.;
   m_px = m_u0 / tan(hfov / 2);
   m_py = m_v0 / tan(vfov / 2);
   m_kud = 0;
@@ -436,39 +436,55 @@ vpCameraParameters &vpCameraParameters::operator=(const vpCameraParameters &cam)
  */
 bool vpCameraParameters::operator==(const vpCameraParameters &c) const
 {
-  if (m_projModel != c.m_projModel)
+  if (m_projModel != c.m_projModel) {
     return false;
+  }
 
-  if (!vpMath::equal(m_px, c.m_px, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_py, c.m_py, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_u0, c.m_u0, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_v0, c.m_v0, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_kud, c.m_kud, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_kdu, c.m_kdu, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_inv_px, c.m_inv_px, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_inv_py, c.m_inv_py, std::numeric_limits<double>::epsilon()))
-    return false;
-
-  if (m_dist_coefs.size() != c.m_dist_coefs.size())
-    return false;
-
-  for (unsigned int i = 0; i < m_dist_coefs.size(); i++)
-    if (!vpMath::equal(m_dist_coefs[i], c.m_dist_coefs[i], std::numeric_limits<double>::epsilon()))
+  // maximum allowed conditional operators shall be maximum 3
+  if ((!vpMath::equal(m_px, c.m_px, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_py, c.m_py, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_u0, c.m_u0, std::numeric_limits<double>::epsilon()))) {
       return false;
-
-  if (m_isFov != c.m_isFov || !vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon()) ||
-      !vpMath::equal(m_vFovAngle, c.m_vFovAngle, std::numeric_limits<double>::epsilon()) || m_width != c.m_width ||
-      m_height != c.m_height)
+  }
+  if ((!vpMath::equal(m_v0, c.m_v0, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_kud, c.m_kud, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_kdu, c.m_kdu, std::numeric_limits<double>::epsilon()))) {
+      return false;
+  }
+  if ((!vpMath::equal(m_inv_px, c.m_inv_px, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_inv_py, c.m_inv_py, std::numeric_limits<double>::epsilon()))) {
     return false;
+  }
 
-  if (m_fovNormals.size() != c.m_fovNormals.size())
+  if (m_dist_coefs.size() != c.m_dist_coefs.size()) {
     return false;
+  }
+
+  unsigned int m_dist_coefs_size = m_dist_coefs.size();
+  for (unsigned int i = 0; i < m_dist_coefs_size; ++i) {
+    if (!vpMath::equal(m_dist_coefs[i], c.m_dist_coefs[i], std::numeric_limits<double>::epsilon())) {
+      return false;
+    }
+  }
+
+  if ( (m_isFov != c.m_isFov) || (!vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon())) ||
+      (!vpMath::equal(m_vFovAngle, c.m_vFovAngle, std::numeric_limits<double>::epsilon()))) {
+       return false;
+  }
+  if ((m_width != c.m_width) || (m_height != c.m_height)) {
+    return false;
+  }
+
+  if (m_fovNormals.size() != c.m_fovNormals.size()) {
+    return false;
+  }
 
   std::vector<vpColVector>::const_iterator it1 = m_fovNormals.begin();
   std::vector<vpColVector>::const_iterator it2 = c.m_fovNormals.begin();
-  for (; it1 != m_fovNormals.end() && it2 != c.m_fovNormals.end(); ++it1, ++it2) {
-    if (*it1 != *it2)
+  for (; (it1 != m_fovNormals.end()) && (it2 != c.m_fovNormals.end()); ++it1, ++it2) {
+    if (*it1 != *it2) {
       return false;
+    }
   }
 
   return true;
@@ -487,15 +503,16 @@ bool vpCameraParameters::operator!=(const vpCameraParameters &c) const { return 
  */
 void vpCameraParameters::computeFov(const unsigned int &w, const unsigned int &h)
 {
-  if ((!m_isFov || w != m_width || h != m_height) && w != 0 && h != 0) {
+  bool cond1 = (!m_isFov) || (w != m_width) || (h != m_height);
+  if ( cond1 && (w != 0) && (h != 0)) {
     m_fovNormals = std::vector<vpColVector>(4);
 
     m_isFov = true;
 
-    double hFovAngle = atan(((double)w - m_u0) * (1.0 / m_px));
-    double vFovAngle = atan((m_v0) * (1.0 / m_py));
-    double minushFovAngle = atan((m_u0) * (1.0 / m_px));
-    double minusvFovAngle = atan(((double)h - m_v0) * (1.0 / m_py));
+    double hFovAngle = atan((static_cast<double>(w) - m_u0) * (1.0 / m_px));
+    double vFovAngle = atan(m_v0 * (1.0 / m_py));
+    double minushFovAngle = atan(m_u0 * (1.0 / m_px));
+    double minusvFovAngle = atan((static_cast<double>(h) - m_v0) * (1.0 / m_py));
 
     m_width = w;
     m_height = h;
@@ -586,6 +603,7 @@ vpMatrix vpCameraParameters::get_K_inverse() const
  */
 void vpCameraParameters::printParameters()
 {
+  unsigned int m_dist_coefs_size = m_dist_coefs.size(); 
   std::ios::fmtflags original_flags(std::cout.flags());
   switch (m_projModel) {
   case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -604,8 +622,10 @@ void vpCameraParameters::printParameters()
     break;
   case vpCameraParameters::ProjWithKannalaBrandtDistortion:
     std::cout << "  Coefficients: ";
-    for (unsigned int i = 0; i < m_dist_coefs.size(); i++)
+    // --comment: unsigned int m_dist_coefs_size = m_dist_coefs.size()
+    for (unsigned int i = 0; i < m_dist_coefs_size; ++i) {
       std::cout << " " << m_dist_coefs[i];
+    }
     std::cout << std::endl;
     break;
   }
@@ -636,17 +656,23 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     os << "  kud = " << cam.get_kud() << std::endl;
     os << "  kdu = " << cam.get_kdu() << std::endl;
     os.flags(original_flags); // restore os to standard state
-  } break;
+  }
+  break;
   case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
     os << "Camera parameters for projection with Kannala-Brandt distortion:" << std::endl;
     os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
     os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     os << "  Coefficients: ";
     std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoefficients();
-    for (unsigned int i = 0; i < tmp_coefs.size(); i++)
+    unsigned int tmp_coefs_size = tmp_coefs.size();
+    for (unsigned int i = 0; i < tmp_coefs_size; ++i) {
       os << " " << tmp_coefs[i];
+    }
     os << std::endl;
-  } break;
+  }
+  break;
+  default:
+    std::cout << "Unidentified camera parameters model" << std::endl;
   }
   return os;
 }

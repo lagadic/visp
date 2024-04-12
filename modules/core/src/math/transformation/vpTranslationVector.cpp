@@ -223,8 +223,9 @@ vpTranslationVector vpTranslationVector::operator+(const vpTranslationVector &tv
 {
   vpTranslationVector s;
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     s[i] = (*this)[i] + tv[i];
+  }
 
   return s;
 }
@@ -257,8 +258,9 @@ vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
   }
   vpTranslationVector s;
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     s[i] = (*this)[i] + v[i];
+  }
 
   return s;
 }
@@ -285,8 +287,9 @@ vpTranslationVector vpTranslationVector::operator-(const vpTranslationVector &tv
 {
   vpTranslationVector sub;
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     sub[i] = (*this)[i] - tv[i];
+  }
 
   return sub;
 }
@@ -308,7 +311,7 @@ vpTranslationVector vpTranslationVector::operator-(const vpTranslationVector &tv
 vpTranslationVector vpTranslationVector::operator-() const // negate
 {
   vpTranslationVector tv;
-  for (unsigned int i = 0; i < dsize; i++) {
+  for (unsigned int i = 0; i < dsize; ++i) {
     *(tv.data + i) = -*(data + i);
   }
 
@@ -334,7 +337,7 @@ vpTranslationVector vpTranslationVector::operator-() const // negate
 vpTranslationVector vpTranslationVector::operator*(double x) const
 {
   vpTranslationVector tv;
-  for (unsigned int i = 0; i < dsize; i++) {
+  for (unsigned int i = 0; i < dsize; ++i) {
     *(tv.data + i) = (*(data + i)) * x;
   }
 
@@ -353,8 +356,9 @@ vpTranslationVector vpTranslationVector::operator*(double x) const
 vpMatrix vpTranslationVector::operator*(const vpRowVector &v) const
 {
   vpMatrix M(rowNum, v.getCols());
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < v.getCols(); j++) {
+  unsigned int v_col = v.getCols();
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < v_col; ++j) {
       M[i][j] = (*this)[i] * v[j];
     }
   }
@@ -371,9 +375,10 @@ vpMatrix vpTranslationVector::operator*(const vpRowVector &v) const
 */
 vpTranslationVector &vpTranslationVector::operator*=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     (*this)[i] *= x;
-  return (*this);
+  }
+  return *this;
 }
 /*!
   Operator that allows to divide each element of a translation vector by a
@@ -385,9 +390,10 @@ vpTranslationVector &vpTranslationVector::operator*=(double x)
 */
 vpTranslationVector &vpTranslationVector::operator/=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
     (*this)[i] /= x;
-  return (*this);
+  }
+  return *this;
 }
 
 /*!
@@ -409,7 +415,7 @@ vpTranslationVector &vpTranslationVector::operator/=(double x)
 vpTranslationVector vpTranslationVector::operator/(double x) const
 {
   vpTranslationVector tv;
-  for (unsigned int i = 0; i < dsize; i++) {
+  for (unsigned int i = 0; i < dsize; ++i) {
     *(tv.data + i) = (*(data + i)) / x;
   }
 
@@ -499,8 +505,9 @@ vpTranslationVector &vpTranslationVector::operator=(double x)
 {
   double *d = data;
 
-  for (int i = 0; i < 3; i++)
+  for (int i = 0; i < 3; ++i) {
     *(d++) = x;
+  }
 
   return *this;
 }
@@ -746,7 +753,7 @@ double vpTranslationVector::sumSquare() const
 {
   double sum_square = 0.0;
 
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     double x = rowPtrs[i][0];
     sum_square += x * x;
   }
@@ -765,7 +772,8 @@ double vpTranslationVector::sumSquare() const
 vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMatrix> &vec_M)
 {
   vpColVector meanT(3);
-  for (size_t i = 0; i < vec_M.size(); i++) {
+  size_t vec_m_size = vec_M.size();
+  for (size_t i = 0; i < vec_m_size; ++i) {
     meanT += (vpColVector)vec_M[i].getTranslationVector();
   }
   meanT /= static_cast<double>(vec_M.size());
@@ -785,7 +793,8 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
 vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVector> &vec_t)
 {
   vpColVector meanT(3);
-  for (size_t i = 0; i < vec_t.size(); i++) {
+  size_t l_vec_t_size = vec_t.size();
+  for (size_t i = 0; i < l_vec_t_size; ++i) {
     meanT += (vpColVector)vec_t[i];
   }
   meanT /= static_cast<double>(vec_t.size());

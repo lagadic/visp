@@ -48,8 +48,8 @@
 */
 bool vpImagePoint::inRectangle(const vpRect &rect) const
 {
-  return (this->i <= rect.getBottom() && this->i >= rect.getTop() && this->j <= rect.getRight() &&
-          this->j >= rect.getLeft());
+  return ((this->i <= rect.getBottom()) && (this->i >= rect.getTop()) && (this->j <= rect.getRight()) &&
+          (this->j >= rect.getLeft()));
 }
 
 /*!
@@ -71,7 +71,7 @@ int main()
   ip[1].set_ij(300, 400);
 
   vpImagePoint cog(0,0);
-  for(unsigned int i=0; i<ip.size(); i++)
+  for(unsigned int i=0; i<ip.size(); ++i)
     cog += ip[i];
   cog /= ip.size();
   std::cout << "cog: " << cog << std::endl;
@@ -104,7 +104,7 @@ int main()
   ip[1].set_ij(300, 400);
 
   vpImagePoint cog(0,0);
-  for(unsigned int i=0; i<ip.size(); i++)
+  for(unsigned int i=0; i<ip.size(); ++i)
     cog += ip[i];
   cog /= ip.size();
   std::cout << "cog: " << cog << std::endl;
@@ -126,16 +126,15 @@ vpImagePoint &vpImagePoint::operator/=(double scale)
 */
 VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  // return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() )
-  // );
+  // --comment: return ( ( ip1.get_i() == ip2.get_i() ) && ( ip1.get_j() == ip2.get_j() ));
 
   double i1 = ip1.get_i();
   double j1 = ip1.get_j();
   double i2 = ip2.get_i();
   double j2 = ip2.get_j();
 
-  return ((std::fabs(i1 - i2) <= std::fabs(vpMath::maximum(i1, i2)) * std::numeric_limits<double>::epsilon()) &&
-          (std::fabs(j1 - j2) <= std::fabs(vpMath::maximum(j1, j2)) * std::numeric_limits<double>::epsilon()));
+  return ((std::fabs(i1 - i2) <= (std::fabs(vpMath::maximum(i1, i2)) * std::numeric_limits<double>::epsilon())) &&
+          (std::fabs(j1 - j2) <= (std::fabs(vpMath::maximum(j1, j2)) * std::numeric_limits<double>::epsilon())));
 }
 
 /*!
@@ -145,15 +144,14 @@ VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2)
 */
 VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2)
 {
-  // return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() )
-  // );
+  // --comment: return ( ( ip1.get_i() != ip2.get_i() ) || ( ip1.get_j() != ip2.get_j() ));
   double i1 = ip1.get_i();
   double j1 = ip1.get_j();
   double i2 = ip2.get_i();
   double j2 = ip2.get_j();
 
-  return ((std::fabs(i1 - i2) > std::fabs(vpMath::maximum(i1, i2)) * std::numeric_limits<double>::epsilon()) ||
-          (std::fabs(j1 - j2) > std::fabs(vpMath::maximum(j1, j2)) * std::numeric_limits<double>::epsilon()));
+  return ((std::fabs(i1 - i2) > (std::fabs(vpMath::maximum(i1, i2)) * std::numeric_limits<double>::epsilon())) ||
+          (std::fabs(j1 - j2) > (std::fabs(vpMath::maximum(j1, j2)) * std::numeric_limits<double>::epsilon())));
 }
 
 /*!

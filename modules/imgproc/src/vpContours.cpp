@@ -119,24 +119,24 @@ bool crossesEastBorder(const vpImage<int> &I, bool checked[8], const vpImagePoin
     return false;
   }
 
-  bool b = checked[(int)direction.m_direction];
+  bool b = checked[static_cast<int>(direction.m_direction)];
 
-  if (point.get_i() < 0 || point.get_j() < 0) {
+  if ((point.get_i() < 0) || (point.get_j() < 0)) {
     return false;
   }
 
-  unsigned int i = (unsigned int)point.get_i();
-  unsigned int j = (unsigned int)point.get_j();
+  unsigned int i = static_cast<unsigned int>(point.get_i());
+  unsigned int j = static_cast<unsigned int>(point.get_j());
 
-  return I[i][j] != 0 && ((unsigned int)point.get_j() == I.getWidth() - 1 || b);
+  return (I[i][j] != 0) && ((static_cast<unsigned int>(point.get_j()) == (I.getWidth() - 1)) || b);
 }
 
 void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint &point, bool checked[8], int nbd)
 {
   border->m_points.push_back(vpImagePoint(point.get_i() - 1, point.get_j() - 1)); // remove 1-pixel padding
 
-  unsigned int i = (unsigned int)point.get_i();
-  unsigned int j = (unsigned int)point.get_j();
+  unsigned int i = static_cast<unsigned int>(point.get_i());
+  unsigned int j = static_cast<unsigned int>(point.get_j());
 
   if (crossesEastBorder(I, checked, point)) {
     I[i][j] = -nbd;
@@ -157,7 +157,7 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
   vpDirection trace = dir.clockwise();
   vpImagePoint i1j1(-1, -1);
 
-  // Find i1j1 (3.1)
+  // --comment: find i1j1 (3.1)
   while (trace.m_direction != dir.m_direction) {
     vpImagePoint activePixel = trace.active(I, ij);
 
@@ -169,7 +169,7 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
     trace = trace.clockwise();
   }
 
-  if (i1j1.get_i() < 0 || i1j1.get_j() < 0) {
+  if ((i1j1.get_i() < 0) || (i1j1.get_j() < 0)) {
     //(3.1) ; single pixel contour
     return;
   }
@@ -188,23 +188,23 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
     vpImagePoint i4j4(-1, -1);
 
     // Reset checked
-    for (int cpt = 0; cpt < 8; cpt++) {
+    for (int cpt = 0; cpt < 8; ++cpt) {
       checked[cpt] = false;
     }
 
     while (true) {
       i4j4 = trace.active(I, i3j3); //(3.3)
-      if (i4j4.get_i() >= 0 && i4j4.get_j() >= 0) {
+      if ((i4j4.get_i() >= 0) && (i4j4.get_j() >= 0)) {
         break;
       }
 
-      checked[(int)trace.m_direction] = true;
+      checked[static_cast<int>(trace.m_direction)] = true;
       trace = trace.counterClockwise();
     }
 
     addContourPoint(I, border, i3j3, checked, nbd);
 
-    if (i4j4 == ij && i3j3 == i1j1) {
+    if ((i4j4 == ij) && (i3j3 == i1j1)) {
       //(3.5)
       break;
     }
@@ -217,17 +217,17 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
 
 bool isOuterBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
 {
-  return (I[i][j] == 1 && (j == 0 || I[i][j - 1] == 0));
+  return ((I[i][j] == 1) && ((j == 0) || (I[i][j - 1] == 0)));
 }
 
 bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
 {
-  return (I[i][j] >= 1 && (j == I.getWidth() - 1 || I[i][j + 1] == 0));
+  return ((I[i][j] >= 1) && ((j == (I.getWidth() - 1)) || (I[i][j + 1] == 0)));
 }
 
 void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contour_list)
 {
-  if (level > 0 && level < std::numeric_limits<int>::max()) {
+  if ((level > 0) && (level < std::numeric_limits<int>::max())) {
     vp::vpContour *contour_node = new vp::vpContour;
     contour_node->m_contourType = root.m_contourType;
     contour_node->m_points = root.m_points;
@@ -251,8 +251,8 @@ void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpIma
 
   for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
     for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-      unsigned int i = (unsigned int)it2->get_i();
-      unsigned int j = (unsigned int)it2->get_j();
+      unsigned int i = static_cast<unsigned int>(it2->get_i());
+      unsigned int j = static_cast<unsigned int>(it2->get_j());
       I[i][j] = grayValue;
     }
   }
@@ -266,8 +266,8 @@ void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint
 
   for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
     for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
-      unsigned int i = (unsigned int)it2->get_i();
-      unsigned int j = (unsigned int)it2->get_j();
+      unsigned int i = static_cast<unsigned int>(it2->get_i());
+      unsigned int j = static_cast<unsigned int>(it2->get_j());
       I[i][j] = vpRGBa(color.R, color.G, color.B);
     }
   }
@@ -285,16 +285,21 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
   // Copy uchar I_original into int I + padding
   vpImage<int> I(I_original.getHeight() + 2, I_original.getWidth() + 2);
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    if (i == 0 || i == I.getHeight() - 1) {
-      memset(I.bitmap, 0, sizeof(int) * I.getWidth());
+
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  unsigned int i_original_width = I_original.getWidth();
+
+  for (unsigned int i = 0; i < i_height; ++i) {
+    if ((i == 0) || (i == (i_height - 1))) {
+      memset(I.bitmap, 0, sizeof(int) * i_width);
     }
     else {
       I[i][0] = 0;
-      for (unsigned int j = 0; j < I_original.getWidth(); j++) {
+      for (unsigned int j = 0; j < i_original_width; ++j) {
         I[i][j + 1] = I_original[i - 1][j];
       }
-      I[i][I.getWidth() - 1] = 0;
+      I[i][i_width - 1] = 0;
     }
   }
 
@@ -311,10 +316,10 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
   std::map<int, vpContour *> borderMap;
   borderMap[lnbd] = root;
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
+  for (unsigned int i = 0; i < i_height; ++i) {
     lnbd = 1; // Reset LNBD at the beginning of each scan row
 
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int j = 0; j < i_width; ++j) {
       int fji = I[i][j];
 
       bool isOuter = isOuterBorderStart(I, i, j);
@@ -382,7 +387,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
           I[i][j] = -nbd;
         }
 
-        if (retrievalMode == CONTOUR_RETR_LIST || retrievalMode == CONTOUR_RETR_TREE) {
+        if ((retrievalMode == CONTOUR_RETR_LIST) || (retrievalMode == CONTOUR_RETR_TREE)) {
           // Add contour points
           contourPts.push_back(border->m_points);
         }
@@ -391,13 +396,13 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
       }
 
       //(4)
-      if (fji != 0 && fji != 1) {
+      if ((fji != 0) && (fji != 1)) {
         lnbd = std::abs(fji);
       }
     }
   }
 
-  if (retrievalMode == CONTOUR_RETR_EXTERNAL || retrievalMode == CONTOUR_RETR_LIST) {
+  if ((retrievalMode == CONTOUR_RETR_EXTERNAL) || (retrievalMode == CONTOUR_RETR_LIST)) {
     // Delete contours content
     contours.m_parent = nullptr;
 
@@ -424,7 +429,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
       // Restore children
       (*it)->m_children = children_copy;
       // Set parent to children
-      for (size_t i = 0; i < contours.m_children.size(); i++) {
+      for (size_t i = 0; i < contours.m_children.size(); ++i) {
         contours.m_children[i]->m_parent = &contours;
       }
       contourPts.push_back((*it)->m_points);

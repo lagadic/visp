@@ -196,9 +196,9 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
   auto min_dist = -1.;
-  for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
+  for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && (curr_pixel != end_pixel);
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
-    const auto depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
+    const auto depth = depth_scale * data[static_cast<int>((curr_pixel.get_v() * depth_width) + curr_pixel.get_u())];
     if (std::fabs(depth) <= std::numeric_limits<double>::epsilon())
       continue;
 
@@ -208,7 +208,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
     const auto new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
       vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
-    if (new_dist < min_dist || min_dist < 0) {
+    if ( (new_dist < min_dist) || (min_dist < 0) ) {
       min_dist = new_dist;
       depth_pixel = curr_pixel;
     }

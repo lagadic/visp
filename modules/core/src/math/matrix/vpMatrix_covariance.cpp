@@ -60,11 +60,12 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 {
   //  double denom = ((double)(A.getRows()) - (double)(A.getCols())); // To
   //  consider OLS Estimate for sigma
-  double denom = ((double)(A.getRows())); // To consider MLE Estimate for sigma
+  double denom = (static_cast<double>(A.getRows())); // To consider MLE Estimate for sigma
 
-  if (denom <= std::numeric_limits<double>::epsilon())
+  if (denom <= std::numeric_limits<double>::epsilon()) {
     throw vpMatrixException(vpMatrixException::divideByZeroError,
                             "Impossible to compute covariance matrix: not enough data");
+  }
 
   //  double sigma2 = ( ((b.t())*b) - ( (b.t())*A*x ) ); // Should be
   //  equivalent to line bellow.
@@ -93,18 +94,20 @@ vpMatrix vpMatrix::computeCovarianceMatrix(const vpMatrix &A, const vpColVector 
 {
   double denom = 0.0;
   vpMatrix W2(W.getCols(), W.getCols());
-  for (unsigned int i = 0; i < W.getCols(); i++) {
+  unsigned int w_cols = W.getCols();
+  for (unsigned int i = 0; i < w_cols; ++i) {
     denom += W[i][i];
     W2[i][i] = W[i][i] * W[i][i];
   }
 
-  if (denom <= std::numeric_limits<double>::epsilon())
+  if (denom <= std::numeric_limits<double>::epsilon()) {
     throw vpMatrixException(vpMatrixException::divideByZeroError,
                             "Impossible to compute covariance matrix: not enough data");
+  }
 
   //  double sigma2 = ( ((W*b).t())*W*b - ( ((W*b).t())*W*A*x ) ); // Should
   //  be equivalent to line bellow.
-  double sigma2 = (W * b - (W * A * x)).t() * (W * b - (W * A * x));
+  double sigma2 = ((W * b) - (W * A * x)).t() * (W * b - (W * A * x));
   sigma2 /= denom;
 
   return (A.t() * (W2)*A).pseudoInverse(A.getCols() * std::numeric_limits<double>::epsilon()) * sigma2;
@@ -175,49 +178,54 @@ void vpMatrix::computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const 
   cMo.extract(thetau);
 
   vpColVector tu(3);
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     tu[i] = thetau[i];
+  }
 
   double theta = sqrt(tu.sumSquare());
 
-  //    vpMatrix Lthetau(3,3);
+  // --comment:   vpMatrix Lthetau(3,3);
   vpMatrix LthetauInvAnalytic(3, 3);
   vpMatrix I3(3, 3);
   I3.eye();
-  //    Lthetau = -I3;
+  // --comment:   Lthetau = -I3;
   LthetauInvAnalytic = -I3;
 
-  if (theta / (2.0 * M_PI) > std::numeric_limits<double>::epsilon()) {
+  if ((theta / (2.0 * M_PI)) > std::numeric_limits<double>::epsilon()) {
     // Computing [theta/2 u]_x
     vpColVector theta2u(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; ++i) {
       theta2u[i] = tu[i] / 2.0;
     }
     vpMatrix theta2u_skew = vpColVector::skew(theta2u);
 
     vpColVector u(3);
-    for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int i = 0; i < 3; ++i) {
       u[i] = tu[i] / theta;
     }
     vpMatrix u_skew = vpColVector::skew(u);
 
-    //        Lthetau += (theta2u_skew -
-    //        (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
+    // --comment:      Lthetau += (theta2u_skew -
+    // --comment:      (1.0-vpMath::sinc(theta)/vpMath::sqr(vpMath::sinc(theta/2.0)))*u_skew*u_skew);
     LthetauInvAnalytic +=
-        -(vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew - (1.0 - vpMath::sinc(theta)) * u_skew * u_skew);
+      -((vpMath::sqr(vpMath::sinc(theta / 2.0)) * theta2u_skew) - ((1.0 - vpMath::sinc(theta)) * u_skew * u_skew));
   }
 
-  //    vpMatrix LthetauInv = Lthetau.inverseByLU();
+  // --comment:  vpMatrix LthetauInv = Lthetau.inverseByLU();
 
   ctoInitSkew = ctoInitSkew * LthetauInvAnalytic;
 
-  for (unsigned int a = 0; a < 3; a++)
-    for (unsigned int b = 0; b < 3; b++)
+  for (unsigned int a = 0; a < 3; ++a) {
+    for (unsigned int b = 0; b < 3; ++b) {
       LpInv[a][b + 3] = ctoInitSkew[a][b];
+    }
+  }
 
-  for (unsigned int a = 0; a < 3; a++)
-    for (unsigned int b = 0; b < 3; b++)
+  for (unsigned int a = 0; a < 3; ++a) {
+    for (unsigned int b = 0; b < 3; ++b) {
       LpInv[a + 3][b + 3] = LthetauInvAnalytic[a][b];
+    }
+  }
 
   // Building Js
   Js = Ls * LpInv;

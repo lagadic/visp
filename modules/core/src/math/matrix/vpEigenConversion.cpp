@@ -48,7 +48,7 @@ void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
 
 void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
 {
-  if (src.rows() != 4 || src.cols() != 4) {
+  if ((src.rows() != 4) || (src.cols() != 4)) {
     throw vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
   }
 
@@ -60,25 +60,29 @@ void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.rows(); i++) {
+  Eigen::DenseIndex src_rows = src.rows();
+  for (Eigen::DenseIndex i = 0; i < src_rows; i++) {
 #else
-  for (Eigen::Index i = 0; i < src.rows(); i++) {
+  Eigen::Index src_rows = src.rows();
+  for (Eigen::Index i = 0; i < src_rows; i++) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
   dst.resize(static_cast<unsigned int>(src.cols()));
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
-  for (Eigen::DenseIndex i = 0; i < src.cols(); i++) {
+  Eigen::DenseIndex src_cols = src.cols();
+  for (Eigen::DenseIndex i = 0; i < src_cols; ++i) {
 #else
-  for (Eigen::Index i = 0; i < src.cols(); i++) {
+  Eigen::Index src_cols = src.cols();
+  for (Eigen::Index i = 0; i < src_cols; i++) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-}
+  }
 
 void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 

@@ -147,11 +147,14 @@ vpCannyEdgeDetection::initGradientFilters()
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   auto scaleFilter = [](vpArray2D<float> &filter, const float &scale) {
-    for (unsigned int r = 0; r < filter.getRows(); r++) {
-      for (unsigned int c = 0; c < filter.getCols(); c++) {
+    unsigned int filter_rows = filter.getRows();
+    unsigned int filter_col = filter.getCols();
+    for (unsigned int r = 0; r < filter_rows; ++r) {
+      for (unsigned int c = 0; c < filter_col; ++c) {
         filter[r][c] = filter[r][c] * scale;
       }
-    }};
+    }
+    };
 #endif
 
   float scaleX = 1.f;
@@ -237,8 +240,8 @@ vpCannyEdgeDetection::detect(const vpImage<unsigned char> &I)
 void
 vpCannyEdgeDetection::performFilteringAndGradientComputation(const vpImage<unsigned char> &I)
 {
-  if (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING
-      || m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING) {
+  if ((m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SOBEL_FILTERING)
+      || (m_filteringAndGradientType == vpImageFilter::CANNY_GBLUR_SCHARR_FILTERING)) {
     // Computing the Gaussian blur
     vpImage<float> Iblur;
     vpImage<float> GIx;
@@ -284,7 +287,7 @@ getInterpolationWeightsAndOffsets(const float &gradientOrientation,
     dRowGradAlpha = 0;
     dRowGradBeta = -1;
   }
-  else if (gradientOrientation >= M_PI_4f && gradientOrientation < M_PI_2f) {
+  else if ((gradientOrientation >= M_PI_4f) && (gradientOrientation < M_PI_2f)) {
     // Angles between 45 and 90 deg rely on the diagonal and vertical points
     thetaMin = M_PI_4f;
     dColGradAlpha = 1;
@@ -292,7 +295,7 @@ getInterpolationWeightsAndOffsets(const float &gradientOrientation,
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (gradientOrientation >= M_PI_2f && gradientOrientation < (3.f * M_PI_4f)) {
+  else if ((gradientOrientation >= M_PI_2f) && (gradientOrientation < (3.f * M_PI_4f))) {
     // Angles between 90 and 135 deg rely on the vertical and diagonal points
     thetaMin = M_PI_2f;
     dColGradAlpha = 0;
@@ -300,7 +303,7 @@ getInterpolationWeightsAndOffsets(const float &gradientOrientation,
     dRowGradAlpha = -1;
     dRowGradBeta = -1;
   }
-  else if (gradientOrientation >= (3.f * M_PI_4f) && gradientOrientation < M_PIf) {
+  else if ((gradientOrientation >= (3.f * M_PI_4f)) && (gradientOrientation < M_PIf)) {
     // Angles between 135 and 180 deg rely on the vertical and diagonal points
     thetaMin = 3.f * M_PI_4f;
     dColGradAlpha = -1;
@@ -327,10 +330,10 @@ getManhattanGradient(const vpImage<float> &dIx, const vpImage<float> &dIy, const
   float grad = 0.;
   int nbRows = dIx.getRows();
   int nbCols = dIx.getCols();
-  if (row >= 0
-      && row < nbRows
-      && col >= 0
-      && col < nbCols
+  if ((row >= 0)
+      && (row < nbRows)
+      && (col >= 0)
+      && (col < nbCols)
       ) {
     float dx = dIx[row][col];
     float dy = dIy[row][col];
@@ -377,8 +380,8 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
   int nbRows = m_dIx.getRows();
   int nbCols = m_dIx.getCols();
 
-  for (int row = 0; row < nbRows; row++) {
-    for (int col = 0; col < nbCols; col++) {
+  for (int row = 0; row < nbRows; ++row) {
+    for (int col = 0; col < nbCols; ++col) {
       if (mp_mask != nullptr) {
         if (!(*mp_mask)[row][col]) {
           // The mask tells us to ignore the current pixel
@@ -407,10 +410,10 @@ vpCannyEdgeDetection::performEdgeThinning(const float &lowerThreshold)
       float gradBetaPlus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaPlus, col + dColBetaPlus);
       float gradAlphaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowAlphaMinus, col + dColAphaMinus);
       float gradBetaMinus = getManhattanGradient(m_dIx, m_dIy, row + dRowBetaMinus, col + dColBetaMinus);
-      float gradPlus = alpha * gradAlphaPlus + beta * gradBetaPlus;
-      float gradMinus = alpha * gradAlphaMinus + beta * gradBetaMinus;
+      float gradPlus = (alpha * gradAlphaPlus) + (beta * gradBetaPlus);
+      float gradMinus = (alpha * gradAlphaMinus) + (beta * gradBetaMinus);
 
-      if (grad >= gradPlus && grad >= gradMinus) {
+      if ((grad >= gradPlus) && (grad >= gradMinus)) {
         // Keeping the edge point that has the highest gradient
         std::pair<unsigned int, unsigned int> bestPixel(row, col);
         m_edgeCandidateAndGradient[bestPixel] = grad;
@@ -423,11 +426,11 @@ void
 vpCannyEdgeDetection::performHysteresisThresholding(const float &lowerThreshold, const float &upperThreshold)
 {
   std::map<std::pair<unsigned int, unsigned int>, float>::iterator it;
-  for (it = m_edgeCandidateAndGradient.begin(); it != m_edgeCandidateAndGradient.end(); it++) {
+  for (it = m_edgeCandidateAndGradient.begin(); it != m_edgeCandidateAndGradient.end(); ++it) {
     if (it->second >= upperThreshold) {
       m_edgePointsCandidates[it->first] = STRONG_EDGE;
     }
-    else if (it->second >= lowerThreshold && it->second < upperThreshold) {
+    else if ((it->second >= lowerThreshold) && (it->second < upperThreshold)) {
       m_edgePointsCandidates[it->first] = WEAK_EDGE;
     }
   }
@@ -437,7 +440,7 @@ void
 vpCannyEdgeDetection::performEdgeTracking()
 {
   std::map<std::pair<unsigned int, unsigned int>, EdgeType>::iterator it;
-  for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates.end(); it++) {
+  for (it = m_edgePointsCandidates.begin(); it != m_edgePointsCandidates.end(); ++it) {
     if (it->second == STRONG_EDGE) {
       m_edgeMap[it->first.first][it->first.second] = 255;
     }
@@ -456,17 +459,17 @@ vpCannyEdgeDetection::recursiveSearchForStrongEdge(const std::pair<unsigned int,
   int nbRows = m_dIx.getRows();
   int nbCols = m_dIx.getCols();
   m_edgePointsCandidates[coordinates] = ON_CHECK;
-  for (int dr = -1; dr <= 1 && !hasFoundStrongEdge; dr++) {
-    for (int dc = -1; dc <= 1 && !hasFoundStrongEdge; dc++) {
-      int idRow = dr + (int)coordinates.first;
+  for (int dr = -1; (dr <= 1) && (!hasFoundStrongEdge); ++dr) {
+    for (int dc = -1; (dc <= 1) && (!hasFoundStrongEdge); ++dc) {
+      int idRow = dr + static_cast<int>(coordinates.first);
       idRow = std::max<int>(idRow, 0); // Avoid getting negative pixel ID
-      int idCol = dc + (int)coordinates.second;
+      int idCol = dc + static_cast<int>(coordinates.second);
       idCol = std::max<int>(idCol, 0); // Avoid getting negative pixel ID
 
       // Checking if we are still looking for an edge in the limit of the image
-      if ((idRow < 0 || idRow >= nbRows)
-          || (idCol < 0 || idCol >= nbCols)
-          || (dr == 0 && dc == 0)
+      if (((idRow < 0) || (idRow >= nbRows))
+          || ((idCol < 0) || (idCol >= nbCols))
+          || ((dr == 0) && (dc == 0))
           ) {
         continue;
       }

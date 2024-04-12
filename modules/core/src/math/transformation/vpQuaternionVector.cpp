@@ -136,8 +136,9 @@ vpQuaternionVector vpQuaternionVector::buildFrom(const vpColVector &q)
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a quaternion vector from a %d-dimension col vector", q.size()));
   }
-  for (unsigned int i = 0; i < 4; i++)
+  for (unsigned int i = 0; i < 4; ++i) {
     data[i] = q[i];
+  }
 
   return *this;
 }
@@ -151,8 +152,9 @@ vpQuaternionVector vpQuaternionVector::buildFrom(const std::vector<double> &q)
     throw(vpException(vpException::dimensionError,
                       "Cannot construct a quaternion vector from a %d-dimension std::vector", q.size()));
   }
-  for (unsigned int i = 0; i < 4; i++)
+  for (unsigned int i = 0; i < 4; ++i) {
     data[i] = q[i];
+  }
 
   return *this;
 }
@@ -192,10 +194,10 @@ vpQuaternionVector vpQuaternionVector::operator*(double l) const
 //! Multiply two quaternions.
 vpQuaternionVector vpQuaternionVector::operator*(const vpQuaternionVector &rq) const
 {
-  return vpQuaternionVector(w() * rq.x() + x() * rq.w() + y() * rq.z() - z() * rq.y(),
-                            w() * rq.y() + y() * rq.w() + z() * rq.x() - x() * rq.z(),
-                            w() * rq.z() + z() * rq.w() + x() * rq.y() - y() * rq.x(),
-                            w() * rq.w() - x() * rq.x() - y() * rq.y() - z() * rq.z());
+  return vpQuaternionVector(((w() * rq.x()) + (x() * rq.w()) + (y() * rq.z())) - (z() * rq.y()),
+                            ((w() * rq.y()) + (y() * rq.w()) + (z() * rq.x())) - (x() * rq.z()),
+                            ((w() * rq.z()) + (z() * rq.w()) + (x() * rq.y())) - (y() * rq.x()),
+                            ((w() * rq.w()) - (x() * rq.x()) - (y() * rq.y())) - (z() * rq.z()));
 }
 
 //! Division by scalar. Returns a quaternion defined by (x/l,y/l,z/l,w/l).
@@ -237,8 +239,9 @@ vpQuaternionVector &vpQuaternionVector::operator=(const vpColVector &q)
     throw(vpException(vpException::dimensionError, "Cannot set a quaternion vector from a %d-dimension col vector",
                       q.size()));
   }
-  for (unsigned int i = 0; i < 4; i++)
+  for (unsigned int i = 0; i < 4; ++i) {
     data[i] = q[i];
+  }
 
   return *this;
 }
@@ -278,7 +281,7 @@ vpQuaternionVector vpQuaternionVector::inverse() const
 {
   vpQuaternionVector q_inv;
 
-  double mag_square = w() * w() + x() * x() + y() * y() + z() * z();
+  double mag_square = (w() * w()) + (x() * x()) + (y() * y()) + (z() * z());
   if (!vpMath::nul(mag_square, std::numeric_limits<double>::epsilon())) {
     q_inv = this->conjugate() / mag_square;
   }
@@ -294,7 +297,7 @@ vpQuaternionVector vpQuaternionVector::inverse() const
 
   \return The magnitude or norm of the quaternion.
 */
-double vpQuaternionVector::magnitude() const { return sqrt(w() * w() + x() * x() + y() * y() + z() * z()); }
+double vpQuaternionVector::magnitude() const { return sqrt((w() * w()) + (x() * x()) + (y() * y()) + (z() * z())); }
 
 /*!
   Normalize the quaternion.
@@ -317,7 +320,7 @@ void vpQuaternionVector::normalize()
 */
 double vpQuaternionVector::dot(const vpQuaternionVector &q0, const vpQuaternionVector &q1)
 {
-  return q0.x() * q1.x() + q0.y() * q1.y() + q0.z() * q1.z() + q0.w() * q1.w();
+  return (q0.x() * q1.x()) + (q0.y() * q1.y()) + (q0.z() * q1.z()) + (q0.w() * q1.w());
 }
 
 //! Returns the x-component of the quaternion.
@@ -395,10 +398,10 @@ vpQuaternionVector vpQuaternionVector::lerp(const vpQuaternionVector &q0, const 
   }
 
   vpQuaternionVector qLerp;
-  qLerp.x() = q0.x() - t * (q0.x() - q1.x());
-  qLerp.y() = q0.y() - t * (q0.y() - q1.y());
-  qLerp.z() = q0.z() - t * (q0.z() - q1.z());
-  qLerp.w() = q0.w() - t * (q0.w() - q1.w());
+  qLerp.x() = q0.x() - (t * (q0.x() - q1.x()));
+  qLerp.y() = q0.y() - (t * (q0.y() - q1.y()));
+  qLerp.z() = q0.z() - (t * (q0.z() - q1.z()));
+  qLerp.w() = q0.w() - (t * (q0.w() - q1.w()));
 
   return qLerp;
 }
@@ -463,12 +466,12 @@ vpQuaternionVector vpQuaternionVector::slerp(const vpQuaternionVector &q0, const
   double scale0 = 1 - t;
   double scale1 = t;
 
-  if (1 - cosHalfTheta > 0.1) {
+  if ((1 - cosHalfTheta) > 0.1) {
     double theta = std::acos(cosHalfTheta);
     double invSinTheta = 1 / std::sin(theta);
 
     scale0 = std::sin((1 - t) * theta) * invSinTheta;
-    scale1 = std::sin((t * theta)) * invSinTheta;
+    scale1 = std::sin(t * theta) * invSinTheta;
   }
 
   vpQuaternionVector qSlerp;

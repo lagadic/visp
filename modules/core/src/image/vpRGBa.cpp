@@ -99,10 +99,10 @@ vpRGBa &vpRGBa::operator=(const vpColVector &v)
     vpERROR_TRACE("Bad vector dimension ");
     throw(vpException(vpException::dimensionError, "Bad vector dimension "));
   }
-  R = (unsigned char)v[0];
-  G = (unsigned char)v[1];
-  B = (unsigned char)v[2];
-  A = (unsigned char)v[3];
+  R = static_cast<unsigned char>(v[0]);
+  G = static_cast<unsigned char>(v[1]);
+  B = static_cast<unsigned char>(v[2]);
+  A = static_cast<unsigned char>(v[3]);
   return *this;
 }
 
@@ -113,14 +113,14 @@ vpRGBa &vpRGBa::operator=(const vpColVector &v)
 */
 bool vpRGBa::operator==(const vpRGBa &v) const
 {
-  return R == v.R && G == v.G && B == v.B && A == v.A;
+  return (R == v.R) && (G == v.G) && (B == v.B) && (A == v.A);
 }
 /*!
   Compare two color pixels.
 
   \return true if the images are different, false if they are the same.
 */
-bool vpRGBa::operator!=(const vpRGBa &v) const { return (R != v.R || G != v.G || B != v.B || A != v.A); }
+bool vpRGBa::operator!=(const vpRGBa &v) const { return ((R != v.R) || (G != v.G) || (B != v.B) || (A != v.A)); }
 
 /*!
   subtraction operator : "this" - v.
@@ -130,10 +130,10 @@ bool vpRGBa::operator!=(const vpRGBa &v) const { return (R != v.R || G != v.G ||
 vpColVector vpRGBa::operator-(const vpRGBa &v) const
 {
   vpColVector n(4); // new color
-  n[0] = (double)R - (double)v.R;
-  n[1] = (double)G - (double)v.G;
-  n[2] = (double)B - (double)v.B;
-  n[3] = (double)A - (double)v.A;
+  n[0] = static_cast<double>(R) - static_cast<double>(v.R);
+  n[1] = static_cast<double>(G) - static_cast<double>(v.G);
+  n[2] = static_cast<double>(B) - static_cast<double>(v.B);
+  n[3] = static_cast<double>(A) - static_cast<double>(v.A);
   return n;
 }
 
@@ -215,16 +215,16 @@ vpColVector vpRGBa::operator*(const double &v) const
 
 bool vpRGBa::operator<(const vpRGBa &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 < gray2);
 }
 
 bool vpRGBa::operator>(const vpRGBa &v) const
 {
-  double gray1 = 0.2126 * R + 0.7152 * G + 0.0722 * B;
-  double gray2 = 0.2126 * v.R + 0.7152 * v.G + 0.0722 * v.B;
+  double gray1 = (0.2126 * R) + (0.7152 * G) + (0.0722 * B);
+  double gray2 = (0.2126 * v.R) + (0.7152 * v.G) + (0.0722 * v.B);
 
   return (gray1 > gray2);
 }
@@ -255,6 +255,6 @@ int main()
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba)
 {
-  os << "(" << (int)rgba.R << "," << (int)rgba.G << "," << (int)rgba.B << "," << (int)rgba.A << ")";
+  os << "(" << static_cast<int>(rgba.R) << "," << static_cast<int>(rgba.G) << "," << static_cast<int>(rgba.B) << "," << static_cast<int>(rgba.A) << ")";
   return os;
 }

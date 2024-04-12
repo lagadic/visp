@@ -59,12 +59,14 @@
 */
 void vpRotationMatrix::eye()
 {
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      if (i == j)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
+      if (i == j) {
         (*this)[i][j] = 1.0;
-      else
+      }
+      else {
         (*this)[i][j] = 0.0;
+      }
     }
   }
 }
@@ -80,8 +82,8 @@ void vpRotationMatrix::eye()
 */
 vpRotationMatrix &vpRotationMatrix::operator=(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       rowPtrs[i][j] = R.rowPtrs[i][j];
     }
   }
@@ -160,8 +162,8 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
                       M.getRows(), M.getCols()));
   }
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = M[i][j];
     }
   }
@@ -256,11 +258,12 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
 {
   vpRotationMatrix p;
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 3; k++)
+      for (unsigned int k = 0; k < 3; ++k) {
         s += rowPtrs[i][k] * R.rowPtrs[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -286,17 +289,18 @@ vpRotationMatrix vpRotationMatrix::operator*(const vpRotationMatrix &R) const
 */
 vpMatrix vpRotationMatrix::operator*(const vpMatrix &M) const
 {
-  if (M.getRows() != 3 || M.getCols() != 3) {
+  if ((M.getRows() != 3) || (M.getCols() != 3)) {
     throw(vpException(vpException::dimensionError, "Cannot set a (3x3) rotation matrix from a (%dx%d) matrix",
                       M.getRows(), M.getCols()));
   }
   vpMatrix p(3, 3);
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 3; k++)
+      for (unsigned int k = 0; k < 3; ++k) {
         s += (*this)[i][k] * M[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -361,9 +365,9 @@ vpColVector vpRotationMatrix::operator*(const vpColVector &v) const
   }
   vpColVector v_out(3);
 
-  for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int j = 0; j < colNum; ++j) {
     double vj = v[j]; // optimization em 5/12/2006
-    for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int i = 0; i < rowNum; ++i) {
       v_out[i] += rowPtrs[i][j] * vj;
     }
   }
@@ -379,11 +383,12 @@ vpTranslationVector vpRotationMatrix::operator*(const vpTranslationVector &tv) c
 {
   vpTranslationVector p;
 
-  for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int j = 0; j < 3; ++j) {
     p[j] = 0;
+  }
 
-  for (unsigned int j = 0; j < 3; j++) {
-    for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int j = 0; j < 3; ++j) {
+    for (unsigned int i = 0; i < 3; ++i) {
       p[i] += rowPtrs[i][j] * tv[j];
     }
   }
@@ -399,9 +404,11 @@ vpRotationMatrix vpRotationMatrix::operator*(double x) const
 {
   vpRotationMatrix R;
 
-  for (unsigned int i = 0; i < rowNum; i++)
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       R[i][j] = rowPtrs[i][j] * x;
+    }
+  }
 
   return R;
 }
@@ -412,9 +419,11 @@ vpRotationMatrix vpRotationMatrix::operator*(double x) const
  */
 vpRotationMatrix &vpRotationMatrix::operator*=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++)
-    for (unsigned int j = 0; j < colNum; j++)
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] *= x;
+    }
+  }
 
   return *this;
 }
@@ -431,14 +440,14 @@ bool vpRotationMatrix::isARotationMatrix(double threshold) const
 {
   bool isRotation = true;
 
-  if (getCols() != 3 || getRows() != 3) {
+  if ((getCols() != 3) || (getRows() != 3)) {
     return false;
   }
 
-  // test R^TR = Id ;
+  // --comment: test R^TR = Id
   vpRotationMatrix RtR = (*this).t() * (*this);
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       if (i == j) {
         if (fabs(RtR[i][j] - 1) > threshold) {
           isRotation = false;
@@ -453,14 +462,14 @@ bool vpRotationMatrix::isARotationMatrix(double threshold) const
   }
   // test if it is a basis
   // test || Ci || = 1
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     if ((sqrt(vpMath::sqr(RtR[0][i]) + vpMath::sqr(RtR[1][i]) + vpMath::sqr(RtR[2][i])) - 1) > threshold) {
       isRotation = false;
     }
   }
 
   // test || Ri || = 1
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     if ((sqrt(vpMath::sqr(RtR[i][0]) + vpMath::sqr(RtR[i][1]) + vpMath::sqr(RtR[i][2])) - 1) > threshold) {
       isRotation = false;
     }
@@ -585,9 +594,11 @@ vpRotationMatrix vpRotationMatrix::t() const
 {
   vpRotationMatrix Rt;
 
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       Rt[j][i] = (*this)[i][j];
+    }
+  }
 
   return Rt;
 }
@@ -632,8 +643,9 @@ void vpRotationMatrix::printVector()
 {
   vpThetaUVector tu(*this);
 
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     std::cout << tu[i] << "  ";
+  }
 
   std::cout << std::endl;
 }
@@ -652,25 +664,27 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
   double theta, si, co, sinc, mcosc;
   vpRotationMatrix R;
 
-  theta = sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  theta = sqrt((v[0] * v[0]) + (v[1] * v[1]) + (v[2] * v[2]));
   si = sin(theta);
   co = cos(theta);
   sinc = vpMath::sinc(si, theta);
   mcosc = vpMath::mcosc(co, theta);
 
-  R[0][0] = co + mcosc * v[0] * v[0];
-  R[0][1] = -sinc * v[2] + mcosc * v[0] * v[1];
-  R[0][2] = sinc * v[1] + mcosc * v[0] * v[2];
-  R[1][0] = sinc * v[2] + mcosc * v[1] * v[0];
-  R[1][1] = co + mcosc * v[1] * v[1];
-  R[1][2] = -sinc * v[0] + mcosc * v[1] * v[2];
-  R[2][0] = -sinc * v[1] + mcosc * v[2] * v[0];
-  R[2][1] = sinc * v[0] + mcosc * v[2] * v[1];
-  R[2][2] = co + mcosc * v[2] * v[2];
+  R[0][0] = co + (mcosc * v[0] * v[0]);
+  R[0][1] = (-sinc * v[2]) + (mcosc * v[0] * v[1]);
+  R[0][2] = (sinc * v[1])  + (mcosc * v[0] * v[2]);
+  R[1][0] = (sinc * v[2])  + (mcosc * v[1] * v[0]);
+  R[1][1] = co + (mcosc * v[1] * v[1]);
+  R[1][2] = (-sinc * v[0]) + (mcosc * v[1] * v[2]);
+  R[2][0] = (-sinc * v[1]) + (mcosc * v[2] * v[0]);
+  R[2][1] = (sinc * v[0])  + (mcosc * v[2] * v[1]);
+  R[2][2] = co + (mcosc * v[2] * v[2]);
 
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = R[i][j];
+    }
+  }
 
   return *this;
 }
@@ -680,9 +694,11 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 */
 vpRotationMatrix vpRotationMatrix::buildFrom(const vpHomogeneousMatrix &M)
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = M[i][j];
+    }
+  }
 
   return *this;
 }
@@ -716,17 +732,17 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyzVector &v)
   s1 = sin(v[1]);
   s2 = sin(v[2]);
 
-  (*this)[0][0] = c0 * c1 * c2 - s0 * s2;
-  (*this)[0][1] = -c0 * c1 * s2 - s0 * c2;
+  (*this)[0][0] = (c0 * c1 * c2) - (s0 * s2);
+  (*this)[0][1] = (-c0 * c1 * s2) - (s0 * c2);
   (*this)[0][2] = c0 * s1;
-  (*this)[1][0] = s0 * c1 * c2 + c0 * s2;
-  (*this)[1][1] = -s0 * c1 * s2 + c0 * c2;
+  (*this)[1][0] = (s0 * c1 * c2) + (c0 * s2);
+  (*this)[1][1] = (-s0 * c1 * s2) + (c0 * c2);
   (*this)[1][2] = s0 * s1;
   (*this)[2][0] = -s1 * c2;
   (*this)[2][1] = s1 * s2;
   (*this)[2][2] = c1;
 
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -751,14 +767,14 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRxyzVector &v)
   (*this)[0][0] = c1 * c2;
   (*this)[0][1] = -c1 * s2;
   (*this)[0][2] = s1;
-  (*this)[1][0] = c0 * s2 + s0 * s1 * c2;
-  (*this)[1][1] = c0 * c2 - s0 * s1 * s2;
+  (*this)[1][0] = (c0 * s2) + (s0 * s1 * c2);
+  (*this)[1][1] = (c0 * c2) - (s0 * s1 * s2);
   (*this)[1][2] = -s0 * c1;
-  (*this)[2][0] = -c0 * s1 * c2 + s0 * s2;
-  (*this)[2][1] = c0 * s1 * s2 + c2 * s0;
+  (*this)[2][0] = (-c0 * s1 * c2) + (s0 * s2);
+  (*this)[2][1] = (c0 * s1 * s2) + (c2 * s0);
   (*this)[2][2] = c0 * c1;
 
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -779,18 +795,18 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
   s2 = sin(v[2]);
 
   (*this)[0][0] = c0 * c1;
-  (*this)[0][1] = c0 * s1 * s2 - s0 * c2;
-  (*this)[0][2] = c0 * s1 * c2 + s0 * s2;
+  (*this)[0][1] = (c0 * s1 * s2) - (s0 * c2);
+  (*this)[0][2] = (c0 * s1 * c2) + (s0 * s2);
 
   (*this)[1][0] = s0 * c1;
-  (*this)[1][1] = s0 * s1 * s2 + c0 * c2;
-  (*this)[1][2] = s0 * s1 * c2 - c0 * s2;
+  (*this)[1][1] = (s0 * s1 * s2) + (c0 * c2);
+  (*this)[1][2] = (s0 * s1 * c2) - (c0 * s2);
 
   (*this)[2][0] = -s1;
   (*this)[2][1] = c1 * s2;
   (*this)[2][2] = c1 * c2;
 
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -813,17 +829,17 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpQuaternionVector &q)
   double b = q.x();
   double c = q.y();
   double d = q.z();
-  (*this)[0][0] = a * a + b * b - c * c - d * d;
-  (*this)[0][1] = 2 * b * c - 2 * a * d;
-  (*this)[0][2] = 2 * a * c + 2 * b * d;
+  (*this)[0][0] = ((a * a) + (b * b) - (c * c)) - (d * d);
+  (*this)[0][1] = (2 * b * c) - (2 * a * d);
+  (*this)[0][2] = (2 * a * c) + (2 * b * d);
 
-  (*this)[1][0] = 2 * a * d + 2 * b * c;
-  (*this)[1][1] = a * a - b * b + c * c - d * d;
-  (*this)[1][2] = 2 * c * d - 2 * a * b;
+  (*this)[1][0] = (2 * a * d) + (2 * b * c);
+  (*this)[1][1] = ((a * a) - (b * b) + (c * c)) - (d * d);
+  (*this)[1][2] = (2 * c * d) - (2 * a * b);
 
-  (*this)[2][0] = 2 * b * d - 2 * a * c;
-  (*this)[2][1] = 2 * a * b + 2 * c * d;
-  (*this)[2][2] = a * a - b * b - c * c + d * d;
+  (*this)[2][0] = (2 * b * d) - (2 * a * c);
+  (*this)[2][1] = (2 * a * b) + (2 * c * d);
+  (*this)[2][2] = ((a * a) - (b * b) - (c * c)) + (d * d);
   return *this;
 }
 
@@ -837,9 +853,11 @@ vpRotationMatrix operator*(const double &x, const vpRotationMatrix &R)
   unsigned int Rrow = R.getRows();
   unsigned int Rcol = R.getCols();
 
-  for (unsigned int i = 0; i < Rrow; i++)
-    for (unsigned int j = 0; j < Rcol; j++)
+  for (unsigned int i = 0; i < Rrow; ++i) {
+    for (unsigned int j = 0; j < Rcol; ++j) {
       C[i][j] = R[i][j] * x;
+    }
+  }
 
   return C;
 }
@@ -884,12 +902,14 @@ Last column:
  */
 vpColVector vpRotationMatrix::getCol(unsigned int j) const
 {
-  if (j >= getCols())
+  if (j >= getCols()) {
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));
+  }
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
-  for (unsigned int i = 0; i < nb_rows; i++)
+  for (unsigned int i = 0; i < nb_rows; ++i) {
     c[i] = (*this)[i][j];
+  }
   return c;
 }
 
@@ -906,7 +926,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
 {
   vpMatrix meanR(3, 3);
   vpRotationMatrix R;
-  for (size_t i = 0; i < vec_M.size(); i++) {
+  size_t vec_m_size = vec_M.size();
+  for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
     meanR += (vpMatrix)R;
   }
@@ -923,7 +944,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   else {
     vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0;
+    D[0][0] = 1.0;
+    D[1][1] = 1.0;
     D[2][2] = -1;
     meanR = U * D * V.t();
   }
@@ -944,7 +966,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
 {
   vpMatrix meanR(3, 3);
   vpRotationMatrix R;
-  for (size_t i = 0; i < vec_R.size(); i++) {
+  size_t vec_r_size = vec_R.size();
+  for (size_t i = 0; i < vec_r_size; ++i) {
     meanR += (vpMatrix)vec_R[i];
   }
   meanR /= static_cast<double>(vec_R.size());
@@ -960,7 +983,8 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   else {
     vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0;
+    D[0][0] = 1.0;
+    D[1][1] = 1.0;
     D[2][2] = -1;
     meanR = U * D * V.t();
   }

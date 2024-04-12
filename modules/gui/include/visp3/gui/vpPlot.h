@@ -89,7 +89,7 @@
  *   // Add the point (0,2) to the second curve of the second graphic
  *   A.plot(1,1,0,2);
  *
- *   for (int i = 0; i < 50; i++) {
+ *   for (int i = 0; i < 50; ++i) {
  *     // Add the point (i,sin(i*pi/10) in the first graphic
  *     A.plot(0,0,i,sin(i*M_PI/10));
  *

@@ -144,8 +144,9 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
 
     while (degenerate == true) {
       // Generate s random indicies in the range 1..npts
-      for (unsigned int i = 0; i < s; i++)
-        ind[i] = (unsigned int)ceil(random() * npts) - 1;
+      for (unsigned int i = 0; i < s; ++i) {
+        ind[i] = static_cast<unsigned int>(ceil(random() * npts)) - 1;
+      }
 
       // Test that these points are not a degenerate configuration.
       degenerate = vpTransformation::degenerateConfiguration(x, ind);
@@ -173,7 +174,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       *residual = 0.0;
     }
     ninliers = 0;
-    for (unsigned int i = 0; i < npts; i++) {
+    for (unsigned int i = 0; i < npts; ++i) {
       double resid = fabs(d[i]);
       if (resid < t) {
         inliers[i] = 1;

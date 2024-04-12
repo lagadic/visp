@@ -344,7 +344,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
     ip_edges_list.push_back(ip);
     if (graphics == true) {
       vpImagePoint ip_(ip);
-      for (unsigned int t = 0; t < thickness; t++) {
+      for (unsigned int t = 0; t < thickness; ++t) {
         ip_.set_u(ip.get_u() + t);
         vpDisplay::displayPoint(I, ip_, vpColor::red);
       }
@@ -406,9 +406,9 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
               mean_gray_level, u_cog, v_cog, npoint) == vpDot::out) {
     bool sol = false;
     unsigned int pas;
-    for (pas = 2; pas <= 25; pas++)if (sol==false) {
-      for (int k = -1; k <=1; k++) if (sol==false)
-        for (int l = -1; l <=1; l++) if (sol==false) {
+    for (pas = 2; pas <= 25; ++pas)if (sol==false) {
+      for (int k = -1; k <=1; ++k) if (sol==false)
+        for (int l = -1; l <=1; ++l) if (sol==false) {
           u_cog = 0;
           v_cog = 0;
           ip_connexities_list.clear();
@@ -441,7 +441,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
 
     // Spiral search from the center to find the nearest dot
     while ((right < SPIRAL_SEARCH_SIZE) && (sol == false)) {
-      for (k = 1; k <= right; k++)
+      for (k = 1; k <= right; ++k)
         if (sol == false) {
           u_cog = 0;
           v_cog = 0;
@@ -458,7 +458,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
       u_ += k;
       right += 2;
 
-      for (k = 1; k <= botom; k++)
+      for (k = 1; k <= botom; ++k)
         if (sol == false) {
           u_cog = 0;
           v_cog = 0;
@@ -476,7 +476,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
       v_ += k;
       botom += 2;
 
-      for (k = 1; k <= left; k++)
+      for (k = 1; k <= left; ++k)
         if (sol == false) {
           u_cog = 0;
           v_cog = 0;
@@ -494,7 +494,7 @@ void vpDot::COG(const vpImage<unsigned char> &I, double &u, double &v)
       u_ -= k;
       left += 2;
 
-      for (k = 1; k <= up; k++)
+      for (k = 1; k <= up; ++k)
         if (sol == false) {
           u_cog = 0;
           v_cog = 0;

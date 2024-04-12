@@ -113,9 +113,9 @@ void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const dou
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP_)
 {
-  if (oP_.getRows() != 8)
+  if (oP_.getRows() != 8) {
     throw vpException(vpException::dimensionError, "Size of oP is not equal to 8 as it should be");
-
+  }
   this->oP = oP_;
 }
 
@@ -142,13 +142,13 @@ void vpLine::setWorldCoordinates(const vpColVector &oP_)
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
 {
-  if (oP1.getRows() != 4)
+  if (oP1.getRows() != 4) {
     throw vpException(vpException::dimensionError, "Size of oP1 is not equal to 4 as it should be");
-
-  if (oP2.getRows() != 4)
+  }
+  if (oP2.getRows() != 4) {
     throw vpException(vpException::dimensionError, "Size of oP2 is not equal to 4 as it should be");
-
-  for (unsigned int i = 0; i < 4; i++) {
+  }
+  for (unsigned int i = 0; i < 4; ++i) {
     oP[i] = oP1[i];
     oP[i + 4] = oP2[i];
   }
@@ -212,9 +212,9 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
   p_.resize(2, false);
   // projection
 
-  if (cP.getRows() != 8)
+  if (cP.getRows() != 8) {
     throw vpException(vpException::dimensionError, "Size of cP is not equal to 8 as it should be");
-
+  }
   double A1, A2, B1, B2, C1, C2, D1, D2;
 
   A1 = cP_[0];
@@ -228,10 +228,10 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
   D2 = cP_[7];
 
   double a, b, c, s;
-  a = A2 * D1 - A1 * D2;
-  b = B2 * D1 - B1 * D2;
-  c = C2 * D1 - C1 * D2;
-  s = a * a + b * b;
+  a = (A2 * D1) - (A1 * D2);
+  b = (B2 * D1) - (B1 * D2);
+  c = (C2 * D1) - (C1 * D2);
+  s = (a * a) + (b * b);
   if (s <= 1e-8) // seuil pas terrible
   {
     printf("Degenerate case: the image of the straight line is a point!\n");
@@ -344,19 +344,19 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   c2 = oP[6];
   d2 = oP[7];
 
-  A1 = cMo[0][0] * a1 + cMo[0][1] * b1 + cMo[0][2] * c1;
-  B1 = cMo[1][0] * a1 + cMo[1][1] * b1 + cMo[1][2] * c1;
-  C1 = cMo[2][0] * a1 + cMo[2][1] * b1 + cMo[2][2] * c1;
-  D1 = d1 - (cMo[0][3] * A1 + cMo[1][3] * B1 + cMo[2][3] * C1);
+  A1 = (cMo[0][0] * a1) + (cMo[0][1] * b1) + (cMo[0][2] * c1);
+  B1 = (cMo[1][0] * a1) + (cMo[1][1] * b1) + (cMo[1][2] * c1);
+  C1 = (cMo[2][0] * a1) + (cMo[2][1] * b1) + (cMo[2][2] * c1);
+  D1 = d1 - ((cMo[0][3] * A1) + (cMo[1][3] * B1) + (cMo[2][3] * C1));
 
-  A2 = cMo[0][0] * a2 + cMo[0][1] * b2 + cMo[0][2] * c2;
-  B2 = cMo[1][0] * a2 + cMo[1][1] * b2 + cMo[1][2] * c2;
-  C2 = cMo[2][0] * a2 + cMo[2][1] * b2 + cMo[2][2] * c2;
-  D2 = d2 - (cMo[0][3] * A2 + cMo[1][3] * B2 + cMo[2][3] * C2);
+  A2 = (cMo[0][0] * a2) + (cMo[0][1] * b2) + (cMo[0][2] * c2);
+  B2 = (cMo[1][0] * a2) + (cMo[1][1] * b2) + (cMo[1][2] * c2);
+  C2 = (cMo[2][0] * a2) + (cMo[2][1] * b2) + (cMo[2][2] * c2);
+  D2 = d2 - ((cMo[0][3] * A2) + (cMo[1][3] * B2) + (cMo[2][3] * C2));
 
   // in case of verification
-  // ap1 = A1; bp1 = B1; cp1 = C1; dp1 = D1;
-  // ap2 = A2; bp2 = B2; cp2 = C2; dp2 = D2;
+  // --comment: ap1 = A1; bp1 = B1; cp1 = C1; dp1 = D1
+  // --comment:  ap2 = A2; bp2 = B2; cp2 = C2; dp2 = D2
 
   //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
   //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
@@ -364,14 +364,14 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   // Adding constraints on the straight line to have a unique representation
 
   // direction of the straight line = N1 x N2
-  a2 = B1 * C2 - C1 * B2;
-  b2 = C1 * A2 - A1 * C2;
-  c2 = A1 * B2 - B1 * A2;
+  a2 = (B1 * C2) - (C1 * B2);
+  b2 = (C1 * A2) - (A1 * C2);
+  c2 = (A1 * B2) - (B1 * A2);
 
   // Constraint D1 = 0 (the origin belongs to P1)
-  a1 = A2 * D1 - A1 * D2;
-  b1 = B2 * D1 - B1 * D2;
-  c1 = C2 * D1 - C1 * D2;
+  a1 = (A2 * D1) - (A1 * D2);
+  b1 = (B2 * D1) - (B1 * D2);
+  c1 = (C2 * D1) - (C1 * D2);
 
   if (fabs(D2) < fabs(D1)) // to be sure that D2 <> 0
   {
@@ -382,26 +382,30 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   }
 
   // Constraint A1^2 + B1^2 + C1^2 = 1
-  d1 = 1.0 / sqrt(a1 * a1 + b1 * b1 + c1 * c1);
-  cP_[0] = A1 = a1 * d1;
-  cP_[1] = B1 = b1 * d1;
-  cP_[2] = C1 = c1 * d1;
+  d1 = 1.0 / sqrt((a1 * a1) + (b1 * b1) + (c1 * c1));
+  A1 = a1 * d1;
+  B1 = b1 * d1;
+  C1 = c1 * d1;
+  cP_[0] = A1;
+  cP_[1] = B1;
+  cP_[2] = C1;
+
   cP_[3] = 0;
 
   // Constraint A1 A2 + B1 B2 + C1 C2 = 0 (P2 orthogonal to P1)
   // N2_new = (N1 x N2) x N1_new
-  a1 = b2 * C1 - c2 * B1;
-  b1 = c2 * A1 - a2 * C1;
-  c1 = a2 * B1 - b2 * A1;
+  a1 = (b2 * C1) - (c2 * B1);
+  b1 = (c2 * A1) - (a2 * C1);
+  c1 = (a2 * B1) - (b2 * A1);
 
   // Constraint A2^2 + B2^2 + C2^2 = 1
-  d1 = 1.0 / sqrt(a1 * a1 + b1 * b1 + c1 * c1);
+  d1 = 1.0 / sqrt((a1 * a1) + (b1 * b1) + (c1 * c1));
   a1 *= d1;
   b1 *= d1;
   c1 *= d1;
 
   // D2_new = D2 / (N2^T . N2_new)
-  D2 /= (A2 * a1 + B2 * b1 + C2 * c1);
+  D2 /= ((A2 * a1) + (B2 * b1) + (C2 * c1));
   A2 = a1;
   B2 = b1;
   C2 = c1;
@@ -420,27 +424,6 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   cP_[5] = B2;
   cP_[6] = C2;
   cP_[7] = D2;
-
-  // in case of verification
-  /*
-  x = -A2*D2;
-  y = -B2*D2;
-  z = -C2*D2;
-  d1 = ap1*x+bp1*y+cp1*z+dp1;
-  d2 = ap2*x+bp2*y+cp2*z+dp2;
-  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
-    {
-      printf("PB in VPline: P1 : 0 = %lf, P2: 0 = %lf\n",d1,d2);
-      return EXIT_FAILURE;
-    }
-  d1 = A1*x+B1*y+C1*z+D1;
-  d2 = A2*x+B2*y+C2*z+D2;
-  if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
-    {
-      printf("PB in VPline: Pn1 : 0 = %lf, Pn2: 0 = %lf\n",d1,d2);
-      return EXIT_FAILURE;
-    }
-  */
 }
 
 /*!
@@ -511,13 +494,14 @@ void vpLine::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, co
 void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                      const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
   try {
-    projection(_cP, _p);
-    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
-  } catch (...) {
-    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
+    projection(v_cP, v_p);
+    vpFeatureDisplay::displayLine(v_p[0], v_p[1], cam, I, color, thickness);
+  }
+  catch (...) {
+ // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }
 
@@ -546,13 +530,14 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix 
 void vpLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                      const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
   try {
-    projection(_cP, _p);
-    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
-  } catch (...) {
-    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
+    projection(v_cP, v_p);
+    vpFeatureDisplay::displayLine(v_p[0], v_p[1], cam, I, color, thickness);
+  }
+  catch (...) {
+ // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }
 

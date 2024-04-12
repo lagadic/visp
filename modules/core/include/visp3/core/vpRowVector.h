@@ -73,7 +73,7 @@ int main()
   v[0] = -1; v[1] = -2.1; v[2] = -3;
 
   std::cout << "v:" << std::endl;
-  for (unsigned int i = 0; i < v.size(); i++) {
+  for (unsigned int i = 0; i < v.size(); ++i) {
     std::cout << v[i] << " ";
   }
   std::cout << std::endl;
@@ -169,7 +169,7 @@ public:
 
      \code
      vpRowVector r1;
-     for (unsigned int i=0; i<4; i++)
+     for (unsigned int i=0; i<4; ++i)
        r1.stack(i);
      // r1 is equal to [0 1 2 3]
      vpRowVector r2 = r1.extract(1, 3);

@@ -218,7 +218,7 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   unsigned char *imBuffer = new unsigned char[m_rwidth * m_rheight * 4];
 
   if (m_rscale == 1) {
-    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, k++) {
+    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, ++k) {
       imBuffer[i + 0] = I.bitmap[k].B;
       imBuffer[i + 1] = I.bitmap[k].G;
       imBuffer[i + 2] = I.bitmap[k].R;
@@ -226,10 +226,10 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
     }
   }
   else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * m_rwidth;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         vpRGBa val = I[i_][j * m_rscale];
         unsigned int index_ = (ii_ + j) * 4;
         imBuffer[index_] = val.B;
@@ -287,10 +287,10 @@ void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP,
     }
   }
   else {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * w;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         vpRGBa val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = (ii_ + j) * 4;
         imBuffer[index_] = val.B;
@@ -319,7 +319,7 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   unsigned char *imBuffer = new unsigned char[m_rwidth * m_rheight * 4];
 
   if (m_rscale == 1) {
-    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, k++) {
+    for (unsigned int i = 0, k = 0; i < m_rwidth * m_rheight * 4; i += 4, ++k) {
       imBuffer[i + 0] = I.bitmap[k];
       imBuffer[i + 1] = I.bitmap[k];
       imBuffer[i + 2] = I.bitmap[k];
@@ -327,10 +327,10 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
     }
   }
   else {
-    for (unsigned int i = 0; i < m_rheight; i++) {
+    for (unsigned int i = 0; i < m_rheight; ++i) {
       unsigned int i_ = i * m_rscale;
       unsigned int ii_ = i * m_rwidth;
-      for (unsigned int j = 0; j < m_rwidth; j++) {
+      for (unsigned int j = 0; j < m_rwidth; ++j) {
         unsigned char val = I[i_][j * m_rscale];
         unsigned int index_ = (ii_ + j) * 4;
         imBuffer[index_] = val;
@@ -369,10 +369,10 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoi
   unsigned char *imBuffer = new unsigned char[w * h * 4];
 
   if (m_rscale == 1) {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = i_min + i;
       unsigned int ii_ = i * w;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][j_min + j];
         unsigned int index_ = (ii_ + j) * 4;
         imBuffer[index_] = val;
@@ -383,10 +383,10 @@ void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoi
     }
   }
   else {
-    for (int i = 0; i < h; i++) {
+    for (int i = 0; i < h; ++i) {
       unsigned int i_ = (i_min + i) * m_rscale;
       unsigned int ii_ = i * w;
-      for (int j = 0; j < w; j++) {
+      for (int j = 0; j < w; ++j) {
         unsigned char val = I[i_][(j_min + j) * m_rscale];
         unsigned int index_ = (ii_ + j) * 4;
         imBuffer[index_] = val;

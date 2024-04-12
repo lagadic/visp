@@ -74,8 +74,8 @@
     R[2][0] = -1; R[2][1] =  0; R[2][2] =  0;
 
     std::cout << "R:" << std::endl;
-    for (unsigned int i = 0; i < R.getRows(); i++) {
-      for (unsigned int j = 0; j < R.getCols(); j++) {
+    for (unsigned int i = 0; i < R.getRows(); ++i) {
+      for (unsigned int j = 0; j < R.getCols(); ++j) {
         std::cout << R[i][j] << " ";
       }
       std::cout << std::endl;

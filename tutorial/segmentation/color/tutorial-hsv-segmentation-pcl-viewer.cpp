@@ -15,7 +15,7 @@
 //! [Include vpDisplayPCL header]
 #include <visp3/sensor/vpRealSense2.h>
 
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
   std::string opt_hsv_filename = "calib/hsv-thresholds.yml";
   bool opt_pcl_textured = false;

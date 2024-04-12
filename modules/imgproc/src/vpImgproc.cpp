@@ -178,8 +178,8 @@ void adjust(vpImage<unsigned char> &I, double alpha, double beta)
 {
   // Construct the look-up table
   unsigned char lut[256];
-  for (unsigned int i = 0; i < 256; i++) {
-    lut[i] = vpMath::saturate<unsigned char>(alpha * i + beta);
+  for (unsigned int i = 0; i < 256; ++i) {
+    lut[i] = vpMath::saturate<unsigned char>((alpha * i) + beta);
   }
 
   // Apply the transformation using a LUT
@@ -198,11 +198,11 @@ void adjust(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   // Construct the look-up table
   vpRGBa lut[256];
-  for (unsigned int i = 0; i < 256; i++) {
-    lut[i].R = vpMath::saturate<unsigned char>(alpha * i + beta);
-    lut[i].G = vpMath::saturate<unsigned char>(alpha * i + beta);
-    lut[i].B = vpMath::saturate<unsigned char>(alpha * i + beta);
-    lut[i].A = vpMath::saturate<unsigned char>(alpha * i + beta);
+  for (unsigned int i = 0; i < 256; ++i) {
+    lut[i].R = vpMath::saturate<unsigned char>((alpha * i) + beta);
+    lut[i].G = vpMath::saturate<unsigned char>((alpha * i) + beta);
+    lut[i].B = vpMath::saturate<unsigned char>((alpha * i) + beta);
+    lut[i].A = vpMath::saturate<unsigned char>((alpha * i) + beta);
   }
 
   // Apply the transformation using a LUT
@@ -226,7 +226,7 @@ void equalizeHistogram(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2,
                        const vpImage<bool> *p_mask)
 {
-  if (I1.getWidth() * I1.getHeight() == 0) {
+  if ((I1.getWidth() * I1.getHeight()) == 0) {
     return;
   }
 
@@ -238,7 +238,7 @@ void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> 
 
 void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 {
-  if (I.getWidth() * I.getHeight() == 0) {
+  if ((I.getWidth() * I.getHeight()) == 0) {
     return;
   }
 
@@ -259,7 +259,7 @@ void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
     // Merge the result in I
     unsigned int size = I.getWidth() * I.getHeight();
     unsigned char *ptrStart = (unsigned char *)I.bitmap;
-    unsigned char *ptrEnd = ptrStart + size * 4;
+    unsigned char *ptrEnd = ptrStart + (size * 4);
     unsigned char *ptrCurrent = ptrStart;
 
     unsigned int cpt = 0;
@@ -330,7 +330,7 @@ void gammaCorrectionLogMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_
   // Construct the look-up table
   unsigned char lut[256];
   float inputRangeAsFloat = static_cast<float>(inputRange);
-  for (unsigned int i = inputMin; i <= inputMax; i++) {
+  for (unsigned int i = inputMin; i <= inputMax; ++i) {
     lut[i] = vpMath::saturate<unsigned char>(std::pow(static_cast<float>(i - inputMin) / inputRangeAsFloat, inverse_gamma) * 255.f);
   }
 
@@ -358,13 +358,13 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
   const float alpha = std::atan2(-b, x_m);
   const float rho = 0.1f;
   unsigned char lut[256];
-  for (unsigned int i = 0; i < 256; i++) {
+  for (unsigned int i = 0; i < 256; ++i) {
     float x = static_cast<float>(i);
     float phi = M_PIf * x / (2.f * x_m);
     float f1 = a * std::cos(phi);
     float k = rho * std::sin(4 * M_PIf * x / 255.f);
     float f2 = (k + b)*std::cos(alpha) + x * std::sin(alpha);
-    float r = c * std::abs(x / x_m - 1.f);
+    float r = c * std::abs((x / x_m) - 1.f);
     float f3 = r * std::cos(3.f * M_PIf * x / 255.f);
     float g = f1 + f2 + f3;
     float gamma = 1 + g;
@@ -411,15 +411,15 @@ void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const v
   if (meanNormalized < 0.5) {
       // Case dark image
     float meanPowerGamma = static_cast<float>(std::pow(meanNormalized, gamma));
-    for (unsigned int i = 0; i <= 255; i++) {
+    for (unsigned int i = 0; i <= 255; ++i) {
       float iNormalized = static_cast<float>(i)/255.f;
       float iPowerGamma = std::pow(iNormalized, gamma);
-      lut[i] = vpMath::saturate<unsigned char>(255.f * (iPowerGamma / (iPowerGamma + (1.f - iPowerGamma) * meanPowerGamma)));
+      lut[i] = vpMath::saturate<unsigned char>(255.f * (iPowerGamma / (iPowerGamma + ((1.f - iPowerGamma) * meanPowerGamma))));
     }
   }
   else {
     // Case bright image
-    for (unsigned int i = 0; i <= 255; i++) {
+    for (unsigned int i = 0; i <= 255; ++i) {
       float iNormalized = static_cast<float>(i)/255.f;
       lut[i] = vpMath::saturate<unsigned char>(std::pow(iNormalized, gamma) * 255.f);
     }
@@ -463,7 +463,7 @@ void gammaCorrectionProbabilisticBased(vpImage<unsigned char> &I, const vpImage<
   }
   unsigned char lut[256];
   float cdf_w = 0;
-  for (unsigned int i = 0; i <= 255; i++) {
+  for (unsigned int i = 0; i <= 255; ++i) {
     cdf_w += pdf_w[i] / sum_pdf_w;
     float gamma = 1.f - cdf_w;
     float iNormalized = static_cast<float>(i)/255.f;
@@ -507,7 +507,7 @@ void gammaCorrectionSpatialBased(vpImage<unsigned char> &I, const vpImage<bool> 
     p = 2.f;
   }
   else if (stdev <= 80) {
-    p = -0.025f * stdev + 3.f;
+    p = (-0.025f * stdev) + 3.f;
   }
   else {
     p = 1.f;
@@ -547,7 +547,7 @@ void gammaCorrectionSpatialBased(vpImage<vpRGBa> &I, const vpImage<bool> *p_mask
   vpImage<unsigned char> I_gray(height, width);
   for (unsigned int i = 0; i < size; ++i) {
     vpRGBa rgb = I.bitmap[i];
-    I_gray.bitmap[i] = static_cast<unsigned char>(0.299 * rgb.R + 0.587 * rgb.G + 0.114 * rgb.B);
+    I_gray.bitmap[i] = static_cast<unsigned char>((0.299 * rgb.R) + (0.587 * rgb.G) + (0.114 * rgb.B));
   }
   vpImage<unsigned char> I_2, I_4, I_8;
   I_gray.subsample(2, 2, I_2);
@@ -572,7 +572,7 @@ void gammaCorrectionSpatialBased(vpImage<vpRGBa> &I, const vpImage<bool> *p_mask
     p = 2.f;
   }
   else if (stdev <= 80) {
-    p = -0.025f * stdev + 3.f;
+    p = (-0.025f * stdev) + 3.f;
   }
   else {
     p = 1.f;
@@ -605,7 +605,7 @@ void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGamm
     inverse_gamma = 1.0f / gamma;
     // Construct the look-up table
     unsigned char lut[256];
-    for (unsigned int i = 0; i < 256; i++) {
+    for (unsigned int i = 0; i < 256; ++i) {
       lut[i] = vpMath::saturate<unsigned char>(std::pow(static_cast<float>(i) / 255.0, inverse_gamma) * 255.0);
     }
 
@@ -656,7 +656,7 @@ void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
 void gammaCorrection(vpImage<vpRGBa> &I, const float &gamma, const vpGammaColorHandling &colorHandling,
                      const vpGammaMethod &method, const vpImage<bool> *p_mask)
 {
-  if ((method == GAMMA_SPATIAL_VARIANT_BASED)) {
+  if (method == GAMMA_SPATIAL_VARIANT_BASED) {
     gammaCorrectionSpatialBased(I, p_mask);
   }
   else {
@@ -713,7 +713,7 @@ void stretchContrast(vpImage<unsigned char> &I)
   // Construct the look-up table
   unsigned char lut[256];
   if (range > 0) {
-    for (unsigned int x = min; x <= max; x++) {
+    for (unsigned int x = min; x <= max; ++x) {
       lut[x] = 255 * (x - min) / range;
     }
   }
@@ -765,7 +765,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
   vpRGBa lut[256];
   unsigned char rangeR = max.R - min.R;
   if (rangeR > 0) {
-    for (unsigned int x = min.R; x <= max.R; x++) {
+    for (unsigned int x = min.R; x <= max.R; ++x) {
       lut[x].R = 255 * (x - min.R) / rangeR;
     }
   }
@@ -775,7 +775,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
 
   unsigned char rangeG = max.G - min.G;
   if (rangeG > 0) {
-    for (unsigned int x = min.G; x <= max.G; x++) {
+    for (unsigned int x = min.G; x <= max.G; ++x) {
       lut[x].G = 255 * (x - min.G) / rangeG;
     }
   }
@@ -785,7 +785,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
 
   unsigned char rangeB = max.B - min.B;
   if (rangeB > 0) {
-    for (unsigned int x = min.B; x <= max.B; x++) {
+    for (unsigned int x = min.B; x <= max.B; ++x) {
       lut[x].B = 255 * (x - min.B) / rangeB;
     }
   }
@@ -795,7 +795,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
 
   unsigned char rangeA = max.A - min.A;
   if (rangeA > 0) {
-    for (unsigned int x = min.A; x <= max.A; x++) {
+    for (unsigned int x = min.A; x <= max.A; ++x) {
       lut[x].A = 255 * (x - min.A) / rangeA;
     }
   }
@@ -833,7 +833,7 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
   double *ptrCurrent = ptrStart;
 
   // Stretch Saturation
-  if (maxSaturation - minSaturation > 0.0) {
+  if ((maxSaturation - minSaturation) > 0.0) {
     while (ptrCurrent != ptrEnd) {
       *ptrCurrent = (*ptrCurrent - minSaturation) / (maxSaturation - minSaturation);
       ++ptrCurrent;
@@ -841,7 +841,7 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
   }
 
   // Stretch Value
-  if (maxValue - minValue > 0.0) {
+  if ((maxValue - minValue) > 0.0) {
     ptrStart = valueImage.bitmap;
     ptrEnd = valueImage.bitmap + size;
     ptrCurrent = ptrStart;
@@ -853,7 +853,7 @@ void stretchContrastHSV(vpImage<vpRGBa> &I)
   }
 
   // Convert HSV to RGBa
-  vpImageConvert::HSVToRGBa(hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap, (unsigned char *)I.bitmap,
+  vpImageConvert::HSVToRGBa(hueImage.bitmap, saturationImage.bitmap, valueImage.bitmap, (unsigned char *)(I.bitmap),
                             size);
 }
 
@@ -866,7 +866,7 @@ void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 
 void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
 {
-  if (weight < 1.0 && weight >= 0.0) {
+  if ((weight < 1.0) && (weight >= 0.0)) {
 #if defined(VISP_HAVE_SIMDLIB)
     // Gaussian blurred image
     vpGaussianFilter gaussian_filter(I.getWidth(), I.getHeight(), sigma);
@@ -881,7 +881,8 @@ void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
 #endif
 
     // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
+    unsigned int i_size = I.getSize();
+    for (unsigned int cpt = 0; cpt < i_size; ++cpt) {
       double val = (I.bitmap[cpt] - weight * I_blurred.bitmap[cpt]) / (1 - weight);
       I.bitmap[cpt] = vpMath::saturate<unsigned char>(val); // val > 255 ? 255 : (val < 0 ? 0 : val);
     }
@@ -897,7 +898,7 @@ void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, 
 
 void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
 {
-  if (weight < 1.0 && weight >= 0.0) {
+  if ((weight < 1.0) && (weight >= 0.0)) {
 #if defined(VISP_HAVE_SIMDLIB)
     // Gaussian blurred image
     vpGaussianFilter gaussian_filter(I.getWidth(), I.getHeight(), sigma);
@@ -917,7 +918,8 @@ void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
 #endif
 
     // Unsharp mask
-    for (unsigned int cpt = 0; cpt < I.getSize(); cpt++) {
+    unsigned int i_size = I.getSize();
+    for (unsigned int cpt = 0; cpt < i_size; ++cpt) {
 #if defined(VISP_HAVE_SIMDLIB)
       double val_R = (I.bitmap[cpt].R - weight * I_blurred.bitmap[cpt].R) / (1 - weight);
       double val_G = (I.bitmap[cpt].G - weight * I_blurred.bitmap[cpt].G) / (1 - weight);

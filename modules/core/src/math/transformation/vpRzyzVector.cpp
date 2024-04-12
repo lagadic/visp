@@ -86,16 +86,18 @@ vpRzyzVector::vpRzyzVector(const std::vector<double> &rzyz) : vpRotationVector(3
 vpRzyzVector vpRzyzVector::buildFrom(const vpRotationMatrix &R)
 {
   double phi;
-  if ((fabs(R[1][2]) < 1e-6) && (fabs(R[0][2]) < 1e-6))
+  if ((fabs(R[1][2]) < 1e-6) && (fabs(R[0][2]) < 1e-6)) {
     phi = 0;
-  else
+  }
+  else {
     phi = atan2(R[1][2], R[0][2]);
+  }
   double cphi = cos(phi);
   double sphi = sin(phi);
 
-  double theta = atan2(cphi * R[0][2] + sphi * R[1][2], R[2][2]);
+  double theta = atan2((cphi * R[0][2]) + (sphi * R[1][2]), R[2][2]);
 
-  double psi = atan2(-sphi * R[0][0] + cphi * R[1][0], -sphi * R[0][1] + cphi * R[1][1]);
+  double psi = atan2((-sphi * R[0][0]) + (cphi * R[1][0]), (-sphi * R[0][1]) + (cphi * R[1][1]));
 
   buildFrom(phi, theta, psi);
 
@@ -126,8 +128,9 @@ vpRzyzVector vpRzyzVector::buildFrom(const vpColVector &rzyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyz vector from a %d-dimension col vector",
                       rzyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyz[i];
+  }
 
   return *this;
 }
@@ -141,8 +144,9 @@ vpRzyzVector vpRzyzVector::buildFrom(const std::vector<double> &rzyz)
     throw(vpException(vpException::dimensionError, "Cannot construct a R-zyx vector from a %d-dimension std::vector",
                       rzyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyz[i];
+  }
 
   return *this;
 }
@@ -168,8 +172,9 @@ vpRzyzVector vpRzyzVector::buildFrom(const std::vector<double> &rzyz)
 */
 vpRzyzVector &vpRzyzVector::operator=(double v)
 {
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     data[i] = v;
+  }
 
   return *this;
 }
@@ -215,8 +220,9 @@ vpRzyzVector &vpRzyzVector::operator=(const vpColVector &rzyz)
     throw(vpException(vpException::dimensionError, "Cannot set a R-zyz vector from a %d-dimension col vector",
                       rzyz.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = rzyz[i];
+  }
 
   return *this;
 }

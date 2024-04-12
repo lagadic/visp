@@ -90,13 +90,15 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 2) {          // decode height
+      }
+      else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 3) {          // decode maxval
+      }
+      else if (cpt_elt == 3) {          // decode maxval
         std::istringstream ss(header[0]);
         ss >> maxval;
         cpt_elt++;
@@ -148,13 +150,15 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 2) {          // decode height
+      }
+      else if (cpt_elt == 2) {          // decode height
         std::istringstream ss(header[0]);
         ss >> h;
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 3) {          // decode byte order
+      }
+      else if (cpt_elt == 3) {          // decode byte order
         std::istringstream ss(header[0]);
         ss >> scale;
         littleEndian = scale < 0;
@@ -275,7 +279,7 @@ void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
   size_t nbyte = I.getWidth() * 3;
   for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
     size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
-     if (ierr != nbyte) {
+    if (ierr != nbyte) {
       fclose(fd);
       throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
                              filename.c_str(), ierr, nbyte));
@@ -347,7 +351,7 @@ void vp_writePGM(const vpImage<short> &I, const std::string &filename)
 
   Iuc.resize(nrows, ncols);
 
-  for (unsigned int i = 0; i < nrows * ncols; i++)
+  for (unsigned int i = 0; i < nrows * ncols; ++i)
     Iuc.bitmap[i] = (unsigned char)I.bitmap[i];
 
   vp_writePGM(Iuc, filename);
@@ -503,7 +507,7 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
     if (swapEndianness) {
-      for (unsigned int j = 0; j < w * channels; j++) {
+      for (unsigned int j = 0; j < w * channels; ++j) {
         I[i][j] = vpEndian::swapFloat(I[i][j]);
       }
     }
@@ -517,8 +521,8 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   fd.close();
 
   if (std::fabs(scale) > 0.0f) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         I[i][j] *= 1.0f / static_cast<float>(std::fabs(scale));
       }
     }
@@ -578,7 +582,7 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
     if (swapEndianness) {
-      for (unsigned int j = 0; j < w; j++) {
+      for (unsigned int j = 0; j < w; ++j) {
         I[i][j].R = vpEndian::swapFloat(I[i][j].R);
         I[i][j].G = vpEndian::swapFloat(I[i][j].G);
         I[i][j].B = vpEndian::swapFloat(I[i][j].B);
@@ -594,8 +598,8 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
   fd.close();
 
   if (std::fabs(scale) > 0.0f) {
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
+    for (unsigned int i = 0; i < I.getHeight(); ++i) {
+      for (unsigned int j = 0; j < I.getWidth(); ++j) {
         I[i][j].R *= 1.0f / static_cast<float>(std::fabs(scale));
         I[i][j].G *= 1.0f / static_cast<float>(std::fabs(scale));
         I[i][j].B *= 1.0f / static_cast<float>(std::fabs(scale));
@@ -750,8 +754,8 @@ void vp_readPPM(vpImage<vpRGBa> &I, const std::string &filename)
     I.resize(h, w);
   }
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       unsigned char rgb[3];
       fd.read((char *)&rgb, 3);
 
@@ -814,8 +818,8 @@ void vp_writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
   fprintf(f, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
   fprintf(f, "%d\n", 255);                            // Max level
 
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
+  for (unsigned int i = 0; i < I.getHeight(); ++i) {
+    for (unsigned int j = 0; j < I.getWidth(); ++j) {
       vpRGBa v = I[i][j];
       unsigned char rgb[3];
       rgb[0] = v.R;

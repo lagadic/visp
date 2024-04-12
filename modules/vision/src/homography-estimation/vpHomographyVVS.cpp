@@ -69,7 +69,8 @@ static void updatePoseRotation(vpColVector &dx, vpHomogeneousMatrix &mati)
     rd[2][0] = (-sinu * u[1]) + (mcosi * u[2] * u[0]);
     rd[2][1] = (sinu * u[0]) + (mcosi * u[2] * u[1]);
     rd[2][2] = cosi + (mcosi * u[2] * u[2]);
-  } else {
+  }
+  else {
     for (unsigned int i = 0; i < 3; ++i) {
       for (unsigned int j = 0; j < 3; ++j) {
         rd[i][j] = 0.0;
@@ -125,7 +126,8 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   W = 0;
   vpMatrix c2Rc1(3, 3);
   double r = 0;
-  while (vpMath::equal(r_1, r, m_threshold_rotation) == false) {
+  bool stop = false;
+  while ((vpMath::equal(r_1, r, m_threshold_rotation) == false) && (stop == false)) {
 
     r_1 = r;
     // compute current position
@@ -191,23 +193,28 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
           if (k == 0) {
             L = H2;
             e = e2;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H2);
             e = vpColVector::stack(e, e2);
           }
-        } else if (only_1) {
+        }
+        else if (only_1) {
           if (k == 0) {
             L = H1;
             e = e1;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H1);
             e = vpColVector::stack(e, e1);
           }
-        } else {
+        }
+        else {
           if (k == 0) {
             L = H2;
             e = e2;
-          } else {
+          }
+          else {
             L = vpMatrix::stack(L, H2);
             e = vpColVector::stack(e, e2);
           }
@@ -221,7 +228,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
 
     if (userobust) {
       for (unsigned int l = 0; l < n; ++l) {
-        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l )+ 1]);
+        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l)+ 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
@@ -230,7 +237,8 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
         W[2 * l][2 * l] = w[l];
         W[(2 * l) + 1][(2 * l) + 1] = w[l];
       }
-    } else {
+    }
+    else {
       for (unsigned int l = 0; l < (2 * n); ++l) {
         W[l][l] = 1;
       }
@@ -250,7 +258,7 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
     r = e.sumSquare();
 
     if (((W * e).sumSquare() < 1e-10) || (iter > 25)) {
-      break;
+      stop = true;
     }
     ++iter;
   }
@@ -307,7 +315,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (!vpMath::equal(r_1, r, m_threshold_displacement)) {
+  vpMatrix sTR;
+  bool stop = false;
+  while ((!vpMath::equal(r_1, r, m_threshold_displacement)) && (stop == false)) {
     r_1 = r;
     // compute current position
 
@@ -366,16 +376,16 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H2 *= -1;
 
       vpMatrix c1CFc2(6, 6);
-      {
-        vpMatrix sTR = c1Tc2.skew() * static_cast<vpMatrix>(c1Rc2);
-        for (unsigned int k_ = 0; k_ < 3; ++k_) {
-          for (unsigned int l = 0; l < 3; ++l) {
-            c1CFc2[k_][l] = c1Rc2[k_][l];
-            c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
-            c1CFc2[k_][l + 3] = sTR[k_][l];
-          }
+
+      sTR = c1Tc2.skew() * c1Rc2;
+      for (unsigned int k_ = 0; k_ < 3; ++k_) {
+        for (unsigned int l = 0; l < 3; ++l) {
+          c1CFc2[k_][l] = c1Rc2[k_][l];
+          c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
+          c1CFc2[k_][l + 3] = sTR[k_][l];
         }
       }
+
       H2 = H2 * c1CFc2;
 
       // Set up the error vector
@@ -408,23 +418,28 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
-      } else if (only_1) {
+      }
+      else if (only_1) {
         if (k == 0) {
           L = H1;
           e = e1;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H1);
           e = vpColVector::stack(e, e1);
         }
-      } else {
+      }
+      else {
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
@@ -437,7 +452,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
     if (userobust) {
       for (unsigned int l = 0; l < n; ++l) {
-        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l )+ 1]);
+        res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[(2 * l)+ 1]);
       }
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
@@ -446,7 +461,8 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         W[2 * l][2 * l] = w[l];
         W[(2 * l) + 1][(2 * l) + 1] = w[l];
       }
-    } else {
+    }
+    else {
       for (unsigned int l = 0; l < (2 * n); ++l) {
         W[l][l] = 1;
       }
@@ -463,7 +479,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     r = (W * e).sumSquare();
 
     if ((r < 1e-15) || (iter > 1000) || (r > r_1)) {
-      break;
+      stop = true;
     }
     ++iter;
   }
@@ -508,7 +524,9 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
 
   double r = 1e10;
   iter = 0;
-  while (!vpMath::equal(r_1, r, m_threshold_displacement)) {
+  vpMatrix sTR;
+  bool stop = false;
+  while ((!vpMath::equal(r_1, r, m_threshold_displacement)) && (stop == false)) {
     r_1 = r;
     // compute current position
 
@@ -566,16 +584,16 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
       H2 *= -1;
 
       vpMatrix c1CFc2(6, 6);
-      {
-        vpMatrix sTR = c1Tc2.skew() * static_cast<vpMatrix>(c1Rc2);
-        for (unsigned int k_ = 0; k_ < 3; ++k_) {
-          for (unsigned int l = 0; l < 3; ++l) {
-            c1CFc2[k_][l] = c1Rc2[k_][l];
-            c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
-            c1CFc2[k_][l + 3] = sTR[k_][l];
-          }
+
+      sTR = c1Tc2.skew() * static_cast<vpMatrix>(c1Rc2);
+      for (unsigned int k_ = 0; k_ < 3; ++k_) {
+        for (unsigned int l = 0; l < 3; ++l) {
+          c1CFc2[k_][l] = c1Rc2[k_][l];
+          c1CFc2[k_ + 3][l + 3] = c1Rc2[k_][l];
+          c1CFc2[k_][l + 3] = sTR[k_][l];
         }
       }
+
       H2 = H2 * c1CFc2;
 
       // Set up the error vector
@@ -608,23 +626,28 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
-      } else if (only_1) {
+      }
+      else if (only_1) {
         if (k == 0) {
           L = H1;
           e = e1;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H1);
           e = vpColVector::stack(e, e1);
         }
-      } else {
+      }
+      else {
         if (k == 0) {
           L = H2;
           e = e2;
-        } else {
+        }
+        else {
           L = vpMatrix::stack(L, H2);
           e = vpColVector::stack(e, e2);
         }
@@ -646,7 +669,8 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
         W[2 * k_][2 * k_] = w[k_];
         W[(2 * k_) + 1][(2 * k_) + 1] = w[k_];
       }
-    } else {
+    }
+    else {
       for (unsigned int k_ = 0; k_ < (2 * n); ++k_) {
         W[k_][k_] = 1;
       }
@@ -663,7 +687,7 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     r = (W * e).sumSquare();
 
     if ((r < 1e-15) || (iter > 1000) || (r > r_1)) {
-      break;
+      stop = true;
     }
     ++iter;
   }
