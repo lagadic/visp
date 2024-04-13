@@ -76,7 +76,9 @@ jobs:
           --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       with:
         files: ./build/visp-coverage.cleaned
         fail_ci_if_error: true
