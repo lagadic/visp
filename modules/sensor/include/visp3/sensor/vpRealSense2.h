@@ -363,6 +363,8 @@ public:
 
   std::string getProductLine();
 
+  std::string getSensorInfo();
+
   vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index = -1) const;
 
   bool open(const rs2::config &cfg = rs2::config());
