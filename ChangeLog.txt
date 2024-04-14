@@ -68,6 +68,7 @@ ViSP 3.x.x (Version in development)
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
     . [#1320] Broken links in the documentation
     . [#1341] SVD computation fails with Lapack when m < n
+    . [#1370] encountered compilation errors while building the ViSP library
 ----------------------------------------------
 ViSP 3.6.0 (released September 22, 2023)
   - Contributors:
