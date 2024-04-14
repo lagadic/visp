@@ -235,7 +235,7 @@ int main()
 
     chrono.stop();
     time_vector.push_back(chrono.getDurationMs());
-    if (cv::waitKey(5) == 27) {
+    if (cv::waitKey(5) == 27 || cv::waitKey(5) == 113) { // Esc or q
       break;
     }
   }
