@@ -67,6 +67,7 @@ ViSP 3.x.x (Version in development)
     . [#1296] Unable to parse camera parameters with vpXmlParserCamera::parse() when camera name is empty
     . [#1307] Cannot set cxx standard when configuring for Visual Studio
     . [#1320] Broken links in the documentation
+    . [#1337] The pose of the automatic datageneration pipeline from blenderproc seems wrong
     . [#1341] SVD computation fails with Lapack when m < n
     . [#1370] encountered compilation errors while building the ViSP library
 ----------------------------------------------
