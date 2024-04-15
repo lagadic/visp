@@ -75,7 +75,7 @@ If you encounter a compilation error, make sure to first try rebuilding after cl
 Pybind did generate problems (an error at the pybind include line) that were solved like this.
 
 Static and member methods have the same name
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------
 
 If, when importing visp in python, you encounter this message:
 
@@ -86,7 +86,7 @@ If, when importing visp in python, you encounter this message:
 Then it means that a class has both a static method and a member method with the same name. You should :ref:`rename either one through the config files <Function options>`.
 
 Abstract class not detected
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------
 
 If you have this error:
 
@@ -103,7 +103,8 @@ This error occurs because some methods are defined as pure virtual in a parent c
 
 
 Template errors
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------------------------
+
 
 If you have an issue that looks like:
 
