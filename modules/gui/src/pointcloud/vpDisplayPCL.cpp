@@ -52,6 +52,9 @@ vpDisplayPCL::vpDisplayPCL(int posx, int posy, const std::string &window_name)
  * Constructor able to initialize the display window size.
  * \param[in] width : Point cloud viewer width.
  * \param[in] height : Point cloud viewer height.
+ * \param[in] posx : Position along X-axis.
+ * \param[in] posy : Position along Y-axis.
+ * \param[in] window_name : Window name.
  */
 vpDisplayPCL::vpDisplayPCL(unsigned int width, unsigned int height, int posx, int posy, const std::string &window_name)
   : m_stop(false), m_verbose(false), m_width(width), m_height(height), m_posx(posx), m_posy(posy),
