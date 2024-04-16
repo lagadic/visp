@@ -136,11 +136,11 @@ std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale
 
 // See: http://imagej.net/Retinex and
 // https://docs.gimp.org/en/plug-in-retinex.html
-void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynamic, int _kernelSize)
+void MSRCR(vpImage<vpRGBa> &I, int v_scale, int scaleDiv, int level, double dynamic, int v_kernelSize)
 {
   // Calculate the scales of filtering according to the number of filter and
   // their distribution.
-  std::vector<double> retinexScales = retinexScalesDistribution(scaleDiv, level, _scale);
+  std::vector<double> retinexScales = retinexScalesDistribution(scaleDiv, level, v_scale);
 
   // Filtering according to the various scales.
   // Summarize the results of the various filters according to a specific
@@ -151,11 +151,11 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
   std::vector<vpImage<double> > doubleResRGB(3);
   unsigned int size = I.getSize();
 
-  int kernelSize = _kernelSize;
+  int kernelSize = v_kernelSize;
   if (kernelSize == -1) {
     // Compute the kernel size from the input image size
     kernelSize = static_cast<int>(std::min<unsigned int>(I.getWidth(), I.getHeight()) / 2.0);
-    kernelSize = (kernelSize - kernelSize % 2) + 1;
+    kernelSize = (kernelSize - (kernelSize % 2)) + 1;
   }
 
   for (int channel = 0; channel < 3; ++channel) {
@@ -203,7 +203,7 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
   for (unsigned int cpt = 0; cpt < size; ++cpt) {
     double logl = std::log(static_cast<double>(I.bitmap[cpt].R + I.bitmap[cpt].G + I.bitmap[cpt].B + 3.0));
 
-    dest[cpt * 3] = gain * (std::log(alpha * doubleRGB[0].bitmap[cpt]) - logl) * doubleResRGB[0].bitmap[cpt] + offset;
+    dest[cpt * 3] = (gain * (std::log(alpha * doubleRGB[0].bitmap[cpt]) - logl) * doubleResRGB[0].bitmap[cpt]) + offset;
     dest[(cpt * 3) + 1] =
       (gain * (std::log(alpha * doubleRGB[1].bitmap[cpt]) - logl) * doubleResRGB[1].bitmap[cpt]) + offset;
     dest[(cpt * 3) + 2] =
@@ -233,9 +233,9 @@ void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, double dynam
   }
 
   for (unsigned int cpt = 0; cpt < size; ++cpt) {
-    I.bitmap[cpt].R = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 0] - mini) / range));
-    I.bitmap[cpt].G = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 1] - mini) / range));
-    I.bitmap[cpt].B = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 2] - mini) / range));
+    I.bitmap[cpt].R = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 0] - mini)) / range);
+    I.bitmap[cpt].G = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 1] - mini)) / range);
+    I.bitmap[cpt].B = vpMath::saturate<unsigned char>((255.0 * (dest[(cpt * 3) + 2] - mini)) / range);
   }
 }
 

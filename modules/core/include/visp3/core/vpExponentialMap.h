@@ -52,25 +52,25 @@
   The exponential map gives the relationship between the velocity of a moving
   body and its displacement:
 
-  \f[ \exp({^c}{\bf v}_c(t - \Delta t)) = {^{c(t - \Delta t)}}{\bf M}_{c(t)} \f]
+  \f[ \exp({^c}{\bf v}_c) = {^{c(t)}}{\bf M}_{c(t+\Delta t)} \f]
 
-  where \f$ {^c}{\bf v}_c(t - \Delta t)\f$ is the velocity skew vector at the previous iteration applied during \f$\Delta t\f$
-  seconds at point \f$ c \f$ in frame \f$ c \f$, while \f$ {^{c(t- \Delta t)}}{\bf M}_{c(t)} \f$
+  where \f$ {^c}{\bf v}_c\f$ is the velocity skew vector applied during \f$\Delta t\f$
+  seconds at point \f$ c \f$ in frame \f$ c \f$, while \f$ {^{c(t)}}{\bf M}_{c(t+\Delta t)} \f$
   is the corresponding displacement.
 
   This class allows to compute the direct or the inverse exponential map.
 
   - The direct exponential map allows to compute the displacement
-    \f${^{c(t - \Delta t)}}{\bf M}_{c(t)}\f$ using \f${^c}{\bf v}_c(t - \Delta t)\f$ as input:
-    \f[ {^{o}}{\bf M}_{c(t)} = {^{o}}{\bf M}_{c(t - \Delta t)} \exp({^c}{\bf v}_c(t - \Delta t)) \f]
+    \f${^{c(t)}}{\bf M}_{c(t+\Delta t)}\f$ using \f${^c}{\bf v}_c\f$ as input:
+    \f[ {^{o}}{\bf M}_{c(t+\Delta t)} = {^{o}}{\bf M}_{c(t)} \exp({^c}{\bf v}_c) \f]
     where \f$ o \f$ is a reference frame.
-    With direct(), the velocity skew vector \f$ {^c}{\bf v}_c(t - \Delta t) \f$ is applied during 1 second
+    With direct(), the velocity skew vector \f$ {^c}{\bf v}_c \f$ is applied during 1 second
     considering \f$ \Delta t = 1\f$. With direct(const vpColVector &, const double &)
     the sampling time can be set to an other value where the second
     argument is \f$ \Delta t \f$.
 
   - The inverse exponential map allows to compute the velocity skew vector \f$
-    {^c}{\bf v}_c(t - \Delta t) \f$ from the displacement \f$ {^{c(t - \Delta t)}}{\bf M}_{c(t)}\f$
+    \bf {^c}{\bf v}_c \f$ from the displacement \f$ {^{c(t)}}{\bf M}_{c(t+\Delta t)}\f$
     measured during a time interval \f$ \Delta t \f$. With inverse() the time interval
     also called sampling time is set to 1 second. With
     inverse(const vpHomogeneousMatrix &, const double &) the sampling time can
@@ -78,7 +78,7 @@
     argument is \f$ \Delta t \f$.
 
   A displacement \f$ \bf M \f$ is represented as an homogeneous matrix implemented in
-  vpHomogeneousMatrix. A velocity \f$ \bf v \f$ is represented as a
+  vpHomogeneousMatrix. A velocities \f$ \bf v \f$ is represented as a
   6 dimension velocity skew vector \f$ [v, \omega] \f$, where \f$ v \f$
   is a velocity translation vector with values in m/s and \f$ \omega \f$ a
   velocity rotation vector with values expressed in rad/s.

@@ -260,7 +260,8 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
     return;
   }
 
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t  ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_dot_line(I, ips[i], ips[i + 1], color, thickness);
   }
 
@@ -466,11 +467,11 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
       std::vector<vpImagePoint> vip; // Image points that intersect image borders
       // Test intersection with vertical line j=0
       vpImagePoint ip_left(b, 0);
-      if (ip_left.get_i() >= 0. && ip_left.get_i() <= (I.getHeight() - 1.)) {
+      if ((ip_left.get_i() >= 0.) && (ip_left.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_left);
       }
       // Test intersection with vertical line j=width-1
-      vpImagePoint ip_right(a * (I.getWidth() - 1) + b, I.getWidth() - 1.);
+      vpImagePoint ip_right((a * (I.getWidth() - 1)) + b, I.getWidth() - 1.);
       if ((ip_right.get_i() >= 0.) && (ip_right.get_i() <= (I.getHeight() - 1.))) {
         vip.push_back(ip_right);
       }
@@ -515,7 +516,8 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<v
     return;
   }
 
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_line(I, ips[i], ips[i + 1], color, thickness);
   }
 

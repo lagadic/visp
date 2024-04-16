@@ -1009,7 +1009,7 @@ unsigned int vpMatrix::qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full,
 */
 vpMatrix vpMatrix::inverseTriangular(bool upper) const
 {
-  if (rowNum != colNum || rowNum == 0) {
+  if ((rowNum != colNum) || (rowNum == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot inverse a triangular matrix (%d, %d) that is not square",
                       rowNum, colNum));
   }

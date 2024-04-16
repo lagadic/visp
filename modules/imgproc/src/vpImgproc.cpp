@@ -360,12 +360,12 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
   unsigned char lut[256];
   for (unsigned int i = 0; i < 256; ++i) {
     float x = static_cast<float>(i);
-    float phi = M_PIf * x / (2.f * x_m);
+    float phi = (M_PIf * x) / (2.f * x_m);
     float f1 = a * std::cos(phi);
-    float k = rho * std::sin(4 * M_PIf * x / 255.f);
-    float f2 = (k + b)*std::cos(alpha) + x * std::sin(alpha);
+    float k = rho * std::sin((4 * M_PIf * x) / 255.f);
+    float f2 = (k + b)*std::cos(alpha) + (x * std::sin(alpha));
     float r = c * std::abs((x / x_m) - 1.f);
-    float f3 = r * std::cos(3.f * M_PIf * x / 255.f);
+    float f3 = r * std::cos((3.f * M_PIf * x) / 255.f);
     float g = f1 + f2 + f3;
     float gamma = 1 + g;
     float inverse_gamma = 1.f / gamma;
@@ -386,7 +386,7 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
  * \param[in] p_mask Boolean that indicates which points must be taken into account (true value)
  * or must be ignored (false value).
  */
-void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
+void gammaCorrectionClassBasedMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
   double mean = I.getMeanValue(p_mask);
   double stdev = I.getStdev(p_mask);
@@ -439,7 +439,7 @@ void gammaCorrectionClassificationBasedMethod(vpImage<unsigned char> &I, const v
  * \param[in] p_mask Boolean that indicates which points must be taken into account (true value)
  * or must be ignored (false value).
  */
-void gammaCorrectionProbabilisticBased(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
+void gammaCorrectionProbBasedMethod(vpImage<unsigned char> &I, const vpImage<bool> *p_mask)
 {
   const unsigned int nbBins = 256;
   vpHistogram histo;
@@ -630,10 +630,10 @@ void gammaCorrection(vpImage<unsigned char> &I, const float &gamma, const vpGamm
       gammaCorrectionLogMethod(I, p_mask);
     }
     else if (method == GAMMA_CLASSIFICATION_BASED) {
-      gammaCorrectionClassificationBasedMethod(I, p_mask);
+      gammaCorrectionClassBasedMethod(I, p_mask);
     }
     else if (method == GAMMA_CDF_BASED) {
-      gammaCorrectionProbabilisticBased(I, p_mask);
+      gammaCorrectionProbBasedMethod(I, p_mask);
     }
     else if (method == GAMMA_SPATIAL_VARIANT_BASED) {
       gammaCorrectionSpatialBased(I, p_mask);
@@ -714,7 +714,7 @@ void stretchContrast(vpImage<unsigned char> &I)
   unsigned char lut[256];
   if (range > 0) {
     for (unsigned int x = min; x <= max; ++x) {
-      lut[x] = 255 * (x - min) / range;
+      lut[x] = (255 * (x - min)) / range;
     }
   }
   else {
@@ -766,7 +766,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
   unsigned char rangeR = max.R - min.R;
   if (rangeR > 0) {
     for (unsigned int x = min.R; x <= max.R; ++x) {
-      lut[x].R = 255 * (x - min.R) / rangeR;
+      lut[x].R = (255 * (x - min.R)) / rangeR;
     }
   }
   else {
@@ -776,7 +776,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
   unsigned char rangeG = max.G - min.G;
   if (rangeG > 0) {
     for (unsigned int x = min.G; x <= max.G; ++x) {
-      lut[x].G = 255 * (x - min.G) / rangeG;
+      lut[x].G = (255 * (x - min.G)) / rangeG;
     }
   }
   else {
@@ -786,7 +786,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
   unsigned char rangeB = max.B - min.B;
   if (rangeB > 0) {
     for (unsigned int x = min.B; x <= max.B; ++x) {
-      lut[x].B = 255 * (x - min.B) / rangeB;
+      lut[x].B = (255 * (x - min.B)) / rangeB;
     }
   }
   else {
@@ -796,7 +796,7 @@ void stretchContrast(vpImage<vpRGBa> &I)
   unsigned char rangeA = max.A - min.A;
   if (rangeA > 0) {
     for (unsigned int x = min.A; x <= max.A; ++x) {
-      lut[x].A = 255 * (x - min.A) / rangeA;
+      lut[x].A = (255 * (x - min.A)) / rangeA;
     }
   }
   else {
@@ -883,7 +883,7 @@ void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
     // Unsharp mask
     unsigned int i_size = I.getSize();
     for (unsigned int cpt = 0; cpt < i_size; ++cpt) {
-      double val = (I.bitmap[cpt] - weight * I_blurred.bitmap[cpt]) / (1 - weight);
+      double val = (I.bitmap[cpt] - (weight * I_blurred.bitmap[cpt])) / (1 - weight);
       I.bitmap[cpt] = vpMath::saturate<unsigned char>(val); // val > 255 ? 255 : (val < 0 ? 0 : val);
     }
   }
@@ -921,13 +921,13 @@ void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight)
     unsigned int i_size = I.getSize();
     for (unsigned int cpt = 0; cpt < i_size; ++cpt) {
 #if defined(VISP_HAVE_SIMDLIB)
-      double val_R = (I.bitmap[cpt].R - weight * I_blurred.bitmap[cpt].R) / (1 - weight);
-      double val_G = (I.bitmap[cpt].G - weight * I_blurred.bitmap[cpt].G) / (1 - weight);
-      double val_B = (I.bitmap[cpt].B - weight * I_blurred.bitmap[cpt].B) / (1 - weight);
+      double val_R = (I.bitmap[cpt].R - (weight * I_blurred.bitmap[cpt].R)) / (1 - weight);
+      double val_G = (I.bitmap[cpt].G - (weight * I_blurred.bitmap[cpt].G)) / (1 - weight);
+      double val_B = (I.bitmap[cpt].B - (weight * I_blurred.bitmap[cpt].B)) / (1 - weight);
 #else
-      double val_R = (I.bitmap[cpt].R - weight * I_blurred_R.bitmap[cpt]) / (1 - weight);
-      double val_G = (I.bitmap[cpt].G - weight * I_blurred_G.bitmap[cpt]) / (1 - weight);
-      double val_B = (I.bitmap[cpt].B - weight * I_blurred_B.bitmap[cpt]) / (1 - weight);
+      double val_R = (I.bitmap[cpt].R - (weight * I_blurred_R.bitmap[cpt])) / (1 - weight);
+      double val_G = (I.bitmap[cpt].G - (weight * I_blurred_G.bitmap[cpt])) / (1 - weight);
+      double val_B = (I.bitmap[cpt].B - (weight * I_blurred_B.bitmap[cpt])) / (1 - weight);
 #endif
       I.bitmap[cpt].R = vpMath::saturate<unsigned char>(val_R);
       I.bitmap[cpt].G = vpMath::saturate<unsigned char>(val_G);

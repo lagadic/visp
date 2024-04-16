@@ -702,7 +702,7 @@ vpMatrix vpTranslationVector::skew() const
 vpTranslationVector vpTranslationVector::cross(const vpTranslationVector &a, const vpTranslationVector &b)
 {
   vpMatrix skew_a = vpTranslationVector::skew(a);
-  return (vpTranslationVector)(skew_a * b);
+  return static_cast<vpTranslationVector>(skew_a * b);
 }
 
 /*!
@@ -774,7 +774,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
   vpColVector meanT(3);
   size_t vec_m_size = vec_M.size();
   for (size_t i = 0; i < vec_m_size; ++i) {
-    meanT += (vpColVector)vec_M[i].getTranslationVector();
+    meanT += static_cast<vpColVector>(vec_M[i].getTranslationVector());
   }
   meanT /= static_cast<double>(vec_M.size());
 
@@ -795,7 +795,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
   vpColVector meanT(3);
   size_t l_vec_t_size = vec_t.size();
   for (size_t i = 0; i < l_vec_t_size; ++i) {
-    meanT += (vpColVector)vec_t[i];
+    meanT += static_cast<vpColVector>(vec_t[i]);
   }
   meanT /= static_cast<double>(vec_t.size());
 

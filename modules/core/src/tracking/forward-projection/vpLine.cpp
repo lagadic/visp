@@ -354,13 +354,6 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   C2 = (cMo[2][0] * a2) + (cMo[2][1] * b2) + (cMo[2][2] * c2);
   D2 = d2 - ((cMo[0][3] * A2) + (cMo[1][3] * B2) + (cMo[2][3] * C2));
 
-  // in case of verification
-  // --comment: ap1 = A1; bp1 = B1; cp1 = C1; dp1 = D1
-  // --comment:  ap2 = A2; bp2 = B2; cp2 = C2; dp2 = D2
-
-  //  vpERROR_TRACE("A1 B1 C1 D1 %f %f %f %f  ", A1, B1, C1, D1) ;
-  //  vpERROR_TRACE("A2 B2 C2 D2 %f %f %f %f  ", A2, B2, C2, D2) ;
-
   // Adding constraints on the straight line to have a unique representation
 
   // direction of the straight line = N1 x N2

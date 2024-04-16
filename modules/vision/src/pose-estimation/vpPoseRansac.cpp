@@ -181,7 +181,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
 
     vpPose poseMin;
     for (unsigned int i = 0; i < nbMinRandom;) {
-      if ((size_t)std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
+      if (static_cast<size_t>(std::count(usedPt.begin(), usedPt.end(), true)) == usedPt.size()) {
         // All points was picked once, break otherwise we stay in an infinite loop
         break;
       }
@@ -458,23 +458,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
   if (foundSolution) {
     unsigned int nbMinRandom = 4;
-    // std::cout << "Nb inliers " << nbInliers << std::endl;
 
-    // Display the random picked points
-    /*
-    std::cout << "Randoms : "
-    for(unsigned int i = 0 ; i < cur_randoms.size() ; ++i)
-      std::cout << cur_randoms[i] << " "
-    std::cout << std::endl
-    */
-
-    // Display the outliers
-    /*
-    std::cout << "Outliers : "
-    for(unsigned int i = 0 ; i < cur_outliers.size() ; ++i)
-      std::cout << cur_outliers[i] << " "
-    std::cout << std::endl
-    */
+    // --comment: print the nbInliers
+    // Display the random picked points (cur_randoms)
+    // Display the outliers (cur_outliers)
 
     // Even if the cardinality of the best consensus set is inferior to
     // ransacNbInlierConsensus,  we want to refine the solution with data in
@@ -553,7 +540,7 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
   }
 
   N = log(std::max<double>(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
-  if (logval < 0.0 && N < maxIterations) {
+  if ((logval < 0.0) && (N < maxIterations)) {
     return static_cast<int>(ceil(N));
   }
 

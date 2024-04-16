@@ -258,8 +258,8 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpIma
   if (ips.size() <= 1) {
     return;
   }
-
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_dot_line(I, ips[i], ips[i + 1], color, thickness);
   }
 
@@ -515,7 +515,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImageP
     return;
   }
 
-  for (size_t i = 0; i < ips.size() - 1; ++i) {
+  size_t ips_size = ips.size();
+  for (size_t i = 0; i < (ips_size - 1); ++i) {
     vp_display_display_line(I, ips[i], ips[i + 1], color, thickness);
   }
 

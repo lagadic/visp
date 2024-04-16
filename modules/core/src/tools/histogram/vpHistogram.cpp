@@ -202,7 +202,7 @@ vpHistogram::vpHistogram(const vpHistogram &h) : m_histogram(nullptr), m_size(25
 }
 
 /*!
-  Calculates the histrogram from a gray level image.
+  Calculates the histogram from a gray level image.
 
   \param I : Gray level image.
 
@@ -216,7 +216,7 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I) : m_histogram(nullptr)
 }
 
 /*!
-  Calculates the histrogram from a gray level image using a binary mask.
+  Calculates the histogram from a gray level image using a binary mask.
 
   \param I : Gray level image.
   \param p_mask: A pointer towards a binary mask where true indicates that the pixel should considered
@@ -236,7 +236,6 @@ vpHistogram::vpHistogram(const vpImage<unsigned char> &I, const vpImage<bool> *p
 vpHistogram::~vpHistogram()
 {
   if (m_histogram != nullptr) {
-    // --comment:   vpTRACE("free: %p", &histogram);
     delete[] m_histogram;
     m_histogram = nullptr;
     m_size = 0;
@@ -285,7 +284,6 @@ void vpHistogram::init(unsigned size_)
 
   mp_mask = nullptr;
   m_total = 0;
-  // --comment: vpTRACE("alloc: %p", &histogram);
 }
 
 /*!
@@ -320,13 +318,13 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
   use_single_thread = (nbThreads == 0 || nbThreads == 1);
 #endif
 
-  if (!use_single_thread && (I.getSize() <= nbThreads)) {
+  if ((!use_single_thread) && (I.getSize() <= nbThreads)) {
     use_single_thread = true;
   }
 
   unsigned int lut[256];
   for (unsigned int i = 0; i < 256; ++i) {
-    lut[i] = static_cast<unsigned int>(i * m_size / 256.0);
+    lut[i] = static_cast<unsigned int>((i * m_size) / 256.0);
   }
 
   if (use_single_thread) {
@@ -588,12 +586,6 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   for (unsigned i = 0; i < (m_size - 1); ++i) {
     int next_slope = static_cast<int>(m_histogram[i + 1]) - static_cast<int>(m_histogram[i]); // Next histogram inclination
 
-    //  --comment:   if ((prev_slope < 0) && (next_slope > 0) ) {
-    //  --comment:     sum_level += i;
-    //  --comment:     cpt ++;
-    //  --comment:     continue;
-    //  --comment:   }
-
     if ((prev_slope > 0) && (next_slope == 0)) {
       sum_level += i + 1;
       cpt++;
@@ -607,7 +599,6 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 
       unsigned int level = sum_level / cpt;
       p.set(static_cast<unsigned char>(level), m_histogram[level]);
-      // --comment:  vpTRACE("add %d %d", p.getLevel(), p.getValue());
       peaks.push_back(p);
 
       nbpeaks++;
@@ -619,7 +610,6 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   }
   if (prev_slope > 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
-    //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     peaks.push_back(p);
     nbpeaks++;
   }
@@ -719,7 +709,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   // Parse the histogram to get the local maxima
   nbpeaks = 0;
   prev_slope = 1;
-  for (unsigned i = 0; i < m_size - 1; ++i) {
+  for (unsigned i = 0; i < (m_size - 1); ++i) {
     int next_slope = static_cast<int>(m_histogram[i + 1]) - static_cast<int>(m_histogram[i]); // Next histogram inclination
     if (next_slope == 0)
       continue;
@@ -801,7 +791,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   sumindmini = 0;
   nbmini = 0;
   unsigned peakr_level = peakr.getLevel();
-  for (unsigned i = peakl.getLevel(); i <= peakr_level; i++) {
+  for (unsigned i = peakl.getLevel(); i <= peakr_level; ++i) {
     if (m_histogram[i] < mini) {
       mini = m_histogram[i];
       nbmini = 1;
@@ -813,9 +803,6 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
       nbmini++;
     }
   }
-  // --comment: vpTRACE("nbmini %d", nbmini);
-  // --comment: vpTRACE("sumindmini %d", sumindmini);
-  // --comment: vpTRACE("mini: indmini: %d", sumindmini/nbmini);
 
   if (nbmini == 0) {
     // no valey found
@@ -881,7 +868,6 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 
       unsigned int level = sum_level / cpt;
       p.set(static_cast<unsigned char>(level), m_histogram[level]);
-      //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
       valey.push_back(p);
 
       nbvaley++;
@@ -893,7 +879,6 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
   }
   if (prev_slope < 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
-    //      vpTRACE("add %d %d", p.getLevel(), p.getValue());
     valey.push_back(p);
     nbvaley++;
   }
@@ -938,7 +923,7 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
   sumindmini = 0;
   nbmini = 0;
   unsigned peakr_level = peakr.getLevel();
-  for (unsigned i = peakl.getLevel(); i <= peakr_level; i++) {
+  for (unsigned i = peakl.getLevel(); i <= peakr_level; ++i) {
     if (m_histogram[i] < mini) {
       mini = m_histogram[i];
       nbmini = 1;
@@ -1088,7 +1073,7 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     bool found = false;
     // search for the nearest peak on the right that matches the distance
     std::list<vpHistogramPeak>::const_iterator rit; // right iterator
-    for (rit = it; rit != peaks.end(); ++rit)
+    for (rit = it; rit != peaks.end(); ++rit) {
 
       if (abs((*rit).getLevel() - peak.getLevel()) > dist) {
         // peakr found
@@ -1096,6 +1081,7 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
         found = true;
         break; // we can stop here
       }
+    }
 
     if (!found) {
       peakr.set(static_cast<unsigned char>(m_size - 1), 0);
@@ -1105,7 +1091,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     mini = peak.getValue();
     sumindmini = 0;
     nbmini = 0;
-    for (unsigned i = static_cast<unsigned int>(peak.getLevel()) + 1; i <= static_cast<unsigned int>(peakr.getLevel()); ++i) {
+    unsigned int peakr_level = static_cast<unsigned int>(peakr.getLevel());
+    for (unsigned i = static_cast<unsigned int>(peak.getLevel()) + 1; i <= peakr_level; ++i) {
       if (m_histogram[i] < mini) {
         mini = m_histogram[i];
         nbmini = 1;

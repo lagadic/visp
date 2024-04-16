@@ -107,19 +107,25 @@ void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigne
   }
   unsigned char v;
 
-  double factor = (double)(B_star - A_star) / (double)(B - A);
+  double factor = static_cast<double>((B_star - A_star) / static_cast<double>((B - A)));
 
-  for (unsigned int i = 0; i < I.getHeight(); ++i)
-    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < i_width; ++j) {
       v = I[i][j];
 
-      if (v <= A)
+      if (v <= A) {
         I[i][j] = A_star;
-      else if (v >= B)
+      }
+      else if (v >= B) {
         I[i][j] = B_star;
-      else
-        I[i][j] = (unsigned char)(A_star + factor * (v - A));
+      }
+      else {
+        I[i][j] = static_cast<unsigned char>(A_star + (factor * (v - A)));
+      }
     }
+  }
 }
 
 /*!
@@ -277,11 +283,11 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
     int diffR = I1.bitmap[b].R - I2.bitmap[b].R;
     int diffG = I1.bitmap[b].G - I2.bitmap[b].G;
     int diffB = I1.bitmap[b].B - I2.bitmap[b].B;
-    // int diffA = I1.bitmap[b].A - I2.bitmap[b].A;
+    // --comment: int diffA eq I1 dot bitmap[b] dot A minus I2 dot bitmap[b] dot A
     Idiff.bitmap[b].R = static_cast<unsigned char>(vpMath::abs(diffR));
     Idiff.bitmap[b].G = static_cast<unsigned char>(vpMath::abs(diffG));
     Idiff.bitmap[b].B = static_cast<unsigned char>(vpMath::abs(diffB));
-    // Idiff.bitmap[b].A = diffA;
+    // --comment: Idiff dot bitmap[b] dot A eq diffA
     Idiff.bitmap[b].A = 0;
   }
 }
@@ -403,13 +409,14 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   float kud = 0;
   std::vector<double> dist_coefs;
 
-  if (!is_KannalaBrandt)
+  if (!is_KannalaBrandt) {
     kud = static_cast<float>(cam.get_kud());
-
-  else
+  }
+  else {
     dist_coefs = cam.getKannalaBrandtDistortionCoefficients();
+  }
 
-  if (!is_KannalaBrandt && std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
+  if ((!is_KannalaBrandt) && (std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon())) {
     // There is no need to undistort the image (Perpective projection)
     for (unsigned int i = 0; i < height; ++i) {
       for (unsigned int j = 0; j < width; ++j) {
@@ -444,19 +451,21 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   for (unsigned int v = 0; v < height; ++v) {
     deltav = v - v0;
 
-    if (!is_KannalaBrandt)
-      fr1 = 1.0f + kud_py2 * deltav * deltav;
-    else
+    if (!is_KannalaBrandt) {
+      fr1 = 1.0f + (kud_py2 * deltav * deltav);
+    }
+    else {
       deltav_py = deltav * invpy;
+    }
 
     for (unsigned int u = 0; u < width; ++u) {
       // computation of u,v : corresponding pixel coordinates in I.
       deltau = u - u0;
       if (!is_KannalaBrandt) {
-        fr2 = fr1 + kud_px2 * deltau * deltau;
+        fr2 = fr1 + (kud_px2 * deltau * deltau);
 
-        u_float = deltau * fr2 + u0;
-        v_float = deltav * fr2 + v0;
+        u_float = (deltau * fr2) + u0;
+        v_float = (deltav * fr2) + v0;
       }
 
       else {
@@ -469,13 +478,13 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
         theta6 = theta2 * theta4;
         theta8 = vpMath::sqr(theta4);
 
-        theta_d = theta * (1 + dist_coefs[0] * theta2 + dist_coefs[1] * theta4 + dist_coefs[2] * theta6 +
-                           dist_coefs[3] * theta8);
+        theta_d = theta * (1 + (dist_coefs[0] * theta2) + (dist_coefs[1] * theta4) + (dist_coefs[2] * theta6) +
+                           (dist_coefs[3] * theta8));
 
-        // scale = (r == 0) ? 1.0 : theta_d / r;
-        scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : theta_d / r;
-        u_float = static_cast<float>(deltau * scale + u0);
-        v_float = static_cast<float>(deltav * scale + v0);
+        // --comment: scale eq (r == 0) 1.0 otherwise theta_d / r
+        scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : (theta_d / r);
+        u_float = static_cast<float>((deltau * scale) + u0);
+        v_float = static_cast<float>((deltav * scale) + v0);
       }
 
       u_round = static_cast<int>(u_float);
@@ -511,10 +520,12 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
   II.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
   IIsq.resize(I.getHeight() + 1, I.getWidth() + 1, 0.0);
 
-  for (unsigned int i = 1; i < II.getHeight(); ++i) {
-    for (unsigned int j = 1; j < II.getWidth(); ++j) {
-      II[i][j] = I[i - 1][j - 1] + II[i - 1][j] + II[i][j - 1] - II[i - 1][j - 1];
-      IIsq[i][j] = vpMath::sqr(I[i - 1][j - 1]) + IIsq[i - 1][j] + IIsq[i][j - 1] - IIsq[i - 1][j - 1];
+  unsigned int ii_height = II.getHeight();
+  unsigned int ii_width = II.getWidth();
+  for (unsigned int i = 1; i < ii_height; ++i) {
+    for (unsigned int j = 1; j < ii_width; ++j) {
+      II[i][j] = (I[i - 1][j - 1] + II[i - 1][j] + II[i][j - 1]) - II[i - 1][j - 1];
+      IIsq[i][j] = (vpMath::sqr(I[i - 1][j - 1]) + IIsq[i - 1][j] + IIsq[i][j - 1]) - IIsq[i - 1][j - 1];
     }
   }
 }
@@ -567,11 +578,14 @@ void vpImageTools::columnMean(const vpImage<double> &I, vpRowVector &V)
   unsigned int height = I.getHeight(), width = I.getWidth();
   V.resize(width); // resize and nullify
 
-  for (unsigned int i = 0; i < height; ++i)
-    for (unsigned int j = 0; j < width; ++j)
+  for (unsigned int i = 0; i < height; ++i) {
+    for (unsigned int j = 0; j < width; ++j) {
       V[j] += I[i][j];
-  for (unsigned int j = 0; j < width; ++j)
+    }
+  }
+  for (unsigned int j = 0; j < width; ++j) {
     V[j] /= height;
+  }
 }
 
 /*!
@@ -581,9 +595,13 @@ void vpImageTools::columnMean(const vpImage<double> &I, vpRowVector &V)
 void vpImageTools::normalize(vpImage<double> &I)
 {
   double s = I.getSum();
-  for (unsigned int i = 0; i < I.getHeight(); ++i)
-    for (unsigned int j = 0; j < I.getWidth(); ++j)
+  unsigned int i_height = I.getHeight();
+  unsigned int i_width = I.getWidth();
+  for (unsigned int i = 0; i < i_height; ++i) {
+    for (unsigned int j = 0; j < i_width; ++j) {
       I(i, j, I(i, j) / s);
+    }
+  }
 }
 
 /*!
@@ -600,22 +618,23 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
   case INTERPOLATION_NEAREST:
     return I(vpMath::round(point.get_i()), vpMath::round(point.get_j()));
   case INTERPOLATION_LINEAR: {
-    int x1 = (int)floor(point.get_i());
-    int x2 = (int)ceil(point.get_i());
-    int y1 = (int)floor(point.get_j());
-    int y2 = (int)ceil(point.get_j());
+    int x1 = static_cast<int>(floor(point.get_i()));
+    int x2 = static_cast<int>(ceil(point.get_i()));
+    int y1 = static_cast<int>(floor(point.get_j()));
+    int y2 = static_cast<int>(ceil(point.get_j()));
     double v1, v2;
     if (x1 == x2) {
       v1 = I(x1, y1);
       v2 = I(x1, y2);
     }
     else {
-      v1 = (x2 - point.get_i()) * I(x1, y1) + (point.get_i() - x1) * I(x2, y1);
-      v2 = (x2 - point.get_i()) * I(x1, y2) + (point.get_i() - x1) * I(x2, y2);
+      v1 = ((x2 - point.get_i()) * I(x1, y1)) + ((point.get_i() - x1) * I(x2, y1));
+      v2 = ((x2 - point.get_i()) * I(x1, y2)) + ((point.get_i() - x1) * I(x2, y2));
     }
-    if (y1 == y2)
+    if (y1 == y2) {
       return v1;
-    return (y2 - point.get_j()) * v1 + (point.get_j() - y1) * v2;
+    }
+    return ((y2 - point.get_j()) * v1) + ((point.get_j() - y1) * v2);
   }
   case INTERPOLATION_CUBIC: {
     throw vpException(vpException::notImplementedError,
@@ -629,45 +648,53 @@ double vpImageTools::interpolate(const vpImage<unsigned char> &I, const vpImageP
 
 /*!
   Extract a rectangular region from an image.
-  \param Src : The source image.
-  \param Dst : The resulting image.
+  \param src : The source image.
+  \param dst : The resulting image.
   \param r : The rectangle area.
 */
-void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, const vpRectOriented &r)
+void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<unsigned char> &dst, const vpRectOriented &r)
 {
   unsigned int x_d = vpMath::round(r.getHeight());
   unsigned int y_d = vpMath::round(r.getWidth());
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
-  Dst.resize(x_d, y_d);
+  double cos_t = cos(t);
+  double sin_t = sin(t);
+  dst.resize(x_d, y_d);
   for (unsigned int x = 0; x < x_d; ++x) {
+    double x_cos_t = x * cos_t;
+    double x_sin_t = x * sin_t;
     for (unsigned int y = 0; y < y_d; ++y) {
-      Dst(x, y,
-          (unsigned char)interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
-                                     vpImageTools::INTERPOLATION_LINEAR));
+      dst(x, y,
+          static_cast<unsigned char>(interpolate(src, vpImagePoint(x1 + x_cos_t + (y * sin_t), (y1 - x_sin_t) + (y * cos_t)),
+                                                 vpImageTools::INTERPOLATION_LINEAR)));
     }
   }
 }
 
 /*!
   Extract a rectangular region from an image.
-  \param Src : The source image.
-  \param Dst : The resulting image.
+  \param src : The source image.
+  \param dst : The resulting image.
   \param r : The rectangle area.
 */
-void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst, const vpRectOriented &r)
+void vpImageTools::extract(const vpImage<unsigned char> &src, vpImage<double> &dst, const vpRectOriented &r)
 {
   unsigned int x_d = vpMath::round(r.getHeight());
   unsigned int y_d = vpMath::round(r.getWidth());
   double x1 = r.getTopLeft().get_i();
   double y1 = r.getTopLeft().get_j();
   double t = r.getOrientation();
-  Dst.resize(x_d, y_d);
+  double cos_t = cos(t);
+  double sin_t = sin(t);
+  dst.resize(x_d, y_d);
   for (unsigned int x = 0; x < x_d; ++x) {
+    double x_cos_t = x * cos_t;
+    double x_sin_t = x * sin_t;
     for (unsigned int y = 0; y < y_d; ++y) {
-      Dst(x, y,
-          interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
+      dst(x, y,
+          interpolate(src, vpImagePoint(x1 + x_cos_t + (y * sin_t), (y1 - x_sin_t) + (y * cos_t)),
                       vpImageTools::INTERPOLATION_LINEAR));
     }
   }
@@ -701,7 +728,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     return;
   }
 
-  if (I_tpl.getHeight() > I.getHeight() || I_tpl.getWidth() > I.getWidth()) {
+  if ((I_tpl.getHeight() > I.getHeight()) || (I_tpl.getWidth() > I.getWidth())) {
     std::cerr << "Error, template image is bigger than input image." << std::endl;
     return;
   }
@@ -721,9 +748,10 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     integralImage(I_tpl, II_tpl, IIsq_tpl);
 
     // zero-mean template image
-    const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
+    const double sum2 = (((II_tpl[height_tpl][width_tpl] + II_tpl[0][0]) - II_tpl[0][width_tpl]) - II_tpl[height_tpl][0]);
     const double mean2 = sum2 / I_tpl.getSize();
-    for (unsigned int cpt = 0; cpt < I_tpl_double.getSize(); ++cpt) {
+    unsigned int i_tpl_double_size = I_tpl_double.getSize();
+    for (unsigned int cpt = 0; cpt < i_tpl_double_size; ++cpt) {
       I_tpl_double.bitmap[cpt] -= mean2;
     }
 
@@ -736,16 +764,18 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
     }
 #else
     // error C3016: 'i': index variable in OpenMP 'for' statement must have signed integral type
-    int end = (int)((I.getHeight() - height_tpl) / step_v) + 1;
-    std::vector<unsigned int> vec_step_v((size_t)end);
-    for (unsigned int cpt = 0, idx = 0; cpt < I.getHeight() - height_tpl; cpt += step_v, idx++) {
-      vec_step_v[(size_t)idx] = cpt;
+    int end = static_cast<int>((I.getHeight() - height_tpl) / step_v) + 1;
+    std::vector<unsigned int> vec_step_v(static_cast<size_t>(end));
+    unsigned int i_height = I.getHeight();
+    for (unsigned int cpt = 0, idx = 0; cpt < (i_height - height_tpl); cpt += step_v, ++idx) {
+      vec_step_v[static_cast<size_t>(idx)] = cpt;
     }
 #if defined(_OPENMP) // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
     for (int cpt = 0; cpt < end; ++cpt) {
-      for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
+      unsigned int i_width = I.getWidth();
+      for (unsigned int j = 0; j < (i_width - width_tpl); j += step_u) {
         I_score[vec_step_v[cpt]][j] =
           normalizedCorrelation(I_double, I_tpl_double, II, IIsq, II_tpl, IIsq_tpl, vec_step_v[cpt], j);
       }
@@ -755,9 +785,11 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
   else {
     vpImage<double> I_cur;
 
-    for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
-      for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
-        vpRect roi(vpImagePoint(i, j), vpImagePoint(i + height_tpl - 1, j + width_tpl - 1));
+    unsigned int i_height = I.getHeight();
+    unsigned int i_width = I.getWidth();
+    for (unsigned int i = 0; i < (i_height - height_tpl); i += step_v) {
+      for (unsigned int j = 0; j < (i_width - width_tpl); j += step_u) {
+        vpRect roi(vpImagePoint(i, j), vpImagePoint(((i + height_tpl) - 1), ((j + width_tpl) - 1)));
         vpImageTools::crop(I_double, roi, I_cur);
 
         I_score[i][j] = vpImageTools::normalizedCorrelation(I_cur, I_tpl_double, useOptimized);
@@ -775,21 +807,21 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
 // the edges.
 float vpImageTools::cubicHermite(const float A, const float B, const float C, const float D, const float t)
 {
-  float a = (-A + 3.0f * B - 3.0f * C + D) / 2.0f;
-  float b = A + 2.0f * C - (5.0f * B + D) / 2.0f;
+  float a = (((-A + (3.0f * B)) - (3.0f * C)) + D) / 2.0f;
+  float b = (A + (2.0f * C)) - (((5.0f * B) + D) / 2.0f);
   float c = (-A + C) / 2.0f;
   float d = B;
 
-  return a * t * t * t + b * t * t + c * t + d;
+  return (a * t * t * t) + (b * t * t) + (c * t) + d;
 }
 
 int vpImageTools::coordCast(double x) { return x < 0 ? -1 : static_cast<int>(x); }
 
-double vpImageTools::lerp(double A, double B, double t) { return A * (1.0 - t) + B * t; }
+double vpImageTools::lerp(double A, double B, double t) { return (A * (1.0 - t)) + (B * t); }
 
-float vpImageTools::lerp(float A, float B, float t) { return A * (1.0f - t) + B * t; }
+float vpImageTools::lerp(float A, float B, float t) { return (A * (1.0f - t)) + (B * t); }
 
-int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) { return A * t_1 + B * t; }
+int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) { return (A * t_1) + (B * t); }
 
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
@@ -810,16 +842,16 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
 
   unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
-    (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
-  const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
+    (((II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0]) - II[i0][j0 + width_tpl]) - II[i0 + height_tpl][j0]);
+  const double sum2 = (((II_tpl[height_tpl][width_tpl] + II_tpl[0][0]) - II_tpl[0][width_tpl]) - II_tpl[height_tpl][0]);
 
-  double a2 = ((IIsq[i0 + I2.getHeight()][j0 + I2.getWidth()] + IIsq[i0][j0] - IIsq[i0][j0 + I2.getWidth()] -
+  double a2 = ((((IIsq[i0 + I2.getHeight()][j0 + I2.getWidth()] + IIsq[i0][j0]) - IIsq[i0][j0 + I2.getWidth()]) -
                 IIsq[i0 + I2.getHeight()][j0]) -
-               (1.0 / I2.getSize()) * vpMath::sqr(sum1));
+               ((1.0 / I2.getSize()) * vpMath::sqr(sum1)));
 
-  double b2 = ((IIsq_tpl[I2.getHeight()][I2.getWidth()] + IIsq_tpl[0][0] - IIsq_tpl[0][I2.getWidth()] -
+  double b2 = ((((IIsq_tpl[I2.getHeight()][I2.getWidth()] + IIsq_tpl[0][0]) - IIsq_tpl[0][I2.getWidth()]) -
                 IIsq_tpl[I2.getHeight()][0]) -
-               (1.0 / I2.getSize()) * vpMath::sqr(sum2));
+               ((1.0 / I2.getSize()) * vpMath::sqr(sum2)));
   return ab / sqrt(a2 * b2);
 }
 
@@ -843,7 +875,8 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
 #endif
   for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); ++i_) {
     const unsigned int i = static_cast<unsigned int>(i_);
-    for (unsigned int j = 0; j < I.getWidth(); ++j) {
+    unsigned int i_width = I.getWidth();
+    for (unsigned int j = 0; j < i_width; ++j) {
 
       int u_round = mapU[i][j];
       int v_round = mapV[i][j];
@@ -851,8 +884,8 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
       float du = mapDu[i][j];
       float dv = mapDv[i][j];
 
-      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1 &&
-          v_round < static_cast<int>(I.getHeight()) - 1) {
+      if ((0 <= u_round) && (0 <= v_round) && (u_round < (static_cast<int>(I.getWidth()) - 1)) &&
+          (v_round < (static_cast<int>(I.getHeight()) - 1))) {
         // process interpolation
         float col0 = lerp(I[v_round][u_round], I[v_round][u_round + 1], du);
         float col1 = lerp(I[v_round + 1][u_round], I[v_round + 1][u_round + 1], du);
@@ -972,9 +1005,9 @@ bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatri
   double a7 = affine ? 0.0 : T[2][1];
   double a8 = affine ? 1.0 : T[2][2];
 
-  double w = a6 * x + a7 * y + a8;
-  double x2 = (a0 * x + a1 * y + a2) / w;
-  double y2 = (a3 * x + a4 * y + a5) / w;
+  double w = (a6 * x) + (a7 * y) + a8;
+  double x2 = ((a0 * x) + (a1 * y) + a2) / w;
+  double y2 = ((a3 * x) + (a4 * y) + a5) / w;
 
   const double limit = 1 << 15;
   return (vpMath::abs(x2) < limit) && (vpMath::abs(y2) < limit);

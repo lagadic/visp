@@ -127,7 +127,7 @@ void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCent
 
   for (int y = yMin; y < yMax; ++y) {
     for (int x = xMin; x < xMax; ++x) {
-      ++hist[fastRound(I[y][x] / 255.0f * bins)];
+      ++hist[fastRound((I[y][x] / 255.0f) * bins)];
     }
   }
 }
@@ -218,7 +218,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 
   if (fast) {
     int blockSize = (2 * blockRadius) + 1;
-    int limit = static_cast<int>((slope * blockSize * blockSize / bins) + 0.5);
+    int limit = static_cast<int>(((slope * blockSize * blockSize) / bins) + 0.5);
 
     /* div */
     int nc = I1.getWidth() / blockSize;
@@ -335,7 +335,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
 
           for (int x = xMin; x < xMax; ++x) {
             float wx = static_cast<float>(cs[c1] - x) / dc;
-            int v = fastRound(I1[y][x] / 255.0f * bins);
+            int v = fastRound((I1[y][x] / 255.0f) * bins);
             float t00 = tl[v];
             float t01 = tr[v];
             float t10 = bl[v];
@@ -386,7 +386,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
         // Compute histogram for the block at (0,0)
         for (int yi = yMin; yi < yMax; ++yi) {
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound(I1[yi][xi] / 255.0f * bins)];
+            ++hist[fastRound((I1[yi][xi] / 255.0f) * bins)];
           }
         }
       }
@@ -397,7 +397,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMin1 = yMin - 1;
           // Sliding histogram, remove top
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            --hist[fastRound(I1[yMin1][xi] / 255.0f * bins)];
+            --hist[fastRound((I1[yMin1][xi] / 255.0f) * bins)];
           }
         }
 
@@ -405,7 +405,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int yMax1 = yMax - 1;
           // Sliding histogram, add bottom
           for (int xi = xMin0; xi < xMax0; ++xi) {
-            ++hist[fastRound(I1[yMax1][xi] / 255.0f * bins)];
+            ++hist[fastRound((I1[yMax1][xi] / 255.0f) * bins)];
           }
         }
       }
@@ -420,7 +420,7 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMin1 = xMin - 1;
           // Sliding histogram, remove left
           for (int yi = yMin; yi < yMax; ++yi) {
-            --hist[fastRound(I1[yi][xMin1] / 255.0f * bins)];
+            --hist[fastRound((I1[yi][xMin1] / 255.0f) * bins)];
           }
         }
 
@@ -428,14 +428,14 @@ void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blo
           int xMax1 = xMax - 1;
           // Sliding histogram, add right
           for (int yi = yMin; yi < yMax; ++yi) {
-            ++hist[fastRound(I1[yi][xMax1] / 255.0f * bins)];
+            ++hist[fastRound((I1[yi][xMax1] / 255.0f) * bins)];
           }
         }
 
-        int v = fastRound(I1[y][x] / 255.0f * bins);
+        int v = fastRound((I1[y][x] / 255.0f) * bins);
         int w = std::min<int>(static_cast<int>(I1.getWidth()), xMax) - xMin;
         int n = h * w;
-        int limit = static_cast<int>(slope * n / bins + 0.5f);
+        int limit = static_cast<int>((slope * n) / bins + 0.5f);
         I2[y][x] = fastRound(transferValue(v, hist, clippedHist, limit) * 255.0f);
       }
     }

@@ -261,12 +261,12 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
     blue = rgb[++i_] / 255.0;
 
     if (red > green) {
-      max = ((std::max))(red, blue);
-      min = ((std::min))(green, blue);
+      max = std::max<double>(red, blue);
+      min = std::min<double>(green, blue);
     }
     else {
-      max = ((std::max))(green, blue);
-      min = ((std::min))(red, blue);
+      max = std::max<double>(green, blue);
+      min = std::min<double>(red, blue);
     }
 
     v = max;
@@ -288,10 +288,10 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
         h = (green - blue) / delta;
       }
       else if (vpMath::equal(green, max, std::numeric_limits<double>::epsilon())) {
-        h = 2 + (blue - red) / delta;
+        h = 2 + ((blue - red) / delta);
       }
       else {
-        h = 4 + (red - green) / delta;
+        h = 4 + ((red - green) / delta);
       }
 
       h /= 6.0;
@@ -365,7 +365,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
     v = max;
 
     if (!vpMath::equal(max, 0.f, std::numeric_limits<float>::epsilon())) {
-      s = 255.f * (max - min) / max;
+      s = (255.f * (max - min)) / max;
     }
     else {
       s = 0.f;
@@ -378,13 +378,13 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, unsigned char *hue, unsig
       float delta = max - min;
 
       if (vpMath::equal(red, max, std::numeric_limits<float>::epsilon())) {
-        h = h_scale[0] * (green - blue) / delta;
+        h = (h_scale[0] * (green - blue)) / delta;
       }
       else if (vpMath::equal(green, max, std::numeric_limits<float>::epsilon())) {
-        h = h_scale[1] + h_scale[0] * (blue - red) / delta;
+        h = h_scale[1] + ((h_scale[0] * (blue - red)) / delta);
       }
       else {
-        h = h_scale[2] + h_scale[0] * (red - green) / delta;
+        h = h_scale[2] + ((h_scale[0] * (red - green)) / delta);
       }
 
       if (h < 0.f) {
