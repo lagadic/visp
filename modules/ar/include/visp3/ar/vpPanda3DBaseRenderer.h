@@ -73,34 +73,11 @@ public:
     // Adapted from Megapose code (https://github.com/megapose6d/megapose6d/blob/master/src/megapose/panda3d_renderer/types.py#L59),
     // which was itself inspired by https://discourse.panda3d.org/t/lens-camera-for-opencv-style-camera-parameterisation/15413
     // And http://ksimek.github.io/2013/06/03/calibrated_cameras_in_opengl
-    // near, far = self.z_near, self.z_far
-    //   lens.set_far(far)
-    //   lens.set_near(near)
 
-    //   h, w = self.resolution
-    //   fx = self.K[0, 0]
-    //   fy = self.K[1, 1]
-    //   cx = self.K[0, 2]
-    //   cy = h - self.K[1, 2]
-    //   A = (far + near) / (far - near)
-    //   B = -2 * (far * near) / (far - near)
-    //   user_mat = np.array(
-    //       [
-    //         [fx, 0, 0, 0],
-    //           [0, 0, A, 1],
-    //           [0, fy, 0, 0],
-    //           [0, 0, B, 0],
-    //       ]
-    //   )
-
-    //   lens.setFilmSize(w, h)
-    //   lens.setUserMat(p3d.core.LMatrix4f(*user_mat.flatten().tolist()))
-    //   lens.setFilmOffset(w * 0.5 - cx, h * 0.5 - cy)
-    //   return
     PT(MatrixLens) lens = new MatrixLens();
     lens->set_near_far(m_clipNear, m_clipFar);
     const double A = (m_clipFar + m_clipNear) / (m_clipFar - m_clipNear);
-    const double B = -2 * (m_clipFar * m_clipNear) / (m_clipFar - m_clipNear);
+    const double B = -2.0 * (m_clipFar * m_clipNear) / (m_clipFar - m_clipNear);
 
     const double cx = m_cam.get_u0();
     const double cy = m_height - m_cam.get_v0();
@@ -145,15 +122,30 @@ public:
     int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
     m_window = m_framework->open_window(winProps, flags);
     m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
+    setupScene();
+    setupCamera();
+    m_window->get_display_region_3d()->set_camera(m_cameraPath);
+  }
+
+  virtual void setupScene()
+  {
     m_renderRoot = m_window->get_render().attach_new_node(m_name);
-    m_renderRoot.set_shader_auto();
-    initCamera();
+  }
+
+  void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
+  {
+    m_framework = framework;
+    m_window = window;
+    setupScene();
+    setupCamera();
   }
 
   virtual void renderFrame()
   {
     m_framework->get_graphics_engine()->render_frame();
   }
+
+  NodePath getRenderRoot() { return m_renderRoot; }
 
   virtual void setCameraPose(const vpHomogeneousMatrix &wTc)
   {
@@ -181,28 +173,44 @@ public:
     object.set_pos(t[0], t[1], t[2]);
     object.set_quat(LQuaternion(q.w(), q.x(), q.y(), q.z()));
   }
+  virtual vpHomogeneousMatrix getNodePose(const std::string &name)
+  {
+    NodePath object = m_renderRoot.find(name);
+    return getNodePose(object);
+  }
+  virtual vpHomogeneousMatrix getNodePose(NodePath &object)
+  {
+    const LPoint3 pos = object.get_pos();
+    const LQuaternion quat = object.get_quat();
+    const vpTranslationVector t(pos[0], pos[1], pos[2]);
+    const vpQuaternionVector q(quat.get_i(), quat.get_j(), quat.get_k(), quat.get_r());
+    return vpHomogeneousMatrix(t, q);
+  }
+
 
   /**
    * @brief Initialize camera. Should be called when the scene root of this render has already been created.
    *
    */
-  virtual void initCamera()
+  virtual void setupCamera()
   {
-    m_camera = new Camera("camera");
-    m_renderRoot.attach_new_node(m_camera);
+    m_cameraPath = m_window->make_camera();
+    m_camera = (Camera *)m_cameraPath.node();
+      // m_camera = m_window->get_camera(0);
+    m_cameraPath = m_renderRoot.attach_new_node(m_camera);
     m_renderParameters.setupPandaCamera(m_camera);
   }
 
   NodePath loadObject(const std::string &nodeName, const std::string &modelPath)
   {
-    NodePath model = m_window->load_model(m_framework->get_models(), modelPath);
+    NodePath model = m_window->load_model(m_window->get_render(), modelPath);
     std::cout << "After loading model" << std::endl;
-    model.detach_node();
+    //model.detach_node();
     model.set_name(nodeName);
     return model;
   }
 
-  virtual void addNodeToScene(NodePath &object)
+  virtual void addNodeToScene(const NodePath &object)
   {
     NodePath objectInScene = m_renderRoot.attach_new_node(object.node());
     objectInScene.set_name(object.get_name());
