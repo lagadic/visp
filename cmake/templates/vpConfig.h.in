@@ -283,6 +283,9 @@
 // Defined if OpenGL library available.
 #cmakedefine VISP_HAVE_OPENGL
 
+// Defined if Panda3D is available
+#cmakedefine VISP_HAVE_PANDA3D
+
 // Defined if Qt library available (either Qt-3 or Qt-4).
 #cmakedefine VISP_HAVE_QT
 

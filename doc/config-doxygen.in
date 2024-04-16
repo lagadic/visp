@@ -2409,6 +2409,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          HAVE_OPENCV_VIDEO \
                          HAVE_OPENCV_VIDEOIO \
                          VISP_HAVE_OPENGL \
+                         VISP_HAVE_PANDA3D \
                          VISP_HAVE_PARPORT \
                          VISP_HAVE_PCL \
                          VISP_HAVE_PIONEER \
