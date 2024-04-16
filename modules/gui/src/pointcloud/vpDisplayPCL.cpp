@@ -35,8 +35,6 @@
 
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 
-#include <thread>
-
 #include <visp3/gui/vpDisplayPCL.h>
 
 /*!

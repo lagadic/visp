@@ -39,6 +39,7 @@
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
 
 #include <mutex>
+#include <thread>
 #include <string>
 
 #include <pcl/visualization/cloud_viewer.h>
