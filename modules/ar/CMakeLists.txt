@@ -173,6 +173,15 @@ if(USE_COIN3D)
   endif()
 endif()
 
+if(USE_PANDA3D)
+  if(Panda3D_INCLUDE_DIRS)
+    list(APPEND opt_incs ${Panda3D_INCLUDE_DIRS})
+  endif()
+  if(Panda3D_LIBRARIES)
+  list(APPEND opt_libs ${Panda3D_LIBRARIES})
+  endif()
+endif()
+
 vp_add_module(ar visp_core)
 vp_glob_module_sources()
 

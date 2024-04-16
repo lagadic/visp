@@ -5,8 +5,9 @@ else()
 endif()
 
 set(PANDA3D_LIBS
-  panda p3framework p3direct
-  p3dtoolconfig p3dtool pandaexpress pandaegg
+  panda p3framework pandaexpress
+  p3dtoolconfig p3dtool p3direct
+  #pandaegg
   #p3ffmpeg p3interrogatedb p3tinydisplay p3vision
   #pandaai pandafx pandaphysics pandaskel
 )
