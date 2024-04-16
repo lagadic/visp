@@ -104,8 +104,8 @@ public:
   static void crop(const unsigned char *bitmap, unsigned int width, unsigned int height, const vpRect &roi,
                    vpImage<Type> &crop, unsigned int v_scale = 1, unsigned int h_scale = 1);
 
-  static void extract(const vpImage<unsigned char> &Src, vpImage<unsigned char> &Dst, const vpRectOriented &r);
-  static void extract(const vpImage<unsigned char> &Src, vpImage<double> &Dst, const vpRectOriented &r);
+  static void extract(const vpImage<unsigned char> &src, vpImage<unsigned char> &dst, const vpRectOriented &r);
+  static void extract(const vpImage<unsigned char> &src, vpImage<double> &dst, const vpRectOriented &r);
 
   template <class Type> static void flip(const vpImage<Type> &I, vpImage<Type> &newI);
 

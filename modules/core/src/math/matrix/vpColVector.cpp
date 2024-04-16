@@ -775,11 +775,11 @@ void vpColVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
 
 void vpColVector::insert(unsigned int i, const vpColVector &v)
 {
-  if ((i + v.size()) > (this->size())) {
+  if ((i + v.size()) >(this->size())) {
     throw(vpException(vpException::dimensionError, "Unable to insert a column vector"));
   }
 
-  if ( (data != nullptr) && (v.data != nullptr) && (v.rowNum > 0)) {
+  if ((data != nullptr) && (v.data != nullptr) && (v.rowNum > 0)) {
     memcpy(data + i, v.data, sizeof(double) * v.rowNum);
   }
 }
@@ -907,7 +907,7 @@ double vpColVector::frobeniusNorm() const
 
 vpColVector vpColVector::hadamard(const vpColVector &v) const
 {
-  if ( (v.getRows() != rowNum) || (v.getCols() != colNum)) {
+  if ((v.getRows() != rowNum) || (v.getCols() != colNum)) {
     throw(vpException(vpException::dimensionError, "Hadamard product: bad dimensions!"));
   }
 

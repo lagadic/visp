@@ -216,16 +216,8 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
 #if defined(_OPENMP)
               std::lock_guard<std::mutex> lock(mutex);
 #endif
-#if PCL_VERSION_COMPARE(>=,1,14,1)
               pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
                                                      color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
-#else
-              pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
-              pt.x = point_3D[0];
-              pt.y = point_3D[1];
-              pt.z = point_3D[2];
-              pointcloud->push_back(pcl::PointXYZRGB(pt));
-#endif
             }
           }
         }
@@ -259,16 +251,8 @@ int vpImageConvert::depthToPointCloud(const vpImage<vpRGBa> &color, const vpImag
 #if defined(_OPENMP)
             std::lock_guard<std::mutex> lock(mutex);
 #endif
-#if PCL_VERSION_COMPARE(>=,1,14,1)
             pointcloud->push_back(pcl::PointXYZRGB(point_3D[0], point_3D[1], point_3D[2],
                                                    color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B));
-#else
-            pcl::PointXYZRGB pt(color.bitmap[p].R, color.bitmap[p].G, color.bitmap[p].B);
-            pt.x = point_3D[0];
-            pt.y = point_3D[1];
-            pt.z = point_3D[2];
-            pointcloud->push_back(pcl::PointXYZRGB(pt));
-#endif
           }
         }
       }

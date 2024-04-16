@@ -75,7 +75,7 @@ void vpSubMatrix::init(vpMatrix &m, const unsigned int &row_offset, const unsign
     throw(vpMatrixException(vpMatrixException::subMatrixError, "SubMatrix parent matrix is not allocated"));
   }
 
-  if ((row_offset + nrows <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
+  if (((row_offset + nrows) <= m.getRows()) && ((col_offset + ncols) <= m.getCols())) {
     data = m.data;
     parent = &m;
     rowNum = nrows;

@@ -157,11 +157,11 @@ void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, v
   vpDirection trace = dir.clockwise();
   vpImagePoint i1j1(-1, -1);
 
-  // --comment: find i1j1 (3.1)
+  // --comment: find i1j1 3.1
   while (trace.m_direction != dir.m_direction) {
     vpImagePoint activePixel = trace.active(I, ij);
 
-    if (activePixel.get_i() >= 0 && activePixel.get_j() >= 0) {
+    if ((activePixel.get_i() >= 0) && (activePixel.get_j() >= 0)) {
       i1j1 = activePixel;
       break;
     }
@@ -429,7 +429,8 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
       // Restore children
       (*it)->m_children = children_copy;
       // Set parent to children
-      for (size_t i = 0; i < contours.m_children.size(); ++i) {
+      size_t contours_m_children_size = contours.m_children.size();
+      for (size_t i = 0; i < contours_m_children_size; ++i) {
         contours.m_children[i]->m_parent = &contours;
       }
       contourPts.push_back((*it)->m_points);

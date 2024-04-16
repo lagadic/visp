@@ -48,7 +48,7 @@ bool isBimodal(const std::vector<float> &hist_float)
 
   size_t hist_float_size_m_1 = hist_float.size() - 1;
   for (size_t cpt = 1; cpt < hist_float_size_m_1; ++cpt) {
-    if (hist_float[cpt - 1] < hist_float[cpt] && hist_float[cpt] > hist_float[cpt + 1]) {
+    if ((hist_float[cpt - 1] < hist_float[cpt]) && (hist_float[cpt] > hist_float[cpt + 1])) {
       modes++;
     }
 
@@ -72,11 +72,12 @@ int computeThresholdHuang(const vpHistogram &hist)
 
   // Find first and last non-empty bin
   size_t first, last;
-  for (first = 0; (first < static_cast<size_t>(hist.getSize())) && (hist[static_cast<unsigned char>(first)] == 0); first++) {
+  size_t hist_size = hist.getSize();
+  for (first = 0; (first < hist_size) && (hist[static_cast<unsigned char>(first)] == 0); first++) {
     // do nothing
   }
 
-  for (last = static_cast<size_t>(hist.getSize()) - 1; (last > first) && (hist[static_cast<unsigned char>(last)] == 0); last--) {
+  for (last = (hist_size - 1); (last > first) && (hist[static_cast<unsigned char>(last)] == 0); last--) {
     // do nothing
   }
 
@@ -169,7 +170,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
     hist_float[0] = (hist_float[0] + hist_float[1]) / 2.0f;
 
     // Last value
-    hist_float[hist_float.size() - 1] = (hist_float.size() - 2 + hist_float.size() - 1) / 2.0f;
+    hist_float[hist_float.size() - 1] = (((hist_float.size() - 2) + hist_float.size()) - 1) / 2.0f;
 
     iter++;
 
@@ -189,7 +190,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
     }
   }
 
-  return static_cast<int>(std::floor(tt / 2.0)); // vpMath::round(tt / 2.0);
+  return static_cast<int>(std::floor(tt / 2.0)); // vpMath round of tt div 2.0
 }
 
 int computeThresholdIsoData(const vpHistogram &hist, unsigned int imageSize)

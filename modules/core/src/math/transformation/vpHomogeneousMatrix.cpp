@@ -593,7 +593,7 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
 
   v1 /= v1[3];
 
-  //  --comment: v1 = M*v
+  //  --comment: v1 equals M multiplied by v
   aP.set_X(v1[0]);
   aP.set_Y(v1[1]);
   aP.set_Z(v1[2]);

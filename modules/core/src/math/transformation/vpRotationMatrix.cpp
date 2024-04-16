@@ -829,12 +829,12 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpQuaternionVector &q)
   double b = q.x();
   double c = q.y();
   double d = q.z();
-  (*this)[0][0] = ((a * a) + (b * b) - (c * c)) - (d * d);
+  (*this)[0][0] = (((a * a) + (b * b)) - (c * c)) - (d * d);
   (*this)[0][1] = (2 * b * c) - (2 * a * d);
   (*this)[0][2] = (2 * a * c) + (2 * b * d);
 
   (*this)[1][0] = (2 * a * d) + (2 * b * c);
-  (*this)[1][1] = ((a * a) - (b * b) + (c * c)) - (d * d);
+  (*this)[1][1] = (((a * a) - (b * b)) + (c * c)) - (d * d);
   (*this)[1][2] = (2 * c * d) - (2 * a * b);
 
   (*this)[2][0] = (2 * b * d) - (2 * a * c);

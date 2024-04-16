@@ -71,8 +71,7 @@
 
 vpUniRand::vpUniRand()
   : m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
-{
-}
+{ }
 
 /*!
   Create a pseudorandom number generator with uniform distribution.
@@ -146,7 +145,7 @@ uint32_t vpUniRand::boundedRand(uint32_t bound)
 uint32_t vpUniRand::next()
 {
   uint64_t oldstate = m_rng.state;
-  m_rng.state = oldstate * 6364136223846793005ULL + m_rng.inc;
+  m_rng.state = (oldstate * 6364136223846793005ULL) + m_rng.inc;
   uint32_t xorshifted = static_cast<uint32_t>(((oldstate >> 18u) ^ oldstate) >> 27u);
   uint32_t rot = oldstate >> 59u;
   return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));

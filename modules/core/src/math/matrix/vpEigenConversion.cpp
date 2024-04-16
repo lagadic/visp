@@ -64,11 +64,11 @@ void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
   for (Eigen::DenseIndex i = 0; i < src_rows; i++) {
 #else
   Eigen::Index src_rows = src.rows();
-  for (Eigen::Index i = 0; i < src_rows; i++) {
+  for (Eigen::Index i = 0; i < src_rows; ++i) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-  }
+}
 
 void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
 {
@@ -78,11 +78,11 @@ void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
   for (Eigen::DenseIndex i = 0; i < src_cols; ++i) {
 #else
   Eigen::Index src_cols = src.cols();
-  for (Eigen::Index i = 0; i < src_cols; i++) {
+  for (Eigen::Index i = 0; i < src_cols; ++i) {
 #endif
     dst[static_cast<unsigned int>(i)] = src(i);
   }
-  }
+}
 
 void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 
