@@ -148,6 +148,7 @@ html_theme = 'sphinx_immaterial'
 # html_theme_options = {}
 html_theme_options = {
     "toc_title_is_page_title": True,
+    "font": False,
     "repo_url": "https://github.com/lagadic/visp",
     "repo_name": "visp",
     "features": [
