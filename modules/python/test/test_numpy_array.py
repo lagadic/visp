@@ -86,7 +86,6 @@ def test_numpy_constructor_interpreted_as_1d_vector():
   ac = ArrayDouble2D(n_1d, c=len(n_1d))
 
 
-
 def test_numpy_conversion_and_back():
   a = ArrayDouble2D(10, 10, 2.0)
   a_np = a.numpy().copy()
