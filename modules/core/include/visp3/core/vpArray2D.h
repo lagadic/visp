@@ -223,10 +223,22 @@ public:
       resize(r, c, false, false);
     }
     else if (c == 0) {
+      if (r != vec.size()) {
+        throw(vpException(vpException::dimensionError,
+                          "Cannot initialize vpArray(%d, %d) from std::vector(%d). Wrong dimension", r, c, vec.size()));
+      }
       resize(static_cast<unsigned int>(vec.size()), 1, false, false);
     }
     else if (r == 0) {
+      if (c != vec.size()) {
+        throw(vpException(vpException::dimensionError,
+                          "Cannot initialize vpArray(%d, %d) from std::vector(%d). Wrong dimension", r, c, vec.size()));
+      }
       resize(1, static_cast<unsigned int>(vec.size()), false, false);
+    }
+    else {
+      throw(vpException(vpException::dimensionError,
+                        "Cannot initialize vpArray(%d, %d) from std::vector(%d). Wrong dimension", r, c, vec.size()));
     }
 #if ((__cplusplus >= 201103L) || (defined(_MSVC_LANG) && (_MSVC_LANG >= 201103L))) // Check if cxx11 or higher
     std::copy(vec.begin(), vec.end(), data);
