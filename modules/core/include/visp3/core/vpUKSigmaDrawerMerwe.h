@@ -31,33 +31,24 @@
  * Display a point cloud using PCL library.
  */
 
-#ifndef _vpUKSigmaDrawerAbstract_h_
-#define _vpUKSigmaDrawerAbstract_h_
+#ifndef _vpUKSigmaDrawerMerwe_h_
+#define _vpUKSigmaDrawerMerwe_h_
 
 #include <vector>
 
 #include <visp3/core/vpConfig.h>
 
-#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpUKSigmaDrawerAbstract.h>
 
 /*!
   \class vpUKSigmaDrawerAbstract
   \ingroup group_core_kalman
   This abstract class defines the interface to draw the sigma points for the Unscented Kalman filter.
 */
-class VISP_EXPORT vpUKSigmaDrawerAbstract
+class VISP_EXPORT vpUKSigmaDrawerMerwe : public vpUKSigmaDrawerAbstract
 {
 public:
-  /**
-   * \brief The weights corresponding to the sigma points drawing.
-   */
-  typedef struct vpSigmaPointsWeights
-  {
-    std::vector<double> m_wm; /*!< The weights for the computation of the mean.*/
-    std::vector<double> m_wc; /*!< The weights for the computation of the covariance.*/
-  }vpSigmaPointsWeights;
-
-  vpUKSigmaDrawerAbstract(const unsigned int &n);
+  vpUKSigmaDrawerMerwe();
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state
@@ -67,15 +58,18 @@ public:
    * \param[in] covariance The current process covariance of the UKF.
    * @return std::vector<vpColVector> The sigma points.
    */
-  virtual std::vector<vpColVector> drawSigmaPoints(const vpColVector &mean, const vpMatrix &covariance) = 0;
+  virtual std::vector<vpColVector> drawSigmaPoints(const vpColVector &mean, const vpMatrix &covariance) override;
 
   /**
    * \brief Computed the weigths that correspond to the sigma poitns that have been drawn.
    *
    * \return vpSigmaPointsWeights The weights that correspond to the sigma points.
    */
-  virtual vpSigmaPointsWeights computeWeights() = 0;
+  virtual vpSigmaPointsWeights computeWeights() override;
 protected:
-  unsigned int m_n; /*!< The size of the state of the UKF.*/
+  double m_alpha;
+  double m_beta;
+  double m_kappa;
+  double m_lambda;
 };
 #endif

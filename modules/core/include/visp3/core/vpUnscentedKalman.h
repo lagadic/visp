@@ -53,6 +53,14 @@ public:
   vpUnscentedKalman(const vpUnscentedKalman &other);
 
   /**
+   * \brief Perform first the prediction step and then the filtering step.
+   *
+   * \param[in] z The new measurement.
+   * \param[in] dt The time in the future we must predict.
+   */
+  void filter(const vpColVector &z, const double &dt);
+
+  /**
    * \brief Predict the new state based on the last state and how far in time we want to predict.
    *
    * \param[in] dt The time in the future we must predict.
@@ -69,20 +77,20 @@ private:
   vpColVector m_Xpred; /*!< The predicted state variables.*/
   vpColVector m_Xest; /*!< The estimated (i.e. filtered) state variables.*/
   vpMatrix m_Q; /*!< The covariance introduced by performing the prediction step.*/
-  vpMatrix m_chi; /*!< The sigma points.*/
-  vpColVector m_wm; /*!< The weights for the mean computation.*/
-  vpColVector m_wc; /*!< The weights for the covariance computation.*/
-  vpMatrix m_Y; /*!< The projection forward in time of the sigma points according to the process model, called the prior.*/
+  std::vector<vpColVector> m_chi; /*!< The sigma points.*/
+  std::vector<double> m_wm; /*!< The weights for the mean computation.*/
+  std::vector<double> m_wc; /*!< The weights for the covariance computation.*/
+  std::vector<vpColVector> m_Y; /*!< The projection forward in time of the sigma points according to the process model, called the prior.*/
   vpColVector m_mu; /*!< The mean of the prior.*/
   vpMatrix m_P; /*!< The covariance matrix of the prior.*/
-  vpMatrix m_Z; /*!< The sigma points of the prior expressed in the measurement space, called the measurement sigma points.*/
+  std::vector<vpColVector> m_Z; /*!< The sigma points of the prior expressed in the measurement space, called the measurement sigma points.*/
   vpColVector m_muz; /*!< The mean of the measurement sigma points.*/
   vpMatrix m_Pz; /*!< The covariance matrix of the measurement sigma points.*/
   vpMatrix m_Pxz; /*!< The cross variance of the state and the measurements.*/
   vpColVector m_y; /*!< The residual.*/
   vpMatrix m_K; /*!< The Kalman gain.*/
-  std::function<vpMatrix(const vpMatrix &, const double &)> m_f; /*!< Process model function, which projects the sigma points forward in time.*/
-  std::function<vpMatrix(const vpMatrix &)> m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
+  std::function<vpMatrix(const std::vector<vpColVector> &, const double &)> m_f; /*!< Process model function, which projects the sigma points forward in time.*/
+  std::function<vpMatrix(const std::vector<vpColVector> &)> m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
   vpUKSigmaDrawerAbstract *m_sigmaDrawer; /*!< Object that permits to draw the sigma points.*/
 
   /**
