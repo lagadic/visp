@@ -145,6 +145,8 @@ public:
     m_framework->get_graphics_engine()->render_frame();
   }
 
+
+  const std::string &getName() const { return m_name; }
   NodePath getRenderRoot() { return m_renderRoot; }
 
   virtual void setCameraPose(const vpHomogeneousMatrix &wTc)
@@ -153,6 +155,13 @@ public:
       throw vpException(vpException::notInitialized, "Camera was not initialized before trying to set its pose");
     }
     setNodePose(m_cameraPath, wTc);
+  }
+  virtual vpHomogeneousMatrix getCameraPose()
+  {
+    if (m_camera.is_null()) {
+      throw vpException(vpException::notInitialized, "Camera was not initialized before trying to get its pose");
+    }
+    return getNodePose(m_cameraPath);
   }
   /**
    * @brief Set the pose of a node.

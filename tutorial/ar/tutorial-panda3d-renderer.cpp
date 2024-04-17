@@ -5,13 +5,19 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
+#include <visp3/ar/vpPanda3DRendererSet.h>
+
 #include <ambientLight.h>
 
 int main()
 {
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.001, 10.0);
-  vpPanda3DBaseRenderer renderer("basic");
+  vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
+
+  std::shared_ptr<vpPanda3DBaseRenderer> base = std::shared_ptr<vpPanda3DBaseRenderer>(new vpPanda3DBaseRenderer("base"));
+  renderer.addSubRenderer(base);
+  std::cout << "Initializing framework" << std::endl;
   renderer.initFramework(true);
   std::cout << "Loading object" << std::endl;
   NodePath object = renderer.loadObject("cube", "/home/sfelton/software/visp-sfelton/tutorial/ar/data/simple_cube.obj");
