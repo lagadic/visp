@@ -28,6 +28,9 @@ public:
     winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
     int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
     m_window = m_framework->open_window(winProps, flags);
+    if (m_window == nullptr) {
+      throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
+    }
     m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       renderer->initFromParent(m_framework, m_window);

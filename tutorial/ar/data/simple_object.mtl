@@ -1,0 +1,10 @@
+# Blender 3.4.1 MTL File: 'None'
+# www.blender.org
+
+newmtl Material
+Kd 0.800000 0.000000 0.001367
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 3

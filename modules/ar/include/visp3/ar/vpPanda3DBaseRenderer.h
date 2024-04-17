@@ -74,29 +74,34 @@ public:
     // which was itself inspired by https://discourse.panda3d.org/t/lens-camera-for-opencv-style-camera-parameterisation/15413
     // And http://ksimek.github.io/2013/06/03/calibrated_cameras_in_opengl
 
-    PT(MatrixLens) lens = new MatrixLens();
-    lens->set_near_far(m_clipNear, m_clipFar);
-    const double A = (m_clipFar + m_clipNear) / (m_clipFar - m_clipNear);
-    const double B = -2.0 * (m_clipFar * m_clipNear) / (m_clipFar - m_clipNear);
+    if (lens == nullptr) {
+      lens = new MatrixLens();
+      const double A = (m_clipFar + m_clipNear) / (m_clipFar - m_clipNear);
+      const double B = -2.0 * (m_clipFar * m_clipNear) / (m_clipFar - m_clipNear);
 
-    const double cx = m_cam.get_u0();
-    const double cy = m_height - m_cam.get_v0();
-    lens->set_film_size(m_width, m_height);
-    lens->set_film_offset(m_width * 0.5 - cx, m_height * 0.5 - cy);
-    lens->set_user_mat(LMatrix4(
-      m_cam.get_px(), 0, 0, 0,
-      0, 0, A, 1,
-      0, m_cam.get_py(), 0, 0,
-      0, 0, B, 0
-    ));
+      const double cx = m_cam.get_u0();
+      const double cy = m_height - m_cam.get_v0();
+      lens->set_film_size(m_width, m_height);
+      lens->set_near_far(m_clipNear, m_clipFar);
+      lens->set_user_mat(LMatrix4(
+        m_cam.get_px(), 0, 0, 0,
+        0, 0, A, 1,
+        0, m_cam.get_py(), 0, 0,
+        0, 0, B, 0
+      ));
+      lens->set_film_offset(m_width * 0.5 - cx, m_height * 0.5 - cy);
+      std::cout << lens->get_aspect_ratio() << std::endl;
+    }
 
     camera->set_lens(lens);
+    camera->set_lens_active(0, true);
   }
 
 private:
   vpCameraParameters m_cam;
   unsigned int m_height, m_width;
   double m_clipNear, m_clipFar;
+  PT(MatrixLens) lens;
 };
 
 
@@ -130,6 +135,7 @@ public:
   virtual void setupScene()
   {
     m_renderRoot = m_window->get_render().attach_new_node(m_name);
+    m_renderRoot.set_shader_auto();
   }
 
   void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
@@ -138,6 +144,7 @@ public:
     m_window = window;
     setupScene();
     setupCamera();
+    m_window->get_display_region_3d()->set_camera(m_cameraPath);
   }
 
   virtual void renderFrame()
@@ -151,7 +158,7 @@ public:
 
   virtual void setCameraPose(const vpHomogeneousMatrix &wTc)
   {
-    if (m_camera.is_null()) {
+    if (m_camera.is_null() || m_cameraPath.is_empty()) {
       throw vpException(vpException::notInitialized, "Camera was not initialized before trying to set its pose");
     }
     setNodePose(m_cameraPath, wTc);
@@ -185,6 +192,9 @@ public:
   virtual vpHomogeneousMatrix getNodePose(const std::string &name)
   {
     NodePath object = m_renderRoot.find(name);
+    if (object.is_empty()) {
+      throw vpException(vpException::badValue, "Node %s was not found", name);
+    }
     return getNodePose(object);
   }
   virtual vpHomogeneousMatrix getNodePose(NodePath &object)
@@ -222,7 +232,9 @@ public:
   virtual void addNodeToScene(const NodePath &object)
   {
     NodePath objectInScene = m_renderRoot.attach_new_node(object.node());
+    objectInScene.set_shader_auto();
     objectInScene.set_name(object.get_name());
+    std::cout << objectInScene.get_mat() << std::endl;
   }
 
 
