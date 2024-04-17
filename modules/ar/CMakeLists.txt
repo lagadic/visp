@@ -190,5 +190,9 @@ if(USE_OGRE)
   vp_set_source_file_compile_flag(src/ogre-simulator/vpAROgre.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
 endif()
 
+if(USE_PANDA3D)
+  vp_set_source_file_compile_flag(src/panda3d-simulator/vpPanda3DGeometryRenderer.cpp -Wno-unused-parameter -Wno-unused-variable -Wno-extra)
+endif()
+
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})

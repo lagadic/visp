@@ -73,7 +73,7 @@ public:
     // Adapted from Megapose code (https://github.com/megapose6d/megapose6d/blob/master/src/megapose/panda3d_renderer/types.py#L59),
     // which was itself inspired by https://discourse.panda3d.org/t/lens-camera-for-opencv-style-camera-parameterisation/15413
     // And http://ksimek.github.io/2013/06/03/calibrated_cameras_in_opengl
-
+    std::cout << "Calling setup panda camera" << std::endl;
     if (lens == nullptr) {
       lens = new MatrixLens();
       const double A = (m_clipFar + m_clipNear) / (m_clipFar - m_clipNear);
@@ -81,7 +81,7 @@ public:
 
       const double cx = m_cam.get_u0();
       const double cy = m_height - m_cam.get_v0();
-      lens->set_film_size(m_width, m_height);
+
       lens->set_near_far(m_clipNear, m_clipFar);
       lens->set_user_mat(LMatrix4(
         m_cam.get_px(), 0, 0, 0,
@@ -89,12 +89,12 @@ public:
         0, m_cam.get_py(), 0, 0,
         0, 0, B, 0
       ));
+      lens->set_film_size(m_width, m_height);
       lens->set_film_offset(m_width * 0.5 - cx, m_height * 0.5 - cy);
-      std::cout << lens->get_aspect_ratio() << std::endl;
     }
 
     camera->set_lens(lens);
-    camera->set_lens_active(0, true);
+    // camera->set_lens_active(0, true);
   }
 
 private:
@@ -115,6 +115,8 @@ class VISP_EXPORT vpPanda3DBaseRenderer
 public:
   vpPanda3DBaseRenderer(const std::string &rendererName) : m_name(rendererName), m_framework(nullptr), m_window(nullptr) { }
 
+  virtual ~vpPanda3DBaseRenderer() = default;
+
   virtual void initFramework(bool showWindow)
   {
     if (m_framework.use_count() > 0) {
@@ -132,11 +134,6 @@ public:
     m_window->get_display_region_3d()->set_camera(m_cameraPath);
   }
 
-  virtual void setupScene()
-  {
-    m_renderRoot = m_window->get_render().attach_new_node(m_name);
-    m_renderRoot.set_shader_auto();
-  }
 
   void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
   {
@@ -144,12 +141,23 @@ public:
     m_window = window;
     setupScene();
     setupCamera();
+    setupRenderTarget();
     m_window->get_display_region_3d()->set_camera(m_cameraPath);
   }
+
+  virtual void setupScene()
+  {
+    m_renderRoot = m_window->get_render().attach_new_node(m_name);
+    m_renderRoot.set_shader_auto();
+  }
+
+  virtual void setupRenderTarget() { }
 
   virtual void renderFrame()
   {
     m_framework->get_graphics_engine()->render_frame();
+    m_framework->get_graphics_engine()->sync_frame();
+
   }
 
 
@@ -213,18 +221,19 @@ public:
    */
   virtual void setupCamera()
   {
-    m_cameraPath = m_window->make_camera();
-    m_camera = (Camera *)m_cameraPath.node();
-      // m_camera = m_window->get_camera(0);
+
+    m_camera = m_window->get_camera(0);
+    //m_camera = (Camera *)m_cameraPath.node();
+    // m_camera = m_window->get_camera(0);
     m_cameraPath = m_renderRoot.attach_new_node(m_camera);
     m_renderParameters.setupPandaCamera(m_camera);
   }
 
   NodePath loadObject(const std::string &nodeName, const std::string &modelPath)
   {
-    NodePath model = m_window->load_model(m_window->get_render(), modelPath);
+    NodePath model = m_window->load_model(m_framework->get_models(), modelPath);
     std::cout << "After loading model" << std::endl;
-    //model.detach_node();
+    model.detach_node();
     model.set_name(nodeName);
     return model;
   }
@@ -232,7 +241,7 @@ public:
   virtual void addNodeToScene(const NodePath &object)
   {
     NodePath objectInScene = m_renderRoot.attach_new_node(object.node());
-    objectInScene.set_shader_auto();
+    //objectInScene.set_shader_auto();
     objectInScene.set_name(object.get_name());
     std::cout << objectInScene.get_mat() << std::endl;
   }

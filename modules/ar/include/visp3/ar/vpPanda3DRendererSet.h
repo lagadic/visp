@@ -39,6 +39,8 @@ public:
 
   void setupScene() vp_override { }
 
+  void setupCamera() vp_override { }
+
 
   void setCameraPose(const vpHomogeneousMatrix &wTc) vp_override
   {
@@ -103,15 +105,15 @@ public:
       }
     }
     m_subRenderers.push_back(renderer);
+    renderer->setRenderParameters(m_renderParameters);
     if (m_framework != nullptr) {
-      renderer->setRenderParameters(m_renderParameters);
       renderer->initFromParent(m_framework, m_window);
       renderer->setCameraPose(getCameraPose());
     }
   }
 
   template<typename RendererType>
-  std::shared_ptr<RendererType> getFirstMatch()
+  std::shared_ptr<RendererType> getRenderer()
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       std::shared_ptr<RendererType> rendererCast = std::dynamic_pointer_cast<RendererType>(renderer);
@@ -122,19 +124,19 @@ public:
     return nullptr;
   }
 
-  std::shared_ptr<vpPanda3DBaseRenderer> getRenderer(const std::string &name)
+  template<typename RendererType>
+  std::shared_ptr<RendererType> getRenderer(const std::string &name)
   {
     for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
       if (renderer->getName() == name) {
-        return renderer;
+        std::shared_ptr<RendererType> rendererCast = std::dynamic_pointer_cast<RendererType>(renderer);
+        if (rendererCast != nullptr) {
+          return rendererCast;
+        }
       }
     }
     return nullptr;
   }
-
-
-
-
 
 private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;
