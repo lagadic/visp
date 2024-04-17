@@ -226,8 +226,9 @@ void vpDisplay::getImage(const vpImage<vpRGBa> &Isrc, vpImage<vpRGBa> &Idest)
  */
 void vpDisplay::setDownScalingFactor(unsigned int scale)
 {
-  if (!m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized) {
     m_scale = scale;
+  }
   else {
     std::cout << "Warning: Cannot apply the down scaling factor " << scale
       << " to the display window since the display is initialized yet..." << std::endl;
@@ -243,9 +244,9 @@ unsigned int vpDisplay::computeAutoScale(unsigned int width, unsigned int height
 {
   unsigned int screen_width, screen_height;
   getScreenSize(screen_width, screen_height);
-  double wscale = std::max<double>(1., ceil(2. * (double)width / (double)screen_width));
-  double hscale = std::max<double>(1., ceil(2. * (double)height / (double)screen_height));
-  unsigned int scale = std::max<unsigned int>(1u, std::max<unsigned int>((unsigned int)wscale, (unsigned int)hscale));
+  double wscale = std::max<double>(1., ceil((2. * static_cast<double>(width)) / static_cast<double>(screen_width)));
+  double hscale = std::max<double>(1., ceil((2. * static_cast<double>(height)) / static_cast<double>(screen_height)));
+  unsigned int scale = std::max<unsigned int>(1u, std::max<unsigned int>(static_cast<unsigned int>(wscale), static_cast<unsigned int>(hscale)));
   return scale;
 }
 
@@ -288,6 +289,10 @@ void vpDisplay::setScale(vpScaleType scaleType, unsigned int width, unsigned int
   case vpDisplay::SCALE_10:
     setDownScalingFactor(10);
     break;
+  default:
+  {
+    std::cout << "undefined scaleType" << std::endl;
+  }
   }
 }
 
@@ -319,6 +324,7 @@ int main()
  */
 void vpDisplay::setDownScalingFactor(vpScaleType scaleType)
 {
-  if (!m_displayHasBeenInitialized)
+  if (!m_displayHasBeenInitialized) {
     m_scaleType = scaleType;
+  }
 }

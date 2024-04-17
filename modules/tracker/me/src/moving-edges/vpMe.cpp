@@ -140,7 +140,7 @@ static bool clipping(vpPoint2Dt A, vpPoint2Dt B, double Xmin, double Ymin, doubl
   vpPoint2Dt P[nbP];
   P[0] = A;
   P[1] = B;
-  int code_P[nbP], // codes de P[n]
+  unsigned int code_P[nbP], // codes de P[n]
     i, bit_i,  // i -> (0000100...)
     n;
 
@@ -234,7 +234,7 @@ static double surfaceRelative(vpPoint2Dt P, vpPoint2Dt Q, double Xmin, double Ym
        (vpMath::maximum(std::fabs(P.x), std::fabs(Xmin)) * std::numeric_limits<double>::epsilon())) &&
       (std::fabs(Q.x - Xmax) <=
        (vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon()))) {
-    return fabs(Ymax + Ymin - P.y - Q.y);
+    return fabs((Ymax + Ymin) - (P.y - Q.y));
   }
 
   // Case (P.y=Ymin and Q.y==Ymax) or (Q.y=Ymin and P.y==Ymax)
@@ -246,7 +246,7 @@ static double surfaceRelative(vpPoint2Dt P, vpPoint2Dt Q, double Xmin, double Ym
         (vpMath::maximum(std::fabs(Q.y), std::fabs(Ymin)) * std::numeric_limits<double>::epsilon())) &&
        (std::fabs(P.y - Ymax) <=
         (vpMath::maximum(std::fabs(P.y), std::fabs(Ymax)) * std::numeric_limits<double>::epsilon())))) {
-    return fabs(Xmax + Xmin - P.x - Q.x);
+    return fabs((Xmax + Xmin) - (P.x - Q.x));
   }
 
   // Case P.x=Xmin and Q.y=Ymax
@@ -329,8 +329,8 @@ static void calculMasques(vpColVector &angle, // definitions des angles theta
     // ======================
     M[i_theta].resize(n, n); // allocation (si necessaire)
 
-    for (i = 0, Y = -moitie + 0.5; i < n; ++i, ++Y) {
-      for (j = 0, X = -moitie + 0.5; j < n; ++j, ++X) {
+    for (i = 0, Y = (-moitie + 0.5); i < n; ++i, ++Y) {
+      for (j = 0, X = (-moitie + 0.5); j < n; ++j, ++X) {
         // produit vectoriel dir_droite*(X,Y)
         int sgn = vpMath::sign((cos_theta * Y) - (sin_theta * X));
 

@@ -146,23 +146,23 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
   y0 = cP_[1];
   z0 = cP_[2];
 
-  s = r * r - y0 * y0 - z0 * z0;
+  s = (r * r) - (y0 * y0) - (z0 * z0);
 
-  if ((s = z0 * z0 - r * r) < 0.0) {
+  if ((s = ((z0 * z0) - (r * r))) < 0.0) {
     vpERROR_TRACE("Error: Sphere is behind image plane\n");
   }
 
-  p_[0] = x0 * z0 / s; // x
-  p_[1] = y0 * z0 / s; // y
+  p_[0] = (x0 * z0) / s; // x
+  p_[1] = (y0 * z0) / s; // y
 
   if (fabs(x0) > 1e-6) {
     double e = y0 / x0;
     double b = r / sqrt(s);
-    double a = x0 * x0 + y0 * y0 + z0 * z0 - r * r;
+    double a = ((x0 * x0) + (y0 * y0) + (z0 * z0)) - (r * r);
     if (a < 0.0) {
       vpERROR_TRACE("Error: Sphere is behind image plane\n");
     }
-    a = r * sqrt(a) / s;
+    a = (r * sqrt(a)) / s;
     if (fabs(e) <= 1.0) {
       E = e;
       A = a;
@@ -177,13 +177,13 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
   else {
     E = 0.0;
     A = r / sqrt(s);
-    B = r * sqrt(y0 * y0 + z0 * z0 - r * r) / s;
+    B = (r * sqrt(((y0 * y0) + (z0 * z0)) - (r * r))) / s;
   }
 
   // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
   double det = 4 * (1.0 + vpMath::sqr(E));
   double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
-  double n11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
+  double n11 = ((vpMath::sqr(A) - vpMath::sqr(B)) * E) / det;
   double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
 
   p_[2] = n20;
@@ -212,9 +212,9 @@ void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) con
 
   double x0, y0, z0; // variables intermediaires
 
-  x0 = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3];
-  y0 = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2] + cMo[1][3];
-  z0 = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2] + cMo[2][3];
+  x0 = (cMo[0][0] * oP[0]) + (cMo[0][1] * oP[1]) + (cMo[0][2] * oP[2]) + cMo[0][3];
+  y0 = (cMo[1][0] * oP[0]) + (cMo[1][1] * oP[1]) + (cMo[1][2] * oP[2]) + cMo[1][3];
+  z0 = (cMo[2][0] * oP[0]) + (cMo[2][1] * oP[1]) + (cMo[2][2] * oP[2]) + cMo[2][3];
 
   cP_[3] = oP[3];
 
@@ -244,10 +244,10 @@ vpSphere *vpSphere::duplicate() const
 void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  projection(v_cP, v_p);
+  vpFeatureDisplay::displayEllipse(v_p[0], v_p[1], v_p[2], v_p[3], v_p[4], cam, I, color, thickness);
 }
 
 /*!
@@ -264,10 +264,10 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
 void vpSphere::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
-  vpColVector _cP, _p;
-  changeFrame(cMo, _cP);
-  projection(_cP, _p);
-  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+  vpColVector v_cP, v_p;
+  changeFrame(cMo, v_cP);
+  projection(v_cP, v_p);
+  vpFeatureDisplay::displayEllipse(v_p[0], v_p[1], v_p[2], v_p[3], v_p[4], cam, I, color, thickness);
 }
 
 /*!

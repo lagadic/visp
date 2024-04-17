@@ -257,7 +257,7 @@ vpHomography &vpHomography::operator/=(double v)
 vpHomography &vpHomography::operator=(const vpHomography &H)
 {
   const unsigned int nbCols = 3, nbRows = 3;
-  for (unsigned int i = 0; i < nbRows; ++i){
+  for (unsigned int i = 0; i < nbRows; ++i) {
     for (unsigned int j = 0; j < nbCols; ++j) {
       (*this)[i][j] = H[i][j];
     }
@@ -370,9 +370,9 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, cons
 
 double vpHomography::det() const
 {
-  return ((*this)[0][0] * (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1])) -
-          (*this)[0][1] * (((*this)[1][0] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][0])) +
-          (*this)[0][2] * (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0])));
+  return ((((*this)[0][0] * (((*this)[1][1] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][1]))) -
+           ((*this)[0][1] * (((*this)[1][0] * (*this)[2][2]) - ((*this)[1][2] * (*this)[2][0])))) +
+          ((*this)[0][2] * (((*this)[1][0] * (*this)[2][1]) - ((*this)[1][1] * (*this)[2][0]))));
 }
 
 void vpHomography::eye()

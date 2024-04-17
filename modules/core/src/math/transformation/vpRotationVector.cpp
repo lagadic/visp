@@ -54,8 +54,9 @@ vpRowVector vpRotationVector::t() const
 {
   vpRowVector v(dsize);
 
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     v[i] = data[i];
+  }
 
   return v;
 }
@@ -68,8 +69,10 @@ std::vector<double> vpRotationVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 
-  for (unsigned int i = 0; i < this->size(); i++)
+  unsigned int this_size = this->size();
+  for (unsigned int i = 0; i < this_size; ++i) {
     v[i] = data[i];
+  }
   return v;
 }
 
@@ -87,8 +90,9 @@ vpColVector vpRotationVector::operator*(double x) const
 {
   vpColVector v(dsize);
 
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     v[i] = (*this)[i] * x;
+  }
   return v;
 }
 
@@ -179,7 +183,7 @@ double vpRotationVector::sumSquare() const
 {
   double sum_square = 0.0;
 
-  for (unsigned int i = 0; i < rowNum; i++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
     double x = rowPtrs[i][0];
     sum_square += x * x;
   }

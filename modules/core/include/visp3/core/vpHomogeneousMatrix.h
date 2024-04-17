@@ -99,8 +99,8 @@ class vpPoint;
     M[2][0] = -1; M[2][1] =  0; M[2][2] =  0; M[2][3] = 0.3;
 
     std::cout << "M:" << std::endl;
-    for (unsigned int i = 0; i < M.getRows(); i++) {
-      for (unsigned int j = 0; j < M.getCols(); j++) {
+    for (unsigned int i = 0; i < M.getRows(); ++i) {
+      for (unsigned int j = 0; j < M.getCols(); ++j) {
         std::cout << M[i][j] << " ";
       }
       std::cout << std::endl;

@@ -54,8 +54,8 @@
 */
 vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMatrix &V)
 {
-  for (int i = 0; i < 6; i++) {
-    for (int j = 0; j < 6; j++) {
+  for (int i = 0; i < 6; ++i) {
+    for (int j = 0; j < 6; ++j) {
       rowPtrs[i][j] = V.rowPtrs[i][j];
     }
   }
@@ -68,12 +68,16 @@ vpVelocityTwistMatrix &vpVelocityTwistMatrix::operator=(const vpVelocityTwistMat
 */
 void vpVelocityTwistMatrix::eye()
 {
-  for (unsigned int i = 0; i < 6; i++)
-    for (unsigned int j = 0; j < 6; j++)
-      if (i == j)
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 6; ++j) {
+      if (i == j) {
         (*this)[i][j] = 1.0;
-      else
+      }
+      else {
         (*this)[i][j] = 0.0;
+      }
+    }
+  }
 }
 
 /*!
@@ -109,10 +113,12 @@ vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpVelocityTwistMatrix &V) : v
 */
 vpVelocityTwistMatrix::vpVelocityTwistMatrix(const vpHomogeneousMatrix &M, bool full) : vpArray2D<double>(6, 6)
 {
-  if (full)
+  if (full) {
     buildFrom(M);
-  else
+  }
+  else {
     buildFrom(M.getRotationMatrix());
+  }
 }
 
 /*!
@@ -217,11 +223,12 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::operator*(const vpVelocityTwistMatr
 {
   vpVelocityTwistMatrix p;
 
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < 6; j++) {
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 6; ++j) {
       double s = 0;
-      for (int k = 0; k < 6; k++)
+      for (int k = 0; k < 6; ++k) {
         s += rowPtrs[i][k] * V.rowPtrs[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -275,11 +282,13 @@ vpMatrix vpVelocityTwistMatrix::operator*(const vpMatrix &M) const
   }
 
   vpMatrix p(6, M.getCols());
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+  unsigned int m_col = M.getCols();
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < m_col; ++j) {
       double s = 0;
-      for (unsigned int k = 0; k < 6; k++)
+      for (unsigned int k = 0; k < 6; ++k) {
         s += rowPtrs[i][k] * M[k][j];
+      }
       p[i][j] = s;
     }
   }
@@ -310,11 +319,9 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 
   c = 0.0;
 
-  for (unsigned int i = 0; i < 6; i++) {
-    for (unsigned int j = 0; j < 6; j++) {
-      {
-        c[i] += rowPtrs[i][j] * v[j];
-      }
+  for (unsigned int i = 0; i < 6; ++i) {
+    for (unsigned int j = 0; j < 6; ++j) {
+      c[i] += rowPtrs[i][j] * v[j];
     }
   }
 
@@ -334,14 +341,14 @@ vpColVector vpVelocityTwistMatrix::operator*(const vpColVector &v) const
 */
 vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = 0;
     }
   }
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -362,15 +369,15 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
 {
   vpMatrix skewaR = t.skew(t) * R;
 
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = R[i][j];
       (*this)[i + 3][j + 3] = R[i][j];
       (*this)[i][j + 3] = skewaR[i][j];
     }
   }
 
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -391,7 +398,7 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
 vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector &t, const vpThetaUVector &thetau)
 {
   buildFrom(t, vpRotationMatrix(thetau));
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -409,7 +416,7 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpTranslationVector
 vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &thetau)
 {
   buildFrom(vpRotationMatrix(thetau));
-  return (*this);
+  return *this;
 }
 
 /*!
@@ -432,12 +439,14 @@ vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpThetaUVector &the
 */
 vpVelocityTwistMatrix vpVelocityTwistMatrix::buildFrom(const vpHomogeneousMatrix &M, bool full)
 {
-  if (full)
+  if (full) {
     buildFrom(M.getTranslationVector(), M.getRotationMatrix());
-  else
+  }
+  else {
     buildFrom(M.getRotationMatrix());
+  }
 
-  return (*this);
+  return *this;
 }
 
 //! Invert the velocity twist matrix.
@@ -462,9 +471,11 @@ void vpVelocityTwistMatrix::inverse(vpVelocityTwistMatrix &V) const { V = invers
 //! Extract the rotation matrix from the velocity twist matrix.
 void vpVelocityTwistMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       R[i][j] = (*this)[i][j];
+    }
+  }
 }
 
 //! Extract the translation vector from the velocity twist matrix.
@@ -473,9 +484,11 @@ void vpVelocityTwistMatrix::extract(vpTranslationVector &tv) const
   vpRotationMatrix R;
   extract(R);
   vpMatrix skTR(3, 3);
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       skTR[i][j] = (*this)[i][j + 3];
+    }
+  }
 
   vpMatrix skT = skTR * R.t();
   tv[0] = skT[2][1];
@@ -514,7 +527,7 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
+  // --comment: ossFixed <<std::fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -530,9 +543,9 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
         oss.str(ossFixed.str());
       }
 
-      values[i * n + j] = oss.str();
-      size_type thislen = values[i * n + j].size();
-      size_type p = values[i * n + j].find('.');
+      values[(i * n) + j] = oss.str();
+      size_type thislen = values[(i * n) + j].size();
+      size_type p = values[(i * n) + j].find('.');
 
       if (p == std::string::npos) {
         maxBefore = vpMath::maximum(maxBefore, thislen);
@@ -550,33 +563,35 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
   maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
+  if (maxAfter == 1) {
     maxAfter = 0;
+  }
 
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (intro) {
     s << intro;
+  }
   s << "[" << m << "," << n << "]=\n";
 
-  for (unsigned int i = 0; i < m; i++) {
+  for (unsigned int i = 0; i < m; ++i) {
     s << "  ";
-    for (unsigned int j = 0; j < n; j++) {
-      size_type p = values[i * n + j].find('.');
+    for (unsigned int j = 0; j < n; ++j) {
+      size_type p = values[(i * n) + j].find('.');
       s.setf(std::ios::right, std::ios::adjustfield);
-      s.width((std::streamsize)maxBefore);
-      s << values[i * n + j].substr(0, p).c_str();
+      s.width(static_cast<std::streamsize>(maxBefore));
+      s << values[(i * n) + j].substr(0, p).c_str();
 
       if (maxAfter > 0) {
         s.setf(std::ios::left, std::ios::adjustfield);
         if (p != std::string::npos) {
-          s.width((std::streamsize)maxAfter);
-          s << values[i * n + j].substr(p, maxAfter).c_str();
+          s.width(static_cast<std::streamsize>(maxAfter));
+          s << values[(i * n) + j].substr(p, maxAfter).c_str();
         }
         else {
           assert(maxAfter > 1);
-          s.width((std::streamsize)maxAfter);
+          s.width(static_cast<std::streamsize>(maxAfter));
           s << ".0";
         }
       }
@@ -588,7 +603,7 @@ int vpVelocityTwistMatrix::print(std::ostream &s, unsigned int length, char cons
 
   s.flags(original_flags); // restore s to standard state
 
-  return (int)(maxBefore + maxAfter);
+  return static_cast<int>(maxBefore + maxAfter);
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

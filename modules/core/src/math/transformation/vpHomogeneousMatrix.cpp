@@ -123,7 +123,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -197,7 +197,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
   }
   else if (list.size() == 16) {
     std::copy(list.begin(), list.end(), data);
-    for (size_t i = 12; i < 15; i++) {
+    for (size_t i = 12; i < 15; ++i) {
       if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
         throw(vpException(vpException::fatalError,
                           "Cannot initialize homogeneous matrix. "
@@ -263,7 +263,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -376,7 +376,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -398,12 +398,13 @@ M:
   */
 void vpHomogeneousMatrix::buildFrom(const std::vector<float> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<float> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
-    this->data[i] = (double)v[i];
+  for (unsigned int i = 0; i < 12; ++i) {
+    this->data[i] = static_cast<double>(v[i]);
+  }
 }
 
 /*!
@@ -426,7 +427,7 @@ int main()
   v[11] = 0.5; // tz
 
   std::cout << "v: ";
-  for(unsigned int i=0; i<v.size(); i++)
+  for(unsigned int i=0; i<v.size(); ++i)
     std::cout << v[i] << " ";
   std::cout << std::endl;
 
@@ -448,12 +449,13 @@ M:
   */
 void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 {
-  if (v.size() != 12 && v.size() != 16) {
+  if ((v.size() != 12) && (v.size() != 16)) {
     throw(vpException(vpException::dimensionError, "Cannot convert std::vector<double> to vpHomogeneousMatrix"));
   }
 
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     this->data[i] = v[i];
+  }
 }
 
 /*!
@@ -463,8 +465,8 @@ void vpHomogeneousMatrix::buildFrom(const std::vector<double> &v)
 */
 vpHomogeneousMatrix &vpHomogeneousMatrix::operator=(const vpHomogeneousMatrix &M)
 {
-  for (int i = 0; i < 4; i++) {
-    for (int j = 0; j < 4; j++) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
       rowPtrs[i][j] = M.rowPtrs[i][j];
     }
   }
@@ -503,7 +505,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::operator*(const vpHomogeneousMatrix &M)
 
   R = R1 * R2;
 
-  T = R1 * T2 + T1;
+  T = (R1 * T2) + T1;
 
   p.insert(T);
   p.insert(R);
@@ -553,8 +555,8 @@ vpColVector vpHomogeneousMatrix::operator*(const vpColVector &v) const
 
   p = 0.0;
 
-  for (unsigned int j = 0; j < 4; j++) {
-    for (unsigned int i = 0; i < 4; i++) {
+  for (unsigned int j = 0; j < 4; ++j) {
+    for (unsigned int i = 0; i < 4; ++i) {
       p[i] += rowPtrs[i][j] * v[j];
     }
   }
@@ -584,14 +586,14 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
   v[2] = bP.get_Z();
   v[3] = bP.get_W();
 
-  v1[0] = (*this)[0][0] * v[0] + (*this)[0][1] * v[1] + (*this)[0][2] * v[2] + (*this)[0][3] * v[3];
-  v1[1] = (*this)[1][0] * v[0] + (*this)[1][1] * v[1] + (*this)[1][2] * v[2] + (*this)[1][3] * v[3];
-  v1[2] = (*this)[2][0] * v[0] + (*this)[2][1] * v[1] + (*this)[2][2] * v[2] + (*this)[2][3] * v[3];
-  v1[3] = (*this)[3][0] * v[0] + (*this)[3][1] * v[1] + (*this)[3][2] * v[2] + (*this)[3][3] * v[3];
+  v1[0] = ((*this)[0][0] * v[0]) + ((*this)[0][1] * v[1]) + ((*this)[0][2] * v[2]) + ((*this)[0][3] * v[3]);
+  v1[1] = ((*this)[1][0] * v[0]) + ((*this)[1][1] * v[1]) + ((*this)[1][2] * v[2]) + ((*this)[1][3] * v[3]);
+  v1[2] = ((*this)[2][0] * v[0]) + ((*this)[2][1] * v[1]) + ((*this)[2][2] * v[2]) + ((*this)[2][3] * v[3]);
+  v1[3] = ((*this)[3][0] * v[0]) + ((*this)[3][1] * v[1]) + ((*this)[3][2] * v[2]) + ((*this)[3][3] * v[3]);
 
   v1 /= v1[3];
 
-  //  v1 = M*v ;
+  //  --comment: v1 equals M multiplied by v
   aP.set_X(v1[0]);
   aP.set_Y(v1[1]);
   aP.set_Z(v1[2]);
@@ -618,9 +620,9 @@ vpPoint vpHomogeneousMatrix::operator*(const vpPoint &bP) const
 vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t) const
 {
   vpTranslationVector t_out;
-  t_out[0] = (*this)[0][0] * t[0] + (*this)[0][1] * t[1] + (*this)[0][2] * t[2] + (*this)[0][3];
-  t_out[1] = (*this)[1][0] * t[0] + (*this)[1][1] * t[1] + (*this)[1][2] * t[2] + (*this)[1][3];
-  t_out[2] = (*this)[2][0] * t[0] + (*this)[2][1] * t[1] + (*this)[2][2] * t[2] + (*this)[2][3];
+  t_out[0] = (((*this)[0][0] * t[0]) + ((*this)[0][1] * t[1]) + ((*this)[0][2] * t[2])) + (*this)[0][3];
+  t_out[1] = (((*this)[1][0] * t[0]) + ((*this)[1][1] * t[1]) + ((*this)[1][2] * t[2])) + (*this)[1][3];
+  t_out[2] = (((*this)[2][0] * t[0]) + ((*this)[2][1] * t[1]) + ((*this)[2][2] * t[2])) + (*this)[2][3];
 
   return t_out;
 }
@@ -772,7 +774,8 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
  */
 bool vpHomogeneousMatrix::isValid() const
 {
-  for (unsigned int i = 0; i < size(); i++) {
+  unsigned int l_size = size();
+  for (unsigned int i = 0; i < l_size; ++i) {
     if (vpMath::isNaN(data[i])) {
       return false;
     }
@@ -786,9 +789,11 @@ bool vpHomogeneousMatrix::isValid() const
 */
 void vpHomogeneousMatrix::extract(vpRotationMatrix &R) const
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       R[i][j] = (*this)[i][j];
+    }
+  }
 }
 
 /*!
@@ -825,9 +830,11 @@ void vpHomogeneousMatrix::extract(vpQuaternionVector &q) const
 */
 void vpHomogeneousMatrix::insert(const vpRotationMatrix &R)
 {
-  for (unsigned int i = 0; i < 3; i++)
-    for (unsigned int j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       (*this)[i][j] = R[i][j];
+    }
+  }
 }
 
 /*!
@@ -902,10 +909,18 @@ void vpHomogeneousMatrix::eye()
   (*this)[2][2] = 1;
   (*this)[3][3] = 1;
 
-  (*this)[0][1] = (*this)[0][2] = (*this)[0][3] = 0;
-  (*this)[1][0] = (*this)[1][2] = (*this)[1][3] = 0;
-  (*this)[2][0] = (*this)[2][1] = (*this)[2][3] = 0;
-  (*this)[3][0] = (*this)[3][1] = (*this)[3][2] = 0;
+  (*this)[0][1] = 0;
+  (*this)[0][2] = 0;
+  (*this)[0][3] = 0;
+  (*this)[1][0] = 0;
+  (*this)[1][2] = 0;
+  (*this)[1][3] = 0;
+  (*this)[2][0] = 0;
+  (*this)[2][1] = 0;
+  (*this)[2][3] = 0;
+  (*this)[3][0] = 0;
+  (*this)[3][1] = 0;
+  (*this)[3][2] = 0;
 }
 
 /*!
@@ -945,8 +960,8 @@ void vpHomogeneousMatrix::save(const std::string &filename) const
 void vpHomogeneousMatrix::load(std::ifstream &f)
 {
   if (!f.fail()) {
-    for (unsigned int i = 0; i < 4; i++) {
-      for (unsigned int j = 0; j < 4; j++) {
+    for (unsigned int i = 0; i < 4; ++i) {
+      for (unsigned int j = 0; j < 4; ++j) {
         f >> (*this)[i][j];
       }
     }
@@ -997,8 +1012,9 @@ void vpHomogeneousMatrix::print() const
 void vpHomogeneousMatrix::convert(std::vector<float> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
-    M[i] = (float)(this->data[i]);
+  for (unsigned int i = 0; i < 12; ++i) {
+    M[i] = static_cast<float>(this->data[i]);
+  }
 }
 
 /*!
@@ -1008,8 +1024,9 @@ void vpHomogeneousMatrix::convert(std::vector<float> &M)
 void vpHomogeneousMatrix::convert(std::vector<double> &M)
 {
   M.resize(12);
-  for (unsigned int i = 0; i < 12; i++)
+  for (unsigned int i = 0; i < 12; ++i) {
     M[i] = this->data[i];
+  }
 }
 
 /*!
@@ -1073,12 +1090,14 @@ Last column:
  */
 vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 {
-  if (j >= getCols())
+  if (j >= getCols()) {
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));
+  }
   unsigned int nb_rows = getRows();
   vpColVector c(nb_rows);
-  for (unsigned int i = 0; i < nb_rows; i++)
+  for (unsigned int i = 0; i < nb_rows; ++i) {
     c[i] = (*this)[i][j];
+  }
   return c;
 }
 
@@ -1094,14 +1113,15 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
 
   vpColVector p_bar(3, 0.0);
   vpColVector q_bar(3, 0.0);
-  for (size_t i = 0; i < p.size(); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  size_t p_size = p.size();
+  for (size_t i = 0; i < p_size; ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       p_bar[j] += p.at(i).oP[j];
       q_bar[j] += q.at(i).oP[j];
     }
   }
 
-  for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int j = 0; j < 3; ++j) {
     p_bar[j] /= N;
     q_bar[j] /= N;
   }
@@ -1109,8 +1129,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
   vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
   vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
 
-  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p_size); ++i) {
+    for (unsigned int j = 0; j < 3; ++j) {
       pc[i][j] = p.at(i).oP[j] - p_bar[j];
       qc[i][j] = q.at(i).oP[j] - q_bar[j];
     }
@@ -1131,7 +1151,7 @@ vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::ve
     R = U * Vt;
   }
 
-  const vpColVector t = p_bar - R * q_bar;
+  const vpColVector t = p_bar - (R * q_bar);
 
   return vpHomogeneousMatrix(vpTranslationVector(t), vpRotationMatrix(R));
 }
@@ -1150,7 +1170,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix meanR(3, 3);
   vpColVector meanT(3);
   vpRotationMatrix R;
-  for (size_t i = 0; i < vec_M.size(); i++) {
+  size_t vec_m_size = vec_M.size();
+  for (size_t i = 0; i < vec_m_size; ++i) {
     R = vec_M[i].getRotationMatrix();
     meanR += (vpMatrix)R;
     meanT += (vpColVector)vec_M[i].getTranslationVector();
@@ -1169,7 +1190,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   else {
     vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0;
+    D[0][0] = 1.0;
+    D[1][1] = 1.0;
     D[2][2] = -1;
     meanR = U * D * V.t();
   }
@@ -1216,7 +1238,7 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json &j)
     from_json(j, *asArray);
   }
 
-  if (getCols() != 4 && getRows() != 4) {
+  if ((getCols() != 4) && (getRows() != 4)) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 4x4 matrix");
   }
   if (!isAnHomogeneousMatrix()) {

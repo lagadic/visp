@@ -240,7 +240,8 @@ void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraPar
                           const bool create_convex_hull)
 {
   std::vector<vpImagePoint> ipCorners(corners.size());
-  for (unsigned int i = 0; i < corners.size(); ++i) {
+  unsigned int corners_size = corners.size();
+  for (unsigned int i = 0; i < corners_size; ++i) {
     vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(), corners[i].get_y(), ipCorners[i]);
   }
   buildFrom(ipCorners, create_convex_hull);
@@ -265,7 +266,7 @@ void vpPolygon::initClick(const vpImage<unsigned char> &I, unsigned int size, co
 
   while (button == vpMouseButton::button1) {
     bool ret = vpDisplay::getClick(I, ip, button, true);
-    if (ret && button == vpMouseButton::button1) {
+    if (ret && (button == vpMouseButton::button1)) {
       vpDisplay::displayCross(I, ip, size, color, thickness);
       cornersClick.push_back(ip);
       vpDisplay::flush(I);
@@ -293,7 +294,7 @@ void vpPolygon::initClick(const vpImage<vpRGBa> &I, unsigned int size, const vpC
 
   while (button == vpMouseButton::button1) {
     bool ret = vpDisplay::getClick(I, ip, button, true);
-    if (ret && button == vpMouseButton::button1) {
+    if (ret && (button == vpMouseButton::button1)) {
       vpDisplay::displayCross(I, ip, size, color, thickness);
       cornersClick.push_back(ip);
       vpDisplay::flush(I);
@@ -363,19 +364,19 @@ bool vpPolygon::testIntersectionSegments(const vpImagePoint &ip1, const vpImageP
   double di2 = ip4.get_i() - ip3.get_i();
   double dj2 = ip4.get_j() - ip3.get_j();
 
-  double denominator = di1 * dj2 - dj1 * di2;
+  double denominator = (di1 * dj2) - (dj1 * di2);
 
   if (fabs(denominator) < std::numeric_limits<double>::epsilon()) {
     throw vpException(vpException::divideByZeroError, "Denominator is null, lines are parallels");
   }
 
-  double alpha = -((ip1.get_i() - ip3.get_i()) * dj2 + di2 * (ip3.get_j() - ip1.get_j())) / denominator;
-  if (alpha < 0 || alpha >= 1) {
+  double alpha = -(((ip1.get_i() - ip3.get_i()) * dj2) + (di2 * (ip3.get_j() - ip1.get_j()))) / denominator;
+  if ((alpha < 0) || (alpha >= 1)) {
     return false;
   }
 
-  double beta = -(di1 * (ip3.get_j() - ip1.get_j()) + dj1 * (ip1.get_i() - ip3.get_i())) / denominator;
-  if (beta < 0 || beta >= 1) {
+  double beta = -((di1 * (ip3.get_j() - ip1.get_j())) + (dj1 * (ip1.get_i() - ip3.get_i()))) / denominator;
+  if ((beta < 0) || (beta >= 1)) {
     return false;
   }
 
@@ -403,19 +404,21 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     // we add random since it appears that sometimes infPoint may cause a degenerated case (so relaunch and
     // hope that result will be different).
     vpUniRand generator;
-    infPoint.set_i(infPoint.get_i() + 1000 * generator());
-    infPoint.set_j(infPoint.get_j() + 1000 * generator());
+    infPoint.set_i(infPoint.get_i() + (1000 * generator()));
+    infPoint.set_j(infPoint.get_j() + (1000 * generator()));
 
     bool oddNbIntersections = false;
-    for (unsigned int i = 0; i < _corners.size(); ++i) {
+    unsigned int v_corners_size = _corners.size();
+    for (unsigned int i = 0; i < v_corners_size; ++i) {
       vpImagePoint ip1 = _corners[i];
       vpImagePoint ip2 = _corners[(i + 1) % _corners.size()];
       bool intersection = false;
 
       // If the points are the same we continue without trying to found
       // an intersection
-      if (ip1 == ip2)
+      if (ip1 == ip2) {
         continue;
+      }
 
       try {
         intersection = testIntersectionSegments(ip1, ip2, ip, infPoint);
@@ -430,15 +433,17 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     }
 
     test = oddNbIntersections;
-  } break;
+  }
+                                break;
 
-    // Reference: http://alienryderflex.com/polygon/
+                                  // Reference: http://alienryderflex.com/polygon/
   case PnPolyRayCasting:
   default: {
     bool oddNodes = false;
-    for (size_t i = 0, j = _corners.size() - 1; i < _corners.size(); i++) {
-      if ((_corners[i].get_v() < ip.get_v() && _corners[j].get_v() >= ip.get_v()) ||
-          (_corners[j].get_v() < ip.get_v() && _corners[i].get_v() >= ip.get_v())) {
+    size_t v_corners_size = _corners.size();
+    for (size_t i = 0, j = (v_corners_size - 1); i < v_corners_size; ++i) {
+      if (((_corners[i].get_v() < ip.get_v()) && (_corners[j].get_v() >= ip.get_v())) ||
+          ((_corners[j].get_v() < ip.get_v()) && (_corners[i].get_v() >= ip.get_v()))) {
         oddNodes ^= (ip.get_v() * m_PnPolyMultiples[i] + m_PnPolyConstants[i] < ip.get_u());
       }
 
@@ -446,7 +451,8 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
     }
 
     test = oddNodes;
-  } break;
+  }
+         break;
   }
 
   return test;
@@ -461,15 +467,16 @@ void vpPolygon::precalcValuesPnPoly()
   m_PnPolyConstants.resize(_corners.size());
   m_PnPolyMultiples.resize(_corners.size());
 
-  for (size_t i = 0, j = _corners.size() - 1; i < _corners.size(); i++) {
+  size_t v_corners_size = _corners.size();
+  for (size_t i = 0, j = (v_corners_size - 1); i < v_corners_size; ++i) {
     if (vpMath::equal(_corners[j].get_v(), _corners[i].get_v(), std::numeric_limits<double>::epsilon())) {
       m_PnPolyConstants[i] = _corners[i].get_u();
       m_PnPolyMultiples[i] = 0.0;
     }
     else {
-      m_PnPolyConstants[i] = _corners[i].get_u() -
-        (_corners[i].get_v() * _corners[j].get_u()) / (_corners[j].get_v() - _corners[i].get_v()) +
-        (_corners[i].get_v() * _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
+      m_PnPolyConstants[i] = (_corners[i].get_u() -
+        ((_corners[i].get_v() * _corners[j].get_u()) / (_corners[j].get_v() - _corners[i].get_v()))) +
+        ((_corners[i].get_v() * _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v()));
       m_PnPolyMultiples[i] = (_corners[j].get_u() - _corners[i].get_u()) / (_corners[j].get_v() - _corners[i].get_v());
     }
 
@@ -495,9 +502,10 @@ void vpPolygon::updateArea()
   }
   _area = 0;
 
-  for (unsigned int i = 0; i < _corners.size(); ++i) {
+  unsigned int v_corners_size = _corners.size();
+  for (unsigned int i = 0; i < v_corners_size; ++i) {
     unsigned int i_p_1 = (i + 1) % _corners.size();
-    _area += _corners[i].get_j() * _corners[i_p_1].get_i() - _corners[i_p_1].get_j() * _corners[i].get_i();
+    _area += (_corners[i].get_j() * _corners[i_p_1].get_i()) - (_corners[i_p_1].get_j() * _corners[i].get_i());
   }
 
   _area /= 2;
@@ -535,13 +543,14 @@ void vpPolygon::updateCenter()
       (_corners[i + 1].get_i() * _corners[i].get_j() - _corners[i + 1].get_j() * _corners[i].get_i());
   }
 #else
-  for (unsigned int i = 0; i < _corners.size(); ++i) {
+  unsigned int v_corners_size = _corners.size();
+  for (unsigned int i = 0; i < v_corners_size; ++i) {
     unsigned int i_p_1 = (i + 1) % _corners.size();
     i_tmp += (_corners[i].get_i() + _corners[i_p_1].get_i()) *
-      (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
+      ((_corners[i_p_1].get_i() * _corners[i].get_j()) - (_corners[i_p_1].get_j() * _corners[i].get_i()));
 
     j_tmp += (_corners[i].get_j() + _corners[i_p_1].get_j()) *
-      (_corners[i_p_1].get_i() * _corners[i].get_j() - _corners[i_p_1].get_j() * _corners[i].get_i());
+      ((_corners[i_p_1].get_i() * _corners[i].get_j()) - (_corners[i_p_1].get_j() * _corners[i].get_i()));
   }
 #endif
 
@@ -571,7 +580,8 @@ void vpPolygon::updateBoundingBox()
 
   std::set<double> setI;
   std::set<double> setJ;
-  for (unsigned int i = 0; i < _corners.size(); ++i) {
+  unsigned int v_corners_size = _corners.size();
+  for (unsigned int i = 0; i < v_corners_size; ++i) {
     setI.insert(_corners[i].get_i());
     setJ.insert(_corners[i].get_j());
   }
@@ -599,7 +609,7 @@ void vpPolygon::updateBoundingBox()
 */
 void vpPolygon::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness) const
 {
-  const unsigned int N = (unsigned int)_corners.size();
+  const unsigned int N = static_cast<unsigned int>(_corners.size());
   for (unsigned int i = 0; i < N; ++i) {
     vpDisplay::displayLine(I, _corners[i], _corners[(i + 1) % N], color, thickness);
   }
@@ -628,5 +638,5 @@ bool vpPolygon::isInside(const std::vector<vpImagePoint> &roi, const double &i, 
  */
 unsigned int vpPolygon::getSize() const
 {
-  return ((unsigned int)_corners.size());
+  return (static_cast<unsigned int>(_corners.size()));
 }

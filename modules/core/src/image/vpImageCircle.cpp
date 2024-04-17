@@ -69,15 +69,15 @@ vpImageCircle::vpImageCircle(const cv::Vec3f &vec)
 void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi, const float &radius,
                                         float &delta_theta)
 {
-  // umin_roi = u_c + r cos(theta)
-  // theta = acos((umin_roi - u_c) / r)
+  // --comment: umin_roi = u_c + r cos(theta)
+  // --comment: theta = acos of of umin_roi - u_c endof / r endof
   float theta1 = std::acos((umin_roi - u_c) / radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
   delta_theta = theta_max - theta_min;
-  if (u_c < umin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+  if ((u_c < umin_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -94,15 +94,15 @@ void computeIntersectionsLeftBorderOnly(const float &u_c, const float &umin_roi,
 void computeIntersectionsRightBorderOnly(const float &u_c, const float &umax_roi, const float &radius,
                                          float &delta_theta)
 {
-  // u = u_c + r cos(theta)
-  // theta = acos((u - u_c) / r)
+  // --comment: u = u_c + r cos(theta)
+  // --comment: theta = acos of of u - u_c endof / r endof
   float theta1 = std::acos((umax_roi - u_c) / radius);
   theta1 = vpMath::getAngleBetweenMinPiAndPi(theta1);
   float theta2 = -1.f * theta1;
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
-  delta_theta = 2.f * M_PIf - (theta_max - theta_min);
-  if (u_c > umax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+  delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
+  if ((u_c > umax_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -133,18 +133,18 @@ void computeIntersectionsTopBorderOnly(const float &v_c, const float &vmin_roi, 
   }
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
-  if (std::abs(theta_max - theta_min) * radius < 1.f) {
+  if ((std::abs(theta_max - theta_min) * radius) < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
     delta_theta = 2.f * M_PIf;
   }
   else if (theta1 > 0.f) {
-    delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+    delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
   }
   else {
     delta_theta = theta_max - theta_min;
   }
-  if (v_c < vmin_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+  if ((v_c < vmin_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -175,7 +175,7 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
   }
   float theta_min = std::min<float>(theta1, theta2);
   float theta_max = std::max<float>(theta1, theta2);
-  if (std::abs(theta_max - theta_min) * radius < 1.f) {
+  if ((std::abs(theta_max - theta_min) * radius) < 1.f) {
     // Between the maximum and minimum theta there is less than 1 pixel of difference
     // It meens that the full circle is visible
     delta_theta = 2.f * M_PIf;
@@ -184,9 +184,9 @@ void computeIntersectionsBottomBorderOnly(const float &v_c, const float &vmax_ro
     delta_theta = theta_max - theta_min;
   }
   else {
-    delta_theta = 2.f * M_PIf - (theta_max - theta_min);
+    delta_theta = (2.f * M_PIf) - (theta_max - theta_min);
   }
-  if (v_c > vmax_roi && std::abs(delta_theta - 2 * M_PIf) < 2.f * std::numeric_limits<float>::epsilon()) {
+  if ((v_c > vmax_roi) && (std::abs(delta_theta - (2 * M_PIf)) < (2.f * std::numeric_limits<float>::epsilon()))) {
     delta_theta = 0.f;
   }
 }
@@ -223,8 +223,8 @@ void computePerpendicularAxesIntersections(const float &u_c, const float &v_c, c
     theta_u_cross_2 = -M_PIf - theta_u_cross;
   }
   // Computing the corresponding u-coordinates at which the u-axis is crossed
-  float u_ucross = u_c + radius * std::cos(theta_u_cross);
-  float u_ucross2 = u_c + radius * std::cos(theta_u_cross_2);
+  float u_ucross = u_c + (radius * std::cos(theta_u_cross));
+  float u_ucross2 = u_c + (radius * std::cos(theta_u_cross_2));
   // Sorting the outputs such as theta_X_cross_min.second < theta_X_cross_max.second
   if (u_ucross < u_ucross2) {
     theta_u_cross_min.first = theta_u_cross;
@@ -247,8 +247,8 @@ void computePerpendicularAxesIntersections(const float &u_c, const float &v_c, c
   float theta_v_cross_2 = -theta_v_cross;
   // Computing the corresponding v-coordinates at which the v-axis is crossed
   // v = v_c - radius sin(theta) because the v-axis is oriented towards the bottom
-  float v_vcross = v_c - radius * std::sin(theta_v_cross);
-  float v_vcross2 = v_c - radius * std::sin(theta_v_cross_2);
+  float v_vcross = v_c - (radius * std::sin(theta_v_cross));
+  float v_vcross2 = v_c - (radius * std::sin(theta_v_cross_2));
   // Sorting the outputs such as theta_X_cross_min.second < theta_X_cross_max.second
   if (v_vcross < v_vcross2) {
     theta_v_cross_min.first = theta_v_cross;
@@ -291,23 +291,23 @@ void computeIntersectionsTopLeft(const float &u_c, const float &v_c, const float
   float u_umax = crossing_theta_u_max.second;
   float v_vmin = crossing_theta_v_min.second;
   float v_vmax = crossing_theta_v_max.second;
-  if (u_umin < umin_roi && u_umax >= umin_roi && v_vmin < vmin_roi && v_vmax >= vmin_roi) {
+  if ((u_umin < umin_roi) && (u_umax >= umin_roi) && (v_vmin < vmin_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses only once each axis
    //Case crossing once
     delta_theta = theta_u_max - theta_v_max;
   }
-  else if (u_umin >= umin_roi && u_umax >= umin_roi && v_vmin >= vmin_roi && v_vmax >= vmin_roi) {
+  else if ((u_umin >= umin_roi) && (u_umax >= umin_roi) && (v_vmin >= vmin_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
     delta_theta = (theta_v_min - theta_u_min) + (theta_u_max - theta_v_max);
   }
-  else if (u_umin < umin_roi && u_umax < umin_roi && v_vmin >= vmin_roi && v_vmax >= vmin_roi) {
+  else if ((u_umin < umin_roi) && (u_umax < umin_roi) && (v_vmin >= vmin_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses the u-axis outside the roi
     // so it is equivalent to the case of crossing only the left border
    //Case left only
     computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
   }
-  else if (u_umin >= umin_roi && u_umax >= umin_roi && v_vmin <= vmin_roi && v_vmax <= vmin_roi) {
+  else if ((u_umin >= umin_roi) && (u_umax >= umin_roi) && (v_vmin <= vmin_roi) && (v_vmax <= vmin_roi)) {
     // The circle crosses the v-axis outside the roi
     // so it is equivalent to the case of crossing only the top border
    //Case top only
@@ -340,7 +340,7 @@ void computeIntersectionsTopRight(const float &u_c, const float &v_c, const floa
   float u_umax = crossing_theta_u_max.second;
   float v_vmin = crossing_theta_v_min.second;
   float v_vmax = crossing_theta_v_max.second;
-  if (u_umin <= umax_roi && v_vmin < vmin_roi && u_umax >= umax_roi && v_vmax >= vmin_roi) {
+  if ((u_umin <= umax_roi) && (v_vmin < vmin_roi) && (u_umax >= umax_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses only once each axis and the center is below the top border
    //Case crossing once
     delta_theta = theta_v_max - theta_u_min;
@@ -349,18 +349,18 @@ void computeIntersectionsTopRight(const float &u_c, const float &v_c, const floa
       delta_theta += 2.f * M_PIf;
     }
   }
-  else if (u_umin <= umax_roi && v_vmin >= vmin_roi && u_umax <= umax_roi && v_vmax >= vmin_roi) {
+  else if ((u_umin <= umax_roi) && (v_vmin >= vmin_roi) && (u_umax <= umax_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
-    delta_theta = 2 * M_PIf - ((theta_u_min - theta_u_max) + (theta_v_min - theta_v_max));
+    delta_theta = (2 * M_PIf) - ((theta_u_min - theta_u_max) + (theta_v_min - theta_v_max));
   }
-  else if (u_umin >= umax_roi && v_vmin >= vmin_roi && u_umax >= umax_roi && v_vmax >= vmin_roi) {
+  else if ((u_umin >= umax_roi) && (v_vmin >= vmin_roi) && (u_umax >= umax_roi) && (v_vmax >= vmin_roi)) {
     // The circle crosses the u-axis outside the roi
     // so it is equivalent to the case of crossing only the right border
    //Case crossing right only
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
-  else if (u_umin <= umax_roi && v_vmin <= vmin_roi && u_umax <= umax_roi && v_vmax <= vmin_roi) {
+  else if ((u_umin <= umax_roi) && (v_vmin <= vmin_roi) && (u_umax <= umax_roi) && (v_vmax <= vmin_roi)) {
     // The circle crosses the v-axis outside the roi
     // so it is equivalent to the case of crossing only the top border
    //Case crossing top only
@@ -395,23 +395,23 @@ void computeIntersectionsBottomLeft(const float &u_c, const float &v_c, const fl
   float u_umax = crossing_theta_u_max.second;
   float v_vmin = crossing_theta_v_min.second;
   float v_vmax = crossing_theta_v_max.second;
-  if (u_umin < umin_roi && u_umax >= umin_roi && v_vmin <= vmax_roi && v_vmax > vmax_roi) {
+  if ((u_umin < umin_roi) && (u_umax >= umin_roi) && (v_vmin <= vmax_roi) && (v_vmax > vmax_roi)) {
     // The circle crosses only once each axis
    //Case crossing once
     delta_theta = theta_v_min - theta_u_max;
   }
-  else if (u_umin >= umin_roi && u_umax >= umin_roi && v_vmin <= vmax_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin >= umin_roi) && (u_umax >= umin_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
     delta_theta = (theta_v_min - theta_u_max) + (theta_u_min - theta_v_max);
   }
-  else if (u_umin < umin_roi && u_umax < umin_roi && v_vmin <= vmax_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin < umin_roi) && (u_umax < umin_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses the u-axis outside the roi
     // so it is equivalent to the case of crossing only the left border
    //Case left only
     computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
   }
-  else if (u_umin >= umin_roi && u_umax >= umin_roi && v_vmin >= vmax_roi && v_vmax >= vmax_roi) {
+  else if ((u_umin >= umin_roi) && (u_umax >= umin_roi) && (v_vmin >= vmax_roi) && (v_vmax >= vmax_roi)) {
     // The circle crosses the v-axis outside the roi
     // so it is equivalent to the case of crossing only the bottom border
    //Case bottom only
@@ -446,7 +446,7 @@ void computeIntersectionsBottomRight(const float &u_c, const float &v_c, const f
   float u_umax = crossing_theta_u_max.second;
   float v_vmin = crossing_theta_v_min.second;
   float v_vmax = crossing_theta_v_max.second;
-  if (u_umin <= umax_roi && u_umax > umax_roi && v_vmin <= vmax_roi && v_vmax > vmax_roi) {
+  if ((u_umin <= umax_roi) && (u_umax > umax_roi) && (v_vmin <= vmax_roi) && (v_vmax > vmax_roi)) {
     // The circle crosses only once each axis
    //Case crossing once
     delta_theta = theta_u_min - theta_v_min;
@@ -455,18 +455,18 @@ void computeIntersectionsBottomRight(const float &u_c, const float &v_c, const f
       delta_theta += 2.f * M_PIf;
     }
   }
-  else if (u_umin <= umax_roi && u_umax <= umax_roi && v_vmin <= vmax_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin <= umax_roi) && (u_umax <= umax_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses twice each axis
    //Case crossing twice
-    delta_theta = 2.f * M_PIf - ((theta_v_min - theta_v_max) + (theta_u_max - theta_u_min));
+    delta_theta = (2.f * M_PIf) - ((theta_v_min - theta_v_max) + (theta_u_max - theta_u_min));
   }
-  else if (u_umin > umax_roi && u_umax > umax_roi && v_vmin <= vmax_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin > umax_roi) && (u_umax > umax_roi) && (v_vmin <= vmax_roi) && (v_vmax <= vmax_roi)) {
     // The circle crosses the u-axis outside the roi
     // so it is equivalent to the case of crossing only the right border
    //Case left only
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
-  else if (u_umin <= umax_roi && u_umax <= umax_roi && v_vmin > vmax_roi && v_vmax > vmax_roi) {
+  else if ((u_umin <= umax_roi) && (u_umax <= umax_roi) && (v_vmin > vmax_roi) && (v_vmax > vmax_roi)) {
     // The circle crosses the v-axis outside the roi
     // so it is equivalent to the case of crossing only the bottom border
    //Case bottom only
@@ -513,23 +513,23 @@ void computeIntersectionsTopLeftBottom(const float &u_c, const float &v_c, const
   float theta_u_max_bottom = crossing_theta_u_max.first;
   float u_umin_bottom = crossing_theta_u_min.second;
   float u_umax_bottom = crossing_theta_u_max.second;
-  if (u_umin_top >= umin_roi && u_umin_bottom >= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+  if ((u_umin_top >= umin_roi) && (u_umin_bottom >= umin_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case intersection top + left + bottom twice
     delta_theta = (theta_v_min - theta_u_min_top) + (theta_u_max_top - theta_u_max_bottom) + (theta_u_min_bottom - theta_v_max);
   }
-  else if (u_umin_top <= umin_roi && v_vmin <= vmin_roi && u_umin_bottom <= umin_roi && v_vmax >= vmax_roi) {
+  else if ((u_umin_top <= umin_roi) && (v_vmin <= vmin_roi) && (u_umin_bottom <= umin_roi) && (v_vmax >= vmax_roi)) {
     // case intersection top and bottom
     delta_theta = (theta_u_max_top - theta_u_max_bottom);
   }
-  else if (u_umax_top <= umin_roi && u_umax_bottom <= umin_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+  else if ((u_umax_top <= umin_roi) && (u_umax_bottom <= umin_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case left only
     computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
   }
-  else if (u_umax_bottom > umin_roi && v_vmin >= vmin_roi) {
+  else if ((u_umax_bottom > umin_roi) && (v_vmin >= vmin_roi)) {
     // case bottom/left corner
     computeIntersectionsBottomLeft(u_c, v_c, umin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (u_umax_top > umin_roi && v_vmax <= vmax_roi) {
+  else if ((u_umax_top > umin_roi) && (v_vmax <= vmax_roi)) {
     // case top/left corner
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
   }
@@ -574,23 +574,23 @@ void computeIntersectionsTopRightBottom(const float &u_c, const float &v_c, cons
   float theta_u_max_bottom = crossing_theta_u_max.first;
   float u_umin_bottom = crossing_theta_u_min.second;
   float u_umax_bottom = crossing_theta_u_max.second;
-  if (u_umax_top <= umax_roi && u_umax_bottom <= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+  if ((u_umax_top <= umax_roi) && (u_umax_bottom <= umax_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case intersection top + right + bottom twice
-    delta_theta = 2.f * M_PIf - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
+    delta_theta = (2.f * M_PIf) - ((theta_u_min_top - theta_u_max_top) + (theta_v_min - theta_v_max) + (theta_u_max_bottom - theta_u_min_bottom));
   }
-  else if (u_umin_top <= umax_roi && u_umax_top > umax_roi && v_vmin <= vmin_roi && u_umin_bottom <= umax_roi && u_umax_bottom > umax_roi && v_vmax >= vmax_roi) {
+  else if ((u_umin_top <= umax_roi) && (u_umax_top > umax_roi) && (v_vmin <= vmin_roi) && (u_umin_bottom <= umax_roi) && (u_umax_bottom > umax_roi) && (v_vmax >= vmax_roi)) {
     // case intersection top and bottom
     delta_theta = (theta_u_max_top - theta_u_max_bottom);
   }
-  else if (u_umin_top >= umax_roi && u_umin_bottom >= umax_roi && v_vmin >= vmin_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin_top >= umax_roi) && (u_umin_bottom >= umax_roi) && (v_vmin >= vmin_roi) && (v_vmax <= vmax_roi)) {
     // case right only
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
-  else if (u_umin_bottom <= umax_roi && v_vmin >= vmin_roi) {
+  else if ((u_umin_bottom <= umax_roi) && (v_vmin >= vmin_roi)) {
     // case bottom/right corner
     computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
   }
-  else if (u_umin_top <= umax_roi && v_vmax <= vmax_roi) {
+  else if ((u_umin_top <= umax_roi) && (v_vmax <= vmax_roi)) {
     // case top/right corner
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
@@ -624,8 +624,8 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
   }
 
   // Computing the corresponding u-coordinates at which the u-axis is crossed
-  float u_ucross_top = u_c + radius * std::cos(theta_u_cross_top);
-  float u_ucross_top_2 = u_c + radius * std::cos(theta_u_cross_top_2);
+  float u_ucross_top = u_c + (radius * std::cos(theta_u_cross_top));
+  float u_ucross_top_2 = u_c + (radius * std::cos(theta_u_cross_top_2));
   // Sorting the outputs such as u(theta_u_cross_top_min) < u(theta_u_cross_top_max)
   float theta_u_cross_top_min = 0.f, theta_u_cross_top_max = 0.f;
   if (u_ucross_top < u_ucross_top_2) {
@@ -651,8 +651,8 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
   }
 
   // Computing the corresponding u-coordinates at which the u-axis is crossed
-  float u_ucross_bottom = u_c + radius * std::cos(theta_u_cross_bottom);
-  float u_ucross_bottom_2 = u_c + radius * std::cos(theta_u_cross_bottom_2);
+  float u_ucross_bottom = u_c + (radius * std::cos(theta_u_cross_bottom));
+  float u_ucross_bottom_2 = u_c + (radius * std::cos(theta_u_cross_bottom_2));
 
   // Sorting the outputs such as u(theta_u_cross_bottom_min) < u(theta_u_cross_bottom_max)
   float theta_u_cross_bottom_min = 0.f, theta_u_cross_bottom_max = 0.f;
@@ -667,7 +667,7 @@ void computeIntersectionsTopBottomOnly(const float &u_c, const float &v_c, const
 
   // Computing the the length of the angular interval of the circle when it intersects
   // only with the top and bottom borders of the Region of Interest (RoI)
-  delta_theta = 2.f * M_PIf - ((theta_u_cross_top_min - theta_u_cross_top_max) + (theta_u_cross_bottom_max - theta_u_cross_bottom_min));
+  delta_theta = (2.f * M_PIf) - ((theta_u_cross_top_min - theta_u_cross_top_max) + (theta_u_cross_bottom_max - theta_u_cross_bottom_min));
 }
 
 /*!
@@ -712,23 +712,23 @@ void computeIntersectionsLeftRightTop(const float &u_c, const float &v_c, const 
   float v_vmin_right = crossing_theta_v_min.second;
   float v_vmax_right = crossing_theta_v_max.second;
 
-  if (u_umin >= umin_roi && u_umax <= umax_roi && v_vmin_left >= vmin_roi && v_vmin_right >= vmin_roi) {
+  if ((u_umin >= umin_roi) && (u_umax <= umax_roi) && (v_vmin_left >= vmin_roi) && (v_vmin_right >= vmin_roi)) {
     // case intersection left + right + top  twice
     delta_theta = (theta_v_min_left - theta_u_min) + (theta_u_max - theta_v_min_right) + (theta_v_max_right - theta_v_max_left);
   }
-  else if (u_umin <= umin_roi && u_umax >= umax_roi && v_vmax_left >= vmin_roi && v_vmax_right >= vmin_roi) {
+  else if ((u_umin <= umin_roi) && (u_umax >= umax_roi) && (v_vmax_left >= vmin_roi) && (v_vmax_right >= vmin_roi)) {
     // case intersection left + right
     delta_theta = (theta_v_max_right - theta_v_max_left);
   }
-  else if (v_vmax_left <= vmin_roi && v_vmax_right <= vmin_roi && u_umin >= umin_roi && u_umax <= umax_roi) {
+  else if ((v_vmax_left <= vmin_roi) && (v_vmax_right <= vmin_roi) && (u_umin >= umin_roi) && (u_umax <= umax_roi)) {
     // case top only
     computeIntersectionsTopBorderOnly(v_c, vmin_roi, radius, delta_theta);
   }
-  else if (u_umax >= umin_roi && v_vmax_left >= vmin_roi) {
+  else if ((u_umax >= umin_roi) && (v_vmax_left >= vmin_roi)) {
     // case top/left corner
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
   }
-  else if (u_umin <= umax_roi && v_vmax_right >= vmin_roi) {
+  else if ((u_umin <= umax_roi) && (v_vmax_right >= vmin_roi)) {
     // case top/right corner
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
@@ -764,7 +764,7 @@ void computeIntersectionsLeftRightBottom(const float &u_c, const float &v_c, con
   float theta_v_min_left = crossing_theta_v_min.first;
   float theta_v_max_left = crossing_theta_v_max.first;
   float v_vmin_left = crossing_theta_v_min.second;
-  // float v_vmax_left = crossing_theta_v_max.second;
+  // --comment: float v_vmax_left equals crossing_theta_v_max dot second
 
   // Computing the intersections with the bottom and right axes
   float crossing_v_right = umax_roi; // We cross the v-axis of the right of the RoI at the maximum u-coordinate of the RoI
@@ -774,25 +774,25 @@ void computeIntersectionsLeftRightBottom(const float &u_c, const float &v_c, con
   float theta_v_min_right = crossing_theta_v_min.first;
   float theta_v_max_right = crossing_theta_v_max.first;
   float v_vmin_right = crossing_theta_v_min.second;
-  // float v_vmax_right = crossing_theta_v_max.second;
+  // --comment: float v_vmax_right equals crossing_theta_v_max dot second
 
-  if (u_umin >= umin_roi && u_umax <= umax_roi && v_vmin_left <= vmax_roi && v_vmin_right <= vmax_roi) {
+  if ((u_umin >= umin_roi) && (u_umax <= umax_roi) && (v_vmin_left <= vmax_roi) && (v_vmin_right <= vmax_roi)) {
     // case intersection left + right + bottom  twice
     delta_theta = (theta_v_min_left - theta_v_min_right) + (theta_v_max_right - theta_u_max) + (theta_u_min - theta_v_max_left);
   }
-  else if (u_umin <= umin_roi && u_umax >= umax_roi && v_vmin_left <= vmax_roi && v_vmin_right <= vmax_roi) {
+  else if ((u_umin <= umin_roi) && (u_umax >= umax_roi) && (v_vmin_left <= vmax_roi) && (v_vmin_right <= vmax_roi)) {
     // case intersection left + right
     delta_theta = (theta_v_min_left - theta_v_min_right);
   }
-  else if (v_vmin_left >= vmax_roi && v_vmin_right >= vmax_roi && u_umin >= umin_roi && u_umax <= umax_roi) {
+  else if ((v_vmin_left >= vmax_roi) && (v_vmin_right >= vmax_roi) && (u_umin >= umin_roi) && (u_umax <= umax_roi)) {
     // case bottom only
     computeIntersectionsBottomBorderOnly(v_c, vmax_roi, radius, delta_theta);
   }
-  else if (u_umax >= umin_roi && v_vmin_right >= vmax_roi) {
+  else if ((u_umax >= umin_roi) && (v_vmin_right >= vmax_roi)) {
     // case bottom/left corner
     computeIntersectionsBottomLeft(u_c, v_c, umin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (u_umin <= umax_roi && v_vmin_right <= vmax_roi) {
+  else if ((u_umin <= umax_roi) && (v_vmin_right <= vmax_roi)) {
     // case bottom/right corner
     computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
   }
@@ -821,8 +821,8 @@ void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const
   float theta_v_cross_left_2 = -theta_v_cross_left;
 
   // Computing the corresponding v-coordinates at which the v-axis is crossed
-  float v_vcross_left = v_c - radius * std::sin(theta_v_cross_left);
-  float v_vcross_left_2 = v_c - radius * std::sin(theta_v_cross_left_2);
+  float v_vcross_left = v_c - (radius * std::sin(theta_v_cross_left));
+  float v_vcross_left_2 = v_c - (radius * std::sin(theta_v_cross_left_2));
   // Sorting the outputs such as v(theta_v_cross_left_min) < v(theta_v_cross_left_max)
   float theta_v_cross_left_min = 0.f, theta_v_cross_left_max = 0.f;
   if (v_vcross_left < v_vcross_left_2) {
@@ -843,8 +843,8 @@ void computeIntersectionsLeftRightOnly(const float &u_c, const float &v_c, const
   float theta_v_cross_right_2 = -theta_v_cross_right;
 
   // Computing the corresponding v-coordinates at which the v-axis is crossed
-  float v_vcross_right = v_c - radius * std::sin(theta_v_cross_right);
-  float v_vcross_right_2 = v_c - radius * std::sin(theta_v_cross_right_2);
+  float v_vcross_right = v_c - (radius * std::sin(theta_v_cross_right));
+  float v_vcross_right_2 = v_c - (radius * std::sin(theta_v_cross_right_2));
 
   // Sorting the outputs such as v(theta_v_cross_right_min) < v(theta_v_cross_right_max)
   float theta_v_cross_right_min = 0.f, theta_v_cross_right_max = 0.f;
@@ -924,67 +924,67 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
   bool touchRightBorder = (u_c + radius) >= umax_roi;
   bool touchTopBorder = (v_c - radius) <= vmin_roi;
   bool touchBottomBorder = (v_c + radius) >= vmax_roi;
-  bool isHorizontallyOK = (!touchLeftBorder && !touchRightBorder);
-  bool isVerticallyOK = (!touchTopBorder && !touchBottomBorder);
+  bool isHorizontallyOK = ((!touchLeftBorder) && (!touchRightBorder));
+  bool isVerticallyOK = ((!touchTopBorder) && (!touchBottomBorder));
   if (isHorizontallyOK && isVerticallyOK && roi.isInside(m_center)) {
     // Easy case
     // The circle has its center in the image and its radius is not too great
     // to make it fully contained in the RoI
     delta_theta = 2.f * M_PIf;
   }
-  else if (touchBottomBorder && !touchLeftBorder && !touchRightBorder && !touchTopBorder) {
+  else if (touchBottomBorder && (!touchLeftBorder) && (!touchRightBorder) && (!touchTopBorder)) {
     // Touches/intersects only the bottom border of the RoI
     computeIntersectionsBottomBorderOnly(v_c, vmax_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && touchLeftBorder && !touchRightBorder && !touchTopBorder) {
+  else if ((!touchBottomBorder) && touchLeftBorder && (!touchRightBorder) && (!touchTopBorder)) {
     // Touches/intersects only the left border of the RoI
     computeIntersectionsLeftBorderOnly(u_c, umin_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && !touchLeftBorder && touchRightBorder && !touchTopBorder) {
+  else if ((!touchBottomBorder) && (!touchLeftBorder) && touchRightBorder && (!touchTopBorder)) {
     // Touches/intersects only the right border of the RoI
     computeIntersectionsRightBorderOnly(u_c, umax_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && !touchLeftBorder && !touchRightBorder && touchTopBorder) {
+  else if ((!touchBottomBorder) && (!touchLeftBorder) && (!touchRightBorder) && touchTopBorder) {
     // Touches/intersects only the top border of the RoI
     computeIntersectionsTopBorderOnly(v_c, vmin_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && touchLeftBorder && !touchRightBorder && !touchTopBorder) {
+  else if (touchBottomBorder && touchLeftBorder && (!touchRightBorder) && (!touchTopBorder)) {
     // Touches/intersects the bottom and left borders of the RoI
     computeIntersectionsBottomLeft(u_c, v_c, umin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && !touchLeftBorder && touchRightBorder && !touchTopBorder) {
+  else if (touchBottomBorder && (!touchLeftBorder) && touchRightBorder && (!touchTopBorder)) {
     // Touches/intersects the bottom and right borders of the RoI
     computeIntersectionsBottomRight(u_c, v_c, vmax_roi, umax_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && touchLeftBorder && !touchRightBorder && touchTopBorder) {
+  else if ((!touchBottomBorder) && touchLeftBorder && (!touchRightBorder) && touchTopBorder) {
     // Touches/intersects the top and left borders of the RoI
     computeIntersectionsTopLeft(u_c, v_c, umin_roi, vmin_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && !touchLeftBorder && touchRightBorder && touchTopBorder) {
+  else if ((!touchBottomBorder) && (!touchLeftBorder) && touchRightBorder && touchTopBorder) {
     // Touches/intersects the top and right borders of the RoI
     computeIntersectionsTopRight(u_c, v_c, vmin_roi, umax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && touchTopBorder && touchLeftBorder && !touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && touchLeftBorder && (!touchRightBorder)) {
     // Touches/intersects the top, left and bottom borders of the RoI
     computeIntersectionsTopLeftBottom(u_c, v_c, umin_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && touchTopBorder && !touchLeftBorder && touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && (!touchLeftBorder) && touchRightBorder) {
     // Touches/intersects the top, right and bottom borders of the RoI
     computeIntersectionsTopRightBottom(u_c, v_c, umax_roi, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && touchTopBorder && !touchLeftBorder && !touchRightBorder) {
+  else if (touchBottomBorder && touchTopBorder && (!touchLeftBorder) && (!touchRightBorder)) {
     // Touches/intersects the top and bottom borders of the RoI
     computeIntersectionsTopBottomOnly(u_c, v_c, vmin_roi, vmax_roi, radius, delta_theta);
   }
-  else if (!touchBottomBorder && touchTopBorder && touchLeftBorder && touchRightBorder) {
+  else if ((!touchBottomBorder) && touchTopBorder && touchLeftBorder && touchRightBorder) {
     // Touches/intersects the top, left and right borders of the RoI
     computeIntersectionsLeftRightTop(u_c, v_c, umin_roi, umax_roi, vmin_roi, radius, delta_theta);
   }
-  else if (touchBottomBorder && !touchTopBorder && touchLeftBorder && touchRightBorder) {
+  else if (touchBottomBorder && (!touchTopBorder) && touchLeftBorder && touchRightBorder) {
     // Touches/intersects the bottom, left and right borders of the RoI
     computeIntersectionsLeftRightBottom(u_c, v_c, umin_roi, umax_roi, vmax_roi, radius, delta_theta);
   }
-  else if (touchLeftBorder && touchRightBorder && !touchTopBorder && !touchBottomBorder) {
+  else if (touchLeftBorder && touchRightBorder && (!touchTopBorder) && (!touchBottomBorder)) {
     // Touches/intersects the bottom, left and right borders of the RoI
     computeIntersectionsLeftRightOnly(u_c, v_c, umin_roi, umax_roi, radius, delta_theta);
   }
@@ -1001,9 +1001,9 @@ float vpImageCircle::computeAngularCoverageInRoI(const vpRect &roi, const float 
     throw(vpException(vpException::fatalError, "This case should never happen. Please contact Inria to make fix the problem"));
   }
 
-  if (delta_theta < 0 || delta_theta > 2.f * M_PIf) { // Needed since M_PIf is used
+  if ((delta_theta < 0) || (delta_theta >(2.f * M_PIf))) { // Needed since M_PIf is used
     float rest = vpMath::modulo(delta_theta, 2.f * M_PIf);
-    if (rest < roundingTolerance && (delta_theta < -M_PIf || delta_theta > M_PIf)) {
+    if ((rest < roundingTolerance) && ((delta_theta < -M_PIf) || (delta_theta > M_PIf))) {
       // If the angle is a negative multiple of 2.f * M_PIf we consider it to be 2.f * M_PIf
       delta_theta = 2.f * M_PIf;
     }
@@ -1096,23 +1096,23 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
     float dthetaSinNeg = -1.f / (r_float * sin_theta);
     float dthetaPos = 0.f;
     if ((sin_theta < 0.f) && (cos_theta > 0.f)) {
-      // dTheta <= -1/r sin(theta) && dTheta <= 1/r cos(theta)
+      // --comment: dTheta lesseq -1/r sin(theta) and dTheta lesseq 1/r cos(theta)
       dthetaPos = std::min<float>(dthetaCosPos, dthetaSinNeg);
     }
     else if ((sin_theta > 0.f) && (cos_theta < 0.f)) {
-      // dTheta <= 1/r sin(theta) && dTheta <= -1/r cos(theta)
+      // --comment: dTheta lesseq 1/r sin(theta) and dTheta lesseq -1/r cos(theta)
       dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinPos);
     }
     else if ((sin_theta < 0.f) && (cos_theta < 0.f)) {
-      // dTheta <= -1/r sin(theta) && dTheta <= -1/r cos(theta)
+      // --comment: dTheta lesseq -1/r sin(theta) and dTheta lesseq -1/r cos(theta)
       dthetaPos = std::min<float>(dthetaCosNeg, dthetaSinNeg);
     }
     else if ((sin_theta > 0.f) && (cos_theta > 0.f)) {
-      // dTheta <= 1/r sin(theta) && dTheta <= 1/r cos(theta)
+      // --comment: dTheta lesseq 1/r sin(theta) and dTheta lesseq 1/r cos(theta)
       dthetaPos = std::min<float>(dthetaCosPos, dthetaSinPos);
     }
     else if (vpMath::equal(sin_theta, 0.f) && (!vpMath::equal(cos_theta, 0.f))) {
-      // dTheta = -1 / r cos(theta) || dTheta = 1 / r cos(theta)
+      // --comment: dTheta eq -1 / r cos(theta) or dTheta eq 1 / r cos(theta)
       if (cos_theta > 0.f) {
         dthetaPos = dthetaCosNeg;
       }
@@ -1121,7 +1121,7 @@ unsigned int vpImageCircle::computePixelsInMask(const vpImage<bool> &mask) const
       }
     }
     else if ((!vpMath::equal(sin_theta, 0.f)) && vpMath::equal(cos_theta, 0.f)) {
-      // dTheta = -1 / r sin(theta) || dTheta = 1 / r sin(theta)
+      // --comment: dTheta eq -1 / r sin(theta) or dTheta eq 1 / r sin(theta)
       if (sin_theta > 0.f) {
         dthetaPos = dthetaSinNeg;
       }
@@ -1152,12 +1152,12 @@ vpRect vpImageCircle::getBBox() const
 
 float vpImageCircle::get_n20() const
 {
-  return m_radius * m_radius / 4;
+  return (m_radius * m_radius) / 4;
 }
 
 float vpImageCircle::get_n02() const
 {
-  return m_radius * m_radius / 4;
+  return (m_radius * m_radius) / 4;
 }
 
 float vpImageCircle::get_n11() const

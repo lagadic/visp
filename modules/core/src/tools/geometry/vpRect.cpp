@@ -120,8 +120,8 @@ vpRect::vpRect(const std::vector<vpImagePoint> &ip) : left(0), top(0), width(0),
 */
 bool vpRect::isInside(const vpImagePoint &ip) const
 {
-  return (ip.get_i() <= this->getBottom() && ip.get_i() >= this->getTop() && ip.get_j() <= this->getRight() &&
-          ip.get_j() >= this->getLeft());
+  return ((ip.get_i() <= this->getBottom()) && (ip.get_i() >= this->getTop()) && (ip.get_j() <= this->getRight()) &&
+          (ip.get_j() >= this->getLeft()));
 }
 
 /*!
@@ -163,24 +163,32 @@ void vpRect::set(const vpImagePoint &topLeft, double w, double h)
 */
 void vpRect::set(const std::vector<vpImagePoint> &ip)
 {
-  if (ip.size() < 1)
+  if (ip.size() < 1) {
     throw(vpException(vpException::dimensionError, "At least 1 point is requested to build a rectangle"));
+  }
   double minu, maxu;
   double minv, maxv;
-  minu = maxu = ip[0].get_u();
-  minv = maxv = ip[0].get_v();
+  maxu = ip[0].get_u();
+  maxv = ip[0].get_v();
+  minu = maxu;
+  minv = maxv;
 
-  for (size_t i = 1; i < ip.size(); i++) {
+  size_t ip_size = ip.size();
+  for (size_t i = 1; i < ip_size; ++i) {
     double u = ip[i].get_u();
     double v = ip[i].get_v();
-    if (u < minu)
+    if (u < minu) {
       minu = u;
-    else if (u > maxu)
+    }
+    else if (u > maxu) {
       maxu = u;
-    if (v < minv)
+    }
+    if (v < minv) {
       minv = v;
-    else if (v > maxv)
+    }
+    else if (v > maxv) {
       maxv = v;
+    }
   }
 
   setLeft(minu);
@@ -216,12 +224,11 @@ void vpRect::set(const vpRect &r) { *this = r; }
  */
 bool vpRect::operator==(const vpRect &r) const
 {
-  // return (top == r.top && left == r.left && width == r.width && height ==
-  // r.height);
-  return (std::fabs(top - r.top) <= std::fabs(top) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(left - r.left) <= std::fabs(left) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(width - r.width) <= std::fabs(width) * std::numeric_limits<double>::epsilon() &&
-          std::fabs(height - r.height) <= std::fabs(height) * std::numeric_limits<double>::epsilon());
+  // --comment: return top == r.top and left == r.left and width == r.width and height == r.height
+  return ((std::fabs(top - r.top) <= (std::fabs(top) * std::numeric_limits<double>::epsilon())) &&
+          (std::fabs(left - r.left) <= (std::fabs(left) * std::numeric_limits<double>::epsilon())) &&
+          (std::fabs(width - r.width) <= (std::fabs(width) * std::numeric_limits<double>::epsilon())) &&
+          (std::fabs(height - r.height) <= (std::fabs(height) * std::numeric_limits<double>::epsilon())));
 }
 
 /*!
@@ -230,16 +237,16 @@ bool vpRect::operator==(const vpRect &r) const
  */
 bool vpRect::operator!=(const vpRect &r) const
 {
-  // return (top != r.top || left != r.left || width != r.width || height !=
-  // r.height);
-  //  return (std::fabs(top-r.top) >
-  //  std::fabs(top)*std::numeric_limits<double>::epsilon()
-  //          || std::fabs(left-r.left) >
-  //          std::fabs(left)*std::numeric_limits<double>::epsilon()
-  //          || std::fabs(width-r.width) >
-  //          std::fabs(width)*std::numeric_limits<double>::epsilon()
-  //          || std::fabs(height-r.height) >
-  //          std::fabs(height)*std::numeric_limits<double>::epsilon());
+  // --comment: return (top != r.top || left != r.left || width != r.width || height !=
+  // --comment: r.height);
+  // --comment:  return (std::fabs(top-r.top) >
+  // --comment:  std::fabs(top)*std::numeric_limits<double>::epsilon()
+  // --comment:          || std::fabs(left-r.left) >
+  // --comment:          std::fabs(left)*std::numeric_limits<double>::epsilon()
+  // --comment:          || std::fabs(width-r.width) >
+  // --comment:          std::fabs(width)*std::numeric_limits<double>::epsilon()
+  // --comment:          || std::fabs(height-r.height) >
+  // --comment:          std::fabs(height)*std::numeric_limits<double>::epsilon()
   return !(*this == r);
 }
 
@@ -253,8 +260,8 @@ bool vpRect::operator!=(const vpRect &r) const
 */
 VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect)
 {
-  return (ip.get_i() <= rect.getBottom() && ip.get_i() >= rect.getTop() && ip.get_j() <= rect.getRight() &&
-          ip.get_j() >= rect.getLeft());
+  return ((ip.get_i() <= rect.getBottom()) && (ip.get_i() >= rect.getTop()) && (ip.get_j() <= rect.getRight()) &&
+          (ip.get_j() >= rect.getLeft()));
 }
 
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r)

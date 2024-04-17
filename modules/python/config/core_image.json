@@ -348,7 +348,7 @@
         },
         {
           "static": true,
-          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "signature": "void RGBaToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int, bool)",
           "ignore": true,
           "custom_implem": true
         },
@@ -360,13 +360,13 @@
         },
         {
           "static": true,
-          "signature": "void HSVToRGB(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "signature": "void HSVToRGB(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int, bool)",
           "ignore": true,
           "custom_implem": true
         },
         {
           "static": true,
-          "signature": "void HSVToRGBa(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int)",
+          "signature": "void HSVToRGBa(const unsigned char*, const unsigned char*, const unsigned char*, unsigned char*, unsigned int, bool)",
           "ignore": true,
           "custom_implem": true
         },
@@ -384,7 +384,7 @@
         },
         {
           "static": true,
-          "signature": "void RGBToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int)",
+          "signature": "void RGBToHSV(const unsigned char*, unsigned char*, unsigned char*, unsigned char*, unsigned int, bool)",
           "ignore": true,
           "custom_implem": true
         },

@@ -220,7 +220,7 @@ vpPoseVector vpPoseVector::buildFrom(const vpHomogeneousMatrix &M)
 */
 vpPoseVector vpPoseVector::buildFrom(const vpTranslationVector &tv, const vpThetaUVector &tu)
 {
-  for (unsigned int i = 0; i < 3; i++) {
+  for (unsigned int i = 0; i < 3; ++i) {
     (*this)[i] = tv[i];
     (*this)[i + 3] = tu[i];
   }
@@ -333,11 +333,14 @@ vpThetaUVector vpPoseVector::getThetaUVector() const
 */
 void vpPoseVector::print() const
 {
-  for (unsigned int i = 0; i < 6; i++)
-    if (i < 3)
+  for (unsigned int i = 0; i < 6; ++i) {
+    if (i < 3) {
       std::cout << (*this)[i] << " ";
-    else
+    }
+    else {
       std::cout << vpMath::deg((*this)[i]) << " ";
+    }
+  }
   std::cout << std::endl;
 }
 
@@ -375,7 +378,7 @@ void vpPoseVector::save(std::ofstream &f) const
 void vpPoseVector::load(std::ifstream &f)
 {
   if (!f.fail()) {
-    for (unsigned int i = 0; i < 6; i++) {
+    for (unsigned int i = 0; i < 6; ++i) {
       f >> (*this)[i];
     }
   }
@@ -426,7 +429,7 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
+  // --comment: ossFixed less less std fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -460,32 +463,34 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
   maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
+  if (maxAfter == 1) {
     maxAfter = 0;
+  }
 
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (intro) {
     s << intro;
+  }
   s << "[" << m << "," << n << "]=\n";
 
-  for (unsigned int i = 0; i < m; i++) {
+  for (unsigned int i = 0; i < m; ++i) {
     s << "  ";
     size_type p = values[i].find('.');
     s.setf(std::ios::right, std::ios::adjustfield);
-    s.width((std::streamsize)maxBefore);
+    s.width(static_cast<std::streamsize>(maxBefore));
     s << values[i].substr(0, p).c_str();
 
     if (maxAfter > 0) {
       s.setf(std::ios::left, std::ios::adjustfield);
       if (p != std::string::npos) {
-        s.width((std::streamsize)maxAfter);
+        s.width(static_cast<std::streamsize>(maxAfter));
         s << values[i].substr(p, maxAfter).c_str();
       }
       else {
         assert(maxAfter > 1);
-        s.width((std::streamsize)maxAfter);
+        s.width(static_cast<std::streamsize>(maxAfter));
         s << ".0";
       }
     }
@@ -497,7 +502,7 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
 
   s.flags(original_flags); // restore s to standard state
 
-  return (int)(maxBefore + maxAfter);
+  return static_cast<int>(maxBefore + maxAfter);
 }
 
 /*!
@@ -508,8 +513,10 @@ std::vector<double> vpPoseVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 
-  for (unsigned int i = 0; i < this->size(); i++)
+  unsigned int this_size = this->size();
+  for (unsigned int i = 0; i < this_size; ++i) {
     v[i] = data[i];
+  }
   return v;
 }
 
@@ -535,7 +542,7 @@ void vpPoseVector::parse_json(const nlohmann::json &j)
     from_json(j, *asArray);
   }
 
-  if (getCols() != 1 && getRows() != 6) {
+  if ((getCols() != 1) && (getRows() != 6)) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 6D pose vector");
   }
 }

@@ -452,8 +452,8 @@ public:
     guchar OctetRouge, OctetVert, OctetBleu, mask;
     mask = 0x000000FF;
 
-    for (gint y = 0; y < height; y++) {
-      for (gint x = 0; x < width; x++) {
+    for (gint y = 0; y < height; ++y) {
+      for (gint x = 0; x < width; ++x) {
         pixel = gdk_image_get_pixel(ImageGtk, x, y);
         OctetBleu = static_cast<guchar>(pixel) & mask;
         OctetVert = static_cast<guchar>(pixel >> 8) & mask;

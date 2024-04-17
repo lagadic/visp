@@ -121,8 +121,9 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpHomogeneousMatrix &M)
 */
 vpThetaUVector vpThetaUVector::buildFrom(const vpPoseVector &p)
 {
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = p[i + 3];
+  }
 
   return *this;
 }
@@ -134,10 +135,10 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
 {
   double s, c, theta;
 
-  s = (R[1][0] - R[0][1]) * (R[1][0] - R[0][1]) + (R[2][0] - R[0][2]) * (R[2][0] - R[0][2]) +
-    (R[2][1] - R[1][2]) * (R[2][1] - R[1][2]);
+  s = ((R[1][0] - R[0][1]) * (R[1][0] - R[0][1])) + ((R[2][0] - R[0][2]) * (R[2][0] - R[0][2])) +
+    ((R[2][1] - R[1][2]) * (R[2][1] - R[1][2]));
   s = sqrt(s) / 2.0;
-  c = (R[0][0] + R[1][1] + R[2][2] - 1.0) / 2.0;
+  c = ((R[0][0] + R[1][1] + R[2][2]) - 1.0) / 2.0;
   theta = atan2(s, c); /* theta in [0, PI] since s > 0 */
 
   // General case when theta != pi. If theta=pi, c=-1
@@ -152,40 +153,52 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpRotationMatrix &R)
   else /* theta near PI */
   {
     double x = 0;
-    if ((R[0][0] - c) > std::numeric_limits<double>::epsilon())
+    if ((R[0][0] - c) > std::numeric_limits<double>::epsilon()) {
       x = sqrt((R[0][0] - c) / (1 - c));
+    }
 
     double y = 0;
-    if ((R[1][1] - c) > std::numeric_limits<double>::epsilon())
+    if ((R[1][1] - c) > std::numeric_limits<double>::epsilon()) {
       y = sqrt((R[1][1] - c) / (1 - c));
+    }
 
     double z = 0;
-    if ((R[2][2] - c) > std::numeric_limits<double>::epsilon())
+    if ((R[2][2] - c) > std::numeric_limits<double>::epsilon()) {
       z = sqrt((R[2][2] - c) / (1 - c));
+    }
 
-    if (x > y && x > z) {
-      if ((R[2][1] - R[1][2]) < 0)
+    if ((x > y) && (x > z)) {
+      if ((R[2][1] - R[1][2]) < 0) {
         x = -x;
-      if (vpMath::sign(x) * vpMath::sign(y) != vpMath::sign(R[0][1] + R[1][0]))
+      }
+      if ((vpMath::sign(x) * vpMath::sign(y)) != (vpMath::sign(R[0][1] + R[1][0]))) {
         y = -y;
-      if (vpMath::sign(x) * vpMath::sign(z) != vpMath::sign(R[0][2] + R[2][0]))
+      }
+      if ((vpMath::sign(x) * vpMath::sign(z)) != (vpMath::sign(R[0][2] + R[2][0]))) {
         z = -z;
+      }
     }
     else if (y > z) {
-      if ((R[0][2] - R[2][0]) < 0)
+      if ((R[0][2] - R[2][0]) < 0) {
         y = -y;
-      if (vpMath::sign(y) * vpMath::sign(x) != vpMath::sign(R[1][0] + R[0][1]))
+      }
+      if ((vpMath::sign(y) * vpMath::sign(x)) != (vpMath::sign(R[1][0] + R[0][1]))) {
         x = -x;
-      if (vpMath::sign(y) * vpMath::sign(z) != vpMath::sign(R[1][2] + R[2][1]))
+      }
+      if ((vpMath::sign(y) * vpMath::sign(z)) != (vpMath::sign(R[1][2] + R[2][1]))) {
         z = -z;
+      }
     }
     else {
-      if ((R[1][0] - R[0][1]) < 0)
+      if ((R[1][0] - R[0][1]) < 0) {
         z = -z;
-      if (vpMath::sign(z) * vpMath::sign(x) != vpMath::sign(R[2][0] + R[0][2]))
+      }
+      if ((vpMath::sign(z) * vpMath::sign(x)) != (vpMath::sign(R[2][0] + R[0][2]))) {
         x = -x;
-      if (vpMath::sign(z) * vpMath::sign(y) != vpMath::sign(R[2][1] + R[1][2]))
+      }
+      if ((vpMath::sign(z) * vpMath::sign(y)) != (vpMath::sign(R[2][1] + R[1][2]))) {
         y = -y;
+      }
     }
     data[0] = theta * x;
     data[1] = theta * y;
@@ -245,8 +258,9 @@ vpThetaUVector vpThetaUVector::buildFrom(const std::vector<double> &tu)
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = tu[i];
+  }
 
   return *this;
 }
@@ -260,8 +274,9 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
     throw(vpException(vpException::dimensionError, "Cannot construct a theta-u vector from a %d-dimension std::vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     data[i] = tu[i];
+  }
 
   return *this;
 }
@@ -288,8 +303,9 @@ vpThetaUVector vpThetaUVector::buildFrom(const vpColVector &tu)
 */
 vpThetaUVector &vpThetaUVector::operator=(double v)
 {
-  for (unsigned int i = 0; i < dsize; i++)
+  for (unsigned int i = 0; i < dsize; ++i) {
     data[i] = v;
+  }
 
   return *this;
 }
@@ -322,8 +338,11 @@ vpThetaUVector &vpThetaUVector::operator=(const vpColVector &tu)
     throw(vpException(vpException::dimensionError, "Cannot set a theta-u vector from a %d-dimension col vector",
                       tu.size()));
   }
-  for (unsigned int i = 0; i < size(); i++)
+
+  unsigned int l_size = size();
+  for (unsigned int i = 0; i < l_size; ++i) {
     data[i] = tu[i];
+  }
 
   return *this;
 }
@@ -361,13 +380,14 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
   u.resize(3);
 
   theta = getTheta();
-  // if (theta == 0) {
+  // --comment: if (theta == 0)
   if (std::fabs(theta) <= std::numeric_limits<double>::epsilon()) {
     u = 0;
     return;
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     u[i] = data[i] / theta;
+  }
 }
 
 /*!
@@ -392,7 +412,7 @@ void vpThetaUVector::extract(double &theta, vpColVector &u) const
 
   \sa getTheta(), extract()
 */
-double vpThetaUVector::getTheta() const { return sqrt(data[0] * data[0] + data[1] * data[1] + data[2] * data[2]); }
+double vpThetaUVector::getTheta() const { return sqrt((data[0] * data[0]) + (data[1] * data[1]) + (data[2] * data[2])); }
 
 /*!
 
@@ -422,13 +442,14 @@ vpColVector vpThetaUVector::getU() const
   vpColVector u(3);
 
   double theta = getTheta();
-  // if (theta == 0) {
+  // --comment: if theta equals 0
   if (std::fabs(theta) <= std::numeric_limits<double>::epsilon()) {
     u = 0;
     return u;
   }
-  for (unsigned int i = 0; i < 3; i++)
+  for (unsigned int i = 0; i < 3; ++i) {
     u[i] = data[i] / theta;
+  }
   return u;
 }
 
@@ -455,10 +476,10 @@ vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
 
   vpColVector a_hat_sin_2 = a_hat * std::sin(a_2);
   vpColVector b_hat_sin_2 = b_hat * std::sin(b_2);
-  double c = 2 * std::acos(std::cos(a_2) * std::cos(b_2) - vpColVector::dotProd(a_hat_sin_2, b_hat_sin_2));
-  vpColVector d = std::sin(a_2) * std::cos(b_2) * a_hat + std::cos(a_2) * std::sin(b_2) * b_hat +
+  double c = 2 * std::acos((std::cos(a_2) * std::cos(b_2)) - (vpColVector::dotProd(a_hat_sin_2, b_hat_sin_2)));
+  vpColVector d = ((std::sin(a_2) * std::cos(b_2) * a_hat) + (std::cos(a_2) * std::sin(b_2) * b_hat)) +
     std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat);
-  d = c * d / std::sin(c / 2);
+  d = (c * d) / std::sin(c / 2);
 
   return vpThetaUVector(d);
 }

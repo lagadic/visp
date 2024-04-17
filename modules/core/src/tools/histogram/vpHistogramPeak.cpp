@@ -92,7 +92,7 @@ bool vpHistogramPeak::operator==(const vpHistogramPeak &p) const { return ((leve
 VISP_EXPORT std::ostream &operator<<(std::ostream &s, const vpHistogramPeak &p)
 {
 
-  s << (int)p.getLevel() << " " << p.getValue();
+  s << static_cast<int>(p.getLevel()) << " " << p.getValue();
 
   return s;
 }

@@ -53,7 +53,7 @@
 #include <thread>
 #endif
 
-#define eps 1e-6
+#define EPS 1e-6
 
 namespace
 {
@@ -62,31 +62,41 @@ struct CompareObjectPointDegenerate
 {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    bool rc = false;
     const double dist1 =
-      point1.get_oX() * point1.get_oX() + point1.get_oY() * point1.get_oY() + point1.get_oZ() * point1.get_oZ();
+      (point1.get_oX() * point1.get_oX()) + (point1.get_oY() * point1.get_oY()) + (point1.get_oZ() * point1.get_oZ());
     const double dist2 =
-      point2.get_oX() * point2.get_oX() + point2.get_oY() * point2.get_oY() + point2.get_oZ() * point2.get_oZ();
-    if (dist1 - dist2 < -3 * eps * eps)
-      return true;
-    if (dist1 - dist2 > 3 * eps * eps)
-      return false;
+      (point2.get_oX() * point2.get_oX()) + (point2.get_oY() * point2.get_oY()) + (point2.get_oZ() * point2.get_oZ());
 
-    if (point1.oP[0] - point2.oP[0] < -eps)
+    if ((dist1 - dist2) < (-3 * EPS * EPS)) {
       return true;
-    if (point1.oP[0] - point2.oP[0] > eps)
+    }
+    if ((dist1 - dist2) > (3 * EPS * EPS)) {
       return false;
+    }
 
-    if (point1.oP[1] - point2.oP[1] < -eps)
+    if ((point1.oP[0] - point2.oP[0]) < -EPS) {
       return true;
-    if (point1.oP[1] - point2.oP[1] > eps)
+    }
+    if ((point1.oP[0] - point2.oP[0]) > EPS) {
       return false;
+    }
 
-    if (point1.oP[2] - point2.oP[2] < -eps)
+    if ((point1.oP[1] - point2.oP[1]) < -EPS) {
       return true;
-    if (point1.oP[2] - point2.oP[2] > eps)
+    }
+    if ((point1.oP[1] - point2.oP[1]) > EPS) {
       return false;
+    }
 
-    return false;
+    if ((point1.oP[2] - point2.oP[2]) < -EPS) {
+      return true;
+    }
+    if ((point1.oP[2] - point2.oP[2]) > EPS) {
+      return false;
+    }
+
+    return rc;
   }
 };
 
@@ -95,24 +105,31 @@ struct CompareImagePointDegenerate
 {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
-    const double dist1 = point1.get_x() * point1.get_x() + point1.get_y() * point1.get_y();
-    const double dist2 = point2.get_x() * point2.get_x() + point2.get_y() * point2.get_y();
-    if (dist1 - dist2 < -2 * eps * eps)
+    bool rc = false;
+    const double dist1 = (point1.get_x() * point1.get_x()) + (point1.get_y() * point1.get_y());
+    const double dist2 = (point2.get_x() * point2.get_x()) + (point2.get_y() * point2.get_y());
+    if ((dist1 - dist2) < (-2 * EPS * EPS)) {
       return true;
-    if (dist1 - dist2 > 2 * eps * eps)
+    }
+    if ((dist1 - dist2) > (2 * EPS * EPS)) {
       return false;
+    }
 
-    if (point1.p[0] - point2.p[0] < -eps)
+    if ((point1.p[0] - point2.p[0]) < -EPS) {
       return true;
-    if (point1.p[0] - point2.p[0] > eps)
+    }
+    if ((point1.p[0] - point2.p[0]) > EPS) {
       return false;
+    }
 
-    if (point1.p[1] - point2.p[1] < -eps)
+    if ((point1.p[1] - point2.p[1]) < -EPS) {
       return true;
-    if (point1.p[1] - point2.p[1] > eps)
+    }
+    if ((point1.p[1] - point2.p[1]) > EPS) {
       return false;
+    }
 
-    return false;
+    return rc;
   }
 };
 
@@ -123,9 +140,9 @@ struct FindDegeneratePoint
 
   bool operator()(const vpPoint &pt)
   {
-    return ((std::fabs(m_pt.oP[0] - pt.oP[0]) < eps && std::fabs(m_pt.oP[1] - pt.oP[1]) < eps &&
-             std::fabs(m_pt.oP[2] - pt.oP[2]) < eps) ||
-            (std::fabs(m_pt.p[0] - pt.p[0]) < eps && std::fabs(m_pt.p[1] - pt.p[1]) < eps));
+    return (((std::fabs(m_pt.oP[0] - pt.oP[0]) < EPS) && (std::fabs(m_pt.oP[1] - pt.oP[1]) < EPS) &&
+             (std::fabs(m_pt.oP[2] - pt.oP[2]) < EPS)) ||
+            ((std::fabs(m_pt.p[0] - pt.p[0]) < EPS) && (std::fabs(m_pt.p[1] - pt.p[1]) < EPS)));
   }
 
   vpPoint m_pt;
@@ -134,14 +151,14 @@ struct FindDegeneratePoint
 
 bool vpPose::vpRansacFunctor::poseRansacImpl()
 {
-  const unsigned int size = (unsigned int)m_listOfUniquePoints.size();
+  const unsigned int size = static_cast<unsigned int>(m_listOfUniquePoints.size());
   unsigned int nbMinRandom = 4;
   int nbTrials = 0;
 
   vpPoint p; // Point used to project using the estimated pose
 
   bool foundSolution = false;
-  while (nbTrials < m_ransacMaxTrials && m_nbInliers < m_ransacNbInlierConsensus) {
+  while ((nbTrials < m_ransacMaxTrials) && (m_nbInliers < m_ransacNbInlierConsensus)) {
     // Hold the list of the index of the inliers (points in the consensus set)
     std::vector<unsigned int> cur_consensus;
     // Hold the list of the index of the outliers
@@ -164,7 +181,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
 
     vpPose poseMin;
     for (unsigned int i = 0; i < nbMinRandom;) {
-      if ((size_t)std::count(usedPt.begin(), usedPt.end(), true) == usedPt.size()) {
+      if (static_cast<size_t>(std::count(usedPt.begin(), usedPt.end(), true)) == usedPt.size()) {
         // All points was picked once, break otherwise we stay in an infinite loop
         break;
       }
@@ -209,6 +226,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
       r_min = poseMin.computeResidual(cMo_tmp);
     }
     catch (...) {
+      // no need to take action
     }
 
     // If residual returned is not a number (NAN), set valid to false
@@ -218,7 +236,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
 
     // If at pose computation is OK we can continue, otherwise pick another random set
     if (is_pose_valid) {
-      double r = sqrt(r_min) / (double)nbMinRandom; // FS should be r = sqrt(r_min / (double)nbMinRandom);
+      double r = sqrt(r_min) / static_cast<double>(nbMinRandom); // FS should be r = sqrt(r_min / (double)nbMinRandom);
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
       bool isPoseValid = true;
@@ -233,11 +251,11 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
         m_cMo = cMo_tmp;
       }
 
-      if (isPoseValid && r < m_ransacThreshold) {
+      if (isPoseValid && (r < m_ransacThreshold)) {
         unsigned int nbInliersCur = 0;
         unsigned int iter = 0;
         for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listOfUniquePoints.end();
-             ++it, iter++) {
+             ++it, ++iter) {
           p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
           p.track(m_cMo);
 
@@ -323,7 +341,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
     size_t index_pt = 0;
     for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
-         ++it_pt, index_pt++) {
+         ++it_pt, ++index_pt) {
       if (filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end()) {
         filterObjectPointMap[*it_pt] = index_pt;
       }
@@ -346,7 +364,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
     size_t index_pt = 0;
     for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
-         ++it_pt, index_pt++) {
+         ++it_pt, ++index_pt) {
       mapOfUniquePointIndex[index_pt] = index_pt;
     }
   }
@@ -386,9 +404,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     std::vector<vpRansacFunctor> ransacWorkers;
 
     int splitTrials = ransacMaxTrials / nbThreads;
-    for (size_t i = 0; i < (size_t)nbThreads; i++) {
-      unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(nullptr) ^ i);
-      if (i < (size_t)nbThreads - 1) {
+    for (size_t i = 0; i < static_cast<size_t>(nbThreads); ++i) {
+      unsigned int initial_seed = static_cast<unsigned int>(i); //((unsigned int) time(nullptr) ^ i);
+      if (i < static_cast<size_t>(nbThreads) - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
                                    checkDegeneratePoints, listOfUniquePoints, func);
       }
@@ -440,23 +458,10 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
   if (foundSolution) {
     unsigned int nbMinRandom = 4;
-    //    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
 
-    // Display the random picked points
-    /*
-    std::cout << "Randoms : ";
-    for(unsigned int i = 0 ; i < cur_randoms.size() ; i++)
-      std::cout << cur_randoms[i] << " ";
-    std::cout << std::endl;
-    */
-
-    // Display the outliers
-    /*
-    std::cout << "Outliers : ";
-    for(unsigned int i = 0 ; i < cur_outliers.size() ; i++)
-      std::cout << cur_outliers[i] << " ";
-    std::cout << std::endl;
-    */
+    // --comment: print the nbInliers
+    // Display the random picked points (cur_randoms)
+    // Display the outliers (cur_outliers)
 
     // Even if the cardinality of the best consensus set is inferior to
     // ransacNbInlierConsensus,  we want to refine the solution with data in
@@ -468,7 +473,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // Refine the solution using all the points in the consensus set and
       // with VVS pose estimation
       vpPose pose;
-      for (size_t i = 0; i < best_consensus.size(); i++) {
+      size_t best_consensus_size = best_consensus.size();
+      for (size_t i = 0; i < best_consensus_size; ++i) {
         vpPoint pt = listOfUniquePoints[best_consensus[i]];
 
         pose.addPoint(pt);
@@ -478,7 +484,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // Update the list of inlier index
       for (std::vector<unsigned int>::const_iterator it_index = best_consensus.begin();
            it_index != best_consensus.end(); ++it_index) {
-        ransacInlierIndex.push_back((unsigned int)mapOfUniquePointIndex[*it_index]);
+        ransacInlierIndex.push_back(static_cast<unsigned int>(mapOfUniquePointIndex[*it_index]));
       }
 
       pose.setCovarianceComputation(computeCovariance);
@@ -487,7 +493,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       // In some rare cases, the final pose could not respect the pose
       // criterion even  if the 4 minimal points picked respect the pose
       // criterion.
-      if (func != nullptr && !func(cMo)) {
+      if ((func != nullptr) && (!func(cMo))) {
         return false;
       }
 
@@ -534,8 +540,8 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
   }
 
   N = log(std::max<double>(1.0 - probability, std::numeric_limits<double>::epsilon())) / logval;
-  if (logval < 0.0 && N < maxIterations) {
-    return (int)ceil(N);
+  if ((logval < 0.0) && (N < maxIterations)) {
+    return static_cast<int>(ceil(N));
   }
 
   return maxIterations;
@@ -549,8 +555,10 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
 {
   vpPose pose;
 
-  for (unsigned int i = 0; i < p2D.size(); i++) {
-    for (unsigned int j = 0; j < p3D.size(); j++) {
+  unsigned int p2D_size = p2D.size();
+  unsigned int p3D_size = p3D.size();
+  for (unsigned int i = 0; i < p2D_size; ++i) {
+    for (unsigned int j = 0; j < p3D_size; ++j) {
       vpPoint pt(p3D[j].getWorldCoordinates());
       pt.set_x(p2D[i].get_x());
       pt.set_y(p2D[i].get_y());

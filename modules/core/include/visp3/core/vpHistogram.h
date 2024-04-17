@@ -130,7 +130,7 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h[i]);
     \endcode
 
@@ -160,7 +160,7 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h(i));
     \endcode
 
@@ -190,7 +190,7 @@ public:
     h.calculate(I); // Histogram of the gray level image
 
     // Print the histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, h.get(i));
     \endcode
 
@@ -218,7 +218,7 @@ public:
     vpHistogram h;
 
     // Set histogram values
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       h.set(i, i*2); // for each level i, set a value of 2*i
     \endcode
 
@@ -294,7 +294,7 @@ public:
 
     // Print the histogram values
     unsigned char *values = h.getValues();
-    for (int i=0; i < h.getSize(); i ++)
+    for (int i=0; i < h.getSize(); ++i)
       printf("%d: %d\n", i, values[i]);
     \endcode
 

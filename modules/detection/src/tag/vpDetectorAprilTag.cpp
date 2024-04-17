@@ -326,12 +326,12 @@ public:
     messages.resize(static_cast<size_t>(nb_detections));
     m_tagsId.resize(static_cast<size_t>(nb_detections));
 
-    for (int i = 0; i < zarray_size(m_detections); i++) {
+    for (int i = 0; i < zarray_size(m_detections); ++i) {
       apriltag_detection_t *det;
       zarray_get(m_detections, i, &det);
 
       std::vector<vpImagePoint> polygon;
-      for (int j = 0; j < 4; j++) {
+      for (int j = 0; j < 4; ++j) {
         polygon.push_back(vpImagePoint(det->p[j][1], det->p[j][0]));
       }
       polygons[static_cast<size_t>(i)] = polygon;
@@ -610,7 +610,7 @@ public:
         matd_t *p[4] = { matd_create_data(3, 1, data_p0), matd_create_data(3, 1, data_p1),
                         matd_create_data(3, 1, data_p2), matd_create_data(3, 1, data_p3) };
         matd_t *v[4];
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; ++i) {
           double data_v[] = { (det->p[i][0] - cam.get_u0()) / cam.get_px(), (det->p[i][1] - cam.get_v0()) / cam.get_py(),
                              1 };
           v[i] = matd_create_data(3, 1, data_v);
@@ -624,7 +624,7 @@ public:
         double err2;
         get_second_solution(v, p, &solution1, &solution2, nIters, &err2);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 4; ++i) {
           matd_destroy(p[i]);
           matd_destroy(v[i]);
         }

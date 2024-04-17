@@ -88,13 +88,13 @@ void vp_display_display_camera(const vpImage<Type> &I, const vpHomogeneousMatrix
   pt[3].setWorldCoordinates(-halfSize, halfSize, 0.0);
   pt[4].setWorldCoordinates(0.0, 0.0, -size);
 
-  for (int i = 0; i < 5; i++)
+  for (int i = 0; i < 5; ++i)
     pt[i].track(cMo);
 
   vpImagePoint ip, ip_1, ip0;
   vpMeterPixelConversion::convertPoint(cam, pt[4].p[0], pt[4].p[1], ip0);
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 4; ++i) {
     vpMeterPixelConversion::convertPoint(cam, pt[i].p[0], pt[i].p[1], ip_1);
     vpMeterPixelConversion::convertPoint(cam, pt[(i + 1) % 4].p[0], pt[(i + 1) % 4].p[1], ip);
     vpDisplay::displayLine(I, ip_1, ip, color, thickness);
@@ -267,7 +267,7 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
     }
 
     // display the arc of the ellipse by successive small segments
-    for (unsigned int i = 0; i < nbpoints; i++) {
+    for (unsigned int i = 0; i < nbpoints; ++i) {
       angle += incr;
       // Two concentric circles method used
       u = a * cos(angle);
@@ -352,7 +352,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     double abs_v_val = std::abs(cMo[1][0]); // Taking the X-axis of the object frame as first initial guess
     int v_direction = vpMath::sign(cMo[1][0]); // Taking the direction of the X-axis of the object frame in the camera frame
 
-    for (int i = 1; i <= 2; i++) {
+    for (int i = 1; i <= 2; ++i) {
       double abs_u_candidate = std::abs(cMo[0][i]);
       int u_direction_candidate = vpMath::sign(cMo[0][i]);
       if (abs_u_candidate - abs_u_val > std::numeric_limits<double>::epsilon()) {
@@ -444,12 +444,12 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
 {
   if (I.display != nullptr) {
     if (closed) {
-      for (unsigned int i = 0; i < vip.size(); i++) {
+      for (unsigned int i = 0; i < vip.size(); ++i) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
       }
     }
     else {
-      for (unsigned int i = 1; i < vip.size(); i++) {
+      for (unsigned int i = 1; i < vip.size(); ++i) {
         (I.display)->displayLine(vip[i - 1], vip[i], color, thickness);
       }
     }

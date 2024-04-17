@@ -145,14 +145,14 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
 
   m_sorted_residues = residues;
 
-  unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
+  unsigned int ind_med = static_cast<unsigned int>(ceil(n_data / 2.0)) - 1;
 
   // Calculate median
   med = select(m_sorted_residues, 0, n_data - 1, ind_med);
-  // residualMedian = med ;
+  // --comment: residualMedian = med
 
   // Normalize residues
-  for (unsigned int i = 0; i < n_data; i++) {
+  for (unsigned int i = 0; i < n_data; ++i) {
     m_normres[i] = (fabs(residues[i] - med));
     m_sorted_normres[i] = (fabs(m_sorted_residues[i] - med));
   }
@@ -181,6 +181,9 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
     psiHuber(m_mad, m_normres, weights);
     break;
   }
+  default:
+    // TODO
+    std::cout << "MEstimator: method not recognised - id = " << method << std::endl;
   }
 }
 
@@ -198,7 +201,7 @@ void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
   double C = sig * 4.6851;
 
   // Here we consider that sig cannot be equal to 0
-  for (unsigned int i = 0; i < n_data; i++) {
+  for (unsigned int i = 0; i < n_data; ++i) {
     double xi = x[i] / C;
     xi *= xi;
 
@@ -225,12 +228,14 @@ void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
   double C = sig * 1.2107;
   unsigned int n_data = x.getRows();
 
-  for (unsigned int i = 0; i < n_data; i++) {
+  for (unsigned int i = 0; i < n_data; ++i) {
     double xi = x[i] / C;
-    if (fabs(xi) > 1.)
+    if (fabs(xi) > 1.) {
       weights[i] = std::fabs(1. / xi);
-    else
+    }
+    else {
       weights[i] = 1;
+    }
   }
 }
 
@@ -248,8 +253,8 @@ void vpRobust::psiCauchy(double sig, const vpColVector &x, vpColVector &weights)
   double C = sig * 2.3849;
 
   // Calculate Cauchy's equation
-  for (unsigned int i = 0; i < n_data; i++) {
-    weights[i] = 1. / (1. + vpMath::sqr(x[i] / (C)));
+  for (unsigned int i = 0; i < n_data; ++i) {
+    weights[i] = 1. / (1. + vpMath::sqr(x[i] / C));
   }
 }
 
@@ -290,10 +295,12 @@ double vpRobust::select(vpColVector &a, int l, int r, int k)
 {
   while (r > l) {
     int i = partition(a, l, r);
-    if (i >= k)
+    if (i >= k) {
       r = i - 1;
-    if (i <= k)
+    }
+    if (i <= k) {
       l = i + 1;
+    }
   }
   return a[k];
 }
@@ -380,7 +387,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   no_null_weight_residues.resize(n_data);
 
   unsigned int index = 0;
-  for (unsigned int j = 0; j < n_data; j++) {
+  for (unsigned int j = 0; j < n_data; ++j) {
     // if(weights[j]!=0)
     if (std::fabs(weights[j]) > std::numeric_limits<double>::epsilon()) {
       no_null_weight_residues[index] = residues[j];
@@ -399,11 +406,11 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   med = select(m_sorted_residues, 0, n_data - 1, ind_med);
 
   // Normalize residues
-  for (unsigned int i = 0; i < n_all_data; i++) {
+  for (unsigned int i = 0; i < n_all_data; ++i) {
     all_normres[i] = (fabs(all_residues[i] - med));
   }
 
-  for (unsigned int i = 0; i < n_data; i++) {
+  for (unsigned int i = 0; i < n_data; ++i) {
     m_sorted_normres[i] = (fabs(m_sorted_residues[i] - med));
   }
   // MAD calculated only on first iteration
@@ -431,7 +438,7 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   med = select(residues, 0, n_data - 1, ind_med /*(int)n_data/2*/);
 
   // Normalize residues
-  for (unsigned int i = 0; i < n_data; i++)
+  for (unsigned int i = 0; i < n_data; ++i)
     norm_res[i] = (fabs(residues[i] - med));
 
   // Check for various methods.
@@ -468,7 +475,7 @@ double vpRobust::simultscale(const vpColVector &x)
   /* long */ double Expectation = 0;
   /* long */ double Sum_chi = 0;
 
-  for (unsigned int i = 0; i < n; i++) {
+  for (unsigned int i = 0; i < n; ++i) {
 
     double chiTmp = simult_chi_huber(x[i]);
 #if defined(VISP_HAVE_FUNC_STD_ERFC)
@@ -632,7 +639,7 @@ void vpRobust::gser(double *gamser, double a, double x, double *gln)
     double ap = a;
     double sum = 1.0 / a;
     double del = sum;
-    for (int n = 1; n <= vpITMAX; n++) {
+    for (int n = 1; n <= vpITMAX; ++n) {
       ap += 1.0;
       del *= x / ap;
       sum += del;
@@ -653,8 +660,8 @@ void vpRobust::gcf(double *gammcf, double a, double x, double *gln)
 
   *gln = gammln(a);
   a1 = x;
-  for (int n = 1; n <= vpITMAX; n++) {
-    double an = (double)n;
+  for (int n = 1; n <= vpITMAX; ++n) {
+    double an = static_cast<double>(n);
     double ana = an - a;
     a0 = (a1 + a0 * ana) * fac;
     b0 = (b1 + b0 * ana) * fac;
@@ -684,7 +691,7 @@ double vpRobust::gammln(double xx)
   tmp = x + 5.5;
   tmp -= (x + 0.5) * log(tmp);
   ser = 1.0;
-  for (int j = 0; j <= 5; j++) {
+  for (int j = 0; j <= 5; ++j) {
     x += 1.0;
     ser += cof[j] / x;
   }

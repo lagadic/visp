@@ -122,7 +122,7 @@
  *   // camera frame a
  *   vpPoint Pa[4];
  *   std::vector<double> xa(4), ya(4); // Coordinates in pixels of the points in frame a
- *   for(int i=0 ; i < 4 ; i++) {
+ *   for(int i=0 ; i < 4 ; ++i) {
  *     Pa[i] = Po[i]; Pa[i].project(aMo); // Project the points from object frame to camera frame a
  *     vpMeterPixelConversion::convertPoint(cam,
  *                                         Pa[i].get_x(), Pa[i].get_y(),
@@ -133,7 +133,7 @@
  *   // camera frame b
  *   vpPoint Pb[4];
  *   std::vector<double> xb(4), yb(4); // Coordinates in pixels of the points in frame b
- *   for(int i=0 ; i < 4 ; i++) {
+ *   for(int i=0 ; i < 4 ; ++i) {
  *     Pb[i] = Po[i]; Pb[i].project(bMo); // Project the points from object frame to camera frame a
  *   }
  *
@@ -148,7 +148,7 @@
  *   // Compute the coordinates of the points in frame b using the ground
  *   // truth homography and the coordinates of the points in frame a
  *   vpHomography bHa = aHb.inverse();
- *   for(int i = 0; i < 4 ; i++){
+ *   for(int i = 0; i < 4 ; ++i){
  *     double inv_z = 1. / (bHa[2][0] * xa[i] + bHa[2][1] * ya[i] + bHa[2][2]);
  *
  *     xb[i] = (bHa[0][0] * xa[i] + bHa[0][1] * ya[i] + bHa[0][2]) * inv_z;

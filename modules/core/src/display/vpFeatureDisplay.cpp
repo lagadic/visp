@@ -81,11 +81,11 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam,
                                    const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
-  //    x cos(theta) + y sin(theta) - rho = 0
+  //  --comment: x times cos(theta) plus y times sin(theta) minus rho equals 0
   double rhop, thetap;
   vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  //    u cos(thetap) + v sin(thetap) - rhop = 0
+  //  --comment: u times cos thetap plus v times sin thetap minus rhop equals 0
   double co = cos(thetap);
   double si = sin(thetap);
   double c = -rhop;
@@ -97,12 +97,13 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
   if (fabs(a) < fabs(b)) {
     ip1.set_ij(0, (-c) / b);
     double h = I.getHeight() - 1;
-    ip2.set_ij(h, (-c - a * h) / b);
+    ip2.set_ij(h, (-c - (a * h)) / b);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  } else {
+  }
+  else {
     ip1.set_ij((-c) / a, 0);
     double w = I.getWidth() - 1;
-    ip2.set_ij((-c - b * w) / a, w);
+    ip2.set_ij((-c - (b * w)) / a, w);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
   }
 }
@@ -193,11 +194,11 @@ void vpFeatureDisplay::displayPoint(double x, double y, const vpCameraParameters
 void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParameters &cam, const vpImage<vpRGBa> &I,
                                    const vpColor &color, unsigned int thickness)
 {
-  //    x cos(theta) + y sin(theta) - rho = 0
+  // --comment: x times cos of theta plus y times sin of theta minus rho equals 0
   double rhop, thetap;
   vpMeterPixelConversion::convertLine(cam, rho, theta, rhop, thetap);
 
-  //    u cos(thetap) + v sin(thetap) - rhop = 0
+  // --comment: u times cos of thetap plus v times sin of thetap minus rhop equals 0
   double co = cos(thetap);
   double si = sin(thetap);
   double c = -rhop;
@@ -209,12 +210,13 @@ void vpFeatureDisplay::displayLine(double rho, double theta, const vpCameraParam
   if (fabs(a) < fabs(b)) {
     ip1.set_ij(0, (-c) / b);
     double h = I.getHeight() - 1;
-    ip2.set_ij(h, (-c - a * h) / b);
+    ip2.set_ij(h, (-c - (a * h)) / b);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
-  } else {
+  }
+  else {
     ip1.set_ij((-c) / a, 0);
     double w = I.getWidth() - 1;
-    ip2.set_ij((-c - b * w) / a, w);
+    ip2.set_ij((-c - (b * w)) / a, w);
     vpDisplay::displayLine(I, ip1, ip2, color, thickness);
   }
 }

@@ -66,7 +66,7 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam, const do
   }
 
   theta_p = atan2(cam.m_px * si, cam.m_py * co);
-  rho_p = (cam.m_px * cam.m_py * rho_m + cam.m_u0 * cam.m_py * co + cam.m_v0 * cam.m_px * si);
+  rho_p = ((cam.m_px * cam.m_py * rho_m) + (cam.m_u0 * cam.m_py * co) + (cam.m_v0 * cam.m_px * si));
   rho_p /= d;
 }
 

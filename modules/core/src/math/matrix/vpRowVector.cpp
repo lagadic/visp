@@ -83,8 +83,9 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
                       M.getCols(), M.getRows(), M.getCols()));
   }
 
-  if (M.getCols() != colNum)
+  if (M.getCols() != colNum) {
     resize(M.getCols());
+  }
 
   memcpy(data, M.data, colNum * sizeof(double));
   return *this;
@@ -95,9 +96,11 @@ vpRowVector &vpRowVector::operator=(const vpMatrix &M)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 {
-  resize((unsigned int)v.size());
-  for (unsigned int i = 0; i < v.size(); i++)
+  unsigned int v_size = v.size();
+  resize(v_size);
+  for (unsigned int i = 0; i < v_size; ++i) {
     (*this)[i] = v[i];
+  }
   return *this;
 }
 /*!
@@ -105,17 +108,19 @@ vpRowVector &vpRowVector::operator=(const std::vector<double> &v)
 */
 vpRowVector &vpRowVector::operator=(const std::vector<float> &v)
 {
-  resize((unsigned int)v.size());
-  for (unsigned int i = 0; i < v.size(); i++)
-    (*this)[i] = (float)v[i];
+  unsigned int v_size = v.size();
+  resize(v_size);
+  for (unsigned int i = 0; i < v_size; ++i) {
+    (*this)[i] = static_cast<float>(v[i]);
+  }
   return *this;
 }
 
 //! Initialize each element of the vector with \e x.
 vpRowVector &vpRowVector::operator=(double x)
 {
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int i = 0; i < rowNum; ++i) {
+    for (unsigned int j = 0; j < colNum; ++j) {
       rowPtrs[i][j] = x;
     }
   }
@@ -173,12 +178,14 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
 
 bool vpRowVector::operator==(const vpRowVector &v) const
 {
-  if (colNum != v.colNum || rowNum != v.rowNum /* should not happen */)
+  if ((colNum != v.colNum) || (rowNum != v.rowNum) /* should not happen */) {
     return false;
+  }
 
-  for (unsigned int i = 0; i < colNum; i++) {
-    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon()))
+  for (unsigned int i = 0; i < colNum; ++i) {
+    if (!vpMath::equal(data[i], v.data[i], std::numeric_limits<double>::epsilon())) {
       return false;
+    }
   }
 
   return true;
@@ -210,7 +217,7 @@ double vpRowVector::operator*(const vpColVector &x) const
 
   double scalar = 0.0;
 
-  for (unsigned int i = 0; i < nelements; i++) {
+  for (unsigned int i = 0; i < nelements; ++i) {
     scalar += (*this)[i] * x[i];
   }
   return scalar;
@@ -241,9 +248,10 @@ vpRowVector vpRowVector::operator*(const vpMatrix &M) const
 
   c = 0.0;
 
-  for (unsigned int i = 0; i < colNum; i++) {
+  for (unsigned int i = 0; i < colNum; ++i) {
     double bi = data[i]; // optimization em 5/12/2006
-    for (unsigned int j = 0; j < M.getCols(); j++) {
+    unsigned int m_cols = M.getCols();
+    for (unsigned int j = 0; j < m_cols; ++j) {
       c[j] += bi * M[i][j];
     }
   }
@@ -277,8 +285,9 @@ vpRowVector vpRowVector::operator*(double x) const
   double *vd = v.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = (*d++) * x;
+  }
   return v;
 }
 
@@ -301,8 +310,9 @@ vpRowVector vpRowVector::operator*(double x) const
 */
 vpRowVector &vpRowVector::operator*=(double x)
 {
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] *= x;
+  }
   return (*this);
 }
 
@@ -332,8 +342,9 @@ vpRowVector vpRowVector::operator/(double x) const
   double *vd = v.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = (*d++) / x;
+  }
   return v;
 }
 
@@ -357,8 +368,9 @@ vpRowVector vpRowVector::operator/(double x) const
 */
 vpRowVector &vpRowVector::operator/=(double x)
 {
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] /= x;
+  }
   return (*this);
 }
 
@@ -379,8 +391,9 @@ vpRowVector vpRowVector::operator-() const
   double *vd = A.data;
   double *d = data;
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     *(vd++) = -(*d++);
+  }
 
   return A;
 }
@@ -398,8 +411,9 @@ vpRowVector vpRowVector::operator-(const vpRowVector &m) const
 
   vpRowVector v(colNum);
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     v[i] = (*this)[i] - m[i];
+  }
   return v;
 }
 
@@ -416,8 +430,9 @@ vpRowVector vpRowVector::operator+(const vpRowVector &v) const
 
   vpRowVector r(colNum);
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     r[i] = (*this)[i] + v[i];
+  }
   return r;
 }
 
@@ -433,8 +448,9 @@ vpRowVector &vpRowVector::operator+=(vpRowVector v)
                       v.getCols()));
   }
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] += v[i];
+  }
   return (*this);
 }
 
@@ -450,8 +466,9 @@ vpRowVector &vpRowVector::operator-=(vpRowVector v)
                       v.getCols()));
   }
 
-  for (unsigned int i = 0; i < colNum; i++)
+  for (unsigned int i = 0; i < colNum; ++i) {
     (*this)[i] -= v[i];
+  }
   return (*this);
 }
 
@@ -523,8 +540,10 @@ void vpRowVector::transpose(vpColVector &v) const { v = t(); }
  */
 vpRowVector::vpRowVector(const vpMatrix &M, unsigned int i) : vpArray2D<double>(1, M.getCols())
 {
-  for (unsigned int j = 0; j < M.getCols(); j++)
+  unsigned int m_cols = M.getCols();
+  for (unsigned int j = 0; j < m_cols; ++j) {
     (*this)[j] = M[i][j];
+  }
 }
 /*!
    Constructor that creates a row vector from a 1-by-n matrix \e M.
@@ -538,26 +557,31 @@ vpRowVector::vpRowVector(const vpMatrix &M) : vpArray2D<double>(1, M.getCols())
     throw(vpException(vpException::dimensionError, "Cannot construct a (1x%d) row vector from a (%dx%d) matrix",
                       M.getCols(), M.getRows(), M.getCols()));
   }
-
-  for (unsigned int j = 0; j < M.getCols(); j++)
+  unsigned int m_cols = M.getCols();
+  for (unsigned int j = 0; j < m_cols; ++j) {
     (*this)[j] = M[0][j];
+  }
 }
 
 /*!
    Constructor that creates a row vector from a std vector of double.
  */
-vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<double> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  for (unsigned int j = 0; j < v.size(); j++)
+  unsigned int v_size = v.size();
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[j] = v[j];
+  }
 }
 /*!
    Constructor that creates a row vector from a std vector of float.
  */
-vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, (unsigned int)v.size())
+vpRowVector::vpRowVector(const std::vector<float> &v) : vpArray2D<double>(1, static_cast<unsigned int>(v.size()))
 {
-  for (unsigned int j = 0; j < v.size(); j++)
-    (*this)[j] = (double)(v[j]);
+  unsigned int v_size = v.size();
+  for (unsigned int j = 0; j < v_size; ++j) {
+    (*this)[j] = static_cast<double>(v[j]);
+  }
 }
 
 /*!
@@ -693,20 +717,23 @@ remat:
 */
 void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols)
 {
-  if (dsize != nrows * ncols) {
+  if (dsize != (nrows * ncols)) {
     throw(vpException(vpException::dimensionError, "Cannot reshape (1x%d) row vector in (%dx%d) matrix", colNum,
                       M.getRows(), M.getCols()));
   }
   try {
-    if ((M.getRows() != nrows) || (M.getCols() != ncols))
+    if ((M.getRows() != nrows) || (M.getCols() != ncols)) {
       M.resize(nrows, ncols);
+    }
   }
   catch (...) {
     throw;
   }
-  for (unsigned int i = 0; i < nrows; i++)
-    for (unsigned int j = 0; j < ncols; j++)
-      M[i][j] = data[i * ncols + j];
+  for (unsigned int i = 0; i < nrows; ++i) {
+    for (unsigned int j = 0; j < ncols; ++j) {
+      M[i][j] = data[(i * ncols) + j];
+    }
+  }
 }
 
 /*!
@@ -742,13 +769,16 @@ v: 0  10  11  3
  */
 void vpRowVector::insert(unsigned int i, const vpRowVector &v)
 {
-  if (i + v.size() > this->size())
+  if ( (i + v.size()) > this->size()) {
     throw(vpException(vpException::dimensionError,
                       "Unable to insert (1x%d) row vector in (1x%d) row "
                       "vector at position (%d)",
                       v.getCols(), colNum, i));
-  for (unsigned int j = 0; j < v.size(); j++)
+  }
+  unsigned int v_size = v.size();
+  for (unsigned int j = 0; j < v_size; ++j) {
     (*this)[i + j] = v[j];
+  }
 }
 
 /*!
@@ -759,8 +789,10 @@ std::vector<double> vpRowVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 
-  for (unsigned int i = 0; i < this->size(); i++)
+  unsigned int this_size = this->size();
+  for (unsigned int i = 0; i < this_size; ++i) {
     v[i] = data[i];
+  }
   return v;
 }
 
@@ -859,7 +891,7 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
   unsigned int nrA = A.getCols();
   unsigned int nrB = B.getCols();
 
-  if (nrA == 0 && nrB == 0) {
+  if ((nrA == 0) && (nrB == 0)) {
     C.resize(0);
     return;
   }
@@ -877,11 +909,13 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
   // General case
   C.resize(nrA + nrB);
 
-  for (unsigned int i = 0; i < nrA; i++)
+  for (unsigned int i = 0; i < nrA; ++i) {
     C[i] = A[i];
+  }
 
-  for (unsigned int i = 0; i < nrB; i++)
+  for (unsigned int i = 0; i < nrB; ++i) {
     C[nrA + i] = B[i];
+  }
 }
 
 /*!
@@ -889,14 +923,16 @@ void vpRowVector::stack(const vpRowVector &A, const vpRowVector &B, vpRowVector 
 */
 double vpRowVector::mean(const vpRowVector &v)
 {
-  if (v.data == nullptr || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean = 0;
   double *vd = v.data;
-  for (unsigned int i = 0; i < v.getCols(); i++)
+  unsigned int v_col = v.getCols();
+  for (unsigned int i = 0; i < v_col; ++i) {
     mean += *(vd++);
+  }
 
   return mean / v.getCols();
 }
@@ -906,7 +942,7 @@ double vpRowVector::mean(const vpRowVector &v)
 */
 double vpRowVector::median(const vpRowVector &v)
 {
-  if (v.data == nullptr || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
@@ -920,18 +956,19 @@ double vpRowVector::median(const vpRowVector &v)
 */
 double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
 {
-  if (v.data == nullptr || v.size() == 0) {
+  if ((v.data == nullptr) || (v.size() == 0)) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));
   }
 
   double mean_value = mean(v);
   double sum_squared_diff = 0.0;
-  for (unsigned int i = 0; i < v.size(); i++) {
+  unsigned int v_size = v.size();
+  for (unsigned int i = 0; i < v_size; ++i) {
     sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
   }
 
-  double divisor = (double)v.size();
-  if (useBesselCorrection && v.size() > 1) {
+  double divisor = static_cast<double>(v.size());
+  if (useBesselCorrection && (v.size() > 1)) {
     divisor = divisor - 1;
   }
 
@@ -969,7 +1006,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
+  // ossFixed <<std::fixed
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -1003,32 +1040,34 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
   maxAfter = std::min<size_type>(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
+  if (maxAfter == 1) {
     maxAfter = 0;
+  }
 
   // the following line is useful for debugging
   // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
-  if (intro)
+  if (intro) {
     s << intro;
+  }
   s << "[" << m << "," << n << "]=\n";
 
   s << "  ";
-  for (unsigned int j = 0; j < n; j++) {
+  for (unsigned int j = 0; j < n; ++j) {
     size_type p = values[j].find('.');
     s.setf(std::ios::right, std::ios::adjustfield);
-    s.width((std::streamsize)maxBefore);
+    s.width(static_cast<std::streamsize>(maxBefore));
     s << values[j].substr(0, p).c_str();
 
     if (maxAfter > 0) {
       s.setf(std::ios::left, std::ios::adjustfield);
       if (p != std::string::npos) {
-        s.width((std::streamsize)maxAfter);
+        s.width(static_cast<std::streamsize>(maxAfter));
         s << values[j].substr(p, maxAfter).c_str();
       }
       else {
         assert(maxAfter > 1);
-        s.width((std::streamsize)maxAfter);
+        s.width( static_cast<std::streamsize> (maxAfter));
         s << ".0";
       }
     }
@@ -1039,7 +1078,7 @@ int vpRowVector::print(std::ostream &s, unsigned int length, char const *intro) 
 
   s.flags(original_flags); // restore s to standard state
 
-  return (int)(maxBefore + maxAfter);
+  return static_cast<int>(maxBefore + maxAfter);
 }
 
 /*!
@@ -1061,7 +1100,7 @@ double vpRowVector::sum() const
 {
   double sum = 0.0;
 
-  for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int j = 0; j < colNum; ++j) {
     sum += rowPtrs[0][j];
   }
 
@@ -1078,7 +1117,7 @@ double vpRowVector::sumSquare() const
 {
   double sum_square = 0.0;
 
-  for (unsigned int j = 0; j < colNum; j++) {
+  for (unsigned int j = 0; j < colNum; ++j) {
     double x = rowPtrs[0][j];
     sum_square += x * x;
   }
@@ -1150,14 +1189,15 @@ void vpRowVector::init(const vpRowVector &v, unsigned int c, unsigned int ncols)
 {
   unsigned int cncols = c + ncols;
 
-  if (cncols > v.getCols())
+  if (cncols > v.getCols()) {
     throw(vpException(vpException::dimensionError, "Bad column dimension (%d > %d) used to initialize vpRowVector",
                       cncols, v.getCols()));
+  }
   resize(ncols);
   if (this->rowPtrs == nullptr) { // Fix coverity scan: explicit null dereferenced
     return;                  // Noting to do
   }
-  for (unsigned int i = 0; i < ncols; i++) {
+  for (unsigned int i = 0; i < ncols; ++i) {
     (*this)[i] = v[i + c];
   }
 }
@@ -1196,14 +1236,15 @@ std::ostream &vpRowVector::cppPrint(std::ostream &os, const std::string &matrixN
 {
   os << "vpRowVector " << matrixName << " (" << this->getCols() << "); " << std::endl;
 
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     if (!octet) {
       os << matrixName << "[" << j << "] = " << (*this)[j] << "; " << std::endl;
     }
     else {
       for (unsigned int k = 0; k < sizeof(double); ++k) {
         os << "((unsigned char*)&(" << matrixName << "[" << j << "]) )[" << k << "] = 0x" << std::hex
-          << (unsigned int)((unsigned char *)&((*this)[j]))[k] << "; " << std::endl;
+          << static_cast<unsigned int>(((unsigned char *)&((*this)[j]))[k]) << "; " << std::endl;
       }
     }
   }
@@ -1237,10 +1278,12 @@ int main()
 */
 std::ostream &vpRowVector::csvPrint(std::ostream &os) const
 {
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j];
-    if (!(j == (this->getCols() - 1)))
+    if (!(j == (this->getCols() - 1))) {
       os << ", ";
+    }
   }
   os << std::endl;
   return os;
@@ -1273,7 +1316,8 @@ std::ostream &vpRowVector::maplePrint(std::ostream &os) const
 {
   os << "([ " << std::endl;
   os << "[";
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j] << ", ";
   }
   os << "]," << std::endl;
@@ -1314,7 +1358,9 @@ r =
 std::ostream &vpRowVector::matlabPrint(std::ostream &os) const
 {
   os << "[ ";
-  for (unsigned int j = 0; j < this->getCols(); ++j) {
+
+  unsigned int this_cols = this->getCols();
+  for (unsigned int j = 0; j < this_cols; ++j) {
     os << (*this)[j] << ", ";
   }
   os << "]" << std::endl;

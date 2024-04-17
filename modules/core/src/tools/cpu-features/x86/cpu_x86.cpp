@@ -120,8 +120,9 @@ bool cpu_x86::detect_OS_AVX()
 bool cpu_x86::detect_OS_AVX512()
 {
 #ifndef UNKNOWN_ARCH
-  if (!detect_OS_AVX())
+  if (!detect_OS_AVX()) {
     return false;
+  }
 
   uint64_t xcrFeatureMask = xgetbv(_XCR_XFEATURE_ENABLED_MASK);
   return (xcrFeatureMask & 0xe6) == 0xe6;
