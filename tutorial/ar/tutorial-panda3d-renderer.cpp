@@ -31,7 +31,7 @@ void convertToDisplay(const vpImage<vpRGBf> &normalsImage, const vpImage<float> 
 
 int main()
 {
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.1, 0.5);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.1, 5);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
 
@@ -47,7 +47,7 @@ int main()
   renderer.initFramework(false);
 
   std::cout << "Loading object" << std::endl;
-  NodePath object = renderer.loadObject("cube", "/home/sfelton/software/visp-sfelton/tutorial/ar/data/dragon.obj");
+  NodePath object = renderer.loadObject("cube", "/home/sfelton/software/visp-sfelton/tutorial/ar/data/simple_cube.obj");
 
   // PT(Material) mat = new Material();
   // mat->set_diffuse(LColor(0.0, 1.0, 0.0, 1.0));
@@ -71,7 +71,7 @@ int main()
 
 
   std::cout << "Setting camera pose" << std::endl;
-  renderer.setCameraPose(vpHomogeneousMatrix(0.0, -0.2, 0.0, 0.0, 0.0, 0.0));
+  renderer.setCameraPose(vpHomogeneousMatrix(0.0, -5, 0.0, 0.0, 0.0, 0.0));
 
   vpImage<vpRGBf> normalsImage;
   vpImage<float> depthImage;
@@ -106,9 +106,10 @@ int main()
 
 
     vpHomogeneousMatrix wTo = renderer.getNodePose("cube");
-    // vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
-    // renderer.setNodePose("cube", wTo * oToo);
-    renderer.getRenderer<vpPanda3DRGBRenderer>()->setNodePose("cube", vpHomogeneousMatrix(1, 0, 0.0, 0.0, 0.0, 0.0));
+    vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
+    renderer.setNodePose("cube", wTo * oToo);
+
+    // renderer.getRenderer<vpPanda3DRGBRenderer>()->setNodePose("cube", vpHomogeneousMatrix(1, 0, 0.0, 0.0, 0.0, 0.0));
     std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << afterRender - beforeRender << "ms" << std::endl;
   }
   return 0;

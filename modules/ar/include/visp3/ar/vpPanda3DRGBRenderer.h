@@ -18,13 +18,14 @@ public:
   void setupScene() vp_override
   {
     vpPanda3DBaseRenderer::setupScene();
-    // m_renderRoot.set_shader_auto(-100);
-    // PT(DirectionalLight) d_light;
-    // d_light = new DirectionalLight("my d_light");
-    // d_light->set_color(LColor(0.8, 0.8, 0.5, 1));
-    // NodePath dlnp = m_renderRoot.attach_new_node(d_light);
+    m_renderRoot.set_shader_auto();
+    PT(DirectionalLight) d_light;
+    d_light = new DirectionalLight("my d_light");
+    d_light->set_color(LColor(1.0, 1.0, 1.0, 1));
+    d_light->set_direction(LVector3(0.5, 0.5, 0.0).normalized());
+    NodePath dlnp = m_renderRoot.attach_new_node(d_light);
     // dlnp.set_hpr(-30, -60, 0);
-    // m_renderRoot.set_light(dlnp);
+    m_renderRoot.set_light(dlnp);
   }
 
   void setupRenderTarget() vp_override;
@@ -34,17 +35,13 @@ public:
 
   void addNodeToScene(const NodePath &object) vp_override
   {
-    NodePath object2 = loadObject("cube", "/home/sfelton/software/visp-sfelton/tutorial/ar/data/dragon.obj");
-    NodePath objectInScene = object2.copy_to(m_renderRoot);
-    objectInScene.set_name(object2.get_name());
-    objectInScene.set_color(LColor(1.0, 0.0, 0.0, 0.0));
-    objectInScene.hide();
-    // PT(Material) mat = new Material();
-    // mat->set_diffuse(LColor(1.0, 0.0, 0.0, 1.0));
-    // mat->set_metallic(1.0);
-    // mat->set_specular(0.5);
-    // objectInScene.set_material(mat);
-    // objectInScene.set_shader_auto();
+    NodePath objectInScene = object.copy_to(m_renderRoot);
+    objectInScene.set_name(object.get_name());
+    PT(Material) mat = new Material();
+    mat->set_base_color(LColor(1.0, 0.0, 0.0, 1.0));
+    mat->set_metallic(1.0);
+    mat->set_specular(1.0);
+    objectInScene.set_material(mat);
     std::cout << "before rgb render ls" << std::endl;
     m_renderRoot.ls();
   }

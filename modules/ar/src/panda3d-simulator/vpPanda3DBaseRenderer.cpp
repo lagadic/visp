@@ -49,6 +49,7 @@ void vpPanda3DBaseRenderer::setupCamera()
   // m_camera = m_window->get_camera(0);
   m_cameraPath = m_renderRoot.attach_new_node(m_camera);
   m_renderParameters.setupPandaCamera(m_camera);
+  m_camera->set_scene(m_renderRoot);
 }
 
 void vpPanda3DBaseRenderer::renderFrame()
