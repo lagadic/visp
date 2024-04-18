@@ -140,11 +140,8 @@ TEST_CASE("Test constructors with double", "[constructors]")
     }
     SECTION("Keep default size (r=0, c=0)")
     {
-      vpArray2D<double> A(bench);
-      std::cout << "A with default size (r=0, c=0):\n" << A << std::endl;
-      CHECK(test("A", A, bench));
-      CHECK(A.getRows() == bench.size());
-      CHECK(A.getCols() == 1);
+      std::cout << "A with default size (r=0, c=0):\n" << std::endl;
+      REQUIRE_THROWS(vpArray2D<double>(bench));
     }
     SECTION("Keep row size to 0")
     {
@@ -221,11 +218,8 @@ TEST_CASE("Test constructors with float", "[constructors]")
     }
     SECTION("Keep default size (r=0, c=0)")
     {
-      vpArray2D<float> A(bench);
-      std::cout << "A with default size (r=0, c=0):\n" << A << std::endl;
-      CHECK(test("A", A, bench));
-      CHECK(A.getRows() == bench.size());
-      CHECK(A.getCols() == 1);
+      std::cout << "A with default size (r=0, c=0):\n" << std::endl;
+      REQUIRE_THROWS(vpArray2D<float>(bench));
     }
     SECTION("Keep row size to 0")
     {
