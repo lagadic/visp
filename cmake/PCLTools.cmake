@@ -386,3 +386,16 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced($<$<CONFIG:debug:bcrypt_LOCATION)    # Requested for pcl 1.13.1 on windows
   mark_as_advanced($<$<CONFIG:release:bcrypt_LOCATION)            # Requested for pcl 1.13.1 on windows
 endmacro()
+
+# Find pcl modules
+# IN: pcl_components
+# OUT: none
+#
+macro(vp_detect_required_pcl_components pcl_components)
+  foreach(component_ ${${pcl_components}})
+    string(TOUPPER "${component_}" COMPONENT)
+    if(PCL_${COMPONENT}_FOUND)
+      set(VISP_HAVE_PCL_${COMPONENT} TRUE)
+    endif()
+  endforeach()
+endmacro()
