@@ -49,11 +49,22 @@
 #include <thread>
 
 #if defined(VISP_HAVE_PCL)
-#include <pcl/common/common.h>
+#include <pcl/pcl_config.h>
+#if defined(VISP_HAVE_PCL_COMMON)
+#if PCL_VERSION_COMPARE(>=,1,14,1)
+#include <pcl/impl/point_types.hpp>
+#else
+#include <pcl/point_types.h>
+#endif
+#include <pcl/point_cloud.h>
+#endif
+#if defined(VISP_HAVE_PCL_IO)
 #include <pcl/io/pcd_io.h>
+#endif
 #endif
 
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -216,7 +227,7 @@ public:
 
   // Push data to save in the queue (FIFO)
   void push(const vpImage<vpRGBa> &colorImg, const vpImage<uint16_t> &depthImg,
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             const pcl::PointCloud<pcl::PointXYZ>::Ptr &pointCloud,
 #else
             const std::vector<vpColVector> &pointCloud,
@@ -255,7 +266,7 @@ public:
 
   // Pop the image to save from the queue (FIFO)
   void pop(vpImage<vpRGBa> &colorImg, vpImage<uint16_t> &depthImg,
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
            pcl::PointCloud<pcl::PointXYZ>::Ptr &pointCloud,
 #else
            std::vector<vpColVector> &pointCloud,
@@ -294,7 +305,7 @@ private:
   std::condition_variable m_cond;
   std::queue<vpImage<vpRGBa>> m_queueColor;
   std::queue<vpImage<uint16_t>> m_queueDepth;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   std::queue<pcl::PointCloud<pcl::PointXYZ>::Ptr> m_queuePointCloud;
 #else
   std::queue<std::vector<vpColVector>> m_queuePointCloud;
@@ -334,7 +345,7 @@ public:
     try {
       vpImage<vpRGBa> colorImg;
       vpImage<uint16_t> depthImg;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud;
 #else
       std::vector<vpColVector> pointCloud;
@@ -388,7 +399,7 @@ public:
               std::ofstream file_pointcloud(filename_point_cloud.c_str(), std::ios::out | std::ios::binary);
 
               if (file_pointcloud.is_open()) {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
                 uint32_t width = pointCloud->width;
                 uint32_t height = pointCloud->height;
                 // true if pointcloud does not contain NaN or Inf, not handled currently
@@ -406,7 +417,7 @@ public:
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.y);
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.z);
                   }
-                }
+              }
 #else
                 uint32_t width = m_size_width;
                 uint32_t height = m_size_height;
@@ -429,14 +440,16 @@ public:
                   }
                 }
 #endif
-              }
-            }
-            else {
-#ifdef VISP_HAVE_PCL
-              pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
-#endif
             }
           }
+            else {
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO)
+              pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
+#elif defined(VISP_HAVE_PCL)
+              throw(vpIoException(vpIoException::fatalError, "Cannot save as pcd files without PCL io module"));
+#endif
+            }
+        }
 
           if (m_save_infrared) {
             ss.str("");
@@ -448,13 +461,13 @@ public:
           }
 
           m_cpt++;
-        }
       }
     }
+  }
     catch (const vpFrameQueue::vpCancelled_t &) {
       std::cout << "Receive cancel vpFrameQueue." << std::endl;
     }
-  }
+}
 
 private:
   vpFrameQueue &m_queue;
@@ -614,12 +627,12 @@ int main(int argc, const char *argv[])
     vpHomogeneousMatrix depth_M_color;
     if (!use_aligned_stream) {
       depth_M_color = realsense.getTransformation(rs::stream::color, rs::stream::depth);
-    }
+  }
 #endif
     std::ofstream file(std::string(output_directory + "/depth_M_color.txt"));
     depth_M_color.save(file);
     file.close();
-  }
+}
 
   vpFrameQueue save_queue;
   vpStorageWorker storage(std::ref(save_queue), std::cref(output_directory), save_color, save_depth, save_pointcloud,
@@ -637,7 +650,7 @@ int main(int argc, const char *argv[])
 
   int nb_saves = 0;
   bool quit = false;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud(new pcl::PointCloud<pcl::PointXYZ>);
 #else
   std::vector<vpColVector> pointCloud;
@@ -645,7 +658,7 @@ int main(int argc, const char *argv[])
   while (!quit) {
     if (use_aligned_stream) {
 #ifdef USE_REALSENSE2
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud, nullptr,
                         &align_to);
 #else
@@ -653,7 +666,7 @@ int main(int argc, const char *argv[])
                         &align_to);
 #endif
 #else
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud,
                         (unsigned char *)I_infrared.bitmap, nullptr, rs::stream::rectified_color,
                         rs::stream::depth_aligned_to_rectified_color);
@@ -665,7 +678,7 @@ int main(int argc, const char *argv[])
 #endif
     }
     else {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       realsense.acquire((unsigned char *)I_color.bitmap, (unsigned char *)I_depth_raw.bitmap, nullptr, pointCloud,
                         (unsigned char *)I_infrared.bitmap, nullptr);
 #else
@@ -695,7 +708,7 @@ int main(int argc, const char *argv[])
     vpDisplay::flush(I_infrared);
 
     if (save && !click_to_save) {
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
       pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy = pointCloud->makeShared();
       save_queue.push(I_color, I_depth_raw, pointCloud_copy, I_infrared);
 #else
@@ -714,7 +727,7 @@ int main(int argc, const char *argv[])
         case vpMouseButton::button1:
           if (save) {
             nb_saves++;
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
             pcl::PointCloud<pcl::PointXYZ>::Ptr pointCloud_copy = pointCloud->makeShared();
             save_queue.push(I_color, I_depth_raw, pointCloud_copy, I_infrared);
 #else

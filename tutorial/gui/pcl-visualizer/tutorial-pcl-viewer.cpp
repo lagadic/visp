@@ -4,7 +4,7 @@
 // System include
 #include <iostream>
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_VISUALIZATION)
 
 // ViSP include
 #include <visp3/core/vpIoTools.h>
@@ -187,8 +187,8 @@ int main(int argc, char *argv[])
 
 int main()
 {
-  std::cout << "ViSP seems to have been compiled without PCL library." << std::endl;
-  std::cout << "Please install PCL library and recompile ViSP." << std::endl;
+  std::cout << "ViSP seems to have been compiled without PCL visualization module." << std::endl;
+  std::cout << "Please install PCL visualization module and recompile ViSP." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

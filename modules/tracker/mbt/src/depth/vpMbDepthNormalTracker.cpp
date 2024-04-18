@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/point_cloud.h>
 #endif
 
@@ -493,7 +493,7 @@ void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const 
   initFromPose(I, cMo);
 }
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                          const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose)
 {
@@ -561,7 +561,7 @@ void vpMbDepthNormalTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHom
   init(m_I);
 }
 
-#if defined(VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::setPose(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                      const vpHomogeneousMatrix &cdMo)
 {
@@ -594,7 +594,7 @@ void vpMbDepthNormalTracker::setUseDepthNormalTracking(const std::string &name, 
 
 void vpMbDepthNormalTracker::testTracking() { }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   m_depthNormalListOfActiveFaces.clear();
@@ -867,7 +867,7 @@ void vpMbDepthNormalTracker::track(const vpImage<vpRGBa> &)
   throw vpException(vpException::fatalError, "Cannot track with a color image!");
 }
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 void vpMbDepthNormalTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud)
 {
   segmentPointCloud(point_cloud);

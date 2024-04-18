@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON) && defined(VISP_HAVE_THREADS)
 
 #include <visp3/core/vpImageConvert.h>
 

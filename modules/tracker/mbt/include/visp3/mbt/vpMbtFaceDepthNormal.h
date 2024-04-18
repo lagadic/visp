@@ -39,7 +39,7 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #endif
@@ -63,7 +63,7 @@ public:
   {
     ROBUST_FEATURE_ESTIMATION = 0,
     ROBUST_SVD_PLANE_ESTIMATION = 1,
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
     PCL_PLANE_ESTIMATION = 2
 #endif
   };
@@ -91,7 +91,7 @@ public:
   void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
                int polygon = -1, std::string name = "");
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                               vpColVector &desired_features, unsigned int stepX, unsigned int stepY
@@ -128,7 +128,7 @@ public:
 
   void computeNormalVisibility(double nx, double ny, double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   void computeNormalVisibility(float nx, float ny, float nz, const pcl::PointXYZ &centroid_point,
                                pcl::PointXYZ &face_normal);
 #endif
@@ -279,7 +279,7 @@ protected:
   //!
   std::vector<PolygonLine> m_polygonLines;
 
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
   bool computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud_face,
                                  vpColVector &desired_features, vpColVector &desired_normal,
                                  vpColVector &centroid_point);
@@ -315,7 +315,7 @@ protected:
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
-#ifdef VISP_HAVE_PCL
+#if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_COMMON)
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbtFaceDepthNormal::vpFeatureEstimationType, {
     {vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION, "robust"},
     {vpMbtFaceDepthNormal::ROBUST_SVD_PLANE_ESTIMATION, "robustSVD"},

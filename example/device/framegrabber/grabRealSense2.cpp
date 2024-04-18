@@ -90,8 +90,10 @@ int main()
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_THREADS)
     std::mutex mutex;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
+#if defined(VISP_HAVE_PCL_VISUALIZATION)
     vpDisplayPCL pcl_viewer(color.getWidth() + 80, color.getHeight() + 70, "3D viewer " + vpTime::getDateTime());
     pcl_viewer.startThread(std::ref(mutex), pointcloud_color);
+#endif
 #endif
 
 #if defined(VISP_HAVE_X11)
