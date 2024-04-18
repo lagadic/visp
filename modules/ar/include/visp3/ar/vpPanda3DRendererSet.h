@@ -68,6 +68,7 @@ public:
   {
     throw vpException(vpException::badValue, "NodePath setNodePose is not supported in renderer set, prefer the string version");
   }
+
   vpHomogeneousMatrix getNodePose(const std::string &name) vp_override
   {
     if (m_subRenderers.size() == 0) {

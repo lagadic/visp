@@ -61,13 +61,13 @@ int main()
   renderer.addNodeToScene(object);
 
 
-  PT(DirectionalLight) alight = new DirectionalLight("alight");
-  alight->set_color(LColor(1.0, 0.0, 0.0, 1.0));
-  alight->set_direction(LVector3(0.f, 1.f, 0.f));
-  NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(alight);
-  rgbRenderer->getRenderRoot().set_light(alnp);
-  rgbRenderer->setNodePose("cube", vpHomogeneousMatrix(1, 0, 0.0, 0.0, 0.0, 0.0));
-  alnp.set_pos(0, -5, 0);
+  // PT(DirectionalLight) alight = new DirectionalLight("alight");
+  // alight->set_color(LColor(1.0, 0.0, 0.0, 1.0));
+  // alight->set_direction(LVector3(0.f, 1.f, 0.f));
+  // NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(alight);
+  // rgbRenderer->getRenderRoot().set_light(alnp);
+
+  // alnp.set_pos(0, -5, 0);
 
 
   std::cout << "Setting camera pose" << std::endl;
@@ -105,13 +105,10 @@ int main()
     vpDisplay::flush(colorImage);
 
 
-    std::cout << "Before get pose" << std::endl;
     vpHomogeneousMatrix wTo = renderer.getNodePose("cube");
-    std::cout << wTo << std::endl;
-    vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
-    renderer.setNodePose("cube", wTo * oToo);
-    std::cout << object.get_scale() << std::endl;
-    std::cout << "After set pose " << std::endl;
+    // vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
+    // renderer.setNodePose("cube", wTo * oToo);
+    renderer.getRenderer<vpPanda3DRGBRenderer>()->setNodePose("cube", vpHomogeneousMatrix(1, 0, 0.0, 0.0, 0.0, 0.0));
     std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << afterRender - beforeRender << "ms" << std::endl;
   }
   return 0;

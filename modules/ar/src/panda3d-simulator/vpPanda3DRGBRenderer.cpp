@@ -27,7 +27,7 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
 
   GraphicsEngine *engine = m_window->get_graphics_output()->get_engine();
   GraphicsPipe *pipe = m_window->get_graphics_output()->get_pipe();
-  m_colorBuffer = engine->make_output(pipe, "My Buffer", -100, fbp, win_prop, flags,
+  m_colorBuffer = engine->make_output(pipe, "Color Buffer", -100, fbp, win_prop, flags,
                                             m_window->get_graphics_output()->get_gsg(),
                                             m_window->get_graphics_output());
   m_colorTexture = new Texture();
