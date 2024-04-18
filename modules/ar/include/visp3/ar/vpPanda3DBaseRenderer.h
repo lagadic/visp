@@ -5,110 +5,21 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/ar/vpPanda3DRenderParameters.h>
 
 #include <pandaFramework.h>
 #include <pandaSystem.h>
-#include <matrixLens.h>
-
-
-
-/**
- * @brief Rendering parameters for a panda3D simulation
- *
- * includes:
- *  - Camera intrinsics
- *  - Image resolution
- *  - Clipping parameters
- */
-class VISP_EXPORT vpPanda3DRenderParameters
-{
-public:
-  vpPanda3DRenderParameters() : m_cam(), m_height(0), m_width(0), m_clipNear(0.001), m_clipFar(10.0) { }
-  vpPanda3DRenderParameters(const vpCameraParameters &cam, unsigned int h, unsigned int w,
-                            double clipNear, double clipFar)
-    : m_cam(cam), m_height(h), m_width(w), m_clipNear(clipNear), m_clipFar(clipFar)
-  { }
-
-  /**
-   * @brief Retrieve camera intrinsics.
-   *
-   * @return const vpCameraParameters&
-   */
-  const vpCameraParameters &getCameraIntrinsics() const { return m_cam; }
-  /**
-   * @brief set camera intrinsics. Only camera intrinsics for a lens without distortion are supported.
-   * \throws if camera intrinsics have a distortion model.
-   */
-  void setCameraIntrinsics(const vpCameraParameters &cam)
-  {
-    if (cam.get_projModel() != vpCameraParameters::perspectiveProjWithoutDistortion) {
-      throw vpException(vpException::badValue, "Panda3D renderer: only lenses with no distortion are supported");
-    }
-    m_cam = cam;
-  }
-
-  double getNearClippingDistance() const { return m_clipNear; }
-  double getFarClippingDistance() const { return m_clipFar; }
-
-  void setClippingDistance(double near, double far)
-  {
-    if (far < near) {
-      std::swap(near, far);
-    }
-    m_clipNear = near;
-    m_clipFar = far;
-  }
-
-  unsigned int getImageWidth() const { return m_width; }
-  unsigned int getImageHeight() const { return m_height; }
-
-  void setImageResolution(unsigned int height, unsigned int width)
-  {
-    m_height = height;
-    m_width = width;
-  }
-
-  void setupPandaCamera(Camera *camera)
-  {
-    // Adapted from Megapose code (https://github.com/megapose6d/megapose6d/blob/master/src/megapose/panda3d_renderer/types.py#L59),
-    // which was itself inspired by https://discourse.panda3d.org/t/lens-camera-for-opencv-style-camera-parameterisation/15413
-    // And http://ksimek.github.io/2013/06/03/calibrated_cameras_in_opengl
-    std::cout << "Calling setup panda camera" << std::endl;
-    if (lens == nullptr) {
-      lens = new MatrixLens();
-      const double A = (m_clipFar + m_clipNear) / (m_clipFar - m_clipNear);
-      const double B = -2.0 * (m_clipFar * m_clipNear) / (m_clipFar - m_clipNear);
-
-      const double cx = m_cam.get_u0();
-      const double cy = m_height - m_cam.get_v0();
-
-      lens->set_near_far(m_clipNear, m_clipFar);
-      lens->set_user_mat(LMatrix4(
-        m_cam.get_px(), 0, 0, 0,
-        0, 0, A, 1,
-        0, m_cam.get_py(), 0, 0,
-        0, 0, B, 0
-      ));
-      lens->set_film_size(m_width, m_height);
-      lens->set_film_offset(m_width * 0.5 - cx, m_height * 0.5 - cy);
-    }
-
-    camera->set_lens(lens);
-    // camera->set_lens_active(0, true);
-  }
-
-private:
-  vpCameraParameters m_cam;
-  unsigned int m_height, m_width;
-  double m_clipNear, m_clipFar;
-  PT(MatrixLens) lens;
-};
 
 
 /**
  * @brief Base class for a panda3D renderer. This class handles basic functionalities,
- * such as loading object, changing camera parameters etc.
+ * such as loading object, changing camera parameters.
  *
+ * For a subclass to have a novel behaviour (e.g, display something else) These methods should be overriden:
+ *
+ * - setupScene: This is where you should apply your shaders.
+ * - setupCamera: This is where cameras are created and intrinsics parameters are applied
+ * - setupRenderTarget: This is where you should create the texture buffers, where the render results should be stored.
  */
 class VISP_EXPORT vpPanda3DBaseRenderer
 {
@@ -117,138 +28,123 @@ public:
 
   virtual ~vpPanda3DBaseRenderer() = default;
 
-  virtual void initFramework(bool showWindow)
-  {
-    if (m_framework.use_count() > 0) {
-      throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
-    }
-    m_framework = std::shared_ptr<PandaFramework>(new PandaFramework());
-    m_framework->open_framework();
-    WindowProperties winProps;
-    winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
-    int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
-    m_window = m_framework->open_window(winProps, flags);
-    m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
-    setupScene();
-    setupCamera();
-    m_window->get_display_region_3d()->set_camera(m_cameraPath);
-  }
-
-
-  void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window)
-  {
-    m_framework = framework;
-    m_window = window;
-    setupScene();
-    setupCamera();
-    setupRenderTarget();
-    m_window->get_display_region_3d()->set_camera(m_cameraPath);
-  }
-
-  virtual void setupScene()
-  {
-    m_renderRoot = m_window->get_render().attach_new_node(m_name);
-    m_renderRoot.set_shader_auto();
-  }
-
-  virtual void setupRenderTarget() { }
-
-  virtual void renderFrame()
-  {
-    m_framework->get_graphics_engine()->render_frame();
-    m_framework->get_graphics_engine()->sync_frame();
-
-  }
-
-
-  const std::string &getName() const { return m_name; }
-  NodePath getRenderRoot() { return m_renderRoot; }
-
-  virtual void setCameraPose(const vpHomogeneousMatrix &wTc)
-  {
-    if (m_camera.is_null() || m_cameraPath.is_empty()) {
-      throw vpException(vpException::notInitialized, "Camera was not initialized before trying to set its pose");
-    }
-    setNodePose(m_cameraPath, wTc);
-  }
-  virtual vpHomogeneousMatrix getCameraPose()
-  {
-    if (m_camera.is_null()) {
-      throw vpException(vpException::notInitialized, "Camera was not initialized before trying to get its pose");
-    }
-    return getNodePose(m_cameraPath);
-  }
   /**
-   * @brief Set the pose of a node.
+   * @brief Initialize the whole Panda3D framework. Create a new PandaFramework object and a new window.
    *
-   * @param name Node path to search for, from the render root. See https://docs.panda3d.org/1.10/python/programming/scene-graph/searching-scene-graph
-   * @param wTo Pose of the object in the world frame
+   * Will also perform the renderer setup (scene, camera and render targets)
+   *
+   * @param showWindow whether the created window should be visible
    */
-  virtual void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo)
-  {
-    NodePath object = m_renderRoot.find(name);
-    setNodePose(object, wTo);
-  }
+  virtual void initFramework(bool showWindow);
 
-  virtual void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo)
-  {
-    vpTranslationVector t = wTo.getTranslationVector();
-    vpQuaternionVector q(wTo.getRotationMatrix());
-    object.set_pos(t[0], t[1], t[2]);
-    object.set_quat(LQuaternion(q.w(), q.x(), q.y(), q.z()));
-  }
-  virtual vpHomogeneousMatrix getNodePose(const std::string &name)
-  {
-    NodePath object = m_renderRoot.find(name);
-    if (object.is_empty()) {
-      throw vpException(vpException::badValue, "Node %s was not found", name);
-    }
-    return getNodePose(object);
-  }
-  virtual vpHomogeneousMatrix getNodePose(NodePath &object)
-  {
-    const LPoint3 pos = object.get_pos();
-    const LQuaternion quat = object.get_quat();
-    const vpTranslationVector t(pos[0], pos[1], pos[2]);
-    const vpQuaternionVector q(quat.get_i(), quat.get_j(), quat.get_k(), quat.get_r());
-    return vpHomogeneousMatrix(t, q);
-  }
+  /**
+   * @brief
+   *
+   * @param framework
+   */
+  void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window);
 
+  /**
+   * @brief Initialize the scene for this specific renderer.
+   *
+   * Creates a root scene for this node and applies shaders. that will be used for rendering
+   *
+   */
+  virtual void setupScene();
 
   /**
    * @brief Initialize camera. Should be called when the scene root of this render has already been created.
    *
    */
-  virtual void setupCamera()
-  {
+  virtual void setupCamera();
 
-    m_camera = m_window->get_camera(0);
-    //m_camera = (Camera *)m_cameraPath.node();
-    // m_camera = m_window->get_camera(0);
-    m_cameraPath = m_renderRoot.attach_new_node(m_camera);
-    m_renderParameters.setupPandaCamera(m_camera);
+  virtual void setupRenderTarget() { }
+
+  virtual void renderFrame();
+
+  /**
+   * @brief Get the name of the renderer
+   *
+   * @return const std::string&
+   */
+  const std::string &getName() const { return m_name; }
+  /**
+   * @brief Get the scene root
+   *
+   */
+  NodePath &getRenderRoot() { return m_renderRoot; }
+
+  /**
+   * @brief Set new rendering parameters. If the scene has already been initialized, the renderer camera is updated.
+   *
+   * @param params the new rendering parameters
+   */
+  virtual void setRenderParameters(const vpPanda3DRenderParameters &params)
+  {
+    m_renderParameters = params;
+    if (m_camera != nullptr) {
+      m_renderParameters.setupPandaCamera(m_camera);
+    }
   }
 
-  NodePath loadObject(const std::string &nodeName, const std::string &modelPath)
-  {
-    NodePath model = m_window->load_model(m_framework->get_models(), modelPath);
-    std::cout << "After loading model" << std::endl;
-    model.detach_node();
-    model.set_name(nodeName);
-    return model;
-  }
+  /**
+   * @brief Set the camera's pose.
+   *
+   * @param wTc the new pose of the camera, in world frame
+   */
+  virtual void setCameraPose(const vpHomogeneousMatrix &wTc);
 
-  virtual void addNodeToScene(const NodePath &object)
-  {
-    NodePath objectInScene = m_renderRoot.attach_new_node(object.node());
-    //objectInScene.set_shader_auto();
-    objectInScene.set_name(object.get_name());
-    std::cout << objectInScene.get_mat() << std::endl;
-  }
+  /**
+   * @brief Retrieve the camera's pose, in the world frame.
+   */
+  virtual vpHomogeneousMatrix getCameraPose();
+  /**
+   * @brief Set the pose of a node. This node can be any Panda object (light, mesh, camera).
+   *
+   * @param name Node path to search for, from the render root. This is the object that will be modified See https://docs.panda3d.org/1.10/python/programming/scene-graph/searching-scene-graph
+   * @param wTo Pose of the object in the world frame
+   *
+   * \throws if the corresponding node cannot be found.
+   */
+  virtual void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo);
 
+  /**
+   * @brief Set the pose of a node. This node can be any Panda object (light, mesh, camera).
+   *
+   * @param object The object for which to set the pose
+   * @param wTo Pose of the object in the world frame
+   */
+  virtual void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo);
+  /**
+   * @brief Get the pose of a Panda node, in world frame.
+   *
+   * @param name Node path to search for. \see setNodePose(const std::string &, const vpHomogeneousMatrix &) for more info
+   * @return wTo, the pose of the object in world frame
+   * \throws if no node can be found from the given path.
+   */
+  virtual vpHomogeneousMatrix getNodePose(const std::string &name);
+  /**
+   * @brief Get the pose of a Panda node, in world frame. This version of the method directly uses the Panda Nodepath.
+   */
+  virtual vpHomogeneousMatrix getNodePose(NodePath &object);
 
-  virtual void setRenderParameters(const vpPanda3DRenderParameters &params) { m_renderParameters = params; }
+  /**
+   * @brief Load a 3D object. To load an .obj file, Panda3D must be compiled with assimp support.
+   *
+   * Once loaded, the object will not be visible, it should be added to the scene.
+   *
+   * @param nodeName the name that will be used when inserting the node in the scene graph
+   * @param modelPath  Path to the model file
+   * @return NodePath The NodePath containing the 3D model, which can now be added to the scene graph.
+   */
+  NodePath loadObject(const std::string &nodeName, const std::string &modelPath);
 
+  /**
+   * @brief Add a node to the scene
+   *
+   * @param object
+   */
+  virtual void addNodeToScene(const NodePath &object);
 
 protected:
   const std::string m_name; //! name of the renderer
