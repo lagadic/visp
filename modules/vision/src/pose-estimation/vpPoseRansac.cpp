@@ -140,9 +140,10 @@ struct FindDegeneratePoint
 
   bool operator()(const vpPoint &pt)
   {
-    return (((std::fabs(m_pt.oP[0] - pt.oP[0]) < EPS) && (std::fabs(m_pt.oP[1] - pt.oP[1]) < EPS) &&
-             (std::fabs(m_pt.oP[2] - pt.oP[2]) < EPS)) ||
-            ((std::fabs(m_pt.p[0] - pt.p[0]) < EPS) && (std::fabs(m_pt.p[1] - pt.p[1]) < EPS)));
+    bool result_cond1 = ((std::fabs(m_pt.oP[0] - pt.oP[0]) < EPS) && (std::fabs(m_pt.oP[1] - pt.oP[1]) < EPS)
+                      && (std::fabs(m_pt.oP[2] - pt.oP[2]) < EPS));
+    bool result_cond2 = (std::fabs(m_pt.p[0] - pt.p[0]) < EPS) && (std::fabs(m_pt.p[1] - pt.p[1]) < EPS);
+    return result_cond1 || result_cond2;
   }
 
   vpPoint m_pt;
@@ -209,12 +210,12 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
         poseMin.addPoint(pt);
         cur_randoms.push_back(r_);
         // Increment the number of points picked
-        i++;
+        ++i;
       }
     }
 
     if (poseMin.npt < nbMinRandom) {
-      nbTrials++;
+      ++nbTrials;
       continue;
     }
 
@@ -254,7 +255,8 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
       if (isPoseValid && (r < m_ransacThreshold)) {
         unsigned int nbInliersCur = 0;
         unsigned int iter = 0;
-        for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listOfUniquePoints.end();
+        std::vector<vpPoint>::const_iterator m_listofuniquepoints_end = m_listOfUniquePoints.end();
+        for (std::vector<vpPoint>::const_iterator it = m_listOfUniquePoints.begin(); it != m_listofuniquepoints_end;
              ++it, ++iter) {
           p.setWorldCoordinates(it->get_oX(), it->get_oY(), it->get_oZ());
           p.track(m_cMo);
@@ -271,7 +273,7 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
             if (!degenerate) {
               // the point is considered as inlier if the error is below the
               // threshold
-              nbInliersCur++;
+              ++nbInliersCur;
               cur_consensus.push_back(iter);
               cur_inliers.push_back(*it);
             }
@@ -290,18 +292,18 @@ bool vpPose::vpRansacFunctor::poseRansacImpl()
           m_nbInliers = nbInliersCur;
         }
 
-        nbTrials++;
+        ++nbTrials;
 
         if (nbTrials >= m_ransacMaxTrials) {
           foundSolution = true;
         }
       }
       else {
-        nbTrials++;
+        ++nbTrials;
       }
     }
     else {
-      nbTrials++;
+      ++nbTrials;
     }
   }
 
@@ -340,7 +342,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     // Remove degenerate object points
     std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
     size_t index_pt = 0;
-    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
+    std::vector<vpPoint>::const_iterator listofpoints_end = listOfPoints.end();
+    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listofpoints_end;
          ++it_pt, ++index_pt) {
       if (filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end()) {
         filterObjectPointMap[*it_pt] = index_pt;
@@ -348,8 +351,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     }
 
     std::map<vpPoint, size_t, CompareImagePointDegenerate> filterImagePointMap;
+    std::map<vpPoint, size_t, CompareObjectPointDegenerate>::const_iterator filterobjectpointmap_end = filterObjectPointMap.end();
     for (std::map<vpPoint, size_t, CompareObjectPointDegenerate>::const_iterator it = filterObjectPointMap.begin();
-         it != filterObjectPointMap.end(); ++it) {
+         it != filterobjectpointmap_end; ++it) {
       if (filterImagePointMap.find(it->first) == filterImagePointMap.end()) {
         filterImagePointMap[it->first] = it->second;
 
@@ -363,7 +367,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     listOfUniquePoints = listOfPoints;
 
     size_t index_pt = 0;
-    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
+    std::vector<vpPoint>::const_iterator listofpoints_end = listOfPoints.end();
+    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listofpoints_end;
          ++it_pt, ++index_pt) {
       mapOfUniquePointIndex[index_pt] = index_pt;
     }
@@ -482,8 +487,9 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       }
 
       // Update the list of inlier index
+      std::vector<unsigned int>::const_iterator best_consensus_end = best_consensus.end();
       for (std::vector<unsigned int>::const_iterator it_index = best_consensus.begin();
-           it_index != best_consensus.end(); ++it_index) {
+           it_index != best_consensus_end; ++it_index) {
         ransacInlierIndex.push_back(static_cast<unsigned int>(mapOfUniquePointIndex[*it_index]));
       }
 

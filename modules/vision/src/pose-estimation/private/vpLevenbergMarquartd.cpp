@@ -263,7 +263,7 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
      */
     for (;;) // iter >= 0)
     {
-      iter++;
+      ++iter;
 
       /*
        *  evaluation de la fonction a la valeur courant
@@ -296,9 +296,10 @@ int lmpar(int n, double *r, int ldr, int *ipvt, double *diag, double *qtb, doubl
        *  ou parl est nul et ou le nombre d'iteration a
        *  atteint 10.
        */
-      if ((std::fabs(fp) <= (tol1 * (*delta))) ||
-          ((std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && ((fp <= temp) && (temp < 0.0))) ||
-          (iter == 10)) {
+      bool cond_part_1 = (std::fabs(fp) <= (tol1 * (*delta)));
+      bool cond_part_2 = (std::fabs(parl) <= std::numeric_limits<double>::epsilon()) && ((fp <= temp) && (temp < 0.0));
+      bool cond_part_3 = (iter == 10);
+      if (cond_part_1 || cond_part_2 || cond_part_3) {
         // terminaison.
 
         return 0;
@@ -685,8 +686,10 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
   if (factor <= 0.0) {
     return 0;
   }
-  if ((n <= 0) || (m < n) || (ldfjac < m) || (ftol < 0.0) || (xtol < 0.0) || (gtol < 0.0) || (maxfev == 0) ||
-      (factor <= 0.0)) {
+  bool cond_part_one = (n <= 0) || (m < n) || (ldfjac < m);
+  bool cond_part_two = (ftol < 0.0) || (xtol < 0.0) || (gtol < 0.0);
+  bool cond_part_three = (maxfev == 0) || (factor <= 0.0);
+  if (cond_part_one || cond_part_two || cond_part_three) {
     /*
      * termination, normal ou imposee par l'utilisateur.
      */
@@ -765,7 +768,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
    *  debut de la boucle la plus externe.
    */
   while (count < static_cast<int>(maxfev)) {
-    count++;
+    ++count;
     /*
      *  calcul de la matrice jacobienne.
      */
@@ -1086,7 +1089,7 @@ int lmder(void (*ptr_fcn)(int m, int n, double *xc, double *fvecc, double *jac, 
 
         xnorm = enorm(wa2, n);
         fnorm = fnorm1;
-        iter++;
+        ++iter;
       }
 
       /*

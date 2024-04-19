@@ -287,7 +287,8 @@ void vpDisplay::displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImage
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
   vpImagePoint ip_prev = *(++it);
-  for (; it != ips.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ips_end = ips.end();
+  for (; it != ips_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;
@@ -544,7 +545,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoi
   std::list<vpImagePoint>::const_iterator it = ips.begin();
 
   vpImagePoint ip_prev = *(++it);
-  for (; it != ips.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ips_end = ips.end();
+  for (; it != ips_end; ++it) {
     if (vpImagePoint::distance(ip_prev, *it) > 1) {
       vp_display_display_line(I, ip_prev, *it, color, thickness);
       ip_prev = *it;

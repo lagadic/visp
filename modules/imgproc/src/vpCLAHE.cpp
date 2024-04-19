@@ -478,7 +478,7 @@ void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int 
     *ptrCurrent = pa.bitmap[cpt];
     ++ptrCurrent;
 
-    cpt++;
+    ++cpt;
   }
 }
 };

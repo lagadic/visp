@@ -49,7 +49,7 @@ bool isBimodal(const std::vector<float> &hist_float)
   size_t hist_float_size_m_1 = hist_float.size() - 1;
   for (size_t cpt = 1; cpt < hist_float_size_m_1; ++cpt) {
     if ((hist_float[cpt - 1] < hist_float[cpt]) && (hist_float[cpt] > hist_float[cpt + 1])) {
-      modes++;
+      ++modes;
     }
 
     if (modes > 2) {
@@ -73,11 +73,11 @@ int computeThresholdHuang(const vpHistogram &hist)
   // Find first and last non-empty bin
   size_t first, last;
   size_t hist_size = hist.getSize();
-  for (first = 0; (first < hist_size) && (hist[static_cast<unsigned char>(first)] == 0); first++) {
+  for (first = 0; (first < hist_size) && (hist[static_cast<unsigned char>(first)] == 0); ++first) {
     // do nothing
   }
 
-  for (last = (hist_size - 1); (last > first) && (hist[static_cast<unsigned char>(last)] == 0); last--) {
+  for (last = (hist_size - 1); (last > first) && (hist[static_cast<unsigned char>(last)] == 0); --last) {
     // do nothing
   }
 
@@ -172,7 +172,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
     // Last value
     hist_float[hist_float.size() - 1] = (((hist_float.size() - 2) + hist_float.size()) - 1) / 2.0f;
 
-    iter++;
+    ++iter;
 
     if (iter > 10000) {
       std::cerr << "Intermodes Threshold not found after 10000 iterations!" << std::endl;
@@ -329,7 +329,7 @@ int computeThresholdTriangle(vpHistogram &hist)
 
     int cpt_left = 0;
     int cpt_right = static_cast<int>(hist.getSize()) - 1;
-    for (; cpt_left < cpt_right; cpt_left++, cpt_right--) {
+    for (; cpt_left < cpt_right; ++cpt_left, --cpt_right) {
       unsigned int temp = hist[cpt_left];
       hist.set(cpt_left, hist[cpt_right]);
       hist.set(cpt_right, temp);
@@ -358,7 +358,7 @@ int computeThresholdTriangle(vpHistogram &hist)
       threshold = cpt;
     }
   }
-  threshold--;
+  --threshold;
 
   if (flip) {
     threshold = static_cast<int>(hist.getSize()) - 1 - threshold;

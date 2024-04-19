@@ -288,7 +288,8 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 
   vpPoint P;
   unsigned int i_ = 0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
     XI[i_] = P.get_x(); // --comment: *cam.px plus cam.xc
     YI[i_] = P.get_y(); // --comment: *cam.py plus cam.yc

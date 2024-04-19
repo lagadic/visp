@@ -150,7 +150,7 @@ void connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, 
         visitNeighbors(I_copy, listOfNeighbors, labels_copy, current_label, connexity);
 
         // Increment label
-        current_label++;
+        ++current_label;
       }
     }
   }

@@ -343,7 +343,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins,
     m_total = 0;
     while (ptrCurrent != ptrEnd) {
       if (*ptrMaskCurrent) {
-        m_histogram[lut[*ptrCurrent]]++;
+        ++m_histogram[lut[*ptrCurrent]];
         ++m_total;
       }
       ++ptrCurrent;
@@ -543,7 +543,7 @@ void vpHistogram::smooth(unsigned int fsize)
       // exploitation of the overflow to detect negative value...
       if (/*(i + j) >= 0 &&*/ (i + static_cast<unsigned int>(j)) < m_size) {
         sum += h.m_histogram[i + static_cast<unsigned int>(j)];
-        nb++;
+        ++nb;
       }
     }
     m_histogram[i] = sum / nb;
@@ -588,20 +588,20 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
 
     if ((prev_slope > 0) && (next_slope == 0)) {
       sum_level += i + 1;
-      cpt++;
+      ++cpt;
       continue;
     }
 
     // Peak detection
     if ((prev_slope > 0) && (next_slope < 0)) {
       sum_level += i;
-      cpt++;
+      ++cpt;
 
       unsigned int level = sum_level / cpt;
       p.set(static_cast<unsigned char>(level), m_histogram[level]);
       peaks.push_back(p);
 
-      nbpeaks++;
+      ++nbpeaks;
     }
 
     prev_slope = next_slope;
@@ -611,7 +611,7 @@ unsigned vpHistogram::getPeaks(std::list<vpHistogramPeak> &peaks)
   if (prev_slope > 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
     peaks.push_back(p);
-    nbpeaks++;
+    ++nbpeaks;
   }
 
   return nbpeaks;
@@ -657,7 +657,8 @@ unsigned vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peak1, vpHis
   // Parse the peaks list to get the peak with a distance greater
   // than dist to the highest
   peak1 = peaks.front();
-  for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks.end(); ++it) {
+  std::list<vpHistogramPeak>::const_iterator peaks_end = peaks.end();
+  for (std::list<vpHistogramPeak>::const_iterator it = peaks.begin(); it != peaks_end; ++it) {
     vpHistogramPeak p = *it;
     if (abs(p.getLevel() - peak1.getLevel()) > dist) {
       // The second peak is found
@@ -711,8 +712,9 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
   prev_slope = 1;
   for (unsigned i = 0; i < (m_size - 1); ++i) {
     int next_slope = static_cast<int>(m_histogram[i + 1]) - static_cast<int>(m_histogram[i]); // Next histogram inclination
-    if (next_slope == 0)
+    if (next_slope == 0) {
       continue;
+    }
     // Peak detection
     if ((prev_slope > 0) && (next_slope < 0)) {
       peak[nbpeaks++] = static_cast<unsigned char>(i);
@@ -800,7 +802,7 @@ bool vpHistogram::getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogr
     }
     if (m_histogram[i] == mini) {
       sumindmini += i;
-      nbmini++;
+      ++nbmini;
     }
   }
 
@@ -857,20 +859,20 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
 
     if ((prev_slope < 0) && (next_slope == 0)) {
       sum_level += i + 1;
-      cpt++;
+      ++cpt;
       continue;
     }
 
     // Valey detection
     if ((prev_slope < 0) && (next_slope > 0)) {
       sum_level += i;
-      cpt++;
+      ++cpt;
 
       unsigned int level = sum_level / cpt;
       p.set(static_cast<unsigned char>(level), m_histogram[level]);
       valey.push_back(p);
 
-      nbvaley++;
+      ++nbvaley;
     }
 
     prev_slope = next_slope;
@@ -880,7 +882,7 @@ unsigned vpHistogram::getValey(std::list<vpHistogramValey> &valey)
   if (prev_slope < 0) {
     p.set(static_cast<unsigned char>(m_size) - 1u, m_histogram[m_size - 1]);
     valey.push_back(p);
-    nbvaley++;
+    ++nbvaley;
   }
 
   return nbvaley;
@@ -932,7 +934,7 @@ bool vpHistogram::getValey(const vpHistogramPeak &peak1, const vpHistogramPeak &
     }
     if (m_histogram[i] == mini) {
       sumindmini += i;
-      nbmini++;
+      ++nbmini;
     }
   }
 
@@ -998,12 +1000,13 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     // Go to the requested peak in the list
     std::list<vpHistogramPeak>::const_iterator it;
     unsigned index = 0;
-    for (it = peaks.begin(); it != peaks.end(); ++it) {
+    std::list<vpHistogramPeak>::const_iterator peaks_end = peaks.end();
+    for (it = peaks.begin(); it != peaks_end; ++it) {
       if (peak == *it) {
         // we are on the peak.
         break;
       }
-      index++;
+      ++index;
     }
 
     bool found = false;
@@ -1042,7 +1045,7 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       }
       if (m_histogram[i] == mini) {
         sumindmini += i;
-        nbmini++;
+        ++nbmini;
       }
     }
     if (nbmini == 0) {
@@ -1063,7 +1066,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     }
     // Go to the requested peak in the list
     std::list<vpHistogramPeak>::const_iterator it;
-    for (it = peaks.begin(); it != peaks.end(); ++it) {
+    std::list<vpHistogramPeak>::const_iterator peaks_end = peaks.end();
+    for (it = peaks.begin(); it != peaks_end; ++it) {
       if (peak == *it) {
         // we are on the peak.
         break;
@@ -1073,7 +1077,8 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     bool found = false;
     // search for the nearest peak on the right that matches the distance
     std::list<vpHistogramPeak>::const_iterator rit; // right iterator
-    for (rit = it; rit != peaks.end(); ++rit) {
+    std::list<vpHistogramPeak>::const_iterator peaks_end_s = peaks.end();
+    for (rit = it; rit != peaks_end_s; ++rit) {
 
       if (abs((*rit).getLevel() - peak.getLevel()) > dist) {
         // peakr found
@@ -1101,7 +1106,7 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
       }
       if (m_histogram[i] == mini) {
         sumindmini += i;
-        nbmini++;
+        ++nbmini;
       }
     }
     if (nbmini == 0) {

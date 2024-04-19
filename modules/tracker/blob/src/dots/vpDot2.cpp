@@ -214,7 +214,8 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
   vpDisplay::displayCross(I, cog, (3 * t) + 8, color, t);
   std::list<vpImagePoint>::const_iterator it;
 
-  for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ip_edges_list_end = ip_edges_list.end();
+  for (it = ip_edges_list.begin(); it != ip_edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
@@ -253,6 +254,7 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
   while (vpDisplay::getClick(I, cog) != true) {
+    // block empty waiting user interaction
   }
 
   unsigned int i = static_cast<unsigned int>(cog.get_i());
@@ -1073,11 +1075,11 @@ void vpDot2::searchDotsInArea(const vpImage<unsigned char> &I, int area_u, int a
             //   position to the list of pixels of previously detected dots
             cogBadDot = *it_edges;
             if ((std::fabs(border_u - cogBadDot.get_u()) <=
-                 vpMath::maximum(std::fabs(static_cast<double>(border_u)), std::fabs(cogBadDot.get_u())) *
-                 std::numeric_limits<double>::epsilon()) &&
+                 (vpMath::maximum(std::fabs(static_cast<double>(border_u)), std::fabs(cogBadDot.get_u())) *
+                  std::numeric_limits<double>::epsilon())) &&
                 (std::fabs(v - cogBadDot.get_v()) <=
-                 vpMath::maximum(std::fabs(static_cast<double>(v)), std::fabs(cogBadDot.get_v())) *
-                 std::numeric_limits<double>::epsilon())) {
+                 (vpMath::maximum(std::fabs(static_cast<double>(v)), std::fabs(cogBadDot.get_v())) *
+                  std::numeric_limits<double>::epsilon()))) {
               good_germ = false;
             }
             ++it_edges;
@@ -1358,7 +1360,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
                "%d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
-        nb_bad_points++;
+        ++nb_bad_points;
       }
       if (graphics) {
         for (unsigned int t = 0; t < thickness; ++t) {
@@ -1406,7 +1408,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
                "%g): %d not in [%u, %u]\n",
                u, v, cog_u, cog_v, I[v][u], gray_level_min, gray_level_max);
 #endif
-        nb_bad_points++;
+        ++nb_bad_points;
       }
       if (graphics) {
         for (unsigned int t = 0; t < thickness; ++t) {
@@ -1793,7 +1795,7 @@ bool vpDot2::findFirstBorder(const vpImage<unsigned char> &I, const unsigned int
     vpDisplay::flush(I);
 #endif
 
-    border_u++;
+    ++border_u;
   }
   return true;
 }
@@ -2231,14 +2233,14 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
     unsigned int pixel_gray = static_cast<unsigned int>(I[static_cast<unsigned int>(cog_v)][i]);
     if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
       sum_value += pixel_gray;
-      nb_pixels++;
+      ++nb_pixels;
     }
   }
   for (unsigned int i = static_cast<unsigned int>(this->bbox_v_min); i <= static_cast<unsigned int>(this->bbox_v_max); ++i) {
     unsigned char pixel_gray = I[i][static_cast<unsigned int>(cog_u)];
     if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
       sum_value += pixel_gray;
-      nb_pixels++;
+      ++nb_pixels;
     }
   }
   if (nb_pixels < 10) { // could be good to choose the min nb points from area of dot
@@ -2260,7 +2262,7 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
       unsigned int pixel_gray = static_cast<unsigned int>(I[static_cast<unsigned int>(cog_v + i)][static_cast<unsigned int>(cog_u + i)]);
       if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
         sum_value += pixel_gray;
-        nb_pixels++;
+        ++nb_pixels;
       }
     }
 
@@ -2281,7 +2283,7 @@ void vpDot2::computeMeanGrayLevel(const vpImage<unsigned char> &I)
       unsigned char pixel_gray = I[static_cast<unsigned int>(cog_v - i)][static_cast<unsigned int>(cog_u + i)];
       if ((pixel_gray >= getGrayLevelMin()) && (pixel_gray <= getGrayLevelMax())) {
         sum_value += pixel_gray;
-        nb_pixels++;
+        ++nb_pixels;
       }
     }
   }
@@ -2464,7 +2466,8 @@ void vpDot2::display(const vpImage<unsigned char> &I, const vpImagePoint &cog,
   vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
 
-  for (it = edges_list.begin(); it != edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
+  for (it = edges_list.begin(); it != edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
@@ -2488,8 +2491,8 @@ void vpDot2::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const st
 {
   vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
-
-  for (it = edges_list.begin(); it != edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
+  for (it = edges_list.begin(); it != edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }

@@ -297,7 +297,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
     // Mean value of the dot intensities
     mean_value = ((mean_value * (n - 1)) + I[v][u]) / n;
     if (compute_moment == true) {
-      m00++;
+      ++m00;
       m10 += u;
       m01 += v;
       m11 += (u * v);
@@ -335,7 +335,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
     }
   }
 
-  if (v + 1 < I.getHeight()) {
+  if ((v + 1) < I.getHeight()) {
     if (!checkTab[u + ((v + 1) * I.getWidth())]) {
       if (!connexe(I, u, v + 1, mean_value, u_cog, v_cog, n, checkTab)) {
         edge = true;
@@ -345,14 +345,14 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
 
   if (connexityType == CONNEXITY_8) {
     if ((v >= 1) && (u >= 1)) {
-      if (!checkTab[u - 1 + ((v - 1) * I.getWidth())]) {
+      if (!checkTab[(u - 1) + ((v - 1) * I.getWidth())]) {
         if (!connexe(I, u - 1, v - 1, mean_value, u_cog, v_cog, n, checkTab)) {
           edge = true;
         }
       }
     }
 
-    if (v >= 1 && (u + 1) < I.getWidth()) {
+    if ((v >= 1) && ((u + 1) < I.getWidth())) {
       if (!checkTab[u + 1 + ((v - 1) * I.getWidth())]) {
         if (!connexe(I, u + 1, v - 1, mean_value, u_cog, v_cog, n, checkTab)) {
           edge = true;
@@ -360,7 +360,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
       }
     }
 
-    if ((v + 1) < I.getHeight() && u >= 1) {
+    if (((v + 1) < I.getHeight()) && (u >= 1)) {
       if (!checkTab[(u - 1) + ((v + 1) * I.getWidth())]) {
         if (!connexe(I, u - 1, v + 1, mean_value, u_cog, v_cog, n, checkTab)) {
           edge = true;
@@ -368,7 +368,7 @@ bool vpDot::connexe(const vpImage<unsigned char> &I, unsigned int u, unsigned in
       }
     }
 
-    if ((v + 1) < I.getHeight() && (u + 1) < I.getWidth()) {
+    if (((v + 1) < I.getHeight()) && ((u + 1) < I.getWidth())) {
       if (!checkTab[u + 1 + ((v + 1) * I.getWidth())]) {
         if (!connexe(I, u + 1, v + 1, mean_value, u_cog, v_cog, n, checkTab)) {
           edge = true;
@@ -851,7 +851,8 @@ void vpDot::display(const vpImage<unsigned char> &I, vpColor color, unsigned int
   vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thick);
   std::list<vpImagePoint>::const_iterator it;
 
-  for (it = ip_edges_list.begin(); it != ip_edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator ip_edges_list_end = ip_edges_list.end();
+  for (it = ip_edges_list.begin(); it != ip_edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
@@ -908,7 +909,8 @@ void vpDot::display(const vpImage<unsigned char> &I, const vpImagePoint &cog, co
   vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
 
-  for (it = edges_list.begin(); it != edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
+  for (it = edges_list.begin(); it != edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
@@ -933,7 +935,8 @@ void vpDot::display(const vpImage<vpRGBa> &I, const vpImagePoint &cog, const std
   vpDisplay::displayCross(I, cog, (3 * thickness) + 8, color, thickness);
   std::list<vpImagePoint>::const_iterator it;
 
-  for (it = edges_list.begin(); it != edges_list.end(); ++it) {
+  std::list<vpImagePoint>::const_iterator edges_list_end = edges_list.end();
+  for (it = edges_list.begin(); it != edges_list_end; ++it) {
     vpDisplay::displayPoint(I, *it, color);
   }
 }
