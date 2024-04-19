@@ -117,9 +117,9 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 
 //#pragma omp parallel for simd
   for (unsigned int i = 0; i < normals.getRows() * normals.getCols(); ++i) {
-    normals.bitmap[i].R = (data[i * 4]);
+    normals.bitmap[i].B = (data[i * 4]);
     normals.bitmap[i].G = (data[i * 4 + 1]);
-    normals.bitmap[i].B = (data[i * 4 + 2]);
+    normals.bitmap[i].R = (data[i * 4 + 2]);
     depth.bitmap[i] = (data[i * 4 + 3]);
   }
 }

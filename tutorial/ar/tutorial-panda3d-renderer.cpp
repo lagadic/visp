@@ -18,6 +18,7 @@
 #include <visp3/ar/vpPanda3DRendererSet.h>
 
 #include <ambientLight.h>
+#include <pointLight.h>
 #include <directionalLight.h>
 
 
@@ -46,12 +47,10 @@ void displayDepth(const vpImage<float> &depthImage,
 
 int main()
 {
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 480, 640, 0.01, 1.0);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 1.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
   const std::string objectName = "object";
-
-
 
   std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS));
 
@@ -72,29 +71,24 @@ int main()
   NodePath object = renderer.loadObject(objectName, "/home/sfelton/cube.bam");
   std::cout << "Adding node to scene" <<std::endl;
 
-  PT(Material) mat = new Material();
-  mat->set_specular(LColor(1.0, 1.0, 1.0, 1.0));
-  mat->set_base_color(LColor(1.0));
-  mat->set_shininess(5.0);
-  mat->set_metallic(5.0);
-  object.set_material(mat);
-
-
   renderer.addNodeToScene(object);
 
+  rgbRenderer->getRenderRoot().set_shader_auto(100);
+  // PT(PointLight) plight = new PointLight("sun");
+  // plight->set_color(LColor(1.0, 1.0, 1.0, 1));
+  // NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
+  // plnp.set_pos(0.4, -0.5, 0.1);
+  // rgbRenderer->getRenderRoot().set_light(plnp);
 
-  // PT(DirectionalLight) d_light;
-  // d_light = new DirectionalLight("my d_light");
-  // d_light->set_color(LColor(10.0, 1.0, 1.0, 1));
-  // d_light->set_direction(LVector3(0.5, 0.5, 0.0).normalized());
+
+
   // NodePath dlnp = rgbRenderer->getRenderRoot().attach_new_node(d_light);
-  // d_light->set_point(LPoint3(-5, -5, 0));
-  // // dlnp.set_hpr(-30, -60, 0);
+  // dlnp.set_hpr(-30, -60, 0);
   // rgbRenderer->getRenderRoot().set_light(dlnp);
-  PT(AmbientLight) a_light = new AmbientLight("my a_light");
-  a_light->set_color(LColor(1.0, 5.0, 0.0, 1.0));
-  NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(a_light);
-  rgbRenderer->getRenderRoot().set_light(alnp);
+  // PT(AmbientLight) a_light = new AmbientLight("my a_light");
+  // a_light->set_color(LColor(1.0, 1.0, 1.0, 1.0));
+  // NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(a_light);
+  // rgbRenderer->getRenderRoot().set_light(alnp);
 
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, -0.4, 0.0, 0.0, 0.0, 0.0));
@@ -139,7 +133,7 @@ int main()
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage, depthImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
-
+    std::cout << colorImage.getMaxValue() << std::endl;
     const double beforeConvert = vpTime::measureTimeMs();
 
     displayNormals(normalsImage, normalDisplayImage);

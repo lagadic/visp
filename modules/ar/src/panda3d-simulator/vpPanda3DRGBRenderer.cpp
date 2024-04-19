@@ -6,8 +6,20 @@
 void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
 {
   I.resize(m_colorTexture->get_y_size(), m_colorTexture->get_x_size());
+  std::cout << "Before request" << std::endl;
   unsigned char *data = (unsigned char *)(&(m_colorTexture->get_ram_image().front()));
-  memcpy(I.bitmap, data, sizeof(unsigned char) * I.getSize() * 4);
+  std::cout << m_colorTexture->get_format() << std::endl;
+  // CPTA_uchar p((const unsigned char *)I.bitmap, ((const unsigned char *)I.bitmap) + I.getSize() * 4);
+  // m_colorTexture->set_ram_image_as(p, "rgba");
+  std::cout << "After request" << std::endl;
+  // BGRA order in panda3d
+  for (unsigned int i = 0; i < I.getSize(); ++i) {
+    I.bitmap[i].B = data[i * 4];
+    I.bitmap[i].G = data[i * 4 + 1];
+    I.bitmap[i].R = data[i * 4 + 2];
+    I.bitmap[i].A = data[i * 4 + 3];
+  }
+  // memcpy(I.bitmap, data, sizeof(unsigned char) * I.getSize() * 4);
 }
 
 
