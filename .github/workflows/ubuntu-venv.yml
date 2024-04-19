@@ -65,6 +65,11 @@ jobs:
         virtualenv venv
         . venv/bin/activate
 
+    - name: Install pybind11
+      working-directory: build
+      run: |
+        pip install pybind11[global]
+
     - name: Configure
       working-directory: build
       run: |
