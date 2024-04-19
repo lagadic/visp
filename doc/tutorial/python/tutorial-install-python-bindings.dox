@@ -293,11 +293,11 @@ Then, install or upgrade pip3:
 
     $ python3 -m pip install --upgrade pip
     $ pip3 --version
-    $ pip 23.3.1 from /Users/username/Library/Python/3.9/lib/python/site-packages/pip (python 3.9)
+    pip 23.3.1 from /Users/username/Library/Python/3.9/lib/python/site-packages/pip (python 3.9)
 
 Install virtualenv:
 
-    $ pip install virtualenv
+    $ pip3 install virtualenv
 
 To use virtualenv as a standard executable make sure that the bin folder of your python install is in the PATH variable
 
