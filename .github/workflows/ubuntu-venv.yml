@@ -62,30 +62,17 @@ jobs:
     - name: Create and activate virtual env
       working-directory: build
       run: |
+        echo "Create virtual env"
         virtualenv venv
+        echo "Activate virtual env"
         . venv/bin/activate
-
-    - name: Install pybind11
-      working-directory: build
-      run: |
+        echo "Install pybind11"
         pip install pybind11[global]
-
-    - name: Configure
-      working-directory: build
-      run: |
+        echo "Configure"
         cmake .. -DBUILD_DEPRECATED_FUNCTIONS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_APPS=OFF -DBUILD_DEMOS=OFF
-
-    - name: Build python bindings
-      working-directory: build
-      run: |
+        echo "Build python bindings"
         make -j$(nproc) visp_python_bindings
-
-    - name: Build python tests
-      working-directory: build
-      run: |
+        echo "Build python tests"
         make -j$(nproc) visp_python_bindings_test
-
-    - name: Build python doc
-      working-directory: build
-      run: |
+        echo "Build python doc"
         make -j$(nproc) visp_python_bindings_doc
