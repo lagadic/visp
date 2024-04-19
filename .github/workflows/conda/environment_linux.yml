@@ -12,7 +12,6 @@ dependencies:
   - libdc1394 >=2.2.6
   - librealsense
   - libgomp
-  - libopencv
   - eigen
   - libjpeg-turbo
   - libpng
