@@ -52,9 +52,21 @@ jobs:
         conda config --show
         printenv | sort
 
+    - name: Determine number of processor on Ubuntu
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo "NPROC=$(nproc)" >> $GITHUB_ENV
+
+    - name: Determine number of processor on MacOS
+      if: matrix.os == 'macos-latest'
+      run: |
+        echo "NPROC=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
+
     - name: Build visp python bindings
       shell: bash -el {0}
       run: |
+        echo "Number of processors: ${NPROC}"
+
         mkdir build
         cd build
 
@@ -65,13 +77,15 @@ jobs:
           -DBUILD_TESTS=OFF \
           -DBUILD_EXAMPLES=OFF \
           -DBUILD_TUTORIALS=OFF \
+          -DBUILD_APPS=OFF \
+          -DBUILD_DEMOS=OFF \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
 
         # Build
-        cmake --build . --target visp_python_bindings
+        cmake --build . --parallel ${NPROC} --target visp_python_bindings
 
         # Tests
-        cmake --build . --target visp_python_bindings_test
+        cmake --build . --parallel ${NPROC} --target visp_python_bindings_test
 
   check:
     if: always()
