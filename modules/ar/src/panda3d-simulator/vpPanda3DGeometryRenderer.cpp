@@ -5,7 +5,19 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 
 
-const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH = R"shader(
+const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
+#version 140
+in vec3 p3d_Normal;
+varying vec3 oNormal;
+uniform mat3 p3d_NormalMatrix;
+void main()
+{
+    gl_Position = ftransform();
+    oNormal.zyx = p3d_NormalMatrix * normalize(p3d_Normal);
+}
+)shader";
+
+const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_WORLD = R"shader(
 #version 120
 
 varying vec3 oNormal;
@@ -38,7 +50,7 @@ void vpPanda3DGeometryRenderer::setupScene()
 {
   m_renderRoot = m_window->get_render().attach_new_node(m_name);
   m_normalDepthShader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                    SHADER_VERT_NORMAL_AND_DEPTH,
+                                    SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
                                     SHADER_FRAG_NORMAL_AND_DEPTH);
   m_renderRoot.set_shader(m_normalDepthShader);
 
@@ -82,7 +94,7 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
 
-#pragma omp parallel for simd
+//#pragma omp parallel for simd
   for (unsigned int i = 0; i < normals.getRows() * normals.getCols(); ++i) {
     normals.bitmap[i].R = (data[i * 4]);
     normals.bitmap[i].G = (data[i * 4 + 1]);

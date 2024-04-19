@@ -24,14 +24,14 @@ void convertToDisplay(const vpImage<vpRGBf> &normalsImage, const vpImage<float> 
     normalDisplayImage.bitmap[i].R = static_cast<unsigned char>((normalsImage.bitmap[i].R + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
-    depthDisplayImage.bitmap[i] = static_cast<unsigned char>(((depthImage.bitmap[i] - minDepth) / (maxDepth - minDepth)) * 255.f);
+    depthDisplayImage.bitmap[i] = static_cast<unsigned char>(depthImage.bitmap[i] * 255.f);
   }
 }
 
 
 int main()
 {
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.1, 5);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.3, 1.5);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
 
@@ -47,7 +47,7 @@ int main()
   renderer.initFramework(false);
 
   std::cout << "Loading object" << std::endl;
-  NodePath object = renderer.loadObject("cube", "/home/sfelton/software/visp-sfelton/tutorial/ar/data/simple_cube.obj");
+  NodePath object = renderer.loadObject("cube", "/home/sfelton/buddha.obj");
 
   // PT(Material) mat = new Material();
   // mat->set_diffuse(LColor(0.0, 1.0, 0.0, 1.0));
@@ -71,7 +71,7 @@ int main()
 
 
   std::cout << "Setting camera pose" << std::endl;
-  renderer.setCameraPose(vpHomogeneousMatrix(0.0, -5, 0.0, 0.0, 0.0, 0.0));
+  renderer.setCameraPose(vpHomogeneousMatrix(0.0, -1, 0.0, 0.0, 0.0, 0.0));
 
   vpImage<vpRGBf> normalsImage;
   vpImage<float> depthImage;
@@ -88,14 +88,13 @@ int main()
   while (true) {
     const double beforeRender = vpTime::measureTimeMs();
     renderer.renderFrame();
+    const double beforeFetch = vpTime::measureTimeMs();
     renderer.getRenderer<vpPanda3DGeometryRenderer>()->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
 
-
+    const double beforeConvert = vpTime::measureTimeMs();
     convertToDisplay(normalsImage, depthImage, normalDisplayImage, depthDisplayImage, 0.0, 1.0);
 
-    const double afterRender = vpTime::measureTimeMs();
-    const double delta = (afterRender - beforeRender) / 1000.0;
     vpDisplay::display(normalDisplayImage);
     vpDisplay::flush(normalDisplayImage);
 
@@ -105,12 +104,17 @@ int main()
     vpDisplay::flush(colorImage);
 
 
+    const double afterAll = vpTime::measureTimeMs();
+    const double delta = (afterAll - beforeRender) / 1000.0;
     vpHomogeneousMatrix wTo = renderer.getNodePose("cube");
     vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
     renderer.setNodePose("cube", wTo * oToo);
 
     // renderer.getRenderer<vpPanda3DRGBRenderer>()->setNodePose("cube", vpHomogeneousMatrix(1, 0, 0.0, 0.0, 0.0, 0.0));
-    std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << afterRender - beforeRender << "ms" << std::endl;
+    std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << beforeFetch - beforeRender << "ms" << std::endl;
+    std::cout << "Copying to vpImage took: " << std::fixed << std::setprecision(2) << beforeConvert - beforeFetch << "ms" << std::endl;
+    std::cout << "display took: " << std::fixed << std::setprecision(2) << afterAll - beforeConvert << "ms" << std::endl;
+
   }
   return 0;
 }

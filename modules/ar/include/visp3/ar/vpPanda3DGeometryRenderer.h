@@ -25,7 +25,8 @@ public:
   void getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth) const;
 
 
-  static const char *SHADER_VERT_NORMAL_AND_DEPTH;
+  static const char *SHADER_VERT_NORMAL_AND_DEPTH_WORLD;
+  static const char *SHADER_VERT_NORMAL_AND_DEPTH_CAMERA;
   static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
 
 private:
