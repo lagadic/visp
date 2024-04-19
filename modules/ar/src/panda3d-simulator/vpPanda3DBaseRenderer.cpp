@@ -41,7 +41,6 @@ void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> frame
 void vpPanda3DBaseRenderer::setupScene()
 {
   m_renderRoot = m_window->get_render().attach_new_node(m_name);
-  m_renderRoot.set_shader_auto();
 }
 
 void vpPanda3DBaseRenderer::setupCamera()

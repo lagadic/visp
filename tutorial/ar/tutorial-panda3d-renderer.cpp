@@ -73,12 +73,12 @@ int main()
 
   renderer.addNodeToScene(object);
 
-  rgbRenderer->getRenderRoot().set_shader_auto(100);
-  // PT(PointLight) plight = new PointLight("sun");
-  // plight->set_color(LColor(1.0, 1.0, 1.0, 1));
-  // NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
-  // plnp.set_pos(0.4, -0.5, 0.1);
-  // rgbRenderer->getRenderRoot().set_light(plnp);
+  // rgbRenderer->getRenderRoot().set_shader_auto(100);
+  PT(PointLight) plight = new PointLight("sun");
+  plight->set_color(LColor(1.0, 1.0, 1.0, 1));
+  NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
+  plnp.set_pos(0.4, -0.5, 0.1);
+  rgbRenderer->getRenderRoot().set_light(plnp);
 
 
 
