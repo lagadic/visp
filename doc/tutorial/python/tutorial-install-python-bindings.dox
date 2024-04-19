@@ -833,7 +833,7 @@ This error may also happen when generating the Python stubs (after the bindings 
 
 \subsubsection py_bindings_known_errors_test When building the tests
 
-The following error may occur when building Python tests on Ubuntu 22.04 when ROS-2 humble is installed:
+The following error may occur when building Python tests on Ubuntu 22.04 when ros-2 humble is installed:
 
 \verbatim
 (venv) $ cd $VISP_WS/visp-build-bindings
@@ -961,6 +961,8 @@ make: *** [Makefile:702: visp_python_bindings_test] Error 2
 (venv) $
 \endverbatim
 
-The work arround consists in uninstalling `python3-pytest`.
+The work arround consists in uninstalling `python3-pytest` system package.
+
+\warning Removing `python3-pytest` could break the ros-2 installation, as `python3-pytest` is a dependency of some humble ros-2 packages.
 
 */
