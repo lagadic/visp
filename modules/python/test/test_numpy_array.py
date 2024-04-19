@@ -76,8 +76,15 @@ def test_numpy_constructor():
     a = ArrayDouble2D(n_invalid)
   n_valid = np.array([[1, 2, 3], [4, 5, 6]])
   a = ArrayDouble2D(n_valid)
-
   assert np.all(np.equal(a.numpy(), n_valid))
+
+def test_numpy_constructor_interpreted_as_1d_vector():
+  n_1d = np.array([1, 2, 3])
+  with pytest.raises(RuntimeError):
+    a = ArrayDouble2D(n_1d) # R = 0, c = 0
+  ar = ArrayDouble2D(n_1d, r=len(n_1d))
+  ac = ArrayDouble2D(n_1d, c=len(n_1d))
+
 
 def test_numpy_conversion_and_back():
   a = ArrayDouble2D(10, 10, 2.0)
