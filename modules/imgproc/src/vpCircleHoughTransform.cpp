@@ -186,7 +186,7 @@ vpCircleHoughTransform::initGradientFilters()
         filter[r][c] = filter[r][c] * scale;
       }
     }
-  };
+    };
 #endif
 
   if ((m_algoParams.m_gradientFilterKernelSize % 2) != 1) {

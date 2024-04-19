@@ -55,8 +55,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
   tukey.setMinMedianAbsoluteDeviation(1e-4);
   vpColVector normal;
 
-
-  for (unsigned int iter = 0; (iter < max_iter) && (std::fabs(error - prev_error) > 1e-6); ++iter) {
+  double fabs_error_m_prev_error = std::fabs(error - prev_error);
+  for (unsigned int iter = 0; (iter < max_iter) && (fabs_error_m_prev_error > 1e-6); ++iter) {
     if (iter != 0) {
       tukey.MEstimator(vpRobust::TUKEY, residues, weights);
     }
@@ -114,6 +114,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPla
       error += weights[i] * residues[i];
     }
     error /= total_w;
+    // evaluate one of the end conditions of the for
+    fabs_error_m_prev_error = std::fabs(error - prev_error);
   }
 
   // Update final weights
@@ -355,7 +357,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
           p.push_back(vpPoint(x * Z, y * Z, Z));
           pose_points[count].set_x(x);
           pose_points[count].set_y(y);
-          count++;
+          ++count;
         }
       }
     }
@@ -389,7 +391,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
             p.push_back(vpPoint(x * Z, y * Z, Z));
             pose_points[count].set_x(x);
             pose_points[count].set_y(y);
-            count++;
+            ++count;
           }
         }
         else {
