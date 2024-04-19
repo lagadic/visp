@@ -24,7 +24,11 @@
 class VISP_EXPORT vpPanda3DBaseRenderer
 {
 public:
-  vpPanda3DBaseRenderer(const std::string &rendererName) : m_name(rendererName), m_framework(nullptr), m_window(nullptr) { }
+  vpPanda3DBaseRenderer(const std::string &rendererName)
+    : m_name(rendererName), m_framework(nullptr), m_window(nullptr), m_camera(nullptr)
+  {
+    setVerticalSyncEnabled(false);
+  }
 
   virtual ~vpPanda3DBaseRenderer() = default;
 
@@ -44,21 +48,6 @@ public:
    */
   void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window);
 
-  /**
-   * @brief Initialize the scene for this specific renderer.
-   *
-   * Creates a root scene for this node and applies shaders. that will be used for rendering
-   *
-   */
-  virtual void setupScene();
-
-  /**
-   * @brief Initialize camera. Should be called when the scene root of this render has already been created.
-   *
-   */
-  virtual void setupCamera();
-
-  virtual void setupRenderTarget() { }
 
   virtual void renderFrame();
 
@@ -68,6 +57,7 @@ public:
    * @return const std::string&
    */
   const std::string &getName() const { return m_name; }
+
   /**
    * @brief Get the scene root
    *
@@ -98,6 +88,7 @@ public:
    * @brief Retrieve the camera's pose, in the world frame.
    */
   virtual vpHomogeneousMatrix getCameraPose();
+
   /**
    * @brief Set the pose of a node. This node can be any Panda object (light, mesh, camera).
    *
@@ -115,6 +106,7 @@ public:
    * @param wTo Pose of the object in the world frame
    */
   virtual void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo);
+
   /**
    * @brief Get the pose of a Panda node, in world frame.
    *
@@ -123,10 +115,28 @@ public:
    * \throws if no node can be found from the given path.
    */
   virtual vpHomogeneousMatrix getNodePose(const std::string &name);
+
   /**
    * @brief Get the pose of a Panda node, in world frame. This version of the method directly uses the Panda Nodepath.
    */
   virtual vpHomogeneousMatrix getNodePose(NodePath &object);
+
+  /**
+   * @brief Compute the near and far planes for the camera at the current pose, given a certain node/part of the graph.
+   *
+   * The near clipping value will be set to the distance to the closest point of the object.
+   * The far clipping value will be set to the distance to farthest vertex of the object.
+   *
+   * \warning Depending on geometry complexity, this may be an expensive operation.
+   * \warning if the object lies partly behind the camera, the near plane value will be zero.
+   *  If it fully behind, the far plane will also be zero. If these near/far values are used to update the
+   *  rendering parameters of the camera, this may result in an invalid projection matrix.
+   *
+   * @param name name of the node that should be used to compute near and far values.
+   * @param near resulting near clipping plane distance
+   * @param far resulting far clipping plane distance
+   */
+  void computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far);
 
   /**
    * @brief Load a 3D object. To load an .obj file, Panda3D must be compiled with assimp support.
@@ -140,11 +150,49 @@ public:
   NodePath loadObject(const std::string &nodeName, const std::string &modelPath);
 
   /**
-   * @brief Add a node to the scene
+   * @brief Add a node to the scene.
    *
    * @param object
    */
   virtual void addNodeToScene(const NodePath &object);
+
+  /**
+   * @brief set whether vertical sync is enabled.
+   * When vertical sync is enabled, render speed will be limited by the display's refresh rate
+   *
+   * @param useVsync Whether to use vsync or not
+   */
+  void setVerticalSyncEnabled(bool useVsync);
+  /**
+   * @brief Set the behaviour when a Panda3D assertion fails. If abort is true, the program will stop.
+   * Otherwise, an error will be displayed in the console.
+   *
+   * @param abort whether to abort (true) or display a message when an assertion fails.
+   */
+  void setAbortOnPandaError(bool abort);
+
+
+protected:
+
+  /**
+   * @brief Initialize the scene for this specific renderer.
+   *
+   * Creates a root scene for this node and applies shaders. that will be used for rendering
+   *
+   */
+  virtual void setupScene();
+
+  /**
+   * @brief Initialize camera. Should be called when the scene root of this render has already been created.
+   *
+   */
+  virtual void setupCamera();
+
+  /**
+   * @brief Initialize buffers and other objects that are required to save the render.
+   *
+   */
+  virtual void setupRenderTarget() { }
 
 protected:
   const std::string m_name; //! name of the renderer

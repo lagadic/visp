@@ -9,30 +9,47 @@
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
 
 /**
- * @brief Renderer that outputs object normals (in world frame) as well as depth
+ * @brief Renderer that outputs object geometric information.
  *
+ * This information may contain, depending on requested render type:
+ *
+ * - Normals in the world frame or in the camera frame
+ * - Depth information
  */
 class VISP_EXPORT vpPanda3DGeometryRenderer : public vpPanda3DBaseRenderer
 {
 public:
-  vpPanda3DGeometryRenderer(const std::string &rendererName) : vpPanda3DBaseRenderer(rendererName) { }
+
+  enum vpRenderType
+  {
+    WORLD_NORMALS, //! Surface normals in world space.
+    CAMERA_NORMALS, //! Surface normals in the frame of the camera
+  };
+
+  vpPanda3DGeometryRenderer(vpRenderType renderType);
   ~vpPanda3DGeometryRenderer() { }
 
+  /**
+   * @brief Get render results into ViSP readable structures
+   *
+   *
+   * @param colorData Depending on the vpRenderType, normals in the world or camera frame may be stored in this image.
+   * @param depth Image used to store depth
+   */
+  void getRender(vpImage<vpRGBf> &colorData, vpImage<float> &depth) const;
+
+protected:
   void setupScene() vp_override;
   void setupRenderTarget() vp_override;
 
-
-  void getRender(vpImage<vpRGBf> &normals, vpImage<float> &depth) const;
-
+private:
+  vpRenderType m_renderType;
+  Texture *m_normalDepthTexture;
+  GraphicsOutput *m_normalDepthBuffer;
 
   static const char *SHADER_VERT_NORMAL_AND_DEPTH_WORLD;
   static const char *SHADER_VERT_NORMAL_AND_DEPTH_CAMERA;
   static const char *SHADER_FRAG_NORMAL_AND_DEPTH;
-
-private:
-  PT(Shader) m_normalDepthShader;
-  Texture *m_normalDepthTexture;
-  GraphicsOutput *m_normalDepthBuffer;
 
 };
 

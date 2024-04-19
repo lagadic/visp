@@ -10,6 +10,7 @@ void vpPanda3DRGBRenderer::getRender(vpImage<vpRGBa> &I) const
   memcpy(I.bitmap, data, sizeof(unsigned char) * I.getSize() * 4);
 }
 
+
 void vpPanda3DRGBRenderer::setupRenderTarget()
 {
   FrameBufferProperties fbp;

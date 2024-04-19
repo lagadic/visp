@@ -13,7 +13,9 @@ uniform mat3 p3d_NormalMatrix;
 void main()
 {
     gl_Position = ftransform();
-    oNormal.zyx = p3d_NormalMatrix * normalize(p3d_Normal);
+    // View space is Z-up right handed, flip z and y
+    oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
+    //oNormal.yz = -oNormal.zy;
 }
 )shader";
 
@@ -45,16 +47,35 @@ void main()
 }
 )shader";
 
+std::string renderTypeToName(vpPanda3DGeometryRenderer::vpRenderType type)
+{
+  switch (type) {
+  case vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS:
+    return "normals-world";
+  case vpPanda3DGeometryRenderer::vpRenderType::CAMERA_NORMALS:
+    return "normals-camera";
+  default:
+    return "";
+  }
+}
+
+vpPanda3DGeometryRenderer::vpPanda3DGeometryRenderer(vpRenderType renderType) : vpPanda3DBaseRenderer(renderTypeToName(renderType)), m_renderType(renderType) { }
 
 void vpPanda3DGeometryRenderer::setupScene()
 {
   m_renderRoot = m_window->get_render().attach_new_node(m_name);
-  m_normalDepthShader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
-                                    SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
-                                    SHADER_FRAG_NORMAL_AND_DEPTH);
-  m_renderRoot.set_shader(m_normalDepthShader);
-
-
+  PT(Shader) shader;
+  if (m_renderType == WORLD_NORMALS) {
+    shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
+                                      SHADER_VERT_NORMAL_AND_DEPTH_WORLD,
+                                      SHADER_FRAG_NORMAL_AND_DEPTH);
+  }
+  else if (m_renderType == CAMERA_NORMALS) {
+    shader = Shader::make(Shader::ShaderLanguage::SL_GLSL,
+                                      SHADER_VERT_NORMAL_AND_DEPTH_CAMERA,
+                                      SHADER_FRAG_NORMAL_AND_DEPTH);
+  }
+  m_renderRoot.set_shader(shader);
 }
 
 
