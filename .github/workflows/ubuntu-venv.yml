@@ -59,7 +59,7 @@ jobs:
         mkdir build
         cd build
 
-    - name: Create and activate virtual env
+    - name: Build Python bindings
       working-directory: build
       run: |
         echo "Create virtual env"
