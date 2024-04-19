@@ -59,11 +59,11 @@ jobs:
         mkdir build
         cd build
 
-    - name: Create and avtivate virtual env
+    - name: Create and activate virtual env
       working-directory: build
       run: |
         virtualenv venv
-        source venv/bin/activate
+        . venv/bin/activate
 
     - name: Configure
       working-directory: build
