@@ -60,11 +60,7 @@
 #if defined(VISP_HAVE_PCL)
 #include <pcl/pcl_config.h>
 #if defined(VISP_HAVE_PCL_COMMON)
-#if PCL_VERSION_COMPARE(>=,1,14,1)
-#include <pcl/impl/point_types.hpp>
-#else
 #include <pcl/point_types.h>
-#endif
 #include <pcl/point_cloud.h>
 #endif
 #if defined(VISP_HAVE_PCL_IO)
@@ -251,11 +247,11 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
 #if defined(VISP_HAVE_PCL_IO)
     if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
       std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
-  }
+    }
 #else
     throw(vpIoException(vpIoException::ioError, "Cannot read pcd file without PCL io module"));
 #endif
-}
+  }
 #endif
 
   return true;
@@ -311,7 +307,7 @@ int main(int argc, const char *argv[])
     {
       std::lock_guard<std::mutex> lock(mutex);
       quit = !readData(cpt_frame, input_directory, I_color, I_depth_raw, pointcloud_binary_format, pointcloud);
-  }
+    }
 #else
     quit = !readData(cpt_frame, input_directory, I_color, I_depth_raw, pointcloud_binary_format);
 #endif
@@ -388,7 +384,7 @@ int main(int argc, const char *argv[])
 
     vpTime::wait(t, 30);
     cpt_frame++;
-}
+  }
 
   return EXIT_SUCCESS;
 }
