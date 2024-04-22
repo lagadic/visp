@@ -93,7 +93,6 @@ void vpPanda3DBaseRenderer::setupCamera()
 void vpPanda3DBaseRenderer::renderFrame()
 {
   m_framework->get_graphics_engine()->render_frame();
-  m_framework->get_graphics_engine()->sync_frame();
 }
 
 void vpPanda3DBaseRenderer::setCameraPose(const vpHomogeneousMatrix &wTc)

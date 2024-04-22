@@ -52,6 +52,7 @@ void displayDepth(const vpImage<float> &depthImage,
 int main(int argc, const char **argv)
 {
   bool invertTexture = false;
+  bool stepByStep = false;
   std::string modelPathCstr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
@@ -59,6 +60,9 @@ int main(int argc, const char **argv)
      "Whether to force Texture inversion. Use this if the model is upside down."},
     {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
      "Path to the model to load."},
+    {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
+     "Show frames step by step."},
+
     {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
      "Print the help."},
     {(char *) nullptr, vpParseArgv::ARGV_END, (char *) nullptr, (char *) nullptr, (char *) nullptr} };
@@ -146,6 +150,7 @@ int main(int argc, const char **argv)
   DisplayCls dColor(colorImage, renderParams.getImageWidth() * 2 + 90, 0, "color");
 
   bool end = false;
+  std::vector<double> renderTime, fetchTime, displayTime;
   while (!end) {
     float near = 0, far = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
@@ -153,12 +158,16 @@ int main(int argc, const char **argv)
     renderParams.setClippingDistance(near, far);
     renderer.setRenderParameters(renderParams);
     std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
+
     const double beforeRender = vpTime::measureTimeMs();
     renderer.renderFrame();
+
     const double beforeFetch = vpTime::measureTimeMs();
+
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
+
     const double beforeConvert = vpTime::measureTimeMs();
 
     displayNormals(normalsImage, normalDisplayImage);
@@ -166,21 +175,38 @@ int main(int argc, const char **argv)
     displayDepth(depthImage, depthDisplayImage, near, far);
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
+    if (stepByStep) {
+      vpDisplay::displayText(colorImage, 50, 15, "Next frame: space", vpColor::red);
+    }
     if (vpDisplay::getClick(colorImage, false)) {
       end = true;
     }
     vpDisplay::flush(colorImage);
+    const double endDisplay = vpTime::measureTimeMs();
+    renderTime.push_back(beforeFetch - beforeRender);
+    fetchTime.push_back(beforeConvert - beforeFetch);
+    displayTime.push_back(endDisplay - beforeConvert);
+    if (stepByStep) {
+      std::string s;
+      bool next = false;
+      while (!next) {
+        vpDisplay::getKeyboardEvent(colorImage, s, true);
+        if (s == " ") {
+          next = true;
+        }
+      }
 
+    }
     const double afterAll = vpTime::measureTimeMs();
     const double delta = (afterAll - beforeRender) / 1000.0;
     vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
-
     vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
     renderer.setNodePose(objectName, wTo * oToo);
-    std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << beforeFetch - beforeRender << "ms" << std::endl;
-    std::cout << "Copying to vpImage took: " << std::fixed << std::setprecision(2) << beforeConvert - beforeFetch << "ms" << std::endl;
-    std::cout << "display took: " << std::fixed << std::setprecision(2) << afterAll - beforeConvert << "ms" << std::endl;
-
+  }
+  if (renderTime.size() > 0) {
+    std::cout << "Render time: " << vpMath::getMean(renderTime) << "ms +- " << vpMath::getStdev(renderTime) << "ms" << std::endl;
+    std::cout << "Panda3D -> vpImage time: " << vpMath::getMean(fetchTime) << "ms +- " << vpMath::getStdev(fetchTime) << "ms" << std::endl;
+    std::cout << "Display time: " << vpMath::getMean(displayTime) << "ms +- " << vpMath::getStdev(displayTime) << "ms" << std::endl;
   }
   return 0;
 }
