@@ -102,7 +102,8 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
   cdg[0] = 0.0;
   cdg[1] = 0.0;
   cdg[2] = 0.0;
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = (*it);
     cdg[0] += P.get_oX();
     cdg[1] += P.get_oY();
@@ -115,7 +116,8 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 
   c3d.clear();
   /* translate the 3D points wrt cog */
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end_s = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end_s; ++it) {
     P = (*it);
     P.set_oX(P.get_oX() - cdg[0]);
     P.set_oY(P.get_oY() - cdg[1]);
@@ -216,7 +218,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
 #endif
       cMo = cMo_old;
     }
-    cpt++;
+    ++cpt;
   }
   // go back to the initial frame
   cMo[0][3] -= ((cdg[0] * cMo[0][0]) + (cdg[1] * cMo[0][1]) + (cdg[2] * cMo[0][2]));
@@ -410,7 +412,7 @@ int vpPose::calculArbreDementhon(vpMatrix &Ap, vpColVector &U, vpHomogeneousMatr
 #endif
       cMo = cMo_old;
     }
-    cpt++;
+    ++cpt;
   } /* end of while */
 
 #if (DEBUG_LEVEL1)
@@ -448,7 +450,8 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 
   c3d.clear();
   /* translate the 3D points wrt cog */
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = (*it);
     P.set_oX(P.get_oX() - cdg[0]);
     P.set_oY(P.get_oY() - cdg[1]);

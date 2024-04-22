@@ -1,0 +1,19 @@
+name: visp
+channels:
+  - conda-forge
+dependencies:
+  - cxx-compiler
+  - cmake
+  - ninja
+  - xorg-libx11
+  - xorg-libxfixes
+  - mesa-libegl-cos7-x86_64
+  - libxml2
+  - libdc1394 >=2.2.6
+  - librealsense
+  - libgomp
+  - eigen
+  - libjpeg-turbo
+  - libpng
+  - mkl-devel
+  - pybind11

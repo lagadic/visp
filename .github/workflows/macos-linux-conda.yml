@@ -1,0 +1,103 @@
+name: MacOS-Linux-conda-CI
+
+on: [push,pull_request]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  visp-conda:
+    name: ${{ matrix.os }} - Python ${{ matrix.python-version }} ${{ matrix.build_type }} ${{ matrix.cxx_options }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ["ubuntu-latest", "macos-latest"]
+        build_type: [Release]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Install miniconda on ubuntu
+      uses: conda-incubator/setup-miniconda@v3
+      if: startsWith(matrix.os,'ubuntu') == true
+      with:
+        activate-environment: visp
+        auto-update-conda: true
+        environment-file: .github/workflows/conda/environment_linux.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+
+    - name: Install miniconda on macOS
+      uses: conda-incubator/setup-miniconda@v3
+      if: startsWith(matrix.os,'macos') == true
+      with:
+        activate-environment: visp
+        auto-update-conda: true
+        environment-file: .github/workflows/conda/environment_macos.yml
+        python-version: ${{ matrix.python-version }}
+        auto-activate-base: false
+
+    - name: Show conda config
+      shell: bash -el {0}
+      run: |
+        conda info
+        conda list
+        conda config --show-sources
+        conda config --show
+        printenv | sort
+
+    - name: Determine number of processor on Ubuntu
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        echo "NPROC=$(nproc)" >> $GITHUB_ENV
+
+    - name: Determine number of processor on MacOS
+      if: matrix.os == 'macos-latest'
+      run: |
+        echo "NPROC=$(sysctl -n hw.logicalcpu)" >> $GITHUB_ENV
+
+    - name: Build visp python bindings
+      shell: bash -el {0}
+      run: |
+        echo "Number of processors: ${NPROC}"
+
+        mkdir build
+        cd build
+
+        cmake .. \
+          -G "Ninja" \
+          -DCMAKE_PREFIX_PATH=$CONDA_PREFIX \
+          -DCMAKE_INSTALL_PREFIX=$CONDA_PREFIX \
+          -DBUILD_TESTS=OFF \
+          -DBUILD_EXAMPLES=OFF \
+          -DBUILD_TUTORIALS=OFF \
+          -DBUILD_APPS=OFF \
+          -DBUILD_DEMOS=OFF \
+          -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+
+        # Build
+        cmake --build . --parallel ${NPROC} --target visp_python_bindings
+
+        # Tests
+        cmake --build . --parallel ${NPROC} --target visp_python_bindings_test
+
+  check:
+    if: always()
+    name: check-macos-linux-conda
+
+    needs:
+    - visp-conda
+
+    runs-on: Ubuntu-latest
+
+    steps:
+    - name: Decide whether the needed jobs succeeded or failed
+      uses: re-actors/alls-green@release/v1
+      with:
+        jobs: ${{ toJSON(needs) }}

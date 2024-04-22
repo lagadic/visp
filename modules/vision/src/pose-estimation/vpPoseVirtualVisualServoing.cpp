@@ -64,12 +64,13 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 
     // create sd
     unsigned int k = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    std::list<vpPoint>::const_iterator listp_end = listP.end();
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
       sd[2 * k] = P.get_x();
       sd[(2 * k) + 1] = P.get_y();
       lP.push_back(P);
-      k++;
+      ++k;
     }
 
     vpHomogeneousMatrix cMoPrev = cMo;
@@ -81,7 +82,8 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 
       // Compute the interaction matrix and the error
       k = 0;
-      for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lP.end(); ++it) {
+      std::list<vpPoint>::const_iterator lp_end = lP.end();
+      for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lp_end; ++it) {
         P = *it;
         // forward projection of the 3D model for a given pose
         // change frame coordinates
@@ -124,8 +126,11 @@ void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
       cMoPrev = cMo;
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
 
-      if ((iter++) > vvsIterMax) {
+      if (iter> vvsIterMax) {
         break;
+      }
+      else {
+        ++iter;
       }
     }
 
@@ -164,12 +169,13 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 
     // create sd
     unsigned int k_ = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    std::list<vpPoint>::const_iterator listp_end = listP.end();
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
       sd[2 * k_] = P.get_x();
       sd[(2 * k_) + 1] = P.get_y();
       lP.push_back(P);
-      k_++;
+      ++k_;
     }
     int iter = 0;
     res.resize(s.getRows() / 2);
@@ -177,13 +183,14 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
     W.resize(s.getRows(), s.getRows());
     w = 1;
 
-    //  --comment: while((int)((residu_1 - r)*1e12) !=0)
+    //  --comment: while (residu_1 - r) times 1e12 diff 0
     while (std::fabs((residu_1 - r) * 1e12) > std::numeric_limits<double>::epsilon()) {
       residu_1 = r;
 
       // Compute the interaction matrix and the error
       k_ = 0;
-      for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lP.end(); ++it) {
+      std::list<vpPoint>::const_iterator lp_end = lP.end();
+      for (std::list<vpPoint>::const_iterator it = lP.begin(); it != lp_end; ++it) {
         P = *it;
         // forward projection of the 3D model for a given pose
         // change frame coordinates
@@ -207,7 +214,7 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
         L[(2 * k_) + 1][4] = -x * y;
         L[(2 * k_) + 1][5] = -x;
 
-        k_++;
+        ++k_;
       }
       error = s - sd;
 
@@ -234,8 +241,12 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
       v = -m_lambda * Lp * W * error;
 
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
-      if ((iter++) > vvsIterMax)
+      if (iter > vvsIterMax) {
         break;
+      }
+      else {
+        ++iter;
+      }
     }
 
     if (computeCovariance) {
@@ -326,8 +337,11 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vec
     // update the pose
     cMoPrev = vpExponentialMap::direct(v).inverse() * cMoPrev;
 
-    if ((iter++) > vvsIterMax) {
+    if (iter > vvsIterMax) {
       return std::nullopt;
+    }
+    else {
+      ++iter;
     }
   }
   return cMoPrev;

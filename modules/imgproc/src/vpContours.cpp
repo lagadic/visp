@@ -235,7 +235,8 @@ void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contou
     contour_list.m_children.push_back(contour_node);
   }
 
-  for (std::vector<vp::vpContour *>::const_iterator it = root.m_children.begin(); it != root.m_children.end(); ++it) {
+  std::vector<vp::vpContour *>::const_iterator root_m_children_end = root.m_children.end();
+  for (std::vector<vp::vpContour *>::const_iterator it = root.m_children.begin(); it != root_m_children_end; ++it) {
     getContoursList(**it, level + 1, contour_list);
   }
 }
@@ -249,8 +250,10 @@ void drawContours(vpImage<unsigned char> &I, const std::vector<std::vector<vpIma
     return;
   }
 
-  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
-    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+  std::vector<std::vector<vpImagePoint> >::const_iterator contours_end = contours.end();
+  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours_end; ++it1) {
+    std::vector<vpImagePoint>::const_iterator it1_end = it1->end();
+    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1_end; ++it2) {
       unsigned int i = static_cast<unsigned int>(it2->get_i());
       unsigned int j = static_cast<unsigned int>(it2->get_j());
       I[i][j] = grayValue;
@@ -264,8 +267,10 @@ void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint
     return;
   }
 
-  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours.end(); ++it1) {
-    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1->end(); ++it2) {
+  std::vector<std::vector<vpImagePoint> >::const_iterator contours_end = contours.end();
+  for (std::vector<std::vector<vpImagePoint> >::const_iterator it1 = contours.begin(); it1 != contours_end; ++it1) {
+    std::vector<vpImagePoint>::const_iterator it1_end = it1->end();
+    for (std::vector<vpImagePoint>::const_iterator it2 = it1->begin(); it2 != it1_end; ++it2) {
       unsigned int i = static_cast<unsigned int>(it2->get_i());
       unsigned int j = static_cast<unsigned int>(it2->get_j());
       I[i][j] = vpRGBa(color.R, color.G, color.B);
@@ -332,7 +337,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
         if (isOuter) {
           //(1) (a)
-          nbd++;
+          ++nbd;
           from.set_j(from.get_j() - 1);
           border->m_contourType = vp::CONTOUR_OUTER;
           borderPrime = borderMap[lnbd];
@@ -353,7 +358,7 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
         }
         else {
           //(1) (b)
-          nbd++;
+          ++nbd;
 
           if (fji > 1) {
             lnbd = fji;
@@ -406,7 +411,8 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
     // Delete contours content
     contours.m_parent = nullptr;
 
-    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
+    std::vector<vpContour *>::iterator contours_m_children_end = contours.m_children.end();
+    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours_m_children_end; ++it) {
       (*it)->m_parent = nullptr;
       if (*it != nullptr) {
         delete *it;
@@ -419,7 +425,8 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
 
   if (retrievalMode == CONTOUR_RETR_EXTERNAL) {
     // Add only external contours
-    for (std::vector<vpContour *>::const_iterator it = root->m_children.begin(); it != root->m_children.end(); ++it) {
+    std::vector<vpContour *>::iterator root_m_children_end = root->m_children.end();
+    for (std::vector<vpContour *>::const_iterator it = root->m_children.begin(); it != root_m_children_end; ++it) {
       // Save children
       std::vector<vpContour *> children_copy = (*it)->m_children;
       // Erase children
@@ -440,7 +447,8 @@ void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
     getContoursList(*root, 0, contours);
 
     // Set parent to root
-    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours.m_children.end(); ++it) {
+    std::vector<vpContour *>::iterator contours_m_children_end = contours.m_children.end();
+    for (std::vector<vpContour *>::iterator it = contours.m_children.begin(); it != contours_m_children_end; ++it) {
       (*it)->m_parent = &contours;
     }
   }

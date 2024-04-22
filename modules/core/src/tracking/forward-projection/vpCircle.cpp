@@ -421,14 +421,14 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double ctheta2 = vpMath::sqr(ctheta);
   double m02xg = n02 * Xg;
   double m11stheta = n11 * stheta;
-  j = ((((((n11 * Xg * sctheta) - (n20 * Yg * sctheta)) + (n20 * rho * ctheta)) - m11yg) + (m11yg * ctheta2) + m02xg -
-        (m02xg * ctheta2) + (m11stheta * rho)) /
-       ((((n20 * ctheta2) + (2.0 * m11stheta * ctheta) + n02)) - (n02 * ctheta2)));
+  j = ((((((((n11 * Xg * sctheta) - (n20 * Yg * sctheta)) + (n20 * rho * ctheta)) - m11yg) + (m11yg * ctheta2) + m02xg) -
+         (m02xg * ctheta2)) + (m11stheta * rho)) /
+       (((n20 * ctheta2) + (2.0 * m11stheta * ctheta) + n02) - (n02 * ctheta2)));
   // Optimised calculation for Y
   double rhom02 = rho * n02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-((-rho * n11 * stheta * ctheta) - rhom02 + (rhom02 * ctheta2) + (n11 * Xg * sctheta2) - (n20 * Yg * sctheta2) -
-         (ctheta * n11 * Yg) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg) - (ctheta3 * n02 * Xg)) /
-       ((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02 - (n02 * ctheta2)) / stheta);
+  i = (-(((((((-rho * n11 * stheta * ctheta) - rhom02) + (rhom02 * ctheta2) + (n11 * Xg * sctheta2)) - (n20 * Yg * sctheta2)) -
+           (ctheta * n11 * Yg)) + (ctheta3 * n11 * Yg) + (ctheta * n02 * Xg)) - (ctheta3 * n02 * Xg)) /
+       (((n20 * ctheta2) + (2.0 * n11 * stheta * ctheta) + n02) - (n02 * ctheta2)) / stheta);
 }

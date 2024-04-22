@@ -261,7 +261,9 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   double a, b, c, d;
 
   // Checking if coplanar has already been called and if the plan coefficients have been given
-  if ((p_isPlan != nullptr) && (p_a != nullptr) && (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr)) {
+  bool p_isplan_and_p_a_no_null = (p_isPlan != nullptr) && (p_a != nullptr);
+  bool p_b_p_c_p_d_no_null = (p_b != nullptr) && (p_c != nullptr) && (p_d != nullptr);
+  if (p_isplan_and_p_a_no_null && p_b_p_c_p_d_no_null) {
     if (*p_isPlan) {
       // All the pointers towards the plan coefficients are different from nullptr => using them in the rest of the method
       a = *p_a;
@@ -340,7 +342,8 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *
   vpMatrix B(nl, 6);
   vpPoint P;
 
-  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+  std::list<vpPoint>::const_iterator listp_end = listP.end();
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
     P = *it;
 
     // Transform each point in plane Z = 0
@@ -485,7 +488,8 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
 
     vpPoint P;
     i = 0;
-    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    std::list<vpPoint>::const_iterator listp_end = listP.end();
+    for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listp_end; ++it) {
       P = *it;
       a[k][0] = -P.get_oX();
       a[k][1] = 0.0;

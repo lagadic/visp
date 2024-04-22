@@ -276,7 +276,7 @@ void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
       *ptrCurrent = pa.bitmap[cpt];
       ++ptrCurrent;
 
-      cpt++;
+      ++cpt;
     }
   }
   else {
@@ -363,7 +363,7 @@ void gammaCorrectionNonLinearMethod(vpImage<unsigned char> &I, const vpImage<boo
     float phi = (M_PIf * x) / (2.f * x_m);
     float f1 = a * std::cos(phi);
     float k = rho * std::sin((4 * M_PIf * x) / 255.f);
-    float f2 = (k + b)*std::cos(alpha) + (x * std::sin(alpha));
+    float f2 = ((k + b)*std::cos(alpha)) + (x * std::sin(alpha));
     float r = c * std::abs((x / x_m) - 1.f);
     float f3 = r * std::cos((3.f * M_PIf * x) / 255.f);
     float g = f1 + f2 + f3;

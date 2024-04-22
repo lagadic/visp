@@ -142,7 +142,7 @@ int image_u8x3_write_pnm(const image_u8x3_t *im, const char *path)
 
     if (f == NULL) {
         res = -1;
-        fclose(f);
+        //fclose(f);
         return res;
 //        goto finish;
     }
