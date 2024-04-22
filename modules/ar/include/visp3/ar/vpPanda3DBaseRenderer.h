@@ -110,6 +110,7 @@ public:
 
   /**
    * @brief Set the camera's pose.
+   * The pose is specified using the ViSP convention (Y-down right handed).
    *
    * @param wTc the new pose of the camera, in world frame
    */
@@ -117,11 +118,13 @@ public:
 
   /**
    * @brief Retrieve the camera's pose, in the world frame.
+   * The pose is specified using the ViSP convention (Y-down right handed).
    */
   virtual vpHomogeneousMatrix getCameraPose();
 
   /**
    * @brief Set the pose of a node. This node can be any Panda object (light, mesh, camera).
+   * The pose is specified using the ViSP convention (Y-down right handed).
    *
    * @param name Node path to search for, from the render root. This is the object that will be modified See https://docs.panda3d.org/1.10/python/programming/scene-graph/searching-scene-graph
    * @param wTo Pose of the object in the world frame
@@ -131,7 +134,9 @@ public:
   virtual void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo);
 
   /**
-   * @brief Set the pose of a node. This node can be any Panda object (light, mesh, camera).
+   * @brief Set the pose of a node.
+   * The pose is specified using the ViSP convention (Y-down right handed).
+   * This node can be any Panda object (light, mesh, camera).
    *
    * @param object The object for which to set the pose
    * @param wTo Pose of the object in the world frame
@@ -139,7 +144,7 @@ public:
   virtual void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo);
 
   /**
-   * @brief Get the pose of a Panda node, in world frame.
+   * @brief Get the pose of a Panda node, in world frame in the ViSP convention (Y-down right handed).
    *
    * @param name Node path to search for. \see setNodePose(const std::string &, const vpHomogeneousMatrix &) for more info
    * @return wTo, the pose of the object in world frame
@@ -148,7 +153,7 @@ public:
   virtual vpHomogeneousMatrix getNodePose(const std::string &name);
 
   /**
-   * @brief Get the pose of a Panda node, in world frame. This version of the method directly uses the Panda Nodepath.
+   * @brief Get the pose of a Panda node, in world frame in the ViSP convention (Y-down right handed). This version of the method directly uses the Panda Nodepath.
    */
   virtual vpHomogeneousMatrix getNodePose(NodePath &object);
 
