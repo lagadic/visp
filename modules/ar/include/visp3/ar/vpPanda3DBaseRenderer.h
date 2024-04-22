@@ -102,7 +102,24 @@ public:
    */
   virtual void setRenderParameters(const vpPanda3DRenderParameters &params)
   {
+    unsigned int previousH = m_renderParameters.getImageHeight(), previousW = m_renderParameters.getImageWidth();
+    bool resize = previousH != params.getImageHeight() || previousW != params.getImageWidth();
+
     m_renderParameters = params;
+
+    if (resize) {
+      for (GraphicsOutput *buffer: m_buffers) {
+        GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
+        if (buf == nullptr) {
+          throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");
+        }
+        else {
+          buf->set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
+        }
+      }
+    }
+
+    // If renderer is already initialize, modify camera properties
     if (m_camera != nullptr) {
       m_renderParameters.setupPandaCamera(m_camera);
     }
@@ -243,6 +260,7 @@ protected:
   NodePath m_renderRoot; //! Node containing all the objects and the camera for this renderer
   PT(Camera) m_camera;
   NodePath m_cameraPath; //! NodePath of the camera
+  std::vector<GraphicsOutput *> m_buffers; //! Set of buffers that this renderer uses. This storage contains weak refs to those buffers and should not deallocate them.
 };
 
 #endif //VISP_HAVE_PANDA3D

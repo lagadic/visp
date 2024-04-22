@@ -174,7 +174,6 @@ int main(int argc, const char **argv)
     const double afterAll = vpTime::measureTimeMs();
     const double delta = (afterAll - beforeRender) / 1000.0;
     vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
-    std::cout << wTo << std::endl;
 
     vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
     renderer.setNodePose(objectName, wTo * oToo);

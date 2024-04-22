@@ -141,13 +141,18 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
 
   // Don't open a window - force it to be an offscreen buffer.
-  int flags = GraphicsPipe::BF_refuse_window;
+  int flags = GraphicsPipe::BF_refuse_window  | GraphicsPipe::BF_resizeable;
   GraphicsOutput *windowOutput = m_window->get_graphics_output();
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsPipe *pipe = windowOutput->get_pipe();
   m_normalDepthBuffer = engine->make_output(pipe, "My Buffer", -100, fbp, win_prop, flags,
                                             windowOutput->get_gsg(),
                                             windowOutput);
+
+  if (m_normalDepthBuffer == nullptr) {
+    throw vpException(vpException::fatalError, "Could not create geometry info buffer");
+  }
+  m_buffers.push_back(m_normalDepthBuffer);
   m_normalDepthTexture = new Texture();
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
