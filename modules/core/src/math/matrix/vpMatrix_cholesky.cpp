@@ -222,7 +222,43 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
  */
 vpMatrix vpMatrix::choleskyByLapack()const
 {
-  throw(vpException(vpException::notImplementedError, "choleskyByLapack not implemented yet"));
+  vpMatrix L = *this;
+#if defined(VISP_HAVE_GSL)
+  gsl_matrix cholesky;
+  cholesky.size1 = rowNum;
+  cholesky.size2 = colNum;
+  cholesky.tda = cholesky.size2;
+  cholesky.data = L.data;
+  cholesky.owner = 0;
+  cholesky.block = 0;
+
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 3)
+  gsl_linalg_cholesky_decomp1(&cholesky);
+#else
+  gsl_linalg_cholesky_decomp(&cholesky);
+#endif
+#else
+  if (rowNum != colNum) {
+    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
+                            rowNum, colNum));
+  }
+
+  integer rowNum_ = (integer)this->getRows();
+  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+  integer info;
+
+  vpMatrix L = *this;
+  dpotrf_((char *)"L", &rowNum_, L.data, &lda, &info);
+#endif
+  // Make sure that the upper part of L is null
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = r + 1; c < nbCols; ++c) {
+      L[r][c] = 0.;
+    }
+  }
+  return L;
 }
 #endif
 
