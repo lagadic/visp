@@ -1,3 +1,4 @@
+//! \example tutorial-panada3d-renderer.cpp
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_DISPLAY)
@@ -80,8 +81,6 @@ int main()
   plnp.set_pos(0.4, -0.5, 0.1);
   rgbRenderer->getRenderRoot().set_light(plnp);
 
-
-
   // NodePath dlnp = rgbRenderer->getRenderRoot().attach_new_node(d_light);
   // dlnp.set_hpr(-30, -60, 0);
   // rgbRenderer->getRenderRoot().set_light(dlnp);
@@ -116,11 +115,12 @@ int main()
 #endif
 
   DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in world space");
-  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, 0, "normals in camera space");
-  DisplayCls dDepth(depthDisplayImage, renderParams.getImageWidth(), 0, "depth");
-  DisplayCls dColor(colorImage, renderParams.getImageWidth() * 2, 0, "color");
+  DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, renderParams.getImageHeight() + 80, "normals in camera space");
+  DisplayCls dDepth(depthDisplayImage, renderParams.getImageWidth() + 80, 0, "depth");
+  DisplayCls dColor(colorImage, renderParams.getImageWidth() * 2 + 90, 0, "color");
 
-  while (true) {
+  bool end = false;
+  while (!end) {
     float near = 0, far = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
     rgbRenderer->computeNearAndFarPlanesFromNode(objectName, near, far);
@@ -140,6 +140,10 @@ int main()
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
     displayDepth(depthImage, depthDisplayImage);
     vpDisplay::display(colorImage);
+    vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
+    if (vpDisplay::getClick(colorImage, false)) {
+      end = true;
+    }
     vpDisplay::flush(colorImage);
 
     const double afterAll = vpTime::measureTimeMs();
