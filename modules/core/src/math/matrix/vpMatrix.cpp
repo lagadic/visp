@@ -6289,11 +6289,9 @@ vpMatrix vpMatrix::cholesky() const
   return choleskyByEigen3();
 #elif defined(VISP_HAVE_LAPACK)
   return choleskyByLapack();
-#elif defined(VISP_HAVE_OPENCV)
-  return choleskyByOpenCV();
 #else
   throw(vpException(vpException::fatalError, "Cannot compute matrix Chloesky decomposition. "
-                    "Install Lapack, Eigen3 or OpenCV 3rd party"));
+                    "Install Lapack or Eigen3 3rd party"));
 #endif
 }
 

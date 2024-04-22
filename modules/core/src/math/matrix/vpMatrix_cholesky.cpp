@@ -314,17 +314,6 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
 
   return A;
 }
-
-/*!
- * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
- * using OpenCV library.
- *
- * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
- */
-vpMatrix vpMatrix::choleskyByOpenCV()const
-{
-  throw(vpException(vpException::notImplementedError, "choleskyByOpenCV not implemented yet"));
-}
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
