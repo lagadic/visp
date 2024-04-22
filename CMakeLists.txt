@@ -1722,15 +1722,14 @@ status("    \\- Use Coin3D:"         USE_COIN3D       THEN "yes (ver ${COIN3D_VE
 status("    \\- Use SoWin:"          USE_SOWIN        THEN "yes" ELSE "no")
 status("    \\- Use SoXt:"           USE_SOXT         THEN "yes" ELSE "no")
 if(USE_SOQT AND SoQt_FOUND)
-status("    \\- Use SoQt:"           USE_SOQT AND SoQt_FOUND THEN "yes (ver ${SoQt_VERSION})" ELSE "no")
+status("    \\- Use SoQt:"           USE_SOQT    AND SoQt_FOUND THEN "yes (ver ${SoQt_VERSION})" ELSE "no")
 else()
 status("    \\- Use SoQt:"           USE_SOQT         THEN "yes" ELSE "no")
 endif()
 status("    \\- Use Qt5:"            USE_SOQT AND SoQt_FOUND                    THEN "yes" ELSE "no")
 status("    \\- Use Qt4:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 4  THEN "yes" ELSE "no")
 status("    \\- Use Qt3:"            USE_QT   AND DESIRED_QT_VERSION MATCHES 3  THEN "yes" ELSE "no")
-
-status("    Panda3D:"                USE_PANDA3D AND Panda3D_FOUND THEN "yes" ELSE "no")
+status("    Panda3D:"                USE_PANDA3D      THEN "yes (ver ${Panda3D_VERSION_STRING})" ELSE "no")
 
 status("")
 status("  Media I/O: ")
