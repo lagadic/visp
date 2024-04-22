@@ -34,6 +34,13 @@
 #if defined(VISP_HAVE_PANDA3D)
 
 #include "load_prc_file.h"
+const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
+  1.0, 0.0, 0.0, 0.0,
+  0.0, 0.0, -1., 0.0,
+  0.0, 1.0, 0.0, 0.0,
+  0.0, 0.0, 0.0, 1.0
+});
+const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRenderer::VISP_T_PANDA.inverse());
 
 void vpPanda3DBaseRenderer::initFramework(bool showWindow)
 {
@@ -113,8 +120,9 @@ void vpPanda3DBaseRenderer::setNodePose(const std::string &name, const vpHomogen
 
 void vpPanda3DBaseRenderer::setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo)
 {
-  vpTranslationVector t = wTo.getTranslationVector();
-  vpQuaternionVector q(wTo.getRotationMatrix());
+  const vpHomogeneousMatrix wpTo = wTo * VISP_T_PANDA;
+  vpTranslationVector t = wpTo.getTranslationVector();
+  vpQuaternionVector q(wpTo.getRotationMatrix());
   object.set_pos(t[0], t[1], t[2]);
   object.set_quat(LQuaternion(q.w(), q.x(), q.y(), q.z()));
 }
@@ -134,7 +142,7 @@ vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(NodePath &object)
   const LQuaternion quat = object.get_quat();
   const vpTranslationVector t(pos[0], pos[1], pos[2]);
   const vpQuaternionVector q(quat.get_i(), quat.get_j(), quat.get_k(), quat.get_r());
-  return vpHomogeneousMatrix(t, q);
+  return vpHomogeneousMatrix(t, q) * PANDA_T_VISP;
 }
 
 void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &name, float &near, float &far)
@@ -165,6 +173,7 @@ void vpPanda3DBaseRenderer::addNodeToScene(const NodePath &object)
 {
   NodePath objectInScene = object.copy_to(m_renderRoot);
   objectInScene.set_name(object.get_name());
+  setNodePose(objectInScene, vpHomogeneousMatrix());
 }
 
 void vpPanda3DBaseRenderer::setVerticalSyncEnabled(bool useVsync)
