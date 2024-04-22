@@ -9,10 +9,7 @@ set(tutorial_cpp
   tutorial-panda3d-renderer.cpp
 )
 
-# file(GLOB tutorial_data "*.jpg")
-
 visp_set_source_file_compile_flag(tutorial-panda3d-renderer.cpp -Wno-extra -Wno-unused-parameter -Wno-unused-variable)
-
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -21,9 +18,5 @@ foreach(cpp ${tutorial_cpp})
   endif()
 endforeach()
 
-
-
-# Copy the data files to the same location than the target
-# foreach(data ${tutorial_data})
-#   visp_copy_data(tutorial-hsv-segmentation-basic.cpp ${data})
-# endforeach()
+# Copy the data folder to the same location than the target
+visp_copy_dir(tutorial-panda3d-renderer "${CMAKE_CURRENT_SOURCE_DIR}" data)
