@@ -66,12 +66,16 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
 
   // Don't open a window - force it to be an offscreen buffer.
   int flags = GraphicsPipe::BF_refuse_window;
-
-  GraphicsEngine *engine = m_window->get_graphics_output()->get_engine();
-  GraphicsPipe *pipe = m_window->get_graphics_output()->get_pipe();
-  m_colorBuffer = engine->make_output(pipe, "Color Buffer", -100, fbp, win_prop, flags,
-                                            m_window->get_graphics_output()->get_gsg(),
-                                            m_window->get_graphics_output());
+  GraphicsOutput *windowOutput = m_window->get_graphics_output();
+  GraphicsEngine *engine = windowOutput->get_engine();
+  GraphicsStateGuardian *gsg = windowOutput->get_gsg();
+  GraphicsPipe *pipe = windowOutput->get_pipe();
+  m_colorBuffer = engine->make_output(pipe, "Color Buffer", -100,
+                                      fbp, win_prop, flags,
+                                      gsg, windowOutput);
+  std::cout << "GSG inverted = " << gsg->get_copy_texture_inverted() << std::endl;
+  m_colorBuffer->set_inverted(gsg->get_copy_texture_inverted());
+  std::cout << "BUFFER inverted = " << m_colorBuffer->get_inverted() << std::endl;
   m_colorTexture = new Texture();
   fbp.setup_color_texture(m_colorTexture);
   m_colorBuffer->add_render_texture(m_colorTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);

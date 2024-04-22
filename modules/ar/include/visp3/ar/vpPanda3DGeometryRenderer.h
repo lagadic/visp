@@ -69,6 +69,19 @@ public:
    */
   void getRender(vpImage<vpRGBf> &colorData, vpImage<float> &depth) const;
 
+  /**
+   * @brief Get render results into ViSP readable structures. This version only retrieves the normal data
+   * @param colorData Depending on the vpRenderType, normals in the world or camera frame may be stored in this image.
+   */
+  void getRender(vpImage<vpRGBf> &colorData) const;
+  /**
+   * @brief Get render results into ViSP readable structures. This version only retrieves the depth data.
+   * @param colorData Depending on the vpRenderType, normals in the world or camera frame may be stored in this image.
+   */
+  void getRender(vpImage<float> &depth) const;
+
+
+
 protected:
   void setupScene() vp_override;
   void setupRenderTarget() vp_override;

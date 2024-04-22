@@ -201,6 +201,7 @@ public:
    * @param abort whether to abort (true) or display a message when an assertion fails.
    */
   void setAbortOnPandaError(bool abort);
+  void setForcedInvertTextures(bool invert);
 
 protected:
 

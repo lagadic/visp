@@ -192,12 +192,14 @@ endif()
 
 if(USE_PANDA3D)
   set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra)
-  vp_set_source_file_compile_flag(src/panda3d-simulator/vpPanda3DGeometryRenderer.cpp ${PANDA3D_CXX_FLAGS})
-  vp_set_source_file_compile_flag(src/panda3d-simulator/vpPanda3DRGBRenderer.cpp ${PANDA3D_CXX_FLAGS})
-  vp_set_source_file_compile_flag(src/panda3d-simulator/vpPanda3DBaseRenderer.cpp ${PANDA3D_CXX_FLAGS})
-  vp_set_source_file_compile_flag(src/panda3d-simulator/vpPanda3DRenderParameters.cpp ${PANDA3D_CXX_FLAGS})
-
-
+  set(PANDA3D_MODULE_SOURCES
+    vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
+    vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
+    vpPanda3DRendererSet.cpp
+  )
+  foreach(panda_src_name ${PANDA3D_MODULE_SOURCES})
+    vp_set_source_file_compile_flag(src/panda3d-simulator/${panda_src_name} ${PANDA3D_CXX_FLAGS})
+  endforeach()
 endif()
 
 vp_module_include_directories(${opt_incs})

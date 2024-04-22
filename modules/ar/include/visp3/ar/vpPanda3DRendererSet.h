@@ -42,103 +42,79 @@
 class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer
 {
 public:
-  vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
-  {
-    m_renderParameters = renderParameters;
-  }
+  vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters);
+  virtual ~vpPanda3DRendererSet();
 
-  void initFramework(bool showWindow) vp_override
-  {
-    if (m_framework.use_count() > 0) {
-      throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
-    }
-    m_framework = std::shared_ptr<PandaFramework>(new PandaFramework());
-    m_framework->open_framework();
-    WindowProperties winProps;
-    winProps.set_size(LVecBase2i(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight()));
-    int flags = showWindow ? 0 : GraphicsPipe::BF_refuse_window;
-    m_window = m_framework->open_window(winProps, flags);
-    if (m_window == nullptr) {
-      throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
-    }
-    m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-      renderer->initFromParent(m_framework, m_window);
-    }
-  }
+  /**
+   * @brief Initialize the framework and propagate the created panda3D framework to the subrenderers
+   *
+   * @param showWindow Whether a window should be shown
+   */
+  void initFramework(bool showWindow) vp_override;
 
-  void setupScene() vp_override { }
+  /**
+   * @brief Set the pose of the camera, using the ViSP convention. This change is propagated to all subrenderers
+   *
+   * @param wTc Pose of the camera
+   */
+  void setCameraPose(const vpHomogeneousMatrix &wTc) vp_override;
 
-  void setupCamera() vp_override { }
+  /**
+   * @brief Retrieve the pose of the camera. As this renderer contains multiple other renderers.
+   *
+   * \warning It is assumed that all the sub renderers are synchronized (i.e., the setCameraPose of this renderer was called before calling this method).
+   * Otherwise, you may get incoherent results.
+   *
+   * @return the pose of the camera using the ViSP convention
+   */
+  vpHomogeneousMatrix getCameraPose() vp_override;
 
-  void setCameraPose(const vpHomogeneousMatrix &wTc) vp_override
-  {
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-      renderer->setCameraPose(wTc);
-    }
-  }
+  /**
+   * @brief Set the pose of an object for all the subrenderers. The pose is specified using the ViSP convention
+   * This method may fail if a subrenderer does not have a node with the given name.
+   *
+   * \warning This method may fail if a subrenderer does not have a node with the given name. It is assumed that the scenes are synchronized
+   *
+   * @param name
+   * @param wTo
+   */
+  void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo) vp_override;
 
-  vpHomogeneousMatrix getCameraPose() vp_override
-  {
-    if (m_subRenderers.size() == 0) {
-      throw vpException(vpException::fatalError, "cannot get the pose of an object if no subrenderer is present");
-    }
-    return m_subRenderers[0]->getCameraPose();
-  }
+  /**
+   * @brief This method is not supported for this renderer type. Use the std::string version
+   *
+   * \throws vpException, as this method is not supported
+   * @param object
+   * @param wTo
+   */
+  void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo) vp_override;
 
-  void setNodePose(const std::string &name, const vpHomogeneousMatrix &wTo) vp_override
-  {
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-      renderer->setNodePose(name, wTo);
-    }
-  }
+  /**
+   * @brief Retrieve the pose of a scene node. The pose is in the world frame, using a ViSP convention.
+   *
+   * \see the base method
+   *
+   * \warning It is assumed that all the sub renderers are synchronized (i.e., the setNodePose of this renderer was called before calling this method).
+   * Otherwise, you may get incoherent results.
+   * @param name name of the node
+   * @return vpHomogeneousMatrix the pose of the node in the world frame
+   */
+  vpHomogeneousMatrix getNodePose(const std::string &name) vp_override;
 
-  void setNodePose(NodePath &object, const vpHomogeneousMatrix &wTo) vp_override
-  {
-    throw vpException(vpException::badValue, "NodePath setNodePose is not supported in renderer set, prefer the string version");
-  }
+  /**
+   * @brief This method is not supported for this renderer type. Use the std::string version
+   *
+   * \throws vpException, as this method is not supported
+   * @param object
+   * @param wTo
+   */
+  vpHomogeneousMatrix getNodePose(NodePath &object) vp_override;
 
-  vpHomogeneousMatrix getNodePose(const std::string &name) vp_override
-  {
-    if (m_subRenderers.size() == 0) {
-      throw vpException(vpException::fatalError, "cannot get the pose of an object if no subrenderer is present");
-    }
-    return m_subRenderers[0]->getNodePose(name);
-  }
-  vpHomogeneousMatrix getNodePose(NodePath &object) vp_override
-  {
-    throw vpException(vpException::badValue, "NodePath getNodePose is not supported in renderer set, prefer the string version");
-  }
+  void addNodeToScene(const NodePath &object) vp_override;
 
-  void addNodeToScene(const NodePath &object) vp_override
-  {
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-      renderer->addNodeToScene(object);
-    }
-  }
+  void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
 
-  void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override
-  {
-    m_renderParameters = params;
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
-      renderer->setRenderParameters(m_renderParameters);
-    }
-  }
-
-  void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer)
-  {
-    for (std::shared_ptr<vpPanda3DBaseRenderer> &otherRenderer: m_subRenderers) {
-      if (renderer->getName() == otherRenderer->getName()) {
-        throw vpException(vpException::badValue, "Cannot have two subrenderers with the same name");
-      }
-    }
-    m_subRenderers.push_back(renderer);
-    renderer->setRenderParameters(m_renderParameters);
-    if (m_framework != nullptr) {
-      renderer->initFromParent(m_framework, m_window);
-      renderer->setCameraPose(getCameraPose());
-    }
-  }
+  void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 
   template<typename RendererType>
   std::shared_ptr<RendererType> getRenderer()
@@ -165,6 +141,11 @@ public:
     }
     return nullptr;
   }
+
+protected:
+  void setupScene() vp_override { }
+
+  void setupCamera() vp_override { }
 
 private:
   std::vector<std::shared_ptr<vpPanda3DBaseRenderer>> m_subRenderers;

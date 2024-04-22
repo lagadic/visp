@@ -36,11 +36,12 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage,
   vpDisplay::flush(normalDisplayImage);
 }
 void displayDepth(const vpImage<float> &depthImage,
-                  vpImage<unsigned char> &depthDisplayImage)
+                  vpImage<unsigned char> &depthDisplayImage, float near, float far)
 {
 #pragma omp parallel for simd
   for (unsigned int i = 0; i < depthImage.getSize(); ++i) {
-    depthDisplayImage.bitmap[i] = static_cast<unsigned char>(depthImage.bitmap[i] * 255.f);
+    float val = std::max(0.f, (depthImage.bitmap[i] - near) / (far - near));
+    depthDisplayImage.bitmap[i] = static_cast<unsigned char>(val * 255.f);
   }
   vpDisplay::display(depthDisplayImage);
   vpDisplay::flush(depthDisplayImage);
@@ -64,19 +65,20 @@ int main()
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
+  renderer.setForcedInvertTextures(true);
 
   std::cout << "Initializing framework" << std::endl;
   renderer.initFramework(false);
 
   std::cout << "Loading object" << std::endl;
-  NodePath object = renderer.loadObject(objectName, "/home/sfelton/cube.bam");
+  NodePath object = renderer.loadObject(objectName, "/home/sfelton/buddha.bam");
   std::cout << "Adding node to scene" <<std::endl;
 
   renderer.addNodeToScene(object);
 
   // rgbRenderer->getRenderRoot().set_shader_auto(100);
   PT(PointLight) plight = new PointLight("sun");
-  plight->set_color(LColor(1.0, 1.0, 1.0, 1));
+  plight->set_color(LColor(2.0, 2.0, 2.0, 1));
   NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
   plnp.set_pos(0.4, -0.5, 0.1);
   rgbRenderer->getRenderRoot().set_light(plnp);
@@ -131,14 +133,13 @@ int main()
     renderer.renderFrame();
     const double beforeFetch = vpTime::measureTimeMs();
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
-    renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage, depthImage);
+    renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
-    std::cout << colorImage.getMaxValue() << std::endl;
     const double beforeConvert = vpTime::measureTimeMs();
 
     displayNormals(normalsImage, normalDisplayImage);
     displayNormals(cameraNormalsImage, cameraNormalDisplayImage);
-    displayDepth(depthImage, depthDisplayImage);
+    displayDepth(depthImage, depthDisplayImage, near, far);
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
     if (vpDisplay::getClick(colorImage, false)) {

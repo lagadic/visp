@@ -37,43 +37,63 @@
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_CAMERA = R"shader(
 #version 140
+
 in vec3 p3d_Normal;
+in vec3 p3d_Vertex;
+
 varying vec3 oNormal;
 uniform mat3 p3d_NormalMatrix;
+uniform mat4 p3d_ModelViewMatrix;
+
+
+varying float distToCamera;
+
 void main()
 {
     gl_Position = ftransform();
     // View space is Z-up right handed, flip z and y
     oNormal = p3d_NormalMatrix * normalize(p3d_Normal);
-    //oNormal.yz = -oNormal.zy;
+    oNormal.yz = oNormal.zy;
+    oNormal.y = -oNormal.y;
+    vec4 cs_position = p3d_ModelViewMatrix * vec4(p3d_Vertex, 1.0);
+  distToCamera = -cs_position.z;
 }
 )shader";
 
 const char *vpPanda3DGeometryRenderer::SHADER_VERT_NORMAL_AND_DEPTH_WORLD = R"shader(
-#version 120
 
+#version 140
+in vec3 p3d_Normal;
+in vec3 p3d_Vertex;
+uniform mat4 p3d_ModelViewMatrix;
 varying vec3 oNormal;
+varying float distToCamera;
+
 
 void main()
 {
     gl_Position = ftransform();
-    oNormal = normalize(gl_Normal);
+    oNormal = normalize(p3d_Normal);
+    oNormal.yz = oNormal.zy;
+    oNormal.y = -oNormal.y;
+    vec4 cs_position = p3d_ModelViewMatrix * vec4(p3d_Vertex, 1.0);
+    distToCamera = -cs_position.z;
 }
 )shader";
 
 const char *vpPanda3DGeometryRenderer::SHADER_FRAG_NORMAL_AND_DEPTH = R"shader(
-#version 120
+#version 140
 
 varying vec3 oNormal;
+varying float distToCamera;
+
 
 void main()
 {
   vec3 n = normalize(oNormal);
   //if (!gl_FrontFacing)
       //n = -n;
-  float fDepth = gl_FragCoord.z;
-
-  gl_FragColor = vec4(n, fDepth);
+  gl_FragColor = vec4(n, distToCamera);
 }
 )shader";
 
@@ -122,13 +142,14 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
 
   // Don't open a window - force it to be an offscreen buffer.
   int flags = GraphicsPipe::BF_refuse_window;
-
-  GraphicsEngine *engine = m_window->get_graphics_output()->get_engine();
-  GraphicsPipe *pipe = m_window->get_graphics_output()->get_pipe();
+  GraphicsOutput *windowOutput = m_window->get_graphics_output();
+  GraphicsEngine *engine = windowOutput->get_engine();
+  GraphicsPipe *pipe = windowOutput->get_pipe();
   m_normalDepthBuffer = engine->make_output(pipe, "My Buffer", -100, fbp, win_prop, flags,
-                                            m_window->get_graphics_output()->get_gsg(),
-                                            m_window->get_graphics_output());
+                                            windowOutput->get_gsg(),
+                                            windowOutput);
   m_normalDepthTexture = new Texture();
+  m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
   fbp.setup_color_texture(m_normalDepthTexture);
   m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
@@ -145,10 +166,33 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
   float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
 
 //#pragma omp parallel for simd
-  for (unsigned int i = 0; i < normals.getRows() * normals.getCols(); ++i) {
+  for (unsigned int i = 0; i < normals.getSize(); ++i) {
     normals.bitmap[i].B = (data[i * 4]);
     normals.bitmap[i].G = (data[i * 4 + 1]);
     normals.bitmap[i].R = (data[i * 4 + 2]);
+    depth.bitmap[i] = (data[i * 4 + 3]);
+  }
+}
+
+void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals) const
+{
+  normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
+  float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+
+//#pragma omp parallel for simd
+  for (unsigned int i = 0; i < normals.getSize(); ++i) {
+    normals.bitmap[i].B = (data[i * 4]);
+    normals.bitmap[i].G = (data[i * 4 + 1]);
+    normals.bitmap[i].R = (data[i * 4 + 2]);
+  }
+}
+
+void vpPanda3DGeometryRenderer::getRender(vpImage<float> &depth) const
+{
+  depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
+  float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
+//#pragma omp parallel for simd
+  for (unsigned int i = 0; i < depth.getSize(); ++i) {
     depth.bitmap[i] = (data[i * 4 + 3]);
   }
 }

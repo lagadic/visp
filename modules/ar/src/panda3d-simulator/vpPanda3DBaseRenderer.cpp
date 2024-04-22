@@ -66,7 +66,6 @@ void vpPanda3DBaseRenderer::initFromParent(std::shared_ptr<PandaFramework> frame
   setupScene();
   setupCamera();
   setupRenderTarget();
-  //m_window->get_display_region_3d()->set_camera(m_cameraPath);
 }
 
 void vpPanda3DBaseRenderer::setupScene()
@@ -185,6 +184,17 @@ void vpPanda3DBaseRenderer::setAbortOnPandaError(bool abort)
   else {
     load_prc_file_data("", "assert-abort 0");
   }
+}
+
+void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
+{
+  if (invert) {
+    load_prc_file_data("", "copy-texture-inverted 1");
+  }
+  else {
+    load_prc_file_data("", "copy-texture-inverted 0");
+  }
+
 }
 
 #endif
