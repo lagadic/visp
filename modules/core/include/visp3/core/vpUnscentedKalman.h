@@ -83,14 +83,15 @@ private:
   std::vector<vpColVector> m_Y; /*!< The projection forward in time of the sigma points according to the process model, called the prior.*/
   vpColVector m_mu; /*!< The mean of the prior.*/
   vpMatrix m_P; /*!< The covariance matrix of the prior.*/
+  vpMatrix m_R; /*!< The covariance introduced by performing the update step.*/
   std::vector<vpColVector> m_Z; /*!< The sigma points of the prior expressed in the measurement space, called the measurement sigma points.*/
   vpColVector m_muz; /*!< The mean of the measurement sigma points.*/
   vpMatrix m_Pz; /*!< The covariance matrix of the measurement sigma points.*/
   vpMatrix m_Pxz; /*!< The cross variance of the state and the measurements.*/
   vpColVector m_y; /*!< The residual.*/
   vpMatrix m_K; /*!< The Kalman gain.*/
-  std::function<vpMatrix(const std::vector<vpColVector> &, const double &)> m_f; /*!< Process model function, which projects the sigma points forward in time.*/
-  std::function<vpMatrix(const std::vector<vpColVector> &)> m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
+  std::function<std::vector<vpColVector>(const std::vector<vpColVector> &, const double &)> m_f; /*!< Process model function, which projects the sigma points forward in time.*/
+  std::function<std::vector<vpColVector>(const std::vector<vpColVector> &)> m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
   vpUKSigmaDrawerAbstract *m_sigmaDrawer; /*!< Object that permits to draw the sigma points.*/
 
   /**
@@ -112,7 +113,7 @@ private:
    * \param[in] cov The constant covariance matrix to add to the computed covariance matrix.
    * \return vpUnscentedTransformResult The mean and covariance of the sigma points.
    */
-  vpUnscentedTransformResult unscentedTransform(const vpMatrix &sigmaPoints, const vpColVector &wm, const vpColVector &wc, const vpMatrix &cov);
+  static vpUnscentedTransformResult unscentedTransform(const std::vector<vpColVector> &sigmaPoints, const vpColVector &wm, const vpColVector &wc, const vpMatrix &cov);
 };
 
 #endif
