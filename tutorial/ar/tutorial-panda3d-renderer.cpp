@@ -1,4 +1,4 @@
-//! \example tutorial-panada3d-renderer.cpp
+//! \example tutorial-panda3d-renderer.cpp
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_DISPLAY)

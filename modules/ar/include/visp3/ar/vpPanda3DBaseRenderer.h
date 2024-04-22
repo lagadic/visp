@@ -75,6 +75,7 @@ public:
    * @brief
    *
    * @param framework
+   * @param window
    */
   void initFromParent(std::shared_ptr<PandaFramework> framework, PT(WindowFramework) window);
 
