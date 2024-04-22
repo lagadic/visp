@@ -1,7 +1,7 @@
 //! \example tutorial-panda3d-renderer.cpp
 #include <iostream>
 #include <visp3/core/vpConfig.h>
-#if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_PANDA3D) && defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_IO)
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpExponentialMap.h>
@@ -12,7 +12,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayGTK.h>
 
-
+#include <visp3/io/vpParseArgv.h>
 
 #include <visp3/ar/vpPanda3DRGBRenderer.h>
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
@@ -47,8 +47,34 @@ void displayDepth(const vpImage<float> &depthImage,
   vpDisplay::flush(depthDisplayImage);
 }
 
-int main()
+
+
+int main(int argc, const char **argv)
 {
+  bool invertTexture = false;
+  std::string modelPathCstr;
+  vpParseArgv::vpArgvInfo argTable[] =
+  {
+    {"-invert", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&invertTexture,
+     "Whether to force Texture inversion. Use this if the model is upside down."},
+    {"-model", vpParseArgv::ARGV_STRING, (char *) nullptr, (char *)&modelPathCstr,
+     "Path to the model to load."},
+    {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
+     "Print the help."},
+    {(char *) nullptr, vpParseArgv::ARGV_END, (char *) nullptr, (char *) nullptr, (char *) nullptr} };
+
+  // Read the command line options
+  if (vpParseArgv::parse(&argc, argv, argTable,
+                         vpParseArgv::ARGV_NO_LEFTOVERS |
+                         vpParseArgv::ARGV_NO_ABBREV |
+                         vpParseArgv::ARGV_NO_DEFAULTS)) {
+    return (false);
+  }
+
+  std::string modelPath(modelPathCstr);
+  if (modelPath.size() == 0) {
+    modelPath = "data/deformed_sphere.bam";
+  }
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 1.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
@@ -65,39 +91,37 @@ int main()
 
   renderer.setVerticalSyncEnabled(false);
   renderer.setAbortOnPandaError(true);
-  renderer.setForcedInvertTextures(true);
+  if (invertTexture) {
+    renderer.setForcedInvertTextures(true);
+  }
 
   std::cout << "Initializing framework" << std::endl;
   renderer.initFramework(false);
 
   std::cout << "Loading object" << std::endl;
-  NodePath object = renderer.loadObject(objectName, "/home/sfelton/buddha.bam");
+  NodePath object = renderer.loadObject(objectName, modelPath);
   std::cout << "Adding node to scene" <<std::endl;
 
   renderer.addNodeToScene(object);
 
   // rgbRenderer->getRenderRoot().set_shader_auto(100);
+  PT(AmbientLight) alight = new AmbientLight("ambient");
+  alight->set_color(LColor(0.2, 0.2, 0.2, 1));
+  NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(alight);
+  rgbRenderer->getRenderRoot().set_light(alnp);
   PT(PointLight) plight = new PointLight("sun");
   plight->set_color(LColor(2.0, 2.0, 2.0, 1));
   NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
   plnp.set_pos(0.4, -0.5, 0.1);
   rgbRenderer->getRenderRoot().set_light(plnp);
 
-  // NodePath dlnp = rgbRenderer->getRenderRoot().attach_new_node(d_light);
-  // dlnp.set_hpr(-30, -60, 0);
-  // rgbRenderer->getRenderRoot().set_light(dlnp);
-  // PT(AmbientLight) a_light = new AmbientLight("my a_light");
-  // a_light->set_color(LColor(1.0, 1.0, 1.0, 1.0));
-  // NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(a_light);
-  // rgbRenderer->getRenderRoot().set_light(alnp);
-
   std::cout << "Setting camera pose" << std::endl;
-  renderer.setCameraPose(vpHomogeneousMatrix(0.0, -0.4, 0.0, 0.0, 0.0, 0.0));
+  renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.5, 0.0, 0.0, 0.0));
 
   vpImage<vpRGBf> normalsImage;
   vpImage<vpRGBf> cameraNormalsImage;
-
   vpImage<float> depthImage;
+
   vpImage<vpRGBa> colorImage(renderParams.getImageHeight(), renderParams.getImageWidth());
   vpImage<vpRGBa> normalDisplayImage(renderParams.getImageHeight(), renderParams.getImageWidth());
   vpImage<vpRGBa> cameraNormalDisplayImage(renderParams.getImageHeight(), renderParams.getImageWidth());
@@ -150,7 +174,9 @@ int main()
     const double afterAll = vpTime::measureTimeMs();
     const double delta = (afterAll - beforeRender) / 1000.0;
     vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
-    vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0) }), delta);
+    std::cout << wTo << std::endl;
+
+    vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
     renderer.setNodePose(objectName, wTo * oToo);
     std::cout << "Rendering took: " << std::fixed << std::setprecision(2) << beforeFetch - beforeRender << "ms" << std::endl;
     std::cout << "Copying to vpImage took: " << std::fixed << std::setprecision(2) << beforeConvert - beforeFetch << "ms" << std::endl;
