@@ -117,8 +117,8 @@ vpMatrix vpMatrix::inverseByCholesky() const
   return inverseByCholeskyOpenCV();
 #else
   throw(vpException(vpException::fatalError, "Cannot inverse matrix by "
-                                             "Cholesky. Install Lapack or "
-                                             "OpenCV 3rd party"));
+                    "Cholesky. Install Lapack or "
+                    "OpenCV 3rd party"));
 #endif
 }
 
@@ -213,6 +213,17 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
   }
 #endif
 }
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Lapack library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByLapack()const
+{
+  throw(vpException(vpException::notImplementedError, "choleskyByLapack not implemented yet"));
+}
 #endif
 
 #if defined(VISP_HAVE_OPENCV)
@@ -266,5 +277,45 @@ vpMatrix vpMatrix::inverseByCholeskyOpenCV() const
   memcpy(A.data, Minv.data, (size_t)(8 * Minv.rows * Minv.cols));
 
   return A;
+}
+
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using OpenCV library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByOpenCV()const
+{
+  throw(vpException(vpException::notImplementedError, "choleskyByOpenCV not implemented yet"));
+}
+#endif
+
+#if defined(VISP_HAVE_EIGEN3)
+#include <Eigen/Dense>
+/*!
+ * \brief Compute the Cholesky decomposition of a Hermitian positive-definite matrix
+ * using Eigen3 library.
+ *
+ * \return vpMatrix The lower triangular matrix resulting from the Cholesky decomposition
+ */
+vpMatrix vpMatrix::choleskyByEigen3() const
+{
+  unsigned int nbRows = this->getRows();
+  unsigned int nbCols = this->getCols();
+  Eigen::MatrixXd A(nbRows, nbCols);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c < nbCols; ++c) {
+      A(r, c) = (*this)[r][c];
+    }
+  }
+  Eigen::MatrixXd L = A.llt().matrixL();
+  vpMatrix Lvisp(L.rows(), L.cols(), 0.);
+  for (unsigned int r = 0; r < nbRows; ++r) {
+    for (unsigned int c = 0; c <= r; ++c) {
+      Lvisp[r][c] = L(r, c);
+    }
+  }
+  return Lvisp;
 }
 #endif
