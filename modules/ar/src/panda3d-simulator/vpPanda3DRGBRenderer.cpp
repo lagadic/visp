@@ -51,17 +51,21 @@ void vpPanda3DRGBRenderer::setupScene()
 {
   vpPanda3DBaseRenderer::setupScene();
   setLightableScene(m_renderRoot);
-  //m_renderRoot.set_shader_auto();
+  m_renderRoot.set_shader_auto();
 }
 
 void vpPanda3DRGBRenderer::setupRenderTarget()
 {
+  if (m_window == nullptr) {
+    throw vpException(vpException::fatalError, "Cannot setup render target when window is null");
+  }
   FrameBufferProperties fbp;
   fbp.set_rgb_color(true);
   fbp.set_float_depth(false);
   fbp.set_float_color(false);
   fbp.set_depth_bits(16);
   fbp.set_rgba_bits(8, 8, 8, 8);
+
 
   WindowProperties win_prop;
   win_prop.set_size(m_renderParameters.getImageWidth(), m_renderParameters.getImageHeight());
@@ -86,6 +90,9 @@ void vpPanda3DRGBRenderer::setupRenderTarget()
   m_colorBuffer->set_clear_color(LColor(0.f));
   m_colorBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_colorBuffer->make_display_region();
+  if (region == nullptr) {
+    throw vpException(vpException::fatalError, "Could not create display region");
+  }
   region->set_camera(m_cameraPath);
   region->set_clear_color(LColor(0.f));
 }

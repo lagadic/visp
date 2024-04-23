@@ -227,7 +227,7 @@ public:
   void setAbortOnPandaError(bool abort);
   void setForcedInvertTextures(bool invert);
 
-  static vpPoint vispPointToPanda(const vpPoint &point);
+  static vpColVector vispPointToPanda(const vpColVector &point);
 
   void printStructure();
 

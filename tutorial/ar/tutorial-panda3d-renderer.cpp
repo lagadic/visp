@@ -76,7 +76,7 @@ int main(int argc, const char **argv)
   else {
     modelPath = "data/deformed_sphere.bam";
   }
-  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 1.0);
+  vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 10.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
 
@@ -106,10 +106,9 @@ int main(int argc, const char **argv)
 
   renderer.addNodeToScene(object);
 
-  // rgbRenderer->getRenderRoot().set_shader_auto(100);
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(2.0), vpColVector({ 0.0, -0.3, -0.0 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(200.0), vpColVector({ 0.0, 0.0, -5.0 }), vpColVector({ 1.0, 0.0, 0.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
@@ -150,7 +149,7 @@ int main(int argc, const char **argv)
     float near = 0, far = 0;
     const double beforeComputeBB = vpTime::measureTimeMs();
     rgbRenderer->computeNearAndFarPlanesFromNode(objectName, near, far);
-    renderParams.setClippingDistance(near, far);
+    // renderParams.setClippingDistance(near, far);
     renderer.setRenderParameters(renderParams);
     std::cout << "Update clipping plane took " << vpTime::measureTimeMs() - beforeComputeBB << std::endl;
 

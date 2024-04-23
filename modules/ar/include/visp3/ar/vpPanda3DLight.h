@@ -129,11 +129,23 @@ public:
    * @param name name of the light
    * @param color  color of the light
    * @param position Position in the scene of the light. Uses ViSP coordinates.
+   * @param attenuation Attenuation components of the light as a function of distance.
+   * Should be a vector of size 3 where the first component is the constant intensity factor (no falloff),
+   * the second is a linear falloff coefficient, and the last one is the quadratic falloff component.
+   * To follow the inverse square law, set this value vector to [0, 0, 1]
+   * To have no falloff, set it to [1, 0, 0].
    */
-  vpPanda3DPointLight(const std::string &name, const vpRGBf &color, const vpColVector &position) : vpPanda3DLight(name, color), m_position(position)
+  vpPanda3DPointLight(const std::string &name, const vpRGBf &color, const vpColVector &position, const vpColVector &attenuation)
+    : vpPanda3DLight(name, color), m_attenuation(attenuation)
   {
     if (position.size() != 3) {
       throw vpException(vpException::dimensionError, "Point light position must be a 3 dimensional vector");
+    }
+    m_position.resize(4, false);
+    m_position.insert(0, position);
+    m_position[3] = 1.0;
+    if (attenuation.size() != 3) {
+      throw vpException(vpException::dimensionError, "Point light attenuation components must be a 3 dimensional vector");
     }
   }
 
@@ -141,14 +153,20 @@ public:
   {
     PT(PointLight) light = new PointLight(m_name);
     light->set_color(LColor(m_color.R, m_color.G, m_color.B, 1));
+    light->set_attenuation(LVecBase3(m_attenuation[0], m_attenuation[1], m_attenuation[2]));
     NodePath np = scene.attach_new_node(light);
-    vpPoint posPanda = vpPanda3DBaseRenderer::vispPointToPanda(m_position);
-    np.set_pos(posPanda.get_X(), posPanda.get_Y(), posPanda.get_Z());
+    vpColVector posPanda = vpPanda3DBaseRenderer::vispPointToPanda(m_position);
+    np.set_pos(posPanda[0], posPanda[1], posPanda[2]);
+    std::cout << "posPanda = " << posPanda << std::endl;
+    std::cout << np.get_pos() << std::endl;
+    std::cout << scene.get_mat() << std::endl;
+    std::cout << np.get_mat(scene) << std::endl;
     scene.set_light(np);
   }
 
 private:
-  const vpPoint m_position;
+  vpColVector m_position; //! Position of the light, in homogeneous coordinates
+  vpColVector m_attenuation; //! Attenuation components: [constant, linear, quadratic]
 };
 
 /**

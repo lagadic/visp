@@ -204,9 +204,12 @@ void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
   }
 }
 
-vpPoint vpPanda3DBaseRenderer::vispPointToPanda(const vpPoint &point)
+vpColVector vpPanda3DBaseRenderer::vispPointToPanda(const vpColVector &point)
 {
-  return PANDA_T_VISP * point;
+  vpColVector pandaPos = PANDA_T_VISP * point;
+  std::cout <<"PANDA POS = " << pandaPos << std::endl;
+  pandaPos /= pandaPos[3];
+  return pandaPos;
 }
 
 void vpPanda3DBaseRenderer::printStructure()

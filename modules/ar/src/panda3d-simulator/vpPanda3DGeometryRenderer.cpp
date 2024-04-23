@@ -130,6 +130,9 @@ void vpPanda3DGeometryRenderer::setupScene()
 
 void vpPanda3DGeometryRenderer::setupRenderTarget()
 {
+  if (m_window == nullptr) {
+    throw vpException(vpException::fatalError, "Cannot setup render target when window is null");
+  }
   FrameBufferProperties fbp;
   fbp.set_rgb_color(true);
   fbp.set_float_depth(false);
@@ -160,6 +163,9 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
   DisplayRegion *region = m_normalDepthBuffer->make_display_region();
+  if (region == nullptr) {
+    throw vpException(vpException::fatalError, "Could not create display region");
+  }
   region->set_camera(m_cameraPath);
   region->set_clear_color(LColor(0.f));
 }
