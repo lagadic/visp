@@ -53,7 +53,7 @@ int main(int argc, const char **argv)
 {
   bool invertTexture = false;
   bool stepByStep = false;
-  std::string modelPathCstr;
+  char *modelPathCstr;
   vpParseArgv::vpArgvInfo argTable[] =
   {
     {"-invert", vpParseArgv::ARGV_CONSTANT_BOOL, 0, (char *)&invertTexture,
@@ -62,7 +62,6 @@ int main(int argc, const char **argv)
      "Path to the model to load."},
     {"-step", vpParseArgv::ARGV_CONSTANT_BOOL, (char *) nullptr, (char *)&stepByStep,
      "Show frames step by step."},
-
     {"-h", vpParseArgv::ARGV_HELP, (char *) nullptr, (char *) nullptr,
      "Print the help."},
     {(char *) nullptr, vpParseArgv::ARGV_END, (char *) nullptr, (char *) nullptr, (char *) nullptr} };
@@ -99,10 +98,10 @@ int main(int argc, const char **argv)
     renderer.setForcedInvertTextures(true);
   }
 
-  std::cout << "Initializing framework" << std::endl;
+  std::cout << "Initializing Panda3D rendering framework" << std::endl;
   renderer.initFramework(true);
 
-  std::cout << "Loading object" << std::endl;
+  std::cout << "Loading object " << modelPath << std::endl;
   NodePath object = renderer.loadObject(objectName, modelPath);
   std::cout << "Adding node to scene" <<std::endl;
 
@@ -111,7 +110,7 @@ int main(int argc, const char **argv)
   // rgbRenderer->getRenderRoot().set_shader_auto(100);
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(50.0), vpColVector({ 0.4, -0.5, -0.5 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(2.0), vpColVector({ 0.4, -0.5, -0.5 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
