@@ -51,11 +51,7 @@
 #if defined(VISP_HAVE_PCL)
 #include <pcl/pcl_config.h>
 #if defined(VISP_HAVE_PCL_COMMON)
-#if PCL_VERSION_COMPARE(>=,1,14,1)
-#include <pcl/impl/point_types.hpp>
-#else
 #include <pcl/point_types.h>
-#endif
 #include <pcl/point_cloud.h>
 #endif
 #if defined(VISP_HAVE_PCL_IO)
@@ -417,7 +413,7 @@ public:
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.y);
                     vpIoTools::writeBinaryValueLE(file_pointcloud, pt.z);
                   }
-              }
+                }
 #else
                 uint32_t width = m_size_width;
                 uint32_t height = m_size_height;
@@ -440,8 +436,8 @@ public:
                   }
                 }
 #endif
+              }
             }
-          }
             else {
 #if defined(VISP_HAVE_PCL) && defined(VISP_HAVE_PCL_IO)
               pcl::io::savePCDFileBinary(filename_point_cloud, *pointCloud);
@@ -449,7 +445,7 @@ public:
               throw(vpIoException(vpIoException::fatalError, "Cannot save as pcd files without PCL io module"));
 #endif
             }
-        }
+          }
 
           if (m_save_infrared) {
             ss.str("");
@@ -461,13 +457,13 @@ public:
           }
 
           m_cpt++;
+        }
       }
     }
-  }
     catch (const vpFrameQueue::vpCancelled_t &) {
       std::cout << "Receive cancel vpFrameQueue." << std::endl;
     }
-}
+  }
 
 private:
   vpFrameQueue &m_queue;
@@ -627,12 +623,12 @@ int main(int argc, const char *argv[])
     vpHomogeneousMatrix depth_M_color;
     if (!use_aligned_stream) {
       depth_M_color = realsense.getTransformation(rs::stream::color, rs::stream::depth);
-  }
+    }
 #endif
     std::ofstream file(std::string(output_directory + "/depth_M_color.txt"));
     depth_M_color.save(file);
     file.close();
-}
+  }
 
   vpFrameQueue save_queue;
   vpStorageWorker storage(std::ref(save_queue), std::cref(output_directory), save_color, save_depth, save_pointcloud,
