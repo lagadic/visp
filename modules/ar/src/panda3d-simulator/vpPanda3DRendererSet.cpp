@@ -33,6 +33,8 @@
 
 #if defined(VISP_HAVE_PANDA3D)
 
+#include "load_prc_file.h"
+
 vpPanda3DRendererSet::vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters) : vpPanda3DBaseRenderer("set")
 {
   m_renderParameters = renderParameters;
@@ -43,6 +45,12 @@ vpPanda3DRendererSet::~vpPanda3DRendererSet()
 
 void vpPanda3DRendererSet::initFramework(bool showWindow)
 {
+
+  // load_prc_file_data("", "load-display p3tinydisplay");
+  // load_prc_file_data("", "color-bits 32 32 32");
+  // load_prc_file_data("", "depth-bits 16");
+
+
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError, "Panda3D renderer: Reinitializing is not supported!");
   }
@@ -55,6 +63,7 @@ void vpPanda3DRendererSet::initFramework(bool showWindow)
   if (m_window == nullptr) {
     throw vpException(vpException::fatalError, "Could not open Panda3D window (hidden or visible)");
   }
+
   m_window->set_background_type(WindowFramework::BackgroundType::BT_black);
   for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
     renderer->initFromParent(m_framework, m_window);

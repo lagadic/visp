@@ -148,17 +148,23 @@ void vpPanda3DGeometryRenderer::setupRenderTarget()
   GraphicsOutput *windowOutput = m_window->get_graphics_output();
   GraphicsEngine *engine = windowOutput->get_engine();
   GraphicsPipe *pipe = windowOutput->get_pipe();
-  m_normalDepthBuffer = engine->make_output(pipe, "My Buffer", -100, fbp, win_prop, flags,
+
+  m_normalDepthBuffer = engine->make_output(pipe, renderTypeToName(m_renderType), 0, fbp, win_prop, flags,
                                             windowOutput->get_gsg(),
                                             windowOutput);
 
   if (m_normalDepthBuffer == nullptr) {
     throw vpException(vpException::fatalError, "Could not create geometry info buffer");
   }
+  // if (!m_normalDepthBuffer->is_valid()) {
+  //   throw vpException(vpException::fatalError, "Geometry info buffer is invalid");
+  // }
   m_buffers.push_back(m_normalDepthBuffer);
   m_normalDepthTexture = new Texture();
   m_normalDepthBuffer->set_inverted(windowOutput->get_gsg()->get_copy_texture_inverted());
-  fbp.setup_color_texture(m_normalDepthTexture);
+  // fbp.setup_color_texture(m_normalDepthTexture);
+  // m_normalDepthTexture->set_format(Texture::F_rgba32);
+
   m_normalDepthBuffer->add_render_texture(m_normalDepthTexture, GraphicsOutput::RenderTextureMode::RTM_copy_ram);
   m_normalDepthBuffer->set_clear_color(LColor(0.f));
   m_normalDepthBuffer->set_clear_color_active(true);
@@ -174,6 +180,11 @@ void vpPanda3DGeometryRenderer::getRender(vpImage<vpRGBf> &normals, vpImage<floa
 {
   normals.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
   depth.resize(m_normalDepthTexture->get_y_size(), m_normalDepthTexture->get_x_size());
+  unsigned expectedSize = m_normalDepthTexture->get_y_size() * m_normalDepthTexture->get_x_size() * sizeof(float) * 4;
+  unsigned actualSize = m_normalDepthTexture->get_ram_image_size();
+  if (expectedSize != actualSize) {
+    throw vpException(vpException::fatalError, "Expected %d bytes, but got %d bytes", expectedSize, actualSize);
+  }
   float *data = (float *)(&(m_normalDepthTexture->get_ram_image().front()));
 
 //#pragma omp parallel for simd

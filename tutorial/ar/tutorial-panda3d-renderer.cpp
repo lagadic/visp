@@ -27,6 +27,7 @@ void displayNormals(const vpImage<vpRGBf> &normalsImage,
     normalDisplayImage.bitmap[i].G = static_cast<unsigned char>((normalsImage.bitmap[i].G + 1.0) * 127.5f);
     normalDisplayImage.bitmap[i].B = static_cast<unsigned char>((normalsImage.bitmap[i].B + 1.0) * 127.5f);
   }
+
   vpDisplay::display(normalDisplayImage);
   vpDisplay::flush(normalDisplayImage);
 }

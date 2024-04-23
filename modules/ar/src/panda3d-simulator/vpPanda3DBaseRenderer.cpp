@@ -34,6 +34,7 @@
 #if defined(VISP_HAVE_PANDA3D)
 
 #include "load_prc_file.h"
+
 const vpHomogeneousMatrix vpPanda3DBaseRenderer::VISP_T_PANDA({
   1.0, 0.0, 0.0, 0.0,
   0.0, 0.0, -1., 0.0,
@@ -44,6 +45,7 @@ const vpHomogeneousMatrix vpPanda3DBaseRenderer::PANDA_T_VISP(vpPanda3DBaseRende
 
 void vpPanda3DBaseRenderer::initFramework(bool showWindow)
 {
+  load_prc_file_data("", "load-display p3tinydisplay");
   if (m_framework.use_count() > 0) {
     throw vpException(vpException::notImplementedError,
     "Panda3D renderer: Reinitializing is not supported!");
