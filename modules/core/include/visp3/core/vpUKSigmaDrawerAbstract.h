@@ -57,7 +57,7 @@ public:
     std::vector<double> m_wc; /*!< The weights for the computation of the covariance.*/
   }vpSigmaPointsWeights;
 
-  vpUKSigmaDrawerAbstract(const unsigned int &n);
+  inline vpUKSigmaDrawerAbstract(const unsigned int &n) : m_n(n) { }
 
   /**
    * \brief Draw the sigma points according to the current mean and covariance of the state

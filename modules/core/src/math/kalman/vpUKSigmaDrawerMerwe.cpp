@@ -51,12 +51,12 @@ vpUKSigmaDrawerMerwe::vpUKSigmaDrawerMerwe(const int &n, const double &alpha, co
 
 std::vector<vpColVector> vpUKSigmaDrawerMerwe::drawSigmaPoints(const vpColVector &mean, const vpMatrix &covariance)
 {
-  const int nbSigmaPoints = 2 * m_n + 1;
+  const unsigned int nbSigmaPoints = 2 * m_n + 1;
   std::vector<vpColVector> sigmaPoints(nbSigmaPoints);
   sigmaPoints[0] = mean;
   vpMatrix scaledCov = (static_cast<double>(m_n) + m_lambda) * covariance;
   vpMatrix cholesky = scaledCov.cholesky();
-  for (int i = 1; i < nbSigmaPoints; ++i) {
+  for (unsigned int i = 1; i < nbSigmaPoints; ++i) {
     if (i <= m_n) {
       sigmaPoints[i] = mean + cholesky.getRow(i).transpose();
     }
@@ -69,7 +69,7 @@ std::vector<vpColVector> vpUKSigmaDrawerMerwe::drawSigmaPoints(const vpColVector
 
 vpUKSigmaDrawerMerwe::vpSigmaPointsWeights vpUKSigmaDrawerMerwe::computeWeights()
 {
-  const int nbSigmaPoints = 2 * m_n + 1;
+  const unsigned int nbSigmaPoints = 2 * m_n + 1;
   vpSigmaPointsWeights weights;
   weights.m_wm.resize(nbSigmaPoints);
   weights.m_wc.resize(nbSigmaPoints);
@@ -78,7 +78,7 @@ vpUKSigmaDrawerMerwe::vpSigmaPointsWeights vpUKSigmaDrawerMerwe::computeWeights(
   weights.m_wc[0] = (m_lambda / (static_cast<double>(m_n) + m_lambda)) + 1.0 - m_alpha * m_alpha + m_beta;
 
   double cstWeight = 1. / (2. * (static_cast<double>(m_n) + m_lambda));
-  for (int i = 1; i < nbSigmaPoints; ++i) {
+  for (unsigned int i = 1; i < nbSigmaPoints; ++i) {
     weights.m_wm[i] = cstWeight;
     weights.m_wc[i] = cstWeight;
   }
