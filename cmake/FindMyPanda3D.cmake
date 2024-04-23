@@ -44,6 +44,7 @@ set(PANDA3D_INCLUDE_SEARCH_PATHS
   ${Panda3D_DIR}/built/include
   /usr/include/panda3d
   /usr/local/include/panda3d
+  /Library/Developer/Panda3D/include
 )
 
 set(PANDA3D_LIBRARIES_SEARCH_PATHS
@@ -54,6 +55,7 @@ set(PANDA3D_LIBRARIES_SEARCH_PATHS
   /usr/lib/panda3d
   /usr/local/lib/panda3d
   /usr/lib/x86_64-linux-gnu/panda3d
+  /Library/Developer/Panda3D/lib
 )
 
 set(PANDA3D_LIBS
