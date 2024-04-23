@@ -110,6 +110,7 @@ public:
 
     if (resize) {
       for (GraphicsOutput *buffer: m_buffers) {
+        //buffer->get_type().is_derived_from()
         GraphicsBuffer *buf = dynamic_cast<GraphicsBuffer *>(buffer);
         if (buf == nullptr) {
           throw vpException(vpException::fatalError, "Panda3D: could not cast to GraphicsBuffer when rendering.");

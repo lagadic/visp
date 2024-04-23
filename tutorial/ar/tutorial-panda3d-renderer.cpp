@@ -18,11 +18,6 @@
 #include <visp3/ar/vpPanda3DGeometryRenderer.h>
 #include <visp3/ar/vpPanda3DRendererSet.h>
 
-#include <ambientLight.h>
-#include <pointLight.h>
-#include <directionalLight.h>
-
-
 void displayNormals(const vpImage<vpRGBf> &normalsImage,
                     vpImage<vpRGBa> &normalDisplayImage)
 {
@@ -81,6 +76,7 @@ int main(int argc, const char **argv)
   vpPanda3DRenderParameters renderParams(vpCameraParameters(300, 300, 160, 120), 240, 320, 0.01, 1.0);
   vpPanda3DRendererSet renderer(renderParams);
   renderer.setRenderParameters(renderParams);
+
   const std::string objectName = "object";
 
   std::shared_ptr<vpPanda3DGeometryRenderer> geometryRenderer = std::shared_ptr<vpPanda3DGeometryRenderer>(new vpPanda3DGeometryRenderer(vpPanda3DGeometryRenderer::vpRenderType::WORLD_NORMALS));
@@ -110,7 +106,7 @@ int main(int argc, const char **argv)
   // rgbRenderer->getRenderRoot().set_shader_auto(100);
   vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
   renderer.addLight(alight);
-  vpPanda3DPointLight plight("Point", vpRGBf(2.0), vpColVector({ 0.4, -0.5, -0.5 }));
+  vpPanda3DPointLight plight("Point", vpRGBf(2.0), vpColVector({ 0.0, -0.3, -0.0 }));
   renderer.addLight(plight);
 
   rgbRenderer->printStructure();
@@ -142,7 +138,7 @@ int main(int argc, const char **argv)
   DisplayCls dNormals(normalDisplayImage, 0, 0, "normals in world space");
   DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, renderParams.getImageHeight() + 80, "normals in camera space");
   DisplayCls dDepth(depthDisplayImage, renderParams.getImageWidth() + 80, 0, "depth");
-  DisplayCls dColor(colorImage, renderParams.getImageWidth() * 2 + 90, 0, "color");
+  DisplayCls dColor(colorImage, renderParams.getImageWidth() * 3 + 90, 0, "color");
   renderer.renderFrame();
   bool end = false;
   bool firstFrame = true;

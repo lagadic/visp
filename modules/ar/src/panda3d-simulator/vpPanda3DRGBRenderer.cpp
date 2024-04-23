@@ -51,6 +51,7 @@ void vpPanda3DRGBRenderer::setupScene()
 {
   vpPanda3DBaseRenderer::setupScene();
   setLightableScene(m_renderRoot);
+  //m_renderRoot.set_shader_auto();
 }
 
 void vpPanda3DRGBRenderer::setupRenderTarget()
