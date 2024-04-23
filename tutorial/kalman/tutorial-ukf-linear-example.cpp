@@ -40,6 +40,13 @@
 #include <visp3/core/vpUniRand.h>
 #include <visp3/gui/vpPlot.h>
 
+/**
+ * \brief The process function, that updates the prior.
+ *
+ * \param[in] chi The sigma points.
+ * \param[in] dt The period.
+ * \return std::vector<vpColVector> The sigma points projected in the future.
+ */
 std::vector<vpColVector> fx(const std::vector<vpColVector> &chi, const double &dt)
 {
   unsigned int nbPoints = chi.size();
@@ -53,6 +60,12 @@ std::vector<vpColVector> fx(const std::vector<vpColVector> &chi, const double &d
   return points;
 }
 
+/**
+ * \brief The measurement function, that project the prior in the measurement space.
+ *
+ * \param[in] chi The prior.
+ * \return std::vector<vpColVector> The prior projected in the measurement space.
+ */
 std::vector<vpColVector> hx(const std::vector<vpColVector> &chi)
 {
   unsigned int nbPoints = chi.size();
@@ -74,13 +87,13 @@ int main(/*const int argc, const char *argv[]*/)
 
   // Initialize the attributes of the UKF
   vpUKSigmaDrawerMerwe drawer(2, 0.3, 2., 0.1);
-  vpMatrix P0(2, 2);
+  vpMatrix P0(2, 2); //  The initial guess of the process covariance
   P0.eye(2, 2);
   P0 = P0 * 10.;
-  vpMatrix R(2, 2);
+  vpMatrix R(2, 2); // The covariance of the noise introduced by the measurement
   R.eye(1, 1);
   R = R * 0.5;
-  vpMatrix Q(2, 2);
+  vpMatrix Q(2, 2); // The covariance of the process
   Q[0][0] = std::pow(dt, 3) / 3.;
   Q[0][1] = std::pow(dt, 2)/2.;
   Q[1][0] = std::pow(dt, 2)/2.;
@@ -118,11 +131,16 @@ int main(/*const int argc, const char *argv[]*/)
   double gt_x = 0.;
   double z_prec = 0.;
   for (int i = 0; i < 50; ++i) {
+    // Perform the measurement
     double z_meas = gt_x + rng.uniform(-0.5, 0.5);
     vpColVector z(1);
     z[0] = z_meas;
+
+    // Use the UKF to filter the measurement
     ukf.filter(z, dt);
     vpColVector Xest = ukf.getXest();
+
+    // Plot the ground truth, measurement and filtered state
     plot.plot(0, 0, i, gt_x);
     plot.plot(0, 1, i, z_meas);
     plot.plot(0, 2, i, Xest[0]);
