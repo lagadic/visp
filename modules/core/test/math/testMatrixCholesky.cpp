@@ -42,7 +42,28 @@
 #include <stdlib.h>
 #include <visp3/core/vpMatrix.h>
 
-bool testCholeskyDecomposition(const vpMatrix &gtResult, const vpMatrix &result,
+bool equal(const vpMatrix &A, const vpMatrix &B)
+{
+  unsigned int rowsA = A.getRows(), rowsB = B.getRows();
+  unsigned int colsA = A.getCols(), colsB = B.getCols();
+  bool areEqual = (rowsA == rowsB) && (colsA == colsB);
+
+  if (!areEqual) {
+    return false;
+  }
+
+  for (unsigned int r = 0; r < rowsA; ++r) {
+    for (unsigned int c = 0; c < colsA; ++c) {
+      areEqual = areEqual && vpMath::equal(A[r][c], B[r][c]);
+      if (!areEqual) {
+        return false;
+      }
+    }
+  }
+  return areEqual;
+}
+
+bool testCholeskyDecomposition(const vpMatrix &M, const vpMatrix &gtResult, const vpMatrix &result,
                                const std::string &title, const bool &verbose)
 {
   if (verbose) {
@@ -61,18 +82,24 @@ bool testCholeskyDecomposition(const vpMatrix &gtResult, const vpMatrix &result,
     return false;
   }
 
-  for (unsigned int r = 0; r < gtRows; ++r) {
-    for (unsigned int c = 0; c < gtCols; ++c) {
-      areEqual = areEqual && vpMath::equal(gtResult[r][c], result[r][c]);
-    }
-  }
+  areEqual = equal(gtResult, result);
 
   if ((!areEqual) && verbose) {
-    std::cout << "Failed: matrices differ." << std::endl;
+    std::cout << "Failed: L matrices differ." << std::endl;
+    std::cout << "Result =\n" << result << std::endl;
+    std::cout << "GT =\n" << gtResult << std::endl;
+    return false;
+  }
+
+  vpMatrix LLt = result * result.transpose();
+  areEqual = equal(M, LLt);
+
+  if ((!areEqual) && verbose) {
+    std::cout << "Failed: L matrices differ." << std::endl;
     std::cout << "Result =\n" << result << std::endl;
     std::cout << "GT =\n" << gtResult << std::endl;
   }
-  else if (areEqual && verbose) {
+  if (areEqual && verbose) {
     std::cout << "Test " << title << " succeeded" << std::endl;
   }
 
@@ -133,24 +160,24 @@ int main(const int argc, const char *argv[])
 
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix L = M.choleskyByLapack();
-  bool success = testCholeskyDecomposition(gtL, L,
+  bool success = testCholeskyDecomposition(M, gtL, L,
                                "Test 1 Cholesky's decomposition using Lapack", verbose);
   allSuccess = allSuccess && success;
 
   L = M2.choleskyByLapack();
-  success = testCholeskyDecomposition(gtL2, L,
+  success = testCholeskyDecomposition(M2, gtL2, L,
                                "Test 2 Cholesky's decomposition using Lapack", verbose);
   allSuccess = allSuccess && success;
 #endif
 
 #if defined(VISP_HAVE_EIGEN3)
   L = M.choleskyByEigen3();
-  success = testCholeskyDecomposition(gtL, L,
+  success = testCholeskyDecomposition(M, gtL, L,
                                "Test Cholesky's decomposition using Eigen3", verbose);
   allSuccess = allSuccess && success;
 
   L = M2.choleskyByEigen3();
-  success = testCholeskyDecomposition(gtL2, L,
+  success = testCholeskyDecomposition(M2, gtL2, L,
                                "Test 2 Cholesky's decomposition using Eigen3", verbose);
   allSuccess = allSuccess && success;
 #endif
