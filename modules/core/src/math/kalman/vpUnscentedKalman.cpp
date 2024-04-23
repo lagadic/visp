@@ -38,14 +38,20 @@
 
 #include <visp3/core/vpUnscentedKalman.h>
 
-vpUnscentedKalman::vpUnscentedKalman(const int &stateSize, const int &measurementSize)
+vpUnscentedKalman::vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const process_function &f, const measurement_function &h)
+  : m_Q(Q)
+  , m_R(R)
+  , m_f(f)
+  , m_h(h)
+  , m_sigmaDrawer(drawer)
 {
 
 }
 
-vpUnscentedKalman::vpUnscentedKalman(const vpUnscentedKalman &other)
+void vpUnscentedKalman::init(const vpColVector &mu0, const vpMatrix &P0)
 {
-
+  m_Xest = mu0;
+  m_Pest = P0;
 }
 
 void vpUnscentedKalman::filter(const vpColVector &z, const double &dt)
@@ -57,7 +63,7 @@ void vpUnscentedKalman::filter(const vpColVector &z, const double &dt)
 void vpUnscentedKalman::predict(const double &dt)
 {
   // Drawing the sigma points
-  m_chi = m_sigmaDrawer->drawSigmaPoints(m_mu, m_P);
+  m_chi = m_sigmaDrawer->drawSigmaPoints(m_Xest, m_Pest);
 
   // Computation of the attached weights
   vpUKSigmaDrawerAbstract::vpSigmaPointsWeights weights = m_sigmaDrawer->computeWeights();
@@ -68,7 +74,7 @@ void vpUnscentedKalman::predict(const double &dt)
   m_Y = m_f(m_chi, dt);
 
   // Computation of the mean and covariance of the prior
-  vpUnscentedTransformResult transformResults = unscentedTransform(m_chi, m_wm, m_wc, m_Q);
+  vpUnscentedTransformResult transformResults = unscentedTransform(m_Y, m_wm, m_wc, m_Q);
   m_mu = transformResults.m_mu;
   m_P = transformResults.m_P;
 }
@@ -92,7 +98,7 @@ void vpUnscentedKalman::update(const vpColVector &z)
 
   // Updating the estimate
   m_Xest = m_mu + m_K * (z - m_muz);
-  m_P = m_P - m_K * m_Pz * m_K.transpose();
+  m_Pest = m_P - m_K * m_Pz * m_K.transpose();
 }
 
 vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransform(const std::vector<vpColVector> &sigmaPoints, const vpColVector &wm, const vpColVector &wc, const vpMatrix &cov)
@@ -101,8 +107,8 @@ vpUnscentedKalman::vpUnscentedTransformResult vpUnscentedKalman::unscentedTransf
 
   // Computation of the mean
   unsigned int nbSigmaPoints = wm.size();
-  result.m_mu = 0.;
-  for (unsigned int i = 0; i < nbSigmaPoints; ++i) {
+  result.m_mu = wm[0] * sigmaPoints[0];
+  for (unsigned int i = 1; i < nbSigmaPoints; ++i) {
     result.m_mu += wm[i] * sigmaPoints[i];
   }
 

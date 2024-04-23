@@ -56,13 +56,9 @@ std::vector<vpColVector> vpUKSigmaDrawerMerwe::drawSigmaPoints(const vpColVector
   sigmaPoints[0] = mean;
   vpMatrix scaledCov = (static_cast<double>(m_n) + m_lambda) * covariance;
   vpMatrix cholesky = scaledCov.cholesky();
-  for (unsigned int i = 1; i < nbSigmaPoints; ++i) {
-    if (i <= m_n) {
-      sigmaPoints[i] = mean + cholesky.getRow(i).transpose();
-    }
-    else {
-      sigmaPoints[i] = mean - cholesky.getRow(i - m_n).transpose();
-    }
+  for (unsigned int i = 0; i < m_n; ++i) {
+    sigmaPoints[i + 1] = mean + cholesky.getRow(i).transpose();
+    sigmaPoints[i + m_n + 1] = mean - cholesky.getRow(i).transpose();
   }
   return sigmaPoints;
 }

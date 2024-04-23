@@ -49,8 +49,27 @@
 class VISP_EXPORT vpUnscentedKalman
 {
 public:
-  vpUnscentedKalman(const int &stateSize, const int &measurementSize);
-  vpUnscentedKalman(const vpUnscentedKalman &other);
+  typedef std::function<std::vector<vpColVector>(const std::vector<vpColVector> &, const double &)> process_function;
+  typedef std::function<std::vector<vpColVector>(const std::vector<vpColVector> &)> measurement_function;
+
+  /**
+   * \brief Construct a new vpUnscentedKalman object.
+   *
+   * \param[in] Q The covariance introduced by performing the prediction step.
+   * \param[in] R The covariance introduced by performing the update step.
+   * \param[in] drawer Object that permits to draw the sigma points.
+   * \param[in] f Process model function, which projects the sigma points forward in time.
+   * \param[in] h Measurement function, which converts the sigma points in the measurement space.
+   */
+  vpUnscentedKalman(const vpMatrix &Q, const vpMatrix &R, vpUKSigmaDrawerAbstract *drawer, const process_function &f, const measurement_function &h);
+
+  /**
+   * \brief Set the guess of the initial state and covariance.
+   *
+   * \param[in] mu0 Guess of the initial state.
+   * \param[in] P0 Guess of the initial covariance.
+   */
+  void init(const vpColVector &mu0, const vpMatrix &P0);
 
   /**
    * \brief Perform first the prediction step and then the filtering step.
@@ -73,9 +92,29 @@ public:
    * \param[in] z The measurements at the current timestep.
    */
   void update(const vpColVector &z);
+
+  /**
+   * \brief Get the estimated (i.e. filtered) state.
+   *
+   * \return vpColVector The estimated state.
+   */
+  inline vpColVector getXest() const
+  {
+    return m_Xest;
+  }
+
+  /**
+   * \brief Get the predicted state (i.e. the prior).
+   *
+   * \return vpColVector The predicted state.
+   */
+  inline vpColVector getXpred() const
+  {
+    return m_mu;
+  }
 private:
-  vpColVector m_Xpred; /*!< The predicted state variables.*/
   vpColVector m_Xest; /*!< The estimated (i.e. filtered) state variables.*/
+  vpMatrix m_Pest; /*!< The estimated (i.e. filtered) covariance matrix.*/
   vpMatrix m_Q; /*!< The covariance introduced by performing the prediction step.*/
   std::vector<vpColVector> m_chi; /*!< The sigma points.*/
   std::vector<double> m_wm; /*!< The weights for the mean computation.*/
@@ -90,8 +129,8 @@ private:
   vpMatrix m_Pxz; /*!< The cross variance of the state and the measurements.*/
   vpColVector m_y; /*!< The residual.*/
   vpMatrix m_K; /*!< The Kalman gain.*/
-  std::function<std::vector<vpColVector>(const std::vector<vpColVector> &, const double &)> m_f; /*!< Process model function, which projects the sigma points forward in time.*/
-  std::function<std::vector<vpColVector>(const std::vector<vpColVector> &)> m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
+  process_function m_f; /*!< Process model function, which projects the sigma points forward in time.*/
+  measurement_function m_h; /*!< Measurement function, which converts the sigma points in the measurement space.*/
   vpUKSigmaDrawerAbstract *m_sigmaDrawer; /*!< Object that permits to draw the sigma points.*/
 
   /**
