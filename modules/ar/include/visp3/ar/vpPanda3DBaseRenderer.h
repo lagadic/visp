@@ -35,6 +35,7 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PANDA3D)
+#include <visp3/core/vpPoint.h>
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/ar/vpPanda3DRenderParameters.h>
 
@@ -224,6 +225,10 @@ public:
    */
   void setAbortOnPandaError(bool abort);
   void setForcedInvertTextures(bool invert);
+
+  static vpPoint vispPointToPanda(const vpPoint &point);
+
+  void printStructure();
 
 protected:
 

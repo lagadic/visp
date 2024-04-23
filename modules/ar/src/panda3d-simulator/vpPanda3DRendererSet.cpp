@@ -117,6 +117,16 @@ void vpPanda3DRendererSet::setRenderParameters(const vpPanda3DRenderParameters &
   }
 }
 
+void vpPanda3DRendererSet::addLight(const vpPanda3DLight &light)
+{
+  for (std::shared_ptr<vpPanda3DBaseRenderer> &renderer: m_subRenderers) {
+    vpPanda3DLightable *lightable = dynamic_cast<vpPanda3DLightable *>(renderer.get());
+    if (lightable != nullptr) {
+      lightable->addLight(light);
+    }
+  }
+}
+
 void vpPanda3DRendererSet::addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer)
 {
   for (std::shared_ptr<vpPanda3DBaseRenderer> &otherRenderer: m_subRenderers) {

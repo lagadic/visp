@@ -100,7 +100,7 @@ int main(int argc, const char **argv)
   }
 
   std::cout << "Initializing framework" << std::endl;
-  renderer.initFramework(false);
+  renderer.initFramework(true);
 
   std::cout << "Loading object" << std::endl;
   NodePath object = renderer.loadObject(objectName, modelPath);
@@ -109,16 +109,12 @@ int main(int argc, const char **argv)
   renderer.addNodeToScene(object);
 
   // rgbRenderer->getRenderRoot().set_shader_auto(100);
-  PT(AmbientLight) alight = new AmbientLight("ambient");
-  alight->set_color(LColor(0.2, 0.2, 0.2, 1));
-  NodePath alnp = rgbRenderer->getRenderRoot().attach_new_node(alight);
-  rgbRenderer->getRenderRoot().set_light(alnp);
-  PT(PointLight) plight = new PointLight("sun");
-  plight->set_color(LColor(2.0, 2.0, 2.0, 1));
-  NodePath plnp = rgbRenderer->getRenderRoot().attach_new_node(plight);
-  plnp.set_pos(0.4, -0.5, 0.1);
-  rgbRenderer->getRenderRoot().set_light(plnp);
+  vpPanda3DAmbientLight alight("Ambient", vpRGBf(0.2));
+  renderer.addLight(alight);
+  vpPanda3DPointLight plight("Point", vpRGBf(50.0), vpColVector({ 0.4, -0.5, -0.5 }));
+  renderer.addLight(plight);
 
+  rgbRenderer->printStructure();
   std::cout << "Setting camera pose" << std::endl;
   renderer.setCameraPose(vpHomogeneousMatrix(0.0, 0.0, -0.5, 0.0, 0.0, 0.0));
 
@@ -148,8 +144,9 @@ int main(int argc, const char **argv)
   DisplayCls dNormalsCamera(cameraNormalDisplayImage, 0, renderParams.getImageHeight() + 80, "normals in camera space");
   DisplayCls dDepth(depthDisplayImage, renderParams.getImageWidth() + 80, 0, "depth");
   DisplayCls dColor(colorImage, renderParams.getImageWidth() * 2 + 90, 0, "color");
-
+  renderer.renderFrame();
   bool end = false;
+  bool firstFrame = true;
   std::vector<double> renderTime, fetchTime, displayTime;
   while (!end) {
     float near = 0, far = 0;
@@ -163,7 +160,6 @@ int main(int argc, const char **argv)
     renderer.renderFrame();
 
     const double beforeFetch = vpTime::measureTimeMs();
-
     renderer.getRenderer<vpPanda3DGeometryRenderer>(geometryRenderer->getName())->getRender(normalsImage, depthImage);
     renderer.getRenderer<vpPanda3DGeometryRenderer>(cameraRenderer->getName())->getRender(cameraNormalsImage);
     renderer.getRenderer<vpPanda3DRGBRenderer>()->getRender(colorImage);
@@ -175,6 +171,7 @@ int main(int argc, const char **argv)
     displayDepth(depthImage, depthDisplayImage, near, far);
     vpDisplay::display(colorImage);
     vpDisplay::displayText(colorImage, 15, 15, "Click to quit", vpColor::red);
+
     if (stepByStep) {
       vpDisplay::displayText(colorImage, 50, 15, "Next frame: space", vpColor::red);
     }
@@ -186,8 +183,8 @@ int main(int argc, const char **argv)
     renderTime.push_back(beforeFetch - beforeRender);
     fetchTime.push_back(beforeConvert - beforeFetch);
     displayTime.push_back(endDisplay - beforeConvert);
+    std::string s;
     if (stepByStep) {
-      std::string s;
       bool next = false;
       while (!next) {
         vpDisplay::getKeyboardEvent(colorImage, s, true);
@@ -195,12 +192,21 @@ int main(int argc, const char **argv)
           next = true;
         }
       }
-
     }
+    // if (firstFrame) {
+    //   renderParams.setImageResolution(renderParams.getImageHeight() * 0.5, renderParams.getImageWidth() * 0.5);
+    //   vpCameraParameters orig = renderParams.getCameraIntrinsics();
+    //   vpCameraParameters newCam(orig.get_px() * 0.5, orig.get_py() * 0.5, orig.get_u0() * 0.5, orig.get_v0() * 0.5);
+    //   renderParams.setCameraIntrinsics(newCam);
+    //   std::cout << renderParams.getImageHeight() << std::endl;
+    //   //dDepth.setDownScalingFactor(0.5);
+    //   renderer.setRenderParameters(renderParams);
+    // }
+    // firstFrame = false;
     const double afterAll = vpTime::measureTimeMs();
     const double delta = (afterAll - beforeRender) / 1000.0;
-    vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
-    vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
+    const vpHomogeneousMatrix wTo = renderer.getNodePose(objectName);
+    const vpHomogeneousMatrix oToo = vpExponentialMap::direct(vpColVector({ 0.0, 0.0, 0.0, 0.0, vpMath::rad(20.0), 0.0 }), delta);
     renderer.setNodePose(objectName, wTo * oToo);
   }
   if (renderTime.size() > 0) {

@@ -37,11 +37,10 @@
 #if defined(VISP_HAVE_PANDA3D)
 
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
+#include <visp3/ar/vpPanda3DLight.h>
 #include <visp3/core/vpImage.h>
 
-#include <directionalLight.h>
-
-class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer
+class VISP_EXPORT vpPanda3DRGBRenderer : public vpPanda3DBaseRenderer, public vpPanda3DLightableScene
 {
 public:
   vpPanda3DRGBRenderer() : vpPanda3DBaseRenderer("RGB") { }
@@ -56,7 +55,7 @@ public:
   void getRender(vpImage<vpRGBa> &I) const;
 
 protected:
-
+  void setupScene() vp_override;
   void setupRenderTarget() vp_override;
 
 private:

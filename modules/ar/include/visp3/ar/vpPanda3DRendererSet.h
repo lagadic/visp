@@ -38,8 +38,9 @@
 #include <vector>
 
 #include <visp3/ar/vpPanda3DBaseRenderer.h>
+#include <visp3/ar/vpPanda3DLight.h>
 
-class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer
+class VISP_EXPORT vpPanda3DRendererSet : public vpPanda3DBaseRenderer, public vpPanda3DLightable
 {
 public:
   vpPanda3DRendererSet(const vpPanda3DRenderParameters &renderParameters);
@@ -113,6 +114,8 @@ public:
   void addNodeToScene(const NodePath &object) vp_override;
 
   void setRenderParameters(const vpPanda3DRenderParameters &params) vp_override;
+
+  void addLight(const vpPanda3DLight& light) vp_override;
 
   void addSubRenderer(std::shared_ptr<vpPanda3DBaseRenderer> renderer);
 

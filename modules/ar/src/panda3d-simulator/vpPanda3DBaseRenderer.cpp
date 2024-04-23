@@ -202,7 +202,17 @@ void vpPanda3DBaseRenderer::setForcedInvertTextures(bool invert)
   else {
     load_prc_file_data("", "copy-texture-inverted 0");
   }
-
 }
+
+vpPoint vpPanda3DBaseRenderer::vispPointToPanda(const vpPoint &point)
+{
+  return PANDA_T_VISP * point;
+}
+
+void vpPanda3DBaseRenderer::printStructure()
+{
+  m_renderRoot.ls();
+}
+
 
 #endif
