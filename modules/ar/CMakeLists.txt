@@ -191,7 +191,7 @@ if(USE_OGRE)
 endif()
 
 if(USE_PANDA3D)
-  set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra)
+  set(PANDA3D_CXX_FLAGS -Wno-unused-parameter -Wno-unused-variable -Wno-extra -Wno-reorder-ctor)
   set(PANDA3D_MODULE_SOURCES
     vpPanda3DBaseRenderer.cpp vpPanda3DGeometryRenderer.cpp
     vpPanda3DRGBRenderer.cpp vpPanda3DRenderParameters.cpp
