@@ -7,6 +7,7 @@ find_package(VISP REQUIRED visp_core visp_gui)
 set(tutorial_cpp)
 
 list(APPEND tutorial_cpp tutorial-ukf-linear-example.cpp)
+list(APPEND tutorial_cpp tutorial-ukf-nonlinear-example)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
