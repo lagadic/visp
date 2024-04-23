@@ -130,7 +130,7 @@ vpHomogeneousMatrix vpPanda3DBaseRenderer::getNodePose(const std::string &name)
 {
   NodePath object = m_renderRoot.find(name);
   if (object.is_empty()) {
-    throw vpException(vpException::badValue, "Node %s was not found", name);
+    throw vpException(vpException::badValue, "Node %s was not found", name.c_str());
   }
   return getNodePose(object);
 }
@@ -151,7 +151,7 @@ void vpPanda3DBaseRenderer::computeNearAndFarPlanesFromNode(const std::string &n
   }
   NodePath object = m_renderRoot.find(name);
   if (object.is_empty()) {
-    throw vpException(vpException::badValue, "Node %s was not found", name);
+    throw vpException(vpException::badValue, "Node %s was not found", name.c_str());
   }
   LPoint3 minP, maxP;
   object.calc_tight_bounds(minP, maxP, m_cameraPath);
